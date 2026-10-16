@@ -20,3 +20,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+--------------------------------------------------------------------------------
+
+fdlibm 5.3
+
+lib/src/js/fdlibm_log.dart and lib/src/js/fdlibm_atan.dart are Dart ports of
+e_log.c, e_log10.c, s_atan.c and e_atan2.c from fdlibm 5.3
+(https://www.netlib.org/fdlibm/), which carry this notice (SPDX license
+identifier SunPro):
+
+Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+
+Developed at SunSoft, a Sun Microsystems, Inc. business.
+Permission to use, copy, modify, and distribute this
+software is freely granted, provided that this notice
+is preserved.

@@ -27,3 +27,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  # Pure-layer specs and port tests run with `dart test` on the VM, dart2js and
+  # dart2wasm (porting-flow.md section 3). 1.31.0 matches the test_api pin of
+  # flutter_test in Flutter 3.44.9.
+  test: ^1.31.0

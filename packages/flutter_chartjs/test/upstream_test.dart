@@ -1,3 +1,8 @@
+@TestOn('vm')
+library;
+
+// dart:io reads the submodule and flutter_test reaches dart:ui, so the web
+// legs (`dart test -p chrome`) cannot compile this file.
 import 'dart:convert';
 import 'dart:io';
 

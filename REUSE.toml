@@ -34,3 +34,23 @@ path = [
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2014 The Flutter Authors"
 SPDX-License-Identifier = "BSD-3-Clause"
+
+# fdlibm 5.3 e_log.c, e_log10.c, s_atan.c and e_atan2.c from netlib, kept
+# unchanged as the reference for lib/src/js/fdlibm_log.dart and
+# lib/src/js/fdlibm_atan.dart (porting-flow.md 2.13).
+[[annotations]]
+path = "third_party/fdlibm/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "1993 Sun Microsystems, Inc."
+SPDX-License-Identifier = "SunPro"
+
+# The Dart ports of fdlibm. They are not derived from Chart.js, so this table
+# replaces the package table above for these files.
+[[annotations]]
+path = [
+  "packages/flutter_chartjs/lib/src/js/fdlibm_log.dart",
+  "packages/flutter_chartjs/lib/src/js/fdlibm_atan.dart",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["1993 Sun Microsystems, Inc.", "2026 Vasiliy Ditsyak"]
+SPDX-License-Identifier = "SunPro AND MIT"

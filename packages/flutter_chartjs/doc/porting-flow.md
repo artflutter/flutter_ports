@@ -57,7 +57,7 @@ the `differences.md` schema.
    The sample passes `analyze --fatal-infos` and `format:check` (Dart 3.12.2, very_good_analysis
    10.3.0).
 4. **Licensing** (AGENTS.md Licensing). The new sources are @kurkle/color 0.3.2 (MIT, Jukka
-   Kurkela), fdlibm 5.3 (SunPro, Sun Microsystems), chartjs-test-utils 0.4.0 (MIT,
+   Kurkela), fdlibm 5.3 (SunPro, Sun Microsystems, Inc.), chartjs-test-utils 0.4.0 (MIT,
    chartjs-test-utils Contributors) and pixelmatch 5.3.0 (ISC, Mapbox).
 5. **Port the specs.**
    - The path is `test/specs/<upstream base>_test.dart`. The header names
@@ -142,17 +142,37 @@ Chromium. Non-finite arguments do nothing. Dashes restart for each contour. Phas
 ### 2.3 ADR: JS numeric semantics (gate 1)
 
 **Decision.** An unexported "JS runtime" lives in `lib/src/js/`:
-- `js_math.dart` (port-only): `jsRound`, `jsToInt32`, `jsLog`/`jsLog10`, `numberEpsilon`,
-  `jsMax`/`jsMin`
+- `js_math.dart` (port-only): `jsRound`, `jsToInt32`, `jsLog`/`jsLog10`, `jsAtan2`,
+  `numberEpsilon`, `jsMax`/`jsMin`
 - `fdlibm_log.dart`: a netlib fdlibm port with the headers
-  `// Ported from fdlibm 5.3 e_log.c (SunPro, Sun Microsystems).` and one line for `e_log10.c`
+  `// Ported from fdlibm 5.3 e_log.c (SunPro, Sun Microsystems, Inc.).` and one line for
+  `e_log10.c`
+- `fdlibm_atan.dart`: the same for `s_atan.c` and `e_atan2.c`, plus one line that V8 has and
+  netlib does not (`m &= 1` when |y/x| > 2**60, so `atan2` returns ±π/2 also for x < 0)
 - `js_number.dart`: `jsNumberToString`, `jsParseFloat`, `jsToNumber`, `jsIsNaN`
 - `js_array.dart`: a stable `jsSort` and the `jsObjectKeys` order
 - `js_intl.dart`: the JS-style number formatter behind `helpers.intl.dart`
 
+The reference engine is V8 13.6 as Node.js v24.12.0 for x64 builds it: fdlibm 5.3 compiled
+without fused multiply-add.
+- V8 on arm64 contracts fdlibm to fused multiply-add, and Chrome 155 computes `Math.log`,
+  `Math.log10` and `Math.atan2` another way. Both differ from the reference in the last bit for
+  some inputs, so reference data never come from a browser or an arm64 Node.js. On Apple silicon,
+  the darwin-x64 build runs under Rosetta.
+- Each reference run records the Node.js version, the V8 version and the architecture in its
+  output. The generators in `tool/reference/` stop unless `process.arch` is `x64`.
+- Every transcendental `Math` builtin that ported code calls is a pure-Dart fdlibm port, so the
+  VM, dart2js and dart2wasm give the same bits: `log`, `log10` and `atan2` now. `sin`, `cos`,
+  `exp` and the rest come with their first ported caller. `dart:math` calls the host C library on
+  the VM and the browser on the web.
+- Correctly rounded builtins (`Math.sqrt`, `Math.abs`, the arithmetic operators) call
+  `dart:math` or the operator.
+
 Translation rules:
 - `%` → `.remainder()`, `Math.floor`/`Math.ceil` → `floorToDouble`/`ceilToDouble`
-- `Math.pow` on doubles, `double` for numbers
+- `Math.pow` on doubles, `double` for numbers. This holds while the exponents are integers
+  (`pow(x, 2)`, `pow(10, n)`). The first ported caller with another exponent adds `jsPow`
+  (fdlibm `e_pow.c`).
 - no `num.clamp` for `_limitValue`, no `is int` on data
 
 Do not port from V8's `ieee754.cc`, because it adds a V8 BSD notice. Depend on
@@ -165,11 +185,16 @@ Do not port from V8's `ieee754.cc`, because it adds a V8 BSD notice. Depend on
 | `Math.round` (25 sites) | 116/834 mismatches, throws on NaN | 0 |
 | `%` | 150/318 mismatches | 0 |
 | `log10` as `log(x)/ln10` | spec loop fails for 168/308 exponents | 0 (fdlibm) |
+| `Math.atan2` as `dart:math` `atan2` | 34,032/303,640 mismatches on the VM; the web follows the browser | 0 (fdlibm) |
 | logarithmic `generateTicks` | 310/613 pairs wrong | 0 |
 | `toString` | `'1.0'` on VM and wasm | 0 |
 
-The fdlibm result came from a transcription of V8's `ieee754.cc`. The pilot re-runs the
-5,909-input log10 comparison on the netlib port.
+The fdlibm result came from a transcription of V8's `ieee754.cc`. The pilot re-ran the
+5,909-input log10 comparison on the netlib port: 0 mismatches against x64 V8 on all three targets.
+The netlib `atan2` port matched x64 V8 on 607,280 fuzz inputs on the VM and on 150,000 on
+dart2js and dart2wasm. Without the `m &= 1` line, netlib returns π/2 + 1 ulp for
+`atan2(1e300, -1e-300)`, where V8 returns π/2. In `getAngleFromPoint`, such a last-bit difference
+below −π/2 changes the angle by 2π.
 
 On Flutter 3.44.9, `List.sort` is unstable above 32 elements on the VM, in dart2wasm and in DDC,
 because they call Dart's `Sort.sort`. dart2js calls the native JS sort. That sort is stable
@@ -356,12 +381,12 @@ resolve. On the 3.50 beta, `flutter/material.dart` is deprecated. `dart run melo
   - `third_party/kurkle-color` at `v0.3.2` (`eb0d1db`)
   - `third_party/chartjs-test-utils` at `v0.4.0` (`8c02987`)
   - `third_party/pixelmatch` at `v5.3.0` (`910cd5d`)
-- fdlibm has no git repository. Commit the netlib `e_log.c` and `e_log10.c` as reference-only
-  copies in `third_party/fdlibm/`.
+- fdlibm has no git repository. Commit the netlib `e_log.c`, `e_log10.c`, `s_atan.c` and
+  `e_atan2.c` as reference-only copies in `third_party/fdlibm/`.
 - `tool/port_sources.yaml` has one entry for each project. An entry holds the header name, the
   version and its source, the URL, the SPDX ID, the holder, the pin and the Dart target.
-- Targets: `lib/src/kurkle_color/`, `packages/chartjs_test_utils/lib/src/` (with `pixelmatch.dart`)
-  and `lib/src/js/fdlibm_log.dart`.
+- Targets: `lib/src/kurkle_color/`, `packages/chartjs_test_utils/lib/src/` (with `pixelmatch.dart`),
+  `lib/src/js/fdlibm_log.dart` and `lib/src/js/fdlibm_atan.dart`.
 - Clarification to ADR 0002: dev-time tools can read and evaluate reference sources. The fixtures
   job reads the Chart.js PNGs. Dart code never imports them. Nothing builds or ships them.
 

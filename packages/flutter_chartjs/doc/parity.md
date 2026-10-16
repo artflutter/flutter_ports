@@ -4,8 +4,18 @@ One row per upstream source file of [Chart.js v4.5.1](https://github.com/chartjs
 (the pinned `third_party/Chart.js` submodule; run `melos run upstream` to check it out).
 Port work updates the **Dart target** and **Status** columns in the same PR as the code.
 
-Status values: `not started` → `in progress` → `ported` (code + ported specs pass) → `verified`
-(visual parity checked against upstream reference renders).
+Status values ([porting-flow.md](porting-flow.md) §1 step 7):
+
+- `not started`: no Dart code yet.
+- `in progress`: Dart code exists, but not all of the module is ported.
+- `partial: <symbols>`: only the listed symbols are ported, because a ported module needs them.
+- `ported`: code + ported specs pass; for a pure-layer module, on the VM, dart2js and dart2wasm.
+- `verified`: visual parity checked against upstream reference renders.
+- `replaced`: a Flutter file replaces the upstream file, for example `platform.flutter.dart` for
+  `platform.dom.js`.
+- `distributed`: a type declaration file mirrored as `abstract interface class` declarations in
+  `lib/src/types`, with members added as ported callers need them (porting-flow.md §2.4).
+- `n/a: <reason>`: not ported, for the stated reason.
 
 Line counts are `wc -l` of the upstream file at v4.5.1.
 
@@ -13,7 +23,7 @@ Line counts are `wc -l` of the upstream file at v4.5.1.
 
 | Area | Files | Lines | Ported |
 |---|---:|---:|---:|
-| helpers | 18 | 3435 | 0 |
+| helpers | 18 | 3435 | 1 |
 | core | 21 | 7135 | 0 |
 | elements | 5 | 1203 | 0 |
 | scales | 8 | 2290 | 0 |
@@ -34,7 +44,7 @@ Runtime dependency: [`@kurkle/color`](https://github.com/kurkle/color) `^0.3.0` 
 | [`src/helpers/helpers.color.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.color.ts) | 32 | | not started |
 | [`src/helpers/helpers.config.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.config.ts) | 456 | | not started |
 | [`src/helpers/helpers.config.types.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.config.types.ts) | 60 | | not started |
-| [`src/helpers/helpers.core.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.core.ts) | 416 | | not started |
+| [`src/helpers/helpers.core.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.core.ts) | 416 | `lib/src/helpers/helpers.core.dart` | partial: `isFinite` |
 | [`src/helpers/helpers.curve.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.curve.ts) | 223 | | not started |
 | [`src/helpers/helpers.dataset.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.dataset.ts) | 33 | | not started |
 | [`src/helpers/helpers.dom.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.dom.ts) | 284 | | not started |
@@ -42,7 +52,7 @@ Runtime dependency: [`@kurkle/color`](https://github.com/kurkle/color) `^0.3.0` 
 | [`src/helpers/helpers.extras.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.extras.ts) | 163 | | not started |
 | [`src/helpers/helpers.interpolation.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.interpolation.ts) | 41 | | not started |
 | [`src/helpers/helpers.intl.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.intl.ts) | 17 | | not started |
-| [`src/helpers/helpers.math.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.math.ts) | 207 | | not started |
+| [`src/helpers/helpers.math.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.math.ts) | 207 | `lib/src/helpers/helpers.math.dart` | ported |
 | [`src/helpers/helpers.options.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.options.ts) | 206 | | not started |
 | [`src/helpers/helpers.rtl.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.rtl.ts) | 74 | | not started |
 | [`src/helpers/helpers.segment.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/helpers/helpers.segment.js) | 364 | | not started |
@@ -147,7 +157,7 @@ Runtime dependency: [`@kurkle/color`](https://github.com/kurkle/color) `^0.3.0` 
 | [`src/types/animation.d.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/types/animation.d.ts) | 34 | | not started |
 | [`src/types/basic.d.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/types/basic.d.ts) | 3 | | not started |
 | [`src/types/color.d.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/types/color.d.ts) | 1 | | not started |
-| [`src/types/geometric.d.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/types/geometric.d.ts) | 52 | | not started |
+| [`src/types/geometric.d.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/types/geometric.d.ts) | 52 | `lib/src/types/geometric.dart` | distributed |
 | [`src/types/index.d.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/types/index.d.ts) | 3885 | | not started |
 | [`src/types/layout.d.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/types/layout.d.ts) | 65 | | not started |
 | [`src/types/utils.d.ts`](https://github.com/chartjs/Chart.js/blob/v4.5.1/src/types/utils.d.ts) | 30 | | not started |
@@ -205,7 +215,7 @@ Upstream tests come in two kinds. Both are ported with the module they cover.
 | [`test/specs/helpers.dom.tests.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/test/specs/helpers.dom.tests.js) | 548 | | not started |
 | [`test/specs/helpers.easing.tests.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/test/specs/helpers.easing.tests.js) | 61 | | not started |
 | [`test/specs/helpers.interpolation.tests.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/test/specs/helpers.interpolation.tests.js) | 35 | | not started |
-| [`test/specs/helpers.math.tests.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/test/specs/helpers.math.tests.js) | 141 | | not started |
+| [`test/specs/helpers.math.tests.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/test/specs/helpers.math.tests.js) | 141 | `test/specs/helpers.math_test.dart` | ported (12/12 cases) |
 | [`test/specs/helpers.options.tests.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/test/specs/helpers.options.tests.js) | 256 | | not started |
 | [`test/specs/helpers.segment.tests.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/test/specs/helpers.segment.tests.js) | 61 | | not started |
 | [`test/specs/mixed.tests.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/test/specs/mixed.tests.js) | 46 | | not started |
@@ -223,3 +233,22 @@ Upstream tests come in two kinds. Both are ported with the module they cover.
 | [`test/specs/scale.logarithmic.tests.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/test/specs/scale.logarithmic.tests.js) | 1208 | | not started |
 | [`test/specs/scale.radialLinear.tests.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/test/specs/scale.radialLinear.tests.js) | 656 | | not started |
 | [`test/specs/scale.time.tests.js`](https://github.com/chartjs/Chart.js/blob/v4.5.1/test/specs/scale.time.tests.js) | 1336 | | not started |
+
+## Port-only files
+
+Files with no Chart.js counterpart. Each file starts with
+`// Original code, not ported from Chart.js: <reason>.`, except the fdlibm ports, which have the
+rule-2 headers of their own source. The fdlibm reference copies are in `third_party/fdlibm/`. The
+reference engine of `lib/src/js` is V8 13.6 in Node.js v24.12.0 on x64 ([porting-flow.md](porting-flow.md)
+§2.3).
+
+| File | Contents | Tests |
+|---|---|---|
+| `lib/src/js/js_math.dart` | `Math` and `Number` builtins with the results of the reference engine: `numberEpsilon`, `jsRound`, `jsToInt32`, `jsLog10`, `jsAtan2`, `jsMax`, `jsMin` | `test/port/js/js_math_test.dart` |
+| `lib/src/js/js_number.dart` | JS number coercion: `jsToNumber`, `jsParseFloat`, `jsIsNaN`, `jsIsFinite` | `test/port/js/js_number_test.dart` |
+| `lib/src/js/fdlibm_log.dart` | Ported from fdlibm 5.3 `e_log.c` and `e_log10.c` (SunPro, Sun Microsystems, Inc.): `ieee754Log`, `ieee754Log10` | `test/port/js/fdlibm_log_test.dart`: 5,909 inputs and 3 regression inputs, bit for bit against `Math.log10` of the reference engine |
+| `lib/src/js/fdlibm_atan.dart` | Ported from fdlibm 5.3 `s_atan.c` and `e_atan2.c` (SunPro, Sun Microsystems, Inc.), plus one line that V8 has and netlib does not (`m &= 1` when abs(y/x) > 2**60): `atan`, `ieee754Atan2` | `test/port/js/fdlibm_atan_test.dart`: 3,000 inputs, bit for bit against `Math.atan2` of the reference engine |
+| `test/port/js/log10_reference.dart` | Generated data of `fdlibm_log_test.dart` | written by `tool/reference/log10_reference.mjs` |
+| `test/port/js/atan2_reference.dart` | Generated data of `fdlibm_atan_test.dart` | written by `tool/reference/atan2_reference.mjs` |
+| `tool/reference/log10_reference.mjs`, `tool/reference/atan2_reference.mjs` | Dev-time Node.js generators of the two data files; they stop unless Node.js is an x64 build | — |
+| `test/port/helpers/helpers.math_test.dart` | `helpers.math` behaviour that `test/specs/helpers.math.tests.js` does not check (AGENTS.md rule 3), with expected values from the chart.js 4.5.1 npm dist in Node.js v24.12.0 on x64 | — |

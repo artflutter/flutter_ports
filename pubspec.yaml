@@ -33,6 +33,9 @@ melos:
         failFast: true
       packageFilters:
         dirExists: test
+    test:web:
+      run: cd packages/flutter_chartjs && dart test -p chrome -c dart2js -c dart2wasm
+      description: Run the flutter_chartjs tests that are not @TestOn('vm') in Chrome, compiled with dart2js and with dart2wasm.
 
     upstream:
       run: git submodule update --init --depth 1 third_party/Chart.js
