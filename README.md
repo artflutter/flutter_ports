@@ -5,7 +5,7 @@ translated to Dart and drawn with Flutter's own canvas, so the charts are ordina
 widgets. There's no WebView and no JavaScript at runtime, and the same code runs on every
 Flutter platform, including web builds compiled to WebAssembly.
 
-Why ports instead of wrappers, and what already exists on pub.dev: [docs/prior-art](docs/prior-art/README.md).
+Why ports instead of wrappers, and what already exists on pub.dev: [docs/prior-art](packages/flutter_chartjs/doc/prior-art/README.md).
 
 > **Status:** early. The Chart.js port is scaffolded and nothing renders yet. Nothing is
 > published to pub.dev yet.
@@ -14,7 +14,7 @@ Why ports instead of wrappers, and what already exists on pub.dev: [docs/prior-a
 
 | Port | Upstream | Package | Progress |
 |---|---|---|---|
-| Chart.js | [chartjs/Chart.js](https://github.com/chartjs/Chart.js) v4.5.1 (MIT) | [`flutter_chartjs`](packages/flutter_chartjs) | [parity tracker](docs/chartjs/parity.md) |
+| Chart.js | [chartjs/Chart.js](https://github.com/chartjs/Chart.js) v4.5.1 (MIT) | [`flutter_chartjs`](packages/flutter_chartjs) | [parity tracker](packages/flutter_chartjs/doc/parity.md) |
 
 ## Layout
 

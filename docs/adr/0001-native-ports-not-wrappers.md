@@ -5,7 +5,7 @@
 
 ## Context
 
-A survey of pub.dev and GitHub ([prior art](../prior-art/README.md)) found no maintained native
+A survey of pub.dev and GitHub ([prior art](../../packages/flutter_chartjs/doc/prior-art/README.md)) found no maintained native
 Dart/Flutter port of Chart.js. Every Chart.js package usable from Flutter today runs the real
 Chart.js JavaScript, in one of three ways:
 
@@ -42,7 +42,7 @@ replayed, and upstream specs can be ported next to the code.
 ## Consequences
 
 - Much more work than a wrapper: Chart.js alone is about 20k lines of implementation and 26k lines
-  of specs ([parity tracker](../chartjs/parity.md)).
+  of specs ([parity tracker](../../packages/flutter_chartjs/doc/parity.md)).
 - The JavaScript runtime model has to be re-created where upstream relies on it: Canvas 2D
   semantics, `Proxy`-based option resolution, `requestAnimationFrame`, DOM events, CSS fonts and
   colours. These get their own ADRs.

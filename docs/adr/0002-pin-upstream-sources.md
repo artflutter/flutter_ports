@@ -31,7 +31,7 @@ release tag. Chart.js: `third_party/Chart.js` at `v4.5.1` (commit `9c5cf9f`).
   2. check out the new tag;
   3. review `git -C third_party/Chart.js diff <old-tag> <new-tag> -- src test/specs`;
   4. `git add third_party/Chart.js`, then port the changes and update `chartJsVersion` and
-     [parity.md](../chartjs/parity.md).
+     [parity.md](../../packages/flutter_chartjs/doc/parity.md).
 
   All of it goes in one PR.
 - Dependabot's `gitsubmodule` updater is not used: it follows the upstream default branch, not

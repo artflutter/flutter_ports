@@ -3,15 +3,18 @@
 `packages/flutter_chartjs` is a native Dart port of [Chart.js](https://www.chartjs.org):
 the Chart.js logic (scales, layout, dataset controllers, elements, plugins, animations)
 translated to Dart and drawn with Flutter's own canvas. No WebView, no JavaScript at runtime.
-Why this approach, and what already exists: [prior art](../prior-art/README.md) and
-[ADR 0001](../adr/0001-native-ports-not-wrappers.md).
+Why this approach, and what already exists: [prior art](prior-art/README.md) and
+[ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
 
 - **Upstream:** Chart.js **v4.5.1** (2025-10-13), MIT, pinned as the git submodule
-  `third_party/Chart.js` ([ADR 0002](../adr/0002-pin-upstream-sources.md)).
+  `third_party/Chart.js` ([ADR 0002](../../../docs/adr/0002-pin-upstream-sources.md)).
   `melos run upstream` checks it out.
 - **Progress:** [parity.md](parity.md), one row per upstream source file and spec.
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
+- **Decisions:** the Chart.js ADRs are in [adr/](adr/), for example
+  [Chart.js ADR 0001: Theming](adr/0001-theming.md) (proposed). The decisions for all ports are
+  in [docs/adr/](../../../docs/adr/).
 
 ## What gets ported
 
@@ -34,11 +37,16 @@ Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the v4.5.1 lockfile), which
 2. Start the Dart file with a header naming its source, license and holder, for example
    `// Ported from Chart.js v4.5.1 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).`
    Code from another project (such as `@kurkle/color`) also adds that project's notice to the
-   package LICENSE and `REUSE.toml` ([AGENTS.md](../../AGENTS.md#licensing)).
+   package LICENSE and `REUSE.toml` ([AGENTS.md](../../../AGENTS.md#licensing)).
 3. Port the matching spec from `test/specs` next to it.
 4. Update the row in [parity.md](parity.md) in the same PR.
 
 ## Roadmap (draft)
+
+[porting-flow.md](porting-flow.md) proposes a revised phase plan and the steps of one module port.
+[upstream-tracking.md](upstream-tracking.md) proposes how the port follows upstream after the pin.
+The new ADRs and design documents use the revised phase numbers of porting-flow.md §5 (4 =
+Elements, 5 = Core), not the numbers of the table below.
 
 The order follows upstream's own layering:
 - `helpers` depend only on `core.defaults` (and a type-only import of the chart controller).
@@ -71,11 +79,16 @@ elements and scales lands (phases 5-7).
 
 ## Open questions (ADRs before phase 2)
 
+[porting-flow.md](porting-flow.md) section 2 gives a recommended decision for each question below
+and adds new ones. Each decision there has a gate phase. Only the gate 1 and gate 2 decisions come
+before phase 2. [Chart.js ADR 0001](adr/0001-theming.md) proposes the theming decision.
+[theming.md](theming.md) gives the design.
+
 - **Canvas model.** Port the drawing code against a small Canvas 2D-compatible layer over
   `dart:ui` (keeps upstream drawing code close to line-for-line), or translate each draw call to
   `dart:ui` directly. Canvas 2D semantics that differ from `dart:ui`: the current path is not part
   of `save()`/`restore()`, transforms apply when path points are added, `arcTo` differs from
-  `arcToPoint`. Prior art worth studying: [js-runtimes.md](../prior-art/js-runtimes.md).
+  `arcToPoint`. Prior art worth studying: [js-runtimes.md](prior-art/js-runtimes.md).
 - **Options.** Upstream resolves options through `Proxy`-based scopes (defaults, overrides,
   scriptable and indexable options). Dart has no `Proxy`, so the resolver needs its own design,
   and a decision on a typed Dart options API versus accepting raw Chart.js JSON configs (or both).

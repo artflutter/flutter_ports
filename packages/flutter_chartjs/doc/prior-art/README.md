@@ -58,9 +58,11 @@ Six more leads (a fork, a mirror, two apps, a demo and Dart 1-era typings) are
 - [Running real Chart.js without a WebView](js-runtimes.md): WebF, Kraken, flutter_fjs and other
   JS engines embedded in Flutter. None ships or demos Chart.js. Their Canvas 2D implementations
   are useful prior art.
-- [Other JavaScript chart libraries](other-chart-libraries.md): ECharts, Highcharts, Plotly, Vega and
+- [Other JavaScript chart libraries](../../../../docs/prior-art/other-chart-libraries.md): ECharts, Highcharts, Plotly, Vega and
   others are wrapped too. Native ports exist only for ApexCharts (`apexcharts_flutter`), Recharts
   (GitHub only) and D3 building blocks (`d4_*`).
+- [forui theming](forui-theming.md): how forui builds, finds, overrides and animates its theme,
+  and which ideas the chart theme takes.
 
 ## How the survey was done
 
@@ -101,7 +103,7 @@ Six more leads (a fork, a mirror, two apps, a demo and Dart 1-era typings) are
 - **There is no competition.** Every Chart.js option usable from Flutter today is a WebView or
   platform view with a JSON-only bridge. That means no Dart callbacks or scriptable options, few
   or no events, no Flutter goldens or theming, and broken WebAssembly builds. That is the case
-  for a native port ([ADR 0001](../adr/0001-native-ports-not-wrappers.md)).
+  for a native port ([ADR 0001](../../../../docs/adr/0001-native-ports-not-wrappers.md)).
 - **Nothing to fork.** No package contains reusable Dart implementations of Chart.js scales,
   layout, controllers or elements. The port is translated from upstream v4.5.1 directly.
 - **Raw Chart.js configs are worth accepting.** Several packages take an untyped Chart.js config,
@@ -115,4 +117,4 @@ Six more leads (a fork, a mirror, two apps, a demo and Dart 1-era typings) are
   - `chartjs_flutter`'s WebView harness running Chart.js 4.5.1, as a reference renderer for visual
     comparisons.
 - **Names.** `chart`, `chartjs`, `chartjs2` and `chartjs_flutter` are taken
-  ([ADR 0003](../adr/0003-package-names.md)).
+  ([ADR 0003](../../../../docs/adr/0003-package-names.md)).

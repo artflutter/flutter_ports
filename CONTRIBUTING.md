@@ -14,10 +14,10 @@ to people as much as to agents.
   lefthook `commit-msg` hook checks both.
 - **Ported code:** translated from the pinned upstream source, with a header naming the upstream
   file, specs ported alongside, and the parity tracker updated
-  ([docs/chartjs/parity.md](docs/chartjs/parity.md)).
+  ([packages/flutter_chartjs/doc/parity.md](packages/flutter_chartjs/doc/parity.md)).
 - **Licensing:** keep upstream notices. Code from another project also needs its notice in the
   package LICENSE and a `REUSE.toml` annotation (see [AGENTS.md](AGENTS.md#licensing)). Never
   copy code from GPL or otherwise incompatible projects (see
-  [docs/prior-art](docs/prior-art/README.md)). `reuse lint` runs in CI.
+  [docs/prior-art](packages/flutter_chartjs/doc/prior-art/README.md)). `reuse lint` runs in CI.
 - **Before pushing:** `dart run melos run format:check`, `dart run melos run analyze` and
   `dart run melos run test --no-select` must pass.

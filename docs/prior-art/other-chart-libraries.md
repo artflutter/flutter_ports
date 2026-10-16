@@ -1,6 +1,7 @@
 # Other JavaScript chart libraries in Dart/Flutter
 
-Part of the [prior-art survey](README.md).
+This page extends the [Chart.js prior-art survey](../../packages/flutter_chartjs/doc/prior-art/README.md)
+to other libraries.
 
 This page lists what exists in Dart and Flutter for JavaScript chart libraries other than Chart.js, as background for future ports in this repository. It draws on 35 pub.dev search queries, per-package lookups and GitHub search; each package in the tables was classified from its source code. Versions, dates and status are as of 2026-10-16.
 

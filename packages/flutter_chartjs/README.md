@@ -8,11 +8,11 @@ web builds compiled to WebAssembly.
 
 > **Status:** work in progress. Nothing renders yet and the package is not published. Progress is
 > tracked per upstream file in the
-> [parity tracker](https://github.com/artflutter/flutter_ports/blob/main/docs/chartjs/parity.md).
+> [parity tracker](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs/doc/parity.md).
 
 This is not [`chartjs_flutter`](https://pub.dev/packages/chartjs_flutter), which hosts the
 JavaScript Chart.js in a WebView. For how the existing Chart.js packages work, see the
-[prior-art survey](https://github.com/artflutter/flutter_ports/blob/main/docs/prior-art/README.md).
+[prior-art survey](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs/doc/prior-art/README.md).
 
 ## Upstream
 

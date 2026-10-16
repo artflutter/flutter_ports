@@ -23,13 +23,15 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos â
 ## Layout
 
 - `packages/flutter_chartjs`: the Chart.js port (library, `publish_to: none` until 0.1.0).
+  - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
+    (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
 - `apps/chartjs_gallery`: gallery app (Android, iOS, web, macOS); every Chart.js chart type,
   marked pending until ported.
 - `third_party/Chart.js`: git submodule at tag `v4.5.1`. Reference only: never imported, built
   or shipped. Excluded from analysis.
 - `tool/`: repository scripts (`check_upstream_pin.sh`).
-- `docs/prior-art/`: what exists on pub.dev/GitHub and how each package works.
-- `docs/adr/`: decisions. `docs/chartjs/`: roadmap and parity tracker.
+- `docs/`: docs for all ports only. `docs/adr/`: decisions for all ports. `docs/prior-art/`: prior
+  art for future ports. Docs for one port go in the `doc/` folder of its package.
 
 ## Porting rules
 
@@ -41,7 +43,7 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos â
    `// Ported from Chart.js v4.5.1 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).`
 3. **Port the specs.** Upstream `test/specs/<module>.tests.js` becomes a `flutter_test` file next to
    the code. Behaviour without an upstream spec still needs tests.
-4. **Track parity.** Update the module's row in `docs/chartjs/parity.md` in the same change.
+4. **Track parity.** Update the module's row in `packages/flutter_chartjs/doc/parity.md` in the same change.
 5. **No JavaScript at runtime.** No WebView, no JS engine, no `dart:js_interop` in library code
    (ADR 0001). Library code must compile for every Flutter platform and for web WebAssembly.
 6. **Bumping upstream** is its own change (ADR 0002). The submodule is a shallow clone without
@@ -68,7 +70,7 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos â
   its `NOTICE` content, and add `LICENSES/Apache-2.0.txt`.
 - Never copy code from GPL or otherwise incompatible projects, even for "small" helpers.
   `flutter_web_chartjs` is GPL-3.0; current WebF is GPL-3.0 with an enterprise exception. Ideas
-  only. See `docs/prior-art/`.
+  only. See `packages/flutter_chartjs/doc/prior-art/`.
 
 ## Conventions
 
