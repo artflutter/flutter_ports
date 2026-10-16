@@ -2,6 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "chartjs_gallery (selected device)",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/chartjs_gallery",
+      "program": "lib/main.dart"
+    },
+    {
       "name": "chartjs_gallery (Chrome)",
       "type": "dart",
       "request": "launch",

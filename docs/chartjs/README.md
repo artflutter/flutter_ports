@@ -10,7 +10,8 @@ Why this approach, and what already exists: [prior art](../prior-art/README.md) 
   `third_party/Chart.js` ([ADR 0002](../adr/0002-pin-upstream-sources.md)).
   `melos run upstream` checks it out.
 - **Progress:** [parity.md](parity.md), one row per upstream source file and spec.
-- **Gallery:** `apps/chartjs_gallery` (`melos run gallery`).
+- **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
+  `melos run gallery:device`).
 
 ## What gets ported
 

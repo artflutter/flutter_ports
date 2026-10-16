@@ -20,7 +20,7 @@ Why ports instead of wrappers, and what already exists on pub.dev: [docs/prior-a
 
 ```
 packages/flutter_chartjs   the Chart.js port (library)
-apps/chartjs_gallery       gallery and visual test bed (web, macOS)
+apps/chartjs_gallery       gallery and visual test bed (Android, iOS, web, macOS)
 third_party/Chart.js       pinned upstream source, git submodule (reference only, not shipped)
 docs/                      prior art, ADRs, per-port roadmap and parity tracker
 ```
@@ -36,7 +36,8 @@ flutter pub get               # resolves the whole pub workspace
 dart run melos run upstream   # optional: check out the pinned Chart.js sources
 dart run melos run analyze
 dart run melos run test --no-select
-dart run melos run gallery    # Chrome
+dart run melos run gallery          # Chrome
+dart run melos run gallery:device   # Android/iOS device, emulator or simulator
 ```
 
 `melos` is a dev dependency, so `dart run melos …` works without a global install. With a

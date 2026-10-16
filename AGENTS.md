@@ -15,12 +15,16 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos â
 - `dart run melos run upstream`: check out the pinned upstream sources (`third_party/Chart.js`).
 - `dart run melos run upstream:check`: fail unless the submodule is pinned to the release tag named
   by `chartJsVersion`. CI runs it too.
-- `dart run melos run gallery` / `gallery:macos` / `gallery:build`
+- `dart run melos run gallery` (Chrome) / `gallery:macos` / `gallery:device` (Android/iOS):
+  run the gallery.
+- `dart run melos run gallery:build:web` / `gallery:build:android` / `gallery:build:ios`: build the
+  gallery the way CI does (web with WebAssembly, debug APK, iOS without code signing).
 
 ## Layout
 
 - `packages/flutter_chartjs`: the Chart.js port (library, `publish_to: none` until 0.1.0).
-- `apps/chartjs_gallery`: gallery app; every Chart.js chart type, marked pending until ported.
+- `apps/chartjs_gallery`: gallery app (Android, iOS, web, macOS); every Chart.js chart type,
+  marked pending until ported.
 - `third_party/Chart.js`: git submodule at tag `v4.5.1`. Reference only: never imported, built
   or shipped. Excluded from analysis.
 - `tool/`: repository scripts (`check_upstream_pin.sh`).

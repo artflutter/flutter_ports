@@ -44,8 +44,28 @@ jobs:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/setup
       - name: Build the gallery for the web (WebAssembly + JavaScript fallback)
-        working-directory: apps/chartjs_gallery
-        run: flutter build web --wasm
+        run: dart run melos run gallery:build:web
+
+  gallery-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17 # the gallery's Gradle build targets JVM 17
+          cache: gradle
+      - uses: ./.github/actions/setup
+      - name: Build the gallery for Android (debug APK)
+        run: dart run melos run gallery:build:android
+
+  gallery-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+      - name: Build the gallery for iOS (no code signing)
+        run: dart run melos run gallery:build:ios
 
   upstream-pin:
     # The third_party/Chart.js gitlink must be the commit of the release tag

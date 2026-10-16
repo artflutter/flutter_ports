@@ -27,6 +27,9 @@ path = [
   "apps/chartjs_gallery/web/favicon.png",
   "apps/chartjs_gallery/web/icons/**",
   "apps/chartjs_gallery/macos/Runner/Assets.xcassets/AppIcon.appiconset/*.png",
+  "apps/chartjs_gallery/ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png",
+  "apps/chartjs_gallery/ios/Runner/Assets.xcassets/LaunchImage.imageset/*.png",
+  "apps/chartjs_gallery/android/app/src/main/res/mipmap-*/ic_launcher.png",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2014 The Flutter Authors"

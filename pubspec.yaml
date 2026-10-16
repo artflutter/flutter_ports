@@ -50,6 +50,16 @@ melos:
       run: cd apps/chartjs_gallery && flutter run -d macos
       stdio: inherit
       description: Run the Chart.js gallery as a macOS app.
-    gallery:build:
+    gallery:device:
+      run: cd apps/chartjs_gallery && flutter run
+      stdio: inherit
+      description: Run the Chart.js gallery on a connected Android/iOS device, emulator or simulator (flutter asks when there are several).
+    gallery:build:web:
       run: cd apps/chartjs_gallery && flutter build web --wasm
       description: Build the gallery for the web (WebAssembly with a JavaScript fallback).
+    gallery:build:android:
+      run: cd apps/chartjs_gallery && flutter build apk --debug
+      description: Build a debug APK of the gallery.
+    gallery:build:ios:
+      run: cd apps/chartjs_gallery && flutter build ios --debug --no-codesign
+      description: Build the gallery for iOS without code signing.
