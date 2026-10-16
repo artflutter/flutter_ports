@@ -18,7 +18,7 @@ Terms used below:
 Packages: [`chart`](#pkg-chart) · [`chartjs_flutter`](#pkg-chartjs_flutter) · [`js_widget`](#pkg-js_widget) ·
 [`flutter_web_chartjs`](#pkg-flutter_web_chartjs) · [`chart_engine`](#pkg-chart_engine) ·
 [`chartjs`](#pkg-chartjs) · [`chartjs2`](#pkg-chartjs2) · [`pakhyunw/flutter_chartjs`](#pkg-pakhyunw_flutter_chartjs) ·
-[copies of `google/chartjs.dart`](#pkg-chartjs_dart_copies) · [ruled out](#pkg-ruleouts)
+[copies of `google/chartjs.dart`](#pkg-chartjs_dart_copies) · [completeness pass](#pkg-completeness) · [ruled out](#pkg-ruleouts)
 
 <a id="pkg-chart"></a>
 
@@ -476,6 +476,248 @@ License: ramnim, AnantaPodder and FarHard112 keep upstream's LICENSE verbatim (B
 
 Evidence: `lib/chartjs.dart:27` (ramnim), `lib/chartjs.dart:957` (AnantaPodder), `lib/chartjs.dart:390` (FarHard112), `lib/main.dart:1` (aris_chartjs).
 
+<a id="pkg-completeness"></a>
+
+## Found in the completeness pass
+
+A final search pass looked for anything the first round missed. It used reverse dependencies, past
+the search engine's 100-result cap, name probing, forks, archived repositories, GitLab, Codeberg,
+Stack Exchange and web search. It found 14 more leads. The eight below were inspected and
+re-verified the same way as the packages above. None of them is a native port of Chart.js.
+
+<a id="pkg-ensemble"></a>
+
+### `ensemble`: low-code runtime whose `ChartJs` widget runs real Chart.js in a WebView or through `js_widget`; not a port
+
+| | |
+|---|---|
+| Where | [pub.dev/packages/ensemble](https://pub.dev/packages/ensemble); [EnsembleUI/ensemble](https://github.com/EnsembleUI/ensemble/tree/main/modules/ensemble), monorepo path `modules/ensemble` |
+| Inspected | 1.2.55 (published 2026-09-14); its ChartJs files match GitHub `main` as of 2026-10-16 |
+| Status | Maintained: 12 pub.dev versions since 2026-06-26, `main` pushed 2026-10-16; ChartJs code unchanged since 2025-01-29 |
+| Approach | EDL/YAML runtime widget passing an untyped Chart.js config through. `dart.library.io`: WebView (webview_flutter). Web (dart2js): platform view (`HtmlElementView`) plus global `eval`, via Ensemble's `js_widget` 1.0.4 (see `js_widget` above). WASM: none |
+| Chart.js | v4, unpinned, not shipped. WebView: jsDelivr `chart.js` and `chartjs-plugin-annotation`, no SRI (4.5.1 and 3.1.0 as of 2026-10-16). Web: the host `index.html` must load it (`js_widget` ignores `scripts` on web); Ensemble's starter app bundles 4.4.7 |
+| Works on | Android, iOS; web dart2js if `index.html` preloads Chart.js. Fails on macOS (`setOpaque` `UnimplementedError`, as for `js_widget`), Windows and Linux (no webview_flutter backend) and WASM (pana: not WASM-compatible), though pub.dev tags macOS and Windows |
+| License | BSD-3-Clause; Chart.js and the annotation plugin, loaded at runtime: MIT |
+| Adoption (2026-10-16) | pub.dev: 0 likes, 90/160 points, 912 downloads (30 days). GitHub (whole monorepo): 152 stars |
+
+**How it works.**
+
+1. An app declares a `ChartJs:` node (`id`, `width`/`height` in px, `config`, `onTap`). `JSInterpreter.toJSString` (ensemble_ts_interpreter) turns a Map `config` into JS source, functions included; a String is used verbatim.
+2. A conditional export picks web (`dart.library.html`), WebView (`dart.library.io`) or a "not supported" `Text`.
+3. Web: a `JsWidget` shows a `<canvas>` in an `HtmlElementView` and, after 250 ms, `eval`s `new Chart(canvas, config)`; the host page's Chart.js draws on it.
+4. Android/iOS: each `build()` creates a `WebViewController` loading an HTML page that pulls Chart.js from jsDelivr; the system WebView draws inside a fixed-size `WebViewWidget`.
+5. `addLabels`/`addData`/`setData`/`update` run generated JS; a click posts the nearest element as JSON to the `onTap` action.
+
+**Notes.**
+
+- Not a port: 347 lines of Dart plumbing and JS templates, with no scale, layout or drawing logic. The package's `LineChart`/`BarChart` widgets wrap fl_chart and are unrelated to Chart.js.
+- Charts are fixed-size platform views (default 200x200 px) without Flutter layout, theming or semantics, and only clicks reach Dart. Android/iOS: needs network, would load a future v5 silently, and reloads on every rebuild, dropping `addData`/`setData` changes. Web: a host page without Chart.js fails with only a console error.
+- For flutter_chartjs: an acceptance target for the config parser and interaction API (full v4 config as JSON, `addLabels`/`addData`/`setData`/`update`, a click payload with `label`, `value`, `datasetIndex`, `index`, `x`, `y`, `chartType`). A Dart port accepting that config could replace both branches and add desktop and offline use (WASM stays blocked package-wide); function-valued options would need Dart callbacks.
+
+Evidence: `lib/widget/visualization/chart_js/chart_js_state.dart:3`, `lib/widget/visualization/chart_js/native/chart_js_state.dart:30`, `lib/util/chart_utils.dart:55`
+
+<a id="pkg-urban_chartjs_flutter"></a>
+
+### `URBAN-CONNECTIONS/chartjs_flutter`: GitHub-only iframe wrapper around CDN Chart.js for Flutter web; not the pub.dev `chartjs_flutter`
+
+| | |
+|---|---|
+| Where | [GitHub](https://github.com/URBAN-CONNECTIONS/chartjs_flutter) only. **Name collision:** its pubspec name is `chartjs_flutter`, but [`chartjs_flutter` on pub.dev](https://pub.dev/packages/chartjs_flutter) is an unrelated package by digia.tech. A hosted `chartjs_flutter` dependency gets Digia's package; this repo works only as a git or path dependency. |
+| Inspected | 1.0.4 per pubspec (untagged; newest tag 1.0.3), `main` at `be36c0683a`, pushed 2025-08-08 |
+| Status | Unpublished and stale: 6 commits, 2025-05-08 to 2025-08-08, none since as of 2026-10-16; not archived. It cannot be published under its name, held on pub.dev by digia.tech since 2025-11-11. |
+| Approach | Web (dart2js): platform view (`HtmlElementView` hosting an `<iframe>`), configured via `postMessage`. Every other target, including dart2wasm: empty stub. |
+| Chart.js | Not bundled. The iframe loads the unpinned `https://cdn.jsdelivr.net/npm/chart.js` without SRI, i.e. npm `latest` (4.5.1 as of 2026-10-16). The example config targets v4. |
+| Works on | dart2js web builds, provided jsDelivr is reachable, assets are served from the app's origin and the app is not itself in an iframe. `--wasm` builds render only in the dart2js fallback (browsers without WasmGC). Android, iOS, desktop: empty `SizedBox`, no error. (Static inspection.) |
+| License | None (`LICENSE`: `TODO: Add your license here.`; GitHub: `NOASSERTION`) |
+| Adoption (2026-10-16) | GitHub: 0 stars, 0 forks, 1 watcher. Not on pub.dev; the `chartjs_flutter` figures there (5 likes, 160/160 points, 53 downloads/30 days) are Digia's. |
+
+**How it works.**
+
+1. The app builds `ChartjsWidget(data: {...})` with a raw Chart.js config map; a conditional export on `dart.library.html` selects the web implementation.
+2. On dart2js web, `build()` returns `HtmlElementView.fromTagName(tagName: 'iframe')`, with id `Chartjs$hashCode` and `src` set to the package's `assets/html/index.html`.
+3. That page loads Chart.js from jsDelivr; its `script.js` listens for `message` events on `window.parent`.
+4. On iframe `load`, Dart posts `{source: <iframe id>, event: 'createChart', data: <config>}` to `window.parent`; the matching iframe calls `new Chart(canvas, config)`.
+5. Chart.js draws with Canvas 2D inside the iframe, which Flutter composites as a platform view; hover, tooltips and animation stay in JavaScript.
+
+**Notes.**
+
+- One-shot, one-way bridge: the config is posted once, later `data` changes are ignored (no update or destroy path), and no events reach Dart (the `onChartCreated` handler is empty). Only structured-cloneable JSON crosses: no scriptable options, callbacks, custom plugins or date adapters.
+- Not a port: `lib/` is 141 lines of Dart glue; Chart.js does all layout and drawing. With no license, none of it can be copied.
+- For a native port: accepting a raw Chart.js JSON config, as this widget does, gives drop-in compatibility. Its example (stacked bars with a dashed line overlay, per-corner `borderRadius`, `scales.*.border.dash`) suggests cases for independently written parity tests.
+
+Evidence: `lib/chartjs_flutter.dart:3`, `lib/src/chartjs_widget/chartjs_widget_web.dart:66`, `assets/html/index.html:7`
+
+<a id="pkg-json_render"></a>
+
+### `json_render`: web-only JSON-to-DOM renderer whose opt-in chart node delegates to `chart_engine` 2.1.x (Chart.js 2.9.4)
+
+| | |
+|---|---|
+| Where | [pub.dev/packages/json_render](https://pub.dev/packages/json_render), [github.com/gmpassos/json_render](https://github.com/gmpassos/json_render) |
+| Inspected | 2.1.0 (published 2024-02-15), same code as GitHub `master` HEAD; plus chart_engine 2.1.1, the version that resolves |
+| Status | Stale: no release or push since 2024-02-15 (about 32 months as of 2026-10-16); not discontinued. Its `chart_engine: ^2.1.0` excludes 3.0.0 (2026-10-07). |
+| Approach | Web (dart2js/DDC): JS interop, indirect, via chart_engine 2.1.x (`dart:js`). Not a Flutter widget (no HtmlElementView). dart2wasm, Dart VM, Flutter mobile and desktop: unsupported. |
+| Chart.js | 2.9.4 (v2 config schema), bundled in chart_engine and loaded at runtime from the page-relative `packages/chart_engine/chartjs-2.9.4/Chart.min.js` (require.js or an injected `<script>`); no CDN |
+| Works on | Browser builds (dart2js/DDC) serving the `packages/` assets. From decoded JSON only the all-numeric "gauge" renders; line, time-series and scatter need strongly typed Dart maps (static analysis, not run). |
+| License | BSD-3-Clause (stock Dart-authors template); chart_engine Apache-2.0; bundled Chart.js MIT |
+| Adoption (2026-10-16) | 1 like, 120/160 points, 79 downloads (30 days); 3 GitHub stars |
+
+**How it works.** Loading and the bridge are as in the `chart_engine` section, but in 2.1.x form: `dart:js` and `dart:html` rather than `package:web`.
+
+1. The app opts in with `JSONRender.fromJSON(json)..addTypeRender(TypeChartsRender())`, then calls `renderToDiv(div)`. `addAllKnownTypeRenders()` leaves charts out.
+2. The `TypeChartsRender()` constructor creates `ChartEngineChartJS` and calls `load()`, which injects Chart.js and the JS glue once per page.
+3. `renderNode` offers every node to the extended renderers first; for maps, `matches` returns `ChartData.matchesChartData(node)`.
+4. `ChartData.from(node)` infers the chart from the JSON shape (all-numeric map: gauge; `[epochMillis, num]` pair lists: time-series line; numeric pair lists: scatter; numeric-list lists: line), then `renderAsync` runs unawaited and its chart is discarded. With decoded JSON, the last three throw instead (see Notes).
+5. chart_engine appends a `<canvas>` to json_render's `<div>`, the glue calls `new Chart(ctx, config)` with a v2 config, and Chart.js 2.9.4 does the layout and drawing.
+
+**Notes.**
+
+- Using chart_engine 3.0.0 would take a new constraint, `intl` ^0.20.3 (json_render pins ^0.19.0) and `package:web` instead of `dart:html`.
+- By static analysis, chart_engine 2.1.x's `map as Map<dynamic, List<dynamic>>` cast throws on decoded JSON for the non-gauge shapes, and `matches()` throws on some plain objects (a string first value, for example); `renderToDiv` prints the error and the rest of the tree is not rendered. Any all-numeric object, such as `{"width":640,"height":480}`, becomes a gauge.
+- No chart options (title, type, colors, size, events) and no update or destroy; `buildJSON()` writes `[]` for chart nodes. Without require.js, a 404 on the bundled JS leaves `load()` pending: no chart, no error.
+- Nothing substantive to reuse: the chart code is a 38-line adapter. Lesson for a native port: test parsing with untyped maps, as `json.decode` returns; chart_engine 2.1.x rejects them, and 3.0.0 fixed the cast and added such tests.
+
+Evidence: `pubspec.yaml:14`, `lib/src/json_render_charts.dart:32`, chart_engine 2.1.1 `lib/src/chart_engine_series.dart:102`
+
+<a id="pkg-bindsmith"></a>
+
+### `pyrlyn/bindsmith` (`examples/chartjs_web`): unpublished, web-only `dart:js_interop` bindings for a small Chart.js 4.x subset; the example renders no chart
+
+| | |
+|---|---|
+| Where | [github.com/pyrlyn/bindsmith](https://github.com/pyrlyn/bindsmith), [`examples/chartjs_web`](https://github.com/pyrlyn/bindsmith/tree/main/examples/chartjs_web) (moved from `listepo/bindsmith`). Not on pub.dev. |
+| Inspected | `chartjs_web` 0.0.1 (`publish_to: none`), `main` at `72c38f3ca9` (2026-09-27) |
+| Status | Unpublished work in progress, active as of 2026-10-16 (last push 2026-10-15). The example is unchanged since its single commit (2026-09-13). |
+| Approach | Web: JS interop (generated extension types over the global `Chart`); no widget, canvas or platform view. Other platforms: none. Not a native port. |
+| Chart.js | 4.4.7 UMD from an exact-version jsDelivr `<script>` in the example's `web/index.html`; the package neither bundles nor injects it. Bindings come from a hand-written 25-line `src/chart.d.ts`, not the published typings. |
+| Works on | Web, compile-only: the example builds (CI: `flutter build web --debug`) but draws no chart. No other platforms. |
+| License | Mixed: repo root `GPL-3.0` since 2026-09-27 (was `MIT`; the README also offers custom royalty-free or commercial terms); the `bindsmith` and `bindsmith_runtime` packages still carry `MIT` files; the example's `LICENSE` is a TODO placeholder. Chart.js: `MIT`. |
+| Adoption (2026-10-16) | GitHub: 0 stars, 0 forks. No pub.dev metrics. |
+
+**How it works.**
+
+1. The app calls typed facade classes generated ahead of time by `dart run bindsmith generate` (a Node/TypeScript sidecar parses `src/chart.d.ts`): `ChartDataset(label:, data:)`, `ChartData`, `ChartConfiguration(type:, data:)`.
+2. Each of these facades calls an `external factory` on a `dart:js_interop` extension type that creates a JS object literal; lists are converted with `.toJS`.
+3. `Chart(item, config)` compiles to `new globalThis.Chart(item, config)` (library-level `@JS()`, global scope). `item` is untyped `JSAny?` because the generator treats `CanvasRenderingContext2D` as unknown. `update()` and `destroy()` forward to JS.
+4. `globalThis.Chart` is the CDN bundle, which self-registers all registerables.
+5. Chart.js would draw on a canvas that the caller must create and mount; the example shows only a `Text` widget.
+
+**Notes.**
+
+- Bound: constructor, `update()` (without upstream's `mode` argument), `destroy()`, `id`; config is only `type`, `labels` and `{label, data: List<num>}` datasets, with no options, dataset styling, events or callbacks. Unbound options need an unsupported import of the generated `lib/src/` binding plus `dart:js_interop_unsafe`.
+- The subset is a workaround: per the repo's notes, the generator cannot yet emit the mapped types in the real typings (91 `.d.ts` files in 4.4.7), and generics and non-literal unions degrade to `JSAny?`, so scriptable options would stay untyped.
+- Nothing to reuse for a native port: 220 Dart lines, all binding or delegation code, with no chart logic and mixed licensing, so do not copy from it. The transferable idea is a browser-side oracle: a few hand-written `dart:js_interop` extension types around real Chart.js that render goldens to compare the port against.
+
+Evidence: `examples/chartjs_web/lib/src/generated/web/dts.g.dart:9`, `examples/chartjs_web/example/web/index.html:36`, `examples/chartjs_web/example/lib/main.dart:16`
+
+<a id="pkg-dash_panel"></a>
+
+### `dash_panel`: Jaspr server-rendered admin panel; Dart only builds the Chart.js config, Chart.js 4.4.1 draws in the browser
+
+| | |
+|---|---|
+| Where | [pub.dev/packages/dash_panel](https://pub.dev/packages/dash_panel), [github.com/mark-nicepants/dash_panel](https://github.com/mark-nicepants/dash_panel) (monorepo; package in `dash/`) |
+| Inspected | 0.1.0 (published 2025-12-07); GitHub `main` (last push 2025-12-08) |
+| Status | Stale as of 2026-10-16: one release, no push since 2025-12-08. Not discontinued. |
+| Approach | Server to browser: config only (typed builders `jsonEncode`d into server-rendered HTML). Not JS interop: no JS bindings, no Dart in the browser. Flutter: none (no widget, `HtmlElementView` or WebView). |
+| Chart.js | 4.4.1 via `<script src>` to `https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js` (jsDelivr's alias of the official UMD build). Not bundled, no SRI or fallback. |
+| Works on | Dart VM server (JIT/AOT, SDK ^3.10.1), also inside a native Flutter app (pub.dev tags Android and iOS); charts appear only in a browser loading its pages. Not Flutter web or WASM. |
+| License | MIT (in `dash/LICENSE`, so GitHub detects none) |
+| Adoption (2026-10-16) | 1 like, 140/160 points, 29 downloads in 30 days; 0 GitHub stars |
+
+**How it works.**
+
+1. User code subclasses `ChartWidget` (or its line, bar, pie or doughnut variants), overrides `getType()`, `getData()` and optionally `getOptions()`, and registers it with `Panel().widgets([...])`.
+2. Server, per dashboard request: await each widget's `preload()` and collect its `requiredAssets` (for charts, the CDN `JsAsset.url`).
+3. Server: `ChartWidget.build()` `jsonEncode`s `{type, data, options}` and returns raw HTML: a `<canvas>` and an inline script that runs `new Chart(ctx, <json>)` on `window` `load`.
+4. Server: Jaspr's `renderComponent` renders the page, with the Chart.js tag at the end of `<body>`. The package's work ends here; its output is HTML and JSON text.
+5. Browser: Chart.js 4.4.1 computes scales, ticks and layout and draws on the canvas through `CanvasRenderingContext2D`.
+
+**Notes.**
+
+- The built-in API is static and one-way: the `Chart` instance is discarded (no `update()` or `destroy()`), and function-valued options cannot pass through `jsonEncode`. Scripts added by overriding `requiredAssets` run before `new Chart()` and could call `Chart.register(...)` or `Chart.getChart(id).update()`; the package has no such API.
+- Small typed surface: 6 of Chart.js v4's 8 chart types (no scatter or bubble), `List<num>` data only, untyped options.
+- Only dashboard-registered widgets get the Chart.js tag; on a custom `Page` or in a render hook a `ChartWidget` shows a blank canvas unless Chart.js is supplied another way. A `</script>` in a label breaks out of the inline script. Published 0.1.0 looks up its resources under the name `dash`, so pub.dev installs can fail to find them (fixed on GitHub, unreleased).
+- For a native port: no Chart.js logic to reuse; the only Dart chart geometry is a 29-LOC SVG sparkline. The dark-theme defaults could serve as golden-test fixtures.
+
+Evidence: `lib/src/widgets/chart_widget.dart:101`, `lib/src/widgets/chart_widget.dart:130`, `lib/src/widgets/chart_widget.dart:144`
+
+<a id="pkg-stream_chat_flutter_ai"></a>
+
+### `stream_chat_flutter_ai`: AI-chat UI kit that draws a small subset of Chart.js JSON natively with fl_chart; not a port or wrapper
+
+| | |
+|---|---|
+| Where | [pub.dev/packages/stream_chat_flutter_ai](https://pub.dev/packages/stream_chat_flutter_ai), [github.com/GetStream/stream-chat-flutter-ai](https://github.com/GetStream/stream-chat-flutter-ai) (in `packages/stream_chat_flutter_ai`) |
+| Inspected | 0.1.0 (published 2026-09-24); chart files unchanged on `main` at 765bf11637 (2026-10-16) |
+| Status | Maintained, new: 0.1.0 is the only release; repo created 2026-07-31, last `main` commit 2026-10-16 |
+| Approach | Chart.js-inspired native, the same Dart code on all six platforms: Chart.js JSON is one of seven input dialects, drawn with fl_chart. No JS interop, platform view or WebView for charts. |
+| Chart.js | Not involved: no JS files in the package or repo, and no Chart.js CDN or script tag. No version is targeted; the one option it reads, `options.scales.y.beginAtZero`, has the v3+/v4 shape. |
+| Works on | Chart path: all six declared platforms (pure Dart, no platform code). Web only without `--wasm`: `ChartView`'s own imports reach `photo_manager` and `dart:io`. pana flags plugin gaps outside the charts (photo_manager: no Windows or web; speech_to_text: no Linux). |
+| License | No SPDX id: proprietary Stream.io Source Code License Agreement (GitHub: `NOASSERTION`), for current Stream customers only; forbids redistribution and use with open-source software. Renderer fl_chart: MIT. |
+| Adoption (2026-10-16) | 0 likes, 140/160 pub points, 593 downloads (30 days); 0 GitHub stars |
+
+**How it works.**
+
+1. `StreamingMessageView(text:)` reveals a chat reply typewriter-style and renders it with `AIMarkdownBody`; hosts can also call `USpecParser.tryParse` and `ChartView(spec:)` themselves.
+2. Code fences tagged `json`, `chart`, `chartjs`, `echarts`, `highcharts`, `plotly` or `vega` go to `USpecParser.tryParse`. The tag does not choose the adapter.
+3. After `jsonDecode`, seven adapters are tried in order (the package's own USpec, Chart.js, Plotly, ECharts, Highcharts, Vega-Lite, flat pie), yielding the package's `USpec` model. If none matches, the fence stays a code block.
+4. `ChartView` builds an fl_chart `LineChart`, `BarChart`, `PieChart` or `ScatterChart`. Histograms are binned by the package and drawn as bars; heatmaps are a Material widget grid.
+5. fl_chart 1.2.0 computes axis intervals itself and paints on the `dart:ui` Canvas, which the Flutter engine rasterizes.
+
+**Notes.**
+
+- Chart.js coverage: it needs a non-empty `data.datasets` and reads only `type` (default `bar`; a non-string aborts the whole parse), `data.labels`, `datasets[].label`, `datasets[].data` (numbers, `null`, `{x,y,r}`), `options.scales.y.beginAtZero` (ignored by bar and histogram) and a non-standard root `title`. Doughnut and polarArea draw as pie, radar as bar, unrecognized types as line; pie uses the first dataset. Everything else is dropped silently, including colors (always from the theme), dataset styles, stacking, horizontal bars, time/log/multiple axes, plugins and animation, and scriptable options cannot be expressed in JSON. Output has fl_chart's look, with no series legend and no callbacks to the host.
+- Observed use case: chat replies, such as LLM output, that carry chart JSON in Markdown fences, drawn natively in Flutter while the reply streams in. The example app's fences use the USpec dialect, not Chart.js JSON.
+- For flutter_chartjs: nothing to copy (proprietary license) and no Chart.js internals to study. Concepts worth re-deriving independently: lenient intake of LLM-written chart JSON, caching parsed specs and widgets behind a `RepaintBoundary` while streaming, and one `Semantics` summary per chart.
+
+Evidence: `lib/src/chart/uspec.dart:154`, `lib/src/chart/uspec.dart:233`, `lib/src/chart/chart_view.dart:3`
+
+<a id="pkg-modern_charts"></a>
+
+### `modern_charts`: independent dart:html canvas chart library (2014-2019), not a Chart.js port; Dart 2 only, archived
+
+| | |
+|---|---|
+| Where | [pub.dev/packages/modern_charts](https://pub.dev/packages/modern_charts); [github.com/jolleekin/modern_charts](https://github.com/jolleekin/modern_charts) |
+| Inspected | 0.1.19, published 2019-11-18 (same code as repository HEAD `2730046d`) |
+| Status | Archived on GitHub; last release and commit 2019-11-18, after 20 versions since 2014-12-01. A null-safety pull request (#22, opened 2021-09-19) is unmerged, and nothing null-safe is on pub.dev (as of 2026-10-16) |
+| Approach | Web: native Dart library on dart:html `CanvasRenderingContext2D`, with a DOM legend and tooltip; no JS interop, `HtmlElementView` or WebView. Flutter, Dart VM, dart2wasm: none |
+| Chart.js | No Chart.js JS is bundled or loaded, and the API matches no Chart.js version. About 310 of 4,192 `lib/` lines, mostly the easing table, come from Chart.js 0.x through Symcon's `chart` package (a partial Chart.js 0.2 port) |
+| Works on | Browsers, with a Dart 2 SDK only; it neither resolves nor compiles on Dart 3. Hover and tooltips are mouse-only (no touch handlers) |
+| License | BSD-2-Clause (pub.dev shows `license:unknown`); the `chart`-derived `animation.dart` has an attribution comment but not the MIT notice |
+| Adoption (2026-10-16) | 45 likes, 30/160 pub points, 65 downloads in 30 days; 65 GitHub stars |
+
+**How it works.**
+
+1. `BarChart(container)` (or `LineChart`, `PieChart`, `RadarChart`, `GaugeChart`) creates a visible canvas plus offscreen axes and series canvases.
+2. `draw(DataTable, options)` deep-merges the untyped options `Map` with defaults, builds the legend and tooltip as DOM `<div>`s and scales the canvases by `devicePixelRatio`.
+3. `update()` computes layout, a 1/2/5/10 tick step and x-label rotation with its own code, sets each entity's target geometry and paints axes and grid onto their layer.
+4. A `requestAnimationFrame` loop redraws the series layer, interpolating from old to new geometry at the eased progress, and `drawImageScaled` composites both layers onto the visible canvas, where the browser's Canvas 2D produces the pixels.
+
+**Notes.**
+
+- The API is not Chart.js-shaped: a Google Charts-style `DataTable`, Highcharts-style options and palette, 5 types (bar, line/area, pie/donut, radar, gauge), and only one category x-axis and one linear y-axis, without scatter, stacking, time or log scales, or plugins. Legend and tooltip labels go through unescaped `innerHtml`: untrusted labels can inject markup, though dart:html's default sanitizer strips scripts and event handlers.
+- A native port can borrow two of its designs: static axes and grid on a separate layer composited each frame (in Flutter, a `RepaintBoundary` or a cached `ui.Picture`), and per-entity old-to-new interpolation with a four-state series visibility (`hidden`, `hiding`, `showing`, `shown`) for animated inserts, removals and legend toggles. Easing should come from Chart.js v4's `src/helpers/helpers.easing.ts` (MIT), not `animation.dart`, which keeps a pre-v2 quirk (`easeInExpo(0)` returns 1) and maps `easeInBounce` to `easeInBack`.
+- Related entries, none with Chart.js JS or reusable code: `angular_modern_charts` 0.2.0 (2019-06-04; the five types as AngularDart 6 components, Dart 2 only) and `modern_charts_angular_wrapper` 0.0.3 (2017-08-22; Dart 1 angular2 pie and line components, no source repository) are BSD-3-Clause wrappers by Dejan Marlovic, and [EpicPi/Tier4-kpi-dashboard](https://github.com/EpicPi/Tier4-kpi-dashboard) vendors a trimmed copy from about June 2017 as `lib/pi_charts` (pie and gauge only, Dart 1, last push 2017-07-28) without modern_charts' `LICENSE.md`.
+
+Evidence: `lib/src/base.dart:838` (three canvas contexts), `lib/src/animation.dart:1` (attribution to Chart.js via `chart`), `pubspec.yaml:5` (`sdk: '>=2.0.0 <3.0.0'`).
+
+<a id="pkg-leads"></a>
+
+### Flagged but not inspected
+
+These come from the completeness search's own notes as of 2026-10-16 and were not independently verified (no dedicated source inspection, no second review).
+
+| Repository | What it is | Relation to Chart.js |
+|---|---|---|
+| [jiridanek/definitely_typed](https://github.com/jiridanek/definitely_typed) | Its pubspec names the package `dts2dart` 0.0.3 (2015; that name returns 404 on pub.dev), and `lib/chartjs/chart.g.dart` is generated code dated 2015-10-23. | A `package:js` facade generated from DefinitelyTyped's `chart.d.ts`, using Chart.js v1 option names such as `fillColor`; not a port. |
+| [cogwheel0/conduit](https://github.com/cogwheel0/conduit) | An Open WebUI client app (about 2.3k stars), not a pub package, whose README advertises Chart.js embeds. | A `ChartJsDiagram` widget runs a bundled Chart.js v4.5.0 in `flutter_inappwebview` and is not supported on web. |
+| [1600822305/Aetherlink-flutter](https://github.com/1600822305/Aetherlink-flutter) | An app whose `CHART` block view ports `ChartBlock.tsx`, which feeds `block.data` and `block.options` straight into Chart.js. | An app-internal adapter that parses the same Chart.js payload into `fl_chart` bar, line, pie and scatter widgets, with `options.plugins.title.text` the only option honored; not a Chart.js port. |
+| [Hexer10/chartjs.dart](https://github.com/Hexer10/chartjs.dart) | A JS interop fork of `google/chartjs.dart`, two commits ahead. | Binds `chartjs-plugin-zoom` (`resetZoom` and root-level, v2-style `pan` and `zoom` options), the only Chart.js plugin binding the search found in Dart. |
+| [nguyenxdat/flutter_chartjs_example](https://github.com/nguyenxdat/flutter_chartjs_example) | A WebView demo app (2024-05) whose GitHub language shows as C++, so `language:dart` searches missed it. | Imports `flutter_inappwebview` and serves `assets/chart.html` through an `InAppLocalhostServer`; the page loads an unpinned Chart.js from jsDelivr and calls `new Chart(...)`. |
+| [suddenabnormalsecrets/chartjs.dart](https://github.com/suddenabnormalsecrets/chartjs.dart) | A non-fork repository labeled JavaScript whose default branch, `gh-pages`, holds only `example.dart.js`, `example.dart.js.info.json` and `index.html` (pushed 2025-05-15). | A mirror of the compiled `google/chartjs.dart` demo; its `index.html` loads Chart.js 2.6.0 from cdnjs. |
+
 <a id="pkg-ruleouts"></a>
 
 ## Ruled out
@@ -514,3 +756,9 @@ Three candidates matched on name but are not Chart.js ports or wrappers. Status 
 - **Why it surfaced:** a "chart.js webview" search. Its webview support is a generic `webView` node that embeds a URL through a host-supplied `JsWebViewHost` (a placeholder if none is set). Messages go only from page to widget, so a page running Chart.js could get data only through its URL. None of the 603 published files bundles, loads or references Chart.js.
 - **Takeaway for flutter_chartjs:** nothing Chart.js-specific to reuse (no scales, layout, dataset controllers or elements). It is a worked example of running JS in QuickJS/JavaScriptCore or a Web Worker with timer and `requestAnimationFrame` shims over a JSON bridge, relevant only to a "run real Chart.js" fallback, and it has no Canvas 2D shim or way to show JS-drawn pixels.
 - **Evidence:** `lib/src/runtime/js_widget_bootstrap.dart:137`, `lib/src/renderer/json_widget_renderer.dart:386`, `lib/src/renderer/nodes/js_chart_nodes.dart:21`, `lib/src/renderer/json_widget_renderer.dart:585`
+
+### `tyto`: a benchmarking library that writes a Chart.js HTML report
+
+[`tyto`](https://pub.dev/packages/tyto) ([GitHub](https://github.com/avesbox/tyto)) is an MIT-licensed, pure-Dart benchmarking library; its latest release, 0.0.3 (2025-11-25), was inspected, and nothing has been committed since (as of 2026-10-16). With a `Report(name, ReportType.chart)` registered, `Suite.run()` uses `dart:io` to write a static `<name>.chart.html` into the working directory. That page loads Chart.js from the unpinned `https://cdn.jsdelivr.net/npm/chart.js` (which resolves to 4.5.1 as of 2026-10-16) and calls `new Chart(ctx, {type: 'bar', ...})`; only the benchmark names and `avgScorePerSecond` values come from Dart, spliced in once as `jsonEncode` text. Chart.js runs only when someone opens the file in a browser, with no link back to Dart: there is no widget, no Dart/JS interop and no chart or layout code to reuse.
+
+Evidence: `pubspec.yaml:2` (description), `lib/src/report.dart:46` (output file path), `lib/src/report.dart:50` (CDN script tag)

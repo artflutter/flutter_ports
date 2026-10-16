@@ -29,11 +29,27 @@ three ways:
 | [`pakhyunw/flutter_chartjs`](chartjs-packages.md#pkg-pakhyunw_flutter_chartjs) | Flutter wrapper, GitHub only | WebView (native); `HtmlElementView` (web) | CDN: 3.9.1, later unpinned | — | never published; dormant |
 | [4 GitHub copies](chartjs-packages.md#pkg-chartjs_dart_copies) of `google/chartjs.dart` | copies | same as `chartjs` | 2.x | — | abandoned |
 
+The [completeness pass](chartjs-packages.md#pkg-completeness) found these as well. None is a port:
+
+| Package | Kind | Chart.js | Status |
+|---|---|---|---|
+| [`ensemble`](chartjs-packages.md#pkg-ensemble) | low-code runtime; its `ChartJs` widget uses a WebView (native) or `js_widget` (web) | v4 from an unpinned CDN | maintained |
+| [`URBAN-CONNECTIONS/chartjs_flutter`](chartjs-packages.md#pkg-urban_chartjs_flutter) | Flutter-web `<iframe>` wrapper, GitHub only (its name is taken on pub.dev) | latest from CDN | unpublished; stale |
+| [`json_render`](chartjs-packages.md#pkg-json_render) | JSON-to-DOM renderer, web only; charts via `chart_engine` 2.1.x | 2.9.4 | stale since 2024-02-15 |
+| [`pyrlyn/bindsmith`](chartjs-packages.md#pkg-bindsmith) | generated `dart:js_interop` bindings for a small 4.x subset (example) | 4.4.7 | unpublished; work in progress |
+| [`dash_panel`](chartjs-packages.md#pkg-dash_panel) | Jaspr server-rendered admin panel; Dart builds the config, the browser runs Chart.js | 4.4.1 | stale |
+| [`stream_chat_flutter_ai`](chartjs-packages.md#pkg-stream_chat_flutter_ai) | AI-chat UI kit that reads a small subset of Chart.js JSON and draws it with fl_chart | none (no JS) | new (2026-09-24) |
+| [`modern_charts`](chartjs-packages.md#pkg-modern_charts) | independent `dart:html` canvas library; its easing table derives from `chart` | none | archived; Dart 2 only |
+
+Six more leads (a fork, a mirror, two apps, a demo and Dart 1-era typings) are
+[listed but were not inspected](chartjs-packages.md#pkg-leads).
+
 [Ruled out](chartjs-packages.md#pkg-ruleouts) after inspection:
 - `highchartjs` wraps Highcharts.
 - `m4d_spa` is single-page-app plumbing; only a sample app in it uses Chart.js bindings.
 - `reactspring/flutter_js_chart` is a renamed copy of fl_chart.
 - `js_widget_runtime` is a JS-to-Flutter-widgets runtime whose charts are fl_chart.
+- `tyto` is a benchmarking library that writes an HTML report using Chart.js.
 
 ## Pages
 
@@ -66,7 +82,18 @@ three ways:
    and read statically, tracing the public API to the pixels on each platform. A second,
    independent pass then tried to refute each finding, and its corrections are applied here
    (for example, macOS turned out to be broken in both current Flutter wrappers).
-4. **Landscape.** JS runtimes embedded in Flutter and the other popular JS chart libraries got a
+4. **Completeness pass.** A separate search, deliberately using different methods:
+   - pub.dev reverse dependencies, sort orders past the 100-result cap, topics, and about 80
+     probed names;
+   - GitHub search without a language filter, topics, code search for Chart.js option names,
+     internals, CDN and bundle markers and attribution strings;
+   - all 57 forks of `google/chartjs.dart`, and archived repositories;
+   - GitLab, Codeberg and Gitee, Hacker News, Stack Exchange, and web search (including
+     non-English queries).
+
+   It found 14 more leads. Eight were inspected and re-verified as in step 3; six are listed as
+   not inspected. None is a native port.
+5. **Landscape.** JS runtimes embedded in Flutter and the other popular JS chart libraries got a
    lighter, single-pass check.
 
 ## What it means for `flutter_chartjs`
@@ -77,6 +104,10 @@ three ways:
   for a native port ([ADR 0001](../adr/0001-native-ports-not-wrappers.md)).
 - **Nothing to fork.** No package contains reusable Dart implementations of Chart.js scales,
   layout, controllers or elements. The port is translated from upstream v4.5.1 directly.
+- **Raw Chart.js configs are worth accepting.** Several packages take an untyped Chart.js config,
+  and one draws Chart.js JSON natively: `stream_chat_flutter_ai`, for charts in AI chat, but only
+  a small subset of it. A native port that accepts raw Chart.js JSON alongside a typed Dart API
+  covers that case completely.
 - **Worth studying:**
   - the Canvas 2D-on-`dart:ui` code in flutter_fjs (MIT) and Kraken (Apache-2.0). WebF's newer
     canvas code is GPL-3.0, so ideas only;
