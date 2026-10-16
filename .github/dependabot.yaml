@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # Only GitHub Actions, including the composite actions under .github/actions,
+  # grouped so one bump updates every file that uses the action.
+  #
+  # The upstream submodules are pinned to release tags and bumped deliberately
+  # as port work (docs/adr/0002). Dependabot's gitsubmodule updater follows the
+  # upstream default branch instead, so it is not used.
+  - package-ecosystem: github-actions
+    directories:
+      - /
+      - /.github/actions/*
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        group-by: dependency-name
+        patterns:
+          - "*"

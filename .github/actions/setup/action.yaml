@@ -1,0 +1,14 @@
+name: Setup workspace
+description: Installs the Flutter version pinned in .fvmrc and resolves the pub workspace. Checkout is done by the caller.
+runs:
+  using: composite
+  steps:
+    - uses: subosito/flutter-action@v2
+      with:
+        flutter-version-file: .fvmrc
+        cache: true
+    - name: Resolve workspace
+      shell: bash
+      # Every Dart tool, including `dart format`, needs the resolved workspace:
+      # the formatter settings come from very_good_analysis via analysis_options.yaml.
+      run: flutter pub get

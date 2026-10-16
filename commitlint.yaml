@@ -1,0 +1,25 @@
+include: package:commitlint_cli/commitlint.yaml
+
+# commitlint_cli's built-in ignore patterns are unanchored (any message that
+# merely contains "revert " or "Merge branch " would skip linting), so they are
+# replaced by anchored ones for messages git writes itself.
+defaultIgnores: false
+ignores:
+  - '^Merge (branch|commit|pull request|remote-tracking branch|tag) '
+  - '^(Revert|Reapply) "'
+  - '^(fixup|squash|amend)! '
+
+rules:
+  # A scope is optional; when present it names a workspace package or app, or a
+  # repo-wide area. Add new ports here, e.g. `feat(flutter_chartjs): port helpers.math`.
+  scope-enum:
+    - 2
+    - always
+    - - flutter_chartjs
+      - chartjs_gallery
+      - ci
+      - deps
+      - docs
+      - release
+      - repo
+      - upstream

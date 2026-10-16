@@ -1,0 +1,10 @@
+.DS_Store
+.dart_tool/
+build/
+coverage/
+.fvm/
+*.iml
+.idea/
+
+# Agent worktrees
+.claude/worktrees/

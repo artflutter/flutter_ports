@@ -1,0 +1,55 @@
+name: flutter_ports_workspace
+description: Native Dart/Flutter ports of popular JavaScript chart libraries.
+publish_to: none
+
+environment:
+  sdk: ^3.12.0
+
+workspace:
+  - packages/flutter_chartjs
+  - apps/chartjs_gallery
+
+dev_dependencies:
+  commitlint_cli: ^0.8.1
+  melos: ^8.9.0
+  very_good_analysis: ^10.3.0
+
+melos:
+  scripts:
+    format:
+      run: dart format .
+      description: Format all Dart code.
+    format:check:
+      run: dart format --output=none --set-exit-if-changed .
+      description: Fail if any Dart file is not formatted.
+    analyze:
+      run: dart analyze --fatal-infos
+      description: Analyze the whole workspace.
+    test:
+      description: Run the tests of every package that has a test/ directory.
+      exec:
+        command: flutter test
+        concurrency: 1
+        failFast: true
+      packageFilters:
+        dirExists: test
+
+    upstream:
+      run: git submodule update --init --depth 1 third_party/Chart.js
+      description: Check out the pinned upstream Chart.js sources (reference for porting, not shipped).
+    upstream:check:
+      run: bash tool/check_upstream_pin.sh
+      description: Fail unless third_party/Chart.js is pinned to the release tag named by chartJsVersion.
+
+    gallery:
+      run: cd apps/chartjs_gallery && flutter run -d chrome
+      # A real terminal, so flutter run's hot reload/restart/quit keys work.
+      stdio: inherit
+      description: Run the Chart.js gallery in Chrome.
+    gallery:macos:
+      run: cd apps/chartjs_gallery && flutter run -d macos
+      stdio: inherit
+      description: Run the Chart.js gallery as a macOS app.
+    gallery:build:
+      run: cd apps/chartjs_gallery && flutter build web --wasm
+      description: Build the gallery for the web (WebAssembly with a JavaScript fallback).

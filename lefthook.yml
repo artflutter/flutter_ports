@@ -1,0 +1,21 @@
+# {1} (the commit message file) needs lefthook >= 0.7.3; older versions pass it
+# through literally, and commitlint would then accept every message.
+min_version: 1.0.0
+
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: "*.dart"
+      run: dart format --output=none --set-exit-if-changed {staged_files}
+    analyze:
+      glob: "*.dart"
+      run: dart analyze --fatal-infos
+
+commit-msg:
+  commands:
+    commitlint:
+      run: test -f "{1}" && dart run commitlint_cli --edit "{1}"
+    signoff:
+      run: |
+        grep -q '^Signed-off-by: ' "{1}" || { echo 'Missing Signed-off-by trailer: commit with -s (DCO, see CONTRIBUTING.md).'; exit 1; }
