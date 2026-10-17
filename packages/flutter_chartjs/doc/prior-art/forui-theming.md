@@ -440,9 +440,9 @@ the theme, through the `theme-review` action.
   lines.
 - **Generated deltas for every option, and `forui_internal_gen`.** Chart.js options are already
   partial values over defaults, with merge and scope precedence. Why: a delta adds nothing to that.
-  The generator is unpublished, tied to forui and needs Dart 3.13. ADR: Options representation and
-  resolver puts the typed options API after 0.1.0. ADR: Typed options API then decides it
-  ([porting-flow.md §2.1](../porting-flow.md)).
+  The generator is unpublished, tied to forui and needs Dart 3.13.
+  [Chart.js ADR 0006](../adr/0006-options-representation-and-resolver.md) (proposed) puts the
+  typed options API after 0.1.0. ADR: Typed options API then decides it.
 - **`FVariants` as a general state system.** Upstream renders two states, default and active,
   through the `hover` option prefixes. The ported dataset controller keeps that resolution. Why:
   more states diverge from upstream ([theming.md §6](../theming.md)).

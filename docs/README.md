@@ -28,8 +28,16 @@ package.
     ADR 0001.
   - [Upstream tracking](../packages/flutter_chartjs/doc/upstream-tracking.md) (proposed): how the
     port follows Chart.js fixes and improvements after the pinned tag.
-  - Decisions: [Chart.js ADR 0001: Theming](../packages/flutter_chartjs/doc/adr/0001-theming.md)
-    (proposed).
+  - [Upstream ledger](../packages/flutter_chartjs/doc/upstream-ledger.md): the upstream commits
+    after the pinned tag, with their triage.
+  - Decisions (all proposed):
+    [Chart.js ADR 0001: Theming](../packages/flutter_chartjs/doc/adr/0001-theming.md),
+    [Chart.js ADR 0002: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0002-js-numeric-semantics.md),
+    [Chart.js ADR 0003: Type-only dependencies](../packages/flutter_chartjs/doc/adr/0003-type-only-dependencies.md),
+    [Chart.js ADR 0004: Dart file naming](../packages/flutter_chartjs/doc/adr/0004-dart-file-naming.md),
+    [Chart.js ADR 0005: Third-party sources](../packages/flutter_chartjs/doc/adr/0005-third-party-sources.md),
+    [Chart.js ADR 0006: Options representation and resolver](../packages/flutter_chartjs/doc/adr/0006-options-representation-and-resolver.md),
+    [Chart.js ADR 0007: Frame scheduling](../packages/flutter_chartjs/doc/adr/0007-frame-scheduling.md).
   - Prior art: [overview](../packages/flutter_chartjs/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs/doc/prior-art/js-runtimes.md),

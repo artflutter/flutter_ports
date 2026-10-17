@@ -4,9 +4,9 @@
 
 ## Checklist
 
-- [ ] `melos run format:check`, `melos run analyze` and `melos run test --no-select` pass
+- [ ] `dart run melos run format:check`, `analyze`, `test --no-select`, `test:web` and `check:port` pass
 - [ ] Commits follow Conventional Commits and are signed off (`git commit -s`, DCO)
 - [ ] Ported code is translated from the pinned upstream source (not from memory), names its upstream file in a header comment, and keeps the upstream copyright notice
 - [ ] Ported behaviour is covered by tests (ported from the upstream specs where they exist)
 - [ ] `packages/flutter_chartjs/doc/parity.md` is updated for every upstream module touched
-- [ ] No code copied from GPL or otherwise incompatible projects (see `docs/prior-art/`)
+- [ ] No code copied from GPL or otherwise incompatible projects (see `packages/flutter_chartjs/doc/prior-art/`)

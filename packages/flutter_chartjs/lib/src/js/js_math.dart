@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: JS Math builtins with V8 semantics.
 
 /// `Math` and `Number` builtins for ported code, with the results of the
-/// reference engine of ADR "JS numeric semantics" (porting-flow.md 2.3):
+/// reference engine of Chart.js ADR 0002 (porting-flow.md 2.3):
 /// V8 13.6 in Node.js v24.12.0 on x64.
 ///
 /// Ported code calls these instead of the `dart:math` and `num` members whose

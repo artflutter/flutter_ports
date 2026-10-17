@@ -2,7 +2,7 @@
 
 /// The JavaScript number coercions (`ToNumber`, `parseFloat`, `isNaN`,
 /// `isFinite`) over the Dart values that stand for JavaScript values
-/// (ADR "JS numeric semantics", porting-flow.md 2.3).
+/// (Chart.js ADR 0002, porting-flow.md 2.3).
 ///
 /// The value mapping: `null` is JS `null`, `bool` is a boolean, `num` is a
 /// number, `String` is a string, `List` is an array, `Symbol` is a symbol and

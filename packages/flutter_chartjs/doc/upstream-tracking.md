@@ -3,8 +3,9 @@
 - Status: proposed ([ADR 0004](../../../docs/adr/0004-follow-upstream-between-releases.md), which amends
   [ADR 0002](../../../docs/adr/0002-pin-upstream-sources.md))
 - Date: 2026-10-16
-- Related: [porting-flow.md](porting-flow.md), [theming.md](theming.md). Proposed future files:
-  `packages/flutter_chartjs/doc/upstream-ledger.md`, `packages/flutter_chartjs/doc/differences.md`.
+- Related: [porting-flow.md](porting-flow.md), [theming.md](theming.md),
+  [upstream-ledger.md](upstream-ledger.md). Proposed future file:
+  `packages/flutter_chartjs/doc/differences.md`.
 
 This document defines how `flutter_chartjs` follows the Chart.js fixes and improvements that
 upstream merges after the pinned tag (`v4.5.1`, commit `9c5cf9f`).
@@ -112,9 +113,9 @@ porting-flow.md §6 links here for them.
 |---|---|
 | AGENTS.md rule 1 | Replace the last sentence with: "Never port from memory or from other Dart chart libraries. Port from upstream `master` only as a backport. A backport is one merged commit. It fixes a regression released up to the pinned tag, or a bug in a module with the status `in progress`, `partial`, `ported` or `verified`. Record it in `packages/flutter_chartjs/doc/upstream-ledger.md` and in the file header (`packages/flutter_chartjs/doc/upstream-tracking.md`). Sources from other projects follow `packages/flutter_chartjs/doc/porting-flow.md` §2.13." |
 | AGENTS.md rule 2 | Add: "The header version names the upstream version that the porter last reconciled the file with. A backport adds the line `// Upstream backport: chartjs/Chart.js@<sha8> (#<PR>).` directly below it." |
-| AGENTS.md rule 6 | Replace the text from "review" to the end of that sentence with: "review `git -C third_party/Chart.js diff <old-tag> <new-tag> -- src test/specs test/fixtures`. Then run `git add third_party/Chart.js` and update `chartJsVersion`. Port the diff for every started module. Close the ledger rows of the range. Restamp the headers (`packages/flutter_chartjs/doc/upstream-tracking.md` §4.8). Backports follow rule 1. They never move the submodule." Later PRs add the manifest step (tool 4, mid phase 2), the bump report command (`dart run melos run upstream:bump-report -- --from <old> --to <new>`, M6) and the fixture-ledger re-run |
+| AGENTS.md rule 6 | Replace the text from "review" to the end of that sentence with: "review `git -C third_party/Chart.js diff <old-tag> <new-tag> -- src test/specs test/fixtures`. Then run `git add third_party/Chart.js` and update `chartJsVersion` and the Chart.js `version`, `ref` and `commit` in `packages/flutter_chartjs/tool/port_sources.yaml`. Port the diff for every started module. Close the ledger rows of the range. Restamp the headers (`packages/flutter_chartjs/doc/upstream-tracking.md` §4.8). Backports follow rule 1. They never move the submodule." Later PRs add the manifest step (tool 4, mid phase 2), the bump report command (`dart run melos run upstream:bump-report -- --from <old> --to <new>`, M6) and the fixture-ledger re-run |
 | AGENTS.md Commands and Layout | Phase 1 adds the ledger to Layout. Each tool PR adds its entry (`upstream:status`, `upstream:ledger`, `upstream:ledger:check`, `upstream:bump-report`, the watch workflow, the issue templates), in the `dart run melos run …` form |
-| ADR 0002 | Status line only: "accepted; amended by ADR 0004". ADR: Third-party sources adds its name when the maintainers accept it (porting-flow.md §2.13) |
+| ADR 0002 | Status line only: "accepted; amended by ADR 0004". [Chart.js ADR 0005](adr/0005-third-party-sources.md) adds its name when the maintainers accept it (porting-flow.md §2.13) |
 | `.github/dependabot.yaml` lines 6-8 | Replace the outdated reason with the ADR 0004 reason |
 | `packages/flutter_chartjs/doc/README.md` | Link ADR 0004. Phase 0 added the other links |
 | `.github/PULL_REQUEST_TEMPLATE.md` | Add: "Backports: ledger row, header line, `Upstream-*` trailers. Bump PRs use Rebase and merge." |
@@ -305,8 +306,8 @@ Sections:
 2. **src.** Changed files with their Dart files and module status. Hunks with function context,
    without import-only, comment-only and annotation-only hunks (such as #10879).
 3. **JS-semantics hotspots.** Added `Math.round`, `Math.floor`, `Math.ceil`, `%`, `| 0`,
-   `Math.log10`, `parseFloat`, `Number(`, string coercion and `.sort(`, for ADR: JS numeric
-   semantics.
+   `Math.log10`, `parseFloat`, `Number(`, string coercion and `.sort(`, for
+   [Chart.js ADR 0002](adr/0002-js-numeric-semantics.md).
 4. **Specs.** Added, removed and renamed cases (spec-case tracking).
 5. **Fixtures.** Changes by config hash and PNG sha256, joined to the fixture ledger. A changed
    PNG makes its row stale. v4.5.1..master: 6 PNGs modified, 5 added.
@@ -322,9 +323,11 @@ Sections:
 8. **Dependencies and license.** Lock versions of `@kurkle/color` and `chartjs-test-utils`. The
    diff of upstream `LICENSE.md`.
 9. **Version strings.** The lines in `tool/version_strings.txt`. Today these are
-   `packages/flutter_chartjs/lib/src/upstream.dart:4-5`, `packages/flutter_chartjs/README.md:19`,
-   `README.md:17`, `packages/flutter_chartjs/doc/README.md:9` and its example header, `AGENTS.md:4, :28, :41`,
-   `.github/PULL_REQUEST_TEMPLATE.md:3`, the `parity.md` links and a new `CHANGELOG.md` entry.
+   `packages/flutter_chartjs/lib/src/upstream.dart:5-6`, `packages/flutter_chartjs/README.md:19`,
+   `README.md:17`, `packages/flutter_chartjs/doc/README.md:9` and its example header, `AGENTS.md:4, :66, :82`,
+   `.github/PULL_REQUEST_TEMPLATE.md:3`, the Chart.js `version`, `ref` and `commit` in
+   `packages/flutter_chartjs/tool/port_sources.yaml`, the `parity.md` links and a new
+   `CHANGELOG.md` entry.
    The prior-art survey, the ADRs and the design documents are dated evidence. The bump does not
    restamp them.
 
@@ -397,8 +400,9 @@ feature work. A Flutter SDK bump is a separate PR (porting-flow.md §2.12, §3).
 11. **Licenses.** If a kurkle version or upstream `LICENSE.md` changed, update
     `packages/flutter_chartjs/LICENSE` and its `REUSE.toml` annotation in one commit.
     Then run `reuse lint`.
-12. **Versions.** Run `git add third_party/Chart.js`. Update `chartJsVersion` and the strings of
-    report section 9. Regenerate `parity.md`.
+12. **Versions.** Run `git add third_party/Chart.js`. Update `chartJsVersion`, the Chart.js
+    `version`, `ref` and `commit` in `packages/flutter_chartjs/tool/port_sources.yaml` and the
+    strings of report section 9. Regenerate `parity.md`.
 13. **Headers.** Restamp (M8).
 14. **Gate and merge.** Once M7 exists, run the gate. Merge with "Rebase and merge".
 

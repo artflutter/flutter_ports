@@ -486,10 +486,10 @@ theming work in each phase.
 |---|---|---|
 | 0. Now | the forui survey, this document and Chart.js ADR 0001 (proposed), linked from `docs/README.md`, `packages/flutter_chartjs/doc/prior-art/README.md` (Pages) and `packages/flutter_chartjs/doc/README.md` (Chart.js ADR 0001 and this document) | — |
 | 1. Decisions and minimum tooling | Chart.js ADR 0001 stays proposed. porting-flow.md, section 6, adds the four invariants of Chart.js ADR 0001 to AGENTS.md rule 5 | — |
-| 2. JS runtime, helpers, defaults | a faithful `core.defaults` singleton, `getHoverColor`, `jsNumberToString` | ADR: JS numeric semantics |
+| 2. JS runtime, helpers, defaults | a faithful `core.defaults` singleton, `getHoverColor`, `jsNumberToString` | [Chart.js ADR 0002](adr/0002-js-numeric-semantics.md) |
 | 3. Canvas, text, platform, harness | CSS `rgba()` and font strings in the canvas layer, a harness without a theme | ADR: Canvas model, ADR: Text |
 | 4. Elements | nothing | — |
-| 5. Core | a Dart prototype of H0-H3, then Chart.js ADR 0001 accepted. H0-H3, `compile.dart` over raw Map themes, the guard, internal `ChartThemes.light`, test 1 and the non-palette rows of test 2 with test-registered components, `differences.md` rows | `core.config`, `helpers.config`, ADR: Options representation and resolver |
+| 5. Core | a Dart prototype of H0-H3, then Chart.js ADR 0001 accepted. H0-H3, `compile.dart` over raw Map themes, the guard, internal `ChartThemes.light`, test 1 and the non-palette rows of test 2 with test-registered components, `differences.md` rows | `core.config`, `helpers.config`, [Chart.js ADR 0006](adr/0006-options-representation-and-resolver.md) |
 | 6. Scales | H1 tests with real scales, test 4 against the defaults inventory that tool 4 records from mid phase 2 | scale ports, porting-flow.md tool 4 |
 | 7. Controllers | test 3 for elements and scales, test 5, hover tests, the blue screen without plugins | controllers |
 | 8. Plugins | H4a-H4c and H5, the palette rows of test 2, test 3 for plugin keys and the palette, decimation tests, the full blue screen | plugin ports |
@@ -516,7 +516,7 @@ Open questions, to decide in phase 9:
 1. Touch values (hit radius 8, hover radius 6, font 14), and whether touch changes `interaction`
    (proposed: no). An amendment of Chart.js ADR 0001 decides them with ADR: Input events and
    interaction state. porting-flow.md, decision 2.7, must list this item.
-2. `easing` as a string (proposed) or an enum (ADR: Options representation and resolver).
+2. `easing` as a string (proposed) or an enum ([Chart.js ADR 0006](adr/0006-options-representation-and-resolver.md)).
 3. Does `frames` exist at all if its benchmark fails?
 4. Typed component styles: generated option classes, or `raw` only (section 5.1)? ADR: Typed
    options API decides this question after 0.1.0.

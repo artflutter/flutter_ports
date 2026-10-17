@@ -10,11 +10,19 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   `third_party/Chart.js` ([ADR 0002](../../../docs/adr/0002-pin-upstream-sources.md)).
   `melos run upstream` checks it out.
 - **Progress:** [parity.md](parity.md), one row per upstream source file and spec.
+- **Upstream after the pin:** [upstream-ledger.md](upstream-ledger.md) lists the upstream commits
+  after the pinned tag, with their triage ([upstream-tracking.md](upstream-tracking.md)).
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
-- **Decisions:** the Chart.js ADRs are in [adr/](adr/), for example
-  [Chart.js ADR 0001: Theming](adr/0001-theming.md) (proposed). The decisions for all ports are
-  in [docs/adr/](../../../docs/adr/).
+- **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
+  ADRs are in [adr/](adr/). All of them are proposed:
+  - [Chart.js ADR 0001: Theming](adr/0001-theming.md)
+  - [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md)
+  - [Chart.js ADR 0003: Type-only dependencies](adr/0003-type-only-dependencies.md)
+  - [Chart.js ADR 0004: Dart file naming](adr/0004-dart-file-naming.md)
+  - [Chart.js ADR 0005: Third-party sources](adr/0005-third-party-sources.md)
+  - [Chart.js ADR 0006: Options representation and resolver](adr/0006-options-representation-and-resolver.md)
+  - [Chart.js ADR 0007: Frame scheduling](adr/0007-frame-scheduling.md)
 
 ## What gets ported
 
@@ -82,7 +90,9 @@ elements and scales lands (phases 5-7).
 [porting-flow.md](porting-flow.md) section 2 gives a recommended decision for each question below
 and adds new ones. Each decision there has a gate phase. Only the gate 1 and gate 2 decisions come
 before phase 2. [Chart.js ADR 0001](adr/0001-theming.md) proposes the theming decision.
-[theming.md](theming.md) gives the design.
+[theming.md](theming.md) gives the design. Chart.js ADRs 0002 to 0007 propose the gate 1 and gate 2
+decisions, for example the options representation
+([Chart.js ADR 0006](adr/0006-options-representation-and-resolver.md)).
 
 - **Canvas model.** Port the drawing code against a small Canvas 2D-compatible layer over
   `dart:ui` (keeps upstream drawing code close to line-for-line), or translate each draw call to

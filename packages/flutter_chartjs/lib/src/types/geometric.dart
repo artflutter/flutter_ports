@@ -1,7 +1,7 @@
 // Ported from Chart.js v4.5.1 src/types/geometric.d.ts (MIT, Chart.js Contributors).
 
 /// The declarations of `src/types/geometric.d.ts` as Dart interfaces
-/// (ADR "Type-only dependencies", porting-flow.md 2.4).
+/// (Chart.js ADR 0003, porting-flow.md 2.4).
 ///
 /// Each interface gets its members when a ported caller needs them. A
 /// TypeScript property becomes an abstract getter, and a setter is added when
