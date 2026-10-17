@@ -1,0 +1,148 @@
+# The projects that packages/flutter_chartjs ports code from (porting-flow.md
+# 2.13). tool/check_port_headers.dart reads this file. Each "// Ported from"
+# header must name a project here, with the same license and holder.
+#
+# Keys of an entry:
+# - header: the project name in the header.
+# - version: the header version. tool/check_port_headers.dart reports an
+#   older header version as stale, and fails on any other difference.
+# - version_source: where the version comes from.
+# - url: the project repository.
+# - language: the language of the source. "js" is JavaScript or TypeScript:
+#   tool/check_js_semantics.dart examines each Dart file whose header names a
+#   js project. "c" is C.
+# - spdx: the SPDX license identifier.
+# - holder: the copyright holder, as the header, the package LICENSE and
+#   REUSE.toml write it.
+# - pin: the reference copy in this repository. kind "submodule" is a git
+#   submodule at the commit "commit" (tag "ref"); the check compares it with
+#   the gitlink. kind "copy" is a committed copy of the source files.
+# - targets: the Dart path of a source path. A "source" that ends with "/" is
+#   a directory: its files map into the "dart" directory, with ".tests.js"
+#   changed to "_test.dart" and any other extension (".d.ts" is one) changed
+#   to ".dart". Any other "source" is one file, and "dart" is its Dart file.
+# - files: source paths that exist at the pin. The check uses them, and the
+#   links in "file_index", when the submodule is not checked out.
+# - file_index: a Markdown file whose links "<url>/blob/<version>/<path>"
+#   name source paths that exist at the pin.
+#
+# All paths are relative to the repository root, except "source" and
+# "files", which are relative to the project root.
+
+sources:
+  - header: Chart.js
+    version: "v4.5.1"
+    version_source: chartJsVersion in packages/flutter_chartjs/lib/src/upstream.dart
+    url: https://github.com/chartjs/Chart.js
+    language: js
+    spdx: MIT
+    holder: Chart.js Contributors
+    pin:
+      kind: submodule
+      path: third_party/Chart.js
+      ref: "v4.5.1"
+      commit: 9c5cf9fac7ec04a71b516e2aff3f7d76876be369
+    targets:
+      - source: src/
+        dart: packages/flutter_chartjs/lib/src/
+      - source: test/specs/
+        dart: packages/flutter_chartjs/test/specs/
+      - source: test/index.js
+        dart: packages/flutter_chartjs/test/flutter_test_config.dart
+    files:
+      - test/index.js
+    file_index: packages/flutter_chartjs/doc/parity.md
+
+  - header: fdlibm
+    version: "5.3"
+    version_source: netlib fdlibm 5.3 (https://www.netlib.org/fdlibm/readme)
+    url: https://www.netlib.org/fdlibm/
+    language: c
+    spdx: SunPro
+    holder: Sun Microsystems, Inc.
+    pin:
+      kind: copy
+      path: third_party/fdlibm
+      ref: netlib fdlibm 5.3
+    targets:
+      - source: e_log.c
+        dart: packages/flutter_chartjs/lib/src/js/fdlibm_log.dart
+      - source: e_log10.c
+        dart: packages/flutter_chartjs/lib/src/js/fdlibm_log.dart
+      - source: s_atan.c
+        dart: packages/flutter_chartjs/lib/src/js/fdlibm_atan.dart
+      - source: e_atan2.c
+        dart: packages/flutter_chartjs/lib/src/js/fdlibm_atan.dart
+    files:
+      - e_log.c
+      - e_log10.c
+      - s_atan.c
+      - e_atan2.c
+
+  - header: "@kurkle/color"
+    version: "v0.3.2"
+    version_source: the Chart.js v4.5.1 pnpm-lock.yaml, which resolves ^0.3.0 to 0.3.2
+    url: https://github.com/kurkle/color
+    language: js
+    spdx: MIT
+    holder: Jukka Kurkela
+    pin:
+      kind: submodule
+      path: third_party/kurkle-color
+      ref: "v0.3.2"
+      commit: eb0d1db26a35704553c93782bad8c3ac2d971597
+    targets:
+      - source: src/
+        dart: packages/flutter_chartjs/lib/src/kurkle_color/
+    files:
+      - src/byte.js
+      - src/color.js
+      - src/hex.js
+      - src/hue.js
+      - src/index.esm.js
+      - src/index.js
+      - src/names.js
+      - src/rgb.js
+      - src/srgb.js
+
+  - header: chartjs-test-utils
+    version: "v0.4.0"
+    version_source: the Chart.js v4.5.1 package.json:90 (^0.4.0), resolved to 0.4.0 in its pnpm-lock.yaml
+    url: https://github.com/chartjs/chartjs-test-utils
+    language: js
+    spdx: MIT
+    holder: chartjs-test-utils Contributors
+    pin:
+      kind: submodule
+      path: third_party/chartjs-test-utils
+      ref: "v0.4.0"
+      commit: 8c02987f3ce7001abc9226b87a14a61ed64c7387
+    targets:
+      - source: src/
+        dart: packages/chartjs_test_utils/lib/src/
+    files:
+      - src/context.js
+      - src/fixture.js
+      - src/index.js
+      - src/matchers.js
+      - src/matchers.options.js
+      - src/spriting.js
+      - src/utils.js
+
+  - header: pixelmatch
+    version: "v5.3.0"
+    version_source: the Chart.js v4.5.1 package.json:116 (^5.3.0), resolved to 5.3.0 in its pnpm-lock.yaml
+    url: https://github.com/mapbox/pixelmatch
+    language: js
+    spdx: ISC
+    holder: Mapbox
+    pin:
+      kind: submodule
+      path: third_party/pixelmatch
+      ref: "v5.3.0"
+      commit: 910cd5db90d1e3acef90454f5c2534053ee58d98
+    targets:
+      - source: index.js
+        dart: packages/chartjs_test_utils/lib/src/pixelmatch.dart
+    files:
+      - index.js

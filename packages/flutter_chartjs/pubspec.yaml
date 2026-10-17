@@ -25,6 +25,9 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
+  # tool/check_js_semantics.dart resolves the types of interpolated values.
+  # 12.1.0 is the version that test_core already resolves in the workspace.
+  analyzer: ^12.1.0
   flutter_test:
     sdk: flutter
   # Pure-layer specs and port tests run with `dart test` on the VM, dart2js and

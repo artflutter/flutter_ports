@@ -1,3 +1,4 @@
+// Original code, not ported from Chart.js: the pinned upstream version.
 /// The Chart.js release this port tracks.
 ///
 /// The upstream sources are pinned as a git submodule at

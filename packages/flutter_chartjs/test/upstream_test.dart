@@ -1,3 +1,4 @@
+// Original code, not ported from Chart.js: tests of the upstream pin.
 @TestOn('vm')
 library;
 

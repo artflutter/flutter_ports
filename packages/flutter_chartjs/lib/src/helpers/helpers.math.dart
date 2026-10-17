@@ -61,6 +61,7 @@ double niceNum(double range) {
   range = almostEquals(range, roundedRange, range / 1000)
       ? roundedRange
       : range;
+  // js-ok: the exponent is an integer, as porting-flow.md 2.3 requires.
   final niceRange = math.pow(10.0, log10(range).floorToDouble()).toDouble();
   final fraction = range / niceRange;
   final niceFraction = fraction <= 1
@@ -207,7 +208,9 @@ double? decimalPlaces(Object? x) {
 /// helpers.math.ts:144 `distanceBetweenPoints`.
 double distanceBetweenPoints(Point pt1, Point pt2) {
   return math.sqrt(
+    // js-ok: integer exponent, as Chart.js ADR 0002 requires.
     math.pow(jsToNumber(pt2.x) - jsToNumber(pt1.x), 2.0) +
+        // js-ok: integer exponent, as Chart.js ADR 0002 requires.
         math.pow(jsToNumber(pt2.y) - jsToNumber(pt1.y), 2.0),
   );
 }

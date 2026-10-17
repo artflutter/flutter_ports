@@ -27,6 +27,7 @@ final class _Point implements Point {
 /// compares, so it also accepts differences up to about 1.1 times this bound.
 /// The spec always passes `precision`, so it has no default here.
 Matcher _toBeCloseTo(double expected, int precision) =>
+    // js-ok: the exponent is an int, as in Jasmine's Math.pow(10, -precision).
     closeTo(expected, js_math.pow(10.0, -precision) / 2);
 
 void main() {
@@ -67,6 +68,7 @@ void main() {
       // Check all allowed powers of 10, which should return integer values
       final maxPowerOf10 = math.log10(double.maxFinite).floorToDouble();
       for (var i = 0.0; i < maxPowerOf10; i += 1) {
+        // js-ok: i is an integer, as in the upstream Math.pow(10, i).
         expect(math.log10(js_math.pow(10.0, i).toDouble()), i);
       }
     });

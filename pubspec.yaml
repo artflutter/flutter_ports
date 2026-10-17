@@ -37,9 +37,26 @@ melos:
       run: cd packages/flutter_chartjs && dart test -p chrome -c dart2js -c dart2wasm
       description: Run the flutter_chartjs tests that are not @TestOn('vm') in Chrome, compiled with dart2js and with dart2wasm.
 
+    # The per-module tools of packages/flutter_chartjs/doc/porting-flow.md section 4.
+    check:lib-imports:
+      run: dart run packages/flutter_chartjs/tool/check_lib_imports.dart
+      description: Fail on flutter_chartjs imports outside the allowlists (lib/, pure layers, web tests, theme).
+    check:headers:
+      run: dart run packages/flutter_chartjs/tool/check_port_headers.dart
+      description: Fail on flutter_chartjs file headers, DIVERGES markers or port_sources.yaml entries that break the rules.
+    check:js-semantics:
+      run: dart run packages/flutter_chartjs/tool/check_js_semantics.dart
+      description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs files.
+    check:port:
+      steps:
+        - check:lib-imports
+        - check:headers
+        - check:js-semantics
+      description: Run check:lib-imports, check:headers and check:js-semantics.
+
     upstream:
-      run: git submodule update --init --depth 1 third_party/Chart.js
-      description: Check out the pinned upstream Chart.js sources (reference for porting, not shipped).
+      run: git submodule update --init --depth 1
+      description: Check out every pinned third_party/ submodule (Chart.js, @kurkle/color, chartjs-test-utils, pixelmatch). Reference for porting, not shipped.
     upstream:check:
       run: bash tool/check_upstream_pin.sh
       description: Fail unless third_party/Chart.js is pinned to the release tag named by chartJsVersion.

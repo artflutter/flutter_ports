@@ -1,3 +1,4 @@
+// Original code, not ported from Chart.js: the public library of the package.
 /// A native Dart port of [Chart.js](https://www.chartjs.org) for Flutter.
 ///
 /// Work in progress: nothing renders yet. The port follows the upstream

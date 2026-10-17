@@ -1,0 +1,631 @@
+// Original code, not ported from Chart.js: tests of tool 2, the header check.
+@TestOn('vm')
+library;
+
+import 'package:test/test.dart';
+
+import '../../tool/src/check_support.dart';
+import '../../tool/src/port_headers.dart';
+import 'file_tree.dart';
+
+const String _package = 'packages/flutter_chartjs';
+const String _portOnly = '// Original code, not ported from Chart.js: a test.';
+const String _chartJsCommit = '9c5cf9fac7ec04a71b516e2aff3f7d76876be369';
+
+String _chartJs(String path, {String version = 'v4.5.1'}) =>
+    '// Ported from Chart.js $version $path (MIT, Chart.js Contributors).';
+
+String _fdlibm(String path) =>
+    '// Ported from fdlibm 5.3 $path (SunPro, Sun Microsystems, Inc.).';
+
+String _header(String project, String version, String path, String rest) =>
+    '// Ported from $project $version $path ($rest).';
+
+String _parityRow(String path) =>
+    '| [`$path`](https://github.com/chartjs/Chart.js/blob/v4.5.1/$path) | 1 |';
+
+/// An error in [message], which starts with a path in the package.
+String _error(String message) => 'error: $_package/$message';
+
+/// A warning in [message], which starts with a path in the package.
+String _warning(String message) => 'warning: $_package/$message';
+
+const String _chartJsCopyright =
+    'SPDX-FileCopyrightText = ["2014-2024 Chart.js Contributors", "2026 A"]';
+
+const List<String> _portSources = [
+  'sources:',
+  '  - header: Chart.js',
+  '    version: "v4.5.1"',
+  '    url: https://github.com/chartjs/Chart.js',
+  '    language: js',
+  '    spdx: MIT',
+  '    holder: Chart.js Contributors',
+  '    pin:',
+  '      kind: submodule',
+  '      path: third_party/Chart.js',
+  '      ref: "v4.5.1"',
+  '      commit: $_chartJsCommit',
+  '    targets:',
+  '      - source: src/',
+  '        dart: $_package/lib/src/',
+  '      - source: test/specs/',
+  '        dart: $_package/test/specs/',
+  '      - source: test/index.js',
+  '        dart: $_package/test/flutter_test_config.dart',
+  '    files:',
+  '      - test/index.js',
+  '    file_index: $_package/doc/parity.md',
+  '  - header: fdlibm',
+  '    version: "5.3"',
+  '    url: https://www.netlib.org/fdlibm/',
+  '    language: c',
+  '    spdx: SunPro',
+  '    holder: Sun Microsystems, Inc.',
+  '    pin:',
+  '      kind: copy',
+  '      path: third_party/fdlibm',
+  '    targets:',
+  '      - source: e_log.c',
+  '        dart: $_package/lib/src/js/fdlibm_log.dart',
+  '      - source: e_log10.c',
+  '        dart: $_package/lib/src/js/fdlibm_log.dart',
+  '    files:',
+  '      - e_log.c',
+];
+
+void main() {
+  late FileTree tree;
+  String? gitlink;
+
+  setUp(() {
+    gitlink = null;
+    tree = FileTree()
+      ..write('REUSE.toml', [
+        'version = 1',
+        '[[annotations]]',
+        'path = "$_package/**"',
+        _chartJsCopyright,
+        'SPDX-License-Identifier = "MIT"',
+        '[[annotations]]',
+        'path = "$_package/lib/src/js/fdlibm_*.dart"',
+        'SPDX-FileCopyrightText = ["1993 Sun Microsystems, Inc.", "2026 A"]',
+        'SPDX-License-Identifier = "SunPro AND MIT"',
+      ])
+      ..write('third_party/Chart.js/src/helpers/helpers.math.ts', ['//'])
+      ..write('third_party/Chart.js/src/types/geometric.d.ts', ['//'])
+      ..write('third_party/Chart.js/test/specs/helpers.math.tests.js', ['//'])
+      ..write('third_party/Chart.js/test/index.js', ['//'])
+      ..write('third_party/fdlibm/e_log.c', ['/* */'])
+      ..write('third_party/fdlibm/e_log10.c', ['/* */'])
+      ..write('$_package/pubspec.yaml', ['name: flutter_chartjs'])
+      ..write('$_package/LICENSE', [
+        'Copyright (c) 2014-2024 Chart.js Contributors',
+        'Copyright (C) 1993 by Sun Microsystems, Inc.',
+      ])
+      ..write('$_package/tool/port_sources.yaml', _portSources)
+      ..write('$_package/doc/parity.md', [
+        _parityRow('src/helpers/helpers.math.ts'),
+        _parityRow('test/specs/helpers.math.tests.js'),
+      ])
+      ..write('$_package/lib/src/upstream.dart', [
+        _portOnly,
+        "const String chartJsVersion = '4.5.1';",
+      ])
+      ..write('$_package/lib/src/helpers/helpers.math.dart', [
+        _chartJs('src/helpers/helpers.math.ts'),
+        '// Upstream backport: chartjs/Chart.js@2898a6d1 (#12142).',
+        '',
+        '// A comment, not a header line: Ported from here on.',
+        "const s = '''",
+        _chartJs('src/a.ts'),
+        "''';",
+      ])
+      ..write('$_package/lib/src/types/geometric.dart', [
+        _chartJs('src/types/geometric.d.ts'),
+      ])
+      ..write('$_package/lib/src/js/fdlibm_log.dart', [
+        _fdlibm('e_log.c'),
+        _fdlibm('e_log10.c'),
+      ])
+      ..write('$_package/test/specs/helpers.math_test.dart', [
+        _chartJs('test/specs/helpers.math.tests.js'),
+      ])
+      ..write('$_package/test/flutter_test_config.dart', [
+        _chartJs('test/index.js'),
+      ])
+      ..write('$_package/test/port/a_test.dart', [_portOnly])
+      ..write('$_package/tool/check.dart', [_portOnly]);
+  });
+
+  ({List<Finding> findings, int files}) check() => checkPortHeaders(
+    HeaderCheckInput(
+      repository: tree.root,
+      home: tree.path(_package),
+      packages: [tree.path(_package)],
+      gitlink: (_, path) => path == 'third_party/Chart.js' ? gitlink : null,
+    ),
+  );
+
+  List<String> run() => describeFindings(check().findings);
+
+  void replaceFile(String path, List<String> lines) =>
+      tree.write('$_package/$path', lines);
+
+  test('passes a tree that keeps the rules', () {
+    expect(run(), isEmpty);
+    expect(check().files, 8);
+  });
+
+  group('line 1', () {
+    test('is a header or the port-only marker', () {
+      replaceFile('lib/a.dart', ['/// Docs.']);
+      replaceFile('lib/b.dart', [
+        '// Original code, not ported from Chart.js: no full stop',
+      ]);
+      expect(run(), [
+        startsWith(_error('lib/a.dart:1: line 1 is neither')),
+        startsWith(_error('lib/b.dart:1: line 1 is neither')),
+      ]);
+    });
+
+    test('is not the port-only marker at the Dart path of a source', () {
+      replaceFile('lib/src/types/geometric.dart', [_portOnly]);
+      replaceFile('test/flutter_test_config.dart', [_portOnly]);
+      replaceFile('test/specs/helpers.math_test.dart', [_portOnly]);
+      // No source exists at the pin for these paths.
+      replaceFile('lib/src/helpers/helpers.color.dart', [_portOnly]);
+      replaceFile('lib/flutter_chartjs.dart', [_portOnly]);
+      const message =
+          ': start it with its "// Ported from" header, not the port-only '
+          'marker.';
+      expect(run(), [
+        _error(
+          'lib/src/types/geometric.dart:1: the file is at the Dart path of '
+          'Chart.js src/types/geometric.d.ts$message',
+        ),
+        _error(
+          'test/flutter_test_config.dart:1: the file is at the Dart path of '
+          'Chart.js test/index.js$message',
+        ),
+        _error(
+          'test/specs/helpers.math_test.dart:1: the file is at the Dart path '
+          'of Chart.js test/specs/helpers.math.tests.js$message',
+        ),
+      ]);
+    });
+
+    test('is port-only under test/port/ and tool/', () {
+      replaceFile('test/port/a_test.dart', [
+        _chartJs('src/helpers/helpers.math.ts'),
+      ]);
+      replaceFile('tool/check.dart', [_chartJs('src/helpers/helpers.math.ts')]);
+      const message =
+          ':1: files under test/port/ and tool/ are port-only: start the '
+          'file with the port-only marker.';
+      expect(
+        run(),
+        containsAll([
+          _error('test/port/a_test.dart$message'),
+          _error('tool/check.dart$message'),
+        ]),
+      );
+    });
+  });
+
+  group('header block', () {
+    test('rejects malformed and misplaced header lines', () {
+      replaceFile('lib/src/types/geometric.dart', [
+        _chartJs('src/types/geometric.d.ts'),
+        '// Upstream backport: chartjs/Chart.js@2898a6d (#12142).',
+        '',
+        _chartJs('src/types/geometric.d.ts'),
+        'void f() {} // Upstream backport: chartjs/Chart.js@2898a6d1 (#1).',
+      ]);
+      const misplaced =
+          ': a header line outside the header block: header lines come '
+          'directly after line 1.';
+      expect(run(), [
+        _error(
+          'lib/src/types/geometric.dart:2: the header line does not match '
+          'the grammar of porting-flow.md 4, tool 2.',
+        ),
+        _error('lib/src/types/geometric.dart:4$misplaced'),
+        _error('lib/src/types/geometric.dart:5$misplaced'),
+      ]);
+    });
+
+    test('reports a malformed line 1 once', () {
+      replaceFile('lib/src/types/geometric.dart', [
+        '// Ported from Chart.js v4.5.1 src/types/geometric.d.ts (MIT).',
+      ]);
+      expect(run(), [
+        _error(
+          'lib/src/types/geometric.dart:1: the header line does not match '
+          'the grammar of porting-flow.md 4, tool 2.',
+        ),
+        startsWith(_error('lib/src/types/geometric.dart:1: line 1 is neither')),
+      ]);
+    });
+
+    test('needs a Chart.js line for a backport line', () {
+      replaceFile('lib/src/js/fdlibm_log.dart', [
+        _fdlibm('e_log.c'),
+        '// Upstream backport: chartjs/Chart.js@2898a6d1 (#12142).',
+      ]);
+      expect(run(), [
+        _error(
+          'lib/src/js/fdlibm_log.dart:2: a backport line needs a '
+          '"// Ported from Chart.js" line.',
+        ),
+      ]);
+    });
+  });
+
+  group('project, license and holder', () {
+    test('agree with port_sources.yaml', () {
+      replaceFile('lib/src/types/geometric.dart', [
+        _header('Chart.js', 'v4.5.1', 'src/types/geometric.d.ts', 'ISC, A'),
+        _header('moment', '2.29.4', 'src/moment.js', 'MIT, JS Foundation'),
+      ]);
+      expect(run(), [
+        _error(
+          'lib/src/types/geometric.dart:1: the license is ISC, but '
+          'tool/port_sources.yaml names MIT.',
+        ),
+        _error(
+          'lib/src/types/geometric.dart:1: the holder is "A", but '
+          'tool/port_sources.yaml names "Chart.js Contributors".',
+        ),
+        _error(
+          'lib/src/types/geometric.dart:2: "moment" is not in '
+          'tool/port_sources.yaml.',
+        ),
+      ]);
+    });
+
+    test('appear in the package LICENSE', () {
+      tree.write('$_package/LICENSE', [
+        'Copyright (c) 2014-2024 Chart.js Contributors',
+      ]);
+      const message =
+          ': $_package/LICENSE does not name "Sun Microsystems, Inc.".';
+      expect(run(), [
+        _error('lib/src/js/fdlibm_log.dart:1$message'),
+        _error('lib/src/js/fdlibm_log.dart:2$message'),
+      ]);
+    });
+
+    test('appear in the last matching REUSE.toml annotation', () {
+      tree.write('REUSE.toml', [
+        '[[annotations]]',
+        'path = "$_package/**"',
+        _chartJsCopyright,
+        'SPDX-License-Identifier = "MIT"',
+        '[[annotations]]',
+        'path = "$_package/lib/src/js/*.dart"',
+        'SPDX-FileCopyrightText = "2026 A"',
+        'SPDX-License-Identifier = "MIT"',
+      ]);
+      const annotation =
+          ': the last REUSE.toml annotation that matches the file (line 5) '
+          'does not list';
+      expect(run(), [
+        _error(
+          'lib/src/js/fdlibm_log.dart:1$annotation "Sun '
+          'Microsystems, Inc.".',
+        ),
+        _error('lib/src/js/fdlibm_log.dart:1$annotation SunPro.'),
+        _error(
+          'lib/src/js/fdlibm_log.dart:2$annotation "Sun '
+          'Microsystems, Inc.".',
+        ),
+        _error('lib/src/js/fdlibm_log.dart:2$annotation SunPro.'),
+      ]);
+
+      tree.write('REUSE.toml', ['version = 1']);
+      expect(
+        run(),
+        everyElement(endsWith('no REUSE.toml annotation matches the file.')),
+      );
+    });
+  });
+
+  group('source path', () {
+    test('exists in the checked-out submodule', () {
+      replaceFile('lib/src/helpers/helpers.color.dart', [
+        _chartJs('src/helpers/helpers.color.ts'),
+      ]);
+      expect(run(), [
+        _error(
+          'lib/src/helpers/helpers.color.dart:1: '
+          'src/helpers/helpers.color.ts does not exist in '
+          'third_party/Chart.js.',
+        ),
+      ]);
+    });
+
+    test('is listed when the submodule is not checked out', () {
+      // An uninitialized submodule is an empty directory.
+      tree
+        ..deleteDirectory('third_party/Chart.js')
+        ..mkdir('third_party/Chart.js');
+      expect(run(), [
+        _error(
+          'lib/src/types/geometric.dart:1: src/types/geometric.d.ts is not '
+          'in the files of tool/port_sources.yaml or its file_index, and '
+          'third_party/Chart.js is not checked out (dart run melos run '
+          'upstream).',
+        ),
+      ]);
+    });
+
+    test('exists in a copy', () {
+      tree.delete('third_party/fdlibm/e_log10.c');
+      expect(run(), [
+        _error(
+          'lib/src/js/fdlibm_log.dart:2: e_log10.c does not exist in '
+          'third_party/fdlibm.',
+        ),
+      ]);
+    });
+
+    test('is normalized', () {
+      replaceFile('lib/src/types/geometric.dart', [
+        _chartJs('src/types/../types/geometric.d.ts'),
+      ]);
+      expect(
+        run(),
+        contains(
+          _error(
+            'lib/src/types/geometric.dart:1: the source path '
+            'src/types/../types/geometric.d.ts is not normalized.',
+          ),
+        ),
+      );
+    });
+  });
+
+  group('Dart path', () {
+    test('equals the mapped path', () {
+      replaceFile('lib/src/helpers/geometric.dart', [
+        _chartJs('src/types/geometric.d.ts'),
+      ]);
+      replaceFile('test/specs/helpers_math_test.dart', [
+        _chartJs('test/specs/helpers.math.tests.js'),
+      ]);
+      replaceFile('lib/src/js/fdlibm_x.dart', [_fdlibm('e_log.c')]);
+      replaceFile('lib/src/js/js.dart', [_chartJs('docs/index.md')]);
+      tree.write('third_party/Chart.js/docs/index.md', ['#']);
+      const notThisFile = '(porting-flow.md 2.5), not this file.';
+      expect(run(), [
+        _error(
+          'lib/src/helpers/geometric.dart:1: the Dart path of '
+          'src/types/geometric.d.ts is '
+          '$_package/lib/src/types/geometric.dart $notThisFile',
+        ),
+        _error(
+          'lib/src/js/fdlibm_x.dart:1: the Dart path of e_log.c is '
+          '$_package/lib/src/js/fdlibm_log.dart $notThisFile',
+        ),
+        _error(
+          'lib/src/js/js.dart:1: no target of tool/port_sources.yaml maps '
+          'docs/index.md.',
+        ),
+        _error(
+          'test/specs/helpers_math_test.dart:1: the Dart path of '
+          'test/specs/helpers.math.tests.js is '
+          '$_package/test/specs/helpers.math_test.dart $notThisFile',
+        ),
+      ]);
+    });
+  });
+
+  group('versions', () {
+    const restamp = 'Restamp it (upstream-tracking.md 4.8).';
+
+    test('report an older Chart.js header as stale', () {
+      replaceFile('lib/src/types/geometric.dart', [
+        _chartJs('src/types/geometric.d.ts', version: 'v4.4.9'),
+      ]);
+      final result = check();
+      expect(describeFindings(result.findings), [
+        _warning(
+          'lib/src/types/geometric.dart:1: stale header: Chart.js v4.4.9 is '
+          'older than v4.5.1 (chartJsVersion). $restamp',
+        ),
+      ]);
+      expect(result.findings.single.isError, isFalse);
+    });
+
+    test('reject a newer or differently written version', () {
+      replaceFile('lib/src/types/geometric.dart', [
+        _chartJs('src/types/geometric.d.ts', version: 'v4.6.0'),
+      ]);
+      replaceFile('test/specs/helpers.math_test.dart', [
+        _chartJs('test/specs/helpers.math.tests.js', version: '4.5.1'),
+      ]);
+      replaceFile('lib/src/js/fdlibm_log.dart', [
+        _header('fdlibm', '5.2', 'e_log.c', 'SunPro, Sun Microsystems, Inc.'),
+      ]);
+      expect(run(), [
+        _warning(
+          'lib/src/js/fdlibm_log.dart:1: stale header: fdlibm 5.2 is older '
+          'than 5.3. $restamp',
+        ),
+        _error(
+          'lib/src/types/geometric.dart:1: Chart.js v4.6.0 is newer than '
+          'the pin v4.5.1.',
+        ),
+        _error(
+          'test/specs/helpers.math_test.dart:1: write the version as '
+          'v4.5.1.',
+        ),
+      ]);
+    });
+
+    test('of port_sources.yaml follow chartJsVersion', () {
+      replaceFile('lib/src/upstream.dart', [
+        _portOnly,
+        "const String chartJsVersion = '4.6.0';",
+      ]);
+      const stale =
+          ':1: stale header: Chart.js v4.5.1 is older than v4.6.0 '
+          '(chartJsVersion). $restamp';
+      expect(run(), [
+        _error(
+          'tool/port_sources.yaml: Chart.js version is v4.5.1, but '
+          'chartJsVersion is 4.6.0: write v4.6.0.',
+        ),
+        _warning('lib/src/helpers/helpers.math.dart$stale'),
+        _warning('lib/src/types/geometric.dart$stale'),
+        _warning('test/flutter_test_config.dart$stale'),
+        _warning('test/specs/helpers.math_test.dart$stale'),
+      ]);
+    });
+  });
+
+  group('port_sources.yaml', () {
+    test('agrees with the gitlink', () {
+      gitlink = _chartJsCommit;
+      expect(run(), isEmpty);
+      gitlink = '0' * 40;
+      expect(run(), [
+        _error(
+          'tool/port_sources.yaml: Chart.js pin commit is $_chartJsCommit, '
+          'but the gitlink of third_party/Chart.js is ${'0' * 40}.',
+        ),
+      ]);
+    });
+
+    test('lists files that exist at the pin', () {
+      tree.write('$_package/tool/port_sources.yaml', [
+        ..._portSources,
+        '      - e_exp.c',
+      ]);
+      expect(run(), [
+        _error(
+          'tool/port_sources.yaml: fdlibm file e_exp.c does not exist in '
+          'third_party/fdlibm.',
+        ),
+      ]);
+    });
+
+    test('is reported when it cannot be read', () {
+      tree.write('$_package/tool/port_sources.yaml', ['sources: [a]']);
+      expect(run(), [
+        _error(
+          'tool/port_sources.yaml: line 1: unsupported YAML syntax: [a]',
+        ),
+      ]);
+      tree.delete('$_package/tool/port_sources.yaml');
+      expect(run(), [
+        startsWith(_error('tool/port_sources.yaml: Cannot open')),
+      ]);
+    });
+  });
+
+  group('DIVERGES(chartjs) markers', () {
+    const marker = '// DIVERGES(chartjs): theme-H1, the theme scope.';
+    const category =
+        'start with a category (adapt, platform, theme, js-semantics, '
+        'harness, not-followed) and a hyphen.';
+    const malformed =
+        ': a malformed DIVERGES marker: write the line comment '
+        '"DIVERGES(chartjs): <row id>, <reason>" (porting-flow.md 4).';
+
+    void writeDifferences(List<String> ids) =>
+        tree.write('$_package/doc/differences.md', [
+          '# Differences',
+          '',
+          '| ID | Dart file and symbol | Reason |',
+          '|---|---|---|',
+          for (final id in ids) '| <a id="$id"></a>`$id` | x | y |',
+          '',
+          '| Other | table |',
+          '|---|---|',
+          '| theme-H9 | ignored |',
+        ]);
+
+    test('name a row, and each row has a marker', () {
+      replaceFile('lib/src/types/geometric.dart', [
+        _chartJs('src/types/geometric.d.ts'),
+        marker,
+        "const s = '// DIVERGES(chartjs): theme-H8, in a string.';",
+      ]);
+      expect(run(), [
+        _error(
+          'lib/src/types/geometric.dart:2: the DIVERGES(chartjs) marker '
+          'names "theme-H1", which is not a row of '
+          '$_package/doc/differences.md.',
+        ),
+      ]);
+
+      writeDifferences(['theme-H1']);
+      expect(run(), isEmpty);
+
+      writeDifferences(['theme-H1', 'theme-H2']);
+      expect(run(), [
+        _error(
+          'doc/differences.md:6: row theme-H2 has no DIVERGES(chartjs) '
+          'marker in the code.',
+        ),
+      ]);
+    });
+
+    test('follow the marker grammar', () {
+      writeDifferences(['theme-H1', 'bad-H1']);
+      replaceFile('lib/src/types/geometric.dart', [
+        _chartJs('src/types/geometric.d.ts'),
+        marker,
+        "    // DIVERGES(chartjs): bad-H1, a long reason ${'x' * 40}.",
+        '// DIVERGES: theme-H1, no project.',
+        '/// DIVERGES(chartjs): theme-H1, a doc comment.',
+        '/* DIVERGES(chartjs): theme-H1, a block comment. */',
+        '/** DIVERGES(chartjs): theme-H1, a doc block. */',
+        '/* Not a marker: DIVERGES(chartjs): theme-H1, x. */',
+      ]);
+      expect(run(), [
+        _error('doc/differences.md:6: row ID "bad-H1" does not $category'),
+        _error(
+          'lib/src/types/geometric.dart:3: the DIVERGES(chartjs) row ID '
+          '"bad-H1" does not $category',
+        ),
+        _error(
+          'lib/src/types/geometric.dart:3: the DIVERGES(chartjs) marker '
+          'line is longer than 80 columns.',
+        ),
+        _error('lib/src/types/geometric.dart:4$malformed'),
+        _error('lib/src/types/geometric.dart:5$malformed'),
+        _error('lib/src/types/geometric.dart:6$malformed'),
+        _error('lib/src/types/geometric.dart:7$malformed'),
+      ]);
+    });
+  });
+
+  test('parseDifferences reads the ID column', () {
+    final rows = parseDifferences(
+      [
+        '| ID | Reason |',
+        '| :-- | --- |',
+        '| <a id="adapt-x"></a>adapt-x | a |',
+        '| `harness-y` | b |',
+        '',
+        '| Name | ID |',
+        '|---|---|',
+        '| no | theme-z |',
+      ].join('\n'),
+    );
+    expect(
+      [for (final r in rows) '${r.id}:${r.line}'],
+      [
+        'adapt-x:3',
+        'harness-y:4',
+      ],
+    );
+    expect(isDifferenceId('js-semantics-sort'), isTrue);
+    expect(isDifferenceId('not-followed-12238'), isTrue);
+    expect(isDifferenceId('theme-'), isFalse);
+    expect(isDifferenceId('themes-H1'), isFalse);
+  });
+}

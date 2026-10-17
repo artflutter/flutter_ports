@@ -252,3 +252,9 @@ reference engine of `lib/src/js` is V8 13.6 in Node.js v24.12.0 on x64 ([porting
 | `test/port/js/atan2_reference.dart` | Generated data of `fdlibm_atan_test.dart` | written by `tool/reference/atan2_reference.mjs` |
 | `tool/reference/log10_reference.mjs`, `tool/reference/atan2_reference.mjs` | Dev-time Node.js generators of the two data files; they stop unless Node.js is an x64 build | — |
 | `test/port/helpers/helpers.math_test.dart` | `helpers.math` behaviour that `test/specs/helpers.math.tests.js` does not check (AGENTS.md rule 3), with expected values from the chart.js 4.5.1 npm dist in Node.js v24.12.0 on x64 | — |
+| `lib/flutter_chartjs.dart` | The public library of the package. It exports `lib/src/upstream.dart` | — |
+| `lib/src/upstream.dart` | `chartJsVersion`, the pinned Chart.js release | `test/upstream_test.dart` |
+| `test/upstream_test.dart` | Compares `chartJsVersion` with `third_party/Chart.js/package.json` | — |
+| `tool/check_lib_imports.dart`, `tool/check_port_headers.dart`, `tool/check_js_semantics.dart` | The commands of tools 1-3 of [porting-flow.md](porting-flow.md) §4 | `test/tool/check_*_test.dart` |
+| `tool/src/*.dart` (8 files) | The code of tools 1-3: the rules, a Dart lexer, the header grammar, small YAML and TOML readers, and the shared command line | `test/tool/*_test.dart` |
+| `test/tool/*.dart` (7 files) | The tests of tools 1-3, and `file_tree.dart`, their temporary file trees | — |

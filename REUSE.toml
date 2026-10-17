@@ -4,8 +4,10 @@ SPDX-PackageSupplier = "Vasiliy Ditsyak <vasilich6107@users.noreply.github.com>"
 SPDX-PackageDownloadLocation = "https://github.com/artflutter/flutter_ports"
 
 # When several annotations match a path, the last one wins, so each table lists
-# every holder for its paths. third_party/Chart.js is a git submodule and is not
-# part of this tree.
+# every holder for its paths. third_party/Chart.js, third_party/kurkle-color,
+# third_party/chartjs-test-utils and third_party/pixelmatch are git submodules
+# and are not part of this tree. third_party/fdlibm is a committed copy and has
+# its own table below.
 
 [[annotations]]
 path = "**"
