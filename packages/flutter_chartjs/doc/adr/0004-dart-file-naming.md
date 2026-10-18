@@ -2,6 +2,7 @@
 
 - Status: accepted (2026-10-18)
 - Date: 2026-10-17
+- Superseded by: [Chart.js ADR 0012](0012-dart-file-naming.md) (2026-10-19)
 
 ## Context
 

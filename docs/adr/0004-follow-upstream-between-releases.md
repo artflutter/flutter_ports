@@ -2,7 +2,7 @@
 
 - Status: accepted (2026-10-18)
 - Date: 2026-10-16
-- Amends: [ADR 0002](0002-pin-upstream-sources.md)
+- Superseded by: [ADR 0006](0006-follow-upstream-between-releases.md) (2026-10-19)
 
 ## Context
 

@@ -29,8 +29,8 @@ Chart.js options do already. Options are partial values over defaults, with a fi
 The port has three constraints. Ported specs and fixtures must keep their upstream values
 (AGENTS.md rule 3). Upstream releases must replay file by file
 ([ADR 0001](../../../../docs/adr/0001-native-ports-not-wrappers.md),
-[ADR 0002](../../../../docs/adr/0002-pin-upstream-sources.md)). The ported files must thus stay close to
-upstream.
+[ADR 0005](../../../../docs/adr/0005-pin-upstream-sources.md)). The ported files must thus stay
+close to upstream.
 Upstream draws two states only: default and active, through the hover option prefixes.
 
 ## Decision
@@ -80,7 +80,7 @@ The theme is one more option scope for the ported resolver. The design is in
 ## Consequences
 
 - Upstream fixes replay without changes to theme code. A bump or an
-  [ADR 0004](../../../../docs/adr/0004-follow-upstream-between-releases.md) backport into
+  [ADR 0006](../../../../docs/adr/0006-follow-upstream-between-releases.md) backport into
   `core.config.js` or `plugin.colors.ts` re-applies the eight hunks and runs their pinning tests.
   These two files had 3 and 6 commits in `v4.0.0-release..v4.5.1`.
 - The hunks change only two upstream lines: the bodies of `getBorderColor` and
@@ -104,9 +104,10 @@ The theme is one more option scope for the ported resolver. The design is in
   2. `lib/` imports no forui or Material.
   3. Ported code never writes `Chart.defaults` for theming.
   4. Ported files never import `lib/src/theme/`.
-- The adapter change amends [ADR 0003](../../../../docs/adr/0003-package-names.md). First-party
-  design-system adapters take the name `flutter_chartjs_<system>` and stay `publish_to: none`
-  until their first release.
-- Touch sizes stay open. An amendment of this ADR decides them in phase 9, together with ADR: Input
-  events and interaction state. ADR: Animation decides reduced motion for the other chart
-  animations.
+- The adapter change needs a new ADR that supersedes
+  [ADR 0003](../../../../docs/adr/0003-package-names.md). In it, first-party design-system
+  adapters take the name `flutter_chartjs_<system>` and stay `publish_to: none` until their first
+  release.
+- Touch sizes stay open. In phase 9, a new ADR that supersedes this ADR decides them, together
+  with ADR: Input events and interaction state. ADR: Animation decides reduced motion for the
+  other chart animations.

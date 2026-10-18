@@ -2,7 +2,7 @@
 
 - Status: accepted (2026-10-18)
 - Date: 2026-10-17
-- Amends: [ADR 0002](../../../../docs/adr/0002-pin-upstream-sources.md)
+- Superseded by: [Chart.js ADR 0011](0011-third-party-sources.md) (2026-10-19)
 
 ## Context
 
