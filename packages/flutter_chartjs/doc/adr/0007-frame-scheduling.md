@@ -1,6 +1,6 @@
 # Chart.js ADR 0007: Frame scheduling
 
-- Status: proposed
+- Status: accepted (2026-10-18)
 - Date: 2026-10-17
 
 ## Context
@@ -172,14 +172,19 @@ Probes of this decision (Flutter 3.44.9, 2026-10-17 and 2026-10-18) gave these r
    - The chart host destroys its chart in `dispose`. Thus the loop ends when the tree unmounts.
      A test that keeps a chart after its body uses `animation: false`, the `acquireChart` default.
 7. **`TickerMode` muting.** The chart host follows `TickerMode`. It reads `TickerMode.valuesOf` in
-   `createRenderObject` and `updateRenderObject`. When `TickerMode` turns off, it calls
-   `animator.mute(chart)`. When `TickerMode` turns on, it calls `animator.unmute(chart)`.
+   `createRenderObject` and `updateRenderObject`. It keeps the last value. When `TickerMode` turns
+   off, it calls `animator.mute(chart)`. When `TickerMode` turns on, it calls
+   `animator.unmute(chart)`. A rebuild with the same value calls neither method.
    - `mute` marks the chart in an `Expando`. Thus a destroyed chart leaves no entry. `_update`
      skips a muted chart, as it skips a chart that does not run. A muted chart then does not count
      in `remaining`. When all charts with animations are muted, the loop ends. Then the animator
      schedules no more frames.
-   - `unmute` removes the mark and calls `_refresh()`. The animations continue at the current
-     `Date.now()`, as a muted `Ticker` lets the time pass.
+   - `unmute` removes the mark. If the chart has animations (`has(chart)`), it calls `_refresh()`.
+     The animations continue at the current `Date.now()`, as a muted `Ticker` lets the time pass.
+     Without these two conditions, each rebuild of the host schedules one frame for nothing.
+   - While a chart is muted, its `onComplete` and `onProgress` callbacks wait. A `render()` call
+     on it resets `anims.start` (`core.animator.js:169`). Thus `currentStep` of the next
+     `onProgress` starts again from that time.
    - A `render()` call on a muted chart with animations starts the loop again
      (`core.controller.js:688-691`). `_update` then finds no running chart. Thus the loop ends
      after one frame.
@@ -190,8 +195,15 @@ Probes of this decision (Flutter 3.44.9, 2026-10-17 and 2026-10-18) gave these r
      `TickerMode` off (`widgets/overlay.dart:900-908`, `:420-421`). The overlay does not paint it
      (`widgets/overlay.dart:1426-1440`). Without the mute, a chart there continues its animation. With
      `animation.loop: true`, the animation never ends (`core.animation.js:85`). Each animator frame
-     is a full app frame (`scheduler/binding.dart:613-615`, `rendering/binding.dart:646-649`). Thus the app never goes
-     idle.
+     is a full app frame (`scheduler/binding.dart:613-615`, `rendering/binding.dart:646-649`). Thus
+     the app never goes idle.
+   - A probe of 2026-10-18 (Flutter 3.44.9) ran a port of the upstream loop with this mute. A
+     `LeafRenderObjectWidget` host read `TickerMode`, and a `Navigator` covered it. During the
+     300 ms transition, the chart animated. After it, `updateRenderObject` ran one time, the
+     chart drew no more frames, and no frame was scheduled. Without the mute, frames continued.
+     After the pop, the animation continued at the current time. A visible chart animated while
+     the covered chart stayed muted. A `render()` call on the muted chart ran one frame. A chart
+     created under `TickerMode(enabled: false)` started muted.
 8. **No frame-callback cancel.** Upstream never calls `cancelAnimationFrame`. The port adds no
    cancel function for frame callbacks. A callback that is pending at `destroy()` runs one time,
    in the next frame or in a teardown frame of flutter_test.

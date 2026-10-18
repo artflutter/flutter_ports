@@ -39,6 +39,10 @@ Ports follow the upstream source tree module by module (same file split, same na
 case, header comment naming the upstream file) so that upstream releases can be diffed and
 replayed, and upstream specs can be ported next to the code.
 
+A dev-time tool is not runtime. A port can use Node.js on the porter's machine or in a CI job, for
+example to generate reference data from the pinned upstream source. Nothing in `lib/` or `test/`
+loads such a tool.
+
 ## Consequences
 
 - Much more work than a wrapper: Chart.js alone is about 20k lines of implementation and 26k lines

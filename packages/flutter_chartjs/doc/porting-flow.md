@@ -98,7 +98,7 @@ decisions in this section are for Chart.js only. Each of them becomes a file in
 [`packages/flutter_chartjs/doc/adr/`](adr/) with the next free number. If a later port needs the same
 decision, the decision moves to `docs/adr/`.
 
-The gate 1 and gate 2 decisions are proposed ADR files now. Their subsections below keep a summary,
+The gate 1 and gate 2 decisions are accepted ADR files now (2026-10-18). Their subsections below keep a summary,
 the link and the evidence that the ADR does not repeat. The other subsections stay proposals in
 this document until their ADR files exist.
 

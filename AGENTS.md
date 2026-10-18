@@ -53,7 +53,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web` and
     pin) and `reference/` (the Node.js generators of reference data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0007. All of them are proposed. Docs name them
+    - `doc/adr/`: Chart.js ADRs 0001-0007. All of them are accepted. Chart.js ADR 0001 is
+      accepted for its four theming invariants only. Docs name them
       "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file.
     - `doc/porting-flow.md`: the porting plan (proposed). It has the module life cycle, the
       decisions, the test harness, the tools and the phases.
@@ -65,7 +66,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web` and
   analysis.
   - Shallow git submodules at release tags: `Chart.js` (`v4.5.1`), `kurkle-color` (`v0.3.2`),
     `chartjs-test-utils` (`v0.4.0`) and `pixelmatch` (`v5.3.0`). The last three come from
-    Chart.js ADR 0005 (proposed).
+    Chart.js ADR 0005.
   - `fdlibm/`: unchanged netlib fdlibm 5.3 files for the `lib/src/js/fdlibm_*.dart` ports. fdlibm
     has no git repository. Thus these files are a committed copy. `REUSE.toml` annotates them.
 - `tool/`: repository scripts (`check_upstream_pin.sh`).
@@ -97,7 +98,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web` and
    `git add third_party/Chart.js`, update `chartJsVersion`, and port the diff.
    `upstream:check` and `packages/flutter_chartjs/test/upstream_test.dart` fail on a mismatch.
 
-These rules are proposed. The maintainers did not accept them yet. The doc paths are relative to
+The rules below come from the accepted ADRs and from two plans. The plans, `porting-flow.md` and
+`upstream-tracking.md`, are still proposed. The doc paths are relative to
 `packages/flutter_chartjs/doc/`.
 
 - Backports from upstream `master`: ADR 0004 and `upstream-tracking.md` §2.2 (proposed).
@@ -106,9 +108,9 @@ These rules are proposed. The maintainers did not accept them yet. The doc paths
 - The module status values of the `parity.md` legend: `porting-flow.md` §1 step 7 (proposed).
 - `// DIVERGES(chartjs): <row id>, <reason>` markers and their `differences.md` rows:
   `porting-flow.md` §4 (proposed). `check:headers` already pairs markers with rows.
-- The JS numeric translation rules: Chart.js ADR 0002 (proposed). `check:js-semantics` already
+- The JS numeric translation rules: Chart.js ADR 0002. `check:js-semantics` already
   fails on the flagged forms. A kept form carries `// js-ok: <reason>`.
-- File names in the upstream spelling and the `_` rules: Chart.js ADR 0004 (proposed).
+- File names in the upstream spelling and the `_` rules: Chart.js ADR 0004.
   `check:headers` already compares each Dart path with the mapped path.
 - Spec names and skip reasons: `porting-flow.md` §1 step 5 (proposed).
 - The spec paths and the test folders: Chart.js ADR 0004 and `porting-flow.md` §1 step 5
@@ -116,22 +118,21 @@ These rules are proposed. The maintainers did not accept them yet. The doc paths
   `packages/flutter_chartjs/test/specs/<base>_test.dart`. A pure-layer spec imports `package:test`,
   not `flutter_test` ([Tests](#tests)). Tests of behavior without an upstream spec go in
   `test/port/`. `check:headers` already compares each spec path with the mapped path.
-- The source list `packages/flutter_chartjs/tool/port_sources.yaml`: Chart.js ADR 0005
-  (proposed). It has one entry for each project that the package ports code from: Chart.js,
+- The source list `packages/flutter_chartjs/tool/port_sources.yaml`: Chart.js ADR 0005. It has one entry for each project that the package ports code from: Chart.js,
   fdlibm, `@kurkle/color`, chartjs-test-utils and pixelmatch. Code from another project also
   needs an entry, with the license and holder of the header. A Chart.js bump (rule 6) also updates
   the Chart.js `version`, `ref` and `commit` in the entry. `check:headers` already fails on a
   mismatch.
 - The notices of chartjs-test-utils and pixelmatch go in the `LICENSE` of
   `packages/chartjs_test_utils`, not in `packages/flutter_chartjs/LICENSE` (Licensing item 1):
-  Chart.js ADR 0005 (proposed). `check:headers` reads the `LICENSE` of the package that contains
+  Chart.js ADR 0005. `check:headers` reads the `LICENSE` of the package that contains
   the file.
-- The reference engine: Chart.js ADR 0002 (proposed). Take JavaScript reference values only from
+- The reference engine: Chart.js ADR 0002. Take JavaScript reference values only from
   an x64 build of Node.js v24.12.0. On Apple silicon, run the darwin-x64 build under Rosetta.
   Never take reference values from a browser or an arm64 Node.js.
 - The four theming invariants (specs run unthemed, no forui or Material in `lib/`, no
   `Chart.defaults` writes for theming, no `lib/src/theme/` import in ported files): Chart.js ADR
-  0001 (proposed). `check:lib-imports` already fails on the two import invariants.
+  0001. `check:lib-imports` already fails on the two import invariants.
 
 ## Tests
 

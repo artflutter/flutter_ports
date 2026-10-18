@@ -1,6 +1,6 @@
 # Chart.js ADR 0003: Type-only dependencies
 
-- Status: proposed
+- Status: accepted (2026-10-18)
 - Date: 2026-10-17
 
 ## Context

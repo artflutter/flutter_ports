@@ -1,6 +1,7 @@
 # Chart.js ADR 0001: Theming
 
-- Status: proposed
+- Status: accepted (2026-10-18) for the four invariants of the Consequences section only. The rest
+  stays proposed until phase 5.
 - Date: 2026-10-16
 
 ## Context

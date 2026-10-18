@@ -372,7 +372,7 @@ notice too. That case needs a licensing decision.
 
 ## What it means for flutter_chartjs
 
-The theme design is in [Chart.js ADR 0001](../adr/0001-theming.md) (proposed) and in
+The theme design is in [Chart.js ADR 0001](../adr/0001-theming.md) and in
 [packages/flutter_chartjs/doc/theming.md](../theming.md). This section lists the forui ideas that the
 design takes or rejects, with the reason for each. The per-module porting rules, the `DIVERGES`
 marker and the library import guard are in [porting-flow.md](../porting-flow.md).
@@ -431,7 +431,7 @@ the theme, through the `theme-review` action.
 
 - **forui, `material_ui` or Material as a dependency of the library.** The library keeps sdk
   `^3.12.0` and flutter `>=3.44.0`. Its only Flutter imports are `package:flutter/widgets.dart` and
-  the lower layers. Under Chart.js ADR 0001 (proposed), AGENTS.md rule 5 gets the list of
+  the lower layers. Under Chart.js ADR 0001, AGENTS.md rule 5 gets the list of
   forbidden imports ([porting-flow.md §6](../porting-flow.md)). The import guard (porting-flow.md tool 1)
   enforces the list. Why: the library must not depend on a design system. The Flutter 3.47 pin that
   forui 0.26 needs is a separate change (ADR: Toolchain pin and library floor).
@@ -441,7 +441,7 @@ the theme, through the `theme-review` action.
 - **Generated deltas for every option, and `forui_internal_gen`.** Chart.js options are already
   partial values over defaults, with merge and scope precedence. Why: a delta adds nothing to that.
   The generator is unpublished, tied to forui and needs Dart 3.13.
-  [Chart.js ADR 0006](../adr/0006-options-representation-and-resolver.md) (proposed) puts the
+  [Chart.js ADR 0006](../adr/0006-options-representation-and-resolver.md) puts the
   typed options API after 0.1.0. ADR: Typed options API then decides it.
 - **`FVariants` as a general state system.** Upstream renders two states, default and active,
   through the `hover` option prefixes. The ported dataset controller keeps that resolution. Why:

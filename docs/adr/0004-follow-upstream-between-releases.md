@@ -1,6 +1,6 @@
 # ADR 0004: Follow upstream between releases
 
-- Status: proposed
+- Status: accepted (2026-10-18)
 - Date: 2026-10-16
 - Amends: [ADR 0002](0002-pin-upstream-sources.md)
 

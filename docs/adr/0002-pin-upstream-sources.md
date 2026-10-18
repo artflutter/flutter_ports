@@ -2,6 +2,8 @@
 
 - Status: accepted
 - Date: 2026-10-16
+- Amended by: [ADR 0004](0004-follow-upstream-between-releases.md),
+  [Chart.js ADR 0005](../../packages/flutter_chartjs/doc/adr/0005-third-party-sources.md)
 
 ## Context
 

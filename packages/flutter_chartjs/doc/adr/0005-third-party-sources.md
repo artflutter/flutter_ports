@@ -1,6 +1,6 @@
 # Chart.js ADR 0005: Third-party sources
 
-- Status: proposed
+- Status: accepted (2026-10-18)
 - Date: 2026-10-17
 - Amends: [ADR 0002](../../../../docs/adr/0002-pin-upstream-sources.md)
 

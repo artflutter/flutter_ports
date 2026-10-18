@@ -485,7 +485,7 @@ theming work in each phase.
 | Phase | Theming work | Needs |
 |---|---|---|
 | 0. Now | the forui survey, this document and Chart.js ADR 0001 (proposed), linked from `docs/README.md`, `packages/flutter_chartjs/doc/prior-art/README.md` (Pages) and `packages/flutter_chartjs/doc/README.md` (Chart.js ADR 0001 and this document) | — |
-| 1. Decisions and minimum tooling | Chart.js ADR 0001 stays proposed. porting-flow.md, section 6, adds the four invariants of Chart.js ADR 0001 to AGENTS.md rule 5 | — |
+| 1. Decisions and minimum tooling | Chart.js ADR 0001 is accepted for its four invariants only. The rest stays proposed. porting-flow.md, section 6, adds the four invariants of Chart.js ADR 0001 to AGENTS.md rule 5 | — |
 | 2. JS runtime, helpers, defaults | a faithful `core.defaults` singleton, `getHoverColor`, `jsNumberToString` | [Chart.js ADR 0002](adr/0002-js-numeric-semantics.md) |
 | 3. Canvas, text, platform, harness | CSS `rgba()` and font strings in the canvas layer, a harness without a theme | ADR: Canvas model, ADR: Text |
 | 4. Elements | nothing | — |

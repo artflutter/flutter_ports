@@ -15,7 +15,8 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). All of them are proposed:
+  ADRs are in [adr/](adr/). All of them are accepted. Chart.js ADR 0001 is accepted for its four
+  invariants only:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md)
   - [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md)
   - [Chart.js ADR 0003: Type-only dependencies](adr/0003-type-only-dependencies.md)

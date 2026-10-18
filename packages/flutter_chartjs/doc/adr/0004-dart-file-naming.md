@@ -1,6 +1,6 @@
 # Chart.js ADR 0004: Dart file naming
 
-- Status: proposed
+- Status: accepted (2026-10-18)
 - Date: 2026-10-17
 
 ## Context

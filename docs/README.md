@@ -9,7 +9,6 @@ package.
 - [ADR 0002: Pin upstream sources as git submodules at release tags](adr/0002-pin-upstream-sources.md)
 - [ADR 0003: Package names](adr/0003-package-names.md)
 - [ADR 0004: Follow upstream between releases](adr/0004-follow-upstream-between-releases.md)
-  (proposed)
 
 ## Prior art for future ports
 
@@ -30,7 +29,7 @@ package.
     port follows Chart.js fixes and improvements after the pinned tag.
   - [Upstream ledger](../packages/flutter_chartjs/doc/upstream-ledger.md): the upstream commits
     after the pinned tag, with their triage.
-  - Decisions (all proposed):
+  - Decisions (accepted, Chart.js ADR 0001 for its four invariants only):
     [Chart.js ADR 0001: Theming](../packages/flutter_chartjs/doc/adr/0001-theming.md),
     [Chart.js ADR 0002: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0002-js-numeric-semantics.md),
     [Chart.js ADR 0003: Type-only dependencies](../packages/flutter_chartjs/doc/adr/0003-type-only-dependencies.md),
