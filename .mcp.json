@@ -1,0 +1,91 @@
+{
+  "mcpServers": {
+    "dart": {
+      "type": "stdio",
+      "command": "dart",
+      "args": [
+        "mcp-server",
+        "--enable",
+        "flutter_app_lifecycle",
+        "--enable",
+        "run_tests"
+      ],
+      "env": {}
+    },
+    "devtools-profiler": {
+      "type": "stdio",
+      "command": "devtools-profiler",
+      "args": [
+        "mcp"
+      ],
+      "env": {}
+    },
+    "flutter-profile": {
+      "type": "stdio",
+      "command": "flutter-profile-mcp",
+      "args": [],
+      "env": {}
+    },
+    "sleuth": {
+      "type": "stdio",
+      "command": "sleuth_mcp",
+      "args": [],
+      "env": {}
+    },
+    "marionette": {
+      "type": "stdio",
+      "command": "marionette_mcp",
+      "args": [],
+      "env": {}
+    },
+    "perfetto": {
+      "type": "stdio",
+      "command": "/usr/local/bin/perfetto-mcp-rs",
+      "args": [],
+      "env": {}
+    },
+    "chrome-devtools": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@1.11.0",
+        "--no-usage-statistics",
+        "--no-performance-crux",
+        "--memoryDebugging"
+      ],
+      "env": {}
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@0.0.83",
+        "--browser",
+        "chrome",
+        "--caps=vision"
+      ],
+      "env": {}
+    },
+    "perfetto-android": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "--with",
+        "mcp<2",
+        "perfetto-mcp==0.1.4"
+      ],
+      "env": {}
+    },
+    "xctrace-analyzer": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@xctrace-analyzer/mcp-server@0.1.7"
+      ],
+      "env": {}
+    }
+  }
+}
