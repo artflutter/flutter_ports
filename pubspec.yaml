@@ -7,6 +7,7 @@ environment:
 
 workspace:
   - packages/flutter_chartjs
+  - packages/chartjs_test_utils
   - apps/chartjs_gallery
 
 dev_dependencies:
@@ -40,26 +41,32 @@ melos:
     # The per-module tools of packages/flutter_chartjs/doc/porting-flow.md section 4.
     check:lib-imports:
       run: dart run packages/flutter_chartjs/tool/check_lib_imports.dart
-      description: Fail on flutter_chartjs imports outside the allowlists (lib/, pure layers, web tests, theme).
+      description: Fail on flutter_chartjs imports outside the allowlists (lib/, pure layers, web tests, theme) and on chartjs_test_utils pure.dart imports outside the pure layer.
     check:headers:
       run: dart run packages/flutter_chartjs/tool/check_port_headers.dart
-      description: Fail on flutter_chartjs file headers, DIVERGES markers or port_sources.yaml entries that break the rules.
+      description: Fail on flutter_chartjs and chartjs_test_utils file headers, DIVERGES markers or port_sources.yaml entries that break the rules.
     check:js-semantics:
       run: dart run packages/flutter_chartjs/tool/check_js_semantics.dart
-      description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs files.
+      description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs and chartjs_test_utils files.
     check:port:
       steps:
         - check:lib-imports
         - check:headers
         - check:js-semantics
       description: Run check:lib-imports, check:headers and check:js-semantics.
+    test:cases:
+      run: dart run packages/flutter_chartjs/tool/spec_cases.dart
+      description: Run the flutter_chartjs spec tests and report each upstream case as passed, failed, skipped or missing (tool 5). Fail on unknown test names and on missing cases of ported modules.
 
     upstream:
       run: git submodule update --init --depth 1
-      description: Check out every pinned third_party/ submodule (Chart.js, @kurkle/color, chartjs-test-utils, pixelmatch). Reference for porting, not shipped.
+      description: Check out every pinned third_party/ submodule (Chart.js, @kurkle/color, chartjs-test-utils). Reference for porting, not shipped.
     upstream:check:
       run: bash tool/check_upstream_pin.sh
       description: Fail unless third_party/Chart.js is pinned to the release tag named by chartJsVersion.
+    upstream:manifest:
+      run: cd packages/flutter_chartjs && node tool/upstream_manifest/upstream_manifest.mjs --src ../../third_party/Chart.js --out doc/upstream/manifest.json
+      description: Write packages/flutter_chartjs/doc/upstream/manifest.json and fixtures.json from third_party/Chart.js (tool 4). Needs Node.js 22.18 or later (CI uses 24.12.0) and the submodule (melos run upstream).
 
     gallery:
       run: cd apps/chartjs_gallery && flutter run -d chrome

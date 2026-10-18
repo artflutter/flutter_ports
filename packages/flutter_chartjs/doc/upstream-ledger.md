@@ -2,7 +2,7 @@
 
 This ledger records each merged Chart.js PR after the pinned tag, with one row for each PR.
 [upstream-tracking.md](upstream-tracking.md) defines the process (§2), the values of each column
-(§3) and this format (§4.1). [ADR 0004](../../../docs/adr/0004-follow-upstream-between-releases.md)
+(§3) and this format (§4.1). [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md)
 gives the rules for all ports. Phase 1 added these rows by hand from
 upstream-tracking.md §6. At each module start, the porter adds the new rows (upstream-tracking.md
 §4.3). Do not put a pipe in a cell, because the status script will parse a strict grammar.

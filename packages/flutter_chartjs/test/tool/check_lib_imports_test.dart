@@ -75,7 +75,7 @@ void main() {
       "import 'dart:io';",
       "import 'dart:js_interop';",
       "import 'package:web/web.dart';",
-      "import 'package:collection/collection.dart';",
+      "import 'package:collection/algorithms.dart';",
       "import 'package:flutter/animation.dart';",
     ]);
     expect(run(), [
@@ -91,12 +91,80 @@ void main() {
       contains('widget.dart:5: imports dart:js_interop (AGENTS.md rule 5'),
       contains('widget.dart:6: imports package:web/web.dart (AGENTS.md'),
       contains(
-        'widget.dart:7: imports package:collection/collection.dart, '
+        'widget.dart:7: imports package:collection/algorithms.dart, '
         'which is not on the lib/ allowlist',
       ),
       contains(
         'widget.dart:8: imports package:flutter/animation.dart, '
         'which is not on the lib/ allowlist',
+      ),
+    ]);
+  });
+
+  test('allows package:collection/collection.dart in lib/ and pure layers', () {
+    tree
+      ..write('lib/src/js/js_array.dart', [
+        _portOnly,
+        "import 'package:collection/collection.dart' show mergeSort;",
+      ])
+      ..write('lib/src/helpers/helpers.core.dart', [
+        _portOnly,
+        "import 'package:collection/collection.dart' as c show mergeSort;",
+        "import 'package:flutter_chartjs/src/js/js_array.dart';",
+      ])
+      ..write('lib/src/widget.dart', [
+        _portOnly,
+        "import 'package:collection/collection.dart'",
+        '    show mergeSort;',
+      ])
+      ..write('test/port/js/js_array_test.dart', [
+        _portOnly,
+        "import 'package:flutter_chartjs/src/js/js_array.dart';",
+        "import 'package:test/test.dart';",
+      ]);
+    expect(run(), isEmpty);
+  });
+
+  test(
+    'imports package:collection/collection.dart only with show mergeSort',
+    () {
+      tree
+        ..write('lib/src/js/js_array.dart', [
+          _portOnly,
+          "import 'package:collection/collection.dart';",
+        ])
+        ..write('lib/src/widget.dart', [
+          _portOnly,
+          "import 'package:collection/collection.dart' show mergeSort, sortBy;",
+          "import 'package:collection/collection.dart' hide sortBy;",
+        ]);
+      const message =
+          'imports package:collection/collection.dart without '
+          '"show mergeSort" (Chart.js ADR 0010, Sort).';
+      expect(run(), [
+        'error: lib/src/js/js_array.dart:2: $message',
+        'error: lib/src/widget.dart:2: $message',
+        'error: lib/src/widget.dart:3: $message',
+      ]);
+    },
+  );
+
+  test('keeps the other package:collection libraries out of pure layers', () {
+    tree.write('lib/src/js/js_array.dart', [
+      _portOnly,
+      "import 'package:collection/algorithms.dart';",
+    ]);
+    expect(run(), [
+      equals(
+        'error: lib/src/js/js_array.dart:2: imports '
+        'package:collection/algorithms.dart, which is not on the lib/ '
+        'allowlist (porting-flow.md 4, tool 1).',
+      ),
+      equals(
+        'error: lib/src/js/js_array.dart:2: imports '
+        'package:collection/algorithms.dart, but the file is in the pure '
+        'layer (pure layers import only the pure allowlist, porting-flow.md '
+        '3).',
       ),
     ]);
   });
@@ -279,6 +347,90 @@ void main() {
       "''';",
     ]);
     expect(run(), isEmpty);
+  });
+
+  group('harness package', () {
+    late FileTree harness;
+
+    setUp(() {
+      harness = FileTree()
+        ..write('pubspec.yaml', ['name: chartjs_test_utils'])
+        ..write('lib/pure.dart', [
+          _portOnly,
+          "import 'dart:math';",
+          "import 'package:test/test.dart';",
+          "import 'package:flutter_chartjs/src/helpers/helpers.math.dart';",
+          "import 'src/set_up.dart';",
+        ])
+        ..write('lib/src/set_up.dart', [
+          _portOnly,
+          "import 'package:test/scaffolding.dart';",
+        ])
+        ..write('lib/chartjs_test_utils.dart', [
+          _portOnly,
+          "import 'package:flutter_test/flutter_test.dart';",
+        ]);
+    });
+
+    ({List<String> findings, int files}) runWithHarness() {
+      final result = checkLibImports(
+        tree.root,
+        harnessDirectory: harness.root,
+        harnessDisplayPrefix: 'h/',
+      );
+      return (findings: describeFindings(result.findings), files: result.files);
+    }
+
+    test('passes a pure.dart closure that keeps the rules', () {
+      final result = runWithHarness();
+      expect(result.findings, isEmpty);
+      expect(result.files, 9 + 2);
+    });
+
+    test('keeps the pure.dart closure a pure layer', () {
+      harness
+        ..write('lib/pure.dart', [
+          _portOnly,
+          "import 'package:flutter/foundation.dart';",
+          "import 'package:flutter_chartjs/src/widget.dart';",
+          "import 'package:flutter_chartjs/flutter_chartjs.dart';",
+          "import 'chartjs_test_utils.dart';",
+          "import 'src/set_up.dart';",
+        ])
+        ..write('lib/src/set_up.dart', [_portOnly, "import 'dart:io';"]);
+      expect(runWithHarness().findings, [
+        equals(
+          'error: h/lib/pure.dart:2: imports package:flutter/foundation.dart, '
+          'but the file is in the pure layer of the harness (it imports only '
+          'pure libraries, package:test and the pure layers of '
+          'flutter_chartjs, porting-flow.md 3).',
+        ),
+        contains(
+          'h/lib/pure.dart:3: imports package:flutter_chartjs/src/widget.dart, '
+          'but',
+        ),
+        contains(
+          'h/lib/pure.dart:4: imports '
+          'package:flutter_chartjs/flutter_chartjs.dart, but',
+        ),
+        contains(
+          'h/lib/chartjs_test_utils.dart:2: imports '
+          'package:flutter_test/flutter_test.dart, but the file is in the '
+          'pure layer of the harness (reached from lib/pure.dart)',
+        ),
+        contains(
+          'h/lib/src/set_up.dart:2: imports dart:io, but the file is in the '
+          'pure layer of the harness (reached from lib/pure.dart)',
+        ),
+      ]);
+    });
+
+    test('skips a harness without lib/pure.dart', () {
+      harness.delete('lib/pure.dart');
+      final result = runWithHarness();
+      expect(result.findings, isEmpty);
+      expect(result.files, 9);
+    });
   });
 
   test('adds the display prefix to paths', () {

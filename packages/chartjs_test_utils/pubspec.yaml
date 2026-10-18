@@ -1,0 +1,23 @@
+name: chartjs_test_utils
+description: >-
+  The test harness of flutter_chartjs: a Dart port of chartjs-test-utils
+  0.4.0, the test utilities of Chart.js. For the tests of this repository only.
+version: 0.0.1
+# The harness, its notices and the test font stay outside the published
+# archives (porting-flow.md section 3).
+publish_to: none
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/chartjs_test_utils
+
+environment:
+  sdk: ^3.12.0
+  flutter: ">=3.44.0"
+
+resolution: workspace
+
+dependencies:
+  # flutter_chartjs has a dev_dependency on this package. The workspace
+  # resolves the cycle (porting-flow.md section 3).
+  flutter_chartjs: ^0.0.1
+  # pure.dart runs with `dart test` on the VM, dart2js and dart2wasm. The
+  # constraint is the test constraint of flutter_chartjs.
+  test: ^1.31.0

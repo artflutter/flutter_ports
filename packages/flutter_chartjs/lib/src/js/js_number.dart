@@ -1,146 +1,161 @@
 // Original code, not ported from Chart.js: JS number coercion as in V8.
 
-/// The JavaScript number coercions (`ToNumber`, `parseFloat`, `isNaN`,
-/// `isFinite`) over the Dart values that stand for JavaScript values
-/// (Chart.js ADR 0002, porting-flow.md 2.3).
+/// The JavaScript coercions `ToNumber`, `ToBoolean` and `ToString`, the
+/// globals `parseFloat`, `isNaN` and `isFinite`, and `Number::toString` over
+/// the Dart values that stand for JavaScript values (Chart.js ADR 0010).
 ///
-/// The value mapping: `null` is JS `null`, `bool` is a boolean, `num` is a
-/// number, `String` is a string, `List` is an array, `Symbol` is a symbol and
-/// any other object is an object whose `toString()` is its primitive value.
-/// Dart has no `undefined`; until the options ADR adds its sentinel, a caller
-/// that reads an absent key passes `double.nan` or tests the key itself.
+/// The value mapping: `null` is JS `null`, [undefined] is JS `undefined`
+/// (Chart.js ADR 0006), `bool` is a boolean, `num` is a number, `String` is a
+/// string, `List` is an array, `Map` is a plain object and any other object
+/// is an object whose `toString()` is its primitive value.
+///
+/// Dart `RegExp` follows ECMAScript: `\s` is `StrWhiteSpaceChar`, the white
+/// space that `ToNumber` and `parseFloat` skip. `String.trim` differs: it
+/// also removes U+0085.
 library;
 
+import 'package:flutter_chartjs/src/js/js_undefined.dart';
+
 /// ECMAScript `ToNumber(value)`, the coercion of unary `+` and `Number()`.
-///
-/// Throws an [ArgumentError] for a [Symbol], where JavaScript throws a
-/// `TypeError`.
-double jsToNumber(Object? value) {
-  if (value is double) return value;
-  if (value is num) return value.toDouble();
-  if (value == null) return 0;
-  if (value is bool) return value ? 1 : 0;
-  if (value is String) return _stringToNumber(value);
-  return _stringToNumber(_toPrimitiveString(value));
-}
+double jsToNumber(Object? value) => switch (value) {
+  final double d => d,
+  final num n => n.toDouble(),
+  null => 0,
+  Undefined() => double.nan,
+  final bool b => b ? 1 : 0,
+  final String s => _stringToNumber(s),
+  _ => _stringToNumber(jsToString(value)),
+};
 
 /// The global `parseFloat(value)`: the longest decimal prefix of
-/// `String(value)` after leading white space, or NaN.
-///
-/// Throws an [ArgumentError] for a [Symbol], where JavaScript throws a
-/// `TypeError`.
+/// `ToString(value)` after leading white space, or NaN.
 double jsParseFloat(Object? value) {
-  if (value is num) {
-    // String(-0) is '0'; String(x) reads back as x for every other number.
-    return value == 0 ? 0 : value.toDouble();
-  }
-  final string = switch (value) {
-    null => 'null',
-    final bool b => '$b',
-    final String s => s,
-    final Object o => _toPrimitiveString(o),
-  };
-  final match = _decimalPrefix.matchAsPrefix(string, _skipWhiteSpace(string));
-  if (match == null) return double.nan;
-  return _decimalValue(match[0]!);
+  // String(-0) is '0'. String(x) reads back as x for every other number.
+  if (value is num) return value == 0 ? 0 : value.toDouble();
+  final match = _decimalPrefix.firstMatch(jsToString(value));
+  return match == null ? double.nan : _decimalValue(match[1]!);
 }
 
-/// The global `isNaN(value)`: whether `ToNumber(value)` is NaN.
+/// The global `isNaN(value)`: whether `ToNumber(value)` is NaN. For a
+/// `double`, `x.isNaN` is the same test.
 bool jsIsNaN(Object? value) => jsToNumber(value).isNaN;
 
 /// The global `isFinite(value)`: whether `ToNumber(value)` is finite.
 bool jsIsFinite(Object? value) => jsToNumber(value).isFinite;
 
-/// `StrDecimalLiteral` (ECMAScript 7.1.4.1), without white space.
-final RegExp _decimalPrefix = RegExp(
-  r'[+-]?(?:Infinity|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)',
-);
-final RegExp _decimalLiteral = RegExp(
-  r'^[+-]?(?:Infinity|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)$',
-);
-final RegExp _hexLiteral = RegExp(r'^0[xX]([0-9a-fA-F]+)$');
-final RegExp _octalLiteral = RegExp(r'^0[oO]([0-7]+)$');
-final RegExp _binaryLiteral = RegExp(r'^0[bB]([01]+)$');
-
-/// `StringToNumber(string)` (ECMAScript 7.1.4.1.1).
-double _stringToNumber(String string) {
-  var end = string.length;
-  while (end > 0 && _isWhiteSpace(string.codeUnitAt(end - 1))) {
-    end--;
-  }
-  final start = end == 0 ? 0 : _skipWhiteSpace(string);
-  final literal = string.substring(start, end);
-  if (literal.isEmpty) return 0;
-  if (_decimalLiteral.hasMatch(literal)) return _decimalValue(literal);
-  for (final (pattern, radix) in [
-    (_hexLiteral, 16),
-    (_octalLiteral, 8),
-    (_binaryLiteral, 2),
-  ]) {
-    final match = pattern.firstMatch(literal);
-    // BigInt.toDouble rounds to nearest, ties to even, as JavaScript does.
-    if (match != null) return BigInt.parse(match[1]!, radix: radix).toDouble();
-  }
-  return double.nan;
-}
-
-/// The value of a string that matches `StrDecimalLiteral`.
-double _decimalValue(String literal) {
-  if (literal.endsWith('Infinity')) {
-    return literal.startsWith('-') ? double.negativeInfinity : double.infinity;
-  }
-  // double.parse rounds correctly on every platform.
-  return double.parse(literal);
-}
-
-/// The index of the first character of [string] that is not
-/// `StrWhiteSpaceChar`.
-int _skipWhiteSpace(String string) {
-  var start = 0;
-  while (start < string.length && _isWhiteSpace(string.codeUnitAt(start))) {
-    start++;
-  }
-  return start;
-}
-
-/// `StrWhiteSpaceChar`: `WhiteSpace` or `LineTerminator` (ECMAScript 12.2,
-/// 12.3). Not `String.trim`, which also removes U+0085.
-bool _isWhiteSpace(int c) =>
-    c == 0x09 ||
-    c == 0x0A ||
-    c == 0x0B ||
-    c == 0x0C ||
-    c == 0x0D ||
-    c == 0x20 ||
-    c == 0xA0 ||
-    c == 0x1680 ||
-    (c >= 0x2000 && c <= 0x200A) ||
-    c == 0x2028 ||
-    c == 0x2029 ||
-    c == 0x202F ||
-    c == 0x205F ||
-    c == 0x3000 ||
-    c == 0xFEFF;
-
-/// The string that `ToPrimitive` gives for an object: the join of an array,
-/// else `toString()`.
+/// ECMAScript `ToBoolean(value)`, the test of `if (value)`, `!value`,
+/// `value || d` and `value && d`.
 ///
-/// Numbers in an array use Dart's `toString()`. It differs from JavaScript
-/// `Number.prototype.toString` only in a trailing `.0` and in `-0.0`, and no
-/// numeric parse of the result sees either difference.
-String _toPrimitiveString(Object value) => switch (value) {
-  final Symbol s => throw ArgumentError.value(
-    s,
-    'value',
-    'Cannot convert a Symbol value to a number or string',
-  ),
-  final List<Object?> list => list.map(_joinElement).join(','),
+/// False for `null`, [undefined], `false`, `0`, `-0`, NaN and `''`. True for
+/// every other value, also for an empty `List` or `Map`.
+bool jsTruthy(Object? value) => switch (value) {
+  null || Undefined() => false,
+  final bool b => b,
+  final num n => n != 0 && !n.isNaN,
+  final String s => s.isNotEmpty,
+  _ => true,
+};
+
+/// ECMAScript `ToString(value)`, the coercion of `'' + value`, of a template
+/// literal and of `String(value)`.
+///
+/// A number gives [jsNumberToString]. An array gives the join of its elements
+/// with `,`, where `null` and [undefined] are empty. A cyclic array recurses
+/// without end: chart data has no such array. A `Map` gives
+/// `'[object Object]'`. Any other object gives its `toString()`, which is
+/// `'undefined'` for [undefined].
+String jsToString(Object? value) => switch (value) {
+  null => 'null',
+  final num n => jsNumberToString(n),
+  final List<Object?> list =>
+    list.map((e) => e == null || e is Undefined ? '' : jsToString(e)).join(','),
+  Map<Object?, Object?>() => '[object Object]',
   _ => value.toString(),
 };
 
-/// `ToString(element)` inside `Array.prototype.join`, where null is empty.
-String _joinElement(Object? element) => switch (element) {
-  null => '',
-  final num n => n == 0 ? '0' : n.toDouble().toString(),
-  final Object o => o is String || o is bool ? '$o' : _toPrimitiveString(o),
-};
+/// ECMAScript `Number::toString(x, 10)`, the string of `String(x)` and
+/// `'' + x` for a number: `'12'`, `'0.000001'`, `'1e+21'`, `'1.5e-7'`, and
+/// `'0'` for both `0` and `-0`.
+///
+/// Dart's `toString()` gives the shortest digits that read back as [x] and
+/// the notation of ECMAScript on the VM, dart2js and dart2wasm. Only the VM
+/// and dart2wasm add `.0` to an integral value in plain notation, and give
+/// `'-0.0'` for -0.
+String jsNumberToString(num x) {
+  final d = x.toDouble();
+  if (d == 0) return '0';
+  // Below 2^53 the shortest round-trip digits of an integral value are its
+  // exact digits. Above it, JavaScript pads the shortest digits with zeros
+  // (2^60 gives '1152921504606847000'), so int.toString gives other digits.
+  // NaN and the infinities fail the first test.
+  if (d == d.truncateToDouble() && d.abs() < 9007199254740992) {
+    return d.toInt().toString();
+  }
+  final s = d.toString();
+  return s.endsWith('.0') ? s.substring(0, s.length - 2) : s;
+}
+
+/// `StrDecimalLiteral` (ECMAScript 7.1.4.1).
+const String _decimal =
+    r'[+-]?(?:Infinity|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)';
+
+/// `StringNumericLiteral`: white space, then a decimal literal, a
+/// `0x`/`0o`/`0b` literal or nothing, then white space. The digit class of
+/// group 3 is wide. `BigInt.tryParse` rejects a digit outside the radix.
+/// The `0x`/`0o`/`0b` literals cost one group and four lines. They keep a
+/// data string such as `'0x10'` at 16, as `Number('0x10')` gives, and not
+/// NaN, which removes the data point.
+final RegExp _literal = RegExp(
+  '^\\s*(?:($_decimal)|0([xXoObB])([0-9a-fA-F]+))?\\s*\$',
+);
+
+/// The prefix that `parseFloat` reads.
+final RegExp _decimalPrefix = RegExp('^\\s*($_decimal)');
+
+/// `StringToNumber(string)` (ECMAScript 7.1.4.1.1).
+double _stringToNumber(String string) {
+  final plain = _plainDecimal(string);
+  if (plain != null) return plain;
+  final match = _literal.firstMatch(string);
+  if (match == null) return double.nan;
+  if (match[1] != null) return _decimalValue(match[1]!);
+  if (match[2] == null) return 0; // Only white space.
+  final radix = switch (match[2]!.toLowerCase()) {
+    'x' => 16,
+    'o' => 8,
+    _ => 2,
+  };
+  // BigInt.toDouble rounds to nearest, ties to even, as JavaScript does.
+  return BigInt.tryParse(match[3]!, radix: radix)?.toDouble() ?? double.nan;
+}
+
+/// The value of a string that matches `StrDecimalLiteral`. `double.parse`
+/// rounds correctly on every platform.
+double _decimalValue(String literal) => literal.endsWith('Infinity')
+    ? (literal.startsWith('-') ? double.negativeInfinity : double.infinity)
+    : double.parse(literal);
+
+/// The value of [string] when it has 1 to 64 characters, all of them in
+/// `0-9 . + - e E`, and [double.tryParse] reads it. Else null, and the
+/// `StringNumericLiteral` RegExp decides.
+///
+/// This path gives the same result as the RegExp path, because over this
+/// alphabet each grammar of [double.tryParse] is `StrDecimalLiteral` without
+/// `Infinity`: on the VM, the grammar of the Dart double literal; on dart2js
+/// and dart2wasm, the guard RegExp
+/// `[+-]?(?:\.\d+|\d+(?:\.\d*)?)(?:[eE][+-]?\d+)?` before `parseFloat`.
+/// All of them round correctly. A string that the grammar rejects gives
+/// null. The limit of 64 characters only bounds the scan.
+double? _plainDecimal(String string) {
+  final length = string.length;
+  if (length == 0 || length > 64) return null;
+  for (var i = 0; i < length; i++) {
+    final allowed = switch (string.codeUnitAt(i)) {
+      >= 0x30 && <= 0x39 => true, // 0-9
+      0x2B || 0x2D || 0x2E || 0x45 || 0x65 => true, // + - . E e
+      _ => false,
+    };
+    if (!allowed) return null;
+  }
+  return double.tryParse(string);
+}

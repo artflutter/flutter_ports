@@ -9,6 +9,11 @@
 ///   test imports use only pure layers, `package:test` and
 ///   `package:chartjs_test_utils/pure.dart`.
 /// - Ported files do not import `lib/src/theme/` (Chart.js ADR 0001).
+/// - `lib/` imports `package:collection/collection.dart` only with
+///   `show mergeSort` (Chart.js ADR 0010, Sort).
+/// - The `lib/pure.dart` closure of the harness package `chartjs_test_utils`
+///   is a pure layer too. It also imports `package:test` and the pure layers
+///   of the checked package (porting-flow.md 3).
 library;
 
 import 'dart:collection';
@@ -28,13 +33,23 @@ const Set<String> pureDartLibraries = {
   'dart:typed_data',
 };
 
-/// The other libraries of pure layers.
+/// The other libraries of pure layers. [collectionLibrary] gives
+/// `mergeSort` to `jsSort` from phase 2 (Chart.js ADR 0010, Sort).
 const Set<String> purePackageLibraries = {
+  collectionLibrary,
   'package:meta/meta.dart',
   'package:intl/intl.dart',
   'package:intl/number_symbols.dart',
   'package:intl/number_symbols_data.dart',
 };
+
+/// The library of `package:collection` that `lib/` can import.
+const String collectionLibrary = 'package:collection/collection.dart';
+
+/// The names that `lib/` shows from [collectionLibrary]. The other sorts of
+/// the library are not those of `Array.prototype.sort` (Chart.js ADR 0010,
+/// Sort).
+const Set<String> collectionNames = {'mergeSort'};
 
 /// The libraries that `lib/` can import in addition to the pure ones.
 const Set<String> flutterLibraries = {
@@ -90,6 +105,14 @@ const Set<String> webTestLibraries = {
 /// The directory that ported files never import.
 const String themeDirectory = 'lib/src/theme/';
 
+/// The pure-layer root of the harness package (porting-flow.md 3).
+const String harnessPureRoot = 'lib/pure.dart';
+
+/// The libraries that the harness pure layer can import in addition to the
+/// pure ones and the pure layers of the checked package. An entry that ends
+/// with `/` is a prefix.
+const Set<String> harnessPureLibraries = {'package:test/'};
+
 /// One Dart file of the package.
 final class _Library {
   _Library(this.path, this.source) : header = Header.parse(source.lines);
@@ -114,30 +137,17 @@ final class _Edge {
 
 /// Runs the guard over the package in [packageDirectory]. The paths in the
 /// findings start with [displayPrefix].
+///
+/// When [harnessDirectory] holds a [harnessPureRoot], the guard also checks
+/// the closure of that file. Its paths start with [harnessDisplayPrefix].
 ({List<Finding> findings, int files}) checkLibImports(
   String packageDirectory, {
   String displayPrefix = '',
+  String? harnessDirectory,
+  String harnessDisplayPrefix = '',
 }) {
   final packageName = _packageName(packageDirectory);
-  final libraries = SplayTreeMap<String, _Library>();
-  for (final directory in const ['lib', 'test']) {
-    for (final file in dartFilesUnder('$packageDirectory/$directory')) {
-      final path = relativePath(packageDirectory, file);
-      libraries[path] = _Library(
-        path,
-        DartSource(File(file).readAsStringSync()),
-      );
-    }
-  }
-  for (final library in libraries.values) {
-    for (final directive in library.source.directives) {
-      for (final uri in directive.uris) {
-        library.edges.add(
-          _Edge(uri, directive.line, _resolve(packageName, library.path, uri)),
-        );
-      }
-    }
-  }
+  final libraries = _load(packageDirectory, packageName, const ['lib', 'test']);
 
   final findings = <Finding>[];
   void report(_Library library, int line, String message) {
@@ -169,6 +179,23 @@ final class _Edge {
           edge.line,
           'imports ${edge.uri}, which is not on the lib/ allowlist '
           '(porting-flow.md 4, tool 1).',
+        );
+      }
+    }
+  }
+
+  // The sorts of package:collection.
+  for (final library in libraries.values) {
+    if (!library.path.startsWith('lib/')) continue;
+    for (final directive in library.source.directives) {
+      if (!directive.uris.contains(collectionLibrary)) continue;
+      final shown = directive.shown;
+      if (shown == null || !shown.every(collectionNames.contains)) {
+        report(
+          library,
+          directive.line,
+          '${directive.keyword}s $collectionLibrary without '
+          '"show ${collectionNames.join(', ')}" (Chart.js ADR 0010, Sort).',
         );
       }
     }
@@ -246,7 +273,93 @@ final class _Edge {
     }
   }
 
-  return (findings: findings, files: libraries.length);
+  var files = libraries.length;
+  if (harnessDirectory != null &&
+      File('$harnessDirectory/$harnessPureRoot').existsSync()) {
+    files += _checkHarness(
+      harnessDirectory,
+      packageName,
+      pure,
+      findings,
+      harnessDisplayPrefix,
+    );
+  }
+  return (findings: findings, files: files);
+}
+
+/// Reads the Dart files in [directories] of the package in
+/// [packageDirectory], with the edges of their directives.
+SplayTreeMap<String, _Library> _load(
+  String packageDirectory,
+  String packageName,
+  List<String> directories,
+) {
+  final libraries = SplayTreeMap<String, _Library>();
+  for (final directory in directories) {
+    for (final file in dartFilesUnder('$packageDirectory/$directory')) {
+      final path = relativePath(packageDirectory, file);
+      libraries[path] = _Library(
+        path,
+        DartSource(File(file).readAsStringSync()),
+      );
+    }
+  }
+  for (final library in libraries.values) {
+    for (final directive in library.source.directives) {
+      for (final uri in directive.uris) {
+        library.edges.add(
+          _Edge(uri, directive.line, _resolve(packageName, library.path, uri)),
+        );
+      }
+    }
+  }
+  return libraries;
+}
+
+/// Checks the [harnessPureRoot] closure of the harness package in
+/// [harnessDirectory]: it imports only pure libraries, the
+/// [harnessPureLibraries] and the files of [pure], the pure layers of
+/// package [packageName]. Returns the number of files in the closure.
+int _checkHarness(
+  String harnessDirectory,
+  String packageName,
+  Map<String, String?> pure,
+  List<Finding> findings,
+  String displayPrefix,
+) {
+  final harnessName = _packageName(harnessDirectory);
+  final libraries = _load(harnessDirectory, harnessName, const ['lib']);
+  final closure = _closure(
+    [harnessPureRoot],
+    libraries,
+    (path) => path.startsWith('lib/'),
+  );
+  final checked = 'package:$packageName/';
+  for (final path in closure.keys) {
+    final library = libraries[path]!;
+    for (final edge in library.edges) {
+      final target = edge.target;
+      if (target != null && target.startsWith('lib/')) continue;
+      if (target == null && _isHarnessPureAllowed(edge.uri)) continue;
+      if (edge.uri.startsWith(checked) &&
+          pure.containsKey(
+            normalizeRelative('lib/${edge.uri.substring(checked.length)}'),
+          )) {
+        continue;
+      }
+      findings.add(
+        Finding(
+          '$displayPrefix$path',
+          edge.line,
+          'imports ${target ?? edge.uri}, but the file is in the pure layer '
+              'of the harness${_chain(path, closure)} (it imports only pure '
+              'libraries, package:test and the pure layers of $packageName, '
+              'porting-flow.md 3).',
+        ),
+      );
+    }
+  }
+  return closure.length;
 }
 
 String _packageName(String packageDirectory) {
@@ -287,6 +400,12 @@ bool _isPureAllowed(String uri) =>
 
 bool _isLibAllowed(String uri) =>
     _isPureAllowed(uri) || flutterLibraries.contains(uri);
+
+bool _isHarnessPureAllowed(String uri) =>
+    _isPureAllowed(uri) ||
+    harnessPureLibraries.any(
+      (entry) => entry.endsWith('/') ? uri.startsWith(entry) : uri == entry,
+    );
 
 bool _isWebTestAllowed(String uri) =>
     pureDartLibraries.contains(uri) ||

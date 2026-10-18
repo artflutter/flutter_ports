@@ -7,7 +7,7 @@ to people as much as to agents.
   at the repository root. `upstream` checks out every `third_party/` submodule. Install the git
   hooks with [lefthook](https://lefthook.dev) 1.0 or newer: `lefthook install`. The `test:web`
   script needs Google Chrome. To generate reference data, use an x64 build of Node.js v24.12.0
-  ([AGENTS.md](AGENTS.md#tests); Chart.js ADR 0002).
+  ([AGENTS.md](AGENTS.md#tests); Chart.js ADR 0010).
 - **DCO:** sign off every commit (`git commit -s`), certifying the
   [Developer Certificate of Origin](https://developercertificate.org/). The lefthook `commit-msg`
   hook and the CI `dco` job check for the `Signed-off-by` trailer.
@@ -21,7 +21,7 @@ to people as much as to agents.
 - **Licensing:** keep upstream notices. Code from another project also needs its notice in the
   package LICENSE, a `REUSE.toml` annotation and an entry in
   `packages/flutter_chartjs/tool/port_sources.yaml` (see [AGENTS.md](AGENTS.md#licensing);
-  Chart.js ADR 0005). Never
+  Chart.js ADR 0011). Never
   copy code from GPL or otherwise incompatible projects (see
   [packages/flutter_chartjs/doc/prior-art](packages/flutter_chartjs/doc/prior-art/README.md)).
   `reuse lint` runs in CI.
@@ -30,6 +30,7 @@ to people as much as to agents.
   - `dart run melos run analyze`
   - `dart run melos run test --no-select`
   - `dart run melos run test:web` (the web tests, with dart2js and dart2wasm in Chrome)
+  - `dart run melos run test:cases` (the upstream spec cases, tool 5)
   - `dart run melos run check:port` (the import guard, the header check and the JS-semantics check)
 
   CI runs the same checks.

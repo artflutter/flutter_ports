@@ -33,6 +33,10 @@ String _warning(String message) => 'warning: $_package/$message';
 const String _chartJsCopyright =
     'SPDX-FileCopyrightText = ["2014-2024 Chart.js Contributors", "2026 A"]';
 
+const String _testUtilsCopyright =
+    'SPDX-FileCopyrightText = '
+    '["2020 chartjs-test-utils Contributors", "2026 A"]';
+
 const List<String> _portSources = [
   'sources:',
   '  - header: Chart.js',
@@ -599,6 +603,166 @@ void main() {
         _error('lib/src/types/geometric.dart:5$malformed'),
         _error('lib/src/types/geometric.dart:6$malformed'),
         _error('lib/src/types/geometric.dart:7$malformed'),
+      ]);
+    });
+  });
+
+  group('harness package', () {
+    const harness = 'packages/chartjs_test_utils';
+    const testUtilsHeader =
+        '// Ported from chartjs-test-utils v0.4.0 src/context.js '
+        '(MIT, chartjs-test-utils Contributors).';
+
+    setUp(() {
+      tree
+        ..write('$_package/tool/port_sources.yaml', [
+          ..._portSources,
+          '  - header: chartjs-test-utils',
+          '    version: "v0.4.0"',
+          '    url: https://github.com/chartjs/chartjs-test-utils',
+          '    language: js',
+          '    spdx: MIT',
+          '    holder: chartjs-test-utils Contributors',
+          '    pin:',
+          '      kind: copy',
+          '      path: third_party/chartjs-test-utils',
+          '    targets:',
+          '      - source: src/',
+          '        dart: $harness/lib/src/',
+        ])
+        ..write('third_party/chartjs-test-utils/src/context.js', ['//'])
+        ..write('REUSE.toml', [
+          'version = 1',
+          '[[annotations]]',
+          'path = "$_package/**"',
+          _chartJsCopyright,
+          'SPDX-License-Identifier = "MIT"',
+          '[[annotations]]',
+          'path = "$harness/**"',
+          _testUtilsCopyright,
+          'SPDX-License-Identifier = "MIT"',
+          '[[annotations]]',
+          'path = "$_package/lib/src/js/fdlibm_*.dart"',
+          'SPDX-FileCopyrightText = ["1993 Sun Microsystems, Inc.", "2026 A"]',
+          'SPDX-License-Identifier = "SunPro AND MIT"',
+        ])
+        ..write('$harness/pubspec.yaml', ['name: chartjs_test_utils'])
+        ..write('$harness/LICENSE', [
+          'Copyright (c) 2020 chartjs-test-utils Contributors',
+        ])
+        ..write('$harness/lib/pure.dart', [_portOnly])
+        ..write('$harness/lib/src/context.dart', [testUtilsHeader])
+        ..write('$harness/tool/a.dart', [_portOnly]);
+    });
+
+    List<String> runWithHarness() => describeFindings(
+      checkPortHeaders(
+        HeaderCheckInput(
+          repository: tree.root,
+          home: tree.path(_package),
+          packages: withHarnessPackage([tree.path(_package)]),
+          gitlink: (_, _) => null,
+        ),
+      ).findings,
+    );
+
+    test('is added next to the home package when it exists', () {
+      final home = tree.path(_package);
+      expect(withHarnessPackage([home]), [home, tree.path(harness)]);
+      expect(withHarnessPackage([home, tree.path(harness)]), [
+        home,
+        tree.path(harness),
+      ]);
+      tree.delete('$harness/pubspec.yaml');
+      expect(withHarnessPackage([home]), [home]);
+      expect(withHarnessPackage([tree.path(harness)]), [tree.path(harness)]);
+    });
+
+    test('passes a harness that keeps the rules', () {
+      expect(runWithHarness(), isEmpty);
+    });
+
+    test('has its headers checked', () {
+      tree
+        ..write('$harness/lib/a.dart', ['/// Docs.'])
+        ..write('$harness/lib/src/context.dart', [_portOnly])
+        ..write('$harness/tool/a.dart', [testUtilsHeader])
+        ..write('$harness/test/a_test.dart', [
+          _header(
+            'chartjs-test-utils',
+            'v0.4.0',
+            'src/utils.js',
+            'MIT, chartjs-test-utils Contributors',
+          ),
+        ]);
+      expect(runWithHarness(), [
+        startsWith('error: $harness/lib/a.dart:1: line 1 is neither'),
+        equals(
+          'error: $harness/lib/src/context.dart:1: the file is at the Dart '
+          'path of chartjs-test-utils src/context.js: start it with its '
+          '"// Ported from" header, not the port-only marker.',
+        ),
+        equals(
+          'error: $harness/test/a_test.dart:1: src/utils.js does not exist '
+          'in third_party/chartjs-test-utils.',
+        ),
+        equals(
+          'error: $harness/test/a_test.dart:1: the Dart path of src/utils.js '
+          'is $harness/lib/src/utils.dart (porting-flow.md 2.5), not this '
+          'file.',
+        ),
+        startsWith(
+          'error: $harness/tool/a.dart:1: files under test/port/ and tool/ '
+          'are port-only',
+        ),
+        startsWith(
+          'error: $harness/tool/a.dart:1: the Dart path of src/context.js is '
+          '$harness/lib/src/context.dart',
+        ),
+      ]);
+    });
+
+    test('reads the LICENSE of the harness, not of the home package', () {
+      tree
+        ..write('$harness/LICENSE', ['Copyright (c) 2026 A'])
+        ..write('$_package/LICENSE', [
+          'Copyright (c) 2014-2024 Chart.js Contributors',
+          'Copyright (C) 1993 by Sun Microsystems, Inc.',
+          'Copyright (c) 2020 chartjs-test-utils Contributors',
+        ]);
+      expect(runWithHarness(), [
+        equals(
+          'error: $harness/lib/src/context.dart:1: $harness/LICENSE does not '
+          'name "chartjs-test-utils Contributors".',
+        ),
+      ]);
+      tree.delete('$harness/LICENSE');
+      expect(runWithHarness(), [
+        equals(
+          'error: $harness/lib/src/context.dart:1: $harness/LICENSE does not '
+          'exist.',
+        ),
+      ]);
+    });
+
+    test('needs its own REUSE.toml annotation', () {
+      tree.write('REUSE.toml', [
+        'version = 1',
+        '[[annotations]]',
+        'path = "packages/**"',
+        _chartJsCopyright,
+        'SPDX-License-Identifier = "MIT"',
+        '[[annotations]]',
+        'path = "$_package/lib/src/js/fdlibm_*.dart"',
+        'SPDX-FileCopyrightText = ["1993 Sun Microsystems, Inc.", "2026 A"]',
+        'SPDX-License-Identifier = "SunPro AND MIT"',
+      ]);
+      expect(runWithHarness(), [
+        equals(
+          'error: $harness/lib/src/context.dart:1: the last REUSE.toml '
+          'annotation that matches the file (line 2) does not list '
+          '"chartjs-test-utils Contributors".',
+        ),
       ]);
     });
   });

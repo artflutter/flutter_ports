@@ -94,7 +94,13 @@ sources:
     targets:
       - source: src/
         dart: packages/flutter_chartjs/lib/src/kurkle_color/
+      - source: packed.js
+        dart: packages/flutter_chartjs/lib/src/kurkle_color/packed.dart
+      - source: test/index.js
+        dart: packages/flutter_chartjs/test/kurkle_color/index_test.dart
     files:
+      - packed.js
+      - test/index.js
       - src/byte.js
       - src/color.js
       - src/hex.js
@@ -128,21 +134,3 @@ sources:
       - src/matchers.options.js
       - src/spriting.js
       - src/utils.js
-
-  - header: pixelmatch
-    version: "v5.3.0"
-    version_source: the Chart.js v4.5.1 package.json:116 (^5.3.0), resolved to 5.3.0 in its pnpm-lock.yaml
-    url: https://github.com/mapbox/pixelmatch
-    language: js
-    spdx: ISC
-    holder: Mapbox
-    pin:
-      kind: submodule
-      path: third_party/pixelmatch
-      ref: "v5.3.0"
-      commit: 910cd5db90d1e3acef90454f5c2534053ee58d98
-    targets:
-      - source: index.js
-        dart: packages/chartjs_test_utils/lib/src/pixelmatch.dart
-    files:
-      - index.js

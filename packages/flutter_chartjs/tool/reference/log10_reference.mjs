@@ -12,7 +12,7 @@
 //
 //   node tool/reference/log10_reference.mjs
 //
-// The reference is V8 13.6 on x64 (porting-flow.md 2.3), and the script stops
+// The reference is V8 13.6 on x64 (Chart.js ADR 0010), and the script stops
 // on any other architecture. V8 compiles fdlibm without fused multiply-add on
 // x64 and with it on arm64, so the two builds differ in the last bit for some
 // inputs: netlib e_log10.c compiled by clang with -ffp-contract=off gives the

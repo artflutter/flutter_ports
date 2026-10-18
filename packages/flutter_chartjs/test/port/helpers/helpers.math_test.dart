@@ -1,7 +1,9 @@
 // Original code, not ported from Chart.js: helpers.math cases with no spec.
 import 'dart:math' as js_math;
+import 'dart:typed_data';
 
 import 'package:flutter_chartjs/src/helpers/helpers.math.dart' as math;
+import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:test/test.dart';
 
@@ -39,6 +41,40 @@ Matcher _isSameNumber(double expected) => predicate<double>(
       : actual == expected && actual.isNegative == expected.isNegative,
   'Object.is($expected)',
 );
+
+/// The IEEE 754 bit pattern of [x] in hex, from two 32-bit halves (dart2js
+/// has no 64-bit int). All NaN values give `NaN`: JS has one NaN value.
+String _bits(double x) {
+  if (x.isNaN) return 'NaN';
+  final data = ByteData(8)..setFloat64(0, x);
+  String half(int offset) =>
+      data.getUint32(offset).toRadixString(16).padLeft(8, '0');
+  return '${half(0)}${half(4)}';
+}
+
+/// Point coordinates for the tests that compare a function with its earlier
+/// `jsToNumber` and `Math.pow` form: JS `null`, the signed zeros, NaN (a
+/// copied `undefined`), the infinities, a subnormal, values whose square
+/// overflows, and seeded random finites.
+List<double?> _coordinates() {
+  final random = js_math.Random(20261019);
+  return [
+    null,
+    0,
+    -0,
+    double.nan,
+    double.infinity,
+    double.negativeInfinity,
+    double.minPositive,
+    -double.minPositive,
+    1.4e154,
+    -1.4e154,
+    1,
+    -3.5,
+    for (var i = 0; i < 4; i++)
+      (random.nextDouble() - 0.5) * js_math.pow(10.0, random.nextInt(40) - 20),
+  ];
+}
 
 void main() {
   group('helpers.math constants', () {
@@ -204,9 +240,67 @@ void main() {
         3,
       );
     });
+
+    test('gives the bits of the jsToNumber and Math.pow form', () {
+      // The form before Chart.js ADR 0010: ToNumber through jsToNumber, and
+      // Math.pow(x, 2) through dart:math pow.
+      double before(Point pt1, Point pt2) => js_math.sqrt(
+        // js-ok: the earlier form, the reference of the test.
+        js_math.pow(jsToNumber(pt2.x) - jsToNumber(pt1.x), 2.0) +
+            // js-ok: the earlier form, the reference of the test.
+            js_math.pow(jsToNumber(pt2.y) - jsToNumber(pt1.y), 2.0),
+      );
+      final coordinates = _coordinates();
+      for (final x1 in coordinates) {
+        for (final y1 in coordinates) {
+          final pt1 = _Point(x1, y1);
+          for (final x2 in coordinates) {
+            for (final y2 in coordinates) {
+              final pt2 = _Point(x2, y2);
+              expect(
+                _bits(math.distanceBetweenPoints(pt1, pt2)),
+                _bits(before(pt1, pt2)),
+                reason: '($x1, $y1) to ($x2, $y2)',
+              );
+            }
+          }
+        }
+      }
+    });
   });
 
   group('getAngleFromPoint', () {
+    test('reads a null coordinate as jsToNumber(null), 0', () {
+      final coordinates = _coordinates();
+      for (final x1 in coordinates) {
+        for (final y1 in coordinates) {
+          for (final x2 in coordinates) {
+            for (final y2 in coordinates) {
+              final actual = math.getAngleFromPoint(
+                _Point(x1, y1),
+                _Point(x2, y2),
+              );
+              final expected = math.getAngleFromPoint(
+                _Point(jsToNumber(x1), jsToNumber(y1)),
+                _Point(jsToNumber(x2), jsToNumber(y2)),
+              );
+              final reason = '($x1, $y1) about ($x2, $y2)';
+              expect(
+                _bits(actual.angle),
+                _bits(expected.angle),
+                reason: reason,
+              );
+              expect(
+                _bits(actual.distance),
+                _bits(expected.distance),
+                reason: reason,
+              );
+            }
+          }
+        }
+      }
+    });
+
     test('keeps the angle in (-PI/2, 3PI/2]', () {
       expect(
         math.getAngleFromPoint(const _Point(null, null), const _Point(0, -1)),

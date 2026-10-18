@@ -496,5 +496,5 @@ Flutter 3.47, after 0.1.0.
 
 [ADR 0003](../../../../docs/adr/0003-package-names.md) names `flutter_chartjs`, `chartjs_gallery` and the
 `flutter_<library>` rule for later ports. It does not name adapter packages. Thus the adapter
-package name needs an amendment to ADR 0003. The proposed name is `flutter_chartjs_forui`, with the
-rule `flutter_chartjs_<design system>` for adapters.
+package name needs a new ADR that supersedes ADR 0003. The proposed name is
+`flutter_chartjs_forui`, with the rule `flutter_chartjs_<design system>` for adapters.

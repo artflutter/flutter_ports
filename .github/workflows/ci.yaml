@@ -42,6 +42,9 @@ jobs:
           submodules: ${{ matrix.os == 'ubuntu-latest' }}
       - uses: ./.github/actions/setup
       - run: dart run melos run test --no-select
+      - name: Report the upstream spec cases (porting-flow.md section 4, tool 5)
+        if: matrix.os == 'ubuntu-latest'
+        run: dart run melos run test:cases
 
   test-web:
     # The flutter_chartjs tests that are not @TestOn('vm'), compiled with
@@ -65,6 +68,33 @@ jobs:
       - run: dart run melos run check:lib-imports
       - run: dart run melos run check:headers
       - run: dart run melos run check:js-semantics
+
+  upstream-manifest:
+    # Tool 4 of packages/flutter_chartjs/doc/porting-flow.md section 4. The
+    # committed doc/upstream files equal the output for the pinned
+    # third_party/Chart.js. This is the only CI job that runs Node.js.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.12.0
+      - name: Test the manifest generator
+        working-directory: packages/flutter_chartjs
+        run: node --test tool/upstream_manifest/test/*.test.mjs
+      - name: Regenerate the upstream manifest
+        working-directory: packages/flutter_chartjs
+        run: node tool/upstream_manifest/upstream_manifest.mjs --src ../../third_party/Chart.js --out doc/upstream/manifest.json
+      - name: Fail when the committed manifest differs
+        run: |
+          git diff --exit-code -- packages/flutter_chartjs/doc/upstream
+          untracked=$(git status --porcelain --untracked-files=all -- packages/flutter_chartjs/doc/upstream)
+          if [ -n "$untracked" ]; then
+            echo "::error::uncommitted files: $untracked (run dart run melos run upstream:manifest)"
+            exit 1
+          fi
 
   gallery-web:
     runs-on: ubuntu-latest

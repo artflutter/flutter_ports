@@ -90,6 +90,7 @@ void main() {
         "import 'dart:math' as math;\n"
         "import 'package:a/a.dart' show A;\n"
         "import 'package:b/b.dart' deferred as b_alias show B;\n"
+        "import 'package:c/c.dart' show C, D hide E show F;\n"
         "export 'src/b.dart'\n"
         "    if (dart.library.io == 'true') 'src/b_io.dart'\n"
         "    if (dart.library.js_interop) 'src/b_web.dart';\n"
@@ -100,13 +101,14 @@ void main() {
       expect(
         [
           for (final d in source.directives)
-            '${d.keyword} ${d.uris.join(' ')} ${d.line} ${d.prefix}',
+            [d.keyword, ...d.uris, d.line, d.prefix, d.shown].join(' '),
         ],
         [
-          'import dart:math 2 math',
-          'import package:a/a.dart 3 null',
-          'import package:b/b.dart 4 b_alias',
-          'export src/b.dart src/b_io.dart src/b_web.dart 5 null',
+          'import dart:math 2 math null',
+          'import package:a/a.dart 3 null [A]',
+          'import package:b/b.dart 4 b_alias [B]',
+          'import package:c/c.dart 5 null [C, D, F]',
+          'export src/b.dart src/b_io.dart src/b_web.dart 6 null null',
         ],
       );
     });

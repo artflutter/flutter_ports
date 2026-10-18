@@ -6,6 +6,7 @@ import 'package:test/test.dart';
 
 import '../../tool/src/check_support.dart';
 import '../../tool/src/js_semantics.dart';
+import '../../tool/src/port_headers.dart' show withHarnessPackage;
 import 'file_tree.dart';
 
 const String _ported =
@@ -122,6 +123,57 @@ void main() {
         'final b = x.remainder(2) + math.sqrt(x) + math.pi + jsLog10(x);',
         'final c = jsAtan2(y, x) + isInt + x.sortKey + power(2) + sinh(x);',
         'jsSort(list, compare);',
+        'final d = math.sqrt(jsSquare((p.x ?? 0) - (q.x ?? 0)));',
+      ]),
+      isEmpty,
+    );
+  });
+
+  test('flags the sorts of package:collection', () {
+    expect(
+      _sites([
+        "import 'package:collection/collection.dart' as c;",
+        'mergeSort(list, compare: compare);',
+        'c.mergeSort<double>(list, start: 1);',
+        'insertionSort(list);',
+        'final a = list.sorted(compare);',
+        'final b = list.sortedBy((e) => e.x) + list.sortedBy<num>(key);',
+        'final d = list.sortedByCompare(key, compare);',
+        'list',
+        '  ..sortBy((e) => e.x)',
+        '  ..sortByCompare(key, compare)',
+        '  ..sortRange(0, 2, compare);',
+        'list.sortRange (0, 2, compare); // js-ok: two distinct values.',
+        'final e = list.sortedBy<int Function()>(key);',
+        'final f = list.sortedByCompare<Map<String, int>>(key, compare);',
+      ]),
+      [
+        '3 mergeSort(',
+        '4 mergeSort(',
+        '5 insertionSort(',
+        '6 .sorted(',
+        '7 .sortedBy(',
+        '14 .sortedBy(',
+        '8 .sortedByCompare(',
+        '15 .sortedByCompare(',
+        '10 .sortBy(',
+        '11 .sortByCompare(',
+        '12 .sortRange(',
+      ],
+    );
+    expect(
+      _check(['final a = list.sorted(compare);']).single,
+      endsWith(
+        'Array.prototype.sort is (Chart.js ADR 0010, Sort). Use jsSort.',
+      ),
+    );
+    expect(
+      _check([
+        'jsSort(list, compare);',
+        'final a = jsMergeSort(list) + list.isSorted(compare);',
+        'final b = x.sortedKeys + x.sortByName + sortRangeOf(list);',
+        '_mergeSort(list);',
+        'mergeSortLength(list);',
       ]),
       isEmpty,
     );
@@ -134,11 +186,9 @@ void main() {
         'final a = math.sin(t) + math.cos(t) + math . tan(t);',
         'final b = math.asin(t) + math.acos(t) + math.atan(t);',
         'final c = math.atan2(t, 1) + math.exp(t) + math.log(t);',
-        'final d = other.sin(t) + jsAtan2(t, 1) + mathx.log(t);',
+        'final d = other.tan(t) + jsAtan2(t, 1) + mathx.log(t);',
       ]),
       [
-        '3 math.sin(',
-        '3 math.cos(',
         '3 math.tan(',
         '4 math.asin(',
         '4 math.acos(',
@@ -151,11 +201,23 @@ void main() {
     expect(
       _sites([
         "import 'dart:math';",
-        'final a = sin(t) + x.cos(t) + log(t);',
+        'final a = tan(t) + x.atan(t) + log(t);',
       ]),
-      ['3 sin(', '3 log('],
+      ['3 tan(', '3 log('],
     );
-    expect(_sites(['final a = math.sin(t) + log(t);']), isEmpty);
+    expect(_sites(['final a = math.tan(t) + log(t);']), isEmpty);
+  });
+
+  test('accepts dart:math sin and cos (Chart.js ADR 0010)', () {
+    expect(
+      _sites([
+        "import 'dart:math' as math;",
+        'final a = math.sin(t) + math.cos(t);',
+        "import 'dart:math';",
+        'final b = sin(t) + cos(t);',
+      ]),
+      isEmpty,
+    );
   });
 
   test('ignores comments and string contents, not interpolations', () {
@@ -234,13 +296,41 @@ void main() {
         r"String c(double? v) => 'v $v ${v ?? 0}';",
         r"String d(List<double> l) => '${l.length} ${l.first.isNaN}';",
       ]);
-    final sites = await numberInterpolationSites([tree.path('lib/a.dart')]);
+    final sites = await resolvedSites([tree.path('lib/a.dart')]);
     expect(
       [for (final site in sites[tree.path('lib/a.dart')]!) site.line],
       [2, 3, 4, 4],
     );
     expect(sites.values.first.first.name, 'number interpolation');
-    expect(await numberInterpolationSites(const []), isEmpty);
+    expect(await resolvedSites(const []), isEmpty);
+  });
+
+  test('flags dart:math max and min with double or num operands', () async {
+    final tree = FileTree()
+      ..write('lib/a.dart', [
+        _ported,
+        "import 'dart:math' as math;",
+        "import 'dart:math' show max, min;",
+        'double a(double x, double y) => math.max(x, y);',
+        'num b(int i, double y) => math.min(i, y);',
+        'double c(double x) => min<double>(x, 1);',
+        'double d(List<double> l) => l.fold(double.infinity, math.min);',
+        'int e(int i, int j) => math.max(i, j) + max<int>(0, j);',
+        'int f(List<int> l) => l.fold(0, math.max);',
+        'double g(double x, double y) => max(x, y);',
+      ]);
+    final sites = await resolvedSites([tree.path('lib/a.dart')]);
+    expect(
+      [
+        for (final site in sites[tree.path('lib/a.dart')]!)
+          '${site.line} ${site.name}',
+      ],
+      ['4 max(', '5 min(', '6 min(', '7 min(', '10 max('],
+    );
+    expect(
+      sites.values.first.first.message,
+      contains('Call jsMax from lib/src/js/js_math.dart'),
+    );
   });
 
   test('examines lib/ and test/ of a package', () async {
@@ -269,5 +359,49 @@ void main() {
       describeFindings(missing.findings),
       contains(startsWith('error: tool/port_sources.yaml: Cannot open')),
     );
+  });
+
+  test('examines the harness package next to the home package', () async {
+    const home = 'packages/flutter_chartjs';
+    const harness = 'packages/chartjs_test_utils';
+    const testUtils =
+        '// Ported from chartjs-test-utils v0.4.0 src/matchers.js '
+        '(MIT, chartjs-test-utils Contributors).';
+    final tree = FileTree()
+      ..write('$home/pubspec.yaml', ['name: flutter_chartjs'])
+      ..write('$home/tool/port_sources.yaml', [
+        ..._portSources,
+        '  - header: chartjs-test-utils',
+        '    version: "v0.4.0"',
+        '    url: https://github.com/chartjs/chartjs-test-utils',
+        '    language: js',
+        '    spdx: MIT',
+        '    holder: chartjs-test-utils Contributors',
+        '    pin:',
+        '      kind: copy',
+        '      path: third_party/chartjs-test-utils',
+        '    targets:',
+        '      - source: src/',
+        '        dart: $harness/lib/src/',
+      ])
+      ..write('$home/lib/src/a.dart', [_ported, 'final a = 1.0;'])
+      ..write('$harness/pubspec.yaml', ['name: chartjs_test_utils'])
+      ..write('$harness/lib/pure.dart', [
+        '// Original code, not ported from Chart.js: x.',
+        'final b = 3 % 2;',
+      ])
+      ..write('$harness/lib/src/matchers.dart', [
+        testUtils,
+        'final c = (1.5 - 0.5).abs().round();',
+        'final d = 3 % 2;',
+      ]);
+    final packages = withHarnessPackage([tree.path(home)]);
+    expect(packages, [tree.path(home), tree.path(harness)]);
+    final result = await checkJsSemantics(packages, base: tree.root);
+    expect(result.files, 2);
+    expect(result.findings.map((f) => '${f.path}:${f.line}'), [
+      '$harness/lib/src/matchers.dart:2',
+      '$harness/lib/src/matchers.dart:3',
+    ]);
   });
 }

@@ -3,7 +3,8 @@
 /// The header check of porting-flow.md section 4, tool 2.
 ///
 /// For each Dart file under `lib/`, `test/` and `tool/` of the examined
-/// packages:
+/// packages (the command adds the harness package `chartjs_test_utils` when
+/// it exists, [withHarnessPackage]):
 /// - Line 1 is a `// Ported from` line or the port-only marker. More
 ///   `// Ported from` lines and backport lines can follow directly.
 /// - The project, license and holder of a `// Ported from` line agree with
@@ -47,6 +48,27 @@ const List<String> differenceCategories = [
 
 /// The directories of a package that the check examines.
 const List<String> examinedDirectories = ['lib', 'test', 'tool'];
+
+/// The directory name of the test harness package, next to the home package
+/// (porting-flow.md 3).
+const String harnessPackageName = 'chartjs_test_utils';
+
+/// [packages], plus the harness package next to the first package when it
+/// has a `pubspec.yaml` and is not in [packages] (porting-flow.md 4, tool 2).
+///
+/// Each package keeps its own `LICENSE` for the holder check (AGENTS.md
+/// Licensing).
+List<String> withHarnessPackage(List<String> packages) {
+  final home = posixPath(packages.first);
+  final slash = home.lastIndexOf('/');
+  final harness = '${home.substring(0, slash + 1)}$harnessPackageName';
+  if (slash < 0 ||
+      packages.map(posixPath).contains(harness) ||
+      !File('$harness/pubspec.yaml').existsSync()) {
+    return packages;
+  }
+  return [...packages, harness];
+}
 
 /// The package-relative directories whose files are port-only.
 const List<String> portOnlyDirectories = ['test/port/', 'tool/'];

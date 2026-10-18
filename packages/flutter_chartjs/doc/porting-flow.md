@@ -3,7 +3,7 @@
 - Status: proposed
 - Date: 2026-10-16
 - Related: [Chart.js ADR 0001](adr/0001-theming.md), [theming.md](theming.md),
-  [ADR 0004](../../../docs/adr/0004-follow-upstream-between-releases.md),
+  [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md),
   [upstream-tracking.md](upstream-tracking.md)
 
 This document defines how one Chart.js v4.5.1 module becomes Dart code in
@@ -57,8 +57,9 @@ the `differences.md` schema.
    The sample passes `analyze --fatal-infos` and `format:check` (Dart 3.12.2, very_good_analysis
    10.3.0).
 4. **Licensing** (AGENTS.md Licensing). The new sources are @kurkle/color 0.3.2 (MIT, Jukka
-   Kurkela), fdlibm 5.3 (SunPro, Sun Microsystems, Inc.), chartjs-test-utils 0.4.0 (MIT,
-   chartjs-test-utils Contributors) and pixelmatch 5.3.0 (ISC, Mapbox).
+   Kurkela), fdlibm 5.3 (SunPro, Sun Microsystems, Inc.) and chartjs-test-utils 0.4.0 (MIT,
+   chartjs-test-utils Contributors). The port has no pixelmatch code
+   ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)).
 5. **Port the specs.**
    - The path is `test/specs/<upstream base>_test.dart`. The header names
      `test/specs/<base>.tests.js`.
@@ -71,9 +72,9 @@ the `differences.md` schema.
      as `setUp` plus `tearDown`.
    - Put tests of port-only behavior in `test/port/`.
 6. **Fixtures.** From phase 7, register the fixture directory with the runner (upstream prefix
-   match). Hand-port configs with functions to `test/fixtures/hand/`. Update the ledger rows.
+   match). Hand-port configs with functions to `test/fixtures/hand/`.
 7. **Status.** The values are `not started`, `in progress`, `partial` (with a symbol list),
-   `ported`, `verified`, `replaced`, `distributed` and `n/a` (with a reason). Until tool 6 lands in
+   `ported`, `replaced`, `distributed` and `n/a` (with a reason). Until tool 6 lands in
    phase 5, edit `parity.md` by hand. After that, `packages/flutter_chartjs/doc/status.yaml` holds the manual
    states. Tool 6 writes `parity.md`. The upstream status script reads the same source. The first
    PR with a new value updates the `parity.md` legend.
@@ -93,8 +94,8 @@ the first PR that depends on it. Phase 1 accepts the ADRs with gate 1 or 2. Phas
 the four invariants of Chart.js ADR 0001, because tool 1 and AGENTS.md rule 5 enforce them. The
 rest of Chart.js ADR 0001 stays proposed until phase 5.
 
-[ADR 0004](../../../docs/adr/0004-follow-upstream-between-releases.md) is common to all ports. The other
-decisions in this section are for Chart.js only. Each of them becomes a file in
+[ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md) is common to all ports.
+The other decisions in this section are for Chart.js only. Each of them becomes a file in
 [`packages/flutter_chartjs/doc/adr/`](adr/) with the next free number. If a later port needs the same
 decision, the decision moves to `docs/adr/`.
 
@@ -105,13 +106,15 @@ this document until their ADR files exist.
 | Subsection | ADR | Gate |
 |---|---|---|
 | 2.1 | [Chart.js ADR 0006: Options representation and resolver](adr/0006-options-representation-and-resolver.md) | 2 |
-| 2.3 | [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md) | 1 |
+| 2.3 | [Chart.js ADR 0010: JS numeric semantics](adr/0010-js-numeric-semantics.md), which supersedes Chart.js ADR 0002 | 1 |
 | 2.4 | [Chart.js ADR 0003: Type-only dependencies](adr/0003-type-only-dependencies.md) | 1 |
-| 2.5 | [Chart.js ADR 0004: Dart file naming](adr/0004-dart-file-naming.md) | 1 |
+| 2.5 | [Chart.js ADR 0012: Dart file naming](adr/0012-dart-file-naming.md), which supersedes Chart.js ADR 0004 | 1 |
 | 2.9, `helpers.extras` and the animator frame source | [Chart.js ADR 0007: Frame scheduling](adr/0007-frame-scheduling.md) | 2 |
-| 2.13 | [Chart.js ADR 0005: Third-party sources](adr/0005-third-party-sources.md) | 1 |
+| 2.13 | [Chart.js ADR 0011: Third-party sources](adr/0011-third-party-sources.md), which supersedes Chart.js ADR 0005 | 1 |
+| 2.3, number formatting | [Chart.js ADR 0008: Number formatting on package:intl](adr/0008-number-formatting-on-package-intl.md) | 2 |
+| 2.2, 2.3, 2.6, 2.10 | [Chart.js ADR 0009: No display-only JS exactness](adr/0009-no-display-only-js-exactness.md) | 2 |
 
-ADR 0004 (gate 1) belongs to [upstream-tracking.md](upstream-tracking.md).
+ADR 0006 (gate 1) belongs to [upstream-tracking.md](upstream-tracking.md).
 
 ### 2.1 Chart.js ADR 0006: Options representation and resolver (gate 2)
 
@@ -135,36 +138,54 @@ declared-key marker at `core.datasetController.js:817`, not at `:818`.
 - a `dart:ui` implementation in a file that no helper imports
 - a recorder implementation in the harness
 
-The layer owns the Canvas 2D semantics that `dart:ui` lacks. The current path is outside
-`save()`/`restore()`. Transforms apply when the code adds a point. `arcTo` and the arc sweep follow
-Chromium. Non-finite arguments do nothing. Dashes restart for each contour. Phase 2 ports
-`toFontString` and `_isPointInArea` (`helpers.canvas.dart` is `partial`).
+The layer owns only the Canvas 2D semantics that `dart:ui` lacks and that change behavior. The
+current path is outside `save()`/`restore()`. Transforms apply when the code adds a point. Non-finite
+arguments do nothing. The layer has no Chromium-exact `arcTo` or arc sweep math
+([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)). Phase 2 ports `toFontString` and
+`_isPointInArea` (`helpers.canvas.dart` is `partial`).
 
 `RenderView` already applies the device pixel ratio (DPR) at the root (`rendering/view.dart:70-72`,
 `:267-270`). Thus the `dart:ui` context composes each transform on a base
 `scale(1 / currentDevicePixelRatio)`. `retinaScale` stays a line-by-line port. The chart does not
 apply the DPR two times. With that base, `clearCanvas` and the arc clip rectangle still map
-onto the box. The fixture harness applies the root scale and rasterizes at `canvas.width` ×
-`canvas.height`, for example with `OffsetLayer.toImage(pixelRatio:)`. A widget test with a
+onto the box. A widget test with a
 `tester.view.devicePixelRatio` other than 1 pins the base scale.
 
 **Evidence.** Specs port 1:1 only against the mock context API: 24 methods and 9 setters
 (chartjs-test-utils `src/context.js:102-146`).
 
-### 2.3 Chart.js ADR 0002: JS numeric semantics (gate 1)
+### 2.3 Chart.js ADR 0010: JS numeric semantics (gate 1)
 
-[Chart.js ADR 0002](adr/0002-js-numeric-semantics.md) holds the decision, the translation rules
-and the evidence. In short:
+[Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) holds the complete decision, the
+translation rules and the evidence. It supersedes Chart.js ADR 0002.
+[Chart.js ADR 0008](adr/0008-number-formatting-on-package-intl.md) holds the number formatting
+decision. [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) holds the principle of no
+display-only JS exactness. In short:
 - An unexported JS runtime in `lib/src/js/` represents the JS builtins. Ported files call it where
   upstream calls a builtin.
 - The reference engine is V8 13.6 as Node.js v24.12.0 for x64 builds it. Reference data never
   come from a browser or from an arm64 Node.js.
-- Each transcendental `Math` builtin that ported code calls is a pure-Dart netlib fdlibm port.
-  Phase 2 adds `sin`, `cos` and `pow` for `helpers.easing`.
+- `Math.log10` and `Math.atan2` are pure-Dart netlib fdlibm ports, because their last bit changes
+  log-scale ticks and arc hit tests. `Math.sin`, `Math.cos` and `Math.pow` use `dart:math` `sin`,
+  `cos` and `pow` with `double` operands, because no pixel depends on their last bit.
+- `Math.max` and `Math.min` with `double` operands are `jsMax` and `jsMin` of
+  `lib/src/js/js_math.dart`. On dart2wasm, these functions compare the operands in their own
+  code, because the generic `dart:math` `max` and `min` box `double` operands there. On the VM
+  and dart2js, they call `dart:math` `max` and `min`. With `int` operands, ported code calls
+  `dart:math` `max` and `min`.
+- `Math.pow(x, 2)` is `jsSquare(x)` of `lib/src/js/js_math.dart`, which returns `x * x`. The
+  product is correctly rounded. On the reference engine, `Math.pow(x, 2)` gave the bits of
+  `x * x` for all of 23 million probe inputs. Thus the result is the JS result on every target.
+  `ToNumber` of a `double?` value whose `null` is JS `null`, such as `Point.x` and `Point.y`, is
+  `(e ?? 0)`, not `jsToNumber(e)`.
 - Where the Dart SDK or a package that Flutter 3.44.9 pins gives the JS result, the port uses it.
-  Ported code calls `dart:math` `max` and `min`. The port-only `jsSort` calls `mergeSort` of
+  The port-only `jsSort` calls `mergeSort` of
   `package:collection`. `jsDateNow()` reads `clock.now()` of `package:clock`. The `FakeAsync` zone
   of `testWidgets` fakes that clock.
+- `Intl.NumberFormat` is the `NumberFormat` of `package:intl`. The port-only adapter
+  `lib/src/js/js_intl.dart` maps the JS locale and options onto it
+  ([Chart.js ADR 0008](adr/0008-number-formatting-on-package-intl.md)). A string that differs from
+  the V8 string is the `differences.md` row `adapt-intl-number-format`.
 - Tool 3 enforces the translation rules. A site that keeps a flagged form for a stated reason
   carries `// js-ok: <reason>` at the end of its line, or alone on the line before it.
 
@@ -176,25 +197,23 @@ short, each declaration file becomes a library of `abstract interface class` dec
 class of the same name imports the types library with the prefix `types`. A union waits for its
 first ported caller. The `src/types/*.d.ts` rows become `distributed`.
 
-### 2.5 Chart.js ADR 0004: Dart file naming (gate 1)
+### 2.5 Chart.js ADR 0012: Dart file naming (gate 1)
 
-[Chart.js ADR 0004](adr/0004-dart-file-naming.md) holds the decision and its evidence. In short,
+[Chart.js ADR 0012](adr/0012-dart-file-naming.md) holds the decision and its evidence. It
+supersedes Chart.js ADR 0004. In short,
 "Dart-cased" applies to identifiers. File and directory names keep the upstream spelling, for
 example `lib/src/controllers/controller.polarArea.dart`. `simpleArc.dart` is the one file that
 needs `// ignore_for_file: file_names`. Upstream `_`-prefixed exports drop the underscore. A
 `_`-prefixed member that other modules read also drops the underscore. It carries `@internal`.
+A member of an interface in `lib/src/types/` does not carry it, because a type library imports
+only other type libraries.
 
-### 2.6 ADR: Visual verification (gate 3)
+### 2.6 Chart.js ADR 0009: No display-only JS exactness, image comparison part (gate 2)
 
-**Decision.** Reuse the upstream PNGs. Do not re-render references. Compare with pixelmatch 5.3.0
-semantics (white alpha blend) and each fixture's top-level `threshold` (default 0.1) and
-`tolerance` (default 0.001). Key the fixture ledger by fixture path plus PNG sha256. Run on Linux
-with the default Skia software path of flutter_tester. Use Flutter-only goldens only for Flutter
-behavior.
-
-**Evidence.** A 596-line state machine replayed the Canvas calls of chart.js 4.5.1. 381/384
-geometry and 208/208 sprite fixtures pass at upstream thresholds. The 3 failures pass at 0.05,
-because DisplayList changes rectangle paths into `DrawRect`. pixelmatch 7.2.0 changes 33 results.
+[Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) holds the decision. In short, the
+port does not compare its renders with the upstream PNGs. It has no pixelmatch port, no
+Canvas-call replay suite and no fixture ledger. The fixture configs run as smoke tests (tool 7).
+Flutter goldens of the port test only Flutter behavior.
 
 ### 2.7 ADR: Input events and interaction state (gate 3)
 
@@ -230,7 +249,7 @@ gesture arena. Thus parent scrollables keep their gestures. Events coalesce for 
 
 **Open.**
 - Touch sizes (hit radius, hover radius, font size) and the tooltip after a touch lift (#7738).
-  An amendment of Chart.js ADR 0001 decides the touch sizes in phase 9
+  A new ADR decides the touch sizes in phase 9
   ([theming.md](theming.md) §11).
 - The first size. Upstream sizes the chart at construction (spec
   `core.controller.tests.js:651`). The first observer notification uses `throttled`
@@ -268,7 +287,7 @@ and the frame source of the animator. `requestAnimFrame` calls
 `debounce` uses a `dart:async` `Timer`. `Chart.destroy()` cancels that `Timer`. `core.animator.js` stays
 one module-level animator on `requestAnimFrame`. The chart host mutes a chart under
 `TickerMode(enabled: false)`. Thus `core.animator.js` has two small `DIVERGES` hunks.
-[Chart.js ADR 0002](adr/0002-js-numeric-semantics.md) gives the clock: `jsDateNow()` on
+[Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) gives the clock: `jsDateNow()` on
 `clock.now()`. The rest of this subsection stays a proposal for ADR: Animation (gate 5).
 
 **Decision.** None yet. [Chart.js ADR 0007](adr/0007-frame-scheduling.md) decisions 6 and 7
@@ -288,17 +307,16 @@ animates until this ADR decides ([theming.md](theming.md) §3.7, §11).
   calendar steps with the `DateTime` constructor, not with `Duration`. Clamp month ends. Truncate
   `diff` toward zero. Return null for invalid input, also for NaN and ±Infinity. Stop an `add`
   loop that does not advance.
-- Format through `intl` (`^0.20.2`). This ADR selects the token dialect of the default adapter:
-  moment tokens or ICU tokens.
-- Read "now" through `jsDateNow()` ([Chart.js ADR 0002](adr/0002-js-numeric-semantics.md)),
+- Format with `DateFormat` of `intl`, with ICU pattern tokens
+  ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)). The port has no
+  moment-compatible formatter or parser.
+- Read "now" through `jsDateNow()` ([Chart.js ADR 0010](adr/0010-js-numeric-semantics.md)),
   because `scale.time.js:342-343` calls `Date.now()`. A spec sets the time with `withClock` of
   `package:clock`. The fake time of `testWidgets` starts at the wall-clock time of the test start.
   It moves only by the pumped durations.
-- The specs use a test adapter in `chartjs_test_utils`. It runs in UTC only. It matches
-  chartjs-adapter-moment 1.0.1 with moment 2.29.4 and moment-timezone 0.5.42 in `Etc/UTC`. It has a
-  small formatter and a lenient parser for the moment tokens that the specs use. Write it from the
-  moment documentation as ideas only. A dev-time Node script can run the pinned moment to give
-  expected values.
+- The specs use the default adapter in UTC. The harness has no moment emulation. A spec case that
+  asserts moment-token output or parses a moment format string skips with
+  `'diverges: <row id>'`.
 - `flutter_chartjs` has no named time zones. A later optional package can add them on `timezone`
   `^0.11.2` (BSD-2-Clause, labs.dart.dev, pure Dart). That package imports only
   `package:timezone/timezone.dart`. It takes the zone from `adapters.date.zone`, as the luxon
@@ -318,7 +336,6 @@ animates until this ADR decides ([theming.md](theming.md) §3.7, §11).
   `DateTime`.
 
 **Open.**
-- The token dialect.
 - The `isoWeekday` rule: moment can move a date forward, but luxon and date-fns move it back.
 - Whether `diff` returns fractions or truncates.
 - Outside 1970-2037, the VM and dart2wasm compute local offsets from a substitute year. Thus only
@@ -347,8 +364,8 @@ imports neither forui nor Material.
   [theming.md](theming.md) §5.3) needs 3.47. That PR
   moves to 3.47.7 with the iOS deployment-target migration. It updates the toolchain lines of
   AGENTS.md Conventions and CONTRIBUTING.md Setup.
-- That PR also adds a CI `floor` job on 3.44.9. It re-runs the replay suite, the renderer default,
-  the sort probe and the cycle probe on 3.47.7.
+- That PR also adds a CI `floor` job on 3.44.9. It re-runs the sort probe and the cycle probe on
+  3.47.7.
 - Keep `flutter_chartjs` at `sdk: ^3.12.0`, `flutter: ">=3.44.0"`. Phase 9 sets the published floor.
 - The floor job does not use `.github/actions/setup` (a root `flutter pub get`). It writes this
   `pubspec_overrides.yaml` in `packages/flutter_chartjs`, in CI only:
@@ -370,17 +387,19 @@ that the workspace analyzer missed. With only `resolution:`, a harness dev_depen
 resolve. On the 3.50 beta, `flutter/material.dart` is deprecated. `dart run melos` crashes on Dart
 3.14.
 
-### 2.13 Chart.js ADR 0005: Third-party sources (gate 1)
+### 2.13 Chart.js ADR 0011: Third-party sources (gate 1)
 
-[Chart.js ADR 0005](adr/0005-third-party-sources.md) holds the decision and its evidence. In
-short:
-- `third_party/kurkle-color` (`v0.3.2`), `third_party/chartjs-test-utils` (`v0.4.0`) and
-  `third_party/pixelmatch` (`v5.3.0`) are reference-only shallow submodules.
+[Chart.js ADR 0011](adr/0011-third-party-sources.md) holds the complete decision and its
+evidence. It supersedes Chart.js ADR 0005. In short:
+- `third_party/kurkle-color` (`v0.3.2`) and `third_party/chartjs-test-utils` (`v0.4.0`) are
+  reference-only shallow submodules. The phase 2 cleanup removed `third_party/pixelmatch`
+  ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)).
 - `third_party/fdlibm/` holds unchanged netlib copies, because fdlibm has no git repository.
 - `packages/flutter_chartjs/tool/port_sources.yaml` has one entry for each project. Tool 2 reads
   it.
-- The ADR clarifies ADR 0002. Dev-time tools can read and evaluate reference sources. Dart code
-  never imports them. No tool builds them inside `third_party/`. No package ships them.
+- [ADR 0005](../../../docs/adr/0005-pin-upstream-sources.md) gives the reference-only rules.
+  Dev-time tools can read and evaluate reference sources. Dart code never imports them. No tool
+  builds them inside `third_party/`. No package ships them.
 
 **Evidence** (2026-10-16). `.gitmodules` listed only Chart.js.
 
@@ -388,28 +407,26 @@ short:
 
 **Package.** `packages/chartjs_test_utils` (`publish_to: none`) mirrors the npm package module by
 module. It is a dev_dependency of `flutter_chartjs`. It also depends on `flutter_chartjs`. Probes
-showed that the workspace resolves this cycle. The harness, its notices, the test font and the
-recordings stay outside the published archive. Port exactly 0.4.0 (`package.json:90`).
+showed that the workspace resolves this cycle. The harness, its notices and the test font stay
+outside the published archive. Port exactly 0.4.0 (`package.json:90`).
 
 | Upstream (0.4.0) | Dart | Phase |
 |---|---|---|
 | — | `pure.dart` (spec set-up for `dart test`) | 2 |
 | `src/context.js` | `MockContext implements CanvasRenderingContext2D` | 3 |
 | `src/matchers.js`, `src/matchers.options.js` | matchers | 3 |
-| `src/spriting.js`; pixelmatch `index.js` | `spriting.dart` plus sheet; `pixelmatch.dart` | 3 |
-| — | test font, recordings | 3 |
+| — | test font | 3 |
 | `src/utils.js` | `acquireChart` (512×512, `animation: false`, `locale: 'en-US'`), `afterEvent`, `triggerMouseEvent`, `waitForResize` | 5 |
-| `src/fixture.js` | `specsFromFixtures` (prefix match, plugin rule, `run` hook) | 7 |
+| `src/fixture.js` | `specsFromFixtures` as a smoke runner (prefix match, plugin rule, `run` hook), no image comparison | 7 |
+| `src/spriting.js`; pixelmatch `index.js`; Canvas-call recordings | not ported (`n/a`): no image comparison ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)) | — |
 | `injectWrapperCSS`, `useShadowDOM`, `useOffscreenCanvas` | not ported (`n/a`) | — |
 
-**Licensing.** pixelmatch is ISC ("Copyright (c) 2019, Mapbox"). Its code needs the notice in the
-harness `LICENSE`, `LICENSES/ISC.txt`, a last-placed `REUSE.toml` annotation and the header
-`// Ported from pixelmatch v5.3.0 index.js (ISC, Mapbox).`
+**Licensing.** The harness has no pixelmatch code. Thus its `LICENSE` has no ISC notice.
 
-**`test/index.js` equivalent.** `packages/flutter_chartjs/test/flutter_test_config.dart` ports
-`test/index.js`. It translates DPR 1 (`:5`), the UTC zone (`:23`), the disabled colors plugin
+**`test/index.js` equivalent.** From phase 3, `packages/flutter_chartjs/test/flutter_test_config.dart`
+ports `test/index.js`. It translates DPR 1 (`:5`), the UTC zone (`:23`), the disabled colors plugin
 (`:25-28`) and `releaseCharts()` (`:34-36`). Two port-only hunks carry `DIVERGES` markers and
-rows:
+`harness-*` rows. Phase 3 adds the two rows:
 - the restore of `defaults` and `overrides` in `tearDown`, from a snapshot after the harness setup
 - the test font install.
 
@@ -417,7 +434,9 @@ The harness installs no theme ([Chart.js ADR 0001](adr/0001-theming.md)). Thus n
 depends on the platform that flutter_test reports (`TargetPlatform.android`).
 
 `dart test` does not read `flutter_test_config.dart`. Thus each pure-layer spec file calls the
-same set-up from `package:chartjs_test_utils/pure.dart`.
+same set-up from `package:chartjs_test_utils/pure.dart`. Phase 2 added `pure.dart`. It restores
+`defaults` and `overrides` after each test. `pure.dart` is a port-only file. Thus its restore has no
+`DIVERGES` marker and no row.
 
 **Frames in tests.** The scheduling of [Chart.js ADR 0007](adr/0007-frame-scheduling.md) runs only
 when the test pumps.
@@ -437,7 +456,7 @@ when the test pumps.
 |---|---|---|---|
 | Pure-layer specs | yes | yes | yes |
 | Other specs (`@TestOn('vm')`) | yes | no | no |
-| Fixtures and replay (`@Tags(['fixtures'])`) | ubuntu `fixtures` job | no | no |
+| Fixture smoke tests (`@Tags(['fixtures'])`) | ubuntu `fixtures` job | no | no |
 | Flutter-only goldens | one pinned runner | no | no |
 
 A pure-layer file is a file whose transitive imports reach neither `dart:ui` nor
@@ -454,13 +473,11 @@ The matrix does not use `flutter test --platform chrome`. That flag is deprecate
 JS leg compiles with DDC (`web_test_compiler.dart:113-176`), not with dart2js. `flutter build web`
 uses dart2js.
 
-**Fixture selection.** The melos `test` script passes `--exclude-tags fixtures`. The `fixtures`
+**Fixture selection.** From phase 7 (tool 7), the melos `test` script passes
+`--exclude-tags fixtures`. The `fixtures`
 job runs `flutter test --tags fixtures` with a shallow submodule checkout. A fixture test skips
 when the submodule is absent. It fails instead when `FIXTURES_REQUIRED=1`. Only that job sets
 this variable. A `CI=true` rule cannot do this, because GitHub sets `CI=true` in every job.
-
-**Renderer.** Never pass `--enable-impeller` to the fixture job. Re-run the full ledger on every
-`.fvmrc` change.
 
 ## 4. Tooling owned by this flow
 
@@ -470,10 +487,12 @@ melos script `check:port` and the CI job `port-checks` run tools 1-3. Tool 1 use
   `package:flutter/` libraries `foundation`, `gestures`, `painting`, `rendering`, `scheduler`,
   `semantics`, `services` and `widgets`, `package:meta/meta.dart`, `package:intl/intl.dart` with
   its `number_symbols` files, and the package's own files. From phase 2, also
-  `package:collection/collection.dart`. From phase 5, also `package:clock/clock.dart`
-  ([Chart.js ADR 0002](adr/0002-js-numeric-semantics.md)).
+  `package:collection/collection.dart` with `show mergeSort`. From phase 5, also
+  `package:clock/clock.dart` ([Chart.js ADR 0010](adr/0010-js-numeric-semantics.md)).
 - Pure layers: the same list without `dart:ui` and `package:flutter`, over the transitive closure.
 - Test files without `@TestOn('vm')`: pure layers, `package:test` and `pure.dart` only.
+- The harness: the closure of `packages/chartjs_test_utils/lib/pure.dart` is a pure layer. It
+  imports only pure libraries, `package:test` and the pure layers of `flutter_chartjs`.
 - Ported files: no import of `lib/src/theme/` ([Chart.js ADR 0001](adr/0001-theming.md)). `lib/`
   never imports `material`, `cupertino`, `material_ui` or `forui`.
 
@@ -502,7 +521,7 @@ check also examines that package. It fails unless all of these conditions are tr
 A Chart.js version older than `chartJsVersion` is stale. The header restamp belongs to
 upstream-tracking.
 
-**`differences.md` schema.** Each row is one `DIVERGES` hunk. Port-only files are not rows. The
+**`differences.md` schema.** Each row is one difference. One or more `DIVERGES` hunks name it. Port-only files are not rows. The
 columns are ID, Dart file and symbol, Upstream file@version:lines, Category, Reason, Upstream
 reference, Pinning test and Re-check on bump. The ID is a hyphenated name that starts with the
 lowercase category, for example `theme-H1`. It has an HTML anchor. The marker text after
@@ -511,26 +530,32 @@ lowercase category, for example `theme-H1`. It has an HTML anchor. The marker te
 
 **3. JS-semantics check** (`tool/check_js_semantics.dart`, `check:js-semantics`, phase 1). It
 examines the `lib/` and `test/` files whose header block names a `js` project of
-`tool/port_sources.yaml`. It flags these forms:
+`tool/port_sources.yaml`. When `packages/chartjs_test_utils` exists, the check also examines that
+package. It flags these forms:
 - `.round()`, `.roundToDouble()`, `.floor()`, `.ceil()`, `.truncate()`, `.clamp(`, `%`, `pow(`
-  with any base, every `.toString()` call, `is int` and `.sort(`
-- the `dart:math` functions `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `atan2`, `exp` and `log`
+  with any base, every `.toString()` call, `is int` and `.sort(`. A `pow` call with `double`
+  operands carries `// js-ok`.
+- the `dart:math` functions `tan`, `asin`, `acos`, `atan`, `atan2`, `exp` and `log`. `sin` and
+  `cos` are not flagged ([Chart.js ADR 0010](adr/0010-js-numeric-semantics.md)).
 - the interpolation of a value with the static type `double` or `num`
+- the calls and tear-offs of `dart:math` `max` and `min` with the type argument `double` or `num`.
+  Use `jsMax` and `jsMin` ([Chart.js ADR 0010](adr/0010-js-numeric-semantics.md)).
 - from phase 2, the sorts of `package:collection`: `mergeSort(`, `insertionSort(`, `.sorted(`,
   `.sortedBy(`, `.sortedByCompare(`, `.sortBy(`, `.sortByCompare(` and `.sortRange(`
 - from phase 5, `DateTime.now(`
 
 A site passes with `// js-ok: <reason>` at the end of its line, or alone on the line before it.
-The lexical rules read the code without comments and strings. The interpolation rule resolves
-types with `package:analyzer`, a dev_dependency of `flutter_chartjs`.
-[Chart.js ADR 0002](adr/0002-js-numeric-semantics.md) lists the forms that tool 3 does not find.
+The lexical rules read the code without comments and strings. The interpolation rule and the
+`max`/`min` rule resolve types with `package:analyzer`, a dev_dependency of `flutter_chartjs`.
+[Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) lists the forms that tool 3 does not find.
 
 **4. Upstream manifest** (`tool/upstream_manifest/`, Node, `upstream:manifest`, job
 `upstream-manifest`, mid phase 2). With `--src <checkout> --out <file>`, it writes
 `packages/flutter_chartjs/doc/upstream/manifest.json` plus the fixture configs as JSON. A `vm` run of the
-`describe` bodies finds the 31 loop-generated cases. Its fixture count becomes authoritative. It
-also records the defaults inventory and the JS builtin sites. Only this tool and the Node
-reference recorder of tool 7 need Node. They run on the porter's machine. In CI, only the
+`describe` bodies finds the loop-generated cases: 163 cases from 26 `it` call sites in 8 spec files
+at v4.5.1. 31 of them are in `helpers.easing`. Its fixture count becomes authoritative. It
+also records the defaults inventory and the JS builtin sites. Only this tool and the reference
+generators in `tool/reference/` need Node. They run on the porter's machine. In CI, only the
 `upstream-manifest` job runs Node. The bump report and the watch preview read the committed
 manifests or git.
 
@@ -544,23 +569,17 @@ the Flutter input mapping and `test/types`. It also writes the `differences.md` 
 category into the `parity.md` row of each file with `DIVERGES` hunks ([theming.md](theming.md)
 §7).
 
-**7. Fixture runner and fixture ledger** (`test:fixtures`, `fixtures:update`, job `fixtures`).
-Phase 3 brings the comparator, the replay suite and the ledger seed. Phase 7 brings the runner.
-- `test/fixtures/ledger.csv` has one row for each fixture. The columns are fixture, png_sha256,
-  kind, sprite, tolerance, threshold, replay, port, flutter and note. `flutter` is the SDK that
-  last confirmed the row.
-- The statuses are `pass`, `pass-relaxed: <threshold>`, `needs-real-font`, `needs-events`,
-  `hand-config`, `blocked: <module>`, `not-started` and `fail: <issue>`.
-- CI fails when a result differs from the ledger, or when a PNG hash is stale.
-- The harness keeps all 592 Canvas-call recordings (about 0.5 MB compressed) as a replay suite.
-- The Node reference recorder is a pinned part of tool 7. It pins `@kurkle/color` 0.3.2, because
-  npm resolves `^0.3.0` to 0.3.4.
+**7. Fixture smoke runner** (`test:fixtures`, job `fixtures`, phase 7). It builds a chart from
+each fixture config of a ported module and renders one frame. A test passes when no exception
+occurs. The runner compares no pixels and keeps no ledger
+([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)). It reads the configs that tool 4
+writes and the hand-ported configs in `test/fixtures/hand/`.
 
 **8. Port-order helper** (`tool/port_order.dart`, `port:next`, phase 5). It lists the ready
 modules and the interfaces that each module needs.
 
 **Node and ADR 0001.** A dev-time Node tool is not runtime. Nothing in `lib/` or `test/` loads it.
-A clarification in ADR 0001 records this.
+[ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md) records this in its Decision.
 
 ## 5. Revised phases
 
@@ -570,19 +589,19 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 - Elements import only `core.element` from core. 20 of 21 element cases need no chart.
 - 14 of the 23 core, element and scale spec files call `acquireChart`. Thus phase exits count cases.
 - Master (unreleased, milestone 4.6.0) fixes `retinaScale` (#12142). It also changes doughnut
-  spacing (#12238). ADR 0004 decides both.
+  spacing (#12238). ADR 0006 decides both.
 
 | Phase | Scope | Exit criteria |
 |---|---|---|
 | 0. Scaffold | done; the design documents | CI green |
-| 1. Decisions, minimum tooling, pilot | gate 1-2 ADRs; pins (2.13); tools 1-3; pilot by hand: `helpers.math`, `lib/src/js`, `geometric.dart`, `isFinite` from `helpers.core` | 12 `helpers.math` cases pass on VM, dart2js and dart2wasm; log10 comparison passes on the netlib port; AGENTS.md revised from the pilot; tools 1-3 green; gate 1-2 ADRs accepted |
-| 2. JS runtime, helpers, defaults | rest of `lib/src/js` and `lib/src/types`; helpers except `helpers.canvas` and `helpers.dom`, plus `toFontString` and `_isPointInArea`; `core.defaults` closure; @kurkle/color; null-vs-undefined resolver tests; `pure.dart`; tools 4-5 | 181 non-chart helper cases and 5 `core.defaults`/`core.ticks` cases pass on VM, pure-layer cases also on dart2js and dart2wasm; `test:cases` reports none missing |
-| 3. Canvas, text, platform, harness | `lib/src/canvas`; rest of `helpers.canvas`; `helpers.dom`; `platform.*`; internal chart host; phase-3 harness rows; replay suite; ledger seed | non-chart canvas and DOM cases pass; replay reaches 381/384 geometry and 208/208 sprite; text-metric probe recorded |
+| 1. Decisions, minimum tooling, pilot | done; gate 1-2 ADRs; pins (2.13); tools 1-3; pilot by hand: `helpers.math`, `lib/src/js`, `geometric.dart`, `isFinite` from `helpers.core` | 12 `helpers.math` cases pass on VM, dart2js and dart2wasm; log10 comparison passes on the netlib port; AGENTS.md revised from the pilot; tools 1-3 green; gate 1-2 ADRs accepted |
+| 2. JS runtime, helpers, defaults | done; rest of `lib/src/js` and `lib/src/types`; helpers except `helpers.canvas` and `helpers.dom`, plus `toFontString` and `_isPointInArea`; `core.defaults` closure; @kurkle/color; null-vs-undefined resolver tests; `pure.dart`; tools 4-5 | 181 non-chart helper cases and 5 `core.defaults`/`core.ticks` cases pass on VM, pure-layer cases also on dart2js and dart2wasm; `test:cases` reports none missing. Result: 179 of the 181 helper cases pass. The 2 `helpers.color` cases that need a canvas pattern and gradient skip as `blocked: helpers.canvas`. `test/port/helpers/helpers.color_test.dart` tests the same behavior with test classes. `helpers.rtl` is in progress: `overrideTextDirection` and `restoreTextDirection` need the canvas layer. `src/helpers/index.ts` re-exports `helpers.dom`. Both wait for phase 3 |
+| 3. Canvas, text, platform, harness | `lib/src/canvas`; rest of `helpers.canvas`; rest of `helpers.rtl`; `helpers.dom`; `src/helpers/index.ts`; `platform.*`; internal chart host; phase-3 harness rows | non-chart canvas and DOM cases pass; the 2 `helpers.color` canvas cases pass; text-metric probe recorded |
 | 4. Elements | `core.element`, point, line, bar, arc | 20 of 21 element cases pass |
 | 5. Core | `core.config` with hunks H0-H3 and their tests; registry to controller; phase-5 harness rows; tools 6 and 8 | non-chart core cases pass; others skipped `blocked: <module>` |
-| 6. Scales | seven scales; date adapters | non-chart scale cases pass |
-| 7. Controllers | bar first, then the other seven; fixture runner | controller and earlier chart-blocked cases pass or have rows; replay-passing fixtures pass with the port; gallery shows every type |
-| 8. Plugins | seven plugins; hunks H4a-H4c and H5 and their tests; input adapter for legend and tooltip | plugin cases pass; `plugin.*` ledger rows resolved |
+| 6. Scales | seven scales; default date adapter on `DateFormat` (ICU tokens) | non-chart scale cases pass; moment-token cases skip as `diverges` |
+| 7. Controllers | bar first, then the other seven; fixture smoke runner | controller and earlier chart-blocked cases pass or have rows; fixture smoke tests pass for the ported types; gallery shows every type |
+| 8. Plugins | seven plugins; hunks H4a-H4c and H5 and their tests; input adapter for legend and tooltip | plugin cases pass; `plugin.*` fixture smoke tests pass |
 | 9. Flutter API and release | public widget on the host; theme API; keyboard and semantics; docs; published floor (2.12); pana | `flutter_chartjs` 0.1.0 on pub.dev |
 
 ## 6. Changes to other files
@@ -597,32 +616,46 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 - Rule 4: status vocabulary, tool 6. Rule 5: the tool 1 allowlist, the library floor and the four
   invariants of Chart.js ADR 0001.
 - New rule: JS numeric semantics.
-- Licensing: ISC, SunPro, OFL. Item 1 becomes "its notice in the `LICENSE` of the package that
-  contains the code" (the harness for pixelmatch, the adapter for forui code). Commands and
+- Licensing: SunPro, OFL. Item 1 becomes "its notice in the `LICENSE` of the package that
+  contains the code" (the harness for chartjs-test-utils, the adapter for forui code). Commands and
   Layout: new scripts, packages, pins, `tool/` files.
+- Phase 2 applied the Commands and Layout revisions, the JS numeric rule, the spec skip reasons
+  and `setUpSpecs`. The other revisions wait for their phases.
 
 **Repository files.**
 - Root `pubspec.yaml`: `packages/chartjs_test_utils` in `workspace:`, new melos scripts,
-  `--exclude-tags fixtures` in `test`, and every `third_party` submodule in `upstream`.
+  `--exclude-tags fixtures` in `test` (phase 7), and every `third_party` submodule in `upstream`.
 - `packages/flutter_chartjs`: `meta`, `intl: ^0.20.2`, `collection: ^1.19.1` (phase 2),
   `clock: ^1.1.2` (phase 5), the dev_dependencies `chartjs_test_utils`
-  and `test`, and `dart_test.yaml` with the `fixtures` tag. The PR that adds tool 2 adds the
+  and `test`, and `dart_test.yaml` with the `fixtures` tag (phase 7). The PR that adds tool 2 adds the
   port-only marker to `lib/src/upstream.dart` and `test/upstream_test.dart`. Phase 1 added the
   dev_dependencies `test` and `analyzer` (for tool 3) and the two port-only markers.
 - `ci.yaml`: phase 1 added a shallow `submodules: true` checkout in the ubuntu `test` leg (for
   `upstream_test.dart`) and in the job `port-checks` (tools 1-3). It also added the job `test-web`
-  (dart2js and dart2wasm). Add the `fixtures` and `upstream-manifest` jobs.
+  (dart2js and dart2wasm). Phase 2 added the job `upstream-manifest` (tool 4) and the `test:cases`
+  step in the ubuntu `test` leg. Phase 7 adds the `fixtures` job.
 - `.gitmodules`, `commitlint.yaml` (the `chartjs_test_utils` scope), CONTRIBUTING.md
-  (pre-push list), the PR template, and `REUSE.toml` (harness, fdlibm, sprite sheet, font,
-  recordings). Phase 1 changed `.gitmodules`, the pre-push lists of CONTRIBUTING.md and the PR
-  template, and the fdlibm tables of `REUSE.toml`.
+  (pre-push list), the PR template, and `REUSE.toml` (harness, fdlibm, font). Phase 1 changed
+  `.gitmodules`, the pre-push lists of CONTRIBUTING.md and the PR
+  template, and the fdlibm tables of `REUSE.toml`. Phase 2 added the harness table of `REUSE.toml`
+  and `test:cases` to the pre-push lists. It removed the pixelmatch entry of `.gitmodules`.
 
 **ADRs and docs.**
-- ADR 0001 gets the Node clarification.
-- [Chart.js ADR 0005](adr/0005-third-party-sources.md) (2.13) amends ADR 0002. The status line of
-  ADR 0002 names it. The body of ADR 0002 stays as it is.
-- ADR 0003 records `chartjs_test_utils`. The forui adapter change (after 0.1.0,
-  [theming.md](theming.md) §5.3) records `flutter_chartjs_forui` and its `commitlint.yaml` scope.
+- An accepted ADR does not change. A changed decision gets a new ADR that states the complete
+  decision and supersedes the old ADR. The old ADR gets only the line "Superseded by".
+- [ADR 0005](../../../docs/adr/0005-pin-upstream-sources.md) supersedes ADR 0002. It states the
+  complete pin rules and the reference-only rules for dev-time tools.
+  [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md) supersedes ADR 0004. It
+  states the backport rules without the status `verified`.
+- [Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) (2.3) supersedes Chart.js ADR 0002.
+  [Chart.js ADR 0011](adr/0011-third-party-sources.md) (2.13) supersedes Chart.js ADR 0005.
+  [Chart.js ADR 0012](adr/0012-dart-file-naming.md) (2.5) supersedes Chart.js ADR 0004. It adds
+  the rule for the members of the type libraries.
+- The phase 2 cleanup removed `third_party/pixelmatch` and its references. The Consequences of
+  [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) have the list.
+- A new ADR that supersedes ADR 0003 records `chartjs_test_utils`. The forui adapter change
+  (after 0.1.0, [theming.md](theming.md) §5.3) records `flutter_chartjs_forui` and its
+  `commitlint.yaml` scope.
 - When the maintainers accept this plan, `packages/flutter_chartjs/doc/README.md` takes the phase table of
   section 5. `parity.md` takes the new phase numbers.
 
@@ -632,14 +665,17 @@ Phase 0 already made the index edits. `docs/README.md` links the six new documen
 ## 7. Risks and open questions
 
 **Risks**
+
+The numbers of the risks do not change, because ADRs cite them. A risk that no longer applies
+stays in the list as closed.
 1. **Text metrics.** 374 `toBeCloseToPixel` assertions depend on Chrome's font metrics. Failures
    become `differences.md` rows, not looser matchers.
-2. **Skia leaves flutter_tester.** Impeller costs 26 geometry and 3 sprite passes. Use
-   `pass-relaxed` rows with stated causes.
+2. **Skia leaves flutter_tester.** Closed. The port compares no pixels
+   ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)).
 3. **Map resolver speed on dart2js.** It is about 1.6× slower than V8 on the scriptable path.
    Typed resolvers come only after parity, behind the same specs.
-4. **Reference drift.** The recordings came from npm chart.js 4.5.1. In phase 3, build v4.5.1 in a
-   throwaway clone outside the repository. Compare it with the npm dist and record the result.
+4. **Reference drift.** Closed. The port has no Canvas-call recordings
+   ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)).
 5. **File-name lint gap.** If `file_names` starts to examine the whole name, 2.5 needs a new form.
 6. **Hot modules.** element.arc, core.datasetController, plugin.tooltip, plugin.filler,
    helpers.dom, helpers.canvas, core.scale, core.controller, scale.time, scale.radialLinear,
@@ -648,10 +684,9 @@ Phase 0 already made the index edits. `docs/README.md` links the six new documen
    unpublished package. Phase 9 runs pana first.
 
 **Open questions**
-- Fixture PNGs: read from the submodule (about 21 MB) or vendored (about 15 MB)?
-- The 31 real-font fixtures: re-render references or use Flutter-only goldens?
-- fdlibm or correctly rounded libm? log10 differs in the last bit on 7/5,909 inputs.
-  [Chart.js ADR 0002](adr/0002-js-numeric-semantics.md) proposes fdlibm for now. V8 `main` moved
+- fdlibm or correctly rounded libm for `log10` and `atan2`? log10 differs in the last bit on
+  7/5,909 inputs.
+  [Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) keeps fdlibm for now. V8 `main` moved
   `Math.log10` to a correctly rounded libm on 2026-05-11.
 - Tooltip after touch lift: keep upstream parity (#7738), hide on tap-up, or fade?
 - Research evidence: commit the archive of the 2026-10-16 probes under `tool/research/`, or keep it

@@ -81,9 +81,8 @@ list:
         'fdlibm',
         '@kurkle/color',
         'chartjs-test-utils',
-        'pixelmatch',
       ]);
-      expect(sources.map((s) => s.language), ['js', 'c', 'js', 'js', 'js']);
+      expect(sources.map((s) => s.language), ['js', 'c', 'js', 'js']);
       final chartJs = sources.first;
       expect(
         chartJs.dartPathOf('src/helpers/helpers.math.ts'),
@@ -102,8 +101,8 @@ list:
         'packages/flutter_chartjs/lib/src/js/fdlibm_atan.dart',
       );
       expect(
-        sources[4].dartPathOf('index.js'),
-        'packages/chartjs_test_utils/lib/src/pixelmatch.dart',
+        sources[3].dartPathOf('src/utils.js'),
+        'packages/chartjs_test_utils/lib/src/utils.dart',
       );
     });
   });
@@ -261,6 +260,18 @@ SPDX-License-Identifier = "SunPro AND (MIT OR ISC)"
         'packages/flutter_chartjs/lib/src/js/fdlibm_log.dart',
       );
       expect(fdlibm?.licenseIds, containsAll(['SunPro', 'MIT']));
+      final harness = annotationFor(
+        annotations,
+        'packages/chartjs_test_utils/lib/pure.dart',
+      );
+      expect(
+        harness?.copyrights,
+        containsAll([
+          contains('chartjs-test-utils Contributors'),
+          contains('Vasiliy Ditsyak'),
+        ]),
+      );
+      expect(harness?.licenseIds, ['MIT']);
     });
   });
 

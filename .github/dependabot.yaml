@@ -4,8 +4,8 @@ updates:
   # grouped so one bump updates every file that uses the action.
   #
   # The upstream submodules are pinned to release tags and bumped deliberately
-  # as port work (docs/adr/0002). Dependabot's gitsubmodule updater follows the
-  # upstream default branch instead, so it is not used.
+  # as port work (docs/adr/0005). Dependabot's gitsubmodule updater rewrites
+  # only the gitlink and sees no fixes between tags, so it is not used.
   - package-ecosystem: github-actions
     directories:
       - /

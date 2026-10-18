@@ -61,7 +61,7 @@ double niceNum(double range) {
   range = almostEquals(range, roundedRange, range / 1000)
       ? roundedRange
       : range;
-  // js-ok: the exponent is an integer, as porting-flow.md 2.3 requires.
+  // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0010).
   final niceRange = math.pow(10.0, log10(range).floorToDouble()).toDouble();
   final fraction = range / niceRange;
   final niceFraction = fraction <= 1
@@ -112,7 +112,7 @@ bool _isNonPrimitive(Object? n) {
 
 /// helpers.math.ts:67 `isNumber`.
 bool isNumber(Object? n) {
-  return !_isNonPrimitive(n) && !jsIsNaN(jsParseFloat(n)) && jsIsFinite(n);
+  return !_isNonPrimitive(n) && !jsParseFloat(n).isNaN && jsIsFinite(n);
 }
 
 /// helpers.math.ts:71 `almostWhole`.
@@ -142,8 +142,8 @@ void setMinAndMaxByKey(
     // An absent key reads as undefined, and isNaN(undefined) is true.
     if (array[i].containsKey(property) && !jsIsNaN(value)) {
       target
-        ..min = math.min(target.min, jsToNumber(value))
-        ..max = math.max(target.max, jsToNumber(value));
+        ..min = jsMin(target.min, jsToNumber(value))
+        ..max = jsMax(target.max, jsToNumber(value));
     }
   }
 }
@@ -186,10 +186,8 @@ double? decimalPlaces(Object? x) {
   Point centrePoint,
   Point anglePoint,
 ) {
-  final distanceFromXCenter =
-      jsToNumber(anglePoint.x) - jsToNumber(centrePoint.x);
-  final distanceFromYCenter =
-      jsToNumber(anglePoint.y) - jsToNumber(centrePoint.y);
+  final distanceFromXCenter = (anglePoint.x ?? 0) - (centrePoint.x ?? 0);
+  final distanceFromYCenter = (anglePoint.y ?? 0) - (centrePoint.y ?? 0);
   final radialDistanceFromCenter = math.sqrt(
     distanceFromXCenter * distanceFromXCenter +
         distanceFromYCenter * distanceFromYCenter,
@@ -208,10 +206,8 @@ double? decimalPlaces(Object? x) {
 /// helpers.math.ts:144 `distanceBetweenPoints`.
 double distanceBetweenPoints(Point pt1, Point pt2) {
   return math.sqrt(
-    // js-ok: integer exponent, as Chart.js ADR 0002 requires.
-    math.pow(jsToNumber(pt2.x) - jsToNumber(pt1.x), 2.0) +
-        // js-ok: integer exponent, as Chart.js ADR 0002 requires.
-        math.pow(jsToNumber(pt2.y) - jsToNumber(pt1.y), 2.0),
+    jsSquare((pt2.x ?? 0) - (pt1.x ?? 0)) +
+        jsSquare((pt2.y ?? 0) - (pt1.y ?? 0)),
   );
 }
 
@@ -255,7 +251,7 @@ bool angleBetween(
 ///
 /// Limit `value` between `min` and `max`
 double limitValue(double value, double min, double max) {
-  return math.max(min, math.min(max, value));
+  return jsMax(min, jsMin(max, value));
 }
 
 /// helpers.math.ts:194 `_int16Range`.
@@ -270,6 +266,6 @@ bool isBetween(
   double end, [
   double epsilon = 1e-6,
 ]) {
-  return value >= math.min(start, end) - epsilon &&
-      value <= math.max(start, end) + epsilon;
+  return value >= jsMin(start, end) - epsilon &&
+      value <= jsMax(start, end) + epsilon;
 }

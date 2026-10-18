@@ -4,7 +4,7 @@
 - Date: 2026-10-16
 - Related: [forui theming survey](prior-art/forui-theming.md), [porting flow](porting-flow.md),
   [upstream tracking](upstream-tracking.md),
-  [ADR 0004](../../../docs/adr/0004-follow-upstream-between-releases.md)
+  [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md)
 
 This document gives the design behind Chart.js ADR 0001. That ADR decides the mechanism in
 section 3. Section 5 is an API sketch for phase 9.
@@ -337,7 +337,7 @@ overrides in `raw`. Until then, one internal function derives the keys of sectio
 | `ChartThemeTransition.frames` | one chart update per frame, scales included | a phase 9 benchmark |
 | `ChartThemeExtension<T>` with `toScope` | `plugins.<id>.*` of a third-party plugin, from the tokens | the first ported third-party plugin |
 | Hover strategies | sealed `ChartHover`: `UpstreamChartHover`, `IdentityChartHover`, `LightnessChartHover`. Root `hover*Color` scriptables, one set per value, read only in active mode | a dark preset with lighter hover colors |
-| `touch` flag, `ChartSizes` | hit and hover radius, tooltip and legend padding, font sizes. Never behavior keys | an amendment of Chart.js ADR 0001 with ADR: Input events and interaction state |
+| `touch` flag, `ChartSizes` | hit and hover radius, tooltip and legend padding, font sizes. Never behavior keys | a new ADR that supersedes Chart.js ADR 0001, together with ADR: Input events and interaction state |
 | Material snippet | `onSurfaceVariant`, `outlineVariant`, `primary` at alpha 0.1, `surface`, `inverseSurface`, `onInverseSurface`, `textTheme.bodySmall` of the target `ThemeData`. CI compiles it in the gallery | after 0.1.0 |
 | forui adapter | section 5.3 | after 0.1.0 |
 
@@ -367,9 +367,9 @@ once. Inside a nested `FBasicTheme`, the adapter finds the farther `FTheme`. The
 
 The adapter change also does these items:
 
-1. It amends ADR 0003. First-party design-system adapters take the name `flutter_chartjs_<system>`.
-   They stay `publish_to: none` until their first release. On 2026-10-16, pub.dev had no package
-   `flutter_chartjs_forui`.
+1. The adapter change adds a new ADR that supersedes ADR 0003. In that ADR, first-party
+   design-system adapters take the name `flutter_chartjs_<system>`. They stay `publish_to: none`
+   until their first release. On 2026-10-16, pub.dev had no package `flutter_chartjs_forui`.
 2. It adds the `commitlint.yaml` scope `flutter_chartjs_forui` and a line in the AGENTS.md Layout
    section.
 3. It adds the package `LICENSE` and its `REUSE.toml` annotation.
@@ -450,7 +450,7 @@ goldens for each chart type.
 
 ## 9. Upstream bump impact
 
-Review these items on each bump, and on each backport (ADR 0004) into a hunk host:
+Review these items on each bump, and on each backport (ADR 0006) into a hunk host:
 
 - the values that the presets restate: `core.defaults.js:41-64`, `element.arc.ts:304-321`,
   `element.point.ts:31-50`, `core.scale.defaults.js:28-89`, `scale.radialLinear.js:345-410`,
@@ -486,7 +486,7 @@ theming work in each phase.
 |---|---|---|
 | 0. Now | the forui survey, this document and Chart.js ADR 0001 (proposed), linked from `docs/README.md`, `packages/flutter_chartjs/doc/prior-art/README.md` (Pages) and `packages/flutter_chartjs/doc/README.md` (Chart.js ADR 0001 and this document) | — |
 | 1. Decisions and minimum tooling | Chart.js ADR 0001 is accepted for its four invariants only. The rest stays proposed. porting-flow.md, section 6, adds the four invariants of Chart.js ADR 0001 to AGENTS.md rule 5 | — |
-| 2. JS runtime, helpers, defaults | a faithful `core.defaults` singleton, `getHoverColor`, `jsNumberToString` | [Chart.js ADR 0002](adr/0002-js-numeric-semantics.md) |
+| 2. JS runtime, helpers, defaults | a faithful `core.defaults` singleton, `getHoverColor`, `jsNumberToString` | [Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) |
 | 3. Canvas, text, platform, harness | CSS `rgba()` and font strings in the canvas layer, a harness without a theme | ADR: Canvas model, ADR: Text |
 | 4. Elements | nothing | — |
 | 5. Core | a Dart prototype of H0-H3, then Chart.js ADR 0001 accepted. H0-H3, `compile.dart` over raw Map themes, the guard, internal `ChartThemes.light`, test 1 and the non-palette rows of test 2 with test-registered components, `differences.md` rows | `core.config`, `helpers.config`, [Chart.js ADR 0006](adr/0006-options-representation-and-resolver.md) |
@@ -514,8 +514,8 @@ Risks:
 Open questions, to decide in phase 9:
 
 1. Touch values (hit radius 8, hover radius 6, font 14), and whether touch changes `interaction`
-   (proposed: no). An amendment of Chart.js ADR 0001 decides them with ADR: Input events and
-   interaction state. porting-flow.md, decision 2.7, must list this item.
+   (proposed: no). A new ADR that supersedes Chart.js ADR 0001 decides them, together with ADR:
+   Input events and interaction state. porting-flow.md, decision 2.7, must list this item.
 2. `easing` as a string (proposed) or an enum ([Chart.js ADR 0006](adr/0006-options-representation-and-resolver.md)).
 3. Does `frames` exist at all if its benchmark fails?
 4. Typed component styles: generated option classes, or `raw` only (section 5.1)? ADR: Typed

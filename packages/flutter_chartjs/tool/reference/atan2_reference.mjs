@@ -12,7 +12,7 @@
 //
 //   node tool/reference/atan2_reference.mjs
 //
-// The reference is V8 13.6 on x64 (porting-flow.md 2.3), and the script stops
+// The reference is V8 13.6 on x64 (Chart.js ADR 0010), and the script stops
 // on any other architecture. V8 on arm64 compiles fdlibm with fused
 // multiply-add and differs in the last bit for some inputs.
 

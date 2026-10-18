@@ -1,7 +1,7 @@
 # Upstream tracking for Chart.js
 
-- Status: proposed ([ADR 0004](../../../docs/adr/0004-follow-upstream-between-releases.md), which amends
-  [ADR 0002](../../../docs/adr/0002-pin-upstream-sources.md))
+- Status: proposed ([ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md). The pin
+  rules are in [ADR 0005](../../../docs/adr/0005-pin-upstream-sources.md).)
 - Date: 2026-10-16
 - Related: [porting-flow.md](porting-flow.md), [theming.md](theming.md),
   [upstream-ledger.md](upstream-ledger.md). Proposed future file:
@@ -17,7 +17,7 @@ This document owns the upstream tooling:
 [porting-flow.md](porting-flow.md) owns the per-module tooling:
 - the header check, the library import guard and the JS-semantics check
 - the upstream manifest, the parity generator and spec-case tracking
-- the fixture runner and fixture ledger, and the port-order helper
+- the fixture smoke runner and the port-order helper
 
 ## 1. Facts that drive the design
 
@@ -45,7 +45,7 @@ upstream behavior changes.
 
 ### 2.1 Units
 
-- **Unit of a bump: a release tag**, as in ADR 0002. A commit pin (§2.4) is the one exception.
+- **Unit of a bump: a release tag**, as in ADR 0005. A commit pin (§2.4) is the one exception.
 - **Unit of triage: a merged upstream PR.** Chart.js squash-merges: all 249 commits since
   `v4.0.0-release` end in `(#NNNN)`.
 
@@ -57,8 +57,8 @@ conditions are true:
 1. **Kind.** It is a `fix` or a `regression-fix` (§3). Features, behavior changes, refactors and
    types-only changes are never backports.
 2. **Scope.** It fixes a regression released up to the pinned tag (#12142 fixes #12097 from
-   v4.5.1). Or it fixes a bug in a module whose status is `in progress`, `partial`, `ported` or
-   `verified`. The status is in `parity.md` until the parity generator exists, then in
+   v4.5.1). Or it fixes a bug in a module whose status is `in progress`, `partial` or `ported`.
+   The status is in `parity.md` until the parity generator exists, then in
    `packages/flutter_chartjs/doc/status.yaml`. A `replaced` module has the status of its replacement file.
 3. **Self-contained.** It applies to the pinned file plus the recorded backports.
 4. **Recorded.** The same PR contains the `backported` ledger row, the header backport line, the
@@ -105,19 +105,20 @@ comes first. `element.arc` then gets one port, with #12238.
 
 ### 2.5 Text changes in other files
 
-These changes land when the maintainers accept ADR 0004, unless a row names a later PR. This
-document owns the final text of AGENTS.md rules 1 and 6 and the backport sentence of rule 2.
-porting-flow.md §6 links here for them.
+These changes land after the acceptance of ADR 0004 (2026-10-18), unless a row names a later PR.
+[ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md) now holds the rules of ADR
+0004. A row that starts with "Done" has landed. This document owns the final text of AGENTS.md
+rules 1 and 6 and the backport sentence of rule 2. porting-flow.md §6 links here for them.
 
 | Where | Change |
 |---|---|
-| AGENTS.md rule 1 | Replace the last sentence with: "Never port from memory or from other Dart chart libraries. Port from upstream `master` only as a backport. A backport is one merged commit. It fixes a regression released up to the pinned tag, or a bug in a module with the status `in progress`, `partial`, `ported` or `verified`. Record it in `packages/flutter_chartjs/doc/upstream-ledger.md` and in the file header (`packages/flutter_chartjs/doc/upstream-tracking.md`). Sources from other projects follow `packages/flutter_chartjs/doc/porting-flow.md` §2.13." |
+| AGENTS.md rule 1 | Replace the last sentence with: "Never port from memory or from other Dart chart libraries. Port from upstream `master` only as a backport. A backport is one merged commit. It fixes a regression released up to the pinned tag, or a bug in a module with the status `in progress`, `partial` or `ported`. Record it in `packages/flutter_chartjs/doc/upstream-ledger.md` and in the file header (`packages/flutter_chartjs/doc/upstream-tracking.md`). Sources from other projects follow `packages/flutter_chartjs/doc/porting-flow.md` §2.13." |
 | AGENTS.md rule 2 | Add: "The header version names the upstream version that the porter last reconciled the file with. A backport adds the line `// Upstream backport: chartjs/Chart.js@<sha8> (#<PR>).` directly below it." |
-| AGENTS.md rule 6 | Replace the text from "review" to the end of that sentence with: "review `git -C third_party/Chart.js diff <old-tag> <new-tag> -- src test/specs test/fixtures`. Then run `git add third_party/Chart.js` and update `chartJsVersion` and the Chart.js `version`, `ref` and `commit` in `packages/flutter_chartjs/tool/port_sources.yaml`. Port the diff for every started module. Close the ledger rows of the range. Restamp the headers (`packages/flutter_chartjs/doc/upstream-tracking.md` §4.8). Backports follow rule 1. They never move the submodule." Later PRs add the manifest step (tool 4, mid phase 2), the bump report command (`dart run melos run upstream:bump-report -- --from <old> --to <new>`, M6) and the fixture-ledger re-run |
+| AGENTS.md rule 6 | Done (2026-10-19). Rule 6 reviews the source, spec and fixture paths and the bump report once it exists. It updates `chartJsVersion` and the Chart.js `version`, `ref` and `commit` in `packages/flutter_chartjs/tool/port_sources.yaml`, runs the manifest step (tool 4), ports the diff for every started module, closes the ledger rows of the range, restamps the headers (§4.8) and updates `parity.md`. Backports follow ADR 0006. Later PRs add the bump report command (`dart run melos run upstream:bump-report -- --from <old> --to <new>`, M6) and the fixture smoke run |
 | AGENTS.md Commands and Layout | Phase 1 adds the ledger to Layout. Each tool PR adds its entry (`upstream:status`, `upstream:ledger`, `upstream:ledger:check`, `upstream:bump-report`, the watch workflow, the issue templates), in the `dart run melos run …` form |
-| ADR 0002 | Status line only: "accepted; amended by ADR 0004". [Chart.js ADR 0005](adr/0005-third-party-sources.md) adds its name when the maintainers accept it (porting-flow.md §2.13) |
-| `.github/dependabot.yaml` lines 6-8 | Replace the outdated reason with the ADR 0004 reason |
-| `packages/flutter_chartjs/doc/README.md` | Link ADR 0004. Phase 0 added the other links |
+| ADR 0002 | Done (2026-10-19). ADR 0002 has only the new status line "Superseded by ADR 0005". [ADR 0005](../../../docs/adr/0005-pin-upstream-sources.md) states the complete pin rules |
+| `.github/dependabot.yaml` lines 6-8 | Done (2026-10-19). The comment gives the reason of ADR 0005 |
+| `packages/flutter_chartjs/doc/README.md` | Done (2026-10-19). It links ADR 0005 and ADR 0006. Phase 0 added the other links |
 | `.github/PULL_REQUEST_TEMPLATE.md` | Add: "Backports: ledger row, header line, `Upstream-*` trailers. Bump PRs use Rebase and merge." |
 
 ### 2.6 Never tracked, and signals
@@ -236,7 +237,7 @@ git -C .dart_tool/chartjs-history log --oneline v4.5.1..origin/master -- \
 porter adds the new rows by hand. Then the porter applies §2.3 and §2.4. Do not use the shallow
 submodule or `--shallow-exclude`: path-limited `git log` then lists the boundary commit by
 mistake. Between module starts, a personal `releases.atom` subscription shows new tags.
-Dependabot, Renovate and updatecli see tags only. ADR 0004 rejects them.
+Dependabot, Renovate and updatecli see tags only. ADR 0006 rejects them.
 
 ### 4.4 M4: status script and ledger check
 
@@ -278,8 +279,8 @@ activity, the module-start check still finds the changes. The templates are
 
 `tool/bump_report.dart` runs as `dart run melos run upstream:bump-report -- --from <ref> --to <ref>`.
 Build it in stages. Sections 1, 2, 4, 5, 8 and 9 come first. Sections 3 and 7 join in phase 3,
-section 6 in phase 5. The coverage-test output joins section 6 in phase 6. Its inputs are the M3 clone, the upstream manifest of each ref
-(porting-flow.md) and the fixture ledger.
+section 6 in phase 5. The coverage-test output joins section 6 in phase 6. Its inputs are the M3 clone and the upstream manifest of each ref
+(porting-flow.md).
 
 - **Modes.** In a bump PR, the porter regenerates the manifest for the new ref locally (§5 step
   4). In CI, only the `upstream-manifest` job of porting-flow.md runs Node. The bump report reads
@@ -307,10 +308,10 @@ Sections:
    without import-only, comment-only and annotation-only hunks (such as #10879).
 3. **JS-semantics hotspots.** Added `Math.round`, `Math.floor`, `Math.ceil`, `%`, `| 0`,
    `Math.log10`, `parseFloat`, `Number(`, `Date.now(`, string coercion and `.sort(`, for
-   [Chart.js ADR 0002](adr/0002-js-numeric-semantics.md).
+   [Chart.js ADR 0010](adr/0010-js-numeric-semantics.md).
 4. **Specs.** Added, removed and renamed cases (spec-case tracking).
-5. **Fixtures.** Changes by config hash and PNG sha256, joined to the fixture ledger. A changed
-   PNG makes its row stale. v4.5.1..master: 6 PNGs modified, 5 added.
+5. **Fixtures.** Added, removed and changed fixture configs, by config hash. The port compares no
+   PNGs ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)).
 6. **Defaults and theming.** The defaults-inventory diff from the manifest, the option-key diff of
    `src/types/index.d.ts`, the theme hunks in changed hosts, and the output of the theming
    coverage snapshot test (ADDED, REMOVED, CHANGED, theming.md §8, test 4). v4.5.1..master:
@@ -340,10 +341,10 @@ differs from the PR base. It fails unless all these conditions are true:
 2. Each `backported` and `ported` row has a `Ref`.
 3. Each `diverged` row has a `differences.md` row.
 4. Every header has the version that the new pin implies. Chart.js headers have the new
-   version. The `@kurkle/color`, `chartjs-test-utils` and pixelmatch headers have their versions
-   in the new Chart.js lockfile.
+   version. The `@kurkle/color` and `chartjs-test-utils` headers have their versions in the new
+   Chart.js lockfile.
 5. No `Upstream backport:` line names a commit in the new pin.
-6. From phase 7, the fixture ledger has no stale rows in started modules.
+6. From phase 7, the fixture smoke tests of the started modules pass.
 7. The version strings of report section 9 name the new version.
 8. The bump report is in the job summary.
 
@@ -358,7 +359,7 @@ git grep -lz '^// Ported from Chart\.js v4\.5\.1 ' -- packages apps \
 ```
 
 The porter also removes each backport line whose commit is in the new pin. The `@kurkle/color`
-headers, and the `chartjs-test-utils` and pixelmatch headers in `packages/chartjs_test_utils`,
+headers, and the `chartjs-test-utils` headers in `packages/chartjs_test_utils`,
 follow the versions in the Chart.js lockfile (§5 step 10). Gate condition 4 covers every header.
 The restamp therefore compares no upstream blobs.
 
@@ -374,8 +375,8 @@ Use one PR on the branch `upstream/chartjs-vX.Y.Z` (or `upstream/chartjs-<sha8>`
 feature work. A Flutter SDK bump is a separate PR (porting-flow.md §2.12, §3).
 
 1. **Trigger.** The module-start check or the watch finds a tag, or §2.4 makes a commit pin due.
-2. **Check out.** Fetch both refs and check out the new one (ADR 0002 steps 1-2). For a commit
-   pin, fetch the full SHA.
+2. **Check out.** Fetch both refs and check out the new one (ADR 0005, decision 5, steps 1-2).
+   For a commit pin, fetch the full SHA.
 3. **Rows.** Add the new rows. Move the rows of the range under the new section.
 4. **Manifest and report.** Regenerate the upstream manifest (porting-flow.md) and the bump
    report. Before M6 exists, read
@@ -385,7 +386,7 @@ feature work. A Flutter SDK bump is a separate PR (porting-flow.md §2.12, §3).
    exists. Docs and build: `not-applicable`.
 6. **Port** the started modules: src hunks, spec cases, `api-only` rows, and Dart tests for
    runtime changes without upstream tests. If upstream splits or merges files, do the same.
-7. **Fixtures.** Once the fixture runner is live, re-run the whole fixture ledger.
+7. **Fixtures.** Once the fixture smoke runner is live, run the fixture smoke tests.
 8. **Theming.** Run the coverage snapshot test and the light-preset test (theming.md §8, tests 3
    and 4). Update the snapshot, the `notThemed` list or the preset values. Re-apply the theme
    hunks in changed hosts. Then run their pinning tests.
@@ -393,10 +394,8 @@ feature work. A Flutter SDK bump is a separate PR (porting-flow.md §2.12, §3).
    input-mapping source that the parity generator reads. Then run `dart run melos run parity`.
 10. **Dependencies.**
     - `@kurkle/color`: if its lock version changed, diff the two kurkle tags and port the change.
-    - `chartjs-test-utils`: if its lock version changed, review the harness port. v1 (Vitest,
-      Playwright, pixelmatch 7) keeps white blending unless a fixture sets `checkerboard: true`.
-      Re-run the ledger rows of these fixtures and of changed PNGs. If upstream renames spec
-      files, remap the case IDs.
+    - `chartjs-test-utils`: if its lock version changed, review the harness port. If upstream
+      renames spec files, remap the case IDs.
 11. **Licenses.** If a kurkle version or upstream `LICENSE.md` changed, update
     `packages/flutter_chartjs/LICENSE` and its `REUSE.toml` annotation in one commit.
     Then run `reuse lint`.
@@ -440,7 +439,7 @@ this document and the proposed ADR 0004 and Chart.js ADR 0001.
 | 3 | Backport #12142 with `helpers.dom` if no tag contains it. Write M4 (or earlier, at more than about 10 new rows in a quarter). Before the first bump whose range touches a started module, build M6 (without section 6), M7 and M8. Build M5 only after M4, when a maintainer asks |
 | 4 | Apply §2.4 before the phase starts. On today's facts, a commit pin comes first |
 | 5 | Add report section 6. #12155 is already in the pin (4.6.0 or the commit pin). It needs no backport |
-| 7, 8 | Fixture-ledger re-runs join bumps (gate condition 6). #12283 is already in the pin |
+| 7, 8 | Fixture smoke runs join bumps (gate condition 6). #12283 is already in the pin |
 | 9 | Each CHANGELOG entry names the Chart.js version and lists its backports |
 
 ## 8. Risks and open questions
@@ -450,7 +449,7 @@ this document and the proposed ADR 0004 and Chart.js ADR 0001.
 - **Unreleased code.** It is possible that upstream revises a commit before a tag. Report section
   1 flags a changed backport. The next bump replays the revision.
 - **Harness migration.** A move to chartjs-test-utils v1 (Vitest, `*.spec.js`) changes case IDs.
-  Pass/fail results change only for fixtures that set `checkerboard: true` or get new PNGs.
+  The fixture smoke tests compare no pixels. New PNGs do not change their results.
 - **Silent security fixes.** Upstream publishes no advisories. It is possible that a regex DoS in
   color parsing also affects the port.
 

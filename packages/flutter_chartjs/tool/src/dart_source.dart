@@ -58,8 +58,15 @@ final class StringLiteral {
 
 /// An `import` or `export` directive.
 final class Directive {
-  /// A directive on [line] with the URIs [uris] and the import [prefix].
-  const Directive(this.keyword, this.uris, this.line, {this.prefix});
+  /// A directive on [line] with the URIs [uris], the import [prefix] and
+  /// the [shown] names.
+  const Directive(
+    this.keyword,
+    this.uris,
+    this.line, {
+    this.prefix,
+    this.shown,
+  });
 
   /// `import` or `export`.
   final String keyword;
@@ -72,6 +79,10 @@ final class Directive {
 
   /// The prefix of an `import ... as <prefix>` directive, or null.
   final String? prefix;
+
+  /// The names of the `show` combinators, or null when the directive has no
+  /// `show` combinator.
+  final List<String>? shown;
 }
 
 /// A Dart file, split into code, comments and string literals.
@@ -159,15 +170,21 @@ final class DartSource {
         if (depth == 0) uris.add(contentOf(literal));
       }
       if (uris.isNotEmpty) {
-        final prefix = _importPrefix.firstMatch(
-          code.substring(match.end, semicolon),
-        );
+        final clause = code.substring(match.end, semicolon);
+        final prefix = _importPrefix.firstMatch(clause);
+        List<String>? shown;
+        for (final combinator in _showCombinator.allMatches(clause)) {
+          (shown ??= []).addAll([
+            for (final name in combinator.group(1)!.split(',')) name.trim(),
+          ]);
+        }
         result.add(
           Directive(
             match.group(1)!,
             uris,
             lineOf(match.start),
             prefix: match.group(1) == 'import' ? prefix?.group(1) : null,
+            shown: shown,
           ),
         );
       }
@@ -189,6 +206,11 @@ final class DartSource {
 
 /// The `as <prefix>` part of an import, in code without string contents.
 final RegExp _importPrefix = RegExp(r'(?<![\w$])as\s+([A-Za-z_$][\w$]*)');
+
+/// A `show <name>, ...` combinator, in code without string contents.
+final RegExp _showCombinator = RegExp(
+  r'(?<![\w$])show\s+([A-Za-z_$][\w$]*(?:\s*,\s*[A-Za-z_$][\w$]*)*)',
+);
 
 int _lineOf(List<int> lineStarts, int offset) {
   var low = 0;

@@ -16,8 +16,10 @@ Usage: dart run tool/check_port_headers.dart [<package directory>...]
 Checks the file headers, the DIVERGES(chartjs) markers and
 tool/port_sources.yaml (porting-flow.md section 4, tool 2). The default
 package is the package of this tool. The first package holds
-tool/port_sources.yaml, lib/src/upstream.dart and doc/differences.md.
-Exits with 1 when a check fails. Stale headers are warnings.''';
+tool/port_sources.yaml, lib/src/upstream.dart and doc/differences.md. The
+check also examines the harness package chartjs_test_utils next to the first
+package when it exists. Each file is checked against the LICENSE of its own
+package. Exits with 1 when a check fails. Stale headers are warnings.''';
 
 Future<void> main(List<String> args) async {
   exitCode = await runCheck(
@@ -39,7 +41,7 @@ Future<void> main(List<String> args) async {
         HeaderCheckInput(
           repository: repository,
           home: packages.first,
-          packages: packages,
+          packages: withHarnessPackage(packages),
         ),
       );
     },

@@ -3,7 +3,7 @@
 /// The JS-semantics check of porting-flow.md section 4, tool 3.
 ///
 /// It flags Dart calls and operators whose results differ from the
-/// JavaScript that a ported file translates (Chart.js ADR 0002). It examines
+/// JavaScript that a ported file translates (Chart.js ADR 0010). It examines
 /// the files whose header block names a `js` project of
 /// `tool/port_sources.yaml`, or a project that the file does not list. A site
 /// passes with a `// js-ok: <reason>` comment at the end of its line, or with
@@ -11,8 +11,8 @@
 ///
 /// The lexical rules read code with comments and string contents removed.
 /// They do not know types. Thus they flag every `.toString()` call: add
-/// `js-ok` when the receiver is not a number. Only the interpolation rule
-/// resolves types, with `package:analyzer`.
+/// `js-ok` when the receiver is not a number. Only the interpolation rule and
+/// the `max`/`min` rule resolve types, with `package:analyzer`.
 library;
 
 import 'dart:io';
@@ -21,6 +21,7 @@ import 'package:analyzer/dart/analysis/analysis_context_collection.dart';
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/file_system/physical_file_system.dart';
 
@@ -44,8 +45,8 @@ final class JsSemanticsRule {
   final String message;
 }
 
-/// The lexical rules of the check. [mathFunctionSites] and
-/// [numberInterpolationSites] add two more rules.
+/// The lexical rules of the check. [mathFunctionSites] and [resolvedSites]
+/// add three more rules.
 const List<JsSemanticsRule> jsSemanticsRules = [
   JsSemanticsRule(
     '.round()',
@@ -92,9 +93,9 @@ const List<JsSemanticsRule> jsSemanticsRules = [
   JsSemanticsRule(
     'pow(',
     r'\bpow\s*\(',
-    'pow gives the JS Math.pow result only for an integer exponent with '
-        'double operands (Chart.js ADR 0002). Add js-ok with the reason, or '
-        'use jsPow.',
+    'pow returns an int for int operands, and the int can overflow; JS '
+        'Math.pow computes with doubles. Pass double operands and add js-ok '
+        'with the reason (Chart.js ADR 0010).',
   ),
   JsSemanticsRule(
     '.toString()',
@@ -115,13 +116,73 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     'List.sort is not stable on the VM, in dart2wasm and in DDC; '
         'Array.prototype.sort is. Use jsSort.',
   ),
+  // The sorts of package:collection (Chart.js ADR 0010, Sort). A type
+  // argument can come before the argument list.
+  JsSemanticsRule(
+    'mergeSort(',
+    r'\bmergeSort' + _typeArguments,
+    _stableCollectionSort,
+  ),
+  JsSemanticsRule(
+    'insertionSort(',
+    r'\binsertionSort' + _typeArguments,
+    _stableCollectionSort,
+  ),
+  JsSemanticsRule(
+    '.sorted(',
+    r'\.sorted' + _typeArguments,
+    'sorted calls List.sort, which is not stable on the VM, in dart2wasm '
+        'and in DDC; Array.prototype.sort is (Chart.js ADR 0010, Sort). Use '
+        'jsSort.',
+  ),
+  JsSemanticsRule(
+    '.sortedBy(',
+    r'\.sortedBy' + _typeArguments,
+    _stableCollectionSort,
+  ),
+  JsSemanticsRule(
+    '.sortedByCompare(',
+    r'\.sortedByCompare' + _typeArguments,
+    _stableCollectionSort,
+  ),
+  JsSemanticsRule(
+    '.sortBy(',
+    r'\.sortBy' + _typeArguments,
+    _quickSortCollectionSort,
+  ),
+  JsSemanticsRule(
+    '.sortByCompare(',
+    r'\.sortByCompare' + _typeArguments,
+    _quickSortCollectionSort,
+  ),
+  JsSemanticsRule(
+    '.sortRange(',
+    r'\.sortRange' + _typeArguments,
+    _quickSortCollectionSort,
+  ),
 ];
+
+/// The optional type arguments and the opening parenthesis after the name of
+/// a package:collection sort. The type arguments nest one level, as in
+/// `sortedBy<int Function()>(`, and stay inside one statement.
+const String _typeArguments = r'\s*(?:<(?:[^<>;{}]|<[^<>;{}]*>)*>)?\s*\(';
+
+const String _stableCollectionSort =
+    'this package:collection sort is stable, but it does not change the '
+    'comparator result to its sign, with NaN as 0, as Array.prototype.sort '
+    'does (Chart.js ADR 0010, Sort). Use jsSort.';
+
+const String _quickSortCollectionSort =
+    'this package:collection sort calls quickSortBy, which is not stable; '
+    'Array.prototype.sort is (Chart.js ADR 0010, Sort). Use jsSort.';
 
 /// The `dart:math` functions whose results differ from the JS `Math`
 /// builtins of the reference engine. `pow` has its own rule.
+///
+/// `sin` and `cos` are not in the list: ported code calls the `dart:math`
+/// functions, and their last bit changes no chart behavior (Chart.js ADR
+/// 0010).
 const List<String> transcendentalFunctions = [
-  'sin',
-  'cos',
   'tan',
   'asin',
   'acos',
@@ -195,8 +256,9 @@ List<JsSite> mathFunctionSites(DartSource source) {
           '${prefix == null ? '' : '$prefix.'}$function(',
           'dart:math $function calls the host C library on the VM and the '
               'browser on the web. JS Math.$function gives the fdlibm bits '
-              'of the reference engine (Chart.js ADR 0002). Call the '
-              'lib/src/js port of the function.',
+              'of the reference engine (Chart.js ADR 0010). Call the '
+              'lib/src/js port of the function, or add js-ok with the '
+              'reason.',
         ),
       );
     }
@@ -265,7 +327,7 @@ void _reportSites(
 /// findings to [findings]. Returns whether the check examines the file
 /// ([examinesHeader] with [languages]).
 ///
-/// [typedSites] are the sites of [numberInterpolationSites] for the file.
+/// [typedSites] are the sites of [resolvedSites] for the file.
 bool checkJsSemanticsText(
   String text,
   String path,
@@ -304,15 +366,21 @@ String _normalized(String path) {
   return context.normalize(context.absolute(path));
 }
 
-/// The interpolation rule: the `${...}` and `$name` interpolations of a
-/// `double` or `num` value in [files] (absolute paths), by file.
+/// The rules that resolve types, for [files] (absolute paths), by file. A
+/// file that does not resolve is not in the result.
 ///
-/// Dart writes such a value with `double.toString`, for example `"12.0"` on
-/// the VM and on dart2wasm. JS `'' + 12` and template literals give `"12"`.
-/// An `int` value is not flagged: ported code uses an `int` only as a list
-/// index, and its text is the JS text. A file that does not resolve is not
-/// in the result.
-Future<Map<String, List<JsSite>>> numberInterpolationSites(
+/// The interpolation rule flags the `${...}` and `$name` interpolations of a
+/// `double` or `num` value. Dart writes such a value with `double.toString`,
+/// for example `"12.0"` on the VM and on dart2wasm. JS `'' + 12` and
+/// template literals give `"12"`. An `int` value is not flagged: ported code
+/// uses an `int` only as a list index, and its text is the JS text.
+///
+/// The `max`/`min` rule flags the calls and tear-offs of `dart:math` `max`
+/// and `min` whose type argument is `double` or `num`. Ported code calls
+/// `jsMax` and `jsMin` for them (Chart.js ADR 0010): on dart2wasm, the
+/// generic functions box their `double` operands. The rule does not flag an
+/// `int` type argument.
+Future<Map<String, List<JsSite>>> resolvedSites(
   List<String> files,
 ) async {
   if (files.isEmpty) return const {};
@@ -329,7 +397,7 @@ Future<Map<String, List<JsSite>>> numberInterpolationSites(
           .currentSession
           .getResolvedUnit(path);
       if (unit is! ResolvedUnitResult) continue;
-      final visitor = _InterpolationVisitor(unit);
+      final visitor = _ResolvedSitesVisitor(unit);
       unit.unit.accept(visitor);
       result[file] = visitor.sites;
     }
@@ -339,8 +407,8 @@ Future<Map<String, List<JsSite>>> numberInterpolationSites(
   return result;
 }
 
-final class _InterpolationVisitor extends RecursiveAstVisitor<void> {
-  _InterpolationVisitor(this.unit);
+final class _ResolvedSitesVisitor extends RecursiveAstVisitor<void> {
+  _ResolvedSitesVisitor(this.unit);
 
   final ResolvedUnitResult unit;
   final List<JsSite> sites = [];
@@ -364,6 +432,47 @@ final class _InterpolationVisitor extends RecursiveAstVisitor<void> {
       );
     }
     super.visitInterpolationExpression(node);
+  }
+
+  @override
+  void visitSimpleIdentifier(SimpleIdentifier node) {
+    final element = node.element;
+    if (element is TopLevelFunctionElement &&
+        element.library.uri.toString() == 'dart:math' &&
+        (element.name == 'max' || element.name == 'min')) {
+      final parent = node.parent;
+      // A call gives its instantiated return type. A tear-off, with or
+      // without the import prefix, sits in a FunctionReference that gives
+      // its instantiated function type.
+      final DartType? type;
+      if (parent is MethodInvocation && parent.methodName == node) {
+        type = parent.staticType;
+      } else {
+        final Expression expression = parent is PrefixedIdentifier
+            ? parent
+            : node;
+        final reference = expression.parent;
+        final function = reference is FunctionReference
+            ? reference.staticType
+            : expression.staticType;
+        type = function is FunctionType ? function.returnType : null;
+      }
+      if (_isNumber(type)) {
+        final name = element.name!;
+        final js = name == 'max' ? 'jsMax' : 'jsMin';
+        sites.add(
+          JsSite(
+            unit.lineInfo.getLocation(node.offset).lineNumber,
+            '$name(',
+            'dart:math $name with ${type!.getDisplayString()} operands '
+                'boxes them on dart2wasm. Call $js from '
+                'lib/src/js/js_math.dart (Chart.js ADR 0010), or add js-ok '
+                'with the reason.',
+          ),
+        );
+      }
+    }
+    super.visitSimpleIdentifier(node);
   }
 }
 
@@ -407,7 +516,7 @@ Future<({List<Finding> findings, int files})> checkJsSemantics(
       }
     }
   }
-  final typed = await numberInterpolationSites(examined.keys.toList());
+  final typed = await resolvedSites(examined.keys.toList());
   for (final MapEntry(key: file, value: text) in examined.entries) {
     final path = relativePath(base, file);
     final sites = typed[file];

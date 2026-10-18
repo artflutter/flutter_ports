@@ -7,23 +7,38 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
 
 - **Upstream:** Chart.js **v4.5.1** (2025-10-13), MIT, pinned as the git submodule
-  `third_party/Chart.js` ([ADR 0002](../../../docs/adr/0002-pin-upstream-sources.md)).
-  `melos run upstream` checks it out.
+  `third_party/Chart.js` ([ADR 0005](../../../docs/adr/0005-pin-upstream-sources.md)).
+  `melos run upstream` checks it out. Backports and commit pins follow
+  [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md).
 - **Progress:** [parity.md](parity.md), one row per upstream source file and spec.
+- **Differences:** [differences.md](differences.md), one row for each `DIVERGES` hunk, where the
+  port does not translate the upstream lines.
+- **Upstream manifest:** [upstream/](upstream/README.md), the spec cases, the fixtures, the
+  defaults and the JS builtin sites of the pinned Chart.js. Tool 4 of
+  [porting-flow.md](porting-flow.md) §4 writes it.
 - **Upstream after the pin:** [upstream-ledger.md](upstream-ledger.md) lists the upstream commits
   after the pinned tag, with their triage ([upstream-tracking.md](upstream-tracking.md)).
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). All of them are accepted. Chart.js ADR 0001 is accepted for its four
-  invariants only:
+  ADRs are in [adr/](adr/). Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
+  supersedes Chart.js ADR 0005, and Chart.js ADR 0012 supersedes Chart.js ADR 0004. Chart.js
+  ADR 0001 is accepted for its four invariants only. The other Chart.js ADRs are accepted:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md)
-  - [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md)
+  - [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md) (superseded by
+    Chart.js ADR 0010)
   - [Chart.js ADR 0003: Type-only dependencies](adr/0003-type-only-dependencies.md)
-  - [Chart.js ADR 0004: Dart file naming](adr/0004-dart-file-naming.md)
-  - [Chart.js ADR 0005: Third-party sources](adr/0005-third-party-sources.md)
+  - [Chart.js ADR 0004: Dart file naming](adr/0004-dart-file-naming.md) (superseded by Chart.js
+    ADR 0012)
+  - [Chart.js ADR 0005: Third-party sources](adr/0005-third-party-sources.md) (superseded by
+    Chart.js ADR 0011)
   - [Chart.js ADR 0006: Options representation and resolver](adr/0006-options-representation-and-resolver.md)
   - [Chart.js ADR 0007: Frame scheduling](adr/0007-frame-scheduling.md)
+  - [Chart.js ADR 0008: Number formatting on package:intl](adr/0008-number-formatting-on-package-intl.md)
+  - [Chart.js ADR 0009: No display-only JS exactness](adr/0009-no-display-only-js-exactness.md)
+  - [Chart.js ADR 0010: JS numeric semantics](adr/0010-js-numeric-semantics.md)
+  - [Chart.js ADR 0011: Third-party sources](adr/0011-third-party-sources.md)
+  - [Chart.js ADR 0012: Dart file naming](adr/0012-dart-file-naming.md)
 
 ## What gets ported
 
@@ -56,6 +71,13 @@ Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the v4.5.1 lockfile), which
 [upstream-tracking.md](upstream-tracking.md) proposes how the port follows upstream after the pin.
 The new ADRs and design documents use the revised phase numbers of porting-flow.md §5 (4 =
 Elements, 5 = Core), not the numbers of the table below.
+
+**Status (2026-10-18).** Phases 0, 1 and 2 of porting-flow.md §5 are done. Phase 2 ported the
+rest of the JS runtime, 14 helper files, the `core.defaults` closure and `@kurkle/color` 0.3.2
+([parity.md](parity.md)). 179 of the 181 non-chart helper cases pass. The 2 other cases need a
+canvas pattern and gradient. `helpers.rtl` is in progress: `overrideTextDirection` and
+`restoreTextDirection` need the canvas layer. `src/helpers/index.ts` re-exports `helpers.dom`.
+These items wait for phase 3 (canvas, text, platform, harness), which is next.
 
 The order follows upstream's own layering:
 - `helpers` depend only on `core.defaults` (and a type-only import of the chart controller).
@@ -91,8 +113,8 @@ elements and scales lands (phases 5-7).
 [porting-flow.md](porting-flow.md) section 2 gives a recommended decision for each question below
 and adds new ones. Each decision there has a gate phase. Only the gate 1 and gate 2 decisions come
 before phase 2. [Chart.js ADR 0001](adr/0001-theming.md) proposes the theming decision.
-[theming.md](theming.md) gives the design. Chart.js ADRs 0002 to 0007 propose the gate 1 and gate 2
-decisions, for example the options representation
+[theming.md](theming.md) gives the design. Chart.js ADRs 0003 and 0006 to 0012 hold the gate 1
+and gate 2 decisions. All of them are accepted. An example is the options representation
 ([Chart.js ADR 0006](adr/0006-options-representation-and-resolver.md)).
 
 - **Canvas model.** Port the drawing code against a small Canvas 2D-compatible layer over
@@ -110,6 +132,8 @@ decisions, for example the options representation
   [porting-flow.md](porting-flow.md) §2.9) decides reduced motion, the theme-change modes and the
   `core.animator` tests.
 - **Dates.** Time scales need a date adapter; upstream ships none. Provide a default on
-  `DateTime`.
-- **Visual verification.** Flutter goldens plus tolerance-based comparison against the upstream
-  PNG fixtures; optionally render new references with real Chart.js 4.5.1 in a browser.
+  `DateTime`. It formats with `DateFormat` and ICU pattern tokens, with no moment emulation
+  ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)).
+- **Visual verification.** Decided in [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md):
+  no image comparison against the upstream PNGs. The fixture configs run as smoke tests. Flutter
+  goldens test only Flutter behavior.

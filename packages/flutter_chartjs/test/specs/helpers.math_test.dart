@@ -1,8 +1,10 @@
 // Ported from Chart.js v4.5.1 test/specs/helpers.math.tests.js (MIT, Chart.js Contributors).
 import 'dart:math' as js_math;
 
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.math.dart' as math;
 import 'package:flutter_chartjs/src/js/js_math.dart';
+import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:test/test.dart';
 
@@ -31,6 +33,7 @@ Matcher _toBeCloseTo(double expected, int precision) =>
     closeTo(expected, js_math.pow(10.0, -precision) / 2);
 
 void main() {
+  setUpSpecs();
   group('Chart.helpers.math', () {
     const factorize = math.factorize;
     const decimalPlaces = math.decimalPlaces;
@@ -81,8 +84,8 @@ void main() {
       expect(decimalPlaces(-0.01), 2);
       expect(decimalPlaces('1'), isNull);
       expect(decimalPlaces(''), isNull);
-      // undefined: Dart has no undefined, and null gives the same result.
-      expect(decimalPlaces(null), isNull);
+      // decimalPlaces gives Dart null where upstream gives undefined.
+      expect(decimalPlaces(undefined), isNull);
       expect(decimalPlaces(12345678.1234), 4);
       expect(decimalPlaces(1234567890.1234567), 7);
     });
@@ -147,8 +150,7 @@ void main() {
       expect(math.isNumber('123'), true);
       expect(math.isNumber(null), false);
       expect(math.isNumber(double.nan), false);
-      // undefined: Dart has no undefined, and null gives the same result.
-      expect(math.isNumber(null), false);
+      expect(math.isNumber(undefined), false);
       expect(math.isNumber('cbc'), false);
       // Symbol(): a symbol without a description.
       expect(math.isNumber(Symbol.empty), false);

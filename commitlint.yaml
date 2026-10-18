@@ -16,6 +16,7 @@ rules:
     - 2
     - always
     - - flutter_chartjs
+      - chartjs_test_utils
       - chartjs_gallery
       - ci
       - deps

@@ -10,7 +10,3 @@
 	path = third_party/chartjs-test-utils
 	url = https://github.com/chartjs/chartjs-test-utils
 	shallow = true
-[submodule "third_party/pixelmatch"]
-	path = third_party/pixelmatch
-	url = https://github.com/mapbox/pixelmatch
-	shallow = true

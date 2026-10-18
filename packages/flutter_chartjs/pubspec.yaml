@@ -21,13 +21,26 @@ environment:
 resolution: workspace
 
 dependencies:
+  # jsSort calls mergeSort, a stable sort (Chart.js ADR 0010). 1.19.1 is the
+  # pin of Flutter 3.44.9.
+  collection: ^1.19.1
   flutter:
     sdk: flutter
+  # Numbers (js_intl.dart, Chart.js ADR 0008) and the date adapter
+  # (porting-flow.md 2.10) format through intl. 0.20.2 is the pin of
+  # flutter_localizations in Flutter 3.44.9.
+  intl: ^0.20.2
+  # @internal on underscore members that other modules read (Chart.js ADR
+  # 0004).
+  meta: ^1.18.0
 
 dev_dependencies:
   # tool/check_js_semantics.dart resolves the types of interpolated values.
   # 12.1.0 is the version that test_core already resolves in the workspace.
   analyzer: ^12.1.0
+  # The test harness (porting-flow.md section 3). It depends on this package;
+  # the workspace resolves the cycle.
+  chartjs_test_utils: ^0.0.1
   flutter_test:
     sdk: flutter
   # Pure-layer specs and port tests run with `dart test` on the VM, dart2js and

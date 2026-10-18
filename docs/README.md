@@ -7,8 +7,12 @@ package.
 
 - [ADR 0001: Native ports, not wrappers](adr/0001-native-ports-not-wrappers.md)
 - [ADR 0002: Pin upstream sources as git submodules at release tags](adr/0002-pin-upstream-sources.md)
+  (superseded by ADR 0005)
 - [ADR 0003: Package names](adr/0003-package-names.md)
 - [ADR 0004: Follow upstream between releases](adr/0004-follow-upstream-between-releases.md)
+  (superseded by ADR 0006)
+- [ADR 0005: Pin upstream sources](adr/0005-pin-upstream-sources.md)
+- [ADR 0006: Follow upstream between releases](adr/0006-follow-upstream-between-releases.md)
 
 ## Prior art for future ports
 
@@ -20,6 +24,10 @@ package.
 - Chart.js: [`packages/flutter_chartjs/doc/`](../packages/flutter_chartjs/doc/README.md)
   - [Overview and roadmap](../packages/flutter_chartjs/doc/README.md)
   - [Parity tracker](../packages/flutter_chartjs/doc/parity.md)
+  - [Differences](../packages/flutter_chartjs/doc/differences.md): one row for each `DIVERGES`
+    hunk, where the port does not translate the upstream lines.
+  - [Upstream manifest](../packages/flutter_chartjs/doc/upstream/README.md): the spec cases, the
+    fixtures, the defaults and the JS builtin sites of the pinned Chart.js, as tool 4 writes them.
   - [Porting flow](../packages/flutter_chartjs/doc/porting-flow.md) (proposed): the steps of one
     module port, the decisions and their gate phases, the test harness, the tools and a revised
     phase plan.
@@ -31,12 +39,20 @@ package.
     after the pinned tag, with their triage.
   - Decisions (accepted, Chart.js ADR 0001 for its four invariants only):
     [Chart.js ADR 0001: Theming](../packages/flutter_chartjs/doc/adr/0001-theming.md),
-    [Chart.js ADR 0002: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0002-js-numeric-semantics.md),
+    [Chart.js ADR 0002: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0002-js-numeric-semantics.md)
+    (superseded by Chart.js ADR 0010),
     [Chart.js ADR 0003: Type-only dependencies](../packages/flutter_chartjs/doc/adr/0003-type-only-dependencies.md),
-    [Chart.js ADR 0004: Dart file naming](../packages/flutter_chartjs/doc/adr/0004-dart-file-naming.md),
-    [Chart.js ADR 0005: Third-party sources](../packages/flutter_chartjs/doc/adr/0005-third-party-sources.md),
+    [Chart.js ADR 0004: Dart file naming](../packages/flutter_chartjs/doc/adr/0004-dart-file-naming.md)
+    (superseded by Chart.js ADR 0012),
+    [Chart.js ADR 0005: Third-party sources](../packages/flutter_chartjs/doc/adr/0005-third-party-sources.md)
+    (superseded by Chart.js ADR 0011),
     [Chart.js ADR 0006: Options representation and resolver](../packages/flutter_chartjs/doc/adr/0006-options-representation-and-resolver.md),
-    [Chart.js ADR 0007: Frame scheduling](../packages/flutter_chartjs/doc/adr/0007-frame-scheduling.md).
+    [Chart.js ADR 0007: Frame scheduling](../packages/flutter_chartjs/doc/adr/0007-frame-scheduling.md),
+    [Chart.js ADR 0008: Number formatting on package:intl](../packages/flutter_chartjs/doc/adr/0008-number-formatting-on-package-intl.md),
+    [Chart.js ADR 0009: No display-only JS exactness](../packages/flutter_chartjs/doc/adr/0009-no-display-only-js-exactness.md),
+    [Chart.js ADR 0010: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0010-js-numeric-semantics.md),
+    [Chart.js ADR 0011: Third-party sources](../packages/flutter_chartjs/doc/adr/0011-third-party-sources.md),
+    [Chart.js ADR 0012: Dart file naming](../packages/flutter_chartjs/doc/adr/0012-dart-file-naming.md).
   - Prior art: [overview](../packages/flutter_chartjs/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs/doc/prior-art/js-runtimes.md),
