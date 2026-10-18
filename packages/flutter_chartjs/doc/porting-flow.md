@@ -108,7 +108,7 @@ this document until their ADR files exist.
 | 2.3 | [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md) | 1 |
 | 2.4 | [Chart.js ADR 0003: Type-only dependencies](adr/0003-type-only-dependencies.md) | 1 |
 | 2.5 | [Chart.js ADR 0004: Dart file naming](adr/0004-dart-file-naming.md) | 1 |
-| 2.9, `helpers.extras` part | [Chart.js ADR 0007: Frame scheduling](adr/0007-frame-scheduling.md) | 2 |
+| 2.9, `helpers.extras` and the animator frame source | [Chart.js ADR 0007: Frame scheduling](adr/0007-frame-scheduling.md) | 2 |
 | 2.13 | [Chart.js ADR 0005: Third-party sources](adr/0005-third-party-sources.md) | 1 |
 
 ADR 0004 (gate 1) belongs to [upstream-tracking.md](upstream-tracking.md).
@@ -140,6 +140,14 @@ The layer owns the Canvas 2D semantics that `dart:ui` lacks. The current path is
 Chromium. Non-finite arguments do nothing. Dashes restart for each contour. Phase 2 ports
 `toFontString` and `_isPointInArea` (`helpers.canvas.dart` is `partial`).
 
+`RenderView` already applies the device pixel ratio (DPR) at the root (`rendering/view.dart:70-72`,
+`:267-270`). Thus the `dart:ui` context composes each transform on a base
+`scale(1 / currentDevicePixelRatio)`. `retinaScale` stays a line-by-line port. The chart does not
+apply the DPR two times. With that base, `clearCanvas` and the arc clip rectangle still map
+onto the box. The fixture harness applies the root scale and rasterizes at `canvas.width` ×
+`canvas.height`, for example with `OffsetLayer.toImage(pixelRatio:)`. A widget test with a
+`tester.view.devicePixelRatio` other than 1 pins the base scale.
+
 **Evidence.** Specs port 1:1 only against the mock context API: 24 methods and 9 setters
 (chartjs-test-utils `src/context.js:102-146`).
 
@@ -153,6 +161,10 @@ and the evidence. In short:
   come from a browser or from an arm64 Node.js.
 - Each transcendental `Math` builtin that ported code calls is a pure-Dart netlib fdlibm port.
   Phase 2 adds `sin`, `cos` and `pow` for `helpers.easing`.
+- Where the Dart SDK or a package that Flutter 3.44.9 pins gives the JS result, the port uses it.
+  Ported code calls `dart:math` `max` and `min`. The port-only `jsSort` calls `mergeSort` of
+  `package:collection`. `jsDateNow()` reads `clock.now()` of `package:clock`. The `FakeAsync` zone
+  of `testWidgets` fakes that clock.
 - Tool 3 enforces the translation rules. A site that keeps a flagged form for a stated reason
   carries `// js-ok: <reason>` at the end of its line, or alone on the line before it.
 
@@ -191,12 +203,50 @@ selects them, not the platform. `EVENT_TYPES` (`platform.dom.js:21-31`) and the 
 filter stay unchanged. The chart claims only one `TapGestureRecognizer` (for `click`) in the
 gesture arena. Thus parent scrollables keep their gestures. Events coalesce for each frame.
 `platform.flutter.dart` replaces `platform.dom.js`. Keyboard and semantics are port-only.
+- Phase 3 adds an internal chart host. The host is a port-only, unexported `RenderBox` plus
+  `LeafRenderObjectWidget`. It owns the canvas layer and the `platform.flutter` listeners. Its
+  contract names `computeDryLayout`. Phase 9 puts the public widget on top of it.
+- [Chart.js ADR 0007](adr/0007-frame-scheduling.md) decides the scheduling. The host makes one
+  throttled function for each `options.events` entry. One `throttled<Size?>` function takes the
+  size and DPR changes. One post-frame callback takes attach and detach.
+- The host takes the chart size from its layout, not from a `ResizeObserver`.
+- The host reads the DPR with `MediaQuery.devicePixelRatioOf` and the ticker state with
+  `TickerMode.valuesOf` in `createRenderObject` and `updateRenderObject`. `View.of` does not rebuild on a DPR change. The window `resize` listener
+  and its global map (`platform.dom.js:161-189`) have no port.
+- The scrollbar step of `platform.dom.js:198-209` has no port. A Flutter `Scrollbar` paints over
+  its child and takes no layout width.
+- The zero-size skip of `platform.dom.js:217-222` stays as a guard in the host. `Offstage` calls
+  `layout` on its child with its own constraints (`proxy_box.dart:3918-3923`). Thus the child does
+  not get the zero size of `display: none`. The harness emulates `display: none` with
+  `SizedBox.shrink`.
+- The event position comes from `PointerEvent.localPosition`. One `DIVERGES` hunk in
+  `getRelativePosition` of `helpers.dom.dart` reads it. The port does not emulate the CSS math of
+  `helpers.dom.ts:73-130`. The DOM-only spec cases skip as `n/a`.
+- Flutter sends one event for each pointer. `platform.flutter.dart` builds a `touches` list,
+  sorted by pointer id.
+- `platform.flutter.dart` makes the destroyed-chart guard of `platform.dom.js:246` again.
 
 **Evidence.** The pan recognizer of fl_chart breaks `PageView` (#202).
 
-**Open.** Touch sizes (hit radius, hover radius, font size) and the tooltip after a touch lift
-(#7738). An amendment of Chart.js ADR 0001 decides the touch sizes in phase 9
-([theming.md](theming.md) §11).
+**Open.**
+- Touch sizes (hit radius, hover radius, font size) and the tooltip after a touch lift (#7738).
+  An amendment of Chart.js ADR 0001 decides the touch sizes in phase 9
+  ([theming.md](theming.md) §11).
+- The first size. Upstream sizes the chart at construction (spec
+  `core.controller.tests.js:651`). The first observer notification uses `throttled`
+  (spec `:712`). The host can size the chart only after its first layout. Thus the port paints
+  one blank first frame. This ADR records it as a divergence or prevents it.
+- `getMaximumSize` stays a port in `helpers.dom.dart`, with `DIVERGES` hunks for the DOM reads.
+  `AspectRatio` has no `round1`, no `floor` and no `width / 2` fallback.
+- Unbounded constraints: infinity to 0, or infinity to the current chart size? A chart larger
+  than its box: paint outside the box, or clip?
+- The factor `/ chart.width * canvas.width / currentDevicePixelRatio` of `getRelativePosition`:
+  keep it for exact values at fractional sizes, or drop it?
+- A harness detach without an unmount, for the specs that keep a detached chart across a task
+  (`core.controller.tests.js:1065`, `:1147`, `:1179`). Without it, these specs skip as `n/a`.
+- Touch scope: only the pointers that hit the chart, or all pointers through
+  `GestureBinding.instance.pointerRouter.addGlobalRoute`? Upstream gives NaN coordinates on a
+  `touchend` after the last finger lifts (`helpers.dom.ts:81-93`).
 
 ### 2.8 ADR: Text (gate 3)
 
@@ -209,27 +259,27 @@ gesture arena. Thus parent scrollables keep their gestures. Events coalesce for 
 specs measure real fonts. The proposal is a metric-compatible OFL font in `chartjs_test_utils`.
 Phase 3 measures the result.
 
-### 2.9 ADR: Animation (gate 5), with Chart.js ADR 0007 for `helpers.extras` (gate 2)
+### 2.9 ADR: Animation (gate 5), with Chart.js ADR 0007 for `helpers.extras` and the animator frame source (gate 2)
 
 [Chart.js ADR 0007: Frame scheduling](adr/0007-frame-scheduling.md) holds the gate 2 part:
-`requestAnimFrame`, `throttled` and `debounce` in `helpers.extras` (`helpers.extras.ts:14-61`).
-`requestAnimFrame` calls `SchedulerBinding.scheduleFrameCallback`. `throttled` coalesces calls to
-one in each frame. `debounce` uses a `dart:async` `Timer`. The rest of this subsection stays a
-proposal for ADR: Animation (gate 5).
+`requestAnimFrame`, `throttled` and `debounce` in `helpers.extras` (`helpers.extras.ts:14-61`),
+and the frame source of the animator. `requestAnimFrame` calls
+`SchedulerBinding.scheduleFrameCallback`. `throttled` coalesces calls to one in each frame.
+`debounce` uses a `dart:async` `Timer`. `Chart.destroy()` cancels that `Timer`. `core.animator.js` stays
+one module-level animator on `requestAnimFrame`. The chart host mutes a chart under
+`TickerMode(enabled: false)`. Thus `core.animator.js` has two small `DIVERGES` hunks.
+[Chart.js ADR 0002](adr/0002-js-numeric-semantics.md) gives the clock: `jsDateNow()` on
+`clock.now()`. The rest of this subsection stays a proposal for ADR: Animation (gate 5).
 
-**Decision.** `core.animator.js` runs on a `Ticker`, with one animator for each binding. Phase 3
-adds an internal chart host that owns the `Ticker`, the canvas layer and the `platform.flutter`
-listeners. The host is a port-only, unexported `RenderBox` plus `LeafRenderObjectWidget`. Phase 9
-puts the public widget on top of it. Tests use `tester.pump` with `animation: false`, as
-`acquireChart` does.
+**Decision.** None yet. [Chart.js ADR 0007](adr/0007-frame-scheduling.md) decisions 6 and 7
+already make the chart host of 2.7 destroy its chart in `dispose` and follow `TickerMode`. Tests use `tester.pump` with
+`animation: false`, as `acquireChart` does.
 
 **Evidence.** Thin. The ADR must cover `core.animator.tests.js` and the 400 ms hover transitions.
 
-**Open.** Chart animations under reduced motion. A theme switch uses the zero-duration
-`'themeFrame'` mode. Theme removal uses `'default'`. Thus it animates until this ADR decides
-([theming.md](theming.md) §3.7, §11). The clock behind `Date.now()` is also open. A `Ticker` in
-`core.animator.js` replaces its `requestAnimFrame` call (`:44`). Thus that change is a `DIVERGES`
-hunk.
+**Open.** Chart animations under reduced motion, through `MediaQuery.maybeDisableAnimationsOf`. A
+theme switch uses the zero-duration `'themeFrame'` mode. Theme removal uses `'default'`. Thus it
+animates until this ADR decides ([theming.md](theming.md) §3.7, §11).
 
 ### 2.10 ADR: Dates (gate 6)
 
@@ -240,9 +290,10 @@ hunk.
   loop that does not advance.
 - Format through `intl` (`^0.20.2`). This ADR selects the token dialect of the default adapter:
   moment tokens or ICU tokens.
-- Read "now" through an injectable clock, because `scale.time.js:342-343` calls `Date.now()`. Use
-  a function parameter, or `clock` `^1.1.2` (Apache-2.0, already a dependency of `intl`). If the
-  ADR picks `clock`, tool 1 allows `package:clock/clock.dart`.
+- Read "now" through `jsDateNow()` ([Chart.js ADR 0002](adr/0002-js-numeric-semantics.md)),
+  because `scale.time.js:342-343` calls `Date.now()`. A spec sets the time with `withClock` of
+  `package:clock`. The fake time of `testWidgets` starts at the wall-clock time of the test start.
+  It moves only by the pumped durations.
 - The specs use a test adapter in `chartjs_test_utils`. It runs in UTC only. It matches
   chartjs-adapter-moment 1.0.1 with moment 2.29.4 and moment-timezone 0.5.42 in `Etc/UTC`. It has a
   small formatter and a lenient parser for the moment tokens that the specs use. Write it from the
@@ -347,7 +398,7 @@ recordings stay outside the published archive. Port exactly 0.4.0 (`package.json
 | `src/matchers.js`, `src/matchers.options.js` | matchers | 3 |
 | `src/spriting.js`; pixelmatch `index.js` | `spriting.dart` plus sheet; `pixelmatch.dart` | 3 |
 | — | test font, recordings | 3 |
-| `src/utils.js` | `acquireChart` (512×512, `animation: false`, `locale: 'en-US'`), `afterEvent`, `triggerMouseEvent` | 5 |
+| `src/utils.js` | `acquireChart` (512×512, `animation: false`, `locale: 'en-US'`), `afterEvent`, `triggerMouseEvent`, `waitForResize` | 5 |
 | `src/fixture.js` | `specsFromFixtures` (prefix match, plugin rule, `run` hook) | 7 |
 | `injectWrapperCSS`, `useShadowDOM`, `useOffscreenCanvas` | not ported (`n/a`) | — |
 
@@ -367,6 +418,18 @@ depends on the platform that flutter_test reports (`TargetPlatform.android`).
 
 `dart test` does not read `flutter_test_config.dart`. Thus each pure-layer spec file calls the
 same set-up from `package:chartjs_test_utils/pure.dart`.
+
+**Frames in tests.** The scheduling of [Chart.js ADR 0007](adr/0007-frame-scheduling.md) runs only
+when the test pumps.
+- A spec that reaches `requestAnimFrame` or `throttled` is a `testWidgets` test. In a plain
+  `test()`, no frame runs.
+- `setUp` runs outside the `FakeAsync` zone of `testWidgets`. Its timers are real. `clock.now()`
+  there gives real time. Thus a ported `beforeEach` that acquires a chart runs at the
+  start of each `testWidgets` body. 29 `beforeEach` blocks in 10 spec files acquire a chart.
+- The harness helpers pump. `triggerMouseEvent` resolves after the throttled event callback. Specs
+  call it 104 times in 13 files. `waitForResize` resolves after the next resize. Specs call it
+  32 times in 2 files.
+- A spec with `resizeDelay` pumps past the delay. `pumpAndSettle` does not wait for a `Timer`.
 
 **Where tests run.**
 
@@ -406,7 +469,9 @@ melos script `check:port` and the CI job `port-checks` run tools 1-3. Tool 1 use
 - `lib/`: `dart:async`, `collection`, `convert`, `core`, `math`, `typed_data` and `ui`, the
   `package:flutter/` libraries `foundation`, `gestures`, `painting`, `rendering`, `scheduler`,
   `semantics`, `services` and `widgets`, `package:meta/meta.dart`, `package:intl/intl.dart` with
-  its `number_symbols` files, and the package's own files.
+  its `number_symbols` files, and the package's own files. From phase 2, also
+  `package:collection/collection.dart`. From phase 5, also `package:clock/clock.dart`
+  ([Chart.js ADR 0002](adr/0002-js-numeric-semantics.md)).
 - Pure layers: the same list without `dart:ui` and `package:flutter`, over the transitive closure.
 - Test files without `@TestOn('vm')`: pure layers, `package:test` and `pure.dart` only.
 - Ported files: no import of `lib/src/theme/` ([Chart.js ADR 0001](adr/0001-theming.md)). `lib/`
@@ -451,6 +516,9 @@ examines the `lib/` and `test/` files whose header block names a `js` project of
   with any base, every `.toString()` call, `is int` and `.sort(`
 - the `dart:math` functions `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `atan2`, `exp` and `log`
 - the interpolation of a value with the static type `double` or `num`
+- from phase 2, the sorts of `package:collection`: `mergeSort(`, `insertionSort(`, `.sorted(`,
+  `.sortedBy(`, `.sortedByCompare(`, `.sortBy(`, `.sortByCompare(` and `.sortRange(`
+- from phase 5, `DateTime.now(`
 
 A site passes with `// js-ok: <reason>` at the end of its line, or alone on the line before it.
 The lexical rules read the code without comments and strings. The interpolation rule resolves
@@ -536,7 +604,8 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 **Repository files.**
 - Root `pubspec.yaml`: `packages/chartjs_test_utils` in `workspace:`, new melos scripts,
   `--exclude-tags fixtures` in `test`, and every `third_party` submodule in `upstream`.
-- `packages/flutter_chartjs`: `meta`, `intl: ^0.20.2`, the dev_dependencies `chartjs_test_utils`
+- `packages/flutter_chartjs`: `meta`, `intl: ^0.20.2`, `collection: ^1.19.1` (phase 2),
+  `clock: ^1.1.2` (phase 5), the dev_dependencies `chartjs_test_utils`
   and `test`, and `dart_test.yaml` with the `fixtures` tag. The PR that adds tool 2 adds the
   port-only marker to `lib/src/upstream.dart` and `test/upstream_test.dart`. Phase 1 added the
   dev_dependencies `test` and `analyzer` (for tool 3) and the two port-only markers.

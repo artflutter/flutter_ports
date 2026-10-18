@@ -65,17 +65,3 @@ double jsLog10(double x) => ieee754Log10(x);
 /// `Math.atan2` on the web. Both differ from V8 in the last bit for about one
 /// input in ten, and the VM differs from the web.
 double jsAtan2(double y, double x) => ieee754Atan2(y, x);
-
-/// `Math.max(a, b)`: NaN if either argument is NaN, and +0 over -0.
-double jsMax(double a, double b) {
-  if (a.isNaN || b.isNaN) return double.nan;
-  if (a == b) return a.isNegative ? b : a;
-  return a > b ? a : b;
-}
-
-/// `Math.min(a, b)`: NaN if either argument is NaN, and -0 over +0.
-double jsMin(double a, double b) {
-  if (a.isNaN || b.isNaN) return double.nan;
-  if (a == b) return a.isNegative ? a : b;
-  return a < b ? a : b;
-}

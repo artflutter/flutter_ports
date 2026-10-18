@@ -306,7 +306,7 @@ Sections:
 2. **src.** Changed files with their Dart files and module status. Hunks with function context,
    without import-only, comment-only and annotation-only hunks (such as #10879).
 3. **JS-semantics hotspots.** Added `Math.round`, `Math.floor`, `Math.ceil`, `%`, `| 0`,
-   `Math.log10`, `parseFloat`, `Number(`, string coercion and `.sort(`, for
+   `Math.log10`, `parseFloat`, `Number(`, `Date.now(`, string coercion and `.sort(`, for
    [Chart.js ADR 0002](adr/0002-js-numeric-semantics.md).
 4. **Specs.** Added, removed and renamed cases (spec-case tracking).
 5. **Fixtures.** Changes by config hash and PNG sha256, joined to the fixture ledger. A changed

@@ -98,6 +98,12 @@ these uses.
   them. pixelmatch 7.2.0 changes 33 fixture results ([porting-flow.md](../porting-flow.md) §2.6).
 - **V8's `ieee754.cc` as the fdlibm source.** Rejected. It adds a V8 BSD notice
   ([Chart.js ADR 0002](0002-js-numeric-semantics.md)).
+- **Flutter `Color` and `Color.lerp` instead of a port of `@kurkle/color`.** Rejected. A color
+  transition calls `mix` (`core.animation.js:19`). `mix` weights the two colors by their alpha
+  difference and rounds each channel to a byte (`kurkle-color/src/color.js:157-172`).
+  `Color.lerp` interpolates each channel linearly, with no weight and no rounding. Chart.js also
+  parses CSS color strings. Its transitions write `hexString()` values. Eight spec files compare
+  color strings, for example `core.animation.tests.js`.
 
 ## Consequences
 

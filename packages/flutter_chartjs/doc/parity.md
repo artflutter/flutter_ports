@@ -244,7 +244,7 @@ reference engine of `lib/src/js` is V8 13.6 in Node.js v24.12.0 on x64 ([porting
 
 | File | Contents | Tests |
 |---|---|---|
-| `lib/src/js/js_math.dart` | `Math` and `Number` builtins with the results of the reference engine: `numberEpsilon`, `jsRound`, `jsToInt32`, `jsLog10`, `jsAtan2`, `jsMax`, `jsMin` | `test/port/js/js_math_test.dart` |
+| `lib/src/js/js_math.dart` | `Math` and `Number` builtins with the results of the reference engine: `numberEpsilon`, `jsRound`, `jsToInt32`, `jsLog10`, `jsAtan2` | `test/port/js/js_math_test.dart`, which also pins `dart:math` `max` and `min` (Chart.js ADR 0002) |
 | `lib/src/js/js_number.dart` | JS number coercion: `jsToNumber`, `jsParseFloat`, `jsIsNaN`, `jsIsFinite` | `test/port/js/js_number_test.dart` |
 | `lib/src/js/fdlibm_log.dart` | Ported from fdlibm 5.3 `e_log.c` and `e_log10.c` (SunPro, Sun Microsystems, Inc.): `ieee754Log`, `ieee754Log10` | `test/port/js/fdlibm_log_test.dart`: 5,909 inputs and 3 regression inputs, bit for bit against `Math.log10` of the reference engine |
 | `lib/src/js/fdlibm_atan.dart` | Ported from fdlibm 5.3 `s_atan.c` and `e_atan2.c` (SunPro, Sun Microsystems, Inc.), plus one line that V8 has and netlib does not (`m &= 1` when abs(y/x) > 2**60): `atan`, `ieee754Atan2` | `test/port/js/fdlibm_atan_test.dart`: 3,000 inputs, bit for bit against `Math.atan2` of the reference engine |

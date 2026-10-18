@@ -1,4 +1,6 @@
-// Original code, not ported from Chart.js: tests of lib/src/js/js_math.dart.
+// Original code, not ported from Chart.js: tests of lib/src/js/js_math.dart and of dart:math max and min.
+import 'dart:math' as math;
+
 import 'package:flutter_chartjs/src/js/js_math.dart';
 import 'package:test/test.dart';
 
@@ -83,28 +85,45 @@ void main() {
     }
   });
 
-  group('jsMax and jsMin', () {
+  // Chart.js ADR 0002: ported code calls dart:math max and min for Math.max
+  // and Math.min, with double operands. These tests pin that the results are
+  // the JS results on the VM, dart2js and dart2wasm.
+  group('dart:math max and min', () {
     test('return the larger and the smaller value', () {
-      expect(jsMax(1, 2), 2);
-      expect(jsMax(-1, -2), -1);
-      expect(jsMin(1, 2), 1);
-      expect(jsMin(-1, -2), -2);
-      expect(jsMax(double.negativeInfinity, 3), 3);
-      expect(jsMin(double.infinity, 3), 3);
+      expect(math.max<double>(1, 2), 2);
+      expect(math.max<double>(-1, -2), -1);
+      expect(math.min<double>(1, 2), 1);
+      expect(math.min<double>(-1, -2), -2);
+      expect(math.max<double>(double.negativeInfinity, 3), 3);
+      expect(math.min<double>(double.infinity, 3), 3);
     });
 
     test('order -0 below +0', () {
-      expect(jsMax(0, -0), _isSameNumber(0));
-      expect(jsMax(-0, 0), _isSameNumber(0));
-      expect(jsMin(0, -0), _isSameNumber(-0));
-      expect(jsMin(-0, 0), _isSameNumber(-0));
+      expect(math.max<double>(0, -0), _isSameNumber(0));
+      expect(math.max<double>(-0, 0), _isSameNumber(0));
+      expect(math.min<double>(0, -0), _isSameNumber(-0));
+      expect(math.min<double>(-0, 0), _isSameNumber(-0));
     });
 
     test('return NaN when either argument is NaN', () {
-      expect(jsMax(1, double.nan), isNaN);
-      expect(jsMax(double.nan, 1), isNaN);
-      expect(jsMin(1, double.nan), isNaN);
-      expect(jsMin(double.nan, 1), isNaN);
+      expect(math.max<double>(1, double.nan), isNaN);
+      expect(math.max<double>(double.nan, 1), isNaN);
+      expect(math.min<double>(1, double.nan), isNaN);
+      expect(math.min<double>(double.nan, 1), isNaN);
+    });
+
+    test('fold over a list as the spread form does', () {
+      // Math.max(...[]) is -Infinity. Math.max(...[-0]) is -0.
+      expect(<double>[].fold(double.negativeInfinity, math.max), -1 / 0);
+      expect(
+        <double>[-0].fold(double.negativeInfinity, math.max),
+        _isSameNumber(-0),
+      );
+      expect(
+        <double>[1, double.nan, 3].fold(double.negativeInfinity, math.max),
+        isNaN,
+      );
+      expect(<double>[].fold(double.infinity, math.min), 1 / 0);
     });
   });
 

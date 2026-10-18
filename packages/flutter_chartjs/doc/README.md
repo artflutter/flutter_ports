@@ -103,7 +103,11 @@ decisions, for example the options representation
   scriptable and indexable options). Dart has no `Proxy`, so the resolver needs its own design,
   and a decision on a typed Dart options API versus accepting raw Chart.js JSON configs (or both).
 - **Text.** CSS font strings, `measureText`, caching; `TextPainter` versus `Paragraph`.
-- **Animation.** `requestAnimationFrame` and the global animator mapped onto `Ticker`.
+- **Animation.** `requestAnimationFrame` maps onto `SchedulerBinding.scheduleFrameCallback`.
+  `core.animator.js` stays one module-level animator on `requestAnimFrame`
+  ([Chart.js ADR 0007](adr/0007-frame-scheduling.md)). ADR: Animation (gate 5,
+  [porting-flow.md](porting-flow.md) §2.9) decides reduced motion, the theme-change modes and the
+  `core.animator` tests.
 - **Dates.** Time scales need a date adapter; upstream ships none. Provide a default on
   `DateTime`.
 - **Visual verification.** Flutter goldens plus tolerance-based comparison against the upstream
