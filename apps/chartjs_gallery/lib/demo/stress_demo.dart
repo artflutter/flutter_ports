@@ -12,6 +12,10 @@ import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
+// The typed options of Chart.js ADR 0018. The prefix keeps them apart from
+// the PointOptions of demo_chart.dart, which the primitives mode uses.
+import 'package:flutter_chartjs/src/elements/element_options.dart'
+    as element_options;
 import 'package:flutter_chartjs/src/elements/index.dart';
 import 'package:flutter_chartjs/src/helpers/index.dart'
     show ParsedFont, drawPoint, renderText, requestAnimFrame, toFont;
@@ -282,37 +286,43 @@ class StressDemoState extends State<StressDemo> {
   }
 
   /// The resolved options of each point element: the defaults of
-  /// element.point.ts and the colors of the [StressMode.primitives] points.
-  /// All points share the Map, as the shared options of a dataset are.
-  static final Map<String, Object?> _pointElementOptions = {
-    ...PointElement.defaults,
-    'backgroundColor': 'rgba(54, 162, 235, 0.45)',
-    'borderColor': '#36A2EB',
-    'borderWidth': 1.0,
-    'pointStyle': 'circle',
-    'radius': 3.0,
-  };
+  /// element.point.ts and the colors of the [StressMode.primitives] points,
+  /// as typed options (Chart.js ADR 0018). All points share the object, as
+  /// the shared options of a dataset are.
+  static final element_options.PointOptions _pointElementOptions =
+      element_options.PointOptions({
+        ...PointElement.defaults,
+        'backgroundColor': 'rgba(54, 162, 235, 0.45)',
+        'borderColor': '#36A2EB',
+        'borderWidth': 1.0,
+        'pointStyle': 'circle',
+        'radius': 3.0,
+      });
 
   /// The resolved options of the line: the defaults of element.line.js and
-  /// the color and width of the [StressMode.primitives] polyline. A
-  /// `List<double>` dash goes to `setLineDash` without a copy.
-  static final Map<String, Object?> _lineElementOptions = {
-    ...LineElement.defaults,
-    'borderColor': '#FF6384',
-    'borderDash': const <double>[],
-    'borderWidth': 1.5,
-    'tension': 0.0,
-  };
+  /// the color and width of the [StressMode.primitives] polyline, as typed
+  /// options (Chart.js ADR 0018). A `List<double>` dash goes to
+  /// `setLineDash` without a copy.
+  static final element_options.LineOptions _lineElementOptions =
+      element_options.LineOptions({
+        ...LineElement.defaults,
+        'borderColor': '#FF6384',
+        'borderDash': const <double>[],
+        'borderWidth': 1.5,
+        'tension': 0.0,
+      });
 
   /// The resolved options of each bar: the defaults of element.bar.js with
-  /// a border and rounded corners.
-  static final Map<String, Object?> _barOptions = {
-    ...BarElement.defaults,
-    'backgroundColor': 'rgba(54, 162, 235, 0.45)',
-    'borderColor': '#36A2EB',
-    'borderWidth': 1.0,
-    'borderRadius': 4.0,
-  };
+  /// a border and rounded corners, as typed options (Chart.js ADR 0018). All
+  /// bars share the object, as the shared options of a dataset are.
+  static final element_options.BarOptions _barOptions =
+      element_options.BarOptions({
+        ...BarElement.defaults,
+        'backgroundColor': 'rgba(54, 162, 235, 0.45)',
+        'borderColor': '#36A2EB',
+        'borderWidth': 1.0,
+        'borderRadius': 4.0,
+      });
 
   /// controller.bar.js:202-232 `setBorderSkipped` for the option
   /// `borderSkipped: 'start'` of a vertical bar with a value above its
@@ -327,9 +337,9 @@ class StressDemoState extends State<StressDemo> {
 
   /// The resolved options of the arcs of each slice index: the defaults of
   /// element.arc.ts with the spacing and the rounded corners, and the
-  /// colors of the Chart.js colors plugin. A `List<double>` dash goes to
-  /// `setLineDash` without a copy.
-  static final List<Map<String, Object?>> _arcOptions = [
+  /// colors of the Chart.js colors plugin, as typed options (Chart.js ADR
+  /// 0018). A `List<double>` dash goes to `setLineDash` without a copy.
+  static final List<element_options.ArcOptions> _arcOptions = [
     for (final color in const [
       'rgba(54, 162, 235, 0.5)',
       'rgba(255, 99, 132, 0.5)',
@@ -337,14 +347,14 @@ class StressDemoState extends State<StressDemo> {
       'rgba(255, 205, 86, 0.5)',
       'rgba(75, 192, 192, 0.5)',
     ])
-      {
+      element_options.ArcOptions({
         ...ArcElement.defaults,
         'backgroundColor': color,
         'borderDash': const <double>[],
         'borderRadius': 4.0,
         'borderWidth': 2.0,
         'spacing': 2.0,
-      },
+      }),
   ];
 
   /// Makes the elements of the mode for N items, and drops the elements of

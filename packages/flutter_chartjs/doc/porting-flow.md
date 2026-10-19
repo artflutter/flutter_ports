@@ -132,8 +132,10 @@ The gate 1 and gate 2 decisions are accepted ADR files now (2026-10-18). Their s
 the link and the evidence that the ADR does not repeat. Phase 3 wrote the gate 3 decisions (2.2,
 2.7 and 2.8) as proposed ADR files (2026-10-19). Phase 3 also wrote Chart.js ADR 0016
 (proposed), which changes one decision of the gate 2 part of 2.9. Phase 4 wrote the gate 4 decision (2.14) as the
-proposed file of Chart.js ADR 0017 (2026-10-19). The subsections of the gate 3 and gate 4
-decisions keep a summary and the link.
+proposed file of Chart.js ADR 0017 (2026-10-19). Phase 4 also wrote the gate 4 decision 2.15 as
+the proposed file of Chart.js ADR 0018 (2026-10-19): the typed element options, for the option
+reads that [performance.md](performance.md) §8.2 measured (§1.1). The subsections of the gate 3
+and gate 4 decisions keep a summary and the link.
 The other subsections stay proposals in this document until their ADR files exist.
 
 | Subsection | ADR | Gate |
@@ -151,6 +153,7 @@ The other subsections stay proposals in this document until their ADR files exis
 | 2.8 | [Chart.js ADR 0015: Text](adr/0015-text.md) (proposed) | 3 |
 | 2.9, `helpers.extras` and the animator frame source | [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (proposed), which supersedes Chart.js ADR 0007 on acceptance | 2 |
 | 2.14 | [Chart.js ADR 0017: Element properties](adr/0017-element-properties.md) (proposed) | 4 |
+| 2.15 | [Chart.js ADR 0018: Typed element options](adr/0018-typed-element-options.md) (proposed) | 4 |
 
 ADR 0006 (gate 1) belongs to [upstream-tracking.md](upstream-tracking.md).
 
@@ -426,6 +429,28 @@ and the items that stay open. In short:
   functions.
 - `core.element.dart`, `lib/src/elements/` and `lib/src/js/js_webidl.dart` are pure layers. Their
   specs and tests run on the VM, with dart2js and with dart2wasm.
+
+### 2.15 Chart.js ADR 0018: Typed element options (gate 4)
+
+[Chart.js ADR 0018](adr/0018-typed-element-options.md) (proposed) holds the decision, its evidence
+and the items that stay open. In short:
+- The port-only file `lib/src/elements/element_options.dart` declares `ElementOptions`, a
+  `MapBase<String, Object?>`, and its four final subclasses `PointOptions`, `LineOptions`,
+  `BarOptions` and `ArcOptions`. An instance is a Map. Thus Chart.js ADR 0006 stays valid, and
+  `jsGet`, the resolver and user code read it as a Map.
+- Each subclass has a fixed list of known keys: `$shared`, the keys of the `defaults` and of the
+  `defaultRoutes` of its element class, and the keys that other code writes into the options
+  (`segment` of the line, `$animations`). Each known key has a field. A private sentinel marks an
+  absent key. The other keys go to a Map of extra keys.
+- The Map protocol gives the results of a plain Map with the same entries. Only the key order can
+  differ: the present known keys come in the order of the list.
+- The getter of a known key gives the raw value, or `undefined` for an absent key, with no Map
+  lookup. The element code reads each option through one small function, which also takes a
+  plain Map. `PointOptions` implements `DrawPointOptions`.
+- Phase 4 makes typed options in the gallery. Phase 5 makes them in `resolveNamedOptions` and
+  keeps the class in the copies of `cloneIfNotShared` and `resolveTargetOptions`.
+- Each element test that compares with reference data runs with plain Map options and with typed
+  options.
 
 ## 3. Test harness
 

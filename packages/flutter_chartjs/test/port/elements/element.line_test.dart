@@ -4,6 +4,7 @@ import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/elements/element.line.dart';
 import 'package:flutter_chartjs/src/elements/element.point.dart';
+import 'package:flutter_chartjs/src/elements/element_options.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.interpolation.dart'
     show InterpolatedPoint;
 import 'package:flutter_chartjs/src/js/js_number.dart';
@@ -25,6 +26,10 @@ import 'line_reference.dart';
 // and the mock context of chartjs-test-utils in Node.js v24.12.0 on x64. The
 // other expected values come from a probe of the same sources in the same
 // Node.js. The numbers compare with closeTo (Chart.js ADR 0009).
+//
+// Each reference case runs twice (Chart.js ADR 0018, section 6): with the
+// plain Map options of the reference, and with a LineOptions with the same
+// entries. Both compare with the same reference data.
 
 /// A chart area `{left, top, right, bottom, width, height}`.
 final class _Area implements ChartArea {
@@ -86,17 +91,35 @@ PointElement _point(LineReferencePointInput point) {
   });
 }
 
+/// [options] as they are: the plain Map form of the options.
+AnyObject _plainOptions(AnyObject options) => options;
+
+/// The two forms of the options of a line (Chart.js ADR 0018, section 6): the
+/// plain Map, and a [LineOptions] with the same entries in the same key
+/// order.
+const Map<String, AnyObject Function(AnyObject options)> _optionsForms = {
+  'Map options': _plainOptions,
+  'LineOptions': LineOptions.new,
+};
+
 /// The line of a reference case, made as the generator makes it:
-/// `new LineElement({points, options, ...props})`.
-LineElement _line(LineReferenceCase c, List<types.PointElement> points) {
+/// `new LineElement({points, options, ...props})`, with the options in the
+/// form [form].
+LineElement _line(
+  LineReferenceCase c,
+  List<types.PointElement> points,
+  AnyObject Function(AnyObject) form,
+) {
   final options = c.options;
   final segment = c.segment;
   return LineElement({
     'points': points,
     if (options != null)
-      'options': segment == null
-          ? options
-          : {...options, 'segment': _segmentOption(segment)},
+      'options': form(
+        segment == null
+            ? options
+            : {...options, 'segment': _segmentOption(segment)},
+      ),
     for (final MapEntry(:key, :value) in c.props.entries)
       key: value == 'chart' ? _Chart() : value,
   });
@@ -192,10 +215,11 @@ Matcher _expectedPoint(LineReferencePoint point) => isA<LineReferencePoint>()
       point.y == null ? isNull : _number(point.y!),
     );
 
-/// Runs the steps of the reference case [c] and compares each record.
-void _run(LineReferenceCase c) {
+/// Runs the steps of the reference case [c], with the options in the form
+/// [form], and compares each record.
+void _run(LineReferenceCase c, AnyObject Function(AnyObject) form) {
   final points = <types.PointElement>[for (final p in c.points) _point(p)];
-  final line = _line(c, points);
+  final line = _line(c, points, form);
   final ids = _PathIds();
 
   for (var i = 0; i < c.steps.length; i++) {
@@ -337,8 +361,12 @@ void main() {
       expect(lineReference, hasLength(40));
     });
 
-    for (final c in lineReference) {
-      test(c.name, () => _run(c));
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in lineReference) {
+          test(c.name, () => _run(c, form));
+        }
+      });
     }
   });
 

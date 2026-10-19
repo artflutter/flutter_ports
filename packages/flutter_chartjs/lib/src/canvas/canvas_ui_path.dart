@@ -20,6 +20,10 @@
 ///   two half arcs.
 /// - `arc` with a negative radius throws a [RangeError] (the DOM
 ///   `IndexSizeError`).
+/// - `roundRect` follows [roundRectGeometry]. Under an axis-aligned
+///   transform it adds one `ui.Path.addRRect`, which the context fills with
+///   `drawRRect` and clips with `clipRRect`. This is a performance addition
+///   (porting-flow.md §1.1), not a Canvas 2D rule.
 ///
 /// The arc and ellipse curves are `dart:ui` arcs when the transform keeps
 /// them circular or axis-aligned, else cubic Bézier curves. The layer has no
@@ -300,6 +304,11 @@ final class UiPathBuilder implements CanvasPath {
   double _startY = 0;
   int _ops = 0;
   ui.Rect? _rect;
+  ui.RRect? _rrect;
+  // The first two commands, each a `ui.Rect` of a `rect` or a `ui.RRect` of
+  // a `roundRect` under an axis-aligned transform, else null.
+  Object? _shape0;
+  Object? _shape1;
 
   /// The path has no command.
   bool get isEmpty => _ops == 0;
@@ -308,6 +317,38 @@ final class UiPathBuilder implements CanvasPath {
   /// axis-aligned transform mapped. The context fills and clips it with
   /// `drawRect` and `clipRect`.
   ui.Rect? get singleRect => _ops == 1 ? _rect : null;
+
+  /// The rounded rectangle of the path in bitmap space, when the path is one
+  /// `roundRect` that an axis-aligned transform mapped. The context fills
+  /// and clips it with `drawRRect` and `clipRRect`.
+  ui.RRect? get singleRRect => _ops == 1 ? _rrect : null;
+
+  /// The two shapes of the path in bitmap space, in path order, when the
+  /// path is exactly two `rect` or `roundRect` commands that an
+  /// axis-aligned transform mapped. A rectangle has radii of 0. Each shape
+  /// is one closed subpath. The context fills the ring of a bar border
+  /// (`element.bar.js:188-192`) with `drawDRRect` when one shape is inside
+  /// the other ([rrectContains]).
+  ({ui.RRect first, ui.RRect second})? get shapePair {
+    if (_ops != 2) return null;
+    final first = _shape0;
+    final second = _shape1;
+    if (first == null || second == null) return null;
+    return (first: _asRRect(first), second: _asRRect(second));
+  }
+
+  static ui.RRect _asRRect(Object shape) =>
+      shape is ui.RRect ? shape : ui.RRect.fromRectAndCorners(shape as ui.Rect);
+
+  /// Keeps [shape] as the shape of the current command, when it is one of
+  /// the first two. Call it before `_ops++`.
+  void _trackShape(Object? shape) {
+    if (_ops == 0) {
+      _shape0 = shape;
+    } else if (_ops == 1) {
+      _shape1 = shape;
+    }
+  }
 
   /// The circle of the path in bitmap space, when the path is one full
   /// circle that a similarity transform mapped, with or without a
@@ -321,6 +362,9 @@ final class UiPathBuilder implements CanvasPath {
     hasSubpath = false;
     _ops = 0;
     _rect = null;
+    _rrect = null;
+    _shape0 = null;
+    _shape1 = null;
     _circle = false;
   }
 
@@ -473,7 +517,111 @@ final class UiPathBuilder implements CanvasPath {
             math.max(y0, y2),
           )
         : null;
+    _rrect = null;
+    _trackShape(_rect);
     _ops++;
+  }
+
+  /// See [CanvasPath.roundRect] and [roundRectGeometry]. The arguments are
+  /// examined first: a [RangeError] comes before the test of the transform.
+  ///
+  /// Under an axis-aligned transform, the path gets one `ui.Path.addRRect`
+  /// of the mapped rectangle when the path goes clockwise in bitmap space
+  /// (`addRRect` has no direction argument). Its contour starts at another
+  /// point of the outline than the HTML path: a dashed stroke starts its
+  /// pattern there, a display-only difference (Chart.js ADR 0009). Else, and
+  /// under another transform, the path gets the segments of
+  /// [_roundRectSegments]. Then a new subpath starts at (x, y).
+  @override
+  void roundRect(double x, double y, double w, double h, [Object? radii]) {
+    final g = roundRectGeometry(x, y, w, h, radii);
+    final t = transform;
+    if (g == null || !t.isInvertible) return;
+    ui.RRect? rrect;
+    if (t.isAxisAligned) {
+      rrect = _mappedRRect(g);
+      if (g.clockwise != t.isReflected) {
+        path.addRRect(rrect);
+      } else {
+        _roundRectSegments(g);
+      }
+    } else {
+      _roundRectSegments(g);
+    }
+    _moveToMapped(t.mapX(x, y), t.mapY(x, y));
+    _rect = null;
+    _rrect = rrect;
+    _trackShape(rrect);
+    _ops++;
+  }
+
+  /// The rounded rectangle of [g] in bitmap space, for an axis-aligned
+  /// transform. A mirror moves each radius to the mirrored corner, and a
+  /// scale makes it elliptical.
+  ui.RRect _mappedRRect(RoundRectGeometry g) {
+    final t = transform;
+    final x0 = t.mapX(g.left, g.top);
+    final y0 = t.mapY(g.left, g.top);
+    final x1 = t.mapX(g.left + g.width, g.top + g.height);
+    final y1 = t.mapY(g.left + g.width, g.top + g.height);
+    final sx = t.a.abs();
+    final sy = t.d.abs();
+    final flipX = t.a < 0;
+    final flipY = t.d < 0;
+    // The user corner at each bitmap corner.
+    final tl = flipY
+        ? (flipX ? g.lowerRight : g.lowerLeft)
+        : (flipX ? g.upperRight : g.upperLeft);
+    final tr = flipY
+        ? (flipX ? g.lowerLeft : g.lowerRight)
+        : (flipX ? g.upperLeft : g.upperRight);
+    final br = flipY
+        ? (flipX ? g.upperLeft : g.upperRight)
+        : (flipX ? g.lowerLeft : g.lowerRight);
+    final bl = flipY
+        ? (flipX ? g.upperRight : g.upperLeft)
+        : (flipX ? g.lowerRight : g.lowerLeft);
+    return ui.RRect.fromLTRBAndCorners(
+      math.min(x0, x1),
+      math.min(y0, y1),
+      math.max(x0, x1),
+      math.max(y0, y1),
+      topLeft: ui.Radius.elliptical(tl * sx, tl * sy),
+      topRight: ui.Radius.elliptical(tr * sx, tr * sy),
+      bottomRight: ui.Radius.elliptical(br * sx, br * sy),
+      bottomLeft: ui.Radius.elliptical(bl * sx, bl * sy),
+    );
+  }
+
+  /// The segments of [g]: from (left + upperLeft, top), a line and an arc
+  /// for each corner, then the close. They go in the HTML order (step 12)
+  /// when `g.clockwise` is true, else in the other direction, as Chromium
+  /// adds a flipped rectangle. An arc connects to the current point with a
+  /// line ([_addArc]), and an arc of radius 0 is that line alone.
+  void _roundRectSegments(RoundRectGeometry g) {
+    final t = transform;
+    final l = g.left;
+    final tp = g.top;
+    final r = l + g.width;
+    final b = tp + g.height;
+    final ul = g.upperLeft;
+    final ur = g.upperRight;
+    final lr = g.lowerRight;
+    final ll = g.lowerLeft;
+    const quarter = math.pi / 2;
+    _moveToMapped(t.mapX(l + ul, tp), t.mapY(l + ul, tp));
+    if (g.clockwise) {
+      _addArc(r - ur, tp + ur, ur, ur, 0, -quarter, quarter);
+      _addArc(r - lr, b - lr, lr, lr, 0, 0, quarter);
+      _addArc(l + ll, b - ll, ll, ll, 0, quarter, quarter);
+      _addArc(l + ul, tp + ul, ul, ul, 0, math.pi, quarter);
+    } else {
+      _addArc(l + ul, tp + ul, ul, ul, 0, -quarter, -quarter);
+      _addArc(l + ll, b - ll, ll, ll, 0, math.pi, -quarter);
+      _addArc(r - lr, b - lr, lr, lr, 0, quarter, -quarter);
+      _addArc(r - ur, tp + ur, ur, ur, 0, 0, -quarter);
+    }
+    path.close();
   }
 
   @override
@@ -785,6 +933,119 @@ final class UiPathBuilder implements CanvasPath {
       sinP = sin1;
     }
   }
+}
+
+/// The tolerance of [rrectContains] in units of a corner radius: 1e-9 of
+/// the radius, below 1e-5 pixels for a radius below 10000 pixels.
+const double _containsTolerance = 1e-9;
+
+/// Whether [inner] is inside [outer], both with a width and a height of 0
+/// or more. A `false` result does not mean that [inner] sticks out: the
+/// test is sufficient, not necessary. A shape with a coordinate or a radius
+/// that is not finite gives `false`.
+///
+/// When it is true, the even-odd fill of the two shapes is `outer` without
+/// `inner`, and `Canvas.drawDRRect(outer, inner)` fills the same area. The
+/// bounds of [inner] must be inside those of [outer] with no tolerance,
+/// because Skia draws nothing for a `drawDRRect` whose inner bounds stick
+/// out. Then, for each corner of [outer] with radii above 0, the points of
+/// [inner] in the box of that corner must be inside its ellipse. In the
+/// units of that ellipse, with its center at the origin and with C the
+/// center and a the radii of the [inner] corner arc on the same side, the
+/// test is:
+/// - the two ends of the [inner] edges next to the corner are inside the
+///   unit circle;
+/// - |min(C, 0)| + max(a) <= 1: the corner arc of [inner] is inside it, by
+///   the triangle inequality, for the part of the arc in the corner box.
+///
+/// Each comparison of the corner allows [_containsTolerance], so that the
+/// border ring of a bar, whose corner arcs have one center, passes after
+/// the rounding of the transform.
+bool rrectContains(ui.RRect outer, ui.RRect inner) {
+  if (!outer.isFinite ||
+      !inner.isFinite ||
+      inner.left < outer.left ||
+      inner.top < outer.top ||
+      inner.right > outer.right ||
+      inner.bottom > outer.bottom) {
+    return false;
+  }
+  // Each corner, mirrored into the place of the upper-left corner.
+  return _cornerContains(
+        outer.left,
+        outer.top,
+        outer.tlRadiusX,
+        outer.tlRadiusY,
+        inner.left,
+        inner.top,
+        inner.tlRadiusX,
+        inner.tlRadiusY,
+      ) &&
+      _cornerContains(
+        -outer.right,
+        outer.top,
+        outer.trRadiusX,
+        outer.trRadiusY,
+        -inner.right,
+        inner.top,
+        inner.trRadiusX,
+        inner.trRadiusY,
+      ) &&
+      _cornerContains(
+        -outer.right,
+        -outer.bottom,
+        outer.brRadiusX,
+        outer.brRadiusY,
+        -inner.right,
+        -inner.bottom,
+        inner.brRadiusX,
+        inner.brRadiusY,
+      ) &&
+      _cornerContains(
+        outer.left,
+        -outer.bottom,
+        outer.blRadiusX,
+        outer.blRadiusY,
+        inner.left,
+        -inner.bottom,
+        inner.blRadiusX,
+        inner.blRadiusY,
+      );
+}
+
+/// The corner test of [rrectContains], for an upper-left corner: the outer
+/// shape has its edges at x = [ox] and y = [oy] and the corner radii [rx]
+/// and [ry]. The inner shape has its edges at x = [ix] >= [ox] and
+/// y = [iy] >= [oy] and the corner radii [irx] and [iry].
+bool _cornerContains(
+  double ox,
+  double oy,
+  double rx,
+  double ry,
+  double ix,
+  double iy,
+  double irx,
+  double iry,
+) {
+  // A square corner: the test of the bounds covers it.
+  if (!(rx > 0 && ry > 0)) return true;
+  const limit = 1 + _containsTolerance;
+  final centerX = ox + rx;
+  final centerY = oy + ry;
+  // The center of the inner corner arc, and the inner edges, in the units
+  // of the outer corner ellipse.
+  final cx = (ix + irx - centerX) / rx;
+  final cy = (iy + iry - centerY) / ry;
+  final edgeX = math.min((ix - centerX) / rx, 0);
+  final edgeY = math.min((iy - centerY) / ry, 0);
+  final nearX = math.min(cx, 0);
+  final nearY = math.min(cy, 0);
+  // The ends of the inner edges at the corner box: (cx, top) and
+  // (left, cy).
+  if (nearX * nearX + edgeY * edgeY > limit * limit) return false;
+  if (edgeX * edgeX + nearY * nearY > limit * limit) return false;
+  final reach = math.sqrt(nearX * nearX + nearY * nearY);
+  return reach + math.max(irx / rx, iry / ry) <= limit;
 }
 
 /// The `ui.Path` of a [Path2D], in user space, kept in [Path2D.cache].

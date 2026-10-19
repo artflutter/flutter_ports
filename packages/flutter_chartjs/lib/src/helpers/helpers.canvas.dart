@@ -763,53 +763,21 @@ void renderText(
 /// has no intersection type, so the function takes a [RoundedRect] and
 /// reads its radius as a [TRBLCorners]. Every caller passes one (see
 /// [RoundedRect]).
+///
+/// Upstream adds four arcs and four lines (helpers.canvas.ts:504-526). The
+/// port makes one `roundRect` call with the four radii, which the `dart:ui`
+/// canvas adds as one rounded rectangle and fills with `drawRRect` (the
+/// performance rule of porting-flow.md §1.1, differences.md
+/// `adapt-rounded-rect-path`). The fill and clip area is the same.
 void addRoundedRectPath(CanvasRenderingContext2D ctx, RoundedRect rect) {
   final RoundedRect(:x, :y, :w, :h) = rect;
   final radius = rect.radius! as TRBLCorners;
 
-  ctx
-    // top left arc
-    ..arc(
-      x + radius.topLeft,
-      y + radius.topLeft,
-      radius.topLeft,
-      1.5 * pi,
-      pi,
-      true,
-    )
-    // line from top left to bottom left
-    ..lineTo(x, y + h - radius.bottomLeft)
-    // bottom left arc
-    ..arc(
-      x + radius.bottomLeft,
-      y + h - radius.bottomLeft,
-      radius.bottomLeft,
-      pi,
-      halfPi,
-      true,
-    )
-    // line from bottom left to bottom right
-    ..lineTo(x + w - radius.bottomRight, y + h)
-    // bottom right arc
-    ..arc(
-      x + w - radius.bottomRight,
-      y + h - radius.bottomRight,
-      radius.bottomRight,
-      halfPi,
-      0,
-      true,
-    )
-    // line from bottom right to top right
-    ..lineTo(x + w, y + radius.topRight)
-    // top right arc
-    ..arc(
-      x + w - radius.topRight,
-      y + radius.topRight,
-      radius.topRight,
-      0,
-      -halfPi,
-      true,
-    )
-    // line from top right to top left
-    ..lineTo(x + radius.topLeft, y);
+  // DIVERGES(chartjs): adapt-rounded-rect-path, one roundRect call.
+  ctx.roundRect(x, y, w, h, [
+    radius.topLeft,
+    radius.topRight,
+    radius.bottomRight,
+    radius.bottomLeft,
+  ]);
 }

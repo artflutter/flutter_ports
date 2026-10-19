@@ -232,6 +232,15 @@ final class _RectClip extends _Clip {
   void applyTo(ui.Canvas canvas) => canvas.clipRect(rect);
 }
 
+final class _RRectClip extends _Clip {
+  const _RRectClip(this.rrect);
+
+  final ui.RRect rrect;
+
+  @override
+  void applyTo(ui.Canvas canvas) => canvas.clipRRect(rrect);
+}
+
 final class _PathClip extends _Clip {
   const _PathClip(this.path);
 
@@ -377,6 +386,31 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
   /// The count of retained pictures, for tests.
   @visibleForTesting
   int get debugPictureCount => _pictures.length + (_hasContent ? 1 : 0);
+
+  /// The builder of the current path, for tests: its `singleRect`,
+  /// `singleCircle` and `singleRRect` select the fast paths of [fill] and
+  /// [clip].
+  @visibleForTesting
+  UiPathBuilder get debugPath => _path;
+
+  /// The outer and the inner shape that `fill('evenodd')` of the current
+  /// path draws with `drawDRRect`, or `null` when it draws the path, for
+  /// tests.
+  @visibleForTesting
+  ({ui.RRect outer, ui.RRect inner})? get debugRing => _ring();
+
+  /// The clips of the current state, for tests: a `ui.Rect` for
+  /// `clipRect`, a `ui.RRect` for `clipRRect` and a `ui.Path` for
+  /// `clipPath`.
+  @visibleForTesting
+  List<Object> get debugClips => [
+    for (final clip in _s.clips)
+      switch (clip) {
+        _RectClip(:final rect) => rect,
+        _RRectClip(:final rrect) => rrect,
+        _PathClip(:final path) => path,
+      },
+  ];
 
   /// Draws the content at [offset], in logical pixels, clipped to the
   /// bitmap: the bitmap of `width` x `height` device pixels covers
@@ -1041,6 +1075,10 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
   @override
   void rect(double x, double y, double w, double h) => _path.rect(x, y, w, h);
 
+  @override
+  void roundRect(double x, double y, double w, double h, [Object? radii]) =>
+      _path.roundRect(x, y, w, h, radii);
+
   /// An unknown fill rule does nothing (the DOM throws a `TypeError`).
   @override
   void fill([Object? pathOrFillRule, CanvasFillRule? fillRule]) {
@@ -1096,10 +1134,40 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
           _fillPaint,
         );
       } else {
-        _c.drawPath(_path.path..fillType = fillType, _fillPaint);
+        final rrect = _path.singleRRect;
+        final ring = rrect == null && fillType == ui.PathFillType.evenOdd
+            ? _ring()
+            : null;
+        if (rrect != null) {
+          _c.drawRRect(rrect, _fillPaint);
+        } else if (ring != null) {
+          _c.drawDRRect(ring.outer, ring.inner, _fillPaint);
+        } else {
+          _c.drawPath(_path.path..fillType = fillType, _fillPaint);
+        }
       }
     }
     _drew();
+  }
+
+  /// The two shapes of the current path as an outer and an inner shape, when
+  /// the path is two `rect` or `roundRect` commands ([UiPathBuilder.shapePair])
+  /// and one of them is inside the other ([rrectContains]). Then the
+  /// even-odd fill of the path is `drawDRRect(outer, inner)`: the border
+  /// ring of a bar (`element.bar.js:188-192`). An inner shape with no width
+  /// or no height takes the path: Skia then draws the outer shape, but the
+  /// other engines are not examined.
+  ({ui.RRect outer, ui.RRect inner})? _ring() {
+    final pair = _path.shapePair;
+    if (pair == null) return null;
+    final (:first, :second) = pair;
+    if (second.width > 0 && second.height > 0 && rrectContains(first, second)) {
+      return (outer: first, inner: second);
+    }
+    if (first.width > 0 && first.height > 0 && rrectContains(second, first)) {
+      return (outer: second, inner: first);
+    }
+    return null;
   }
 
   @override
@@ -1142,8 +1210,11 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
       );
     } else {
       final rect = _path.singleRect;
+      final rrect = _path.singleRRect;
       clip = rect != null
           ? _RectClip(rect)
+          : rrect != null
+          ? _RRectClip(rrect)
           : _PathClip(ui.Path.from(_path.path)..fillType = fillType);
     }
     if (_batch.length > 0) _flushBatch();

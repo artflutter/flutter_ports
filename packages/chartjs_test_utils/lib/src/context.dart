@@ -56,7 +56,8 @@ final class _MockTextMetrics implements TextMetrics {
 /// context.js:2 `Context`: a [CanvasRenderingContext2D] that records the
 /// calls of 24 methods and the writes of 9 properties.
 ///
-/// The mock defines only the members of `src/context.js`. A JS caller that
+/// The mock defines only the members of `src/context.js`, plus the
+/// port-only [roundRect], which records its calls too. A JS caller that
 /// calls another method gets a `TypeError`, because the method is
 /// `undefined`. Here such a method throws an [UnsupportedError]. A JS caller
 /// that writes another property creates it without a record. Here such a
@@ -295,6 +296,19 @@ class MockContext implements CanvasRenderingContext2D {
   @override
   void rect(double x, double y, double w, double h) {
     record('rect', [x, y, w, h]);
+  }
+
+  /// Port-only: `src/context.js` has no `roundRect`. It records the call as
+  /// the other path methods do, with [radii] as passed (`null` for an
+  /// absent argument), and examines no argument.
+  ///
+  /// `addRoundedRectPath` calls it in place of the upstream arcs and lines
+  /// (differences.md `adapt-rounded-rect-path` of `flutter_chartjs`). A test
+  /// that compares the calls with an upstream run translates the call back
+  /// into those arcs and lines.
+  @override
+  void roundRect(double x, double y, double w, double h, [Object? radii]) {
+    record('roundRect', [x, y, w, h, radii]);
   }
 
   @override

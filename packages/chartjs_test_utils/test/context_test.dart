@@ -275,6 +275,68 @@ void main() {
       ]);
     });
 
+    group('roundRect (port-only)', () {
+      // src/context.js has no roundRect. addRoundedRectPath of
+      // flutter_chartjs calls it (adapt-rounded-rect-path), so the mock
+      // records it as the other path methods.
+      test('records the arguments and the radii as passed', () {
+        final radii = <double>[1, 2, 3, 4];
+        final ctx = createMockContext()
+          ..beginPath()
+          ..roundRect(10, 20, 30, 40, radii)
+          ..roundRect(1, 2, 3, 4, 5)
+          ..roundRect(1, 2, 3, 4)
+          ..fill();
+        expect(ctx.getCalls(), [
+          {'name': 'beginPath', 'args': <Object?>[]},
+          {
+            'name': 'roundRect',
+            'args': [
+              10,
+              20,
+              30,
+              40,
+              [1, 2, 3, 4],
+            ],
+          },
+          {
+            'name': 'roundRect',
+            'args': [1, 2, 3, 4, 5],
+          },
+          {
+            'name': 'roundRect',
+            'args': [1, 2, 3, 4, null],
+          },
+          {
+            'name': 'fill',
+            'args': [null, null],
+          },
+        ]);
+        // The record holds the caller's list, as setLineDash does.
+        final args = ctx.getCalls()[1]['args']! as List<Object?>;
+        expect(identical(args[4], radii), isTrue);
+      });
+
+      test('examines no argument', () {
+        final ctx = createMockContext()
+          ..roundRect(double.nan, 0, -1, 1, [-1])
+          ..roundRect(0, 0, 1, 1, <double>[])
+          ..roundRect(0, 0, 1, 1, [1, 2, 3, 4, 5]);
+        expect(ctx.getCalls().map((call) => call['name']), [
+          'roundRect',
+          'roundRect',
+          'roundRect',
+        ]);
+        expect(ctx.getCalls()[0]['args'], [
+          isNaN,
+          0,
+          -1,
+          1,
+          [-1],
+        ]);
+      });
+    });
+
     test('measureText gives 10 per code unit and fixed boxes', () {
       final ctx = createMockContext();
       final metrics = ctx.measureText('abc');

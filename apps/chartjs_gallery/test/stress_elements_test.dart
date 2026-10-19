@@ -1,6 +1,8 @@
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chartjs/src/elements/element_options.dart'
+    as element_options;
 import 'package:flutter_chartjs/src/elements/index.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs/src/types/index.dart' as types;
@@ -177,6 +179,24 @@ void main() {
         // An animated line keeps no path between two frames
         // (element.line.js:439-443).
         expect(identical(line['_path'], undefined), isTrue);
+        // The points share one typed options object, and the line has typed
+        // options (Chart.js ADR 0018).
+        final options = (after.first as PointElement).options;
+        expect(options, isA<element_options.PointOptions>());
+        expect(identical((after[1] as PointElement).options, options), isTrue);
+        expect(line.options, isA<element_options.LineOptions>());
+      }
+      if (mode == StressMode.bars) {
+        // The bars share one typed options object (Chart.js ADR 0018).
+        final options = (after.first as BarElement).options;
+        expect(options, isA<element_options.BarOptions>());
+        expect(identical((after[1] as BarElement).options, options), isTrue);
+      }
+      if (mode == StressMode.arcs) {
+        expect(
+          (after.first as ArcElement).options,
+          isA<element_options.ArcOptions>(),
+        );
       }
 
       await _tap(tester, 'stress.start');

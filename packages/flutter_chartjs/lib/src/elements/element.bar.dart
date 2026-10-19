@@ -15,12 +15,21 @@
 /// corner object `{topLeft, topRight, bottomLeft, bottomRight}` is a
 /// [TRBLCorners].
 ///
+/// The options of a bar are a [BarOptions] or a plain Map (Chart.js ADR
+/// 0006). Each option read goes through one small function for each option,
+/// for example `_borderWidth`, which gives [BarOptions.borderWidthValue] or
+/// `jsGet(options, 'borderWidth')` (Chart.js ADR 0018, section 4). Both give
+/// JS `undefined` for an absent key, and `jsGet` throws the [TypeError] of a
+/// property read of `undefined` options.
+///
 /// This library is a pure layer (Chart.js ADR 0017, section 10). It imports
 /// neither `dart:ui` nor `package:flutter`.
 library;
 
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
+import 'package:flutter_chartjs/src/elements/element_options.dart'
+    show BarOptions;
 import 'package:flutter_chartjs/src/helpers/helpers.canvas.dart'
     show addRoundedRectPath;
 import 'package:flutter_chartjs/src/helpers/helpers.core.dart' show isObject;
@@ -36,6 +45,35 @@ import 'package:flutter_chartjs/src/js/js_webidl.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
+
+/// The option `borderWidth` of [options]: [BarOptions.borderWidthValue] for
+/// typed options, else `jsGet(options, 'borderWidth')` (Chart.js ADR 0018,
+/// section 4).
+///
+/// Both give JS `undefined` for an absent key. `jsGet` throws a [TypeError]
+/// for Dart `null`, the `undefined` state of the options. The other option
+/// functions of this file work in the same way.
+Object? _borderWidth(Object? options) => options is BarOptions
+    ? options.borderWidthValue
+    : jsGet(options, 'borderWidth');
+
+/// The option `borderRadius` of [options], as [_borderWidth] reads
+/// `borderWidth`.
+Object? _borderRadius(Object? options) => options is BarOptions
+    ? options.borderRadiusValue
+    : jsGet(options, 'borderRadius');
+
+/// The option `borderColor` of [options], as [_borderWidth] reads
+/// `borderWidth`.
+Object? _borderColor(Object? options) => options is BarOptions
+    ? options.borderColorValue
+    : jsGet(options, 'borderColor');
+
+/// The option `backgroundColor` of [options], as [_borderWidth] reads
+/// `borderWidth`.
+Object? _backgroundColor(Object? options) => options is BarOptions
+    ? options.backgroundColorValue
+    : jsGet(options, 'backgroundColor');
 
 /// element.bar.js:34 the bounds literal `{left, top, right, bottom}` of
 /// `getBarBounds`.
@@ -105,10 +143,10 @@ double _skipOrLimit(bool skip, double value, double min, double max) {
 /// element.bar.js:41 `parseBorderWidth`.
 ///
 /// `bar.options.borderWidth` and `skip.<edge>` are property reads
-/// ([jsGet]). Thus an element without `options` or without `borderSkipped`
-/// throws a [TypeError], as upstream does.
+/// ([_borderWidth] and [jsGet]). Thus an element without `options` or
+/// without `borderSkipped` throws a [TypeError], as upstream does.
 _BorderWidths _parseBorderWidth(BarElement bar, double maxW, double maxH) {
-  final value = jsGet(bar.options, 'borderWidth');
+  final value = _borderWidth(bar.options);
   final skip = bar.borderSkipped;
   final o = toTRBL(value);
 
@@ -128,7 +166,7 @@ TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
   final enableBorderRadius = bar.getProps(const [
     'enableBorderRadius',
   ])['enableBorderRadius'];
-  final value = jsGet(bar.options, 'borderRadius');
+  final value = _borderRadius(bar.options);
   final o = toTRBLCorners(value);
   final maxR = jsMin(maxW, maxH);
   final skip = bar.borderSkipped;
@@ -452,17 +490,26 @@ class BarElement extends Element implements types.VisualElement {
   ///
   /// Upstream `draw` takes only the context. Thus the port ignores [area],
   /// as JavaScript ignores an extra argument (Chart.js ADR 0017, section 1).
-  /// The colors are property reads of `options` ([jsGet]). An element
-  /// without `options` throws a [TypeError], as the upstream destructuring
-  /// does. `ctx.fillStyle` gets a color through [canvasStyle]: an absent
-  /// color gives Dart `null`, which the canvas ignores, as the DOM ignores
-  /// `undefined`.
+  /// The colors are property reads of `options` ([_borderColor] and
+  /// [_backgroundColor], in the order of the upstream destructuring). An
+  /// element without `options` throws a [TypeError], as the upstream
+  /// destructuring does. `ctx.fillStyle` gets a color through
+  /// [canvasStyle]: an absent color gives Dart `null`, which the canvas
+  /// ignores, as the DOM ignores `undefined`.
+  ///
+  /// When [inflateAmount] is 0, the port does not call `ctx.clip()` (the
+  /// performance rule of porting-flow.md §1.1, differences.md
+  /// `adapt-bar-clip`). Then the clip is the outer rectangle, and the inner
+  /// rectangle of `boundingRects` is inside it: its edges are inside by the
+  /// border widths, and its corner arcs have a radius smaller by the
+  /// larger border width. Thus the border ring and the fill are inside the
+  /// clip, which changes only the anti-aliasing of the edges.
   @override
   void draw(CanvasRenderingContext2D ctx, [ChartArea? area]) {
     final inflateAmount = this.inflateAmount;
     final options = this.options;
-    final borderColor = jsGet(options, 'borderColor');
-    final backgroundColor = jsGet(options, 'backgroundColor');
+    final borderColor = _borderColor(options);
+    final backgroundColor = _backgroundColor(options);
     final (:inner, :outer) = _boundingRects(this);
     final addRectPath = _hasRadius(outer.radius)
         ? addRoundedRectPath
@@ -473,7 +520,8 @@ class BarElement extends Element implements types.VisualElement {
     if (outer.w != inner.w || outer.h != inner.h) {
       ctx.beginPath();
       addRectPath(ctx, _inflateRect(outer, inflateAmount, inner));
-      ctx.clip();
+      // DIVERGES(chartjs): adapt-bar-clip, no clip for inflateAmount 0.
+      if (inflateAmount != 0) ctx.clip();
       addRectPath(ctx, _inflateRect(inner, -inflateAmount, outer));
       ctx
         ..fillStyle = canvasStyle(borderColor)

@@ -61,7 +61,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `fdlibm_atan.dart`. `js_webidl.dart` has the WebIDL conversions of the Canvas 2D setters.
   - `lib/src/core/core.element.dart` and `lib/src/elements/` (Chart.js ADR 0017): the port of
     `core.element.ts`, and the four elements (`element.point.dart`, `element.line.dart`,
-    `element.bar.dart`, `element.arc.dart`) with `index.dart`. These files are pure layers.
+    `element.bar.dart`, `element.arc.dart`) with `index.dart`. The port-only
+    `element_options.dart` (Chart.js ADR 0018) has the typed element options: `PointOptions`,
+    `LineOptions`, `BarOptions` and `ArcOptions`, Maps with a field for each known key. These files
+    are pure layers.
   - `lib/src/canvas/`: the port-only canvas layer (Chart.js ADRs 0013 and 0015). `canvas.dart` is
     the Canvas 2D interface, a pure layer. `canvas_ui.dart` and its four parts
     (`canvas_ui_path.dart`, `canvas_ui_paint.dart`, `canvas_ui_text.dart` and
@@ -82,15 +85,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     generators of reference data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0017. Three of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0018. Three of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, and Chart.js
       ADR 0012 supersedes Chart.js ADR 0004. Chart.js ADR 0001 is accepted for its four theming
       invariants only. Chart.js ADRs 0013 (canvas model), 0014 (input events and the chart host),
-      0015 (text), 0016 (frame scheduling) and 0017 (element properties) are proposed. Chart.js
-      ADR 0016 supersedes Chart.js ADR 0007 when it is accepted. The other ADRs are accepted. Docs
-      name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. An accepted ADR does
-      not change. A changed decision gets a new ADR that states the complete decision and
-      supersedes the old ADR.
+      0015 (text), 0016 (frame scheduling), 0017 (element properties) and 0018 (typed element
+      options) are proposed. Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it is accepted.
+      The other ADRs are accepted. Docs name them "Chart.js ADR NNNN". "ADR NNNN" alone is a
+      `docs/adr/` file. An accepted ADR does not change. A changed decision gets a new ADR that
+      states the complete decision and supersedes the old ADR.
     - `doc/differences.md`: one row for each `DIVERGES` difference.
     - `doc/upstream/`: the output of tool 4 (`manifest.json`, `fixtures.json`). Do not edit it by
       hand.

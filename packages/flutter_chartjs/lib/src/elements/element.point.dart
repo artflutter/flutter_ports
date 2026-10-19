@@ -7,14 +7,18 @@
 /// `operator []` and `operator []=`, and the options as a Map.
 ///
 /// The options Map is the resolved options object of the point (Chart.js
-/// ADR 0006). The methods read it as upstream reads the object:
+/// ADR 0006). It is a [PointOptions] or a plain Map. The methods read each
+/// option through one small function, for example `_radius`, which gives
+/// [PointOptions.radiusValue] or `jsGet(options, 'radius')` (Chart.js ADR
+/// 0018, section 4). Both give the upstream value: JS `undefined` for an
+/// absent key. Thus the methods read the options as upstream reads the
+/// object:
 /// - A numeric option in arithmetic or in a comparison is read with
-///   `jsToNumber(jsGet(options, key))`, where an absent key (JS `undefined`)
-///   gives NaN and JS `null` gives 0. `jsGet` also throws the `TypeError`
-///   of a property read of `undefined` options.
-/// - A read whose result is the same for an absent key and for JS `null` is
-///   the typed Map read `options[key]`, for example the `|| 0` reads of
-///   [PointElement.size] (Chart.js ADR 0017, section 8).
+///   `jsToNumber`, where an absent key (JS `undefined`) gives NaN and JS
+///   `null` gives 0. The read also throws the `TypeError` of a property read
+///   of `undefined` options.
+/// - The `|| 0` reads of [PointElement.size] give 0 for JS `undefined` and
+///   for JS `null` (Chart.js ADR 0017, section 8).
 ///
 /// This library is a pure layer (Chart.js ADR 0017, section 10). It imports
 /// neither `dart:ui` nor `package:flutter`.
@@ -23,6 +27,8 @@ library;
 import 'package:flutter_chartjs/src/canvas/canvas.dart'
     show CanvasRenderingContext2D;
 import 'package:flutter_chartjs/src/core/core.element.dart';
+import 'package:flutter_chartjs/src/elements/element_options.dart'
+    show PointOptions;
 import 'package:flutter_chartjs/src/helpers/helpers.canvas.dart'
     show DrawPointOptions, drawPoint, isPointInArea;
 import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax, jsSquare;
@@ -49,9 +55,42 @@ bool _inRange(
   final value = jsToNumber(el.getProps([axis], useFinalPosition)[axis]);
 
   return (pos - value).abs() <
-      jsToNumber(jsGet(options, 'radius')) +
-          jsToNumber(jsGet(options, 'hitRadius'));
+      jsToNumber(_radius(options)) + jsToNumber(_hitRadius(options));
 }
+
+/// The option `radius` of [options]: [PointOptions.radiusValue] for typed
+/// options, else `jsGet(options, 'radius')` (Chart.js ADR 0018, section 4).
+///
+/// Both give JS `undefined` for an absent key. `jsGet` throws a [TypeError]
+/// for Dart `null`, the `undefined` state of the options. The other option
+/// functions of this file work in the same way.
+Object? _radius(Object? options) =>
+    options is PointOptions ? options.radiusValue : jsGet(options, 'radius');
+
+/// The option `hitRadius` of [options], as [_radius] reads `radius`.
+Object? _hitRadius(Object? options) => options is PointOptions
+    ? options.hitRadiusValue
+    : jsGet(options, 'hitRadius');
+
+/// The option `hoverRadius` of [options], as [_radius] reads `radius`.
+Object? _hoverRadius(Object? options) => options is PointOptions
+    ? options.hoverRadiusValue
+    : jsGet(options, 'hoverRadius');
+
+/// The option `borderWidth` of [options], as [_radius] reads `radius`.
+Object? _borderWidth(Object? options) => options is PointOptions
+    ? options.borderWidthValue
+    : jsGet(options, 'borderWidth');
+
+/// The option `borderColor` of [options], as [_radius] reads `radius`.
+Object? _borderColor(Object? options) => options is PointOptions
+    ? options.borderColorValue
+    : jsGet(options, 'borderColor');
+
+/// The option `backgroundColor` of [options], as [_radius] reads `radius`.
+Object? _backgroundColor(Object? options) => options is PointOptions
+    ? options.backgroundColorValue
+    : jsGet(options, 'backgroundColor');
 
 /// element.point.ts:18 `PointProps = Point`, the animated properties of a
 /// point element.
@@ -132,13 +171,15 @@ class PointElement extends Element
   /// The value of [angle]. Dart `null` stands for JS `undefined`.
   double? _angle;
 
-  /// The [DrawPointOptions] of the last [draw]: an adapter over [options].
+  /// The [DrawPointOptions] of the last [draw] with plain Map options: an
+  /// adapter over [options].
   ///
   /// [draw] runs for each point in each frame. Thus it keeps the adapter
   /// while [options] is the identical Map, and allocates a new adapter only
   /// when the Map changes. The adapter reads the Map at each call. Thus a
-  /// change of the values in the same Map needs no new adapter.
-  _PointOptions? _drawPointOptions;
+  /// change of the values in the same Map needs no new adapter. Typed
+  /// options ([PointOptions]) need no adapter.
+  _MapPointOptions? _drawPointOptions;
 
   /// element.point.ts:24 `parsed: CartesianParsedData`, the parsed data of
   /// the point. `controller.line.js:106` and `controller.scatter.js:135`
@@ -287,8 +328,7 @@ class PointElement extends Element
     final y = jsToNumber(props['y']);
     return (jsSquare(mouseX - x) + jsSquare(mouseY - y)) <
         jsSquare(
-          jsToNumber(jsGet(options, 'hitRadius')) +
-              jsToNumber(jsGet(options, 'radius')),
+          jsToNumber(_hitRadius(options)) + jsToNumber(_radius(options)),
         );
   }
 
@@ -327,21 +367,21 @@ class PointElement extends Element
   /// its hover radius and its border.
   ///
   /// Dart `null` for [options] stands for a falsy argument: `undefined` or
-  /// no argument. A Map is always truthy. Each `|| 0` read gives the same
-  /// result for an absent key and for JS `null`. Thus the reads are typed
-  /// Map reads (Chart.js ADR 0017, section 8), and [jsOrZero] applies the
-  /// `|| 0` and the `ToNumber` of the arithmetic.
+  /// no argument. A Map is always truthy. The option functions give JS
+  /// `undefined` for an absent key, and [jsOrZero] applies the `|| 0` and
+  /// the `ToNumber` of the arithmetic. `|| 0` gives 0 for JS `undefined` and
+  /// for JS `null` (Chart.js ADR 0017, section 8).
   double size([AnyObject? options]) {
     // Upstream reassigns its parameter.
     // ignore: parameter_assignments
     options = options ?? this.options ?? const <String, Object?>{};
-    var radius = jsOrZero(options['radius']);
+    var radius = jsOrZero(_radius(options));
     radius = jsMax(
       radius,
-      jsTruthy(radius) ? jsOrZero(options['hoverRadius']) : 0,
+      jsTruthy(radius) ? jsOrZero(_hoverRadius(options)) : 0,
     );
     final borderWidth = jsTruthy(radius)
-        ? jsOrZero(options['borderWidth'])
+        ? jsOrZero(_borderWidth(options))
         : 0.0;
     return (radius + borderWidth) * 2;
   }
@@ -357,8 +397,9 @@ class PointElement extends Element
   /// The canvas setters get the option values through [canvasStyle] and
   /// [canvasNumber]: Dart `null` for an absent key, which the canvas
   /// ignores as the DOM ignores `undefined`, and the `ToNumber` of the DOM
-  /// setter for `lineWidth`. `drawPoint` gets the adapter [_PointOptions]
-  /// over [options] (Chart.js ADR 0017, section 8).
+  /// setter for `lineWidth`. `drawPoint` gets [options] itself when it is a
+  /// [PointOptions] (Chart.js ADR 0018, section 4), else the adapter
+  /// [_MapPointOptions] over [options] (Chart.js ADR 0017, section 8).
   ///
   /// Throws a [TypeError] when [skip] is not true and [options] is in the
   /// `undefined` state, as the upstream property read of `undefined` does.
@@ -367,17 +408,17 @@ class PointElement extends Element
     final options = this.options;
 
     if (skip == true ||
-        jsToNumber(jsGet(options, 'radius')) < 0.1 ||
+        jsToNumber(_radius(options)) < 0.1 ||
         !isPointInArea(this, area, size(options) / 2)) {
       return;
     }
 
-    // jsGet threw a TypeError above when options is null.
+    // _radius threw a TypeError above when options is null.
     final opts = options!;
     ctx
-      ..strokeStyle = canvasStyle(jsGet(opts, 'borderColor'))
-      ..lineWidth = canvasNumber(jsGet(opts, 'borderWidth'))
-      ..fillStyle = canvasStyle(jsGet(opts, 'backgroundColor'));
+      ..strokeStyle = canvasStyle(_borderColor(opts))
+      ..lineWidth = canvasNumber(_borderWidth(opts))
+      ..fillStyle = canvasStyle(_backgroundColor(opts));
     drawPoint(ctx, _drawPointOptionsOf(opts), x, y);
   }
 
@@ -389,21 +430,23 @@ class PointElement extends Element
   double getRange([String? axis]) {
     final options = this.options ?? const <String, Object?>{};
     // @ts-expect-error Fallbacks should never be hit in practice
-    return jsToNumber(jsGet(options, 'radius')) +
-        jsToNumber(jsGet(options, 'hitRadius'));
+    return jsToNumber(_radius(options)) + jsToNumber(_hitRadius(options));
   }
 
-  /// The [DrawPointOptions] over [options]: the adapter of the last [draw]
-  /// when its Map is [options], else a new adapter that [draw] keeps.
-  _PointOptions _drawPointOptionsOf(AnyObject options) {
+  /// The [DrawPointOptions] of [options]: [options] itself for a
+  /// [PointOptions]. For a plain Map, the adapter of the last [draw] when
+  /// its Map is [options], else a new adapter that [draw] keeps.
+  DrawPointOptions _drawPointOptionsOf(AnyObject options) {
+    if (options is PointOptions) return options;
     final cached = _drawPointOptions;
     if (cached != null && identical(cached.options, options)) return cached;
-    return _drawPointOptions = _PointOptions(options);
+    return _drawPointOptions = _MapPointOptions(options);
   }
 }
 
 /// The options object of element.point.ts:99 `drawPoint(ctx, options, …)` as
-/// a [DrawPointOptions] (Chart.js ADR 0017, section 8).
+/// a [DrawPointOptions], for plain Map options (Chart.js ADR 0017, section
+/// 8). [PointOptions] implements [DrawPointOptions] with the same results.
 ///
 /// Each member reads [options] at the call, as upstream reads the object.
 /// The reads are typed Map reads, because they give the upstream result
@@ -412,8 +455,8 @@ class PointElement extends Element
 /// NaN. `drawPointLegend` treats 0 and NaN alike for these three numbers:
 /// `rotation || 0` (helpers.canvas.ts:178) and `!rotation` (:238),
 /// `isNaN(radius) || radius <= 0` (:192), and `borderWidth > 0` (:305).
-final class _PointOptions implements DrawPointOptions {
-  _PointOptions(this.options);
+final class _MapPointOptions implements DrawPointOptions {
+  _MapPointOptions(this.options);
 
   /// The options Map of the point.
   final AnyObject options;

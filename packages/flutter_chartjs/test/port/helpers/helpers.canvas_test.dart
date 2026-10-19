@@ -9,6 +9,7 @@ import 'package:flutter_chartjs/src/types/index.dart';
 import 'package:test/test.dart';
 
 import 'draw_point_reference.dart';
+import 'rounded_rect_upstream.dart';
 
 // Upstream behaviour that test/specs/helpers.canvas.tests.js does not check
 // (AGENTS.md rule 3). The expected values of toFontString and isPointInArea
@@ -1167,8 +1168,34 @@ void main() {
   });
 
   group('addRoundedRectPath', () {
-    test('adds the four arcs and lines', () {
+    // adapt-rounded-rect-path: the port makes one roundRect call in place of
+    // the four upstream arcs and lines. test/port/helpers/
+    // helpers.canvas_ui_test.dart compares the pixels of the two forms.
+    test('makes one roundRect call with the radii in the DOM order', () {
       final ctx = createMockContext();
+      addRoundedRectPath(
+        ctx,
+        const _RoundedRect(10, 20, 100, 50, _Corners(1, 2, 3, 4)),
+      );
+      // [topLeft, topRight, bottomRight, bottomLeft]
+      expect(ctx.getCalls(), [
+        {
+          'name': 'roundRect',
+          'args': [
+            10,
+            20,
+            100,
+            50,
+            [1, 2, 4, 3],
+          ],
+        },
+      ]);
+    });
+
+    test('the roundRect call replays as the upstream arcs and lines', () {
+      // The translation of adapt-rounded-rect-path back into the upstream
+      // calls gives the calls of helpers.canvas.ts at v4.5.1.
+      final ctx = UpstreamRoundedRectContext();
       addRoundedRectPath(
         ctx,
         const _RoundedRect(10, 20, 100, 50, _Corners(1, 2, 3, 4)),
@@ -1189,6 +1216,18 @@ void main() {
           ('lineTo', [11, 20]),
         ]),
       );
+    });
+
+    test('passes the radii that upstream passes to arc unchanged', () {
+      // roundRect throws for a negative radius and does nothing for NaN, as
+      // the upstream arcs do (an IndexSizeError, a call that adds nothing).
+      final ctx = createMockContext();
+      addRoundedRectPath(
+        ctx,
+        const _RoundedRect(0, 0, 10, 10, _Corners(-1, double.nan, 99, 0)),
+      );
+      final args = ctx.getCalls().single['args']! as List<Object?>;
+      expect(args[4], [-1, isNaN, 0, 99]);
     });
   });
 }

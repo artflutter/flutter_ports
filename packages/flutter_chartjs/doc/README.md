@@ -30,7 +30,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
   ADRs are in [adr/](adr/). Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
   supersedes Chart.js ADR 0005, and Chart.js ADR 0012 supersedes Chart.js ADR 0004. Chart.js
-  ADR 0001 is accepted for its four invariants only. Chart.js ADRs 0013 to 0017 are proposed.
+  ADR 0001 is accepted for its four invariants only. Chart.js ADRs 0013 to 0018 are proposed.
   Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it is accepted. The other Chart.js ADRs are
   accepted:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md)
@@ -55,6 +55,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (proposed; it
     supersedes Chart.js ADR 0007 on acceptance)
   - [Chart.js ADR 0017: Element properties](adr/0017-element-properties.md) (proposed)
+  - [Chart.js ADR 0018: Typed element options](adr/0018-typed-element-options.md) (proposed)
 
 ## What gets ported
 

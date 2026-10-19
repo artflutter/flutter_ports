@@ -27,9 +27,12 @@
 /// with `toInt()`. Each index comes from a list length or from a segment of
 /// the same points, so it is finite. JS `%` is Dart `remainder`.
 ///
-/// `line.options` is an option object (Chart.js ADR 0006). Its reads go
-/// through [jsGet], which throws a [TypeError] for the `undefined` state, as
-/// a JavaScript property read of `undefined` does.
+/// `line.options` is an option object (Chart.js ADR 0006): a [LineOptions]
+/// or a plain Map. Each read goes through one small function for each
+/// option, for example `_stepped`, which gives [LineOptions.steppedValue] or
+/// `jsGet(options, 'stepped')` (Chart.js ADR 0018, section 4). Both give JS
+/// `undefined` for an absent key. [jsGet] throws a [TypeError] for the
+/// `undefined` state, as a JavaScript property read of `undefined` does.
 ///
 /// This library is a pure layer (Chart.js ADR 0017, section 10). It imports
 /// neither `dart:ui` nor `package:flutter`.
@@ -37,6 +40,8 @@ library;
 
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
+import 'package:flutter_chartjs/src/elements/element_options.dart'
+    show LineOptions;
 import 'package:flutter_chartjs/src/helpers/helpers.canvas.dart'
     show bezierCurveTo, steppedLineTo;
 import 'package:flutter_chartjs/src/helpers/helpers.core.dart'
@@ -61,6 +66,74 @@ import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
+/// The option `borderCapStyle` of [options]: [LineOptions.borderCapStyleValue]
+/// for typed options, else `jsGet(options, 'borderCapStyle')` (Chart.js ADR
+/// 0018, section 4).
+///
+/// Both give JS `undefined` for an absent key. `jsGet` throws a [TypeError]
+/// for Dart `null`, the `undefined` state of the options. [options] can also
+/// be the style of a segment, a plain Map. The other option functions of
+/// this file work in the same way.
+Object? _borderCapStyle(Object? options) => options is LineOptions
+    ? options.borderCapStyleValue
+    : jsGet(options, 'borderCapStyle');
+
+/// The option `borderDash` of [options], as [_borderCapStyle] reads
+/// `borderCapStyle`.
+Object? _borderDash(Object? options) => options is LineOptions
+    ? options.borderDashValue
+    : jsGet(options, 'borderDash');
+
+/// The option `borderDashOffset` of [options], as [_borderCapStyle] reads
+/// `borderCapStyle`.
+Object? _borderDashOffset(Object? options) => options is LineOptions
+    ? options.borderDashOffsetValue
+    : jsGet(options, 'borderDashOffset');
+
+/// The option `borderJoinStyle` of [options], as [_borderCapStyle] reads
+/// `borderCapStyle`.
+Object? _borderJoinStyle(Object? options) => options is LineOptions
+    ? options.borderJoinStyleValue
+    : jsGet(options, 'borderJoinStyle');
+
+/// The option `borderWidth` of [options], as [_borderCapStyle] reads
+/// `borderCapStyle`.
+Object? _borderWidth(Object? options) => options is LineOptions
+    ? options.borderWidthValue
+    : jsGet(options, 'borderWidth');
+
+/// The option `borderColor` of [options], as [_borderCapStyle] reads
+/// `borderCapStyle`.
+Object? _borderColor(Object? options) => options is LineOptions
+    ? options.borderColorValue
+    : jsGet(options, 'borderColor');
+
+/// The option `cubicInterpolationMode` of [options], as [_borderCapStyle]
+/// reads `borderCapStyle`.
+Object? _cubicInterpolationMode(Object? options) => options is LineOptions
+    ? options.cubicInterpolationModeValue
+    : jsGet(options, 'cubicInterpolationMode');
+
+/// The option `spanGaps` of [options], as [_borderCapStyle] reads
+/// `borderCapStyle`.
+Object? _spanGaps(Object? options) =>
+    options is LineOptions ? options.spanGapsValue : jsGet(options, 'spanGaps');
+
+/// The option `stepped` of [options], as [_borderCapStyle] reads
+/// `borderCapStyle`.
+Object? _stepped(Object? options) =>
+    options is LineOptions ? options.steppedValue : jsGet(options, 'stepped');
+
+/// The option `tension` of [options], as [_borderCapStyle] reads
+/// `borderCapStyle`.
+Object? _tension(Object? options) =>
+    options is LineOptions ? options.tensionValue : jsGet(options, 'tension');
+
+/// The option `segment` of [options], which the line controller writes
+/// (controller.line.js:66), as [_borderCapStyle] reads `borderCapStyle`.
+Object? _segment(Object? options) =>
+    options is LineOptions ? options.segmentValue : jsGet(options, 'segment');
+
 /// element.line.js:12 `setStyle(ctx, options, style = options)`.
 ///
 /// Dart `null` for [style] stands for JS `undefined`, which gives the
@@ -79,33 +152,22 @@ void _setStyle(
   final s = style ?? options;
   ctx
     ..lineCap = canvasKeyword(
-      valueOrDefault(
-        jsGet(s, 'borderCapStyle'),
-        jsGet(options, 'borderCapStyle'),
-      ),
+      valueOrDefault(_borderCapStyle(s), _borderCapStyle(options)),
     )
     ..setLineDash(
-      canvasLineDash(
-        valueOrDefault(jsGet(s, 'borderDash'), jsGet(options, 'borderDash')),
-      ),
+      canvasLineDash(valueOrDefault(_borderDash(s), _borderDash(options))),
     )
     ..lineDashOffset = canvasNumber(
-      valueOrDefault(
-        jsGet(s, 'borderDashOffset'),
-        jsGet(options, 'borderDashOffset'),
-      ),
+      valueOrDefault(_borderDashOffset(s), _borderDashOffset(options)),
     )
     ..lineJoin = canvasKeyword(
-      valueOrDefault(
-        jsGet(s, 'borderJoinStyle'),
-        jsGet(options, 'borderJoinStyle'),
-      ),
+      valueOrDefault(_borderJoinStyle(s), _borderJoinStyle(options)),
     )
     ..lineWidth = canvasNumber(
-      valueOrDefault(jsGet(s, 'borderWidth'), jsGet(options, 'borderWidth')),
+      valueOrDefault(_borderWidth(s), _borderWidth(options)),
     )
     ..strokeStyle = canvasStyle(
-      valueOrDefault(jsGet(s, 'borderColor'), jsGet(options, 'borderColor')),
+      valueOrDefault(_borderColor(s), _borderColor(options)),
     );
 }
 
@@ -155,12 +217,12 @@ void Function(
   Object? mode,
 )
 _getLineMethod(Object? options) {
-  if (jsTruthy(jsGet(options, 'stepped'))) {
+  if (jsTruthy(_stepped(options))) {
     return steppedLineTo;
   }
 
-  if (jsTruthy(jsGet(options, 'tension')) ||
-      jsGet(options, 'cubicInterpolationMode') == 'monotone') {
+  if (jsTruthy(_tension(options)) ||
+      _cubicInterpolationMode(options) == 'monotone') {
     return _bezierCurveTo;
   }
 
@@ -274,7 +336,7 @@ bool? _pathSegment(
       ctx.moveTo(point.x, point.y);
       move = false;
     } else {
-      lineMethod(ctx, prev, point, reverse, jsGet(options, 'stepped'));
+      lineMethod(ctx, prev, point, reverse, _stepped(options));
     }
 
     prev = point;
@@ -282,7 +344,7 @@ bool? _pathSegment(
 
   if (loop) {
     point = points[(start + (reverse ? ilen : 0)).remainder(count).toInt()];
-    lineMethod(ctx, prev, point, reverse, jsGet(options, 'stepped'));
+    lineMethod(ctx, prev, point, reverse, _stepped(options));
   }
 
   return loop;
@@ -429,16 +491,16 @@ bool? Function(
 )
 _getSegmentMethod(LineElement line) {
   final opts = line.options;
-  final borderDash = jsGet(opts, 'borderDash');
+  final borderDash = _borderDash(opts);
   final dashLength = jsTruthy(borderDash)
       ? jsGet(borderDash, 'length')
       : borderDash;
   final useFastPath =
       !line.decimated &&
       !(line.loop ?? false) &&
-      !jsTruthy(jsGet(opts, 'tension')) &&
-      jsGet(opts, 'cubicInterpolationMode') != 'monotone' &&
-      !jsTruthy(jsGet(opts, 'stepped')) &&
+      !jsTruthy(_tension(opts)) &&
+      _cubicInterpolationMode(opts) != 'monotone' &&
+      !jsTruthy(_stepped(opts)) &&
       !jsTruthy(dashLength);
   return useFastPath ? _fastPathSegment : _pathSegment;
 }
@@ -456,12 +518,12 @@ InterpolatedPoint Function(
   Object? mode,
 )
 _getInterpolationMethod(Object? options) {
-  if (jsTruthy(jsGet(options, 'stepped'))) {
+  if (jsTruthy(_stepped(options))) {
     return steppedInterpolation;
   }
 
-  if (jsTruthy(jsGet(options, 'tension')) ||
-      jsGet(options, 'cubicInterpolationMode') == 'monotone') {
+  if (jsTruthy(_tension(options)) ||
+      _cubicInterpolationMode(options) == 'monotone') {
     return bezierInterpolation;
   }
 
@@ -535,7 +597,7 @@ void _draw(
   double? start,
   double? count,
 ) {
-  if (_usePath2D && !jsTruthy(jsGet(line.options, 'segment'))) {
+  if (_usePath2D && !jsTruthy(_segment(line.options))) {
     _strokePathWithCache(ctx, line, start, count);
   } else {
     _strokePathDirect(ctx, line, start, count);
@@ -713,11 +775,11 @@ class LineElement extends Element
   /// writes its control points.
   void updateControlPoints(ChartArea chartArea, [String? indexAxis]) {
     final options = this.options;
-    if ((jsTruthy(jsGet(options, 'tension')) ||
-            jsGet(options, 'cubicInterpolationMode') == 'monotone') &&
-        !jsTruthy(jsGet(options, 'stepped')) &&
+    if ((jsTruthy(_tension(options)) ||
+            _cubicInterpolationMode(options) == 'monotone') &&
+        !jsTruthy(_stepped(options)) &&
         !_pointsUpdated) {
-      final loop = jsTruthy(jsGet(options, 'spanGaps')) ? _loop : _fullLoop;
+      final loop = jsTruthy(_spanGaps(options)) ? _loop : _fullLoop;
       // `_updateBezierControlPoints(undefined, …)` throws a TypeError, as the
       // null check of `_points` does.
       updateBezierControlPoints(
@@ -774,7 +836,7 @@ class LineElement extends Element
   /// [TypeError] when [options] or [points] is in the `undefined` state.
   @override
   List<types.Segment> get segments =>
-      _segments ??= computeSegments(this, jsGet(options, 'segment'));
+      _segments ??= computeSegments(this, _segment(options));
 
   /// element.line.js:327 `first()`.
   ///
@@ -848,12 +910,7 @@ class LineElement extends Element
         continue;
       }
       final t = ((value - p1[property]) / (p2[property] - p1[property])).abs();
-      final interpolated = interpolateMethod(
-        p1,
-        p2,
-        t,
-        jsGet(options, 'stepped'),
-      );
+      final interpolated = interpolateMethod(p1, p2, t, _stepped(options));
       switch (property) {
         case 'x':
           interpolated.x = point.x;
@@ -944,7 +1001,9 @@ class LineElement extends Element
   /// @param {number} `[count]`
   ///
   /// [area] is the upstream `chartArea`, which `draw` does not read. Dart
-  /// `null` for [start] and [count] stands for JS `undefined`.
+  /// `null` for [start] and [count] stands for JS `undefined`. The test of
+  /// `borderWidth` is `ToBoolean`, which is false for JS `undefined` and for
+  /// JS `null`.
   @override
   void draw(
     CanvasRenderingContext2D ctx, [
@@ -955,7 +1014,7 @@ class LineElement extends Element
     final options = this.options ?? const <String, Object?>{};
     final points = _points ?? const <types.PointElement>[];
 
-    if (points.isNotEmpty && jsTruthy(options['borderWidth'])) {
+    if (points.isNotEmpty && jsTruthy(_borderWidth(options))) {
       ctx.save();
 
       _draw(ctx, this, start, count);

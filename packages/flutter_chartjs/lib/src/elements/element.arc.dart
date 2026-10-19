@@ -14,12 +14,17 @@
 ///
 /// ## Options
 ///
-/// The code reads the options as Chart.js ADR 0017 (section 8) states:
-/// - A read whose result differs for an absent key and for JS `null` uses
-///   `jsGet`. An example is a number in arithmetic: `undefined` gives NaN,
+/// The options are an [ArcOptions] or a plain Map. Each read goes through
+/// one small function for each option, for example `_offset`, which gives
+/// [ArcOptions.offsetValue] or `jsGet(options, 'offset')` (Chart.js ADR 0018,
+/// section 4). Both give JS `undefined` for an absent key. The code reads
+/// the options as Chart.js ADR 0017 (section 8) states:
+/// - A number in arithmetic reads with `jsToNumber`: `undefined` gives NaN,
 ///   and `null` gives 0.
-/// - A typed Map read `options[key]` stays where both give the same result:
-///   a test with `jsTruthy` and a compare with a string.
+/// - A test with `jsTruthy`, a compare with a string or with 0, `|| 0` and
+///   `toRadiusCorners` give the same result for JS `undefined` and for JS
+///   `null`. Thus these sites give the same result as the typed Map read
+///   `options[key]`, which gives Dart `null` for an absent key.
 /// - A canvas setter gets its value through `canvasStyle`, `canvasNumber`,
 ///   `canvasKeyword` or `canvasLineDash` of `lib/src/js/js_webidl.dart`, as
 ///   in the other element classes.
@@ -33,6 +38,8 @@ import 'dart:math' as math;
 
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
+import 'package:flutter_chartjs/src/elements/element_options.dart'
+    show ArcOptions;
 // Upstream imports _angleBetween, getAngleFromPoint, TAU, HALF_PI and
 // valueOrDefault from helpers/index.js. helpers/index.dart exports
 // helpers.extras, which is not a pure layer. Thus the port imports the
@@ -60,6 +67,77 @@ import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 
+/// The option `borderAlign` of [options]: [ArcOptions.borderAlignValue] for
+/// typed options, else `jsGet(options, 'borderAlign')` (Chart.js ADR 0018,
+/// section 4).
+///
+/// Both give JS `undefined` for an absent key. `jsGet` throws a [TypeError]
+/// for Dart `null`, the `undefined` state of the options. The other option
+/// functions of this file work in the same way.
+Object? _borderAlign(Object? options) => options is ArcOptions
+    ? options.borderAlignValue
+    : jsGet(options, 'borderAlign');
+
+/// The option `borderColor` of [options], as [_borderAlign] reads
+/// `borderAlign`.
+Object? _borderColor(Object? options) => options is ArcOptions
+    ? options.borderColorValue
+    : jsGet(options, 'borderColor');
+
+/// The option `borderDash` of [options], as [_borderAlign] reads
+/// `borderAlign`.
+Object? _borderDash(Object? options) => options is ArcOptions
+    ? options.borderDashValue
+    : jsGet(options, 'borderDash');
+
+/// The option `borderDashOffset` of [options], as [_borderAlign] reads
+/// `borderAlign`.
+Object? _borderDashOffset(Object? options) => options is ArcOptions
+    ? options.borderDashOffsetValue
+    : jsGet(options, 'borderDashOffset');
+
+/// The option `borderJoinStyle` of [options], as [_borderAlign] reads
+/// `borderAlign`.
+Object? _borderJoinStyle(Object? options) => options is ArcOptions
+    ? options.borderJoinStyleValue
+    : jsGet(options, 'borderJoinStyle');
+
+/// The option `borderRadius` of [options], as [_borderAlign] reads
+/// `borderAlign`.
+Object? _borderRadius(Object? options) => options is ArcOptions
+    ? options.borderRadiusValue
+    : jsGet(options, 'borderRadius');
+
+/// The option `borderWidth` of [options], as [_borderAlign] reads
+/// `borderAlign`.
+Object? _borderWidth(Object? options) => options is ArcOptions
+    ? options.borderWidthValue
+    : jsGet(options, 'borderWidth');
+
+/// The option `offset` of [options], as [_borderAlign] reads `borderAlign`.
+Object? _offset(Object? options) =>
+    options is ArcOptions ? options.offsetValue : jsGet(options, 'offset');
+
+/// The option `spacing` of [options], as [_borderAlign] reads `borderAlign`.
+Object? _spacing(Object? options) =>
+    options is ArcOptions ? options.spacingValue : jsGet(options, 'spacing');
+
+/// The option `circular` of [options], as [_borderAlign] reads
+/// `borderAlign`.
+Object? _circular(Object? options) =>
+    options is ArcOptions ? options.circularValue : jsGet(options, 'circular');
+
+/// The option `selfJoin` of [options], as [_borderAlign] reads
+/// `borderAlign`.
+Object? _selfJoin(Object? options) =>
+    options is ArcOptions ? options.selfJoinValue : jsGet(options, 'selfJoin');
+
+/// The option `backgroundColor` of [options], as [_borderAlign] reads
+/// `borderAlign`.
+Object? _backgroundColor(Object? options) => options is ArcOptions
+    ? options.backgroundColorValue
+    : jsGet(options, 'backgroundColor');
+
 /// element.arc.ts:7 `clipSelf`.
 ///
 /// It reads `ctx.canvas`. The mock context of chartjs-test-utils has no
@@ -71,8 +149,9 @@ void _clipSelf(
 ) {
   final ArcElement(:startAngle, :x, :y, :outerRadius, :innerRadius) = element;
   final options = element.options!;
-  final borderWidth = jsToNumber(jsGet(options, 'borderWidth'));
-  final borderJoinStyle = options['borderJoinStyle'];
+  final borderWidth = jsToNumber(_borderWidth(options));
+  // Compared with strings only: JS undefined and JS null give one result.
+  final borderJoinStyle = _borderJoinStyle(options);
   final outerAngleClip = jsMin(
     borderWidth / outerRadius,
     normalizeAngle(startAngle - endAngle),
@@ -195,7 +274,9 @@ _BorderRadius _parseBorderRadius(
   double outerRadius,
   double angleDelta,
 ) {
-  final o = _toRadiusCorners(arc.options!['borderRadius']);
+  // toRadiusCorners gives 0 for each corner of JS undefined and JS null.
+  // _borderRadius throws a TypeError for undefined options, as `!` did.
+  final o = _toRadiusCorners(_borderRadius(arc.options));
   final halfThickness = (outerRadius - innerRadius) / 2;
   final innerLimit = jsMin(halfThickness, angleDelta * innerRadius / 2);
 
@@ -475,13 +556,16 @@ void _drawBorder(
 ) {
   final ArcElement(:fullCircles, :startAngle, :circumference) = element;
   final options = element.options!;
-  final borderWidth = options['borderWidth'];
-  final borderJoinStyle = options['borderJoinStyle'];
-  final borderDash = options['borderDash'];
+  // borderWidth, borderJoinStyle and borderDash reach the canvas only when
+  // they are truthy. borderJoinStyle and borderRadius are compared with a
+  // string and with 0. Thus JS undefined and JS null give one result.
+  final borderWidth = _borderWidth(options);
+  final borderJoinStyle = _borderJoinStyle(options);
+  final borderDash = _borderDash(options);
   // An absent key is undefined, which the canvas ignores. JS null is 0.
-  final borderDashOffset = jsGet(options, 'borderDashOffset');
-  final borderRadius = options['borderRadius'];
-  final inner = options['borderAlign'] == 'inner';
+  final borderDashOffset = _borderDashOffset(options);
+  final borderRadius = _borderRadius(options);
+  final inner = _borderAlign(options) == 'inner';
 
   if (!jsTruthy(borderWidth)) {
     return;
@@ -525,7 +609,7 @@ void _drawBorder(
 
   // `borderRadius === 0`: the Dart `==` of a number and 0 is true only for
   // 0 and -0, and false for every value that is not a number.
-  if (jsTruthy(options['selfJoin']) &&
+  if (jsTruthy(_selfJoin(options)) &&
       endAngle - startAngle >= pi &&
       borderRadius == 0 &&
       borderJoinStyle != 'miter') {
@@ -794,9 +878,7 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     final outerRadius = jsToNumber(props['outerRadius']);
     final circumference = props['circumference'];
     final rAdjust =
-        (jsToNumber(jsGet(options, 'spacing')) +
-            jsToNumber(jsGet(options, 'borderWidth'))) /
-        2;
+        (jsToNumber(_spacing(options)) + jsToNumber(_borderWidth(options))) / 2;
     final circumference_ = jsToNumber(
       valueOrDefault<Object?>(circumference, endAngle - startAngle),
     );
@@ -859,8 +941,8 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     final endAngle = jsToNumber(props['endAngle']);
     final innerRadius = jsToNumber(props['innerRadius']);
     final outerRadius = jsToNumber(props['outerRadius']);
-    final offset = jsToNumber(jsGet(options, 'offset'));
-    final spacing = jsToNumber(jsGet(options, 'spacing'));
+    final offset = jsToNumber(_offset(options));
+    final spacing = jsToNumber(_spacing(options));
     final halfAngle = (startAngle + endAngle) / 2;
     final halfRadius = (innerRadius + outerRadius + spacing + offset) / 2;
     return ElementPoint(
@@ -888,11 +970,13 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   void draw(CanvasRenderingContext2D ctx, [ChartArea? area]) {
     final options = this.options!;
     final circumference = this.circumference;
-    final offset = jsOrZero(options['offset']) / 4;
-    final spacing = jsOrZero(options['spacing']) / 2;
+    // `|| 0`, ToBoolean and a compare with a string: JS undefined and JS
+    // null give one result.
+    final offset = jsOrZero(_offset(options)) / 4;
+    final spacing = jsOrZero(_spacing(options)) / 2;
     // pathArc tests it with `if (circular)`.
-    final circular = jsTruthy(options['circular']);
-    pixelMargin = (options['borderAlign'] == 'inner') ? 0.33 : 0;
+    final circular = jsTruthy(_circular(options));
+    pixelMargin = (_borderAlign(options) == 'inner') ? 0.33 : 0;
     fullCircles = circumference > tau
         ? (circumference / tau).floorToDouble()
         : 0;
@@ -910,8 +994,8 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     final radiusOffset = offset * fix;
 
     ctx
-      ..fillStyle = canvasStyle(jsGet(options, 'backgroundColor'))
-      ..strokeStyle = canvasStyle(jsGet(options, 'borderColor'));
+      ..fillStyle = canvasStyle(_backgroundColor(options))
+      ..strokeStyle = canvasStyle(_borderColor(options));
 
     _drawArc(ctx, this, radiusOffset, spacing, circular);
     _drawBorder(ctx, this, radiusOffset, spacing, circular);

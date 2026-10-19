@@ -4,6 +4,7 @@ import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/elements_demo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chartjs/src/elements/element_options.dart';
 import 'package:flutter_chartjs/src/elements/index.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/platform/chart_host.dart';
@@ -137,6 +138,11 @@ void main() {
     expect(state.points.first.options!['pointStyle'], 'triangle');
     expect(line.options!['capBezierPoints'], isTrue);
     expect(state.arcs.first.options!['borderColor'], '#fff');
+    // Each element has typed options (Chart.js ADR 0018).
+    expect(state.bars.first.options, isA<BarOptions>());
+    expect(state.points.first.options, isA<PointOptions>());
+    expect(line.options, isA<LineOptions>());
+    expect(state.arcs.first.options, isA<ArcOptions>());
 
     // The layout fits the phone width: each element is in the chart.
     final size = tester.getSize(_host);

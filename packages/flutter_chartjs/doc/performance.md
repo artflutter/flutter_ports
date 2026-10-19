@@ -414,22 +414,23 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
 - macOS and Chrome: section 8.1 has the figures of the `primitives` mode with the circle batch.
   They are not the baseline of the plan: they come from one process for each mode, not from 3
   fresh processes for each scenario.
-- dart2wasm: the option reads of the elements are Map lookups with `String` keys. They take about
-  26 % of the main thread at 20000 points (section 8.2). Phase 5 decides how the resolved options
-  of an element are kept (Chart.js ADR 0006).
-- Bars with a border and a radius, and arcs: the native path calls (`Path.arcTo`), the `clip` of
-  each bar and the anti-aliased paths cost the most (section 8.2). Cut 1 of
+- Typed element options (section 8.4): the elements read typed options without a Map lookup, but
+  only phase 5 makes them in a chart. `resolveNamedOptions` must make the typed class, and the two
+  option copies of the animations must keep it ([Chart.js ADR 0018](adr/0018-typed-element-options.md)).
+  Options that are plain Maps still cost the lookups of section 8.2.
+- Arcs: the native path calls (`Path.arcTo`) cost the most (section 8.2). Cut 1 of
   [canvas-cuts-plan.md](canvas-cuts-plan.md) keeps the native arc path (`_nativeArc`), so it does
-  not reduce this cost. Only a new change can reduce it, for example a `roundRect` that the canvas
-  layer maps to `addRRect`, or no `clip` for a bar with an `inflateAmount` of 0. Such a change
-  adds code. It follows the performance rule of [porting-flow.md](porting-flow.md) §1.1.
+  not reduce this cost. The bars use `roundRect` now (section 8.4).
+- macOS: the `drawDRRect` ring of the bars costs more raster time than the path on Metal (section
+  8.4), at the same 60 FPS up to 5000 bars. Measure it again on a later Flutter release.
 - macOS: the cause of the stop after about 28 seconds in a process with several scenarios
   (section 6) is not known.
 - The circle batch with bilinear sampling on the phone: section 4.2 was measured with nearest
   sampling.
 - The draw time at 1000 points on the phone (section 4.3): the cause of the 4.5 ms that is not
   the points is not measured.
-- iOS: not measured.
+- iOS: section 8.4 has the element modes on an iPhone 17 Pro. The `primitives` mode is measured
+  only with the code of section 8.4, and the variants of the bars only on the other platforms.
 
 ## 8. Elements (phase 4)
 
@@ -553,4 +554,99 @@ compares the two paths for 19 values that are not objects.
 On macOS, the draw time is about 12 % lower. On the phone, the draw time went from 15.6 to 14.6
 ms at 1000 bars and from 59.2 to 57.3 ms at 5000 bars. The raster time does not change, because
 it comes from the clip and the paths.
+
+### 8.4 Changes: typed options, `roundRect` and the bar clip
+
+Three changes followed the profiles of section 8.2 and the performance rule of
+[porting-flow.md](porting-flow.md) §1.1:
+- **Typed element options** ([Chart.js ADR 0018](adr/0018-typed-element-options.md)):
+  `PointOptions`, `LineOptions`, `BarOptions` and `ArcOptions` are Maps that keep their known
+  keys in fields. The elements read these options without a Map lookup. The stress demo makes
+  them.
+- **`roundRect`** (`adapt-rounded-rect-path`, [differences.md](differences.md)):
+  `addRoundedRectPath` calls `roundRect`. Under an axis-aligned transform, the `dart:ui` context
+  adds one `addRRect`, fills one rounded rectangle with `drawRRect`, clips it with `clipRRect`, and
+  fills the even-odd ring of two nested shapes with `drawDRRect`.
+- **No bar clip** (`adapt-bar-clip`, [differences.md](differences.md)): a bar with an
+  `inflateAmount` of 0 does not clip, because the clip changes no pixel then.
+
+The old code is commit `7866a3e` in a git worktree. The new code is the change. Both ran in the
+same session: on the Pixel 8a and the iPhone one process for each mode, on macOS one fresh process
+for each scenario, and in Chrome one page for each mode. Two variants of the new code each change
+one line: "no clip skip" clips each bar again, and "no ring" fills the ring with `drawPath`. The
+cells give FPS / draw (ms) / raster (ms). A dash means fewer than 31 frames in 7 seconds.
+
+**Pixel 8a:**
+
+| Scenario | Before | After | After, no clip skip | After, no ring |
+|---|---|---|---|---|
+| elements 5000 + 50 | 58.2 / 8.7 / 6.6 | 59.4 / 8.0 / 6.4 | | |
+| elements 20000 + 0 | 33.4 / 18.5 / 10.1 | 44.5 / 14.7 / 9.7 | | |
+| elements 20000 + 200 | 31.6 / 19.1 / 12.5 | 42.5 / 15.2 / 11.5 | | |
+| bars 1000 | 33.9 / 14.9 / 21.0 | 49.6 / 9.5 / 13.9 | 41.4 / 11.1 / 17.9 | 46.4 / 10.3 / 14.7 |
+| bars 5000 | 12.5 / 58.5 / 69.3 | 16.8 / 33.3 / 52.1 | 15.2 / 44.9 / 51.0 | 15.3 / 35.3 / 57.2 |
+| bars 20000 | — | 8.7 / 115.8 / 84.5 | — | 6.2 / 142.7 / 101.8 |
+| arcs 1000 | 38.7 / 14.3 / 18.1 | 39.5 / 13.9 / 18.2 | | |
+| arcs 5000 | 13.1 / 54.7 / 64.8 | 14.1 / 56.6 / 63.6 | | |
+
+**macOS:**
+
+| Scenario | Before | After | After, no clip skip | After, no ring |
+|---|---|---|---|---|
+| elements 5000 + 50 | 60 / 2.4 / 12.6 | 60 / 1.9 / 9.2 | | |
+| elements 20000 + 0 | 60 / 8.3 / 8.0 | 60 / 6.6 / 7.9 | | |
+| bars 1000 | 60 / 3.1 / 7.2 | 60 / 2.9 / 3.3 | 60 / 3.1 / 5.2 | 60 / 3.1 / 2.5 |
+| bars 5000 | 37.1 / 14.5 / 26.1 | 60 / 12.1 / 12.7 | 40.0 / 12.9 / 22.9 | 60 / 11.7 / 8.9 |
+| bars 20000 | 10.3 / 59.1 / 97.3 | 15.3 / 47.6 / 42.2 | | |
+| arcs 1000 | 60 / 4.2 / 7.0 | 60 / 4.2 / 7.0 | | |
+| arcs 5000 | 30.0 / 19.5 / 30.9 | 30.2 / 19.1 / 30.8 | | |
+
+**Chrome** (dart2wasm, skwasm):
+
+| Scenario | Before | After | After, no clip skip | After, no ring |
+|---|---|---|---|---|
+| elements 5000 + 50 | 60 / 10.0 / 24.0 | 60 / 7.1 / 22.0 | | |
+| elements 20000 + 0 | 26.6 / 36.3 / 37.7 | 37.4 / 25.4 / 26.6 | | |
+| elements 20000 + 200 | 26.2 / 36.8 / 37.7 | 37.2 / 25.5 / 26.6 | | |
+| bars 1000 | 60 / 14.8 / 33.5 | 60 / 6.0 / 9.2 | 60 / 6.8 / 18.8 | 60 / 7.8 / 6.3 |
+| bars 5000 | 12.6 / 74.0 / 148.7 | 32.2 / 30.3 / 58.9 | 29.3 / 33.4 / 78.3 | 24.2 / 39.6 / 38.6 |
+| bars 20000 | — | 8.2 / 121.1 / 245.0 | 7.3 / 135.0 / 276.8 | 6.2 / 157.8 / 161.8 |
+| arcs 1000 | 48.9 / 19.5 / 38.0 | 51.3 / 18.6 / 37.3 | | |
+| arcs 5000 | 10.3 / 94.6 / 186.6 | 10.6 / 91.6 / 180.6 | | |
+
+**iPhone 17 Pro** (iOS 26.6.2, the display runs at up to 120 Hz, a profile build connected by
+cable, one process for each mode, the default renderer of Flutter on iOS):
+
+| Scenario | Before | After |
+|---|---|---|
+| primitives 1000 + 0 | | 119.4 / 1.3 / 1.0 |
+| primitives 20000 + 200 | | 119.7 / 3.0 / 1.0 |
+| elements 5000 + 50 | 119.8 / 1.6 / 0.3 | 119.8 / 1.3 / 0.3 |
+| elements 20000 + 0 | 119.9 / 6.8 / 0.5 | 119.8 / 4.9 / 0.4 |
+| elements 20000 + 200 | 114.5 / 7.2 / 0.7 | 119.7 / 5.3 / 0.6 |
+| bars 1000 | 120 / 2.0 / 2.7 | 119.9 / 1.8 / 1.4 |
+| bars 5000 | 42.7 / 13.1 / 22.2 | 60.0 / 10.2 / 7.2 |
+| bars 20000 | 15.3 / 54.8 / 57.0 | 20.3 / 41.9 / 22.1 |
+| arcs 1000 | 119.9 / 2.7 / 2.1 | 119.9 / 2.6 / 2.1 |
+| arcs 5000 | 42.0 / 16.4 / 13.0 | 42.7 / 16.3 / 13.2 |
+
+- **Typed options.** At 20000 points, the draw time is 20 % lower on the Pixel 8a, 21 % on macOS,
+  28 % on the iPhone and 30 % in Chrome. The frame rate went from 33 to 44 FPS on the Pixel 8a
+  and from 27 to 37 FPS in Chrome.
+- **Bars.** At 1000 bars, the Pixel 8a went from 34 to 50 FPS. At 5000 bars, macOS went from 37
+  to 60 FPS, the iPhone from 42.7 to 60 FPS, and Chrome from 12.6 to 32.2 FPS. The draw time is
+  36 to 43 % lower on the Pixel 8a, 6 to 19 % on macOS, 6 to 24 % on the iPhone and 59 % in
+  Chrome. The raster time is 25 to 73 % lower.
+- **No bar clip.** It is a gain on the three platforms where the variant ran: 41 to 50 FPS at
+  1000 bars on the Pixel 8a, 40 to 60 FPS at 5000 bars on macOS, and half the raster time at 1000
+  bars in Chrome.
+- **The ring.** `drawDRRect` gives a higher frame rate than `drawPath` on the phone (46.4 to 49.6
+  FPS at 1000 bars) and in Chrome (24.2 to 32.2 FPS at 5000 bars). On macOS, it costs more raster
+  time (8.9 to 12.7 ms at 5000 bars), at the same 60 FPS. The ring stays, because it gives the
+  larger frame-rate gain where the frame rate is under the limit.
+- **Arcs.** They change little. The native arc calls of section 8.2 stay.
+- The pixel tests of the fast paths (`test/port/canvas/canvas_ui_round_rect_test.dart`,
+  `test/port/helpers/helpers.canvas_ui_test.dart`, `test/port/elements/element.bar_ui_test.dart`)
+  compare them with the upstream arc paths on flutter_tester. A look at the bars on the Pixel 8a
+  and in Chrome showed the rounded tops, the border and the open bottom of `borderSkipped`.
 

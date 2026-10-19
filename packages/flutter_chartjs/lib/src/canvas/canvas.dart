@@ -88,7 +88,169 @@ abstract interface class CanvasPath {
 
   /// `rect(x, y, w, h)`.
   void rect(double x, double y, double w, double h);
+
+  /// `roundRect(x, y, w, h, radii)`: a closed subpath of the rectangle with
+  /// rounded corners, then a new subpath at (x, y).
+  ///
+  /// [roundRectGeometry] gives the rectangle and the radii. [radii] is a
+  /// number or a list of 1 to 4 numbers, and `null` is the DOM default 0. A
+  /// negative radius or a list of another length throws a [RangeError], as
+  /// in the DOM. The DOM `DOMPointInit` radius is not supported: another
+  /// value throws an [ArgumentError].
+  ///
+  /// The port calls it in place of the arcs and lines of
+  /// `addRoundedRectPath` (helpers.canvas.ts:498, differences.md
+  /// `adapt-rounded-rect-path`).
+  void roundRect(double x, double y, double w, double h, [Object? radii]);
 }
+
+/// The rectangle and the corner radii of `roundRect(x, y, w, h, radii)`.
+///
+/// `left`, `top`, `width` and `height` give the rectangle with a width and
+/// a height of 0 or more. The four radii are those of the corners of that
+/// rectangle, after the scale. The path goes clockwise (the HTML order) when
+/// `clockwise` is true, else the other way. It starts at
+/// (left + upperLeft, top).
+typedef RoundRectGeometry = ({
+  double left,
+  double top,
+  double width,
+  double height,
+  double upperLeft,
+  double upperRight,
+  double lowerRight,
+  double lowerLeft,
+  bool clockwise,
+});
+
+/// The steps 1 to 11 of the HTML `roundRect(x, y, w, h, radii)` algorithm
+/// (https://html.spec.whatwg.org/multipage/canvas.html#dom-context-2d-roundrect),
+/// or `null` when the call does nothing.
+///
+/// - A non-finite [x], [y], [w] or [h] gives `null` (step 1), before the
+///   radii are examined.
+/// - [radii] is a `num`, a `List` of 1 to 4 entries, or `null` (the DOM
+///   default 0). A `null` entry is 0, as the DOM converts `null` to an empty
+///   `DOMPointInit`. A list of another length throws a [RangeError]
+///   (step 3). The entries are examined in order: a non-finite radius gives
+///   `null` and a negative radius throws a [RangeError] (step 5). The DOM
+///   `DOMPointInit` radius is not supported: another value throws an
+///   [ArgumentError].
+/// - One radius is all corners. Two radii are the upper-left and
+///   lower-right corners, then the upper-right and lower-left corners. Three
+///   radii are the upper-left corner, the upper-right and lower-left
+///   corners, then the lower-right corner. Four radii are the upper-left,
+///   upper-right, lower-right and lower-left corners (steps 7 to 10).
+/// - A negative [w] or [h] flips the rectangle, as Chromium and Firefox do:
+///   the HTML text has no such step, and with a negative width its scale is
+///   negative. A negative [w] swaps the left and the right corners, a
+///   negative [h] swaps the upper and the lower corners, and each flip
+///   reverses the direction of the path.
+/// - When the radii of one side add up to more than its length, all radii
+///   scale by the smallest ratio of length to sum (step 11). A side whose
+///   radii add up to 0 sets no ratio.
+RoundRectGeometry? roundRectGeometry(
+  double x,
+  double y,
+  double w,
+  double h,
+  Object? radii,
+) {
+  // Step 1.
+  if (!x.isFinite || !y.isFinite || !w.isFinite || !h.isFinite) return null;
+  // Steps 2 to 5.
+  final count = radii is List ? radii.length : 1;
+  if (count < 1 || count > 4) {
+    throw RangeError.range(count, 1, 4, 'radii', 'The count of radii');
+  }
+  var r0 = 0.0;
+  var r1 = 0.0;
+  var r2 = 0.0;
+  var r3 = 0.0;
+  for (var i = 0; i < count; i++) {
+    final value = radii is List ? radii[i] : radii;
+    final radius = switch (value) {
+      null => 0.0,
+      final num n => n.toDouble(),
+      _ => throw ArgumentError.value(
+        value,
+        'radii',
+        'A radius is not a number (DOMPointInit is not supported)',
+      ),
+    };
+    if (!radius.isFinite) return null;
+    if (radius < 0) {
+      throw RangeError.value(radius, 'radii', 'A radius is negative');
+    }
+    switch (i) {
+      case 0:
+        r0 = radius;
+      case 1:
+        r1 = radius;
+      case 2:
+        r2 = radius;
+      default:
+        r3 = radius;
+    }
+  }
+  // Steps 6 to 10.
+  var upperLeft = r0;
+  var upperRight = count == 1 ? r0 : r1;
+  var lowerRight = count < 3 ? r0 : r2;
+  var lowerLeft = switch (count) {
+    1 => r0,
+    4 => r3,
+    _ => r1,
+  };
+  // The flips of Chromium and Firefox.
+  var left = x;
+  var top = y;
+  var width = w;
+  var height = h;
+  var clockwise = true;
+  if (width < 0) {
+    clockwise = false;
+    left += width;
+    width = -width;
+    (upperLeft, upperRight) = (upperRight, upperLeft);
+    (lowerLeft, lowerRight) = (lowerRight, lowerLeft);
+  }
+  if (height < 0) {
+    clockwise = !clockwise;
+    top += height;
+    height = -height;
+    (upperLeft, lowerLeft) = (lowerLeft, upperLeft);
+    (upperRight, lowerRight) = (lowerRight, upperRight);
+  }
+  // Step 11.
+  var scale = 1.0;
+  scale = _limitScale(scale, width, upperLeft + upperRight);
+  scale = _limitScale(scale, height, upperRight + lowerRight);
+  scale = _limitScale(scale, width, lowerRight + lowerLeft);
+  scale = _limitScale(scale, height, upperLeft + lowerLeft);
+  if (scale < 1) {
+    upperLeft *= scale;
+    upperRight *= scale;
+    lowerRight *= scale;
+    lowerLeft *= scale;
+  }
+  return (
+    left: left,
+    top: top,
+    width: width,
+    height: height,
+    upperLeft: upperLeft,
+    upperRight: upperRight,
+    lowerRight: lowerRight,
+    lowerLeft: lowerLeft,
+    clockwise: clockwise,
+  );
+}
+
+/// The smaller of [scale] and [length] / [sum], for a [sum] above 0: the
+/// ratio of step 11 of `roundRect`.
+double _limitScale(double scale, double length, double sum) =>
+    sum > 0 && length / sum < scale ? length / sum : scale;
 
 /// lib.dom.d.ts `CanvasFillRule`: `'nonzero'` or `'evenodd'`.
 ///
@@ -232,7 +394,9 @@ abstract interface class CanvasContainer {
 /// are here, plus the members that upstream source calls and the mock
 /// context lacks: [ellipse], [resetTransform], [drawImage], [scale],
 /// [globalAlpha], [createLinearGradient], [createRadialGradient],
-/// [createConicGradient], [createPattern] and [direction].
+/// [createConicGradient], [createPattern] and [direction]. The port also
+/// calls [roundRect], which upstream source does not call
+/// (differences.md `adapt-rounded-rect-path`).
 abstract interface class CanvasRenderingContext2D implements CanvasPath {
   /// `canvas`: the canvas element of this context.
   HTMLCanvasElement get canvas;
@@ -515,6 +679,23 @@ final class Path2D implements CanvasPath {
   void rect(double x, double y, double w, double h) =>
       commands.add(RectCommand(x, y, w, h));
 
+  /// Throws at this call, as the DOM does: [roundRectGeometry] examines the
+  /// arguments. The command keeps a copy of a [radii] list, as the DOM
+  /// converts the sequence at the call.
+  @override
+  void roundRect(double x, double y, double w, double h, [Object? radii]) {
+    roundRectGeometry(x, y, w, h, radii);
+    commands.add(
+      RoundRectCommand(
+        x,
+        y,
+        w,
+        h,
+        radii is List ? List<Object?>.unmodifiable(radii) : radii,
+      ),
+    );
+  }
+
   /// Replays [commands] on [target], in order.
   void replay(CanvasPath target) {
     for (final command in commands) {
@@ -759,4 +940,28 @@ final class RectCommand extends PathCommand {
 
   @override
   void applyTo(CanvasPath target) => target.rect(x, y, w, h);
+}
+
+/// A recorded [CanvasPath.roundRect].
+final class RoundRectCommand extends PathCommand {
+  /// Creates the command.
+  const RoundRectCommand(this.x, this.y, this.w, this.h, this.radii);
+
+  /// An argument.
+  final double x;
+
+  /// An argument.
+  final double y;
+
+  /// An argument.
+  final double w;
+
+  /// An argument.
+  final double h;
+
+  /// The radii argument: a number, an unmodifiable list or `null`.
+  final Object? radii;
+
+  @override
+  void applyTo(CanvasPath target) => target.roundRect(x, y, w, h, radii);
 }

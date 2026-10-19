@@ -2,11 +2,14 @@
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/elements/element.bar.dart';
+import 'package:flutter_chartjs/src/elements/element_options.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/animation.dart';
+import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
+import '../helpers/rounded_rect_upstream.dart';
 import 'bar_reference.dart';
 
 // Upstream behavior that test/specs/element.bar.tests.js does not check
@@ -23,6 +26,19 @@ import 'bar_reference.dart';
 // The range results are booleans, and the points are the results of one
 // IEEE operation. Thus the tests compare them exactly. The draw calls compare
 // each number with closeTo (Chart.js ADR 0009), and NaN with isNaN.
+//
+// The draw of the port has two DIVERGES forms (differences.md). The
+// comparison with the reference translates each of them back into the
+// upstream form:
+// - adapt-rounded-rect-path: addRoundedRectPath makes one roundRect call.
+//   The context of the draw is an UpstreamRoundedRectContext, which records
+//   that call as the four arcs and four lines of upstream.
+// - adapt-bar-clip: draw does not call clip() when inflateAmount is 0. For
+//   such a bar, the expected calls are the reference calls without 'clip'.
+//
+// Each reference case runs twice (Chart.js ADR 0018, section 6): with the
+// plain Map options of the reference, and with a BarOptions with the same
+// entries. Both compare with the same reference data.
 
 /// The JS animation object `{active: () => active, _to: to}`.
 final class _Animation implements Animation {
@@ -37,6 +53,23 @@ final class _Animation implements Animation {
   @override
   final Object? to;
 }
+
+/// [options] as they are: the plain Map form of the options.
+AnyObject _plainOptions(AnyObject options) => options;
+
+/// The two forms of the options of a bar (Chart.js ADR 0018, section 6): the
+/// plain Map, and a [BarOptions] with the same entries in the same key
+/// order.
+const Map<String, AnyObject Function(AnyObject options)> _optionsForms = {
+  'Map options': _plainOptions,
+  'BarOptions': BarOptions.new,
+};
+
+/// [cfg] with its `options` Map in the form [form].
+AnyObject _withOptions(AnyObject cfg, AnyObject Function(AnyObject) form) => {
+  for (final MapEntry(:key, :value) in cfg.entries)
+    key: key == 'options' && value is AnyObject ? form(value) : value,
+};
 
 /// `new BarElement(cfg)` with an animation for each entry of [animations],
 /// as the generator builds it.
@@ -72,6 +105,19 @@ List<Object?> _names(MockContext ctx) => [
   for (final call in ctx.getCalls()) call['name'],
 ];
 
+/// The reference [calls] of a draw of [bar] in the form of the port for
+/// the row adapt-bar-clip: without the 'clip' call when the inflateAmount
+/// of [bar] is 0.
+List<(String, List<Object?>)> _withoutClipAtZero(
+  BarElement bar,
+  List<(String, List<Object?>)> calls,
+) => bar.inflateAmount == 0
+    ? [
+        for (final call in calls)
+          if (call.$1 != 'clip') call,
+      ]
+    : calls;
+
 /// A drawn bar of 30 x 80 pixels with its top at 20, a border of 2 and the
 /// bottom edge skipped.
 Map<String, Object?> _drawCfg([Map<String, Object?> extra = const {}]) => {
@@ -105,20 +151,24 @@ void main() {
   });
 
   group('inRange, inXRange and inYRange', () {
-    for (final c in barRangeReference) {
-      test(c.name, () {
-        final bar = _bar(c.cfg, c.animations);
-        final final_ = c.useFinalPosition;
-        expect([
-          for (final (x, y, _, _, _) in c.points)
-            (
-              x,
-              y,
-              bar.inRange(x, y, final_),
-              bar.inXRange(x, final_),
-              bar.inYRange(y, final_),
-            ),
-        ], c.points);
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in barRangeReference) {
+          test(c.name, () {
+            final bar = _bar(_withOptions(c.cfg, form), c.animations);
+            final final_ = c.useFinalPosition;
+            expect([
+              for (final (x, y, _, _, _) in c.points)
+                (
+                  x,
+                  y,
+                  bar.inRange(x, y, final_),
+                  bar.inXRange(x, final_),
+                  bar.inYRange(y, final_),
+                ),
+            ], c.points);
+          });
+        }
       });
     }
 
@@ -139,27 +189,35 @@ void main() {
   });
 
   group('getCenterPoint and tooltipPosition', () {
-    for (final c in barRangeReference) {
-      test(c.name, () {
-        final bar = _bar(c.cfg, c.animations);
-        final final_ = c.useFinalPosition;
-        final center = bar.getCenterPoint(final_);
-        expect(center, isA<ElementPoint>());
-        expect(center, ElementPoint(c.center.$1, c.center.$2));
-        expect(
-          bar.tooltipPosition(final_),
-          ElementPoint(c.tooltip.$1, c.tooltip.$2),
-        );
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in barRangeReference) {
+          test(c.name, () {
+            final bar = _bar(_withOptions(c.cfg, form), c.animations);
+            final final_ = c.useFinalPosition;
+            final center = bar.getCenterPoint(final_);
+            expect(center, isA<ElementPoint>());
+            expect(center, ElementPoint(c.center.$1, c.center.$2));
+            expect(
+              bar.tooltipPosition(final_),
+              ElementPoint(c.tooltip.$1, c.tooltip.$2),
+            );
+          });
+        }
       });
     }
   });
 
   group('getRange', () {
-    for (final c in barRangeReference) {
-      test(c.name, () {
-        final bar = _bar(c.cfg, c.animations);
-        expect(bar.getRange('x'), c.rangeX.isNaN ? isNaN : c.rangeX);
-        expect(bar.getRange('y'), c.rangeY.isNaN ? isNaN : c.rangeY);
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in barRangeReference) {
+          test(c.name, () {
+            final bar = _bar(_withOptions(c.cfg, form), c.animations);
+            expect(bar.getRange('x'), c.rangeX.isNaN ? isNaN : c.rangeX);
+            expect(bar.getRange('y'), c.rangeY.isNaN ? isNaN : c.rangeY);
+          });
+        }
       });
     }
 
@@ -184,41 +242,142 @@ void main() {
   });
 
   group('draw', () {
-    for (final c in barDrawReference) {
-      test(c.name, () {
-        final bar = _bar(c.cfg, c.animations);
-        final ctx = createMockContext();
-        if (c.error == null) {
-          bar.draw(ctx);
-        } else {
-          expect(c.error, 'TypeError');
-          expect(() => bar.draw(ctx), throwsA(isA<TypeError>()));
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in barDrawReference) {
+          test(c.name, () {
+            final bar = _bar(_withOptions(c.cfg, form), c.animations);
+            // adapt-rounded-rect-path: record roundRect as the upstream
+            // calls.
+            final ctx = UpstreamRoundedRectContext();
+            if (c.error == null) {
+              bar.draw(ctx);
+            } else {
+              expect(c.error, 'TypeError');
+              expect(() => bar.draw(ctx), throwsA(isA<TypeError>()));
+            }
+            // adapt-bar-clip: no 'clip' when inflateAmount is 0.
+            expect(ctx.getCalls(), _calls(_withoutClipAtZero(bar, c.calls)));
+          });
         }
-        expect(ctx.getCalls(), _calls(c.calls));
       });
     }
 
-    test('fills the border with evenodd inside the clip', () {
-      final ctx = createMockContext();
-      _bar(_drawCfg()).draw(ctx);
-      expect(_names(ctx), [
-        'save',
-        'beginPath',
-        'rect',
-        'clip',
-        'rect',
-        'setFillStyle',
-        'fill',
-        'beginPath',
-        'rect',
-        'setFillStyle',
-        'fill',
-        'restore',
-      ]);
-      expect(ctx.getCalls()[6], {
-        'name': 'fill',
-        'args': ['evenodd', null],
+    test('the reference has clipped bars with inflateAmount 0 and not 0', () {
+      final clipped = [
+        for (final c in barDrawReference)
+          if (c.calls.any((call) => call.$1 == 'clip'))
+            _bar(c.cfg, c.animations).inflateAmount,
+      ];
+      expect(clipped.where((amount) => amount == 0), hasLength(16));
+      expect(clipped.where((amount) => amount != 0), hasLength(6));
+    });
+
+    group('adapt-bar-clip', () {
+      test('fills the border with evenodd and no clip for inflateAmount 0', () {
+        final ctx = createMockContext();
+        _bar(_drawCfg()).draw(ctx);
+        expect(_names(ctx), [
+          'save',
+          'beginPath',
+          'rect',
+          'rect',
+          'setFillStyle',
+          'fill',
+          'beginPath',
+          'rect',
+          'setFillStyle',
+          'fill',
+          'restore',
+        ]);
+        expect(ctx.getCalls()[5], {
+          'name': 'fill',
+          'args': ['evenodd', null],
+        });
       });
+
+      test('clips to the outer rectangle for another inflateAmount', () {
+        for (final amount in [0.33, -0.5, double.nan]) {
+          final ctx = createMockContext();
+          _bar(_drawCfg({'inflateAmount': amount})).draw(ctx);
+          expect(_names(ctx), [
+            'save',
+            'beginPath',
+            'rect',
+            'clip',
+            'rect',
+            'setFillStyle',
+            'fill',
+            'beginPath',
+            'rect',
+            'setFillStyle',
+            'fill',
+            'restore',
+          ], reason: '$amount');
+        }
+      });
+
+      test('skips the clip for -0, as JS -0 === 0', () {
+        final ctx = createMockContext();
+        _bar(_drawCfg({'inflateAmount': -0.0})).draw(ctx);
+        expect(_names(ctx), isNot(contains('clip')));
+      });
+
+      test(
+        'the inner rectangle is inside the outer one at inflateAmount 0',
+        () {
+          // The proof of the row: the clip is the outer rectangle, and the
+          // border ring and the fill are inside it. Each case gives the
+          // rectangles of the calls before the first fill.
+          for (final extra in <Map<String, Object?>>[
+            {},
+            {
+              'options': <String, Object?>{
+                'borderWidth': <String, Object?>{
+                  'top': 3,
+                  'right': 1,
+                  'bottom': 0,
+                  'left': 6,
+                },
+                'borderRadius': 9,
+              },
+              'enableBorderRadius': true,
+            },
+            {
+              'options': <String, Object?>{
+                'borderWidth': 40,
+                'borderRadius': 99,
+              },
+              'enableBorderRadius': true,
+              'borderSkipped': <String, Object?>{},
+            },
+          ]) {
+            final ctx = createMockContext();
+            _bar(_drawCfg(extra)).draw(ctx);
+            final shapes = [
+              for (final call in ctx.getCalls())
+                if (call['name'] == 'rect' || call['name'] == 'roundRect')
+                  call['args']! as List<Object?>,
+            ];
+            expect(shapes, hasLength(3), reason: '$extra');
+            final outer = shapes[0];
+            final inner = shapes[1];
+            double at(List<Object?> args, int i) => args[i]! as double;
+            expect(at(inner, 0), greaterThanOrEqualTo(at(outer, 0)));
+            expect(at(inner, 1), greaterThanOrEqualTo(at(outer, 1)));
+            expect(
+              at(inner, 0) + at(inner, 2),
+              lessThanOrEqualTo(at(outer, 0) + at(outer, 2)),
+            );
+            expect(
+              at(inner, 1) + at(inner, 3),
+              lessThanOrEqualTo(at(outer, 1) + at(outer, 3)),
+            );
+            // The fill of the bar is the inner rectangle.
+            expect(shapes[2], inner);
+          }
+        },
+      );
     });
 
     test('draws no border when the inner rectangle is the outer one', () {
@@ -251,7 +410,9 @@ void main() {
           'enableBorderRadius': true,
         }),
       ).draw(ctx);
-      expect(_names(ctx), contains('arc'));
+      // adapt-rounded-rect-path: one roundRect call in place of the arcs.
+      expect(_names(ctx), contains('roundRect'));
+      expect(_names(ctx), isNot(contains('arc')));
       expect(_names(ctx), isNot(contains('rect')));
     });
 

@@ -3,10 +3,12 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/elements/element.point.dart';
+import 'package:flutter_chartjs/src/elements/element_options.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.curve.dart'
     show updateBezierControlPoints;
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/animation.dart' as types;
+import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:test/test.dart';
@@ -22,6 +24,10 @@ import 'point_reference.dart';
 // chartjs-test-utils (Chart.js ADR 0010). The hit tests, size and getRange
 // compare exactly. The draw calls compare the names exactly and each number
 // with closeTo (Chart.js ADR 0009).
+//
+// Each comparison with the reference runs twice (Chart.js ADR 0018, section
+// 6): with the plain Map options of the reference, and with a PointOptions
+// with the same entries. Both compare with the same reference data.
 //
 // The other groups test the element design of Chart.js ADR 0017 for the
 // point: the start values, the access by name, the control points of a
@@ -126,9 +132,30 @@ List<Object?> _calls(List<(String, List<Object?>)> calls) => [
     },
 ];
 
-/// The point element of an inRange case, with its `$animations`.
-PointElement _inRangePoint(PointInRangeCase c) {
-  final point = PointElement(c.cfg);
+/// [options] as they are: the plain Map form of the options.
+AnyObject _plainOptions(AnyObject options) => options;
+
+/// The two forms of the options of a point (Chart.js ADR 0018, section 6):
+/// the plain Map, and a [PointOptions] with the same entries in the same key
+/// order.
+const Map<String, AnyObject Function(AnyObject options)> _optionsForms = {
+  'Map options': _plainOptions,
+  'PointOptions': PointOptions.new,
+};
+
+/// [cfg] with its `options` Map in the form [form].
+AnyObject _withOptions(AnyObject cfg, AnyObject Function(AnyObject) form) => {
+  for (final MapEntry(:key, :value) in cfg.entries)
+    key: key == 'options' && value is AnyObject ? form(value) : value,
+};
+
+/// The point element of an inRange case, with its `$animations`, and its
+/// options in the form [form].
+PointElement _inRangePoint(
+  PointInRangeCase c,
+  AnyObject Function(AnyObject) form,
+) {
+  final point = PointElement(_withOptions(c.cfg, form));
   final animations = c.animations;
   if (animations != null) {
     point.$animations = {
@@ -432,30 +459,34 @@ void main() {
   });
 
   group('inRange, inXRange, inYRange and getCenterPoint', () {
-    for (final c in pointInRangeReference) {
-      test(c.name, () {
-        final point = _inRangePoint(c);
-        final useFinalPosition = c.useFinalPosition;
-        expect(
-          point.inRange(c.mouseX, c.mouseY, useFinalPosition),
-          c.inRange,
-          reason: 'inRange',
-        );
-        expect(
-          point.inXRange(c.mouseX, useFinalPosition),
-          c.inXRange,
-          reason: 'inXRange',
-        );
-        expect(
-          point.inYRange(c.mouseY, useFinalPosition),
-          c.inYRange,
-          reason: 'inYRange',
-        );
-        expect(
-          point.getCenterPoint(useFinalPosition),
-          ElementPoint(c.centerX, c.centerY),
-          reason: 'getCenterPoint',
-        );
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in pointInRangeReference) {
+          test(c.name, () {
+            final point = _inRangePoint(c, form);
+            final useFinalPosition = c.useFinalPosition;
+            expect(
+              point.inRange(c.mouseX, c.mouseY, useFinalPosition),
+              c.inRange,
+              reason: 'inRange',
+            );
+            expect(
+              point.inXRange(c.mouseX, useFinalPosition),
+              c.inXRange,
+              reason: 'inXRange',
+            );
+            expect(
+              point.inYRange(c.mouseY, useFinalPosition),
+              c.inYRange,
+              reason: 'inYRange',
+            );
+            expect(
+              point.getCenterPoint(useFinalPosition),
+              ElementPoint(c.centerX, c.centerY),
+              reason: 'getCenterPoint',
+            );
+          });
+        }
       });
     }
 
@@ -469,23 +500,37 @@ void main() {
   });
 
   group('size', () {
-    for (final c in pointSizeReference) {
-      test(c.name, () {
-        final elementOptions = c.elementOptions;
-        final point = PointElement({'options': ?elementOptions});
-        final options = c.options;
-        final size = options == null ? point.size() : point.size(options);
-        expect(size, _number(c.size));
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in pointSizeReference) {
+          test(c.name, () {
+            final elementOptions = c.elementOptions;
+            final point = PointElement({
+              if (elementOptions != null) 'options': form(elementOptions),
+            });
+            final options = c.options;
+            final size = options == null
+                ? point.size()
+                : point.size(form(options));
+            expect(size, _number(c.size));
+          });
+        }
       });
     }
   });
 
   group('getRange', () {
-    for (final c in pointGetRangeReference) {
-      test(c.name, () {
-        final options = c.options;
-        final point = PointElement({'options': ?options});
-        expect(point.getRange(), _number(c.range));
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in pointGetRangeReference) {
+          test(c.name, () {
+            final options = c.options;
+            final point = PointElement({
+              if (options != null) 'options': form(options),
+            });
+            expect(point.getRange(), _number(c.range));
+          });
+        }
       });
     }
 
@@ -499,20 +544,27 @@ void main() {
   });
 
   group('draw', () {
-    for (final c in pointDrawReference) {
-      test(c.name, () {
-        final ctx = _Context();
-        final point = PointElement(
-          _fromReference(c.cfg)! as Map<String, Object?>,
-        );
-        final area = c.area;
-        point.draw(
-          ctx,
-          area == null
-              ? null
-              : _Area(area.left, area.top, area.right, area.bottom),
-        );
-        expect(ctx.getCalls(), _calls(c.calls));
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in pointDrawReference) {
+          test(c.name, () {
+            final ctx = _Context();
+            final point = PointElement(
+              _withOptions(
+                _fromReference(c.cfg)! as Map<String, Object?>,
+                form,
+              ),
+            );
+            final area = c.area;
+            point.draw(
+              ctx,
+              area == null
+                  ? null
+                  : _Area(area.left, area.top, area.right, area.bottom),
+            );
+            expect(ctx.getCalls(), _calls(c.calls));
+          });
+        }
       });
     }
 

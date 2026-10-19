@@ -5,8 +5,10 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/elements/element.arc.dart';
+import 'package:flutter_chartjs/src/elements/element_options.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/animation.dart' as types;
+import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:test/test.dart';
@@ -27,7 +29,10 @@ import 'arc_reference.dart';
 //   radius (parseBorderRadius), circular false and the border dash.
 // The expected results come from arc_reference.dart, which
 // tool/reference/arc_reference.mjs writes from the pinned element.arc.ts and
-// the mock context of chartjs-test-utils in Node.js v24.12.0 on x64.
+// the mock context of chartjs-test-utils in Node.js v24.12.0 on x64. Each
+// reference case runs twice (Chart.js ADR 0018, section 6): with the plain
+// Map options of the reference, and with an ArcOptions with the same
+// entries. Both compare with the same reference data.
 
 /// A test animation with the two members that getProps reads.
 final class _Animation implements types.Animation {
@@ -72,13 +77,31 @@ final class _CanvasContext extends MockContext {
   final HTMLCanvasElement canvas;
 }
 
+/// [options] as they are: the plain Map form of the options.
+AnyObject _plainOptions(AnyObject options) => options;
+
+/// The two forms of the options of an arc (Chart.js ADR 0018, section 6):
+/// the plain Map, and an [ArcOptions] with the same entries in the same key
+/// order.
+const Map<String, AnyObject Function(AnyObject options)> _optionsForms = {
+  'Map options': _plainOptions,
+  'ArcOptions': ArcOptions.new,
+};
+
+/// [cfg] with its `options` Map in the form [form].
+AnyObject _withOptions(AnyObject cfg, AnyObject Function(AnyObject) form) => {
+  for (final MapEntry(:key, :value) in cfg.entries)
+    key: key == 'options' && value is AnyObject ? form(value) : value,
+};
+
 /// `new ArcElement(cfg)` with the animations of a reference case as
-/// `$animations`.
+/// `$animations`, and the options of [cfg] in the form [form].
 ArcElement _arc(
   Map<String, Object?> cfg, [
   Map<String, ArcReferenceAnimation> animations = const {},
+  AnyObject Function(AnyObject) form = _plainOptions,
 ]) {
-  final arc = ArcElement(cfg);
+  final arc = ArcElement(_withOptions(cfg, form));
   if (animations.isNotEmpty) {
     arc.$animations = {
       for (final MapEntry(:key, :value) in animations.entries)
@@ -367,10 +390,17 @@ void main() {
       expect(arcInRangeReference, hasLength(55));
     });
 
-    for (final c in arcInRangeReference) {
-      test(c.name, () {
-        final arc = _arc(c.cfg, c.animations);
-        expect(arc.inRange(c.chartX, c.chartY, c.useFinalPosition), c.result);
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in arcInRangeReference) {
+          test(c.name, () {
+            final arc = _arc(c.cfg, c.animations, form);
+            expect(
+              arc.inRange(c.chartX, c.chartY, c.useFinalPosition),
+              c.result,
+            );
+          });
+        }
       });
     }
 
@@ -392,13 +422,17 @@ void main() {
       expect(arcCenterReference, hasLength(11));
     });
 
-    for (final c in arcCenterReference) {
-      test(c.name, () {
-        final arc = _arc(c.cfg, c.animations);
-        final center = arc.getCenterPoint(c.useFinalPosition);
-        _expectValue(center.x, c.x, 'x');
-        _expectValue(center.y, c.y, 'y');
-        expect(arc.tooltipPosition(c.useFinalPosition), center);
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in arcCenterReference) {
+          test(c.name, () {
+            final arc = _arc(c.cfg, c.animations, form);
+            final center = arc.getCenterPoint(c.useFinalPosition);
+            _expectValue(center.x, c.x, 'x');
+            _expectValue(center.y, c.y, 'y');
+            expect(arc.tooltipPosition(c.useFinalPosition), center);
+          });
+        }
       });
     }
 
@@ -422,14 +456,18 @@ void main() {
       expect(arcDrawReference, hasLength(54));
     });
 
-    for (final c in arcDrawReference) {
-      test(c.name, () {
-        final arc = _arc(c.cfg);
-        final ctx = _CanvasContext();
-        arc.draw(ctx);
-        _expectCalls(ctx.getCalls(), c.calls);
-        expect(arc.pixelMargin, c.pixelMargin);
-        expect(arc.fullCircles, c.fullCircles);
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final c in arcDrawReference) {
+          test(c.name, () {
+            final arc = _arc(c.cfg, const {}, form);
+            final ctx = _CanvasContext();
+            arc.draw(ctx);
+            _expectCalls(ctx.getCalls(), c.calls);
+            expect(arc.pixelMargin, c.pixelMargin);
+            expect(arc.fullCircles, c.fullCircles);
+          });
+        }
       });
     }
 

@@ -6,13 +6,15 @@ import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/canvas_demo.dart'
     show chartColors, drawCaption;
-import 'package:chartjs_gallery/demo/demo_chart.dart';
+import 'package:chartjs_gallery/demo/demo_chart.dart' hide PointOptions;
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs/src/core/core.element.dart' as core;
+import 'package:flutter_chartjs/src/elements/element_options.dart'
+    show ArcOptions, BarOptions, LineOptions, PointOptions;
 import 'package:flutter_chartjs/src/elements/index.dart';
 import 'package:flutter_chartjs/src/helpers/index.dart' show getHoverColor;
 import 'package:flutter_chartjs/src/js/js_number.dart' show jsOrZero;
@@ -138,6 +140,11 @@ typedef _Options = ({
 /// `radius`), as the resolver reads the prefix `hover` first
 /// (core.datasetController.js:815).
 ///
+/// Each element gets typed options with the same entries: a `BarOptions`,
+/// a `PointOptions`, a `LineOptions` and an `ArcOptions` (Chart.js ADR
+/// 0018). The keys that are not keys of `XElement.defaults`, for example the
+/// hover colors, go to the extra keys of these classes.
+///
 /// The chart listens to [elementsDemoEvents]. Each event goes through the
 /// `inRange` of the elements, from the top of the drawing down: the points,
 /// then the bars, then the arcs. The element that gives true becomes active
@@ -235,8 +242,13 @@ class ElementsDemoState extends State<ElementsDemo> {
   // Options.
 
   /// The options of an element in the normal state and in the hover state.
-  static _Options _pair(Map<String, Object?> base) =>
-      (base: base, active: _resolveActive(base));
+  ///
+  /// [form] gives the options object of each state from its Map: a typed
+  /// class of Chart.js ADR 0018, for example `PointOptions.new`.
+  static _Options _pair(
+    Map<String, Object?> base,
+    Map<String, Object?> Function(Map<String, Object?>) form,
+  ) => (base: form(base), active: form(_resolveActive(base)));
 
   /// The options of an active element: [options] with the value of each
   /// `hover` key over its base key, for example `hoverRadius` over
@@ -309,10 +321,14 @@ class ElementsDemoState extends State<ElementsDemo> {
   /// `updateControlPoints` uses the new `tension` and `stepped`. The arcs
   /// get the radii of the new options.
   void _applyOptions() {
-    final barOptions = _barOptions = _pair(_barBase());
-    final pointOptions = _pointOptions = _pair(_pointBase());
+    final barOptions = _barOptions = _pair(_barBase(), BarOptions.new);
+    final pointOptions = _pointOptions = _pair(
+      _pointBase(),
+      PointOptions.new,
+    );
     final arcOptions = _arcOptions = [
-      for (var i = 0; i < _arcValues.length; i++) _pair(_arcBase(i)),
+      for (var i = 0; i < _arcValues.length; i++)
+        _pair(_arcBase(i), ArcOptions.new),
     ];
     for (final bar in _bars) {
       bar.options = bar.active ? barOptions.active : barOptions.base;
@@ -352,7 +368,7 @@ class ElementsDemoState extends State<ElementsDemo> {
     final line = _line;
     if (line != null) {
       line
-        ..options = _lineBase()
+        ..options = LineOptions(_lineBase())
         ..points = _points;
     }
   }

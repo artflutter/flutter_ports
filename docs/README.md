@@ -59,7 +59,8 @@ package.
     [Chart.js ADR 0015: Text](../packages/flutter_chartjs/doc/adr/0015-text.md),
     [Chart.js ADR 0016: Frame scheduling](../packages/flutter_chartjs/doc/adr/0016-frame-scheduling.md)
     (it supersedes Chart.js ADR 0007 on acceptance),
-    [Chart.js ADR 0017: Element properties](../packages/flutter_chartjs/doc/adr/0017-element-properties.md).
+    [Chart.js ADR 0017: Element properties](../packages/flutter_chartjs/doc/adr/0017-element-properties.md),
+    [Chart.js ADR 0018: Typed element options](../packages/flutter_chartjs/doc/adr/0018-typed-element-options.md).
   - Prior art: [overview](../packages/flutter_chartjs/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs/doc/prior-art/js-runtimes.md),
