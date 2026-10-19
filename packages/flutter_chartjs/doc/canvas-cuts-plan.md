@@ -615,9 +615,9 @@ change their status lines. Chart.js ADR 0009 and Chart.js ADR 0016 do not change
   applies the scale that the host gives. Delete the bullet on the `UiCanvasElement.devicePixelRatio`
   write. "The content keeps bitmap pixels across a DPR change" stays. The stretch bullet points to
   Chart.js ADR 0014 §5. Evidence: the test names.
-- **`porting-flow.md`** (proposed): §2.2 (line 151), "`paint` applies `scale(1 / devicePixelRatio)`"
+- **`porting-flow.md`** (proposed): §2.2 (line 180), "`paint` applies `scale(1 / devicePixelRatio)`"
   becomes "`paint` maps the bitmap pixels with the scale of the host". §2.7: one bullet on the
-  canvas attributes. §3, harness table (line 415), `acquireChart`: 512 x 512 as attributes
+  canvas attributes. §3, harness table (line 444), `acquireChart`: 512 x 512 as attributes
   (`UiCanvasElement(width: 512, height: 512)`), the `canvas.style` option fills the inline style, a
   wrapper style becomes a `SizedBox`, `ConstrainedBox` or `Padding`, and the default wrapper is a
   box of the canvas display size. `toBeChartOfSize`: the display width and height come from the

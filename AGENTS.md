@@ -171,6 +171,11 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   that edits a file that a deferred plan cites updates the plan in the same commit (the
   references, the inventory, the pinning tests, the estimates). A trigger of §5.1 brings the plan
   forward.
+- Performance (`porting-flow.md` §1.1, proposed): when two Dart forms give the upstream behavior,
+  choose the form with the larger measured gain. The priority is the upstream behavior, then
+  performance, then the upstream structure, then less code of our own. A faster form that changes
+  the upstream structure gets a `DIVERGES` marker and an `adapt` row. Record the figures in
+  `performance.md`.
 - The JS runtime in `lib/src/js/`: `jsObjectKeys` (`Object.keys` order), `jsSort` (the stable
   `Array.prototype.sort`), `jsCall` (a call of a JS function value with JS arity), `jsGet` (the
   property read `object[key]`), `jsOrZero` (`value || 0` before arithmetic, Chart.js ADR 0017

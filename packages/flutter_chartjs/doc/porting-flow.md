@@ -31,6 +31,7 @@ the `differences.md` schema.
      `// DIVERGES(chartjs): <row id>, <reason>` and a `differences.md` row (section 4).
    - Start a port-only file with `// Original code, not ported from Chart.js: <reason>.` List it
      in the port-only section of `parity.md`.
+   - When two Dart forms give the upstream behavior, choose the faster form (1.1).
 
    ```dart
    // Ported from Chart.js v4.5.1 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).
@@ -86,6 +87,34 @@ the `differences.md` schema.
     `// Upstream backport: chartjs/Chart.js@<sha8> (#<PR>).` line below the header, plus the
     trailers of [upstream-tracking.md](upstream-tracking.md) §4.2. The reviewer compares the Dart
     file with upstream, side by side.
+
+### 1.1 Performance rule
+
+When two or more Dart forms give the upstream behavior, choose the form with the larger measured
+performance gain. The upstream behavior is the part that
+[Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) protects: the ticks, the hit
+element, the item order, the resolved option and a throw. A difference in exact digits or pixels
+only does not block a faster form.
+
+The order of priority is:
+1. The upstream behavior.
+2. Performance: frame rate, draw time and raster time on the three platforms of
+   [performance.md](performance.md) (the Pixel 8a, macOS, Chrome with dart2wasm).
+3. The upstream structure (AGENTS.md rule 2).
+4. Less code of our own, for example the cuts of a deferred plan (§5.1).
+
+Apply the rule in this way:
+- Measure before you choose. A form with no measured gain keeps the upstream structure.
+- A faster form that keeps the upstream structure needs no more records. An example is the number
+  path of `toTRBL` ([performance.md](performance.md) §8.3).
+- A faster form that changes the upstream structure or the canvas calls gets a `DIVERGES` marker
+  and an `adapt` row in `differences.md` (section 4). The row names the figure in
+  `performance.md`. A port-only test pins the upstream behavior of both forms.
+- Record each measured change in `performance.md`: the figures before and after, on each platform
+  that it changes.
+- A cut of our own code does not land when it makes a measured scenario slower. A faster form can
+  add code, also to a file that a deferred plan cites. That change updates the plan in the same
+  commit (§5.1).
 
 ## 2. Decisions
 

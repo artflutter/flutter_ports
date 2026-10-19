@@ -418,8 +418,11 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   26 % of the main thread at 20000 points (section 8.2). Phase 5 decides how the resolved options
   of an element are kept (Chart.js ADR 0006).
 - Bars with a border and a radius, and arcs: the native path calls (`Path.arcTo`), the `clip` of
-  each bar and the anti-aliased paths cost the most (section 8.2). The arc code of the canvas layer
-  is part of cut 1 of [canvas-cuts-plan.md](canvas-cuts-plan.md).
+  each bar and the anti-aliased paths cost the most (section 8.2). Cut 1 of
+  [canvas-cuts-plan.md](canvas-cuts-plan.md) keeps the native arc path (`_nativeArc`), so it does
+  not reduce this cost. Only a new change can reduce it, for example a `roundRect` that the canvas
+  layer maps to `addRRect`, or no `clip` for a bar with an `inflateAmount` of 0. Such a change
+  adds code. It follows the performance rule of [porting-flow.md](porting-flow.md) §1.1.
 - macOS: the cause of the stop after about 28 seconds in a process with several scenarios
   (section 6) is not known.
 - The circle batch with bilinear sampling on the phone: section 4.2 was measured with nearest
