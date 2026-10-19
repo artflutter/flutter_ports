@@ -53,6 +53,13 @@ package.
     [Chart.js ADR 0010: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0010-js-numeric-semantics.md),
     [Chart.js ADR 0011: Third-party sources](../packages/flutter_chartjs/doc/adr/0011-third-party-sources.md),
     [Chart.js ADR 0012: Dart file naming](../packages/flutter_chartjs/doc/adr/0012-dart-file-naming.md).
+  - Proposed decisions:
+    [Chart.js ADR 0013: Canvas model](../packages/flutter_chartjs/doc/adr/0013-canvas-model.md),
+    [Chart.js ADR 0014: Input events and the chart host](../packages/flutter_chartjs/doc/adr/0014-input-events-and-chart-host.md),
+    [Chart.js ADR 0015: Text](../packages/flutter_chartjs/doc/adr/0015-text.md),
+    [Chart.js ADR 0016: Frame scheduling](../packages/flutter_chartjs/doc/adr/0016-frame-scheduling.md)
+    (it supersedes Chart.js ADR 0007 on acceptance),
+    [Chart.js ADR 0017: Element properties](../packages/flutter_chartjs/doc/adr/0017-element-properties.md).
   - Prior art: [overview](../packages/flutter_chartjs/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs/doc/prior-art/js-runtimes.md),

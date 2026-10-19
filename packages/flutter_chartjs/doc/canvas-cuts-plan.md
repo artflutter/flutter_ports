@@ -22,7 +22,9 @@ after phase 8, before phase 9. Until then:
   and line references, the code inventory (§1.1), the tests that pin the behavior (§2.6, §3.5) and
   the estimates. The cited files are `lib/src/canvas/*.dart`, `lib/src/platform/chart_host.dart`,
   `lib/src/platform/platform.flutter.dart`, `lib/src/helpers/helpers.dom.dart`, the tests of §2.6
-  and §3.5, and `doc/performance.md`.
+  and §3.5, `doc/performance.md`, `doc/parity.md` (the rows of §2.7, §3.7 and §5),
+  `doc/porting-flow.md` (§2.2 and the harness table of §3), `doc/adr/0013-canvas-model.md` and
+  `doc/adr/0014-input-events-and-chart-host.md` (the lines of §2.7 and §3.7).
 - A change that makes a step unnecessary, or adds a new reason for it, says so here.
 
 These triggers bring the plan, or one work package of it, forward:
@@ -300,8 +302,8 @@ Chart.js ADR 0013 is proposed, so the owner edits it in place. Do not change its
 - §7 or §8: one sentence on step 0, and one sentence on the cost of the matrix path.
 - Evidence: the new test file, the probe figures of §2.8 and the web runs.
 - Open: no repository suite runs the `dart:ui` layer on the web. Name the scratch-package method.
-- `parity.md`: row 356 (`canvas_ui_path.dart`), "else cubic Béziers" becomes "else a user-space
-  `ui.Path.arcTo` that `extendWithPath(matrix4:)` appends". Row 355 and row 357 get the matrix
+- `parity.md`: row 357 (`canvas_ui_path.dart`), "else cubic Béziers" becomes "else a user-space
+  `ui.Path.arcTo` that `extendWithPath(matrix4:)` appends". Row 356 and row 358 get the matrix
   copies of step 0. Add a row for `test/port/canvas/canvas_ui_path_test.dart`.
 - `performance.md`: a new section with the arc figures (§2.8 and §6.3).
 - Chart.js ADR 0009 (accepted) does not change. Conics in place of Béziers give a display-only
@@ -613,18 +615,18 @@ change their status lines. Chart.js ADR 0009 and Chart.js ADR 0016 do not change
   applies the scale that the host gives. Delete the bullet on the `UiCanvasElement.devicePixelRatio`
   write. "The content keeps bitmap pixels across a DPR change" stays. The stretch bullet points to
   Chart.js ADR 0014 §5. Evidence: the test names.
-- **`porting-flow.md`** (proposed): §2.2 (line 146), "`paint` applies `scale(1 / devicePixelRatio)`"
+- **`porting-flow.md`** (proposed): §2.2 (line 151), "`paint` applies `scale(1 / devicePixelRatio)`"
   becomes "`paint` maps the bitmap pixels with the scale of the host". §2.7: one bullet on the
-  canvas attributes. §3, harness table (line 375), `acquireChart`: 512 x 512 as attributes
+  canvas attributes. §3, harness table (line 415), `acquireChart`: 512 x 512 as attributes
   (`UiCanvasElement(width: 512, height: 512)`), the `canvas.style` option fills the inline style, a
   wrapper style becomes a `SizedBox`, `ConstrainedBox` or `Padding`, and the default wrapper is a
   box of the canvas display size. `toBeChartOfSize`: the display width and height come from the
   display size with the CSS rule for one style.
-- **`parity.md`:** row 355 (`canvas_ui.dart`: no `devicePixelRatio` and no `logicalSize`, the
-  attributes, the paint scale), row 362 (`platform.flutter.dart`: `initCanvas` and
-  `releaseContext` line by line over the attributes), row 363 (`chart_host.dart`: "the DOM bitmap
-  stretch" becomes "paint maps the bitmap to the display size"), row 368 (`canvas_ui_test.dart`)
-  and row 381 (`chart_host_test.dart`). The spec rows do not change.
+- **`parity.md`:** row 356 (`canvas_ui.dart`: no `devicePixelRatio` and no `logicalSize`, the
+  attributes, the paint scale), row 363 (`platform.flutter.dart`: `initCanvas` and
+  `releaseContext` line by line over the attributes), row 364 (`chart_host.dart`: "the DOM bitmap
+  stretch" becomes "paint maps the bitmap to the display size"), row 369 (`canvas_ui_test.dart`)
+  and row 396 (`chart_host_test.dart`). The spec rows do not change.
 - **`differences.md`:** no row for option A.
 - **`performance.md`:** record the figures after the change (§6.3).
 
@@ -701,12 +703,12 @@ commit. The rows differ, so the edits do not overlap. Run the gates of §6.2 bef
 | ID | Title | Files touched | Depends on | Parallel with | Deliverable | Acceptance | Estimate |
 |---|---|---|---|---|---|---|---|
 | A1 | Cut 1 tests | `test/port/canvas/canvas_ui_path_test.dart` (new), `doc/parity.md` (new row) | — | A2, A3, I | The 20 tests of §2.6. The web probe results of the current code, in the commit message. | Green on the current code. Gates of §6.2. | ~400 test lines, 1 day |
-| A2 | Cut 2 tests | `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (row 381) | — | A1, A3, I | The 7 tests of §3.5 that pin the stretch and the display size | Green on the current code. Gates. | ~180 test lines, 0.5 day |
+| A2 | Cut 2 tests | `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (row 396) | — | A1, A3, I | The 7 tests of §3.5 that pin the stretch and the display size | Green on the current code. Gates. | ~180 test lines, 0.5 day |
 | A3 | Arc scenario and new baselines | `apps/chartjs_gallery/lib/demo/stress_demo.dart`, `apps/chartjs_gallery/lib/main_stress.dart`, `apps/chartjs_gallery/test/canvas_host_demo_test.dart` (if needed), `doc/performance.md` (new baseline section) | — | A1, A2, I | `--dart-define=POINT_STYLE=<style>` in the stress entry. The baseline of §6.3 on 3 platforms. A scratch micro-benchmark of 5000 wedges (not committed). | Baseline recorded with the commit hash. Old tables marked stale. | ~40 lines, 1 day of runs |
 | I | Renderer probes (optional) | `apps/chartjs_gallery/integration_test/canvas_paths_test.dart` (new), `apps/chartjs_gallery/pubspec.yaml`, root `pubspec.lock` | — | A1, A2, A3 | The web probes of §2.6 as a gallery integration test | Runs on the Pixel 8a, on macOS and in Chrome (dart2js and `--wasm`). Merge alone (lock file). | ~150 lines, 1 day |
-| W | Web matrix aliasing fix | `lib/src/canvas/canvas_ui.dart` (1122, 1140), `lib/src/canvas/canvas_ui_paint.dart` (`shaderFor`), `doc/parity.md` (rows 355, 357) | A1 | A2, A3 | Step 0 of §2.5 | VM pixels unchanged. The stroke probe and the clip probe pass on CanvasKit and on skwasm. | ~6 lines, 0.5 day |
-| C1 | Cut 1 code | `lib/src/canvas/canvas_ui_path.dart`, `test/port/canvas/canvas_ui_path_test.dart` (thresholds only), `doc/parity.md` (row 356) | A1, W | C2 | Steps 1 to 6 of §2.5 | All tests green. Web probes pass. Perf of §6.3 within the thresholds. | ~-45 net library lines, 1 day |
-| C2 | Cut 2 code (option A) | `lib/src/canvas/canvas.dart`, `lib/src/canvas/canvas_ui.dart`, `lib/src/platform/platform.flutter.dart`, `lib/src/platform/chart_host.dart`, `test/port/canvas/canvas_ui_test.dart`, `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (rows 355, 362, 363, 368, 381) | A2, W | C1 | Steps 1 to 6 of §3.4 and the test changes of §3.5 | All tests green. Gallery unchanged on web, macOS and the Pixel 8a. Perf within the thresholds. | ~-10 net library lines, ~+100 test lines, 1.5 days |
+| W | Web matrix aliasing fix | `lib/src/canvas/canvas_ui.dart` (1122, 1140), `lib/src/canvas/canvas_ui_paint.dart` (`shaderFor`), `doc/parity.md` (rows 356, 358) | A1 | A2, A3 | Step 0 of §2.5 | VM pixels unchanged. The stroke probe and the clip probe pass on CanvasKit and on skwasm. | ~6 lines, 0.5 day |
+| C1 | Cut 1 code | `lib/src/canvas/canvas_ui_path.dart`, `test/port/canvas/canvas_ui_path_test.dart` (thresholds only), `doc/parity.md` (row 357) | A1, W | C2 | Steps 1 to 6 of §2.5 | All tests green. Web probes pass. Perf of §6.3 within the thresholds. | ~-45 net library lines, 1 day |
+| C2 | Cut 2 code (option A) | `lib/src/canvas/canvas.dart`, `lib/src/canvas/canvas_ui.dart`, `lib/src/platform/platform.flutter.dart`, `lib/src/platform/chart_host.dart`, `test/port/canvas/canvas_ui_test.dart`, `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (rows 356, 363, 364, 369, 396) | A2, W | C1 | Steps 1 to 6 of §3.4 and the test changes of §3.5 | All tests green. Gallery unchanged on web, macOS and the Pixel 8a. Perf within the thresholds. | ~-10 net library lines, ~+100 test lines, 1.5 days |
 | D | Docs | `doc/adr/0013-canvas-model.md`, `doc/adr/0014-input-events-and-chart-host.md`, `doc/porting-flow.md` | C1, C2 | P | §2.7 and §3.7 (ADR and porting-flow parts), and a "Removal" bullet in Chart.js ADR 0013 §8.1 (§4.1) | Status lines unchanged. Links resolve. | ~60 changed lines, 0.5 day |
 | P | Perf results and cut 3 notes | `doc/performance.md` (results section, §7), this plan (status of each work package) | A3, C1, C2 | D | The figures of §6.3 after C1 and after C2. The removal criteria of §4. The draft of the Flutter feature request. | Every scenario within the thresholds of §6.3, or the miss explained | ~60 lines, 1 day of runs |
 

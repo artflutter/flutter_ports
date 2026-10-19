@@ -87,12 +87,17 @@ const Map<String, String> forbiddenInLib = {
 /// only `platform.base`, `platform.basic` and `native_event` are roots.
 /// `platform.flutter`, `chart_host` and the platform `index` use the Flutter
 /// framework.
+///
+/// `core.element` and every file of `lib/src/elements/` are roots (Chart.js
+/// ADR 0017, section 10). Their specs run on the VM, dart2js and dart2wasm.
 const List<String> pureRoots = [
   'lib/src/js/**',
   'lib/src/types/**',
   'lib/src/kurkle_color/**',
   'lib/src/helpers/helpers.*.dart',
   'lib/src/core/core.defaults.dart',
+  'lib/src/core/core.element.dart',
+  'lib/src/elements/**',
   'lib/src/platform/platform.base.dart',
   'lib/src/platform/platform.basic.dart',
   'lib/src/platform/native_event.dart',

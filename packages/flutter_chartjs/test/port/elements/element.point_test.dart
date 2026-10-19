@@ -1,0 +1,561 @@
+// Original code, not ported from Chart.js: PointElement cases with no spec.
+import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs/src/canvas/canvas.dart';
+import 'package:flutter_chartjs/src/core/core.element.dart';
+import 'package:flutter_chartjs/src/elements/element.point.dart';
+import 'package:flutter_chartjs/src/helpers/helpers.curve.dart'
+    show updateBezierControlPoints;
+import 'package:flutter_chartjs/src/js/js_undefined.dart';
+import 'package:flutter_chartjs/src/types/animation.dart' as types;
+import 'package:flutter_chartjs/src/types/geometric.dart';
+import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:test/test.dart';
+
+import 'point_reference.dart';
+
+// Upstream behavior that test/specs/element.point.tests.js does not check
+// (AGENTS.md rule 3): the hit tests at the edges of the hit radius, with and
+// without useFinalPosition, size, getRange and the calls of draw. The
+// expected values are in point_reference.dart, which
+// tool/reference/point_reference.mjs writes from src/elements/element.point.ts
+// at v4.5.1 in Node.js v24.12.0 on x64, with the mock context of
+// chartjs-test-utils (Chart.js ADR 0010). The hit tests, size and getRange
+// compare exactly. The draw calls compare the names exactly and each number
+// with closeTo (Chart.js ADR 0009).
+//
+// The other groups test the element design of Chart.js ADR 0017 for the
+// point: the start values, the access by name, the control points of a
+// SplinePoint, the radar angle, the TypeError of undefined options and the
+// cache of the drawPoint adapter.
+
+/// A test animation with the two members that getProps reads.
+final class _Animation implements types.Animation {
+  _Animation(this.to, {required this.isActive});
+
+  /// The result of [active].
+  final bool isActive;
+
+  @override
+  bool active() => isActive;
+
+  @override
+  final Object? to;
+}
+
+/// A JavaScript object literal `{left, top, right, bottom}`, passed as a
+/// [ChartArea].
+final class _Area implements ChartArea {
+  const _Area(this.left, this.top, this.right, this.bottom);
+
+  @override
+  final double left;
+
+  @override
+  final double top;
+
+  @override
+  final double right;
+
+  @override
+  final double bottom;
+
+  @override
+  double get width => right - left;
+
+  @override
+  double get height => bottom - top;
+}
+
+/// An image point style, the `{width, height}` of an `HTMLImageElement`.
+final class _Image implements CanvasImageSource {
+  const _Image();
+
+  @override
+  double get width => 8;
+
+  @override
+  double get height => 6;
+}
+
+const _image = _Image();
+
+/// The mock context with a recorded `drawImage`. The generator adds the same
+/// method to the upstream mock, which has none.
+final class _Context extends MockContext {
+  @override
+  void drawImage(
+    CanvasImageSource image,
+    double dx,
+    double dy, [
+    double? dw,
+    double? dh,
+  ]) {
+    record('drawImage', [image, dx, dy, dw, dh]);
+  }
+}
+
+/// [value] with the marker [pointImage] replaced by the test image, also in
+/// a nested Map.
+Object? _fromReference(Object? value) => switch (value) {
+  pointImage => _image,
+  final Map<String, Object?> map => <String, Object?>{
+    for (final MapEntry(:key, :value) in map.entries)
+      key: _fromReference(value),
+  },
+  _ => value,
+};
+
+/// A matcher of a number: [isNaN] for NaN, else equality.
+Matcher _number(double value) => value.isNaN ? isNaN : equals(value);
+
+/// The expected calls as matchers: the names exactly, numbers with
+/// [closeTo] (NaN with [isNaN]), the image marker as the test image, other
+/// values with `==`.
+List<Object?> _calls(List<(String, List<Object?>)> calls) => [
+  for (final (name, args) in calls)
+    {
+      'name': name,
+      'args': [
+        for (final arg in args)
+          switch (arg) {
+            final num n when n.isNaN => isNaN,
+            final num n => closeTo(n, 1e-9),
+            _ => _fromReference(arg),
+          },
+      ],
+    },
+];
+
+/// The point element of an inRange case, with its `$animations`.
+PointElement _inRangePoint(PointInRangeCase c) {
+  final point = PointElement(c.cfg);
+  final animations = c.animations;
+  if (animations != null) {
+    point.$animations = {
+      for (final MapEntry(:key, :value) in animations.entries)
+        key: _Animation(value.to, isActive: value.active),
+    };
+  }
+  return point;
+}
+
+/// The options of a drawn point in the draw tests of the adapter.
+Map<String, Object?> _options({double radius = 5}) => {
+  'radius': radius,
+  'borderWidth': 2,
+  'borderColor': 'red',
+  'backgroundColor': 'blue',
+  'pointStyle': 'circle',
+};
+
+/// The radius of each `arc` call of [ctx].
+List<Object?> _arcRadii(MockContext ctx) => [
+  for (final call in ctx.getCalls())
+    if (call['name'] == 'arc') (call['args']! as List<Object?>)[2],
+];
+
+final Matcher _isUndefined = same(undefined);
+
+void main() {
+  group('reference', () {
+    test('has the reference of Node.js v24.12.0 on x64', () {
+      expect(pointReferenceNode, 'v24.12.0');
+      expect(pointReferenceArch, 'x64');
+      expect(pointInRangeReference, hasLength(35));
+      expect(pointSizeReference, hasLength(18));
+      expect(pointGetRangeReference, hasLength(6));
+      expect(pointDrawReference, hasLength(68));
+    });
+  });
+
+  group('statics', () {
+    test('id is point', () {
+      expect(PointElement.id, 'point');
+    });
+
+    test('defaults has the upstream keys and values in order', () {
+      expect(PointElement.defaults.keys, [
+        'borderWidth',
+        'hitRadius',
+        'hoverBorderWidth',
+        'hoverRadius',
+        'pointStyle',
+        'radius',
+        'rotation',
+      ]);
+      expect(PointElement.defaults.values, [1, 1, 1, 4, 'circle', 3, 0]);
+    });
+
+    test('defaultRoutes routes the two colors', () {
+      expect(PointElement.defaultRoutes, {
+        'backgroundColor': 'backgroundColor',
+        'borderColor': 'borderColor',
+      });
+    });
+
+    test('the statics of Element do not change', () {
+      expect(Element.defaults, isEmpty);
+      expect(Element.defaultRoutes, _isUndefined);
+    });
+  });
+
+  group('properties', () {
+    test('a new point has the upstream start values', () {
+      final point = PointElement();
+      expect(point.parsed, isNull);
+      expect(point.skip, isNull);
+      expect(point.stop, isNull);
+      expect(point.options, isNull);
+      expect(point.angle, isNull);
+      expect(point.active, false);
+      for (final value in [
+        point.x,
+        point.y,
+        point.cp1x,
+        point.cp1y,
+        point.cp2x,
+        point.cp2y,
+      ]) {
+        expect(value, isNaN);
+      }
+      for (final prop in [
+        'parsed',
+        'skip',
+        'stop',
+        'options',
+        'x',
+        'y',
+        'cp1x',
+        'cp1y',
+        'cp2x',
+        'cp2y',
+        'angle',
+        r'$context',
+      ]) {
+        expect(point[prop], _isUndefined, reason: prop);
+      }
+    });
+
+    test('the constructor assigns cfg', () {
+      final parsed = <String, Object?>{'x': 1, 'y': 2};
+      final options = <String, Object?>{'radius': 3};
+      final context = <String, Object?>{'type': 'data'};
+      final point = PointElement({
+        'x': 10,
+        'y': 1.5,
+        'parsed': parsed,
+        'skip': false,
+        'stop': true,
+        'options': options,
+        'angle': 2,
+        r'$context': context,
+      });
+      expect(point.x, 10.0);
+      expect(point.y, 1.5);
+      expect(point.parsed, same(parsed));
+      expect(point.skip, false);
+      expect(point.stop, true);
+      expect(point.options, same(options));
+      expect(point.angle, 2.0);
+      expect(point[r'$context'], same(context));
+    });
+
+    test('a write by name gives a double for a num', () {
+      final point = PointElement()
+        ..['cp1x'] = 1
+        ..['cp1y'] = 2
+        ..['cp2x'] = 3
+        ..['cp2y'] = 4.5
+        ..['angle'] = 5;
+      expect(
+        [point.cp1x, point.cp1y, point.cp2x, point.cp2y, point.angle],
+        [1.0, 2.0, 3.0, 4.5, 5.0],
+      );
+      for (final prop in ['cp1x', 'cp1y', 'cp2x', 'cp2y', 'angle']) {
+        expect(point[prop], isA<double>(), reason: prop);
+      }
+    });
+
+    test('the setters and the reads by name agree', () {
+      final parsed = Object();
+      final point = PointElement()
+        ..parsed = parsed
+        ..skip = true
+        ..stop = false
+        ..cp1x = 1
+        ..cp1y = 2
+        ..cp2x = 3
+        ..cp2y = 4
+        ..angle = 0.5;
+      expect(point['parsed'], same(parsed));
+      expect(point['skip'], true);
+      expect(point['stop'], false);
+      expect(
+        [point['cp1x'], point['cp1y'], point['cp2x'], point['cp2y']],
+        [1.0, 2.0, 3.0, 4.0],
+      );
+      expect(point['angle'], 0.5);
+    });
+
+    test('a write of undefined restores the undefined state', () {
+      final point = PointElement({
+        'parsed': <String, Object?>{},
+        'skip': true,
+        'stop': true,
+        'cp1x': 1,
+        'cp1y': 1,
+        'cp2x': 1,
+        'cp2y': 1,
+        'angle': 1,
+      });
+      for (final prop in [
+        'parsed',
+        'skip',
+        'stop',
+        'cp1x',
+        'cp1y',
+        'cp2x',
+        'cp2y',
+        'angle',
+      ]) {
+        point[prop] = undefined;
+        expect(point[prop], _isUndefined, reason: prop);
+      }
+      expect(point.parsed, isNull);
+      expect(point.skip, isNull);
+      expect(point.stop, isNull);
+      expect(point.cp1x, isNaN);
+      expect(point.angle, isNull);
+    });
+
+    test('a write outside the type throws an ArgumentError', () {
+      final point = PointElement();
+      for (final (prop, value) in <(String, Object?)>[
+        ('parsed', null),
+        ('skip', null),
+        ('skip', 'true'),
+        ('skip', 1),
+        ('stop', null),
+        ('stop', 0),
+        ('cp1x', null),
+        ('cp1y', '1'),
+        ('cp2x', true),
+        ('cp2y', null),
+        ('angle', null),
+        ('angle', '0.5'),
+      ]) {
+        expect(
+          () => point[prop] = value,
+          throwsA(isA<ArgumentError>()),
+          reason: '$prop: $value',
+        );
+        expect(point[prop], _isUndefined, reason: prop);
+      }
+    });
+
+    test(r'Element handles x, y, active, options and $animations', () {
+      final options = <String, Object?>{'radius': 1};
+      final animations = <String, types.Animation>{};
+      final point = PointElement()
+        ..['x'] = 1
+        ..['y'] = 2
+        ..['active'] = true
+        ..['options'] = options
+        ..[r'$animations'] = animations;
+      expect(point.x, 1.0);
+      expect(point.y, 2.0);
+      expect(point.active, true);
+      expect(point.options, same(options));
+      expect(point.$animations, same(animations));
+      expect(() => point['x'] = 'a', throwsA(isA<ArgumentError>()));
+    });
+
+    test(
+      'is an Element, a PointElement, a SplinePoint and a VisualElement',
+      () {
+        final point = PointElement();
+        expect(point, isA<Element>());
+        expect(point, isA<types.Element>());
+        expect(point, isA<types.PointElement>());
+        expect(point, isA<types.RadialPointElement>());
+        expect(point, isA<SplinePoint>());
+        expect(point, isA<types.VisualElement>());
+      },
+    );
+  });
+
+  group('control points', () {
+    test('updateBezierControlPoints writes the control points', () {
+      final points = [
+        PointElement({'x': 0, 'y': 0}),
+        PointElement({'x': 10, 'y': 10}),
+        PointElement({'x': 20, 'y': 0}),
+      ];
+      updateBezierControlPoints(
+        points,
+        {'tension': 0.4},
+        const _Area(0, 0, 100, 100),
+        false,
+        'x',
+      );
+      for (final point in points) {
+        for (final prop in ['cp1x', 'cp1y', 'cp2x', 'cp2y']) {
+          final value = point[prop];
+          expect(value, isA<double>(), reason: prop);
+          expect((value! as double).isFinite, true, reason: prop);
+        }
+        expect(point['cp1x'], point.cp1x);
+        expect(point['cp2y'], point.cp2y);
+      }
+      // The middle point has a smooth tangent: its control points lie on
+      // either side of it.
+      expect(points[1].cp1x, lessThan(10));
+      expect(points[1].cp2x, greaterThan(10));
+    });
+
+    test('a SplinePoint write of NaN keeps a value, not undefined', () {
+      final point = PointElement()..cp1x = double.nan;
+      expect(point.cp1x, isNaN);
+      expect(point['cp1x'], isA<double>());
+      expect(point['cp1x'], isNot(_isUndefined));
+    });
+  });
+
+  group('angle', () {
+    test('the property read of helpers.segment gives the radar angle', () {
+      final types.PointElement radar = PointElement({'angle': 1.5});
+      final types.PointElement other = PointElement();
+      // PointElementProperty, the read of helpers.segment.js:47 and :104.
+      expect(radar['angle'], 1.5);
+      expect(other['angle'], isNaN);
+    });
+  });
+
+  group('inRange, inXRange, inYRange and getCenterPoint', () {
+    for (final c in pointInRangeReference) {
+      test(c.name, () {
+        final point = _inRangePoint(c);
+        final useFinalPosition = c.useFinalPosition;
+        expect(
+          point.inRange(c.mouseX, c.mouseY, useFinalPosition),
+          c.inRange,
+          reason: 'inRange',
+        );
+        expect(
+          point.inXRange(c.mouseX, useFinalPosition),
+          c.inXRange,
+          reason: 'inXRange',
+        );
+        expect(
+          point.inYRange(c.mouseY, useFinalPosition),
+          c.inYRange,
+          reason: 'inYRange',
+        );
+        expect(
+          point.getCenterPoint(useFinalPosition),
+          ElementPoint(c.centerX, c.centerY),
+          reason: 'getCenterPoint',
+        );
+      });
+    }
+
+    test('the hit tests throw a TypeError without options', () {
+      final point = PointElement({'x': 10, 'y': 15});
+      expect(() => point.inRange(10, 15), throwsA(isA<TypeError>()));
+      expect(() => point.inXRange(10), throwsA(isA<TypeError>()));
+      expect(() => point.inYRange(15), throwsA(isA<TypeError>()));
+      expect(point.getCenterPoint(), const ElementPoint(10, 15));
+    });
+  });
+
+  group('size', () {
+    for (final c in pointSizeReference) {
+      test(c.name, () {
+        final elementOptions = c.elementOptions;
+        final point = PointElement({'options': ?elementOptions});
+        final options = c.options;
+        final size = options == null ? point.size() : point.size(options);
+        expect(size, _number(c.size));
+      });
+    }
+  });
+
+  group('getRange', () {
+    for (final c in pointGetRangeReference) {
+      test(c.name, () {
+        final options = c.options;
+        final point = PointElement({'options': ?options});
+        expect(point.getRange(), _number(c.range));
+      });
+    }
+
+    test('ignores the axis', () {
+      final point = PointElement({
+        'options': <String, Object?>{'radius': 3, 'hitRadius': 1},
+      });
+      expect(point.getRange('x'), 4);
+      expect(point.getRange('y'), 4);
+    });
+  });
+
+  group('draw', () {
+    for (final c in pointDrawReference) {
+      test(c.name, () {
+        final ctx = _Context();
+        final point = PointElement(
+          _fromReference(c.cfg)! as Map<String, Object?>,
+        );
+        final area = c.area;
+        point.draw(
+          ctx,
+          area == null
+              ? null
+              : _Area(area.left, area.top, area.right, area.bottom),
+        );
+        expect(ctx.getCalls(), _calls(c.calls));
+      });
+    }
+
+    test('throws a TypeError without options unless skip is true', () {
+      expect(
+        () => PointElement({'x': 10, 'y': 15}).draw(_Context()),
+        throwsA(isA<TypeError>()),
+      );
+      final ctx = _Context();
+      PointElement({'x': 10, 'y': 15, 'skip': true}).draw(ctx);
+      expect(ctx.getCalls(), isEmpty);
+    });
+  });
+
+  group('drawPoint adapter', () {
+    test('draws the same calls with the kept adapter', () {
+      final point = PointElement({'options': _options(), 'x': 50, 'y': 40});
+      final first = _Context();
+      final second = _Context();
+      point
+        ..draw(first)
+        ..draw(second);
+      expect(second.getCalls(), first.getCalls());
+      expect(_arcRadii(second), [5]);
+    });
+
+    test('reads a change of the options Map at the next draw', () {
+      final options = _options();
+      final point = PointElement({'options': options, 'x': 50, 'y': 40})
+        ..draw(_Context());
+      options['radius'] = 7;
+      final ctx = _Context();
+      point.draw(ctx);
+      expect(_arcRadii(ctx), [7]);
+    });
+
+    test('reads a new options Map at the next draw', () {
+      final point = PointElement({'options': _options(), 'x': 50, 'y': 40})
+        ..draw(_Context())
+        ..options = _options(radius: 9);
+      final ctx = _Context();
+      point.draw(ctx);
+      expect(_arcRadii(ctx), [9]);
+    });
+  });
+}

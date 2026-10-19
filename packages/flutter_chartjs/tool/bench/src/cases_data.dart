@@ -65,7 +65,8 @@ final class _Area implements ChartArea {
   double get height => bottom - top;
 }
 
-/// A point element `{x, y, skip, stop}`.
+/// A point element `{x, y, skip, stop}`. The control points are NaN, which
+/// stands for JS `undefined` (`SplinePoint`).
 final class _PointElement implements PointElement {
   _PointElement(this.x, this.y, {this.skip});
 
@@ -83,6 +84,18 @@ final class _PointElement implements PointElement {
 
   @override
   Map<String, Object?>? get options => null;
+
+  @override
+  double cp1x = double.nan;
+
+  @override
+  double cp1y = double.nan;
+
+  @override
+  double cp2x = double.nan;
+
+  @override
+  double cp2y = double.nan;
 }
 
 /// A chart `{getContext}`.

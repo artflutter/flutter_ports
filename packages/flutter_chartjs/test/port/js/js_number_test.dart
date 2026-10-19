@@ -227,6 +227,32 @@ void main() {
     });
   });
 
+  group('jsOrZero', () {
+    test('gives 0 for a falsy value', () {
+      for (final value in <Object?>[
+        undefined,
+        null,
+        false,
+        0,
+        -0.0,
+        double.nan,
+        '',
+      ]) {
+        expect(jsOrZero(value), _isSameNumber(0), reason: '$value');
+      }
+    });
+
+    test('gives the ToNumber of a truthy value', () {
+      expect(jsOrZero(2), 2.0);
+      expect(jsOrZero(-1.5), -1.5);
+      expect(jsOrZero('3'), 3.0);
+      expect(jsOrZero(true), 1.0);
+      expect(jsOrZero(double.infinity), double.infinity);
+      expect(jsOrZero('a'), isNaN);
+      expect(jsOrZero(<Object?>[]), 0.0);
+    });
+  });
+
   group('jsToString', () {
     test('converts primitive values', () {
       expect(jsToString(null), 'null');

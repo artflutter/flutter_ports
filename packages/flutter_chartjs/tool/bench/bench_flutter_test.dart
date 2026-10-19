@@ -38,7 +38,8 @@ final class _Scale implements Scale {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-/// A point element `{x, y}`.
+/// A point element `{x, y}`. The control points are NaN, which stands for
+/// JS `undefined` (`SplinePoint`).
 final class _Point implements PointElement {
   _Point(this.x, this.y);
 
@@ -56,6 +57,18 @@ final class _Point implements PointElement {
 
   @override
   bool? get stop => null;
+
+  @override
+  double cp1x = double.nan;
+
+  @override
+  double cp1y = double.nan;
+
+  @override
+  double cp2x = double.nan;
+
+  @override
+  double cp2y = double.nan;
 }
 
 /// A dataset meta object.

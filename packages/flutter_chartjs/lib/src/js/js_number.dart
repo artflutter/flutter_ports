@@ -1,8 +1,9 @@
 // Original code, not ported from Chart.js: JS number coercion as in V8.
 
 /// The JavaScript coercions `ToNumber`, `ToBoolean` and `ToString`, the
-/// globals `parseFloat`, `isNaN` and `isFinite`, and `Number::toString` over
-/// the Dart values that stand for JavaScript values (Chart.js ADR 0010).
+/// globals `parseFloat`, `isNaN` and `isFinite`, `Number::toString` and the
+/// form `value || 0` over the Dart values that stand for JavaScript values
+/// (Chart.js ADR 0010).
 ///
 /// The value mapping: `null` is JS `null`, [undefined] is JS `undefined`
 /// (Chart.js ADR 0006), `bool` is a boolean, `num` is a number, `String` is a
@@ -55,6 +56,15 @@ bool jsTruthy(Object? value) => switch (value) {
   final String s => s.isNotEmpty,
   _ => true,
 };
+
+/// The JS form `value || 0` before arithmetic, for example
+/// `options.radius || 0` (element.point.ts:83-85) and `options.offset || 0`
+/// (element.arc.ts:396-397).
+///
+/// A falsy value ([jsTruthy]) gives 0. Another value gives its `ToNumber`
+/// ([jsToNumber]), which the arithmetic after the read applies. Thus a
+/// truthy value that is not a number, for example `'a'`, gives NaN.
+double jsOrZero(Object? value) => jsTruthy(value) ? jsToNumber(value) : 0;
 
 /// ECMAScript `ToString(value)`, the coercion of `'' + value`, of a template
 /// literal and of `String(value)`.

@@ -55,13 +55,18 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 ## Layout
 
 - `packages/flutter_chartjs`: the Chart.js port (library, `publish_to: none` until 0.1.0).
-  - `lib/src/`: ported modules at their upstream paths (`core/`, `helpers/`, `platform/`,
-    `types/`), `kurkle_color/` (the `@kurkle/color` 0.3.2 port), and `js/`, the JS runtime:
-    port-only `js_*.dart` files and the fdlibm ports `fdlibm_log.dart` and `fdlibm_atan.dart`.
+  - `lib/src/`: ported modules at their upstream paths (`core/`, `elements/`, `helpers/`,
+    `platform/`, `types/`), `kurkle_color/` (the `@kurkle/color` 0.3.2 port), and `js/`, the JS
+    runtime: port-only `js_*.dart` files and the fdlibm ports `fdlibm_log.dart` and
+    `fdlibm_atan.dart`. `js_webidl.dart` has the WebIDL conversions of the Canvas 2D setters.
+  - `lib/src/core/core.element.dart` and `lib/src/elements/` (Chart.js ADR 0017): the port of
+    `core.element.ts`, and the four elements (`element.point.dart`, `element.line.dart`,
+    `element.bar.dart`, `element.arc.dart`) with `index.dart`. These files are pure layers.
   - `lib/src/canvas/`: the port-only canvas layer (Chart.js ADRs 0013 and 0015). `canvas.dart` is
-    the Canvas 2D interface, a pure layer. `canvas_ui.dart` and its three parts
-    (`canvas_ui_path.dart`, `canvas_ui_paint.dart`, `canvas_ui_text.dart`) are the `dart:ui`
-    implementation. No helper imports them.
+    the Canvas 2D interface, a pure layer. `canvas_ui.dart` and its four parts
+    (`canvas_ui_path.dart`, `canvas_ui_paint.dart`, `canvas_ui_text.dart` and
+    `canvas_ui_batch.dart`, the circle batch) are the `dart:ui` implementation. No helper imports
+    them.
   - `lib/src/platform/` (Chart.js ADR 0014): the ports of `index.js`, `platform.base.js` and
     `platform.basic.js`, and three port-only files. `platform.flutter.dart` replaces
     `platform.dom.js`. `chart_host.dart` is the internal chart host (`ChartHost`,
@@ -77,13 +82,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     generators of reference data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0015. Three of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0017. Three of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, and Chart.js
       ADR 0012 supersedes Chart.js ADR 0004. Chart.js ADR 0001 is accepted for its four theming
-      invariants only. Chart.js ADRs 0013 (canvas model), 0014 (input events and the chart host)
-      and 0015 (text) are proposed. The other ADRs are accepted. Docs name them "Chart.js ADR NNNN". "ADR
-      NNNN" alone is a `docs/adr/` file. An accepted ADR does not change. A changed decision gets
-      a new ADR that states the complete decision and supersedes the old ADR.
+      invariants only. Chart.js ADRs 0013 (canvas model), 0014 (input events and the chart host),
+      0015 (text), 0016 (frame scheduling) and 0017 (element properties) are proposed. Chart.js
+      ADR 0016 supersedes Chart.js ADR 0007 when it is accepted. The other ADRs are accepted. Docs
+      name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. An accepted ADR does
+      not change. A changed decision gets a new ADR that states the complete decision and
+      supersedes the old ADR.
     - `doc/differences.md`: one row for each `DIVERGES` difference.
     - `doc/upstream/`: the output of tool 4 (`manifest.json`, `fixtures.json`). Do not edit it by
       hand.
@@ -166,11 +173,14 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   forward.
 - The JS runtime in `lib/src/js/`: `jsObjectKeys` (`Object.keys` order), `jsSort` (the stable
   `Array.prototype.sort`), `jsCall` (a call of a JS function value with JS arity), `jsGet` (the
-  property read `object[key]`) and the `undefined` sentinel (Chart.js ADR 0006). Ported code
-  calls them where upstream uses the JS builtin. A typed Map read stays `map[key]`. Use `jsGet`
-  when the receiver can be a value that is not a Map, or when an absent key must give
-  `undefined` and not `null`. Ported code tests for the sentinel with
-  `identical(value, undefined)`.
+  property read `object[key]`), `jsOrZero` (`value || 0` before arithmetic, Chart.js ADR 0017
+  §8, proposed) and the `undefined` sentinel (Chart.js ADR 0006). The conversions of
+  `js_webidl.dart` (`canvasStyle`, `canvasNumber`, `canvasKeyword` and `canvasLineDash`) apply the
+  WebIDL conversion of a Canvas 2D setter or of `setLineDash` to an option value (Chart.js ADR
+  0017 §8, proposed). Ported code calls them where upstream uses the JS builtin or gives an option
+  value to the canvas. A typed Map read stays `map[key]`. Use `jsGet` when the receiver can be a
+  value that is not a Map, or when an absent key must give `undefined` and not `null`. Ported code
+  tests for the sentinel with `identical(value, undefined)`.
 - File names in the upstream spelling and the `_` rules: Chart.js ADR 0012.
   `check:headers` already compares each Dart path with the mapped path.
 - Spec names and skip reasons: `porting-flow.md` §1 step 5 (proposed). The skip reasons are
@@ -205,8 +215,9 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   imports. `check:lib-imports` computes the pure layers from the roots in
   `packages/flutter_chartjs/tool/src/lib_imports.dart`. The roots include `lib/src/js/`,
   `lib/src/types/`, `lib/src/kurkle_color/`, `core.defaults`, the helpers except `helpers.extras`,
-  and `platform.base`, `platform.basic` and `native_event` of `lib/src/platform/`. The canvas
-  interface `lib/src/canvas/canvas.dart` is pure, because `helpers.canvas` imports it.
+  `core.element`, the files of `lib/src/elements/`, and `platform.base`, `platform.basic` and
+  `native_event` of `lib/src/platform/`. The canvas interface `lib/src/canvas/canvas.dart` is
+  pure, because `helpers.canvas` imports it.
 - Write the tests of pure layers with `package:test`, not `flutter_test`. These tests run on the
   VM (`test`) and in Chrome with dart2js and dart2wasm (`test:web`).
 - A test file that imports `flutter_test`, `dart:io`, `dart:ui` or other non-pure code needs
@@ -224,10 +235,11 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   with another family, or with no family, measures with the square FlutterTest font. A test file
   of `chartjs_test_utils` that measures text calls `installTestFont()` itself.
 - The Node.js generators in `packages/flutter_chartjs/tool/reference/` write
-  `test/port/js/*_reference.dart` and `test/port/helpers/draw_point_reference.dart`. They stop
-  unless Node.js is an x64 build. `tool/reference/text_metrics/` writes
-  `test/port/canvas/text_metrics_reference.dart` from headless Chrome. The x64 rule does not apply
-  to it. Do not edit the generated files by hand.
+  `test/port/js/*_reference.dart`, `test/port/helpers/draw_point_reference.dart` and
+  `test/port/elements/*_reference.dart` (point, line, bar and arc). They stop unless Node.js is an
+  x64 build. `tool/reference/text_metrics/` writes `test/port/canvas/text_metrics_reference.dart`
+  from headless Chrome. The x64 rule does not apply to it. Do not edit the generated files by
+  hand.
 
 ## Licensing
 

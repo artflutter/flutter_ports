@@ -184,10 +184,13 @@ List<Segment> boundSegment(
   double? subStart;
   late double value;
   PointElement point;
-  // JS `undefined` before the first point. Each reader passes it to a number
-  // function, which makes it NaN. `value === undefined` is false for a
-  // number, as `value == double.nan` is.
+  // prevValue starts JS `undefined`. The closures pass it to a number
+  // function, which makes it NaN, so NaN stands for it there. But the `x`
+  // and `y` getters of an element give NaN for `undefined`, and
+  // `undefined === undefined` is true where `NaN === NaN` is false. Thus
+  // prevUndefined keeps the `undefined` state for `value === prevValue`.
   var prevValue = double.nan;
+  var prevUndefined = true;
 
   bool startIsBefore() =>
       between(startBound, prevValue, value) &&
@@ -205,8 +208,20 @@ List<Segment> boundSegment(
     }
 
     value = normalize(point[property]);
+    // normalize keeps `undefined` for 'x' and 'y' (helpers.segment.js:22).
+    // `_normalizeAngle(undefined)` is NaN.
+    final valueUndefined =
+        value.isNaN &&
+        property != 'angle' &&
+        switch (point) {
+          final ElementPropertyRead element => identical(
+            element[property],
+            undefined,
+          ),
+          _ => false,
+        };
 
-    if (value == prevValue) {
+    if (valueUndefined ? prevUndefined : value == prevValue) {
       continue;
     }
 
@@ -230,6 +245,7 @@ List<Segment> boundSegment(
     }
     prev = i;
     prevValue = value;
+    prevUndefined = valueUndefined;
   }
 
   if (subStart != null) {

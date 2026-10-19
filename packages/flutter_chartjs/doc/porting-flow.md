@@ -101,7 +101,10 @@ decision, the decision moves to `docs/adr/`.
 
 The gate 1 and gate 2 decisions are accepted ADR files now (2026-10-18). Their subsections below keep a summary,
 the link and the evidence that the ADR does not repeat. Phase 3 wrote the gate 3 decisions (2.2,
-2.7 and 2.8) as proposed ADR files (2026-10-19). Their subsections keep a summary and the link.
+2.7 and 2.8) as proposed ADR files (2026-10-19). Phase 3 also wrote Chart.js ADR 0016
+(proposed), which changes one decision of the gate 2 part of 2.9. Phase 4 wrote the gate 4 decision (2.14) as the
+proposed file of Chart.js ADR 0017 (2026-10-19). The subsections of the gate 3 and gate 4
+decisions keep a summary and the link.
 The other subsections stay proposals in this document until their ADR files exist.
 
 | Subsection | ADR | Gate |
@@ -117,6 +120,8 @@ The other subsections stay proposals in this document until their ADR files exis
 | 2.2 | [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md) (proposed) | 3 |
 | 2.7 | [Chart.js ADR 0014: Input events and the chart host](adr/0014-input-events-and-chart-host.md) (proposed) | 3 |
 | 2.8 | [Chart.js ADR 0015: Text](adr/0015-text.md) (proposed) | 3 |
+| 2.9, `helpers.extras` and the animator frame source | [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (proposed), which supersedes Chart.js ADR 0007 on acceptance | 2 |
+| 2.14 | [Chart.js ADR 0017: Element properties](adr/0017-element-properties.md) (proposed) | 4 |
 
 ADR 0006 (gate 1) belongs to [upstream-tracking.md](upstream-tracking.md).
 
@@ -139,7 +144,7 @@ declared-key marker at `core.datasetController.js:817`, not at `:818`.
 [Chart.js ADR 0013](adr/0013-canvas-model.md) (proposed) holds the decision and its evidence. In
 short:
 - `lib/src/canvas/canvas.dart` is the pure Canvas 2D interface, with `Path2D` and the port-only
-  `CanvasNode` and `CanvasContainer`. The `dart:ui` implementation is `canvas_ui.dart` and three
+  `CanvasNode` and `CanvasContainer`. The `dart:ui` implementation is `canvas_ui.dart` and four
   parts. No helper imports it. The harness has `MockContext`.
 - `UiCanvasContext` keeps a retained bitmap as a list of pictures. A full `clearRect` drops the
   list. A partial clear paints inside a layer. More than 8 pictures flatten into one image.
@@ -244,6 +249,13 @@ one module-level animator on `requestAnimFrame`. The chart host mutes a chart un
 `TickerMode(enabled: false)`. Thus `core.animator.js` has two small `DIVERGES` hunks.
 [Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) gives the clock: `jsDateNow()` on
 `clock.now()`. The rest of this subsection stays a proposal for ADR: Animation (gate 5).
+
+[Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (proposed, phase 3) states
+the complete scheduling decision again. It changes decision 9 of Chart.js ADR 0007. The first
+layout of the chart host reports the attach at once, inside `performLayout`
+([Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md), section 3). A canvas swap reports
+the detach of the old canvas at once, during the build. Chart.js ADR 0016 keeps the other eleven
+decisions. On acceptance, it supersedes Chart.js ADR 0007.
 
 **Decision.** None yet. [Chart.js ADR 0007](adr/0007-frame-scheduling.md) decisions 6 and 7
 already make the chart host of 2.7 destroy its chart in `dispose` and follow `TickerMode`. Tests use `tester.pump` with
@@ -358,6 +370,34 @@ evidence. It supersedes Chart.js ADR 0005. In short:
 
 **Evidence** (2026-10-16). `.gitmodules` listed only Chart.js.
 
+### 2.14 Chart.js ADR 0017: Element properties (gate 4)
+
+[Chart.js ADR 0017](adr/0017-element-properties.md) (proposed) holds the decision, its evidence
+and the items that stay open. In short:
+- `Element` of `core.element.dart` is a concrete class. Each element class extends it and
+  implements `types.VisualElement`. The static members `id`, `defaults`, `defaultRoutes` and
+  `descriptors` keep the upstream contents and key order.
+- An element class implements each method of `types.VisualElement`, also a method that its
+  upstream class does not have. When the upstream caller tests for the method, the method gives
+  the result of that test: `ArcElement.inXRange` and `ArcElement.inYRange` give false. Else the
+  method throws a `NoSuchMethodError`.
+- `types.PointElement` implements `SplinePoint`. Thus `element.line.dart` passes its point
+  elements to `helpers.curve` without a cast.
+- Each upstream property is a typed Dart member with the upstream name. A property that starts
+  `undefined` has a nullable field. Its numeric getter gives NaN for `undefined`.
+- `operator []` and `operator []=` give the access by name of phase 5. A Map of extra properties
+  keeps the names that the class does not declare. The constructors write their `cfg` argument
+  through `operator []=`, as `Object.assign` does.
+- `getProps` returns the element itself or an `ElementProps` over a new Map. `tooltipPosition`
+  and `getCenterPoint` return an `ElementPoint`.
+- The JS form `value || 0` before arithmetic is `jsOrZero` of `lib/src/js/js_number.dart`. The
+  port-only file `lib/src/js/js_webidl.dart` converts an option value for a Canvas 2D setter, as
+  the WebIDL type of the DOM setter does (`canvasStyle`, `canvasNumber`, `canvasKeyword` and
+  `canvasLineDash`). The controllers of phase 5 and the plugins of phase 8 use the same
+  functions.
+- `core.element.dart`, `lib/src/elements/` and `lib/src/js/js_webidl.dart` are pure layers. Their
+  specs and tests run on the VM, with dart2js and with dart2wasm.
+
 ## 3. Test harness
 
 **Package.** `packages/chartjs_test_utils` (`publish_to: none`) mirrors the npm package module by
@@ -426,9 +466,11 @@ melos script `test:web` runs them in Chrome too (phase 3).
 
 A pure-layer file is a file whose transitive imports reach neither `dart:ui` nor
 `package:flutter`. The pure layers are `lib/src/js`, `lib/src/types`, `lib/src/kurkle_color`, the
-canvas interface, the `core.defaults` closure, all helpers except `helpers.extras`, and
-`platform.base`, `platform.basic` and `native_event` of `lib/src/platform/`. `helpers.options` and `helpers.curve` import `helpers.canvas`. Thus the canvas
-interface must stay free of `dart:ui` (2.2). Tool 1 computes the closure.
+canvas interface, the `core.defaults` closure, all helpers except `helpers.extras`, `core.element`
+and the files of `lib/src/elements/` ([Chart.js ADR 0017](adr/0017-element-properties.md), section
+10), and `platform.base`, `platform.basic` and `native_event` of `lib/src/platform/`.
+`helpers.options` and `helpers.curve` import `helpers.canvas`. Thus the canvas interface must stay
+free of `dart:ui` (2.2). Tool 1 computes the closure.
 
 On 3.44.9, `dart test -p chrome` runs in a Flutter package with a `test` dev_dependency (probe).
 `--tags` does not stop the compile of other files. `@TestOn('vm')` stops it. `flutter test` still
@@ -562,7 +604,7 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 | 1. Decisions, minimum tooling, pilot | done; gate 1-2 ADRs; pins (2.13); tools 1-3; pilot by hand: `helpers.math`, `lib/src/js`, `geometric.dart`, `isFinite` from `helpers.core` | 12 `helpers.math` cases pass on VM, dart2js and dart2wasm; log10 comparison passes on the netlib port; AGENTS.md revised from the pilot; tools 1-3 green; gate 1-2 ADRs accepted |
 | 2. JS runtime, helpers, defaults | done; rest of `lib/src/js` and `lib/src/types`; helpers except `helpers.canvas` and `helpers.dom`, plus `toFontString` and `_isPointInArea`; `core.defaults` closure; @kurkle/color; null-vs-undefined resolver tests; `pure.dart`; tools 4-5 | 181 non-chart helper cases and 5 `core.defaults`/`core.ticks` cases pass on VM, pure-layer cases also on dart2js and dart2wasm; `test:cases` reports none missing. Result: 179 of the 181 helper cases pass. The 2 `helpers.color` cases that need a canvas pattern and gradient skip as `blocked: helpers.canvas`. `test/port/helpers/helpers.color_test.dart` tests the same behavior with test classes. `helpers.rtl` is in progress: `overrideTextDirection` and `restoreTextDirection` need the canvas layer. `src/helpers/index.ts` re-exports `helpers.dom`. Both wait for phase 3 |
 | 3. Canvas, text, platform, harness | done; `lib/src/canvas`; rest of `helpers.canvas`; rest of `helpers.rtl`; `helpers.dom`; `src/helpers/index.ts`; `platform.*`; internal chart host; phase-3 harness rows | non-chart canvas and DOM cases pass; the 2 `helpers.color` canvas cases pass; text-metric probe recorded. Result: the five phase 3 spec files have 66 cases. 21 pass, 0 fail and 45 skip. The 12 non-chart `helpers.canvas` cases, the 4 `helpers.color` cases and the 5 `helpers.dom` cases with a Flutter equivalent pass. 28 cases skip as `blocked: core.controller`, 15 as `n/a` (CSS, the shadow DOM, DOM ids, iframes, a web worker) and 2 as `diverges: platform-relative-position`. `test:cases` reports 205 passed, 0 failed, 47 skipped and 0 missing cases in the 17 ported spec files. The text-metric probe ([text-metrics.md](text-metrics.md)) found all 80 widths equal to Chrome. Chart.js ADRs 0013-0015 record the gate 3 decisions (proposed) |
-| 4. Elements | `core.element`, point, line, bar, arc | 20 of 21 element cases pass |
+| 4. Elements | done; `core.element`, point, line, bar, arc, `elements/index`; the type members; `jsOrZero` and `js_webidl.dart` of `lib/src/js`; tool 1 roots | 20 of 21 element cases pass. Result: the five phase 4 spec files have 22 cases. 21 pass, 0 fail and 1 skips as `blocked: core.controller` (`element.line`, "should not cache path when animations are enabled"). 20 of the 21 element cases pass. `test:cases` reports 226 passed, 0 failed, 48 skipped and 0 missing cases in the 22 ported spec files. The port-only tests `test/port/core/core.element_test.dart` and `test/port/elements/` (the four elements and `index`) test the behavior that the specs do not test. Four generators of `tool/reference/` (point, line, bar and arc) write the reference data of the four element tests from an x64 build of Node.js v24.12.0. Chart.js ADR 0017 records the gate 4 decision (proposed) |
 | 5. Core | `core.config` with hunks H0-H3 and their tests; registry to controller; phase-5 harness rows; tools 6 and 8 | non-chart core cases pass; others skipped `blocked: <module>` |
 | 6. Scales | seven scales; default date adapter on `DateFormat` (ICU tokens) | non-chart scale cases pass; moment-token cases skip as `diverges` |
 | 7. Controllers | bar first, then the other seven; fixture smoke runner | controller and earlier chart-blocked cases pass or have rows; fixture smoke tests pass for the ported types; gallery shows every type |

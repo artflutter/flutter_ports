@@ -235,6 +235,37 @@ void main() {
     ]);
   });
 
+  test('treats core.element and lib/src/elements/ as roots', () {
+    tree
+      ..write('lib/src/core/core.element.dart', [
+        _portOnly,
+        "import 'package:flutter_chartjs/src/types/geometric.dart';",
+      ])
+      ..write('lib/src/elements/element.point.dart', [
+        _portOnly,
+        "import 'package:flutter_chartjs/src/core/core.element.dart';",
+      ]);
+    expect(run(), isEmpty);
+
+    for (final path in const [
+      'lib/src/core/core.element.dart',
+      'lib/src/elements/element.point.dart',
+    ]) {
+      final original = path.endsWith('element.point.dart')
+          ? "import 'package:flutter_chartjs/src/core/core.element.dart';"
+          : "import 'package:flutter_chartjs/src/types/geometric.dart';";
+      tree.write(path, [_portOnly, original, "import 'dart:ui';"]);
+      expect(run(), [
+        equals(
+          'error: $path:3: imports dart:ui, but the file is in the pure '
+          'layer (pure layers reach neither dart:ui nor package:flutter, '
+          'porting-flow.md 3).',
+        ),
+      ], reason: path);
+      tree.write(path, [_portOnly, original]);
+    }
+  });
+
   test('excludes helpers.extras from the roots', () {
     tree.write('lib/src/helpers/helpers.extras.dart', [
       _portOnly,

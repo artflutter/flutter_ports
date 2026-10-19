@@ -420,6 +420,68 @@ abstract interface class CanvasFontSpec implements FontSpec {
   String? get string;
 }
 
+/// index.d.ts:1816 `VisualElement`, the drawing and hit-test members of an
+/// element class (Chart.js ADR 0017, section 1).
+///
+/// The element classes of `lib/src/elements/` extend the concrete `Element`
+/// of `core.element.dart` and implement this interface.
+///
+/// `getRange?(axis)` (index.d.ts:1822) is optional in TypeScript. Dart has no
+/// optional member. Thus it stays out of this interface until a ported
+/// caller needs it (`core.interaction.js`, phase 5). The classes with an
+/// upstream `getRange` declare it.
+///
+/// `useFinalPosition?: boolean` is `bool?`. Dart `null` stands for JS
+/// `undefined`, which is falsy. JS `null` never reaches it.
+abstract interface class VisualElement {
+  /// index.d.ts:1817 `draw(ctx: CanvasRenderingContext2D, area?:
+  /// ChartArea): void`. Dart `null` stands for an absent [area], JS
+  /// `undefined`.
+  ///
+  /// A class whose upstream `draw` takes fewer parameters ignores [area], as
+  /// JavaScript ignores an extra argument. A class can add optional
+  /// parameters after [area], for example `start` and `count` of
+  /// `LineElement.draw` (element.line.js:427).
+  void draw(CanvasRenderingContext2D ctx, [ChartArea? area]);
+
+  /// index.d.ts:1818 `inRange(mouseX, mouseY, useFinalPosition?):
+  /// boolean`.
+  bool inRange(
+    double mouseX,
+    double mouseY, [
+    // The upstream signature has a positional `useFinalPosition`.
+    // ignore: avoid_positional_boolean_parameters
+    bool? useFinalPosition,
+  ]);
+
+  /// index.d.ts:1819 `inXRange(mouseX, useFinalPosition?): boolean`.
+  bool inXRange(
+    double mouseX, [
+    // The upstream signature has a positional `useFinalPosition`.
+    // ignore: avoid_positional_boolean_parameters
+    bool? useFinalPosition,
+  ]);
+
+  /// index.d.ts:1820 `inYRange(mouseY, useFinalPosition?): boolean`.
+  bool inYRange(
+    double mouseY, [
+    // The upstream signature has a positional `useFinalPosition`.
+    // ignore: avoid_positional_boolean_parameters
+    bool? useFinalPosition,
+  ]);
+
+  /// index.d.ts:1821 `getCenterPoint(useFinalPosition?): Point`.
+  ///
+  /// The element classes return the `ElementPoint` of `core.element.dart`,
+  /// which stands for the object literal `{x, y}` (Chart.js ADR 0017,
+  /// section 9).
+  Point getCenterPoint([
+    // The upstream signature has a positional `useFinalPosition`.
+    // ignore: avoid_positional_boolean_parameters
+    bool? useFinalPosition,
+  ]);
+}
+
 /// index.d.ts:1837 `Segment`.
 abstract interface class Segment {
   /// index.d.ts:1838 `start: number`.
@@ -443,9 +505,12 @@ abstract interface class Segment {
 /// index.d.ts:1977 `LineElement`, with the fields of the class
 /// (element.line.js:243) that `helpers.segment.js` reads.
 abstract interface class LineElement implements Element {
-  /// index.d.ts:1981 `points: Point[]`. The class keeps point elements
-  /// (element.line.js:315), and `helpers.segment.js` reads their `skip` and
-  /// `stop`.
+  /// index.d.ts:1981 `points: Point[]`. The port narrows it to point
+  /// elements: `helpers.segment.js` reads their `skip` and `stop`, and
+  /// `helpers.curve` writes their control points, which the line reads.
+  /// Upstream also stores plain points (filler.helper.js:28-33). See the
+  /// difference `adapt-line-points-elements` and Chart.js ADR 0017, Open.
+  // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
   List<PointElement> get points;
 
   /// index.d.ts:1982 `readonly segments: Segment[]`.
@@ -453,11 +518,17 @@ abstract interface class LineElement implements Element {
 
   /// core.element.ts:14 `options: O`, through `Element<T, O>`
   /// (index.d.ts:1978).
+  ///
+  /// Dart `null` stands for JS `undefined`, the start value
+  /// (element.line.js:283), as in [Element.options]. `helpers.segment.js`
+  /// reads it through `jsGet`, which throws a `TypeError` for `null`, as a
+  /// JavaScript property read of `undefined` does. JS `null` never reaches
+  /// it.
   @override
-  Map<String, Object?> get options;
+  Map<String, Object?>? get options;
 
   /// element.line.js:284 `_chart`. Dart `null` stands for JS `undefined`,
-  /// the start value. `controller.line.js:56` sets it. JS `null` never
+  /// the start value. `controller.line.js:57` sets it. JS `null` never
   /// reaches it.
   Chart? get chart;
 
@@ -470,7 +541,7 @@ abstract interface class LineElement implements Element {
   bool? get fullLoop;
 
   /// element.line.js:292 `_datasetIndex`. Dart `null` stands for JS
-  /// `undefined`, the start value. `controller.line.js:57` sets it. JS `null`
+  /// `undefined`, the start value. `controller.line.js:58` sets it. JS `null`
   /// never reaches it.
   ///
   /// `doSplitByStyles` copies it into the segment context
@@ -547,11 +618,26 @@ abstract interface class ChartConfiguration {
 }
 
 /// core.element.ts:6 `Element`, which index.d.ts:10 imports.
-abstract interface class Element {
-  /// core.element.ts:11 `x: number`.
+///
+/// It implements [Point], because ported code passes an element where
+/// upstream expects a point, for example `_isPointInArea(this, …)`
+/// (element.point.ts:92). TypeScript accepts it by structure (Chart.js ADR
+/// 0017, section 1).
+///
+/// The access by name (`element[prop]`) is a member of the concrete
+/// `Element` of `core.element.dart`, not of this interface. Thus the
+/// extension [PointElementProperty] stays the property read of a
+/// [PointElement] here. A helper that must tell `undefined` from NaN tests
+/// the element against [ElementPropertyRead].
+abstract interface class Element implements Point {
+  /// core.element.ts:11 `x: number`. The concrete classes give NaN, the
+  /// `ToNumber` of JS `undefined`, before the first write (Chart.js ADR
+  /// 0017, section 4).
+  @override
   double get x;
 
-  /// core.element.ts:12 `y: number`.
+  /// core.element.ts:12 `y: number`. NaN before the first write, as [x].
+  @override
   double get y;
 
   /// core.element.ts:14 `options: O`. The constructors leave it undefined
@@ -562,9 +648,20 @@ abstract interface class Element {
 }
 
 /// element.point.ts:20 `PointElement`, which index.d.ts:17 re-exports.
-abstract interface class PointElement implements Element {
+///
+/// It implements [SplinePoint], as [Element] implements [Point]:
+/// `_updateBezierControlPoints` takes `SplinePoint[]`
+/// (helpers.curve.ts:186-187), and `updateControlPoints` passes the point
+/// elements of the line (element.line.js:303). TypeScript accepts them by
+/// structure. Thus ported code passes a list of point elements to
+/// `helpers.curve` without a cast. The control points `cp1x`, `cp1y`,
+/// `cp2x` and `cp2y` are the members of [SplinePoint]: NaN stands for JS
+/// `undefined`, the value before `helpers.curve` writes them (Chart.js ADR
+/// 0017, section 3).
+abstract interface class PointElement implements Element, SplinePoint {
   /// element.point.ts:25 `skip?: boolean`. Dart `null` stands for JS
   /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
+  @override
   bool? get skip;
 
   /// element.point.ts:26 `stop?: boolean`. Dart `null` stands for JS
@@ -579,6 +676,10 @@ abstract interface class PointElement implements Element {
 /// declare it. `helpers.segment.js` and `plugin.filler` read it by name as
 /// `point[property]` (see [PointElementProperty]). A [PointElement] that is
 /// not a [RadialPointElement] has no `angle`.
+///
+/// The concrete `PointElement` of `element.point.dart` implements this
+/// interface. Its `angle` stays Dart `null` until the radar controller
+/// assigns it (Chart.js ADR 0017, sections 3 and 4).
 abstract interface class RadialPointElement implements PointElement {
   /// controller.radar.js:96 `angle: pointPosition.angle`. Dart `null` stands
   /// for JS `undefined`, the value before the first update. JS `null` never
@@ -602,6 +703,12 @@ extension PointElementProperty on PointElement {
   /// helpers.math.ts:160). Any other name also gives NaN. JS gives
   /// `undefined` for an absent property, and the readers handle NaN as they
   /// handle `undefined`: `between` is false, so the bounded result is empty.
+  ///
+  /// `'x'` and `'y'` give the getters, which give NaN in the `undefined`
+  /// state (Chart.js ADR 0017, section 4). `_boundSegment` keeps the
+  /// `undefined` of `'x'` and `'y'` (helpers.segment.js:22), and
+  /// `undefined === undefined` is true where `NaN === NaN` is false. Thus it
+  /// tests the point with [ElementPropertyRead].
   double operator [](String property) => switch (property) {
     'x' => x,
     'y' => y,
@@ -611,4 +718,22 @@ extension PointElementProperty on PointElement {
     },
     _ => double.nan,
   };
+}
+
+/// The JS property read `element[prop]` of an element (Chart.js ADR 0017,
+/// section 5). It is not a declaration of `index.d.ts`.
+///
+/// The concrete `Element` of `core.element.dart` implements it. The read
+/// gives the `undefined` sentinel for a property in the `undefined` state,
+/// where the numeric getter gives NaN. A ported helper that must tell
+/// `undefined` from NaN tests a point against this interface. Thus it does
+/// not import `core.element.dart` (Chart.js ADR 0003). An example is
+/// `boundSegment` of `helpers.segment.dart`.
+// The access by name has one member, the property read.
+// ignore: one_member_abstracts
+abstract interface class ElementPropertyRead {
+  /// The JS property read `element[prop]`. It gives the `undefined`
+  /// sentinel for a property in the `undefined` state and for an unknown
+  /// name.
+  Object? operator [](String prop);
 }

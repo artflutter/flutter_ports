@@ -30,7 +30,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
   ADRs are in [adr/](adr/). Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
   supersedes Chart.js ADR 0005, and Chart.js ADR 0012 supersedes Chart.js ADR 0004. Chart.js
-  ADR 0001 is accepted for its four invariants only. Chart.js ADRs 0013 to 0016 are proposed.
+  ADR 0001 is accepted for its four invariants only. Chart.js ADRs 0013 to 0017 are proposed.
   Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it is accepted. The other Chart.js ADRs are
   accepted:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md)
@@ -54,6 +54,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0015: Text](adr/0015-text.md) (proposed)
   - [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (proposed; it
     supersedes Chart.js ADR 0007 on acceptance)
+  - [Chart.js ADR 0017: Element properties](adr/0017-element-properties.md) (proposed)
 
 ## What gets ported
 
@@ -87,7 +88,7 @@ Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the v4.5.1 lockfile), which
 The new ADRs and design documents use the revised phase numbers of porting-flow.md §5 (4 =
 Elements, 5 = Core), not the numbers of the table below.
 
-**Status (2026-10-19).** Phases 0, 1, 2 and 3 of porting-flow.md §5 are done. Phase 2 ported the
+**Status (2026-10-19).** Phases 0 to 4 of porting-flow.md §5 are done. Phase 2 ported the
 rest of the JS runtime, 14 helper files, the `core.defaults` closure and `@kurkle/color` 0.3.2
 ([parity.md](parity.md)). Phase 3 added the canvas layer over `dart:ui`
 ([Chart.js ADR 0013](adr/0013-canvas-model.md)), the internal chart host and `src/platform`
@@ -95,7 +96,11 @@ rest of the JS runtime, 14 helper files, the `core.defaults` closure and `@kurkl
 ([Chart.js ADR 0015](adr/0015-text.md)), and the phase 3 harness rows. All 18 helper files are
 ported. The 12 non-chart `helpers.canvas` cases, the 4 `helpers.color` cases and the 5
 `helpers.dom` cases with a Flutter equivalent pass. The text-metric probe found all 80 widths
-equal to Chrome ([text-metrics.md](text-metrics.md)). Phase 4 (elements) is next.
+equal to Chrome ([text-metrics.md](text-metrics.md)). Phase 4 ported `core.element`, the point,
+line, bar and arc elements and `src/elements/index.js`
+([Chart.js ADR 0017](adr/0017-element-properties.md)). These files are pure layers. The
+`core.element` spec case and 20 of the 21 element spec cases pass. The other element case needs
+the chart controller and skips as `blocked: core.controller`. Phase 5 (core) is next.
 
 The order follows upstream's own layering:
 - `helpers` depend only on `core.defaults` (and a type-only import of the chart controller).
@@ -119,8 +124,8 @@ elements and scales lands (phases 5-7).
 | 1. Decisions | ADRs for the open questions below | ADRs accepted |
 | 2. Helpers | done; `src/helpers/*` except `helpers.canvas` and `helpers.dom`, plus `core.defaults` with the defaults it pulls in (`core.animations.defaults`, `core.layouts.defaults`, `core.scale.defaults`, `core.ticks`) and a Dart port of `@kurkle/color` 0.3.2 | non-chart helper spec cases pass |
 | 3. Platform and canvas | done; Canvas 2D semantics over `dart:ui`, text measurement, device pixel ratio, resize, pointer events (`src/platform`, `helpers.canvas`, `helpers.dom`) | non-chart canvas and DOM helper cases pass |
-| 4. Core | element, config and option resolution, registry, plugin service, layouts, scale base, autoskip, dataset controller, animations, interaction, adapters, chart controller | core spec cases with ported dependencies pass |
-| 5. Elements | point, line, bar, arc | element spec cases pass |
+| 4. Core | element (done in phase 4 of porting-flow.md §5), config and option resolution, registry, plugin service, layouts, scale base, autoskip, dataset controller, animations, interaction, adapters, chart controller | core spec cases with ported dependencies pass |
+| 5. Elements | done (phase 4 of porting-flow.md §5); point, line, bar, arc | element spec cases pass |
 | 6. Scales | linear base, linear, category, logarithmic, time, timeseries, radial linear | scale spec cases pass |
 | 7. Controllers | line, scatter, bar, bubble, doughnut, pie, polar area, radar | controller specs and the remaining chart-level cases pass; gallery shows every type |
 | 8. Plugins | title, subtitle, legend, tooltip, filler, decimation, colors | plugin specs pass |

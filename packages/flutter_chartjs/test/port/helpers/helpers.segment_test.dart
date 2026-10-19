@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: segment cases with no spec.
+import 'package:flutter_chartjs/src/elements/element.point.dart'
+    as element_point;
 import 'package:flutter_chartjs/src/helpers/helpers.math.dart' show pi;
 import 'package:flutter_chartjs/src/helpers/helpers.segment.dart';
 import 'package:flutter_chartjs/src/js/js_array.dart';
@@ -15,7 +17,8 @@ import 'package:test/test.dart';
 // and the segment styles. The expected values come from
 // src/helpers/helpers.segment.js at v4.5.1 in Node.js v24.12.0 on x64.
 
-/// A point element `{x, y, skip, stop}`. `null` stands for JS `undefined`.
+/// A point element `{x, y, skip, stop}`. `null` stands for JS `undefined`,
+/// and NaN for the `undefined` of a control point (`SplinePoint`).
 final class _Point implements PointElement {
   _Point(this.x, this.y, {this.skip, this.stop});
 
@@ -33,9 +36,22 @@ final class _Point implements PointElement {
 
   @override
   Map<String, Object?>? get options => null;
+
+  @override
+  double cp1x = double.nan;
+
+  @override
+  double cp1y = double.nan;
+
+  @override
+  double cp2x = double.nan;
+
+  @override
+  double cp2y = double.nan;
 }
 
-/// A radar point element `{x: 0, y: 0, angle}`.
+/// A radar point element `{x: 0, y: 0, angle}`. The control points are NaN,
+/// which stands for JS `undefined` (`SplinePoint`).
 final class _RadialPoint implements RadialPointElement {
   _RadialPoint(this.angle);
 
@@ -56,6 +72,18 @@ final class _RadialPoint implements RadialPointElement {
 
   @override
   Map<String, Object?>? get options => null;
+
+  @override
+  double cp1x = double.nan;
+
+  @override
+  double cp1y = double.nan;
+
+  @override
+  double cp2x = double.nan;
+
+  @override
+  double cp2y = double.nan;
 }
 
 /// The points of a pattern: `o` is a point, `s` a skipped point and `t` a
@@ -405,6 +433,73 @@ void main() {
           (property: 'x', start: 0, end: 0),
         ),
         [_segment(0, 0, false)],
+      );
+    });
+
+    test('skips the points of an undefined x, as upstream', () {
+      // Upstream normalize keeps `undefined` for 'x' (helpers.segment.js:22),
+      // and `undefined === undefined` is true, also for the first
+      // prevValue. The x getter of an element gives NaN for `undefined`.
+      // Upstream gives [{start: 0, end: 3}] and [{start: 1, end: 4}] (the
+      // pinned helpers.segment.js and element.point.ts, x64 Node.js
+      // v24.12.0).
+      expect(
+        boundSegment(
+          const _Segment(0, 3, loop: false),
+          [
+            element_point.PointElement({'y': 0}),
+            element_point.PointElement({'y': 1}),
+            element_point.PointElement({'x': 5, 'y': 2}),
+            element_point.PointElement({'x': 20, 'y': 3}),
+          ],
+          (property: 'x', start: 0, end: 10),
+        ),
+        [_segment(0, 3, false)],
+      );
+      expect(
+        boundSegment(
+          const _Segment(0, 4, loop: false),
+          [
+            element_point.PointElement({'x': 0, 'y': 0}),
+            element_point.PointElement({'y': 1}),
+            element_point.PointElement({'y': 2}),
+            element_point.PointElement({'x': 5, 'y': 3}),
+            element_point.PointElement({'x': 20, 'y': 4}),
+          ],
+          (property: 'x', start: 4, end: 10),
+        ),
+        [_segment(1, 4, false)],
+      );
+    });
+
+    test('takes a NaN x apart from an undefined x', () {
+      // `NaN === NaN` and `NaN === undefined` are false. Upstream gives
+      // [{start: 1, end: 3}] for both lists (x64 Node.js v24.12.0).
+      expect(
+        boundSegment(
+          const _Segment(0, 3, loop: false),
+          [
+            element_point.PointElement({'x': double.nan, 'y': 0}),
+            element_point.PointElement({'x': double.nan, 'y': 1}),
+            element_point.PointElement({'x': 5, 'y': 2}),
+            element_point.PointElement({'x': 20, 'y': 3}),
+          ],
+          (property: 'x', start: 0, end: 10),
+        ),
+        [_segment(1, 3, false)],
+      );
+      expect(
+        boundSegment(
+          const _Segment(0, 3, loop: false),
+          [
+            element_point.PointElement({'y': 0}),
+            element_point.PointElement({'x': double.nan, 'y': 1}),
+            element_point.PointElement({'x': 5, 'y': 2}),
+            element_point.PointElement({'x': 20, 'y': 3}),
+          ],
+          (property: 'x', start: 0, end: 10),
+        ),
+        [_segment(1, 3, false)],
       );
     });
 

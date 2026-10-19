@@ -75,7 +75,8 @@ final class _Dataset implements Element {
   double get y => 0;
 }
 
-/// A point element `{x, y}`, passed as a [PointElement].
+/// A point element `{x, y}`, passed as a [PointElement]. The control points
+/// are NaN, which stands for JS `undefined` (`SplinePoint`).
 final class _Point implements PointElement {
   _Point(this.x, this.y);
 
@@ -93,6 +94,18 @@ final class _Point implements PointElement {
 
   @override
   bool? get stop => null;
+
+  @override
+  double cp1x = double.nan;
+
+  @override
+  double cp1y = double.nan;
+
+  @override
+  double cp2x = double.nan;
+
+  @override
+  double cp2y = double.nan;
 }
 
 /// A dataset meta object literal, passed as a [ChartMeta].

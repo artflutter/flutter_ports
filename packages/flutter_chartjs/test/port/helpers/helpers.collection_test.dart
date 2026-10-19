@@ -8,7 +8,8 @@ import 'package:test/test.dart';
 // check (AGENTS.md rule 3). The expected values come from
 // src/helpers/helpers.collection.ts in Node.js v24.12.0 on x64.
 
-/// A point element with only the members that the lookups read.
+/// A point element with only the members that the lookups read. The
+/// control points are NaN, which stands for JS `undefined` (`SplinePoint`).
 final class _Point implements PointElement {
   _Point(this.x, this.y);
 
@@ -26,6 +27,18 @@ final class _Point implements PointElement {
 
   @override
   bool? get stop => null;
+
+  @override
+  double cp1x = double.nan;
+
+  @override
+  double cp1y = double.nan;
+
+  @override
+  double cp2x = double.nan;
+
+  @override
+  double cp2y = double.nan;
 }
 
 /// A listener that records each call, as the JavaScript objects of the

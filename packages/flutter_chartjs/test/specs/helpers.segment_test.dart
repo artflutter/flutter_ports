@@ -7,9 +7,10 @@ import 'package:test/test.dart';
 
 /// A JavaScript object literal `{x, y}`, passed as a [PointElement]. The
 /// members that the literal does not set are `null`, which stands for JS
-/// `undefined` (index.dart).
+/// `undefined` (index.dart). The control points are NaN, which stands for JS
+/// `undefined` (`SplinePoint`).
 final class _Point implements PointElement {
-  const _Point(this.x, this.y);
+  _Point(this.x, this.y);
 
   @override
   final double x;
@@ -25,6 +26,18 @@ final class _Point implements PointElement {
 
   @override
   Map<String, Object?>? get options => null;
+
+  @override
+  double cp1x = double.nan;
+
+  @override
+  double cp1y = double.nan;
+
+  @override
+  double cp2x = double.nan;
+
+  @override
+  double cp2y = double.nan;
 }
 
 /// A JavaScript object literal `{start, end, loop}`, passed as a [Segment].
@@ -70,7 +83,7 @@ void main() {
   setUpSpecs();
   group('helpers.segments', () {
     group('_boundSegment', () {
-      const points = [_Point(10, 1), _Point(20, 2), _Point(30, 3)];
+      final points = [_Point(10, 1), _Point(20, 2), _Point(30, 3)];
       const segment = _Segment(start: 0, end: 2, loop: false);
 
       test('should not find segment from before the line', () {
@@ -149,7 +162,7 @@ void main() {
       });
 
       test('should find multiple segments', () {
-        const points2 = [
+        final points2 = [
           _Point(0, 100),
           _Point(1, 50),
           _Point(2, 70),
@@ -174,7 +187,7 @@ void main() {
         'should find correct segments when there are multiple points with '
         'same property value',
         () {
-          const repeatedPoints = [
+          final repeatedPoints = [
             _Point(1, 5),
             _Point(1, 6),
             _Point(2, 5),
