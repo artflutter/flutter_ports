@@ -10,7 +10,10 @@ import 'package:test/test.dart';
 // expected strings come from @kurkle/color 0.3.2 in Node.js v24.12.0 on x64.
 
 /// A gradient of the canvas layer.
-final class _Gradient implements CanvasGradient {}
+final class _Gradient implements CanvasGradient {
+  @override
+  void addColorStop(double offset, String color) {}
+}
 
 /// A pattern of the canvas layer.
 final class _Pattern implements CanvasPattern {}

@@ -47,8 +47,9 @@ jobs:
         run: dart run melos run test:cases
 
   test-web:
-    # The flutter_chartjs tests that are not @TestOn('vm'), compiled with
-    # dart2js and dart2wasm, in the Chrome of the runner image.
+    # The flutter_chartjs and chartjs_test_utils tests that are not
+    # @TestOn('vm'), compiled with dart2js and dart2wasm, in the Chrome of the
+    # runner image.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

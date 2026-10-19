@@ -1,15 +1,18 @@
 // Ported from Chart.js v4.5.1 src/helpers/helpers.rtl.ts (MIT, Chart.js Contributors).
 
-/// Partial port of `src/helpers/helpers.rtl.ts`: `RTLAdapter` and
-/// `getRtlAdapter`.
+/// Port of `src/helpers/helpers.rtl.ts`.
 ///
-/// `overrideTextDirection` and `restoreTextDirection` read and write
-/// `ctx.canvas.style`, a DOM object. The canvas layer of phase 3 ports them.
-/// There, they set the direction of the canvas layer (a Flutter
-/// `TextDirection`), not a DOM style.
+/// [overrideTextDirection] and [restoreTextDirection] read and write the
+/// `direction` property of `ctx.canvas.style`, a [CSSStyleDeclaration] of
+/// the canvas layer (`lib/src/canvas/canvas.dart`). The `dart:ui` context
+/// reads that property when its `direction` is `'inherit'`, as the DOM does.
+/// This file stays a pure layer.
 library;
 
+import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
+import 'package:flutter_chartjs/src/js/js_object.dart';
+import 'package:flutter_chartjs/src/js/js_undefined.dart';
 
 /// helpers.rtl.ts:1 `RTLAdapter`.
 ///
@@ -136,4 +139,77 @@ RTLAdapter getRtlAdapter(Object? rtl, double rectX, double width) {
   return jsTruthy(rtl)
       ? _getRightToLeftAdapter(rectX, width)
       : _getLeftToRightAdapter();
+}
+
+/// The property `prevTextDirection` that [overrideTextDirection] writes on
+/// the context (helpers.rtl.ts:65) and [restoreTextDirection] deletes
+/// (:71).
+///
+/// Upstream adds the property to the context object. A Dart object has no
+/// such property, so an [Expando] attaches the value. The value is the JS
+/// array `[value, priority]`, a `List<String>` (Chart.js ADR 0006).
+final Expando<List<String>> _prevTextDirection = Expando<List<String>>(
+  'prevTextDirection',
+);
+
+/// The `prevTextDirection` property of [ctx], or `null` when [ctx] has none
+/// (JS `undefined`). Upstream reads it nowhere. Tests read it.
+List<String>? prevTextDirectionOf(CanvasRenderingContext2D ctx) =>
+    _prevTextDirection[ctx];
+
+/// helpers.rtl.ts:55 `overrideTextDirection`.
+///
+/// [direction] is an `Object?`, not a String: upstream declares
+/// `'ltr' | 'rtl'`, but `plugin.legend.js:391` and `plugin.tooltip.js:1074`
+/// pass the `textDirection` option, which can be `undefined`. A value other
+/// than `'ltr'` and `'rtl'` does nothing.
+void overrideTextDirection(CanvasRenderingContext2D ctx, Object? direction) {
+  CSSStyleDeclaration style;
+  List<String> original;
+  if (direction == 'ltr' || direction == 'rtl') {
+    style = ctx.canvas.style;
+    original = [
+      style.getPropertyValue('direction'),
+      style.getPropertyPriority('direction'),
+    ];
+
+    style.setProperty('direction', direction! as String, 'important');
+    _prevTextDirection[ctx] = original;
+  }
+}
+
+/// helpers.rtl.ts:69 `restoreTextDirection`.
+///
+/// Upstream declares [original] as `[string, string]`, the
+/// `[value, priority]` of [overrideTextDirection]. Its callers pass the
+/// `textDirection` option instead (`plugin.legend.js:437`,
+/// `plugin.tooltip.js:1087`): `undefined`, or a String such as `'rtl'`.
+/// Thus [original] is an `Object?`, and `original[0]` and `original[1]` are
+/// [jsGet] reads: for `'rtl'`, they give `'r'` and `'t'`. The DOM ignores a
+/// call of `setProperty` with the priority `'t'`, so the call leaves the
+/// style as [overrideTextDirection] set it, as in the browser.
+///
+/// The absent argument is [undefined], which does nothing. JS `null`
+/// (Dart `null`) throws a `TypeError` at `original[0]`, as upstream.
+///
+/// The DOM converts the two values with `ToString`
+/// (`[LegacyNullToEmptyString] CSSOMString`): `null` gives `''` and
+/// `undefined` gives `'undefined'` for the value, and an `undefined`
+/// priority is the default `''`.
+void restoreTextDirection(
+  CanvasRenderingContext2D ctx, [
+  Object? original = undefined,
+]) {
+  if (!identical(original, undefined)) {
+    _prevTextDirection[ctx] = null;
+    final value = jsGet(original, 0);
+    final priority = jsGet(original, 1);
+    ctx.canvas.style.setProperty(
+      'direction',
+      value == null ? '' : jsToString(value),
+      priority == null || identical(priority, undefined)
+          ? ''
+          : jsToString(priority),
+    );
+  }
 }

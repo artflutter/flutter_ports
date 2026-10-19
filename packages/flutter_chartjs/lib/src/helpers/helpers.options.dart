@@ -270,6 +270,7 @@ final class ParsedFont implements CanvasFontSpec {
   final String? family;
 
   /// helpers.options.ts:132 `lineHeight`, in pixels ([toLineHeight]).
+  @override
   final double lineHeight;
 
   /// helpers.options.ts:133 `size`.

@@ -27,12 +27,16 @@ final class _Active implements ActiveDataPoint {
   final double index;
 }
 
-/// A JavaScript event object `{type}`, passed as a [ChartEvent].
+/// A JavaScript event object `{type}`, passed as a [ChartEvent]. Only
+/// `type` is read.
 final class _Event implements ChartEvent {
   const _Event(this.type);
 
   @override
   final String type;
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// An instance of a Dart class: a leaf for clone and merge.

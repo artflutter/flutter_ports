@@ -1,7 +1,6 @@
 // Ported from Chart.js v4.5.1 test/specs/helpers.interpolation.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.interpolation.dart';
-import 'package:flutter_chartjs/src/js/js_math.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:test/test.dart';
@@ -68,21 +67,6 @@ Matcher _sameValue(double expected) => predicate<double?>(
 Matcher _toEqual(double x, double y) => isA<InterpolatedPoint>()
     .having((p) => p.x, 'x', _sameValue(x))
     .having((p) => p.y, 'y', _sameValue(y));
-
-/// The chartjs-test-utils 0.4.0 matcher `toBeCloseToPoint`
-/// (src/matchers.js:76-87): both members are equal after
-/// `Math.round(v * 100) / 100`. JS `===` on numbers is Dart `==` here.
-///
-/// The harness matchers come in phase 3 (porting-flow.md section 3). Until
-/// then this spec file keeps its own copy.
-Matcher _toBeCloseToPoint(double x, double y) {
-  double rnd(double? v) => jsRound(jsToNumber(v) * 100) / 100;
-  return isA<Point>().having(
-    (p) => rnd(p.x) == rnd(x) && rnd(p.y) == rnd(y),
-    'rounded to 2 places equal to the expected point',
-    isTrue,
-  );
-}
 
 void main() {
   setUpSpecs();
@@ -222,7 +206,7 @@ void main() {
       expect(bezierInterpolation(pt1, pt2, 0), _toEqual(10, 10));
       expect(
         bezierInterpolation(pt1, pt2, 0.2),
-        _toBeCloseToPoint(11.616, 12.656),
+        toBeCloseToPoint({'x': 11.616, 'y': 12.656}),
       );
       expect(bezierInterpolation(pt1, pt2, 1), _toEqual(20, 30));
     });

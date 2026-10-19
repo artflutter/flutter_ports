@@ -89,127 +89,6 @@ final class _Spy {
   }
 }
 
-/// The `toEqualOptions` matcher of chartjs-test-utils 0.4.0
-/// (`src/matchers.options.js`).
-///
-/// It compares only the keys of [expected] that do not start with `_`. It
-/// reads each key of the actual value as a property read. A Map in
-/// [expected] compares as an object, a List as an array, and any other
-/// value with `===`.
-Matcher _toEqualOptions(Map<String, Object?> expected) =>
-    _EqualOptions(expected);
-
-final class _EqualOptions extends Matcher {
-  const _EqualOptions(this.expected);
-
-  final Map<String, Object?> expected;
-
-  @override
-  bool matches(Object? item, Map<Object?, Object?> matchState) {
-    final diff = <String>[];
-    final pass = _compareObject(item, expected, '', diff);
-    matchState['diff'] = diff;
-    return pass;
-  }
-
-  @override
-  Description describe(Description description) =>
-      description.add('options equal to ').addDescriptionOf(expected);
-
-  @override
-  Description describeMismatch(
-    Object? item,
-    Description mismatchDescription,
-    Map<Object?, Object?> matchState,
-    bool verbose,
-  ) => mismatchDescription.add(
-    (matchState['diff']! as List<String>).join('\n'),
-  );
-
-  static String _fmt(Object? value) {
-    if (value is String) return '"$value"';
-    if (value is Resolver || value is ContextResolver) return '[object]';
-    return '$value';
-  }
-
-  static bool _compareArray(
-    Object? actual,
-    List<Object?> expected,
-    String path,
-    List<String> diff,
-  ) {
-    var ret = true;
-    var array = actual;
-    if (array is! List<Object?>) {
-      diff.add('$path: Expected ${_fmt(actual)} to be an array');
-      ret = false;
-      array = const <Object?>[];
-    }
-    if (array.length != expected.length) {
-      diff.add(
-        '$path.length: Expected ${array.length} to equal ${expected.length}',
-      );
-      ret = false;
-    }
-    for (var i = 0; i < expected.length; i++) {
-      final act = i < array.length ? array[i] : undefined;
-      if (!_compareOption(act, expected[i], '$path[$i]', diff)) {
-        ret = false;
-      }
-    }
-    return ret;
-  }
-
-  static bool _compareObject(
-    Object? actual,
-    Map<String, Object?> expected,
-    String path,
-    List<String> diff,
-  ) {
-    var ret = true;
-    var object = actual;
-    if (!isObject(object)) {
-      diff.add('$path: Expected ${_fmt(actual)} to be an object');
-      ret = false;
-      object = <String, Object?>{};
-    }
-    final prefix = path.isEmpty ? '' : '$path.';
-    for (final key in expected.keys) {
-      if (key.startsWith('_')) {
-        continue;
-      }
-      final act = object[key];
-      if (!_compareOption(act, expected[key], '$prefix$key', diff)) {
-        ret = false;
-      }
-    }
-    return ret;
-  }
-
-  static bool _compareOption(
-    Object? actual,
-    Object? expected,
-    String path,
-    List<String> diff,
-  ) {
-    if (expected is Map<String, Object?>) {
-      return _compareObject(actual, expected, path, diff);
-    }
-    if (expected is List<Object?>) {
-      return _compareArray(actual, expected, path, diff);
-    }
-    // `actual === expected`.
-    final same =
-        identical(actual, expected) ||
-        (actual is num && expected is num && actual == expected) ||
-        (actual is String && expected is String && actual == expected);
-    if (!same) {
-      diff.add('$path: Expected ${_fmt(actual)} to equal ${_fmt(expected)}');
-    }
-    return same;
-  }
-}
-
 void main() {
   setUpSpecs();
   group('Chart.helpers.config', () {
@@ -259,7 +138,7 @@ void main() {
         final resolver = createResolver([options, defaults]);
         expect(
           resolver,
-          _toEqualOptions({
+          toEqualOptions({
             'option1': 'options1',
             'option2': 'options2',
             'option3': 'defaults3',
@@ -267,7 +146,7 @@ void main() {
         );
         expect(
           resolver.override(overrides),
-          _toEqualOptions({
+          toEqualOptions({
             'option1': 'override1',
             'option2': 'options2',
             'option3': 'defaults3',
@@ -332,7 +211,7 @@ void main() {
           final resolver = createResolver([options, defaults]);
           expect(
             resolver['hover'],
-            _toEqualOptions({
+            toEqualOptions({
               'mode': 'test',
               'priority': 'main',
               'a': 1,
@@ -364,7 +243,7 @@ void main() {
           final resolver = createResolver([options, defaults, descriptors]);
           expect(
             resolver['hover'],
-            _toEqualOptions({
+            toEqualOptions({
               'mode': 'test',
               'priority': 'main',
               'a': 1,
@@ -416,7 +295,7 @@ void main() {
           ]);
           expect(
             resolver['hover'],
-            _toEqualOptions({
+            toEqualOptions({
               'a': 'defaults.hover',
               'b': 'defaults.controllers.bar.hover',
               'c': 'options.hover',
@@ -430,7 +309,7 @@ void main() {
           );
           expect(
             resolver['hover']['sub'],
-            _toEqualOptions({
+            toEqualOptions({
               'a': undefined,
               'b': undefined,
               'c': undefined,
@@ -490,7 +369,7 @@ void main() {
           ]);
           expect(
             resolver['hover'],
-            _toEqualOptions({
+            toEqualOptions({
               'a': 'defaults.hover',
               'b': 'defaults.controllers.bar.hover',
               'c': 'options.hover',
@@ -504,7 +383,7 @@ void main() {
           );
           expect(
             resolver['hover']['sub'],
-            _toEqualOptions({
+            toEqualOptions({
               'a': 'defaults.hover',
               'b': 'defaults.controllers.bar.hover',
               'c': 'options.hover',
@@ -540,11 +419,11 @@ void main() {
           final resolver = createResolver([defaults, descriptors]);
           expect(
             resolver['level1'],
-            _toEqualOptions({'a': 'root', 'b': 'level1', 'c': undefined}),
+            toEqualOptions({'a': 'root', 'b': 'level1', 'c': undefined}),
           );
           expect(
             resolver['level2'],
-            _toEqualOptions({
+            toEqualOptions({
               'a': 'root',
               'b': 'level1',
               'c': 'level2',
@@ -553,7 +432,7 @@ void main() {
           );
           expect(
             resolver['level2']['sublevel1'],
-            _toEqualOptions({
+            toEqualOptions({
               'a': 'root',
               'b': 'level1',
               'c': undefined,
@@ -565,7 +444,7 @@ void main() {
           );
           expect(
             resolver['level2']['sublevel2'],
-            _toEqualOptions({
+            toEqualOptions({
               'a': 'root',
               'b': 'level1',
               'c': undefined,
@@ -577,7 +456,7 @@ void main() {
           );
           expect(
             resolver['level2']['sublevel2']['level1'],
-            _toEqualOptions({
+            toEqualOptions({
               'a': 'root',
               'b': 'level1',
               'c': undefined,
@@ -642,7 +521,7 @@ void main() {
           ]);
           expect(
             show['animation'],
-            _toEqualOptions({'duration': 400, 'easing': 'linear'}),
+            toEqualOptions({'duration': 400, 'easing': 'linear'}),
           );
           expect(show['animations']['colors']['_scopes'], [
             options['animations']['colors'],
@@ -654,7 +533,7 @@ void main() {
           ]);
           expect(
             show['animations']['colors'],
-            _toEqualOptions({
+            toEqualOptions({
               'duration': 400,
               'from': 'transparent',
               'easing': 'linear',
@@ -664,7 +543,7 @@ void main() {
           );
           expect(
             show['animations']['duration'],
-            _toEqualOptions({
+            toEqualOptions({
               'duration': 400,
               'easing': 'linear',
               'type': 'boolean',
@@ -680,7 +559,7 @@ void main() {
           final def = createResolver([options, defaults, descriptors]);
           expect(
             def['animation'],
-            _toEqualOptions({'duration': 1000, 'easing': 'linear'}),
+            toEqualOptions({'duration': 1000, 'easing': 'linear'}),
           );
           expect(def['animations']['colors']['_scopes'], [
             options['animations']['colors'],
@@ -690,7 +569,7 @@ void main() {
           ]);
           expect(
             def['animations']['colors'],
-            _toEqualOptions({
+            toEqualOptions({
               'duration': 1000,
               'easing': 'linear',
               'type': 'color',
@@ -699,7 +578,7 @@ void main() {
           );
           expect(
             def['animations']['duration'],
-            _toEqualOptions({
+            toEqualOptions({
               'duration': 1000,
               'easing': 'linear',
               'type': 'boolean',
@@ -852,7 +731,7 @@ void main() {
         });
         expect(
           opts['mainScope'],
-          _toEqualOptions({
+          toEqualOptions({
             'main': true,
             'mainTest': 'test',
             'subScope': {'sub': true, 'subText': 'a'},
@@ -884,7 +763,7 @@ void main() {
         });
         expect(
           opts,
-          _toEqualOptions({
+          toEqualOptions({
             'labels': [
               {'text': 'a', 'value': 42},
               {'text': 'b', 'value': 42},
@@ -961,10 +840,10 @@ void main() {
           'index': 2,
           'type': 'test',
         });
-        expect(opts, _toEqualOptions({'fn1': 2, 'fn2': 'test'}));
+        expect(opts, toEqualOptions({'fn1': 2, 'fn2': 'test'}));
         expect(
           opts.override(override),
-          _toEqualOptions({'fn1': 4, 'fn2': 'test'}),
+          toEqualOptions({'fn1': 4, 'fn2': 'test'}),
         );
       });
 

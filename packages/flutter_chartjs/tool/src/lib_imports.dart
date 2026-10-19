@@ -81,17 +81,27 @@ const Map<String, String> forbiddenInLib = {
 /// root imports, directly or not, is in the pure layer too. Thus the canvas
 /// interface is pure because `helpers.canvas` imports it, and the
 /// `core.defaults` closure is pure because `core.defaults` is a root.
+///
+/// `helpers.dom` is a root: it reads the canvas interface and the port-only
+/// `NativeEvent`, not `dart:ui` (Chart.js ADR 0014). Of `lib/src/platform/`,
+/// only `platform.base`, `platform.basic` and `native_event` are roots.
+/// `platform.flutter`, `chart_host` and the platform `index` use the Flutter
+/// framework.
 const List<String> pureRoots = [
   'lib/src/js/**',
   'lib/src/types/**',
   'lib/src/kurkle_color/**',
   'lib/src/helpers/helpers.*.dart',
   'lib/src/core/core.defaults.dart',
+  'lib/src/platform/platform.base.dart',
+  'lib/src/platform/platform.basic.dart',
+  'lib/src/platform/native_event.dart',
 ];
 
 /// Files that match [pureRoots] but are not pure-layer roots.
+/// `helpers.extras` imports `package:flutter/scheduler.dart` (Chart.js ADR
+/// 0007, decision 10).
 const List<String> pureRootExceptions = [
-  'lib/src/helpers/helpers.dom.dart',
   'lib/src/helpers/helpers.extras.dart',
 ];
 

@@ -1,0 +1,212 @@
+// Ported from Chart.js v4.5.1 test/specs/helpers.dom.tests.js (MIT, Chart.js Contributors).
+import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs/src/canvas/canvas.dart';
+import 'package:flutter_chartjs/src/helpers/helpers.dom.dart' as helpers;
+import 'package:test/test.dart';
+
+// The spec reads the functions from Chart.helpers. Here `helpers` is
+// helpers.dom.dart, which lib/src/helpers/index.dart exports.
+//
+// Flutter has no DOM and no CSS (Chart.js ADR 0014). The parent node of a
+// canvas is the box that a chart host lays the canvas out in: a
+// [CanvasContainer] with the content-box size of the host constraints. The
+// cases that build a fixed-size div and measure an element inside it use a
+// test container of the same size. The cases that test only CSS (max-width,
+// max-height, percentages, padding) or the shadow DOM skip as n/a.
+//
+// helpers.dom.dart is a pure-layer root. Thus the file runs on the VM, dart2js
+// and dart2wasm.
+
+/// A test container: the parent node of a canvas, with the content box
+/// [contentWidth] x [contentHeight].
+final class _Container implements CanvasContainer {
+  const _Container(this.contentWidth, this.contentHeight);
+
+  @override
+  final double contentWidth;
+
+  @override
+  final double contentHeight;
+
+  @override
+  bool get isConnected => true;
+}
+
+/// A canvas element in [parentNode]. `getMaximumSize` reads only the parent
+/// node.
+final class _Canvas implements HTMLCanvasElement, CanvasNode {
+  _Canvas(this.parentNode);
+
+  @override
+  final CanvasContainer? parentNode;
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// `document.createElement('div')` with the style `width` x `height`,
+/// appended to `document.body`, and a node inside it: the port gives the
+/// inner node as a canvas whose parent node has that size.
+_Canvas _nodeIn(double width, double height) =>
+    _Canvas(_Container(width, height));
+
+/// `jasmine.objectContaining({width, height})` for the record of
+/// `getMaximumSize`.
+Matcher _size(double width, double height) =>
+    isA<({double width, double height})>()
+        .having((s) => s.width, 'width', width)
+        .having((s) => s.height, 'height', height);
+
+void main() {
+  setUpSpecs();
+  group('DOM helpers tests', () {
+    test('should get the maximum size for a node', () {
+      // A div of 200px x 300px holds the node.
+      final innerDiv = _nodeIn(200, 300);
+
+      expect(helpers.getMaximumSize(innerDiv), _size(200, 300));
+    });
+
+    test(
+      'should get the maximum width and height for a node in a ShadowRoot',
+      () {},
+      skip: 'n/a: Flutter has no shadow DOM',
+    );
+
+    test(
+      'should get the maximum width of a node that has a max-width style',
+      () {},
+      skip: 'n/a: Flutter has no CSS max-width',
+    );
+
+    test(
+      'should get the maximum height of a node that has a max-height style',
+      () {},
+      skip: 'n/a: Flutter has no CSS max-height',
+    );
+
+    test(
+      'should get the maximum width of a node when the parent has a '
+      'max-width style',
+      () {},
+      skip: 'n/a: Flutter has no CSS max-width',
+    );
+
+    test(
+      'should get the maximum height of a node when the parent has a '
+      'max-height style',
+      () {},
+      skip: 'n/a: Flutter has no CSS max-height',
+    );
+
+    test(
+      'should get the maximum width of a node that has a percentage '
+      'max-width style',
+      () {},
+      skip: 'n/a: Flutter has no CSS max-width',
+    );
+
+    test(
+      'should get the maximum height of a node that has a percentage '
+      'max-height style',
+      () {},
+      skip: 'n/a: Flutter has no CSS max-height',
+    );
+
+    test(
+      'should get the maximum width of a node when the parent has a '
+      'percentage max-width style',
+      () {},
+      skip: 'n/a: Flutter has no CSS max-width',
+    );
+
+    test(
+      'should get the maximum height of a node when the parent has a '
+      'percentage max-height style',
+      () {},
+      skip: 'n/a: Flutter has no CSS max-height',
+    );
+
+    test(
+      'Should get padding of parent as number (pixels) when defined as '
+      'percent (returns incorrectly in IE11)',
+      () {},
+      skip: 'n/a: Flutter has no CSS padding',
+    );
+
+    test(
+      'should leave styled height and width on canvas if explicitly set',
+      () {},
+      skip: 'blocked: core.controller',
+    );
+
+    test(
+      'should handle devicePixelRatio correctly',
+      () {},
+      skip: 'blocked: core.controller',
+    );
+
+    group('getRelativePosition', () {
+      // The case also reads canvases with CSS padding, whose position the
+      // port does not scale.
+      test(
+        'should use offsetX/Y when available',
+        () {},
+        skip: 'diverges: platform-relative-position',
+      );
+
+      // The port has no clientX/clientY fallback.
+      test(
+        'should calculate from clientX/Y as fallback',
+        () {},
+        skip: 'diverges: platform-relative-position',
+      );
+
+      test(
+        'should get the correct relative position for a node in a ShadowRoot',
+        () {},
+        skip: 'n/a: Flutter has no shadow DOM',
+      );
+
+      test(
+        'Should not return NaN with a custom event',
+        () {},
+        skip: 'blocked: core.controller',
+      );
+
+      test(
+        'Should give consistent results for native and chart events',
+        () {},
+        skip: 'blocked: core.controller',
+      );
+    });
+
+    test('should respect aspect ratio and container width', () {
+      // A container of 200px x 500px holds the target.
+      final target = _nodeIn(200, 500);
+
+      expect(helpers.getMaximumSize(target, 200, 500, 1), _size(200, 200));
+    });
+
+    test('should respect aspect ratio and container height', () {
+      // A container of 500px x 200px holds the target.
+      final target = _nodeIn(500, 200);
+
+      expect(helpers.getMaximumSize(target, 500, 200, 1), _size(200, 200));
+    });
+
+    test('should respect aspect ratio and skip container height', () {
+      // A container of 500px x 200px holds the target.
+      final target = _nodeIn(500, 200);
+
+      expect(helpers.getMaximumSize(target, null, null, 1), _size(500, 500));
+    });
+
+    test('should round non-integer container dimensions', () {
+      // A container of 799.999px x 299.999px holds the target.
+      final target = _nodeIn(799.999, 299.999);
+
+      expect(helpers.getMaximumSize(target, null, null, 2), _size(800, 400));
+    });
+  });
+}

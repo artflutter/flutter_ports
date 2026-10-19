@@ -235,29 +235,91 @@ void main() {
     ]);
   });
 
-  test('excludes helpers.dom and helpers.extras from the roots', () {
-    tree
-      ..write('lib/src/helpers/helpers.dom.dart', [
-        _portOnly,
-        "import 'package:flutter/widgets.dart';",
-      ])
-      ..write('lib/src/helpers/helpers.extras.dart', [
-        _portOnly,
-        "import 'package:flutter/scheduler.dart';",
-      ]);
+  test('excludes helpers.extras from the roots', () {
+    tree.write('lib/src/helpers/helpers.extras.dart', [
+      _portOnly,
+      "import 'package:flutter/scheduler.dart';",
+    ]);
     expect(run(), isEmpty);
 
     tree.write('lib/src/helpers/helpers.math.dart', [
       _ported,
-      "import 'helpers.dom.dart';",
+      "import 'helpers.extras.dart';",
     ]);
     expect(run(), [
       contains(
-        'lib/src/helpers/helpers.dom.dart:2: imports '
-        'package:flutter/widgets.dart, but the file is in the pure layer '
+        'lib/src/helpers/helpers.extras.dart:2: imports '
+        'package:flutter/scheduler.dart, but the file is in the pure layer '
         '(reached from lib/src/helpers/helpers.math.dart)',
       ),
     ]);
+  });
+
+  test('treats helpers.dom as a root', () {
+    tree.write('lib/src/helpers/helpers.dom.dart', [
+      _portOnly,
+      "import 'package:flutter/widgets.dart';",
+    ]);
+    expect(run(), [
+      equals(
+        'error: lib/src/helpers/helpers.dom.dart:2: imports '
+        'package:flutter/widgets.dart, but the file is in the pure layer '
+        '(pure layers reach neither dart:ui nor package:flutter, '
+        'porting-flow.md 3).',
+      ),
+    ]);
+  });
+
+  test('treats only three files of lib/src/platform/ as roots', () {
+    tree
+      ..write('lib/src/platform/platform.flutter.dart', [
+        _portOnly,
+        "import 'dart:ui' as ui;",
+        "import 'chart_host.dart';",
+        "import 'platform.base.dart';",
+      ])
+      ..write('lib/src/platform/chart_host.dart', [
+        _portOnly,
+        "import 'package:flutter/widgets.dart';",
+        "import 'native_event.dart';",
+      ])
+      ..write('lib/src/platform/index.dart', [
+        _portOnly,
+        "import 'platform.basic.dart';",
+        "import 'platform.flutter.dart';",
+      ])
+      ..write('lib/src/platform/platform.base.dart', [_portOnly])
+      ..write('lib/src/platform/platform.basic.dart', [
+        _portOnly,
+        "import 'platform.base.dart';",
+      ])
+      ..write('lib/src/platform/native_event.dart', [_portOnly]);
+    expect(run(), isEmpty);
+
+    for (final name in const [
+      'platform.base',
+      'platform.basic',
+      'native_event',
+    ]) {
+      tree.write('lib/src/platform/$name.dart', [
+        _portOnly,
+        if (name == 'platform.basic') "import 'platform.base.dart';",
+        "import 'package:flutter/scheduler.dart';",
+      ]);
+      final line = name == 'platform.basic' ? 3 : 2;
+      expect(run(), [
+        equals(
+          'error: lib/src/platform/$name.dart:$line: imports '
+          'package:flutter/scheduler.dart, but the file is in the pure layer '
+          '(pure layers reach neither dart:ui nor package:flutter, '
+          'porting-flow.md 3).',
+        ),
+      ], reason: name);
+      tree.write('lib/src/platform/$name.dart', [
+        _portOnly,
+        if (name == 'platform.basic') "import 'platform.base.dart';",
+      ]);
+    }
   });
 
   test('limits the tests that the web legs compile', () {

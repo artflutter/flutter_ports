@@ -1,13 +1,23 @@
-// Original code, not ported from Chart.js: the spec set-up for dart test.
+// Original code, not ported from Chart.js: the pure part of the test harness.
 
-/// The spec set-up of the pure-layer specs (porting-flow.md section 3,
-/// "`test/index.js` equivalent").
+/// The pure part of the harness: the spec set-up for `dart test`, the mock
+/// canvas context and the matchers (porting-flow.md section 3).
 ///
-/// porting-flow.md section 3 puts the `flutter test` port of Chart.js
-/// `test/index.js` in `test/flutter_test_config.dart`. That file does not
-/// exist yet. Phase 3 adds it. `dart test` does not read that file. Thus each
-/// pure-layer spec file calls [setUpSpecs] first in its `main()`, and runs the
-/// same set-up on the VM, dart2js and dart2wasm.
+/// - [setUpSpecs]: the spec set-up of the pure-layer specs ("`test/index.js`
+///   equivalent"). `dart test` does not read
+///   `packages/flutter_chartjs/test/flutter_test_config.dart`, the
+///   `flutter test` port of Chart.js `test/index.js`. Thus each pure-layer
+///   spec file calls [setUpSpecs] first in its `main()`, and runs the same
+///   restore on the VM, dart2js and dart2wasm. Under `flutter test`, the
+///   config file runs [setUpDefaultsRestore] too. The second restore of a
+///   test finds the scopes restored already, and changes nothing.
+/// - `createMockContext` and `MockContext` (`src/index.js`,
+///   `src/context.js`).
+/// - `toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf` and
+///   `toEqualOptions` (`src/matchers.js`, `src/matchers.options.js`).
+///
+/// The harness part that needs the Flutter engine is
+/// `package:chartjs_test_utils/flutter.dart`.
 ///
 /// This library is a pure layer: it imports only `package:test` and the pure
 /// layers of `flutter_chartjs` (porting-flow.md section 3).
@@ -21,6 +31,11 @@ import 'dart:collection';
 import 'package:flutter_chartjs/src/core/core.defaults.dart';
 import 'package:test/test.dart';
 
+export 'src/context.dart' show ContextCall, MockContext;
+export 'src/index.dart' show createMockContext;
+export 'src/matchers.dart'
+    show toBeCloseToPixel, toBeCloseToPoint, toEqualOneOf, toEqualOptions;
+
 /// Sets up the specs of one pure-layer spec file. Call it first in `main()`.
 ///
 /// ```dart
@@ -30,8 +45,14 @@ import 'package:test/test.dart';
 /// }
 /// ```
 ///
-/// The set-up restores the global scopes of `core.defaults.js` after each
-/// test (porting-flow.md section 1 step 5 and section 3):
+/// The set-up is [setUpDefaultsRestore].
+void setUpSpecs() {
+  setUpDefaultsRestore();
+}
+
+/// Restores the global scopes of `core.defaults.js` after each test of the
+/// current test file (porting-flow.md section 1 step 5 and section 3).
+///
 /// - A `setUpAll` takes a snapshot of [defaults], [overrides] and
 ///   [descriptors] after the harness set-up, before the first test of the
 ///   file.
@@ -49,7 +70,7 @@ import 'package:test/test.dart';
 /// the place of each plain object (`Defaults.route`). An object that a test
 /// adds leaves the scopes. An object that a test removes or replaces comes
 /// back.
-void setUpSpecs() {
+void setUpDefaultsRestore() {
   late _Snapshot snapshot;
   setUpAll(() {
     snapshot = _Snapshot.take([defaults, overrides, descriptors]);

@@ -136,7 +136,10 @@ final class _Segment implements Segment {
 }
 
 /// A gradient object. Its JS `toString()` tag is `[object CanvasGradient]`.
-final class _Gradient implements CanvasGradient {}
+final class _Gradient implements CanvasGradient {
+  @override
+  void addColorStop(double offset, String color) {}
+}
 
 /// An object of a class, which `JSON.stringify` writes with its own
 /// enumerable properties.

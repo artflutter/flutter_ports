@@ -31,7 +31,18 @@ library;
 
 /// lib.dom.d.ts `CanvasGradient`, a member of the union `Color`
 /// (color.d.ts:1).
-abstract interface class CanvasGradient {}
+// A DOM interface with one member: lib.dom.d.ts has the same shape.
+// ignore: one_member_abstracts
+abstract interface class CanvasGradient {
+  /// `addColorStop(offset, color)`: adds a stop of the CSS [color] at
+  /// [offset], in [0, 1].
+  ///
+  /// The DOM throws an `IndexSizeError` for an offset outside [0, 1] and a
+  /// `SyntaxError` for a color that does not parse. The canvas layer throws
+  /// a [RangeError] and a [FormatException]. A gradient that a context
+  /// creates (`createLinearGradient`, phase 3) implements it.
+  void addColorStop(double offset, String color);
+}
 
 /// lib.dom.d.ts `CanvasPattern`, a member of the union `Color`
 /// (color.d.ts:1).

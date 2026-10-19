@@ -75,3 +75,13 @@ path = [
 precedence = "aggregate"
 SPDX-FileCopyrightText = ["2018-2021 Jukka Kurkela", "2026 Vasiliy Ditsyak"]
 SPDX-License-Identifier = "MIT"
+
+# The test font of the harness: the unchanged Liberation Sans files and LICENSE
+# of liberation-fonts-ttf-2.1.5 (SIL OFL 1.1, Chart.js ADR 0015). They are not
+# derived from chartjs-test-utils, so this table replaces the harness table
+# above for these files.
+[[annotations]]
+path = "packages/chartjs_test_utils/lib/fonts/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = ["2010 Google Corporation", "2012 Red Hat, Inc."]
+SPDX-License-Identifier = "OFL-1.1"

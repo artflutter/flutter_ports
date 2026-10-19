@@ -56,10 +56,14 @@ List<String> _keys(Object? object) =>
 /// `new Defaults({}, [])`.
 Defaults _defaults() => Defaults(<String, Object?>{}, const []);
 
-/// A platform whose device pixel ratio is 2.
+/// A platform whose device pixel ratio is 2. Only `getDevicePixelRatio` is
+/// read.
 final class _Platform implements types.BasePlatform {
   @override
   double getDevicePixelRatio() => 2;
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A chart with a [_Platform]. Only `platform` is read.

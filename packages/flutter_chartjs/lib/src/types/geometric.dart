@@ -118,7 +118,31 @@ abstract interface class TRBLCorners {
 }
 
 /// geometric.d.ts:31 `RoundedRect`.
-abstract interface class RoundedRect {}
+///
+/// `addRoundedRectPath` (helpers.canvas.ts:498) takes the intersection
+/// `RoundedRect & { radius: TRBLCorners }`. Its callers pass a rectangle
+/// whose [radius] is a [TRBLCorners] (`element.bar.js:182`,
+/// `plugin.legend.js:347`, `plugin.tooltip.js:835`,
+/// `scale.radialLinear.js:247`).
+abstract interface class RoundedRect {
+  /// geometric.d.ts:32 `x: number`.
+  double get x;
+
+  /// geometric.d.ts:33 `y: number`.
+  double get y;
+
+  /// geometric.d.ts:34 `w: number`.
+  double get w;
+
+  /// geometric.d.ts:35 `h: number`.
+  double get h;
+
+  /// geometric.d.ts:36 `radius?: CornerRadius`, the union
+  /// `number | Partial<TRBLCorners>`. The Dart form is `Object?`: a `num`,
+  /// a [TRBLCorners], or Dart `null` for JS `undefined` (see "The unions"
+  /// above).
+  Object? get radius;
+}
 
 /// geometric.d.ts:41 `SplinePoint`.
 ///

@@ -35,8 +35,8 @@ melos:
       packageFilters:
         dirExists: test
     test:web:
-      run: cd packages/flutter_chartjs && dart test -p chrome -c dart2js -c dart2wasm
-      description: Run the flutter_chartjs tests that are not @TestOn('vm') in Chrome, compiled with dart2js and with dart2wasm.
+      run: cd packages/flutter_chartjs && dart test -p chrome -c dart2js -c dart2wasm && cd ../chartjs_test_utils && dart test -p chrome -c dart2js -c dart2wasm
+      description: Run the flutter_chartjs and chartjs_test_utils tests that are not @TestOn('vm') in Chrome, compiled with dart2js and with dart2wasm.
 
     # The per-module tools of packages/flutter_chartjs/doc/porting-flow.md section 4.
     check:lib-imports:

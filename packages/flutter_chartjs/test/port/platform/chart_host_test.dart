@@ -1,0 +1,818 @@
+// Original code, not ported from Chart.js: tests of the internal chart host.
+@TestOn('vm')
+library;
+
+import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart'
+    show ClipRectLayer, RenderRepaintBoundary;
+import 'package:flutter/widgets.dart';
+import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs/src/platform/chart_host.dart';
+import 'package:flutter_chartjs/src/platform/index.dart';
+import 'package:flutter_chartjs/src/platform/native_event.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import 'fake_chart.dart';
+
+// Chart.js ADR 0014: the chart host sizes the chart at its first layout,
+// throttles later size and device pixel ratio changes, maps Flutter pointer
+// events to DOM events and claims only a tap in the gesture arena. The
+// FakeChart makes the platform calls of core.controller.js.
+
+Widget _box(Widget child, {double width = 400, double height = 300}) =>
+    Directionality(
+      textDirection: TextDirection.ltr,
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: ConstrainedBox(
+          constraints: BoxConstraints.loose(Size(width, height)),
+          child: child,
+        ),
+      ),
+    );
+
+RenderChartHost _host(WidgetTester tester) =>
+    tester.renderObject<RenderChartHost>(find.byType(ChartHost));
+
+/// The DOM event types of the chart events of [chart].
+List<String> _nativeTypes(FakeChart chart) => [
+  for (final event in chart.events) event.native!.type,
+];
+
+void main() {
+  group('first layout', () {
+    testWidgets('sizes a chart that starts before the layout at once', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(
+        _box(ChartHost(canvas: canvas)),
+        phase: EnginePhase.build,
+      );
+      final chart = FakeChart(canvas);
+      expect(chart.platform, isA<FlutterPlatform>());
+      // Not laid out yet: the chart starts detached.
+      expect(chart.attached, isFalse);
+      expect(chart.attachCalls, ['detached']);
+
+      // flutter_test stopped the frame after the build. Run the rest.
+      tester.binding.scheduleFrame();
+      await tester.pump();
+      // The first layout attached and sized the chart, before the paint.
+      expect(chart.attachCalls, ['detached', 'attached']);
+      expect(chart.attached, isTrue);
+      expect((chart.width, chart.height), (400.0, 200.0));
+      expect(chart.updates, ['attach']);
+      expect(_host(tester).size, const Size(400, 200));
+      expect(canvas.getContext2d().isEmpty, isFalse);
+
+      // The initial ResizeObserver notification resizes to the same size in
+      // the next frame, which changes nothing.
+      await tester.pump();
+      expect(chart.updates, ['attach']);
+      chart.destroy();
+    });
+
+    testWidgets('sizes a chart that starts after the layout at once', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final chart = FakeChart(canvas, maintainAspectRatio: false);
+      expect(chart.attachCalls, ['attached']);
+      expect((chart.width, chart.height), (400.0, 300.0));
+      await tester.pump();
+      expect(_host(tester).size, const Size(400, 300));
+      chart.destroy();
+    });
+  });
+
+  group('resize', () {
+    testWidgets('throttles constraint changes to one resize in a frame', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final chart = FakeChart(canvas, maintainAspectRatio: false);
+      await tester.pump();
+      final resizes = chart.resizes.length;
+
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas), width: 600));
+      // The observer got the new size; the resize waits for the next frame.
+      expect(chart.width, 400);
+      expect(_host(tester).size, const Size(400, 300));
+      expect(_host(tester).contentWidth, 600);
+
+      await tester.pump();
+      expect((chart.width, chart.height), (600.0, 300.0));
+      expect(chart.resizes.length, resizes + 1);
+      expect(_host(tester).size, const Size(600, 300));
+      chart.destroy();
+    });
+
+    testWidgets('follows a device pixel ratio change', (tester) async {
+      addTearDown(tester.view.reset);
+      tester.view.devicePixelRatio = 1;
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final chart = FakeChart(canvas);
+      await tester.pump();
+      expect(chart.currentDevicePixelRatio, 1);
+      expect((canvas.width, canvas.height), (400, 200));
+
+      tester.view.devicePixelRatio = 2;
+      await tester.pump();
+      expect(_host(tester).devicePixelRatio, 2);
+      expect(canvas.devicePixelRatio, 2);
+      await tester.pump();
+      expect(chart.currentDevicePixelRatio, 2);
+      expect((canvas.width, canvas.height), (800, 400));
+      expect(_host(tester).size, const Size(400, 200));
+      chart.destroy();
+    });
+
+    testWidgets('shows content drawn before the host at the display size', (
+      tester,
+    ) async {
+      addTearDown(tester.view.reset);
+      tester.view.devicePixelRatio = 2;
+      // A canvas of 400 x 200 bitmap pixels, drawn at the start ratio 1 and
+      // shown by a host at the ratio 2: the DOM shows the bitmap at its
+      // display size, here its render size of 400 x 200.
+      final canvas = UiCanvasElement(width: 400, height: 200);
+      canvas.getContext2d()
+        ..fillStyle = '#ff0000'
+        ..fillRect(0, 0, 200, 100);
+      await tester.pumpWidget(
+        _box(RepaintBoundary(child: ChartHost(canvas: canvas))),
+      );
+      expect(canvas.devicePixelRatio, 2);
+      expect(_host(tester).size, const Size(400, 200));
+      final boundary = tester.renderObject<RenderRepaintBoundary>(
+        find.byType(RepaintBoundary).first,
+      );
+      final image = await tester.runAsync(boundary.toImage);
+      final data = (await tester.runAsync(image!.toByteData))!;
+      int alphaAt(int x, int y) => data.getUint8((y * image.width + x) * 4 + 3);
+      expect(image.width, 400);
+      expect(alphaAt(190, 90), 255);
+      expect(alphaAt(210, 110), 0);
+      image.dispose();
+    });
+
+    testWidgets('clips a chart that is larger than the box', (tester) async {
+      final canvas = UiCanvasElement();
+      canvas.style
+        ..setProperty('width', '600px')
+        ..setProperty('height', '300px');
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas), height: 100));
+      final chart = FakeChart(canvas, responsive: false);
+      await tester.pump();
+      expect((chart.width, chart.height), (600.0, 300.0));
+      expect(_host(tester).chartSize, const Size(600, 300));
+      expect(_host(tester).size, const Size(400, 100));
+      expect(tester.layers.whereType<ClipRectLayer>(), isNotEmpty);
+      chart.destroy();
+    });
+
+    testWidgets('a later resize with the container height keeps the ratio', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas), height: 100));
+      // The attach resize has no maintainHeight: 400 x 200. The first
+      // ResizeObserver notification passes the container size, which gives
+      // 200 x 100 in the next frame, as upstream.
+      final chart = FakeChart(canvas);
+      expect((chart.width, chart.height), (400.0, 200.0));
+      await tester.pump();
+      expect((chart.width, chart.height), (200.0, 100.0));
+      expect(_host(tester).size, const Size(200, 100));
+      chart.destroy();
+    });
+  });
+
+  group('unbounded constraints', () {
+    Future<FakeChart> pumpChart(
+      WidgetTester tester,
+      Widget Function(Widget host) wrap, {
+      bool maintainAspectRatio = true,
+    }) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: wrap(ChartHost(canvas: canvas)),
+        ),
+      );
+      final chart = FakeChart(canvas, maintainAspectRatio: maintainAspectRatio);
+      await tester.pump();
+      await tester.pump();
+      return chart;
+    }
+
+    testWidgets('both sides unbounded give the canvas default 300 x 150', (
+      tester,
+    ) async {
+      final chart = await pumpChart(
+        tester,
+        (host) => UnconstrainedBox(child: host),
+      );
+      expect((chart.width, chart.height), (300.0, 150.0));
+      expect(_host(tester).size, const Size(300, 150));
+      chart.destroy();
+    });
+
+    testWidgets('a bounded width and the aspect ratio give the height', (
+      tester,
+    ) async {
+      final chart = await pumpChart(
+        tester,
+        (host) => Align(
+          alignment: Alignment.topLeft,
+          child: SizedBox(
+            width: 400,
+            child: ListView(children: [host]),
+          ),
+        ),
+      );
+      expect((chart.width, chart.height), (400.0, 200.0));
+      chart.destroy();
+    });
+
+    testWidgets('an unbounded height without aspect ratio is 150', (
+      tester,
+    ) async {
+      final chart = await pumpChart(
+        tester,
+        (host) => Align(
+          alignment: Alignment.topLeft,
+          child: SizedBox(
+            width: 400,
+            child: ListView(children: [host]),
+          ),
+        ),
+        maintainAspectRatio: false,
+      );
+      expect((chart.width, chart.height), (400.0, 150.0));
+      chart.destroy();
+    });
+
+    testWidgets('a bounded height and the aspect ratio give the width', (
+      tester,
+    ) async {
+      final chart = await pumpChart(
+        tester,
+        (host) => Align(
+          alignment: Alignment.topLeft,
+          child: SizedBox(
+            height: 100,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [host],
+            ),
+          ),
+        ),
+      );
+      expect((chart.width, chart.height), (200.0, 100.0));
+      expect(_host(tester).size, const Size(200, 100));
+      chart.destroy();
+    });
+  });
+
+  group('dry layout', () {
+    testWidgets('gives the constrained display size', (tester) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final chart = FakeChart(canvas);
+      await tester.pump();
+      final host = _host(tester);
+      expect(
+        host.getDryLayout(const BoxConstraints(maxWidth: 100, maxHeight: 50)),
+        const Size(100, 50),
+      );
+      expect(host.getDryLayout(const BoxConstraints()), const Size(400, 200));
+      expect(host.getMaxIntrinsicWidth(100), 400);
+      expect(host.getMinIntrinsicHeight(100), 200);
+      expect(host.isRepaintBoundary, isTrue);
+      chart.destroy();
+    });
+  });
+
+  group('TickerMode', () {
+    testWidgets('reports a change of TickerMode.enabled', (tester) async {
+      final canvas = UiCanvasElement();
+      final changes = <bool>[];
+      Widget build({required bool enabled}) => _box(
+        TickerMode(
+          enabled: enabled,
+          child: ChartHost(canvas: canvas, onTickerModeChanged: changes.add),
+        ),
+      );
+      await tester.pumpWidget(build(enabled: true));
+      expect(_host(tester).tickerEnabled, isTrue);
+      await tester.pumpWidget(build(enabled: false));
+      expect(_host(tester).tickerEnabled, isFalse);
+      await tester.pumpWidget(build(enabled: false));
+      await tester.pumpWidget(build(enabled: true));
+      expect(changes, [false, true]);
+    });
+
+    testWidgets('starts muted under TickerMode(enabled: false)', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _box(
+          TickerMode(
+            enabled: false,
+            child: ChartHost(canvas: UiCanvasElement()),
+          ),
+        ),
+      );
+      expect(_host(tester).tickerEnabled, isFalse);
+    });
+  });
+
+  group('attach and detach', () {
+    testWidgets('a GlobalKey move reports no change', (tester) async {
+      final canvas = UiCanvasElement();
+      final key = GlobalKey();
+      Widget build({required bool left}) => _box(
+        Row(
+          children: [
+            SizedBox(
+              width: 200,
+              child: left ? ChartHost(key: key, canvas: canvas) : null,
+            ),
+            SizedBox(
+              width: 200,
+              child: left ? null : ChartHost(key: key, canvas: canvas),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpWidget(build(left: true));
+      final chart = FakeChart(canvas, maintainAspectRatio: false);
+      expect(chart.attachCalls, ['attached']);
+      await tester.pumpWidget(build(left: false));
+      await tester.pump();
+      expect(chart.attachCalls, ['attached']);
+      expect(chart.attached, isTrue);
+      chart.destroy();
+    });
+
+    testWidgets('an unmount reports a detach after the frame', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final chart = FakeChart(canvas);
+      expect(canvas.parentNode, isA<RenderChartHost>());
+      await tester.pumpWidget(_box(const SizedBox()));
+      expect(canvas.parentNode, isNull);
+      expect(chart.attachCalls, ['attached', 'detached']);
+      expect(chart.attached, isFalse);
+      expect(FlutterPlatform().isAttached(canvas), isFalse);
+      chart.destroy();
+    });
+
+    testWidgets('a new host attaches the detached chart again', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final chart = FakeChart(canvas, maintainAspectRatio: false);
+      await tester.pumpWidget(_box(const SizedBox()));
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas), width: 500));
+      expect(chart.attachCalls, ['attached', 'detached', 'attached']);
+      expect((chart.width, chart.height), (500.0, 300.0));
+      chart.destroy();
+    });
+
+    testWidgets('a wrapper toggle keeps the chart attached', (tester) async {
+      final canvas = UiCanvasElement();
+      Widget build({required bool pad, double width = 400}) => _box(
+        pad
+            ? Padding(
+                padding: EdgeInsets.zero,
+                child: ChartHost(canvas: canvas),
+              )
+            : ChartHost(canvas: canvas),
+        width: width,
+      );
+      await tester.pumpWidget(build(pad: false));
+      final chart = FakeChart(canvas, maintainAspectRatio: false);
+      await tester.pump();
+      // A new host takes over the canvas in the same frame.
+      await tester.pumpWidget(build(pad: true));
+      await tester.pump();
+      expect(chart.attachCalls, ['attached']);
+      expect(chart.attached, isTrue);
+      expect(canvas.parentNode, same(_host(tester)));
+      expect((chart.width, chart.height), (400.0, 300.0));
+
+      // The new host has the ResizeObserver of the chart.
+      await tester.pumpWidget(build(pad: true, width: 300));
+      await tester.pump();
+      expect(chart.attachCalls, ['attached']);
+      expect((chart.width, chart.height), (300.0, 300.0));
+      expect(_host(tester).size, const Size(300, 300));
+      chart.destroy();
+    });
+
+    testWidgets('a move to a sibling slot without a GlobalKey keeps the '
+        'chart attached', (tester) async {
+      final canvas = UiCanvasElement();
+      Widget build({required bool left, double width = 300}) => _box(
+        Row(
+          children: [
+            SizedBox(
+              width: 200,
+              child: left ? ChartHost(canvas: canvas) : null,
+            ),
+            SizedBox(
+              width: width,
+              child: left ? null : ChartHost(canvas: canvas),
+            ),
+          ],
+        ),
+        width: 800,
+      );
+      await tester.pumpWidget(build(left: true));
+      final chart = FakeChart(canvas, maintainAspectRatio: false);
+      expect(chart.attachCalls, ['attached']);
+      expect((chart.width, chart.height), (200.0, 300.0));
+      await tester.pumpWidget(build(left: false));
+      await tester.pump();
+      expect(chart.attachCalls, ['attached']);
+      expect(chart.attached, isTrue);
+      expect((chart.width, chart.height), (300.0, 300.0));
+
+      await tester.pumpWidget(build(left: false, width: 500));
+      await tester.pump();
+      expect(chart.attachCalls, ['attached']);
+      expect((chart.width, chart.height), (500.0, 300.0));
+      expect((canvas.width, canvas.height), (500, 300));
+      chart.destroy();
+    });
+
+    testWidgets('an AnimatedSwitcher cross-fade keeps the chart attached', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      Widget build(int key, {double width = 400}) => _box(
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 100),
+          child: ChartHost(key: ValueKey(key), canvas: canvas),
+        ),
+        width: width,
+      );
+      await tester.pumpWidget(build(0));
+      final chart = FakeChart(canvas, maintainAspectRatio: false);
+      await tester.pump();
+      await tester.pumpWidget(build(1));
+      await tester.pump(const Duration(milliseconds: 50));
+      // Both hosts are in the tree; the new one shows the canvas.
+      expect(find.byType(ChartHost), findsNWidgets(2));
+      expect(chart.attachCalls, ['attached']);
+      await tester.pumpAndSettle();
+      expect(find.byType(ChartHost), findsOneWidget);
+      expect(chart.attachCalls, ['attached']);
+      expect(chart.attached, isTrue);
+      expect(canvas.parentNode, same(_host(tester)));
+
+      await tester.pumpWidget(build(1, width: 300));
+      await tester.pump();
+      expect(chart.attachCalls, ['attached']);
+      expect((chart.width, chart.height), (300.0, 300.0));
+      chart.destroy();
+    });
+  });
+
+  group('events', () {
+    Future<FakeChart> pumpChart(
+      WidgetTester tester, {
+      List<String> events = const [
+        'mousemove',
+        'mouseout',
+        'click',
+        'touchstart',
+        'touchmove',
+      ],
+    }) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final chart = FakeChart(
+        canvas,
+        maintainAspectRatio: false,
+        events: events,
+      );
+      await tester.pump();
+      return chart;
+    }
+
+    testWidgets('mouse hover gives one mousemove in a frame', (tester) async {
+      final chart = await pumpChart(tester);
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer(location: const Offset(10, 10));
+      await gesture.moveTo(const Offset(20.4, 30.6));
+      await gesture.moveTo(const Offset(50.2, 60.7));
+      expect(chart.events, isEmpty);
+      await tester.pump();
+      expect(chart.events, hasLength(1));
+      final event = chart.events.single;
+      expect(event.type, 'mousemove');
+      expect((event.x, event.y), (50.0, 61.0));
+      expect(event.chart, same(chart));
+      expect(event.native!.type, 'mousemove');
+      expect(event.native!.source, isA<PointerHoverEvent>());
+      expect(event.native!.target, same(chart.canvas));
+      chart.destroy();
+    });
+
+    testWidgets('mouse exit gives mouseout, enter gives mouseenter', (
+      tester,
+    ) async {
+      final chart = await pumpChart(
+        tester,
+        events: const ['mouseout', 'mouseenter', 'pointerleave'],
+      );
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer(location: const Offset(500, 500));
+      await gesture.moveTo(const Offset(100, 100));
+      await tester.pump();
+      expect(_nativeTypes(chart), ['mouseenter']);
+      await gesture.moveTo(const Offset(450, 100));
+      await tester.pump();
+      // pointerleave maps to the Chart.js type mouseout.
+      // The DOM order: pointerout, pointerleave, mouseout, mouseleave.
+      expect(_nativeTypes(chart), ['mouseenter', 'pointerleave', 'mouseout']);
+      expect(chart.events.last.type, 'mouseout');
+      chart.destroy();
+    });
+
+    testWidgets('a mouse click gives mousedown, mouseup and click', (
+      tester,
+    ) async {
+      final chart = await pumpChart(
+        tester,
+        events: const ['mousedown', 'mouseup', 'click', 'pointerdown'],
+      );
+      await tester.tapAt(const Offset(100, 50), kind: PointerDeviceKind.mouse);
+      await tester.pump();
+      expect(_nativeTypes(chart), [
+        'pointerdown',
+        'mousedown',
+        'mouseup',
+        'click',
+      ]);
+      // pointerdown maps to mousedown.
+      expect(chart.events.map((e) => e.type), [
+        'mousedown',
+        'mousedown',
+        'mouseup',
+        'click',
+      ]);
+      expect((chart.events.last.x, chart.events.last.y), (100.0, 50.0));
+      chart.destroy();
+    });
+
+    testWidgets('two touches give a sorted touches list', (tester) async {
+      final chart = await pumpChart(
+        tester,
+        events: const ['touchstart', 'touchmove', 'touchend'],
+      );
+      final first = await tester.startGesture(const Offset(10, 20));
+      await tester.pump();
+      final second = await tester.startGesture(const Offset(110, 120));
+      await tester.pump();
+      await second.moveTo(const Offset(130, 140));
+      await tester.pump();
+      await first.up();
+      await tester.pump();
+      await second.up();
+      await tester.pump();
+
+      expect(chart.events.map((e) => e.type), [
+        'mousedown',
+        'mousedown',
+        'mousemove',
+        'mouseup',
+        'mouseup',
+      ]);
+      final natives = [for (final e in chart.events) e.native!];
+      expect(natives.map((e) => e.type), [
+        'touchstart',
+        'touchstart',
+        'touchmove',
+        'touchend',
+        'touchend',
+      ]);
+      expect(natives[1].touches.map((t) => (t.x, t.y)), [
+        (10.0, 20.0),
+        (110.0, 120.0),
+      ]);
+      expect(
+        natives[1].touches.first.identifier,
+        lessThan(natives[1].touches.last.identifier),
+      );
+      // The position is the first touch, as upstream reads touches[0].
+      expect((chart.events[2].x, chart.events[2].y), (10.0, 20.0));
+      expect(natives[3].touches.map((t) => (t.x, t.y)), [(130.0, 140.0)]);
+      expect((chart.events[3].x, chart.events[3].y), (130.0, 140.0));
+      // The last touchend has no touches: NaN coordinates, as upstream.
+      expect(natives[4].touches, isEmpty);
+      expect(chart.events[4].x, isNaN);
+      expect(chart.events[4].y, isNaN);
+      chart.destroy();
+    });
+
+    testWidgets('a scroll signal gives wheel', (tester) async {
+      final chart = await pumpChart(tester, events: const ['wheel']);
+      final pointer = TestPointer(1, PointerDeviceKind.mouse);
+      await tester.sendEventToBinding(pointer.hover(const Offset(40, 40)));
+      await tester.sendEventToBinding(pointer.scroll(const Offset(0, 20)));
+      await tester.pump();
+      expect(_nativeTypes(chart), ['wheel']);
+      expect(chart.events.single.native!.source, isA<PointerScrollEvent>());
+      chart.destroy();
+    });
+
+    testWidgets('a parent ListView still scrolls from a drag on the host', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      final controller = ScrollController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        _box(
+          ListView(
+            controller: controller,
+            children: [
+              SizedBox(height: 200, child: ChartHost(canvas: canvas)),
+              const SizedBox(height: 1000),
+            ],
+          ),
+        ),
+      );
+      final chart = FakeChart(
+        canvas,
+        maintainAspectRatio: false,
+        events: const ['click', 'touchmove'],
+      );
+      await tester.pump();
+      await tester.dragFrom(const Offset(100, 150), const Offset(0, -100));
+      await tester.pump();
+      expect(controller.offset, greaterThan(0));
+      expect(_nativeTypes(chart), contains('touchmove'));
+      expect(_nativeTypes(chart), isNot(contains('click')));
+
+      chart.events.clear();
+      controller.jumpTo(0);
+      await tester.pump();
+      await tester.tapAt(const Offset(100, 100));
+      await tester.pump();
+      expect(_nativeTypes(chart), ['click']);
+      chart.destroy();
+    });
+
+    for (final (events, taps) in const [
+      (['click'], 0),
+      (['mousemove'], 1),
+    ]) {
+      testWidgets('a tappable ancestor gets $taps tap with the chart events '
+          '$events', (tester) async {
+        // The TapGestureRecognizer of a click listener wins the arena
+        // against the ancestor (Chart.js ADR 0014). A DOM click would also
+        // reach the ancestor by bubbling.
+        final canvas = UiCanvasElement();
+        var parentTaps = 0;
+        await tester.pumpWidget(
+          _box(
+            GestureDetector(
+              onTap: () => parentTaps++,
+              child: ChartHost(canvas: canvas),
+            ),
+          ),
+        );
+        final chart = FakeChart(
+          canvas,
+          maintainAspectRatio: false,
+          events: events,
+        );
+        await tester.pump();
+        await tester.tapAt(const Offset(50, 50));
+        await tester.pump();
+        expect(parentTaps, taps);
+        expect(_nativeTypes(chart), taps == 0 ? ['click'] : isEmpty);
+        chart.destroy();
+      });
+    }
+
+    testWidgets('a mouse up outside the box gives no mouseup', (tester) async {
+      final chart = await pumpChart(
+        tester,
+        events: const ['mousedown', 'mouseup', 'pointerup', 'mousemove'],
+      );
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer(location: const Offset(10, 10));
+      await gesture.down(const Offset(10, 10));
+      await tester.pump();
+      await gesture.moveTo(const Offset(700, 500));
+      await tester.pump();
+      await gesture.up();
+      await tester.pump();
+      expect(_nativeTypes(chart), ['mousedown']);
+
+      // An up inside the box still gives mouseup.
+      await gesture.down(const Offset(20, 20));
+      await gesture.up();
+      await tester.pump();
+      expect(_nativeTypes(chart), [
+        'mousedown',
+        'mousedown',
+        'pointerup',
+        'mouseup',
+      ]);
+      chart.destroy();
+    });
+
+    testWidgets('an inverted stylus hover gives mouseover and mouseout', (
+      tester,
+    ) async {
+      final chart = await pumpChart(
+        tester,
+        events: const ['mousemove', 'mouseout', 'mouseover'],
+      );
+      final gesture = await tester.createGesture(
+        kind: PointerDeviceKind.invertedStylus,
+      );
+      await gesture.addPointer(location: const Offset(10, 10));
+      await gesture.moveTo(const Offset(20, 20));
+      await tester.pump();
+      await gesture.moveTo(const Offset(700, 500));
+      await tester.pump();
+      expect(_nativeTypes(chart), ['mouseover', 'mousemove', 'mouseout']);
+      expect((chart.events.last.x, chart.events.last.y), (700.0, 500.0));
+
+      // The removal of a pointer over the box gives mouseout.
+      chart.events.clear();
+      await gesture.moveTo(const Offset(30, 30));
+      await tester.pump();
+      await gesture.removePointer();
+      await tester.pump();
+      expect(_nativeTypes(chart), ['mouseover', 'mousemove', 'mouseout']);
+      chart.destroy();
+    });
+
+    testWidgets('a destroyed chart gets no pending event', (tester) async {
+      final chart = await pumpChart(tester);
+      final canvas = chart.canvas!;
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(gesture.removePointer);
+      await gesture.addPointer(location: const Offset(10, 10));
+      await gesture.moveTo(const Offset(20, 20));
+      chart.destroy();
+      await tester.pump();
+      expect(chart.events, isEmpty);
+      expect(hasCanvasEventListener(canvas, 'mousemove'), isFalse);
+    });
+
+    testWidgets('dispose stops the events of the host', (tester) async {
+      final chart = await pumpChart(tester);
+      final canvas = chart.canvas! as UiCanvasElement;
+      await tester.pumpWidget(_box(const SizedBox()));
+      await tester.tapAt(const Offset(100, 100));
+      await tester.pump();
+      expect(chart.events, isEmpty);
+      expect(canvas.parentNode, isNull);
+      chart.destroy();
+      expect(hasCanvasEventListener(canvas, 'click'), isFalse);
+    });
+  });
+
+  group('canvas event target', () {
+    test('adds a listener once and removes it', () {
+      final canvas = UiCanvasElement();
+      final received = <String>[];
+      void listener(NativeEvent event) => received.add(event.type);
+      addCanvasEventListener(canvas, 'click', listener);
+      addCanvasEventListener(canvas, 'click', listener);
+      dispatchCanvasEvent(
+        canvas,
+        NativeEvent(type: 'click', offsetX: 1, offsetY: 2),
+      );
+      expect(received, ['click']);
+      removeCanvasEventListener(canvas, 'click', listener);
+      expect(hasCanvasEventListener(canvas, 'click'), isFalse);
+      dispatchCanvasEvent(
+        canvas,
+        NativeEvent(type: 'click', offsetX: 1, offsetY: 2),
+      );
+      expect(received, ['click']);
+    });
+  });
+}

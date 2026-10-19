@@ -1,5 +1,4 @@
 // Ported from Chart.js v4.5.1 src/types/index.d.ts (MIT, Chart.js Contributors).
-// ignore_for_file: one_member_abstracts
 
 /// The declarations of `src/types/index.d.ts` as Dart interfaces
 /// (Chart.js ADR 0003, porting-flow.md 2.4).
@@ -32,6 +31,12 @@
 /// `undefined` alike.
 library;
 
+// The canvas interface and the native event stand in for lib.dom.d.ts, which
+// index.d.ts names without an import. Both are pure, port-only interface
+// libraries (Chart.js ADR 0013, Chart.js ADR 0014).
+import 'package:flutter_chartjs/src/canvas/canvas.dart'
+    show CanvasRenderingContext2D, HTMLCanvasElement;
+import 'package:flutter_chartjs/src/platform/native_event.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:flutter_chartjs/src/types/layout.dart';
 
@@ -143,11 +148,46 @@ abstract interface class Chart {
   /// index.d.ts:499 `readonly platform: BasePlatform`.
   BasePlatform get platform;
 
-  /// index.d.ts:504 `readonly width: number`.
-  double get width;
+  /// index.d.ts:501 `readonly canvas: HTMLCanvasElement`.
+  ///
+  /// Dart `null` stands for JS `null`: the constructor keeps the `null` of a
+  /// failed `acquireContext` (core.controller.js:140), and `destroy()` sets
+  /// it (core.controller.js:948). `platform.dom.js:104` tests it.
+  HTMLCanvasElement? get canvas;
 
-  /// index.d.ts:505 `readonly height: number`.
-  double get height;
+  /// index.d.ts:502 `readonly ctx: CanvasRenderingContext2D`.
+  ///
+  /// Dart `null` stands for JS `null`, as for [canvas]
+  /// (core.controller.js:139, :949). The throttled event proxy tests it
+  /// (`platform.dom.js:246`).
+  CanvasRenderingContext2D? get ctx;
+
+  /// core.controller.js:168 `$proxies`, the event proxies of
+  /// `platform.dom.js` for each event type. `index.d.ts` does not declare
+  /// it.
+  ///
+  /// The `$` prefix marks a property that Chart.js keeps on an object for
+  /// another module. The Dart name says whose it is. Dart `null` stands for
+  /// JS `undefined`: `platform.dom.js:335` assigns `{}` when it is absent.
+  /// A value of the map is a proxy, or `null` for the `undefined` that
+  /// `removeEventListener` assigns (`platform.dom.js:365`).
+  abstract Map<String, Object?>? platformProxies;
+
+  /// index.d.ts:504 `readonly width: number`. `retinaScale` assigns it
+  /// through the `PrivateChart` type (helpers.dom.ts:218), so it has a
+  /// setter.
+  abstract double width;
+
+  /// index.d.ts:505 `readonly height: number`. `retinaScale` assigns it
+  /// through the `PrivateChart` type (helpers.dom.ts:217), so it has a
+  /// setter.
+  abstract double height;
+
+  /// index.d.ts:508 `readonly currentDevicePixelRatio: number`.
+  /// `_alignPixel` reads it (helpers.canvas.ts:126). `retinaScale` assigns
+  /// it through the `PrivateChart` type (helpers.dom.ts:233), so it has a
+  /// setter.
+  abstract double currentDevicePixelRatio;
 
   /// index.d.ts:509 `readonly chartArea: ChartArea`.
   ChartArea get chartArea;
@@ -246,10 +286,98 @@ abstract interface class Scale implements Element, LayoutItem {
   ({double min, double max, bool minDefined, bool maxDefined}) getUserBounds();
 }
 
+/// index.d.ts:1404 `RenderTextOpts`, the options of `renderText`
+/// (helpers.canvas.ts:449).
+///
+/// Every member is optional. Dart `null` stands for an absent key, JS
+/// `undefined`. The readers treat JS `null` alike: `renderText` tests the
+/// members for truthiness, with `isNullOrUndef`, or with `>`, which makes
+/// `null` and `undefined` both fail.
+abstract interface class RenderTextOpts {
+  /// index.d.ts:1409 `color?: Color`: a CSS color `String`, a
+  /// `CanvasGradient` or a `CanvasPattern` (color.d.ts:1). An empty String
+  /// is falsy, so `setRenderOpts` leaves the fill style unchanged.
+  Object? get color;
+
+  /// index.d.ts:1415 `decorationWidth?: number`. A falsy value gives 2.
+  double? get decorationWidth;
+
+  /// index.d.ts:1420 `maxWidth?: number`.
+  double? get maxWidth;
+
+  /// index.d.ts:1426 `rotation?: number`, in radians.
+  double? get rotation;
+
+  /// index.d.ts:1431 `strikethrough?: boolean`.
+  bool? get strikethrough;
+
+  /// index.d.ts:1437 `strokeColor?: Color`, as [color].
+  Object? get strokeColor;
+
+  /// index.d.ts:1443 `strokeWidth?: number`.
+  double? get strokeWidth;
+
+  /// index.d.ts:1449 `textAlign?: CanvasTextAlign`.
+  String? get textAlign;
+
+  /// index.d.ts:1455 `textBaseline?: CanvasTextBaseline`.
+  String? get textBaseline;
+
+  /// index.d.ts:1460 `translation?: [number, number]`. The tuple is a
+  /// record.
+  (double, double)? get translation;
+
+  /// index.d.ts:1465 `underline?: boolean`.
+  bool? get underline;
+
+  /// index.d.ts:1470 `backdrop?: BackdropOptions`.
+  BackdropOptions? get backdrop;
+}
+
+/// index.d.ts:1473 `BackdropOptions`, the label backdrop of
+/// [RenderTextOpts.backdrop].
+abstract interface class BackdropOptions {
+  /// index.d.ts:1477 `left: number`.
+  double get left;
+
+  /// index.d.ts:1482 `top: number`.
+  double get top;
+
+  /// index.d.ts:1487 `width: number`.
+  double get width;
+
+  /// index.d.ts:1492 `height: number`.
+  double get height;
+
+  /// index.d.ts:1497 `color: Scriptable<Color, ScriptableScaleContext>`.
+  /// `drawBackdrop` assigns it to `fillStyle` as it is
+  /// (helpers.canvas.ts:441): the caller resolves a scriptable value first
+  /// (`core.scale.js:1307`).
+  Object? get color;
+}
+
 /// index.d.ts:1544 `ChartEvent`.
 abstract interface class ChartEvent {
   /// index.d.ts:1545 `type`, one of the DOM event names.
   String get type;
+
+  /// index.d.ts:1558 `native: Event | null`. The port-only [NativeEvent]
+  /// stands for the DOM event (Chart.js ADR 0014). Dart `null` stands for
+  /// JS `null`, for example the `native` of a synthetic event.
+  NativeEvent? get native;
+
+  /// index.d.ts:1559 `x: number | null`. `fromNativeEvent` gives JS `null`
+  /// for an `undefined` position (`platform.dom.js:116`). Dart `null` stands
+  /// for that `null`.
+  double? get x;
+
+  /// index.d.ts:1560 `y: number | null`, as [x].
+  double? get y;
+
+  /// `platform.dom.js:114` `chart`, the chart of the event.
+  /// `index.d.ts` does not declare it. Dart `null` stands for JS
+  /// `undefined`, an event that `fromNativeEvent` did not make.
+  Chart? get chart;
 }
 
 /// index.d.ts:1782 `FontSpec`.
@@ -272,13 +400,19 @@ abstract interface class FontSpec {
   /// index.d.ts:1801 `weight`: a CSS `font-weight` keyword `String`, a
   /// `num` or `null`.
   Object? get weight;
+
+  /// index.d.ts:1806 `lineHeight: number | string`: a `num` or a `String`.
+  ///
+  /// `renderText` reads it as `Number(font.lineHeight)`
+  /// (helpers.canvas.ts:487), so a String gives its `ToNumber`. The font
+  /// object of `toFont` has a number in pixels (helpers.options.ts:132).
+  Object? get lineHeight;
 }
 
 /// index.d.ts:1809 `CanvasFontSpec`.
 ///
-/// `toFont` returns it (helpers.options.ts:115). The member `lineHeight` of
-/// [FontSpec] waits for its first ported caller. The font object of
-/// `toFont` has it as a number in pixels.
+/// `toFont` returns it (helpers.options.ts:115). Its `lineHeight` is a
+/// number in pixels.
 abstract interface class CanvasFontSpec implements FontSpec {
   /// index.d.ts:1810 `string: string`. Dart `null` is JS `null`:
   /// `toFontString` gives `null` when the size or the family is empty
@@ -348,8 +482,68 @@ abstract interface class LineElement implements Element {
 
 /// index.d.ts:2167 `BasePlatform`.
 abstract interface class BasePlatform {
+  /// index.d.ts:2174 `acquireContext(canvas, options?)`.
+  ///
+  /// The JS code passes `options.aspectRatio` as the second argument
+  /// (core.controller.js:139, platform.base.js:16), not the
+  /// `CanvasRenderingContext2DSettings` of index.d.ts. Thus the Dart
+  /// parameter is the aspect ratio. Dart `null` stands for JS `undefined`.
+  /// [canvas] is the item of `getCanvas` (core.controller.js:85): a canvas
+  /// element, or any other value, which gives `null`.
+  CanvasRenderingContext2D? acquireContext(
+    Object? canvas, [
+    double? aspectRatio,
+  ]);
+
+  /// index.d.ts:2185 `releaseContext(context): boolean`.
+  bool releaseContext(CanvasRenderingContext2D context);
+
+  /// index.d.ts:2193 `addEventListener(chart, type, listener)`.
+  ///
+  /// [listener] is a JS function value of three shapes
+  /// (core.controller.js:976-1049): `void Function(ChartEvent)` for an
+  /// event of `options.events`, `void Function([double? width,
+  /// double? height])` for `'resize'`, and `void Function()` for
+  /// `'attach'` and `'detach'`.
+  void addEventListener(Chart chart, String type, Function listener);
+
+  /// index.d.ts:2200 `removeEventListener(chart, type, listener)`. The
+  /// upstream platforms ignore [listener] (`platform.dom.js:350`).
+  void removeEventListener(Chart chart, String type, [Function? listener]);
+
   /// index.d.ts:2203 `getDevicePixelRatio`.
   double getDevicePixelRatio();
+
+  /// index.d.ts:2211 `getMaximumSize(canvas, width?, height?,
+  /// aspectRatio?)`. Dart `null` stands for JS `undefined`.
+  ///
+  /// core.controller.js:263 passes `options.maintainAspectRatio &&
+  /// this.aspectRatio` as [aspectRatio]: a falsy value is `null` or 0.
+  ({double width, double height}) getMaximumSize(
+    HTMLCanvasElement canvas, [
+    double? width,
+    double? height,
+    double? aspectRatio,
+  ]);
+
+  /// index.d.ts:2216 `isAttached(canvas): boolean`. Dart `null` stands for
+  /// the JS `null` of a chart that has no canvas (core.controller.js:1044).
+  bool isAttached(HTMLCanvasElement? canvas);
+
+  /// index.d.ts:2221 `updateConfig(config): void`.
+  void updateConfig(ChartConfiguration config);
+}
+
+/// index.d.ts:3865 `ChartConfiguration`.
+///
+/// core.controller.js:137 passes the `Config` of core.config.js to
+/// `updateConfig`. Its `options` getter returns the options object of the
+/// configuration, which `initOptions` always creates
+/// (core.config.js:47-52).
+abstract interface class ChartConfiguration {
+  /// index.d.ts:3872 `options?: ChartOptions<TType>`. A Map
+  /// (Chart.js ADR 0006).
+  Map<String, Object?> get options;
 }
 
 /// core.element.ts:6 `Element`, which index.d.ts:10 imports.

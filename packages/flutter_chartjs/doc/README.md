@@ -18,12 +18,21 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   [porting-flow.md](porting-flow.md) §4 writes it.
 - **Upstream after the pin:** [upstream-ledger.md](upstream-ledger.md) lists the upstream commits
   after the pinned tag, with their triage ([upstream-tracking.md](upstream-tracking.md)).
+- **Text metrics:** [text-metrics.md](text-metrics.md), the text-metric probe of phase 3. It
+  compares the text metrics of the canvas layer with the Chrome canvas, with the same test font.
+- **Performance:** [performance.md](performance.md), the profile builds of the gallery stress demo
+  on macOS, in Chrome and on an Android phone, two baselines (plain Flutter and the Chrome
+  canvas), and the changes that the builds caused, for example the circle batch.
+- **Canvas and host cuts:** [canvas-cuts-plan.md](canvas-cuts-plan.md) (proposed), the plan that
+  replaces arc math and host sizing code of the port with `dart:ui` and Flutter layout.
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
   ADRs are in [adr/](adr/). Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
   supersedes Chart.js ADR 0005, and Chart.js ADR 0012 supersedes Chart.js ADR 0004. Chart.js
-  ADR 0001 is accepted for its four invariants only. The other Chart.js ADRs are accepted:
+  ADR 0001 is accepted for its four invariants only. Chart.js ADRs 0013 to 0016 are proposed.
+  Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it is accepted. The other Chart.js ADRs are
+  accepted:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md)
   - [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md) (superseded by
     Chart.js ADR 0010)
@@ -39,6 +48,12 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0010: JS numeric semantics](adr/0010-js-numeric-semantics.md)
   - [Chart.js ADR 0011: Third-party sources](adr/0011-third-party-sources.md)
   - [Chart.js ADR 0012: Dart file naming](adr/0012-dart-file-naming.md)
+  - [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md) (proposed)
+  - [Chart.js ADR 0014: Input events and the chart host](adr/0014-input-events-and-chart-host.md)
+    (proposed)
+  - [Chart.js ADR 0015: Text](adr/0015-text.md) (proposed)
+  - [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (proposed; it
+    supersedes Chart.js ADR 0007 on acceptance)
 
 ## What gets ported
 
@@ -72,12 +87,15 @@ Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the v4.5.1 lockfile), which
 The new ADRs and design documents use the revised phase numbers of porting-flow.md §5 (4 =
 Elements, 5 = Core), not the numbers of the table below.
 
-**Status (2026-10-18).** Phases 0, 1 and 2 of porting-flow.md §5 are done. Phase 2 ported the
+**Status (2026-10-19).** Phases 0, 1, 2 and 3 of porting-flow.md §5 are done. Phase 2 ported the
 rest of the JS runtime, 14 helper files, the `core.defaults` closure and `@kurkle/color` 0.3.2
-([parity.md](parity.md)). 179 of the 181 non-chart helper cases pass. The 2 other cases need a
-canvas pattern and gradient. `helpers.rtl` is in progress: `overrideTextDirection` and
-`restoreTextDirection` need the canvas layer. `src/helpers/index.ts` re-exports `helpers.dom`.
-These items wait for phase 3 (canvas, text, platform, harness), which is next.
+([parity.md](parity.md)). Phase 3 added the canvas layer over `dart:ui`
+([Chart.js ADR 0013](adr/0013-canvas-model.md)), the internal chart host and `src/platform`
+([Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md)), canvas text and the test font
+([Chart.js ADR 0015](adr/0015-text.md)), and the phase 3 harness rows. All 18 helper files are
+ported. The 12 non-chart `helpers.canvas` cases, the 4 `helpers.color` cases and the 5
+`helpers.dom` cases with a Flutter equivalent pass. The text-metric probe found all 80 widths
+equal to Chrome ([text-metrics.md](text-metrics.md)). Phase 4 (elements) is next.
 
 The order follows upstream's own layering:
 - `helpers` depend only on `core.defaults` (and a type-only import of the chart controller).
@@ -97,10 +115,10 @@ elements and scales lands (phases 5-7).
 
 | Phase | Scope | Exit criteria |
 |---|---|---|
-| 0. Scaffold | Workspace, CI, upstream pin, parity tracker, prior-art docs | CI green |
+| 0. Scaffold | done; Workspace, CI, upstream pin, parity tracker, prior-art docs | CI green |
 | 1. Decisions | ADRs for the open questions below | ADRs accepted |
-| 2. Helpers | `src/helpers/*` except `helpers.canvas` and `helpers.dom`, plus `core.defaults` with the defaults it pulls in (`core.animations.defaults`, `core.layouts.defaults`, `core.scale.defaults`, `core.ticks`) and a Dart port of `@kurkle/color` 0.3.2 | non-chart helper spec cases pass |
-| 3. Platform and canvas | Canvas 2D semantics over `dart:ui`, text measurement, device pixel ratio, resize, pointer events (`src/platform`, `helpers.canvas`, `helpers.dom`) | non-chart canvas and DOM helper cases pass |
+| 2. Helpers | done; `src/helpers/*` except `helpers.canvas` and `helpers.dom`, plus `core.defaults` with the defaults it pulls in (`core.animations.defaults`, `core.layouts.defaults`, `core.scale.defaults`, `core.ticks`) and a Dart port of `@kurkle/color` 0.3.2 | non-chart helper spec cases pass |
+| 3. Platform and canvas | done; Canvas 2D semantics over `dart:ui`, text measurement, device pixel ratio, resize, pointer events (`src/platform`, `helpers.canvas`, `helpers.dom`) | non-chart canvas and DOM helper cases pass |
 | 4. Core | element, config and option resolution, registry, plugin service, layouts, scale base, autoskip, dataset controller, animations, interaction, adapters, chart controller | core spec cases with ported dependencies pass |
 | 5. Elements | point, line, bar, arc | element spec cases pass |
 | 6. Scales | linear base, linear, category, logarithmic, time, timeseries, radial linear | scale spec cases pass |
@@ -117,15 +135,17 @@ before phase 2. [Chart.js ADR 0001](adr/0001-theming.md) proposes the theming de
 and gate 2 decisions. All of them are accepted. An example is the options representation
 ([Chart.js ADR 0006](adr/0006-options-representation-and-resolver.md)).
 
-- **Canvas model.** Port the drawing code against a small Canvas 2D-compatible layer over
-  `dart:ui` (keeps upstream drawing code close to line-for-line), or translate each draw call to
-  `dart:ui` directly. Canvas 2D semantics that differ from `dart:ui`: the current path is not part
-  of `save()`/`restore()`, transforms apply when path points are added, `arcTo` differs from
-  `arcToPoint`. Prior art worth studying: [js-runtimes.md](prior-art/js-runtimes.md).
+- **Canvas model.** Proposed in [Chart.js ADR 0013](adr/0013-canvas-model.md): a Canvas
+  2D-compatible layer over `dart:ui`, with a retained bitmap of pictures in device pixels. The
+  upstream drawing code stays close to line for line.
 - **Options.** Upstream resolves options through `Proxy`-based scopes (defaults, overrides,
   scriptable and indexable options). Dart has no `Proxy`, so the resolver needs its own design,
   and a decision on a typed Dart options API versus accepting raw Chart.js JSON configs (or both).
-- **Text.** CSS font strings, `measureText`, caching; `TextPainter` versus `Paragraph`.
+- **Text.** Proposed in [Chart.js ADR 0015](adr/0015-text.md): a parser for the CSS font
+  shorthand, `ui.Paragraph` with LRU caches, and Liberation Sans as the test font.
+- **Input events.** Proposed in [Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md): DOM
+  event names from Flutter pointer events, an internal chart host that sizes the chart before the
+  first paint, and one tap recognizer in the gesture arena.
 - **Animation.** `requestAnimationFrame` maps onto `SchedulerBinding.scheduleFrameCallback`.
   `core.animator.js` stays one module-level animator on `requestAnimFrame`
   ([Chart.js ADR 0007](adr/0007-frame-scheduling.md)). ADR: Animation (gate 5,

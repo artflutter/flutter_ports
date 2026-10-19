@@ -1,0 +1,153 @@
+<!doctype html>
+<!-- Original code, not ported from Chart.js: the Chrome side of the text-metric probe. -->
+<!--
+  The page loads Liberation Sans 2.1.5 from packages/chartjs_test_utils/lib/fonts/
+  under the family names that the test harness registers (testFontFamilies of
+  packages/chartjs_test_utils/lib/src/fonts.dart). Then it measures each case
+  with the measureText of a 2D canvas context and writes the result as JSON
+  into <pre id="result">. text_metrics_reference.mjs serves the packages/
+  directory over HTTP, runs headless Chrome on this page and reads the JSON.
+
+  The page has the cases of the probe: text_metrics_test.dart reads them from
+  the generated reference file. A change of FONTS, TEXTS or BASELINES needs a
+  rerun of text_metrics_reference.mjs.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Text metric probe</title>
+</head>
+<body>
+<pre id="result">pending</pre>
+<script>
+'use strict';
+
+// The family names of testFontFamilies, without `sans-serif`: CSS cannot
+// define a font face for a generic family. 'Probe Liberation' is a name
+// that no system has: the page compares it with the Chart.js family list to
+// prove that the list resolves to the loaded files.
+const FAMILIES = ['Helvetica Neue', 'Helvetica', 'Arial', 'Liberation Sans', 'Probe Liberation'];
+
+const FACES = [
+  {file: 'LiberationSans-Regular.ttf', weight: '400', style: 'normal'},
+  {file: 'LiberationSans-Bold.ttf', weight: '700', style: 'normal'},
+  {file: 'LiberationSans-Italic.ttf', weight: '400', style: 'italic'},
+  {file: 'LiberationSans-BoldItalic.ttf', weight: '700', style: 'italic'},
+];
+
+const FONT_DIR = '../../../../chartjs_test_utils/lib/fonts/';
+
+// The Chart.js default family (core.defaults.ts) and the toFontString form
+// (helpers.canvas.ts): `${style} ${weight} ${size}px ${family}`.
+const FAMILY = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+const FONTS = [
+  `normal 12px ${FAMILY}`,
+  `normal bold 12px ${FAMILY}`,
+  `normal bold 16px ${FAMILY}`,
+  `normal 10px ${FAMILY}`,
+  `normal 24px ${FAMILY}`,
+];
+
+// Tick values, labels and titles as in the Chart.js samples, a wide run and
+// a narrow run, a precomposed Latin letter with an accent (U+1E80) and a
+// Hebrew word (an RTL script).
+const TEXTS = [
+  '0',
+  '-10',
+  '100',
+  '1,000',
+  '0.25',
+  '-0.5',
+  '1.5e-7',
+  'January',
+  'February',
+  'Dataset 1',
+  'My title',
+  'Total revenue (USD)',
+  'WWWWWWWWWW',
+  'iiiiiiiiii',
+  'Ẁ',
+  'שלום',
+];
+
+// The text baselines of the DOM. For each one, the probe reads the
+// actualBoundingBoxAscent of BASELINE_TEXT.
+const BASELINES = ['top', 'hanging', 'middle', 'alphabetic', 'ideographic', 'bottom'];
+const BASELINE_TEXT = 'Dataset 1';
+
+const round = (v) => Math.round(v * 1e6) / 1e6;
+
+async function main() {
+  const faces = [];
+  for (const family of FAMILIES) {
+    for (const f of FACES) {
+      const face = new FontFace(family, `url(${FONT_DIR}${f.file})`, {
+        weight: f.weight,
+        style: f.style,
+      });
+      document.fonts.add(face);
+      faces.push(face.load());
+    }
+  }
+  await Promise.all(faces);
+  for (const font of FONTS) await document.fonts.load(font, 'Ag');
+  await document.fonts.ready;
+
+  const ctx = document.createElement('canvas').getContext('2d');
+  const measure = (font, text, baseline = 'alphabetic') => {
+    ctx.font = font;
+    ctx.textAlign = 'start';
+    ctx.textBaseline = baseline;
+    ctx.direction = 'ltr';
+    return ctx.measureText(text);
+  };
+
+  const cases = [];
+  for (const font of FONTS) {
+    for (const text of TEXTS) {
+      const m = measure(font, text);
+      const probe = measure(font.replace(FAMILY, "'Probe Liberation'"), text);
+      cases.push({
+        font,
+        text,
+        width: round(m.width),
+        left: round(m.actualBoundingBoxLeft),
+        right: round(m.actualBoundingBoxRight),
+        ascent: round(m.actualBoundingBoxAscent),
+        descent: round(m.actualBoundingBoxDescent),
+        loaded: m.width === probe.width,
+      });
+    }
+  }
+
+  const fonts = [];
+  for (const font of FONTS) {
+    const m = measure(font, BASELINE_TEXT);
+    const baselines = {};
+    for (const baseline of BASELINES) {
+      baselines[baseline] = round(measure(font, BASELINE_TEXT, baseline).actualBoundingBoxAscent);
+    }
+    fonts.push({
+      font,
+      fontAscent: round(m.fontBoundingBoxAscent),
+      fontDescent: round(m.fontBoundingBoxDescent),
+      baselines,
+    });
+  }
+
+  document.getElementById('result').textContent = JSON.stringify({
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    family: FAMILY,
+    baselineText: BASELINE_TEXT,
+    cases,
+    fonts,
+  });
+}
+
+main().catch((e) => {
+  document.getElementById('result').textContent = `error: ${e}`;
+});
+</script>
+</body>
+</html>

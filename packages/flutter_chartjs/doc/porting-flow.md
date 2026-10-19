@@ -100,8 +100,9 @@ The other decisions in this section are for Chart.js only. Each of them becomes 
 decision, the decision moves to `docs/adr/`.
 
 The gate 1 and gate 2 decisions are accepted ADR files now (2026-10-18). Their subsections below keep a summary,
-the link and the evidence that the ADR does not repeat. The other subsections stay proposals in
-this document until their ADR files exist.
+the link and the evidence that the ADR does not repeat. Phase 3 wrote the gate 3 decisions (2.2,
+2.7 and 2.8) as proposed ADR files (2026-10-19). Their subsections keep a summary and the link.
+The other subsections stay proposals in this document until their ADR files exist.
 
 | Subsection | ADR | Gate |
 |---|---|---|
@@ -113,6 +114,9 @@ this document until their ADR files exist.
 | 2.13 | [Chart.js ADR 0011: Third-party sources](adr/0011-third-party-sources.md), which supersedes Chart.js ADR 0005 | 1 |
 | 2.3, number formatting | [Chart.js ADR 0008: Number formatting on package:intl](adr/0008-number-formatting-on-package-intl.md) | 2 |
 | 2.2, 2.3, 2.6, 2.10 | [Chart.js ADR 0009: No display-only JS exactness](adr/0009-no-display-only-js-exactness.md) | 2 |
+| 2.2 | [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md) (proposed) | 3 |
+| 2.7 | [Chart.js ADR 0014: Input events and the chart host](adr/0014-input-events-and-chart-host.md) (proposed) | 3 |
+| 2.8 | [Chart.js ADR 0015: Text](adr/0015-text.md) (proposed) | 3 |
 
 ADR 0006 (gate 1) belongs to [upstream-tracking.md](upstream-tracking.md).
 
@@ -130,29 +134,19 @@ evidence. In short:
 The ADR corrects one line reference of the earlier evidence. `Object.keys` enumerates the
 declared-key marker at `core.datasetController.js:817`, not at `:818`.
 
-### 2.2 ADR: Canvas model (gate 3)
+### 2.2 Chart.js ADR 0013: Canvas model (gate 3)
 
-**Decision.** A Canvas 2D-compatible layer over `dart:ui` lives in `lib/src/canvas/` (port-only):
-- an `abstract interface class CanvasRenderingContext2D` with no `dart:ui` import, with images
-  behind an opaque `CanvasImageSource` type
-- a `dart:ui` implementation in a file that no helper imports
-- a recorder implementation in the harness
-
-The layer owns only the Canvas 2D semantics that `dart:ui` lacks and that change behavior. The
-current path is outside `save()`/`restore()`. Transforms apply when the code adds a point. Non-finite
-arguments do nothing. The layer has no Chromium-exact `arcTo` or arc sweep math
-([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)). Phase 2 ports `toFontString` and
-`_isPointInArea` (`helpers.canvas.dart` is `partial`).
-
-`RenderView` already applies the device pixel ratio (DPR) at the root (`rendering/view.dart:70-72`,
-`:267-270`). Thus the `dart:ui` context composes each transform on a base
-`scale(1 / currentDevicePixelRatio)`. `retinaScale` stays a line-by-line port. The chart does not
-apply the DPR two times. With that base, `clearCanvas` and the arc clip rectangle still map
-onto the box. A widget test with a
-`tester.view.devicePixelRatio` other than 1 pins the base scale.
-
-**Evidence.** Specs port 1:1 only against the mock context API: 24 methods and 9 setters
-(chartjs-test-utils `src/context.js:102-146`).
+[Chart.js ADR 0013](adr/0013-canvas-model.md) (proposed) holds the decision and its evidence. In
+short:
+- `lib/src/canvas/canvas.dart` is the pure Canvas 2D interface, with `Path2D` and the port-only
+  `CanvasNode` and `CanvasContainer`. The `dart:ui` implementation is `canvas_ui.dart` and three
+  parts. No helper imports it. The harness has `MockContext`.
+- `UiCanvasContext` keeps a retained bitmap as a list of pictures. A full `clearRect` drops the
+  list. A partial clear paints inside a layer. More than 8 pictures flatten into one image.
+- The pictures are in bitmap (device-pixel) space. `paint` applies `scale(1 / devicePixelRatio)`.
+  `retinaScale` stays a line-by-line port. This replaces the base scale of the first proposal.
+- The layer keeps only the Canvas 2D semantics that change behavior, with no Chromium-exact arc
+  math ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)).
 
 ### 2.3 Chart.js ADR 0010: JS numeric semantics (gate 1)
 
@@ -215,68 +209,29 @@ port does not compare its renders with the upstream PNGs. It has no pixelmatch p
 Canvas-call replay suite and no fixture ledger. The fixture configs run as smoke tests (tool 7).
 Flutter goldens of the port test only Flutter behavior.
 
-### 2.7 ADR: Input events and interaction state (gate 3)
+### 2.7 Chart.js ADR 0014: Input events and the chart host (gate 3)
 
-**Decision.** Flutter input produces the DOM-named events that a browser fires. `PointerDeviceKind`
-selects them, not the platform. `EVENT_TYPES` (`platform.dom.js:21-31`) and the `options.events`
-filter stay unchanged. The chart claims only one `TapGestureRecognizer` (for `click`) in the
-gesture arena. Thus parent scrollables keep their gestures. Events coalesce for each frame.
-`platform.flutter.dart` replaces `platform.dom.js`. Keyboard and semantics are port-only.
-- Phase 3 adds an internal chart host. The host is a port-only, unexported `RenderBox` plus
-  `LeafRenderObjectWidget`. It owns the canvas layer and the `platform.flutter` listeners. Its
-  contract names `computeDryLayout`. Phase 9 puts the public widget on top of it.
-- [Chart.js ADR 0007](adr/0007-frame-scheduling.md) decides the scheduling. The host makes one
-  throttled function for each `options.events` entry. One `throttled<Size?>` function takes the
-  size and DPR changes. One post-frame callback takes attach and detach.
-- The host takes the chart size from its layout, not from a `ResizeObserver`.
-- The host reads the DPR with `MediaQuery.devicePixelRatioOf` and the ticker state with
-  `TickerMode.valuesOf` in `createRenderObject` and `updateRenderObject`. `View.of` does not rebuild on a DPR change. The window `resize` listener
-  and its global map (`platform.dom.js:161-189`) have no port.
-- The scrollbar step of `platform.dom.js:198-209` has no port. A Flutter `Scrollbar` paints over
-  its child and takes no layout width.
-- The zero-size skip of `platform.dom.js:217-222` stays as a guard in the host. `Offstage` calls
-  `layout` on its child with its own constraints (`proxy_box.dart:3918-3923`). Thus the child does
-  not get the zero size of `display: none`. The harness emulates `display: none` with
-  `SizedBox.shrink`.
-- The event position comes from `PointerEvent.localPosition`. One `DIVERGES` hunk in
-  `getRelativePosition` of `helpers.dom.dart` reads it. The port does not emulate the CSS math of
-  `helpers.dom.ts:73-130`. The DOM-only spec cases skip as `n/a`.
-- Flutter sends one event for each pointer. `platform.flutter.dart` builds a `touches` list,
-  sorted by pointer id.
-- `platform.flutter.dart` makes the destroyed-chart guard of `platform.dom.js:246` again.
+[Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md) (proposed) holds the decision, its
+evidence and the items that stay open. In short:
+- `platform.flutter.dart` replaces `platform.dom.js` with the upstream names. The port-only
+  `NativeEvent` stands in for the DOM event. `detectPlatform` tests for a chart host.
+- The internal chart host (`ChartHost`, `RenderChartHost`) sizes the chart in its first layout,
+  before the first paint. Later size and DPR changes go through one `throttled<Size?>` function.
+  Unbounded constraints give the canvas default of 300 x 150. Paint clips a larger chart.
+- `PointerDeviceKind` selects the DOM event names. The host reads raw pointer events and claims
+  only one `TapGestureRecognizer`, for `click`. Parent scrollables keep their drags.
+- `getRelativePosition` keeps `Math.round` and drops the CSS math and the DPR factor (row
+  `platform-relative-position`).
 
-**Evidence.** The pan recognizer of fl_chart breaks `PageView` (#202).
+### 2.8 Chart.js ADR 0015: Text (gate 3)
 
-**Open.**
-- Touch sizes (hit radius, hover radius, font size) and the tooltip after a touch lift (#7738).
-  A new ADR decides the touch sizes in phase 9
-  ([theming.md](theming.md) §11).
-- The first size. Upstream sizes the chart at construction (spec
-  `core.controller.tests.js:651`). The first observer notification uses `throttled`
-  (spec `:712`). The host can size the chart only after its first layout. Thus the port paints
-  one blank first frame. This ADR records it as a divergence or prevents it.
-- `getMaximumSize` stays a port in `helpers.dom.dart`, with `DIVERGES` hunks for the DOM reads.
-  `AspectRatio` has no `round1`, no `floor` and no `width / 2` fallback.
-- Unbounded constraints: infinity to 0, or infinity to the current chart size? A chart larger
-  than its box: paint outside the box, or clip?
-- The factor `/ chart.width * canvas.width / currentDevicePixelRatio` of `getRelativePosition`:
-  keep it for exact values at fractional sizes, or drop it?
-- A harness detach without an unmount, for the specs that keep a detached chart across a task
-  (`core.controller.tests.js:1065`, `:1147`, `:1179`). Without it, these specs skip as `n/a`.
-- Touch scope: only the pointers that hit the chart, or all pointers through
-  `GestureBinding.instance.pointerRouter.addGlobalRoute`? Upstream gives NaN coordinates on a
-  `touchend` after the last finger lifts (`helpers.dom.ts:81-93`).
-
-### 2.8 ADR: Text (gate 3)
-
-**Decision.** `font` takes the CSS shorthand from `toFontString` and parses it into
-`ui.TextStyle`. `measureText` builds a `ui.Paragraph` and returns `width` plus
-`actualBoundingBox*`. The layer caches results for each font and text. The harness can replace
-`fillText` and `measureText`.
-
-**Open.** `toBeCloseToPixel` (0.5% or less than 2 px) occurs 374 times in 16 spec files. These
-specs measure real fonts. The proposal is a metric-compatible OFL font in `chartjs_test_utils`.
-Phase 3 measures the result.
+[Chart.js ADR 0015](adr/0015-text.md) (proposed) holds the decision and its evidence. In short:
+- `parseCanvasFont` parses the CSS shorthand of `toFontString`. Generic families stay family
+  names. `measureText` and `fillText` use one `ui.Paragraph` for each font and text, in LRU caches.
+- The harness installs Liberation Sans 2.1.5 (SIL OFL 1.1) under the families of the Chart.js
+  default font and `sans-serif`.
+- The text-metric probe ([text-metrics.md](text-metrics.md)) found all 80 widths equal to the
+  Chrome widths. Baseline offsets differ by less than 1 px. These differences are display-only.
 
 ### 2.9 ADR: Animation (gate 5), with Chart.js ADR 0007 for `helpers.extras` and the animator frame source (gate 2)
 
@@ -412,23 +367,30 @@ outside the published archive. Port exactly 0.4.0 (`package.json:90`).
 
 | Upstream (0.4.0) | Dart | Phase |
 |---|---|---|
-| — | `pure.dart` (spec set-up for `dart test`) | 2 |
-| `src/context.js` | `MockContext implements CanvasRenderingContext2D` | 3 |
-| `src/matchers.js`, `src/matchers.options.js` | matchers | 3 |
-| — | test font | 3 |
+| — | `pure.dart` (spec set-up for `dart test`) | 2, done |
+| `src/context.js`, `src/index.js` | `MockContext implements CanvasRenderingContext2D`, `createMockContext` | 3, done |
+| `src/matchers.js`, `src/matchers.options.js` | matchers: `toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf`, `toEqualOptions` | 3, done |
+| — | test font (`installTestFont` of `flutter.dart`, [Chart.js ADR 0015](adr/0015-text.md)) | 3, done |
+| `src/matchers.js` | `toBeValidChart`, `toBeChartOfSize` | 5 |
 | `src/utils.js` | `acquireChart` (512×512, `animation: false`, `locale: 'en-US'`), `afterEvent`, `triggerMouseEvent`, `waitForResize` | 5 |
 | `src/fixture.js` | `specsFromFixtures` as a smoke runner (prefix match, plugin rule, `run` hook), no image comparison | 7 |
 | `src/spriting.js`; pixelmatch `index.js`; Canvas-call recordings | not ported (`n/a`): no image comparison ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)) | — |
 | `injectWrapperCSS`, `useShadowDOM`, `useOffscreenCanvas` | not ported (`n/a`) | — |
 
-**Licensing.** The harness has no pixelmatch code. Thus its `LICENSE` has no ISC notice.
+**Licensing.** The harness has no pixelmatch code. Thus its `LICENSE` has no ISC notice. Its
+`LICENSE` has the SIL OFL 1.1 notice of the test font as a separate component
+([Chart.js ADR 0015](adr/0015-text.md)).
 
 **`test/index.js` equivalent.** From phase 3, `packages/flutter_chartjs/test/flutter_test_config.dart`
-ports `test/index.js`. It translates DPR 1 (`:5`), the UTC zone (`:23`), the disabled colors plugin
-(`:25-28`) and `releaseCharts()` (`:34-36`). Two port-only hunks carry `DIVERGES` markers and
-`harness-*` rows. Phase 3 adds the two rows:
-- the restore of `defaults` and `overrides` in `tearDown`, from a snapshot after the harness setup
-- the test font install.
+ports `test/index.js`. It translates DPR 1 (`:5`). The UTC zone line (`:23`) has no Dart
+counterpart: the specs use the default date adapter in UTC (phase 6). The disabled colors plugin
+(`:25-28`, phase 8) and `releaseCharts()` (`:34-36`, phase 5) come later. Two port-only hunks carry
+`DIVERGES` markers and `harness-*` rows. Phase 3 added the file with DPR 1 and the two rows:
+- `harness-defaults-restore`: the restore of `defaults` and `overrides` in `tearDown`, from a
+  snapshot after the harness setup. It calls `setUpDefaultsRestore()` of `pure.dart`.
+- `harness-test-font`: the test font install.
+
+The colors plugin line comes in phase 8. `releaseCharts()` comes in phase 5.
 
 The harness installs no theme ([Chart.js ADR 0001](adr/0001-theming.md)). Thus no ported spec
 depends on the platform that flutter_test reports (`TargetPlatform.android`).
@@ -459,10 +421,13 @@ when the test pumps.
 | Fixture smoke tests (`@Tags(['fixtures'])`) | ubuntu `fixtures` job | no | no |
 | Flutter-only goldens | one pinned runner | no | no |
 
+The tests of `packages/chartjs_test_utils` without `@TestOn('vm')` follow the pure-layer row. The
+melos script `test:web` runs them in Chrome too (phase 3).
+
 A pure-layer file is a file whose transitive imports reach neither `dart:ui` nor
 `package:flutter`. The pure layers are `lib/src/js`, `lib/src/types`, `lib/src/kurkle_color`, the
-canvas interface, the `core.defaults` closure and all helpers except `helpers.dom` and
-`helpers.extras`. `helpers.options` and `helpers.curve` import `helpers.canvas`. Thus the canvas
+canvas interface, the `core.defaults` closure, all helpers except `helpers.extras`, and
+`platform.base`, `platform.basic` and `native_event` of `lib/src/platform/`. `helpers.options` and `helpers.curve` import `helpers.canvas`. Thus the canvas
 interface must stay free of `dart:ui` (2.2). Tool 1 computes the closure.
 
 On 3.44.9, `dart test -p chrome` runs in a Flutter package with a `test` dev_dependency (probe).
@@ -596,7 +561,7 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 | 0. Scaffold | done; the design documents | CI green |
 | 1. Decisions, minimum tooling, pilot | done; gate 1-2 ADRs; pins (2.13); tools 1-3; pilot by hand: `helpers.math`, `lib/src/js`, `geometric.dart`, `isFinite` from `helpers.core` | 12 `helpers.math` cases pass on VM, dart2js and dart2wasm; log10 comparison passes on the netlib port; AGENTS.md revised from the pilot; tools 1-3 green; gate 1-2 ADRs accepted |
 | 2. JS runtime, helpers, defaults | done; rest of `lib/src/js` and `lib/src/types`; helpers except `helpers.canvas` and `helpers.dom`, plus `toFontString` and `_isPointInArea`; `core.defaults` closure; @kurkle/color; null-vs-undefined resolver tests; `pure.dart`; tools 4-5 | 181 non-chart helper cases and 5 `core.defaults`/`core.ticks` cases pass on VM, pure-layer cases also on dart2js and dart2wasm; `test:cases` reports none missing. Result: 179 of the 181 helper cases pass. The 2 `helpers.color` cases that need a canvas pattern and gradient skip as `blocked: helpers.canvas`. `test/port/helpers/helpers.color_test.dart` tests the same behavior with test classes. `helpers.rtl` is in progress: `overrideTextDirection` and `restoreTextDirection` need the canvas layer. `src/helpers/index.ts` re-exports `helpers.dom`. Both wait for phase 3 |
-| 3. Canvas, text, platform, harness | `lib/src/canvas`; rest of `helpers.canvas`; rest of `helpers.rtl`; `helpers.dom`; `src/helpers/index.ts`; `platform.*`; internal chart host; phase-3 harness rows | non-chart canvas and DOM cases pass; the 2 `helpers.color` canvas cases pass; text-metric probe recorded |
+| 3. Canvas, text, platform, harness | done; `lib/src/canvas`; rest of `helpers.canvas`; rest of `helpers.rtl`; `helpers.dom`; `src/helpers/index.ts`; `platform.*`; internal chart host; phase-3 harness rows | non-chart canvas and DOM cases pass; the 2 `helpers.color` canvas cases pass; text-metric probe recorded. Result: the five phase 3 spec files have 66 cases. 21 pass, 0 fail and 45 skip. The 12 non-chart `helpers.canvas` cases, the 4 `helpers.color` cases and the 5 `helpers.dom` cases with a Flutter equivalent pass. 28 cases skip as `blocked: core.controller`, 15 as `n/a` (CSS, the shadow DOM, DOM ids, iframes, a web worker) and 2 as `diverges: platform-relative-position`. `test:cases` reports 205 passed, 0 failed, 47 skipped and 0 missing cases in the 17 ported spec files. The text-metric probe ([text-metrics.md](text-metrics.md)) found all 80 widths equal to Chrome. Chart.js ADRs 0013-0015 record the gate 3 decisions (proposed) |
 | 4. Elements | `core.element`, point, line, bar, arc | 20 of 21 element cases pass |
 | 5. Core | `core.config` with hunks H0-H3 and their tests; registry to controller; phase-5 harness rows; tools 6 and 8 | non-chart core cases pass; others skipped `blocked: <module>` |
 | 6. Scales | seven scales; default date adapter on `DateFormat` (ICU tokens) | non-chart scale cases pass; moment-token cases skip as `diverges` |

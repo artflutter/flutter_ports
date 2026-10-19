@@ -13,8 +13,9 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos โ
 - `dart run melos run test --no-select`: `flutter test` in every package with a `test/` dir.
   `--no-select` skips the interactive package picker. On ubuntu, CI also fetches the submodules,
   for `packages/flutter_chartjs/test/upstream_test.dart`.
-- `dart run melos run test:web`: the `flutter_chartjs` tests without `@TestOn('vm')`, in Chrome,
-  compiled with dart2js and with dart2wasm. It needs a local Google Chrome. CI job: `test-web`.
+- `dart run melos run test:web`: the `flutter_chartjs` and `chartjs_test_utils` tests without
+  `@TestOn('vm')`, in Chrome, compiled with dart2js and with dart2wasm. It needs a local Google
+  Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the three port checks of
   `packages/flutter_chartjs/doc/porting-flow.md` ยง4 (tools 1-3), as melos steps. The CI job
   `port-checks` runs the three checks with a shallow submodule checkout. Each check can also run
@@ -54,9 +55,19 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 ## Layout
 
 - `packages/flutter_chartjs`: the Chart.js port (library, `publish_to: none` until 0.1.0).
-  - `lib/src/`: ported modules at their upstream paths (`core/`, `helpers/`, `types/`),
-    `kurkle_color/` (the `@kurkle/color` 0.3.2 port), and `js/`, the JS runtime: port-only
-    `js_*.dart` files and the fdlibm ports `fdlibm_log.dart` and `fdlibm_atan.dart`.
+  - `lib/src/`: ported modules at their upstream paths (`core/`, `helpers/`, `platform/`,
+    `types/`), `kurkle_color/` (the `@kurkle/color` 0.3.2 port), and `js/`, the JS runtime:
+    port-only `js_*.dart` files and the fdlibm ports `fdlibm_log.dart` and `fdlibm_atan.dart`.
+  - `lib/src/canvas/`: the port-only canvas layer (Chart.js ADRs 0013 and 0015). `canvas.dart` is
+    the Canvas 2D interface, a pure layer. `canvas_ui.dart` and its three parts
+    (`canvas_ui_path.dart`, `canvas_ui_paint.dart`, `canvas_ui_text.dart`) are the `dart:ui`
+    implementation. No helper imports them.
+  - `lib/src/platform/` (Chart.js ADR 0014): the ports of `index.js`, `platform.base.js` and
+    `platform.basic.js`, and three port-only files. `platform.flutter.dart` replaces
+    `platform.dom.js`. `chart_host.dart` is the internal chart host (`ChartHost`,
+    `RenderChartHost`). `native_event.dart` is the stand-in for the DOM event, a pure layer.
+  - `test/flutter_test_config.dart`: the port of `test/index.js`. `flutter test` runs it around
+    each test file of the package ([Tests](#tests)).
   - `test/specs/`: ported upstream specs. `test/kurkle_color/`: the ported `@kurkle/color` tests.
     `test/port/`: port-only tests, at the path of the `lib/src/` file that they test.
     `test/tool/`: tests of the port tools.
@@ -66,10 +77,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     generators of reference data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0012. Three of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0015. Three of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, and Chart.js
       ADR 0012 supersedes Chart.js ADR 0004. Chart.js ADR 0001 is accepted for its four theming
-      invariants only. The other ADRs are accepted. Docs name them "Chart.js ADR NNNN". "ADR
+      invariants only. Chart.js ADRs 0013 (canvas model), 0014 (input events and the chart host)
+      and 0015 (text) are proposed. The other ADRs are accepted. Docs name them "Chart.js ADR NNNN". "ADR
       NNNN" alone is a `docs/adr/` file. An accepted ADR does not change. A changed decision gets
       a new ADR that states the complete decision and supersedes the old ADR.
     - `doc/differences.md`: one row for each `DIVERGES` difference.
@@ -79,9 +91,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       decisions, the test harness, the tools and the phases.
     - `doc/upstream-tracking.md`: how the port follows upstream after the pin (proposed).
     - `doc/upstream-ledger.md`: the upstream commits after the pin, with their triage.
+    - `doc/text-metrics.md`: the text-metric probe, the canvas layer against the Chrome canvas.
 - `packages/chartjs_test_utils`: the test harness, a port of chartjs-test-utils 0.4.0
-  (`publish_to: none`, a dev_dependency of `flutter_chartjs`). `lib/pure.dart` has `setUpSpecs()`,
-  the spec set-up for `dart test`.
+  (`publish_to: none`, a dev_dependency of `flutter_chartjs`). The ported files are in `lib/src/`.
+  - `lib/pure.dart`: the pure part. It has `setUpSpecs()`, the spec set-up for `dart test`,
+    `setUpDefaultsRestore()`, `createMockContext`, `MockContext` and the matchers
+    (`toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf`, `toEqualOptions`).
+  - `lib/flutter.dart`: the part that needs the Flutter engine, for `flutter test` only. It has
+    `installTestFont()`. Phase 5 adds `acquireChart` and the event helpers here.
+  - `lib/fonts/`: the test font, Liberation Sans 2.1.5 (SIL OFL 1.1), with its `LICENSE`
+    (Chart.js ADR 0015).
 - `apps/chartjs_gallery`: gallery app (Android, iOS, web, macOS); every Chart.js chart type,
   marked pending until ported.
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
@@ -180,17 +199,30 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
 - A pure-layer file reaches neither `dart:ui` nor `package:flutter` through its direct or indirect
   imports. `check:lib-imports` computes the pure layers from the roots in
   `packages/flutter_chartjs/tool/src/lib_imports.dart`. The roots include `lib/src/js/`,
-  `lib/src/types/`, `lib/src/kurkle_color/`, `core.defaults` and the helpers except `helpers.dom`
-  and `helpers.extras`.
+  `lib/src/types/`, `lib/src/kurkle_color/`, `core.defaults`, the helpers except `helpers.extras`,
+  and `platform.base`, `platform.basic` and `native_event` of `lib/src/platform/`. The canvas
+  interface `lib/src/canvas/canvas.dart` is pure, because `helpers.canvas` imports it.
 - Write the tests of pure layers with `package:test`, not `flutter_test`. These tests run on the
   VM (`test`) and in Chrome with dart2js and dart2wasm (`test:web`).
 - A test file that imports `flutter_test`, `dart:io`, `dart:ui` or other non-pure code needs
   `@TestOn('vm')` after its header line. `test:web` does not compile it. `check:lib-imports` fails
   on a test file without `@TestOn('vm')` that imports more than pure layers, `package:test` and
-  `package:chartjs_test_utils/pure.dart`.
-- The generators in `packages/flutter_chartjs/tool/reference/` write
-  `test/port/js/*_reference.dart`. They stop unless Node.js is an x64 build. Do not edit the
-  generated files by hand.
+  `package:chartjs_test_utils/pure.dart`. It does not examine the tests of `chartjs_test_utils`.
+  Keep the same rule there by hand.
+- `flutter test` runs `packages/flutter_chartjs/test/flutter_test_config.dart` around each test
+  file of `flutter_chartjs`. It sets the test view to DPR 1 and 800 x 600 before each test, also
+  after a test calls `tester.view.reset()`. It restores `defaults`, `overrides` and `descriptors`
+  after each test (`setUpDefaultsRestore()`, the row `harness-defaults-restore`). Thus a test that
+  changes them does not change the next test.
+- It also installs the test font (Chart.js ADR 0015, the row `harness-test-font`): Liberation Sans
+  under `Helvetica Neue`, `Helvetica`, `Arial`, `Liberation Sans` and `sans-serif`. A text style
+  with another family, or with no family, measures with the square FlutterTest font. A test file
+  of `chartjs_test_utils` that measures text calls `installTestFont()` itself.
+- The Node.js generators in `packages/flutter_chartjs/tool/reference/` write
+  `test/port/js/*_reference.dart` and `test/port/helpers/draw_point_reference.dart`. They stop
+  unless Node.js is an x64 build. `tool/reference/text_metrics/` writes
+  `test/port/canvas/text_metrics_reference.dart` from headless Chrome. The x64 rule does not apply
+  to it. Do not edit the generated files by hand.
 
 ## Licensing
 
@@ -208,6 +240,10 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   license text as a separate component of the package LICENSE, along with its `NOTICE` content,
   and add `LICENSES/Apache-2.0.txt`. For another license, add its notice as a separate component
   of the package LICENSE. Also add `LICENSES/<SPDX-ID>.txt`. The fdlibm ports did this for SunPro.
+  The test font did this for SIL OFL 1.1: the OFL notice is a separate component of
+  `packages/chartjs_test_utils/LICENSE`, `LICENSES/OFL-1.1.txt` has the license text, and the last
+  table of `REUSE.toml` annotates `packages/chartjs_test_utils/lib/fonts/**`. The font files and
+  their `LICENSE` stay unchanged.
 - Never copy code from GPL or otherwise incompatible projects, even for "small" helpers.
   `flutter_web_chartjs` is GPL-3.0; current WebF is GPL-3.0 with an enterprise exception. Ideas
   only. See `packages/flutter_chartjs/doc/prior-art/`.
