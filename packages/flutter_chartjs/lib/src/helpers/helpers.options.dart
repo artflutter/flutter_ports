@@ -129,6 +129,14 @@ final class _TRBLObject implements ChartArea {
       bottom = props['bottom']!,
       left = props['left']!;
 
+  /// The object for a [value] that is not an object: the same number for
+  /// each key (see [toTRBL]).
+  _TRBLObject.all(double value)
+    : top = value,
+      right = value,
+      bottom = value,
+      left = value;
+
   @override
   final double top;
 
@@ -160,6 +168,11 @@ final class _TRBLObject implements ChartArea {
 /// [value] is a `number | TRBL | Point` upstream: an option value here (see
 /// the library documentation of `lib/src/types/geometric.dart`).
 TRBL toTRBL(Object? value) {
+  // Port-only fast path. For a value that is not an object, each key gets
+  // the same number (helpers.options.ts:55-63), so the object needs no Map
+  // of the keys. The bar element calls this function for each bar in each
+  // frame (performance.md section 8).
+  if (!isObject(value)) return _TRBLObject.all(_numberOrZero(value));
   return _TRBLObject(
     readValueToProps(value, const <String, Object?>{
       'top': 'y',
@@ -179,6 +192,14 @@ final class _TRBLCornersObject implements TRBLCorners {
       topRight = props['topRight']!,
       bottomLeft = props['bottomLeft']!,
       bottomRight = props['bottomRight']!;
+
+  /// The object for a [value] that is not an object: the same number for
+  /// each corner (see [toTRBLCorners]).
+  _TRBLCornersObject.all(double value)
+    : topLeft = value,
+      topRight = value,
+      bottomLeft = value,
+      bottomRight = value;
 
   @override
   final double topLeft;
@@ -205,6 +226,10 @@ final class _TRBLCornersObject implements TRBLCorners {
 ///
 /// [value] is a `number | TRBLCorners` upstream: an option value here.
 TRBLCorners toTRBLCorners(Object? value) {
+  // Port-only fast path, as in [toTRBL]: a value that is not an object gives
+  // the same number for each corner (helpers.options.ts:55-63). The bar and
+  // arc elements call this function in each draw.
+  if (!isObject(value)) return _TRBLCornersObject.all(_numberOrZero(value));
   return _TRBLCornersObject(
     readValueToProps(value, const [
       'topLeft',

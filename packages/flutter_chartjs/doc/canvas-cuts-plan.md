@@ -722,8 +722,15 @@ entry takes `--dart-define=MODE=<primitives|elements|bars|arcs>`, and the defaul
 - `POINT_STYLE` is still absent.
 - `apps/chartjs_gallery/test/stress_elements_test.dart` tests the modes, their N choices and
   their controls. A change of the stress controls can need a change of that test.
-- `performance.md` §1 and §6 describe only the `primitives` scene and do not name `MODE`. Each
-  `STRESS {json}` line of the stress entry now starts with the key `mode`.
+- `performance.md` §1 and §6 describe the modes and `MODE`. Each `STRESS {json}` line of the stress
+  entry starts with the key `mode`.
+- `performance.md` §8.1 has the first figures of the four modes on the three platforms. They are
+  not the baseline of §6.3, because each mode ran in one process, not in 3 fresh processes for
+  each scenario. They show the scale of the arc cost before A3: at 1000 arcs, about 13.5 ms of
+  draw time on the Pixel 8a. §8.2 shows that the native `Path.arcTo` calls are most of that cost.
+- On macOS, a stress process with several scenarios stopped to give frames after about 28
+  seconds in the phase 4 runs (`performance.md` §6). Run one scenario in each process, as §6.3
+  asks.
 
 ### 5.1 Merge order
 

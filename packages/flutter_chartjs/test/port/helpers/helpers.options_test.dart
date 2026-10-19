@@ -34,6 +34,31 @@ Map<String, double> _trbl(TRBL o) => {
   'left': o.left,
 };
 
+/// Option values that are not objects, for the fast paths of `toTRBL` and
+/// `toTRBLCorners`: numbers, strings, booleans, lists, `null` and
+/// `undefined`.
+const List<Object?> _notObjects = [
+  0.0,
+  -0.0,
+  4.0,
+  -2.5,
+  double.nan,
+  double.infinity,
+  double.negativeInfinity,
+  3,
+  '5',
+  ' 0x10 ',
+  '',
+  'x',
+  true,
+  false,
+  <Object?>[],
+  <Object?>[7.0],
+  <Object?>[1.0, 2.0],
+  null,
+  undefined,
+];
+
 /// Runs [body] and returns the lines that it prints (`console.warn`).
 List<String> _warnings(void Function() body) {
   final lines = <String>[];
@@ -148,9 +173,43 @@ void main() {
     test('gives 0 for -0', () {
       expect(toTRBL(-0.0).top, _isNumber(0));
     });
+    test('the fast path gives the result of _readValueToProps', () {
+      for (final value in _notObjects) {
+        final props = readValueToProps(value, const <String, Object?>{
+          'top': 'y',
+          'right': 'x',
+          'bottom': 'y',
+          'left': 'x',
+        });
+        final o = _trbl(toTRBL(value));
+        for (final key in props.keys) {
+          expect(o[key], _isNumber(props[key]!), reason: '$value $key');
+        }
+      }
+    });
   });
 
   group('toTRBLCorners', () {
+    test('the fast path gives the result of _readValueToProps', () {
+      for (final value in _notObjects) {
+        final props = readValueToProps(value, const [
+          'topLeft',
+          'topRight',
+          'bottomLeft',
+          'bottomRight',
+        ]);
+        final o = toTRBLCorners(value);
+        final corners = {
+          'topLeft': o.topLeft,
+          'topRight': o.topRight,
+          'bottomLeft': o.bottomLeft,
+          'bottomRight': o.bottomRight,
+        };
+        for (final key in props.keys) {
+          expect(corners[key], _isNumber(props[key]!), reason: '$value $key');
+        }
+      }
+    });
     test('gives 0 for the missing corners', () {
       final o = toTRBLCorners(<String, Object?>{
         'topLeft': 2.0,

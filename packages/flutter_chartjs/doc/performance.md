@@ -2,7 +2,8 @@
 
 - Scope: the speed of the `dart:ui` canvas layer of phase 3
   ([Chart.js ADR 0013](adr/0013-canvas-model.md)) and of canvas text
-  ([Chart.js ADR 0015](adr/0015-text.md)).
+  ([Chart.js ADR 0015](adr/0015-text.md)). Section 8 adds the draw cost of the phase 4 elements
+  ([Chart.js ADR 0017](adr/0017-element-properties.md)).
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0007](adr/0007-frame-scheduling.md) (frame scheduling),
   [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) (no display-only JS exactness).
@@ -30,6 +31,19 @@ The readout shows these figures:
 - **raster**: the mean `FrameTiming.rasterDuration` of the last 120 frames.
 
 A scenario is N points and M labels, for example 5000 + 50.
+
+Phase 4 added a mode selector (`stress.mode.<mode>`). The scene above is the mode `primitives`,
+the default. The other modes draw the phase 4 elements through their `draw` methods:
+- `elements`: N `PointElement` objects and one `LineElement` through N point elements, with the
+  colors of `primitives`, plus the M labels. At the same N and M, this mode is comparable with
+  `primitives`. The line is marked as animated, so each draw builds a new `Path2D`.
+- `bars`: N `BarElement` objects in a grid, with `borderWidth` 1 and `borderRadius` 4, and heights
+  that move in each frame.
+- `arcs`: N `ArcElement` objects as doughnuts of 2 rings of 5 slices, with `borderWidth` 2,
+  `spacing` 2 and `borderRadius` 4, and angles that move in each frame.
+
+In each frame, the demo writes the moving properties of the elements with their typed setters.
+The draw time includes these writes.
 
 ## 2. Results on macOS
 
@@ -381,6 +395,12 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   scenario. For one scenario in a fresh process:
   `flutter run --profile -t lib/main_stress.dart --dart-define=SCENARIO=5000x50`.
   `--dart-define=SECONDS=<n>` changes the time of each scenario.
+  `--dart-define=MODE=<primitives|elements|bars|arcs>` selects the mode (section 1). Without
+  `SCENARIO`, the modes `primitives` and `elements` run the six scenarios of section 2, `bars`
+  runs 1000, 5000 and 20000 bars, and `arcs` runs 100, 1000 and 5000 arcs. Each `STRESS` line
+  starts with the key `mode`.
+- On macOS, run one scenario in each process. In the phase 4 runs, a process that ran several
+  scenarios stopped to give frames after about 28 seconds (section 8.1).
 - Take the figures from the first seconds of a fresh process (section 2.5).
 - **Baselines.** Section 4.5 describes the plain Flutter and the Chrome canvas baselines.
 
@@ -391,10 +411,143 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   section 6.3).
 - The 2 degree text rotation snap (section 5.5) stays until the toolchain pin is a stable release
   with the upstream fixes. Then remove it, and run the crash case of section 5.5 again.
-- macOS and Chrome: the figures with the circle batch are still to measure. Sections 2 and 3 have
-  the figures before the batch.
+- macOS and Chrome: section 8.1 has the figures of the `primitives` mode with the circle batch.
+  They are not the baseline of the plan: they come from one process for each mode, not from 3
+  fresh processes for each scenario.
+- dart2wasm: the option reads of the elements are Map lookups with `String` keys. They take about
+  26 % of the main thread at 20000 points (section 8.2). Phase 5 decides how the resolved options
+  of an element are kept (Chart.js ADR 0006).
+- Bars with a border and a radius, and arcs: the native path calls (`Path.arcTo`), the `clip` of
+  each bar and the anti-aliased paths cost the most (section 8.2). The arc code of the canvas layer
+  is part of cut 1 of [canvas-cuts-plan.md](canvas-cuts-plan.md).
+- macOS: the cause of the stop after about 28 seconds in a process with several scenarios
+  (section 6) is not known.
 - The circle batch with bilinear sampling on the phone: section 4.2 was measured with nearest
   sampling.
 - The draw time at 1000 points on the phone (section 4.3): the cause of the 4.5 ms that is not
   the points is not measured.
 - iOS: not measured.
+
+## 8. Elements (phase 4)
+
+### 8.1 Results
+
+Each mode ran in one profile build, with the scenarios of section 6, 7 seconds each. The cells
+give FPS / draw (ms) / raster (ms). A dash means that the scenario gave fewer than 31 frames in
+7 seconds, so it has no figure. The bars rows come from the code after the change of section
+8.3. The other modes do not call the changed code.
+
+**Pixel 8a** (Android 17, Impeller on Vulkan, 60 Hz, one process for each mode):
+
+| Scenario | `primitives` | `elements` |
+|---|---|---|
+| 1000 + 0 | 58.7 / 5.0 / 4.7 | 58.2 / 5.5 / 4.8 |
+| 1000 + 50 | 58.7 / 5.3 / 5.6 | 58.6 / 5.9 / 5.7 |
+| 5000 + 50 | 58.7 / 7.4 / 6.3 | 56.2 / 9.1 / 6.8 |
+| 20000 + 0 | 57.7 / 10.6 / 10.2 | 33.7 / 17.9 / 10.9 |
+| 1000 + 200 | 57.8 / 6.8 / 7.5 | 58.0 / 7.8 / 7.5 |
+| 20000 + 200 | 55.5 / 11.4 / 11.6 | 31.1 / 20.1 / 12.5 |
+
+| N | `bars` | `arcs` |
+|---|---|---|
+| 100 | | 58.0 / 5.6 / 7.5 |
+| 1000 | 34.0 / 14.6 / 21.2 | 39.8 / 13.5 / 18.4 |
+| 5000 | 13.1 / 57.3 / 64.4 | 12.9 / 53.8 / 66.6 |
+| 20000 | — | |
+
+**macOS** (Apple M3 Max). The `primitives`, `elements` and `arcs` rows come from one process for
+each mode, except the two rows with 200 labels. Those rows and the `bars` rows come from one fresh
+process for each scenario (section 6).
+
+| Scenario | `primitives` | `elements` |
+|---|---|---|
+| 1000 + 0 | 60 / 0.5 / 2.4 | 60 / 0.8 / 2.3 |
+| 1000 + 50 | 60 / 0.6 / 2.0 | 60 / 0.9 / 2.0 |
+| 5000 + 50 | 60 / 1.3 / 7.4 | 60 / 2.5 / 5.0 |
+| 20000 + 0 | 60 / 4.3 / 14.5 | 60 / 8.5 / 3.9 |
+| 1000 + 200 | 60 / 0.7 / 2.1 | 60 / 1.0 / 2.2 |
+| 20000 + 200 | 60 / 4.5 / 16.3 | 60 / 8.8 / 8.1 |
+
+| N | `bars` | `arcs` |
+|---|---|---|
+| 100 | | 60 / 0.7 / 1.1 |
+| 1000 | 60 / 3.2 / 6.9 | 60 / 4.2 / 6.3 |
+| 5000 | 36.3 / 15.0 / 26.1 | 30.0 / 19.5 / 30.2 |
+| 20000 | 10.3 / 59.8 / 98.8 | |
+
+**Chrome** (Chrome 155 in a visible window, dart2wasm profile build, skwasm, one page for each
+mode). The raster time is on the skwasm worker.
+
+| Scenario | `primitives` | `elements` |
+|---|---|---|
+| 1000 + 0 | 60 / 1.3 / 6.0 | 60 / 2.5 / 6.3 |
+| 1000 + 50 | 60 / 1.5 / 5.7 | 60 / 2.7 / 5.8 |
+| 5000 + 50 | 60 / 4.9 / 23.8 | 60 / 10.1 / 24.1 |
+| 20000 + 0 | 54.7 / 17.2 / 36.4 | 25.4 / 38.0 / 39.1 |
+| 1000 + 200 | 60 / 2.1 / 6.3 | 60 / 3.3 / 6.6 |
+| 20000 + 200 | 51.5 / 18.3 / 37.0 | 25.8 / 37.4 / 38.3 |
+
+| N | `bars` | `arcs` |
+|---|---|---|
+| 100 | | 60 / 2.4 / 4.3 |
+| 1000 | 59.9 / 15.1 / 38.3 | 47.5 / 20.1 / 40.8 |
+| 5000 | 12.5 / 74.4 / 158.1 | 9.8 / 99.3 / 193.4 |
+| 20000 | — | |
+
+- Up to 5000 points, the `elements` mode keeps 56 to 60 FPS on the three platforms. At 20000
+  points, the elements add about 0.37 microseconds for each point on the phone, 0.21 on macOS and
+  1.0 in Chrome.
+- On macOS, the `elements` mode has a lower raster time than `primitives` at 20000 points. The
+  line takes the fast path of `element.line.js` (`fastPathSegment`), which joins the points of one
+  x pixel. Thus its path has fewer segments than the polyline of `primitives`.
+- Bars with a border and a radius cost about 15 microseconds each on the phone. Arcs with a
+  border, a spacing and a radius cost about 13.5. The default Chart.js bar has no border and no
+  radius. It takes the rectangle path of the canvas layer and does not clip.
+
+### 8.2 CPU profiles
+
+The profiles come from the Dart VM service on macOS (`bars` at 5000, `arcs` at 5000, `elements`
+at 20000) and from a Chrome trace of `elements` at 20000. The percentages are shares of the
+samples of the thread that draws.
+- **`bars`.** `BarElement.draw` took 75.5 %. Of that, `fill` took 20.2 %, `arc` 16.4 % and `clip`
+  13.9 %. These are the canvas layer and the native path calls of the rounded corners.
+  `_boundingRects` took 15.7 %. Most of it was `toTRBL` and `toTRBLCorners`, which built a list of
+  keys, a closure and a Map for each bar (section 8.3).
+- **`arcs`.** The native `Path.arcTo` took 35.4 %, and `UiPathBuilder.arc` 45.3 % in total. With a
+  `borderRadius`, `pathArc` adds about 6 arcs, and upstream builds the path twice: once for the
+  fill and once for the border. `UiPathBuilder._nativeArc` makes one native call for each arc of
+  up to 180 degrees. Thus the cost is the native path API.
+- **`elements`, macOS.** The Map lookups of the options (the lookup, the hash code and the string
+  compare) took about 18 %. `PointElement.draw` took 55.3 %, `PointElement.size` 9.7 % and
+  `drawPointLegend` 29 %. A point reads about 11 option values in each draw, as upstream does.
+- **`elements`, dart2wasm.** On the main thread, the Map lookups with `String` keys took 25.7 %,
+  the calls from Wasm to JavaScript and the timeline marks of the profile build 19.4 %, the canvas
+  layer 14.6 %, the demo code 9.4 % and the element code 7.9 %.
+- **Boxed fields.** The `double?` fields of Chart.js ADR 0017 box a `double` at each write. A
+  scratch AOT benchmark on macOS gave about 2 ns more for each write than a non-nullable field.
+  At 20000 points with 4 writes for each point, this is less than 1 ms on the phone. Thus the
+  fields stay as they are.
+
+A cache of the option values for each options Map is not safe. Chart.js animations write into an
+options object that is not shared (`core.animations.js`, `resolveTargetOptions`). A Dart Map can
+also change in place.
+
+### 8.3 Change: the number path of `toTRBL` and `toTRBLCorners`
+
+For a value that is not an object, `_readValueToProps` gives the same number for each key
+(`helpers.options.ts:55-63`). `toTRBL` and `toTRBLCorners` now build their object from that
+number directly, without the Map. A test of `test/port/helpers/helpers.options_test.dart`
+compares the two paths for 19 values that are not objects.
+
+`bars` on macOS, one fresh process for each scenario, FPS / draw (ms) / raster (ms):
+
+| N | Before | After |
+|---|---|---|
+| 1000 | 60 / 3.6 / 6.9 | 60 / 3.2 / 6.9 |
+| 5000 | 36.1 / 17.2 / 26.2 | 36.3 / 15.0 / 26.1 |
+| 20000 | 10.3 / 67.7 / 101.1 | 10.3 / 59.8 / 98.8 |
+
+On macOS, the draw time is about 12 % lower. On the phone, the draw time went from 15.6 to 14.6
+ms at 1000 bars and from 59.2 to 57.3 ms at 5000 bars. The raster time does not change, because
+it comes from the clip and the paths.
+
