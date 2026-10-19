@@ -63,6 +63,15 @@ final class _Canvas implements HTMLCanvasElement {
   @override
   CanvasRenderingContext2D? getContext(String contextId) =>
       throw UnimplementedError();
+
+  @override
+  String? getAttribute(String name) => throw UnimplementedError();
+
+  @override
+  void setAttribute(String name, String value) => throw UnimplementedError();
+
+  @override
+  void removeAttribute(String name) => throw UnimplementedError();
 }
 
 /// A [MockContext] with a canvas. `clipSelf` reads `ctx.canvas.width` and

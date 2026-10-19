@@ -84,11 +84,12 @@ items open: the first size, unbounded constraints, a chart larger than its box, 
 - `isRepaintBoundary` is true. `paint` calls `UiCanvasContext.paint`, also for an empty context,
   because `paint` arms `onChanged` again.
 - The host reads the DPR with `MediaQuery.maybeDevicePixelRatioOf` and the ticker state with
-  `TickerMode.valuesOf` in `createRenderObject` and `updateRenderObject`. It sets
-  `UiCanvasElement.devicePixelRatio`. It calls `onTickerModeChanged` when the ticker state
-  changes.
+  `TickerMode.valuesOf` in `createRenderObject` and `updateRenderObject`. A DPR change paints the
+  host again, because the paint scale reads the DPR (section 5). It calls `onTickerModeChanged`
+  when the ticker state changes.
 - `computeDryLayout` and the intrinsic sizes give the current display size of the canvas,
-  constrained. They cannot predict a resize for other constraints, because a resize has side
+  constrained. The display size is the two px styles that `retinaScale` writes, else the render
+  size (section 5). They cannot predict a resize for other constraints, because a resize has side
   effects.
 - The window `resize` listener and its global map (`platform.dom.js:161-189`) have no port. The
   host reports a DPR change to its resize observers. The scrollbar step (`:198-209`) has no port.
@@ -142,18 +143,28 @@ no blank first frame.
     other side.
   - One unbounded side and no aspect ratio: that side takes the canvas default, 300 wide or 150
     high.
-- The host size is `constraints.constrain(displaySize)`. The display size follows the rules of a
-  CSS replaced element. It comes from the `width` and `height` styles of the canvas, as
-  `retinaScale` writes them, else from the render size. With one style only, it keeps the aspect
-  ratio.
+- The host size is `constraints.constrain(displaySize)`. The display size is the `width` and
+  `height` styles of the canvas when both are px values. `retinaScale` writes them. Else the
+  display size is the render size. The CSS rule for one style keeps the aspect ratio of the render
+  size. The host does not apply this rule. The harness matcher `toBeChartOfSize` of phase 5
+  applies it.
 - A chart larger than its box: paint clips to the host box.
-- A bitmap whose size over the canvas DPR differs from the display size stretches to the display
-  size, as the DOM does. Examples are an `options.devicePixelRatio` that differs from the view DPR,
-  and a chart that is not responsive and has styles that differ from its attributes.
-- `initCanvas`: a Flutter canvas has no attributes. Thus `getAttribute` is always `null`, and the
-  render size comes from the `width` and `height` styles or from the aspect ratio.
-  `releaseContext` then restores 300 x 150, the DOM effect of `removeAttribute`, and the first
-  `display`, `height` and `width` styles.
+- Paint maps the bitmap to the display size with one scale for each axis: the display size
+  divided by the bitmap size. When both scales are within 1e-3 of `1 / DPR`, the scale is exactly
+  `1 / DPR`. Thus the bitmap pixels stay on the device pixels at a fractional `round1` size. A
+  bitmap side of 0 gives a scale of 1.
+- The stretch stays, because the DOM shows the bitmap at the display size. Without it, a chart
+  with `options.devicePixelRatio: 1` on a DPR 3 view paints at one third of its box. Then the
+  pointer positions do not agree with the drawn elements. The hit element also changes. A chart
+  that is not responsive also needs the stretch when its styles differ from its attributes.
+- The canvas has the `width` and `height` attributes of the DOM
+  ([Chart.js ADR 0013](0013-canvas-model.md), section 2). `initCanvas` reads them with
+  `getAttribute`, as `platform.dom.js:45-46` does. When an attribute is absent, the render size
+  comes from the `width` and `height` styles or from the aspect ratio. `releaseContext` restores
+  each attribute with `setAttribute`, or removes it with `removeAttribute`
+  (`platform.dom.js:300-307`). It also restores the first `display`, `height` and `width` styles.
+  Thus the default spec canvas of `acquireChart`, with the attributes 512 x 512, keeps the render
+  size 512 x 512.
 - `getDevicePixelRatio` reads the DPR of the host that shows the canvas of the last
   `acquireContext` call. Without a host, it reads `PlatformDispatcher.implicitView`, else 1.
 
@@ -274,6 +285,17 @@ stand-ins for `lib.dom.d.ts`. This departs from the letter of
 - **A pan or drag recognizer for move events.** Rejected. It takes drags from parent
   scrollables, as fl_chart #202 shows.
 - **A `DoubleTapGestureRecognizer` for `dblclick`.** Rejected for now. It delays each single tap.
+- **No attributes, no style reads in `initCanvas` and no style restore** (option B of
+  [canvas-cuts-plan.md](../canvas-cuts-plan.md) §3.3). Rejected. Upstream gives 300 x 300 for a
+  doughnut, pie, polar area or radar chart that is not responsive, on a canvas without a height.
+  The port then gives 300 x 150. This needs a `DIVERGES` row. About 11 phase 5 spec cases then
+  skip as `diverges:`. `options.devicePixelRatio` also needs a new mechanism.
+- **Paint at `1 / DPR` only, with no stretch.** Rejected. A chart with an
+  `options.devicePixelRatio` that differs from the view DPR then paints at the wrong size. The hit
+  element then changes (section 5).
+- **The host size from `AspectRatio` or `SizedBox` in place of `getMaximumSize`.** Rejected. It is
+  a second source of the size. It caps the attach resize by the container height. It has no
+  `round1`. `onResize` and the `resize` plugin hook need `_resize` of `core.controller`.
 
 ## Consequences
 
@@ -296,10 +318,11 @@ stand-ins for `lib.dom.d.ts`. This departs from the letter of
 
 ## Evidence
 
-- `test/port/platform/chart_host_test.dart` (32 tests, 31 of them `testWidgets`) covers the first
+- `test/port/platform/chart_host_test.dart` (41 tests, 40 of them `testWidgets`) covers the first
   size with a chart started before and after the first layout, the throttled resize (one in each frame), a DPR
   change (`tester.view.devicePixelRatio = 2`), content drawn before the host at the display size,
-  the clip, the first `ResizeObserver` notification, the unbounded-constraints rule, the dry
+  the clip, the first `ResizeObserver` notification, the display size and the paint scale of
+  section 5, the unbounded-constraints rule, the dry
   layout and intrinsic sizes, `TickerMode`, attach and detach (a `GlobalKey` move gives no
   change, an unmount gives a detach after the frame, a re-attach), mouse hover, enter, exit and
   click, two-finger touches with the sorted `touches` list and the NaN `touchend`, wheel, the click
@@ -318,7 +341,22 @@ stand-ins for `lib.dom.d.ts`. This departs from the letter of
   gives no mouseup' and 'an inverted stylus hover gives mouseover and mouseout'.
 - The event position at a fractional width: `helpers.dom_test.dart` 'a fractional device width
   can differ from upstream by 1 px'.
-- `test/port/platform/platform.flutter_test.dart` (18 tests), `index_test.dart` (3),
+- The display size and the paint scale of section 5: the group 'display size and bitmap stretch'
+  of `chart_host_test.dart` (8 tests). 'a chart at devicePixelRatio 1 on a view at 2 fills its
+  display size' and 'a chart at devicePixelRatio 3 on a view at 1 fills its display size' probe
+  the pixels. 'a pointer at the center of a stretched chart gives the center of the chart' pins
+  the event position. 'a factor within 1e-3 paints at exactly 1 / devicePixelRatio' reads the
+  `Canvas.scale` calls of the paint. 'a non-responsive chart shows its bitmap at the size of its
+  styles' uses the attributes 165 x 85 and the styles 345 x 125. 'one style alone shows the render
+  size' pins the host rule for one style. 'a non-responsive chart on canvas attributes at
+  devicePixelRatio 3 keeps its display size' is the case of `core.controller.tests.js:1397`.
+  'releaseContext gives the host the default 300 x 150' pins the size after the release.
+- The attributes: `platform.flutter_test.dart` 'keeps the render size of the attributes' (512 x
+  512, and the attributes 165 x 85 with the styles 345 x 125), 'applies the aspect ratio to a
+  width attribute alone' and 'releaseContext restores the initial attributes' (the case of
+  `platform.dom.tests.js:331`). The group 'attributes' of `canvas_ui_test.dart` pins the element
+  ([Chart.js ADR 0013](0013-canvas-model.md), section 2).
+- `test/port/platform/platform.flutter_test.dart` (21 tests), `index_test.dart` (3),
   `platform.base_test.dart` (11), `platform.basic_test.dart` (5) and `native_event_test.dart` (2)
   cover the rest of the platform. `FakeChart` (`test/port/platform/fake_chart.dart`) makes the
   platform calls of `core.controller.js` until phase 5 ports it.

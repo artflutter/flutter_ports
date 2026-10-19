@@ -119,6 +119,28 @@ void main() {
       initCanvas(canvas);
       expect(canvas.style.getPropertyValue('display'), 'inline');
     });
+
+    test('keeps the render size of the attributes', () {
+      // The default canvas of acquireChart (chartjs-test-utils utils.js:43).
+      final canvas = UiCanvasElement(width: 512, height: 512);
+      initCanvas(canvas);
+      expect((canvas.width, canvas.height), (512, 512));
+
+      // Attributes 165 x 85 and styles 345 x 125 (platform.dom.tests.js:235).
+      final styled = UiCanvasElement(width: 165, height: 85);
+      styled.style
+        ..setProperty('width', '345px')
+        ..setProperty('height', '125px');
+      initCanvas(styled);
+      expect((styled.width, styled.height), (165, 85));
+    });
+
+    test('applies the aspect ratio to a width attribute alone', () {
+      final canvas = UiCanvasElement(width: 400);
+      initCanvas(canvas, 1);
+      expect((canvas.width, canvas.height), (400, 400));
+      expect(canvas.getAttribute('height'), '400');
+    });
   });
 
   group('FlutterPlatform', () {
@@ -160,6 +182,30 @@ void main() {
       // The context is back at its default state.
       expect(context.fillStyle, '#000000');
       expect(platform.releaseContext(context), isFalse);
+    });
+
+    test('releaseContext restores the initial attributes', () {
+      // platform.dom.tests.js:331 "should restore canvas initial values".
+      final canvas = UiCanvasElement(width: 180);
+      canvas.style
+        ..setProperty('width', '512px')
+        ..setProperty('height', '480px');
+      final platform = FlutterPlatform();
+      final context = platform.acquireContext(canvas)!;
+      expect((canvas.width, canvas.height), (180, 480));
+      // The resize of retinaScale writes both sizes.
+      canvas
+        ..width = 475
+        ..height = 450;
+      expect(canvas.getAttribute('height'), '450');
+
+      expect(platform.releaseContext(context), isTrue);
+      expect(canvas.getAttribute('width'), '180');
+      expect(canvas.getAttribute('height'), isNull);
+      expect((canvas.width, canvas.height), (180, 150));
+      expect(canvas.style.getPropertyValue('width'), '512px');
+      expect(canvas.style.getPropertyValue('height'), '480px');
+      expect(canvas.style.getPropertyValue('display'), '');
     });
 
     testWidgets('addEventListener keeps one proxy for each type', (

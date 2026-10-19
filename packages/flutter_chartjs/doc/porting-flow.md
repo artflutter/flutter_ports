@@ -136,6 +136,9 @@ proposed file of Chart.js ADR 0017 (2026-10-19). Phase 4 also wrote the gate 4 d
 the proposed file of Chart.js ADR 0018 (2026-10-19): the typed element options, for the option
 reads that [performance.md](performance.md) §8.2 measured (§1.1). The subsections of the gate 3
 and gate 4 decisions keep a summary and the link.
+Phase 5 wrote the gate 5 decisions as the proposed files of Chart.js ADRs 0019-0022 (2026-10-19).
+A design panel of three drafts, a judge and a synthesis wrote each of them. Their subsections are
+2.9, 2.16, 2.17 and 2.18.
 The other subsections stay proposals in this document until their ADR files exist.
 
 | Subsection | ADR | Gate |
@@ -154,6 +157,10 @@ The other subsections stay proposals in this document until their ADR files exis
 | 2.9, `helpers.extras` and the animator frame source | [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (proposed), which supersedes Chart.js ADR 0007 on acceptance | 2 |
 | 2.14 | [Chart.js ADR 0017: Element properties](adr/0017-element-properties.md) (proposed) | 4 |
 | 2.15 | [Chart.js ADR 0018: Typed element options](adr/0018-typed-element-options.md) (proposed) | 4 |
+| 2.9 | [Chart.js ADR 0019: Animation](adr/0019-animation.md) (proposed) | 5 |
+| 2.16 | [Chart.js ADR 0020: Registry and component classes](adr/0020-registry-and-component-classes.md) (proposed) | 5 |
+| 2.17 | [Chart.js ADR 0021: Typed options in the resolver](adr/0021-typed-options-in-the-resolver.md) (proposed) | 5 |
+| 2.18 | [Chart.js ADR 0022: Chart test harness on Flutter](adr/0022-chart-test-harness.md) (proposed) | 5 |
 
 ADR 0006 (gate 1) belongs to [upstream-tracking.md](upstream-tracking.md).
 
@@ -180,8 +187,9 @@ short:
   parts. No helper imports it. The harness has `MockContext`.
 - `UiCanvasContext` keeps a retained bitmap as a list of pictures. A full `clearRect` drops the
   list. A partial clear paints inside a layer. More than 8 pictures flatten into one image.
-- The pictures are in bitmap (device-pixel) space. `paint` applies `scale(1 / devicePixelRatio)`.
-  `retinaScale` stays a line-by-line port. This replaces the base scale of the first proposal.
+- The pictures are in bitmap (device-pixel) space. `paint` maps the bitmap pixels with the scale
+  of the host. `retinaScale` stays a line-by-line port. This replaces the base scale of the first
+  proposal.
 - The layer keeps only the Canvas 2D semantics that change behavior, with no Chromium-exact arc
   math ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)).
 
@@ -259,6 +267,10 @@ evidence and the items that stay open. In short:
   only one `TapGestureRecognizer`, for `click`. Parent scrollables keep their drags.
 - `getRelativePosition` keeps `Math.round` and drops the CSS math and the DPR factor (row
   `platform-relative-position`).
+- The canvas has the `width` and `height` attributes of the DOM. `initCanvas` and
+  `releaseContext` read and restore them line by line. Thus the default spec canvas of
+  `acquireChart` is 512 x 512. Paint maps the bitmap to the display size with one scale for each
+  axis.
 
 ### 2.8 Chart.js ADR 0015: Text (gate 3)
 
@@ -289,15 +301,20 @@ layout of the chart host reports the attach at once, inside `performLayout`
 the detach of the old canvas at once, during the build. Chart.js ADR 0016 keeps the other eleven
 decisions. On acceptance, it supersedes Chart.js ADR 0007.
 
-**Decision.** None yet. [Chart.js ADR 0007](adr/0007-frame-scheduling.md) decisions 6 and 7
-already make the chart host of 2.7 destroy its chart in `dispose` and follow `TickerMode`. Tests use `tester.pump` with
-`animation: false`, as `acquireChart` does.
-
-**Evidence.** Thin. The ADR must cover `core.animator.tests.js` and the 400 ms hover transitions.
-
-**Open.** Chart animations under reduced motion, through `MediaQuery.maybeDisableAnimationsOf`. A
-theme switch uses the zero-duration `'themeFrame'` mode. Theme removal uses `'default'`. Thus it
-animates until this ADR decides ([theming.md](theming.md) §3.7, §11).
+[Chart.js ADR 0019: Animation](adr/0019-animation.md) (proposed, phase 5) holds the gate 5
+decision, its evidence and the items that stay open. In short:
+- `core.animation`, `core.animations` and `core.animator` are line-by-line ports on the
+  module-level animator of Chart.js ADR 0016, with `jsDateNow()` on `clock.now()`.
+- An animation reads and writes its target by name, and keeps the `undefined` state.
+- A promise checkpoint (`lib/src/js/js_promise.dart`) runs the promise jobs of an animator frame
+  callback at the end of that callback, as a browser does. Without it, a re-hover in the frame
+  that ends a 400 ms un-hover gives a wrong resolved option.
+- Four `adapt` and `platform` hunks make the frame cheaper: a typed animation config, a number
+  path on `double` values, a color cache for each animation, and the checkpoint.
+- Reduced motion has no code in the core. The phase 9 widget decides it. The theme modes need no
+  code.
+- The ADR expects 15 of the 16 cases of the three animation specs to pass. One case needs a bar
+  chart and skips as `'blocked: controller.bar'`.
 
 ### 2.10 ADR: Dates (gate 6)
 
@@ -452,6 +469,48 @@ and the items that stay open. In short:
 - Each element test that compares with reference data runs with plain Map options and with typed
   options.
 
+### 2.16 Chart.js ADR 0020: Registry and component classes (gate 5)
+
+[Chart.js ADR 0020](adr/0020-registry-and-component-classes.md) (proposed) holds the decision, its
+evidence and the items that stay open. It answers the two Open items of Chart.js ADR 0017. In
+short:
+- The port-only, pure `JsClass` of `lib/src/js/js_class.dart` stands for a JS class value: its
+  name, its superclass and its static members, with `jsConstruct`, `jsAssign` and
+  `jsObjectClass`. Each class that the registry takes gets `static final JsClass jsClass`.
+- `TypedRegistry` and `Registry` are line-by-line ports. `isForType` tests the superclass chain
+  of the class value. `Chart.register` takes one `List`, and the static `Chart.registry` stays.
+- A plugin is a Map or a class value. `_notify` reads each hook by name at each call.
+- `getRange` is in the port-only interface `VisualElementRange`.
+- Section 13 of the ADR reads the performance rule of §1.1 for a form that changes the upstream
+  structure: its gain must show in the frame figures, which have a resolution of 0.1 ms.
+
+### 2.17 Chart.js ADR 0021: Typed options in the resolver (gate 5)
+
+[Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) (proposed) holds the decision, its
+evidence and the items that stay open. It answers the two Open items of Chart.js ADR 0018. In
+short:
+- `createElementOptions` picks the typed class by the element type id. Another id gets
+  `GenericElementOptions`. `resolveNamedOptions` takes the new object as an optional argument.
+- The four `Object.assign` copies of options use `copyOptions`, which keeps the class.
+- `ElementOptions` implements `JsFreezable`. A write into frozen options throws a `TypeError`, as
+  JavaScript strict mode does. `jsObjectFreeze` and `jsObjectIsFrozen` stand for the builtins.
+- A gallery stress mode `chart` measures the element draw cost through the real chart path.
+
+### 2.18 Chart.js ADR 0022: Chart test harness on Flutter (gate 5)
+
+[Chart.js ADR 0022](adr/0022-chart-test-harness.md) (proposed) holds the decision, its evidence
+and the items that stay open. In short:
+- `acquireChart` is synchronous and works only inside a `testWidgets` body. A port-only DOM
+  stand-in and a forced layout attach the chart at its construction, as upstream does.
+- `resize` and `eventHandler` are function fields of `Chart`. Thus `waitForResize` and
+  `afterEvent` are line-by-line ports with the upstream timing.
+- `triggerMouseEvent` dispatches a `NativeEvent` to the canvas listeners and pumps frames.
+  `setTimeout` is a harness task on `clock.now()`.
+- `releaseCharts` runs when the test body unmounts. The harness registers the built-in components
+  before the snapshot of the defaults.
+- The ADR changes the chart host: the first resize notification comes at the next layout, and an
+  append or a removal reports the attach state in a microtask checkpoint.
+
 ## 3. Test harness
 
 **Package.** `packages/chartjs_test_utils` (`publish_to: none`) mirrors the npm package module by
@@ -465,8 +524,8 @@ outside the published archive. Port exactly 0.4.0 (`package.json:90`).
 | `src/context.js`, `src/index.js` | `MockContext implements CanvasRenderingContext2D`, `createMockContext` | 3, done |
 | `src/matchers.js`, `src/matchers.options.js` | matchers: `toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf`, `toEqualOptions` | 3, done |
 | — | test font (`installTestFont` of `flutter.dart`, [Chart.js ADR 0015](adr/0015-text.md)) | 3, done |
-| `src/matchers.js` | `toBeValidChart`, `toBeChartOfSize` | 5 |
-| `src/utils.js` | `acquireChart` (512×512, `animation: false`, `locale: 'en-US'`), `afterEvent`, `triggerMouseEvent`, `waitForResize` | 5 |
+| `src/matchers.js` | `toBeValidChart`, `toBeChartOfSize` (the display width and height from the display size of the host, with the CSS rule for one style) | 5 |
+| `src/utils.js` | `acquireChart` (512×512 as attributes, `UiCanvasElement(width: 512, height: 512)`, the `canvas.style` option as the inline style, a wrapper style as a `SizedBox`, `ConstrainedBox` or `Padding`, a default wrapper of the canvas display size, `animation: false`, `locale: 'en-US'`), `afterEvent`, `triggerMouseEvent`, `waitForResize` | 5 |
 | `src/fixture.js` | `specsFromFixtures` as a smoke runner (prefix match, plugin rule, `run` hook), no image comparison | 7 |
 | `src/spriting.js`; pixelmatch `index.js`; Canvas-call recordings | not ported (`n/a`): no image comparison ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)) | — |
 | `injectWrapperCSS`, `useShadowDOM`, `useOffscreenCanvas` | not ported (`n/a`) | — |
@@ -673,7 +732,7 @@ its triggers.
 
 | Plan | Revisit point | Triggers that bring it forward |
 |---|---|---|
-| [canvas-cuts-plan.md](canvas-cuts-plan.md): cuts of own code in the canvas layer and the chart host, the web matrix fix (work package W), and the removal of the circle batch and of the text rotation snap | After phase 8, before phase 9 | Phase 5 starts the `acquireChart` harness: the default spec canvas is 512 x 256 until cut 2 lands (plan §3.3). Ported code strokes or clips a path under a skew or a non-uniform scale on the web (plan §2.3). The toolchain pin moves to a stable Flutter release with the skwasm fixes (plan §4.2). Flutter batches `drawCircle` calls (plan §4.1). |
+| [canvas-cuts-plan.md](canvas-cuts-plan.md): cuts of own code in the canvas layer and the chart host, the web matrix fix (work package W), and the removal of the circle batch and of the text rotation snap | After phase 8, before phase 9 | Phase 5 starts the `acquireChart` harness: the default spec canvas is 512 x 256 until cut 2 lands (plan §3.3). This trigger occurred in phase 5: cut 2 landed ([Deferral](canvas-cuts-plan.md#deferral)). Ported code strokes or clips a path under a skew or a non-uniform scale on the web (plan §2.3). The toolchain pin moves to a stable Flutter release with the skwasm fixes (plan §4.2). Flutter batches `drawCircle` calls (plan §4.1). |
 
 Keep each deferred plan current while the phases go on:
 - A change that edits a file that a deferred plan cites updates the plan in the same commit: the

@@ -332,9 +332,11 @@ abstract interface class CSSStyleDeclaration {
 /// fractional value calls `toInt()` first.
 abstract interface class HTMLCanvasElement {
   /// `width`: the render width in device pixels. The DOM default is 300.
+  /// It reflects the `width` attribute: a write sets the attribute.
   abstract int width;
 
   /// `height`: the render height in device pixels. The DOM default is 150.
+  /// It reflects the `height` attribute: a write sets the attribute.
   abstract int height;
 
   /// `style`: the inline style of the canvas.
@@ -344,6 +346,20 @@ abstract interface class HTMLCanvasElement {
   /// a context type that the canvas does not support. `clearCanvas` calls
   /// `canvas.getContext('2d')` (helpers.canvas.ts:139).
   CanvasRenderingContext2D? getContext(String contextId);
+
+  /// `getAttribute(name)`: the value of the attribute [name], or `null` when
+  /// the canvas does not have it. `initCanvas` reads `width` and `height`
+  /// (platform.dom.js:45-46): a canvas without them has no attribute.
+  String? getAttribute(String name);
+
+  /// `setAttribute(name, value)`. A `width` or `height` attribute sets the
+  /// render size, parsed as a non-negative integer, else the default. As a
+  /// write of [width] or [height], it resets the context.
+  void setAttribute(String name, String value);
+
+  /// `removeAttribute(name)`. The removal of the `width` or `height`
+  /// attribute gives the default size (300 x 150) and resets the context.
+  void removeAttribute(String name);
 }
 
 /// lib.dom.d.ts `Node.parentNode` of a canvas element, as `helpers.dom`

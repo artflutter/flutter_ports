@@ -24,11 +24,13 @@
 ///
 /// The device pixel ratio (DPR): `RenderView` already scales the scene by
 /// the DPR. The pictures are in bitmap pixels, the space of the DOM
-/// bitmap, and [UiCanvasContext.paint] draws them with `scale(1 / DPR)`.
-/// `retinaScale` sets `setTransform(dpr, 0, 0, dpr, 0, 0)`, so the net
-/// transform is the identity in logical pixels. A DPR change does not
-/// touch the content: a bitmap drawn at one DPR shows at the same logical
-/// size until the chart redraws it.
+/// bitmap. The host gives [UiCanvasContext.paint] the scale from bitmap
+/// pixels to logical pixels: the display size over the bitmap size, which
+/// is `1 / DPR` after `retinaScale`. `retinaScale` also sets
+/// `setTransform(dpr, 0, 0, dpr, 0, 0)`, so the net transform is the
+/// identity in logical pixels. A DPR change does not touch the content: a
+/// bitmap drawn at one DPR shows at the same display size until the chart
+/// redraws it.
 ///
 /// The current path is in bitmap space: the transform applies when a point
 /// is added (`canvas_ui_path.dart`). Strokes scale the line width and the
@@ -126,43 +128,80 @@ final class UiCssStyleDeclaration implements CSSStyleDeclaration {
   }
 }
 
-/// The `dart:ui` [HTMLCanvasElement]: the bitmap size, the style and the
-/// one 2D context.
+/// The `dart:ui` [HTMLCanvasElement]: the bitmap size, the `width` and
+/// `height` attributes, the style and the one 2D context. Other attribute
+/// names give `null` and do nothing.
 ///
 /// It is a [CanvasNode]: the chart host that shows it sets [parentNode].
 final class UiCanvasElement implements HTMLCanvasElement, CanvasNode {
-  /// A canvas of [width] x [height] device pixels: the DOM default is
-  /// 300 x 150.
-  UiCanvasElement({int width = 300, int height = 150})
-    : _width = math.max(0, width),
-      _height = math.max(0, height);
+  /// A canvas with the `width` attribute [width] and the `height` attribute
+  /// [height], in device pixels. A `null` size has no attribute and the DOM
+  /// default: 300 wide, 150 high.
+  UiCanvasElement({int? width, int? height}) {
+    if (width != null) this.width = width;
+    if (height != null) this.height = height;
+  }
 
-  int _width;
-  int _height;
-  double _devicePixelRatio = 1;
+  int _width = 300;
+  int _height = 150;
+  String? _widthAttribute;
+  String? _heightAttribute;
   UiCanvasContext? _context;
 
-  /// Setting the width resets the context state and clears the bitmap,
-  /// even to the same value (the DOM rule).
+  /// Setting the width sets the `width` attribute, resets the context state
+  /// and clears the bitmap, even to the same value (the DOM rule).
   @override
   int get width => _width;
 
   @override
-  set width(int value) {
-    _width = math.max(0, value);
-    _context?._resetForResize();
-  }
+  set width(int value) => _setSize('width', '${math.max(0, value)}');
 
-  /// Setting the height resets the context state and clears the bitmap,
-  /// even to the same value (the DOM rule).
+  /// Setting the height sets the `height` attribute, resets the context
+  /// state and clears the bitmap, even to the same value (the DOM rule).
   @override
   int get height => _height;
 
   @override
-  set height(int value) {
-    _height = math.max(0, value);
+  set height(int value) => _setSize('height', '${math.max(0, value)}');
+
+  @override
+  String? getAttribute(String name) => switch (name.toLowerCase()) {
+    'width' => _widthAttribute,
+    'height' => _heightAttribute,
+    _ => null,
+  };
+
+  @override
+  void setAttribute(String name, String value) => _setSize(name, value);
+
+  @override
+  void removeAttribute(String name) {
+    if (getAttribute(name) != null) _setSize(name, null);
+  }
+
+  /// Sets the `width` or `height` attribute to [value], or removes it for
+  /// `null`, and resets the context. The size is [value] by the HTML rules
+  /// for parsing non-negative integers (leading ASCII whitespace, an
+  /// optional `+`, the digits up to the first other character, at most
+  /// 2147483647), else the default. The DOM also reads `-0` as 0.
+  void _setSize(String name, String? value) {
+    final digits = value == null ? null : _sizePattern.firstMatch(value)?[1];
+    var size = digits == null ? null : int.tryParse(digits);
+    if (size != null && size > 0x7FFFFFFF) size = null;
+    switch (name.toLowerCase()) {
+      case 'width':
+        _widthAttribute = value;
+        _width = size ?? 300;
+      case 'height':
+        _heightAttribute = value;
+        _height = size ?? 150;
+      default:
+        return;
+    }
     _context?._resetForResize();
   }
+
+  static final RegExp _sizePattern = RegExp(r'^[\t\n\f\r ]*\+?(\d+)');
 
   @override
   final CSSStyleDeclaration style = UiCssStyleDeclaration();
@@ -171,25 +210,6 @@ final class UiCanvasElement implements HTMLCanvasElement, CanvasNode {
   /// The host sets it when it attaches and clears it when it detaches.
   @override
   CanvasContainer? parentNode;
-
-  /// The device pixel ratio of the host: [UiCanvasContext.paint] draws
-  /// the bitmap with `scale(1 / devicePixelRatio)`, so one device pixel of
-  /// the bitmap is one device pixel of the view. A value that is not
-  /// finite and positive does nothing. The content stays in bitmap pixels,
-  /// as a DOM bitmap does, so a change only changes how it is shown: it
-  /// calls [UiCanvasContext.onChanged].
-  double get devicePixelRatio => _devicePixelRatio;
-
-  set devicePixelRatio(double value) {
-    if (!value.isFinite || value <= 0 || value == _devicePixelRatio) return;
-    _devicePixelRatio = value;
-    _context?._changed();
-  }
-
-  /// The size of the bitmap in logical pixels: [width] and [height] over
-  /// [devicePixelRatio].
-  ui.Size get logicalSize =>
-      ui.Size(_width / _devicePixelRatio, _height / _devicePixelRatio);
 
   /// `getContext('2d')`: the one context of this canvas.
   UiCanvasContext getContext2d() => _context ??= UiCanvasContext._(this);
@@ -413,20 +433,25 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
   ];
 
   /// Draws the content at [offset], in logical pixels, clipped to the
-  /// bitmap: the bitmap of `width` x `height` device pixels covers
-  /// [UiCanvasElement.logicalSize]. It ends the current recording.
-  void paint(ui.Canvas canvas, ui.Offset offset) {
+  /// bitmap. [scaleX] and [scaleY] map the bitmap pixels to logical pixels:
+  /// the host gives the display size over the bitmap size. It ends the
+  /// current recording.
+  void paint(
+    ui.Canvas canvas,
+    ui.Offset offset,
+    double scaleX,
+    double scaleY,
+  ) {
     _notified = false;
     if (_disposed) return;
     _endRecording();
     if (_pictures.length > _maxPictures) _flatten();
     if (_pictures.isEmpty) return;
     final bounds = _bitmapBounds;
-    final dpr = _element._devicePixelRatio;
     canvas
       ..save()
       ..translate(offset.dx, offset.dy);
-    if (dpr != 1) canvas.scale(1 / dpr);
+    if (scaleX != 1 || scaleY != 1) canvas.scale(scaleX, scaleY);
     canvas.clipRect(bounds);
     if (_needsLayer) canvas.saveLayer(bounds, _layerPaint);
     _pictures.forEach(canvas.drawPicture);

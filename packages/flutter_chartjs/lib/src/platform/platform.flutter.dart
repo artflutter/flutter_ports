@@ -33,6 +33,8 @@ library;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
+import 'package:flutter_chartjs/src/helpers/helpers.core.dart'
+    show isNullOrUndef;
 import 'package:flutter_chartjs/src/helpers/helpers.dom.dart'
     show getParentNode, getRelativePosition, readUsedSize;
 // The method FlutterPlatform.getMaximumSize has the name of the helper.
@@ -79,6 +81,9 @@ final class _Initial {
   /// platform.dom.js:54-58 `style`: `display`, `height` and `width`, in this
   /// key order.
   final Map<String, String> style;
+
+  /// platform.dom.js:301 `initial[prop]`, for `'height'` and `'width'`.
+  String? operator [](String prop) => prop == 'height' ? height : width;
 }
 
 /// platform.dom.js:21 `EVENT_TYPES`.
@@ -108,19 +113,17 @@ bool _isNullOrEmpty(String? value) => value == null || value == '';
 /// method. The config is used to determine the aspect ratio to apply in case
 /// no explicit height has been specified.
 ///
-/// A Flutter canvas has no attributes: `getAttribute('width')` and
-/// `getAttribute('height')` are always `null`, as for a DOM canvas without
-/// them. Thus the render width comes from the `width` style when it is set,
-/// and the render height from the `height` style or from the aspect ratio.
 /// The `display` and `box-sizing` styles have no effect in Flutter. The port
 /// still sets them, so that [FlutterPlatform.releaseContext] restores the
 /// same values.
 HTMLCanvasElement initCanvas(HTMLCanvasElement canvas, [double? aspectRatio]) {
   final style = canvas.style;
 
-  // A Flutter canvas has no attributes (see above).
-  const String? renderHeight = null;
-  const String? renderWidth = null;
+  // NOTE(SB) canvas.getAttribute('width') !== canvas.width: in the first case
+  // it returns null or '' if no explicit value has been set to the canvas
+  // attribute.
+  final renderHeight = canvas.getAttribute('height');
+  final renderWidth = canvas.getAttribute('width');
 
   // Chart.js modifies some canvas values that we want to restore on destroy
   _expando[canvas] = _ChartjsExpando(
@@ -453,11 +456,6 @@ class FlutterPlatform extends BasePlatform {
   }
 
   /// platform.dom.js:293 `releaseContext(context)`.
-  ///
-  /// `canvas.removeAttribute(prop)` resets the render size to the DOM default
-  /// of 300 x 150, as a DOM canvas without the attribute has. A Flutter
-  /// canvas has no attributes, so `setAttribute` has no port: the initial
-  /// attribute values are always `null`.
   @override
   bool releaseContext(CanvasRenderingContext2D context) {
     final canvas = context.canvas;
@@ -467,13 +465,13 @@ class FlutterPlatform extends BasePlatform {
     }
 
     final initial = expando.initial;
-    // `['height', 'width'].forEach`: an absent attribute restores the
-    // default size of the DOM.
-    if (initial.height == null) {
-      canvas.height = 150;
-    }
-    if (initial.width == null) {
-      canvas.width = 300;
+    for (final prop in const ['height', 'width']) {
+      final value = initial[prop];
+      if (isNullOrUndef(value)) {
+        canvas.removeAttribute(prop);
+      } else {
+        canvas.setAttribute(prop, value!);
+      }
     }
 
     final style = initial.style;

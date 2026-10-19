@@ -51,7 +51,7 @@ Future<Render> renderContext(
   final ctx = UiCanvasElement(width: width, height: height).getContext2d();
   draw(ctx);
   final recorder = ui.PictureRecorder();
-  ctx.paint(ui.Canvas(recorder), ui.Offset.zero);
+  ctx.paint(ui.Canvas(recorder), ui.Offset.zero, 1, 1);
   final picture = recorder.endRecording();
   final image = await picture.toImage(width, height);
   final data = await image.toByteData();

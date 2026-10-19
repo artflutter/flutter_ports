@@ -164,6 +164,15 @@ final class _Canvas implements HTMLCanvasElement {
 
   @override
   CSSStyleDeclaration get style => throw UnimplementedError();
+
+  @override
+  String? getAttribute(String name) => throw UnimplementedError();
+
+  @override
+  void setAttribute(String name, String value) => throw UnimplementedError();
+
+  @override
+  void removeAttribute(String name) => throw UnimplementedError();
 }
 
 /// An image point style, the `{width, height}` of an `HTMLImageElement`.

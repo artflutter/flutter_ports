@@ -28,9 +28,12 @@
 /// - A later change of the constraints or of the device pixel ratio reaches
 ///   the [ContainerResizeObserver]s. `createResizeObserver` throttles them
 ///   to one resize in the next frame, as upstream.
-/// - The size of the host is the display size of the canvas (its `width` and
-///   `height` styles, as `retinaScale` writes them), constrained to the
-///   incoming constraints. Paint clips a larger canvas to the host box.
+/// - The size of the host is the display size of the canvas, constrained to
+///   the incoming constraints: its `width` and `height` styles when both are
+///   pixel values, as `retinaScale` writes them, else its render size.
+///   Paint maps the bitmap to the display size with one scale, as the DOM
+///   stretches a canvas bitmap to its CSS size, and clips a larger canvas to
+///   the host box.
 /// - Unbounded constraints give an infinite container side. Then
 ///   `FlutterPlatform.getMaximumSize` gives the chart a size.
 ///
@@ -321,7 +324,8 @@ class RenderChartHost extends RenderBox
   }
 
   /// The device pixel ratio of the view of the host.
-  /// `FlutterPlatform.getDevicePixelRatio` reads it.
+  /// `FlutterPlatform.getDevicePixelRatio` reads it, and paint snaps its
+  /// scale to `1 / devicePixelRatio` (see [paint]).
   double get devicePixelRatio => _devicePixelRatio;
   double _devicePixelRatio;
   set devicePixelRatio(double value) {
@@ -329,7 +333,7 @@ class RenderChartHost extends RenderBox
       return;
     }
     _devicePixelRatio = value;
-    _canvas.devicePixelRatio = value;
+    markNeedsPaint();
     if (_laidOut) {
       for (final observer in List.of(_resizeObservers)) {
         observer.onDevicePixelRatio(value);
@@ -368,8 +372,7 @@ class RenderChartHost extends RenderBox
     }
     canvas
       ..parentNode = this
-      ..devicePixelRatio = _devicePixelRatio;
-    canvas.getContext2d().onChanged = _handleCanvasChanged;
+      ..getContext2d().onChanged = _handleCanvasChanged;
   }
 
   void _hide(UiCanvasElement canvas) {
@@ -467,30 +470,22 @@ class RenderChartHost extends RenderBox
     return match == null ? null : double.tryParse(match[1]!);
   }
 
-  /// The display size of the canvas in logical pixels, by the CSS rules of a
-  /// canvas: the `width` and `height` styles when they are pixel values,
-  /// else the render size. A canvas with one of the two styles keeps the
-  /// aspect ratio of its render size.
-  Size get chartSize {
+  /// The display size of the canvas in logical pixels: the `width` and
+  /// `height` styles when both are pixel values, as `retinaScale` writes
+  /// them, else the render size. The CSS rule for one style (it keeps the
+  /// aspect ratio of the render size) is not here: the harness matcher
+  /// `toBeChartOfSize` applies it.
+  Size get displaySize {
     final style = _canvas.style;
-    final styleWidth = _readPixels(style.getPropertyValue('width'));
-    final styleHeight = _readPixels(style.getPropertyValue('height'));
-    final renderWidth = _canvas.width.toDouble();
-    final renderHeight = _canvas.height.toDouble();
-    final width =
-        styleWidth ??
-        (styleHeight != null && renderHeight > 0
-            ? styleHeight * renderWidth / renderHeight
-            : renderWidth);
-    final height =
-        styleHeight ??
-        (styleWidth != null && renderWidth > 0
-            ? styleWidth * renderHeight / renderWidth
-            : renderHeight);
-    return Size(width, height);
+    final width = _readPixels(style.getPropertyValue('width'));
+    final height = _readPixels(style.getPropertyValue('height'));
+    if (width != null && height != null) {
+      return Size(width, height);
+    }
+    return Size(_canvas.width.toDouble(), _canvas.height.toDouble());
   }
 
-  Size _laidOutChartSize = Size.zero;
+  Size _laidOutDisplaySize = Size.zero;
 
   void _handleCanvasChanged() {
     if (_disposed || !_showsCanvas) {
@@ -504,20 +499,20 @@ class RenderChartHost extends RenderBox
     // callbacks, before the layout.
     if (!_sizeCheckScheduled) {
       _sizeCheckScheduled = true;
-      scheduleMicrotask(_checkChartSize);
+      scheduleMicrotask(_checkDisplaySize);
     }
   }
 
   bool _sizeCheckScheduled = false;
 
-  void _checkChartSize() {
+  void _checkDisplaySize() {
     _sizeCheckScheduled = false;
     if (_disposed || !_showsCanvas) {
       return;
     }
     _canvas.getContext2d().onChanged = _handleCanvasChanged;
     // A change in performLayout (the first size) is read after it.
-    if (!_inLayout && _laidOut && chartSize != _laidOutChartSize) {
+    if (!_inLayout && _laidOut && displaySize != _laidOutDisplaySize) {
       markNeedsLayout();
     }
   }
@@ -534,20 +529,20 @@ class RenderChartHost extends RenderBox
   Size computeDryLayout(covariant BoxConstraints constraints) {
     // The chart takes its size in performLayout. A dry layout cannot resize
     // it, so it gives the current display size of the canvas.
-    return constraints.constrain(chartSize);
+    return constraints.constrain(displaySize);
   }
 
   @override
-  double computeMinIntrinsicWidth(double height) => chartSize.width;
+  double computeMinIntrinsicWidth(double height) => displaySize.width;
 
   @override
-  double computeMaxIntrinsicWidth(double height) => chartSize.width;
+  double computeMaxIntrinsicWidth(double height) => displaySize.width;
 
   @override
-  double computeMinIntrinsicHeight(double width) => chartSize.height;
+  double computeMinIntrinsicHeight(double width) => displaySize.height;
 
   @override
-  double computeMaxIntrinsicHeight(double width) => chartSize.height;
+  double computeMaxIntrinsicHeight(double width) => displaySize.height;
 
   bool _inLayout = false;
 
@@ -580,8 +575,8 @@ class RenderChartHost extends RenderBox
         observer.onResize(width, height);
       }
     }
-    _laidOutChartSize = chartSize;
-    size = constraints.constrain(_finite(_laidOutChartSize));
+    _laidOutDisplaySize = displaySize;
+    size = constraints.constrain(_finite(_laidOutDisplaySize));
   }
 
   static Size _finite(Size size) => Size(
@@ -608,15 +603,20 @@ class RenderChartHost extends RenderBox
 
   final LayerHandle<ClipRectLayer> _clipLayer = LayerHandle<ClipRectLayer>();
 
+  /// Paints the bitmap at the display size, as the DOM stretches a canvas
+  /// bitmap to its CSS size: one scale of display size / bitmap size on
+  /// each axis. A size of 0 gives a scale of 1. When both scales are within
+  /// 1e-3 of `1 / devicePixelRatio`, the scale is exactly that value, so
+  /// that the bitmap pixels stay on the device pixels.
   @override
   void paint(PaintingContext context, Offset offset) {
-    final chart = _finite(chartSize);
-    if (chart != _finite(_laidOutChartSize)) {
+    final display = _finite(displaySize);
+    if (display != _finite(_laidOutDisplaySize)) {
       // The chart changed its size without a content change since the last
       // paint, so onChanged did not run. Lay out again after this frame.
       _scheduleRelayout();
     }
-    if (chart.width > size.width || chart.height > size.height) {
+    if (display.width > size.width || display.height > size.height) {
       _clipLayer.layer = context.pushClipRect(
         needsCompositing,
         offset,
@@ -633,28 +633,14 @@ class RenderChartHost extends RenderBox
   void _paintCanvas(PaintingContext context, Offset offset) {
     // The context paints even when it is empty: its paint call re-arms
     // onChanged.
-    final ctx = _canvas.getContext2d();
-    final canvas = context.canvas;
-    // The DOM stretches the bitmap to the display size. The context paints
-    // the bitmap at its logical size (render size / device pixel ratio of
-    // the canvas). That is the display size in the usual case of
-    // retinaScale; else the host scales it to the display size.
-    final chart = chartSize;
-    final dpr = _canvas.devicePixelRatio;
-    final scaleX = _canvas.width > 0 ? chart.width * dpr / _canvas.width : 1.0;
-    final scaleY = _canvas.height > 0
-        ? chart.height * dpr / _canvas.height
-        : 1.0;
-    if ((scaleX - 1).abs() < 1e-3 && (scaleY - 1).abs() < 1e-3) {
-      ctx.paint(canvas, offset);
-      return;
+    final display = displaySize;
+    final dpr = _devicePixelRatio;
+    var scaleX = _canvas.width > 0 ? display.width / _canvas.width : 1.0;
+    var scaleY = _canvas.height > 0 ? display.height / _canvas.height : 1.0;
+    if ((scaleX * dpr - 1).abs() < 1e-3 && (scaleY * dpr - 1).abs() < 1e-3) {
+      scaleX = scaleY = 1 / dpr;
     }
-    canvas
-      ..save()
-      ..translate(offset.dx, offset.dy)
-      ..scale(scaleX, scaleY);
-    ctx.paint(canvas, Offset.zero);
-    canvas.restore();
+    _canvas.getContext2d().paint(context.canvas, offset, scaleX, scaleY);
   }
 
   // Attach and detach.
@@ -911,6 +897,6 @@ class RenderChartHost extends RenderBox
         FlagProperty('tickerEnabled', value: tickerEnabled, ifFalse: 'muted'),
       )
       ..add(FlagProperty('connected', value: isConnected, ifTrue: 'connected'))
-      ..add(DiagnosticsProperty<Size>('chartSize', chartSize));
+      ..add(DiagnosticsProperty<Size>('displaySize', displaySize));
   }
 }

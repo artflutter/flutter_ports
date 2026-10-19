@@ -79,16 +79,17 @@ final class _Pixels {
 }
 
 /// Paints [ctx] into an image of [width] x [height] logical pixels, on top
-/// of [background] when given.
+/// of [background] when given. The bitmap shows at the scale `1 / dpr`, as
+/// a host at the device pixel ratio [dpr] shows it after `retinaScale`.
 Future<_Pixels> _render(
   UiCanvasContext ctx, {
   int? width,
   int? height,
   ui.Color? background,
+  double dpr = 1,
 }) async {
-  final size = ctx.canvas.logicalSize;
-  final w = width ?? size.width.round();
-  final h = height ?? size.height.round();
+  final w = width ?? (ctx.canvas.width / dpr).round();
+  final h = height ?? (ctx.canvas.height / dpr).round();
   final recorder = ui.PictureRecorder();
   final canvas = ui.Canvas(recorder);
   if (background != null) {
@@ -97,7 +98,7 @@ Future<_Pixels> _render(
       ui.Paint()..color = background,
     );
   }
-  ctx.paint(canvas, ui.Offset.zero);
+  ctx.paint(canvas, ui.Offset.zero, 1 / dpr, 1 / dpr);
   final picture = recorder.endRecording();
   final image = await picture.toImage(w, h);
   final data = await image.toByteData();
@@ -228,6 +229,81 @@ void main() {
       element.height = 40;
       expect(ctx.isEmpty, isTrue);
       expect(element.height, 40);
+    });
+  });
+
+  group('attributes', () {
+    // platform.dom.js:45-46 reads the attributes, and :300-307 restores
+    // them. The DOM reflects the width and height properties into them.
+    test('a canvas without attributes has the default size', () {
+      final element = UiCanvasElement();
+      expect(element.getAttribute('width'), isNull);
+      expect(element.getAttribute('height'), isNull);
+      expect((element.width, element.height), (300, 150));
+      final sized = UiCanvasElement(width: 512, height: 512);
+      expect(sized.getAttribute('width'), '512');
+      expect(sized.getAttribute('HEIGHT'), '512');
+      expect(sized.getAttribute('style'), isNull);
+      expect(UiCanvasElement(height: 80).getAttribute('width'), isNull);
+    });
+
+    test('a write of width or height sets the attribute', () {
+      final element = UiCanvasElement()
+        ..width = 640
+        ..height = -5;
+      expect(element.getAttribute('width'), '640');
+      expect(element.getAttribute('height'), '0');
+      expect((element.width, element.height), (640, 0));
+    });
+
+    test('removeAttribute gives the default size and clears the bitmap', () {
+      final element = UiCanvasElement(width: 50, height: 40);
+      final ctx = element.getContext2d()
+        ..fillStyle = 'red'
+        ..fillRect(0, 0, 10, 10);
+      element.removeAttribute('width');
+      expect(element.getAttribute('width'), isNull);
+      expect((element.width, element.height), (300, 40));
+      expect(ctx.isEmpty, isTrue);
+      expect(ctx.fillStyle, '#000000');
+
+      // An absent attribute and another name do nothing, as in the DOM.
+      ctx
+        ..fillStyle = 'red'
+        ..fillRect(0, 0, 10, 10);
+      element
+        ..removeAttribute('width')
+        ..removeAttribute('style')
+        ..setAttribute('style', 'width: 10px');
+      expect(ctx.isEmpty, isFalse);
+      expect(element.getAttribute('style'), isNull);
+      element.removeAttribute('height');
+      expect((element.width, element.height), (300, 150));
+      expect(ctx.isEmpty, isTrue);
+    });
+
+    test('setAttribute parses a non-negative integer, else the default', () {
+      final element = UiCanvasElement();
+      final ctx = element.getContext2d()..fillRect(0, 0, 10, 10);
+      element.setAttribute('width', '180');
+      expect(element.getAttribute('width'), '180');
+      expect(element.width, 180);
+      expect(ctx.isEmpty, isTrue);
+      for (final (value, width) in const [
+        (' \n+42px', 42),
+        ('007', 7),
+        ('0', 0),
+        ('-5', 300),
+        ('', 300),
+        ('px', 300),
+        ('2147483648', 300),
+      ]) {
+        element.setAttribute('width', value);
+        expect(element.getAttribute('width'), value);
+        expect(element.width, width, reason: value);
+      }
+      element.setAttribute('height', 'auto');
+      expect((element.getAttribute('height'), element.height), ('auto', 150));
     });
   });
 
@@ -393,16 +469,15 @@ void main() {
     });
   });
 
-  group('device pixel ratio', () {
-    test('the context draws on a base scale of 1 / ratio', () async {
-      final element = UiCanvasElement(width: 200, height: 200)
-        ..devicePixelRatio = 2;
-      expect(element.logicalSize, const ui.Size(100, 100));
+  group('paint maps the bitmap pixels with the given scale', () {
+    test('a scale of 1 / ratio after retinaScale is the identity', () async {
+      final element = UiCanvasElement(width: 200, height: 200);
       final ctx = element.getContext2d()
         // retinaScale: the net transform is the identity in logical pixels.
         ..setTransform(2, 0, 0, 2, 0, 0)
         ..fillRect(0, 0, 50, 50);
-      var pixels = await _render(ctx);
+      var pixels = await _render(ctx, dpr: 2);
+      expect((pixels.width, pixels.height), (100, 100));
       expect(pixels.inked(45, 45), isTrue);
       expect(pixels.inked(55, 55), isFalse);
 
@@ -410,33 +485,49 @@ void main() {
         ..resetTransform()
         ..clearRect(0, 0, 200, 200)
         ..fillRect(0, 0, 50, 50);
-      pixels = await _render(ctx);
+      pixels = await _render(ctx, dpr: 2);
       // Without retinaScale, 50 device pixels are 25 logical pixels.
       expect(pixels.inked(20, 20), isTrue);
       expect(pixels.inked(30, 30), isFalse);
     });
 
-    test('a ratio change keeps the content in bitmap pixels', () async {
+    test('the content stays in bitmap pixels at another scale', () async {
       final element = UiCanvasElement(width: 100, height: 100);
       final ctx = element.getContext2d()..fillRect(0, 0, 50, 50);
-      var changes = 0;
-      ctx.onChanged = () => changes++;
-      element.devicePixelRatio = 2;
-      expect(changes, 1);
       // As a DOM bitmap: 50 bitmap pixels show as 25 logical pixels at a
       // ratio of 2, also when they were drawn at a ratio of 1.
-      var pixels = await _render(ctx);
+      var pixels = await _render(ctx, dpr: 2);
       expect(pixels.inked(20, 20), isTrue);
       expect(pixels.inked(30, 30), isFalse);
       ctx.fillRect(50, 50, 50, 50);
-      pixels = await _render(ctx);
+      pixels = await _render(ctx, dpr: 2);
       expect(pixels.inked(45, 45), isTrue);
       expect(pixels.inked(35, 15), isFalse);
-      element.devicePixelRatio = 1;
       pixels = await _render(ctx);
       expect(pixels.inked(45, 45), isTrue);
       expect(pixels.inked(55, 55), isTrue);
       expect(pixels.inked(75, 25), isFalse);
+    });
+
+    test('a scale for each axis stretches the bitmap', () async {
+      // The DOM stretch of a bitmap of 100 x 100 to a display of 200 x 50,
+      // at the offset (10, 5).
+      final ctx = _context()
+        ..fillRect(0, 0, 50, 50)
+        ..fillRect(50, 50, 100, 100);
+      final recorder = ui.PictureRecorder();
+      ctx.paint(ui.Canvas(recorder), const ui.Offset(10, 5), 2, 0.5);
+      final image = await recorder.endRecording().toImage(220, 60);
+      final pixels = _Pixels((await image.toByteData())!, 220, 60);
+      image.dispose();
+      expect(pixels.inked(11, 6), isTrue);
+      expect(pixels.inked(108, 29), isTrue);
+      expect(pixels.inked(112, 20), isFalse);
+      expect(pixels.inked(108, 31), isFalse);
+      expect(pixels.inked(205, 52), isTrue);
+      // The clip is the bitmap, at the display size.
+      expect(pixels.inked(215, 52), isFalse);
+      expect(pixels.inked(205, 57), isFalse);
     });
   });
 
@@ -833,8 +924,7 @@ void main() {
     });
 
     test('toImageSource snapshots the bitmap in device pixels', () async {
-      final canvas = UiCanvasElement(width: 20, height: 10)
-        ..devicePixelRatio = 2;
+      final canvas = UiCanvasElement(width: 20, height: 10);
       final ctx = canvas.getContext2d()
         ..fillStyle = '#0000ff'
         ..fillRect(0, 0, 5, 5);
@@ -843,7 +933,7 @@ void main() {
       expect(source.height, 10);
       final data = (await source.image.toByteData())!;
       // Without a transform, user units are bitmap pixels (the DOM
-      // rule), at any device pixel ratio.
+      // rule), whatever the paint scale of the host.
       expect(data.getUint8((2 * 20 + 2) * 4 + 2), 255);
       expect(data.getUint8((4 * 20 + 4) * 4 + 3), 255);
       expect(data.getUint8((2 * 20 + 7) * 4 + 3), 0);
@@ -1970,17 +2060,17 @@ void main() {
 
     test('the pictures are in bitmap space at a device pixel ratio', () async {
       const dpr = 2.625;
-      final element = UiCanvasElement(width: 263, height: 263)
-        ..devicePixelRatio = dpr;
+      final element = UiCanvasElement(width: 263, height: 263);
       final ctx = element.getContext2d()
         ..setTransform(dpr, 0, 0, dpr, 0, 0)
         ..fillStyle = '#ff0000'
         ..strokeStyle = '#0000ff';
       points(ctx, centers);
-      // RenderView scales the scene by the ratio.
+      // RenderView scales the scene by the ratio, and the host paints the
+      // bitmap at 1 / ratio.
       final recorder = ui.PictureRecorder();
       final canvas = ui.Canvas(recorder)..scale(dpr);
-      ctx.paint(canvas, ui.Offset.zero);
+      ctx.paint(canvas, ui.Offset.zero, 1 / dpr, 1 / dpr);
       final image = await recorder.endRecording().toImage(263, 263);
       final data = (await image.toByteData())!;
       final reference = await _reference(
@@ -2120,7 +2210,7 @@ void main() {
       ]) {
         final recorder = ui.PictureRecorder();
         final canvas = ui.Canvas(recorder)..scale(scale);
-        ctx.paint(canvas, offset);
+        ctx.paint(canvas, offset, 1, 1);
         final image = await recorder.endRecording().toImage(120, 120);
         final data = (await image.toByteData())!;
         image.dispose();

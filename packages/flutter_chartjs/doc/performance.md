@@ -3,7 +3,8 @@
 - Scope: the speed of the `dart:ui` canvas layer of phase 3
   ([Chart.js ADR 0013](adr/0013-canvas-model.md)) and of canvas text
   ([Chart.js ADR 0015](adr/0015-text.md)). Section 8 adds the draw cost of the phase 4 elements
-  ([Chart.js ADR 0017](adr/0017-element-properties.md)).
+  ([Chart.js ADR 0017](adr/0017-element-properties.md)). Section 9 has the A/B test of cut 2 of
+  [canvas-cuts-plan.md](canvas-cuts-plan.md) in phase 5.
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0007](adr/0007-frame-scheduling.md) (frame scheduling),
   [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) (no display-only JS exactness).
@@ -408,7 +409,9 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
 
 - The plan [canvas-cuts-plan.md](canvas-cuts-plan.md) (proposed) needs a new baseline of the
   six scenarios on the three platforms, and a scenario with arcs, before its cuts land (its
-  section 6.3).
+  section 6.3). Cut 2 used an A/B test in place of this baseline (section 9).
+- Cut 2: `bars` 1000 on the Pixel 8a missed the FPS criterion of the plan in two series (section
+  9.3). The cause is not known.
 - The 2 degree text rotation snap (section 5.5) stays until the toolchain pin is a stable release
   with the upstream fixes. Then remove it, and run the crash case of section 5.5 again.
 - macOS and Chrome: section 8.1 has the figures of the `primitives` mode with the circle batch.
@@ -650,3 +653,136 @@ cable, one process for each mode, the default renderer of Flutter on iOS):
   compare them with the upstream arc paths on flutter_tester. A look at the bars on the Pixel 8a
   and in Chrome showed the rounded tops, the border and the open bottom of `borderSkipped`.
 
+## 9. Cut 2 (phase 5)
+
+Work package C2 of [canvas-cuts-plan.md](canvas-cuts-plan.md) (§3.4, §3.10) changes the paint of
+the chart host. The host gives `UiCanvasContext.paint` one scale for each axis. After
+`retinaScale`, both scales are `1 / DPR`, the scale of the code before C2. This section has the
+performance acceptance of the plan (§6.3) as an A/B test.
+
+### 9.1 Method
+
+- **Code.** "Before" is commit `69f9d97`, the library without C2, in a git worktree. "After" is
+  the C2 change on top of `69f9d97`. Both sides ran in one session on 2026-10-19.
+- **Builds.** Each scenario and each side had its own profile build of
+  `apps/chartjs_gallery/lib/main_stress.dart`, with `--dart-define=MODE=<mode>` and
+  `--dart-define=SCENARIO=<N>x<M>`. Each run is a fresh process or a fresh page load. It runs one
+  scenario for 7 seconds.
+- **Order.** The runs of a scenario alternate: before, after, before, after. Each side has 3 runs
+  for each scenario (the first series). Thus a change of the device state affects the two sides
+  alike.
+- **Scenarios.** The six scenarios of the mode `primitives` (section 1), `elements` at 5000 + 50
+  and 20000 + 0, `bars` at 1000 and `arcs` at 1000. All modes draw through the chart host.
+- **Cells.** A figure cell gives the medians of FPS / draw (ms) / raster (ms). A noise cell gives
+  the range from the minimum to the maximum of the runs.
+- **Acceptance** (plan §6.3). The after median FPS is at least the before median minus the larger
+  of 1 FPS and 2 %. The after medians of draw and raster are at most the before median times 1.05
+  plus 0.2 ms. No single after run is outside the before range, widened by the same margins. A
+  scenario with a miss ran 3 more pairs (the rerun). The acceptance then used these 3 pairs. A
+  miss that stays is a failure.
+
+The platforms:
+- **Pixel 8a** (Android 17, Impeller on Vulkan, 60 Hz):
+  `flutter build apk --profile --target-platform android-arm64`. A script installed the APK of
+  each run with `adb install`. It started the app with `am start`. It read the `STRESS` line from
+  `adb logcat`. The screen was on for all runs. In the first series, the battery temperature went from 29.7
+  to 34.9 degrees Celsius. In the reruns, it was 30.0 to 31.5 degrees Celsius.
+- **macOS** (Apple M3 Max, a 60 Hz Studio Display): `flutter build macos --profile`. A script
+  started the app binary. It read the `STRESS` line from stdout. It brought the window to the
+  front with `osascript` (`activate`), because a window behind other windows gets no frames. Two
+  earlier series without this step had runs without frames on both sides. This section does not
+  use them. In some runs of the first series, other windows covered the stress window. These runs
+  have 33 to 57 FPS on both sides. Their draw and raster times are near the times of the other
+  runs.
+- **Chrome** (Chrome 155 in a visible window, DPR 2): `flutter build web --wasm --profile`, with
+  skwasm. Each build had its own local port, with the headers
+  `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp`. One
+  tab loaded the page of each run. The raster time is on the skwasm worker. A CanvasKit build
+  (`flutter build web --profile`, dart2js) ran one pair at `primitives` 5000 + 50.
+
+### 9.2 Results
+
+A row "runs 4 to 6" gives the 3 pairs after a miss. The column "Result" applies the acceptance to
+the row.
+
+**Pixel 8a:**
+
+| Scenario | Before | Before noise | After | After noise | Result |
+|---|---|---|---|---|---|
+| primitives 1000 + 0 | 58.0 / 5.21 / 5.28 | 57.7-58.5 / 5.07-5.22 / 5.21-5.33 | 58.4 / 5.28 / 5.14 | 58.2-58.4 / 5.12-5.34 / 5.03-5.28 | pass |
+| primitives 1000 + 50 | 58.7 / 5.49 / 5.42 | 58.5-59.0 / 5.40-5.64 / 5.41-5.63 | 58.7 / 5.47 / 5.63 | 58.7-58.7 / 5.44-5.50 / 5.38-5.68 | pass |
+| primitives 5000 + 50 | 58.5 / 6.98 / 6.29 | 58.3-59.2 / 6.81-7.01 / 6.13-6.33 | 58.6 / 7.11 / 6.16 | 57.9-58.7 / 7.10-7.16 / 6.04-6.31 | pass |
+| primitives 20000 + 0 | 59.0 / 9.86 / 9.49 | 58.9-59.2 / 9.75-9.94 / 9.47-9.69 | 59.4 / 9.84 / 9.57 | 59.2-59.4 / 9.78-9.95 / 9.30-9.59 | pass |
+| primitives 1000 + 200 | 58.7 / 6.24 / 7.02 | 58.4-58.9 / 6.13-6.28 / 6.87-7.24 | 58.7 / 6.30 / 7.01 | 58.2-58.7 / 6.26-6.55 / 6.94-7.08 | pass |
+| primitives 20000 + 200 | 58.5 / 10.88 / 10.81 | 58.0-58.9 / 10.74-11.09 / 10.75-10.82 | 59.0 / 10.83 / 10.66 | 58.5-59.2 / 10.55-10.95 / 10.61-10.91 | pass |
+| elements 5000 + 50 | 58.0 / 8.18 / 6.12 | 57.7-58.5 / 8.09-8.24 / 6.10-6.22 | 58.4 / 7.89 / 6.18 | 58.2-58.7 / 7.86-8.15 / 6.17-6.28 | pass |
+| elements 20000 + 0 | 36.8 / 16.72 / 9.24 | 32.0-42.8 / 14.94-18.75 / 9.16-9.24 | 39.3 / 15.78 / 8.97 | 32.5-45.6 / 14.40-18.34 / 8.84-9.03 | pass |
+| bars 1000 | 47.8 / 10.92 / 14.72 | 47.4-48.3 / 10.85-11.14 / 14.57-14.89 | 46.9 / 11.02 / 14.88 | 45.9-48.6 / 10.98-11.35 / 14.77-14.90 | miss: one run 45.9 FPS (limit 46.4) |
+| arcs 1000 | 35.7 / 15.70 / 19.81 | 35.6-36.6 / 15.59-15.94 / 19.09-19.81 | 33.6 / 16.47 / 21.80 | 32.9-34.9 / 16.17-16.51 / 21.05-22.16 | miss: FPS 33.6 (limit 34.7), raster 21.80 (limit 21.00) |
+| bars 1000, runs 4 to 6 | 49.8 / 9.46 / 13.73 | 49.5-50.5 / 9.34-9.68 / 13.46-13.87 | 48.3 / 9.74 / 13.91 | 47.4-54.1 / 8.99-10.16 / 13.14-13.96 | miss: FPS 48.3 (limit 48.8), runs 48.3 and 47.4 FPS (limit 48.5) |
+| arcs 1000, runs 4 to 6 | 41.0 / 13.46 / 17.57 | 40.1-44.7 / 12.36-13.89 / 17.26-17.62 | 42.3 / 13.31 / 17.07 | 40.8-43.1 / 13.31-13.65 / 16.83-17.34 | pass |
+| bars 1000, runs 7 to 9, after first | 50.5 / 9.55 / 13.61 | 49.3-53.1 / 9.36-9.68 / 13.16-13.91 | 49.6 / 9.74 / 13.79 | 49.4-51.5 / 9.41-9.77 / 13.65-14.18 | pass (more figures, not part of the rule) |
+
+**macOS:**
+
+| Scenario | Before | Before noise | After | After noise | Result |
+|---|---|---|---|---|---|
+| primitives 1000 + 0 | 60.0 / 0.46 / 2.12 | 60.0-60.0 / 0.46-0.46 / 2.08-2.14 | 60.0 / 0.45 / 2.09 | 59.5-60.0 / 0.44-0.46 / 2.05-2.12 | pass |
+| primitives 1000 + 50 | 60.0 / 0.52 / 2.11 | 60.0-60.0 / 0.52-0.55 / 2.09-2.19 | 60.0 / 0.53 / 2.14 | 60.0-60.0 / 0.52-0.53 / 2.08-2.15 | pass |
+| primitives 5000 + 50 | 60.0 / 1.29 / 11.28 | 60.0-60.0 / 1.26-1.30 / 10.85-14.85 | 60.0 / 1.28 / 10.86 | 60.0-60.0 / 1.26-1.28 / 10.60-10.87 | pass |
+| primitives 20000 + 0 | 60.0 / 4.09 / 15.96 | 60.0-60.0 / 4.07-4.11 / 15.96-15.99 | 60.0 / 4.07 / 15.96 | 60.0-60.0 / 4.07-4.10 / 15.90-16.01 | pass |
+| primitives 1000 + 200 | 60.0 / 0.75 / 2.25 | 60.0-60.0 / 0.73-0.79 / 2.23-2.31 | 60.0 / 0.77 / 2.26 | 60.0-60.0 / 0.75-0.78 / 2.23-2.32 | pass |
+| primitives 20000 + 200 | 52.5 / 4.30 / 16.73 | 33.3-56.6 / 4.27-4.38 / 16.18-17.22 | 57.0 / 4.37 / 16.81 | 41.5-60.0 / 4.35-4.88 / 16.30-17.08 | miss: one run 4.88 ms draw (limit 4.80) |
+| elements 5000 + 50 | 55.3 / 1.92 / 9.66 | 46.7-60.0 / 1.90-1.93 / 9.36-9.98 | 60.0 / 1.93 / 9.71 | 40.7-60.0 / 1.90-1.95 / 9.66-9.82 | miss: one run 40.7 FPS (limit 45.7) |
+| elements 20000 + 0 | 60.0 / 6.54 / 8.36 | 43.1-60.0 / 6.40-6.62 / 7.83-8.47 | 60.0 / 6.49 / 7.87 | 43.5-60.0 / 6.44-6.60 / 7.87-8.47 | pass |
+| bars 1000 | 60.0 / 2.78 / 2.92 | 60.0-60.0 / 2.73-2.79 / 2.90-2.95 | 60.0 / 2.79 / 2.94 | 59.5-60.0 / 2.77-2.81 / 2.93-2.95 | pass |
+| arcs 1000 | 59.5 / 4.09 / 7.58 | 36.0-60.0 / 4.08-4.70 / 7.20-7.74 | 59.8 / 4.08 / 7.24 | 56.5-60.1 / 4.05-4.09 / 7.13-7.38 | pass |
+| primitives 20000 + 200, runs 4 to 6 | 60.0 / 4.30 / 16.06 | 59.8-60.0 / 4.29-4.31 / 16.03-16.12 | 60.0 / 4.36 / 16.09 | 59.8-60.0 / 4.35-4.36 / 16.08-16.09 | pass |
+| elements 5000 + 50, runs 4 to 6 | 60.0 / 1.89 / 9.22 | 60.0-60.0 / 1.88-1.90 / 9.19-9.23 | 60.0 / 1.90 / 9.13 | 60.0-60.0 / 1.88-1.91 / 9.11-9.20 | pass |
+
+**Chrome** (dart2wasm, skwasm):
+
+| Scenario | Before | Before noise | After | After noise | Result |
+|---|---|---|---|---|---|
+| primitives 1000 + 0 | 60.2 / 1.32 / 6.04 | 60.2-60.2 / 1.32-1.33 / 6.01-6.10 | 60.2 / 1.34 / 6.06 | 60.2-60.2 / 1.32-1.34 / 6.05-6.10 | pass |
+| primitives 1000 + 50 | 60.2 / 1.54 / 6.18 | 60.1-60.2 / 1.54-1.55 / 6.12-6.23 | 60.2 / 1.54 / 6.20 | 60.2-60.3 / 1.52-1.54 / 6.15-6.22 | pass |
+| primitives 5000 + 50 | 60.2 / 4.90 / 25.30 | 60.2-60.2 / 4.89-4.90 / 24.95-25.34 | 60.3 / 4.92 / 25.18 | 60.2-60.3 / 4.86-4.92 / 25.08-25.42 | pass |
+| primitives 20000 + 0 | 53.7 / 17.55 / 37.74 | 53.5-53.9 / 17.43-17.60 / 37.60-38.08 | 52.4 / 17.92 / 38.82 | 52.3-53.4 / 17.64-18.00 / 38.27-38.93 | miss: FPS 52.4 (limit 52.6), one run 52.3 FPS (limit 52.4) |
+| primitives 1000 + 200 | 60.2 / 2.08 / 6.53 | 60.2-60.2 / 2.08-2.09 / 6.52-6.59 | 60.3 / 2.08 / 6.52 | 60.3-60.3 / 2.07-2.10 / 6.46-6.52 | pass |
+| primitives 20000 + 200 | 51.1 / 18.43 / 39.97 | 50.6-51.4 / 18.28-18.62 / 39.79-40.32 | 50.8 / 18.55 / 40.25 | 48.8-51.0 / 18.50-19.38 / 40.16-41.92 | miss: one run 48.8 FPS (limit 49.6) |
+| elements 5000 + 50 | 60.2 / 7.19 / 22.97 | 60.2-60.2 / 7.15-7.23 / 22.87-23.05 | 60.2 / 7.21 / 22.96 | 60.1-60.2 / 7.17-7.23 / 22.88-22.96 | pass |
+| elements 20000 + 0 | 37.0 / 25.74 / 27.59 | 36.3-37.0 / 25.70-26.22 / 27.41-28.03 | 37.3 / 25.57 / 27.39 | 37.2-37.6 / 25.34-25.62 / 26.85-27.42 | pass |
+| bars 1000 | 60.3 / 6.05 / 8.73 | 60.2-60.3 / 5.94-6.05 / 8.70-8.95 | 60.2 / 6.04 / 8.76 | 60.2-60.3 / 5.91-6.06 / 8.72-8.92 | pass |
+| arcs 1000 | 52.6 / 18.11 / 38.66 | 52.3-52.9 / 18.02-18.24 / 38.39-38.89 | 52.5 / 18.16 / 38.60 | 52.5-52.6 / 18.15-18.18 / 38.47-38.70 | pass |
+| primitives 20000 + 0, runs 4 to 6 | 52.8 / 17.82 / 38.43 | 52.7-53.8 / 17.51-17.83 / 37.81-38.50 | 53.5 / 17.58 / 38.18 | 53.2-53.9 / 17.42-17.65 / 37.97-38.31 | pass |
+| primitives 20000 + 200, runs 4 to 6 | 50.9 / 18.48 / 40.05 | 50.4-51.4 / 18.29-18.71 / 39.80-40.36 | 50.7 / 18.59 / 40.32 | 50.2-50.7 / 18.56-18.78 / 40.30-40.66 | pass |
+| CanvasKit, primitives 5000 + 50, one pair | 39.4 / 2.45 / 23.52 | one run | 39.6 / 2.46 / 22.37 | one run | pass |
+
+### 9.3 Acceptance
+
+- **Pixel 8a.** 9 of 10 scenarios pass. `arcs` 1000 missed in the first series and passed in the
+  rerun. `bars` 1000 missed the FPS criterion in the first series and in the rerun. Its draw and
+  raster medians stayed in the limits in all series. Thus `bars` 1000 on the Pixel 8a fails the
+  acceptance of plan §6.3.
+- **`bars` 1000 on the Pixel 8a, more figures.** 3 more pairs with the after run first passed
+  (the row "runs 7 to 9, after first"). Over the 9 pairs, the median difference after minus before
+  is -1.1 FPS (-2.1 %), +0.17 ms of draw (+1.6 %) and +0.18 ms of raster (+1.2 %). The after run
+  is slower in 6 of the 9 pairs. Single runs of this mode go from 45.9 to 54.1 FPS. In each frame,
+  C2 changes only the paint and the size check of the host. The paint uses one `scale` of
+  `1 / DPR`, as before C2. The cause of the miss is not known. No library code changed after the
+  runs.
+- **macOS.** All 10 scenarios pass. `primitives` 20000 + 200 and `elements` 5000 + 50 had one run
+  outside the limits in the first series. Other windows covered the stress window in these runs.
+  Both scenarios passed in the rerun.
+- **Chrome.** All 10 scenarios pass. `primitives` 20000 + 0 and 20000 + 200 missed the FPS
+  criterion in the first series. Both passed in the rerun. The CanvasKit pair passes.
+
+### 9.4 Not measured
+
+- `POINT_STYLE=rectRounded` at 5000 + 0 and 20000 + 0 (plan §6.3), also in the CanvasKit run. The
+  stress entry has no `POINT_STYLE` define, because work package A3 did not run.
+- The arc micro-benchmark of plan §6.3. It measures cut 1. C2 does not change the arc path.
+- The iPhone 17 Pro smoke runs (`primitives` 1000 + 0 and 20000 + 200). The phone was offline:
+  `flutter run --profile` waited for the device.
+- The cut 2 web checks of plan §6.4 (the browser zoom, a move between displays) and the look at
+  the Stress tab on the Pixel 8a (plan §3.8, risk 1). They are not performance figures.

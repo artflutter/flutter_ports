@@ -123,7 +123,6 @@ void main() {
       tester.view.devicePixelRatio = 2;
       await tester.pump();
       expect(_host(tester).devicePixelRatio, 2);
-      expect(canvas.devicePixelRatio, 2);
       await tester.pump();
       expect(chart.currentDevicePixelRatio, 2);
       expect((canvas.width, canvas.height), (800, 400));
@@ -146,7 +145,6 @@ void main() {
       await tester.pumpWidget(
         _box(RepaintBoundary(child: ChartHost(canvas: canvas))),
       );
-      expect(canvas.devicePixelRatio, 2);
       expect(_host(tester).size, const Size(400, 200));
       final boundary = tester.renderObject<RenderRepaintBoundary>(
         find.byType(RepaintBoundary).first,
@@ -161,15 +159,12 @@ void main() {
     });
 
     testWidgets('clips a chart that is larger than the box', (tester) async {
-      final canvas = UiCanvasElement();
-      canvas.style
-        ..setProperty('width', '600px')
-        ..setProperty('height', '300px');
+      final canvas = UiCanvasElement(width: 600, height: 300);
       await tester.pumpWidget(_box(ChartHost(canvas: canvas), height: 100));
       final chart = FakeChart(canvas, responsive: false);
       await tester.pump();
       expect((chart.width, chart.height), (600.0, 300.0));
-      expect(_host(tester).chartSize, const Size(600, 300));
+      expect(_host(tester).displaySize, const Size(600, 300));
       expect(_host(tester).size, const Size(400, 100));
       expect(tester.layers.whereType<ClipRectLayer>(), isNotEmpty);
       chart.destroy();
@@ -189,6 +184,254 @@ void main() {
       expect((chart.width, chart.height), (200.0, 100.0));
       expect(_host(tester).size, const Size(200, 100));
       chart.destroy();
+    });
+  });
+
+  group('display size and bitmap stretch', () {
+    // canvas-cuts-plan.md 3.5: the host shows the bitmap at the display size
+    // of the canvas, as the DOM stretches a canvas bitmap to its CSS size.
+    // Work package A2 pinned these rules before cut 2 changed the host.
+
+    /// Sets the device pixel ratio of the test view and keeps its logical
+    /// size of 800 x 600.
+    void setRatio(WidgetTester tester, double ratio) {
+      addTearDown(tester.view.reset);
+      tester.view
+        ..devicePixelRatio = ratio
+        ..physicalSize = const Size(800, 600) * ratio;
+    }
+
+    /// Clears the bitmap of [chart] and fills the left half of the chart, in
+    /// chart coordinates.
+    void fillLeftHalf(FakeChart chart) {
+      final canvas = chart.canvas!;
+      chart.ctx!
+        ..save()
+        ..resetTransform()
+        ..clearRect(0, 0, canvas.width.toDouble(), canvas.height.toDouble())
+        ..restore()
+        ..fillStyle = '#0000ff'
+        ..fillRect(0, 0, chart.width / 2, chart.height);
+    }
+
+    /// The size and the alpha channel of the image of the first
+    /// [RepaintBoundary], in logical pixels.
+    Future<({int width, int height, int Function(int x, int y) alphaAt})>
+    boundaryImage(WidgetTester tester) async {
+      final boundary = tester.renderObject<RenderRepaintBoundary>(
+        find.byType(RepaintBoundary).first,
+      );
+      final image = (await tester.runAsync(boundary.toImage))!;
+      final data = (await tester.runAsync(image.toByteData))!;
+      final (width, height) = (image.width, image.height);
+      image.dispose();
+      return (
+        width: width,
+        height: height,
+        alphaAt: (int x, int y) => data.getUint8((y * width + x) * 4 + 3),
+      );
+    }
+
+    /// The `Canvas.scale` calls of the paint of [host], as (x, y). The host
+    /// and the context scale the canvas itself and push no transform layer,
+    /// so a [TestRecordingCanvas] records the calls.
+    List<(double, double)> paintScales(RenderChartHost host) {
+      final canvas = TestRecordingCanvas();
+      host.paint(TestRecordingPaintingContext(canvas), Offset.zero);
+      return [
+        for (final call in canvas.invocations)
+          if (call.invocation.memberName == #scale)
+            switch (call.invocation.positionalArguments) {
+              [final double x] || [final double x, null] => (x, x),
+              [final double x, final double y] => (x, y),
+              final arguments => throw StateError('scale$arguments'),
+            },
+      ];
+    }
+
+    testWidgets('a chart at devicePixelRatio 1 on a view at 2 fills its '
+        'display size', (tester) async {
+      setRatio(tester, 2);
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(
+        _box(RepaintBoundary(child: ChartHost(canvas: canvas))),
+      );
+      final chart = FakeChart(canvas, devicePixelRatio: 1);
+      fillLeftHalf(chart);
+      await tester.pump();
+      expect((chart.width, chart.height), (400.0, 200.0));
+      expect((canvas.width, canvas.height), (400, 200));
+      expect(_host(tester).size, const Size(400, 200));
+      final image = await boundaryImage(tester);
+      expect((image.width, image.height), (400, 200));
+      // The left half of the chart covers the left half of the image.
+      expect(image.alphaAt(5, 5), 255);
+      expect(image.alphaAt(190, 100), 255);
+      expect(image.alphaAt(210, 100), 0);
+      expect(image.alphaAt(395, 195), 0);
+      chart.destroy();
+    });
+
+    testWidgets('a chart at devicePixelRatio 3 on a view at 1 fills its '
+        'display size', (tester) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(
+        _box(RepaintBoundary(child: ChartHost(canvas: canvas))),
+      );
+      final chart = FakeChart(canvas, devicePixelRatio: 3);
+      fillLeftHalf(chart);
+      await tester.pump();
+      expect((chart.width, chart.height), (400.0, 200.0));
+      expect((canvas.width, canvas.height), (1200, 600));
+      expect(_host(tester).size, const Size(400, 200));
+      final image = await boundaryImage(tester);
+      expect((image.width, image.height), (400, 200));
+      expect(image.alphaAt(5, 5), 255);
+      expect(image.alphaAt(190, 100), 255);
+      expect(image.alphaAt(210, 100), 0);
+      expect(image.alphaAt(395, 195), 0);
+      chart.destroy();
+    });
+
+    testWidgets('a pointer at the center of a stretched chart gives the '
+        'center of the chart', (tester) async {
+      setRatio(tester, 2);
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final chart = FakeChart(
+        canvas,
+        devicePixelRatio: 1,
+        events: const ['click'],
+      );
+      await tester.pump();
+      await tester.tapAt(tester.getCenter(find.byType(ChartHost)));
+      await tester.pump();
+      final event = chart.events.single;
+      expect((event.x, event.y), (chart.width / 2, chart.height / 2));
+      expect((event.x, event.y), (200.0, 100.0));
+      chart.destroy();
+    });
+
+    testWidgets('a factor within 1e-3 paints at exactly 1 / devicePixelRatio', (
+      tester,
+    ) async {
+      // DPR 1.5 and a width of 101: the bitmap is 151 wide. The factor
+      // display / (bitmap / DPR) is 101 * 1.5 / 151 = 1.0033, so the one
+      // scale of the paint is display / bitmap on each axis.
+      setRatio(tester, 1.5);
+      var canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas), width: 101));
+      var chart = FakeChart(canvas);
+      await tester.pump();
+      expect((chart.width, chart.height), (101.0, 50.5));
+      expect((canvas.width, canvas.height), (151, 75));
+      final (scaleX, scaleY) = paintScales(_host(tester)).single;
+      expect(scaleX, 101 / 151);
+      expect(scaleY, 50.5 / 75);
+      expect(scaleX * 1.5, closeTo(1.0033, 1e-4));
+      chart.destroy();
+      await tester.pumpWidget(_box(const SizedBox()));
+
+      // DPR 2.625 and a box 387.43 wide (the Stress tab on the Pixel 8a): the
+      // chart is 387.4 x 193.7 and the bitmap 1016 x 508. The factor
+      // 1016.925 / 1016 is within 1e-3 of 1, so the only scale is exactly
+      // 1 / 2.625 and the bitmap pixels stay on the device pixels.
+      setRatio(tester, 2.625);
+      canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas), width: 387.43));
+      chart = FakeChart(canvas);
+      await tester.pump();
+      expect((chart.width, chart.height), (387.4, 193.7));
+      expect((canvas.width, canvas.height), (1016, 508));
+      expect(chart.width * 2.625 / canvas.width, closeTo(1, 1e-3));
+      expect(paintScales(_host(tester)), [(1 / 2.625, 1 / 2.625)]);
+      chart.destroy();
+    });
+
+    testWidgets('a non-responsive chart shows its bitmap at the size of its '
+        'styles', (tester) async {
+      // The upstream case "attributes for the render size and style for the
+      // display size": attributes 165 x 85, styles 345 x 125.
+      final canvas = UiCanvasElement(width: 165, height: 85);
+      canvas.style
+        ..setProperty('width', '345px')
+        ..setProperty('height', '125px');
+      await tester.pumpWidget(
+        _box(RepaintBoundary(child: ChartHost(canvas: canvas))),
+      );
+      final chart = FakeChart(canvas, responsive: false);
+      expect((chart.width, chart.height), (165.0, 85.0));
+      expect((canvas.width, canvas.height), (165, 85));
+      fillLeftHalf(chart);
+      await tester.pump();
+      expect(_host(tester).size, const Size(345, 125));
+      final image = await boundaryImage(tester);
+      expect((image.width, image.height), (345, 125));
+      // The left 82.5 bitmap pixels show 172.5 pixels wide.
+      expect(image.alphaAt(5, 120), 255);
+      expect(image.alphaAt(165, 60), 255);
+      expect(image.alphaAt(180, 60), 0);
+      expect(image.alphaAt(340, 5), 0);
+      chart.destroy();
+    });
+
+    testWidgets('one style alone shows the render size', (tester) async {
+      // The CSS rule of a replaced element (one style keeps the aspect ratio
+      // of the render size) is for the harness matcher toBeChartOfSize. The
+      // host shows the render size.
+      final canvas = UiCanvasElement(width: 200, height: 100);
+      canvas.style.setProperty('width', '600px');
+      canvas.getContext2d()
+        ..fillStyle = '#0000ff'
+        ..fillRect(0, 0, 100, 100);
+      await tester.pumpWidget(
+        _box(RepaintBoundary(child: ChartHost(canvas: canvas)), width: 800),
+      );
+      expect(_host(tester).size, const Size(200, 100));
+      final image = await boundaryImage(tester);
+      expect((image.width, image.height), (200, 100));
+      expect(image.alphaAt(90, 50), 255);
+      expect(image.alphaAt(110, 50), 0);
+
+      final other = UiCanvasElement(width: 200, height: 100);
+      other.style.setProperty('height', '50px');
+      await tester.pumpWidget(
+        _box(RepaintBoundary(child: ChartHost(canvas: other)), width: 800),
+      );
+      expect(_host(tester).size, const Size(200, 100));
+    });
+
+    testWidgets('a non-responsive chart on canvas attributes at '
+        'devicePixelRatio 3 keeps its display size', (tester) async {
+      // The upstream case "should scale the render size but not the
+      // 'implicit' display size" (core.controller.tests.js:1397).
+      setRatio(tester, 3);
+      final canvas = UiCanvasElement(width: 320, height: 240);
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final chart = FakeChart(canvas, responsive: false);
+      await tester.pump();
+      expect((chart.width, chart.height), (320.0, 240.0));
+      expect((canvas.width, canvas.height), (960, 720));
+      expect(canvas.style.getPropertyValue('width'), '320px');
+      expect(_host(tester).size, const Size(320, 240));
+      expect(paintScales(_host(tester)), [(1 / 3, 1 / 3)]);
+      chart.destroy();
+    });
+
+    testWidgets('releaseContext gives the host the default 300 x 150', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final chart = FakeChart(canvas);
+      await tester.pump();
+      expect(_host(tester).size, const Size(400, 200));
+      chart.destroy();
+      await tester.pump();
+      expect((canvas.width, canvas.height), (300, 150));
+      expect(canvas.style.getPropertyValue('width'), '');
+      expect(canvas.style.getPropertyValue('height'), '');
+      expect(_host(tester).size, const Size(300, 150));
     });
   });
 

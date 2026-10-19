@@ -728,7 +728,7 @@ void main() {
           ..clip()
           ..fillStyle = '#ff0000'
           ..fillRect(0, 0, 160, 160)
-          ..paint(ui.Canvas(ui.PictureRecorder()), ui.Offset.zero)
+          ..paint(ui.Canvas(ui.PictureRecorder()), ui.Offset.zero, 1, 1)
           ..fillStyle = '#0000ff'
           ..fillRect(0, 0, 160, 160);
       });

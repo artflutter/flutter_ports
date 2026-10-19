@@ -78,7 +78,13 @@ line width, an unknown keyword, a font that does not parse.
   and `'important'`.
 - `getContext('2d')` and `getContext2d()` give the one `UiCanvasContext` of the element. Other
   context ids give `null`.
-- `devicePixelRatio` is the DPR of the host. `logicalSize` is the bitmap size over that DPR.
+- The element has the `width` and `height` attributes of the DOM, with `getAttribute`,
+  `setAttribute` and `removeAttribute`. `initCanvas` and `releaseContext` use them
+  ([Chart.js ADR 0014](0014-input-events-and-chart-host.md), section 5). A size at creation is an
+  attribute. A `null` size has no attribute and the DOM default. A write of `width` or `height`
+  sets the attribute, as the DOM reflects the property. `setAttribute` parses a non-negative
+  integer. A value that does not parse gives the default size. `removeAttribute` gives the
+  default size. Both reset the context. Other attribute names give `null` and do nothing.
 - `parentNode` is the container of the host that shows the canvas, or `null`.
 - `toImageSource()` gives a snapshot of the bitmap as a `UiImageSource` (section 7).
 
@@ -110,7 +116,8 @@ difference. [Chart.js ADR 0014](0014-input-events-and-chart-host.md) gives the h
 - A partial `clearRect` draws with `BlendMode.clear`. A composite operation other than
   `source-over` blends with the content. After either one, `paint` draws the pictures inside a
   `saveLayer`. Thus the clear does not reach the pixels below the canvas.
-- `paint(ui.Canvas, ui.Offset)` ends the current recording and clips to the bitmap. When more than
+- `paint(ui.Canvas, ui.Offset, scaleX, scaleY)` ends the current recording, applies the scale of
+  the host and clips to the bitmap. When more than
   8 pictures accumulate without a full clear, `paint` rasterizes the content one time with
   `toImageSync`, at the bitmap size. The result replaces the list. Thus memory stays bounded.
 - `onChanged` tells the host that the content changed. It fires one time until the next `paint`.
@@ -121,16 +128,16 @@ difference. [Chart.js ADR 0014](0014-input-events-and-chart-host.md) gives the h
 ### 5. Bitmap space and the device pixel ratio
 
 The pictures are in bitmap space: the device pixels of the DOM bitmap. The recording has no base
-scale. `paint` applies `scale(1 / devicePixelRatio)` and clips to the bitmap rectangle.
+scale. `paint` applies the scale that the host gives and clips to the bitmap rectangle. The host
+gives the display size divided by the bitmap size. After `retinaScale`, this scale is `1 / DPR`.
 - `retinaScale` stays a line-by-line port. It sets the bitmap to the device size and calls
   `setTransform(dpr, 0, 0, dpr, 0, 0)`. Thus the net transform is the identity in logical pixels.
   `clearCanvas` and the clip rectangles map onto the box.
-- A write of `UiCanvasElement.devicePixelRatio` does not end the recording. It calls `onChanged`.
-  The host then paints again and checks the chart size in the same frame.
 - The content keeps its bitmap pixels across a DPR change, as a DOM bitmap does. It shows at the
   same logical size until the chart draws it again.
-- The host stretches the bitmap to the display size of the canvas, as the DOM does. The factor is
-  the display size divided by the bitmap size over `canvas.devicePixelRatio`.
+- The host stretches the bitmap to the display size of the canvas, as the DOM does
+  ([Chart.js ADR 0014](0014-input-events-and-chart-host.md), section 5). It gives `paint` one
+  scale for each axis. The canvas has no DPR.
 - The flatten step and `toImageSource()` share one rasterization. It needs no DPR scale.
 
 This decision replaces the base scale of porting-flow.md §2.2. It gives the same pixels for a
@@ -301,11 +308,13 @@ The layer has no Chromium-exact `arcTo` or arc sweep math and no pixel matching
 
 ## Evidence
 
-- `test/port/canvas/canvas_ui_test.dart` (85 tests, `flutter test`) probes the pixels of rendered
-  images and reads the state. It covers the element reset, the transform at point-add time, the
-  stroke scale, skew strokes, non-finite arguments, a singular transform, the path outside
-  `save()` and `restore()`, the DPR paint scale, a DPR change that keeps the content in bitmap
-  pixels, the full and partial clears, the clip across recordings, the arc cases, the group
+- `test/port/canvas/canvas_ui_test.dart` (92 tests, `flutter test`) probes the pixels of rendered
+  images and reads the state. It covers the element reset, the attributes (the group
+  'attributes'), the transform at point-add time, the stroke scale, skew strokes, non-finite
+  arguments, a singular transform, the path outside `save()` and `restore()`, the paint scale of
+  the host (the group 'paint maps the bitmap pixels with the given scale': `1 / DPR` after
+  `retinaScale`, the content in bitmap pixels at another scale, a scale for each axis), the full
+  and partial clears, the clip across recordings, the arc cases, the group
   "a full circle on an empty path" (fill and stroke as a circle, later commands that extend the
   same path, an evenodd ring of two circles, a dashed circle, a reflected transform), `Path2D`,
   the gradients in user space at fill time, patterns, `drawImage`, `toImageSource`, the line dash,
@@ -330,7 +339,9 @@ The layer has no Chromium-exact `arcTo` or arc sweep math and no pixel matching
 - `test/port/canvas/canvas_test.dart` (5 tests) tests the pure `Path2D` on the VM, dart2js and
   dart2wasm.
 - `test/port/platform/chart_host_test.dart` renders a host at DPR 2 with content that the code drew
-  at DPR 1. It checks the pixels. This test pins the bitmap space of section 5.
+  at DPR 1. It checks the pixels. This test pins the bitmap space of section 5. The group 'display
+  size and bitmap stretch' of the same file pins the scale that the host gives to `paint`
+  ([Chart.js ADR 0014](0014-input-events-and-chart-host.md), Evidence).
 - The specs: `helpers.canvas.tests.js` passes 12 of 14 cases, and the other 2 call `acquireChart`.
   `helpers.color.tests.js` passes 4 of 4 cases with a real gradient and pattern.
 - A wasm build (`flutter build web --wasm`) of an entry that imports `canvas_ui.dart`,
