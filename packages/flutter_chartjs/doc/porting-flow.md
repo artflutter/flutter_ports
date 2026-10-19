@@ -569,6 +569,26 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 | 8. Plugins | seven plugins; hunks H4a-H4c and H5 and their tests; input adapter for legend and tooltip | plugin cases pass; `plugin.*` fixture smoke tests pass |
 | 9. Flutter API and release | public widget on the host; theme API; keyboard and semantics; docs; published floor (2.12); pana | `flutter_chartjs` 0.1.0 on pub.dev |
 
+### 5.1 Deferred plans
+
+A deferred plan records work that the port does not do now, so that the phases above keep their
+focus. The phases do not wait for a deferred plan. Each deferred plan names its revisit point and
+its triggers.
+
+| Plan | Revisit point | Triggers that bring it forward |
+|---|---|---|
+| [canvas-cuts-plan.md](canvas-cuts-plan.md): cuts of own code in the canvas layer and the chart host, the web matrix fix (work package W), and the removal of the circle batch and of the text rotation snap | After phase 8, before phase 9 | Phase 5 starts the `acquireChart` harness: the default spec canvas is 512 x 256 until cut 2 lands (plan §3.3). Ported code strokes or clips a path under a skew or a non-uniform scale on the web (plan §2.3). The toolchain pin moves to a stable Flutter release with the skwasm fixes (plan §4.2). Flutter batches `drawCircle` calls (plan §4.1). |
+
+Keep each deferred plan current while the phases go on:
+- A change that edits a file that a deferred plan cites updates the plan in the same commit: the
+  file and line references, the code inventory, the tests that pin the behavior, and the
+  estimates.
+- A change that makes a step of the plan unnecessary, or adds a new reason for it, says so in the
+  plan.
+- A trigger that occurs brings the plan forward. Record the decision in the plan and in this
+  table.
+- At the revisit point, the maintainer decides which work packages to do, to change or to drop.
+
 ## 6. Changes to other files
 
 **AGENTS.md.**

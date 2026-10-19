@@ -159,6 +159,11 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   hit element, the item order, the resolved option, or a throw. Do not emulate JavaScript for
   exact digits or pixels only. `check:js-semantics` already fails on the flagged forms. A kept
   form carries `// js-ok: <reason>`.
+- Deferred plans (`porting-flow.md` §5.1), for example
+  `packages/flutter_chartjs/doc/canvas-cuts-plan.md`: do not do their work in a phase. A change
+  that edits a file that a deferred plan cites updates the plan in the same commit (the
+  references, the inventory, the pinning tests, the estimates). A trigger of §5.1 brings the plan
+  forward.
 - The JS runtime in `lib/src/js/`: `jsObjectKeys` (`Object.keys` order), `jsSort` (the stable
   `Array.prototype.sort`), `jsCall` (a call of a JS function value with JS arity), `jsGet` (the
   property read `object[key]`) and the `undefined` sentinel (Chart.js ADR 0006). Ported code

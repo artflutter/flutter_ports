@@ -1,6 +1,6 @@
 # Canvas and host cuts plan
 
-- Status: proposed
+- Status: proposed, deferred
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) (accepted),
   [Chart.js ADR 0013](adr/0013-canvas-model.md), [Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md),
@@ -13,6 +13,30 @@ owner. An owner can take one work package without the history of this plan. All 
 relative to `packages/flutter_chartjs/` unless they start with `apps/` or `third_party/`. The line
 numbers are the line numbers on 2026-10-19. Read the file again before an edit, because other
 work changes the tree.
+
+## Deferral
+
+The port does not do this plan now ([porting-flow.md](porting-flow.md) §5.1). The revisit point is
+after phase 8, before phase 9. Until then:
+- A change that edits a file that this plan cites updates this plan in the same commit: the file
+  and line references, the code inventory (§1.1), the tests that pin the behavior (§2.6, §3.5) and
+  the estimates. The cited files are `lib/src/canvas/*.dart`, `lib/src/platform/chart_host.dart`,
+  `lib/src/platform/platform.flutter.dart`, `lib/src/helpers/helpers.dom.dart`, the tests of §2.6
+  and §3.5, and `doc/performance.md`.
+- A change that makes a step unnecessary, or adds a new reason for it, says so here.
+
+These triggers bring the plan, or one work package of it, forward:
+1. **Phase 5 starts the `acquireChart` harness.** With the current `initCanvas`, the default spec
+   canvas of 512 x 512 becomes 512 x 256 (§3.3). Do cut 2 (work packages A2 and C2) then, or give
+   the harness a workaround and record it here.
+2. **Ported code strokes or clips a path under a skew or a non-uniform scale, or uses a pattern
+   shader, on the web.** Do work package W (§2.3) then. Chart.js core does not do this today.
+3. **The toolchain pin moves to a stable Flutter release with flutter/flutter#190048, #191014
+   and #194139.** Remove the text rotation snap (§4.2).
+4. **Flutter batches `drawCircle` calls on Impeller and skwasm.** Measure and remove the circle
+   batch (§4.1).
+
+Record each trigger that occurs, and the decision, in this section and in porting-flow.md §5.1.
 
 ## 1. Why
 
