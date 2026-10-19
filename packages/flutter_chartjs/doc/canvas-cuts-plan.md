@@ -704,13 +704,26 @@ commit. The rows differ, so the edits do not overlap. Run the gates of §6.2 bef
 |---|---|---|---|---|---|---|---|
 | A1 | Cut 1 tests | `test/port/canvas/canvas_ui_path_test.dart` (new), `doc/parity.md` (new row) | — | A2, A3, I | The 20 tests of §2.6. The web probe results of the current code, in the commit message. | Green on the current code. Gates of §6.2. | ~400 test lines, 1 day |
 | A2 | Cut 2 tests | `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (row 396) | — | A1, A3, I | The 7 tests of §3.5 that pin the stretch and the display size | Green on the current code. Gates. | ~180 test lines, 0.5 day |
-| A3 | Arc scenario and new baselines | `apps/chartjs_gallery/lib/demo/stress_demo.dart`, `apps/chartjs_gallery/lib/main_stress.dart`, `apps/chartjs_gallery/test/canvas_host_demo_test.dart` (if needed), `doc/performance.md` (new baseline section) | — | A1, A2, I | `--dart-define=POINT_STYLE=<style>` in the stress entry. The baseline of §6.3 on 3 platforms. A scratch micro-benchmark of 5000 wedges (not committed). | Baseline recorded with the commit hash. Old tables marked stale. | ~40 lines, 1 day of runs |
+| A3 | Arc scenario and new baselines | `apps/chartjs_gallery/lib/demo/stress_demo.dart`, `apps/chartjs_gallery/lib/main_stress.dart`, `apps/chartjs_gallery/test/canvas_host_demo_test.dart` (if needed), `apps/chartjs_gallery/test/stress_elements_test.dart` (if needed), `doc/performance.md` (new baseline section) | — | A1, A2, I | `--dart-define=POINT_STYLE=<style>` in the stress entry. The baseline of §6.3 on 3 platforms. A scratch micro-benchmark of 5000 wedges (not committed). See the note on A3 below. | Baseline recorded with the commit hash. Old tables marked stale. | ~40 lines, 1 day of runs |
 | I | Renderer probes (optional) | `apps/chartjs_gallery/integration_test/canvas_paths_test.dart` (new), `apps/chartjs_gallery/pubspec.yaml`, root `pubspec.lock` | — | A1, A2, A3 | The web probes of §2.6 as a gallery integration test | Runs on the Pixel 8a, on macOS and in Chrome (dart2js and `--wasm`). Merge alone (lock file). | ~150 lines, 1 day |
 | W | Web matrix aliasing fix | `lib/src/canvas/canvas_ui.dart` (1122, 1140), `lib/src/canvas/canvas_ui_paint.dart` (`shaderFor`), `doc/parity.md` (rows 356, 358) | A1 | A2, A3 | Step 0 of §2.5 | VM pixels unchanged. The stroke probe and the clip probe pass on CanvasKit and on skwasm. | ~6 lines, 0.5 day |
 | C1 | Cut 1 code | `lib/src/canvas/canvas_ui_path.dart`, `test/port/canvas/canvas_ui_path_test.dart` (thresholds only), `doc/parity.md` (row 357) | A1, W | C2 | Steps 1 to 6 of §2.5 | All tests green. Web probes pass. Perf of §6.3 within the thresholds. | ~-45 net library lines, 1 day |
 | C2 | Cut 2 code (option A) | `lib/src/canvas/canvas.dart`, `lib/src/canvas/canvas_ui.dart`, `lib/src/platform/platform.flutter.dart`, `lib/src/platform/chart_host.dart`, `test/port/canvas/canvas_ui_test.dart`, `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (rows 356, 363, 364, 369, 396) | A2, W | C1 | Steps 1 to 6 of §3.4 and the test changes of §3.5 | All tests green. Gallery unchanged on web, macOS and the Pixel 8a. Perf within the thresholds. | ~-10 net library lines, ~+100 test lines, 1.5 days |
 | D | Docs | `doc/adr/0013-canvas-model.md`, `doc/adr/0014-input-events-and-chart-host.md`, `doc/porting-flow.md` | C1, C2 | P | §2.7 and §3.7 (ADR and porting-flow parts), and a "Removal" bullet in Chart.js ADR 0013 §8.1 (§4.1) | Status lines unchanged. Links resolve. | ~60 changed lines, 0.5 day |
 | P | Perf results and cut 3 notes | `doc/performance.md` (results section, §7), this plan (status of each work package) | A3, C1, C2 | D | The figures of §6.3 after C1 and after C2. The removal criteria of §4. The draft of the Flutter feature request. | Every scenario within the thresholds of §6.3, or the miss explained | ~60 lines, 1 day of runs |
+
+**Note on A3 (phase 4).** Phase 4 added the scene modes of the stress tab (§6.3). The stress
+entry takes `--dart-define=MODE=<primitives|elements|bars|arcs>`, and the default is
+`primitives`. For A3, this means:
+- The `arcs` mode draws `ArcElement` wedges under the retina scale. Thus `MODE=arcs` at 5000 + 0
+  can serve the arc micro-benchmark (a) on all three platforms.
+- The micro-benchmark (b), under a skew, still needs the scratch package. No mode draws under a
+  skew.
+- `POINT_STYLE` is still absent.
+- `apps/chartjs_gallery/test/stress_elements_test.dart` tests the modes, their N choices and
+  their controls. A change of the stress controls can need a change of that test.
+- `performance.md` §1 and §6 describe only the `primitives` scene and do not name `MODE`. Each
+  `STRESS {json}` line of the stress entry now starts with the key `mode`.
 
 ### 5.1 Merge order
 
@@ -768,6 +781,16 @@ Use `apps/chartjs_gallery/lib/main_stress.dart` (performance.md §6): profile bu
 - **Arc micro-benchmark:** 5000 wedges with `arc` and `closePath`, (a) under the retina scale and
   (b) under a skew, in the scratch package (VM and skwasm). (a) must not change. (b) costs about
   3 times more (§2.8).
+- **Modes (phase 4):** `--dart-define=MODE=<primitives|elements|bars|arcs>` selects the scene of
+  the stress entry. The default is `primitives`, the scene of the six scenarios above. `elements`
+  draws the same scene with `PointElement` and `LineElement`. `bars` draws N `BarElement` objects
+  with rounded corners. `arcs` draws N `ArcElement` wedges, in doughnuts of 2 rings with 5 slices,
+  under the retina scale. Its default scenarios are 100 + 0, 1000 + 0 and 5000 + 0. Thus
+  `MODE=arcs` at 5000 + 0 can serve the arc micro-benchmark (a) on all three platforms. Each of
+  these wedges has rounded corners and a border, so its figures do not compare with the figures
+  of §2.8. The micro-benchmark (b) still needs the scratch package, because no mode draws under a
+  skew. `POINT_STYLE` is still absent. In the element modes, the draw figure also has the writes
+  of the element properties.
 - **Runs:** 3 fresh processes for each scenario. Take the median FPS, draw (ms) and raster (ms).
   The spread from the minimum to the maximum is the noise.
 - **Platforms:** the Pixel 8a (Impeller on Vulkan, 60 Hz), Chrome with dart2wasm and skwasm (raster
@@ -797,8 +820,9 @@ A miss runs 3 more times. A miss that stays fails the work package. On the Pixel
 at the 60 Hz limit at 1000 points, so draw and raster are the main figures there. The batch
 figure on the phone must hold (about 55 FPS at 20000 + 0).
 
-Expected results: W, C1 and C2 are neutral. The stress scenes draw full circles (the pending
-circle and the batch), lines and text. They do not reach the matrix path. `rectRounded` stays on
+Expected results: W, C1 and C2 are neutral. The `primitives` and `elements` scenes draw full
+circles (the pending circle and the batch), lines and text. The `bars` and `arcs` scenes also draw
+arcs, but only under the retina scale. No scene reaches the matrix path. `rectRounded` stays on
 the direct path. C2 changes only the transform of the host paint.
 
 ### 6.4 Web checks

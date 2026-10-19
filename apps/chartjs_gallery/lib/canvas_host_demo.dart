@@ -1,5 +1,6 @@
 import 'package:chartjs_gallery/demo/canvas_demo.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
+import 'package:chartjs_gallery/demo/elements_demo.dart';
 import 'package:chartjs_gallery/demo/events_demo.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/demo/text_demo.dart';
@@ -27,17 +28,26 @@ canvasHostDemoTabs = [
     build: TextDemo.new,
   ),
   (key: 'stress', label: 'Stress', icon: Icons.speed, build: StressDemo.new),
+  (
+    key: 'elements',
+    label: 'Elements',
+    icon: Icons.bar_chart,
+    build: ElementsDemo.new,
+  ),
 ];
 
-/// A live demo of the phase 3 port: the canvas layer, the canvas and DOM
-/// helpers, the Flutter platform and the internal chart host.
+/// A live demo of the phase 3 and phase 4 ports: the canvas layer, the
+/// canvas and DOM helpers, the Flutter platform, the internal chart host and
+/// the elements.
 ///
 /// Each drawing is a chart host (`ChartHost`) that shows a
 /// `UiCanvasElement`. A small demo chart makes the platform calls of
 /// `core.controller` (`acquireContext`, `getMaximumSize`, `retinaScale`,
 /// `addEventListener`) and draws with the ported `helpers.canvas`,
-/// `helpers.rtl` and `helpers.dom`. No chart type renders yet: the
-/// controller, the elements and the scales come in later phases.
+/// `helpers.rtl` and `helpers.dom`. The Elements tab draws the ported
+/// `BarElement`, `LineElement`, `PointElement` and `ArcElement` of phase 4,
+/// and tests the pointer with their `inRange`. No chart type renders yet:
+/// the controller and the scales come in later phases.
 class CanvasHostDemoPage extends StatelessWidget {
   /// Creates the demo page.
   const CanvasHostDemoPage({super.key});

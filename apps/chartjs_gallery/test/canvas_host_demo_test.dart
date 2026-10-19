@@ -42,7 +42,7 @@ Future<void> _frames(WidgetTester tester, [int count = 4]) async {
 }
 
 Future<void> _openTab(WidgetTester tester, String key) async {
-  await tester.tap(find.byKey(ValueKey('phase3.tab.$key')));
+  await _tapTab(tester, key);
   await _frames(tester, 25);
 }
 
@@ -463,6 +463,17 @@ int _renders(WidgetTester tester) => tester
     )
     .chart!
     .renders;
+
+/// Scrolls the tab of [key] into view and taps it.
+///
+/// The tab bar scrolls. It keeps the selected tab in view, so that another
+/// tab can be out of view on a phone.
+Future<void> _tapTab(WidgetTester tester, String key) async {
+  final tab = find.byKey(ValueKey('phase3.tab.$key'));
+  await tester.ensureVisible(tab);
+  await tester.pump();
+  await tester.tap(tab);
+}
 
 /// The color of the pixel at [x], [y] of [source], as `0xAARRGGBB`.
 Future<int> _pixel(UiImageSource source, int x, int y) async {
