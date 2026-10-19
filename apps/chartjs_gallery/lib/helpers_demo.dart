@@ -1,4 +1,5 @@
 import 'package:chartjs_gallery/demo/color_demo.dart';
+import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/easing_demo.dart';
 import 'package:chartjs_gallery/demo/options_demo.dart';
 import 'package:chartjs_gallery/demo/spline_demo.dart';
@@ -45,37 +46,10 @@ class HelpersDemoPage extends StatelessWidget {
             ],
           ),
         ),
-        body: TabBarView(
-          // Horizontal drags belong to the spline canvas and the sliders.
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            for (final tab in helpersDemoTabs) _KeepAlive(child: tab.build()),
-          ],
+        body: DemoTabBarView(
+          children: [for (final tab in helpersDemoTabs) tab.build()],
         ),
       ),
     );
-  }
-}
-
-/// Keeps a tab's state (locale, dragged points, typed color) when the user
-/// switches to another tab and back.
-class _KeepAlive extends StatefulWidget {
-  const _KeepAlive({required this.child});
-
-  final Widget child;
-
-  @override
-  State<_KeepAlive> createState() => _KeepAliveState();
-}
-
-class _KeepAliveState extends State<_KeepAlive>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return widget.child;
   }
 }

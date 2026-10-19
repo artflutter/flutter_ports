@@ -40,6 +40,10 @@ Color? cssColor(String? css) =>
     css == null ? null : flutterColor(kc.Color(css));
 
 /// A centered column with a readable maximum width, for wide screens.
+///
+/// The page builds all its sections at once, in a [SingleChildScrollView]:
+/// a section that scrolls out of view keeps its state (its toggles, its
+/// sliders and its chart). A tab has at most a few cards.
 class DemoPageBody extends StatelessWidget {
   /// Creates the body with [children], padded and capped at [maxWidth].
   const DemoPageBody({
@@ -56,23 +60,26 @@ class DemoPageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      children: [
-        for (final child in children)
-          Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final child in children)
+            Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: maxWidth),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  child: child,
                 ),
-                child: child,
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -200,7 +207,14 @@ class _SwatchPainter extends CustomPainter {
 /// Monospace text.
 class Mono extends StatelessWidget {
   /// Creates monospace [text].
-  const Mono(this.text, {this.style, super.key});
+  const Mono(
+    this.text, {
+    this.style,
+    this.softWrap,
+    this.overflow,
+    this.maxLines,
+    super.key,
+  });
 
   /// The text.
   final String text;
@@ -208,12 +222,117 @@ class Mono extends StatelessWidget {
   /// The style merged over the monospace body style.
   final TextStyle? style;
 
+  /// The [Text.softWrap] of the text.
+  final bool? softWrap;
+
+  /// The [Text.overflow] of the text.
+  final TextOverflow? overflow;
+
+  /// The [Text.maxLines] of the text.
+  final int? maxLines;
+
   @override
   Widget build(BuildContext context) {
     final base = Theme.of(context).textTheme.bodyMedium!.copyWith(
       fontFamily: 'monospace',
       fontFamilyFallback: const ['Menlo', 'Consolas', 'Roboto Mono'],
     );
-    return Text(text, style: base.merge(style));
+    return Text(
+      text,
+      style: base.merge(style),
+      softWrap: softWrap,
+      overflow: overflow,
+      maxLines: maxLines,
+    );
+  }
+}
+
+/// Keeps the state of a tab (a typed text, dragged points, a running
+/// animation) when the user switches to another tab and back.
+class KeepAliveTab extends StatefulWidget {
+  /// Keeps [child] alive.
+  const KeepAliveTab({required this.child, super.key});
+
+  /// The content of the tab.
+  final Widget child;
+
+  @override
+  State<KeepAliveTab> createState() => _KeepAliveTabState();
+}
+
+class _KeepAliveTabState extends State<KeepAliveTab>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
+  }
+}
+
+/// A [TabBarView] whose tabs keep their state ([KeepAliveTab]) and whose
+/// hidden tabs have their tickers muted.
+///
+/// A kept-alive tab stays in the tree while another tab shows, and
+/// [TabBarView] does not turn its [TickerMode] off. Without the mute, a
+/// `Ticker` or a chart loop of a hidden tab draws in every frame, and the
+/// app never goes idle. A chart host reads the [TickerMode] of its tab and
+/// reports it through `ChartHost.onTickerModeChanged`.
+///
+/// It reads the controller of the enclosing [DefaultTabController]. During
+/// a tab animation, both the old and the new tab run their tickers.
+class DemoTabBarView extends StatefulWidget {
+  /// Creates the view of [children], one for each tab.
+  const DemoTabBarView({required this.children, super.key});
+
+  /// The content of the tabs.
+  final List<Widget> children;
+
+  @override
+  State<DemoTabBarView> createState() => _DemoTabBarViewState();
+}
+
+class _DemoTabBarViewState extends State<DemoTabBarView> {
+  TabController? _controller;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final controller = DefaultTabController.of(context);
+    if (identical(controller, _controller)) return;
+    _controller?.removeListener(_changed);
+    _controller = controller..addListener(_changed);
+  }
+
+  @override
+  void dispose() {
+    _controller?.removeListener(_changed);
+    super.dispose();
+  }
+
+  void _changed() => setState(() {});
+
+  bool _shows(int index) {
+    final controller = _controller!;
+    return index == controller.index ||
+        (controller.indexIsChanging && index == controller.previousIndex);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TabBarView(
+      // Horizontal drags belong to the sliders, the canvases and the chart
+      // hosts.
+      physics: const NeverScrollableScrollPhysics(),
+      children: [
+        for (var i = 0; i < widget.children.length; i++)
+          TickerMode(
+            enabled: _shows(i),
+            child: KeepAliveTab(child: widget.children[i]),
+          ),
+      ],
+    );
   }
 }

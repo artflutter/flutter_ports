@@ -138,8 +138,9 @@ void main() {
     // The value line and the label of the tick 0.5.
     expect(find.text('0.5'), findsWidgets);
 
-    await _scrollTo(tester, find.text('1,000,000'));
-    expect(find.text('1,000,000'), findsOneWidget);
+    // The page builds all its cards: two cards have the label 1,000,000.
+    await _scrollTo(tester, find.text('1,000,000').first);
+    expect(find.text('1,000,000'), findsNWidgets(2));
 
     await _scrollTo(
       tester,
@@ -151,8 +152,8 @@ void main() {
     await tester.tap(find.text(tickLocales[1]).last);
     await tester.pumpAndSettle();
     expect(find.text('0,5'), findsOneWidget);
-    await _scrollTo(tester, find.text('1.000.000'));
-    expect(find.text('1.000.000'), findsOneWidget);
+    await _scrollTo(tester, find.text('1.000.000').first);
+    expect(find.text('1.000.000'), findsNWidgets(2));
 
     // delta 0.05: two decimals, with the de-DE decimal comma.
     await _scrollTo(tester, find.text('-0,45'));
