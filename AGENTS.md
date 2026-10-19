@@ -85,12 +85,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     generators of reference data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0018. Three of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0022. Three of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, and Chart.js
       ADR 0012 supersedes Chart.js ADR 0004. Chart.js ADR 0001 is accepted for its four theming
       invariants only. Chart.js ADRs 0013 (canvas model), 0014 (input events and the chart host),
-      0015 (text), 0016 (frame scheduling), 0017 (element properties) and 0018 (typed element
-      options) are proposed. Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it is accepted.
+      0015 (text), 0016 (frame scheduling), 0017 (element properties), 0018 (typed element
+      options), 0019 (animation), 0020 (registry and component classes), 0021 (typed options in
+      the resolver) and 0022 (chart test harness on Flutter) are proposed. Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it is accepted.
       The other ADRs are accepted. Docs name them "Chart.js ADR NNNN". "ADR NNNN" alone is a
       `docs/adr/` file. An accepted ADR does not change. A changed decision gets a new ADR that
       states the complete decision and supersedes the old ADR.
