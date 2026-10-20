@@ -5,8 +5,9 @@
   ([Chart.js ADR 0015](adr/0015-text.md)). Section 8 adds the draw cost of the phase 4 elements
   ([Chart.js ADR 0017](adr/0017-element-properties.md)). Section 9 has the A/B test of cut 2 of
   [canvas-cuts-plan.md](canvas-cuts-plan.md) in phase 5. Section 10 has the core figures of phase 5:
-  the animations, a hit test and the parsed items.
-- Date: 2026-10-19
+  the animations, a hit test, the parsed items, the profile of the chart path, the change of
+  `hidden`, the acceptance of the typed options and the final series on the phones.
+- Date: 2026-10-20
 - Related: [Chart.js ADR 0007](adr/0007-frame-scheduling.md) (frame scheduling),
   [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) (no display-only JS exactness).
 
@@ -456,15 +457,23 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   Phase 5 makes them in a chart: `resolveNamedOptions` makes the typed class of the element type,
   and the option copies of `cloneIfNotShared` and `resolveTargetOptions` keep it
   ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md)). Section 10.7 has the draw cost
-  for each point of case (a) on the Pixel 8a and macOS. The other cases and the other platforms of
-  the mode `chart` (section 6) are not recorded yet. Options that are plain Maps still cost the
-  lookups of section 8.2.
+  for each point of case (a) on the Pixel 8a and macOS. Section 10.9 has all cases of the mode
+  `chart` on the Pixel 8a and case (a) on the iPhone. The final series of the mode `chart`, the
+  animations and the regression set on macOS and in Chrome with dart2wasm did not run, because
+  the Mac was in use. Options that are plain Maps still cost the lookups of section 8.2.
+- Scriptable options (case c of section 10.9): the update at 5000 points takes 45.6 ms on the
+  Pixel 8a, and case (c) at 20000 runs at 3.5 FPS. A CPU profile of case (c) is not recorded. A
+  candidate is the read and the write of `element['$context']` in `getContext`, which go through
+  the Map of extra properties, as `hidden` did before section 10.6.
+- A benchmark of the chart path without frames (a profile entry of the gallery that times
+  `update` and `draw` into a `PictureRecorder`) can measure the costs of the UI thread in about a
+  minute. It is not built.
 - `elements` 20000 + 0 on the Pixel 8a: over 31 pairs, the FPS median of the phase 5 builds misses
   the criterion of plan §6.3 by 0.9 FPS. The draw follows the frequency of the big core, and at the
   same frequency the phase 5 build is not slower (section 10.8). A series at a fixed core frequency
   needs a device with root access.
-- Animations: the figures of the animated stress case (`CALL=animate`, section 10.4) on the Pixel
-  8a, macOS, Chrome with dart2wasm and the iPhone are not recorded yet.
+- Animations: section 10.9 has the animated stress case (`CALL=animate`) on the Pixel 8a and the
+  iPhone. macOS and Chrome with dart2wasm are not recorded.
 - Arcs: the native path calls (`Path.arcTo`) cost the most (section 8.2). Cut 1 of
   [canvas-cuts-plan.md](canvas-cuts-plan.md) keeps the native arc path (`_nativeArc`), so it does
   not reduce this cost. The bars use `roundRect` now (section 8.4).
@@ -972,8 +981,8 @@ without a compare of the type arguments (the comment of `jsGet`).
 
 `--dart-define=MODE=chart --dart-define=CALL=animate` (section 6) gives the frame figures of the
 animator in a real chart. `drawMs` is the draw that the animator calls. `animatorMs` is the tick of
-the N animations before that draw. The figures on the Pixel 8a, macOS, Chrome with dart2wasm and
-the iPhone are open (section 7).
+the N animations before that draw. Section 10.9 has the figures of the Pixel 8a and the iPhone.
+The figures of macOS and Chrome with dart2wasm are open (section 7).
 
 
 ### 10.5 CPU profile of the chart path
@@ -1210,3 +1219,116 @@ build is 0.26 ms faster (-0.76 to +0.24, a bootstrap over the pairs). The probe 
   against `286470e`, the change gives -0.23 ms of draw and +0.66 FPS over 6 pairs. Section 9.5
   has the spread of `bars` 1000 on this phone.
 - `primitives` 20000 + 0 missed with one run in the regression set. It passes in this series.
+
+### 10.9 The final series on the phones (commit `4c32e6b`)
+
+The mode `chart` of section 6 and the regression set ran on the Pixel 8a and the iPhone 17 Pro on
+2026-10-20, on commit `4c32e6b`.
+- **Sides.** "Typed" is commit `4c32e6b`. "Plain" is the same commit with the one-line variant of
+  Chart.js ADR 0021 §8: `_resolveElementOptions` gives `null` as `into`
+  (`core.datasetController.dart:1548`), so each options object is a plain Map. "Before" is commit
+  `cd9024f`.
+- **Order.** Each series alternates the first side of each pair (ABBA). The Pixel ran 3 pairs for
+  each scenario, and the iPhone 2 pairs for each chart scenario and 1 pair for each regression
+  scenario.
+- **Cells.** The medians of FPS / draw (ms) / raster (ms) / update (ms). The update is the time of
+  `chart.update()` without its draw. A difference is the mean of the pair differences, typed minus
+  plain, with its 95 % bootstrap interval.
+- **Not measured.** macOS and Chrome (dart2wasm) did not run this series, because the Mac was in
+  use (section 7). Section 10.6 has the A/B of the change of `hidden` on both.
+
+**Pixel 8a, typed against plain** (the battery temperature went from 30.2 to 36.6 degrees Celsius):
+
+| N | Case | Sharing | Plain | Typed | Draw difference |
+|---|---|---|---|---|---|
+| 1000 | (a) draw | on | 58.0 / 5.63 / 4.81 / 0.01 | 58.7 / 5.15 / 5.05 / 0.00 | -0.48 (-0.53 to -0.44) |
+| 1000 | (b) update | on | 58.2 / 4.47 / 4.53 / 1.23 | 58.3 / 4.06 / 4.65 / 1.37 | -0.46 (-0.61 to -0.36) |
+| 1000 | (c) update, scriptable | on | 51.9 / 2.56 / 10.64 / 8.38 | 56.0 / 2.22 / 10.68 / 7.57 | -0.35 (-0.43 to -0.22) |
+| 1000 | (a) draw | off | 58.0 / 5.74 / 4.76 / 0.00 | 58.0 / 5.52 / 5.31 / 0.01 | -0.23 (-0.52 to +0.04) |
+| 1000 | (b) update | off | 58.2 / 2.63 / 4.54 / 4.39 | 58.2 / 3.65 / 4.74 / 2.08 | +0.97 (+0.76 to +1.10) |
+| 1000 | (c) update, scriptable | off | 52.0 / 2.61 / 10.59 / 8.44 | 54.4 / 2.24 / 10.54 / 7.73 | -0.38 (-0.43 to -0.34) |
+| 5000 | (a) draw | on | 58.3 / 8.58 / 5.13 / 0.00 | 58.2 / 7.50 / 4.78 / 0.00 | -1.05 (-1.22 to -0.94) |
+| 5000 | (b) update | on | 55.2 / 7.45 / 5.34 / 1.43 | 58.4 / 5.91 / 5.11 / 1.56 | -1.47 (-1.71 to -1.16) |
+| 5000 | (c) update, scriptable | on | 13.5 / 12.75 / 31.40 / 48.80 | 13.9 / 12.04 / 30.04 / 45.56 | -1.28 (-2.64 to +0.97) |
+| 5000 | (a) draw | off | 57.5 / 8.99 / 5.12 / 0.00 | 58.0 / 7.88 / 4.89 / 0.00 | -1.02 (-1.15 to -0.83) |
+| 5000 | (b) update | off | 40.9 / 5.57 / 6.63 / 9.34 | 57.9 / 5.09 / 5.83 / 3.27 | -0.52 (-0.74 to -0.33) |
+| 5000 | (c) update, scriptable | off | 11.3 / 14.87 / 34.86 / 55.32 | 13.7 / 12.01 / 31.92 / 46.53 | -3.26 (-4.16 to -2.76) |
+| 20000 | (a) draw | on | 29.6 / 20.77 / 9.28 / 0.00 | 36.6 / 15.64 / 9.10 / 0.00 | -4.77 (-5.65 to -4.29) |
+| 20000 | (b) update | on | 27.9 / 21.58 / 9.39 / 3.39 | 29.6 / 16.05 / 9.02 / 3.49 | -5.23 (-5.53 to -4.84) |
+| 20000 | (a) draw | off | 29.6 / 21.99 / 9.35 / 0.00 | 34.2 / 16.45 / 8.48 / 0.00 | -5.60 (-5.73 to -5.37) |
+| 20000 | (b) update | off | 11.2 / 24.58 / 10.92 / 52.52 | 27.9 / 16.51 / 9.59 / 9.11 | -8.41 (-9.43 to -7.74) |
+| 20000 | (c), 60 seconds, 2 pairs | on | 2.8 / 65.16 / 90.15 / 261.80 | 3.5 / 48.58 / 89.04 / 199.85 | -16.6 (two pairs) |
+| 20000 | (c), 60 seconds, 2 pairs | off | 2.7 / 66.88 / 90.25 / 270.17 | 3.4 / 48.94 / 98.60 / 202.22 | -18.0 (two pairs) |
+
+- Case (c) at 20000 gives fewer than 30 frames in 7 seconds. The stress entry then reports no
+  figures, because it averages only the windows after the first 30 frames. Thus case (c) at 20000
+  ran 60 seconds (`--dart-define=SECONDS=60`).
+- Typed options are faster in each case with a resolved difference, except one: case (b) without
+  sharing at 1000. There the draw is 0.97 ms longer, but the update is 2.31 ms shorter, and the
+  FPS is equal. The cause of the longer draw is not known.
+- The largest gains come from the copies of case (b) without sharing, as in a scatter chart: at
+  20000, the update takes 9.11 ms typed against 52.52 ms plain, and the chart runs at 27.9 FPS
+  against 11.2 FPS. The copy is `clone` against the `Object.assign` loop over a Map (Chart.js ADR
+  0021 §8).
+- Case (c) is the slowest case. A scriptable option disables the option sharing and the cache of
+  `resolveNamedOptions` (`needContext`, `core.config.js:405`). Each point then gets its own
+  context and its own walk of the scope chain at each update. The scriptable color also gives each
+  point its own paint, so the circle batch (section 5.4) cannot join the points. The raster time
+  grows from about 5 ms (case b) to about 30 ms at 5000 points.
+
+**Pixel 8a, the acceptance base and the animations** (typed, 2 pairs of the same build, 8 runs;
+37.0 to 37.1 degrees Celsius):
+
+| Scenario | FPS / draw / raster (median) | Draw range | Animator tick |
+|---|---|---|---|
+| `elements` without the line, 1000 | 58.4 / 5.65 / 5.18 | 5.39-5.88 | — |
+| `elements` without the line, 5000 | 58.2 / 7.58 / 4.96 | 7.48-7.63 | — |
+| `elements` without the line, 20000 | 40.5 / 15.00 / 9.05 | 13.39-17.57 | — |
+| `chart` `CALL=animate`, 1000 | 58.1 / 4.80 / 5.27 | 4.62-5.09 | 0.94 ms |
+| `chart` `CALL=animate`, 5000 | 58.2 / 6.25 / 5.27 | 6.23-6.42 | 1.81 ms |
+| `chart` `CALL=animate`, 20000 | 30.5 / 14.89 / 9.71 | 12.81-16.75 | 4.66 ms |
+
+- The animated case ticks two number animations (`x` and `y`) for each point. At 20000 points,
+  the tick costs 4.66 ms for 40000 animations, about 0.12 µs for each animation on this phone.
+- Section 10.7 gives the acceptance of ADR 0021 §8 inside one ABBA series. This series ran after
+  the chart series on a hot phone, so it does not compare with the chart series above.
+
+**Pixel 8a, the regression set** (before `cd9024f` against typed `4c32e6b`, 3 pairs; 36.6 to 37.1
+degrees Celsius):
+
+| Scenario | Before | After | FPS difference | Draw difference |
+|---|---|---|---|---|
+| primitives 1000 + 0 | 58.2 / 5.32 / 5.37 | 57.9 / 5.22 / 5.62 | -0.17 | -0.06 |
+| primitives 1000 + 50 | 58.5 / 5.51 / 5.77 | 58.2 / 5.62 / 5.79 | -0.27 | +0.09 |
+| primitives 5000 + 50 | 58.5 / 6.97 / 6.26 | 58.7 / 7.21 / 6.08 | +0.03 | +0.18 |
+| primitives 20000 + 0 | 45.9 / 13.91 / 10.26 | 55.9 / 12.38 / 10.11 | +1.38 | +0.45 |
+| primitives 1000 + 200 | 58.5 / 6.50 / 7.45 | 58.3 / 6.48 / 7.16 | -0.18 | +0.11 |
+| primitives 20000 + 200 | 44.3 / 14.87 / 12.57 | 47.1 / 14.15 / 11.67 | -1.36 | +1.19 |
+| elements 5000 + 50 | 57.5 / 8.55 / 6.28 | 58.0 / 8.72 / 6.28 | +2.29 | -0.62 |
+| elements 20000 + 0 | 31.5 / 19.69 / 9.68 | 29.9 / 20.82 / 9.72 | -2.20 | +1.36 |
+| bars 1000 | 41.9 / 12.20 / 16.03 | 42.7 / 12.08 / 15.95 | -0.39 | +0.29 |
+| arcs 1000 | 29.2 / 19.63 / 26.64 | 32.4 / 17.07 / 22.89 | +2.85 | -2.59 |
+
+- The series ran last, on a hot phone. Single runs of both sides fell to 32 to 37 FPS at 20000
+  points, and the plan §6.3 rule misses in four scenarios on such runs. Thus this series cannot
+  resolve the changes. Sections 10.6 and 10.8 have the controlled figures: the pooled 31 pairs of
+  `elements` 20000 + 0 and the fit against the core frequency.
+
+**iPhone 17 Pro** (120 Hz; 2 pairs for each chart scenario, 1 pair for each regression scenario):
+
+| Scenario | Typed or after | Plain or before |
+|---|---|---|
+| chart (a), sharing on, 1000 | 119.9 / 1.54 / 0.96 | 119.9 / 1.86 / 0.86 |
+| chart (a), sharing on, 5000 | 120.0 / 2.33 / 0.48 | 120.0 / 2.43 / 0.34 |
+| chart (a), sharing on, 20000 | 120.0 / 3.68 / 0.51 | 120.0 / 5.42 / 0.42 |
+| chart `CALL=animate`, 1000 | 119.9 / 1.48 / 0.87, tick 0.31 ms | — |
+| chart `CALL=animate`, 5000 | 119.3 / 2.13 / 0.40, tick 0.58 ms | — |
+| chart `CALL=animate`, 20000 | 117.7 / 3.89 / 0.39, tick 1.11 ms | — |
+| primitives 1000 + 0 | 120.0 / 0.92 / 0.79 | 119.9 / 1.34 / 1.01 |
+| primitives 20000 + 200 | 119.8 / 3.00 / 0.92 | 119.9 / 2.98 / 0.92 |
+
+- At 20000 points, typed options draw 32 % faster on the iPhone (3.68 against 5.42 ms). Both
+  sides run at the 120 Hz limit.
+- The animator tick costs about 28 ns for each animation at 20000 points (1.11 ms for 40000
+  animations), near the 18 to 20 ns of the probe of Chart.js ADR 0019 §11 on an M3 Max.
+- The regression pairs show no loss against `cd9024f`.
