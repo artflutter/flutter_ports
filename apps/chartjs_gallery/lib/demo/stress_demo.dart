@@ -1146,62 +1146,201 @@ class StressDemoState extends State<StressDemo> {
     );
   }
 
-  Widget _choices(
-    String name,
-    List<int> values,
-    int value,
-    ValueChanged<int> set,
-  ) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 4,
-      crossAxisAlignment: WrapCrossAlignment.center,
+  /// The controls: the start button, a segmented button for each choice and
+  /// one segmented button of icons for the options. They wrap to the next
+  /// line on a narrow screen. The chart comes after them.
+  Widget _toolbar(ThemeData theme) {
+    final layers =
+        _mode == StressMode.primitives || _mode == StressMode.elements;
+    String count(int v) => v >= 1000 ? '${v ~/ 1000}k' : '$v';
+    const modeText = {
+      StressMode.primitives: 'prim',
+      StressMode.elements: 'elem',
+      StressMode.bars: 'bars',
+      StressMode.arcs: 'arcs',
+      StressMode.chart: 'chart',
+      StressMode.axes: 'axes',
+    };
+    const callText = {
+      StressChartCall.draw: 'draw',
+      StressChartCall.update: 'upd',
+      StressChartCall.animate: 'anim',
+    };
+    const axisText = {
+      StressAxisType.linear: 'lin',
+      StressAxisType.logarithmic: 'log',
+      StressAxisType.category: 'cat',
+      StressAxisType.time: 'time',
+    };
+    const gap = SizedBox(height: 6);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SizedBox(width: 92, child: Text(name)),
-        for (final v in values)
-          ChoiceChip(
-            key: ValueKey('stress.${name.toLowerCase()}.$v'),
-            label: Text(v >= 1000 ? '${v ~/ 1000}k' : '$v'),
-            selected: v == value,
-            onSelected: (_) => setState(() => set(v)),
-          ),
-      ],
-    );
-  }
-
-  Widget _modeChoices() {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 4,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        const SizedBox(width: 92, child: Text('Mode')),
-        for (final mode in StressMode.values)
-          ChoiceChip(
-            key: ValueKey('stress.mode.${mode.name}'),
-            label: Text(mode.name),
-            selected: mode == _mode,
-            onSelected: (_) => setState(() => _setScene(mode: mode)),
-          ),
-      ],
-    );
-  }
-
-  Widget _callChoices() {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 4,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        const SizedBox(width: 92, child: Text('Call')),
-        for (final call in StressChartCall.values)
-          if (_mode != StressMode.axes || call != StressChartCall.animate)
-            ChoiceChip(
-              key: ValueKey('stress.chart.call.${call.name}'),
-              label: Text(call.name),
-              selected: call == _call,
-              onSelected: (_) => setState(() => _setChartCase(call: call)),
+        Row(
+          children: [
+            SizedBox(
+              width: 88,
+              child: SegmentToggles(
+                items: [
+                  (
+                    key: 'stress.start',
+                    icon: _running ? Icons.pause : Icons.play_arrow,
+                    tooltip: _running ? 'Stop' : 'Start',
+                    value: _running,
+                    onChanged: _setRunning,
+                  ),
+                ],
+              ),
             ),
+            const SizedBox(width: 12),
+            Expanded(child: _optionToggles(layers)),
+          ],
+        ),
+        gap,
+        SegmentChoice<StressMode>(
+          label: 'mode',
+          items: [
+            for (final mode in StressMode.values)
+              (
+                key: 'stress.mode.${mode.name}',
+                text: modeText[mode]!,
+                tooltip: mode.name,
+                value: mode,
+              ),
+          ],
+          value: _mode,
+          onChanged: (mode) => setState(() => _setScene(mode: mode)),
+        ),
+        gap,
+        SegmentChoice<int>(
+          label: 'N',
+          items: [
+            for (final v in _mode.counts)
+              (key: 'stress.n.$v', text: count(v), tooltip: '$v', value: v),
+          ],
+          value: _n,
+          onChanged: (v) => setState(() => _setScene(n: v)),
+        ),
+        gap,
+        SegmentChoice<int>(
+          label: 'M',
+          items: [
+            for (final v in stressLabelCounts)
+              (
+                key: 'stress.m.$v',
+                text: count(v),
+                tooltip: '$v labels',
+                value: v,
+              ),
+          ],
+          value: _m,
+          onChanged: (v) => setState(() => _m = v),
+        ),
+        if (_mode.runsChart) ...[
+          gap,
+          SegmentChoice<StressChartCall>(
+            label: 'call',
+            items: [
+              for (final call in StressChartCall.values)
+                if (_mode != StressMode.axes || call != StressChartCall.animate)
+                  (
+                    key: 'stress.chart.call.${call.name}',
+                    text: callText[call]!,
+                    tooltip: call.name,
+                    value: call,
+                  ),
+            ],
+            value: _call,
+            onChanged: (call) => setState(() => _setChartCase(call: call)),
+          ),
+        ],
+        if (_mode == StressMode.axes) ...[
+          gap,
+          SegmentChoice<StressAxisType>(
+            label: 'x',
+            items: [
+              for (final type in StressAxisType.values)
+                (
+                  key: 'stress.axes.scale.${type.name}',
+                  text: axisText[type]!,
+                  tooltip: type.name,
+                  value: type,
+                ),
+            ],
+            value: _scale,
+            onChanged: (type) => setState(() => _setAxesCase(scale: type)),
+          ),
+          gap,
+          SegmentChoice<StressAxisType>(
+            label: 'y',
+            items: [
+              for (final type in stressAxesValueTypes)
+                (
+                  key: 'stress.axes.yScale.${type.name}',
+                  text: axisText[type]!,
+                  tooltip: type.name,
+                  value: type,
+                ),
+            ],
+            value: _yScale,
+            onChanged: (type) => setState(() => _setAxesCase(yScale: type)),
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// The on/off options of the mode, as one segmented button of icons.
+  Widget _optionToggles(bool layers) {
+    return SegmentToggles(
+      items: [
+        if (layers) ...[
+          (
+            key: 'stress.layer.points',
+            icon: Icons.grain,
+            tooltip: 'points',
+            value: _points,
+            onChanged: (v) => setState(() => _points = v),
+          ),
+          (
+            key: 'stress.layer.line',
+            icon: Icons.timeline,
+            tooltip: 'polyline',
+            value: _line,
+            onChanged: (v) => setState(() => _line = v),
+          ),
+        ],
+        (
+          key: 'stress.spin',
+          icon: Icons.rotate_right,
+          tooltip: 'spin labels',
+          value: _spin,
+          onChanged: (v) => setState(() => _spin = v),
+        ),
+        if (_mode == StressMode.chart) ...[
+          (
+            key: 'stress.chart.sharing',
+            icon: Icons.share,
+            tooltip: 'enableOptionSharing',
+            value: _sharing,
+            onChanged: (v) => setState(() => _setChartCase(sharing: v)),
+          ),
+          (
+            key: 'stress.chart.scriptable',
+            icon: Icons.functions,
+            tooltip: 'scriptable backgroundColor',
+            value: _scriptable,
+            onChanged: (v) => setState(() => _setChartCase(scriptable: v)),
+          ),
+        ],
+        if (_mode == StressMode.axes)
+          (
+            key: 'stress.axes.autoSkip',
+            icon: Icons.skip_next,
+            tooltip: 'ticks.autoSkip',
+            value: _autoSkip,
+            onChanged: (v) => setState(() => _setAxesCase(autoSkip: v)),
+          ),
       ],
     );
   }
@@ -1246,8 +1385,6 @@ class StressDemoState extends State<StressDemo> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     String ms(double v) => v.toStringAsFixed(2);
-    final layers =
-        _mode == StressMode.primitives || _mode == StressMode.elements;
     return DemoPageBody(
       children: [
         DemoCard(
@@ -1256,131 +1393,7 @@ class StressDemoState extends State<StressDemo> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                children: [
-                  Switch(
-                    key: const ValueKey('stress.start'),
-                    value: _running,
-                    onChanged: _setRunning,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _running ? 'Running' : 'Stopped',
-                      style: theme.textTheme.titleSmall,
-                    ),
-                  ),
-                ],
-              ),
-              _modeChoices(),
-              const SizedBox(height: 4),
-              _choices('N', _mode.counts, _n, (v) => _setScene(n: v)),
-              const SizedBox(height: 4),
-              _choices('M', stressLabelCounts, _m, (v) => _m = v),
-              const SizedBox(height: 4),
-              ToggleChips(
-                toggles: [
-                  if (layers) ...[
-                    (
-                      key: 'stress.layer.points',
-                      label: 'points',
-                      value: _points,
-                      onChanged: (v) => setState(() => _points = v),
-                    ),
-                    (
-                      key: 'stress.layer.line',
-                      label: 'polyline',
-                      value: _line,
-                      onChanged: (v) => setState(() => _line = v),
-                    ),
-                  ],
-                  (
-                    key: 'stress.spin',
-                    label: 'spin labels',
-                    value: _spin,
-                    onChanged: (v) => setState(() => _spin = v),
-                  ),
-                ],
-              ),
-              if (_mode == StressMode.axes) ...[
-                const SizedBox(height: 4),
-                _callChoices(),
-                const SizedBox(height: 4),
-                StressAxesControls(
-                  scale: _scale,
-                  yScale: _yScale,
-                  autoSkip: _autoSkip,
-                  onChanged: ({scale, yScale, autoSkip}) => setState(
-                    () => _setAxesCase(
-                      scale: scale,
-                      yScale: yScale,
-                      autoSkip: autoSkip,
-                    ),
-                  ),
-                ),
-              ],
-              if (_mode == StressMode.chart) ...[
-                const SizedBox(height: 4),
-                _callChoices(),
-                const SizedBox(height: 4),
-                ToggleChips(
-                  toggles: [
-                    (
-                      key: 'stress.chart.sharing',
-                      label: 'enableOptionSharing',
-                      value: _sharing,
-                      onChanged: (v) =>
-                          setState(() => _setChartCase(sharing: v)),
-                    ),
-                    (
-                      key: 'stress.chart.scriptable',
-                      label: 'scriptable backgroundColor',
-                      value: _scriptable,
-                      onChanged: (v) =>
-                          setState(() => _setChartCase(scriptable: v)),
-                    ),
-                  ],
-                ),
-              ],
-              const SizedBox(height: 12),
-              ValueListenableBuilder<StressStats>(
-                valueListenable: _stats,
-                builder: (context, stats, _) => ReadoutTable(
-                  key: const ValueKey('stress.stats'),
-                  rows: [
-                    ('FPS', stats.fps.toStringAsFixed(1)),
-                    ('frames', '${stats.frames}'),
-                    ('draw', '${ms(stats.drawMs)} ms'),
-                    if (stats.mode == StressMode.chart) ...[
-                      ('update', '${ms(stats.updateMs)} ms'),
-                      ('animator', '${ms(stats.animatorMs)} ms'),
-                    ],
-                    if (stats.mode == StressMode.axes) ...[
-                      ('update', '${ms(stats.updateMs)} ms'),
-                      ('layout', '${ms(stats.layoutMs)} ms'),
-                      ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
-                      ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
-                      ('x ticks', '${stats.ticks}'),
-                      ('rotation', stats.rotation.toStringAsFixed(1)),
-                    ],
-                    (
-                      'build avg/max',
-                      stats.timings == 0
-                          ? 'n/a'
-                          : '${ms(stats.buildMs)} / '
-                                '${ms(stats.buildMaxMs)} ms',
-                    ),
-                    (
-                      'raster avg/max',
-                      stats.timings == 0
-                          ? 'n/a'
-                          : '${ms(stats.rasterMs)} / '
-                                '${ms(stats.rasterMaxMs)} ms',
-                    ),
-                    ('timings', '${stats.timings} frames'),
-                  ],
-                ),
-              ),
+              _toolbar(theme),
               const SizedBox(height: 12),
               LayoutBuilder(
                 builder: (context, constraints) {
@@ -1431,6 +1444,45 @@ class StressDemoState extends State<StressDemo> {
                     onTickerModeChanged: _onTickerModeChanged,
                   );
                 },
+              ),
+              const SizedBox(height: 12),
+              ValueListenableBuilder<StressStats>(
+                valueListenable: _stats,
+                builder: (context, stats, _) => ReadoutTable(
+                  key: const ValueKey('stress.stats'),
+                  rows: [
+                    ('FPS', stats.fps.toStringAsFixed(1)),
+                    ('frames', '${stats.frames}'),
+                    ('draw', '${ms(stats.drawMs)} ms'),
+                    if (stats.mode == StressMode.chart) ...[
+                      ('update', '${ms(stats.updateMs)} ms'),
+                      ('animator', '${ms(stats.animatorMs)} ms'),
+                    ],
+                    if (stats.mode == StressMode.axes) ...[
+                      ('update', '${ms(stats.updateMs)} ms'),
+                      ('layout', '${ms(stats.layoutMs)} ms'),
+                      ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
+                      ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
+                      ('x ticks', '${stats.ticks}'),
+                      ('rotation', stats.rotation.toStringAsFixed(1)),
+                    ],
+                    (
+                      'build avg/max',
+                      stats.timings == 0
+                          ? 'n/a'
+                          : '${ms(stats.buildMs)} / '
+                                '${ms(stats.buildMaxMs)} ms',
+                    ),
+                    (
+                      'raster avg/max',
+                      stats.timings == 0
+                          ? 'n/a'
+                          : '${ms(stats.rasterMs)} / '
+                                '${ms(stats.rasterMaxMs)} ms',
+                    ),
+                    ('timings', '${stats.timings} frames'),
+                  ],
+                ),
               ),
               const SizedBox(height: 8),
               Text(

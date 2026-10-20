@@ -15,14 +15,11 @@
 /// - [StressAxesTiming]: the time of the layout, of the dataset update and
 ///   of the dataset draw, from the hooks of an inline plugin. The library
 ///   does not change.
-/// - [StressAxesControls]: the controls of the mode in the stress tab.
 library;
 
 import 'dart:math' as math;
 
-import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs/src/types/basic.dart';
@@ -271,90 +268,4 @@ final class StressAxesTiming {
     datasetsUpdateTicks = 0;
     datasetsDrawTicks = 0;
   }
-}
-
-/// The controls of the mode `axes` of the stress tab: the chips
-/// `stress.axes.scale.<type>` (the x axis) and `stress.axes.yScale.<type>`,
-/// and the toggle `stress.axes.autoSkip`.
-class StressAxesControls extends StatelessWidget {
-  /// Creates the controls. [onChanged] gets the new value of one control.
-  const StressAxesControls({
-    required this.scale,
-    required this.yScale,
-    required this.autoSkip,
-    required this.onChanged,
-    super.key,
-  });
-
-  /// The scale type of the x axis.
-  final StressAxisType scale;
-
-  /// The scale type of the y axis.
-  final StressAxisType yScale;
-
-  /// The option `ticks.autoSkip` of the x axis.
-  final bool autoSkip;
-
-  /// Called with the new value of one control.
-  final void Function({
-    StressAxisType? scale,
-    StressAxisType? yScale,
-    bool? autoSkip,
-  })
-  onChanged;
-
-  Widget _choices(
-    String name,
-    String label,
-    List<StressAxisType> values,
-    StressAxisType value,
-    ValueChanged<StressAxisType> onSelected,
-  ) => Wrap(
-    spacing: 8,
-    runSpacing: 4,
-    crossAxisAlignment: WrapCrossAlignment.center,
-    children: [
-      SizedBox(width: 92, child: Text(label)),
-      for (final type in values)
-        ChoiceChip(
-          key: ValueKey('stress.axes.$name.${type.name}'),
-          label: Text(type.name),
-          selected: type == value,
-          onSelected: (_) => onSelected(type),
-        ),
-    ],
-  );
-
-  @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      _choices(
-        'scale',
-        'x scale',
-        StressAxisType.values,
-        scale,
-        (v) => onChanged(scale: v),
-      ),
-      const SizedBox(height: 4),
-      _choices(
-        'yScale',
-        'y scale',
-        stressAxesValueTypes,
-        yScale,
-        (v) => onChanged(yScale: v),
-      ),
-      const SizedBox(height: 4),
-      ToggleChips(
-        toggles: [
-          (
-            key: 'stress.axes.autoSkip',
-            label: 'ticks.autoSkip',
-            value: autoSkip,
-            onChanged: (v) => onChanged(autoSkip: v),
-          ),
-        ],
-      ),
-    ],
-  );
 }

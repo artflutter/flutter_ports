@@ -8,6 +8,8 @@ import 'package:flutter_chartjs/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import 'stress_controls.dart';
+
 /// The item count of each mode in these tests: small, so that a frame is
 /// fast.
 const Map<StressMode, int> _counts = {
@@ -59,18 +61,15 @@ int _renders(WidgetTester tester) => tester
     .chart!
     .renders;
 
-/// Scrolls the widget of [key] into view and taps it.
+/// Taps the control of [key] (stressTap), then pumps frames.
 Future<void> _tap(WidgetTester tester, String key) async {
-  final finder = find.byKey(ValueKey(key));
-  await tester.ensureVisible(finder);
-  await tester.pump();
-  await tester.tap(finder);
+  await stressTap(tester, key);
   await _frames(tester);
 }
 
-/// Whether the chip of [key] is selected.
-bool _selected(WidgetTester tester, String key) =>
-    tester.widget<ChoiceChip>(find.byKey(ValueKey(key))).selected;
+/// Whether the menu item of [key] is checked.
+Future<bool> _selected(WidgetTester tester, String key) =>
+    stressSelected(tester, key);
 
 /// A property of [element] that each frame writes, as a number.
 double _moving(types.VisualElement element) => switch (element) {
@@ -114,37 +113,37 @@ void main() {
     await _pumpStress(tester, StressMode.primitives, autoStart: false);
     for (final mode in StressMode.values) {
       expect(
-        find.byKey(ValueKey('stress.mode.${mode.name}')),
-        findsOneWidget,
+        await stressControlExists(tester, 'stress.mode.${mode.name}'),
+        isTrue,
       );
     }
-    expect(_selected(tester, 'stress.mode.primitives'), isTrue);
-    expect(find.byKey(const ValueKey('stress.n.20000')), findsOneWidget);
-    expect(find.byKey(const ValueKey('stress.n.100')), findsNothing);
-    expect(find.byKey(const ValueKey('stress.layer.points')), findsOneWidget);
+    expect(await _selected(tester, 'stress.mode.primitives'), isTrue);
+    expect(await stressControlExists(tester, 'stress.n.20000'), isTrue);
+    expect(await stressControlExists(tester, 'stress.n.100'), isFalse);
+    expect(await stressControlExists(tester, 'stress.layer.points'), isTrue);
 
     await _tap(tester, 'stress.mode.bars');
-    expect(_selected(tester, 'stress.mode.bars'), isTrue);
-    expect(_selected(tester, 'stress.mode.primitives'), isFalse);
+    expect(await _selected(tester, 'stress.mode.bars'), isTrue);
+    expect(await _selected(tester, 'stress.mode.primitives'), isFalse);
     // The layer switches of the points and the line go.
-    expect(find.byKey(const ValueKey('stress.layer.points')), findsNothing);
-    expect(find.byKey(const ValueKey('stress.layer.line')), findsNothing);
-    expect(find.byKey(const ValueKey('stress.spin')), findsOneWidget);
+    expect(await stressControlExists(tester, 'stress.layer.points'), isFalse);
+    expect(await stressControlExists(tester, 'stress.layer.line'), isFalse);
+    expect(await stressControlExists(tester, 'stress.spin'), isTrue);
     await _tap(tester, 'stress.n.20000');
-    expect(_selected(tester, 'stress.n.20000'), isTrue);
+    expect(await _selected(tester, 'stress.n.20000'), isTrue);
     expect(_state(tester).debugElements, hasLength(20000));
 
     // The arcs go up to 5000: N becomes 5000.
     await _tap(tester, 'stress.mode.arcs');
-    expect(_selected(tester, 'stress.mode.arcs'), isTrue);
-    expect(find.byKey(const ValueKey('stress.n.100')), findsOneWidget);
-    expect(find.byKey(const ValueKey('stress.n.20000')), findsNothing);
-    expect(_selected(tester, 'stress.n.5000'), isTrue);
+    expect(await _selected(tester, 'stress.mode.arcs'), isTrue);
+    expect(await stressControlExists(tester, 'stress.n.100'), isTrue);
+    expect(await stressControlExists(tester, 'stress.n.20000'), isFalse);
+    expect(await _selected(tester, 'stress.n.5000'), isTrue);
     expect(_state(tester).debugElements, hasLength(5000));
 
     await _tap(tester, 'stress.mode.elements');
-    expect(_selected(tester, 'stress.n.5000'), isTrue);
-    expect(find.byKey(const ValueKey('stress.layer.line')), findsOneWidget);
+    expect(await _selected(tester, 'stress.n.5000'), isTrue);
+    expect(await stressControlExists(tester, 'stress.layer.line'), isTrue);
     expect(tester.takeException(), isNull);
   });
 
@@ -247,12 +246,11 @@ void main() {
         ),
       ),
     );
-    bool selected(String key) =>
-        tester.widget<FilterChip>(find.byKey(ValueKey(key))).selected;
-    expect(selected('stress.layer.line'), isFalse);
-    expect(selected('stress.layer.points'), isTrue);
+    Future<bool> selected(String key) => stressSelected(tester, key);
+    expect(await selected('stress.layer.line'), isFalse);
+    expect(await selected('stress.layer.points'), isTrue);
     await _tap(tester, 'stress.layer.line');
-    expect(selected('stress.layer.line'), isTrue);
+    expect(await selected('stress.layer.line'), isTrue);
     expect(tester.takeException(), isNull);
   });
 }

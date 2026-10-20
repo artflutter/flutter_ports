@@ -142,6 +142,144 @@ class ToggleChips extends StatelessWidget {
   }
 }
 
+/// One segment of a [SegmentChoice]: the key of the segment, its short
+/// text, its tooltip and its value.
+typedef SegmentChoiceItem<T> = ({
+  String key,
+  String text,
+  String tooltip,
+  T value,
+});
+
+/// The compact style of [SegmentChoice] and [SegmentToggles].
+final ButtonStyle _segmentStyle = SegmentedButton.styleFrom(
+  visualDensity: VisualDensity.compact,
+  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  padding: const EdgeInsets.symmetric(horizontal: 8),
+);
+
+/// A short [label] and a segmented button with one selected segment, at
+/// the full width that it gets.
+///
+/// The label of each segment has the [ValueKey] of the `key` of its item. A
+/// tap on a segment selects its value.
+class SegmentChoice<T> extends StatelessWidget {
+  /// Creates the control.
+  const SegmentChoice({
+    required this.items,
+    required this.value,
+    required this.onChanged,
+    this.label,
+    super.key,
+  });
+
+  /// The short name of the value, or `null` for none.
+  final String? label;
+
+  /// The segments.
+  final List<SegmentChoiceItem<T>> items;
+
+  /// The selected value.
+  final T value;
+
+  /// Called with the value of the tapped segment.
+  final ValueChanged<T> onChanged;
+
+  /// Whether the segment of [key] is the selected one.
+  bool isSelected(String key) =>
+      items.any((item) => item.key == key && item.value == value);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        if (label != null)
+          SizedBox(
+            width: 44,
+            child: Text(label!, style: theme.textTheme.labelLarge),
+          ),
+        Expanded(
+          child: SegmentedButton<T>(
+            style: _segmentStyle,
+            showSelectedIcon: false,
+            expandedInsets: EdgeInsets.zero,
+            segments: [
+              for (final item in items)
+                ButtonSegment<T>(
+                  value: item.value,
+                  tooltip: item.tooltip,
+                  label: Text(
+                    item.text,
+                    key: ValueKey(item.key),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+            ],
+            selected: {value},
+            onSelectionChanged: (selected) => onChanged(selected.single),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// One segment of a [SegmentToggles]: the key of the segment, its icon, its
+/// tooltip, whether it is on, and the callback that switches it.
+typedef SegmentToggleItem = ({
+  String key,
+  IconData icon,
+  String tooltip,
+  bool value,
+  ValueChanged<bool> onChanged,
+});
+
+/// A segmented button of on/off options, at the full width that it gets:
+/// each segment is an icon, and any count of segments can be on.
+///
+/// The icon of each segment has the [ValueKey] of the `key` of its item. A
+/// tap on a segment switches its option.
+class SegmentToggles extends StatelessWidget {
+  /// Creates the control.
+  const SegmentToggles({required this.items, super.key});
+
+  /// The segments.
+  final List<SegmentToggleItem> items;
+
+  /// Whether the option of [key] is on.
+  bool isSelected(String key) =>
+      items.any((item) => item.key == key && item.value);
+
+  @override
+  Widget build(BuildContext context) => SegmentedButton<String>(
+    style: _segmentStyle,
+    showSelectedIcon: false,
+    multiSelectionEnabled: true,
+    emptySelectionAllowed: true,
+    expandedInsets: EdgeInsets.zero,
+    segments: [
+      for (final item in items)
+        ButtonSegment<String>(
+          value: item.key,
+          tooltip: item.tooltip,
+          icon: Icon(item.icon, key: ValueKey(item.key)),
+        ),
+    ],
+    selected: {
+      for (final item in items)
+        if (item.value) item.key,
+    },
+    onSelectionChanged: (selected) {
+      for (final item in items) {
+        final on = selected.contains(item.key);
+        if (on != item.value) item.onChanged(on);
+      }
+    },
+  );
+}
+
 /// A list of `name: value` lines in monospace.
 class ReadoutTable extends StatelessWidget {
   /// Creates the readout.

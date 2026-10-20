@@ -9,6 +9,8 @@ import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs/src/platform/chart_host.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'stress_controls.dart';
+
 /// A Pixel 8a: 412 x 915 logical pixels at DPR 2.625.
 const Size _phone = Size(412, 915);
 const double _phoneDpr = 2.625;
@@ -282,23 +284,20 @@ void main() {
     await _openTab(tester, 'stress');
     _expectDrawn(tester, 'stress.host');
 
-    ChoiceChip chip(String key) =>
-        tester.widget<ChoiceChip>(find.byKey(ValueKey(key)));
-    expect(chip('stress.n.1000').selected, isTrue);
-    await tester.tap(find.byKey(const ValueKey('stress.n.5000')));
-    await tester.tap(find.byKey(const ValueKey('stress.m.200')));
+    expect(await stressSelected(tester, 'stress.n.1000'), isTrue);
+    await stressTap(tester, 'stress.n.5000');
+    await stressTap(tester, 'stress.m.200');
     await _frames(tester);
-    expect(chip('stress.n.5000').selected, isTrue);
-    expect(chip('stress.n.1000').selected, isFalse);
-    expect(chip('stress.m.200').selected, isTrue);
+    expect(await stressSelected(tester, 'stress.n.5000'), isTrue);
+    expect(await stressSelected(tester, 'stress.n.1000'), isFalse);
+    expect(await stressSelected(tester, 'stress.m.200'), isTrue);
 
-    final start = find.byKey(const ValueKey('stress.start'));
-    await tester.tap(start);
+    await stressTap(tester, 'stress.start');
     await _frames(tester, 10);
     final renders = _renders(tester);
     await _frames(tester, 5);
     expect(_renders(tester), greaterThan(renders));
-    await tester.tap(start);
+    await stressTap(tester, 'stress.start');
     await _frames(tester);
     final stats = find.byKey(const ValueKey('stress.stats'));
     expect(

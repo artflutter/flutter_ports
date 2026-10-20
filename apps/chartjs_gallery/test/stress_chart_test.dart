@@ -13,6 +13,8 @@ import 'package:flutter_chartjs/src/js/js_object.dart' show jsObjectIsFrozen;
 import 'package:flutter_chartjs/src/platform/platform.flutter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'stress_controls.dart';
+
 /// The point count of these tests: small, so that a frame is fast.
 const int _n = 300;
 
@@ -66,18 +68,15 @@ List<PointElement> _points(WidgetTester tester) => [
     element as PointElement,
 ];
 
-/// Scrolls the widget of [key] into view and taps it.
+/// Taps the control of [key] (stressTap), then pumps frames.
 Future<void> _tap(WidgetTester tester, String key) async {
-  final finder = find.byKey(ValueKey(key));
-  await tester.ensureVisible(finder);
-  await tester.pump();
-  await tester.tap(finder);
+  await stressTap(tester, key);
   await _frames(tester);
 }
 
-/// Whether the chip of [key] is selected.
-bool _selected(WidgetTester tester, String key) =>
-    tester.widget<ChoiceChip>(find.byKey(ValueKey(key))).selected;
+/// Whether the menu item of [key] is checked.
+Future<bool> _selected(WidgetTester tester, String key) =>
+    stressSelected(tester, key);
 
 void main() {
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
@@ -191,17 +190,17 @@ void main() {
       'stress.start',
       'stress.stats',
     ]) {
-      expect(find.byKey(ValueKey(key)), findsOneWidget, reason: key);
+      expect(await stressControlExists(tester, key), isTrue, reason: key);
     }
-    expect(_selected(tester, 'stress.mode.chart'), isTrue);
-    expect(_selected(tester, 'stress.chart.call.draw'), isTrue);
-    expect(find.byKey(const ValueKey('stress.layer.points')), findsNothing);
+    expect(await _selected(tester, 'stress.mode.chart'), isTrue);
+    expect(await _selected(tester, 'stress.chart.call.draw'), isTrue);
+    expect(await stressControlExists(tester, 'stress.layer.points'), isFalse);
     expect(find.byKey(const ValueKey('stress.host')), findsNothing);
     final first = _chart(tester);
 
     // The call changes the frames, not the chart.
     await _tap(tester, 'stress.chart.call.update');
-    expect(_selected(tester, 'stress.chart.call.update'), isTrue);
+    expect(await _selected(tester, 'stress.chart.call.update'), isTrue);
     expect(identical(_chart(tester), first), isTrue);
 
     // The sharing makes a new chart. The old chart is destroyed.
@@ -240,7 +239,7 @@ void main() {
       // A change to or from animate gives another `animation` option, thus
       // a new chart. The old chart is destroyed.
       await _tap(tester, key);
-      expect(_selected(tester, key), isTrue, reason: key);
+      expect(await _selected(tester, key), isTrue, reason: key);
       final next = _state(tester).debugChart;
       expect(next, isNotNull, reason: key);
       expect(identical(next, chart), isFalse, reason: key);

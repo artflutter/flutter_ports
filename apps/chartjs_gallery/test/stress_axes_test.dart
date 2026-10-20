@@ -16,6 +16,8 @@ import 'package:flutter_chartjs/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs/src/scales/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'stress_controls.dart';
+
 /// The point count of these tests: small, so that a frame is fast.
 const int _n = 300;
 
@@ -96,18 +98,15 @@ List<PointElement> _points(WidgetTester tester) => [
     element as PointElement,
 ];
 
-/// Scrolls the widget of [key] into view and taps it.
+/// Taps the control of [key] (stressTap), then pumps frames.
 Future<void> _tap(WidgetTester tester, String key) async {
-  final finder = find.byKey(ValueKey(key));
-  await tester.ensureVisible(finder);
-  await tester.pump();
-  await tester.tap(finder);
+  await stressTap(tester, key);
   await _frames(tester);
 }
 
-/// Whether the chip of [key] is selected.
-bool _selected(WidgetTester tester, String key) =>
-    tester.widget<ChoiceChip>(find.byKey(ValueKey(key))).selected;
+/// Whether the menu item of [key] is checked.
+Future<bool> _selected(WidgetTester tester, String key) =>
+    stressSelected(tester, key);
 
 /// The scale class of each scale type.
 final Map<StressAxisType, Matcher> _scaleClass = {
@@ -219,11 +218,11 @@ void main() {
       'stress.start',
       'stress.stats',
     ]) {
-      expect(find.byKey(ValueKey(key)), findsOneWidget, reason: key);
+      expect(await stressControlExists(tester, key), isTrue, reason: key);
     }
-    expect(_selected(tester, 'stress.mode.axes'), isTrue);
-    expect(_selected(tester, 'stress.axes.scale.linear'), isTrue);
-    expect(_selected(tester, 'stress.axes.yScale.linear'), isTrue);
+    expect(await _selected(tester, 'stress.mode.axes'), isTrue);
+    expect(await _selected(tester, 'stress.axes.scale.linear'), isTrue);
+    expect(await _selected(tester, 'stress.axes.yScale.linear'), isTrue);
     // The mode axes has no animate call, and no chart case controls.
     for (final key in [
       'stress.chart.call.animate',
@@ -233,13 +232,13 @@ void main() {
       'stress.chart.host',
       'stress.host',
     ]) {
-      expect(find.byKey(ValueKey(key)), findsNothing, reason: key);
+      expect(await stressControlExists(tester, key), isFalse, reason: key);
     }
     final first = _chart(tester);
 
     // The call changes the frames, not the chart.
     await _tap(tester, 'stress.chart.call.update');
-    expect(_selected(tester, 'stress.chart.call.update'), isTrue);
+    expect(await _selected(tester, 'stress.chart.call.update'), isTrue);
     expect(identical(_chart(tester), first), isTrue);
 
     // A scale type makes a new chart. The old chart is destroyed.
@@ -248,7 +247,7 @@ void main() {
     expect(identical(second, first), isFalse);
     expect(first.canvas, isNull);
     expect(_scale(tester, 'x'), isA<CategoryScale>());
-    expect(_selected(tester, 'stress.axes.scale.category'), isTrue);
+    expect(await _selected(tester, 'stress.axes.scale.category'), isTrue);
     final skipped = _scale(tester, 'x').ticks!.length;
     expect(skipped, lessThan(_n));
 
@@ -285,9 +284,9 @@ void main() {
       autoStart: false,
     );
     await _frames(tester);
-    expect(_selected(tester, 'stress.chart.call.animate'), isTrue);
+    expect(await _selected(tester, 'stress.chart.call.animate'), isTrue);
     await _tap(tester, 'stress.mode.axes');
-    expect(_selected(tester, 'stress.chart.call.draw'), isTrue);
+    expect(await _selected(tester, 'stress.chart.call.draw'), isTrue);
     expect(_chart(tester).options['animation'], false);
     expect(_scale(tester, 'x'), isA<LinearScale>());
     // Back in the mode chart, the chart has no scales.
@@ -300,10 +299,10 @@ void main() {
   testWidgets('axes: an initial call animate runs as draw', (tester) async {
     final stats = await _pumpAxes(tester, call: StressChartCall.animate);
     await _frames(tester, 10);
-    expect(_selected(tester, 'stress.chart.call.draw'), isTrue);
+    expect(await _selected(tester, 'stress.chart.call.draw'), isTrue);
     expect(
-      find.byKey(const ValueKey('stress.chart.call.animate')),
-      findsNothing,
+      await stressControlExists(tester, 'stress.chart.call.animate'),
+      isFalse,
     );
     // The loop does not wait for an animation: each frame draws. A frame
     // of the call draw has no layout and no dataset update, also in the
