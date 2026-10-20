@@ -1,0 +1,664 @@
+# The projects that packages/flutter_d3_port ports code from (D3 ADR 0001).
+# Each "// Ported from" header must name a project of this file, with the
+# same license and holder. The first entry is the d3 bundle, the upstream
+# repository of ADR 0005. The other 33 entries are the D3 module
+# repositories and the three repositories outside the d3 organization. They
+# are the "other projects" of the port, as in Chart.js ADR 0011.
+#
+# The pin rule (D3 ADR 0001): each repository is at the newest release tag
+# in the semver ranges of the d3 v7.9.0 package.json. A range of a module
+# package.json applies to the repositories that d3 does not list.
+#
+# packages/flutter_d3_port/test/upstream_test.dart and
+# tool/check_upstream_pin.sh read this file. The test compares each gitlink
+# with "commit". The script compares each gitlink with the upstream commit of
+# "ref" (git ls-remote). Both also fail on a submodule of .gitmodules that no
+# entry of this file or of packages/flutter_chartjs/tool/port_sources.yaml
+# pins.
+#
+# Keys of an entry, as in packages/flutter_chartjs/tool/port_sources.yaml:
+# - header: the project name in the header.
+# - version: the header version. It is equal to the pin ref.
+# - version_source: where the version comes from.
+# - url: the project repository.
+# - language: the language of the source. "js" is JavaScript.
+# - spdx: the SPDX license identifier of the repository LICENSE.
+# - holder: the copyright holder, as the header, the package LICENSE and
+#   REUSE.toml write it. It is the first copyright line of the repository
+#   LICENSE without the year. The robust-predicates LICENSE has no copyright
+#   line. Its holder is the author of its package.json.
+# - pin: the reference copy in this repository. kind "submodule" is a git
+#   submodule at the commit "commit" (tag "ref"). For an annotated tag,
+#   "commit" is the tagged commit, not the tag object.
+# - targets: the Dart path of a source path (D3 ADR 0002). A "source" that
+#   ends with "/" is a directory. Its files map into the "dart" directory.
+#   The map changes "-test.js" to "_test.dart" and ".js" to ".dart". Any
+#   other "source" is one file. Its "dart" is the Dart file. A file target
+#   applies before a directory target. Four test entries do not end with
+#   "-test.js". They have file targets (D3 ADR 0002 section 1).
+# - files, file_index: the source paths that exist at the pin. Phase 0 ports
+#   no file. Thus no entry has these keys yet.
+#
+# All paths are relative to the repository root. Only "source" is relative
+# to the project root.
+
+sources:
+  - header: d3
+    version: "v7.9.0"
+    version_source: d3Version in packages/flutter_d3_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3
+      ref: "v7.9.0"
+      commit: 1f8dd3b92960f58726006532c11e9457864513ec
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3/
+
+  - header: d3-array
+    version: "v3.2.4"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:38 on 2026-10-20. The d3 v7.9.0 yarn.lock:926-927 also locks 3.2.4.
+    url: https://github.com/d3/d3-array
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-array
+      ref: "v3.2.4"
+      commit: 94d4541626ae3ac6c847e3d4c6e31aca1a8879b4
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-array/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-array/
+
+  - header: d3-axis
+    version: "v3.0.0"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:39 on 2026-10-20. The d3 v7.9.0 yarn.lock:933-934 also locks 3.0.0.
+    url: https://github.com/d3/d3-axis
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-axis
+      ref: "v3.0.0"
+      commit: 64372b12c9ba5c8a816277b3ad04ff813db5af97
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-axis/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-axis/
+
+  - header: d3-brush
+    version: "v3.0.0"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:40 on 2026-10-20. The d3 v7.9.0 yarn.lock:938-939 also locks 3.0.0.
+    url: https://github.com/d3/d3-brush
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-brush
+      ref: "v3.0.0"
+      commit: ec2bce6f15074a9ead7f9a84c61335be51c123a3
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-brush/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-brush/
+
+  - header: d3-chord
+    version: "v3.0.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:41 on 2026-10-20. The d3 v7.9.0 yarn.lock:949-950 also locks 3.0.1.
+    url: https://github.com/d3/d3-chord
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-chord
+      ref: "v3.0.1"
+      commit: 57ac4d9029e66c025117356ae58ab36c7457a2d1
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-chord/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-chord/
+
+  - header: d3-color
+    version: "v3.1.0"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:42 on 2026-10-20. The d3 v7.9.0 yarn.lock:956-957 also locks 3.1.0.
+    url: https://github.com/d3/d3-color
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-color
+      ref: "v3.1.0"
+      commit: 7a1573ed260de4fd97d061975244841132adde92
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-color/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-color/
+
+  - header: d3-contour
+    version: "v4.0.2"
+    version_source: the newest release tag in the range "4" of the d3 v7.9.0 package.json:43 on 2026-10-20. The d3 v7.9.0 yarn.lock:961-962 also locks 4.0.2.
+    url: https://github.com/d3/d3-contour
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-contour
+      ref: "v4.0.2"
+      commit: 0ba2dd047ce4cc2980025eff5c4fea989bf2da85
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-contour/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-contour/
+      - source: test/snapshot.js
+        dart: packages/flutter_d3_port/test/specs/d3-contour/snapshot_test.dart
+
+  - header: d3-delaunay
+    version: "v6.0.4"
+    version_source: the newest release tag in the range "6" of the d3 v7.9.0 package.json:44 on 2026-10-20. The d3 v7.9.0 yarn.lock:968-969 also locks 6.0.4.
+    url: https://github.com/d3/d3-delaunay
+    language: js
+    spdx: ISC
+    holder: Observable, Inc.
+    pin:
+      kind: submodule
+      path: third_party/d3-delaunay
+      ref: "v6.0.4"
+      commit: c5a08b375cd57f4a314b07979e25e3e30387943f
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-delaunay/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-delaunay/
+
+  - header: d3-dispatch
+    version: "v3.0.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:45 on 2026-10-20. The d3 v7.9.0 yarn.lock:975-976 also locks 3.0.1.
+    url: https://github.com/d3/d3-dispatch
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-dispatch
+      ref: "v3.0.1"
+      commit: 904ddf22634bb642460685992f4ce22898f8aeb4
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-dispatch/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-dispatch/
+
+  - header: d3-drag
+    version: "v3.0.0"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:46 on 2026-10-20. The d3 v7.9.0 yarn.lock:980-981 also locks 3.0.0.
+    url: https://github.com/d3/d3-drag
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-drag
+      ref: "v3.0.0"
+      commit: 1b88d8a2d69fca86d4d90a8329987693b79ec506
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-drag/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-drag/
+
+  - header: d3-dsv
+    version: "v3.0.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:47 on 2026-10-20. The d3 v7.9.0 yarn.lock:988-989 also locks 3.0.1.
+    url: https://github.com/d3/d3-dsv
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-dsv
+      ref: "v3.0.1"
+      commit: 344677983ac44e7bbf0e2527ad7f0223d66a2f38
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-dsv/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-dsv/
+
+  - header: d3-ease
+    version: "v3.0.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:48 on 2026-10-20. The d3 v7.9.0 yarn.lock:997-998 also locks 3.0.1.
+    url: https://github.com/d3/d3-ease
+    language: js
+    spdx: BSD-3-Clause
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-ease
+      ref: "v3.0.1"
+      commit: a0919680efc6f8e667275ba1d6330bf6a4cc9301
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-ease/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-ease/
+
+  - header: d3-fetch
+    version: "v3.0.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:49 on 2026-10-20. The d3 v7.9.0 yarn.lock:1002-1003 also locks 3.0.1.
+    url: https://github.com/d3/d3-fetch
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-fetch
+      ref: "v3.0.1"
+      commit: 20a0b61b87a55c88e6b83580c927523b5c0448fe
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-fetch/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-fetch/
+
+  - header: d3-force
+    version: "v3.0.0"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:50 on 2026-10-20. The d3 v7.9.0 yarn.lock:1009-1010 also locks 3.0.0.
+    url: https://github.com/d3/d3-force
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-force
+      ref: "v3.0.0"
+      commit: 156712c8c3285d77cb487e1685c5adafcd0394a4
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-force/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-force/
+
+  - header: d3-format
+    version: "v3.1.2"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:51 on 2026-10-20. The d3 v7.9.0 yarn.lock:1018-1019 locks 3.1.0.
+    url: https://github.com/d3/d3-format
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-format
+      ref: "v3.1.2"
+      commit: ebdc2d530277df379157f82fee6ea5623d179bd7
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-format/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-format/
+
+  - header: d3-geo
+    version: "v3.1.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:52 on 2026-10-20. The d3 v7.9.0 yarn.lock:1023-1024 also locks 3.1.1.
+    url: https://github.com/d3/d3-geo
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-geo
+      ref: "v3.1.1"
+      commit: 8c53a90ae70c94bace73ecb02f2c792c649c86ba
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-geo/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-geo/
+
+  - header: d3-hierarchy
+    version: "v3.1.2"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:53 on 2026-10-20. The d3 v7.9.0 yarn.lock:1030-1031 also locks 3.1.2.
+    url: https://github.com/d3/d3-hierarchy
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-hierarchy
+      ref: "v3.1.2"
+      commit: 7bea49efdc1093b28a8d60d2f8717d8a17803564
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-hierarchy/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-hierarchy/
+
+  - header: d3-interpolate
+    version: "v3.0.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:54 on 2026-10-20. The d3 v7.9.0 yarn.lock:1035-1036 also locks 3.0.1.
+    url: https://github.com/d3/d3-interpolate
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-interpolate
+      ref: "v3.0.1"
+      commit: 6562b85040f7a9b96efe49b54a77eb6fceafa1c1
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-interpolate/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-interpolate/
+
+  - header: d3-path
+    version: "v3.1.0"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:55 on 2026-10-20. The d3 v7.9.0 yarn.lock:1042-1043 also locks 3.1.0.
+    url: https://github.com/d3/d3-path
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-path
+      ref: "v3.1.0"
+      commit: 58bce7a53df2b03f70092a9b00b78055c4ffee04
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-path/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-path/
+
+  - header: d3-polygon
+    version: "v3.0.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:56 on 2026-10-20. The d3 v7.9.0 yarn.lock:1047-1048 also locks 3.0.1.
+    url: https://github.com/d3/d3-polygon
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-polygon
+      ref: "v3.0.1"
+      commit: be52ab24e723b5b0078e13f51003981839ad8134
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-polygon/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-polygon/
+
+  - header: d3-quadtree
+    version: "v3.0.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:57 on 2026-10-20. The d3 v7.9.0 yarn.lock:1052-1053 also locks 3.0.1.
+    url: https://github.com/d3/d3-quadtree
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-quadtree
+      ref: "v3.0.1"
+      commit: 24d7ea88ea7099407cdce67e7fe548a3a1893d92
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-quadtree/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-quadtree/
+
+  - header: d3-random
+    version: "v3.0.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:58 on 2026-10-20. The d3 v7.9.0 yarn.lock:1057-1058 also locks 3.0.1.
+    url: https://github.com/d3/d3-random
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-random
+      ref: "v3.0.1"
+      commit: 4a8ed7dd38cac562f924d69f475f9f058366240b
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-random/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-random/
+
+  - header: d3-scale
+    version: "v4.0.2"
+    version_source: the newest release tag in the range "4" of the d3 v7.9.0 package.json:59 on 2026-10-20. The d3 v7.9.0 yarn.lock:1075-1076 also locks 4.0.2.
+    url: https://github.com/d3/d3-scale
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-scale
+      ref: "v4.0.2"
+      commit: 83555bd759c7314420bd4240642beda5e258db9e
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-scale/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-scale/
+
+  - header: d3-scale-chromatic
+    version: "v3.1.0"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:60 on 2026-10-20. The d3 v7.9.0 yarn.lock:1067-1068 also locks 3.1.0.
+    url: https://github.com/d3/d3-scale-chromatic
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-scale-chromatic
+      ref: "v3.1.0"
+      commit: 2c52792197299346b7bdb94322bb4dff8f554fea
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-scale-chromatic/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-scale-chromatic/
+
+  - header: d3-selection
+    version: "v3.0.0"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:61 on 2026-10-20. The d3 v7.9.0 yarn.lock:1086-1087 also locks 3.0.0.
+    url: https://github.com/d3/d3-selection
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-selection
+      ref: "v3.0.0"
+      commit: 91245ee124ec4dd491e498ecbdc9679d75332b49
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-selection/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-selection/
+
+  - header: d3-shape
+    version: "v3.2.0"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:62 on 2026-10-20. The d3 v7.9.0 yarn.lock:1091-1092 also locks 3.2.0.
+    url: https://github.com/d3/d3-shape
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-shape
+      ref: "v3.2.0"
+      commit: 8ec82658454750cfa29efb1e0ea514e3dd9b2297
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-shape/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-shape/
+
+  - header: d3-time
+    version: "v3.1.0"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:63 on 2026-10-20. The d3 v7.9.0 yarn.lock:1105-1106 also locks 3.1.0.
+    url: https://github.com/d3/d3-time
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-time
+      ref: "v3.1.0"
+      commit: d66bba6f83801b2f3a3e6440dba8df3357669c73
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-time/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-time/
+      - source: test/test-time-zones
+        dart: packages/flutter_d3_port/test/specs/d3-time/test-time-zones_test.dart
+
+  - header: d3-time-format
+    version: "v4.1.0"
+    version_source: the newest release tag in the range "4" of the d3 v7.9.0 package.json:64 on 2026-10-20. The d3 v7.9.0 yarn.lock:1098-1099 also locks 4.1.0.
+    url: https://github.com/d3/d3-time-format
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-time-format
+      ref: "v4.1.0"
+      commit: 76cfef1da81b70404c0226ec9db9b0d56fa09461
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-time-format/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-time-format/
+
+  - header: d3-timer
+    version: "v3.0.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:65 on 2026-10-20. The d3 v7.9.0 yarn.lock:1112-1113 also locks 3.0.1.
+    url: https://github.com/d3/d3-timer
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-timer
+      ref: "v3.0.1"
+      commit: 441e45b3f582762cd20035d47b40e9759ed1b235
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-timer/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-timer/
+
+  - header: d3-transition
+    version: "v3.0.1"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:66 on 2026-10-20. The d3 v7.9.0 yarn.lock:1117-1118 also locks 3.0.1.
+    url: https://github.com/d3/d3-transition
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-transition
+      ref: "v3.0.1"
+      commit: c4c94c421e2ef9e9ffc253fab33ccf99f1434901
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-transition/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-transition/
+
+  - header: d3-zoom
+    version: "v3.0.0"
+    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:67 on 2026-10-20. The d3 v7.9.0 yarn.lock:1128-1129 also locks 3.0.0.
+    url: https://github.com/d3/d3-zoom
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-zoom
+      ref: "v3.0.0"
+      commit: debbe3d76d86ea96965ed4cc61beb6bdf7238156
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/d3-zoom/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/d3-zoom/
+
+  - header: internmap
+    version: "v2.0.3"
+    version_source: the newest release tag in the range "1 - 2" of the d3-array v3.2.4 package.json:41 on 2026-10-20. The d3 v7.9.0 yarn.lock:1559-1560 also locks 2.0.3.
+    url: https://github.com/mbostock/internmap
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/internmap
+      ref: "v2.0.3"
+      commit: 78db0b387b951c036f7a8d6580d98afd8f416a5e
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/internmap/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/internmap/
+
+  - header: delaunator
+    version: "v5.1.0"
+    version_source: the newest release tag in the range "5" of the d3-delaunay v6.0.4 package.json:45 on 2026-10-20. The d3 v7.9.0 yarn.lock:1197-1198 locks 5.0.1.
+    url: https://github.com/mapbox/delaunator
+    language: js
+    spdx: ISC
+    holder: Mapbox
+    pin:
+      kind: submodule
+      path: third_party/delaunator
+      ref: "v5.1.0"
+      commit: 3ce65210ba78a8f02ec6e73cf202838d7df14051
+    targets:
+      - source: index.js
+        dart: packages/flutter_d3_port/lib/src/delaunator/index.dart
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/delaunator/
+      - source: test/test.js
+        dart: packages/flutter_d3_port/test/specs/delaunator/test_test.dart
+
+  - header: robust-predicates
+    version: "v3.0.3"
+    version_source: the newest release tag in the range "^3.0.2" of the delaunator v5.1.0 package.json:13 on 2026-10-20. The d3 v7.9.0 yarn.lock:1949-1950 locks 3.0.2.
+    url: https://github.com/mourner/robust-predicates
+    language: js
+    spdx: Unlicense
+    holder: Vladimir Agafonkin
+    pin:
+      kind: submodule
+      path: third_party/robust-predicates
+      ref: "v3.0.3"
+      commit: 8bed7fadb4284911e1111876e54a6f8acfa445cd
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_port/lib/src/robust-predicates/
+      - source: test/
+        dart: packages/flutter_d3_port/test/specs/robust-predicates/
+      - source: test/test.js
+        dart: packages/flutter_d3_port/test/specs/robust-predicates/test_test.dart

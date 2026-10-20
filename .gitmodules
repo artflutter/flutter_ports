@@ -10,3 +10,139 @@
 	path = third_party/chartjs-test-utils
 	url = https://github.com/chartjs/chartjs-test-utils
 	shallow = true
+[submodule "third_party/d3"]
+	path = third_party/d3
+	url = https://github.com/d3/d3
+	shallow = true
+[submodule "third_party/d3-array"]
+	path = third_party/d3-array
+	url = https://github.com/d3/d3-array
+	shallow = true
+[submodule "third_party/d3-axis"]
+	path = third_party/d3-axis
+	url = https://github.com/d3/d3-axis
+	shallow = true
+[submodule "third_party/d3-brush"]
+	path = third_party/d3-brush
+	url = https://github.com/d3/d3-brush
+	shallow = true
+[submodule "third_party/d3-chord"]
+	path = third_party/d3-chord
+	url = https://github.com/d3/d3-chord
+	shallow = true
+[submodule "third_party/d3-color"]
+	path = third_party/d3-color
+	url = https://github.com/d3/d3-color
+	shallow = true
+[submodule "third_party/d3-contour"]
+	path = third_party/d3-contour
+	url = https://github.com/d3/d3-contour
+	shallow = true
+[submodule "third_party/d3-delaunay"]
+	path = third_party/d3-delaunay
+	url = https://github.com/d3/d3-delaunay
+	shallow = true
+[submodule "third_party/d3-dispatch"]
+	path = third_party/d3-dispatch
+	url = https://github.com/d3/d3-dispatch
+	shallow = true
+[submodule "third_party/d3-drag"]
+	path = third_party/d3-drag
+	url = https://github.com/d3/d3-drag
+	shallow = true
+[submodule "third_party/d3-dsv"]
+	path = third_party/d3-dsv
+	url = https://github.com/d3/d3-dsv
+	shallow = true
+[submodule "third_party/d3-ease"]
+	path = third_party/d3-ease
+	url = https://github.com/d3/d3-ease
+	shallow = true
+[submodule "third_party/d3-fetch"]
+	path = third_party/d3-fetch
+	url = https://github.com/d3/d3-fetch
+	shallow = true
+[submodule "third_party/d3-force"]
+	path = third_party/d3-force
+	url = https://github.com/d3/d3-force
+	shallow = true
+[submodule "third_party/d3-format"]
+	path = third_party/d3-format
+	url = https://github.com/d3/d3-format
+	shallow = true
+[submodule "third_party/d3-geo"]
+	path = third_party/d3-geo
+	url = https://github.com/d3/d3-geo
+	shallow = true
+[submodule "third_party/d3-hierarchy"]
+	path = third_party/d3-hierarchy
+	url = https://github.com/d3/d3-hierarchy
+	shallow = true
+[submodule "third_party/d3-interpolate"]
+	path = third_party/d3-interpolate
+	url = https://github.com/d3/d3-interpolate
+	shallow = true
+[submodule "third_party/d3-path"]
+	path = third_party/d3-path
+	url = https://github.com/d3/d3-path
+	shallow = true
+[submodule "third_party/d3-polygon"]
+	path = third_party/d3-polygon
+	url = https://github.com/d3/d3-polygon
+	shallow = true
+[submodule "third_party/d3-quadtree"]
+	path = third_party/d3-quadtree
+	url = https://github.com/d3/d3-quadtree
+	shallow = true
+[submodule "third_party/d3-random"]
+	path = third_party/d3-random
+	url = https://github.com/d3/d3-random
+	shallow = true
+[submodule "third_party/d3-scale"]
+	path = third_party/d3-scale
+	url = https://github.com/d3/d3-scale
+	shallow = true
+[submodule "third_party/d3-scale-chromatic"]
+	path = third_party/d3-scale-chromatic
+	url = https://github.com/d3/d3-scale-chromatic
+	shallow = true
+[submodule "third_party/d3-selection"]
+	path = third_party/d3-selection
+	url = https://github.com/d3/d3-selection
+	shallow = true
+[submodule "third_party/d3-shape"]
+	path = third_party/d3-shape
+	url = https://github.com/d3/d3-shape
+	shallow = true
+[submodule "third_party/d3-time"]
+	path = third_party/d3-time
+	url = https://github.com/d3/d3-time
+	shallow = true
+[submodule "third_party/d3-time-format"]
+	path = third_party/d3-time-format
+	url = https://github.com/d3/d3-time-format
+	shallow = true
+[submodule "third_party/d3-timer"]
+	path = third_party/d3-timer
+	url = https://github.com/d3/d3-timer
+	shallow = true
+[submodule "third_party/d3-transition"]
+	path = third_party/d3-transition
+	url = https://github.com/d3/d3-transition
+	shallow = true
+[submodule "third_party/d3-zoom"]
+	path = third_party/d3-zoom
+	url = https://github.com/d3/d3-zoom
+	shallow = true
+[submodule "third_party/internmap"]
+	path = third_party/internmap
+	url = https://github.com/mbostock/internmap
+	shallow = true
+[submodule "third_party/delaunator"]
+	path = third_party/delaunator
+	url = https://github.com/mapbox/delaunator
+	shallow = true
+[submodule "third_party/robust-predicates"]
+	path = third_party/robust-predicates
+	url = https://github.com/mourner/robust-predicates
+	shallow = true

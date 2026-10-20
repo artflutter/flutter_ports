@@ -35,11 +35,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
-        with:
-          # Shallow submodules on ubuntu only, so that
-          # packages/flutter_chartjs/test/upstream_test.dart compares
-          # chartJsVersion with third_party/Chart.js/package.json.
-          submodules: ${{ matrix.os == 'ubuntu-latest' }}
+      # On ubuntu only, this step checks out shallow submodules by path.
+      # packages/flutter_chartjs/test/upstream_test.dart compares
+      # chartJsVersion with third_party/Chart.js/package.json.
+      # packages/flutter_d3_port/test/upstream_test.dart compares d3Version
+      # with third_party/d3/package.json. CI does not clone the 33 other D3
+      # repositories.
+      - name: Check out the Chart.js submodules and third_party/d3
+        if: matrix.os == 'ubuntu-latest'
+        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/d3
       - uses: ./.github/actions/setup
       - run: dart run melos run test --no-select
       - name: Report the upstream spec cases (porting-flow.md section 4, tool 5)
@@ -62,11 +66,12 @@ jobs:
     # runs the spec tests of flutter_chartjs for the case counts.
     # Shallow submodules, so that the header check compares each header path
     # and each "files" entry of tool/port_sources.yaml with the pinned tree.
+    # The job checks out only the Chart.js submodules, by path.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-        with:
-          submodules: true
+      - name: Check out the Chart.js submodules
+        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils
       - uses: ./.github/actions/setup
       - run: dart run melos run check:lib-imports
       - run: dart run melos run check:headers
@@ -78,11 +83,13 @@ jobs:
     # Tool 4 of packages/flutter_chartjs/doc/porting-flow.md section 4. The
     # committed doc/upstream files equal the output for the pinned
     # third_party/Chart.js. This is the only CI job that runs Node.js.
+    # The tool reads only third_party/Chart.js. Thus the job checks out only that
+    # submodule.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-        with:
-          submodules: true
+      - name: Check out third_party/Chart.js
+        run: git submodule update --init --depth 1 -- third_party/Chart.js
       - uses: actions/setup-node@v6
         with:
           node-version: 24.12.0
@@ -132,7 +139,11 @@ jobs:
 
   upstream-pin:
     # The third_party/Chart.js gitlink must be the commit of the release tag
-    # named by chartJsVersion. Needs no submodule checkout.
+    # named by chartJsVersion. The third_party/d3 gitlink must be the commit of
+    # the release tag named by d3Version. Each other D3 gitlink must be the
+    # commit of its tag in packages/flutter_d3_port/tool/port_sources.yaml.
+    # Each submodule of .gitmodules must be the pin of a port_sources.yaml
+    # entry. Needs no submodule checkout.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7

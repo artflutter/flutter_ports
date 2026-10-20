@@ -18,6 +18,7 @@ rules:
     - - flutter_chartjs
       - chartjs_test_utils
       - chartjs_gallery
+      - flutter_d3_port
       - ci
       - deps
       - docs
