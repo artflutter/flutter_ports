@@ -1,7 +1,8 @@
 # Agent onboarding
 
 Dart pub workspace + Melos 8 monorepo of native Dart/Flutter ports of JavaScript chart
-libraries. First port: Chart.js v4.5.1 → `packages/flutter_chartjs`.
+libraries. First port: Chart.js v4.5.1 → `packages/flutter_chartjs`. Second port: D3 v7.9.0 →
+`packages/flutter_d3_port`, in phase 0 (scaffold and design, no ported code).
 
 ## Commands
 
@@ -11,14 +12,16 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
 - `dart run melos run format` / `format:check`
 - `dart run melos run analyze`: `dart analyze --fatal-infos` over the workspace.
 - `dart run melos run test --no-select`: `flutter test` in every package with a `test/` dir.
-  `--no-select` skips the interactive package picker. On ubuntu, CI also fetches the submodules,
-  for `packages/flutter_chartjs/test/upstream_test.dart`.
+  `--no-select` skips the interactive package picker. On ubuntu, CI also fetches the three
+  Chart.js submodules and `third_party/d3` by path, for the `test/upstream_test.dart` of
+  `flutter_chartjs` and of `flutter_d3_port`.
 - `dart run melos run test:web`: the `flutter_chartjs` and `chartjs_test_utils` tests without
   `@TestOn('vm')`, in Chrome, compiled with dart2js and with dart2wasm. It needs a local Google
   Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the port checks of
   `packages/flutter_chartjs/doc/porting-flow.md` §4 (tools 1-3 and the checks of tools 6 and 8),
-  as melos steps. The CI job `port-checks` runs the five checks with a shallow submodule checkout.
+  as melos steps. The CI job `port-checks` runs the five checks with a shallow checkout of the
+  three Chart.js submodules.
   Each check can also run alone:
   - `check:lib-imports`: the import allowlists of `lib/`, of the pure layers and of the tests that
     the web legs compile. It also fails when a ported file imports `lib/src/theme/`. It keeps the
@@ -63,12 +66,16 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   `parity.md` status. It also fails when an import does not resolve. `check:port` and the CI job
   `port-checks` run it.
 - `dart run melos run upstream`: check out the pinned reference sources (every `third_party/`
-  submodule, at depth 1).
+  submodule, at depth 1). These are the three Chart.js submodules and the 34 D3 submodules.
 - `dart run melos run upstream:manifest`: tool 4. It writes
   `packages/flutter_chartjs/doc/upstream/` from `third_party/Chart.js`. It needs Node.js 22.18 or
   later. The CI job `upstream-manifest` fails when the committed files differ.
 - `dart run melos run upstream:check`: fail unless `third_party/Chart.js` is pinned to the release
-  tag named by `chartJsVersion`. CI runs it too.
+  tag named by `chartJsVersion`. CI runs it too. It also fails unless `third_party/d3` is at the
+  tag `v<d3Version>`. Each other D3 gitlink must be the commit of its `ref` and equal its `commit`
+  in `packages/flutter_d3_port/tool/port_sources.yaml`. The script reads the gitlinks from the
+  index and the tags with `git ls-remote`. It needs no submodule checkout. It also fails on a
+  submodule of `.gitmodules` that no entry of a `tool/port_sources.yaml` pins.
 - `dart run melos run gallery` (Chrome) / `gallery:macos` / `gallery:device` (Android/iOS):
   run the gallery.
 - `dart run melos run gallery:build:web` / `gallery:build:android` / `gallery:build:ios`: build the
@@ -163,8 +170,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       colliding name) are proposed. Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it is
       accepted.
       The other ADRs are accepted. Docs name them "Chart.js ADR NNNN". "ADR NNNN" alone is a
-      `docs/adr/` file. An accepted ADR does not change. A changed decision gets a new ADR that
-      states the complete decision and supersedes the old ADR.
+      `docs/adr/` file. "D3 ADR NNNN" is a file of `packages/flutter_d3_port/doc/adr/`. An
+      accepted ADR does not change. A changed decision gets a new ADR that states the complete
+      decision and supersedes the old ADR.
     - `doc/differences.md`: one row for each `DIVERGES` difference.
     - `doc/status.yaml`: the hand-written parts of `parity.md`: the text outside the tables, the
       status text of each row, the Dart targets that no header gives and the port-only rows. Tool 6
@@ -212,16 +220,42 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     profiling entry (`packages/flutter_chartjs/doc/performance.md` §6).
   - Each control has a `ValueKey`. Phase 7 replaces `StressPointController` with the ported
     `LineController` and `ScatterController`.
+- `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC). Phase 0
+  has no ported code. `doc/README.md` has the plan and the roadmap.
+  - `lib/flutter_d3_port.dart`: the public library. `lib/src/upstream.dart` has `d3Version`
+    (`7.9.0`). Both files are port-only.
+  - `test/upstream_test.dart` (`@TestOn('vm')`) compares `d3Version` with
+    `third_party/d3/package.json`. It also compares each D3 gitlink with its `commit`. It fails
+    on a submodule of `.gitmodules` that no entry of the two `tool/port_sources.yaml` files pins.
+  - `tool/port_sources.yaml`: the 34 pins in the schema of the Chart.js file (D3 ADR 0001). Each
+    entry gives the tag, the commit, the license and the holder of one repository.
+  - Paths (D3 ADR 0002): `third_party/<repo>/src/<path>.js` becomes `lib/src/<repo>/<path>.dart`.
+    `<repo>` keeps its hyphens. A spec `<repo>/test/<path>-test.js` becomes
+    `test/specs/<repo>/<path>_test.dart`. Port-only tests go in `test/port/<repo>/`.
+  - `doc/`: all D3 port docs: `README.md` (overview, roadmap, decisions), `porting-flow.md`
+    (proposed), `parity.md`, `differences.md`, `upstream-ledger.md` (one section for each
+    repository) and the prior-art survey `prior-art/`.
+    - `doc/adr/`: D3 ADRs 0001-0006, all proposed. D3 ADR 0001 (upstream sources) has gate 0.
+      D3 ADRs 0002 (file naming and layout), 0003 (number to string), 0004 (spec harness) and
+      0006 (generators, accessors and JS values) have gate 1. D3 ADR 0005 (path context) has
+      gate 1 for the pure interface and gate 4 for the `dart:ui` builder.
+  - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
+    yet. `test --no-select` runs its tests. In D3 phase 1, ADR 0008 adds the package to tools 1-3.
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
   - Shallow git submodules at release tags: `Chart.js` (`v4.5.1`), `kurkle-color` (`v0.3.2`) and
     `chartjs-test-utils` (`v0.4.0`). The last two come from Chart.js ADR 0011.
+  - The 34 D3 submodules, also shallow at release tags (D3 ADR 0001): `d3` (`v7.9.0`), the 30
+    `d3-*` modules, `internmap`, `delaunator` (`v5.1.0`) and `robust-predicates` (`v3.0.3`).
+    `packages/flutter_d3_port/tool/port_sources.yaml` gives the tag and the commit of each.
   - `fdlibm/`: unchanged netlib fdlibm 5.3 files (`e_log.c`, `e_log10.c`, `e_atan2.c`, `s_atan.c`)
     for `fdlibm_log.dart` and `fdlibm_atan.dart`. fdlibm has no git repository. Thus these files
     are a committed copy. `REUSE.toml` annotates them.
 - `tool/`: repository scripts (`check_upstream_pin.sh`).
 - `docs/`: docs for all ports only. `docs/adr/`: decisions for all ports. `docs/prior-art/`: prior
   art for future ports. Docs for one port go in the `doc/` folder of its package.
+  - ADR 0007 (package names) and ADR 0008 (shared JS runtime and port tools) are proposed. ADR
+    0007 supersedes ADR 0003 when it is accepted. The gate of ADR 0008 is D3 phase 1.
 
 ## Porting rules
 
@@ -337,6 +371,31 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `Chart.defaults` writes for theming, no `lib/src/theme/` import in ported files): Chart.js ADR
   0001. `check:lib-imports` already fails on the two import invariants.
 
+The D3 port applies the rules above with these changes. The D3 ADRs are proposed. The doc paths
+are relative to `packages/flutter_d3_port/doc/`.
+
+- Rule 1: read the upstream file in `third_party/<repo>`. Never port from `d4` or from another
+  Dart D3 package (`prior-art/README.md`).
+- Rule 2: the header names the repository and its tag, for example
+  `// Ported from d3-array v3.2.4 src/ticks.js (ISC, Mike Bostock).` The port-only marker is
+  `// Original code, not ported from D3: <reason>.` D3 ADR 0001 item 8 gives the holder strings.
+  A file whose name fails the `file_names` lint has `// ignore_for_file: file_names` after its
+  header lines (D3 ADR 0002).
+- Rules 3 and 4: port the specs by D3 ADR 0004. Update the row of the repository in `parity.md`
+  in the same change. From D3 phase 2, tool 6 writes `parity.md`.
+- Rule 6: a bump moves one repository. It changes the submodule, the entry in
+  `tool/port_sources.yaml` and the headers of the files of that repository (D3 ADR 0001 item 7).
+  A bump of `third_party/d3` also changes `d3Version`. `upstream:check` and
+  `packages/flutter_d3_port/test/upstream_test.dart` fail on a mismatch.
+- `upstream-ledger.md` has one section for each repository. A difference carries
+  `// DIVERGES(d3): <row id>, <reason>` and a row in `differences.md`.
+- Number strings (D3 ADR 0003): when a string is the result of a module, its JS digits are
+  behavior. Examples are d3-format, d3-path, d3-color and d3-time-format. The rules of Chart.js
+  ADR 0010 apply to them.
+- No port depends on another port (ADR 0008). Thus D3 code never imports
+  `package:flutter_chartjs`. In D3 phase 1, ADR 0008 copies the generic runtime of `lib/src/js/`
+  into the shared package `js_semantics`.
+
 ## Tests
 
 - A pure-layer file reaches neither `dart:ui` nor `package:flutter` through its direct or indirect
@@ -416,11 +475,25 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `tool/reference/text_metrics/` writes `test/port/canvas/text_metrics_reference.dart` from
   headless Chrome. The x64 rule does not apply to it. Do not edit the generated files by
   hand.
+- The D3 tests use `package:test` (D3 ADR 0004). In phase 0, `test/upstream_test.dart` is the
+  only D3 test. It has `@TestOn('vm')`. Thus `test:web` does not run the D3 package yet. The first
+  pure D3 test adds the package to `test:web`.
+- In a D3 test file with `// ignore_for_file: file_names`, `@TestOn('vm')` comes after the ignore
+  line (D3 ADR 0002 section 2). From phase 1, each D3 spec calls `setUpSpecs()` of
+  `test/support/spec_setup.dart` first in `main()`. The D3 package has no
+  `flutter_test_config.dart`.
 
 ## Licensing
 
 - Chart.js is MIT. `packages/flutter_chartjs/LICENSE` lists both copyright holders and
   `REUSE.toml` annotates the paths. CI runs `reuse lint`.
+- D3 is ISC. `packages/flutter_d3_port/LICENSE` is the ISC text with
+  `Copyright 2010-2026 Mike Bostock` and `Copyright 2026 Vasiliy Ditsyak`. `LICENSES/ISC.txt` has
+  the license text. The `packages/flutter_d3_port/**` table of `REUSE.toml` comes after the
+  `chartjs_test_utils` table. D3 ADR 0001 items 8 and 10 give the other components and their
+  holder strings. Examples are d3-ease (BSD-3-Clause), ColorBrewer in d3-scale-chromatic
+  (Apache-2.0), delaunator (`Mapbox`) and robust-predicates (Unlicense). The change that ports
+  the first file of a component adds that component by the three steps below.
 - Code taken from any other project needs three things in the same change:
   1. its notice in the `LICENSE` of the package that contains the code;
   2. a `REUSE.toml` annotation for the files, placed last because the last matching table wins
@@ -446,7 +519,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
 - Lints: `very_good_analysis` (root `analysis_options.yaml`, which also carries its formatter
   settings, so run Dart tools after `flutter pub get`). Public APIs are documented.
 - Commits: Conventional Commits, signed off (`git commit -s`, DCO), for example
-  `feat(flutter_chartjs): port helpers.math`. Checks:
+  `feat(flutter_chartjs): port helpers.math`. The scope of the D3 port is `flutter_d3_port`.
+  Checks:
   - lefthook ≥ 1.0 `commit-msg` hook (`lefthook install`): `commitlint_cli` checks the type, and
     the scope when one is given, against the list in `commitlint.yaml`; a second command requires a
     `Signed-off-by` trailer;

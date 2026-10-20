@@ -13,6 +13,10 @@ package.
   (superseded by ADR 0006)
 - [ADR 0005: Pin upstream sources](adr/0005-pin-upstream-sources.md)
 - [ADR 0006: Follow upstream between releases](adr/0006-follow-upstream-between-releases.md)
+- Proposed decisions:
+  [ADR 0007: Package names](adr/0007-package-names.md) (it supersedes ADR 0003 on acceptance),
+  [ADR 0008: Shared JS runtime and port tools](adr/0008-shared-js-runtime-and-port-tools.md)
+  (gate: D3 phase 1).
 
 ## Prior art for future ports
 
@@ -70,3 +74,22 @@ package.
     [Chart.js packages](../packages/flutter_chartjs/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs/doc/prior-art/js-runtimes.md),
     [forui theming](../packages/flutter_chartjs/doc/prior-art/forui-theming.md).
+- D3: [`packages/flutter_d3_port/doc/`](../packages/flutter_d3_port/doc/README.md)
+  - [Overview and roadmap](../packages/flutter_d3_port/doc/README.md)
+  - [Parity tracker](../packages/flutter_d3_port/doc/parity.md): one row for each of the 34
+    repositories in phase 0.
+  - [Differences](../packages/flutter_d3_port/doc/differences.md): one row for each `DIVERGES`
+    hunk. It has no rows in phase 0.
+  - [Porting flow](../packages/flutter_d3_port/doc/porting-flow.md) (proposed): the life cycle of
+    one module, the decisions and their gates, the test harness, the tools and the phases.
+  - [Upstream ledger](../packages/flutter_d3_port/doc/upstream-ledger.md): the upstream commits
+    after each pinned tag, with their triage. It has one section for each repository.
+  - Proposed decisions:
+    [D3 ADR 0001: Upstream sources](../packages/flutter_d3_port/doc/adr/0001-upstream-sources.md),
+    [D3 ADR 0002: File naming and package layout](../packages/flutter_d3_port/doc/adr/0002-file-naming-and-layout.md),
+    [D3 ADR 0003: Number to string and number formatting](../packages/flutter_d3_port/doc/adr/0003-number-to-string.md),
+    [D3 ADR 0004: Spec harness](../packages/flutter_d3_port/doc/adr/0004-spec-harness.md),
+    [D3 ADR 0005: Path context and drawing](../packages/flutter_d3_port/doc/adr/0005-path-context.md),
+    [D3 ADR 0006: Generators, accessors and JS values](../packages/flutter_d3_port/doc/adr/0006-generators-accessors-and-js-values.md).
+  - Prior art: [overview](../packages/flutter_d3_port/doc/prior-art/README.md),
+    [D3 packages](../packages/flutter_d3_port/doc/prior-art/d3-packages.md).

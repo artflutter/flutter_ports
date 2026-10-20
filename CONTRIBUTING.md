@@ -13,15 +13,19 @@ to people as much as to agents.
   hook and the CI `dco` job check for the `Signed-off-by` trailer.
 - **Conventional Commits:** `type(scope): summary`. The scope is optional, but when given it must
   be listed in `commitlint.yaml` (for example `feat(flutter_chartjs): port helpers.math`). The
-  lefthook `commit-msg` hook checks both.
+  lefthook `commit-msg` hook checks both. The scope of the D3 port is `flutter_d3_port`.
 - **Ported code:** translated from the pinned upstream source, with a header naming the upstream
   file, specs ported alongside, and the parity tracker updated
   ([packages/flutter_chartjs/doc/parity.md](packages/flutter_chartjs/doc/parity.md)). A file with
   no upstream source starts with `// Original code, not ported from Chart.js: <reason>.`
+  In the D3 port, the parity tracker is
+  [packages/flutter_d3_port/doc/parity.md](packages/flutter_d3_port/doc/parity.md). The D3
+  port-only marker is `// Original code, not ported from D3: <reason>.`
 - **Licensing:** keep upstream notices. Code from another project also needs its notice in the
   package LICENSE, a `REUSE.toml` annotation and an entry in
   `packages/flutter_chartjs/tool/port_sources.yaml` (see [AGENTS.md](AGENTS.md#licensing);
-  Chart.js ADR 0011). Never
+  Chart.js ADR 0011). The D3 port is ISC. Its source list is
+  `packages/flutter_d3_port/tool/port_sources.yaml` (D3 ADR 0001). Never
   copy code from GPL or otherwise incompatible projects (see
   [packages/flutter_chartjs/doc/prior-art](packages/flutter_chartjs/doc/prior-art/README.md)).
   `reuse lint` runs in CI.

@@ -74,6 +74,13 @@ No native port was found; `grizzly_plotly`, `thumbert/plotly_dart` and `flutter_
 | `d3_force_flutter` (GitHub only) | Native port of d3-force | Archived; last push 2023-12-15 |
 | `d3` (rwl) | JS interop over bundled D3 3.5.10, Dart 1 web | Legacy; 0.2.0, 2015-12-15 |
 
+The [D3 prior-art survey](../../packages/flutter_d3_port/doc/prior-art/README.md) of 2026-10-20
+examines these packages and more in depth. It found no formal or complete D3 port for Flutter.
+[AGENTS.md](../../AGENTS.md) rule 1 forbids a port from `d4` or from any other Dart library. For
+the D3 port, `d4` is prior art only: it is neither a source nor a dependency. Thus the `d4_*`
+item under [Conclusions for flutter_ports](#conclusions-for-flutter_ports) does not apply to the
+D3 port.
+
 ### Recharts
 
 | Package | Approach | Status |
