@@ -25,8 +25,8 @@ const chartTypes = <String>[
 /// Every chart type is listed up front and marked as pending until its port
 /// lands, so the gallery doubles as a visual progress tracker. Above the
 /// list, two demo pages show the ported code: the canvas layer and the chart
-/// host of phase 3 with the elements of phase 4 and the core of phase 5, and
-/// the helpers of phase 2.
+/// host of phase 3 with the elements of phase 4, the core of phase 5 and the
+/// scales of phase 6, and the helpers of phase 2.
 class GalleryApp extends StatelessWidget {
   /// Creates the gallery.
   const GalleryApp({super.key});
@@ -56,8 +56,8 @@ class GalleryHome extends StatelessWidget {
             title: Text('Tracking Chart.js $chartJsVersion'),
             subtitle: Text(
               'Native port in progress. The canvas layer, the chart host, '
-              'the elements and the core draw, but no chart type renders '
-              'yet.',
+              'the elements, the core and the scales draw, but no chart type '
+              'renders yet.',
             ),
           ),
           _DemoEntry(
@@ -69,7 +69,10 @@ class GalleryHome extends StatelessWidget {
                 'canvas. Input events, sizing and a stress test in the chart '
                 'host. Phase 4 elements: bars, a line with points and a '
                 'doughnut of arcs, with hover and hit tests. Phase 5 core: a '
-                'real Chart with interaction modes and animated hover.',
+                'real Chart with interaction modes and animated hover. '
+                'Phase 6 scales: linear, logarithmic, category and time axes '
+                'with ticks, rotation, auto skip and the pixel mapping of '
+                'the pointer.',
             builder: (_) => const CanvasHostDemoPage(),
           ),
           _DemoEntry(

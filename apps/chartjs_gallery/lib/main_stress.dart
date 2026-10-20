@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:flutter/material.dart';
 
 /// The scene of the profiling entry: `--dart-define=MODE=elements` selects
-/// the [StressMode] of that name (`primitives`, `elements`, `bars`, `arcs`
-/// or `chart`). Without the define, the mode is `primitives`. An unknown
-/// name throws an [ArgumentError] at the start.
+/// the [StressMode] of that name (`primitives`, `elements`, `bars`, `arcs`,
+/// `chart` or `axes`). Without the define, the mode is `primitives`. An
+/// unknown name throws an [ArgumentError] at the start.
 final StressMode stressMode = StressMode.values.byName(
   const String.fromEnvironment('MODE', defaultValue: 'primitives'),
 );
@@ -39,15 +40,56 @@ final bool stressLine = _flag(
   ),
 );
 
-/// The call of each frame in the mode `chart` (Chart.js ADR 0021, section
-/// 8): `--dart-define=CALL=draw` (the default) gives case (a),
-/// `chart.draw()`. `--dart-define=CALL=update` gives case (b),
+/// The call of each frame in the modes `chart` and `axes` (Chart.js ADR
+/// 0021, section 8): `--dart-define=CALL=draw` (the default) gives case
+/// (a), `chart.draw()`. `--dart-define=CALL=update` gives case (b),
 /// `chart.update('none')` after new positions in the data objects.
 /// `--dart-define=CALL=animate` gives the animation cost: a looping
 /// animation of the N points, which the animator ticks in each frame. An
-/// unknown name throws an [ArgumentError] at the start.
-final StressChartCall stressCall = StressChartCall.values.byName(
+/// unknown name, or `animate` in the mode `axes`, throws an [ArgumentError]
+/// at the start.
+final StressChartCall stressCall = _call(
   const String.fromEnvironment('CALL', defaultValue: 'draw'),
+);
+
+StressChartCall _call(String name) {
+  final call = StressChartCall.values.byName(name);
+  if (stressMode == StressMode.axes && call == StressChartCall.animate) {
+    throw ArgumentError.value(name, 'CALL', 'Not draw or update (MODE=axes)');
+  }
+  return call;
+}
+
+/// The scale type of the x axis in the mode `axes`:
+/// `--dart-define=SCALE=linear` (the default), `logarithmic`, `category` or
+/// `time`. An unknown name throws an [ArgumentError] at the start.
+final StressAxisType stressScale = StressAxisType.values.byName(
+  const String.fromEnvironment('SCALE', defaultValue: 'linear'),
+);
+
+/// The scale type of the y axis in the mode `axes`:
+/// `--dart-define=YSCALE=linear` (the default) or `logarithmic`. Another
+/// name throws an [ArgumentError] at the start.
+final StressAxisType stressYScale = _valueScale(
+  const String.fromEnvironment('YSCALE', defaultValue: 'linear'),
+);
+
+StressAxisType _valueScale(String name) {
+  final type = StressAxisType.values.byName(name);
+  if (!stressAxesValueTypes.contains(type)) {
+    throw ArgumentError.value(name, 'YSCALE', 'Not linear or logarithmic');
+  }
+  return type;
+}
+
+/// The option `ticks.autoSkip` of the x axis in the mode `axes`:
+/// `--dart-define=AUTOSKIP=1` (the default) or `--dart-define=AUTOSKIP=0`.
+final bool stressAutoSkip = _flag(
+  'AUTOSKIP',
+  const String.fromEnvironment(
+    'AUTOSKIP',
+    defaultValue: '1',
+  ),
 );
 
 /// `enableOptionSharing` of the chart points in the mode `chart`:
@@ -85,7 +127,7 @@ bool _flag(String name, String value) => switch (value) {
 ///   `packages/flutter_chartjs/doc/performance.md`.
 /// - `bars`: 1000, 5000 and 20000 bars without labels.
 /// - `arcs`: 100, 1000 and 5000 arcs without labels.
-/// - `chart`: 1000, 5000 and 20000 chart points without labels.
+/// - `chart` and `axes`: 1000, 5000 and 20000 chart points without labels.
 List<(int, int)> stressDefaultScenarios(StressMode mode) => switch (mode) {
   StressMode.primitives || StressMode.elements => const [
     (1000, 0),
@@ -95,7 +137,7 @@ List<(int, int)> stressDefaultScenarios(StressMode mode) => switch (mode) {
     (1000, 200),
     (20000, 200),
   ],
-  StressMode.bars || StressMode.chart => const [
+  StressMode.bars || StressMode.chart || StressMode.axes => const [
     (1000, 0),
     (5000, 0),
     (20000, 0),
@@ -124,6 +166,11 @@ List<(int, int)> _parse(String value) => value.isEmpty
 /// also has `animatorMs`, the time of the animator tick without its draw
 /// (`CALL=animate`), and the keys `call`, `sharing` and `scriptable` of the
 /// defines.
+/// In the mode `axes`, the line has the keys `call`, `scale`, `yScale` and
+/// `autoSkip` of the defines, the tick count `ticks` (after the auto skip)
+/// and the `labelRotation` `rotation` of the x axis at the end, and the
+/// means `layoutMs`, `datasetsUpdateMs` and `datasetsDrawMs` of the parts of
+/// `StressAxesTiming` (`lib/demo/stress_axes.dart`).
 /// With `LINE=0`, it has the key `line` with the value false.
 /// Fresh processes give the most stable figures: run one scenario at a time
 /// with `--dart-define=MODE=<mode> --dart-define=SCENARIO=<N>x<M>`.
@@ -133,15 +180,35 @@ void main() {
 
 /// The app of the profiling entry.
 class StressProfileApp extends StatefulWidget {
-  /// Creates the app. [mode] and [scenarios] default to [stressMode] and
-  /// [stressScenarios], the values of the defines. A test gives them.
-  const StressProfileApp({super.key, this.mode, this.scenarios});
+  /// Creates the app. [mode], [scenarios], [scale], [yScale] and [autoSkip]
+  /// default to [stressMode], [stressScenarios], [stressScale],
+  /// [stressYScale] and [stressAutoSkip], the values of the defines. A test
+  /// gives them.
+  const StressProfileApp({
+    super.key,
+    this.mode,
+    this.scenarios,
+    this.scale,
+    this.yScale,
+    this.autoSkip,
+  });
 
   /// The mode of the scenarios, or Dart `null` for [stressMode].
   final StressMode? mode;
 
   /// The scenarios (N, M), or Dart `null` for [stressScenarios].
   final List<(int, int)>? scenarios;
+
+  /// The x scale type of the mode `axes`, or Dart `null` for [stressScale].
+  final StressAxisType? scale;
+
+  /// The y scale type of the mode `axes`, or Dart `null` for
+  /// [stressYScale].
+  final StressAxisType? yScale;
+
+  /// `ticks.autoSkip` of the mode `axes`, or Dart `null` for
+  /// [stressAutoSkip].
+  final bool? autoSkip;
 
   @override
   State<StressProfileApp> createState() => _StressProfileAppState();
@@ -155,6 +222,12 @@ class _StressProfileAppState extends State<StressProfileApp> {
   StressMode get _mode => widget.mode ?? stressMode;
 
   List<(int, int)> get _scenarios => widget.scenarios ?? stressScenarios;
+
+  StressAxisType get _scale => widget.scale ?? stressScale;
+
+  StressAxisType get _yScale => widget.yScale ?? stressYScale;
+
+  bool get _autoSkip => widget.autoSkip ?? stressAutoSkip;
 
   @override
   void initState() {
@@ -193,6 +266,17 @@ class _StressProfileAppState extends State<StressProfileApp> {
             'sharing': stressSharing,
             'scriptable': stressScriptable,
           },
+          if (_mode == StressMode.axes) ...{
+            'call': stressCall.name,
+            'scale': _scale.name,
+            'yScale': _yScale.name,
+            'autoSkip': _autoSkip,
+            'ticks': last?.ticks,
+            'rotation': last?.rotation.toStringAsFixed(2),
+            'layoutMs': avg((s) => s.layoutMs),
+            'datasetsUpdateMs': avg((s) => s.datasetsUpdateMs),
+            'datasetsDrawMs': avg((s) => s.datasetsDrawMs),
+          },
           'buildMs': avg((s) => s.buildMs),
           'buildMaxMs': last?.buildMaxMs.toStringAsFixed(2),
           'rasterMs': avg((s) => s.rasterMs),
@@ -227,6 +311,9 @@ class _StressProfileAppState extends State<StressProfileApp> {
           initialCall: stressCall,
           initialSharing: stressSharing,
           initialScriptable: stressScriptable,
+          initialScale: _scale,
+          initialYScale: _yScale,
+          initialAutoSkip: _autoSkip,
           autoStart: true,
           // The frame after the timer of a scenario runs the old StressDemo
           // once more, before the build that disposes it. Its last figures

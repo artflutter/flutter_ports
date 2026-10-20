@@ -227,6 +227,36 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('chart: the call animate makes a new chart, and the loop goes '
+      'on', (tester) async {
+    final stats = await _pumpChart(tester);
+    await _frames(tester, 10);
+    var chart = _chart(tester);
+    expect(chart.options['animation'], false);
+    for (final (key, animated) in [
+      ('stress.chart.call.animate', true),
+      ('stress.chart.call.draw', false),
+    ]) {
+      // A change to or from animate gives another `animation` option, thus
+      // a new chart. The old chart is destroyed.
+      await _tap(tester, key);
+      expect(_selected(tester, key), isTrue, reason: key);
+      final next = _state(tester).debugChart;
+      expect(next, isNotNull, reason: key);
+      expect(identical(next, chart), isFalse, reason: key);
+      expect(chart.canvas, isNull, reason: key);
+      expect(next!.options['animation'] != false, animated, reason: key);
+      chart = next;
+      // The running loop goes on with the new chart.
+      final frames = _state(tester).debugFrames;
+      await _frames(tester, 5);
+      expect(_state(tester).debugFrames, greaterThan(frames), reason: key);
+    }
+    await _tap(tester, 'stress.start');
+    expect(stats.last.frames, greaterThan(0));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('chart: a running loop goes on across the modes', (
     tester,
   ) async {

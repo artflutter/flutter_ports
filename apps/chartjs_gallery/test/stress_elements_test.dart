@@ -84,8 +84,9 @@ void main() {
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
 
-  // stress_chart_test.dart tests the mode chart, which has its own host.
-  for (final mode in StressMode.values.where((m) => m != StressMode.chart)) {
+  // stress_chart_test.dart and stress_axes_test.dart test the modes chart
+  // and axes, which have their own host.
+  for (final mode in StressMode.values.where((m) => !m.runsChart)) {
     testWidgets('${mode.name}: the loop draws and publishes the figures', (
       tester,
     ) async {
