@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 // Upstream has no spec for helpers.intl.ts (AGENTS.md rule 3). The expected
 // strings come from Node.js v24.12.0 (V8 13.6, ICU 77.1) on x64, with
 // LANG=en_US.UTF-8. test/port/js/js_intl_test.dart tests the option mapping
-// and pins the known differences from V8 (Chart.js ADR 0008).
+// and pins the known differences from V8 (Chart.js ADR 0026).
 
 /// The options of `formatters.numeric` (core.ticks.js:56-57) with [digits]
 /// fraction digits, or `ticks.format` (undefined by default) for `null`.
@@ -284,7 +284,7 @@ void main() {
   group('formatNumber', () {
     test('gives the V8 strings of the spec labels', () {
       // Each recorded call. package:intl gives the V8 string for all of them
-      // (Chart.js ADR 0008).
+      // (Chart.js ADR 0026).
       for (final (spec, locale, calls) in _specCases) {
         for (final (value, digits, expected) in calls) {
           expect(

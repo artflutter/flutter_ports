@@ -2,6 +2,7 @@
 
 - Status: accepted (2026-10-18)
 - Date: 2026-10-18
+- Superseded by: [Chart.js ADR 0026](0026-number-formatting-on-package-intl.md) (2026-10-20)
 - Related: [Chart.js ADR 0010](0010-js-numeric-semantics.md)
 
 ## Context

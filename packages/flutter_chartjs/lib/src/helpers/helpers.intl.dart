@@ -2,8 +2,8 @@
 
 /// Port of `src/helpers/helpers.intl.ts`.
 ///
-/// `Intl.NumberFormat` is the `NumberFormat` of package:intl (Chart.js ADRs
-/// 0008 and 0026). [jsNumberFormat] in `lib/src/js/js_intl.dart` maps the
+/// `Intl.NumberFormat` is the `NumberFormat` of package:intl (Chart.js ADR
+/// 0026). [jsNumberFormat] in `lib/src/js/js_intl.dart` maps the
 /// locale and the options. The strings are the strings of package:intl, not
 /// of V8. The guards of the adapter write the digits of V8 for numbers from
 /// `2^53`, in scientific notation and for more than 15 fraction digits, and

@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: Intl.NumberFormat on package:intl.
 
 /// `new Intl.NumberFormat(locale, options)` on the `NumberFormat` of
-/// package:intl (Chart.js ADRs 0008 and 0026).
+/// package:intl (Chart.js ADR 0026).
 ///
 /// The strings are the strings of package:intl, not of V8. Chart.js ADR 0026
 /// lists the known differences, and `test/port/js/js_intl_test.dart` pins a

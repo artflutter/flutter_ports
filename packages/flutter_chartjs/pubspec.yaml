@@ -30,7 +30,7 @@ dependencies:
   collection: ^1.19.1
   flutter:
     sdk: flutter
-  # Numbers (js_intl.dart, Chart.js ADR 0008) and the date adapter
+  # Numbers (js_intl.dart, Chart.js ADR 0026) and the date adapter
   # (porting-flow.md 2.10) format through intl. 0.20.2 is the pin of
   # flutter_localizations in Flutter 3.44.9.
   intl: ^0.20.2

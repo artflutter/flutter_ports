@@ -29,10 +29,10 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
   ADRs are in [adr/](adr/). Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
-  supersedes Chart.js ADR 0005, and Chart.js ADR 0012 supersedes Chart.js ADR 0004. Chart.js
-  ADR 0001 is accepted for its four invariants only. Chart.js ADRs 0013 to 0026 are proposed.
-  Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0026 supersedes Chart.js ADR
-  0008, when they are accepted. The other Chart.js ADRs are accepted:
+  supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR 0004, and Chart.js ADR
+  0026 supersedes Chart.js ADR 0008. Chart.js ADR 0001 is accepted for its four invariants only.
+  Chart.js ADRs 0013 to 0023 are proposed. Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it
+  is accepted. The other Chart.js ADRs are accepted:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md)
   - [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md) (superseded by
     Chart.js ADR 0010)
@@ -44,6 +44,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0006: Options representation and resolver](adr/0006-options-representation-and-resolver.md)
   - [Chart.js ADR 0007: Frame scheduling](adr/0007-frame-scheduling.md)
   - [Chart.js ADR 0008: Number formatting on package:intl](adr/0008-number-formatting-on-package-intl.md)
+    (superseded by Chart.js ADR 0026)
   - [Chart.js ADR 0009: No display-only JS exactness](adr/0009-no-display-only-js-exactness.md)
   - [Chart.js ADR 0010: JS numeric semantics](adr/0010-js-numeric-semantics.md)
   - [Chart.js ADR 0011: Third-party sources](adr/0011-third-party-sources.md)
@@ -64,10 +65,10 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0022: Chart test harness on Flutter](adr/0022-chart-test-harness.md) (proposed)
   - [Chart.js ADR 0023: Underscore members with a colliding name](adr/0023-underscore-member-collisions.md)
     (proposed)
-  - [Chart.js ADR 0024: Dates](adr/0024-dates.md) (proposed)
-  - [Chart.js ADR 0025: Scale value parameters](adr/0025-scale-value-parameters.md) (proposed)
+  - [Chart.js ADR 0024: Dates](adr/0024-dates.md)
+  - [Chart.js ADR 0025: Scale value parameters](adr/0025-scale-value-parameters.md)
   - [Chart.js ADR 0026: Number formatting on package:intl](adr/0026-number-formatting-on-package-intl.md)
-    (proposed. It supersedes Chart.js ADR 0008 on acceptance.)
+    (it supersedes Chart.js ADR 0008)
 
 ## What gets ported
 
@@ -170,7 +171,7 @@ and gate 2 decisions. All of them are accepted. An example is the options repres
   ([Chart.js ADR 0007](adr/0007-frame-scheduling.md)). ADR: Animation (gate 5,
   [porting-flow.md](porting-flow.md) §2.9) decides reduced motion, the theme-change modes and the
   `core.animator` tests.
-- **Dates.** Time scales need a date adapter, and upstream ships none. Proposed in
+- **Dates.** Time scales need a date adapter, and upstream ships none. Decided in
   [Chart.js ADR 0024](adr/0024-dates.md): a default adapter with the rules of
   chartjs-adapter-moment 1.0.1 on moment 2.29.4. Its calendar works on wall milliseconds with
   integer day arithmetic, and `DateTime` gives the local offsets. It uses ICU format patterns of

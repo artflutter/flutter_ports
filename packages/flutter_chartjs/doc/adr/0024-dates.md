@@ -1,6 +1,6 @@
 # Chart.js ADR 0024: Dates
 
-- Status: proposed
+- Status: accepted (2026-10-20)
 - Date: 2026-10-20
 - Related: [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (JS values as Maps,
   the `undefined` sentinel),

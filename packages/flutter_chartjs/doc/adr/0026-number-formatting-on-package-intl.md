@@ -1,8 +1,8 @@
 # Chart.js ADR 0026: Number formatting on package:intl
 
-- Status: proposed
+- Status: accepted (2026-10-20)
 - Date: 2026-10-20
-- Supersedes: [Chart.js ADR 0008](0008-number-formatting-on-package-intl.md) (on acceptance)
+- Supersedes: [Chart.js ADR 0008](0008-number-formatting-on-package-intl.md)
 - Related: [Chart.js ADR 0009](0009-no-display-only-js-exactness.md) (no display-only JS
   exactness), [Chart.js ADR 0010](0010-js-numeric-semantics.md) (the reference engine,
   `Number::toString`)
@@ -65,7 +65,7 @@ label show one value two times. A throw stops the chart. Thus
 
 This ADR states the complete current decision. It changes decisions 5 (the guards) and 9 (the
 tests), and the consequences. It adds decision 10 (the cap of the fraction digits). It keeps the
-other decisions of Chart.js ADR 0008. On acceptance, it supersedes Chart.js ADR 0008. The text
+other decisions of Chart.js ADR 0008. It supersedes Chart.js ADR 0008. The text
 below repeats the context of Chart.js ADR 0008, with the references brought up to date.
 
 Chart.js formats numbers with `Intl.NumberFormat` in `helpers.intl.ts`. Five call sites use

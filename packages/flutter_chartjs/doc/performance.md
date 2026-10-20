@@ -1625,7 +1625,7 @@ double))`. The cells give the lowest and the highest round, in ns for each call:
 
 ### 11.5 The number formatting guards (Chart.js ADR 0026)
 
-[Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md) (proposed) adds guards to
+[Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md) adds guards to
 `js_intl.dart` where package:intl gives another label than V8. The bed of section 11.1, AOT, en-US.
 The best of 7 runs of 200,000 calls of `JsNumberFormat.format`, in ns for each call:
 
@@ -1848,7 +1848,7 @@ each change needs the A/B evidence of section 11.7.
 
 ## 12. Dates (phase 6)
 
-[Chart.js ADR 0024](adr/0024-dates.md) (proposed) chooses the forms of the default date adapter
+[Chart.js ADR 0024](adr/0024-dates.md) chooses the forms of the default date adapter
 with these figures: its facts 1, 2, 3, 5, 7, 12 and 13, and its decision 10. Bed: Apple M3 Max,
 macOS 26.5.1, Dart 3.12.2 (Flutter 3.44.9), `package:intl` 0.20.3. AOT is `dart compile exe`.
 dart2wasm and dart2js ran in the x64 Node.js v24.12.0 under Rosetta. The figures are medians, in

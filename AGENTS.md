@@ -177,16 +177,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     generators of reference data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0026. Three of them are superseded: Chart.js ADR 0010
-      supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, and Chart.js
-      ADR 0012 supersedes Chart.js ADR 0004. Chart.js ADR 0001 is accepted for its four theming
-      invariants only. Chart.js ADRs 0013 (canvas model), 0014 (input events and the chart host),
-      0015 (text), 0016 (frame scheduling), 0017 (element properties), 0018 (typed element
-      options), 0019 (animation), 0020 (registry and component classes), 0021 (typed options in
-      the resolver), 0022 (chart test harness on Flutter), 0023 (underscore members with a
-      colliding name), 0024 (dates), 0025 (scale value parameters) and 0026 (number formatting on
-      package:intl) are proposed. Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js
-      ADR 0026 supersedes Chart.js ADR 0008, when they are accepted.
+    - `doc/adr/`: Chart.js ADRs 0001-0026. Four of them are superseded: Chart.js ADR 0010
+      supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR
+      0012 supersedes Chart.js ADR 0004, and Chart.js ADR 0026 supersedes Chart.js ADR 0008.
+      Chart.js ADR 0001 is accepted for its four theming invariants only. Chart.js ADRs 0013
+      (canvas model), 0014 (input events and the chart host), 0015 (text), 0016 (frame
+      scheduling), 0017 (element properties), 0018 (typed element options), 0019 (animation), 0020
+      (registry and component classes), 0021 (typed options in the resolver), 0022 (chart test
+      harness on Flutter) and 0023 (underscore members with a colliding name) are proposed.
+      Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it is accepted.
       The other ADRs are accepted. Docs name them "Chart.js ADR NNNN". "ADR NNNN" alone is a
       `docs/adr/` file. "D3 ADR NNNN" is a file of `packages/flutter_d3_port/doc/adr/`. An
       accepted ADR does not change. A changed decision gets a new ADR that states the complete
@@ -321,8 +320,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
 - The module status values of the `parity.md` legend: `porting-flow.md` §1 step 7 (proposed).
 - `// DIVERGES(chartjs): <row id>, <reason>` markers and their `differences.md` rows:
   `porting-flow.md` §4 (proposed). `check:headers` already pairs markers with rows.
-- The JS numeric translation rules: Chart.js ADR 0010. Number formatting: Chart.js ADR 0008
-  (Chart.js ADR 0026, proposed, restates it with the guards of `js_intl.dart`).
+- The JS numeric translation rules: Chart.js ADR 0010. Number formatting: Chart.js ADR 0026
+  (package:intl with the guards of `js_intl.dart`).
   Emulate JavaScript only where the result changes behavior (Chart.js ADR 0009): the ticks, the
   hit element, the item order, the resolved option, or a throw. Do not emulate JavaScript for
   exact digits or pixels only. `check:js-semantics` already fails on the flagged forms. A kept

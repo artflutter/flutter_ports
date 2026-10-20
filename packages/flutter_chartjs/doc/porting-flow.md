@@ -157,14 +157,14 @@ Phase 5 wrote the gate 5 decisions as the proposed files of Chart.js ADRs 0019-0
 A design panel of three drafts, a judge and a synthesis wrote each of them. Their subsections are
 2.9, 2.16, 2.17 and 2.18. The port of `core.datasetController` wrote Chart.js ADR 0023 (proposed,
 2026-10-20): the names of underscore members that collide with a member of their class. 2.5 has
-its summary. Phase 6 wrote Chart.js ADR 0025 (proposed, 2026-10-20): the value parameters of the
-scales, the interface members that the scales need, the names of their underscore members and the
-parsed read of phase 7. Its subsection is 2.19. Phase 6 also wrote Chart.js ADR 0024 (proposed,
-2026-10-20): the default date adapter, the zone, the calendar, and the parse and format rules. A
-design panel of three drafts, a judge and a synthesis wrote it. Its subsection is 2.10. The fixes
-of phase 6 wrote Chart.js ADR 0026 (proposed, 2026-10-20): the number formatting of Chart.js ADR
-0008 with the six guards of `js_intl.dart`. It supersedes Chart.js ADR 0008 on acceptance. 2.3 has
-its summary.
+its summary. Phase 6 wrote Chart.js ADR 0025 (2026-10-20): the value parameters of the scales,
+the interface members that the scales need, the names of their underscore members and the parsed
+read of phase 7. Its subsection is 2.19. Phase 6 also wrote Chart.js ADR 0024 (2026-10-20): the
+default date adapter, the zone, the calendar, and the parse and format rules. A design panel of
+three drafts, a judge and a synthesis wrote it. Its subsection is 2.10. The fixes of phase 6 wrote
+Chart.js ADR 0026 (2026-10-20): the number formatting of Chart.js ADR 0008 with the six guards of
+`js_intl.dart`. 2.3 has its summary. Chart.js ADRs 0024, 0025 and 0026 are accepted
+(2026-10-20). Chart.js ADR 0026 supersedes Chart.js ADR 0008.
 The other subsections stay proposals in this document until their ADR files exist.
 
 | Subsection | ADR | Gate |
@@ -175,7 +175,7 @@ The other subsections stay proposals in this document until their ADR files exis
 | 2.5 | [Chart.js ADR 0012: Dart file naming](adr/0012-dart-file-naming.md), which supersedes Chart.js ADR 0004 | 1 |
 | 2.9, `helpers.extras` and the animator frame source | [Chart.js ADR 0007: Frame scheduling](adr/0007-frame-scheduling.md) | 2 |
 | 2.13 | [Chart.js ADR 0011: Third-party sources](adr/0011-third-party-sources.md), which supersedes Chart.js ADR 0005 | 1 |
-| 2.3, number formatting | [Chart.js ADR 0008: Number formatting on package:intl](adr/0008-number-formatting-on-package-intl.md) | 2 |
+| 2.3, number formatting | [Chart.js ADR 0026: Number formatting on package:intl](adr/0026-number-formatting-on-package-intl.md), which supersedes Chart.js ADR 0008 | 2 |
 | 2.2, 2.3, 2.6, 2.10 | [Chart.js ADR 0009: No display-only JS exactness](adr/0009-no-display-only-js-exactness.md) | 2 |
 | 2.2 | [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md) (proposed) | 3 |
 | 2.7 | [Chart.js ADR 0014: Input events and the chart host](adr/0014-input-events-and-chart-host.md) (proposed) | 3 |
@@ -188,9 +188,8 @@ The other subsections stay proposals in this document until their ADR files exis
 | 2.17 | [Chart.js ADR 0021: Typed options in the resolver](adr/0021-typed-options-in-the-resolver.md) (proposed) | 5 |
 | 2.18 | [Chart.js ADR 0022: Chart test harness on Flutter](adr/0022-chart-test-harness.md) (proposed) | 5 |
 | 2.5 | [Chart.js ADR 0023: Underscore members with a colliding name](adr/0023-underscore-member-collisions.md) (proposed) | 5 |
-| 2.10 | [Chart.js ADR 0024: Dates](adr/0024-dates.md) (proposed) | 6 |
-| 2.3, number formatting | [Chart.js ADR 0026: Number formatting on package:intl](adr/0026-number-formatting-on-package-intl.md) (proposed), which supersedes Chart.js ADR 0008 on acceptance | 2 |
-| 2.19 | [Chart.js ADR 0025: Scale value parameters](adr/0025-scale-value-parameters.md) (proposed) | 6 |
+| 2.10 | [Chart.js ADR 0024: Dates](adr/0024-dates.md) | 6 |
+| 2.19 | [Chart.js ADR 0025: Scale value parameters](adr/0025-scale-value-parameters.md) | 6 |
 
 ADR 0006 (gate 1) belongs to [upstream-tracking.md](upstream-tracking.md).
 
@@ -227,10 +226,10 @@ short:
 
 [Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) holds the complete decision, the
 translation rules and the evidence. It supersedes Chart.js ADR 0002.
-[Chart.js ADR 0008](adr/0008-number-formatting-on-package-intl.md) holds the number formatting
-decision. [Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md) (proposed) states it
-again with six guards against package:intl failures, and supersedes Chart.js ADR 0008 on
-acceptance. [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) holds the principle of no
+[Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md) holds the number formatting
+decision, with six guards against package:intl failures. It supersedes
+[Chart.js ADR 0008](adr/0008-number-formatting-on-package-intl.md).
+[Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) holds the principle of no
 display-only JS exactness. In short:
 - An unexported JS runtime in `lib/src/js/` represents the JS builtins. Ported files call it where
   upstream calls a builtin.
@@ -255,10 +254,9 @@ display-only JS exactness. In short:
   of `testWidgets` fakes that clock.
 - `Intl.NumberFormat` is the `NumberFormat` of `package:intl`. The port-only adapter
   `lib/src/js/js_intl.dart` maps the JS locale and options onto it
-  ([Chart.js ADR 0008](adr/0008-number-formatting-on-package-intl.md)). Its guards write the V8
+  ([Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md)). Its guards write the V8
   digits where package:intl fails: from `2^53`, in scientific notation, with more than 15
-  fraction digits, and the affixes of NaN and the infinities
-  ([Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md)). A string that differs from
+  fraction digits, and the affixes of NaN and the infinities. A string that differs from
   the V8 string is the `differences.md` row `adapt-intl-number-format`.
 - Tool 3 enforces the translation rules. A site that keeps a flagged form for a stated reason
   carries `// js-ok: <reason>` at the end of its line, or alone on the line before it.
@@ -285,7 +283,7 @@ only other type libraries.
 class or a superclass already has a member with the name without the underscore, the Dart name
 gets a trailing underscore: `_update` is `update_`, and `_getSharedOptions` is
 `getSharedOptions_`. The `_dataset` of the meta is `ChartMeta.dataset_`.
-Chart.js ADR 0025 (proposed) applies the rule to the `_` members that only a spec reads, as
+Chart.js ADR 0025 applies the rule to the `_` members that only a spec reads, as
 `Chart.metasets` does: `unit`, `adapter`, `pointLabels` and `pointLabelItems` drop the underscore
 and carry `@internal`.
 
@@ -370,7 +368,7 @@ decision, its evidence and the items that stay open. In short:
 
 ### 2.10 Chart.js ADR 0024: Dates (gate 6)
 
-[Chart.js ADR 0024](adr/0024-dates.md) (proposed) holds the decision and its evidence. In short:
+[Chart.js ADR 0024](adr/0024-dates.md) holds the decision and its evidence. In short:
 - `DateAdapterBase.prototype` starts with the default members of the port-only
   `date_adapter.dart`. `_date` stays the base class `DateAdapterBase`. A member of the exact Dart
   type of its method gets a typed direct call. Five port-only pure files
@@ -574,8 +572,8 @@ and the items that stay open. In short:
 
 ### 2.19 Chart.js ADR 0025: Scale value parameters (gate 6)
 
-[Chart.js ADR 0025](adr/0025-scale-value-parameters.md) (proposed) holds the decision and its
-evidence. In short:
+[Chart.js ADR 0025](adr/0025-scale-value-parameters.md) holds the decision and its evidence. In
+short:
 - `getPixelForValue`, `getDecimalForValue`, `getDistanceFromCenterForValue`,
   `getPointPositionForValue` and `getLineWidthForValue` take `Object?`. Dart `null` is JS
   `null`, and the `undefined` sentinel is JS `undefined`. The callers pass the raw value. The
@@ -924,7 +922,7 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 | 3. Canvas, text, platform, harness | done; `lib/src/canvas`; rest of `helpers.canvas`; rest of `helpers.rtl`; `helpers.dom`; `src/helpers/index.ts`; `platform.*`; internal chart host; phase-3 harness rows | non-chart canvas and DOM cases pass; the 2 `helpers.color` canvas cases pass; text-metric probe recorded. Result: the five phase 3 spec files have 66 cases. 21 pass, 0 fail and 45 skip. The 12 non-chart `helpers.canvas` cases, the 4 `helpers.color` cases and the 5 `helpers.dom` cases with a Flutter equivalent pass. 28 cases skip as `blocked: core.controller`, 15 as `n/a` (CSS, the shadow DOM, DOM ids, iframes, a web worker) and 2 as `diverges: platform-relative-position`. `test:cases` reports 205 passed, 0 failed, 47 skipped and 0 missing cases in the 17 ported spec files. The text-metric probe ([text-metrics.md](text-metrics.md)) found all 80 widths equal to Chrome. Chart.js ADRs 0013-0015 record the gate 3 decisions (proposed) |
 | 4. Elements | done; `core.element`, point, line, bar, arc, `elements/index`; the type members; `jsOrZero` and `js_webidl.dart` of `lib/src/js`; tool 1 roots | 20 of 21 element cases pass. Result: the five phase 4 spec files have 22 cases. 21 pass, 0 fail and 1 skips as `blocked: core.controller` (`element.line`, "should not cache path when animations are enabled"). 20 of the 21 element cases pass. `test:cases` reports 226 passed, 0 failed, 48 skipped and 0 missing cases in the 22 ported spec files. The port-only tests `test/port/core/core.element_test.dart` and `test/port/elements/` (the four elements and `index`) test the behavior that the specs do not test. Four generators of `tool/reference/` (point, line, bar and arc) write the reference data of the four element tests from an x64 build of Node.js v24.12.0. Chart.js ADR 0017 records the gate 4 decision (proposed). [performance.md](performance.md) §8 has the element draw cost on the Pixel 8a, on macOS and in Chrome with dart2wasm, and a number path in `toTRBL` and `toTRBLCorners` that cuts the bar draw time on macOS by about 12 % |
 | 5. Core | `core.config` with hunks H0-H3 and their tests; registry to controller; phase-5 harness rows; tools 6 and 8 | non-chart core cases pass; others skipped `blocked: <module>`. Result of the port step and the harness step (2026-10-20): all 21 core modules have the status `ported`. The 14 core spec files have 286 cases. 98 pass, 0 fail and 188 skip. The 36 non-chart cases of the new core spec files pass: `core.animation` 6, `core.animations` 8, `core.animator` 1, `core.controller` 4, `core.layouts` 1, `core.registry` 15 and `core.scale` 1. The harness rows of phase 5 are done: `acquireChart`, `releaseChart`, `releaseCharts`, `triggerMouseEvent`, the release at the unmount and the built-in registration. Through the harness, 32 more `core.controller` cases pass (36/85), 19 `core.plugin` cases (19/19) and 3 `core.scale` cases (4/41). 188 core cases skip. Of these, 13 wait for a scale of phase 6, 164 for a controller of phase 7 and 10 for a plugin of phase 8. 1 case is `n/a` (DOM element ids). Of the 76 cases of the port step that waited for the harness, 74 pass. 1 skips as `diverges: platform-canvas-no-shadow`, and 1 as `blocked: scale.linear`. The review of phase 5 made two changes. The `data: []` case of `core.controller` passes: an array data gives a new Map (`adapt-config-objects`). The `core.scale` case "should throw error on scale with custom name without axis type" skips as `blocked: scale.linear`: its throw needs `defaults.scales.linear`. `core.controller.tests.js:918` passes too. It was `n/a` before. Outside core, `helpers.canvas` has 14/14, `helpers.dom` 7/22, `platform.basic` 2/5 and `platform.dom` 15/21. `test:cases` reports 337 passed, 0 failed, 213 skipped and 0 missing cases in the 32 ported spec files. No case skips as `blocked: harness`. Tools 6 and 8 run in `check:port`. The gallery has the Core tab and the stress mode `chart`. The adversarial review and the figures of the typed options on a real chart path come next |
-| 6. Scales | seven scales; default date adapter on `DateFormat` (ICU tokens) | non-chart scale cases pass; moment-token cases skip as `diverges`. Result of the port, the specs and the fixes (2026-10-20): the seven scale modules and `src/scales/index.js` have the status `ported`, and `lib/src/index.dart` registers the six scales. The default date adapter is the five port-only files `lib/src/core/date_*.dart` (Chart.js ADR 0024). The five scale spec files have 233 cases. 22 pass, 0 fail and 211 skip: `scale.category` 2/19, `scale.linear` 7/45, `scale.logarithmic` 2/60, `scale.radialLinear` 2/23 and `scale.time` 9/86. 11 cases without a chart pass: the registration and the default config of each scale, and the date library of `scale.time`. 11 chart cases pass: 5 of `scale.linear` and 6 of `scale.time`. Of the 211 skips, 59 are `diverges: adapt-date-moment-format`. 140 wait for a controller of phase 7 and 12 for `plugin.legend` of phase 8. The 13 core cases that waited for a scale pass: `core.controller` 43/85 and `core.scale` 10/41. `test:cases` reports 372 passed, 0 failed, 411 skipped and 0 missing cases in the 37 ported spec files. The port-only tests compare 445 charts of the seven scale files and 8 charts of the harness with the chart.js 4.5.1 npm dist. They use the Liberation Sans widths, and the time charts use chartjs-adapter-moment 1.0.1 on moment 2.29.4. The date adapter gives the moment result for each reference call, also for the corpus of 357,576 calls. The 59 `diverges` cases of `scale.time` have port-only twins with ICU patterns: 2 pass and 57 wait for `controller.line`. Chart.js ADRs 0024 and 0025 record the gate 6 decisions (proposed). The fixes wrote Chart.js ADR 0026 (proposed) for the number formatting guards. The gallery has the Axes tab, the stress mode `axes` and the frameless benchmark `lib/main_bench.dart`. [performance.md](performance.md) §10.10-§10.11, §11 and §12 have the figures. On the Pixel 8a, the scale path runs at 53-58 FPS with 5000 points for the linear, logarithmic and time axes (§11.6). A category axis with 5000 labels ran at 7 FPS: the canvas metrics cache missed on each label. A larger cache with an eviction in one pass gives 29 FPS (§11.7). The iPhone, macOS and Chrome series wait (§11.8) |
+| 6. Scales | seven scales; default date adapter on `DateFormat` (ICU tokens) | non-chart scale cases pass; moment-token cases skip as `diverges`. Result of the port, the specs and the fixes (2026-10-20): the seven scale modules and `src/scales/index.js` have the status `ported`, and `lib/src/index.dart` registers the six scales. The default date adapter is the five port-only files `lib/src/core/date_*.dart` (Chart.js ADR 0024). The five scale spec files have 233 cases. 22 pass, 0 fail and 211 skip: `scale.category` 2/19, `scale.linear` 7/45, `scale.logarithmic` 2/60, `scale.radialLinear` 2/23 and `scale.time` 9/86. 11 cases without a chart pass: the registration and the default config of each scale, and the date library of `scale.time`. 11 chart cases pass: 5 of `scale.linear` and 6 of `scale.time`. Of the 211 skips, 59 are `diverges: adapt-date-moment-format`. 140 wait for a controller of phase 7 and 12 for `plugin.legend` of phase 8. The 13 core cases that waited for a scale pass: `core.controller` 43/85 and `core.scale` 10/41. `test:cases` reports 372 passed, 0 failed, 411 skipped and 0 missing cases in the 37 ported spec files. The port-only tests compare 445 charts of the seven scale files and 8 charts of the harness with the chart.js 4.5.1 npm dist. They use the Liberation Sans widths, and the time charts use chartjs-adapter-moment 1.0.1 on moment 2.29.4. The date adapter gives the moment result for each reference call, also for the corpus of 357,576 calls. The 59 `diverges` cases of `scale.time` have port-only twins with ICU patterns: 2 pass and 57 wait for `controller.line`. Chart.js ADRs 0024 and 0025 record the gate 6 decisions (accepted 2026-10-20). The fixes wrote Chart.js ADR 0026 (accepted 2026-10-20) for the number formatting guards. The gallery has the Axes tab, the stress mode `axes` and the frameless benchmark `lib/main_bench.dart`. [performance.md](performance.md) §10.10-§10.11, §11 and §12 have the figures. On the Pixel 8a, the scale path runs at 53-58 FPS with 5000 points for the linear, logarithmic and time axes (§11.6). A category axis with 5000 labels ran at 7 FPS: the canvas metrics cache missed on each label. A larger cache with an eviction in one pass gives 29 FPS (§11.7). The iPhone, macOS and Chrome series wait (§11.8) |
 | 7. Controllers | bar first, then the other seven; fixture smoke runner | controller and earlier chart-blocked cases pass or have rows; fixture smoke tests pass for the ported types; gallery shows every type |
 | 8. Plugins | seven plugins; hunks H4a-H4c and H5 and their tests; input adapter for legend and tooltip | plugin cases pass; `plugin.*` fixture smoke tests pass |
 | 9. Flutter API and release | public widget on the host; theme API; keyboard and semantics; docs; published floor (2.12); pana | `flutter_chartjs` 0.1.0 on pub.dev |

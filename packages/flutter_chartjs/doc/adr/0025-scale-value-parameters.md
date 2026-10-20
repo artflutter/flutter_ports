@@ -1,6 +1,6 @@
 # Chart.js ADR 0025: Scale value parameters
 
-- Status: proposed
+- Status: accepted (2026-10-20)
 - Date: 2026-10-20
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (type libraries, a member with its
   first caller, records for inline object types),
