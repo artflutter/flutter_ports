@@ -11,7 +11,7 @@ import 'package:flutter_chartjs/src/types/basic.dart';
 
 /// The theme presets (theming.md §5.1).
 abstract final class ChartThemes {
-  /// The theme with every token of phase 5 at its Chart.js v4.5.1 value
+  /// The theme with every token of phase 6 at its Chart.js v4.5.1 value
   /// (theming.md §4). It restates these values (theming.md §9):
   ///
   /// - `colors.color`: `Defaults.color` `'#666'` (`core.defaults.js:43`).
@@ -25,10 +25,11 @@ abstract final class ChartThemes {
   ///   `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`).
   /// - `typography.font`: `Defaults.font` (`core.defaults.js:54-60`). Its
   ///   `weight` is `null`, which themes nothing.
+  /// - `typography.pointLabels`: the point-label size 10
+  ///   (`scale.radialLinear.js:383-385`).
   ///
   /// The tokens of the plugins (`colors.inverseSurface`,
-  /// `colors.onInverseSurface` and the palette) come in phase 8. The token
-  /// `typography.pointLabels` comes with `scale.radialLinear` in phase 6.
+  /// `colors.onInverseSurface` and the palette) come in phase 8.
   static const AnyObject light = <String, Object?>{
     'colors': <String, Object?>{
       'color': (alpha: 1.0, red: 102 / 255, green: 102 / 255, blue: 102 / 255),
@@ -43,6 +44,7 @@ abstract final class ChartThemes {
         'style': 'normal',
         'lineHeight': 1.2,
       },
+      'pointLabels': <String, Object?>{'size': 10.0},
     },
   };
 

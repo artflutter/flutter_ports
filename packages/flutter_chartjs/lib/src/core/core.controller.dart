@@ -1745,6 +1745,7 @@ class Chart implements types.Chart {
   }
 
   /// core.controller.js:885 `getDataVisibility(index)`.
+  @override
   bool getDataVisibility(double index) {
     return !jsTruthy(_hiddenIndices[jsNumberToString(index)]);
   }

@@ -21,7 +21,7 @@ void main() {
   test('jsNumberFormatLocale follows Intl.defaultLocale', () {
     Intl.defaultLocale = 'de_DE';
     expect(jsNumberFormatLocale(undefined), 'de');
-    expect(jsNumberFormatLocale(null), 'de');
+    expect(jsNumberFormatLocale(<Object?>[]), 'de');
     expect(jsNumberFormatLocale('xx-YY'), 'de');
     expect(jsNumberFormatLocale('fr'), 'fr');
     expect(jsNumberFormat(undefined).format(1234.5), '1.234,5');

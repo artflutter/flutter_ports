@@ -30,9 +30,9 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
   ADRs are in [adr/](adr/). Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
   supersedes Chart.js ADR 0005, and Chart.js ADR 0012 supersedes Chart.js ADR 0004. Chart.js
-  ADR 0001 is accepted for its four invariants only. Chart.js ADRs 0013 to 0023 are proposed.
-  Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it is accepted. The other Chart.js ADRs are
-  accepted:
+  ADR 0001 is accepted for its four invariants only. Chart.js ADRs 0013 to 0026 are proposed.
+  Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0026 supersedes Chart.js ADR
+  0008, when they are accepted. The other Chart.js ADRs are accepted:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md)
   - [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md) (superseded by
     Chart.js ADR 0010)
@@ -52,8 +52,8 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0014: Input events and the chart host](adr/0014-input-events-and-chart-host.md)
     (proposed)
   - [Chart.js ADR 0015: Text](adr/0015-text.md) (proposed)
-  - [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (proposed; it
-    supersedes Chart.js ADR 0007 on acceptance)
+  - [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (proposed. It
+    supersedes Chart.js ADR 0007 on acceptance.)
   - [Chart.js ADR 0017: Element properties](adr/0017-element-properties.md) (proposed)
   - [Chart.js ADR 0018: Typed element options](adr/0018-typed-element-options.md) (proposed)
   - [Chart.js ADR 0019: Animation](adr/0019-animation.md) (proposed)
@@ -64,6 +64,10 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0022: Chart test harness on Flutter](adr/0022-chart-test-harness.md) (proposed)
   - [Chart.js ADR 0023: Underscore members with a colliding name](adr/0023-underscore-member-collisions.md)
     (proposed)
+  - [Chart.js ADR 0024: Dates](adr/0024-dates.md) (proposed)
+  - [Chart.js ADR 0025: Scale value parameters](adr/0025-scale-value-parameters.md) (proposed)
+  - [Chart.js ADR 0026: Number formatting on package:intl](adr/0026-number-formatting-on-package-intl.md)
+    (proposed. It supersedes Chart.js ADR 0008 on acceptance.)
 
 ## What gets ported
 
@@ -166,9 +170,13 @@ and gate 2 decisions. All of them are accepted. An example is the options repres
   ([Chart.js ADR 0007](adr/0007-frame-scheduling.md)). ADR: Animation (gate 5,
   [porting-flow.md](porting-flow.md) §2.9) decides reduced motion, the theme-change modes and the
   `core.animator` tests.
-- **Dates.** Time scales need a date adapter; upstream ships none. Provide a default on
-  `DateTime`. It formats with `DateFormat` and ICU pattern tokens, with no moment emulation
-  ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)).
+- **Dates.** Time scales need a date adapter, and upstream ships none. Proposed in
+  [Chart.js ADR 0024](adr/0024-dates.md): a default adapter with the rules of
+  chartjs-adapter-moment 1.0.1 on moment 2.29.4. Its calendar works on wall milliseconds with
+  integer day arithmetic, and `DateTime` gives the local offsets. It uses ICU format patterns of
+  `DateFormat` in place of moment tokens
+  ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)). It uses local time by default,
+  and UTC in the specs.
 - **Visual verification.** Decided in [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md):
   no image comparison against the upstream PNGs. The fixture configs run as smoke tests. Flutter
   goldens test only Flutter behavior.

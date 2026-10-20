@@ -10,6 +10,8 @@ import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/core/core.scale.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.config.dart'
     show attachContext, createResolver;
+import 'package:flutter_chartjs/src/helpers/helpers.math.dart'
+    show setMinAndMaxByKey;
 import 'package:flutter_chartjs/src/helpers/helpers.options.dart'
     show createContext;
 import 'package:flutter_chartjs/src/js/js_class.dart';
@@ -121,14 +123,15 @@ final class _Meta implements types.ChartMeta {
 }
 
 /// A scale of `chart.scales` for an object position:
-/// `getPixelForValue(v) = offset + v`.
+/// `getPixelForValue(v) = offset + ToNumber(v)`.
 final class _OtherScale implements types.Scale {
   _OtherScale(this.offset);
 
   final double offset;
 
   @override
-  double getPixelForValue(double value, [double? index]) => offset + value;
+  double getPixelForValue(Object? value, [double? index]) =>
+      offset + jsToNumber(value);
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -228,8 +231,8 @@ final class _TestScale extends Scale {
   }
 
   @override
-  double getPixelForValue(double value, [double? index]) {
-    return getPixelForDecimal((value - min) / (max - min));
+  double getPixelForValue(Object? value, [double? index]) {
+    return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
   }
 
   /// `scale.configure()`.
@@ -546,11 +549,11 @@ _Chart _plainChart() => _Chart(<String, Object?>{
 /// A scale of `chart.scales` that records the values of
 /// `getPixelForValue`.
 final class _RecordingScale implements types.Scale {
-  /// The values of the calls, in order.
-  final List<double> values = [];
+  /// The values of the calls, in order, unchanged.
+  final List<Object?> values = [];
 
   @override
-  double getPixelForValue(double value, [double? index]) {
+  double getPixelForValue(Object? value, [double? index]) {
     values.add(value);
     return 50;
   }
@@ -712,8 +715,8 @@ void main() {
         scale.maxWidth,
         scale.maxHeight,
         scale.paddingTop,
+        scale.paddingBottom,
         scale.paddingLeft,
-        scale.labelRotation,
         scale.min,
         scale.max,
         scale.startPixel,
@@ -721,6 +724,9 @@ void main() {
       ]) {
         expect(value, isNaN);
       }
+      // core.scale.js:221: the field holds any JS value (the raw
+      // `minRotation`), so it starts as the sentinel.
+      expect(scale.labelRotation, same(undefined));
       expect(scale.ticks, isEmpty);
       expect(scale.length, 0);
       expect(scale.maxLength, 0);
@@ -865,38 +871,229 @@ void main() {
       chart.data['xLabels'] = labels;
       expect(other.getLabels(), same(labels));
     });
+
+    test('a size or a translation that a string option joins is its '
+        'ToNumber', () {
+      // Upstream (Node.js v24.12.0 on x64) keeps the joined strings:
+      // `height` '80' (core.scale.js:649, :682) and the translations '405'
+      // and '5245' (:1210, :1322). The port fields are `double`.
+      final spec = <String, Object?>{
+        'ticks': <Object?>[
+          <Object?>[0],
+          <Object?>[1],
+        ],
+        'min': 0,
+        'max': 1,
+      };
+      final chart = _plainChart();
+      final hidden = _TestScale(_cfg(chart), spec)
+        ..init(
+          _scaleOptions({
+            'axis': 'x',
+            'position': 'bottom',
+            'ticks': <String, Object?>{'display': false},
+            'grid': <String, Object?>{'tickLength': '8'},
+          }, chart),
+        )
+        ..update(440, 200);
+      expect(hidden.height, 80);
+
+      final bottom = _TestScale(_cfg(chart), spec)
+        ..init(
+          _scaleOptions({
+            'axis': 'x',
+            'position': 'bottom',
+            'ticks': <String, Object?>{'labelOffset': '5'},
+          }, chart),
+        )
+        ..update(440, 200);
+      bottom
+        ..left = 40
+        ..top = 350
+        ..right = 40 + bottom.width
+        ..bottom = 350 + bottom.height
+        ..configureForTest();
+      expect(
+        [for (final item in bottom.getLabelItems()) item.options.translation],
+        [(405, 361), (5245, 361)],
+      );
+    });
   });
 
-  group('adapt-scale-position-value', () {
+  group('paddingTop and paddingBottom keep the joined padding', () {
+    // core.scale.js:734-735 write `paddingTop + padding`. getPadding returns
+    // `this.paddingTop || 0` (:340), and core.layouts.js:111-113 apply
+    // `Math.max`. The values come from Node.js v24.12.0 on x64.
+
+    /// A left scale with two ticks and the `ticks.padding` [padding].
+    _TestScale left(Object? padding) {
+      final chart = _plainChart();
+      return _TestScale(_cfg(chart), {
+          'ticks': <Object?>[
+            <Object?>[0],
+            <Object?>[1],
+          ],
+          'min': 0,
+          'max': 1,
+        })
+        ..init(
+          _scaleOptions({
+            'axis': 'y',
+            'position': 'left',
+            'ticks': <String, Object?>{'padding': padding},
+          }, chart),
+        )
+        ..update(250, 320);
+    }
+
+    test('a string padding joins the number', () {
+      final scale = left('3');
+      expect(scale.paddingTop, '7.1999999999999993');
+      expect(scale.paddingBottom, '7.1999999999999993');
+      expect(scale.getPadding().top, 7.199999999999999);
+      expect(scale.getPadding().bottom, 7.199999999999999);
+    });
+
+    test('a joined string that is not a number gives the padding NaN', () {
+      // The string is truthy: `'7.199999999999999x' || 0` is the string,
+      // and Math.max makes NaN of it. A `double` field gave 0.
+      final scale = left('x');
+      expect(scale.paddingTop, '7.199999999999999x');
+      expect(scale.getPadding().top, isNaN);
+      expect(scale.getPadding().bottom, isNaN);
+    });
+
+    test('a NaN number gives the padding 0', () {
+      // `NaN || 0` is 0.
+      final scale = left(double.nan);
+      expect(scale.paddingTop, isNaN);
+      expect(scale.getPadding().top, 0);
+      expect(scale.getPadding().bottom, 0);
+    });
+  });
+
+  group('labelRotation keeps the raw minRotation', () {
+    // core.scale.js:590-596 and :622 write the raw `minRotation || 0`
+    // without a calculated rotation. :691 tests `labelRotation !== 0`. The
+    // reference cases 'bottom, minRotation string 0' and 'bottom, string
+    // minRotation 5 and maxRotation 30, long labels' compare the layout.
+
+    /// A bottom scale with ten long labels: the labels need a rotation.
+    _TestScale longLabels(Map<String, Object?> ticks) {
+      final chart = _plainChart();
+      return _TestScale(_cfg(chart), {
+          'ticks': <Object?>[
+            for (var i = 0; i < 10; i++) <Object?>[i],
+          ],
+          'min': 0,
+          'max': 9,
+        })
+        ..init(
+          _scaleOptions({
+            'axis': 'x',
+            'position': 'bottom',
+            'ticks': {'callback': _functions['longLabel'], ...ticks},
+          }, chart),
+        )
+        ..update(260, 150);
+    }
+
+    test('the string 0 stays a string', () {
+      final chart = _plainChart();
+      Object? rotation(Object? minRotation) =>
+          (_TestScale(_cfg(chart), {
+                  'ticks': <Object?>[
+                    <Object?>[0],
+                    <Object?>[1],
+                  ],
+                  'min': 0,
+                  'max': 1,
+                })
+                ..init(
+                  _scaleOptions({
+                    'axis': 'x',
+                    'position': 'bottom',
+                    'ticks': <String, Object?>{'minRotation': minRotation},
+                  }, chart),
+                )
+                ..update(440, 200))
+              .labelRotation;
+      expect(rotation('0'), '0');
+      expect(rotation(0), 0);
+      expect(rotation(''), 0);
+    });
+
+    test('two strings compare by their code units', () {
+      // '5' >= '30' is true: the early return keeps '5'. The numbers 5
+      // and 30 calculate a rotation, and Math.max and Math.min limit it
+      // to 30. The values come from the reference cases.
+      expect(
+        longLabels({'minRotation': '5', 'maxRotation': '30'}).labelRotation,
+        '5',
+      );
+      expect(
+        longLabels({'minRotation': 5, 'maxRotation': 30}).labelRotation,
+        30,
+      );
+      // A string and a number compare as numbers: 30 >= 5.
+      expect(
+        longLabels({'minRotation': '30', 'maxRotation': 5}).labelRotation,
+        '30',
+      );
+    });
+  });
+
+  group('object position value (core.scale.js:145, :156, :1064, :1077, '
+      ':1182, :1191)', () {
     // Upstream passes the raw `position[positionAxisID]` to
-    // getPixelForValue (core.scale.js:1191). The port passes its ToNumber.
-    for (final (value, expected) in <(Object?, Matcher)>[
-      ('B', isNaN),
-      (null, equals(0)),
-      ('7', equals(7)),
-      (3, equals(3)),
-    ]) {
-      test('passes the ToNumber of $value', () {
-        final chart = _plainChart();
-        final other = _RecordingScale();
-        chart.scales['x'] = other;
-        _TestScale(_cfg(chart), {
-            'ticks': <Object?>[
-              <Object?>[0],
-            ],
-            'min': 0,
-            'max': 1,
-          })
-          ..init(
-            _scaleOptions({
-              'axis': 'y',
-              'position': <String, Object?>{'x': value},
-            }, chart),
-          )
-          ..update(250, 320)
-          ..getLabelItems();
-        expect(other.values, [expected]);
+    // getPixelForValue. So does the port (Chart.js ADR 0025). Each scale
+    // with a title makes three calls: the label items (:1182, :1191), the
+    // grid line items (:1064, :1077) and the title (:145, :156).
+    for (final (axis, otherAxis) in [('x', 'y'), ('y', 'x')]) {
+      group('$axis scale', () {
+        for (final (value, expected) in <(Object?, Matcher)>[
+          ('B', equals('B')),
+          (null, isNull),
+          ('7', equals('7')),
+          (3, equals(3)),
+        ]) {
+          test('passes $value unchanged', () {
+            final chart = _plainChart();
+            final other = _RecordingScale();
+            chart.scales[otherAxis] = other;
+            _TestScale(_cfg(chart), {
+                'ticks': <Object?>[
+                  <Object?>[0],
+                ],
+                'min': 0,
+                'max': 1,
+              })
+              ..init(
+                _scaleOptions({
+                  'axis': axis,
+                  'position': <String, Object?>{otherAxis: value},
+                  'title': <String, Object?>{'display': true, 'text': 'T'},
+                }, chart),
+              )
+              ..update(250, 320)
+              ..getLabelItems()
+              ..draw(chart.chartArea);
+            expect(other.values, [expected, expected, expected]);
+          });
+        }
       });
     }
+  });
+
+  test('Scale is a MinMax', () {
+    // scale.linearbase.js:274 and scale.logarithmic.js:172 call
+    // `_setMinAndMaxByKey(ticks, this, 'value')` (Chart.js ADR 0025, section
+    // 7).
+    final scale = Scale(_cfg(_plainChart()))
+      ..min = 0
+      ..max = 5;
+    setMinAndMaxByKey([Tick(value: -1), Tick(value: 9)], scale, 'value');
+    expect(scale.min, -1);
+    expect(scale.max, 9);
   });
 }

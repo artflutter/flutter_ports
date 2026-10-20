@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter_chartjs/src/helpers/helpers.math.dart' as math;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
+import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
 // Upstream behaviour that test/specs/helpers.math.tests.js does not check
@@ -31,6 +32,17 @@ final class _Target implements math.MinMax {
 
   @override
   double max;
+}
+
+/// A tick `{value}` of a scale, passed as a [types.Tick].
+final class _Tick implements types.Tick {
+  _Tick(this.value);
+
+  @override
+  final double value;
+
+  @override
+  double? get significand => null;
 }
 
 /// Matches a double with the same value as [expected], where -0 differs from
@@ -223,6 +235,46 @@ void main() {
         'v',
       );
       expect((target.min, target.max), (0, 5));
+    });
+
+    // The scales pass their ticks (scale.linearbase.js:274,
+    // scale.logarithmic.js:172). A tick gives its value for the key 'value'
+    // (Chart.js ADR 0025, section 7).
+    test('reads the value of a tick and skips NaN', () {
+      final target = _Target(double.infinity, double.negativeInfinity);
+      math.setMinAndMaxByKey(
+        [_Tick(3), _Tick(double.nan), _Tick(-2), _Tick(7)],
+        target,
+        'value',
+      );
+      expect((target.min, target.max), (-2, 7));
+    });
+
+    test('keeps a NaN target, as Math.min(NaN, x) does', () {
+      final target = _Target(double.nan, double.nan);
+      math.setMinAndMaxByKey([_Tick(1), _Tick(2)], target, 'value');
+      expect(target.min, isNaN);
+      expect(target.max, isNaN);
+    });
+
+    test('reads a mixed list of ticks and objects', () {
+      final target = _Target(double.infinity, double.negativeInfinity);
+      math.setMinAndMaxByKey(
+        [
+          _Tick(4),
+          {'value': -1},
+          {},
+        ],
+        target,
+        'value',
+      );
+      expect((target.min, target.max), (-1, 4));
+    });
+
+    test('gives undefined for another key of a tick, without a throw', () {
+      final target = _Target(1, 2);
+      math.setMinAndMaxByKey([_Tick(5), _Tick(-5)], target, 'label');
+      expect((target.min, target.max), (1, 2));
     });
   });
 

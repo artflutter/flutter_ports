@@ -283,5 +283,10 @@ void main() {
       expect(jsTypeof(''), 'string');
       expect(jsTypeof(Object()), 'object');
     });
+
+    test('gives object for a DateTime, as for a JS Date', () {
+      // typeof new Date(2015, 0) (Chart.js ADR 0024, decision 2).
+      expect(jsTypeof(DateTime.utc(2015)), 'object');
+    });
   });
 }

@@ -257,16 +257,11 @@ final class _TestController extends DatasetController {
       final point = points[i.toInt()] as Element;
       final parsed = getParsed(i)!;
       final properties = <String, Object?>{};
-      properties[iAxis] = iScale.getPixelForValue(
-        jsToNumber(jsGet(parsed, iAxis)),
-        i,
-      );
+      properties[iAxis] = iScale.getPixelForValue(jsGet(parsed, iAxis), i);
       properties[vAxis] = vScale.getPixelForValue(
-        jsToNumber(
-          jsTruthy(stacked)
-              ? applyStack(vScale, parsed, stacked)
-              : jsGet(parsed, vAxis),
-        ),
+        jsTruthy(stacked)
+            ? applyStack(vScale, parsed, stacked)
+            : jsGet(parsed, vAxis),
         i,
       );
       if (includeOptions) {
@@ -418,7 +413,8 @@ final class _FakeScale implements types.Scale {
   }
 
   @override
-  double getPixelForValue(double value, [double? index]) => value * 10;
+  double getPixelForValue(Object? value, [double? index]) =>
+      jsToNumber(value) * 10;
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

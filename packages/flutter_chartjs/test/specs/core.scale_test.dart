@@ -16,8 +16,14 @@ import 'package:flutter_test/flutter_test.dart';
 // Its chart cases call `acquireChart`. Thus they are `testWidgets` cases, and
 // the file runs on the VM (Chart.js ADR 0022, sections 1 and 2). A case that
 // needs a module of a later phase skips with the missing module of the
-// latest phase. The helper `getLabels(scale)` (core.scale.tests.js:1-3)
-// comes with the bodies of the afterBuildTicks cases.
+// latest phase. flutter_test_config.dart registers the built-in components
+// before main(). Thus the category and linear scales of phase 6 are in the
+// registry.
+//
+// An option function of the spec, for example `afterBuildTicks`, is a Dart
+// closure. The scale calls it through `jsCall` (Chart.js ADR 0006).
+// `scale.ticks.slice(1)` is `scale.ticks!.sublist(1)`. `expect(fn).toThrow()`
+// with no argument is `throwsA(anything)`.
 //
 // A class `class X extends Chart.Scale` of the spec is a Dart subclass of
 // Scale and a class value that constructs it: `JsClass('X', superclass:
@@ -31,6 +37,12 @@ import 'package:flutter_test/flutter_test.dart';
 /// The member read `object.key` of the option object [object].
 Object? _member(Object? object, String key) =>
     (object! as Map<String, Object?>)[key];
+
+/// core.scale.tests.js:1-3 `getLabels(scale)`: the labels of the ticks of
+/// [scale].
+List<Object?> _getLabels(Scale scale) {
+  return scale.ticks!.map((t) => t.label).toList();
+}
 
 /// core.scale.tests.js:514-519 `class CustomScale extends Chart.Scale`.
 final class _CustomScale extends Scale {
@@ -192,27 +204,84 @@ void main() {
     });
 
     group('afterBuildTicks', () {
-      test(
-        'should allow filtering of ticks',
-        () {},
-        skip: 'blocked: scale.category',
-      );
+      testWidgets('should allow filtering of ticks', (tester) async {
+        final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
+        final chart = acquireChart({
+          'type': 'line',
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'category',
+                'labels': labels,
+                'afterBuildTicks': (Scale scale) {
+                  scale.ticks = scale.ticks!.sublist(1);
+                },
+              },
+            },
+          },
+        });
 
-      test(
-        'should allow no return value from callback',
-        () {},
-        skip: 'blocked: scale.category',
-      );
+        final scale = chart.scales['x']!;
+        expect(_getLabels(scale), labels.sublist(1));
+      });
 
-      test('should allow empty ticks', () {}, skip: 'blocked: scale.category');
+      testWidgets('should allow no return value from callback', (
+        tester,
+      ) async {
+        final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
+        final chart = acquireChart({
+          'type': 'line',
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'category',
+                'labels': labels,
+                'afterBuildTicks': () {},
+              },
+            },
+          },
+        });
+
+        final scale = chart.scales['x']!;
+        expect(_getLabels(scale), labels);
+      });
+
+      testWidgets('should allow empty ticks', (tester) async {
+        final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
+        final chart = acquireChart({
+          'type': 'line',
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'category',
+                'labels': labels,
+                'afterBuildTicks': (Scale scale) {
+                  scale.ticks = [];
+                },
+              },
+            },
+          },
+        });
+
+        final scale = chart.scales['x']!;
+        expect(scale.ticks!.length, 0);
+      });
     });
 
     group('_layers', () {
-      test(
-        'should default to three layers',
-        () {},
-        skip: 'blocked: scale.linear',
-      );
+      testWidgets('should default to three layers', (tester) async {
+        final chart = acquireChart({
+          'type': 'line',
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'linear'},
+            },
+          },
+        });
+
+        final scale = chart.scales['x']!;
+        expect(scale.layers!().length, 3);
+      });
 
       test(
         'should create the chart with custom scale ids without axis or '
@@ -318,10 +387,52 @@ void main() {
         },
       );
 
-      test(
+      testWidgets(
         'should return 3 layers when z is not equal between ticks and grid',
-        () {},
-        skip: 'blocked: scale.linear',
+        (tester) async {
+          var chart = acquireChart({
+            'type': 'line',
+            'options': <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'linear',
+                  'ticks': <String, Object?>{'z': 10},
+                },
+              },
+            },
+          });
+
+          expect(chart.scales['x']!.layers!().length, 3);
+
+          chart = acquireChart({
+            'type': 'line',
+            'options': <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'linear',
+                  'grid': <String, Object?>{'z': 11},
+                },
+              },
+            },
+          });
+
+          expect(chart.scales['x']!.layers!().length, 3);
+
+          chart = acquireChart({
+            'type': 'line',
+            'options': <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'linear',
+                  'ticks': <String, Object?>{'z': 10},
+                  'grid': <String, Object?>{'z': 11},
+                },
+              },
+            },
+          });
+
+          expect(chart.scales['x']!.layers!().length, 3);
+        },
       );
     });
 
@@ -346,18 +457,57 @@ void main() {
         skip: 'blocked: controller.scatter',
       );
 
-      // :743-763 expects the Error of determineAxis (core.config.js:52).
-      // The upstream suite registers every built-in (src/index.umd.ts:28),
-      // so `defaults.scales.linear` exists and determineAxis reaches its
-      // throw. In phase 5 `defaults.scales.linear` is undefined, and
-      // determineAxis throws a TypeError first. Thus the case needs
-      // scale.linear. When phase 6 lifts the skip, the body is
-      // `expect(() => acquireChart({type: 'scatter', ...}), throwsA(...))`
-      // with the upstream config.
-      test(
+      // :743-763 the Error comes from determineAxis (core.config.js:52), in
+      // the first loop of mergeScaleConfig. That loop runs in the Config
+      // constructor, before the chart reads its controller. Thus the case
+      // does not need controller.scatter. It needs `defaults.scales.linear`:
+      // without it, determineAxis throws a TypeError first. Upstream
+      // registers controller.scatter, so its bare `toThrow()` can only
+      // catch the determineAxis Error. Here the chart has no scatter
+      // controller, and `acquireChart` also throws when determineAxis does
+      // not throw. Thus the matcher checks the message of determineAxis.
+      testWidgets(
         'should throw error on scale with custom name without axis type',
-        () {},
-        skip: 'blocked: scale.linear',
+        (tester) async {
+          expect(
+            () => acquireChart({
+              'type': 'scatter',
+              'data': <String, Object?>{
+                'datasets': <Object?>[
+                  <String, Object?>{
+                    'data': <Object?>[
+                      <String, Object?>{'x': 100, 'y': 100},
+                      <String, Object?>{'x': -100, 'y': -100},
+                    ],
+                  },
+                  <String, Object?>{
+                    'data': <Object?>[
+                      <String, Object?>{'x': 10, 'y': 10},
+                      <String, Object?>{'x': -10, 'y': -10},
+                    ],
+                  },
+                ],
+              },
+              'options': <String, Object?>{
+                'scales': <String, Object?>{
+                  'scaleX': <String, Object?>{
+                    'type': 'linear',
+                    'min': -20,
+                    'max': 20,
+                  },
+                },
+              },
+            }),
+            throwsA(
+              isA<StateError>().having(
+                (error) => error.message,
+                'message',
+                "Cannot determine type of 'scaleX' axis. Please provide "
+                    "'axis' or 'position' option.",
+              ),
+            ),
+          );
+        },
       );
 
       test(

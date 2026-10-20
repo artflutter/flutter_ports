@@ -397,6 +397,10 @@ abstract interface class Chart {
     bool filterVisible,
   );
 
+  /// index.d.ts:542 `getDataVisibility(index: number): boolean`. The radial
+  /// scale calls it (scale.radialLinear.js:463).
+  bool getDataVisibility(double index);
+
   /// index.d.ts:555 `notifyPlugins(hook: string, args?: AnyObject): boolean
   /// | void`. The scale hooks call it (core.scale.js:535).
   ///
@@ -443,6 +447,10 @@ abstract interface class DatasetController {
   /// (helpers.config.ts:444) reads it as `this._parsing`. Its value is
   /// `false` or an object of the parsing keys (Chart.js ADR 0006).
   Object? get parsing;
+
+  /// index.d.ts:610 `getAllParsedValues(scale: Scale): number[]`. The time
+  /// scale calls it (scale.time.js:638, :642).
+  List<double> getAllParsedValues(Scale scale);
 
   /// index.d.ts:666 `getMinMax(scale: Scale, canStack?: boolean): { min:
   /// number; max: number }`. `Scale.getMinMax` reads the range of each
@@ -554,15 +562,16 @@ abstract interface class Scale implements Element, LayoutItem {
   /// `ToString` to the result (core.datasetController.js:693-694).
   Object? getLabelForValue(Object? value);
 
-  /// index.d.ts:1336 `getPixelForValue`.
+  /// index.d.ts:1336 `getPixelForValue(value: number, index?: number):
+  /// number`.
   ///
   /// index.d.ts:1336 types [value] as a number. core.scale.js:884 documents
-  /// `@param {*} value`, and `scale.category.js:133-139` parses a value that
-  /// is not a number. The callers of `core.scale` pass the value of an
-  /// object position through `ToNumber` (differences.md row
-  /// `adapt-scale-position-value`). Phase 6 decides whether the parameter
-  /// becomes `Object?`, when it ports `scale.category`.
-  double getPixelForValue(double value, [double? index]);
+  /// `@param {*} value`, and each scale tests the JS type of the value, for
+  /// example `scale.category.js:133-139` and `scale.logarithmic.js:210-220`.
+  /// Thus [value] is any JS value: Dart `null` is JS `null`, and the
+  /// `undefined` sentinel is JS `undefined` (Chart.js ADR 0025). Dart `null`
+  /// for [index] stands for JS `undefined`.
+  double getPixelForValue(Object? value, [double? index]);
 
   /// index.d.ts:1355 `parse`.
   Object? parse(Object? raw, [double? index]);

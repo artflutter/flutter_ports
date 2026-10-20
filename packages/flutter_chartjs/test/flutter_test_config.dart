@@ -34,6 +34,8 @@ import 'dart:ui';
 // phase 7.
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs/src/core/date_adapter.dart'
+    show setDefaultDateZone;
 // The specs run on the UMD entry of Chart.js, which registers the built-in
 // components. flutter_chartjs does not export lib/src/index.dart yet.
 import 'package:flutter_chartjs/src/index.dart'
@@ -81,19 +83,18 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // Set a fixed time zone (and, in particular, disable Daylight Saving Time)
   // for more stable test results.
   //
-  // index.js:23 `window.moment.tz.setDefault('Etc/UTC')`: Dart cannot set the
-  // zone of `DateTime` in a running isolate. The specs use the default date
-  // adapter in UTC (porting-flow.md 2.10, phase 6), so no spec depends on the
-  // zone of the machine.
+  // index.js:23 `window.moment.tz.setDefault('Etc/UTC')`: the default zone of
+  // the default date adapter (Chart.js ADR 0024, decision 3).
+  setDefaultDateZone('Etc/UTC');
 
   // The specs run on the UMD entry `src/index.umd.ts` (karma.conf.cjs:110).
   // It registers the built-in components before the first spec:
   // index.umd.ts:28 `Chart.register(controllers, scales, elements,
   // plugins)`. The call runs before `main()` of the test file and before the
   // snapshot of the restore below. Thus the restore keeps the defaults of the
-  // ported components. In phase 5, only `elements` has entries (Chart.js ADR
-  // 0022, section 8). A pure-layer file removes them again in `setUpSpecs()`,
-  // because `dart test` does not run this file.
+  // ported components. In phase 6, only `elements` and `scales` have entries
+  // (Chart.js ADR 0022, section 8). A pure-layer file removes them again in
+  // `setUpSpecs()`, because `dart test` does not run this file.
   // DIVERGES(chartjs): harness-register-builtins, src/index.umd.ts:28.
   setUpBuiltins(
     () => Chart.register([controllers, scales, elements, plugins]),

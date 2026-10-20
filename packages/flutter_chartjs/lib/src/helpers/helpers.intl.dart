@@ -2,9 +2,12 @@
 
 /// Port of `src/helpers/helpers.intl.ts`.
 ///
-/// `Intl.NumberFormat` is the `NumberFormat` of package:intl (Chart.js ADR
-/// 0008). [jsNumberFormat] in `lib/src/js/js_intl.dart` maps the locale and
-/// the options. The strings are the strings of package:intl, not of V8.
+/// `Intl.NumberFormat` is the `NumberFormat` of package:intl (Chart.js ADRs
+/// 0008 and 0026). [jsNumberFormat] in `lib/src/js/js_intl.dart` maps the
+/// locale and the options. The strings are the strings of package:intl, not
+/// of V8. The guards of the adapter write the digits of V8 for numbers from
+/// `2^53`, in scientific notation and for more than 15 fraction digits, and
+/// the affixes of the pattern for NaN and the infinities.
 library;
 
 import 'package:flutter_chartjs/src/js/js_intl.dart';
@@ -51,17 +54,19 @@ String _cacheKey(Object? locale, Map<String, Object?> options) => [
 ///
 /// Upstream names the first parameter `num`, a Dart type name. [locale] is
 /// `chart.options.locale`, a resolved option value (Chart.js ADR 0006). A
-/// String is a BCP 47 tag, and a List is a list of tags. `undefined` and
-/// Dart `null` give the current locale of package:intl
-/// (`Intl.defaultLocale`, `'en_US'` when the app does not set it). In
-/// [options], an absent key and `undefined` are `undefined`.
+/// String is a BCP 47 tag, and a List is a list of tags. `undefined` gives
+/// the current locale of package:intl (`Intl.defaultLocale`, `'en_US'` when
+/// the app does not set it). In [options], an absent key and `undefined` are
+/// `undefined`.
 ///
 /// The cache key holds the resolved intl locale. Thus a change of
 /// `Intl.defaultLocale` also changes a chart without a `locale` option.
 ///
-/// Throws an [ArgumentError] for a digit option out of range, as V8 throws a
-/// `RangeError`. [jsNumberFormat] ignores the options that it does not
-/// support.
+/// Throws a [TypeError] for Dart `null` (JS `null`), as V8 does. Throws an
+/// [ArgumentError] for a tag that is not valid, for example `'en_US'`, and
+/// for a digit option out of range, as V8 throws a `RangeError`
+/// ([jsNumberFormatLocale] and [jsNumberFormat]). [jsNumberFormat] ignores
+/// the options that it does not support.
 String formatNumber(
   double number,
   Object? locale, [

@@ -8,7 +8,13 @@ import 'package:chartjs_test_utils/pure.dart';
 // yet.
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
+import 'package:flutter_chartjs/src/core/core.defaults.dart';
+import 'package:flutter_chartjs/src/helpers/helpers.config.dart'
+    show ContextResolver, Resolver;
+import 'package:flutter_chartjs/src/helpers/helpers.core.dart' as helpers;
+import 'package:flutter_chartjs/src/js/js_array.dart';
 import 'package:flutter_chartjs/src/js/js_function.dart';
+import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/platform/platform.basic.dart';
@@ -31,7 +37,18 @@ import 'package:flutter_test/flutter_test.dart';
 // - A spec object is a `Map<String, Object?>`. A property chain of the
 //   spec, for example `config.data.labels`, is a chain of `jsGet`.
 // - `toBeUndefined()` of `chart.chartArea` is `isNull`: Dart null stands
-//   for JS undefined.
+//   for JS undefined. `not.toBeDefined()` of a scale is `isNull` too.
+// - `Chart.defaults` is `defaults` of core.defaults.dart, and
+//   `Chart.helpers.merge` is `merge` of helpers.core.dart.
+//   `delete object.key` is [Map.remove].
+// - `toEqual` of two option objects is [_toEqual], the deep equality of
+//   Jasmine. `jasmine.objectContaining` is [_objectContaining]. An
+//   `expect` on a resolver gives it in an [_Options] (see there).
+//   `new Error(m)` is a StateError with the message m.
+//
+// flutter_test_config.dart registers the built-in components before main().
+// Thus the scales of phase 6 are in the registry, and their defaults are in
+// `defaults.scales`.
 //
 // Three cases without acquireChart build a chart with
 // `Chart(canvas, config)` on a canvas of `document.createElement`. Its
@@ -42,12 +59,183 @@ import 'package:flutter_test/flutter_test.dart';
 // :3 `const overrides = Chart.overrides` comes with the bodies that read
 // it.
 
-/// `jasmine.objectContaining(expected)` over a Map: each key of [expected]
-/// with an equal value.
-Matcher _objectContaining(Map<String, Object?> expected) => allOf([
-  for (final MapEntry(:key, :value) in expected.entries)
-    containsPair(key, value),
-]);
+/// A resolver of helpers.config as the actual value of an `expect`.
+///
+/// A failed `expect` prints its actual value with `prettyPrint`, which
+/// reads each key of [Map.keys], the `ownKeys` trap. The `ownKeys` trap of
+/// a scale resolver also gives the keys of its fallback scopes, as upstream:
+/// the keys of `options.grid` include `grid`. Thus the print of the
+/// resolver does not stop, and the test does not end. Jasmine prints to a
+/// depth of 8 only. An [_Options] prints the `Object.keys` ([jsObjectKeys])
+/// of its resolver. [_toEqual] and [_objectContaining] compare the
+/// resolver in it.
+final class _Options {
+  const _Options(this.resolver);
+
+  final Map<String, Object?> resolver;
+
+  @override
+  String toString() => 'resolver {${jsObjectKeys(resolver).join(', ')}}';
+}
+
+/// The value that a matcher compares: the resolver of an [_Options], else
+/// [item].
+Object? _actual(Object? item) => item is _Options ? item.resolver : item;
+
+/// `Object.prototype.hasOwnProperty.call(object, key)`: for a resolver, its
+/// `getOwnPropertyDescriptor` trap.
+bool _hasOwnProperty(Map<String, Object?> object, String key) =>
+    switch (object) {
+      final Resolver resolver => resolver.hasOwnProperty(key),
+      final ContextResolver resolver => resolver.hasOwnProperty(key),
+      _ => object.containsKey(key),
+    };
+
+/// `jasmine.objectContaining(expected)`: each key of [expected] is a
+/// property of the actual object, with a value that is equal by Jasmine
+/// `eq` ([_toEqual]).
+///
+/// Jasmine finds the property with `hasProperty`: `hasOwnProperty`, then
+/// the prototype chain. For a resolver, `hasOwnProperty` is the
+/// `getOwnPropertyDescriptor` trap ([_hasOwnProperty]). It is not
+/// [Map.containsKey], the `has` trap of the `in` operator: the `has` trap
+/// rejects the keys that start with `_`, for example `_jasmineCheckA`. A
+/// Map has no prototype chain (the row `js-semantics-resolver-objects`).
+Matcher _objectContaining(Map<String, Object?> expected) =>
+    _JasmineObjectContaining(expected);
+
+final class _JasmineObjectContaining extends Matcher {
+  const _JasmineObjectContaining(this.expected);
+
+  final Map<String, Object?> expected;
+
+  @override
+  bool matches(Object? item, Map<Object?, Object?> matchState) {
+    final object = _actual(item);
+    if (object is! Map<String, Object?>) return false;
+    for (final MapEntry(:key, :value) in expected.entries) {
+      final path = <String>[key];
+      if (!_hasOwnProperty(object, key) ||
+          !_JasmineEquals._eq(value, jsGet(object, key), [], [], path)) {
+        matchState['path'] = path.join('.');
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @override
+  Description describe(Description description) => description.add(
+    'an object that contains the expected properties (Jasmine '
+    'objectContaining)',
+  );
+
+  @override
+  Description describeMismatch(
+    Object? item,
+    Description mismatchDescription,
+    Map<Object?, Object?> matchState,
+    bool verbose,
+  ) => matchState.containsKey('path')
+      ? mismatchDescription.add('is different at ${matchState['path']}')
+      : mismatchDescription.add('is not an object');
+}
+
+/// Jasmine `toEqual(expected)`: the deep equality `eq` of jasmine-core
+/// (`MatchersUtil.eq`), for the values of these specs.
+///
+/// - Two numbers are equal when both are NaN, or when they have the same
+///   value. A zero equals only a zero with the same sign.
+/// - Two strings compare by value. Other values that are not objects or
+///   arrays compare by identity: booleans, functions, `null` and
+///   [undefined].
+/// - Two arrays are equal when they have the same length and equal items.
+/// - Two objects are equal when they have the same `Object.keys`
+///   ([jsObjectKeys]) and equal values. An object is a Map, also a resolver
+///   of helpers.config. A value is the property read `object[key]`
+///   ([jsGet]), the `get` trap of a resolver. Thus two resolvers that are
+///   not identical can be equal.
+/// - Jasmine keeps a stack of the objects that it compares, for cyclic
+///   values. This matcher keeps the same stack.
+Matcher _toEqual(Object? expected) => _JasmineEquals(expected);
+
+final class _JasmineEquals extends Matcher {
+  const _JasmineEquals(this.expected);
+
+  final Object? expected;
+
+  @override
+  bool matches(Object? item, Map<Object?, Object?> matchState) {
+    final path = <String>[];
+    final pass = _eq(_actual(item), expected, [], [], path);
+    if (!pass) matchState['path'] = path.isEmpty ? '(root)' : path.join('.');
+    return pass;
+  }
+
+  @override
+  Description describe(Description description) =>
+      description.add('a value equal to the expected value (Jasmine eq)');
+
+  @override
+  Description describeMismatch(
+    Object? item,
+    Description mismatchDescription,
+    Map<Object?, Object?> matchState,
+    bool verbose,
+  ) => mismatchDescription.add('is different at ${matchState['path']}');
+
+  /// The recursion of `eq`. [path] gets the keys to the first difference.
+  static bool _eq(
+    Object? a,
+    Object? b,
+    List<Object?> aStack,
+    List<Object?> bStack,
+    List<String> path,
+  ) {
+    if (a is num && b is num) {
+      if (a.isNaN || b.isNaN) return a.isNaN && b.isNaN;
+      return a == b && (a != 0 || a.isNegative == b.isNegative);
+    }
+    if (identical(a, b)) return true;
+    if (a is String && b is String) return a == b;
+    final List<String> keys;
+    switch ((a, b)) {
+      case (final List<Object?> aList, final List<Object?> bList):
+        if (aList.length != bList.length) return false;
+        keys = [for (var i = 0; i < aList.length; i++) '$i'];
+      case (
+        final Map<String, Object?> aMap,
+        final Map<String, Object?> bMap,
+      ):
+        keys = jsObjectKeys(aMap);
+        final bKeys = jsObjectKeys(bMap);
+        if (keys.length != bKeys.length) return false;
+        for (final key in keys) {
+          if (!bKeys.contains(key)) {
+            path.add(key);
+            return false;
+          }
+        }
+      default:
+        return false;
+    }
+    for (var i = aStack.length - 1; i >= 0; i--) {
+      if (identical(aStack[i], a)) return identical(bStack[i], b);
+    }
+    aStack.add(a);
+    bStack.add(b);
+    for (final key in keys) {
+      path.add(key);
+      if (!_eq(jsGet(a, key), jsGet(b, key), aStack, bStack, path)) {
+        return false;
+      }
+      path.removeLast();
+    }
+    aStack.removeLast();
+    bStack.removeLast();
+    return true;
+  }
+}
 
 void main() {
   group('Chart', () {
@@ -160,17 +348,65 @@ void main() {
         skip: 'blocked: controller.pie',
       );
 
-      test(
-        'should override axis positions that are incorrect',
-        () {},
-        skip: 'blocked: scale.category',
-      );
+      testWidgets('should override axis positions that are incorrect', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'position': 'left'},
+              'y': <String, Object?>{'position': 'bottom'},
+            },
+          },
+        });
 
-      test(
-        'should throw an error if the chart type is incorrect',
-        () {},
-        skip: 'blocked: scale.linear',
-      );
+        final scaleOptions = chart.options['scales'];
+        expect(jsGet(jsGet(scaleOptions, 'x'), 'position'), 'bottom');
+        expect(jsGet(jsGet(scaleOptions, 'y'), 'position'), 'left');
+      });
+
+      // update() builds the scales before the controllers. Thus the case
+      // needs the linear and category scales, but no controller: the
+      // expected error is the missing controller 'area'.
+      testWidgets('should throw an error if the chart type is incorrect', (
+        tester,
+      ) async {
+        void createChart() {
+          acquireChart(<String, Object?>{
+            'type': 'area',
+            'data': <String, Object?>{
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'label': 'first',
+                  'data': <Object?>[10, 20],
+                },
+              ],
+              'labels': <Object?>['0', '1'],
+            },
+            'options': <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'type': 'linear', 'position': 'left'},
+                'y': <String, Object?>{
+                  'type': 'category',
+                  'position': 'bottom',
+                },
+              },
+            },
+          });
+        }
+
+        expect(
+          createChart,
+          throwsA(
+            isA<StateError>().having(
+              (error) => error.message,
+              'message',
+              '"area" is not a registered controller.',
+            ),
+          ),
+        );
+      });
 
       testWidgets('should initialize the data object', (tester) async {
         final chart = acquireChart(<String, Object?>{'type': 'bar'});
@@ -264,27 +500,140 @@ void main() {
     });
 
     group('when merging scale options', () {
-      // :400-419 the beforeEach and afterEach merge and delete keys of
-      // Chart.defaults.scale and Chart.defaults.scales.logarithmic. They come
-      // with the bodies: the logarithmic scale is a module of phase 6.
+      // :400-419 the beforeEach and afterEach are a setUp and a tearDown:
+      // they read no chart. The restore of flutter_test_config.dart also
+      // puts back `defaults` after each test.
+      setUp(() {
+        helpers.merge(defaults['scale'], <String, Object?>{
+          '_jasmineCheckA': 'a0',
+          '_jasmineCheckB': 'b0',
+          '_jasmineCheckC': 'c0',
+        });
 
-      test(
+        helpers.merge(
+          jsGet(defaults['scales'], 'logarithmic'),
+          <String, Object?>{'_jasmineCheckB': 'b1', '_jasmineCheckC': 'c1'},
+        );
+      });
+
+      tearDown(() {
+        (defaults['scale']! as Map<String, Object?>)
+          ..remove('_jasmineCheckA')
+          ..remove('_jasmineCheckB')
+          ..remove('_jasmineCheckC');
+        (jsGet(defaults['scales'], 'logarithmic')! as Map<String, Object?>)
+          ..remove('_jasmineCheckB')
+          ..remove('_jasmineCheckC');
+      });
+
+      testWidgets(
         'should default to "category" for x scales and "linear" for y scales',
-        () {},
-        skip: 'blocked: scale.category',
+        (tester) async {
+          final chart = acquireChart(<String, Object?>{
+            'type': 'line',
+            'options': <String, Object?>{
+              'scales': <String, Object?>{
+                'xFoo0': <String, Object?>{},
+                'xFoo1': <String, Object?>{},
+                'yBar0': <String, Object?>{},
+                'yBar1': <String, Object?>{},
+              },
+            },
+          });
+
+          expect(chart.scales['xFoo0']!.type, 'category');
+          expect(chart.scales['xFoo1']!.type, 'category');
+          expect(chart.scales['yBar0']!.type, 'linear');
+          expect(chart.scales['yBar1']!.type, 'linear');
+        },
       );
 
-      test(
-        'should correctly apply defaults on central scale',
-        () {},
-        skip: 'blocked: scale.logarithmic',
-      );
+      testWidgets('should correctly apply defaults on central scale', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'foo': <String, Object?>{
+                'axis': 'x',
+                'type': 'logarithmic',
+                '_jasmineCheckC': 'c2',
+                '_jasmineCheckD': 'd2',
+              },
+            },
+          },
+        });
 
-      test(
-        'should correctly apply defaults on xy scales',
-        () {},
-        skip: 'blocked: scale.logarithmic',
-      );
+        // let's check a few values from the user options and defaults
+
+        expect(chart.scales['foo']!.type, 'logarithmic');
+        expect(
+          _Options(chart.scales['foo']!.options),
+          _toEqual(jsGet(chart.options['scales'], 'foo')),
+        );
+        expect(
+          _Options(chart.scales['foo']!.options),
+          _objectContaining({
+            '_jasmineCheckA': 'a0',
+            '_jasmineCheckB': 'b1',
+            '_jasmineCheckC': 'c2',
+            '_jasmineCheckD': 'd2',
+          }),
+        );
+      });
+
+      testWidgets('should correctly apply defaults on xy scales', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'logarithmic',
+                '_jasmineCheckC': 'c2',
+                '_jasmineCheckD': 'd2',
+              },
+              'y': <String, Object?>{
+                'type': 'time',
+                '_jasmineCheckC': 'c2',
+                '_jasmineCheckE': 'e2',
+              },
+            },
+          },
+        });
+
+        expect(chart.scales['x']!.type, 'logarithmic');
+        expect(
+          _Options(chart.scales['x']!.options),
+          _toEqual(jsGet(chart.options['scales'], 'x')),
+        );
+        expect(
+          _Options(chart.scales['x']!.options),
+          _objectContaining({
+            '_jasmineCheckA': 'a0',
+            '_jasmineCheckB': 'b1',
+            '_jasmineCheckC': 'c2',
+            '_jasmineCheckD': 'd2',
+          }),
+        );
+
+        expect(chart.scales['y']!.type, 'time');
+        expect(
+          _Options(chart.scales['y']!.options),
+          _toEqual(jsGet(chart.options['scales'], 'y')),
+        );
+        expect(
+          _Options(chart.scales['y']!.options),
+          _objectContaining({
+            '_jasmineCheckA': 'a0',
+            '_jasmineCheckB': 'b0',
+            '_jasmineCheckC': 'c2',
+            '_jasmineCheckE': 'e2',
+          }),
+        );
+      });
 
       test(
         'should not alter defaults when merging config',
@@ -294,19 +643,53 @@ void main() {
 
       // :536 and :566 give `data: []`. An array data gives a new Map (row
       // adapt-config-objects), and no Chart.js code reads the items of the
-      // array. Thus the two cases need no diverges skip when their scale is
-      // ported.
-      test(
-        'should ignore proxy passed as scale options',
-        () {},
-        skip: 'blocked: scale.category',
-      );
+      // array. Thus the two cases need no diverges skip.
+      testWidgets('should ignore proxy passed as scale options', (
+        tester,
+      ) async {
+        var failure = false;
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <Object?>[],
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'grid': <String, Object?>{
+                  'color': (Object? ctx) {
+                    if (!jsTruthy(jsGet(ctx, 'tick'))) {
+                      failure = true;
+                    }
+                  },
+                },
+              },
+            },
+          },
+        });
+        chart
+          ..options['scales'] = <String, Object?>{
+            'x': jsGet(chart.options['scales'], 'x'),
+            'y': <String, Object?>{'type': 'linear', 'position': 'right'},
+          }
+          ..update();
+        expect(failure, false);
+      });
 
-      test(
-        'should ignore array passed as scale options',
-        () {},
-        skip: 'blocked: scale.logarithmic',
-      );
+      testWidgets('should ignore array passed as scale options', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <Object?>[],
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'xAxes': <Object?>[
+                <String, Object?>{'id': 'xAxes', 'type': 'category'},
+              ],
+            },
+          },
+        });
+        expect(chart.scales['xAxes'], isNull);
+      });
     });
 
     group('Updating options', () {

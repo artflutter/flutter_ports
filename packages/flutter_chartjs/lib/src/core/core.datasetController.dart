@@ -1309,6 +1309,7 @@ class DatasetController
   }
 
   /// core.datasetController.js:662 `getAllParsedValues(scale)`.
+  @override
   List<double> getAllParsedValues(types.Scale scale) {
     final parsed = cachedMeta.parsed;
     final values = <double>[];

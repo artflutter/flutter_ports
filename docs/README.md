@@ -69,7 +69,11 @@ package.
     [Chart.js ADR 0020: Registry and component classes](../packages/flutter_chartjs/doc/adr/0020-registry-and-component-classes.md),
     [Chart.js ADR 0021: Typed options in the resolver](../packages/flutter_chartjs/doc/adr/0021-typed-options-in-the-resolver.md),
     [Chart.js ADR 0022: Chart test harness on Flutter](../packages/flutter_chartjs/doc/adr/0022-chart-test-harness.md),
-    [Chart.js ADR 0023: Underscore members with a colliding name](../packages/flutter_chartjs/doc/adr/0023-underscore-member-collisions.md).
+    [Chart.js ADR 0023: Underscore members with a colliding name](../packages/flutter_chartjs/doc/adr/0023-underscore-member-collisions.md),
+    [Chart.js ADR 0024: Dates](../packages/flutter_chartjs/doc/adr/0024-dates.md),
+    [Chart.js ADR 0025: Scale value parameters](../packages/flutter_chartjs/doc/adr/0025-scale-value-parameters.md),
+    [Chart.js ADR 0026: Number formatting on package:intl](../packages/flutter_chartjs/doc/adr/0026-number-formatting-on-package-intl.md)
+    (it supersedes Chart.js ADR 0008 on acceptance).
   - Prior art: [overview](../packages/flutter_chartjs/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs/doc/prior-art/js-runtimes.md),

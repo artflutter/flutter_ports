@@ -487,7 +487,8 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    without scatter and pie, with no hover. It found no leak. The active-element case waits for
    `IdentityChartHover`.
 
-Section 10 ("Phase 5 state") names the test files and the test groups of phase 5.
+Section 10 ("Phase 5 state" and "Phase 6 state") names the test files and the test groups of
+phases 5 and 6.
 
 Required in phase 9:
 
@@ -582,11 +583,44 @@ theming work in each phase.
 - `tool/reference/theme_precedence_reference.mjs` writes the expected values. It runs each chart
   with the upstream `core.config.js` and with a JavaScript prototype of the hunks H0-H3.
 
+**Phase 6 state.** These parts exist, in addition to the parts of phase 5:
+- `compile.dart` emits the `scales.radialLinear` keys of §4. The token `colors.color` emits
+  `scales.radialLinear.pointLabels.color`. The token `colors.borderColor` emits
+  `scales.radialLinear.angleLines.color`. The typography token `pointLabels` emits
+  `scales.radialLinear.pointLabels.font`: the `typography.font` Map without `size`, then the fields
+  of `typography.pointLabels` (§3.4). Without a `pointLabels` size, hunk H1 merges the theme font
+  into the scale copy-in first. Then `mergeIf` adds the size 10 of `defaults.scales.radialLinear`.
+  `scales.radialLinear.ticks.color` needs no key: H1 fills it from `scale.ticks.color` first. The
+  theme key `scale.grid.color` does not reach `angleLines.color`, because the copy-in always has
+  `angleLines.color`.
+- `ChartThemes.light` also holds `typography.pointLabels` with the size 10
+  (`scale.radialLinear.js:383-385`).
+- `precedence_test.dart` also registers the category, linear and radial linear scales, the
+  controllers `themeReal` and `themeReal2`, and the radial test controller `themeRadial`. Test 2
+  has the H1 tables of the category and linear scales. It also has the H1 tables of four keys of
+  the radial linear scale: the point-label color, the angle-line color, the point-label font and
+  the tick color. The
+  group `a compiled theme on a radial chart` compares a radial chart with a compiled theme with the
+  prototype. It also compares the chart with an upstream chart without a theme that has the values
+  that the tokens replace in `defaults` (§4). The group `the singleton read at
+  scale.radialLinear.js:14` pins the read of §9. The group `test 5: a theme scale type creates no
+  axis` has the part of test 5 without the controllers of phase 7.
+- Test 3, the radial case: `light_reference.dart` has the restated `scales.radialLinear` keys and
+  `themeLightRadial`. `presets_radial_test.dart` compares them on the VM only, because the scales
+  are not pure layers. `presets_test.dart` keeps the other cases on the VM, dart2js and dart2wasm.
+- Test 4: `coverage_test.dart` compares the committed `light_snapshot.json` with
+  `defaults.values.defaults` of `doc/upstream/manifest.json` and with a `notThemed` list of 32
+  keys, each with a reason. It reports ADDED, REMOVED and CHANGED, and two more lists: STALE (a
+  `notThemed` key that upstream removed or that the preset emits) and DOLLAR (a `$` key in the
+  inventory). `THEME_SNAPSHOT_UPDATE=1` writes the snapshot again. The test reads only the
+  defaults. Thus a color in `overrides` stays a risk of §11 until a SHADOWED check exists.
+
 These parts wait:
 - The palette rows of test 2 and the pins of H4a-H4c and H5 come with `plugin.colors` in phase 8.
   `precedence_test.dart` lists them as skipped tests with the reason `'blocked: plugin.colors'`.
-- The plugin tokens and the palette come in phase 8. `typography.pointLabels` and the
-  `scales.radialLinear` keys come in phase 6.
+- The plugin tokens and the palette come in phase 8.
+- Test 3 for the 8 chart types, and test 5 on a doughnut and a bar chart, come with the controllers
+  in phase 7.
 
 Chart.js ADR 0001 stays proposed beyond its four invariants. Only the maintainer accepts it.
 

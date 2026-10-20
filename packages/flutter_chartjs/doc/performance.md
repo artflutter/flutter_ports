@@ -6,7 +6,12 @@
   ([Chart.js ADR 0017](adr/0017-element-properties.md)). Section 9 has the A/B test of cut 2 of
   [canvas-cuts-plan.md](canvas-cuts-plan.md) in phase 5. Section 10 has the core figures of phase 5:
   the animations, a hit test, the parsed items, the profile of the chart path, the change of
-  `hidden`, the acceptance of the typed options and the final series on the phones.
+  `hidden`, the acceptance of the typed options and the final series on the phones. Sections
+  10.10 and 10.11 have the phase 5 work that phase 6 closed: the CPU profile of case (c) and the
+  declared `$context`, which the port does not take. Section 11 has the scale figures of phase 6
+  ([Chart.js ADR 0025](adr/0025-scale-value-parameters.md)), `jsAdd` and the number formatting
+  guards ([Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md)). Section 12 has the
+  date figures of phase 6 ([Chart.js ADR 0024](adr/0024-dates.md)).
 - Date: 2026-10-20
 - Related: [Chart.js ADR 0007](adr/0007-frame-scheduling.md) (frame scheduling),
   [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) (no display-only JS exactness).
@@ -48,6 +53,9 @@ the default. The other modes draw the phase 4 elements through their `draw` meth
   `StressPointController`. The points get the typed options of the resolver. Section 6 gives its
   cases, and [Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) §8 gives its
   acceptance.
+- `axes` (phase 6): the points of the mode `chart` on the real scales of phase 6
+  (`apps/chartjs_gallery/lib/demo/stress_axes.dart`). The x axis is a linear, logarithmic,
+  category or time scale. The y axis is a linear or logarithmic scale. Section 6 gives its cases.
 
 In each frame, the demo writes the moving properties of the elements with their typed setters.
 The draw time includes these writes.
@@ -402,11 +410,11 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   scenario. For one scenario in a fresh process:
   `flutter run --profile -t lib/main_stress.dart --dart-define=SCENARIO=5000x50`.
   `--dart-define=SECONDS=<n>` changes the time of each scenario.
-  `--dart-define=MODE=<primitives|elements|bars|arcs|chart>` selects the mode (section 1).
+  `--dart-define=MODE=<primitives|elements|bars|arcs|chart|axes>` selects the mode (section 1).
   Without `SCENARIO`, the modes `primitives` and `elements` run the six scenarios of section 2,
-  `bars` runs 1000, 5000 and 20000 bars, and `arcs` runs 100, 1000 and 5000 arcs. The mode
-  `chart` runs 1000, 5000 and 20000 chart points without labels. Each `STRESS` line starts with
-  the key `mode`.
+  `bars` runs 1000, 5000 and 20000 bars, and `arcs` runs 100, 1000 and 5000 arcs. The modes
+  `chart` and `axes` run 1000, 5000 and 20000 chart points without labels. Each `STRESS` line
+  starts with the key `mode`.
 - **The mode `chart`** ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) §8)
   measures a real `Chart` with the gallery controller `StressPointController`. Each case runs with
   `animation: false`.
@@ -427,17 +435,61 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   - `SHARING`, `SCRIPTABLE` and `LINE` accept only 0 or 1. Another value throws at the start.
   - Example: `flutter run --profile -t lib/main_stress.dart --dart-define=MODE=chart
     --dart-define=CALL=update --dart-define=SHARING=0 --dart-define=SCENARIO=5000x0`.
+- **The mode `axes`** runs the points of the mode `chart` on real scales of phase 6
+  (`lib/demo/stress_axes.dart`).
+  - `--dart-define=SCALE=<linear|logarithmic|category|time>` selects the x axis (the default is
+    `linear`). `--dart-define=YSCALE=<linear|logarithmic>` selects the y axis.
+    `--dart-define=AUTOSKIP=0` turns off `ticks.autoSkip` of the x axis.
+  - `CALL` is `draw` or `update`. `CALL=animate` throws at the start.
+  - The data has `parsing: false`, so the x values must be sorted. Thus the x values are fixed and
+    in order, and only the y values move. A time point has a timestamp, not an ISO text.
+  - The `STRESS` line has the keys `call`, `scale`, `yScale` and `autoSkip`, the tick count
+    `ticks` (after the auto skip) and the `rotation` of the x axis at the end, and the means
+    `layoutMs`, `datasetsUpdateMs` and `datasetsDrawMs`. An inline plugin of the gallery takes
+    them from the hooks of the chart. The library does not change.
 - `--dart-define=LINE=0` turns off the line of the modes `primitives` and `elements`. The mode
   `chart` has no line. Thus the acceptance of Chart.js ADR 0021 §8 compares the mode `chart` in
   case (a) with the mode `elements` with `LINE=0`.
 - Each `STRESS` line has the key `updateMs`: the time of `chart.update()` without its draw. It is
-  0 outside the mode `chart`. In the mode `chart`, `drawMs` is the time of `chart.draw()`, also of
-  the draw inside `chart.update()`. Neither time includes the writes of the positions into the
+  0 outside the modes `chart` and `axes`. In these modes, `drawMs` is the time of `chart.draw()`,
+  also of the draw inside `chart.update()`. Neither time includes the writes of the positions into the
   data objects. In the mode `chart`, the line also has the keys `animatorMs`, `call`, `sharing`
   and `scriptable`. With `LINE=0`, it has the key `line` with the value false.
 - On macOS, run one scenario in each process. In the phase 4 runs, a process that ran several
   scenarios stopped to give frames after about 28 seconds (section 8.1).
 - Take the figures from the first seconds of a fresh process (section 2.5).
+- **Frameless benchmark.** `apps/chartjs_gallery/lib/main_bench.dart` times the costs of the UI
+  thread of the chart path without frames (`lib/bench/chart_bench.dart`).
+  - The chart is a `UiCanvasElement` of 800 x 480 without a host, so it gets `BasicPlatform`. It
+    has `responsive: false`, `devicePixelRatio: 1`, `animation: false` and `events: []`. It has
+    no labels and no title, so its draw is lower than `drawMs` of the stress entry.
+  - After the first frame, the app runs each case for each N. It prints one line `BENCH {json}`
+    for each case and N, and `BENCH done` at the end. A line has the median, p10 and p90 of
+    `update('none')` without its draw, of `draw()` and of the end of the recording into a
+    `ui.PictureRecorder`. The `axes` cases also give `layout`, `datasetsUpdate` and
+    `datasetsDraw`, and `ticks` and `rotation` of the x axis.
+  - The cases: `chart.a` (draw), `chart.b` (update, with and without sharing) and `chart.c`
+    (update, scriptable), the cases (a) to (c) of the mode `chart`. For each scale type of the mode
+    `axes`, a draw case and an update case, for example `axes.time`.
+  - The loop is the loop of `tool/bench/src/harness.dart`: a warm-up, a calibration, then
+    batches of a fixed number of iterations. A batch figure is the mean of its iterations, so
+    each batch carries its part of the garbage collection. The update cases move the points
+    outside the timing.
+  - Defines: `CASES` (a comma list of modes, names or `mode.name`, the default is all cases), `N`
+    (the default is `1000,5000,20000`), `BATCHES` (15), `BATCH_MS` (200) and `WARMUP_MS` (1000).
+    An unknown selector throws at the start.
+  - Example: `flutter build apk --profile --target-platform android-arm64 -t lib/main_bench.dart
+    --dart-define=CASES=c --dart-define=N=5000`. Install and start the APK, and read the lines
+    with `adb logcat -d -s flutter:I`. On a cool Pixel 8a at 2.9 GHz, case c at 5000 gave an
+    update median of 29.139 ms (p10 28.483, p90 31.635), a draw of 7.372 ms and an end of 4.523
+    ms (75 iterations in 15 batches).
+  - Keep the app in front: a background app gets slower cores. Do not touch the screen during a
+    run. On Android, the UI thread is also the platform thread. A case holds it for about 4 s,
+    and an input event that waits for more than 5 s gives an "App not responding" dialog.
+  - The benchmark does not measure FPS, the raster time or the host paint. It removes the frame
+    pacing, not the noise of the core frequency between processes. Thus an A/B comparison still
+    runs fresh processes in ABBA order, with a gate on the temperature and the core frequency
+    (section 10.11).
 - **Baselines.** Section 4.5 describes the plain Flutter and the Chrome canvas baselines.
 
 ## 7. Open
@@ -462,12 +514,18 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   animations and the regression set on macOS and in Chrome with dart2wasm did not run, because
   the Mac was in use. Options that are plain Maps still cost the lookups of section 8.2.
 - Scriptable options (case c of section 10.9): the update at 5000 points takes 45.6 ms on the
-  Pixel 8a, and case (c) at 20000 runs at 3.5 FPS. A CPU profile of case (c) is not recorded. A
-  candidate is the read and the write of `element['$context']` in `getContext`, which go through
-  the Map of extra properties, as `hidden` did before section 10.6.
-- A benchmark of the chart path without frames (a profile entry of the gallery that times
-  `update` and `draw` into a `PictureRecorder`) can measure the costs of the UI thread in about a
-  minute. It is not built.
+  Pixel 8a, and case (c) at 20000 runs at 3.5 FPS. Section 10.10 has the CPU profile: 84 % of the
+  update is the work of the resolver that upstream also does for a scriptable option. Closed in
+  phase 6: the read of `element['$context']` costs 1.2 % of the update. A declared `$context`
+  gave no measured gain, so the port does not declare it (section 10.11).
+- Closed in phase 6: the benchmark of the chart path without frames is the gallery entry
+  `lib/main_bench.dart` (section 6).
+- Scales (phase 6): this document has no frame figures of the scale path yet. The mode `axes` of
+  the stress entry and the `axes` cases of the frameless benchmark measure them (section 6).
+  Chart.js ADR 0025 needs them for its Open 2 (a logarithmic value axis with `CALL=update`). In
+  phase 7, it needs them for its Open 1 (a `timeseries` axis, a radar chart). Chart.js ADR 0024 needs the figures of a
+  time axis with ISO labels on the Pixel 8a, macOS, Chrome with dart2wasm and the iPhone (its
+  Open 1, section 12.5). The mode `axes` gives timestamps, not ISO labels.
 - `elements` 20000 + 0 on the Pixel 8a: over 31 pairs, the FPS median of the phase 5 builds misses
   the criterion of plan §6.3 by 0.9 FPS. The draw follows the frequency of the big core, and at the
   same frequency the phase 5 build is not slower (section 10.8). A series at a fixed core frequency
@@ -1332,3 +1390,351 @@ degrees Celsius):
 - The animator tick costs about 28 ns for each animation at 20000 points (1.11 ms for 40000
   animations), near the 18 to 20 ns of the probe of Chart.js ADR 0019 §11 on an M3 Max.
 - The regression pairs show no loss against `cd9024f`.
+
+### 10.10 CPU profile of case (c)
+
+Section 7 of phase 5 asked where case (c) spends its update. Five CPU profiles of case (c) at 5000
+points ran on the Pixel 8a on 2026-10-20, on commit `75178b5` (the library of `4c32e6b`):
+- **Build.** `flutter build apk --profile --target-platform android-arm64 -t lib/main_stress.dart`
+  with `MODE=chart CALL=update SHARING=1 SCRIPTABLE=1 SCENARIO=5000x0 SECONDS=30`.
+- **Method.** One fresh process for each profile, with `adb forward` to its VM service. The
+  profile build starts with the profiler off. Thus the script turns it on with
+  `setFlag('profiler', 'true')`, as DevTools does. It waits 6 s, clears the samples, waits 10 s,
+  and reads `getCpuSamples` of the `main` isolate (one sample each 1000 µs).
+- **Scope.** The counts are the samples under `Chart.update` and not under `Chart.draw`: the
+  update without its draw, the scope of `updateMs`. The samples with the VM tag
+  `DRT_InterruptOrStackOverflow` are left out: 8 of 19,561.
+- **Profiles.** Three profiles of the base (one at 28.9 degrees Celsius, two at 34.4-34.7), with
+  13,611 update samples. Two profiles of the variant of section 10.11, with 9,172 update samples.
+
+`Chart.update` has 88.5 % of all samples of the UI isolate. Its draw has 18.9 %, and the update
+without its draw 69.6 %. The rest is mostly the paint of the host (`drawPicture`) and the frame
+work.
+
+Inclusive frames, in % of the update without its draw:
+
+| Frame | Base | Variant |
+|---|---|---|
+| `StressPointController.updateElements` | 99.6 | 99.4 |
+| `DatasetController.resolveDataElementOptions` | 97.4 | 97.7 |
+| `Config.resolveNamedOptions` | 84.0 | 84.2 |
+| `ContextResolver.[]` | 39.0 | 40.0 |
+| `_cached` | 36.4 | 37.3 |
+| `_resolveWithContext` | 21.3 | 22.7 |
+| `jsGet` | 18.4 | 19.6 |
+| `attachContext` (of which the Map literal `Map._fromLiteral`) | 14.7 (10.2) | 14.6 (10.2) |
+| `Config.createResolver` | 11.9 | 12.8 |
+| `_getResolver` (of which `List.join`) | 8.7 (6.6) | 9.0 (6.8) |
+| `jsCall` (the `context()` closure and the scriptable call) | 8.4 | 7.3 |
+| `_needContext` | 8.3 | 8.2 |
+| `DatasetController.getContext` | 6.2 | 5.3 |
+| `_resolveScriptable` | 4.5 | 4.6 |
+| The read `element['$context']` (`PointElement.[]`, the Map of extra properties) | 1.2 | 0.0 |
+| The scriptable function of the gallery | 0.7 | 0.7 |
+
+- 84 % of the update is `resolveNamedOptions`. Upstream does this work too. A scriptable option
+  turns off the option sharing and the cache of the resolver (`needContext`,
+  `core.config.js:405`). Thus the work runs for each point in each update. The largest parts are
+  the scope reads of `jsGet` (18 %), the Map writes of `_cached` (about 13 %), the Map literal of
+  `attachContext` (10 %) and the cache key `prefixes.join()` (6.6 %).
+- Two costs come from the port, not from upstream: the read of `element['$context']` (1.2 %) and
+  the dispatch of `jsCall` without its callees (about 1.4 %).
+- The draw: the FFI call `drawCircle` has 61 % of it. The scriptable color gives each point its
+  own paint, so the circle batch (section 5.4) cannot join the points.
+
+### 10.11 The declared `$context` of `Element`: dropped
+
+The variant: `Element` declares `Object? $context = undefined`, as it declares `hidden` (section
+10.6). `getContext` keeps the upstream form `element.$context || (element.$context = ...)` on the
+field. `Scale` uses the field of `Element` in place of its own field. The variant has 35 lines
+more and 19 lines fewer, of which 6 are code lines. In the profiles of section 10.10 it removes
+the read of 1.2 % of the update: `getContext` goes from 6.2 % to 5.3 %. That is at most about
+0.35-0.55 ms for each update at 5000 points, about 0.1 µs for each point.
+
+**Stress entry.** An ABBA series ran on the Pixel 8a on 2026-10-20, 12:09-12:32, with the stress
+entry: 28 A/B pairs of case (c) at 5000 and 14 A/A pairs of two byte-identical APKs. No series
+that was planned before its run separates from 0:
+- The first 6 A/B pairs give an update difference of +0.67 ms (-1.06 to +2.46).
+- The 21 pairs without a flag (no run above 37.0 degrees Celsius, the two mean frequencies of the
+  big core within 10 %, both at 1.5 GHz or more) give +0.06 ms (-0.66 to +0.87). These pairs can
+  find an effect of about 1.1 ms of update or 0.36 FPS, not less.
+- The A/A control moves: its draw gives +0.34 ms (+0.04 to +0.62) on 6 pairs. Thus a percentile
+  interval that separates on 10 pairs or fewer is no evidence on this phone.
+- The phone went from 29.9 to 37.1 degrees Celsius, and the big core from 2.9 to 1.9 GHz, with
+  dips to 1.16 GHz. Some subsets separate, but their selection came after the data. The same
+  selection gives a false result in the A/A control. Thus these subsets do not count.
+
+**Frameless benchmark.** A second ABBA series ran on the Pixel 8a on 2026-10-20, 13:05-15:28, with
+the frameless benchmark of section 6. The protocol below existed before the first run:
+- A is `75178b5` with the bench files of the gallery. B is A with the variant. A2 is a byte copy
+  of the A APK, for the A/A control.
+- Two APKs for each side: `upd` (`CASES=b,c`, `N=5000,20000`: the cases b with and without
+  sharing and c in one process) and `ctl` (`CASES=a`, `N=20000`). The default timing.
+- One fresh process for each run. A figure is the median of the batches of one run. A difference
+  is the mean of the pair differences B - A, with its 95 % bootstrap interval (20000 resamples)
+  and the exact sign-flip p.
+- A gate before each pair: the battery at 33.0 degrees Celsius or less and the big core at 2.8
+  GHz or more in a busy loop, or 10 minutes. A run with a mean frequency below 2.5 GHz in its case
+  windows leaves out its pair.
+- The rule: keep the variant only when (1) the update of case c at 5000 has an interval below 0,
+  (2) the A/A interval of that figure includes 0, and (3) no checked figure is slower with an
+  interval above 0.
+- 12 A/B pairs (10 valid for `upd`, 9 for `ctl`) and 6 A/A pairs (5 valid). The battery was at
+  31.6-34.2 degrees Celsius. Each case c window ran at 2.90-2.91 GHz.
+
+| Case | Figure | A (ms) | B (ms) | B - A (95 % interval) | p |
+|---|---|---|---|---|---|
+| c, 5000 | update | 33.326 | 32.677 | -0.649 (-1.863 to +0.438) | 0.332 |
+| c, 20000 | update | 143.147 | 138.409 | -4.738 (-9.500 to -0.302) | 0.102 |
+| b with sharing, 5000 | update | 0.554 | 0.533 | -0.021 (-0.063 to +0.021) | 0.400 |
+| b with sharing, 20000 | update | 2.025 | 2.040 | +0.015 (-0.025 to +0.053) | 0.475 |
+| b without sharing, 5000 | update | 1.412 | 1.410 | -0.002 (-0.030 to +0.025) | 0.908 |
+| b without sharing, 20000 | update | 5.579 | 5.468 | -0.111 (-0.400 to +0.175) | 0.492 |
+| a, 20000 (control) | draw | 6.932 | 6.947 | +0.015 (-0.109 to +0.158) | 0.844 |
+| c, 5000 | draw / end | 8.163 / 5.085 | 8.139 / 5.097 | -0.024 / +0.011 | 0.721 / 0.775 |
+| c, 20000 | draw / end | 33.115 / 12.578 | 33.169 / 12.533 | +0.054 / -0.046 | 0.832 / 0.693 |
+
+The A/A control (A2 - A, 5 pairs) gives -0.970 ms (-2.823 to +0.841) for the update of case c at
+5000.
+
+- **Decision: drop.** Rule 1 fails: the interval of case c at 5000 includes 0. Rules 2 and 3
+  hold. With no measured gain, the priority of porting-flow.md §1.1 goes to the upstream
+  structure and to less code. `core.element.ts` does not declare `$context`: a data element gets
+  it as a property of its own, which the Map of extra properties of the port keeps. `Scale` keeps
+  its own field (`core.scale.js:249`).
+- Two A/A intervals exclude 0 with the same bytes on both sides. Thus one interval alone is weak
+  evidence at 5-10 pairs. This applies to case c at 20000 (p 0.102).
+- An independent check rebuilt the 60 runs from the raw logs and got the same figures. The left
+  out pairs leave 6 pairs with A first and 4 with B first, and the first run after a long gate
+  wait is slower. The balanced difference of case c at 5000 is -0.42 ms, not -0.65 ms.
+- After the data, the gain shows in the tails: p10 -0.295 ms (-0.578 to -0.045) and p90 -2.419
+  ms (-4.053 to -0.957) at 5000. The A/A p10 is -1.130 ms (-2.505 to +0.193). Thus the p10 gain is
+  inside the noise of the A/A control.
+- Case c at 5000 takes about 33 ms in the `upd` APK and 29.1 ms in an APK with case c only. In the
+  `upd` APK, case c runs after four b cases in the same process. The cause of the difference is
+  not measured.
+
+## 11. Scales (phase 6)
+
+### 11.1 The value parameter (Chart.js ADR 0025)
+
+[Chart.js ADR 0025](adr/0025-scale-value-parameters.md) §3 chooses the form of the value
+parameter of the scales with this benchmark. The benchmark runs the hot path of
+`controller.line.js:89-118`. For each of 20000 items, it reads `x` and `y` from a
+`Map<String, Object?>` item of a `List<Object?>`. Then it calls `getPixelForValue` of the index
+scale and of the value scale. It imports the real `jsToNumber` and `undefined` of `lib/src/js/`.
+Each family has four live subclasses (linear, category, logarithmic, time), so each call is
+virtual. The forms:
+- **A:** a `double` parameter. The caller applies `jsToNumber`.
+- **B1:** an `Object?` parameter. The body translates the upstream lines literally.
+- **BT:** an `Object?` parameter with `value is double ? value : jsToNumber(value)` at each
+  `ToNumber`.
+- **BF:** an `Object?` parameter. An early `if (value is double)` branch repeats the upstream
+  expression for a number. Then the literal lines follow. The ADR chooses this form.
+
+Bed: Apple M3 Max, macOS 26.5.1, Dart 3.12.2. AOT is `dart compile exe`. wasm is
+`dart compile wasm -O2` in Node.js v24.12.0 (arm64), for times only. 5 warm-up batches, then 15
+batches of 10 passes in an alternate order. A cell gives the lowest and the highest median of 6
+processes (2 builds, 3 runs each), in ns. The `ctl` rows are for each item (two calls). The `tick`
+and `base` rows are for each call:
+
+| Loop | Platform | A | B1 | BT | BF |
+|---|---|---|---|---|---|
+| ctl, linear x, linear y | AOT | 24.2-24.6 | 24.1-25.7 | 23.6-24.8 | 23.0-23.8 |
+| ctl, category x, logarithmic y | AOT | 30.2-31.4 | 34.7-35.7 | 32.2-32.9 | 29.4-29.8 |
+| tick value (a boxed `double`) | AOT | 7.5-7.9 (a layout artifact) | 3.5-3.7 | 3.6-3.7 | 3.5-3.6 |
+| `getBasePixel`, logarithmic | AOT | 3.3-3.4 | 4.7-5.0 | 3.3-3.5 | 3.3-3.4 |
+| ctl, linear x, linear y | wasm | 29.5-31.5 | 31.9-34.5 | 29.4-31.0 | 28.7-30.1 |
+| ctl, category x, logarithmic y | wasm | 51.4-52.4 | 56.4-58.4 | 55.1-56.3 | 49.9-51.4 |
+| tick value (a boxed `double`) | wasm | 1.2-1.3 | 2.2-2.4 | 2.2-2.5 | 2.2-3.0 |
+| `getBasePixel`, logarithmic | wasm | 3.0-3.2 | 11.9-12.6 | 10.9-11.8 | 4.6-4.9 |
+
+- BF is the fastest form. It is at or below A in each `ctl` loop on both platforms. On the linear
+  pair, BF is about 0.6 ns for each item below BT, in each of the 6 processes.
+- On a logarithmic value axis, B1 costs 4.0-6.5 ns more than A for each item: 0.08-0.13 ms for
+  each update of 20000 points.
+- On the same axis, BT costs 1.8-2.4 ns more than A on AOT and 3.1-4.9 ns more on wasm: 0.04 ms
+  and 0.06-0.10 ms for each update of 20000 points.
+- On the same axis, BF is 0.4-2.1 ns below A.
+- A variant of BT with `value is num && value == x` for the strict compares of the logarithmic
+  scale gives the figures of BT (AOT 31.9-33.2 ns, wasm 55.5-57.6 ns on the category and
+  logarithmic pair). Thus the `Object?` tests before the `ToNumber` cost the time, not the
+  compare.
+- The box at a caller that holds a `double` (a tick value, `getBaseValue()`) costs 0 ns on AOT
+  and about 1 ns for each call on wasm. These callers run once for each tick or once for each
+  update. The AOT figure of A in the `tick` row is a layout artifact.
+
+Source: the judge benchmark of Chart.js ADR 0025 (Evidence E8).
+
+### 11.2 The parsed read of phase 7
+
+[Chart.js ADR 0025](adr/0025-scale-value-parameters.md) §8 chooses the read of `parsed[axis]`
+with this benchmark. It reads `x` and `y` of 20000 Map items, with 10 % `null` values. The
+machine, the SDK and the compilers are those of section 11.1. In ns for each item, 3 processes:
+
+| Read | AOT | wasm |
+|---|---|---|
+| `_parsedValue` (Dart `null` for an absent key) | 17.0-17.6 | 24.8-25.4 |
+| Map read with `undefined` for an absent key | 17.7-17.9 | 26.7-27.8 |
+| `jsGet` | 18.9-19.3 | 29.4-30.3 |
+
+- The Map read `value == null && !item.containsKey(key) ? undefined : value` gives the result of
+  `jsGet`. It costs 0.3-0.9 ns (AOT) and 1.7-2.5 ns (wasm) more than `_parsedValue` for each item.
+
+Source: Evidence E9 of Chart.js ADR 0025.
+
+### 11.3 The position result and `getDataVisibility`
+
+The machine, the SDK and the compilers are those of section 11.1. 20000 calls, 3 processes, in ns
+for each call:
+
+| Call | AOT | wasm |
+|---|---|---|
+| A virtual `getPointPositionForValue` that returns the record `({double x, double y, double angle})` | 24.1-25.1 | 32.6-34.0 |
+| The same call that returns a class with three `final double` fields | 20.4-21.0 | 29.4-30.7 |
+| `getDataVisibility` through an interface with two classes | 6.3-6.5 | 8.7-9.1 |
+| `getDataVisibility` after a cast to the concrete class | 5.2-5.3 | 5.5-5.6 |
+
+- A radar or radial draw makes tens of position calls. Thus the class gains less than 1 µs for
+  each draw. The record rule of Chart.js ADR 0003 applies.
+- The bar, doughnut and polar area controllers of phase 7 call `getDataVisibility` for each
+  element (`controller.bar.js:592`, `controller.polarArea.js:180`).
+
+Source: Evidence E10 of Chart.js ADR 0025. Both choices stay Open in the ADR (Open 4 and Open 5).
+The mode `axes` of the stress entry (section 6) can give the frame figures of ADR Open 2 (a
+logarithmic value axis, `CALL=update`). Phase 7 adds the frame figures of Open 1 (a `timeseries`
+axis, a radar chart).
+
+### 11.4 The fast path of `jsAdd`
+
+`jsAdd` of `lib/src/js/js_number.dart` is the JS `+` of a raw option value (`core.scale.js`,
+`scale.radialLinear.js`). Its first line returns the sum of two `double` operands. The bed of
+section 11.1, AOT. One process, 5 rounds of 20,000,000 calls of `jsToNumber(jsAdd(double,
+double))`. The cells give the lowest and the highest round, in ns for each call:
+
+| Form | Not inlined | Inlined |
+|---|---|---|
+| With the fast path | 3.65-3.73 | 3.55-3.61 |
+| Without the fast path | 4.73-4.83 | 3.60-3.63 |
+
+- `a + b` on two doubles takes about 0.9 ns. `jsAdd` returns an `Object`, so the sum is boxed.
+- A layout of a cartesian scale makes about 30 calls, and the label items make 1 or 2 calls for
+  each tick. The gain is less than 1 µs for each layout. The fast path stays: it is one line, and
+  it is not slower.
+
+### 11.5 The number formatting guards (Chart.js ADR 0026)
+
+[Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md) (proposed) adds guards to
+`js_intl.dart` where package:intl gives another label than V8. The bed of section 11.1, AOT, en-US.
+The best of 7 runs of 200,000 calls of `JsNumberFormat.format`, in ns for each call:
+
+| Label | Chart.js ADR 0008 | Chart.js ADR 0026 |
+|---|---:|---:|
+| A standard label (`12.5`, 1 fraction digit) | — | 346-371 |
+| `1e21`, standard notation | 1,133-1,136 | 506-522 |
+| `1e37`, compact notation | 1,190-1,215 | 141-145 |
+| `1.5e20`, compact notation | — | 766-785 |
+| A tick label with 16 to 20 fraction digits | 417-467 (capped at 15) | 264-356 |
+| A scientific label | 350-475 | 260-315 |
+
+- The guards do not change the time of a standard label and of compact `1.5e20`.
+- A cache miss (a new `jsNumberFormat` and a format) stays at about 1.1 µs, because the groups of
+  the pattern are read only when a guard needs them.
+- The compact guard computes its probe one time for each formatter. A probe for each call took
+  1,395-1,402 ns for compact `1.5e20`.
+- Rejected forms: `toStringAsExponential()` for the digits is 6-22 % slower than
+  `jsNumberToString`. The intl mantissa for scientific notation takes 430-600 ns.
+
+## 12. Dates (phase 6)
+
+[Chart.js ADR 0024](adr/0024-dates.md) (proposed) chooses the forms of the default date adapter
+with these figures: its facts 1, 2, 3, 5, 7, 12 and 13, and its decision 10. Bed: Apple M3 Max,
+macOS 26.5.1, Dart 3.12.2 (Flutter 3.44.9), `package:intl` 0.20.3. AOT is `dart compile exe`.
+dart2wasm and dart2js ran in the x64 Node.js v24.12.0 under Rosetta. The figures are medians, in
+ns for each call. The Evidence section of the ADR gives the files.
+
+### 12.1 The dispatch
+
+The extra cost of a call through `DateAdapterBase.prototype`, over a direct call of the same body
+(fact 1):
+
+| Form | AOT | dart2wasm | dart2js |
+|---|---|---|---|
+| The phase 5 path (`jsCall`) | 22-27 | 64-70 | 32-46 |
+| A typed direct call of a member of the exact Dart function type | 7-8 | 21-26 | 15-22 |
+
+The ADR takes the typed direct call.
+
+### 12.2 The calendar, the offset cache, the ISO scanner and the format cache
+
+- **UTC calendar** (fact 2). Integer day arithmetic against `DateTime.utc` and the `DateTime`
+  fields, AOT: `startOf` day 13.1 against 82.5 ns, `add` 1 day 7.9 against 87.3 ns, `add` 1
+  month 44.4 against 138.2 ns. dart2wasm: 16.0 against 120.1, 9.5 against 123.5 and 38.8 against
+  232.3 ns. The results were equal in 139,264 checks.
+- **Local time** (fact 3). The local `DateTime` constructor costs about 1,000 ns on AOT and
+  dart2wasm, because it asks the platform for the offset. A cache keeps one interval of instants
+  with one offset. Wall time to instant: 52.7 ns with the cache, 678.9 ns with the constructor on
+  AOT. dart2wasm: 37.7 against 300.2 ns.
+- **ISO 8601 parse** (fact 5). A code-unit scanner of the moment ISO grammar costs 35-54 ns on AOT
+  and 57-140 ns on dart2wasm. `DateTime.tryParse` costs 745-1,709 ns and 796-1,606 ns, and it
+  gives the moment result for fewer strings.
+- **Format** (fact 7). A cached `DateFormat` costs 209-509 ns on AOT. A new `DateFormat` for each
+  call costs 1,839-9,104 ns. The lower-case day period adds 0-82 ns.
+
+### 12.3 One update
+
+The calls of the adapter in one update (fact 12):
+- 1,000 ISO labels with number data: `init` 1, `formats` 1, `parse` 2,000, `format` 14,
+  `startOf` 1, `diff` 1, `add` 12.
+- 1,000 numbers with `time.round: 'day'`: `startOf` 1,001.
+- A `timeseries` scale with 1,000 timestamps: 1,001 `format`.
+- Ten `chart.draw()` calls after an update make 0 adapter calls.
+
+One update with N ISO labels, without the text measure and the draw (fact 13), in ms on AOT /
+dart2wasm:
+
+| Form | N = 1,000 | N = 20,000 |
+|---|---|---|
+| Subclass, scanner, integer calendar, cached formats, UTC | 0.15 / 0.39 | 3.34 / 6.28 |
+| The same with the phase 5 dispatch | 0.20 / 0.51 | 4.23 / 11.78 |
+| The same in local time with the offset cache | 0.20 / 0.37 | 5.67 / 8.26 |
+| The same in local time with the `DateTime` constructor | 1.52 / 1.01 | 31.30 / 22.39 |
+| The phase 5 dispatch, `tryParse`, the `DateTime` calendar, a new `DateFormat` for each call | 3.37 / 2.98 | 66.01 / 62.50 |
+
+The typed direct call adds about 40,000 times 7-8 ns on AOT and 21-26 ns on dart2wasm to an
+update with 20,000 labels: about 0.3 ms and 0.9 ms. This is a calculation from section 12.1, not a
+measurement (decision 10).
+
+### 12.4 The port
+
+The port of `lib/src/core/date_*.dart`, through the adapter, on the bed of this section. AOT, a
+benchmark outside the repository, medians in ns for each call:
+
+| Call | UTC | Local, sorted labels one hour apart |
+|---|---:|---:|
+| `parse` ISO `2015-01-01T20:00:00` | 79 | 82 |
+| `parse` ISO with `Z` | 80 | 83 |
+| `parse` ISO, date only | 54 | 57 |
+| `startOf` day (direct call: 14) | 43 | 46 |
+| `add` 1 day (direct call: 16) | 47 | 51 |
+| `add` 1 month (direct call: 35) | 77 | 86 |
+| `format` `'MMM d'` | 217 | 221 |
+| `format` `'h:mm a'` (lower-case day period) | 305 | 305 |
+| `format` `'MMM d, yyyy, h:mm:ss a'` | 549 | 545 |
+| The ISO default text | 271 | 323 |
+| `parse` with a format | 1,047 | 1,042 |
+
+- The ISO scanner alone costs 30-80 ns, by the form. It is slower than the 35-54 ns of fact 5,
+  because it also copies the token parse and the range checks of moment.
+- In local time, with dates that are years apart, each call costs about 1.1-1.6 µs: the cache of
+  one interval misses at each call. A local `diff` of two dates 21 days apart costs about 1-3 µs,
+  and a local `startOf` `isoWeek` with a weekday about 216 ns. Both leave the cached interval at
+  each call. The time scale makes about 10 such calls in each update.
+
+### 12.5 Open
+
+- The frame figures of a time axis with ISO labels on the Pixel 8a, macOS, Chrome with dart2wasm
+  and the iPhone (Chart.js ADR 0024, Open 1). When the frame figures show a gain of 0.1 ms or more
+  for direct calls, a new ADR decides between the typed direct call and a subclass. The mode
+  `axes` of the stress entry and the frameless benchmark give the time axis with timestamps. A
+  case with ISO labels does not exist yet.

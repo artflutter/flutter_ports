@@ -15,7 +15,8 @@ import 'package:test/test.dart';
 
 // The theme compiler has no upstream counterpart (Chart.js ADR 0001). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
-// the emission guard, the rgba() form, the deep freeze and the memo), §8
+// the emission guard, the rgba() form, the deep freeze and the memo), §3.4
+// and §4 (the token keys of phase 6 and the point-label font), §8
 // test 1 (no theme equals upstream: ChartThemes.none, no extra scope, the
 // scope position of a compiled theme, no dependence on the platform) and
 // the parts of §8 test 5 that need no chart. The expected scope lists follow
@@ -141,6 +142,12 @@ final Map<String, Map<String, Object?>> _testThemes = {
       'font': <String, Object?>{'family': 'serif', 'size': 14.0},
     },
   },
+  'typography.pointLabels': {
+    'typography': <String, Object?>{
+      'font': <String, Object?>{'family': 'serif', 'size': 14.0},
+      'pointLabels': <String, Object?>{'size': 9.0, 'weight': 'bold'},
+    },
+  },
   'raw': {
     'raw': <String, Object?>{
       'scale': <String, Object?>{
@@ -225,6 +232,12 @@ void main() {
         'scale.title.font.lineHeight': 1.2,
         'scale.grid.color': tenth,
         'scale.border.color': tenth,
+        'scales.radialLinear.pointLabels.color': gray,
+        'scales.radialLinear.pointLabels.font.family': font,
+        'scales.radialLinear.pointLabels.font.style': 'normal',
+        'scales.radialLinear.pointLabels.font.lineHeight': 1.2,
+        'scales.radialLinear.pointLabels.font.size': 10.0,
+        'scales.radialLinear.angleLines.color': tenth,
         'elements.point.borderColor': tenth,
         'elements.point.backgroundColor': tenth,
         'elements.line.borderColor': tenth,
@@ -250,6 +263,12 @@ void main() {
         'scale.title.font.lineHeight',
         'scale.grid.color',
         'scale.border.color',
+        'scales.radialLinear.pointLabels.color',
+        'scales.radialLinear.pointLabels.font.family',
+        'scales.radialLinear.pointLabels.font.style',
+        'scales.radialLinear.pointLabels.font.lineHeight',
+        'scales.radialLinear.pointLabels.font.size',
+        'scales.radialLinear.angleLines.color',
         'elements.point.borderColor',
         'elements.point.backgroundColor',
         'elements.line.borderColor',
@@ -269,10 +288,12 @@ void main() {
           'color': red,
           'scale.ticks.color': red,
           'scale.title.color': red,
+          'scales.radialLinear.pointLabels.color': red,
         },
         'borderColor': {
           'scale.grid.color': red,
           'scale.border.color': red,
+          'scales.radialLinear.angleLines.color': red,
           'elements.point.borderColor': red,
           'elements.line.borderColor': red,
           'elements.bar.borderColor': red,
@@ -331,6 +352,9 @@ void main() {
         'scale.title.font.family': 'serif',
         'scale.title.font.style': 'italic',
         'scale.title.font.weight': 'bold',
+        'scales.radialLinear.pointLabels.font.family': 'serif',
+        'scales.radialLinear.pointLabels.font.style': 'italic',
+        'scales.radialLinear.pointLabels.font.weight': 'bold',
         ..._transitionLeaves,
       });
       // No root font (theming.md §3.4), and one Map for each slot.
@@ -339,6 +363,100 @@ void main() {
         _at(compiled, 'scale.ticks.font'),
         isNot(same(_at(compiled, 'scale.title.font'))),
       );
+    });
+
+    test('the point-label font is the base font without size, then its '
+        'token', () {
+      // theming.md §3.4 and §4, the last row: upstream sets the point-label
+      // size 10 locally (scale.radialLinear.js:383-385).
+      Object? pointLabels(Map<String, Object?> typography) => _at(
+        compileChartTheme({'typography': typography}),
+        'scales.radialLinear.pointLabels.font',
+      );
+
+      // The token wins field by field. The base size never reaches it.
+      expect(
+        pointLabels(<String, Object?>{
+          'font': <String, Object?>{
+            'family': 'serif',
+            'size': 14.0,
+            'style': 'italic',
+          },
+          'pointLabels': <String, Object?>{'style': 'normal', 'size': 9.0},
+        }),
+        <String, Object?>{'family': 'serif', 'style': 'normal', 'size': 9.0},
+      );
+      // The base font without the token: its fields without size. The size
+      // 10 of defaults.scales.radialLinear then stays.
+      expect(
+        pointLabels(<String, Object?>{
+          'font': <String, Object?>{'family': 'serif', 'size': 14.0},
+        }),
+        <String, Object?>{'family': 'serif'},
+      );
+      // The token without the base font.
+      expect(
+        pointLabels(<String, Object?>{
+          'pointLabels': <String, Object?>{'size': 9.0},
+        }),
+        <String, Object?>{'size': 9.0},
+      );
+      // A null token field themes nothing, also over a base field.
+      expect(
+        pointLabels(<String, Object?>{
+          'font': <String, Object?>{'family': 'serif', 'weight': 'bold'},
+          'pointLabels': <String, Object?>{
+            'family': null,
+            'weight': undefined,
+            'lineHeight': 1.5,
+          },
+        }),
+        <String, Object?>{
+          'family': 'serif',
+          'weight': 'bold',
+          'lineHeight': 1.5,
+        },
+      );
+      // A base font with a size only gives no point-label font.
+      final sizeOnly = compileChartTheme({
+        'typography': <String, Object?>{
+          'font': <String, Object?>{'size': 14.0},
+        },
+      });
+      expect(_at(sizeOnly, 'scales'), same(undefined));
+      expect(_at(sizeOnly, 'scale.ticks.font.size'), 14.0);
+      // A token without fields themes nothing.
+      expect(
+        compileChartTheme({
+          'typography': <String, Object?>{
+            'pointLabels': <String, Object?>{'size': null},
+          },
+        }),
+        isNull,
+      );
+    });
+
+    test('the point-label font keeps the field order', () {
+      // The base fields in their order without size, then the new token
+      // fields in their order. A token field over a base field keeps the
+      // position of the base field.
+      final compiled = compileChartTheme({
+        'typography': <String, Object?>{
+          'font': <String, Object?>{
+            'lineHeight': 1.2,
+            'size': 14.0,
+            'family': 'serif',
+          },
+          'pointLabels': <String, Object?>{'weight': 'bold', 'family': 'mono'},
+        },
+      });
+      final font =
+          _at(compiled, 'scales.radialLinear.pointLabels.font')!
+              as Map<String, Object?>;
+      expect(font.keys, ['lineHeight', 'family', 'weight']);
+      expect(font['family'], 'mono');
+      // One Map for each slot.
+      expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
     });
 
     test('the raw keys beat the token keys, key by key', () {
@@ -366,7 +484,36 @@ void main() {
         'scale.ticks.font.size': 10.0,
         'scale.ticks.textStrokeColor': 'raw-stroke',
         'scale.title': 'raw-title',
+        'scales.radialLinear.pointLabels.color': 'rgba(200, 0, 0, 1)',
+        'scales.radialLinear.pointLabels.font.family': 'serif',
         ..._transitionLeaves,
+      });
+    });
+
+    test('the raw radial keys beat the radial token keys', () {
+      final compiled = compileChartTheme({
+        'colors': <String, Object?>{'color': _red, 'borderColor': _red},
+        'typography': <String, Object?>{
+          'pointLabels': <String, Object?>{'size': 9.0, 'style': 'italic'},
+        },
+        'raw': <String, Object?>{
+          'scales': <String, Object?>{
+            'radialLinear': <String, Object?>{
+              'pointLabels': <String, Object?>{
+                'color': 'raw-point-labels',
+                'font': <String, Object?>{'size': 11.0},
+              },
+              'angleLines': <String, Object?>{'lineWidth': 2.0},
+            },
+          },
+        },
+      });
+      expect(_leaves(_at(compiled, 'scales')), {
+        'radialLinear.pointLabels.color': 'raw-point-labels',
+        'radialLinear.pointLabels.font.size': 11.0,
+        'radialLinear.pointLabels.font.style': 'italic',
+        'radialLinear.angleLines.color': 'rgba(200, 0, 0, 1)',
+        'radialLinear.angleLines.lineWidth': 2.0,
       });
     });
 
@@ -568,6 +715,11 @@ void main() {
         ('scales.x', <String, Object?>{}, 'scales.x is not a scale type'),
         ('scales.y.grid.color', 'red', 'scales.y is not a scale type'),
         ('scales.myScale', <String, Object?>{}, 'not a scale type'),
+        // A scale id, not a scale type: the radial scale of a radar chart.
+        ('scales.r.pointLabels.color', 'red', 'scales.r is not a scale type'),
+        ('scales.radial.angleLines.color', 'red', 'not a scale type'),
+        ('scales.radialLinear.pointLabels.hoverColor', 'red', 'hover color'),
+        ('scales.radialLinear.angleLines._fallback', 'grid', 'descriptor'),
         ('elements.bar._fallback', 'x', 'read as a descriptor'),
         ('_scriptable', false, 'read as a descriptor'),
         (r'$theme', <String, Object?>{}, r'a $ key other than the palette'),
@@ -607,6 +759,10 @@ void main() {
         (r'plugins.colors.$backgroundColors', <Object?>['red']),
         (r'plugins.colors.$backgroundColors.0', 'red'),
         for (final type in themeScaleTypes) ('scales.$type.grid.color', 'red'),
+        ('scales.radialLinear.pointLabels.color', 'red'),
+        ('scales.radialLinear.angleLines.color', 'red'),
+        ('scales.radialLinear.pointLabels.font', <String, Object?>{}),
+        ('scales.radialLinear.pointLabels.font.size', 10.0),
         ('scales', <String, Object?>{}),
         ('elements.line.borderDash', <Object?>[4.0, 2.0]),
         ('elements.line.borderDash.0', 4.0),
@@ -714,7 +870,15 @@ void main() {
             'colors': <String, Object?>{'color': 'red'},
           },
           {
-            'typography': <String, Object?>{'pointLabels': <String, Object?>{}},
+            'typography': <String, Object?>{'title': <String, Object?>{}},
+          },
+          {
+            'typography': <String, Object?>{
+              'pointLabels': <String, Object?>{'variant': 'small-caps'},
+            },
+          },
+          {
+            'typography': <String, Object?>{'pointLabels': 10.0},
           },
           {
             'typography': <String, Object?>{

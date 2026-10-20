@@ -296,14 +296,50 @@ void main() {
       }
     });
 
-    test('uses the current intl locale for undefined and null', () {
+    test('uses the current intl locale for undefined', () {
       // controller.doughnut.js:321 and controller.polarArea.js:99 pass
-      // chart.options.locale, undefined by default. The V8 strings: V8 throws
-      // a TypeError for null.
+      // chart.options.locale, undefined by default. The V8 strings.
       expect(formatNumber(1234.5678, undefined), '1,234.568');
-      expect(formatNumber(1234.5678, null), '1,234.568');
       expect(formatNumber(double.nan, undefined), 'NaN');
       expect(formatNumber(double.negativeInfinity, undefined), '-\u{221E}');
+    });
+
+    test('throws for null and for a tag that is not valid, as V8', () {
+      // `new Intl.NumberFormat(locale)` in V8 throws a TypeError for null,
+      // and a RangeError for 'en_US' and 'de_DE'. The cache does not keep
+      // a throw: the second call throws again.
+      for (var i = 0; i < 2; i++) {
+        expect(
+          () => formatNumber(1234.5, null),
+          throwsA(isA<TypeError>()),
+        );
+        expect(() => formatNumber(1234.5, 'en_US'), throwsArgumentError);
+        expect(
+          () => formatNumber(1234.5, 'de_DE', {'maximumFractionDigits': 1}),
+          throwsArgumentError,
+        );
+      }
+      expect(formatNumber(1234.5, 'en-US'), '1,234.5');
+    });
+
+    test('gives the V8 strings at the guards of the adapter', () {
+      // getLabelForValue (scale.linearbase.js:311) with the default
+      // ticks.format. intl gives '922,337,203,685,477,580,700' on the VM.
+      expect(formatNumber(1e21, 'en-US'), '1,000,000,000,000,000,000,000');
+      expect(formatNumber(-1e21, 'en-US'), '-1,000,000,000,000,000,000,000');
+      // formatters.numeric for ticks above 1e15 with a spacing of 1e15 or
+      // more: scientific notation and no fraction digits. intl gives
+      // '10E14' and '10E15'.
+      final scientific = {...?_tickOptions(0), 'notation': 'scientific'};
+      expect(formatNumber(1000000000000000, 'en-US', scientific), '1E15');
+      expect(formatNumber(9500000000000000, 'en-US', scientific), '1E16');
+      // A ticks.format of a user. intl gives 'NaN' and '\u{221E}'.
+      final percent = {'style': 'percent'};
+      expect(formatNumber(double.nan, 'en-US', percent), 'NaN%');
+      expect(
+        formatNumber(double.infinity, 'de-DE', percent),
+        '\u{221E}\u{A0}%',
+      );
     });
 
     test('caches one formatter for each intl locale and options', () {

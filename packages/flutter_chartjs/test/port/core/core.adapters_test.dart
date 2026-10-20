@@ -1,5 +1,6 @@
 // Original code, not ported from Chart.js: core.adapters cases with no spec.
 import 'package:flutter_chartjs/src/core/core.adapters.dart';
+import 'package:flutter_chartjs/src/core/date_adapter.dart';
 import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_function.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
@@ -11,8 +12,11 @@ import 'package:test/test.dart';
 // types stripped by Node.js v24.12.0 on x64. `scale.time.tests.js:1286`
 // calls `override` once. The time scale and its specs come in phase 6.
 //
-// `override` writes the static `DateAdapterBase.prototype` of the port. A
-// tearDown clears it after each test. Upstream specs never restore it.
+// `override` writes the static `DateAdapterBase.prototype` of the port. The
+// prototype starts with the default members of the port (Chart.js ADR 0024,
+// date_adapter_test.dart). This file tests the base alone: a setUp clears
+// the prototype before each test, and a tearDown restores the default
+// members. Upstream specs never restore it.
 
 /// The message of the `Error` of `abstract` (core.adapters.ts:66).
 const String _abstractMessage =
@@ -28,7 +32,12 @@ final Matcher _throwsAbstract = throwsA(
 Object? _option(DateAdapter adapter, String key) => jsGet(adapter.options, key);
 
 void main() {
-  tearDown(DateAdapterBase.prototype.clear);
+  setUp(DateAdapterBase.prototype.clear);
+  tearDown(
+    () => DateAdapterBase.prototype
+      ..clear()
+      ..addAll(dateAdapterMembers),
+  );
 
   group('adapters', () {
     test('has the key _date, the class value of DateAdapterBase', () {
@@ -202,6 +211,83 @@ void main() {
       expect(() => adapter.format(1.0, 'f'), throwsArgumentError);
       DateAdapterBase.override({'format': undefined});
       expect(() => adapter.format(1.0, 'f'), throwsArgumentError);
+    });
+
+    group('typed direct call', () {
+      // A member of the exact Dart function type of its method gets a direct
+      // call. Any other value goes through jsCall (Chart.js ADR 0024,
+      // decision 1). Both calls give one result.
+
+      test('a closure of the exact type gets the arguments', () {
+        final calls = <List<Object?>>[];
+        DateAdapterBase.override({
+          'parse': (Object? value, Object? format) {
+            calls.add([value, format]);
+            return 1.0;
+          },
+          'add': (Object? t, Object? n, Object? u) {
+            calls.add([t, n, u]);
+            return 2.0;
+          },
+          'formats': () => <String, Object?>{'day': 'D'},
+          'init': (Object? options) {
+            calls.add([options]);
+          },
+        });
+        final adapter = DateAdapterBase();
+        expect(adapter.parse('x'), 1.0);
+        expect(adapter.add(1.0, 2.0, 'day'), 2.0);
+        expect(adapter.formats(), {'day': 'D'});
+        adapter.init('options');
+        expect(calls, [
+          ['x', undefined],
+          [1.0, 2.0, 'day'],
+          ['options'],
+        ]);
+      });
+
+      test('a JsFunction gets the adapter as this', () {
+        final adapter = DateAdapterBase(<String, Object?>{'tag': 'a'});
+        DateAdapterBase.override({
+          'diff': JsFunction(
+            (Object? self, Object? a, Object? b, Object? u) => [
+              identical(self, adapter),
+              a,
+              b,
+              u,
+            ],
+          ),
+        });
+        expect(adapter.diff(3.0, 1.0, 'day'), [true, 3.0, 1.0, 'day']);
+      });
+
+      test('a closure with fewer arguments gets the first arguments', () {
+        DateAdapterBase.override({
+          'startOf': (Object? t) => [t],
+          'endOf': (Object? t) => [t],
+          'format': () => 'text',
+        });
+        final adapter = DateAdapterBase();
+        expect(adapter.startOf(1.0, 'isoWeek', 2.0), [1.0]);
+        expect(adapter.endOf(5.0, 'day'), [5.0]);
+        expect(adapter.format(1.0, 'f'), 'text');
+      });
+
+      test('a closure with more arguments gets undefined for them', () {
+        DateAdapterBase.override({
+          'formats': (Object? a, Object? b) => [a, b],
+          'endOf': (Object? t, Object? u, Object? extra) => [t, u, extra],
+        });
+        final adapter = DateAdapterBase();
+        expect(adapter.formats(), [undefined, undefined]);
+        expect(adapter.endOf(5.0, 'day'), [5.0, 'day', undefined]);
+      });
+
+      test('a stored null throws the ArgumentError of jsCall', () {
+        DateAdapterBase.override({'parse': null, 'init': null});
+        expect(() => DateAdapterBase().parse('x'), throwsArgumentError);
+        expect(() => DateAdapterBase().init(null), throwsArgumentError);
+      });
     });
 
     test('through a subclass value writes the members of the base', () {

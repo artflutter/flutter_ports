@@ -95,7 +95,9 @@ const Map<String, String> forbiddenInLib = {
 /// ADR 0017, section 10). Their specs run on the VM, dart2js and dart2wasm.
 ///
 /// `core.config` and `core.adapters` are roots (Chart.js ADR 0021, section
-/// 7). Their port-only tests run on the VM, dart2js and dart2wasm.
+/// 7). Their port-only tests run on the VM, dart2js and dart2wasm. So are
+/// the port-only date files `date_*.dart` (Chart.js ADR 0024): the default
+/// date adapter.
 ///
 /// `core.interaction` and `core.layouts` are roots. Their upstream imports
 /// are helpers other than `helpers.extras`. Their specs and port-only tests
@@ -123,6 +125,7 @@ const List<String> pureRoots = [
   'lib/src/core/core.element.dart',
   'lib/src/core/core.config.dart',
   'lib/src/core/core.adapters.dart',
+  'lib/src/core/date_*.dart',
   'lib/src/core/core.interaction.dart',
   'lib/src/core/core.layouts.dart',
   'lib/src/core/core.animation.dart',

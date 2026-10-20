@@ -162,6 +162,11 @@ final class DemoChart implements types.Chart {
   @override
   List<types.ChartMeta> getSortedDatasetMetas(bool filterVisible) => const [];
 
+  /// core.controller.js:885 `getDataVisibility(index)`:
+  /// `!this._hiddenIndices[index]`. The demo chart hides no index.
+  @override
+  bool getDataVisibility(double index) => true;
+
   /// No plugins: no plugin cancels the hook.
   @override
   bool notifyPlugins(String hook, [Map<String, Object?>? args]) => true;

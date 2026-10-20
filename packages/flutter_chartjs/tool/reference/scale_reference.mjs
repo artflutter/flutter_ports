@@ -422,6 +422,21 @@ class CallsText {
   }
 }
 
+/**
+ * The value of a number field of the port for the upstream value `v`.
+ *
+ * A raw option value that is a string joins the number of a `+`
+ * (core.scale.js:649, :1166, :1210 and others): upstream can keep the
+ * joined string, for example the `height` '80' of `tickLength: '8'`. The
+ * port keeps the `ToNumber` in its `double` fields `width` and `height`
+ * and in the translation of a label item (differences.md row
+ * `adapt-scale-option-types`). The port fields `paddingTop` and
+ * `paddingBottom` keep the joined string, as upstream does. The values of
+ * `getPadding` are the `ToNumber` of `value || 0`, the numbers that
+ * `Math.max` in core.layouts.js takes. Another value stays as it is.
+ */
+const numberField = (v) => (typeof v === 'string' ? Number(v) : v);
+
 /** A label item as a plain object. */
 function labelItem(item) {
   const o = item.options;
@@ -436,7 +451,9 @@ function labelItem(item) {
     strokeWidth: o.strokeWidth === undefined ? null : Number(o.strokeWidth),
     textAlign: o.textAlign === undefined ? null : o.textAlign,
     textBaseline: o.textBaseline,
-    translation: o.translation.map((v) => (v === undefined ? NaN : v)),
+    // `ToNumber`, as the canvas call `translate` applies it: undefined is
+    // NaN, and a joined string is its number (numberField).
+    translation: o.translation.map(Number),
     backdrop: o.backdrop
       ? {
           left: o.backdrop.left,
@@ -481,9 +498,11 @@ function add(name, {chart: chartSpec, scale: scaleSpec, options}) {
 
   const after = {
     ticks: scale.ticks.map((t) => [t.value, t.label === undefined ? null : t.label]),
+    // The raw `minRotation` stays: the port field holds any JS value.
     labelRotation: scale.labelRotation,
-    width: scale.width,
-    height: scale.height,
+    width: numberField(scale.width),
+    height: numberField(scale.height),
+    // The raw paddings: the port fields hold any JS value.
     paddingLeft: scale.paddingLeft,
     paddingTop: scale.paddingTop,
     paddingRight: scale.paddingRight,
@@ -499,8 +518,10 @@ function add(name, {chart: chartSpec, scale: scaleSpec, options}) {
   const [boxLeft, boxTop] = scaleSpec.box;
   scale.left = boxLeft;
   scale.top = boxTop;
-  scale.right = boxLeft + scale.width;
-  scale.bottom = boxTop + scale.height;
+  // The sizes of the port are numbers (numberField). core.layouts.js:212-213
+  // joins a string size: that difference is in core.layouts.
+  scale.right = boxLeft + numberField(scale.width);
+  scale.bottom = boxTop + numberField(scale.height);
   scale.configure();
 
   const userBounds = scale.getUserBounds();
@@ -512,7 +533,7 @@ function add(name, {chart: chartSpec, scale: scaleSpec, options}) {
     isFullSize: !!scale.isFullSize(),
     userBounds: [userBounds.min, userBounds.max, userBounds.minDefined, userBounds.maxDefined],
     minMax: [minMax.min, minMax.max],
-    padding: [padding.left, padding.top, padding.right, padding.bottom],
+    padding: [padding.left, padding.top, padding.right, padding.bottom].map(numberField),
     baseValue: scale.getBaseValue(),
     basePixel: scale.getBasePixel(),
     pixels: [...scale.ticks.map((_, i) => scale.getPixelForTick(i)), scale.getPixelForTick(tickCount)],
@@ -1000,6 +1021,185 @@ add('tick labels hidden', {
   chart: wide,
   scale: {ticks: range(3), min: 0, max: 2, maxWidth: 440, maxHeight: 200, box: [40, 350]},
   options: {axis: 'x', position: 'bottom', ticks: {display: false}},
+});
+// Raw option values in a `+` (core.scale.js:649, :652, :720-721, :734-735,
+// :987-988, :1045, :1057, :1070, :1155, :1166, :1178, :1182, :1210, :1255,
+// :1355, :1363, :1389, :1401): a string option joins the number, and the
+// next `-`, `*`, `Math.min`, `Math.max` or canvas call takes the `ToNumber`
+// of the joined string. A `-` of the raw value takes its `ToNumber`
+// (:612-613, :1036, :1048, :1074, :1162, :1187, :1374).
+add('bottom, string padding, tickLength and labelOffset', {
+  chart: wide,
+  scale: {ticks: range(5), min: 0, max: 4, maxWidth: 440, maxHeight: 200, box: [40, 150]},
+  options: {
+    axis: 'x',
+    position: 'bottom',
+    ticks: {padding: '3', labelOffset: '5'},
+    grid: {tickLength: '8'},
+  },
+});
+add('top, string padding and labelOffset, rotated labels', {
+  chart: {width: 300, height: 300, chartArea: [20, 80, 280, 290]},
+  scale: {ticks: range(12), min: 0, max: 11, maxWidth: 260, maxHeight: 150, box: [20, 0]},
+  options: {
+    axis: 'x',
+    position: 'top',
+    ticks: {callback: FUNCTIONS.longLabel, padding: '3', labelOffset: '2'},
+  },
+});
+add('top, mirror, string padding', {
+  chart: wide,
+  scale: {ticks: range(5), min: 0, max: 4, maxWidth: 440, maxHeight: 200, box: [40, 0]},
+  options: {axis: 'x', position: 'top', ticks: {mirror: true, padding: '3'}},
+});
+add('center, x axis, string padding and tickLength', {
+  chart: wide,
+  scale: {ticks: range(5), min: 0, max: 4, maxWidth: 440, maxHeight: 200, box: [40, 180]},
+  options: {axis: 'x', position: 'center', ticks: {padding: '3'}, grid: {tickLength: '8'}},
+});
+add('object position, x axis, string padding', {
+  chart: {...wide, otherScales: {y: 100}},
+  scale: {ticks: range(5), min: 0, max: 4, maxWidth: 440, maxHeight: 200, box: [40, 140]},
+  options: {axis: 'x', position: {y: 40}, ticks: {padding: '3'}},
+});
+add('bottom, string tickLength, tick labels hidden', {
+  chart: wide,
+  scale: {ticks: range(3), min: 0, max: 2, maxWidth: 440, maxHeight: 200, box: [40, 350]},
+  options: {axis: 'x', position: 'bottom', ticks: {display: false}, grid: {tickLength: '8'}},
+});
+add('bottom, string autoSkipPadding', {
+  chart: wide,
+  scale: {ticks: range(40), min: 0, max: 39, maxWidth: 440, maxHeight: 200, box: [40, 350]},
+  options: {axis: 'x', position: 'bottom', ticks: {autoSkipPadding: '3'}},
+});
+add('bottom, title with a string padding', {
+  chart: wide,
+  scale: {ticks: range(5), min: 0, max: 4, maxWidth: 440, maxHeight: 200, box: [40, 330]},
+  options: {
+    axis: 'x',
+    position: 'bottom',
+    title: {display: true, text: 'Time', padding: '4'},
+  },
+});
+add('left, string padding and tickLength', {
+  chart: wide,
+  scale: {ticks: range(5, 0, 25), min: 0, max: 100, maxWidth: 250, maxHeight: 320, box: [0, 30]},
+  options: {axis: 'y', position: 'left', ticks: {padding: '3'}, grid: {tickLength: '8'}},
+});
+add('left, mirror, string padding, crossAlign center', {
+  chart: wide,
+  scale: {ticks: range(3), min: 0, max: 2, maxWidth: 250, maxHeight: 320, box: [0, 30]},
+  options: {axis: 'y', position: 'left', ticks: {mirror: true, crossAlign: 'center', padding: '3'}},
+});
+add('left, mirror, string padding, crossAlign far', {
+  chart: wide,
+  scale: {ticks: range(3), min: 0, max: 2, maxWidth: 250, maxHeight: 320, box: [0, 30]},
+  options: {axis: 'y', position: 'left', ticks: {mirror: true, crossAlign: 'far', padding: '3'}},
+});
+add('left, string padding, crossAlign center', {
+  chart: wide,
+  scale: {ticks: range(3), min: 0, max: 2, maxWidth: 250, maxHeight: 320, box: [0, 30]},
+  options: {axis: 'y', position: 'left', ticks: {crossAlign: 'center', padding: '3'}},
+});
+add('right, mirror, string padding, crossAlign center', {
+  chart: wide,
+  scale: {ticks: range(3), min: 0, max: 2, maxWidth: 250, maxHeight: 320, box: [440, 30]},
+  options: {axis: 'y', position: 'right', ticks: {mirror: true, crossAlign: 'center', padding: '3'}},
+});
+add('right, mirror, string padding, crossAlign far', {
+  chart: wide,
+  scale: {ticks: range(3), min: 0, max: 2, maxWidth: 250, maxHeight: 320, box: [440, 30]},
+  options: {axis: 'y', position: 'right', ticks: {mirror: true, crossAlign: 'far', padding: '3'}},
+});
+add('right, string padding and tickLength, crossAlign center', {
+  chart: wide,
+  scale: {ticks: range(3), min: 0, max: 2, maxWidth: 250, maxHeight: 320, box: [440, 30]},
+  options: {
+    axis: 'y',
+    position: 'right',
+    ticks: {crossAlign: 'center', padding: '3'},
+    grid: {tickLength: '8'},
+  },
+});
+add('center, y axis, string padding and tickLength', {
+  chart: wide,
+  scale: {ticks: range(4), min: 0, max: 3, maxWidth: 250, maxHeight: 320, box: [240, 30]},
+  options: {axis: 'y', position: 'center', ticks: {padding: '3'}, grid: {tickLength: '8'}},
+});
+add('object position, y axis, string padding and tickLength', {
+  chart: {...wide, otherScales: {x: 50}},
+  scale: {ticks: range(4), min: 0, max: 3, maxWidth: 250, maxHeight: 320, box: [200, 30]},
+  options: {axis: 'y', position: {x: 100}, ticks: {padding: '3'}, grid: {tickLength: '8'}},
+});
+add('left, string tickLength, tick labels hidden', {
+  chart: wide,
+  scale: {ticks: range(3), min: 0, max: 2, maxWidth: 250, maxHeight: 320, box: [0, 30]},
+  options: {axis: 'y', position: 'left', ticks: {display: false}, grid: {tickLength: '8'}},
+});
+// `Math.min` keeps the ToNumber of a joined size that is less than
+// `maxHeight` or `maxWidth` (core.scale.js:666, :672). The tickLength '0'
+// gives `'0' + 0`, the string '00'. The label height and the padding join
+// it: the height is 14.4, where the sum of the numbers gives 20.4. The
+// empty string gives `'' + 0`, the string '0': the width '0306' is more
+// than `maxWidth`, where the sum of the numbers gives 36.
+add('bottom, string tickLength 0', {
+  chart: wide,
+  scale: {ticks: range(5), min: 0, max: 4, maxWidth: 440, maxHeight: 200, box: [40, 350]},
+  options: {axis: 'x', position: 'bottom', grid: {tickLength: '0'}},
+});
+add('left, empty string tickLength', {
+  chart: wide,
+  scale: {ticks: range(5, 0, 25), min: 0, max: 100, maxWidth: 250, maxHeight: 320, box: [0, 30]},
+  options: {axis: 'y', position: 'left', grid: {tickLength: ''}},
+});
+// Without a rotation, `_tickSize` of a horizontal scale is `w / cos`
+// (core.scale.js:987, :991-992). The widest label width 20 and the padding
+// '3' give the string '203', where the sum of the numbers gives 23.
+add('bottom, string autoSkipPadding, no rotation', {
+  chart: wide,
+  scale: {ticks: range(40), min: 0, max: 39, maxWidth: 440, maxHeight: 200, box: [40, 350]},
+  options: {axis: 'x', position: 'bottom', ticks: {autoSkipPadding: '3', maxRotation: 0}},
+});
+// `paddingTop` and `paddingBottom` keep the joined padding (core.scale.js:734
+// -735). `getPadding` returns `this.paddingTop || 0` (:340): the string
+// '7.199999999999999x' is truthy, so its `ToNumber` is NaN, where a NaN
+// number gives 0.
+add('left, string padding that is not a number', {
+  chart: wide,
+  scale: {ticks: range(3), min: 0, max: 2, maxWidth: 250, maxHeight: 320, box: [0, 30]},
+  options: {axis: 'y', position: 'left', ticks: {padding: 'x'}},
+});
+
+// The raw `minRotation` and `maxRotation` (core.scale.js:590-622): the
+// string '0' stays the labelRotation, and `labelRotation !== 0` (:691) is
+// true. Two strings compare by their code units: '5' >= '30'.
+add('bottom, minRotation string 0', {
+  chart: wide,
+  scale: {ticks: range(5), min: 0, max: 4, maxWidth: 440, maxHeight: 200, box: [40, 350]},
+  options: {axis: 'x', position: 'bottom', ticks: {minRotation: '0'}},
+});
+add('bottom, minRotation string 0, long labels', {
+  chart: {width: 300, height: 300, chartArea: [20, 10, 280, 220]},
+  scale: {ticks: range(10), min: 0, max: 9, maxWidth: 260, maxHeight: 150, box: [20, 220]},
+  options: {axis: 'x', position: 'bottom', ticks: {callback: FUNCTIONS.longLabel, minRotation: '0'}},
+});
+add('bottom, string minRotation 5 and maxRotation 30, long labels', {
+  chart: {width: 300, height: 300, chartArea: [20, 10, 280, 220]},
+  scale: {ticks: range(10), min: 0, max: 9, maxWidth: 260, maxHeight: 150, box: [20, 220]},
+  options: {
+    axis: 'x',
+    position: 'bottom',
+    ticks: {callback: FUNCTIONS.longLabel, minRotation: '5', maxRotation: '30'},
+  },
+});
+add('bottom, minRotation 5 and maxRotation 30, long labels', {
+  chart: {width: 300, height: 300, chartArea: [20, 10, 280, 220]},
+  scale: {ticks: range(10), min: 0, max: 9, maxWidth: 260, maxHeight: 150, box: [20, 220]},
+  options: {
+    axis: 'x',
+    position: 'bottom',
+    ticks: {callback: FUNCTIONS.longLabel, minRotation: 5, maxRotation: 30},
+  },
 });
 add('custom z of the layers', {
   chart: wide,

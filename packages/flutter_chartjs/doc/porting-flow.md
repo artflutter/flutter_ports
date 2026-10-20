@@ -157,6 +157,13 @@ Phase 5 wrote the gate 5 decisions as the proposed files of Chart.js ADRs 0019-0
 A design panel of three drafts, a judge and a synthesis wrote each of them. Their subsections are
 2.9, 2.16, 2.17 and 2.18. The port of `core.datasetController` wrote Chart.js ADR 0023 (proposed,
 2026-10-20): the names of underscore members that collide with a member of their class. 2.5 has
+its summary. Phase 6 wrote Chart.js ADR 0025 (proposed, 2026-10-20): the value parameters of the
+scales, the interface members that the scales need, the names of their underscore members and the
+parsed read of phase 7. Its subsection is 2.19. Phase 6 also wrote Chart.js ADR 0024 (proposed,
+2026-10-20): the default date adapter, the zone, the calendar, and the parse and format rules. A
+design panel of three drafts, a judge and a synthesis wrote it. Its subsection is 2.10. The fixes
+of phase 6 wrote Chart.js ADR 0026 (proposed, 2026-10-20): the number formatting of Chart.js ADR
+0008 with the six guards of `js_intl.dart`. It supersedes Chart.js ADR 0008 on acceptance. 2.3 has
 its summary.
 The other subsections stay proposals in this document until their ADR files exist.
 
@@ -181,6 +188,9 @@ The other subsections stay proposals in this document until their ADR files exis
 | 2.17 | [Chart.js ADR 0021: Typed options in the resolver](adr/0021-typed-options-in-the-resolver.md) (proposed) | 5 |
 | 2.18 | [Chart.js ADR 0022: Chart test harness on Flutter](adr/0022-chart-test-harness.md) (proposed) | 5 |
 | 2.5 | [Chart.js ADR 0023: Underscore members with a colliding name](adr/0023-underscore-member-collisions.md) (proposed) | 5 |
+| 2.10 | [Chart.js ADR 0024: Dates](adr/0024-dates.md) (proposed) | 6 |
+| 2.3, number formatting | [Chart.js ADR 0026: Number formatting on package:intl](adr/0026-number-formatting-on-package-intl.md) (proposed), which supersedes Chart.js ADR 0008 on acceptance | 2 |
+| 2.19 | [Chart.js ADR 0025: Scale value parameters](adr/0025-scale-value-parameters.md) (proposed) | 6 |
 
 ADR 0006 (gate 1) belongs to [upstream-tracking.md](upstream-tracking.md).
 
@@ -218,7 +228,9 @@ short:
 [Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) holds the complete decision, the
 translation rules and the evidence. It supersedes Chart.js ADR 0002.
 [Chart.js ADR 0008](adr/0008-number-formatting-on-package-intl.md) holds the number formatting
-decision. [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) holds the principle of no
+decision. [Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md) (proposed) states it
+again with six guards against package:intl failures, and supersedes Chart.js ADR 0008 on
+acceptance. [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) holds the principle of no
 display-only JS exactness. In short:
 - An unexported JS runtime in `lib/src/js/` represents the JS builtins. Ported files call it where
   upstream calls a builtin.
@@ -243,7 +255,10 @@ display-only JS exactness. In short:
   of `testWidgets` fakes that clock.
 - `Intl.NumberFormat` is the `NumberFormat` of `package:intl`. The port-only adapter
   `lib/src/js/js_intl.dart` maps the JS locale and options onto it
-  ([Chart.js ADR 0008](adr/0008-number-formatting-on-package-intl.md)). A string that differs from
+  ([Chart.js ADR 0008](adr/0008-number-formatting-on-package-intl.md)). Its guards write the V8
+  digits where package:intl fails: from `2^53`, in scientific notation, with more than 15
+  fraction digits, and the affixes of NaN and the infinities
+  ([Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md)). A string that differs from
   the V8 string is the `differences.md` row `adapt-intl-number-format`.
 - Tool 3 enforces the translation rules. A site that keeps a flagged form for a stated reason
   carries `// js-ok: <reason>` at the end of its line, or alone on the line before it.
@@ -270,6 +285,9 @@ only other type libraries.
 class or a superclass already has a member with the name without the underscore, the Dart name
 gets a trailing underscore: `_update` is `update_`, and `_getSharedOptions` is
 `getSharedOptions_`. The `_dataset` of the meta is `ChartMeta.dataset_`.
+Chart.js ADR 0025 (proposed) applies the rule to the `_` members that only a spec reads, as
+`Chart.metasets` does: `unit`, `adapter`, `pointLabels` and `pointLabelItems` drop the underscore
+and carry `@internal`.
 
 ### 2.6 Chart.js ADR 0009: No display-only JS exactness, image comparison part (gate 2)
 
@@ -350,61 +368,50 @@ decision, its evidence and the items that stay open. In short:
   `TickerMode(enabled: false)`. The gallery `ChartCanvas` does this. The phase 9 widget does it
   for the public API.
 
-### 2.10 ADR: Dates (gate 6)
+### 2.10 Chart.js ADR 0024: Dates (gate 6)
 
-**Decision.**
-- Port `core.adapters.ts`. Ship a default adapter on `DateTime`, in local time or UTC. Make
-  calendar steps with the `DateTime` constructor, not with `Duration`. Clamp month ends. Truncate
-  `diff` toward zero. Return null for invalid input, also for NaN and ±Infinity. Stop an `add`
-  loop that does not advance.
-- Format with `DateFormat` of `intl`, with ICU pattern tokens
-  ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)). The port has no
-  moment-compatible formatter or parser.
-- Read "now" through `jsDateNow()` ([Chart.js ADR 0010](adr/0010-js-numeric-semantics.md)),
-  because `scale.time.js:342-343` calls `Date.now()`. A spec sets the time with `withClock` of
-  `package:clock`. The fake time of `testWidgets` starts at the wall-clock time of the test start.
-  It moves only by the pumped durations.
-- The specs use the default adapter in UTC. The harness has no moment emulation. A spec case that
-  asserts moment-token output or parses a moment format string skips with
-  `'diverges: <row id>'`.
-- `flutter_chartjs` has no named time zones. A later optional package can add them on `timezone`
-  `^0.11.2` (BSD-2-Clause, labs.dart.dev, pure Dart). That package imports only
-  `package:timezone/timezone.dart`. It takes the zone from `adapters.date.zone`, as the luxon
-  adapter does, and it uses the moment-timezone offset rule.
-- Do not use `temporal` (0.1.3). Its web backend calls the browser `Temporal` global through
-  `dart:js_interop` (ADR 0001). Safari has no `Temporal`. Its native build compiles Rust from
-  source with cargo. Its native time-zone code gives wrong local midnights on some DST days. Its
-  license is not detected, its repository returns 404, and it has no verified publisher.
+[Chart.js ADR 0024](adr/0024-dates.md) (proposed) holds the decision and its evidence. In short:
+- `DateAdapterBase.prototype` starts with the default members of the port-only
+  `date_adapter.dart`. `_date` stays the base class `DateAdapterBase`. A member of the exact Dart
+  type of its method gets a typed direct call. Five port-only pure files
+  `lib/src/core/date_*.dart` hold the adapter. The time scale keeps its adapter in the
+  `@internal` field `adapter` (`_adapter`, Chart.js ADR 0025 §6).
+- The members follow chartjs-adapter-moment 1.0.1 on moment 2.29.4: the `isoWeekday` clamp and
+  the forward rule, `add` with `absRound`, `diff` with `absFloor` and `monthDiff`, and the week
+  start of the locale.
+- The default zone is local time. The harness ports `test/index.js:23` as
+  `setDefaultDateZone('Etc/UTC')`.
+- `format` takes ICU patterns. The default formats give the moment en_US text, also the lower-case
+  day period, because it changes the ticks. A spec case with a moment format string skips as
+  `'diverges: adapt-date-moment-format'`. A port-only twin with ICU patterns tests the same
+  behavior.
+- `parse` reads ISO 8601 with the moment grammar, RFC 2822, the ASP.NET form, and a format string
+  through intl with the current-date fill. Other strings, Lists and Maps are invalid (row
+  `adapt-date-parse-fallback`).
+- "Now" is `jsDateNow()` ([Chart.js ADR 0010](adr/0010-js-numeric-semantics.md)), because
+  `scale.time.js:342-343` calls `Date.now()`. A step of `_generate` that does not advance throws a
+  `StateError` (row `adapt-time-generate-no-advance`).
 
-**Phase 5 state.** `lib/src/core/core.adapters.dart` exists, a pure layer. Its `DateAdapter`
-members take and give JS values (`Object?`). `DateAdapterBase.prototype` holds the members that
-`override` assigns (row `adapt-date-adapter-prototype`). The class value `DateAdapterBase.jsClass`
-is the `_date` of `adapters`. The default adapter of phase 6 can subclass `DateAdapterBase` with
-narrower return types. It can also call `DateAdapterBase.override`, as the chartjs-adapter
-packages do. The ADR of phase 6 confirms or narrows the `Object?` form.
+**Later zone package.** `flutter_chartjs` has no named time zones. A later optional package can
+add them on `timezone` `^0.11.2` (BSD-2-Clause, labs.dart.dev, pure Dart). That package imports
+only `package:timezone/timezone.dart`. It takes the zone from `adapters.date.zone`, as the luxon
+adapter does, and it uses the moment-timezone offset rule. `timezone` has no DST transitions
+after 2037. The ADR of the package decides named zones, the rules after 2037 and a zone option for
+each scale (Chart.js ADR 0024, Open 4).
 
-**Evidence.**
-- `scale.time.tests.js` mentions `moment` 85 times. Of 145 classified time-scale cases, 97 parse
-  with moment format strings, 58 check moment-token text and 0 depend on DST.
-- A `DateTime` prototype matched moment local mode on the VM, dart2js and dart2wasm for
-  1970-2037.
-- `temporal` on native gave 29 wrong local midnights in 9,130, against Python `zoneinfo`. The bug
-  is in temporal_rs 0.2.6. It costs 0.23-0.44 µs per operation (AOT), 7-18× the cost of UTC
-  `DateTime`.
-
-**Open.**
-- The `isoWeekday` rule: moment can move a date forward, but luxon and date-fns move it back.
-- Whether `diff` returns fractions or truncates.
-- Outside 1970-2037, the VM and dart2wasm compute local offsets from a substitute year. Thus only
-  UTC gives the same ticks on every target.
-- `timezone` has no DST transitions after 2037.
-- `temporal` becomes a candidate for the optional zone package only after six changes:
-  1. a web backend without JS interop
-  2. prebuilt, checksummed binaries, or a build for each target architecture
-  3. the DST fix
-  4. a license file that pana detects, with notices for the bundled crates
-  5. support for `code_assets` 2.x
-  6. a verified publisher, a public repository and a stable 1.0
+**`temporal`.** Do not use `temporal` (0.1.3). Its web backend calls the browser `Temporal` global
+through `dart:js_interop` (ADR 0001). Safari has no `Temporal`. Its native build compiles Rust from
+source with cargo. Its native time-zone code gives wrong local midnights on some DST days: on
+native it gave 29 wrong local midnights in 9,130, against Python `zoneinfo`. The bug is in
+temporal_rs 0.2.6. It costs 0.23-0.44 µs per operation (AOT), 7-18× the cost of UTC `DateTime`.
+Its license is not detected, its repository returns 404, and it has no verified publisher.
+`temporal` becomes a candidate for the optional zone package only after six changes:
+1. a web backend without JS interop
+2. prebuilt, checksummed binaries, or a build for each target architecture
+3. the DST fix
+4. a license file that pana detects, with notices for the bundled crates
+5. support for `code_assets` 2.x
+6. a verified publisher, a public repository and a stable 1.0
 
 ### 2.11 Chart.js ADR 0001: Theming (gate 1 for its four invariants, else 5)
 
@@ -565,6 +572,26 @@ and the items that stay open. In short:
 - The ADR changes the chart host: the first resize notification comes at the next layout, and an
   append or a removal reports the attach state in a microtask checkpoint.
 
+### 2.19 Chart.js ADR 0025: Scale value parameters (gate 6)
+
+[Chart.js ADR 0025](adr/0025-scale-value-parameters.md) (proposed) holds the decision and its
+evidence. In short:
+- `getPixelForValue`, `getDecimalForValue`, `getDistanceFromCenterForValue`,
+  `getPointPositionForValue` and `getLineWidthForValue` take `Object?`. Dart `null` is JS
+  `null`, and the `undefined` sentinel is JS `undefined`. The callers pass the raw value. The
+  row `adapt-scale-position-value` goes.
+- The category, linear and logarithmic `getPixelForValue` and the time `getDecimalForValue`
+  start with a port-only `value is double` branch, then the literal lines. A port-only test
+  pins both paths.
+- Phase 6 adds `types.Chart.getDataVisibility` and
+  `types.DatasetController.getAllParsedValues`. Phase 7 adds the other `types.Scale` members
+  and `types.RadialLinearScale` with their first readers, with the signatures of the ADR.
+- The `_` members that another file or a spec reads drop the underscore with `@internal`:
+  `startValue`, `endValue`, `valueRange`, `offsets`, `generate`, `unit`, `adapter`,
+  `pointLabels` and `pointLabelItems`.
+- `Scale` implements `MinMax`. `setMinAndMaxByKey` reads a tick by its `value`.
+- A phase 7 reader that passes `parsed[axis]` to a scale keeps `undefined` for an absent key.
+
 ## 3. Test harness
 
 **Package.** `packages/chartjs_test_utils` (`publish_to: none`) mirrors the npm package module by
@@ -593,8 +620,9 @@ regular dependencies of the package ([Chart.js ADR 0022](adr/0022-chart-test-har
 ([Chart.js ADR 0015](adr/0015-text.md)).
 
 **`test/index.js` equivalent.** From phase 3, `packages/flutter_chartjs/test/flutter_test_config.dart`
-ports `test/index.js`. It translates DPR 1 (`:5`). The UTC zone line (`:23`) has no Dart
-counterpart: the specs use the default date adapter in UTC (phase 6). The disabled colors plugin
+ports `test/index.js`. It translates DPR 1 (`:5`). It translates the UTC zone line (`:23`) as
+`setDefaultDateZone('Etc/UTC')` ([Chart.js ADR 0024](adr/0024-dates.md)). `setUpSpecs()` of
+`pure.dart` makes the same call. The disabled colors plugin
 (`:25-28`) comes in phase 8. Four port-only hunks carry `DIVERGES` markers and `harness-*` rows.
 Phase 3 added the file with DPR 1 and the first two rows. Phase 5 added the last two rows:
 - `harness-defaults-restore`: the restore of `defaults`, `overrides` and `descriptors` in
@@ -896,7 +924,7 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 | 3. Canvas, text, platform, harness | done; `lib/src/canvas`; rest of `helpers.canvas`; rest of `helpers.rtl`; `helpers.dom`; `src/helpers/index.ts`; `platform.*`; internal chart host; phase-3 harness rows | non-chart canvas and DOM cases pass; the 2 `helpers.color` canvas cases pass; text-metric probe recorded. Result: the five phase 3 spec files have 66 cases. 21 pass, 0 fail and 45 skip. The 12 non-chart `helpers.canvas` cases, the 4 `helpers.color` cases and the 5 `helpers.dom` cases with a Flutter equivalent pass. 28 cases skip as `blocked: core.controller`, 15 as `n/a` (CSS, the shadow DOM, DOM ids, iframes, a web worker) and 2 as `diverges: platform-relative-position`. `test:cases` reports 205 passed, 0 failed, 47 skipped and 0 missing cases in the 17 ported spec files. The text-metric probe ([text-metrics.md](text-metrics.md)) found all 80 widths equal to Chrome. Chart.js ADRs 0013-0015 record the gate 3 decisions (proposed) |
 | 4. Elements | done; `core.element`, point, line, bar, arc, `elements/index`; the type members; `jsOrZero` and `js_webidl.dart` of `lib/src/js`; tool 1 roots | 20 of 21 element cases pass. Result: the five phase 4 spec files have 22 cases. 21 pass, 0 fail and 1 skips as `blocked: core.controller` (`element.line`, "should not cache path when animations are enabled"). 20 of the 21 element cases pass. `test:cases` reports 226 passed, 0 failed, 48 skipped and 0 missing cases in the 22 ported spec files. The port-only tests `test/port/core/core.element_test.dart` and `test/port/elements/` (the four elements and `index`) test the behavior that the specs do not test. Four generators of `tool/reference/` (point, line, bar and arc) write the reference data of the four element tests from an x64 build of Node.js v24.12.0. Chart.js ADR 0017 records the gate 4 decision (proposed). [performance.md](performance.md) §8 has the element draw cost on the Pixel 8a, on macOS and in Chrome with dart2wasm, and a number path in `toTRBL` and `toTRBLCorners` that cuts the bar draw time on macOS by about 12 % |
 | 5. Core | `core.config` with hunks H0-H3 and their tests; registry to controller; phase-5 harness rows; tools 6 and 8 | non-chart core cases pass; others skipped `blocked: <module>`. Result of the port step and the harness step (2026-10-20): all 21 core modules have the status `ported`. The 14 core spec files have 286 cases. 98 pass, 0 fail and 188 skip. The 36 non-chart cases of the new core spec files pass: `core.animation` 6, `core.animations` 8, `core.animator` 1, `core.controller` 4, `core.layouts` 1, `core.registry` 15 and `core.scale` 1. The harness rows of phase 5 are done: `acquireChart`, `releaseChart`, `releaseCharts`, `triggerMouseEvent`, the release at the unmount and the built-in registration. Through the harness, 32 more `core.controller` cases pass (36/85), 19 `core.plugin` cases (19/19) and 3 `core.scale` cases (4/41). 188 core cases skip. Of these, 13 wait for a scale of phase 6, 164 for a controller of phase 7 and 10 for a plugin of phase 8. 1 case is `n/a` (DOM element ids). Of the 76 cases of the port step that waited for the harness, 74 pass. 1 skips as `diverges: platform-canvas-no-shadow`, and 1 as `blocked: scale.linear`. The review of phase 5 made two changes. The `data: []` case of `core.controller` passes: an array data gives a new Map (`adapt-config-objects`). The `core.scale` case "should throw error on scale with custom name without axis type" skips as `blocked: scale.linear`: its throw needs `defaults.scales.linear`. `core.controller.tests.js:918` passes too. It was `n/a` before. Outside core, `helpers.canvas` has 14/14, `helpers.dom` 7/22, `platform.basic` 2/5 and `platform.dom` 15/21. `test:cases` reports 337 passed, 0 failed, 213 skipped and 0 missing cases in the 32 ported spec files. No case skips as `blocked: harness`. Tools 6 and 8 run in `check:port`. The gallery has the Core tab and the stress mode `chart`. The adversarial review and the figures of the typed options on a real chart path come next |
-| 6. Scales | seven scales; default date adapter on `DateFormat` (ICU tokens) | non-chart scale cases pass; moment-token cases skip as `diverges` |
+| 6. Scales | seven scales; default date adapter on `DateFormat` (ICU tokens) | non-chart scale cases pass; moment-token cases skip as `diverges`. Result of the port, the specs and the fixes (2026-10-20): the seven scale modules and `src/scales/index.js` have the status `ported`, and `lib/src/index.dart` registers the six scales. The default date adapter is the five port-only files `lib/src/core/date_*.dart` (Chart.js ADR 0024). The five scale spec files have 233 cases. 22 pass, 0 fail and 211 skip: `scale.category` 2/19, `scale.linear` 7/45, `scale.logarithmic` 2/60, `scale.radialLinear` 2/23 and `scale.time` 9/86. 11 cases without a chart pass: the registration and the default config of each scale, and the date library of `scale.time`. 11 chart cases pass: 5 of `scale.linear` and 6 of `scale.time`. Of the 211 skips, 59 are `diverges: adapt-date-moment-format`. 140 wait for a controller of phase 7 and 12 for `plugin.legend` of phase 8. The 13 core cases that waited for a scale pass: `core.controller` 43/85 and `core.scale` 10/41. `test:cases` reports 372 passed, 0 failed, 411 skipped and 0 missing cases in the 37 ported spec files. The port-only tests compare 445 charts of the seven scale files and 8 charts of the harness with the chart.js 4.5.1 npm dist. They use the Liberation Sans widths, and the time charts use chartjs-adapter-moment 1.0.1 on moment 2.29.4. The date adapter gives the moment result for each reference call, also for the corpus of 357,576 calls. The 59 `diverges` cases of `scale.time` have port-only twins with ICU patterns: 2 pass and 57 wait for `controller.line`. Chart.js ADRs 0024 and 0025 record the gate 6 decisions (proposed). The fixes wrote Chart.js ADR 0026 (proposed) for the number formatting guards. The gallery has the Axes tab, the stress mode `axes` and the frameless benchmark `lib/main_bench.dart`. [performance.md](performance.md) §10.10-§10.11, §11 and §12 have the figures. The frame figures of the scale path come next |
 | 7. Controllers | bar first, then the other seven; fixture smoke runner | controller and earlier chart-blocked cases pass or have rows; fixture smoke tests pass for the ported types; gallery shows every type |
 | 8. Plugins | seven plugins; hunks H4a-H4c and H5 and their tests; input adapter for legend and tooltip | plugin cases pass; `plugin.*` fixture smoke tests pass |
 | 9. Flutter API and release | public widget on the host; theme API; keyboard and semantics; docs; published floor (2.12); pana | `flutter_chartjs` 0.1.0 on pub.dev |

@@ -7,8 +7,9 @@
 ///
 /// The value mapping: `null` is JS `null`, [undefined] is JS `undefined`
 /// (Chart.js ADR 0006), `bool` is a boolean, `num` is a number, `String` is a
-/// string, `List` is an array, `Map` is a plain object and any other object
-/// is an object whose `toString()` is its primitive value.
+/// string, `List` is an array, `Map` is a plain object, `DateTime` is a
+/// `Date` (Chart.js ADR 0024) and any other object is an object whose
+/// `toString()` is its primitive value.
 ///
 /// Dart `RegExp` follows ECMAScript: `\s` is `StrWhiteSpaceChar`, the white
 /// space that `ToNumber` and `parseFloat` skip. `String.trim` differs: it
@@ -18,6 +19,8 @@ library;
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 
 /// ECMAScript `ToNumber(value)`, the coercion of unary `+` and `Number()`.
+///
+/// A `DateTime` is a JS `Date`: its time value (Chart.js ADR 0024).
 double jsToNumber(Object? value) => switch (value) {
   final double d => d,
   final num n => n.toDouble(),
@@ -25,6 +28,7 @@ double jsToNumber(Object? value) => switch (value) {
   Undefined() => double.nan,
   final bool b => b ? 1 : 0,
   final String s => _stringToNumber(s),
+  final DateTime d => d.millisecondsSinceEpoch.toDouble(),
   _ => _stringToNumber(jsToString(value)),
 };
 
@@ -65,6 +69,32 @@ bool jsTruthy(Object? value) => switch (value) {
 /// ([jsToNumber]), which the arithmetic after the read applies. Thus a
 /// truthy value that is not a number, for example `'a'`, gives NaN.
 double jsOrZero(Object? value) => jsTruthy(value) ? jsToNumber(value) : 0;
+
+/// The JS operator `a + b` (`ApplyStringOrNumericBinaryOperator`,
+/// ECMAScript 13.15.3) on two values of the value mapping, for example the
+/// sum of a raw option value and a number:
+/// `getTickMarkLength(options) + titleHeight` (core.scale.js:649).
+///
+/// `ToPrimitive` gives a string for a `String`, a `List`, a `Map`, a
+/// `DateTime` (a JS `Date` with the hint `default`) and the other objects.
+/// When one operand gives a string, `+` joins the [jsToString] of the two
+/// operands: `100 + '5'` gives `'1005'`, and `'8' + 0` gives `'80'`. Else
+/// `+` adds the [jsToNumber] of the two operands: `true + null` gives 1.
+///
+/// The result is a `double` or a `String`. A caller that uses the result as
+/// a number applies [jsToNumber] to it, as the JS arithmetic or the canvas
+/// call after the `+` does. Two doubles take the fast path: their sum.
+Object jsAdd(Object? a, Object? b) {
+  if (a is double && b is double) return a + b;
+  return _isNumberPrimitive(a) && _isNumberPrimitive(b)
+      ? jsToNumber(a) + jsToNumber(b)
+      : jsToString(a) + jsToString(b);
+}
+
+/// Whether `ToPrimitive(value)` is not a string: `null`, [undefined], a
+/// boolean or a number.
+bool _isNumberPrimitive(Object? value) =>
+    value == null || value is Undefined || value is bool || value is num;
 
 /// ECMAScript `ToString(value)`, the coercion of `'' + value`, of a template
 /// literal and of `String(value)`.

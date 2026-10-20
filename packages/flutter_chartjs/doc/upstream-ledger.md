@@ -9,6 +9,8 @@ upstream-tracking.md §6. At each module start, the porter adds the new rows (up
 
 Pinned: v4.5.1 (9c5cf9f). Watching: master. Last synced: 7169e651 (2026-10-03).
 
+Exception: the maintainer decided on 2026-10-20 that phase 6 ports from the v4.5.1 pin without a commit pin. This is an exception to ADR 0006 rule 5. The rows stay `deferred`.
+
 Signals: #12302 (milestone 4.6.0, core.ticks). #12286 (milestone 4.6.0, helpers.core). #12268 (fix for the security report #12265). #12205 (theming.md §9, legend crash after a font change). #11910 (theming.md §9, scale color defaults do not update). #12151 (report of the #12097 regression). #12269 (report of the #12097 regression). #7738 (touch tooltips never hide, ADR: Input events and interaction state).
 
 ## After v4.5.1

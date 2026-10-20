@@ -44,7 +44,8 @@ final class CanvasFont {
   /// The weight.
   final ui.FontWeight weight;
 
-  /// The style: normal or italic (`oblique` is italic).
+  /// The style: normal or italic (`oblique` is italic, `oblique 0deg` is
+  /// normal).
   final ui.FontStyle style;
 
   /// The first family, the `fontFamily` of the text style.
@@ -121,7 +122,21 @@ final RegExp _sizePattern = RegExp(
   caseSensitive: false,
 );
 
-final RegExp _numberPattern = RegExp(r'^(?:\d+(?:\.\d*)?|\.\d+)$');
+/// A CSS `<number>`: an optional sign, digits with an optional fraction
+/// (`1.` is not a number), and an optional exponent.
+const String _number = r'[+-]?(?:\d+|\d*\.\d+)(?:e[+-]?\d+)?';
+
+final RegExp _numberPattern = RegExp('^$_number\$', caseSensitive: false);
+
+/// The angle after `oblique`: a CSS `<number>` with an angle unit.
+final RegExp _anglePattern = RegExp(
+  '^($_number)(?:deg|grad|rad|turn)\$',
+  caseSensitive: false,
+);
+
+/// The count of keywords that can come before the size (Blink
+/// `ConsumeFont`): the style, the variant, the weight and the stretch.
+const int _maxKeywords = 4;
 
 final RegExp _token = RegExp(r'\S+');
 
@@ -138,8 +153,23 @@ final Map<String, CanvasFont?> _fontCache = {};
 /// The size unit is `px` or `pt`. The line height after `/` is read and
 /// dropped: canvas text ignores it. `normal`, `small-caps` and the stretch
 /// keywords are accepted and have no effect. A weight is `normal`, `bold`,
-/// `lighter`, `bolder` (relative to 400) or a number in [1, 1000], which
-/// gives the nearest `ui.FontWeight`.
+/// `lighter`, `bolder` (relative to 400) or a CSS number in [1, 1000], which
+/// gives the nearest `ui.FontWeight`. `oblique` can have an angle (`deg`,
+/// `grad`, `rad` or `turn`) with a number in [-90, 90].
+///
+/// The keywords before the size follow Blink `ConsumeFont`: at most 4
+/// keywords, and each of the style, the variant, the weight and the stretch
+/// at most one time. `normal` is one of the 4 keywords. Thus
+/// `bold 600 10px a` and `italic italic 10px a` do not parse, as in Chrome.
+///
+/// The engine then selects the face of the family for that `ui.FontWeight`.
+/// For the test font (the faces 400 and 700), the result is the face of
+/// Chrome on Linux with system fonts, the platform of the upstream specs:
+/// fontconfig selects the nearest weight. Thus the weights 1 to 549.99 give
+/// the regular face, and 550 to 1000 give the bold face. The CSS font
+/// matching rule of `@font-face` fonts (bold from 501) does not apply. For a
+/// family with more faces, the face can be different from Chrome, because
+/// `dart:ui` does not give the faces of a family.
 CanvasFont? parseCanvasFont(String font) {
   final cached = _fontCache[font];
   if (cached != null || _fontCache.containsKey(font)) return cached;
@@ -150,6 +180,13 @@ CanvasFont? parseCanvasFont(String font) {
 CanvasFont? _parse(String font) {
   var weight = ui.FontWeight.normal;
   var style = ui.FontStyle.normal;
+  // The keywords before the size, as Blink `ConsumeFont` reads them.
+  var keywords = 0;
+  var hasStyle = false;
+  var hasVariant = false;
+  var hasWeight = false;
+  var hasStretch = false;
+  var afterOblique = false;
   for (final match in _token.allMatches(font)) {
     final token = match[0]!;
     final slash = token.indexOf('/');
@@ -179,21 +216,38 @@ CanvasFont? _parse(String font) {
       );
     }
     final keyword = token.toLowerCase();
-    if (keyword == 'normal' ||
-        keyword == 'small-caps' ||
-        _stretchKeywords.contains(keyword)) {
-      continue;
+    if (afterOblique) {
+      afterOblique = false;
+      final angle = _anglePattern.firstMatch(keyword);
+      if (angle != null) {
+        // Chromium compares the number with [-90, 90] in each unit.
+        final value = double.parse(angle[1]!);
+        if (value < -90 || value > 90) return null;
+        if (value == 0) style = ui.FontStyle.normal;
+        continue;
+      }
     }
-    if (keyword == 'italic' || keyword == 'oblique') {
+    if (++keywords > _maxKeywords) return null;
+    if (keyword == 'normal') continue;
+    if (!hasStyle && (keyword == 'italic' || keyword == 'oblique')) {
+      hasStyle = true;
       style = ui.FontStyle.italic;
-    } else if (keyword == 'bold' || keyword == 'bolder') {
+      afterOblique = keyword == 'oblique';
+    } else if (!hasVariant && keyword == 'small-caps') {
+      hasVariant = true;
+    } else if (!hasWeight && (keyword == 'bold' || keyword == 'bolder')) {
+      hasWeight = true;
       weight = ui.FontWeight.bold;
-    } else if (keyword == 'lighter') {
+    } else if (!hasWeight && keyword == 'lighter') {
+      hasWeight = true;
       weight = ui.FontWeight.w100;
-    } else if (_numberPattern.hasMatch(keyword)) {
+    } else if (!hasWeight && _numberPattern.hasMatch(keyword)) {
       final number = double.parse(keyword);
       if (number < 1 || number > 1000) return null;
+      hasWeight = true;
       weight = ui.FontWeight.values[((number / 100).round().clamp(1, 9)) - 1];
+    } else if (!hasStretch && _stretchKeywords.contains(keyword)) {
+      hasStretch = true;
     } else {
       return null;
     }

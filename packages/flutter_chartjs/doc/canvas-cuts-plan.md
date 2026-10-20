@@ -142,6 +142,38 @@ Changes to the cited files:
   three event cases and of the `data: []` case. The new rows of `parity.md` are at the end of the
   port-only table, so no cited row number moves. No library file that this plan cites changed. No
   trigger occurred.
+- 2026-10-20, the font weight review of `lib/src/canvas/canvas_ui_text.dart`. A probe ran in
+  Chromium 155 on Linux with the system Liberation Sans. It gave the regular face for the weights 1
+  to 549.99 and the bold face for 550 to 1000. The canvas layer gives the same faces. Thus the mapping of a
+  weight to the nearest `ui.FontWeight` stays. The review of the fix found that the keywords
+  before the size did not follow Chromium. Now `parseCanvasFont` reads a weight as a CSS number
+  (`+500` and `5e2` parse, `500.` does not), accepts each keyword one time with at most 4
+  keywords, and reads the angle after `oblique` (`oblique 20deg`, a style that
+  `helpers.options.ts:8` accepts). `canvas_ui_text.dart` has 66 lines more and 12 lines fewer
+  (507 lines). The new test file `test/port/canvas/canvas_ui_text_test.dart` (8 tests) pins the
+  faces and the keywords. This plan cites no line of `canvas_ui_text.dart`, and the cuts do not
+  remove its code. Thus the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
+  estimates do not change. No trigger occurred.
+- 2026-10-20, the phase 6 docs in porting-flow.md (§2, §2.3, §2.5, §2.10, §2.19, §3 and
+  §5). The text of §2.2 and §2.7 and of the cited rows of the harness table of §3 does not
+  change. The line of §2.2 moves from 210 to 220, the lines of §2.7 from 294-297 to 312-315, and
+  the cited rows of the harness table from 583-584 to 610-611. §3.7 gives the new line numbers.
+  The new rows of `parity.md` are at the end of the port-only table, and the phase 6 rows of the
+  upper tables replace rows that were there, so no cited row number moves. The lines of the
+  groups of `canvas_ui_test.dart` in §2.6 were older than the phase 5 tests of the attributes.
+  §2.6 now gives the lines of the tree (`transforms` 400-482, `paths` from 667, `rotated text`
+  1251-1293, `circle batch` from 1522). No library file that this plan cites changed in phase 6,
+  except `canvas_ui_text.dart` (the entry above). No trigger occurred.
+- 2026-10-20, the phase 6 gallery. Three gallery files of A3 change. `main_stress.dart` gets the
+  mode `axes` with the defines `SCALE`, `YSCALE` and `AUTOSKIP`. `stress_demo.dart` gets the mode
+  `axes`: a real chart on the scales of phase 6 (`lib/demo/stress_axes.dart`). The config of the
+  mode `chart` moves to the new file `lib/demo/stress_chart_config.dart`. The loop test of
+  `stress_elements_test.dart` skips the two modes that run a chart (`StressMode.runsChart`).
+  `stress_chart_test.dart` and `stress_axes_test.dart` test these modes. The note on A3 names the
+  mode `axes`. The work of A3 (`POINT_STYLE`, the arc scenario and the baselines of §6.3) does not
+  change. `demo_chart.dart`, which §3.1 cites, gets `getDataVisibility`. `DemoChart` keeps its
+  default `UiCanvasElement()`, so §3.1 does not change. Thus the references and the estimates do
+  not change. No trigger occurred.
 
 ## 1. Why
 
@@ -337,11 +369,11 @@ Rejected options:
 ### 2.6 Tests
 
 The tests that pin the current behavior are in `test/port/canvas/canvas_ui_test.dart`
-(`@TestOn('vm')`): the group `transforms` (310-393), the group `paths` (577 and later, with "a
+(`@TestOn('vm')`): the group `transforms` (400-482), the group `paths` (667 and later, with "a
 full circle and a negative radius", "a sweep just under a full turn fills a circle", the group "a
 full circle on an empty path", "arc connects to the current point with a line", "a rotated
 ellipse and arcTo draw", "fill and stroke a Path2D under the transform"), the group `rotated text`
-(1161-1203) and the group `circle batch` (1432 and later, 28 tests). They must stay green without
+(1251-1293) and the group `circle batch` (1522 and later, 28 tests). They must stay green without
 a change. The `helpers.canvas` specs use `MockContext`. They record calls and never reach
 `dart:ui`, so they are no evidence for cut 1.
 
@@ -799,9 +831,9 @@ are for work package P. The line numbers below are the lines after C2.
   applies the scale that the host gives. Delete the bullet on the `UiCanvasElement.devicePixelRatio`
   write. "The content keeps bitmap pixels across a DPR change" stays. The stretch bullet points to
   Chart.js ADR 0014 §5. Evidence: the test names.
-- **`porting-flow.md`** (proposed): §2.2 (line 210), "`paint` applies `scale(1 / devicePixelRatio)`"
-  becomes "`paint` maps the bitmap pixels with the scale of the host". §2.7 (lines 294-297): one
-  bullet on the canvas attributes. §3, harness table (lines 583-584), `acquireChart`: 512 x 512 as
+- **`porting-flow.md`** (proposed): §2.2 (line 220), "`paint` applies `scale(1 / devicePixelRatio)`"
+  becomes "`paint` maps the bitmap pixels with the scale of the host". §2.7 (lines 312-315): one
+  bullet on the canvas attributes. §3, harness table (lines 610-611), `acquireChart`: 512 x 512 as
   attributes (`UiCanvasElement(width: 512, height: 512)`), the `canvas.style` option fills the
   inline style, a wrapper style becomes a `SizedBox`, `ConstrainedBox` or `Padding`, and the
   default wrapper is a box of the canvas display size. `toBeChartOfSize`: the display size rule of
@@ -954,9 +986,10 @@ stays (priority 1, the upstream behavior). The two iPhone 17 Pro smoke pairs pas
 limit on both sides (§9.2 and §9.3 of `performance.md`).
 
 **Note on A3 (phase 4).** Phase 4 added the scene modes of the stress tab (§6.3). The stress
-entry takes `--dart-define=MODE=<primitives|elements|bars|arcs|chart>`, and the default is
+entry takes `--dart-define=MODE=<primitives|elements|bars|arcs|chart|axes>`, and the default is
 `primitives`. Phase 5 added the mode `chart`: a real chart path with the typed options of the
-resolver. For A3, this means:
+resolver. Phase 6 added the mode `axes`: the points of the mode `chart` on the real scales of
+phase 6. For A3, this means:
 - The `arcs` mode draws `ArcElement` wedges under the retina scale. Thus `MODE=arcs` at 5000 + 0
   can serve the arc micro-benchmark (a) on all three platforms.
 - The micro-benchmark (b), under a skew, still needs the scratch package. No mode draws under a

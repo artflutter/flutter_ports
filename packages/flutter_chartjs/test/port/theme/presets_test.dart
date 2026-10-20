@@ -19,18 +19,19 @@ import 'package:test/test.dart';
 
 import 'light_reference.dart';
 
-// theming.md §8 test 3, the part of phase 5: the light preset equals
-// upstream for core.defaults, the four elements and core.scale.defaults.
-// The expected values are in light_reference.dart. The generator
-// tool/reference/theme_light_reference.mjs runs the pinned upstream sources
-// in Node.js v24.12.0 on x64, with the four elements registered, and without
-// a theme.
+// theming.md §8 test 3, the parts of phases 5 and 6: the light preset
+// equals upstream for core.defaults, the four elements, core.scale.defaults
+// and the keys of scales.radialLinear. The expected values are in
+// light_reference.dart. The generator tool/reference/theme_light_reference.mjs
+// runs the pinned upstream sources in Node.js v24.12.0 on x64, with the four
+// elements and the radial linear scale registered, and without a theme.
 //
 // main() registers the four element classes through a new TypedRegistry
 // (core.typedRegistry.js:24-53, Chart.js ADR 0022, section 8), before the
-// snapshot of the restore. The keys of the plugins (tooltip, legend, title,
-// subtitle and the colors palette) come in phase 8. The keys of
-// scales.radialLinear come in phase 6. The resolution of 8 chart types with
+// snapshot of the restore. The scales are not pure layers. Thus the radial
+// linear scale case is in presets_radial_test.dart, which runs on the VM
+// only. The keys of the plugins (tooltip, legend, title, subtitle and the
+// colors palette) come in phase 8. The resolution of 8 chart types with
 // controllers comes in phase 7.
 
 /// The parsed form of the CSS color [value]: the `rgbString` of the ported
@@ -143,7 +144,7 @@ void main() {
     expect(themeLightReferenceArch, 'x64');
   });
 
-  group('theming.md §8 test 3, the phase 5 part', () {
+  group('theming.md §8 test 3, the parts of phases 5 and 6', () {
     test('the light preset restates the upstream values', () {
       // theming.md §9: the values that the preset restates.
       final compiled = compileChartTheme(ChartThemes.light)!;
@@ -168,13 +169,13 @@ void main() {
           expect(_parsed(value), isNotNull, reason: path);
         }
       }
-      // The preset emits these keys and no other key of phase 5.
+      // The preset emits these keys and no other key of phase 6.
       final leafPaths = _leaves(compiled).keys
           .where((path) => !path.startsWith('transitions'))
           .map((path) => path.replaceFirst(RegExp(r'\.font\..*$'), '.font'))
           .toSet();
       expect(leafPaths, keys);
-      expect(emitted, {'color', 'scale', 'elements'});
+      expect(emitted, {'color', 'scale', 'scales', 'elements'});
     });
 
     test('the element options equal upstream in both modes', () {

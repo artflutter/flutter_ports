@@ -13,7 +13,9 @@ import 'dart:math' as math;
 import 'package:flutter_chartjs/src/helpers/helpers.core.dart' show isFinite;
 import 'package:flutter_chartjs/src/js/js_math.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
+import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs/src/types/geometric.dart';
+import 'package:flutter_chartjs/src/types/index.dart' as types show Tick;
 
 /// helpers.math.ts:9 `PI`.
 const double pi = math.pi;
@@ -123,6 +125,8 @@ bool almostWhole(double x, double epsilon) {
 
 /// helpers.math.ts:81 the type `{ min: number, max: number }` of the
 /// `_setMinAndMaxByKey` target.
+///
+/// `Scale` of `core.scale.dart` implements it (Chart.js ADR 0025, section 7).
 abstract interface class MinMax {
   /// helpers.math.ts:81 `min`.
   abstract double min;
@@ -132,15 +136,23 @@ abstract interface class MinMax {
 }
 
 /// helpers.math.ts:79 `_setMinAndMaxByKey`.
+///
+/// The read `array[i][property]` gives [types.Tick.value] for a tick and
+/// the key `'value'`: the form of the two upstream callers
+/// (scale.linearbase.js:274, scale.logarithmic.js:172). Another item gives
+/// the read of [jsGet]: `undefined` for an absent key of a Map, and
+/// `isNaN(undefined)` is true (Chart.js ADR 0025, section 7).
 void setMinAndMaxByKey(
-  List<Map<String, Object?>> array,
+  List<Object?> array,
   MinMax target,
   String property,
 ) {
   for (var i = 0, ilen = array.length; i < ilen; i++) {
-    final value = array[i][property];
-    // An absent key reads as undefined, and isNaN(undefined) is true.
-    if (array[i].containsKey(property) && !jsIsNaN(value)) {
+    final item = array[i];
+    final value = item is types.Tick && property == 'value'
+        ? item.value
+        : jsGet(item, property);
+    if (!jsIsNaN(value)) {
       target
         ..min = jsMin(target.min, jsToNumber(value))
         ..max = jsMax(target.max, jsToNumber(value));

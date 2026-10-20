@@ -14,18 +14,18 @@
 ///
 /// - `colors`: a Map of color tokens. Each value is a [RawThemeColor] or
 ///   Dart `null`, which themes nothing.
-/// - `typography`: a Map with the font token `font`, a Map of the `FontSpec`
-///   fields `family`, `size`, `style`, `weight` and `lineHeight`, or Dart
-///   `null`.
+/// - `typography`: a Map with the font tokens `font` and `pointLabels`. Each
+///   value is a Map of the `FontSpec` fields `family`, `size`, `style`,
+///   `weight` and `lineHeight`, or Dart `null`.
 /// - `raw`: a Map of Chart.js keys without a token. Its keys beat the token
 ///   keys.
 ///
-/// The compiler knows the tokens of the parts that exist in phase 5:
-/// `core.defaults`, the elements and `core.scale.defaults` (theming.md §10).
-/// The tooltip, legend, title, subtitle and colors plugin keys come with
-/// the plugins in phase 8. The `scales.radialLinear` keys and the token
-/// `typography.pointLabels` come with the scales in phase 6. A debug assert
-/// rejects a field or a token that the compiler does not know.
+/// The compiler knows the tokens of the parts that exist in phase 6:
+/// `core.defaults`, the elements, `core.scale.defaults` and the
+/// `scales.radialLinear` keys of `scale.radialLinear` (theming.md §10). The
+/// tooltip, legend, title, subtitle and colors plugin keys come with the
+/// plugins in phase 8. A debug assert rejects a field or a token that the
+/// compiler does not know.
 ///
 /// Ported files never import this file (Chart.js ADR 0001, invariant 4).
 library;
@@ -218,14 +218,16 @@ bool _isPaletteKey(List<String> path, int i) =>
     path[1] == 'colors' &&
     _paletteKeys.contains(path[i]);
 
-/// The color tokens of phase 5 and the keys that each token emits
+/// The color tokens of phase 6 and the keys that each token emits
 /// (theming.md §4), in the order of that table.
 ///
 /// - `color` replaces `Defaults.color` (`core.defaults.js:43`). The scale
-///   routes read it (`core.scale.defaults.js:86, 89`).
+///   routes (`core.scale.defaults.js:86, 89`) and the route of the point
+///   labels (`scale.radialLinear.js:400-404`) read it.
 /// - `borderColor` replaces `Defaults.borderColor` (`core.defaults.js:42`).
-///   The scale routes (`core.scale.defaults.js:87-88`) and the element
-///   routes (`element.point.ts:44-47`, `element.line.js:267-270`,
+///   The scale routes (`core.scale.defaults.js:87-88`), the route of the
+///   angle lines (`scale.radialLinear.js:400-404`) and the element routes
+///   (`element.point.ts:44-47`, `element.line.js:267-270`,
 ///   `element.bar.js:159-162`) read it.
 /// - `backgroundColor` replaces `Defaults.backgroundColor`
 ///   (`core.defaults.js:41`) for the routes of the four elements
@@ -233,13 +235,29 @@ bool _isPaletteKey(List<String> path, int i) =>
 /// - `surface` replaces the arc `borderColor` `'#fff'`
 ///   (`element.arc.ts:306`).
 ///
-/// The keys of the plugins (phase 8) and of `scales.radialLinear` (phase 6)
-/// come with their modules.
+/// The radial keys are necessary. Hunk H1 merges the theme into the scale
+/// copy-in before `defaults.scales.radialLinear` (theming.md §3.1). Thus
+/// the routes of `pointLabels.color` and `angleLines.color` fill these keys
+/// from the global `Defaults` when the theme has no value for them. The
+/// theme key `scale.grid.color` does not reach `angleLines.color`: the
+/// `_fallback: 'grid'` of `scale.radialLinear.js:406-410` adds the grid
+/// scopes after the angle-line scopes, and the copy-in always has
+/// `angleLines.color`.
+/// `scales.radialLinear.ticks.color` needs no key: H1 fills it from
+/// `scale.ticks.color` first.
+///
+/// The keys of the plugins come with their modules in phase 8.
 const Map<String, List<String>> _colorTokenKeys = {
-  'color': ['color', 'scale.ticks.color', 'scale.title.color'],
+  'color': [
+    'color',
+    'scale.ticks.color',
+    'scale.title.color',
+    'scales.radialLinear.pointLabels.color',
+  ],
   'borderColor': [
     'scale.grid.color',
     'scale.border.color',
+    'scales.radialLinear.angleLines.color',
     'elements.point.borderColor',
     'elements.line.borderColor',
     'elements.bar.borderColor',
@@ -261,11 +279,25 @@ const String _backdropKey = 'scale.ticks.backdropColor';
 /// The alpha of [_backdropKey].
 const double _backdropAlpha = 0.75;
 
-/// The keys of the font token `typography.font` in phase 5 (theming.md §4):
+/// The keys of the font token `typography.font` in phase 6 (theming.md §4):
 /// the scale slots. `toFont` fills an absent field from the global
 /// `defaults.font` (`helpers.options.ts:115-117`). Thus the compiler writes
 /// a font into every slot and no root `font` (theming.md §3.4).
 const List<String> _fontTokenKeys = ['scale.ticks.font', 'scale.title.font'];
+
+/// The key of the font token `typography.pointLabels` (theming.md §4, the
+/// last row): the font of the point labels of the radial linear scale.
+///
+/// Its value is the `typography.font` Map without `size`, then the fields
+/// of `typography.pointLabels` over it. Upstream sets the point-label size
+/// 10 locally (`scale.radialLinear.js:383-385`). Thus the base font gives
+/// no size (theming.md §3.4). Without a `typography.pointLabels` size, the
+/// size 10 of `defaults.scales.radialLinear` stays. Hunk H1 merges the
+/// theme font into the scale copy-in first. Then `mergeIf` adds the absent
+/// `size` of the defaults font to that font (`core.config.js:109`,
+/// `helpers.core.ts:310-323`). The options of a scale do not have
+/// `defaults.scales.<type>` as a scope.
+const String _pointLabelsFontKey = 'scales.radialLinear.pointLabels.font';
 
 /// The fields of a `FontSpec` (`index.d.ts:1787-1806`).
 const Set<String> _fontFields = {
@@ -276,11 +308,11 @@ const Set<String> _fontFields = {
   'lineHeight',
 };
 
-/// The fields of a raw Map theme in phase 5.
+/// The fields of a raw Map theme in phase 6.
 const Set<String> _themeFields = {'colors', 'typography', 'raw'};
 
-/// The typography tokens of phase 5.
-const Set<String> _typographyTokens = {'font'};
+/// The typography tokens of phase 6.
+const Set<String> _typographyTokens = {'font', 'pointLabels'};
 
 /// The theme transitions of theming.md §3.8: `'theme'` animates for 200 ms
 /// with `'linear'`, the values of the `FThemeMotion` of forui.
@@ -306,7 +338,10 @@ const Object _noTheme = Object();
 /// - Dart `null` gives `null`. A theme that emits no key other than
 ///   `transitions` keys also gives `null`, for example `ChartThemes.none`.
 /// - Each color token emits its keys of theming.md §4 as [themeColorToRgba]
-///   strings. A font token emits a Map of its fields that are not `null`.
+///   strings. The font token `font` emits a Map of its fields that are not
+///   `null` into each scale slot. The point-label font is the `font` Map
+///   without `size`, then the fields of `pointLabels` over it (theming.md
+///   §3.4).
 /// - The `raw` keys beat the token keys, key by key. Maps merge, and a Map
 ///   that holds no key after the guard is left out.
 /// - A key that [themeNeverEmittedReason] rejects is never emitted. In debug
@@ -379,6 +414,15 @@ AnyObject? _compile(AnyObject theme) {
     for (final path in _fontTokenKeys) {
       _put(keys, path, Map<String, Object?>.of(font));
     }
+  }
+  // The base font without size, then the point-label font (theming.md §3.4).
+  final pointLabelsFont = <String, Object?>{
+    for (final MapEntry(:key, :value) in font.entries)
+      if (key != 'size') key: value,
+    ..._font(typography['pointLabels']),
+  };
+  if (pointLabelsFont.isNotEmpty) {
+    _put(keys, _pointLabelsFontKey, pointLabelsFont);
   }
 
   _mergeRaw(keys, _field(theme, 'raw'), const []);

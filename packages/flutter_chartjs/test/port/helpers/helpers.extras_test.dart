@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.extras.dart';
+import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/index.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -55,7 +56,8 @@ final class _Scale implements Scale {
   getUserBounds() => bounds;
 
   @override
-  double getPixelForValue(double value, [double? index]) => pixel(value);
+  double getPixelForValue(Object? value, [double? index]) =>
+      pixel(jsToNumber(value));
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

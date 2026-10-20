@@ -281,7 +281,7 @@ changes Chart.js ADR 0010 §1, an accepted ADR. The deferred plan
 - The new packages use only packages that the root `pubspec.lock` has: `analyzer` 12.1.0
   (`pubspec.lock:12-19`), `clock` 1.1.2 (`:116-123`), `collection` 1.19.1 (`:124-131`) and
   `test` 1.31.0 (`:539-546`). If the lock changes, the change follows the deferred-plan rule,
-  because `canvas-cuts-plan.md:941` cites the root `pubspec.lock`.
+  because the work package I of `canvas-cuts-plan.md` §5 cites the root `pubspec.lock`.
 - A package on pub.dev can depend only on packages on pub.dev. Thus the first release of either
   port needs a release model for `js_semantics`. The two candidates are a release with a semver
   contract and a copy in each released port. A new ADR decides the model. D3 phase 8 has this

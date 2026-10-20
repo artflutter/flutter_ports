@@ -2,9 +2,14 @@
 //
 // It writes test/port/theme/precedence_reference.dart, the data of
 // test/port/theme/precedence_test.dart: theming.md section 8 test 1 at the
-// chart level and the rows of test 2 that need no palette, on charts with
-// test-registered components. The file has the Node.js version, V8 version
-// and architecture in its header. The cases are fixed, so a rerun on the same
+// chart level, the rows of test 2 that need no palette, the hunk H1 with the
+// real category, linear and radial linear scales (theming.md section 10,
+// phase 6), the part of test 5 that needs no controller of phase 7, the
+// singleton read at scale.radialLinear.js:14 (theming.md section 9), and a
+// radial chart without a theme that has the values that the tokens replace
+// in `defaults` (theming.md section 4), on charts with test-registered
+// components. The file has the Node.js version,
+// V8 version and architecture in its header. The cases are fixed, so a rerun on the same
 // Node.js writes the same file. Nothing in lib/ or test/ runs this script
 // (porting-flow.md section 4).
 //
@@ -30,12 +35,19 @@
 // element classes, two dataset controllers `themeTest` and `themeTest2` with
 // a point element and the scale overrides `_index_` and `_value_` of the type
 // `themeLinear`, the scale `themeLinear`, and the plugin `themeProbe`, which
-// keeps the option `k` of its `afterUpdate` hook. A chart is made as
-// `_acquireChart` of chartjs-test-utils makes it (src/utils.js:36-105): a
-// 512 x 512 canvas, and `animation: false`, `responsive: false` and
-// `locale: 'en-US'` in the options. Node.js has no DOM, so the chart gets
-// BasicPlatform. The cases read only options, which do not depend on the
-// platform. A canvas has the mock context of
+// keeps the option `k` of its `afterUpdate` hook. For the hunk H1 with real
+// scales, it also registers the pinned src/scales/scale.category.js,
+// scale.linear.js and scale.radialLinear.js, two dataset controllers
+// `themeReal` and `themeReal2` with the scale overrides `_index_` of the type
+// `category` and `_value_` of the type `linear`, and the radial test
+// controller `themeRadial`: the index axis `r` and the scale override `r` of
+// the type `radialLinear`, as controller.radar.js:11-34 has them. A chart is
+// made as `_acquireChart` of chartjs-test-utils makes it
+// (src/utils.js:36-105): a 512 x 512 canvas, and `animation: false`,
+// `responsive: false` and `locale: 'en-US'` in the options. Node.js has no
+// DOM, so the chart gets BasicPlatform. The cases read options, and the
+// width and the height of a radial scale. These values do not depend on the
+// platform or on a text measurement. A canvas has the mock context of
 // third_party/chartjs-test-utils/src/context.js.
 //
 // A row of a precedence table writes its sentinels into the global scopes
@@ -90,6 +102,9 @@ const CONTROLLER = new URL('core/core.controller.js', SRC);
 const CONFIG = new URL('core/core.config.js', SRC);
 const DATASET_CONTROLLER = new URL('core/core.datasetController.js', SRC);
 const SCALE = new URL('core/core.scale.js', SRC);
+const CATEGORY = new URL('scales/scale.category.js', SRC);
+const LINEAR = new URL('scales/scale.linear.js', SRC);
+const RADIAL_LINEAR = new URL('scales/scale.radialLinear.js', SRC);
 const DEFAULTS = new URL('core/core.defaults.js', SRC);
 const ELEMENTS = new URL('elements/index.js', SRC);
 const HELPERS_CORE = new URL('helpers/helpers.core.ts', SRC);
@@ -103,6 +118,9 @@ for (const url of [
   CONFIG,
   DATASET_CONTROLLER,
   SCALE,
+  CATEGORY,
+  LINEAR,
+  RADIAL_LINEAR,
   DEFAULTS,
   ELEMENTS,
   HELPERS_CORE,
@@ -239,6 +257,9 @@ registerHooks({
 const {default: Chart} = await import(CONTROLLER.href);
 const {default: DatasetController} = await import(DATASET_CONTROLLER.href);
 const {default: Scale} = await import(SCALE.href);
+const {default: CategoryScale} = await import(CATEGORY.href);
+const {default: LinearScale} = await import(LINEAR.href);
+const {default: RadialLinearScale} = await import(RADIAL_LINEAR.href);
 const {default: defaults, overrides, descriptors} = await import(DEFAULTS.href);
 const {ArcElement, BarElement, LineElement, PointElement} = await import(
   ELEMENTS.href
@@ -311,17 +332,21 @@ function fakeCanvas(width, height) {
 
 /**
  * The dataset controller [id]: a point element, and the scales `_index_` and
- * `_value_` of the type `themeLinear` in its overrides. It places each point
- * at its parsed x and y.
+ * `_value_` of the types [indexType] and [valueType] in its overrides. It
+ * places each point at its parsed x and y.
  */
-function themeController(id) {
+function themeController(
+  id,
+  indexType = 'themeLinear',
+  valueType = 'themeLinear',
+) {
   return class extends DatasetController {
     static id = id;
     static defaults = {datasetElementType: false, dataElementType: 'point'};
     static overrides = {
       scales: {
-        _index_: {type: 'themeLinear'},
-        _value_: {type: 'themeLinear'},
+        _index_: {type: indexType},
+        _value_: {type: valueType},
       },
     };
 
@@ -384,12 +409,58 @@ const themeProbe = {
   },
 };
 
+/**
+ * The radial test controller `themeRadial`: a point element, the index axis
+ * `r` and the scale `r` of the type `radialLinear` in its overrides, as
+ * controller.radar.js:11-34 has them. It places each point at the position
+ * of `getPointPositionForValue` (controller.radar.js:81-103 without the
+ * line).
+ */
+class RadialController extends DatasetController {
+  static id = 'themeRadial';
+  static defaults = {
+    datasetElementType: false,
+    dataElementType: 'point',
+    indexAxis: 'r',
+  };
+  static overrides = {scales: {r: {type: 'radialLinear'}}};
+
+  update(mode) {
+    const meta = this._cachedMeta;
+    this.updateElements(meta.data, 0, meta.data.length, mode);
+  }
+
+  updateElements(points, start, count, mode) {
+    const scale = this._cachedMeta.rScale;
+    for (let i = start; i < start + count; i++) {
+      const position = scale.getPointPositionForValue(i, this.getParsed(i).r);
+      this.updateElement(
+        points[i],
+        i,
+        {
+          x: position.x,
+          y: position.y,
+          angle: position.angle,
+          options: this.resolveDataElementOptions(i, mode),
+        },
+        mode,
+      );
+    }
+  }
+}
+
 Chart.register(ArcElement, BarElement, LineElement, PointElement);
 Chart.register(
   themeController('themeTest'),
   themeController('themeTest2'),
   ThemeScale,
   themeProbe,
+);
+Chart.register(CategoryScale, LinearScale, RadialLinearScale);
+Chart.register(
+  themeController('themeReal', 'category', 'linear'),
+  themeController('themeReal2', 'category', 'linear'),
+  RadialController,
 );
 
 const charts = [];
@@ -690,6 +761,299 @@ scenario('chart level', (observe) => {
 });
 
 // ---------------------------------------------------------------------------
+// The hunk H1 with the real scales (theming.md section 10, phase 6).
+
+/**
+ * The data of a chart with the real scales: two labels and two values, in a
+ * dataset of the type [type] (no key for undefined).
+ */
+function realData(type) {
+  const dataset = {data: [2, 8]};
+  if (type !== undefined) dataset.type = type;
+  return {labels: ['a', 'b'], datasets: [dataset]};
+}
+
+/** The data of a radial chart: three labels and three values. */
+function radialData() {
+  return {labels: ['a', 'b', 'c'], datasets: [{data: [1, 2, 3]}]};
+}
+
+scenario('real scales', (observe) => {
+  // The category scale `x` and the linear scale `y`. Each level sets a
+  // sentinel for both axes. The theme type and the scale defaults have one
+  // sentinel for each scale type.
+  rows(
+    [
+      'user',
+      'chartOverrides',
+      'datasetOverrides',
+      'themeType',
+      'themeScale',
+      'scaleDefaults',
+      'scaleBase',
+      'rootColor',
+    ],
+    (levels) => {
+      // The user scales are always there: the chart-type overrides merge
+      // only into a scale of the user options (core.config.js:76-89).
+      const options = {scales: {x: {}, y: {}}};
+      const theme = {};
+      if (levels.includes('user')) {
+        options.scales.x.ticks = {color: 'S1-user-x'};
+        options.scales.y.ticks = {color: 'S1-user-y'};
+      }
+      if (levels.includes('chartOverrides')) {
+        put(overrides, 'themeReal.scales._index_.ticks.color', 'S2-chart-x');
+        put(overrides, 'themeReal.scales._value_.ticks.color', 'S2-chart-y');
+      }
+      if (levels.includes('datasetOverrides')) {
+        put(overrides, 'themeReal2.scales._index_.ticks.color', 'S3-dataset-x');
+        put(overrides, 'themeReal2.scales._value_.ticks.color', 'S3-dataset-y');
+      }
+      if (levels.includes('themeType')) {
+        theme.scales = {
+          category: {ticks: {color: 'S4-theme-category'}},
+          linear: {ticks: {color: 'S4-theme-linear'}},
+        };
+      }
+      if (levels.includes('themeScale')) {
+        theme.scale = {ticks: {color: 'S5-theme-scale'}};
+      }
+      if (levels.includes('scaleDefaults')) {
+        put(defaults, 'scales.category.ticks.color', 'S6-category-defaults');
+        put(defaults, 'scales.linear.ticks.color', 'S6-linear-defaults');
+      }
+      if (levels.includes('scaleBase')) {
+        put(defaults, 'scale.ticks.color', 'S7-scale-base');
+      }
+      if (levels.includes('rootColor')) {
+        put(defaults, 'color', 'S8-root-color');
+      }
+      const config = {type: 'themeReal', data: realData('themeReal2'), options};
+      if (levels.includes('themeType') || levels.includes('themeScale')) {
+        config.$theme = theme;
+      }
+      const chart = acquireChart(config);
+      return [
+        chart.scales.x.options.ticks.color,
+        chart.scales.y.options.ticks.color,
+        Object.keys(chart.scales).join(','),
+      ];
+    },
+    observe,
+  );
+});
+
+/**
+ * A radial chart with the user scale options [r], the theme [theme] (no key
+ * for null) and the type `themeRadial`.
+ */
+function radialChart(r, theme) {
+  const config = {
+    type: 'themeRadial',
+    data: radialData(),
+    options: {scales: {r}},
+  };
+  if (theme) config.$theme = theme;
+  return acquireChart(config);
+}
+
+scenario('radial point labels', (observe) => {
+  // pointLabels.color: the route of scale.radialLinear.js:400-404 reads
+  // Defaults.color.
+  rows(
+    [
+      'user',
+      'chartOverrides',
+      'themeType',
+      'themeScale',
+      'scaleDefaults',
+      'rootColor',
+    ],
+    (levels) => {
+      const r = {};
+      const theme = {};
+      if (levels.includes('user')) r.pointLabels = {color: 'R1-user'};
+      if (levels.includes('chartOverrides')) {
+        put(overrides, 'themeRadial.scales.r.pointLabels.color', 'R2-chart');
+      }
+      if (levels.includes('themeType')) {
+        theme.scales = {radialLinear: {pointLabels: {color: 'R3-theme-type'}}};
+      }
+      if (levels.includes('themeScale')) {
+        theme.scale = {pointLabels: {color: 'R4-theme-scale'}};
+      }
+      if (levels.includes('scaleDefaults')) {
+        put(
+          defaults,
+          'scales.radialLinear.pointLabels.color',
+          'R5-scale-defaults',
+        );
+      }
+      if (levels.includes('rootColor')) put(defaults, 'color', 'R6-root-color');
+      const themed =
+        levels.includes('themeType') || levels.includes('themeScale');
+      const chart = radialChart(r, themed ? theme : null);
+      return [
+        chart.scales.r.options.pointLabels.color,
+        Object.keys(chart.scales).join(','),
+      ];
+    },
+    observe,
+  );
+});
+
+scenario('radial angle lines', (observe) => {
+  // angleLines.color: the route of scale.radialLinear.js:400-404 reads
+  // Defaults.borderColor. The descriptor `_fallback: 'grid'`
+  // (scale.radialLinear.js:406-410) adds the grid scopes after the angle
+  // line scopes.
+  rows(
+    [
+      'user',
+      'userGrid',
+      'themeType',
+      'themeGrid',
+      'scaleDefaults',
+      'rootBorderColor',
+    ],
+    (levels) => {
+      const r = {};
+      const theme = {};
+      if (levels.includes('user')) r.angleLines = {color: 'A1-user'};
+      if (levels.includes('userGrid')) r.grid = {color: 'A2-user-grid'};
+      if (levels.includes('themeType')) {
+        theme.scales = {radialLinear: {angleLines: {color: 'A3-theme-type'}}};
+      }
+      if (levels.includes('themeGrid')) {
+        theme.scale = {grid: {color: 'A4-theme-grid'}};
+      }
+      if (levels.includes('scaleDefaults')) {
+        put(
+          defaults,
+          'scales.radialLinear.angleLines.color',
+          'A5-scale-defaults',
+        );
+      }
+      if (levels.includes('rootBorderColor')) {
+        put(defaults, 'borderColor', 'A6-root-border-color');
+      }
+      const themed =
+        levels.includes('themeType') || levels.includes('themeGrid');
+      const o = radialChart(r, themed ? theme : null).scales.r.options;
+      return [o.angleLines.color, o.grid.color];
+    },
+    observe,
+  );
+});
+
+scenario('radial point label fonts', (observe) => {
+  // pointLabels.font: the size 10 of scale.radialLinear.js:383-385, and the
+  // toFont fallback to Defaults.font (helpers.options.ts:115-117).
+  rows(
+    ['user', 'themeType', 'themeScale', 'scaleDefaults', 'rootFont'],
+    (levels) => {
+      const r = {};
+      const theme = {};
+      if (levels.includes('user')) {
+        r.pointLabels = {font: {family: 'F1-user', size: 31}};
+      }
+      if (levels.includes('themeType')) {
+        theme.scales = {
+          radialLinear: {
+            pointLabels: {font: {family: 'F2-theme-type', size: 32}},
+          },
+        };
+      }
+      if (levels.includes('themeScale')) {
+        theme.scale = {pointLabels: {font: {family: 'F3-theme-scale', size: 33}}};
+      }
+      if (levels.includes('scaleDefaults')) {
+        put(
+          defaults,
+          'scales.radialLinear.pointLabels.font.family',
+          'F4-scale-defaults',
+        );
+        put(defaults, 'scales.radialLinear.pointLabels.font.size', 34);
+      }
+      if (levels.includes('rootFont')) {
+        put(defaults, 'font.family', 'F5-root-font');
+        put(defaults, 'font.size', 35);
+      }
+      const themed =
+        levels.includes('themeType') || levels.includes('themeScale');
+      const o = radialChart(r, themed ? theme : null).scales.r.options;
+      const font = toFont(o.pointLabels.font);
+      return [font.family, font.size, font.string];
+    },
+    observe,
+  );
+});
+
+scenario('radial ticks', (observe) => {
+  // ticks.color: the route of scale.radialLinear.js:400-404 reads
+  // Defaults.color. The hunk H1 merges the theme `scale` before
+  // defaults.scales.radialLinear.
+  rows(
+    [
+      'user',
+      'themeType',
+      'themeScale',
+      'scaleDefaults',
+      'scaleBase',
+      'rootColor',
+    ],
+    (levels) => {
+      const r = {};
+      const theme = {};
+      if (levels.includes('user')) r.ticks = {color: 'T1-user'};
+      if (levels.includes('themeType')) {
+        theme.scales = {radialLinear: {ticks: {color: 'T2-theme-type'}}};
+      }
+      if (levels.includes('themeScale')) {
+        theme.scale = {ticks: {color: 'T3-theme-scale'}};
+      }
+      if (levels.includes('scaleDefaults')) {
+        put(defaults, 'scales.radialLinear.ticks.color', 'T4-scale-defaults');
+      }
+      if (levels.includes('scaleBase')) {
+        put(defaults, 'scale.ticks.color', 'T5-scale-base');
+      }
+      if (levels.includes('rootColor')) put(defaults, 'color', 'T6-root-color');
+      const themed =
+        levels.includes('themeType') || levels.includes('themeScale');
+      return radialChart(r, themed ? theme : null).scales.r.options.ticks.color;
+    },
+    observe,
+  );
+});
+
+scenario('radial tick backdrop', (observe) => {
+  // The singleton read of scale.radialLinear.js:14 (theming.md section 9):
+  // `getTickBackdropHeight` reads `defaults.font.size` when the tick font
+  // has no size. setDimensions (scale.radialLinear.js:426-434) gives the
+  // backdrop height as the padding of the scale. Thus the width and the
+  // height of the scale show it, without a text measurement.
+  const backdrop = (theme, fontSize) =>
+    row(() => {
+      if (fontSize !== undefined) put(defaults, 'font.size', fontSize);
+      const scale = radialChart({}, theme).scales.r;
+      const font = scale.options.ticks.font;
+      return [font && font.size, scale.width, scale.height];
+    });
+  observe('no theme', backdrop(null));
+  observe('no theme, defaults.font.size 30', backdrop(null, 30));
+  observe(
+    'a theme tick font with a size',
+    backdrop({scale: {ticks: {font: {size: 20}}}}, 30),
+  );
+  observe(
+    'a theme tick font without a size',
+    backdrop({scale: {ticks: {font: {family: 'serif'}}}}, 30),
+  );
+});
+
+// ---------------------------------------------------------------------------
 // The resolved options of one chart (section 8, test 1).
 
 /**
@@ -711,6 +1075,15 @@ const compiledTheme = {
     },
     grid: {color: 'rgba(0, 128, 0, 0.5)'},
     border: {color: 'rgba(0, 128, 0, 0.5)'},
+  },
+  scales: {
+    radialLinear: {
+      pointLabels: {
+        color: 'rgba(51, 102, 153, 1)',
+        font: {family: 'Arial', style: 'italic', size: 11},
+      },
+      angleLines: {color: 'rgba(0, 128, 0, 0.5)'},
+    },
   },
   elements: {
     point: {
@@ -794,12 +1167,198 @@ function snapshot(name, theme, user) {
   });
 }
 
+/**
+ * The compiled light preset: the result of
+ * `compileChartTheme(ChartThemes.light)` of lib/src/theme/compile.dart. The
+ * Dart test compares the two.
+ */
+const compiledLight = {
+  color: 'rgba(102, 102, 102, 1)',
+  scale: {
+    ticks: {
+      color: 'rgba(102, 102, 102, 1)',
+      backdropColor: 'rgba(255, 255, 255, 0.75)',
+      font: {
+        family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+        size: 12,
+        style: 'normal',
+        lineHeight: 1.2,
+      },
+    },
+    title: {
+      color: 'rgba(102, 102, 102, 1)',
+      font: {
+        family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+        size: 12,
+        style: 'normal',
+        lineHeight: 1.2,
+      },
+    },
+    grid: {color: 'rgba(0, 0, 0, 0.1)'},
+    border: {color: 'rgba(0, 0, 0, 0.1)'},
+  },
+  scales: {
+    radialLinear: {
+      pointLabels: {
+        color: 'rgba(102, 102, 102, 1)',
+        font: {
+          family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+          style: 'normal',
+          lineHeight: 1.2,
+          size: 10,
+        },
+      },
+      angleLines: {color: 'rgba(0, 0, 0, 0.1)'},
+    },
+  },
+  elements: {
+    point: {
+      borderColor: 'rgba(0, 0, 0, 0.1)',
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    line: {
+      borderColor: 'rgba(0, 0, 0, 0.1)',
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    bar: {
+      borderColor: 'rgba(0, 0, 0, 0.1)',
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    },
+    arc: {
+      backgroundColor: 'rgba(0, 0, 0, 0.1)',
+      borderColor: 'rgba(255, 255, 255, 1)',
+    },
+  },
+  transitions: {
+    theme: {animation: {duration: 200, easing: 'linear'}},
+    themeFrame: {animation: {duration: 0}},
+  },
+};
+
+/**
+ * The compiled theme of the raw Map theme `_fontTheme` of
+ * precedence_test.dart: the font token without the token `pointLabels`.
+ * The point-label font is the base font without size (theming.md section
+ * 3.4).
+ */
+const compiledFont = {
+  scale: {
+    ticks: {font: {family: 'serif', size: 14}},
+    title: {font: {family: 'serif', size: 14}},
+  },
+  scales: {radialLinear: {pointLabels: {font: {family: 'serif'}}}},
+  transitions: {
+    theme: {animation: {duration: 200, easing: 'linear'}},
+    themeFrame: {animation: {duration: 0}},
+  },
+};
+
+/**
+ * The scenario [name]: the options of the radial scale of a chart with the
+ * `$theme` value [theme] (no key for `'absent'`). [replace] writes into the
+ * global scopes before the chart, and the scenario undoes the writes.
+ */
+function radialSnapshot(name, theme, replace) {
+  scenario(name, (observe) => row(() => {
+    if (replace) replace();
+    if (theme !== 'absent') observe('theme', theme);
+    const chart = radialChart({}, theme === 'absent' ? null : theme);
+    const r = chart.scales.r;
+    const o = r.options;
+    observe('scales', Object.keys(chart.scales).join(','));
+    observe('colors', [
+      o.pointLabels.color,
+      o.angleLines.color,
+      o.ticks.color,
+      o.ticks.backdropColor,
+      o.grid.color,
+      o.pointLabels.backdropColor,
+    ]);
+    // The fonts of fitWithPointLabels (scale.radialLinear.js:96-97) and of
+    // _resolveTickFontOptions (core.scale.js:1698-1701).
+    const pointLabelFont = toFont(o.pointLabels.font);
+    const tickFont = r._resolveTickFontOptions(0);
+    observe('fonts', [
+      pointLabelFont.family,
+      pointLabelFont.size,
+      pointLabelFont.string,
+      tickFont.family,
+      tickFont.size,
+      tickFont.string,
+    ]);
+    observe('size', [r.width, r.height]);
+  }));
+}
+
+/**
+ * The scenario [name] of test 5: the scales of a chart of the type [type]
+ * with the `$theme` value [theme] (no key for null). A theme key
+ * `scales.<scale type>` creates no axis (theming.md section 3.3).
+ */
+function axes(name, type, theme) {
+  scenario(name, (observe) => {
+    if (theme) observe('theme', theme);
+    const config =
+      type === 'themeRadial'
+        ? {type, data: radialData(), options: {}}
+        : {type, data: realData(undefined), options: {}};
+    if (theme) config.$theme = theme;
+    const chart = acquireChart(config);
+    observe('scales', Object.keys(chart.scales).join(','));
+    observe('option scales', Object.keys(chart.options.scales).join(','));
+    observe('config scales', chart.config.options.scales);
+  });
+}
+
 snapshot('no theme', 'absent', false);
 snapshot('a null theme', null, false);
 snapshot('a string theme', 'not a map', false);
 snapshot('user values', 'absent', true);
 snapshot('a compiled theme', compiledTheme, false);
 snapshot('a compiled theme and user values', compiledTheme, true);
+radialSnapshot('a radial chart without a theme', 'absent');
+radialSnapshot('a radial chart with a compiled theme', compiledTheme);
+radialSnapshot('a radial chart with the light preset', compiledLight);
+radialSnapshot('a radial chart with a theme font without size', compiledFont);
+// theming.md section 4, the column "Replaces": a chart without a theme, with
+// the values that the tokens replace in the global scopes. A theme must give
+// the same options as the replaced values.
+radialSnapshot(
+  'a radial chart with the values that the tokens replace',
+  'absent',
+  () => {
+    put(defaults, 'color', 'rgba(51, 102, 153, 1)');
+    put(defaults, 'borderColor', 'rgba(0, 128, 0, 0.5)');
+    put(defaults, 'scale.ticks.backdropColor', 'rgba(0, 0, 0, 0.75)');
+    put(defaults, 'font.family', 'Arial');
+    put(defaults, 'font.size', 14);
+    put(defaults, 'scales.radialLinear.pointLabels.font.style', 'italic');
+    put(defaults, 'scales.radialLinear.pointLabels.font.size', 11);
+  },
+);
+radialSnapshot(
+  'a radial chart with the font that the theme font replaces',
+  'absent',
+  () => {
+    put(defaults, 'font.family', 'serif');
+    put(defaults, 'font.size', 14);
+  },
+);
+
+axes('axes of a cartesian chart without a theme', 'themeReal', null);
+axes('axes of a cartesian chart with a radialLinear theme key', 'themeReal', {
+  scales: {
+    radialLinear: {pointLabels: {color: 'red'}, angleLines: {color: 'red'}},
+  },
+});
+axes('axes of a cartesian chart with the light preset', 'themeReal', compiledLight);
+axes('axes of a radial chart without a theme', 'themeRadial', null);
+axes('axes of a radial chart with cartesian theme keys', 'themeRadial', {
+  scales: {
+    category: {ticks: {color: 'red'}},
+    linear: {ticks: {color: 'red'}},
+  },
+});
 
 // ---------------------------------------------------------------------------
 // The option scopes of one chart (section 8, test 1).
@@ -967,8 +1526,9 @@ function writeDart(upstream, prototype) {
 
 // Generated by tool/reference/theme_precedence_reference.mjs. Do not edit.
 // Node.js ${node} (${platform}-${arch}), V8 ${v8}:
-// src/core/core.controller.js at the pinned Chart.js, with the upstream
-// src/core/core.config.js and with a JavaScript prototype of the hunks H0-H3.
+// src/core/core.controller.js and the category, linear and radial linear
+// scales at the pinned Chart.js, with the upstream src/core/core.config.js
+// and with a JavaScript prototype of the hunks H0-H3.
 // ${upstream.scenarios.length} scenarios.
 
 /// The Node.js version that generated the data.

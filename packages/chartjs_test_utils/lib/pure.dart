@@ -36,6 +36,10 @@ import 'dart:collection';
 // not export lib/src.
 // ignore: implementation_imports
 import 'package:flutter_chartjs/src/core/core.defaults.dart';
+// The harness sets the zone of the default date adapter.
+// ignore: implementation_imports
+import 'package:flutter_chartjs/src/core/date_adapter.dart'
+    show setDefaultDateZone;
 import 'package:test/test.dart';
 
 export 'src/context.dart' show ContextCall, MockContext, createMockContext;
@@ -57,12 +61,19 @@ export 'src/matchers.dart'
 /// }
 /// ```
 ///
-/// The set-up is [removeBuiltins], then [setUpDefaultsRestore]. Thus a
-/// pure-layer spec file runs on the same scopes on the VM, dart2js and
-/// dart2wasm: the scopes of the modules, with no built-in component. A spec
-/// file with chart cases does not call it: its charts need the built-in
+/// The set-up is `setDefaultDateZone('Etc/UTC')` (the port of
+/// `test/index.js:23`, Chart.js ADR 0024), then [removeBuiltins], then
+/// [setUpDefaultsRestore]. Thus a pure-layer spec file runs on the same
+/// scopes on the VM, dart2js and dart2wasm: the scopes of the modules, with
+/// no built-in component, and the default date adapter in UTC. A spec file
+/// with chart cases does not call it: its charts need the built-in
 /// components (`harness-register-builtins`).
 void setUpSpecs() {
+  // Set a fixed time zone (and, in particular, disable Daylight Saving Time)
+  // for more stable test results.
+  //
+  // test/index.js:21-23 `window.moment.tz.setDefault('Etc/UTC')`.
+  setDefaultDateZone('Etc/UTC');
   removeBuiltins();
   setUpDefaultsRestore();
 }

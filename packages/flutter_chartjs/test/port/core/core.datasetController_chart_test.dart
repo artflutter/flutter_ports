@@ -92,8 +92,8 @@ final class _TypedController extends DatasetController {
       final point = points[i.toInt()] as Element;
       final parsed = getParsed(i);
       final properties = <String, Object?>{
-        'x': iScale.getPixelForValue(jsToNumber(jsGet(parsed, 'x')), i),
-        'y': vScale.getPixelForValue(jsToNumber(jsGet(parsed, 'y')), i),
+        'x': iScale.getPixelForValue(jsGet(parsed, 'x'), i),
+        'y': vScale.getPixelForValue(jsGet(parsed, 'y'), i),
       };
       if (includeOptions) {
         properties['options'] =
@@ -151,8 +151,8 @@ final class _TypedScale extends Scale {
   List<Tick>? buildTicks() => [Tick(value: 0), Tick(value: 5), Tick(value: 10)];
 
   @override
-  double getPixelForValue(double value, [double? index]) {
-    return getPixelForDecimal((value - min) / (max - min));
+  double getPixelForValue(Object? value, [double? index]) {
+    return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
   }
 }
 

@@ -345,6 +345,44 @@ void main() {
     }
   });
 
+  test('treats the date files date_*.dart of lib/src/core/ as roots', () {
+    // The port-only files of the default date adapter (Chart.js ADR 0024).
+    const roots = [
+      'lib/src/core/date_adapter.dart',
+      'lib/src/core/date_calendar.dart',
+      'lib/src/core/date_format.dart',
+      'lib/src/core/date_parse.dart',
+      'lib/src/core/date_zone.dart',
+    ];
+    const saved = [
+      _portOnly,
+      "import 'package:flutter_chartjs/src/js/js_math.dart';",
+      "import 'package:intl/intl.dart';",
+    ];
+    for (final path in roots) {
+      tree.write(path, saved);
+    }
+    // A file of lib/src/core/ that the glob does not match is not a root.
+    tree.write('lib/src/core/core.datasetController.dart', [
+      _ported,
+      "import 'package:flutter/scheduler.dart';",
+      "import 'package:flutter_chartjs/src/core/date_adapter.dart';",
+    ]);
+    expect(run(), isEmpty);
+
+    for (final path in roots) {
+      tree.write(path, [...saved, "import 'dart:ui';"]);
+      expect(run(), [
+        equals(
+          'error: $path:4: imports dart:ui, but the file is in the pure '
+          'layer (pure layers reach neither dart:ui nor package:flutter, '
+          'porting-flow.md 3).',
+        ),
+      ], reason: path);
+      tree.write(path, saved);
+    }
+  });
+
   test('treats core.typedRegistry as a root, not core.registry', () {
     const typedRegistry = 'lib/src/core/core.typedRegistry.dart';
     const saved = [

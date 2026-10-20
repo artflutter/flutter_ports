@@ -13,6 +13,7 @@ library;
 // `src/harness.dart` apply.
 
 import 'package:flutter_chartjs/src/helpers/helpers.extras.dart';
+import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/types/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -32,7 +33,8 @@ final class _Scale implements Scale {
   getUserBounds() => bounds;
 
   @override
-  double getPixelForValue(double value, [double? index]) => value * 3;
+  double getPixelForValue(Object? value, [double? index]) =>
+      jsToNumber(value) * 3;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

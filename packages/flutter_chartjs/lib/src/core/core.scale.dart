@@ -12,11 +12,16 @@
 ///   the resolver does not resolve. A sub-object such as `options['ticks']`
 ///   is a resolver too, and `setContext` is the member of `ContextProxy`.
 /// - Numbers are `double` (Chart.js ADR 0010). An option value goes through
-///   `jsToNumber` before arithmetic, through `jsTruthy` for a test, and
+///   `jsToNumber` before arithmetic, through `jsAdd` in a `+` (a string
+///   option joins the other operand), through `jsTruthy` for a test, and
 ///   through the conversions of `lib/src/js/js_webidl.dart` before a canvas
 ///   setter. A scale property that starts JS `undefined` and holds a number
 ///   starts as NaN, the `ToNumber` of `undefined`. Each upstream reader of
 ///   such a property gives the same result for NaN and `undefined`.
+///   [Scale.labelRotation] holds any JS value, the raw `minRotation` too,
+///   and starts as [undefined]. [Scale.paddingTop] and [Scale.paddingBottom]
+///   hold a number or a padding that a string option joins, and start as
+///   NaN.
 /// - A list index is an `int`. A tick index that a context or a callback
 ///   gets is a `double`.
 /// - Upstream `_`-prefixed members that another module reads drop the
@@ -58,7 +63,7 @@ import 'package:flutter_chartjs/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs/src/helpers/helpers.extras.dart'
     show alignStartEnd, toLeftRightCenter;
 import 'package:flutter_chartjs/src/helpers/helpers.math.dart'
-    show halfPi, int16Range, limitValue, toDegrees, toRadians;
+    show MinMax, halfPi, int16Range, limitValue, toDegrees, toRadians;
 import 'package:flutter_chartjs/src/helpers/helpers.options.dart'
     show addGrace, createContext, toFont, toPadding;
 import 'package:flutter_chartjs/src/js/js_array.dart' show jsObjectKeys;
@@ -109,6 +114,26 @@ double _getTicksLimit(int ticksLength, Object? maxTicksLimit) => jsMin(
   jsTruthy(maxTicksLimit) ? jsToNumber(maxTicksLimit) : ticksLength.toDouble(),
   ticksLength.toDouble(),
 );
+
+/// The JS comparison `a >= b` of two option values (ECMAScript 13.10.1:
+/// `IsLessThan(a, b, true)`, then the negation of a true or false result).
+///
+/// `ToPrimitive` with the hint `number` keeps a string, a number, a boolean,
+/// `null` and [undefined]. It gives the time value for a `DateTime` (a JS
+/// `Date`) and the `ToString` for the other objects. Two strings compare by
+/// their code units: `'5' >= '30'` is true. Other operands compare as
+/// numbers, and NaN gives false.
+bool _jsGreaterOrEqual(Object? a, Object? b) {
+  if (a is num && b is num) return a >= b;
+  Object? toPrimitive(Object? value) => switch (value) {
+    null || Undefined() || bool() || num() || String() || DateTime() => value,
+    _ => jsToString(value),
+  };
+  final pa = toPrimitive(a);
+  final pb = toPrimitive(b);
+  if (pa is String && pb is String) return pa.compareTo(pb) >= 0;
+  return jsToNumber(pa) >= jsToNumber(pb);
+}
 
 /// core.scale.js:15 the typedef `Tick`:
 /// `{value:number | string, label?:string, major?:boolean, $context?:any}`.
@@ -250,10 +275,15 @@ void _garbageCollect(Map<String, _TextCache> caches, int length) {
 /// core.scale.js:88 `getTickMarkLength`.
 ///
 /// @param {object} options
-double _getTickMarkLength(Object? options) {
+///
+/// The result is the raw `tickLength` option, or 0. A caller that subtracts
+/// it applies [jsToNumber], as the JS `-` does. A caller that adds it
+/// applies [jsAdd]: a string `tickLength` joins the other operand, for
+/// example `'8' + 0` gives `'80'` (core.scale.js:649).
+Object? _getTickMarkLength(Object? options) {
   return jsTruthy(jsGet(options, 'drawTicks'))
-      ? jsToNumber(jsGet(options, 'tickLength'))
-      : 0;
+      ? jsGet(options, 'tickLength')
+      : 0.0;
 }
 
 /// core.scale.js:95 `getTitleHeight`.
@@ -330,12 +360,9 @@ String? _titleAlign(Object? align, Object? position, Object? reverse) {
 
     if (isObject(position)) {
       final positionAxisID = _firstKey(position! as AnyObject);
-      // DIVERGES(chartjs): adapt-scale-position-value, ToNumber of the value.
       final value = jsGet(position, positionAxisID);
       titleY =
-          scales[positionAxisID]!.getPixelForValue(jsToNumber(value)) +
-          height -
-          offset;
+          scales[positionAxisID]!.getPixelForValue(value) + height - offset;
     } else if (position == 'center') {
       titleY = (chartArea!.bottom + chartArea.top) / 2 + height - offset;
     } else {
@@ -345,12 +372,8 @@ String? _titleAlign(Object? align, Object? position, Object? reverse) {
   } else {
     if (isObject(position)) {
       final positionAxisID = _firstKey(position! as AnyObject);
-      // DIVERGES(chartjs): adapt-scale-position-value, ToNumber of the value.
       final value = jsGet(position, positionAxisID);
-      titleX =
-          scales[positionAxisID]!.getPixelForValue(jsToNumber(value)) -
-          width +
-          offset;
+      titleX = scales[positionAxisID]!.getPixelForValue(value) - width + offset;
     } else if (position == 'center') {
       titleX = (chartArea!.left + chartArea.right) / 2 - width + offset;
     } else {
@@ -623,7 +646,8 @@ class Scale extends _ScalePrototype
         types.Scale,
         types.LayoutItemBeforeLayout,
         types.LayoutItemConfigure,
-        types.LayoutItemPadding {
+        types.LayoutItemPadding,
+        MinMax {
   /// core.scale.js:171 `constructor(cfg)`.
   ///
   /// [cfg] is the object `{id, type, ctx, chart}` of `buildOrUpdateScales`
@@ -702,10 +726,23 @@ class Scale extends _ScalePrototype
   double maxHeight = double.nan;
 
   /// core.scale.js:209 `paddingTop`. NaN stands for JS `undefined`.
-  double paddingTop = double.nan;
+  ///
+  /// The value is a JS value, not a `double`. `_calculatePadding`
+  /// (core.scale.js:734) writes `paddingTop + padding`: the option
+  /// `ticks.padding: '3'` gives the string `'7.1999999999999993'`. The
+  /// readers apply `ToNumber`: `_handleMargins` through `Math.max` (:746),
+  /// and `core.layouts` through `Math.max` (core.layouts.js:111) after
+  /// [getPadding], which returns `this.paddingTop || 0` (:340). A joined
+  /// string that is not a number, for example `'7.199999999999999x'`, is
+  /// truthy: [getPadding] gives NaN, and the top and the bottom of the chart
+  /// area are NaN. A NaN number is falsy: [getPadding] gives 0. Thus the
+  /// field keeps the value. Each reader runs one time for each layout. Both
+  /// readers give the same result for NaN and `undefined`.
+  Object? paddingTop = double.nan;
 
-  /// core.scale.js:211 `paddingBottom`. NaN stands for JS `undefined`.
-  double paddingBottom = double.nan;
+  /// core.scale.js:211 `paddingBottom`. NaN stands for JS `undefined`. It
+  /// holds a JS value, as [paddingTop] does.
+  Object? paddingBottom = double.nan;
 
   /// core.scale.js:213 `paddingLeft`. NaN stands for JS `undefined`.
   double paddingLeft = double.nan;
@@ -723,16 +760,34 @@ class Scale extends _ScalePrototype
   @override
   late String axis;
 
-  /// core.scale.js:221 `labelRotation`, in degrees. NaN stands for JS
-  /// `undefined`.
-  double labelRotation = double.nan;
+  /// core.scale.js:221 `labelRotation`, in degrees. It starts as
+  /// [undefined].
+  ///
+  /// The value is a JS value, not a `double`. `calculateLabelRotation`
+  /// (core.scale.js:590-596) writes the raw `minRotation || 0` when it does
+  /// not calculate a rotation: the option `minRotation: '0'` gives the
+  /// string `'0'`. The readers apply `ToNumber` through `toRadians`
+  /// (core.scale.js:659, :981, :1157, :1333), and `_calculatePadding` tests
+  /// `labelRotation !== 0` (:691), which is true for the string `'0'`. Thus
+  /// the field keeps the value: [_rotationRadians] and [_isRotated] are the
+  /// readers. Each reader runs one time for each layout or each computation
+  /// of the label items, not for each tick.
+  Object? labelRotation = undefined;
 
   /// core.scale.js:222 `min`. NaN stands for JS `undefined`, the start
   /// value. The subclasses set it in `determineDataLimits`.
+  ///
+  /// It is the `min` of `MinMax` (helpers.math.ts:81): the scales call
+  /// `setMinAndMaxByKey(ticks, this, 'value')` (scale.linearbase.js:274,
+  /// scale.logarithmic.js:172).
   @override
   double min = double.nan;
 
   /// core.scale.js:223 `max`. NaN stands for JS `undefined`.
+  ///
+  /// It is the `max` of `MinMax` (helpers.math.ts:81): the scales call
+  /// `setMinAndMaxByKey(ticks, this, 'value')` (scale.linearbase.js:274,
+  /// scale.logarithmic.js:172).
   @override
   double max = double.nan;
 
@@ -984,12 +1039,16 @@ class Scale extends _ScalePrototype
   /// @return {{top: number, left: number, bottom: number, right: number}}
   /// the necessary padding
   /// @private
+  ///
+  /// [paddingTop] and [paddingBottom] are JS values. [jsOrZero] gives the
+  /// `ToNumber` of `value || 0`, the number that `Math.max` of the reader
+  /// takes (core.layouts.js:111, :113).
   @override
   types.TRBL getPadding() {
     return _LabelArea(
-      _orZero(paddingTop),
+      jsOrZero(paddingTop),
       _orZero(paddingLeft),
-      _orZero(paddingBottom),
+      jsOrZero(paddingBottom),
       _orZero(paddingRight),
     );
   }
@@ -1331,6 +1390,13 @@ class Scale extends _ScalePrototype
   /// text layout of the platform, which differs from the browser by much more
   /// than one bit (Chart.js ADR 0015). Thus an exact `asin` cannot make the
   /// ticks agree.
+  ///
+  /// `minRotation` and `maxRotation` are the raw option values. Without a
+  /// calculated rotation, [labelRotation] gets the raw `minRotation || 0`,
+  /// for example the string `'0'`. `minRotation >= maxRotation` is the JS
+  /// comparison ([_jsGreaterOrEqual]): two strings compare by their code
+  /// units, so `'5' >= '30'` is true. `Math.max` and `Math.min` apply
+  /// `ToNumber` to the options.
   void calculateLabelRotation() {
     final options = this.options;
     final tickOpts = options['ticks'];
@@ -1338,8 +1404,9 @@ class Scale extends _ScalePrototype
       ticks!.length,
       jsGet(tickOpts, 'maxTicksLimit'),
     );
-    final minRotation = jsOrZero(jsGet(tickOpts, 'minRotation'));
-    final maxRotation = jsToNumber(jsGet(tickOpts, 'maxRotation'));
+    final minRotationOption = jsGet(tickOpts, 'minRotation');
+    final minRotation = jsTruthy(minRotationOption) ? minRotationOption : 0.0;
+    final maxRotation = jsGet(tickOpts, 'maxRotation');
     var labelRotation = minRotation;
     double tickWidth;
     double maxHeight;
@@ -1347,7 +1414,7 @@ class Scale extends _ScalePrototype
 
     if (!_isVisible() ||
         !jsTruthy(jsGet(tickOpts, 'display')) ||
-        minRotation >= maxRotation ||
+        _jsGreaterOrEqual(minRotation, maxRotation) ||
         numTicks <= 1 ||
         !isHorizontal()) {
       this.labelRotation = minRotation;
@@ -1375,13 +1442,15 @@ class Scale extends _ScalePrototype
           maxWidth / (numTicks - (jsTruthy(options['offset']) ? 0.5 : 1));
       maxHeight =
           this.maxHeight -
-          _getTickMarkLength(options['grid']) -
+          jsToNumber(_getTickMarkLength(options['grid'])) -
           jsToNumber(jsGet(tickOpts, 'padding')) -
           _getTitleHeight(options['title'], chart.options['font']);
       maxLabelDiagonal = math.sqrt(
         maxLabelWidth * maxLabelWidth + maxLabelHeight * maxLabelHeight,
       );
-      labelRotation = toDegrees(
+      // The local `labelRotation` holds the raw option value until here.
+      // Thus the calculated degrees have their own local.
+      final degrees = toDegrees(
         jsMin(
           // js-ok: the label sizes differ more (Chart.js ADR 0015)
           math.asin(
@@ -1393,10 +1462,24 @@ class Scale extends _ScalePrototype
               math.asin(limitValue(maxLabelHeight / maxLabelDiagonal, -1, 1)),
         ),
       );
-      labelRotation = jsMax(minRotation, jsMin(maxRotation, labelRotation));
+      labelRotation = jsMax(
+        jsToNumber(minRotation),
+        jsMin(jsToNumber(maxRotation), degrees),
+      );
     }
 
     this.labelRotation = labelRotation;
+  }
+
+  /// `toRadians(this.labelRotation)` (core.scale.js:659, :981, :1157,
+  /// :1333): the radians of the `ToNumber` of [labelRotation].
+  double get _rotationRadians => toRadians(jsToNumber(labelRotation));
+
+  /// `this.labelRotation !== 0` (core.scale.js:691). Only a number 0 (or
+  /// -0) gives false. The string `'0'` gives true.
+  bool get _isRotated {
+    final rotation = labelRotation;
+    return rotation is! num || rotation != 0;
   }
 
   /// core.scale.js:624 `afterCalculateLabelRotation()`.
@@ -1415,10 +1498,19 @@ class Scale extends _ScalePrototype
   }
 
   /// core.scale.js:634 `fit()`.
+  ///
+  /// The two sizes of `minSize` are JS values. The raw `tickLength`
+  /// ([_getTickMarkLength]) starts them, and a string `tickLength` joins
+  /// the other operands of each `+` ([jsAdd]). `Math.min` and the size
+  /// fields take the [jsToNumber] of the result: with the labels, `'8' + 0 +
+  /// 14.4 + 6` gives `'8014.46'`, and the size is `maxHeight`. Upstream
+  /// keeps a joined string in `height` or `width` when it does not fit the
+  /// labels. The port keeps its `ToNumber` (differences.md row
+  /// `adapt-scale-option-types`).
   void fit() {
     // Reset
-    var minSizeWidth = 0.0;
-    var minSizeHeight = 0.0;
+    Object minSizeWidth = 0.0;
+    Object minSizeHeight = 0.0;
 
     final chart = this.chart;
     final options = this.options;
@@ -1432,40 +1524,40 @@ class Scale extends _ScalePrototype
       final titleHeight = _getTitleHeight(titleOpts, chart.options['font']);
       if (isHorizontal) {
         minSizeWidth = maxWidth;
-        minSizeHeight = _getTickMarkLength(gridOpts) + titleHeight;
+        minSizeHeight = jsAdd(_getTickMarkLength(gridOpts), titleHeight);
       } else {
         minSizeHeight = maxHeight; // fill all the height
-        minSizeWidth = _getTickMarkLength(gridOpts) + titleHeight;
+        minSizeWidth = jsAdd(_getTickMarkLength(gridOpts), titleHeight);
       }
 
       // Don't bother fitting the ticks if we are not showing the labels
       if (jsTruthy(jsGet(tickOpts, 'display')) && ticks!.isNotEmpty) {
         final _LabelSizes(:first, :last, :widest, :highest) = _getLabelSizes();
         final tickPadding = jsToNumber(jsGet(tickOpts, 'padding')) * 2;
-        final angleRadians = toRadians(labelRotation);
+        final angleRadians = _rotationRadians;
         final cos = math.cos(angleRadians);
         final sin = math.sin(angleRadians);
 
         if (isHorizontal) {
           // A horizontal axis is more constrained by the height.
           final labelHeight = jsTruthy(jsGet(tickOpts, 'mirror'))
-              ? 0
+              ? 0.0
               : sin * widest.width + cos * highest.height;
           minSizeHeight = jsMin(
             maxHeight,
-            minSizeHeight + labelHeight + tickPadding,
+            jsToNumber(jsAdd(jsAdd(minSizeHeight, labelHeight), tickPadding)),
           );
         } else {
           // A vertical axis is more constrained by the width. Labels are the
           // dominant factor here, so get that length first and account for
           // padding
           final labelWidth = jsTruthy(jsGet(tickOpts, 'mirror'))
-              ? 0
+              ? 0.0
               : cos * widest.width + sin * highest.height;
 
           minSizeWidth = jsMin(
             maxWidth,
-            minSizeWidth + labelWidth + tickPadding,
+            jsToNumber(jsAdd(jsAdd(minSizeWidth, labelWidth), tickPadding)),
           );
         }
         _calculatePadding(first, last, sin, cos);
@@ -1476,14 +1568,21 @@ class Scale extends _ScalePrototype
 
     if (isHorizontal) {
       width = length = chart.width - _margins.left - _margins.right;
-      height = minSizeHeight;
+      // DIVERGES(chartjs): adapt-scale-option-types, a number size only.
+      height = jsToNumber(minSizeHeight);
     } else {
-      width = minSizeWidth;
+      // DIVERGES(chartjs): adapt-scale-option-types, a number size only.
+      width = jsToNumber(minSizeWidth);
       height = length = chart.height - _margins.top - _margins.bottom;
     }
   }
 
   /// core.scale.js:689 `_calculatePadding(first, last, sin, cos)`.
+  ///
+  /// `padding` is the raw `ticks.padding` option. Each `+ padding` is
+  /// [jsAdd]: a string padding joins the number. `Math.max` takes the
+  /// [jsToNumber] of the result for [paddingLeft] and [paddingRight].
+  /// [paddingTop] and [paddingBottom] keep the result, also a joined string.
   void _calculatePadding(
     ({double width, double height}) first,
     ({double width, double height}) last,
@@ -1493,9 +1592,9 @@ class Scale extends _ScalePrototype
     final options = this.options;
     final tickOpts = options['ticks'];
     final align = jsGet(tickOpts, 'align');
-    final padding = jsToNumber(jsGet(tickOpts, 'padding'));
+    final padding = jsGet(tickOpts, 'padding');
     final position = options['position'];
-    final isRotated = labelRotation != 0;
+    final isRotated = _isRotated;
     final labelsBelowTicks = position != 'top' && axis == 'x';
 
     if (isHorizontal()) {
@@ -1526,11 +1625,15 @@ class Scale extends _ScalePrototype
 
       // Adjust padding taking into account changes in offsets
       this.paddingLeft = jsMax(
-        (paddingLeft - offsetLeft + padding) * width / (width - offsetLeft),
+        jsToNumber(jsAdd(paddingLeft - offsetLeft, padding)) *
+            width /
+            (width - offsetLeft),
         0,
       );
       this.paddingRight = jsMax(
-        (paddingRight - offsetRight + padding) * width / (width - offsetRight),
+        jsToNumber(jsAdd(paddingRight - offsetRight, padding)) *
+            width /
+            (width - offsetRight),
         0,
       );
     } else {
@@ -1545,8 +1648,8 @@ class Scale extends _ScalePrototype
         paddingBottom = 0;
       }
 
-      this.paddingTop = paddingTop + padding;
-      this.paddingBottom = paddingBottom + padding;
+      this.paddingTop = jsAdd(paddingTop, padding);
+      this.paddingBottom = jsAdd(paddingBottom, padding);
     }
   }
 
@@ -1560,9 +1663,9 @@ class Scale extends _ScalePrototype
     final margins = _margins;
     margins
       ..left = jsMax(paddingLeft, margins.left)
-      ..top = jsMax(paddingTop, margins.top)
+      ..top = jsMax(jsToNumber(paddingTop), margins.top)
       ..right = jsMax(paddingRight, margins.right)
-      ..bottom = jsMax(paddingBottom, margins.bottom);
+      ..bottom = jsMax(jsToNumber(paddingBottom), margins.bottom);
   }
 
   /// core.scale.js:752 `afterFit()`.
@@ -1759,8 +1862,10 @@ class Scale extends _ScalePrototype
   /// @param {*} value
   /// @param {number} [index]
   /// @return {number}
+  ///
+  /// [value] is any JS value (Chart.js ADR 0025).
   @override
-  double getPixelForValue(double value, [double? index]) {
+  double getPixelForValue(Object? value, [double? index]) {
     // eslint-disable-line no-unused-vars
     return double.nan;
   }
@@ -1866,21 +1971,26 @@ class Scale extends _ScalePrototype
   ///
   /// @return {number}
   /// @private
+  ///
+  /// `padding` is the raw `autoSkipPadding || 0`. A string padding joins
+  /// the label size ([jsAdd]), and the arithmetic after it takes the
+  /// [jsToNumber]: `6.673828125 + '3'` gives `'6.6738281253'`.
   @internal
   @override
   double tickSize() {
     final optionTicks = options['ticks'];
 
     // Calculate space needed by label in axis direction.
-    final rot = toRadians(labelRotation);
+    final rot = _rotationRadians;
     final cos = math.cos(rot).abs();
     final sin = math.sin(rot).abs();
 
     final labelSizes = _getLabelSizes();
-    final padding = jsOrZero(jsGet(optionTicks, 'autoSkipPadding'));
+    final autoSkipPadding = jsGet(optionTicks, 'autoSkipPadding');
+    final padding = jsTruthy(autoSkipPadding) ? autoSkipPadding : 0.0;
     // A label sizes object is always truthy.
-    final w = labelSizes.widest.width + padding;
-    final h = labelSizes.highest.height + padding;
+    final w = jsToNumber(jsAdd(labelSizes.widest.width, padding));
+    final h = jsToNumber(jsAdd(labelSizes.highest.height, padding));
 
     // Calculate space needed for 1 tick in axis direction.
     return isHorizontal()
@@ -1912,6 +2022,12 @@ class Scale extends _ScalePrototype
   ///
   /// A position that matches no branch leaves the coordinates JS
   /// `undefined`. They are NaN here.
+  ///
+  /// `tl` is the raw `tickLength` ([_getTickMarkLength]). `x - tl` takes its
+  /// [jsToNumber]. `x + tl` is [jsAdd]: a string `tickLength` joins the
+  /// number, for example `this.top + '8'` gives `'4848'` for the top 484.
+  /// The canvas call that draws the tick mark applies `ToNumber` to the
+  /// coordinate, so the item keeps the [jsToNumber] of the result.
   List<_GridLineItem> _computeGridLineItems(types.ChartArea? chartArea) {
     final axis = this.axis;
     final chart = this.chart;
@@ -1955,7 +2071,7 @@ class Scale extends _ScalePrototype
 
     if (position == 'top') {
       borderValue = alignBorderValue(bottom);
-      ty1 = bottom - tl;
+      ty1 = bottom - jsToNumber(tl);
       ty2 = borderValue - axisHalfWidth;
       y1 = alignBorderValue(chartArea!.top) + axisHalfWidth;
       y2 = chartArea.bottom;
@@ -1964,10 +2080,10 @@ class Scale extends _ScalePrototype
       y1 = chartArea!.top;
       y2 = alignBorderValue(chartArea.bottom) - axisHalfWidth;
       ty1 = borderValue + axisHalfWidth;
-      ty2 = top + tl;
+      ty2 = jsToNumber(jsAdd(top, tl));
     } else if (position == 'left') {
       borderValue = alignBorderValue(right);
-      tx1 = right - tl;
+      tx1 = right - jsToNumber(tl);
       tx2 = borderValue - axisHalfWidth;
       x1 = alignBorderValue(chartArea!.left) + axisHalfWidth;
       x2 = chartArea.right;
@@ -1976,7 +2092,7 @@ class Scale extends _ScalePrototype
       x1 = chartArea!.left;
       x2 = alignBorderValue(chartArea.right) - axisHalfWidth;
       tx1 = borderValue + axisHalfWidth;
-      tx2 = left + tl;
+      tx2 = jsToNumber(jsAdd(left, tl));
     } else if (axis == 'x') {
       if (position == 'center') {
         borderValue = alignBorderValue(
@@ -1984,17 +2100,16 @@ class Scale extends _ScalePrototype
         );
       } else if (isObject(position)) {
         final positionAxisID = _firstKey(position! as AnyObject);
-        // DIVERGES(chartjs): adapt-scale-position-value, ToNumber of the value.
         final value = jsGet(position, positionAxisID);
         borderValue = alignBorderValue(
-          chart.scales[positionAxisID]!.getPixelForValue(jsToNumber(value)),
+          chart.scales[positionAxisID]!.getPixelForValue(value),
         );
       }
 
       y1 = chartArea!.top;
       y2 = chartArea.bottom;
       ty1 = borderValue + axisHalfWidth;
-      ty2 = ty1 + tl;
+      ty2 = jsToNumber(jsAdd(ty1, tl));
     } else if (axis == 'y') {
       if (position == 'center') {
         borderValue = alignBorderValue(
@@ -2002,15 +2117,14 @@ class Scale extends _ScalePrototype
         );
       } else if (isObject(position)) {
         final positionAxisID = _firstKey(position! as AnyObject);
-        // DIVERGES(chartjs): adapt-scale-position-value, ToNumber of the value.
         final value = jsGet(position, positionAxisID);
         borderValue = alignBorderValue(
-          chart.scales[positionAxisID]!.getPixelForValue(jsToNumber(value)),
+          chart.scales[positionAxisID]!.getPixelForValue(value),
         );
       }
 
       tx1 = borderValue - axisHalfWidth;
-      tx2 = tx1 - tl;
+      tx2 = tx1 - jsToNumber(tl);
       x1 = chartArea!.left;
       x2 = chartArea.right;
     }
@@ -2094,6 +2208,15 @@ class Scale extends _ScalePrototype
   /// Dart `null` for [chartArea] stands for the JS `undefined` of a chart
   /// before its first layout. A branch that reads an edge of it throws a
   /// `TypeError`, as in JavaScript.
+  ///
+  /// `tl` ([_getTickMarkLength]), `padding` and `labelOffset` are raw option
+  /// values. Thus `tickAndPadding`, `x`, `y` and `pixel` are JS values: each
+  /// `+` is [jsAdd], and a string operand joins the other operand. Each `-`
+  /// takes the [jsToNumber]: with `tickLength` 8 and `padding: '3'`, the
+  /// position `'top'` gives `this.bottom - '83'`. The translation of the
+  /// item is the [jsToNumber] of `x` and `y`, the values that the canvas
+  /// call `translate` takes. Upstream keeps a joined string in the
+  /// translation (differences.md row `adapt-scale-option-types`).
   List<types.LabelItem> _computeLabelItems(types.ChartArea? chartArea) {
     final axis = this.axis;
     final options = this.options;
@@ -2103,19 +2226,19 @@ class Scale extends _ScalePrototype
     final ticks = this.ticks!;
     final align = jsGet(optionTicks, 'align');
     final crossAlign = jsGet(optionTicks, 'crossAlign');
-    final padding = jsToNumber(jsGet(optionTicks, 'padding'));
+    final padding = jsGet(optionTicks, 'padding');
     final mirror = jsTruthy(jsGet(optionTicks, 'mirror'));
     final tl = _getTickMarkLength(options['grid']);
-    final tickAndPadding = tl + padding;
-    final hTickAndPadding = mirror ? -padding : tickAndPadding;
-    final rotation = -toRadians(labelRotation);
+    final tickAndPadding = jsAdd(tl, padding);
+    final hTickAndPadding = mirror ? -jsToNumber(padding) : tickAndPadding;
+    final rotation = -_rotationRadians;
     final items = <types.LabelItem>[];
     Tick tick;
     Object? label;
-    var x = double.nan;
-    var y = double.nan;
+    Object x = double.nan;
+    Object y = double.nan;
     String? textAlign;
-    double pixel;
+    Object pixel;
     types.CanvasFontSpec font;
     double lineHeight;
     int lineCount;
@@ -2123,10 +2246,10 @@ class Scale extends _ScalePrototype
     var textBaseline = 'middle';
 
     if (position == 'top') {
-      y = bottom - hTickAndPadding;
+      y = bottom - jsToNumber(hTickAndPadding);
       textAlign = _getXAxisLabelAlignment();
     } else if (position == 'bottom') {
-      y = top + hTickAndPadding;
+      y = jsAdd(top, hTickAndPadding);
       textAlign = _getXAxisLabelAlignment();
     } else if (position == 'left') {
       final ret = _getYAxisLabelAlignment(tl);
@@ -2138,24 +2261,25 @@ class Scale extends _ScalePrototype
       x = ret.x;
     } else if (axis == 'x') {
       if (position == 'center') {
-        y = ((chartArea!.top + chartArea.bottom) / 2) + tickAndPadding;
+        y = jsAdd((chartArea!.top + chartArea.bottom) / 2, tickAndPadding);
       } else if (isObject(position)) {
         final positionAxisID = _firstKey(position! as AnyObject);
-        // DIVERGES(chartjs): adapt-scale-position-value, ToNumber of the value.
         final value = jsGet(position, positionAxisID);
-        y =
-            chart.scales[positionAxisID]!.getPixelForValue(jsToNumber(value)) +
-            tickAndPadding;
+        y = jsAdd(
+          chart.scales[positionAxisID]!.getPixelForValue(value),
+          tickAndPadding,
+        );
       }
       textAlign = _getXAxisLabelAlignment();
     } else if (axis == 'y') {
       if (position == 'center') {
-        x = ((chartArea!.left + chartArea.right) / 2) - tickAndPadding;
+        x =
+            ((chartArea!.left + chartArea.right) / 2) -
+            jsToNumber(tickAndPadding);
       } else if (isObject(position)) {
         final positionAxisID = _firstKey(position! as AnyObject);
-        // DIVERGES(chartjs): adapt-scale-position-value, ToNumber of the value.
         final value = jsGet(position, positionAxisID);
-        x = chart.scales[positionAxisID]!.getPixelForValue(jsToNumber(value));
+        x = chart.scales[positionAxisID]!.getPixelForValue(value);
       }
       textAlign = _getYAxisLabelAlignment(tl).textAlign;
     }
@@ -2174,9 +2298,7 @@ class Scale extends _ScalePrototype
       label = tick.label;
 
       final optsAtIndex = _setContext(optionTicks, getContext(i));
-      pixel =
-          (getPixelForTick(i) ?? 0) +
-          jsToNumber(jsGet(optionTicks, 'labelOffset'));
+      pixel = jsAdd(getPixelForTick(i), jsGet(optionTicks, 'labelOffset'));
       font = resolveTickFontOptions(i);
       lineHeight = jsToNumber(font.lineHeight);
       lineCount = isArray(label) ? (label! as List<Object?>).length : 1;
@@ -2228,7 +2350,7 @@ class Scale extends _ScalePrototype
           textOffset *= -1;
         }
         if (rotation != 0 && !jsTruthy(optsAtIndex['showLabelBackdrop'])) {
-          x += (lineHeight / 2) * math.sin(rotation);
+          x = jsAdd(x, (lineHeight / 2) * math.sin(rotation));
         }
       } else {
         y = pixel;
@@ -2290,7 +2412,8 @@ class Scale extends _ScalePrototype
             strokeWidth: canvasNumber(strokeWidth),
             textAlign: tickTextAlign,
             textBaseline: textBaseline,
-            translation: (x, y),
+            // DIVERGES(chartjs): adapt-scale-option-types, numbers only.
+            translation: (jsToNumber(x), jsToNumber(y)),
             backdrop: backdrop,
           ),
         ),
@@ -2305,7 +2428,7 @@ class Scale extends _ScalePrototype
     final options = this.options;
     final position = options['position'];
     final ticks = options['ticks'];
-    final rotation = -toRadians(labelRotation);
+    final rotation = -_rotationRadians;
 
     if (rotation != 0 && !rotation.isNaN) {
       return position == 'top' ? 'left' : 'right';
@@ -2327,41 +2450,49 @@ class Scale extends _ScalePrototype
 
   /// core.scale.js:1352 `_getYAxisLabelAlignment(tl)`: the object
   /// `{textAlign, x}`, a record. NaN stands for the `undefined` of `x`.
-  ({String textAlign, double x}) _getYAxisLabelAlignment(double tl) {
+  ///
+  /// [tl] ([_getTickMarkLength]) and `padding` are raw option values. Thus
+  /// `x` is a JS value: each `+` and `+=` is [jsAdd], and each `-` and `-=`
+  /// takes the [jsToNumber]. With `mirror` and `padding: '3'`, the position
+  /// `'left'` gives `this.right + '3'`, and `crossAlign: 'center'` then
+  /// joins `widest / 2` to that string. The only reader puts `x` in the
+  /// translation of the label items, which the canvas call `translate`
+  /// converts with `ToNumber`. Thus the record has the [jsToNumber] of `x`.
+  ({String textAlign, double x}) _getYAxisLabelAlignment(Object? tl) {
     final options = this.options;
     final position = options['position'];
     final ticks = options['ticks'];
     final crossAlign = jsGet(ticks, 'crossAlign');
     final mirror = jsGet(ticks, 'mirror');
-    final padding = jsToNumber(jsGet(ticks, 'padding'));
+    final padding = jsGet(ticks, 'padding');
     final labelSizes = _getLabelSizes();
-    final tickAndPadding = tl + padding;
+    final tickAndPadding = jsAdd(tl, padding);
     final widest = labelSizes.widest.width;
 
     String textAlign;
-    var x = double.nan;
+    Object x = double.nan;
 
     if (position == 'left') {
       if (jsTruthy(mirror)) {
-        x = right + padding;
+        x = jsAdd(right, padding);
 
         if (crossAlign == 'near') {
           textAlign = 'left';
         } else if (crossAlign == 'center') {
           textAlign = 'center';
-          x += widest / 2;
+          x = jsAdd(x, widest / 2);
         } else {
           textAlign = 'right';
-          x += widest;
+          x = jsAdd(x, widest);
         }
       } else {
-        x = right - tickAndPadding;
+        x = right - jsToNumber(tickAndPadding);
 
         if (crossAlign == 'near') {
           textAlign = 'right';
         } else if (crossAlign == 'center') {
           textAlign = 'center';
-          x -= widest / 2;
+          x = jsToNumber(x) - widest / 2;
         } else {
           textAlign = 'left';
           x = left;
@@ -2369,25 +2500,25 @@ class Scale extends _ScalePrototype
       }
     } else if (position == 'right') {
       if (jsTruthy(mirror)) {
-        x = left + padding;
+        x = jsAdd(left, padding);
 
         if (crossAlign == 'near') {
           textAlign = 'right';
         } else if (crossAlign == 'center') {
           textAlign = 'center';
-          x -= widest / 2;
+          x = jsToNumber(x) - widest / 2;
         } else {
           textAlign = 'left';
-          x -= widest;
+          x = jsToNumber(x) - widest;
         }
       } else {
-        x = left + tickAndPadding;
+        x = jsAdd(left, tickAndPadding);
 
         if (crossAlign == 'near') {
           textAlign = 'left';
         } else if (crossAlign == 'center') {
           textAlign = 'center';
-          x += widest / 2;
+          x = jsAdd(x, widest / 2);
         } else {
           textAlign = 'right';
           x = right;
@@ -2397,7 +2528,7 @@ class Scale extends _ScalePrototype
       textAlign = 'right';
     }
 
-    return (textAlign: textAlign, x: x);
+    return (textAlign: textAlign, x: jsToNumber(x));
   }
 
   /// core.scale.js:1423 `_computeLabelArea()`.
@@ -2440,8 +2571,12 @@ class Scale extends _ScalePrototype
 
   /// core.scale.js:1451 `getLineWidthForValue(value)`.
   ///
-  /// The result is the `lineWidth` option as a number.
-  double getLineWidthForValue(double value) {
+  /// [value] is any JS value: controller.bar.js:620 passes the `base`
+  /// option. `t.value == value` is the strict compare of core.scale.js:1457
+  /// for a `double` tick value: a number of the same value is equal, and a
+  /// `String` is not (Chart.js ADR 0025). The result is the `lineWidth`
+  /// option as a number.
+  double getLineWidthForValue(Object? value) {
     final grid = options['grid'];
     if (!_isVisible() || !jsTruthy(jsGet(grid, 'display'))) {
       return 0;

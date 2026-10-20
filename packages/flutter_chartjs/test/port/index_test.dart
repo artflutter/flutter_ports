@@ -13,17 +13,21 @@ import 'package:flutter_test/flutter_test.dart';
 // with the export names in code unit order. `Chart.register(
 // ...registerables)` then registers the element classes in the order arc,
 // bar, line, point (Chart.js ADR 0020, probe 2). The source order of
-// elements/index.js (:1-4) is arc, line, point, bar. In phase 5, only the
-// namespace `elements` has entries.
+// elements/index.js (:1-4) is arc, line, point, bar. The scale classes
+// register in the order category, linear, logarithmic, radialLinear, time,
+// timeseries: the code unit order and the source order of scales/index.js
+// (:1-6) are the same. In phase 6, only the namespaces `elements` and
+// `scales` have entries.
 //
 // The library also exports the names of src/core/index.ts and of the other
 // index modules. The test reads some of them, so that a missing export
 // fails the analysis.
 //
 // flutter_test_config.dart registers the built-in components before main()
-// (harness-register-builtins). A second registration of an element through
-// a new Registry throws, as a second `Object.defineProperties` of a route
-// does. Thus the file removes them first.
+// (harness-register-builtins). A second registration of an element or of
+// the radial linear scale through a new Registry throws, as a second
+// `Object.defineProperties` of a route does. Thus the file removes them
+// first.
 
 void main() {
   removeBuiltins();
@@ -49,10 +53,29 @@ void main() {
     expect(elements['PointElement'], same(PointElement.jsClass));
   });
 
+  test('the namespace scales has the export names in code unit order', () {
+    // The order of the x64 Node.js v24.12.0 run of the chart.js 4.5.1 dist:
+    // `Object.keys(scales)`. `LinearScaleBase` is not an export of
+    // scales/index.js.
+    expect(jsObjectKeys(scales), [
+      'CategoryScale',
+      'LinearScale',
+      'LogarithmicScale',
+      'RadialLinearScale',
+      'TimeScale',
+      'TimeSeriesScale',
+    ]);
+    expect(scales['CategoryScale'], same(CategoryScale.jsClass));
+    expect(scales['LinearScale'], same(LinearScale.jsClass));
+    expect(scales['LogarithmicScale'], same(LogarithmicScale.jsClass));
+    expect(scales['RadialLinearScale'], same(RadialLinearScale.jsClass));
+    expect(scales['TimeScale'], same(TimeScale.jsClass));
+    expect(scales['TimeSeriesScale'], same(TimeSeriesScale.jsClass));
+  });
+
   test('the namespaces of later phases are empty', () {
     expect(controllers, isEmpty);
     expect(plugins, isEmpty);
-    expect(scales, isEmpty);
   });
 
   test('a namespace is unmodifiable, as a frozen object', () {
@@ -62,7 +85,10 @@ void main() {
     );
   });
 
-  test('add(registerables) registers the elements in the bundle order', () {
+  test('add(registerables) registers the components in the bundle order', () {
+    // The orders of the x64 Node.js v24.12.0 run of the chart.js 4.5.1 dist:
+    // `Chart.register(...registerables)`, then the keys of
+    // `Chart.registry.scales.items` and of `Chart.defaults.scales`.
     final registry = Registry()..add(registerables);
     expect(jsObjectKeys(registry.elements.items), [
       'arc',
@@ -70,9 +96,24 @@ void main() {
       'line',
       'point',
     ]);
+    expect(jsObjectKeys(registry.scales.items), [
+      'category',
+      'linear',
+      'logarithmic',
+      'radialLinear',
+      'time',
+      'timeseries',
+    ]);
+    expect(jsObjectKeys(defaults.get('scales')), [
+      'category',
+      'linear',
+      'logarithmic',
+      'radialLinear',
+      'time',
+      'timeseries',
+    ]);
     expect(registry.controllers.items, isEmpty);
     expect(registry.plugins.items, isEmpty);
-    expect(registry.scales.items, isEmpty);
   });
 
   test('Chart.register([registerables]) throws at the first namespace', () {

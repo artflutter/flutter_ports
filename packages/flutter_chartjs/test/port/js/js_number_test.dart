@@ -152,6 +152,16 @@ void main() {
       expect(jsToNumber(<String, Object?>{}), isNaN);
       expect(jsToNumber(Object()), isNaN);
     });
+
+    test('gives the time value of a DateTime, as of a JS Date', () {
+      // +new Date(Date.UTC(2015, 0, 1, 20)) is 1420142400000 (Chart.js ADR
+      // 0024, decision 2).
+      final date = DateTime.utc(2015, 1, 1, 20);
+      expect(jsToNumber(date), 1420142400000.0);
+      expect(jsToNumber(date), isA<double>());
+      expect(jsIsFinite(date), isTrue);
+      expect(jsToNumber(DateTime.fromMillisecondsSinceEpoch(-1)), -1);
+    });
   });
 
   group('jsParseFloat', () {
@@ -250,6 +260,55 @@ void main() {
       expect(jsOrZero(double.infinity), double.infinity);
       expect(jsOrZero('a'), isNaN);
       expect(jsOrZero(<Object?>[]), 0.0);
+    });
+  });
+
+  group('jsAdd', () {
+    // The results of `a + b` in Node.js v24.12.0 on x64.
+    test('adds two numbers', () {
+      expect(jsAdd(1.5, 2.25), 3.75);
+      expect(jsAdd(0.1, 0.2), 0.30000000000000004);
+      expect(jsAdd(-0.0, -0.0), _isSameNumber(-0));
+      expect(jsAdd(-0.0, 0.0), _isSameNumber(0));
+      expect(jsAdd(2, 3), _isSameNumber(5));
+      expect(jsAdd(1.5, double.infinity), double.infinity);
+    });
+
+    test('adds the ToNumber of null, undefined and booleans', () {
+      expect(jsAdd(true, null), _isSameNumber(1));
+      expect(jsAdd(true, 1), _isSameNumber(2));
+      expect(jsAdd(null, null), _isSameNumber(0));
+      expect(jsAdd(undefined, 1), isNaN);
+    });
+
+    test('joins the ToString of the operands when one is a string', () {
+      expect(jsAdd(100, '5'), '1005');
+      expect(jsAdd('8', 0.0), '80');
+      expect(jsAdd(7.199999999999999, '3'), '7.1999999999999993');
+      expect(jsAdd(483.59999999999997, '83'), '483.5999999999999783');
+      expect(jsAdd(1e21, 'a'), '1e+21a');
+      expect(jsAdd(-0.0, ''), '0');
+      expect(jsAdd(double.nan, 'x'), 'NaNx');
+      expect(jsAdd(double.infinity, '1'), 'Infinity1');
+      expect(jsAdd(null, '5'), 'null5');
+      expect(jsAdd(undefined, '5'), 'undefined5');
+      expect(jsAdd(false, 'x'), 'falsex');
+      expect(jsAdd('1', '2'), '12');
+      expect(jsAdd('', ''), '');
+    });
+
+    test('joins the ToString of an array or a plain object', () {
+      expect(jsAdd(<Object?>[], 1), '1');
+      expect(jsAdd([1, 2], 3), '1,23');
+      expect(jsAdd(<String, Object?>{}, 1), '[object Object]1');
+      expect(jsAdd(1.5, [null, undefined]), '1.5,');
+    });
+
+    test('the ToNumber of a joined result is the value of the next '
+        'arithmetic', () {
+      // core.scale.js:720: (paddingLeft - offsetLeft + padding) * width.
+      expect(jsToNumber(jsAdd(6.3369140625, '3')), 6.33691406253);
+      expect(jsToNumber(jsAdd('8', 0.0)), 80);
     });
   });
 
