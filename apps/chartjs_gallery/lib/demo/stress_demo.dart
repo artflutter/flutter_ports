@@ -6,12 +6,17 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:chartjs_gallery/demo/canvas_demo.dart' show labelColor;
+import 'package:chartjs_gallery/demo/chart_canvas.dart';
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
+import 'package:chartjs_gallery/demo/stress_point_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
+import 'package:flutter_chartjs/src/canvas/canvas_ui.dart' show UiCanvasElement;
+import 'package:flutter_chartjs/src/core/core.animator.dart' show animator;
+import 'package:flutter_chartjs/src/core/core.controller.dart';
 // The typed options of Chart.js ADR 0018. The prefix keeps them apart from
 // the PointOptions of demo_chart.dart, which the primitives mode uses.
 import 'package:flutter_chartjs/src/elements/element_options.dart'
@@ -19,6 +24,9 @@ import 'package:flutter_chartjs/src/elements/element_options.dart'
 import 'package:flutter_chartjs/src/elements/index.dart';
 import 'package:flutter_chartjs/src/helpers/index.dart'
     show ParsedFont, drawPoint, renderText, requestAnimFrame, toFont;
+import 'package:flutter_chartjs/src/js/js_number.dart' show jsToNumber;
+import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart' show ChartArea;
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 
@@ -47,7 +55,14 @@ enum StressMode {
   bars([1000, 5000, 20000], 'bars'),
 
   /// N `ArcElement` objects as the slices of doughnut rings.
-  arcs([100, 1000, 5000], 'arcs');
+  arcs([100, 1000, 5000], 'arcs'),
+
+  /// N points of a real `Chart` of phase 5 (Chart.js ADR 0021, section 8):
+  /// `core.controller`, `core.config`, the producers of `DatasetController`
+  /// and `PointElement`, with the gallery controller
+  /// `StressPointController`. [StressChartCall] selects the call of each
+  /// frame.
+  chart(stressPointCounts, 'chart points');
 
   const StressMode(this.counts, this.items);
 
@@ -58,9 +73,36 @@ enum StressMode {
   final String items;
 }
 
+/// The call of each frame in the mode [StressMode.chart] (Chart.js ADR
+/// 0021, section 8). [draw] and [update] run with `animation: false`.
+enum StressChartCall {
+  /// Case (a): `chart.draw()`. The points do not move.
+  draw,
+
+  /// Case (b): new positions in the data objects, then
+  /// `chart.update('none')`. With a scriptable `backgroundColor`, this is
+  /// case (c).
+  update,
+
+  /// The animation cost (step 8 of the phase 5 prompt): the chart has
+  /// `animation: {duration: 1000, loop: true}`. Its first update starts an
+  /// animation of `x` and `y` of each point, which loops without end. In
+  /// each frame, the module-level animator of `core.animator` ticks the N
+  /// animations (the property writes) and calls `chart.draw()`. `animatorMs`
+  /// is the time of that tick without the draw.
+  animate,
+}
+
+/// The duration of the looping animation of [StressChartCall.animate], in
+/// ms.
+const int stressAnimateMs = 1000;
+
 /// The figures of the stress tab, published twice a second and when the
 /// loop stops: the mode, the item count N (`points`), the label count M,
-/// and the frame figures.
+/// and the frame figures. `updateMs` is the time of `chart.update()` without
+/// its draw, in the mode [StressMode.chart]. `animatorMs` is the time of the
+/// animator tick without its draw, for [StressChartCall.animate]. Both are 0
+/// in the other modes.
 typedef StressStats = ({
   StressMode mode,
   int points,
@@ -68,6 +110,8 @@ typedef StressStats = ({
   int frames,
   double fps,
   double drawMs,
+  double updateMs,
+  double animatorMs,
   double buildMs,
   double buildMaxMs,
   double rasterMs,
@@ -82,6 +126,8 @@ const StressStats _noStats = (
   frames: 0,
   fps: 0,
   drawMs: 0,
+  updateMs: 0,
+  animatorMs: 0,
   buildMs: 0,
   buildMaxMs: 0,
   rasterMs: 0,
@@ -100,10 +146,16 @@ const StressStats _noStats = (
 ///   one `LineElement`.
 /// - [StressMode.bars]: N `BarElement` objects with heights that move.
 /// - [StressMode.arcs]: N `ArcElement` objects with angles that move.
+/// - [StressMode.chart]: a real `Chart` of N points. Each frame calls
+///   `chart.draw()`, or writes the moving positions into the data objects
+///   and calls `chart.update('none')` ([StressChartCall]). An inline plugin
+///   draws the labels and the title in its `afterDraw` hook.
 ///
 /// The element modes make their elements once for each mode and N. Each
 /// frame writes the properties that move with the typed setters, and then
-/// calls `draw` of each element.
+/// calls `draw` of each element. The mode [StressMode.chart] makes a new
+/// chart for each N, `enableOptionSharing` value and `backgroundColor`
+/// form.
 ///
 /// The labels have one fixed angle of -45 degrees, as the tick labels of a
 /// chart have; the `spin labels` switch gives each label a new angle in
@@ -112,19 +164,27 @@ const StressStats _noStats = (
 /// and the build and raster times of `SchedulerBinding.addTimingsCallback`.
 ///
 /// Every control has a `ValueKey` (`stress.mode.bars`, `stress.n.5000`,
-/// `stress.m.200`, `stress.start`, …) so that automation can drive it.
+/// `stress.m.200`, `stress.start`, `stress.chart.call.update`,
+/// `stress.chart.sharing`, …) so that automation can drive it.
 class StressDemo extends StatefulWidget {
   /// Creates the stress tab.
   ///
   /// [initialMode], [initialN] and [initialM] set the first mode, item count
-  /// and label count. [autoStart] starts the loop when the chart exists.
-  /// [onStats] receives each published [StressStats]. They let a profiling
-  /// entry point (`lib/main_stress.dart`) or a test drive the tab.
+  /// and label count. [initialSpin] and [initialLine] set the first state of
+  /// two layer switches. [initialCall], [initialSharing] and
+  /// [initialScriptable] set the case of the mode [StressMode.chart].
+  /// [autoStart] starts the loop when the chart exists. [onStats] receives
+  /// each published [StressStats]. They let a profiling entry point
+  /// (`lib/main_stress.dart`) or a test drive the tab.
   const StressDemo({
     this.initialMode = StressMode.primitives,
     this.initialN,
     this.initialM,
     this.initialSpin = false,
+    this.initialLine = true,
+    this.initialCall = StressChartCall.draw,
+    this.initialSharing = true,
+    this.initialScriptable = false,
     this.autoStart = false,
     this.onStats,
     super.key,
@@ -141,6 +201,20 @@ class StressDemo extends StatefulWidget {
 
   /// Whether the labels start with a new angle in each frame.
   final bool initialSpin;
+
+  /// Whether the modes [StressMode.primitives] and [StressMode.elements]
+  /// start with their line (the layer `stress.layer.line`).
+  final bool initialLine;
+
+  /// The first call of each frame in the mode [StressMode.chart].
+  final StressChartCall initialCall;
+
+  /// The first `enableOptionSharing` of the chart points: true as in a line
+  /// chart, false as in a scatter chart.
+  final bool initialSharing;
+
+  /// Whether the chart points start with a scriptable `backgroundColor`.
+  final bool initialScriptable;
 
   /// Whether the loop starts as soon as the chart exists.
   final bool autoStart;
@@ -160,13 +234,21 @@ class StressDemoState extends State<StressDemo> {
   late int _n = widget.initialN ?? _mode.counts.first;
   late int _m = widget.initialM ?? stressLabelCounts[1];
   bool _points = true;
-  bool _line = true;
+  late bool _line = widget.initialLine;
   late bool _spin = widget.initialSpin;
+  late StressChartCall _call = widget.initialCall;
+  late bool _sharing = widget.initialSharing;
+  late bool _scriptable = widget.initialScriptable;
   bool _running = false;
   bool _muted = false;
+  bool _autoStarted = false;
 
   DemoChart? _chart;
   int? _frameId;
+
+  // The mode [StressMode.chart]: the chart and its data objects `{x, y}`.
+  _StressChart? _stressChart;
+  List<AnyObject> _chartData = const [];
 
   // Point positions and velocities, in fractions of the chart per second.
   final Float64List _px = Float64List(_maxPoints);
@@ -195,9 +277,13 @@ class StressDemoState extends State<StressDemo> {
   int _frames = 0;
   int _windowFrames = 0;
   int _windowDrawMicros = 0;
+  int _windowUpdateMicros = 0;
+  int _windowAnimatorMicros = 0;
   Duration _windowStart = Duration.zero;
   double _fps = 0;
   double _drawMs = 0;
+  double _updateMs = 0;
+  double _animatorMs = 0;
   final List<FrameTiming> _timings = [];
 
   final ParsedFont _labelFont = toFont(<String, Object?>{'size': 12});
@@ -221,6 +307,14 @@ class StressDemoState extends State<StressDemo> {
     ..._bars,
     ..._arcs,
   ];
+
+  /// The chart of the mode [StressMode.chart], once it exists.
+  @visibleForTesting
+  Chart? get debugChart => _stressChart;
+
+  /// The data objects `{x, y}` of the chart of the mode [StressMode.chart].
+  @visibleForTesting
+  List<AnyObject> get debugChartData => _chartData;
 
   @override
   void initState() {
@@ -263,26 +357,60 @@ class StressDemoState extends State<StressDemo> {
       _windowStart = Duration.zero;
       _windowFrames = 0;
       _windowDrawMicros = 0;
+      _windowUpdateMicros = 0;
+      _windowAnimatorMicros = 0;
       _frames = 0;
       _timings.clear();
+      // The first frame of the animated case starts the animation again.
+      _animating = false;
       _scheduleFrame();
     } else {
       _cancelFrame();
       _clock.stop();
+      if (_animating) _stressChart?.stop();
       _publish();
     }
   }
 
   /// Sets the mode and N. A change of the mode keeps N, but not above the
   /// largest count of the new mode. A change of either makes the elements
-  /// again.
+  /// again. In the mode [StressMode.chart], a change of N makes a new chart.
   void _setScene({StressMode? mode, int? n}) {
     final newMode = mode ?? _mode;
     final newN = n ?? (mode == null ? _n : math.min(_n, newMode.counts.last));
     if (newMode == _mode && newN == _n) return;
+    // The modes of the demo chart share one host. The mode chart has a host
+    // of its own, and a new host for each N. A new host gives its chart.
+    if (newMode == StressMode.chart) {
+      _stressChart = null;
+      if (_mode != StressMode.chart) _chart = null;
+    } else if (_mode == StressMode.chart) {
+      _stressChart = null;
+    }
     _mode = newMode;
     _n = newN;
     _buildScene();
+  }
+
+  /// Sets the case of the mode [StressMode.chart]. A change of the sharing,
+  /// of the `backgroundColor` form, or to or from
+  /// [StressChartCall.animate] (another `animation` option) makes a new
+  /// chart.
+  void _setChartCase({StressChartCall? call, bool? sharing, bool? scriptable}) {
+    final newCall = call ?? _call;
+    final animated = newCall == StressChartCall.animate;
+    final animatedChanged = animated != (_call == StressChartCall.animate);
+    _call = newCall;
+    final newSharing = sharing ?? _sharing;
+    final newScriptable = scriptable ?? _scriptable;
+    if (newSharing == _sharing &&
+        newScriptable == _scriptable &&
+        !animatedChanged) {
+      return;
+    }
+    _sharing = newSharing;
+    _scriptable = newScriptable;
+    _stressChart = null;
   }
 
   /// The resolved options of each point element: the defaults of
@@ -400,8 +528,100 @@ class StressDemoState extends State<StressDemo> {
           for (var i = 0; i < _n; i++)
             ArcElement()..options = _arcOptions[i % _arcSlices],
         ];
+      case StressMode.chart:
+        // The chart makes its point elements.
+        return;
     }
     _sceneBuilds++;
+  }
+
+  /// The background color of the chart points, as in the mode
+  /// [StressMode.elements].
+  static const String _chartBackground = 'rgba(54, 162, 235, 0.45)';
+
+  /// The background color of the odd chart points of the scriptable
+  /// `backgroundColor`.
+  static const String _chartBackgroundOdd = 'rgba(255, 99, 132, 0.45)';
+
+  /// The scriptable `backgroundColor` of case (c). It reads the data index
+  /// of its context, as the scriptable option of a user does. The option
+  /// needs the context. Thus the resolver gives `$shared` false, and each
+  /// update resolves the options of each point (core.config.js:355-356).
+  static Object? _scriptableBackground(Object? context) =>
+      jsToNumber(jsGet(context, 'dataIndex')) % 2 == 0
+      ? _chartBackground
+      : _chartBackgroundOdd;
+
+  /// `new Chart(canvas, config)` of the mode [StressMode.chart]: one dataset
+  /// of N points of `StressPointController` at the positions of the moving
+  /// points, with `animation: false`, or the looping animation of
+  /// [StressChartCall.animate].
+  ///
+  /// The chart listens to no event (`events: []`), as the hosts of the other
+  /// modes take no pointer input. Otherwise a pointer over the host replays
+  /// its last event in each `update` (core.controller.js:528-534), which can
+  /// add a second draw to a frame.
+  ///
+  /// The dataset has the colors, the border and the radius of the point
+  /// elements of the mode [StressMode.elements]. The inline plugin
+  /// `stressLabels` draws the M labels and the title in its `afterDraw`
+  /// hook, as the other modes draw them after their items.
+  Chart _createChart(UiCanvasElement canvas) {
+    registerGalleryComponents();
+    final data = _chartData = [
+      for (var i = 0; i < _n; i++) <String, Object?>{'x': _px[i], 'y': _py[i]},
+    ];
+    return _StressChart(canvas, <String, Object?>{
+      'type': StressPointController.id,
+      'data': <String, Object?>{
+        'datasets': <Object?>[
+          <String, Object?>{
+            'data': data,
+            'optionSharing': _sharing,
+            'backgroundColor': _scriptable
+                ? _scriptableBackground
+                : _chartBackground,
+            'borderColor': '#36A2EB',
+            'borderWidth': 1.0,
+            'pointStyle': 'circle',
+            'radius': 3.0,
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'animation': _call == StressChartCall.animate
+            ? <String, Object?>{'duration': stressAnimateMs, 'loop': true}
+            : false,
+        'events': <String>[],
+        'maintainAspectRatio': false,
+      },
+      'plugins': <Object?>[
+        <String, Object?>{
+          'id': 'stressLabels',
+          'afterDraw': (Object? chart, Object? args, Object? options) {
+            final stressChart = chart! as Chart;
+            final ctx = stressChart.ctx;
+            if (ctx == null) return;
+            _drawLabels(ctx, stressChart.width, stressChart.height);
+            _drawTitle(ctx);
+          },
+        },
+      ],
+    });
+  }
+
+  /// A host gave its chart. The first chart starts the loop for
+  /// [StressDemo.autoStart]. A running loop that waited for the chart of a
+  /// new host continues.
+  void _chartReady() {
+    if (_running) {
+      _scheduleFrame();
+    } else if (widget.autoStart && !_autoStarted) {
+      _autoStarted = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_running) _setRunning(true);
+      });
+    }
   }
 
   void _onTickerModeChanged(bool enabled) {
@@ -425,8 +645,14 @@ class StressDemoState extends State<StressDemo> {
 
   void _onFrame() {
     _frameId = null;
+    if (!_running || !mounted) return;
     final chart = _chart;
-    if (!_running || !mounted || chart == null) return;
+    final stressChart = _stressChart;
+    // A new host gives its chart after its first frame. Then _chartReady
+    // continues the loop.
+    if (_mode == StressMode.chart ? stressChart == null : chart == null) {
+      return;
+    }
     final now = _clock.elapsed;
     final dt = math.min(
       (now - _lastTick).inMicroseconds / 1e6,
@@ -434,20 +660,112 @@ class StressDemoState extends State<StressDemo> {
     );
     _lastTick = now;
     _step(dt);
-    chart.render();
+    if (stressChart != null && _mode == StressMode.chart) {
+      _chartFrame(stressChart);
+    } else {
+      chart!.render();
+      _windowDrawMicros += chart.lastDrawMicros;
+    }
     _frames++;
     _windowFrames++;
-    _windowDrawMicros += chart.lastDrawMicros;
     final window = now - _windowStart;
     if (window >= const Duration(milliseconds: 500)) {
       _fps = _windowFrames / (window.inMicroseconds / 1e6);
       _drawMs = _windowDrawMicros / _windowFrames / 1000;
+      _updateMs = _windowUpdateMicros / _windowFrames / 1000;
+      _animatorMs = _windowAnimatorMicros / _windowFrames / 1000;
       _windowStart = now;
       _windowFrames = 0;
       _windowDrawMicros = 0;
+      _windowUpdateMicros = 0;
+      _windowAnimatorMicros = 0;
       _publish();
     }
-    _scheduleFrame();
+    // In the animated case, the progress listener of the animator schedules
+    // the next frame, so that this callback runs before the animator
+    // callback of that frame ([_chartFrame]).
+    if (!(stressChart != null && _animating)) _scheduleFrame();
+  }
+
+  /// Whether the chart of [StressChartCall.animate] runs its animation.
+  bool _animating = false;
+
+  /// The chart that has the progress listener of [_animateFrame].
+  _StressChart? _listenedChart;
+
+  /// One frame of the mode [StressMode.chart]: case (a) or case (b) of
+  /// Chart.js ADR 0021, section 8.
+  ///
+  /// The draw time is the time of `chart.draw()`, also inside
+  /// `chart.update()`. The update time is the time of `chart.update()`
+  /// without its draw. The writes of the positions into the data objects
+  /// are in neither time.
+  void _chartFrame(_StressChart chart) {
+    if (_call == StressChartCall.animate) {
+      _animateFrame(chart);
+      return;
+    }
+    if (_call == StressChartCall.update) {
+      final data = _chartData;
+      for (var i = 0; i < data.length; i++) {
+        data[i]
+          ..['x'] = _px[i]
+          ..['y'] = _py[i];
+      }
+    }
+    chart.drawMicros = 0;
+    final watch = Stopwatch()..start();
+    switch (_call) {
+      case StressChartCall.draw:
+        chart.draw();
+      case StressChartCall.update:
+        chart.update('none');
+      case StressChartCall.animate:
+        // [_animateFrame] handles this case.
+        break;
+    }
+    final total = watch.elapsedMicroseconds;
+    _windowDrawMicros += chart.drawMicros;
+    _windowUpdateMicros += total - chart.drawMicros;
+  }
+
+  /// One frame of [StressChartCall.animate].
+  ///
+  /// The first frame writes the positions and calls `chart.update()`, which
+  /// starts the looping animations. The animator then ticks them in its own
+  /// frame callback and calls `chart.draw()`. A progress listener schedules
+  /// this callback for the next frame. Thus in each frame this callback runs
+  /// first: it marks the time, and [_StressChart.draw] takes the time from
+  /// the mark to the start of the draw, the tick of the animator. The
+  /// figures of the animator frame come in the next frame.
+  void _animateFrame(_StressChart chart) {
+    if (!_animating) {
+      _animating = true;
+      final data = _chartData;
+      for (var i = 0; i < data.length; i++) {
+        data[i]
+          ..['x'] = _px[i]
+          ..['y'] = _py[i];
+      }
+      if (!identical(_listenedChart, chart)) {
+        _listenedChart = chart;
+        animator.listen(chart, 'progress', (_) {
+          if (mounted && _running && identical(_stressChart, chart)) {
+            _scheduleFrame();
+          }
+        });
+      }
+      chart.drawMicros = 0;
+      final watch = Stopwatch()..start();
+      chart.update();
+      _windowUpdateMicros += watch.elapsedMicroseconds - chart.drawMicros;
+    }
+    _windowDrawMicros += chart.drawMicros;
+    _windowAnimatorMicros += chart.animatorMicros;
+    chart
+      ..drawMicros = 0
+      ..animatorMicros = 0
+      ..markTick();
   }
 
   void _step(double dt) {
@@ -487,6 +805,8 @@ class StressDemoState extends State<StressDemo> {
       frames: _frames,
       fps: _fps,
       drawMs: _drawMs,
+      updateMs: _updateMs,
+      animatorMs: _animatorMs,
       buildMs: avg(build),
       buildMaxMs: max(build),
       rasterMs: avg(raster),
@@ -520,6 +840,9 @@ class StressDemoState extends State<StressDemo> {
         _drawBars(ctx, w, h);
       case StressMode.arcs:
         _drawArcs(ctx, w, h);
+      case StressMode.chart:
+        // The chart of this mode has its own host.
+        return;
     }
     _drawLabels(ctx, w, h);
     _drawTitle(ctx);
@@ -778,6 +1101,27 @@ class StressDemoState extends State<StressDemo> {
     );
   }
 
+  Widget _callChoices() {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        const SizedBox(width: 92, child: Text('Call')),
+        for (final call in StressChartCall.values)
+          ChoiceChip(
+            key: ValueKey('stress.chart.call.${call.name}'),
+            label: Text(call.name),
+            selected: call == _call,
+            onSelected: (_) => setState(() => _setChartCase(call: call)),
+          ),
+      ],
+    );
+  }
+
+  /// The call of case (b), for the card.
+  static const String _updateCall = "chart.update('none')";
+
   /// The calls of each frame, for the card.
   String get _source => switch (_mode) {
     StressMode.primitives =>
@@ -793,6 +1137,16 @@ class StressDemoState extends State<StressDemo> {
     StressMode.arcs =>
       'helpers.extras: requestAnimFrame each frame · elements: '
           'ArcElement.draw × N · helpers.canvas: renderText × M (rotated)',
+    StressMode.chart =>
+      'helpers.extras: requestAnimFrame each frame · core.controller: '
+          '${switch (_call) {
+            StressChartCall.draw => 'chart.draw()',
+            StressChartCall.update => _updateCall,
+            StressChartCall.animate => 'core.animator: the tick of N looping '
+                'animations and chart.draw()',
+          }} · '
+          'StressPointController · PointElement.draw × N · '
+          'plugin afterDraw: renderText × M (rotated)',
   };
 
   @override
@@ -855,6 +1209,29 @@ class StressDemoState extends State<StressDemo> {
                   ),
                 ],
               ),
+              if (_mode == StressMode.chart) ...[
+                const SizedBox(height: 4),
+                _callChoices(),
+                const SizedBox(height: 4),
+                ToggleChips(
+                  toggles: [
+                    (
+                      key: 'stress.chart.sharing',
+                      label: 'enableOptionSharing',
+                      value: _sharing,
+                      onChanged: (v) =>
+                          setState(() => _setChartCase(sharing: v)),
+                    ),
+                    (
+                      key: 'stress.chart.scriptable',
+                      label: 'scriptable backgroundColor',
+                      value: _scriptable,
+                      onChanged: (v) =>
+                          setState(() => _setChartCase(scriptable: v)),
+                    ),
+                  ],
+                ),
+              ],
               const SizedBox(height: 12),
               ValueListenableBuilder<StressStats>(
                 valueListenable: _stats,
@@ -864,6 +1241,10 @@ class StressDemoState extends State<StressDemo> {
                     ('FPS', stats.fps.toStringAsFixed(1)),
                     ('frames', '${stats.frames}'),
                     ('draw', '${ms(stats.drawMs)} ms'),
+                    if (stats.mode == StressMode.chart) ...[
+                      ('update', '${ms(stats.updateMs)} ms'),
+                      ('animator', '${ms(stats.animatorMs)} ms'),
+                    ],
                     (
                       'build avg/max',
                       stats.timings == 0
@@ -884,26 +1265,47 @@ class StressDemoState extends State<StressDemo> {
               ),
               const SizedBox(height: 12),
               LayoutBuilder(
-                builder: (context, constraints) => DemoCanvas(
-                  key: const ValueKey('stress.host'),
-                  height: (constraints.maxWidth * 0.6).clamp(240, 520),
-                  draw: _draw,
-                  onChart: (chart) {
-                    _chart = chart;
-                    if (widget.autoStart && !_running) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        if (mounted && !_running) _setRunning(true);
-                      });
-                    }
-                  },
-                  onTickerModeChanged: _onTickerModeChanged,
-                ),
+                builder: (context, constraints) {
+                  final height = (constraints.maxWidth * 0.6)
+                      .clamp(240, 520)
+                      .toDouble();
+                  if (_mode == StressMode.chart) {
+                    // A new N, sharing or backgroundColor form gives a new
+                    // host, thus a new chart.
+                    return KeyedSubtree(
+                      key: ValueKey((_n, _sharing, _scriptable)),
+                      child: ChartCanvas(
+                        key: const ValueKey('stress.chart.host'),
+                        height: height,
+                        create: _createChart,
+                        onChart: (chart) {
+                          _stressChart = chart as _StressChart;
+                          _animating = false;
+                          _chartReady();
+                        },
+                        onTickerModeChanged: _onTickerModeChanged,
+                      ),
+                    );
+                  }
+                  return DemoCanvas(
+                    key: const ValueKey('stress.host'),
+                    height: height,
+                    draw: _draw,
+                    onChart: (chart) {
+                      _chart = chart;
+                      _chartReady();
+                    },
+                    onTickerModeChanged: _onTickerModeChanged,
+                  );
+                },
               ),
               const SizedBox(height: 8),
               Text(
                 'draw: the Dart time of the draw calls of one frame '
                 '(recording into a ui.Picture). In the element modes, it '
-                'also has the writes of the element properties. build and '
+                'also has the writes of the element properties. update: the '
+                'time of chart.update() without its draw. animator: the tick '
+                'of the animations before their draw (call animate). build and '
                 'raster: FrameTiming of the last 120 frames. Profile on a '
                 'device with flutter run --profile.',
                 style: theme.textTheme.bodySmall,
@@ -913,5 +1315,57 @@ class StressDemoState extends State<StressDemo> {
         ),
       ],
     );
+  }
+}
+
+/// The `Chart` of the mode [StressMode.chart]: it adds the time of each
+/// `draw()` to [drawMicros], also the draw inside `update()`.
+///
+/// For [StressChartCall.animate], it also adds the time from the mark of
+/// [markTick] to the start of a draw in the same frame to [animatorMicros]:
+/// the tick of the animator before its draw.
+final class _StressChart extends Chart {
+  _StressChart(super.item, [super.userConfig]);
+
+  /// The clock of the marks.
+  static final Stopwatch _watch = Stopwatch()..start();
+
+  /// The microseconds of the draws since the last reset.
+  int drawMicros = 0;
+
+  /// The microseconds of the animator ticks since the last reset.
+  int animatorMicros = 0;
+
+  /// The time of the mark, or Dart `null` for no mark.
+  int? _markMicros;
+
+  /// The time stamp of the frame of the mark.
+  Duration? _markFrame;
+
+  /// The time stamp of the current frame, or Dart `null` outside the frame
+  /// callbacks.
+  static Duration? get _frame {
+    final scheduler = SchedulerBinding.instance;
+    return scheduler.schedulerPhase == SchedulerPhase.transientCallbacks
+        ? scheduler.currentFrameTimeStamp
+        : null;
+  }
+
+  /// Marks the time in a frame callback before the animator callback.
+  void markTick() {
+    _markFrame = _frame;
+    _markMicros = _markFrame == null ? null : _watch.elapsedMicroseconds;
+  }
+
+  @override
+  void draw() {
+    final mark = _markMicros;
+    if (mark != null && _frame == _markFrame) {
+      animatorMicros += _watch.elapsedMicroseconds - mark;
+    }
+    _markMicros = null;
+    final watch = Stopwatch()..start();
+    super.draw();
+    drawMicros += watch.elapsedMicroseconds;
   }
 }

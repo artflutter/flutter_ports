@@ -18,6 +18,7 @@ void main() {
 
   testWidgets('marks unported chart types as disabled', (tester) async {
     await tester.pumpWidget(const GalleryApp());
+    await tester.scrollUntilVisible(find.text('Bar'), 100);
 
     final tile = tester.widget<ListTile>(
       find.ancestor(of: find.text('Bar'), matching: find.byType(ListTile)),

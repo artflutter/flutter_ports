@@ -1,4 +1,5 @@
 import 'package:chartjs_gallery/demo/canvas_demo.dart';
+import 'package:chartjs_gallery/demo/core_demo.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/elements_demo.dart';
 import 'package:chartjs_gallery/demo/events_demo.dart';
@@ -34,20 +35,23 @@ canvasHostDemoTabs = [
     icon: Icons.bar_chart,
     build: ElementsDemo.new,
   ),
+  (key: 'core', label: 'Core', icon: Icons.hub_outlined, build: CoreDemo.new),
 ];
 
-/// A live demo of the phase 3 and phase 4 ports: the canvas layer, the
-/// canvas and DOM helpers, the Flutter platform, the internal chart host and
-/// the elements.
+/// A live demo of the phase 3, 4 and 5 ports: the canvas layer, the canvas
+/// and DOM helpers, the Flutter platform, the internal chart host, the
+/// elements and the core.
 ///
 /// Each drawing is a chart host (`ChartHost`) that shows a
-/// `UiCanvasElement`. A small demo chart makes the platform calls of
-/// `core.controller` (`acquireContext`, `getMaximumSize`, `retinaScale`,
-/// `addEventListener`) and draws with the ported `helpers.canvas`,
-/// `helpers.rtl` and `helpers.dom`. The Elements tab draws the ported
-/// `BarElement`, `LineElement`, `PointElement` and `ArcElement` of phase 4,
-/// and tests the pointer with their `inRange`. No chart type renders yet:
-/// the controller and the scales come in later phases.
+/// `UiCanvasElement`. In the first five tabs, a small demo chart makes the
+/// platform calls of `core.controller` (`acquireContext`, `getMaximumSize`,
+/// `retinaScale`, `addEventListener`) and draws with the ported
+/// `helpers.canvas`, `helpers.rtl` and `helpers.dom`. The Elements tab draws
+/// the ported `BarElement`, `LineElement`, `PointElement` and `ArcElement` of
+/// phase 4, and tests the pointer with their `inRange`. The Core tab and the
+/// `chart` mode of the Stress tab run a real `Chart` of phase 5 with a
+/// gallery controller. No chart type renders yet: the scales and the
+/// controllers come in phases 6 and 7.
 class CanvasHostDemoPage extends StatelessWidget {
   /// Creates the demo page.
   const CanvasHostDemoPage({super.key});

@@ -84,7 +84,8 @@ void main() {
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
 
-  for (final mode in StressMode.values) {
+  // stress_chart_test.dart tests the mode chart, which has its own host.
+  for (final mode in StressMode.values.where((m) => m != StressMode.chart)) {
     testWidgets('${mode.name}: the loop draws and publishes the figures', (
       tester,
     ) async {
@@ -229,6 +230,28 @@ void main() {
     await _tap(tester, 'stress.mode.primitives');
     expect(state.debugSceneBuilds, 3);
     expect(state.debugElements, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('initialLine false starts without the line layer', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: StressDemo(
+            initialMode: StressMode.elements,
+            initialLine: false,
+          ),
+        ),
+      ),
+    );
+    bool selected(String key) =>
+        tester.widget<FilterChip>(find.byKey(ValueKey(key))).selected;
+    expect(selected('stress.layer.line'), isFalse);
+    expect(selected('stress.layer.points'), isTrue);
+    await _tap(tester, 'stress.layer.line');
+    expect(selected('stress.layer.line'), isTrue);
     expect(tester.takeException(), isNull);
   });
 }
