@@ -481,7 +481,7 @@ final class PointOptions implements DrawPointOptions {
   final double? rotation;
 }
 
-/// The options of `renderText` (`RenderTextOpts`, index.d.ts:1404). Dart
+/// The options of `renderText` (`RenderTextOpts`, index.d.ts:1434). Dart
 /// `null` is an absent key.
 final class TextOpts implements types.RenderTextOpts {
   /// Creates the options.

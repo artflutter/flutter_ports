@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: scale chart test harness.
 
 /// The harness of the port-only reference tests of the phase 6 scales: real
-/// charts against the chart.js 4.5.1 npm dist.
+/// charts against a build of the pinned Chart.js.
 ///
 /// The method (a decision of the phase 6 plan):
 ///
@@ -11,10 +11,10 @@
 ///   defaults restore (Chart.js ADR 0020, section 8, and Chart.js ADR 0022,
 ///   section 8).
 /// - The expected values come from a generator in
-///   `tool/reference/scale_*_reference.mjs`. It runs the chart.js 4.5.1 npm
-///   dist in the x64 Node.js v24.12.0 (Chart.js ADR 0010), with the same
-///   test controllers as `DatasetController` subclasses in JavaScript
-///   (`tool/reference/scale_chart_common.mjs`).
+///   `tool/reference/scale_*_reference.mjs`. It runs a build of Chart.js at
+///   the pinned commit in the x64 Node.js v24.12.0 (Chart.js ADR 0010), with
+///   the same test controllers as `DatasetController` subclasses in
+///   JavaScript (`tool/reference/scale_chart_common.mjs`).
 /// - Node.js has no canvas. The Node.js side measures text with the advance
 ///   widths and the `kern` pairs of Liberation Sans 2.1.5, the test font of
 ///   the harness. Its mock context has a font stack for `save` and
@@ -64,6 +64,7 @@ import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:flutter_chartjs/src/upstream.dart' show chartJsVersion;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/rounded_rect_upstream.dart';
@@ -572,18 +573,26 @@ typedef ScaleChartCase = ({
 /// generated file has this record type.
 typedef ScaleChartWidth = ({String font, String text, double width});
 
-/// A test that the reference comes from Node.js v24.12.0 on x64 and the
-/// chart.js 4.5.1 dist (Chart.js ADR 0010).
+/// A test that the reference comes from Node.js v24.12.0 on x64 (Chart.js
+/// ADR 0010) and from a build of the pinned Chart.js: [dist] is
+/// [chartJsVersion], and [commit] is a full commit. For a commit pin, the
+/// commit starts with the sha8 of [chartJsVersion].
 void testReferenceOrigin({
   required String node,
   required String arch,
   required String dist,
+  required String commit,
 }) {
-  test('the reference comes from Node.js v24.12.0 on x64 and chart.js '
-      '4.5.1', () {
+  test('the reference comes from Node.js v24.12.0 on x64 and a build of the '
+      'pinned Chart.js', () {
     expect(node, 'v24.12.0');
     expect(arch, 'x64');
-    expect(dist, '4.5.1');
+    expect(dist, chartJsVersion);
+    expect(commit, matches(RegExp(r'^[0-9a-f]{40}$')));
+    final plus = chartJsVersion.indexOf('+');
+    if (plus >= 0) {
+      expect(commit, startsWith(chartJsVersion.substring(plus + 1)));
+    }
   });
 }
 

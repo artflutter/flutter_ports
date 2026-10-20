@@ -13,10 +13,18 @@
 /// - The source path exists at the pin, and the file is at the Dart path that
 ///   `tool/port_sources.yaml` maps it to. Files under `test/port/` and
 ///   `tool/` are port-only. A port-only file is not at the Dart path of a
-///   source that exists at a pin.
+///   source that exists at a pin. A checked-out submodule must be at the pin
+///   commit, because the check reads the source paths from its files.
 /// - Each `DIVERGES(chartjs)` marker names a row of `doc/differences.md`, and
 ///   each row has a marker.
 /// - A header version older than the pinned version is stale: a warning.
+///
+/// A version is a dotted release. Under a commit pin (upstream-tracking.md
+/// 2.4), `+<sha8>` follows the release, for example `v4.5.1+7169e651`. A
+/// commit pin is newer than its release. Thus a `v4.5.1` header is stale
+/// under the pin `v4.5.1+7169e651`. The check cannot put two commits of one
+/// release in order without the upstream history. Thus a header with another
+/// commit of the pinned release is an error.
 library;
 
 import 'dart:io';
@@ -264,11 +272,20 @@ final class PortSource {
   /// The repository-relative directory of the reference copy.
   final String pinPath;
 
-  /// The tag or release of the pin.
+  /// The tag or release of the pin. For a commit pin, the full pin commit.
   final String? pinRef;
 
   /// The commit of a submodule pin.
   final String? pinCommit;
+
+  /// Whether [version] is a commit pin, `<release>+<sha8>`
+  /// (upstream-tracking.md 2.4).
+  bool get isCommitPin => parsePortVersion(version)?.commit != null;
+
+  /// The git name of the pinned tree in the links of the project: the full
+  /// pin commit for a commit pin, else [version]. A git host has no tree
+  /// with the name `<release>+<sha8>`.
+  String get treeRef => isCommitPin ? pinCommit ?? version : version;
 
   /// The source-to-Dart mappings.
   final List<PortTarget> targets;
@@ -391,6 +408,49 @@ int compareVersions(List<int> a, List<int> b) {
   return 0;
 }
 
+/// A header or pin version: a dotted release, and the commit of a commit pin
+/// (upstream-tracking.md 2.4).
+final class PortVersion {
+  /// The [release] parts, with the 8 hex digits [commit] of a commit pin.
+  const PortVersion(this.release, [this.commit]);
+
+  /// The parts of the dotted release, for example `[4, 5, 1]`.
+  final List<int> release;
+
+  /// The abbreviated commit of a commit pin (8 lowercase hex digits), or
+  /// null for a release.
+  final String? commit;
+}
+
+final RegExp _portVersion = RegExp(
+  r'^v?(\d+(?:\.\d+)*)(?:\+([0-9a-f]{8}))?$',
+);
+
+/// The parts of a `v`-prefixed or plain dotted version with an optional
+/// `+<sha8>`, for example `v4.5.1+7169e651`, or null.
+PortVersion? parsePortVersion(String version) {
+  final match = _portVersion.firstMatch(version);
+  if (match == null) return null;
+  return PortVersion(
+    match.group(1)!.split('.').map(int.parse).toList(),
+    match.group(2),
+  );
+}
+
+/// Negative if [a] is older than [b], 0 if equal, positive if newer. Null if
+/// [a] and [b] are other commits of the same release: their order is in the
+/// upstream history only.
+///
+/// A commit pin is newer than its release: the commit comes after the tag.
+int? comparePortVersions(PortVersion a, PortVersion b) {
+  final order = compareVersions(a.release, b.release);
+  if (order != 0) return order;
+  if (a.commit == b.commit) return 0;
+  if (a.commit == null) return -1;
+  if (b.commit == null) return 1;
+  return null;
+}
+
 /// The gitlink of [path] in the index of the repository [repository], or
 /// null if git or the gitlink is not available.
 String? gitlinkOf(String repository, String path) {
@@ -414,6 +474,30 @@ String? gitlinkOf(String repository, String path) {
   }
 }
 
+/// The commit that the submodule checkout [directory] has checked out, or
+/// null if [directory] has no `.git` entry or git is not available.
+///
+/// Without the `.git` test, git reads the repository of a parent directory.
+String? checkoutHeadOf(String directory) {
+  final git = '$directory/.git';
+  if (FileSystemEntity.typeSync(git) == FileSystemEntityType.notFound) {
+    return null;
+  }
+  try {
+    final result = Process.runSync('git', [
+      '-C',
+      directory,
+      'rev-parse',
+      'HEAD',
+    ]);
+    if (result.exitCode != 0) return null;
+    final head = '${result.stdout}'.trim();
+    return RegExp(r'^[0-9a-f]{40}$').hasMatch(head) ? head : null;
+  } on ProcessException {
+    return null;
+  }
+}
+
 /// The inputs of the header check.
 final class HeaderCheckInput {
   /// The check of [packages] in the repository [repository]. [home] is the
@@ -424,6 +508,7 @@ final class HeaderCheckInput {
     required this.home,
     required this.packages,
     this.gitlink = gitlinkOf,
+    this.checkoutHead = checkoutHeadOf,
   });
 
   /// The repository root, with `REUSE.toml`.
@@ -437,6 +522,10 @@ final class HeaderCheckInput {
 
   /// Reads a gitlink; replaceable for tests.
   final String? Function(String repository, String path) gitlink;
+
+  /// Reads the checked-out commit of a submodule directory; replaceable for
+  /// tests.
+  final String? Function(String directory) checkoutHead;
 }
 
 /// The source paths that exist at the pin of one project.
@@ -611,8 +700,12 @@ Map<String, _PinIndex> _validateSources(
   final pins = <String, _PinIndex>{};
   for (final source in sources) {
     final name = source.header;
-    if (parseVersion(source.version) == null) {
-      report('$name version "${source.version}" is not a dotted version.');
+    final version = parsePortVersion(source.version);
+    if (version == null) {
+      report(
+        '$name version "${source.version}" is not a dotted version or '
+        '<version>+<sha8>.',
+      );
     }
     final directory = '${input.repository}/${source.pinPath}';
     final dir = Directory(directory);
@@ -625,14 +718,48 @@ Map<String, _PinIndex> _validateSources(
           '${source.pinPath} is $gitlink.',
         );
       }
-      if (source.pinRef != null && source.pinRef != source.version) {
+      final commit = version?.commit;
+      if (commit == null) {
+        if (source.pinRef != null && source.pinRef != source.version) {
+          report(
+            '$name pin ref ${source.pinRef} differs from version '
+            '${source.version}.',
+          );
+        }
+      } else {
+        if (!source.pinCommit!.startsWith(commit)) {
+          report(
+            '$name version ${source.version} names the commit $commit, but '
+            'the pin commit is ${source.pinCommit}.',
+          );
+        }
+        if (source.pinRef != null && source.pinRef != source.pinCommit) {
+          report(
+            '$name pin ref ${source.pinRef} differs from the pin commit '
+            '${source.pinCommit}. The ref of a commit pin is its full commit '
+            '(upstream-tracking.md 2.4).',
+          );
+        }
+      }
+      final head = checkedOut ? input.checkoutHead(directory) : null;
+      if (head != null && head != source.pinCommit) {
         report(
-          '$name pin ref ${source.pinRef} differs from version '
-          '${source.version}.',
+          '${source.pinPath} has the commit $head checked out, but the $name '
+          'pin commit is ${source.pinCommit}. The check reads the source '
+          'paths from the checked-out files: check out the pin (dart run '
+          'melos run upstream).',
         );
       }
-    } else if (!checkedOut) {
-      report('$name: the copy ${source.pinPath} is missing or empty.');
+    } else {
+      if (version?.commit != null) {
+        report(
+          '$name version ${source.version} is a commit pin, but the pin kind '
+          'is "${source.pinKind}", not "submodule".',
+        );
+      }
+      if (!checkedOut) {
+        report('$name: the copy ${source.pinPath} is missing or empty.');
+      }
     }
 
     final listed = {...source.files};
@@ -641,7 +768,7 @@ Map<String, _PinIndex> _validateSources(
       final file = File('${input.repository}/$index');
       if (file.existsSync()) {
         final link = RegExp(
-          '${RegExp.escape('${source.url}/blob/${source.version}/')}'
+          '${RegExp.escape('${source.url}/blob/${source.treeRef}/')}'
           r'([^)\s#>]+)',
         );
         listed.addAll([
@@ -888,11 +1015,17 @@ final class _FileContext {
     final expected = isChartJs && pinnedVersion != null
         ? 'v$pinnedVersion'
         : source.version;
-    final actual = parseVersion(portedFrom.version);
-    final wanted = parseVersion(expected);
+    final actual = parsePortVersion(portedFrom.version);
+    final wanted = parsePortVersion(expected);
     if (actual == null || wanted == null) return;
-    final order = compareVersions(actual, wanted);
-    if (order < 0) {
+    final order = comparePortVersions(actual, wanted);
+    if (order == null) {
+      report(
+        line,
+        '${source.header} ${portedFrom.version} names another commit than '
+        'the pin $expected. Restamp it (upstream-tracking.md 4.8).',
+      );
+    } else if (order < 0) {
       findings.add(
         Finding.warning(
           path,

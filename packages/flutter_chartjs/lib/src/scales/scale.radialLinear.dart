@@ -1084,7 +1084,7 @@ class RadialLinearScale extends LinearScaleBase {
   ///
   /// @protected
   ///
-  /// `index.d.ts:1296` declares a [chartArea] parameter. The upstream body
+  /// `index.d.ts:1326` declares a [chartArea] parameter. The upstream body
   /// does not read it.
   @override
   @protected
@@ -1165,7 +1165,7 @@ class RadialLinearScale extends LinearScaleBase {
   ///
   /// @protected
   ///
-  /// `index.d.ts:1295` declares a [chartArea] parameter. The upstream body
+  /// `index.d.ts:1325` declares a [chartArea] parameter. The upstream body
   /// does not read it. `ctx.measureText(tick.label)` applies the DOM
   /// `ToString` to the label ([jsToString]).
   @override

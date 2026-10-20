@@ -5,7 +5,9 @@
 # Keys of an entry:
 # - header: the project name in the header.
 # - version: the header version. tool/check_port_headers.dart reports an
-#   older header version as stale, and fails on any other difference.
+#   older header version as stale, and fails on any other difference. A
+#   commit pin (doc/upstream-tracking.md 2.4) is "v<last version>+<sha8>". It
+#   is newer than its release.
 # - version_source: where the version comes from.
 # - url: the project repository.
 # - language: the language of the source. "js" is JavaScript or TypeScript:
@@ -16,7 +18,9 @@
 #   REUSE.toml write it.
 # - pin: the reference copy in this repository. kind "submodule" is a git
 #   submodule at the commit "commit" (tag "ref"); the check compares it with
-#   the gitlink. kind "copy" is a committed copy of the source files.
+#   the gitlink and with the checked-out commit. For a commit pin, "ref" is
+#   the full commit: a fetch of that name gives the pinned tree, and a
+#   branch name moves. kind "copy" is a committed copy of the source files.
 # - targets: the Dart path of a source path. A "source" that ends with "/" is
 #   a directory: its files map into the "dart" directory, with ".tests.js"
 #   changed to "_test.dart" and any other extension (".d.ts" is one) changed
@@ -24,14 +28,17 @@
 # - files: source paths that exist at the pin. The check uses them, and the
 #   links in "file_index", when the submodule is not checked out.
 # - file_index: a Markdown file whose links "<url>/blob/<version>/<path>"
-#   name source paths that exist at the pin.
+#   name source paths that exist at the pin. For a commit pin, the links
+#   have the full commit in place of <version>.
 #
 # All paths are relative to the repository root, except "source" and
 # "files", which are relative to the project root.
 
 sources:
   - header: Chart.js
-    version: "v4.5.1"
+    # The commit pin of 2026-10-20 (doc/upstream-tracking.md 2.4): the newest
+    # master commit with green upstream CI, after the tag v4.5.1.
+    version: "v4.5.1+7169e651"
     version_source: chartJsVersion in packages/flutter_chartjs/lib/src/upstream.dart
     url: https://github.com/chartjs/Chart.js
     language: js
@@ -40,8 +47,8 @@ sources:
     pin:
       kind: submodule
       path: third_party/Chart.js
-      ref: "v4.5.1"
-      commit: 9c5cf9fac7ec04a71b516e2aff3f7d76876be369
+      ref: "7169e65147a47f3720957a6f156a33c838ab9f57"
+      commit: 7169e65147a47f3720957a6f156a33c838ab9f57
     targets:
       - source: src/
         dart: packages/flutter_chartjs/lib/src/

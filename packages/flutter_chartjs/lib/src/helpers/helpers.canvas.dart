@@ -235,7 +235,7 @@ void clearCanvas([HTMLCanvasElement? canvas, CanvasRenderingContext2D? ctx]) {
 abstract interface class DrawPointOptions {
   /// helpers.canvas.ts:150 `pointStyle: PointStyle`.
   ///
-  /// `PointStyle` (index.d.ts:1995) is the union of the style names
+  /// `PointStyle` (index.d.ts:2040) is the union of the style names
   /// `'circle'`, `'cross'`, `'crossRot'`, `'dash'`, `'line'`, `'rect'`,
   /// `'rectRounded'`, `'rectRot'`, `'star'` and `'triangle'`, of `false`, and
   /// of `HTMLImageElement` and `HTMLCanvasElement`. Dart cannot declare the

@@ -530,8 +530,10 @@ defaults to tokens. The bump PR runs it against the new manifest. Section 6 of t
 changed hosts and, from phase 6, the coverage snapshot output. Its rows get the `theme-review` action. It has no token map.
 
 Example, v4.5.1 to `master` `7169e651`: #12130 adds the scale title keys `strokeColor` and
-`strokeWidth` without defaults (`core.scale.js:1615-1619`). The fix is one `notThemed` line. Apps
-can then set the keys through `raw`. #12238 adds a geometry key. No hunk host changed.
+`strokeWidth` without defaults (`core.scale.js:1615-1619`). Thus the manifest has no new leaf, and
+the coverage snapshot test needs no change. A `notThemed` line for a key that the manifest does
+not have fails as STALE. Apps can set the keys through `raw`. #12238 adds a geometry key. No hunk
+host changed.
 
 ## 10. Delivery plan
 

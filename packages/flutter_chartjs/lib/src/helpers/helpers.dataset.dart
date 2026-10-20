@@ -6,7 +6,7 @@
 /// `TRBL?`, and Dart `null` stands for `false`. Both callers only test the
 /// result for truthiness before they read it: `_drawDataset`
 /// (core.controller.js:791, :797) and `clipBounds`
-/// (filler.drawing.js:13, :169).
+/// (filler.drawing.js:13, :188).
 library;
 
 import 'package:flutter_chartjs/src/js/js_number.dart';
@@ -92,7 +92,7 @@ double _subtract(double area, Object? edge) => area - jsToNumber(edge);
 /// port returns `ToNumber` of that string. Each reader of the area applies
 /// `ToNumber` to it: `ctx.rect` and `-` in `clipArea`
 /// (helpers.canvas.ts:331), and `Math.min` in `clipBounds`
-/// (filler.drawing.js:171, :173).
+/// (filler.drawing.js:190, :192).
 double _add(double area, Object? edge) => switch (edge) {
   null || num() || Undefined() => area + jsToNumber(edge),
   _ => jsToNumber(jsNumberToString(area) + jsToString(edge)),

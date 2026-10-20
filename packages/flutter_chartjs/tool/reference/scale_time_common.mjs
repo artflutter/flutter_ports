@@ -41,14 +41,15 @@
 //
 //   npm install --no-save --prefix <scratch> moment@2.29.4 \
 //     moment-timezone@0.5.42 chartjs-adapter-moment@1.0.1
-//   CHARTJS_DIST=<scratch>/node_modules/chart.js/dist/chart.js \
+//   CHARTJS_DIST=<build>/dist/chart.js \
 //   MOMENT_NODE_MODULES=<scratch>/node_modules \
 //     node tool/reference/scale_time_reference.mjs
 //
-// The two paths can also be the first and the second argument. The
-// generator stops unless the three packages have the versions of the
-// Chart.js lockfile. The output file records the sha256 of each loaded
-// file.
+// <build> is the build of the pinned Chart.js (see the header of
+// tool/reference/scale_chart_common.mjs). The two paths can also be the
+// first and the second argument. The generator stops unless the three
+// packages have the versions of the Chart.js lockfile. The output file
+// records the sha256 of each loaded file.
 
 import {execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';

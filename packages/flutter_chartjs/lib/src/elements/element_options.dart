@@ -352,7 +352,7 @@ final class _ElementOptionsKeys extends Iterable<String> {
   bool contains(Object? element) => _options.containsKey(element);
 }
 
-/// index.d.ts:2010 `PointOptions`, the resolved options of a point element
+/// index.d.ts:2055 `PointOptions`, the resolved options of a point element
 /// (`element.point.ts`).
 ///
 /// It also implements [DrawPointOptions]. Thus `PointElement.draw` passes it
@@ -511,7 +511,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
   }
 }
 
-/// index.d.ts:1909 `LineOptions`, the resolved options of a line element
+/// index.d.ts:1954 `LineOptions`, the resolved options of a line element
 /// (`element.line.js`).
 final class LineOptions extends ElementOptions {
   /// Options with the entries of [source], in its key order (see
@@ -696,7 +696,7 @@ final class LineOptions extends ElementOptions {
   }
 }
 
-/// index.d.ts:2103 `BarOptions`, the resolved options of a bar element
+/// index.d.ts:2148 `BarOptions`, the resolved options of a bar element
 /// (`element.bar.js`).
 final class BarOptions extends ElementOptions {
   /// Options with the entries of [source], in its key order (see
@@ -810,7 +810,7 @@ final class BarOptions extends ElementOptions {
   }
 }
 
-/// index.d.ts:1850 `ArcOptions`, the resolved options of an arc element
+/// index.d.ts:1882 `ArcOptions`, the resolved options of an arc element
 /// (`element.arc.ts`).
 final class ArcOptions extends ElementOptions {
   /// Options with the entries of [source], in its key order (see
@@ -829,6 +829,7 @@ final class ArcOptions extends ElementOptions {
       _borderWidth = source._borderWidth,
       _offset = source._offset,
       _spacing = source._spacing,
+      _spacingMode = source._spacingMode,
       _angle = source._angle,
       _circular = source._circular,
       _selfJoin = source._selfJoin,
@@ -836,8 +837,8 @@ final class ArcOptions extends ElementOptions {
       super._copy();
 
   /// The known keys: `$shared`, the keys of `ArcElement.defaults`
-  /// (element.arc.ts:304-317), the keys of `ArcElement.defaultRoutes`
-  /// (element.arc.ts:319-321), and `$animations`.
+  /// (element.arc.ts:377-391), the keys of `ArcElement.defaultRoutes`
+  /// (element.arc.ts:393-395), and `$animations`.
   static const List<String> knownKeys = [
     r'$shared',
     'borderAlign',
@@ -849,6 +850,7 @@ final class ArcOptions extends ElementOptions {
     'borderWidth',
     'offset',
     'spacing',
+    'spacingMode',
     'angle',
     'circular',
     'selfJoin',
@@ -865,6 +867,7 @@ final class ArcOptions extends ElementOptions {
   Object? _borderWidth = _absent;
   Object? _offset = _absent;
   Object? _spacing = _absent;
+  Object? _spacingMode = _absent;
   Object? _angle = _absent;
   Object? _circular = _absent;
   Object? _selfJoin = _absent;
@@ -878,55 +881,59 @@ final class ArcOptions extends ElementOptions {
   @override
   ArcOptions clone() => ArcOptions._copy(this);
 
-  /// element.arc.ts:305 `borderAlign`: the raw value, or [undefined] for an
+  /// element.arc.ts:378 `borderAlign`: the raw value, or [undefined] for an
   /// absent key.
   Object? get borderAlignValue => _read(_borderAlign);
 
-  /// element.arc.ts:306 `borderColor`: the raw value, or [undefined] for an
+  /// element.arc.ts:379 `borderColor`: the raw value, or [undefined] for an
   /// absent key.
   Object? get borderColorValue => _read(_borderColor);
 
-  /// element.arc.ts:307 `borderDash`: the raw value, or [undefined] for an
+  /// element.arc.ts:380 `borderDash`: the raw value, or [undefined] for an
   /// absent key.
   Object? get borderDashValue => _read(_borderDash);
 
-  /// element.arc.ts:308 `borderDashOffset`: the raw value, or [undefined]
+  /// element.arc.ts:381 `borderDashOffset`: the raw value, or [undefined]
   /// for an absent key.
   Object? get borderDashOffsetValue => _read(_borderDashOffset);
 
-  /// element.arc.ts:309 `borderJoinStyle`: the raw value, or [undefined] for
+  /// element.arc.ts:382 `borderJoinStyle`: the raw value, or [undefined] for
   /// an absent key.
   Object? get borderJoinStyleValue => _read(_borderJoinStyle);
 
-  /// element.arc.ts:310 `borderRadius`: the raw value, or [undefined] for an
+  /// element.arc.ts:383 `borderRadius`: the raw value, or [undefined] for an
   /// absent key.
   Object? get borderRadiusValue => _read(_borderRadius);
 
-  /// element.arc.ts:311 `borderWidth`: the raw value, or [undefined] for an
+  /// element.arc.ts:384 `borderWidth`: the raw value, or [undefined] for an
   /// absent key.
   Object? get borderWidthValue => _read(_borderWidth);
 
-  /// element.arc.ts:312 `offset`: the raw value, or [undefined] for an
+  /// element.arc.ts:385 `offset`: the raw value, or [undefined] for an
   /// absent key.
   Object? get offsetValue => _read(_offset);
 
-  /// element.arc.ts:313 `spacing`: the raw value, or [undefined] for an
+  /// element.arc.ts:386 `spacing`: the raw value, or [undefined] for an
   /// absent key.
   Object? get spacingValue => _read(_spacing);
 
-  /// element.arc.ts:314 `angle`: the raw value, or [undefined] for an absent
+  /// element.arc.ts:387 `spacingMode`: the raw value, or [undefined] for an
+  /// absent key.
+  Object? get spacingModeValue => _read(_spacingMode);
+
+  /// element.arc.ts:388 `angle`: the raw value, or [undefined] for an absent
   /// key.
   Object? get angleValue => _read(_angle);
 
-  /// element.arc.ts:315 `circular`: the raw value, or [undefined] for an
+  /// element.arc.ts:389 `circular`: the raw value, or [undefined] for an
   /// absent key.
   Object? get circularValue => _read(_circular);
 
-  /// element.arc.ts:316 `selfJoin`: the raw value, or [undefined] for an
+  /// element.arc.ts:390 `selfJoin`: the raw value, or [undefined] for an
   /// absent key.
   Object? get selfJoinValue => _read(_selfJoin);
 
-  /// element.arc.ts:320 `backgroundColor`: the raw value, or [undefined] for
+  /// element.arc.ts:394 `backgroundColor`: the raw value, or [undefined] for
   /// an absent key.
   Object? get backgroundColorValue => _read(_backgroundColor);
 
@@ -941,6 +948,7 @@ final class ArcOptions extends ElementOptions {
     'borderWidth' => _borderWidth,
     'offset' => _offset,
     'spacing' => _spacing,
+    'spacingMode' => _spacingMode,
     'angle' => _angle,
     'circular' => _circular,
     'selfJoin' => _selfJoin,
@@ -969,6 +977,8 @@ final class ArcOptions extends ElementOptions {
         _offset = raw;
       case 'spacing':
         _spacing = raw;
+      case 'spacingMode':
+        _spacingMode = raw;
       case 'angle':
         _angle = raw;
       case 'circular':
@@ -1086,7 +1096,7 @@ final class GenericElementOptions extends ElementOptions {
 /// (core.datasetController.js:821), where upstream makes the object literal
 /// `{$shared: true}` (core.config.js:352). The ids `'point'`, `'line'`,
 /// `'bar'` and `'arc'` of the four element classes (element.point.ts:22,
-/// element.line.js:245, element.bar.js:143, element.arc.ts:302) give their
+/// element.line.js:245, element.bar.js:143, element.arc.ts:375) give their
 /// typed classes. Another value gives a [GenericElementOptions]. The result
 /// is not frozen.
 // DIVERGES(chartjs): adapt-typed-element-options, the class of the id.

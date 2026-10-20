@@ -9,6 +9,7 @@ import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.defaults.dart';
 import 'package:flutter_chartjs/src/core/core.scale.dart';
 import 'package:flutter_chartjs/src/js/js_class.dart';
+import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -521,6 +522,100 @@ void main() {
         () {},
         skip: 'blocked: controller.line',
       );
+    });
+
+    // :820-899. The charts have no datasets. Thus they need the linear
+    // scale of phase 6 and no controller of phase 7. `scale.options.title`
+    // is a resolver, and `toBeUndefined()` is `same(undefined)`.
+    group('Scale Title stroke', () {
+      /// core.scale.tests.js:821-849 `getChartWithScaleTitleStroke()`.
+      Chart getChartWithScaleTitleStroke() {
+        return acquireChart({
+          'type': 'line',
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'linear',
+                'title': <String, Object?>{
+                  'display': true,
+                  'text': 'title-x',
+                  'color': '#ddd',
+                  'strokeWidth': 1,
+                  'strokeColor': '#333',
+                },
+              },
+              'y': <String, Object?>{
+                'type': 'linear',
+                'title': <String, Object?>{
+                  'display': true,
+                  'text': 'title-y',
+                  'color': '#ddd',
+                  'strokeWidth': 2,
+                  'strokeColor': '#222',
+                },
+              },
+            },
+          },
+        });
+      }
+
+      /// core.scale.tests.js:851-875 `getChartWithoutScaleTitleStroke()`.
+      Chart getChartWithoutScaleTitleStroke() {
+        return acquireChart({
+          'type': 'line',
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'linear',
+                'title': <String, Object?>{
+                  'display': true,
+                  'text': 'title-x',
+                  'color': '#ddd',
+                },
+              },
+              'y': <String, Object?>{
+                'type': 'linear',
+                'title': <String, Object?>{
+                  'display': true,
+                  'text': 'title-y',
+                  'color': '#ddd',
+                },
+              },
+            },
+          },
+        });
+      }
+
+      testWidgets('should draw a scale title stroke when provided x-axis', (
+        tester,
+      ) async {
+        final chart = getChartWithScaleTitleStroke();
+        final scale = chart.scales['x']!;
+        expect(_member(scale.options['title'], 'strokeColor'), '#333');
+        expect(_member(scale.options['title'], 'strokeWidth'), 1);
+      });
+
+      testWidgets('should draw a scale title stroke when provided y-axis', (
+        tester,
+      ) async {
+        final chart = getChartWithScaleTitleStroke();
+        final scale = chart.scales['y']!;
+        expect(_member(scale.options['title'], 'strokeColor'), '#222');
+        expect(_member(scale.options['title'], 'strokeWidth'), 2);
+      });
+
+      testWidgets('should not draw a scale title stroke when not provided', (
+        tester,
+      ) async {
+        final chart = getChartWithoutScaleTitleStroke();
+        final scales = chart.scales;
+        final yTitle = scales['y']!.options['title'];
+        final xTitle = scales['x']!.options['title'];
+        expect(_member(yTitle, 'strokeColor'), same(undefined));
+        expect(_member(yTitle, 'strokeWidth'), same(undefined));
+        expect(_member(xTitle, 'strokeColor'), same(undefined));
+        expect(_member(xTitle, 'strokeWidth'), same(undefined));
+      });
     });
   });
 }

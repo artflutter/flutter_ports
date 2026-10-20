@@ -1156,7 +1156,7 @@ PortOrder computePortOrder(PortOrderInput input) {
 
   final parity = _parityStatuses(
     File(parityFile).readAsStringSync(),
-    '${source.url}/blob/${source.version}/',
+    '${source.url}/blob/${source.treeRef}/',
     graph,
     rel(parityFile),
     findings,
@@ -1530,8 +1530,9 @@ final class _Graph {
 
   /// Whether the relative [specifier] in [importer] names a JSON file of the
   /// pin: data, not a module. `core.controller.js:12` imports `version` from
-  /// `package.json`. The port has `chartJsVersion` of `lib/src/upstream.dart`
-  /// for it, so such an import does not block a module.
+  /// `package.json`. The port has `chartJsPackageVersion` of
+  /// `lib/src/upstream.dart` for it, so such an import does not block a
+  /// module.
   bool isData(String importer, String specifier) {
     if (!specifier.startsWith('.') || !specifier.endsWith('.json')) {
       return false;

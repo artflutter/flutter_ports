@@ -26,8 +26,10 @@ List<String> _source(
   String url,
   String holder,
   String path,
-  List<String> targets,
-) => [
+  List<String> targets, {
+  String? ref,
+  String commit = '0000000000000000000000000000000000000000',
+}) => [
   '  - header: "$header"',
   '    version: "$version"',
   '    url: $url',
@@ -37,17 +39,20 @@ List<String> _source(
   '    pin:',
   '      kind: submodule',
   '      path: $path',
-  '      ref: "$version"',
-  '      commit: 0000000000000000000000000000000000000000',
+  '      ref: "${ref ?? version}"',
+  '      commit: $commit',
   '    targets:',
   ...targets,
 ];
 
-final List<String> _portSources = [
+/// The `tool/port_sources.yaml` of the fixture repository. A [commitPin]
+/// (upstream-tracking.md 2.4) is the Chart.js pin
+/// `v4.5.1+<the first 8 digits>`, with the full commit as its ref.
+List<String> _portSourcesOf({String? commitPin}) => [
   'sources:',
   ..._source(
     'Chart.js',
-    'v4.5.1',
+    commitPin == null ? 'v4.5.1' : 'v4.5.1+${commitPin.substring(0, 8)}',
     'https://github.com/chartjs/Chart.js',
     'Chart.js Contributors',
     'third_party/Chart.js',
@@ -59,6 +64,8 @@ final List<String> _portSources = [
       '      - source: test/index.js',
       '        dart: $_package/test/flutter_test_config.dart',
     ],
+    ref: commitPin,
+    commit: commitPin ?? '0000000000000000000000000000000000000000',
   ),
   ..._source(
     '@kurkle/color',
@@ -82,6 +89,8 @@ final List<String> _portSources = [
     ['      - source: src/', '        dart: $_harness/lib/src/'],
   ),
 ];
+
+final List<String> _portSources = _portSourcesOf();
 
 String _header(String path) =>
     '// Ported from Chart.js v4.5.1 $path (MIT, Chart.js Contributors).';
@@ -641,6 +650,32 @@ void main() {
       );
       expect(categoryOf('js-semantics-x'), 'js-semantics');
       expect(categoryOf('other'), 'not-followed');
+    });
+
+    test('links the full commit of a commit pin', () {
+      const commit = '7169e65147a47f3720957a6f156a33c838ab9f57';
+      final repo = _Repo();
+      repo.tree.write(
+        '$_package/tool/port_sources.yaml',
+        _portSourcesOf(commitPin: commit),
+      );
+      final model = repo.model();
+      // A git host has no tree with the name v4.5.1+7169e651.
+      expect(
+        model.rowOf('Chart.js', 'src/helpers/helpers.math.ts')!.link,
+        '[`src/helpers/helpers.math.ts`](https://github.com/chartjs/Chart.js/'
+        'blob/$commit/src/helpers/helpers.math.ts)',
+      );
+      expect(
+        model.rowOf('@kurkle/color', 'packed.js')!.url,
+        'https://github.com/kurkle/color/blob/v0.3.2/packed.js',
+      );
+      final text = renderParity(model, _status()).text;
+      expect(text, isNot(contains('/blob/v4.5.1')));
+      expect(
+        text,
+        _document.replaceAll('Chart.js/blob/v4.5.1/', 'Chart.js/blob/$commit/'),
+      );
     });
 
     test('throws on a missing input', () {

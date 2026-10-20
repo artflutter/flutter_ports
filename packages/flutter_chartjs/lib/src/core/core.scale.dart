@@ -142,7 +142,7 @@ bool _jsGreaterOrEqual(Object? a, Object? b) {
 /// (scale.category.js:111) or `{value, major}` (scale.time.js:188-191). The
 /// port makes a [Tick]. The scales of phase 6 construct it. `buildTicks`
 /// returns a list of them, and the `afterBuildTicks` callback can replace the
-/// list. The value is a number (`index.d.ts:1165`).
+/// list. The value is a number (`index.d.ts:1195`).
 final class Tick implements types.Tick {
   /// The object literal `{value, label, major, significand}`. Dart `null`
   /// stands for an absent key, JS `undefined`.
@@ -503,8 +503,13 @@ final class _LabelBackdrop implements types.BackdropOptions {
 }
 
 /// The text options of a label item (core.scale.js:1315-1324) and of the
-/// title (core.scale.js:1611-1618). The members that the object literal
+/// title (core.scale.js:1611-1620). The members that the object literal
 /// leaves out are Dart `null`, JS `undefined`.
+///
+/// [strokeWidth] is the [canvasNumber] of the option value. `renderText`
+/// compares the value with 0 and gives it to the setter `lineWidth`. Both
+/// apply `ToNumber`, and the [undefined] of an absent option gives Dart
+/// `null`.
 final class _RenderTextOpts implements types.RenderTextOpts {
   _RenderTextOpts({
     this.rotation,
@@ -591,7 +596,7 @@ final class _LabelArea implements types.TRBL {
   final double right;
 }
 
-/// A layer of `_layers` (core.scale.js:1645-1667): the object literal
+/// A layer of `_layers` (core.scale.js:1647-1669): the object literal
 /// `{z, draw}`.
 ///
 /// `core.controller.js:637` writes `_idx` into the layer: [idx].
@@ -619,8 +624,8 @@ final class _ScaleLayer implements types.LayoutLayer {
 ContextProxy _setContext(Object? options, AnyObject context) =>
     (options! as ContextProxy).setContext(context);
 
-/// The holder of `Scale.prototype.draw` (core.scale.js:1621), for the test
-/// `this.draw !== Scale.prototype.draw` of `_layers` (core.scale.js:1643).
+/// The holder of `Scale.prototype.draw` (core.scale.js:1623), for the test
+/// `this.draw !== Scale.prototype.draw` of `_layers` (core.scale.js:1645).
 ///
 /// Dart has no prototype objects. Two tear-offs of the same method from the
 /// same object are equal (`==`). [Scale.layers] compares the tear-off `draw`
@@ -629,7 +634,7 @@ ContextProxy _setContext(Object? options, AnyObject context) =>
 /// dart2wasm give this result. [draw] calls [_draw], the upstream body in
 /// [Scale]. A subclass that overrides `draw` can call `super.draw`.
 abstract class _ScalePrototype extends Element {
-  /// core.scale.js:1621 `draw(chartArea)`. [Scale] has the body.
+  /// core.scale.js:1623 `draw(chartArea)`. [Scale] has the body.
   ///
   /// Dart `null` for [chartArea] stands for JS `undefined`.
   void draw([types.ChartArea? chartArea]) => _draw(chartArea);
@@ -913,7 +918,7 @@ class Scale extends _ScalePrototype
   @override
   bool fullSize = false;
 
-  /// core.scale.js:1637 `_layers`, the method that gives the drawing layers
+  /// core.scale.js:1639 `_layers`, the method that gives the drawing layers
   /// of the scale, as a property. `core.layouts.js:301` and
   /// `core.controller.js:633` read it.
   ///
@@ -942,10 +947,10 @@ class Scale extends _ScalePrototype
   /// (core.controller.js:367), which JavaScript ignores here. [opts] takes
   /// them. `scale.time.js:266` reads them.
   ///
-  /// `types.Scale` declares `axis` as a `String` (index.d.ts:1287). Thus an
+  /// `types.Scale` declares `axis` as a `String` (index.d.ts:1317). Thus an
   /// `axis` option that is not a string throws a [TypeError], where upstream
   /// keeps the value (differences.md row `adapt-scale-option-types`).
-  /// index.d.ts:3241 types the option as `'x' | 'y' | 'r'`.
+  /// index.d.ts:3286 types the option as `'x' | 'y' | 'r'`.
   void init(AnyObject options, [AnyObject? opts]) {
     this.options = _setContext(options, getContext());
 
@@ -1691,7 +1696,7 @@ class Scale extends _ScalePrototype
   /// @return {boolean}
   ///
   /// It returns the option value as it is, as upstream does: a `bool` for
-  /// the options of `index.d.ts:1383`. No upstream source calls it.
+  /// the options of `index.d.ts:1413`. No upstream source calls it.
   Object? isFullSize() {
     return options['fullSize'];
   }
@@ -2050,7 +2055,7 @@ class Scale extends _ScalePrototype
     // `_alignPixel` tests `width !== 0` and divides the width
     // (helpers.canvas.ts:127). For a number and for `undefined`, the ToNumber
     // of the width gives the same result: `undefined` gives NaN. The type of
-    // `border.width` is number (index.d.ts:3011).
+    // `border.width` is number (index.d.ts:3056).
     final alignWidth = jsToNumber(axisWidth);
     double alignBorderValue(double pixel) {
       return alignPixel(chart, pixel, alignWidth);
@@ -2731,7 +2736,7 @@ class Scale extends _ScalePrototype
   ///
   /// @protected
   ///
-  /// `index.d.ts:1294` declares a [chartArea] parameter. The upstream body
+  /// `index.d.ts:1324` declares a [chartArea] parameter. The upstream body
   /// does not read it.
   @protected
   void drawTitle([types.ChartArea? chartArea]) {
@@ -2780,11 +2785,13 @@ class Scale extends _ScalePrototype
         textAlign: _titleAlign(align, position, reverse),
         textBaseline: 'middle',
         translation: (titleX, titleY),
+        strokeColor: jsGet(title, 'strokeColor'),
+        strokeWidth: canvasNumber(jsGet(title, 'strokeWidth')),
       ),
     );
   }
 
-  /// core.scale.js:1621 `draw(chartArea)`: the body. [draw] calls it.
+  /// core.scale.js:1623 `draw(chartArea)`: the body. [draw] calls it.
   @override
   void _draw(types.ChartArea? chartArea) {
     if (!_isVisible()) {
@@ -2798,7 +2805,7 @@ class Scale extends _ScalePrototype
     drawLabels(chartArea);
   }
 
-  /// core.scale.js:1637 `_layers()`: the body of [layers].
+  /// core.scale.js:1639 `_layers()`: the body of [layers].
   ///
   /// @return {object[]}
   /// @private
@@ -2842,7 +2849,7 @@ class Scale extends _ScalePrototype
     ];
   }
 
-  /// core.scale.js:1678 `getMatchingVisibleMetas(type)`.
+  /// core.scale.js:1680 `getMatchingVisibleMetas(type)`.
   ///
   /// Returns visible dataset metas that are attached to this scale
   /// @param {string} [type] - if specified, also filter by dataset type
@@ -2873,7 +2880,7 @@ class Scale extends _ScalePrototype
     return result;
   }
 
-  /// core.scale.js:1698 `_resolveTickFontOptions(index)`.
+  /// core.scale.js:1700 `_resolveTickFontOptions(index)`.
   /// scale.linear.js:39 and scale.time.js:597 read it.
   ///
   /// @param {number} index
@@ -2885,7 +2892,7 @@ class Scale extends _ScalePrototype
     return toFont(opts['font']);
   }
 
-  /// core.scale.js:1706 `_maxDigits()`. scale.linearbase.js:263 reads it.
+  /// core.scale.js:1708 `_maxDigits()`. scale.linearbase.js:263 reads it.
   ///
   /// @protected
   @internal

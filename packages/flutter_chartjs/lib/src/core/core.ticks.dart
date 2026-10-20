@@ -3,7 +3,7 @@
 /// Port of `src/core/core.ticks.js`.
 ///
 /// The formatters `numeric` and `logarithmic` read `this`, the scale whose
-/// labels they make (index.d.ts:1522, :1530). Thus they are [JsFunction]
+/// labels they make (index.d.ts:1552, :1560). Thus they are [JsFunction]
 /// values (`lib/src/js/js_function.dart`). A caller gives the scale as the
 /// `thisArg` of [jsCall], as `core.scale.js` calls the tick `callback`. The
 /// formatter `values` does not read `this`. It is a Dart function.
@@ -39,7 +39,7 @@ import 'package:flutter_chartjs/src/types/index.dart';
 /// - `'numeric'` and `'logarithmic'` are [JsFunction] values, because they
 ///   read `this`. The closure takes `this` (a [Scale]), `tickValue` (a
 ///   `double`), `index` (a `double`) and `ticks` (a `List<Tick>`), as
-///   index.d.ts:1522 and :1530 declare. Call it with [jsCall] and the scale
+///   index.d.ts:1552 and :1560 declare. Call it with [jsCall] and the scale
 ///   as `thisArg`.
 final Map<String, Object?> formatters = {
   'values': _values,

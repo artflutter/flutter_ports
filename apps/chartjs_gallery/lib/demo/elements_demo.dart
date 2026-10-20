@@ -68,7 +68,7 @@ const List<Object> _borderAlignValues = ['center', 'inner'];
 
 /// The values of the `borderJoinStyle` option of the arcs. [undefined] is
 /// the default: the arc border then joins with `'bevel'`, or with
-/// `'round'` for the inner border (element.arc.ts:259-265 `drawBorder`).
+/// `'round'` for the inner border (element.arc.ts:330-336 `drawBorder`).
 const List<Object> _borderJoinStyleValues = [
   undefined,
   'round',
@@ -119,7 +119,7 @@ typedef _Options = ({
 ///   `innerRadius` and `outerRadius`, as `controller.doughnut.js` gives
 ///   them for a cutout of 50 %. The radius leaves room for the widest
 ///   border, the largest `offset` and the spacing
-///   (controller.doughnut.js:213-214), not for the hover offset, because
+///   (controller.doughnut.js:216-217), not for the hover offset, because
 ///   the resolved options have no `hoverOffset` key. Thus the border
 ///   width, the offset, the spacing and the border alignment also change
 ///   the radii. The doughnut area has a padding of 16 px, as
@@ -337,7 +337,7 @@ class ElementsDemoState extends State<ElementsDemo> {
       point.options = point.active ? pointOptions.active : pointOptions.base;
     }
 
-    // controller.doughnut.js:213-214: the radius leaves room for the widest
+    // controller.doughnut.js:216-217: the radius leaves room for the widest
     // border that is not inner (`getMaxBorderWidth`), the largest offset
     // (`getMaxOffset`) and the spacing. getMaxBorderWidth and getMaxOffset
     // also read `hoverBorderWidth` and `hoverOffset`, but the resolved arc

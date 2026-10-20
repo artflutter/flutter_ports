@@ -26,8 +26,8 @@ import 'scale_timeseries_reference.dart';
 // no spec file for the timeseries scale (AGENTS.md rule 3).
 //
 // The reference group compares real charts with the charts of
-// tool/reference/scale_timeseries_reference.mjs: the chart.js 4.5.1 npm
-// dist with chartjs-adapter-moment 1.0.1 on moment 2.29.4 in the zone
+// tool/reference/scale_timeseries_reference.mjs: a build of the pinned
+// Chart.js with chartjs-adapter-moment 1.0.1 on moment 2.29.4 in the zone
 // 'Etc/UTC', in Node.js v24.12.0 on x64 (Chart.js ADR 0010, Chart.js ADR
 // 0024), with a mock context that measures text in Liberation Sans 2.1.5
 // (scale_chart_harness.dart, scale_time_harness.dart). Each chart comes
@@ -127,6 +127,7 @@ void main() {
     node: scaleTimeseriesReferenceNode,
     arch: scaleTimeseriesReferenceArch,
     dist: scaleTimeseriesReferenceDist,
+    commit: scaleTimeseriesReferenceCommit,
   );
   testAdapterOrigin(scaleTimeseriesReferenceAdapter);
 

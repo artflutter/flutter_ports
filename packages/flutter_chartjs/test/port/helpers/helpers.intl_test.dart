@@ -297,7 +297,7 @@ void main() {
     });
 
     test('uses the current intl locale for undefined', () {
-      // controller.doughnut.js:321 and controller.polarArea.js:99 pass
+      // controller.doughnut.js:324 and controller.polarArea.js:101 pass
       // chart.options.locale, undefined by default. The V8 strings.
       expect(formatNumber(1234.5678, undefined), '1,234.568');
       expect(formatNumber(double.nan, undefined), 'NaN');

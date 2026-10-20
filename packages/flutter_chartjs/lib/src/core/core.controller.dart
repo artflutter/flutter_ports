@@ -82,7 +82,7 @@ import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_chartjs/src/types/layout.dart'
     show LayoutItem, LayoutItemConfigure, LayoutLayer;
-import 'package:flutter_chartjs/src/upstream.dart' show chartJsVersion;
+import 'package:flutter_chartjs/src/upstream.dart' show chartJsPackageVersion;
 import 'package:meta/meta.dart';
 
 // core.controller.js:15-18: the JSDoc typedefs `ChartEvent` and `Point` are
@@ -259,7 +259,7 @@ types.ChartEvent? _determineLastEvent(
 }
 
 /// core.controller.js:835-848 the dataset meta: the object literal of
-/// `getDatasetMeta`, the `ChartMeta` of index.d.ts:477.
+/// `getDatasetMeta`, the `ChartMeta` of index.d.ts:507.
 ///
 /// The fields have the upstream names. The `_` properties that other
 /// modules read drop the underscore (Chart.js ADR 0012): `_parsed` is
@@ -664,7 +664,7 @@ class Chart implements types.Chart {
   static final core_defaults.Defaults defaults = core_defaults.defaults;
 
   /// core.controller.js:106 `static instances = instances`: the charts by
-  /// the `ToString` of their [id] (index.d.ts:564).
+  /// the `ToString` of their [id] (index.d.ts:594).
   static final Map<String, Chart> instances = _instances;
 
   /// core.controller.js:107 `static overrides = overrides`.
@@ -675,8 +675,10 @@ class Chart implements types.Chart {
 
   /// core.controller.js:109 `static version = version`. Upstream reads the
   /// version from `package.json` (core.controller.js:12). The port has
-  /// [chartJsVersion] for it (Chart.js ADR 0020, section 6).
-  static const String version = chartJsVersion;
+  /// [chartJsPackageVersion] for it (Chart.js ADR 0020, section 6). Under a
+  /// commit pin, `chartJsVersion` also names the commit, and `package.json`
+  /// names the last release.
+  static const String version = chartJsPackageVersion;
 
   /// core.controller.js:110 `static getChart = getChart`.
   ///
@@ -756,7 +758,7 @@ class Chart implements types.Chart {
 
   /// core.controller.js:158 `currentDevicePixelRatio = undefined`. NaN
   /// stands for JS `undefined`: `retinaScale` compares it with `!==`
-  /// (helpers.dom.ts:231), and NaN is not equal to any ratio.
+  /// (helpers.dom.ts:232), and NaN is not equal to any ratio.
   @override
   double currentDevicePixelRatio = double.nan;
 
@@ -916,7 +918,7 @@ class Chart implements types.Chart {
   /// core.controller.js:254 `clear()`.
   Chart clear() {
     clearCanvas(canvas, ctx);
-    // The upstream method returns this (index.d.ts:521).
+    // The upstream method returns this (index.d.ts:551).
     // ignore: avoid_returning_this
     return this;
   }
@@ -924,7 +926,7 @@ class Chart implements types.Chart {
   /// core.controller.js:259 `stop()`.
   Chart stop() {
     animator.stop(this);
-    // The upstream method returns this (index.d.ts:522).
+    // The upstream method returns this (index.d.ts:552).
     // ignore: avoid_returning_this
     return this;
   }
@@ -1225,7 +1227,7 @@ class Chart implements types.Chart {
   /// core.controller.js:475 `update(mode)`.
   ///
   /// [mode] is an update mode `String`, a function of the context
-  /// `{datasetIndex}`, or [undefined] for an absent argument (index.d.ts:529).
+  /// `{datasetIndex}`, or [undefined] for an absent argument (index.d.ts:559).
   /// The hooks get it as it is.
   void update([Object? mode = undefined]) {
     final config = this.config..update();
@@ -2353,7 +2355,7 @@ String? _modeArg(Object? mode) =>
 /// The `Set` constructor throws a `TypeError` for a value that is not
 /// iterable. A JS string is iterable, and upstream makes a Set of its
 /// characters (core.controller.js:557). The port throws for a string too:
-/// `events` is `(keyof HTMLElementEventMap)[]` (index.d.ts:1693). A value
+/// `events` is `(keyof HTMLElementEventMap)[]` (index.d.ts:1723). A value
 /// that is not a List is outside the upstream type contract, and its throw
 /// is not a `DIVERGES` hunk (Chart.js ADR 0017, section 5).
 Set<Object?> _setOf(Object? iterable) => switch (iterable) {
@@ -2367,7 +2369,7 @@ Set<Object?> _setOf(Object? iterable) => switch (iterable) {
 ///
 /// Upstream calls `String.prototype.includes` for a string, a substring
 /// test that does not throw. The `events` of a chart and of a plugin are
-/// `(keyof HTMLElementEventMap)[]` (index.d.ts:1693, :833). A value that is
+/// `(keyof HTMLElementEventMap)[]` (index.d.ts:1723, :863). A value that is
 /// not a List is outside the upstream type contract, and its throw is not a
 /// `DIVERGES` hunk (Chart.js ADR 0017, section 5).
 bool _includes(Object? array, Object? value) => switch (array) {

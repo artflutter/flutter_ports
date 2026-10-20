@@ -1140,7 +1140,7 @@ function snapshot(name, theme, user) {
       x.border.color,
       x.title.color,
     ]);
-    // The fonts of _resolveTickFontOptions (core.scale.js:1698-1701) and of
+    // The fonts of _resolveTickFontOptions (core.scale.js:1700-1703) and of
     // the title (core.scale.js:1595).
     const tickFont = chart.scales.x._resolveTickFontOptions(0);
     const titleFont = toFont(x.title.font);
@@ -1275,7 +1275,7 @@ function radialSnapshot(name, theme, replace) {
       o.pointLabels.backdropColor,
     ]);
     // The fonts of fitWithPointLabels (scale.radialLinear.js:96-97) and of
-    // _resolveTickFontOptions (core.scale.js:1698-1701).
+    // _resolveTickFontOptions (core.scale.js:1700-1703).
     const pointLabelFont = toFont(o.pointLabels.font);
     const tickFont = r._resolveTickFontOptions(0);
     observe('fonts', [

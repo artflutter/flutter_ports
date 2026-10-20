@@ -134,7 +134,7 @@ const Set<String> themeTooltipInteractionKeys = {
 /// The root keys that the compiler never emits (theming.md §3.3). The `''`
 /// scope key resolves to the theme root (`helpers.core.ts:338`), ahead of
 /// `defaults.elements.<type>`. These keys then beat the `'#fff'` of the arc
-/// (`element.arc.ts:306`).
+/// (`element.arc.ts:379`).
 const Set<String> _rootStyleKeys = {'backgroundColor', 'borderColor', 'font'};
 
 /// The two palette keys of `plugins.colors` (theming.md §3.5), the only `$`
@@ -231,9 +231,9 @@ bool _isPaletteKey(List<String> path, int i) =>
 ///   `element.bar.js:159-162`) read it.
 /// - `backgroundColor` replaces `Defaults.backgroundColor`
 ///   (`core.defaults.js:41`) for the routes of the four elements
-///   (`element.arc.ts:319-321`).
+///   (`element.arc.ts:393-395`).
 /// - `surface` replaces the arc `borderColor` `'#fff'`
-///   (`element.arc.ts:306`).
+///   (`element.arc.ts:379`).
 ///
 /// The radial keys are necessary. Hunk H1 merges the theme into the scale
 /// copy-in before `defaults.scales.radialLinear` (theming.md §3.1). Thus
@@ -299,7 +299,7 @@ const List<String> _fontTokenKeys = ['scale.ticks.font', 'scale.title.font'];
 /// `defaults.scales.<type>` as a scope.
 const String _pointLabelsFontKey = 'scales.radialLinear.pointLabels.font';
 
-/// The fields of a `FontSpec` (`index.d.ts:1787-1806`).
+/// The fields of a `FontSpec` (`index.d.ts:1817-1836`).
 const Set<String> _fontFields = {
   'family',
   'size',

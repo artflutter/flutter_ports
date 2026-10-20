@@ -25,8 +25,8 @@ import 'scale_linear_reference.dart';
 // The port-only tests of lib/src/scales/scale.linear.dart.
 //
 // The reference group compares real charts with the charts of
-// tool/reference/scale_linear_reference.mjs: the chart.js 4.5.1 npm dist in
-// Node.js v24.12.0 on x64 (Chart.js ADR 0010), with a mock context that
+// tool/reference/scale_linear_reference.mjs: a build of the pinned Chart.js
+// in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with a mock context that
 // measures text in Liberation Sans 2.1.5, the test font of the harness
 // (scale_chart_harness.dart, tool/reference/scale_chart_common.mjs). Each
 // chart comes from acquireChart in a testWidgets case (Chart.js ADR 0022).
@@ -196,6 +196,7 @@ void main() {
     node: scaleLinearReferenceNode,
     arch: scaleLinearReferenceArch,
     dist: scaleLinearReferenceDist,
+    commit: scaleLinearReferenceCommit,
   );
 
   group('the class value (Chart.js ADR 0020)', () {

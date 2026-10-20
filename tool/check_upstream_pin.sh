@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Fails unless the third_party/Chart.js gitlink is the commit of the upstream
 # release tag named by chartJsVersion (packages/flutter_chartjs/lib/src/upstream.dart).
+# A commit pin (ADR 0006 item 5, packages/flutter_chartjs/doc/upstream-tracking.md
+# section 2.4) has the version "<last version>+<sha8>". Then the gitlink must
+# start with <sha8>, and the tag "v<last version>" must exist.
 # Also fails unless the D3 gitlinks are the commits of their tags (ADR 0005 item 4,
 # D3 ADR 0001):
 # - third_party/d3: the release tag named by d3Version
@@ -22,7 +25,17 @@ if [ -z "$version" ]; then
   echo "chartJsVersion not found in packages/flutter_chartjs/lib/src/upstream.dart" >&2
   exit 1
 fi
-tag="v$version"
+# A commit pin: the release before "+" and the abbreviated commit after it.
+release=${version%%+*}
+commit=
+if [ "$release" != "$version" ]; then
+  commit=${version#*+}
+  if ! [[ $release =~ ^[0-9]+\.[0-9]+\.[0-9]+$ && $commit =~ ^[0-9a-f]{8}$ ]]; then
+    echo "chartJsVersion $version is not <version> or <version>+<sha8>" >&2
+    exit 1
+  fi
+fi
+tag="v$release"
 
 pinned=$(git ls-files --stage -- third_party/Chart.js | awk '$1 == "160000" { print $2 }')
 if [ -z "$pinned" ]; then
@@ -43,12 +56,28 @@ if [ -z "$expected" ]; then
   exit 1
 fi
 
-if [ "$pinned" != "$expected" ]; then
-  echo "third_party/Chart.js is pinned to $pinned, but $tag is $expected." >&2
-  echo "Check out the tag in the submodule and stage it: git add third_party/Chart.js" >&2
-  exit 1
+if [ -n "$commit" ]; then
+  # git ls-remote lists only refs. Thus the script cannot see if the commit is
+  # on master after the tag. The upstream ledger records the commits of the
+  # range.
+  if [[ $pinned != "$commit"* ]]; then
+    echo "third_party/Chart.js is pinned to $pinned, but chartJsVersion $version names the commit $commit." >&2
+    echo "Check out the commit in the submodule and stage it: git add third_party/Chart.js" >&2
+    exit 1
+  fi
+  if [ "$pinned" = "$expected" ]; then
+    echo "third_party/Chart.js is pinned to $tag ($pinned). Write chartJsVersion $release, not $version." >&2
+    exit 1
+  fi
+  echo "third_party/Chart.js is pinned to the commit pin v$version ($pinned, after $tag)"
+else
+  if [ "$pinned" != "$expected" ]; then
+    echo "third_party/Chart.js is pinned to $pinned, but $tag is $expected." >&2
+    echo "Check out the tag in the submodule and stage it: git add third_party/Chart.js" >&2
+    exit 1
+  fi
+  echo "third_party/Chart.js is pinned to $tag ($pinned)"
 fi
-echo "third_party/Chart.js is pinned to $tag ($pinned)"
 
 # D3. The script examines every D3 pin and reports each failure. Then it exits
 # with status 1 if one or more pins failed.

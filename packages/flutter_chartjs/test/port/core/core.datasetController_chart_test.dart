@@ -336,7 +336,7 @@ void main() {
 
     testWidgets('after the hover animation, the point holds a copy with '
         r'$shared false', (tester) async {
-      // _setStyle (core.datasetController.js:1124-1132) animates a copy of
+      // _setStyle (core.datasetController.js:919-927) animates a copy of
       // the shared options with `$shared` false. The options of the mode
       // 'active' need the context: the hover colors of core.defaults.js are
       // scriptable. Thus their `$shared` is false, `_animateOptions` waits

@@ -6,8 +6,8 @@
 /// and the origin of the date adapter of the generators.
 ///
 /// The generators (`tool/reference/scale_time_reference.mjs`,
-/// `tool/reference/scale_timeseries_reference.mjs`) run the chart.js 4.5.1
-/// npm dist with chartjs-adapter-moment 1.0.1 on moment 2.29.4 and
+/// `tool/reference/scale_timeseries_reference.mjs`) run a build of the
+/// pinned Chart.js with chartjs-adapter-moment 1.0.1 on moment 2.29.4 and
 /// moment-timezone 0.5.42 in the zone 'Etc/UTC', the date adapter of the
 /// specs (`tool/reference/scale_time_common.mjs`). The Dart charts use the
 /// default date adapter of the port (Chart.js ADR 0024) in UTC: the

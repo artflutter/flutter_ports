@@ -278,6 +278,7 @@ const OPTIONS = {
   borderWidth: 2,
   offset: 0,
   spacing: 0,
+  spacingMode: 'angular',
   circular: true,
   selfJoin: false,
 };
@@ -400,6 +401,56 @@ addDraw('outer radius 0.1, inner border', arcCfg({innerRadius: 0, outerRadius: 0
 addDraw('colors absent', arcCfg({}, {}, ['backgroundColor', 'borderColor']));
 addDraw('angles undefined', arcCfg({startAngle: undefined, endAngle: undefined}));
 addDraw('spec options, full circle', {x: 2, y: 2, startAngle: 0, endAngle: TAU, innerRadius: 0, outerRadius: 2, options: {spacing: 0, offset: 0, borderWidth: 0}});
+
+// spacingMode (pathArc): the three modes, the default for an absent,
+// null or unknown value, the trim limits for a large spacing and a small
+// sweep, the raised root of 'parallel' for an inner radius of 0 and its
+// limit below the outer radius, and an outer radius of 0, also after a
+// negative spacing with an inner radius above 0.
+addDraw('spacing, mode proportional', arcCfg({}, {spacing: 4, spacingMode: 'proportional'}));
+addDraw('spacing, mode parallel', arcCfg({}, {spacing: 4, spacingMode: 'parallel'}));
+addDraw('spacing, mode absent', arcCfg({}, {spacing: 4}, ['spacingMode']));
+addDraw('spacing, mode null', arcCfg({}, {spacing: 4, spacingMode: null}));
+addDraw('spacing, mode unknown', arcCfg({}, {spacing: 4, spacingMode: 'radial'}));
+addDraw('spacing, mode proportional, inner radius 0', arcCfg({innerRadius: 0}, {spacing: 4, spacingMode: 'proportional'}));
+addDraw('spacing, mode parallel, inner radius 0', arcCfg({innerRadius: 0}, {spacing: 4, spacingMode: 'parallel'}));
+addDraw('spacing 40', arcCfg({}, {spacing: 40}));
+addDraw('spacing 40, mode proportional', arcCfg({}, {spacing: 40, spacingMode: 'proportional'}));
+addDraw('spacing 40, mode parallel', arcCfg({}, {spacing: 40, spacingMode: 'parallel'}));
+addDraw('spacing 40, mode parallel, inner radius 0', arcCfg({innerRadius: 0}, {spacing: 40, spacingMode: 'parallel'}));
+addDraw('spacing, sweep 0.05', arcCfg({startAngle: 0, endAngle: 0.05}, {spacing: 4}));
+addDraw('spacing, mode parallel, sweep 0.05', arcCfg({startAngle: 0, endAngle: 0.05}, {spacing: 4, spacingMode: 'parallel'}));
+addDraw('spacing, mode parallel, inner radius 0, sweep 0.002', arcCfg({startAngle: 0, endAngle: 0.002, innerRadius: 0}, {spacing: 4, spacingMode: 'parallel'}));
+addDraw('spacing -4', arcCfg({}, {spacing: -4}));
+addDraw('spacing -4, mode parallel', arcCfg({}, {spacing: -4, spacingMode: 'parallel'}));
+addDraw('spacing -200', arcCfg({}, {spacing: -200}));
+addDraw('spacing, mode parallel, border radius 4', arcCfg({}, {spacing: 4, spacingMode: 'parallel', borderRadius: 4}));
+addDraw('spacing, mode parallel, border radius object', arcCfg({}, {spacing: 4, spacingMode: 'parallel', borderRadius: {outerStart: 2, outerEnd: 50, innerStart: 3, innerEnd: 100}}));
+addDraw('spacing and offset, mode parallel, circumference 1.75', arcCfg({circumference: 1.75}, {spacing: 4, offset: 8, spacingMode: 'parallel'}));
+addDraw('spacing, mode parallel, inner border', arcCfg({}, {spacing: 4, spacingMode: 'parallel', borderAlign: 'inner'}));
+addDraw('spacing, mode parallel, circular false', arcCfg({}, {spacing: 4, spacingMode: 'parallel', circular: false}));
+addDraw('outer radius 0', arcCfg({innerRadius: 0, outerRadius: 0}));
+addDraw('outer radius 0, inner border, spacing 0.5, mode parallel', arcCfg({innerRadius: 0, outerRadius: 0}, {spacing: 0.5, spacingMode: 'parallel', borderAlign: 'inner'}));
+addDraw('spacing, mode parallel, inner radius 0, sweep 0.05', arcCfg({startAngle: 0, endAngle: 0.05, innerRadius: 0}, {spacing: 4, spacingMode: 'parallel'}));
+addDraw('spacing -4, mode parallel, radii 10 and 1', arcCfg({innerRadius: 10, outerRadius: 1}, {spacing: -4, spacingMode: 'parallel'}));
+addDraw('full circle, spacing', arcCfg({startAngle: 0, endAngle: TAU}, {spacing: 4}));
+
+// A full circle with selfJoin (pathFullCircle, and no clipSelf for a ring).
+addDraw('self join, full circle', arcCfg({startAngle: 0, endAngle: TAU}, {selfJoin: true}));
+addDraw('self join, full circle, inner radius 0', arcCfg({startAngle: 0, endAngle: TAU, innerRadius: 0}, {selfJoin: true}));
+addDraw('self join, full circle, inner radius 0, join bevel', arcCfg({startAngle: 0, endAngle: TAU, innerRadius: 0}, {selfJoin: true, borderJoinStyle: 'bevel'}));
+addDraw('self join, full circle, spacing and offset', arcCfg({startAngle: 0.5, endAngle: 0.5 + TAU}, {selfJoin: true, spacing: 4, offset: 8}));
+addDraw('self join, full circle, spacing, mode parallel, inner radius 0', arcCfg({startAngle: 0, endAngle: TAU, innerRadius: 0}, {selfJoin: true, spacing: 4, spacingMode: 'parallel'}));
+addDraw('self join, full circle, border radius 4', arcCfg({startAngle: 0, endAngle: TAU}, {selfJoin: true, borderRadius: 4}));
+addDraw('self join, full circle, circular false', arcCfg({startAngle: 0, endAngle: TAU}, {selfJoin: true, circular: false}));
+addDraw('self join, full circle, inner border', arcCfg({startAngle: 0, endAngle: TAU}, {selfJoin: true, borderAlign: 'inner'}));
+addDraw('self join, full circle, join miter', arcCfg({startAngle: 0, endAngle: TAU}, {selfJoin: true, borderJoinStyle: 'miter'}));
+addDraw('self join, sweep TAU - 1e-4', arcCfg({startAngle: 0, endAngle: TAU - 1e-4}, {selfJoin: true}));
+addDraw('self join, sweep TAU - 2e-4', arcCfg({startAngle: 0, endAngle: TAU - 2e-4}, {selfJoin: true}));
+addDraw('self join, sweep -TAU', arcCfg({startAngle: TAU, endAngle: 0}, {selfJoin: true}));
+addDraw('self join, sweep -TAU, circumference 3 TAU + 4', arcCfg({startAngle: TAU, endAngle: 0, circumference: 3 * TAU + 4}, {selfJoin: true}));
+addDraw('self join, full circle, angles undefined', arcCfg({startAngle: undefined, endAngle: undefined, circumference: TAU}, {selfJoin: true}));
+addDraw('self join, circumference 3 TAU, inner radius 0', arcCfg({startAngle: 0, endAngle: 3 * TAU, circumference: 3 * TAU, innerRadius: 0}, {selfJoin: true}));
 
 const inRangeBody = inRange
   .map(

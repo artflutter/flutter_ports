@@ -152,7 +152,7 @@ void main() {
       expect(center.y, inInclusiveRange(0, size.height));
     }
 
-    // controller.doughnut.js:213-214: the radius leaves room for the border
+    // controller.doughnut.js:216-217: the radius leaves room for the border
     // (2), the offset (0) and the spacing (0), but not for the hover offset:
     // the resolved arc options have no hoverOffset key. The doughnut area is
     // below the bars (split 230), inside the pad of 12 and the caption of

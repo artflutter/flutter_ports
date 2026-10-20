@@ -24,7 +24,7 @@ import 'scale_chart_harness.dart';
 import 'scale_linearbase_reference.dart';
 
 // The reference test of `LinearScaleBase` (scale.linearbase.js): real charts
-// against the chart.js 4.5.1 npm dist, with the method of
+// against a build of the pinned Chart.js, with the method of
 // scale_chart_harness.dart and tool/reference/scale_chart_common.mjs. The
 // generator is tool/reference/scale_linearbase_reference.mjs.
 //
@@ -199,6 +199,7 @@ void main() {
     node: scaleLinearBaseReferenceNode,
     arch: scaleLinearBaseReferenceArch,
     dist: scaleLinearBaseReferenceDist,
+    commit: scaleLinearBaseReferenceCommit,
   );
 
   group('linear scale base charts against upstream', () {
@@ -291,8 +292,9 @@ void main() {
     // generateTicks gives the raw `min` and `max` options to the bound ticks
     // (scale.linearbase.js:111, :136, :138). Upstream keeps a string bound
     // as a string tick value. The port keeps its ToNumber: `Tick.value` is
-    // a number (index.d.ts:1165). The probe of the chart.js 4.5.1 dist on
-    // x64 Node.js v24.12.0 gave the upstream values of these cases.
+    // a number (index.d.ts:1195). The probe of a build of the pinned
+    // Chart.js on x64 Node.js v24.12.0 gave the upstream values of these
+    // cases.
     const values = [0.0, 20.0, 40.0, 60.0, 80.0, 100.0];
 
     testWidgets('a string bound gives its number as the tick value', (

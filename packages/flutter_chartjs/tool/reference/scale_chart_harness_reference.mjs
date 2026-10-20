@@ -21,7 +21,7 @@
 // v24.12.0:
 //
 //   node tool/reference/scale_chart_harness_reference.mjs \
-//     <scratch>/node_modules/chart.js/dist/chart.js
+//     <build>/dist/chart.js
 //
 // or with the environment variable CHARTJS_DIST.
 

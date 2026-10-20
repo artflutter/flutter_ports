@@ -322,7 +322,7 @@ double? _getLastIndexInStack(
 /// The map structure of `chart._stacks` is `{stackKey: {datasetIndex:
 /// value}}`. A key of a stack is the `ToString` of the dataset index.
 ///
-/// A parsed item is any value (`unknown[]`, index.d.ts:473). With `parsing:
+/// A parsed item is any value (`unknown[]`, index.d.ts:503). With `parsing:
 /// false`, the items are the data items. `item._stacks = {}` writes into the
 /// item. A write into a primitive throws a `TypeError` in the strict code of
 /// an ES module, and so does the port. A write into a Map of a narrower
@@ -410,9 +410,8 @@ AnyObject _createDataContext(AnyObject parent, double index, Element element) {
 
 /// core.datasetController.js:208 `clearStacks(meta, items)`.
 ///
-/// The loop returns at the first parsed item without a value of the dataset
-/// in its stack, as v4.5.1 does (:220). Upstream `master` continues there
-/// (ledger row #12155). The commit pin after phase 5 brings that change.
+/// The loop continues after a parsed item without a value of the dataset in
+/// its stack (:220, ledger row #12155). v4.5.1 returns there.
 void _clearStacks(types.ChartMeta meta, [List<Object?>? items]) {
   // Not using meta.index here, because it might be already updated if the
   // dataset changed location
@@ -430,7 +429,7 @@ void _clearStacks(types.ChartMeta meta, [List<Object?>? items]) {
     if (!jsTruthy(stacks) ||
         identical(jsGet(stacks, axis), undefined) ||
         identical(jsGet(jsGet(stacks, axis), datasetKey), undefined)) {
-      return;
+      continue;
     }
     final axisStacks = jsGet(stacks, axis)! as AnyObject..remove(datasetKey);
     final visualValues = jsGet(axisStacks, '_visualValues');
@@ -556,7 +555,7 @@ void _setAt<T>(List<T> list, int index, T value) {
 /// The JS read `item[key]` of a parsed item: the Map read for a Map, else
 /// [jsGet].
 ///
-/// A parsed item is any value (index.d.ts:473). [jsGet] gives [undefined]
+/// A parsed item is any value (index.d.ts:503). [jsGet] gives [undefined]
 /// for a number or a boolean, and throws a [TypeError] for `null` and
 /// [undefined]. The Map read gives Dart `null` for an absent key, where
 /// JavaScript gives `undefined`. The callers test the value with
@@ -680,7 +679,7 @@ class DatasetController
     },
   );
 
-  /// core.datasetController.js:256 `chart` (index.d.ts:600).
+  /// core.datasetController.js:256 `chart` (index.d.ts:630).
   final types.Chart chart;
 
   /// core.datasetController.js:257 `_ctx`, the context of the chart.
@@ -690,7 +689,7 @@ class DatasetController
   final CanvasRenderingContext2D? ctx;
 
   /// core.datasetController.js:258 `index`, the dataset index
-  /// (index.d.ts:601). [updateIndex] writes it.
+  /// (index.d.ts:631). [updateIndex] writes it.
   @override
   double index;
 
@@ -700,13 +699,13 @@ class DatasetController
   AnyObject _cachedDataOpts = {};
 
   /// core.datasetController.js:260 `_cachedMeta`, the meta of the dataset
-  /// (index.d.ts:602).
+  /// (index.d.ts:632).
   @internal
   @override
   late final types.ChartMeta cachedMeta;
 
   /// core.datasetController.js:261 `_type`, the dataset type of the meta.
-  /// controller.bar.js:436 and controller.doughnut.js:189 read it.
+  /// controller.bar.js:436 and controller.doughnut.js:192 read it.
   @internal
   late final String type;
 
@@ -801,7 +800,7 @@ class DatasetController
 
   /// core.datasetController.js:299 `linkScales()`.
   ///
-  /// An axis id is a string (index.d.ts:459-463). An id of another type is
+  /// An axis id is a string (index.d.ts:489-493). An id of another type is
   /// outside the upstream type contract: the write throws an
   /// [ArgumentError].
   void linkScales() {
@@ -1030,7 +1029,7 @@ class DatasetController
     List<Object?> parsed;
 
     if (parsing == false) {
-      // The data items are the parsed items, of any type (index.d.ts:473).
+      // The data items are the parsed items, of any type (index.d.ts:503).
       meta
         ..parsed = parsed = data
         ..sorted = true;
@@ -1192,9 +1191,9 @@ class DatasetController
   /// core.datasetController.js:579 `getParsed(index)`.
   /// @protected
   ///
-  /// A parsed item is any value (`unknown[]`, index.d.ts:473): a Map of the
+  /// A parsed item is any value (`unknown[]`, index.d.ts:503): a Map of the
   /// `parse*Data` methods, a data item with `parsing: false`, or a number of
-  /// a controller that writes numbers (controller.doughnut.js:150, :161).
+  /// a controller that writes numbers (controller.doughnut.js:153, :164).
   /// An index that names no parsed item gives [undefined]. Dart `null` is a
   /// JS `null` item.
   Object? getParsed(double index) {

@@ -23,11 +23,12 @@ import 'scale_radial_linear_reference.dart';
 // The port-only tests of lib/src/scales/scale.radialLinear.dart.
 //
 // The reference group compares real charts with the charts of
-// tool/reference/scale_radial_linear_reference.mjs: the chart.js 4.5.1 npm
-// dist in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with a mock context
-// that measures text in Liberation Sans 2.1.5, the test font of the harness
-// (scale_chart_harness.dart, tool/reference/scale_chart_common.mjs). Each
-// chart comes from acquireChart in a testWidgets case (Chart.js ADR 0022).
+// tool/reference/scale_radial_linear_reference.mjs: a build of the pinned
+// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with a mock
+// context that measures text in Liberation Sans 2.1.5, the test font of the
+// harness (scale_chart_harness.dart, tool/reference/scale_chart_common.mjs).
+// Each chart comes from acquireChart in a testWidgets case (Chart.js ADR
+// 0022).
 //
 // The radar and polar area controllers are not ported yet. Thus the charts
 // use the radial test controller `radialTest` of the harness, with the
@@ -244,6 +245,7 @@ void main() {
     node: scaleRadialLinearReferenceNode,
     arch: scaleRadialLinearReferenceArch,
     dist: scaleRadialLinearReferenceDist,
+    commit: scaleRadialLinearReferenceCommit,
   );
 
   group('the class value (Chart.js ADR 0020)', () {

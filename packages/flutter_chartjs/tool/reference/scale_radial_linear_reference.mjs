@@ -2,7 +2,7 @@
 //
 // It writes test/port/scales/scale_radial_linear_reference.dart, the data of
 // test/port/scales/scale.radialLinear_test.dart: real charts with the radial
-// linear scale of the chart.js 4.5.1 npm dist (see the header of
+// linear scale of a build of the pinned Chart.js (see the header of
 // tool/reference/scale_chart_common.mjs for the method, the usage and the
 // limits).
 //
@@ -33,7 +33,7 @@
 // v24.12.0:
 //
 //   node tool/reference/scale_radial_linear_reference.mjs \
-//     <scratch>/node_modules/chart.js/dist/chart.js
+//     <build>/dist/chart.js
 //
 // or with the environment variable CHARTJS_DIST.
 

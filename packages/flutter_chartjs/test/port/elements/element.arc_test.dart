@@ -26,7 +26,9 @@ import 'arc_reference.dart';
 //   (valueOrDefault) and NaN, and with animations;
 // - getCenterPoint and tooltipPosition with offset, spacing and animations;
 // - the calls of draw: full circles, the inner border (clipArc), the border
-//   joins and selfJoin (clipSelf), spacing and offset (pathArc), the border
+//   joins and selfJoin (clipSelf), spacing and offset (pathArc), the three
+//   values of spacingMode and the default for other values, a full circle
+//   with selfJoin (pathFullCircle, and no clipSelf for a ring), the border
 //   radius (parseBorderRadius), circular false and the border dash.
 // The expected results come from arc_reference.dart, which
 // tool/reference/arc_reference.mjs writes from the pinned element.arc.ts and
@@ -202,6 +204,7 @@ void main() {
       expect(arc.outerRadius, isNaN);
       expect(arc.pixelMargin, 0);
       expect(arc.fullCircles, 0);
+      expect(arc.circular, isFalse);
       expect(arc.options, isNull);
       expect(arc.active, isFalse);
       for (final name in [
@@ -219,6 +222,7 @@ void main() {
       }
       expect(arc['pixelMargin'], 0.0);
       expect(arc['fullCircles'], 0.0);
+      expect(arc['circular'], isFalse);
     });
 
     test('the constructor writes each key of cfg by name', () {
@@ -231,6 +235,7 @@ void main() {
         'outerRadius': 5,
         'pixelMargin': 6,
         'fullCircles': 7,
+        'circular': true,
         'x': 8,
         'y': 9,
         'options': options,
@@ -243,6 +248,7 @@ void main() {
       expect(arc.outerRadius, 5.0);
       expect(arc.pixelMargin, 6.0);
       expect(arc.fullCircles, 7.0);
+      expect(arc.circular, isTrue);
       expect(arc.x, 8.0);
       expect(arc.y, 9.0);
       expect(arc.options, same(options));
@@ -264,16 +270,31 @@ void main() {
       final arc = ArcElement({'pixelMargin': 1, 'circumference': 2});
       arc['pixelMargin'] = undefined;
       arc['circumference'] = undefined;
+      arc['circular'] = undefined;
       expect(arc.pixelMargin, isNaN);
       expect(arc['pixelMargin'], _isUndefined);
       expect(arc.circumference, isNaN);
       expect(arc['circumference'], _isUndefined);
+      expect(arc.circular, isNull);
+      expect(arc['circular'], _isUndefined);
     });
 
     test('NaN is a value, not the undefined state', () {
       final arc = ArcElement({'circumference': double.nan});
       expect(arc.circumference, isNaN);
       expect(arc['circumference'], isA<double>());
+    });
+
+    test('a write by name of a value that is not a boolean throws', () {
+      final arc = ArcElement();
+      for (final value in <Object?>[null, 0, 'true', <String, Object?>{}]) {
+        expect(
+          () => arc['circular'] = value,
+          throwsArgumentError,
+          reason: 'circular = $value',
+        );
+      }
+      expect(arc.circular, isFalse);
     });
 
     test('a write by name of a value that is not a number throws', () {
@@ -305,7 +326,8 @@ void main() {
         ..innerRadius = 4
         ..outerRadius = 5
         ..pixelMargin = 6
-        ..fullCircles = 7;
+        ..fullCircles = 7
+        ..circular = true;
       expect(arc['circumference'], 1.0);
       expect(arc['startAngle'], 2.0);
       expect(arc['endAngle'], 3.0);
@@ -313,6 +335,7 @@ void main() {
       expect(arc['outerRadius'], 5.0);
       expect(arc['pixelMargin'], 6.0);
       expect(arc['fullCircles'], 7.0);
+      expect(arc['circular'], isTrue);
     });
 
     test('is an Element, an ArcProps, a VisualElement and a Point', () {
@@ -358,6 +381,7 @@ void main() {
         'borderWidth',
         'offset',
         'spacing',
+        'spacingMode',
         'angle',
         'circular',
         'selfJoin',
@@ -372,6 +396,7 @@ void main() {
         'borderWidth': 2.0,
         'offset': 0.0,
         'spacing': 0.0,
+        'spacingMode': 'angular',
         'angle': _isUndefined,
         'circular': true,
         'selfJoin': false,
@@ -497,7 +522,7 @@ void main() {
 
   group('draw', () {
     test('has the reference of Node.js v24.12.0 on x64', () {
-      expect(arcDrawReference, hasLength(54));
+      expect(arcDrawReference, hasLength(96));
     });
 
     for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
@@ -584,6 +609,19 @@ void main() {
       final ctx = _CanvasContext();
       _drawArc({'borderWidth': '3', 'borderAlign': 'inner'}).draw(ctx);
       expect(_named(ctx, 'setLineWidth').single['args'], [6.0]);
+    });
+
+    test('draw reads the option circular, not the property circular', () {
+      // draw reads `options.circular` (element.arc.ts:474). No upstream code
+      // reads the property, which the constructor sets to false
+      // (element.arc.ts:422).
+      for (final option in [true, false]) {
+        final withFalse = _CanvasContext();
+        final withTrue = _CanvasContext();
+        _drawArc({'circular': option}).draw(withFalse);
+        (_drawArc({'circular': option})..circular = true).draw(withTrue);
+        expect(withTrue.getCalls(), withFalse.getCalls(), reason: '$option');
+      }
     });
 
     test('the center does not move after a draw', () {

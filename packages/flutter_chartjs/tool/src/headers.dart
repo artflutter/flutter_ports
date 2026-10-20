@@ -6,8 +6,13 @@
 library;
 
 /// A `// Ported from` line.
+///
+/// The version is a dotted release, with or without `v`. Under a commit pin
+/// (upstream-tracking.md 2.4), `+<sha8>` follows the release, for example
+/// `v4.5.1+7169e651`.
 final RegExp portedFromPattern = RegExp(
-  r'^// Ported from (\S+) (v?\d+(?:\.\d+)*) (\S+) \(([^,]+), (.+)\)\.$',
+  r'^// Ported from (\S+) (v?\d+(?:\.\d+)*(?:\+[0-9a-f]{8})?) (\S+) '
+  r'\(([^,]+), (.+)\)\.$',
 );
 
 /// The port-only marker.
@@ -47,7 +52,7 @@ final class PortedFrom {
   /// The project, for example `Chart.js`.
   final String project;
 
-  /// The version as written, for example `v4.5.1`.
+  /// The version as written, for example `v4.5.1` or `v4.5.1+7169e651`.
   final String version;
 
   /// The source path in the project, for example `src/helpers/helpers.math.ts`.

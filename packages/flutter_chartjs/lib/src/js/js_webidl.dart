@@ -38,7 +38,7 @@ import 'package:flutter_chartjs/src/js/js_undefined.dart';
 /// The value that the canvas setter `fillStyle` or `strokeStyle` gets for
 /// the option value [value], for example `ctx.fillStyle =
 /// options.backgroundColor` (element.point.ts:96-98, element.bar.js:191,
-/// :197, element.arc.ts:413-414, element.line.js:18).
+/// :197, element.arc.ts:489-490, element.line.js:18).
 ///
 /// The [undefined] sentinel of an absent option gives Dart `null`. The DOM
 /// ignores `undefined`, which is not a color, and the canvas layer ignores
@@ -47,7 +47,7 @@ Object? canvasStyle(Object? value) => value is Undefined ? null : value;
 
 /// The value that the canvas setter `lineWidth` or `lineDashOffset` gets
 /// for the option value [value] (element.point.ts:97,
-/// element.arc.ts:257-263, element.line.js:15, :17).
+/// element.arc.ts:328-334, element.line.js:15, :17).
 ///
 /// The setters of the DOM take an `unrestricted double`. They apply
 /// `ToNumber` and ignore NaN and the infinities. The [undefined] sentinel
@@ -58,7 +58,7 @@ double? canvasNumber(Object? value) =>
     value is Undefined ? null : jsToNumber(value);
 
 /// The value that the canvas setter `lineCap` or `lineJoin` gets for the
-/// option value [value] (element.arc.ts:261, :264, element.line.js:13, :16).
+/// option value [value] (element.arc.ts:332, :335, element.line.js:13, :16).
 ///
 /// The setters of the DOM take a `DOMString`. They apply `ToString` and
 /// ignore a string that is not a keyword. A `String` gives itself. JS
@@ -72,7 +72,7 @@ String? canvasKeyword(Object? value) => switch (value) {
 };
 
 /// The argument that `setLineDash` gets for the option value [value], a
-/// `number[]` (element.arc.ts:256, element.line.js:14).
+/// `number[]` (element.arc.ts:327, element.line.js:14).
 ///
 /// The DOM converts the argument to a `sequence<unrestricted double>`: it
 /// applies `ToNumber` to each item. A `List<double>` gives itself. Another

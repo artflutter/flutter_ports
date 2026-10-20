@@ -825,7 +825,7 @@ void main() {
 
   group('adapt-line-points-elements', () {
     test('a write of plain points throws an ArgumentError', () {
-      // Upstream stores any array: `points: Point[]` (index.d.ts:1981).
+      // Upstream stores any array: `points: Point[]` (index.d.ts:2026).
       expect(
         () => LineElement({
           'points': <Point>[InterpolatedPoint(1, 2), InterpolatedPoint(3, 4)],

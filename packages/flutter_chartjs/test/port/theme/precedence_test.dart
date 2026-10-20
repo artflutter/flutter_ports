@@ -658,7 +658,7 @@ List<String> _radialSnapshot(Object? theme) {
     _at(o, 'pointLabels.backdropColor'),
   ]);
   // The fonts of fitWithPointLabels (scale.radialLinear.js:96-97) and of
-  // _resolveTickFontOptions (core.scale.js:1698-1701).
+  // _resolveTickFontOptions (core.scale.js:1700-1703).
   final pointLabelFont = toFont(_at(o, 'pointLabels.font'));
   final tickFont = r.resolveTickFontOptions(0);
   observe('fonts', [

@@ -120,8 +120,8 @@ String getStyle(HTMLCanvasElement el, String property) {
 /// `box-sizing`, and the event position is in the logical pixels of the
 /// chart. Thus the factor `/ width * canvas.width / currentDevicePixelRatio`
 /// of :128-129 has no port. `retinaScale` gives the canvas
-/// `trunc(round1(width * dpr))` device pixels, so the factor is
-/// `trunc(round1(width * dpr)) / (width * dpr)`. For a fractional device
+/// `floor(round1(width * dpr))` device pixels, so the factor is
+/// `floor(round1(width * dpr)) / (width * dpr)`. For a fractional device
 /// width the result can differ from upstream by 1 px
 /// (`platform-relative-position`, differences.md).
 Point getRelativePosition(Object event, Chart chart) {
@@ -243,7 +243,7 @@ double _round1(double v) => jsRound(v * 10) / 10;
 }
 
 /// The WebIDL conversion of a number to `unsigned long`, ECMAScript
-/// `ToUint32`: the assignment `canvas.width = deviceWidth` converts with it.
+/// `ToUint32`: the assignment `canvas.width = canvasWidth` converts with it.
 /// It truncates a fraction, and NaN and the infinities give 0.
 int _toUint32(double value) {
   if (!value.isFinite) return 0;
@@ -269,8 +269,11 @@ int _toUint32(double value) {
 /// reads and writes of `canvas.style.height` and `canvas.style.width` call
 /// `getPropertyValue` and `setProperty`. The template literal formats the
 /// size with `Number::toString` ([jsNumberToString]): 400 gives `'400px'`.
-/// The canvas width and height take the `ToUint32` of the device size, as
-/// the DOM attributes do.
+/// The canvas width and height take the `Math.floor` of the device size
+/// (:230-231). The test of :232-234 compares these integers, so a fractional
+/// device size that does not change gives `false`. The assignment converts
+/// the value with `ToUint32`, as the DOM attributes do: NaN and the
+/// infinities give 0.
 ///
 /// The `dart:ui` context paints its bitmap with
 /// `scale(1 / devicePixelRatio)`, so the `setTransform` of the pixel ratio
@@ -307,35 +310,37 @@ bool retinaScale(
       ..setProperty('width', '${jsNumberToString(chart.width)}px');
   }
 
+  final canvasHeight = deviceHeight.floorToDouble();
+  final canvasWidth = deviceWidth.floorToDouble();
   if (chart.currentDevicePixelRatio != pixelRatio ||
-      canvas.height.toDouble() != deviceHeight ||
-      canvas.width.toDouble() != deviceWidth) {
+      canvas.height.toDouble() != canvasHeight ||
+      canvas.width.toDouble() != canvasWidth) {
     chart.currentDevicePixelRatio = pixelRatio;
     canvas
-      ..height = _toUint32(deviceHeight)
-      ..width = _toUint32(deviceWidth);
+      ..height = _toUint32(canvasHeight)
+      ..width = _toUint32(canvasWidth);
     chart.ctx!.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     return true;
   }
   return false;
 }
 
-/// helpers.dom.ts:247 `supportsEventListenerOptions`.
+/// helpers.dom.ts:249 `supportsEventListenerOptions`.
 /// Detects support for options object argument in addEventListener.
 /// https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#Safely_detecting_option_support
 /// @private
 ///
 /// Upstream runs the DOM test only when `_isDomSupported()` is true
-/// (:257-260). [isDomSupported] is false, so the value is the start value
+/// (:259-262). [isDomSupported] is false, so the value is the start value
 /// `false` (`platform-dom-supported`, differences.md). `platform.flutter`
 /// has no listener options.
 const bool supportsEventListenerOptions = false;
 
-/// The pattern of helpers.dom.ts:282. Dart `\d` is `[0-9]`, as in
+/// The pattern of helpers.dom.ts:284. Dart `\d` is `[0-9]`, as in
 /// JavaScript without the `u` flag.
 final RegExp _usedSizePattern = RegExp(r'^(\d+)(\.\d+)?px$');
 
-/// helpers.dom.ts:277 `readUsedSize`.
+/// helpers.dom.ts:279 `readUsedSize`.
 ///
 /// The "used" size is the final value of a dimension property after all
 /// calculations have been performed. This method uses the computed style of

@@ -70,7 +70,7 @@ tests (theming.md §9).
 
 The porter reads the commit with `git -C .dart_tool/chartjs-history show 2898a6d1` (§4.3). A
 fetch into the submodule needs the full SHA (from the trailer or `rev-parse`), because
-`git fetch` rejects an abbreviated SHA. That fetch leaves `HEAD` at `9c5cf9f`.
+`git fetch` rejects an abbreviated SHA. That fetch leaves `HEAD` at the pin.
 
 ### 2.3 Bump first for modules not started
 
@@ -98,10 +98,19 @@ a release drought with a commit pin.
   a gitlink that starts with `<sha8>`. `upstream_test.dart` compares the part before `+` with
   `package.json`. The header check accepts `+<sha8>`. Reference tools build Chart.js at the pinned
   commit in a throwaway clone outside the repository, because npm has no build of a commit.
+  Done (2026-10-20) with the first commit pin, `4.5.1+7169e651`. The header check reports a
+  `v4.5.1` header as stale, and another commit of the same release as an error. The `ref` of the
+  pin in `tool/port_sources.yaml` is the full commit, and the `parity.md` links name it.
+  `Chart.version` stays the `package.json` version (`chartJsPackageVersion`).
 
 On today's facts, phases 2 and 3 get no commit pin: their only post-pin change is the fix
 #12142. Before phase 4, #12238 touches `element.arc`. Without a 4.6.0 tag, a commit pin then
 comes first. `element.arc` then gets one port, with #12238.
+
+Result (2026-10-20): phases 4 to 6 ported from v4.5.1, and the rows of the range stayed
+`deferred`. The first commit pin, `4.5.1+7169e651`, landed after phase 6 and before phase 7.
+It ports #12130, #12142, #12155 and #12238 into the started modules. It absorbs #12283, #12321
+and #12328 and the parts of #12238 for `controller.doughnut` and `controller.polarArea`.
 
 ### 2.5 Text changes in other files
 
@@ -323,12 +332,13 @@ Sections:
    v4.5.1..master changes only `clearStacks` and `retinaScale`, not event handling.
 8. **Dependencies and license.** Lock versions of `@kurkle/color` and `chartjs-test-utils`. The
    diff of upstream `LICENSE.md`.
-9. **Version strings.** The lines in `tool/version_strings.txt`. Today these are
-   `packages/flutter_chartjs/lib/src/upstream.dart:5-6`, `packages/flutter_chartjs/README.md:19`,
-   `README.md:17`, `packages/flutter_chartjs/doc/README.md:9` and its example header, `AGENTS.md:4, :66, :82`,
-   `.github/PULL_REQUEST_TEMPLATE.md:3`, the Chart.js `version`, `ref` and `commit` in
-   `packages/flutter_chartjs/tool/port_sources.yaml`, the `parity.md` links and a new
-   `CHANGELOG.md` entry.
+9. **Version strings.** The lines in `tool/version_strings.txt`. Today (the commit pin of
+   2026-10-20) these are `packages/flutter_chartjs/lib/src/upstream.dart:9, :17`,
+   `packages/flutter_chartjs/README.md:19`, `README.md:20`,
+   `packages/flutter_chartjs/doc/README.md:9` and its example header (:94), `AGENTS.md:4, :270,
+   :292`, `.github/PULL_REQUEST_TEMPLATE.md:3`, the Chart.js `version`, `ref` and `commit` in
+   `packages/flutter_chartjs/tool/port_sources.yaml`, the `parity.md` links, the Chart.js
+   citations of `differences.md` (M9) and a new entry of `packages/flutter_chartjs/CHANGELOG.md`.
    The prior-art survey, the ADRs and the design documents are dated evidence. The bump does not
    restamp them.
 
@@ -354,9 +364,17 @@ After the port, the porter restamps the headers in a separate commit,
 `chore(flutter_chartjs): restamp headers to v4.6.0`:
 
 ```sh
-git grep -lz '^// Ported from Chart\.js v4\.5\.1 ' -- packages apps \
+git grep -lz '^// Ported from Chart\.js v4\.5\.1 ' -- 'packages/*.dart' 'apps/*.dart' \
   | xargs -0 perl -pi -e 's{^// Ported from Chart\.js v4\.5\.1 }{// Ported from Chart.js v4.6.0 }'
 ```
+
+The pathspecs name only Dart files. The example header of §4.2 in this file starts a line with
+the same text, and the restamp must not change it.
+
+After a commit pin, the old version has `+<sha8>`, and the pattern escapes the `+`, for example
+`^// Ported from Chart\.js v4\.5\.1\+7169e651 `. The pattern ends with a space. Thus the pattern
+`v4\.5\.1 ` does not find a header that already has `v4.5.1+<sha8>`, and the restamp to a commit
+pin can run two times with the same result.
 
 The porter also removes each backport line whose commit is in the new pin. The `@kurkle/color`
 headers, and the `chartjs-test-utils` headers in `packages/chartjs_test_utils`,
@@ -368,6 +386,15 @@ The restamp therefore compares no upstream blobs.
 porting-flow.md §4 defines the `packages/flutter_chartjs/doc/differences.md` schema. The port creates the file
 with the first `DIVERGES(chartjs)` hunk. This document adds two links. Each `diverged` ledger row
 has a `not-followed` row. The bump report lists every row whose upstream lines changed.
+
+The column "Upstream file@version:lines" names the pin at which the porter last checked the row.
+The bump checks every row (the column "Re-check on bump"). In the port commit, it moves every
+Chart.js citation of the column to the new version, also when the file did not change. It gives
+the new lines where the file changed, also for the line citations in the column "Reason". Thus
+all Chart.js citations name one version, and the next bump report compares the cited lines of
+the old pin with the new pin. The restamp of the headers (M8) stays a separate commit. Decided at
+the first commit pin (2026-10-20): all citations moved from `v4.5.1` to `v4.5.1+7169e651`. The
+lines changed only for `helpers.dom.ts`, `element.arc.ts` and `src/types/index.d.ts`.
 
 ## 5. Bump procedure
 

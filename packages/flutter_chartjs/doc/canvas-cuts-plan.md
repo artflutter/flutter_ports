@@ -181,6 +181,29 @@ Changes to the cited files:
   cache (11 tests). This plan cites no line of `canvas_ui_text.dart`, and the cuts do not remove
   its code. Thus the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
   estimates do not change. No trigger occurred.
+- 2026-10-20, the commit pin of Chart.js (`v4.5.1+7169e651`), the port of chartjs/Chart.js#12238
+  in `lib/src/elements/element.arc.dart`. It changes `test/port/elements/element.arc_test.dart`,
+  which §3.5 cites for its `_Canvas` fake. The fake does not change. The test file gets the tests
+  of the new property `circular` and 42 new reference cases of `draw`. `pathArc` gets the option
+  `spacingMode`. Its default `'angular'` adds one `asin` and one `sin` to each `pathArc` call with
+  a spacing.
+  The `arcs` scene of A3 (`stress_demo.dart`) has a spacing of 2. Thus its wedges change a little,
+  and the `arcs` figures of performance.md come from the code before the pin. The new
+  `pathFullCircle` draws a full circle with `selfJoin` as one full circle, a `moveTo` and one full
+  counterclockwise circle. These calls go through `arc` and `_nativeArc` as the other arcs do. A
+  scratch probe on the `dart:ui` canvas filled the ring and kept the hole empty. This plan cites
+  no line of the two files, and the cuts do not remove their code. Thus the references, the
+  inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No trigger
+  occurred.
+- 2026-10-20, the commit pin of Chart.js (`v4.5.1+7169e651`), the port of chartjs/Chart.js#12142
+  in `lib/src/helpers/helpers.dom.dart`. `retinaScale` gives the canvas the `Math.floor` of the
+  device size and compares the canvas with these integers. Thus a fractional device size that
+  does not change gives `false`, and `_resize` stops. The tests of §3.5 change:
+  `helpers.dom_test.dart` has 10 `retinaScale` tests and `helpers.dom_web_test.dart` has 5. The
+  line citations in `demo_chart.dart`, `canvas_demo.dart` and `stress_demo.dart` name the lines
+  at the pin. These changes are in comments, so no cited line moves (`canvas_demo.dart:125`
+  stays). This plan cites no line of `helpers.dom.dart`, and the cuts do not remove its code.
+  Thus the references, the inventory (§1.1) and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 
@@ -682,8 +705,9 @@ Tests that pin the current behavior (run them before and after):
   after C2), "acquireContext initializes the canvas", "releaseContext restores the canvas",
   "releaseContext restores the initial attributes" (after C2), `getDevicePixelRatio`,
   `getMaximumSize` (4).
-- `test/port/helpers/helpers.dom_test.dart`: `getMaximumSize`, `retinaScale` (8), `readUsedSize`
-  (10), `platform-dom-computed-style`.
+- `test/port/helpers/helpers.dom_test.dart`: `getMaximumSize`, `retinaScale` (10, with the
+  `Math.floor` of the canvas size of ledger row #12142), `readUsedSize` (10),
+  `platform-dom-computed-style`.
 - `test/port/canvas/canvas_ui_test.dart`: "device pixel ratio" (2), "toImageSource snapshots the
   bitmap in device pixels" (836, 926 after C2, 1016 after Chart.js ADR 0022), "the pictures are
   in bitmap space at a device pixel ratio" (2.625, 1972, 2061 after C2, 2151 after Chart.js ADR
@@ -692,7 +716,7 @@ Tests that pin the current behavior (run them before and after):
 - `test/specs/helpers.dom_test.dart` (7 cases pass. The 2 `retinaScale` cases run through
   `acquireChart`. Thus the file runs on the VM only.)
 - `test/port/helpers/helpers.dom_web_test.dart` (since the review of phase 5): the 5
-  `getMaximumSize` cases of the spec and `retinaScale` (4), on the VM, dart2js and dart2wasm.
+  `getMaximumSize` cases of the spec and `retinaScale` (5), on the VM, dart2js and dart2wasm.
 - `apps/chartjs_gallery/test/` (`canvas_host_demo_test.dart` line 94 expects a non-empty
   `canvas.style` width).
 

@@ -32,7 +32,7 @@
 // scale case resolves the scale `x` of the type `tlin`, a type without
 // defaults, through `chartOptionScopes`, as `buildOrUpdateScales` and
 // `Scale.init` do (core.controller.js:327-397, core.scale.js:231). Its fonts
-// are the `toFont` results of `_resolveTickFontOptions` (core.scale.js:1700)
+// are the `toFont` results of `_resolveTickFontOptions` (core.scale.js:1702)
 // and of `getTitleHeight` (core.scale.js:100, 646). The radial case resolves
 // the scale `r` of the type `radialLinear` in the same way. Its point-label
 // font is the `toFont` result of `fitWithPointLabels`

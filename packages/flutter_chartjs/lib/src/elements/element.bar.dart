@@ -393,7 +393,7 @@ class BarElement extends Element implements types.VisualElementRange {
   bool? _enableBorderRadius;
 
   /// element.bar.js:168 `this.horizontal = undefined`: whether the value
-  /// axis of the bar is horizontal (`BarProps.horizontal`, index.d.ts:2098).
+  /// axis of the bar is horizontal (`BarProps.horizontal`, index.d.ts:2143).
   ///
   /// Dart `null` stands for JS `undefined`, the start value, which is falsy.
   /// JS `null` never reaches it.
@@ -402,7 +402,7 @@ class BarElement extends Element implements types.VisualElementRange {
   set horizontal(bool value) => _horizontal = value;
 
   /// element.bar.js:169 `this.base = undefined`: the pixel of the base of
-  /// the bar on the value axis (`BarProps.base`, index.d.ts:2097).
+  /// the bar on the value axis (`BarProps.base`, index.d.ts:2142).
   ///
   /// NaN in the `undefined` state, the start value. JS `null` never reaches
   /// it. `this['base']` gives `undefined` in that state.
@@ -411,13 +411,13 @@ class BarElement extends Element implements types.VisualElementRange {
   set base(double value) => _base = value;
 
   /// element.bar.js:170 `this.width = undefined` (`BarProps.width`,
-  /// index.d.ts:2099). NaN in the `undefined` state, as [base].
+  /// index.d.ts:2144). NaN in the `undefined` state, as [base].
   double get width => _width ?? double.nan;
 
   set width(double value) => _width = value;
 
   /// element.bar.js:171 `this.height = undefined` (`BarProps.height`,
-  /// index.d.ts:2100). NaN in the `undefined` state, as [base].
+  /// index.d.ts:2145). NaN in the `undefined` state, as [base].
   double get height => _height ?? double.nan;
 
   set height(double value) => _height = value;

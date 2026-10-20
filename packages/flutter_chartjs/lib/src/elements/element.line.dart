@@ -818,7 +818,7 @@ class LineElement extends Element
   /// It also drops the cached [segments], the cached path and the control
   /// points state, as `delete this._segments` and `delete this._path` do.
   ///
-  /// Upstream stores any array: `index.d.ts:1981` declares `points:
+  /// Upstream stores any array: `index.d.ts:2026` declares `points:
   /// Point[]`, and the filler writes plain points (filler.helper.js:28-33,
   /// filler.target.stack.js:29). The port takes only point elements:
   /// `helpers.segment` reads their `skip` and `stop`, and `helpers.curve`
@@ -830,7 +830,7 @@ class LineElement extends Element
   /// element.line.js:315 `get points()`.
   ///
   /// The point elements of the line. Upstream returns `undefined` before the
-  /// first write. `index.d.ts:1981` declares `points: Point[]`, and each
+  /// first write. `index.d.ts:2026` declares `points: Point[]`, and each
   /// upstream reader dereferences the value, which throws a `TypeError` for
   /// `undefined`: `_computeSegments` (helpers.segment.js:239-241),
   /// `pathVars` (element.line.js:41) and `path` (:412). Thus the getter
@@ -864,7 +864,7 @@ class LineElement extends Element
   /// @returns {PointElement|undefined}
   ///
   /// Upstream returns `segments.length && points[…]`: the number 0 for a line
-  /// without segments, which `index.d.ts:1983` declares as `false`. Dart
+  /// without segments, which `index.d.ts:2028` declares as `false`. Dart
   /// `null` stands for that falsy value.
   types.PointElement? first() {
     final segments = this.segments;
@@ -898,12 +898,12 @@ class LineElement extends Element
   /// bounds), one [Point] for one segment, or a `List<Point>`. A [Point] of
   /// the result is a point of [points] or an [InterpolatedPoint].
   ///
-  /// `index.d.ts:1985` declares [property] as `'x'` or `'y'`. The value of
+  /// `index.d.ts:2030` declares [property] as `'x'` or `'y'`. The value of
   /// another name reads as `point[property]` of `PointElementProperty`
   /// (`'angle'`, or NaN). The write `interpolated[property] =
   /// point[property]` (element.line.js:374) sets the member `x` or `y` of the
   /// [InterpolatedPoint]. It has no member for another name, and the readers
-  /// of the result read only `x` and `y` (filler.drawing.js:184).
+  /// of the result read only `x` and `y` (filler.drawing.js:203).
   Object? interpolate(Point point, String property) {
     final options = this.options;
     final value = _pointValue(point, property);
@@ -1049,7 +1049,7 @@ class LineElement extends Element
     }
   }
 
-  /// index.d.ts:1818 `inRange`, which `index.d.ts:1977` declares through
+  /// index.d.ts:1848 `inRange`, which `index.d.ts:2022` declares through
   /// `VisualElement`.
   ///
   /// element.line.js has no `inRange`. A JavaScript call throws a
@@ -1065,7 +1065,7 @@ class LineElement extends Element
     Invocation.method(#inRange, [mouseX, mouseY, useFinalPosition]),
   );
 
-  /// index.d.ts:1819 `inXRange`. element.line.js has no `inXRange`: the
+  /// index.d.ts:1849 `inXRange`. element.line.js has no `inXRange`: the
   /// call throws a [NoSuchMethodError], as for [inRange].
   @override
   bool inXRange(
@@ -1076,7 +1076,7 @@ class LineElement extends Element
     Invocation.method(#inXRange, [mouseX, useFinalPosition]),
   );
 
-  /// index.d.ts:1820 `inYRange`. element.line.js has no `inYRange`: the
+  /// index.d.ts:1850 `inYRange`. element.line.js has no `inYRange`: the
   /// call throws a [NoSuchMethodError], as for [inRange].
   @override
   bool inYRange(
@@ -1087,7 +1087,7 @@ class LineElement extends Element
     Invocation.method(#inYRange, [mouseY, useFinalPosition]),
   );
 
-  /// index.d.ts:1821 `getCenterPoint`. element.line.js has no
+  /// index.d.ts:1851 `getCenterPoint`. element.line.js has no
   /// `getCenterPoint`: the call throws a [NoSuchMethodError], as for
   /// [inRange].
   @override

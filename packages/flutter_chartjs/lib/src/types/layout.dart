@@ -7,7 +7,7 @@
 /// TypeScript property becomes an abstract getter, and a setter is added when
 /// a ported caller assigns through the type. `number` is `double`.
 ///
-/// `Scale` extends `LayoutItem` (index.d.ts:1273). `helpers.dataset.ts:4`
+/// `Scale` extends `LayoutItem` (index.d.ts:1303). `helpers.dataset.ts:4`
 /// reads the edges of a scale through it. `core.layouts.js` reads and writes
 /// the members of a box through it.
 ///
@@ -131,7 +131,7 @@ abstract interface class LayoutItem {
   /// member is a field of a function type. Dart `null` stands for JS
   /// `undefined`. `layouts.addBox` writes a function with one layer of
   /// [draw] when it is absent (core.layouts.js:301-308). A scale gives its
-  /// own layers (core.scale.js:1637).
+  /// own layers (core.scale.js:1639).
   abstract List<LayoutLayer> Function()? layers;
 }
 
@@ -172,7 +172,7 @@ abstract interface class LayoutItemPadding implements LayoutItem {
   TRBL getPadding();
 }
 
-/// core.layouts.js:302-307 and core.scale.js:1645-1667 the layer object
+/// core.layouts.js:302-307 and core.scale.js:1647-1669 the layer object
 /// `{z, draw}` of [LayoutItem.layers]. layout.d.ts does not declare it.
 ///
 /// `core.controller.js` collects the layers of all boxes, sorts them by [z]
@@ -183,7 +183,7 @@ abstract interface class LayoutLayer {
   double get z;
 
   /// `draw(chartArea)`: draws the layer. A layer function that takes no
-  /// argument ignores [chartArea] (core.scale.js:1662).
+  /// argument ignores [chartArea] (core.scale.js:1664).
   void draw(ChartArea chartArea);
 
   /// core.controller.js:637 `_idx`: the index of the layer in the layers of

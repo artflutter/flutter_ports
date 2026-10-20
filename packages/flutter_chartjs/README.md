@@ -16,7 +16,9 @@ JavaScript Chart.js in a WebView. For how the existing Chart.js packages work, s
 
 ## Upstream
 
-Ports Chart.js **4.5.1** (exposed as `chartJsVersion`). Chart.js is MIT-licensed by the Chart.js
-Contributors, and its notice is kept in [LICENSE](LICENSE). This project is not affiliated with the
-Chart.js project. The functions that match JavaScript `Math.log10` and `Math.atan2` are ported from
-fdlibm 5.3 (Sun Microsystems, Inc.); their notice is also in [LICENSE](LICENSE).
+Ports Chart.js **4.5.1+7169e651** (exposed as `chartJsVersion`): the `master` commit `7169e651`
+after the 4.5.1 release, a commit pin of [doc/upstream-tracking.md](doc/upstream-tracking.md) §2.4.
+Chart.js is MIT-licensed by the Chart.js Contributors, and its notice is kept in [LICENSE](LICENSE).
+This project is not affiliated with the Chart.js project. The functions that match JavaScript
+`Math.log10` and `Math.atan2` are ported from fdlibm 5.3 (Sun Microsystems, Inc.); their notice is
+also in [LICENSE](LICENSE).

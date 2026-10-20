@@ -905,6 +905,59 @@ add('object position, y axis', {
   options: {axis: 'y', position: {x: 100}, title: {display: true, text: 'At x'}},
 });
 
+// The title stroke (core.scale.js:1618-1619, chartjs/Chart.js#12130).
+// `renderText` strokes each line when `strokeWidth > 0` and `strokeColor !==
+// ''` (helpers.canvas.ts:458). It sets `strokeStyle` only for a truthy
+// `strokeColor` (:473-474). The string strokeWidth '2' is more than 0, and
+// the setter `lineWidth` applies `ToNumber`.
+add('bottom, title with a stroke', {
+  chart: wide,
+  scale: {ticks: range(5), min: 0, max: 4, maxWidth: 440, maxHeight: 200, box: [40, 330]},
+  options: {
+    axis: 'x',
+    position: 'bottom',
+    title: {display: true, text: 'title-x', color: '#ddd', strokeWidth: 1, strokeColor: '#333'},
+  },
+});
+add('left, title of two lines with a stroke', {
+  chart: wide,
+  scale: {ticks: range(4), min: 0, max: 3, maxWidth: 250, maxHeight: 320, box: [0, 30]},
+  options: {
+    axis: 'y',
+    position: 'left',
+    title: {
+      display: true,
+      text: ['title', 'y'],
+      color: '#ddd',
+      strokeWidth: 2,
+      strokeColor: '#222',
+    },
+  },
+});
+add('bottom, title with a string strokeWidth and no strokeColor', {
+  chart: wide,
+  scale: {ticks: range(5), min: 0, max: 4, maxWidth: 440, maxHeight: 200, box: [40, 330]},
+  options: {axis: 'x', position: 'bottom', title: {display: true, text: 'Time', strokeWidth: '2'}},
+});
+add('bottom, title with an empty strokeColor', {
+  chart: wide,
+  scale: {ticks: range(5), min: 0, max: 4, maxWidth: 440, maxHeight: 200, box: [40, 330]},
+  options: {
+    axis: 'x',
+    position: 'bottom',
+    title: {display: true, text: 'Time', strokeWidth: 3, strokeColor: ''},
+  },
+});
+add('right, title with strokeWidth 0', {
+  chart: wide,
+  scale: {ticks: range(4), min: 0, max: 3, maxWidth: 250, maxHeight: 320, box: [440, 30]},
+  options: {
+    axis: 'y',
+    position: 'right',
+    title: {display: true, text: 'Value', strokeWidth: 0, strokeColor: 'red'},
+  },
+});
+
 // Display, data limits and metas.
 add('display false', {
   chart: wide,

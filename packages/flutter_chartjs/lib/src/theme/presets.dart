@@ -21,7 +21,7 @@ abstract final class ChartThemes {
   /// - `colors.backgroundColor`: `Defaults.backgroundColor`
   ///   `'rgba(0,0,0,0.1)'` (`core.defaults.js:41`).
   /// - `colors.surface`: the arc `borderColor` `'#fff'`
-  ///   (`element.arc.ts:306`) and the tick backdrop
+  ///   (`element.arc.ts:379`) and the tick backdrop
   ///   `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`).
   /// - `typography.font`: `Defaults.font` (`core.defaults.js:54-60`). Its
   ///   `weight` is `null`, which themes nothing.

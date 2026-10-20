@@ -32,11 +32,12 @@ import 'scale_reference.dart';
 // (`_computeLabelSizes`), the rotation and the fit, `getPixelForTick` and
 // the other pixel methods, `getLabelItems` (`_computeLabelItems`),
 // `_layers`, and the draw calls of the background, the grid
-// (`_computeGridLineItems`), the border, the title and the labels.
+// (`_computeGridLineItems`), the border, the title with its stroke and the
+// labels.
 //
 // The expected values are in scale_reference.dart, which
 // tool/reference/scale_reference.mjs writes from src/core/core.scale.js at
-// v4.5.1 in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with the mock
+// v4.5.1+7169e651 in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with the mock
 // context of chartjs-test-utils. Both sides use a test subclass of Scale with
 // fixed ticks and a linear mapping, a fake chart, and options that resolve
 // through the user options, `defaults.scale` and `descriptors.scale`. Names

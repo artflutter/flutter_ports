@@ -618,7 +618,7 @@ minmax 2 y true: {"min":-1,"max":-1}''',
   ),
   (
     spec: <String, Object?>{
-      'name': 'clearStacks returns early',
+      'name': 'clearStacks continues after an item without a value',
       'scales': <Object?>[
         <String, Object?>{'id': 'x', 'axis': 'x', 'kind': 'linear'},
         <String, Object?>{
@@ -660,7 +660,7 @@ minmax 2 y true: {"min":-1,"max":-1}''',
     },
     observations: '''
 stacks: {"x.y.test":{"0":{"0":undefined,"1":1,"_top":1,"_bottom":null,"_visualValues":{"0":undefined,"1":1}},"1":{"0":2,"1":3,"_top":1,"_bottom":null,"_visualValues":{"0":2,"1":3}}}}
-stacks: {"x.y.test":{"0":{"0":5,"1":1,"_top":1,"_bottom":null,"_visualValues":{"0":5,"1":1}},"1":{"0":2,"1":3,"_top":1,"_bottom":null,"_visualValues":{"0":2,"1":3}}}}''',
+stacks: {"x.y.test":{"0":{"0":5,"1":1,"_top":1,"_bottom":null,"_visualValues":{"0":5,"1":1}},"1":{"1":3,"_top":1,"_bottom":null,"_visualValues":{"1":3}}}}''',
   ),
   (
     spec: <String, Object?>{
@@ -1142,7 +1142,7 @@ style 0 null null: opt#0 frozen=true {"$shared":true,"size":4,"label":"c"}''',
       ],
     },
     observations: r'''
-options 0 0 null: opt#0 frozen=true {"$shared":true,"borderAlign":"center","borderColor":"#fff","borderDash":[],"borderDashOffset":0,"borderJoinStyle":undefined,"borderRadius":0,"borderWidth":2,"offset":0,"spacing":0,"angle":undefined,"circular":true,"selfJoin":false,"backgroundColor":"rgba(0,0,0,0.1)"}''',
+options 0 0 null: opt#0 frozen=true {"$shared":true,"borderAlign":"center","borderColor":"#fff","borderDash":[],"borderDashOffset":0,"borderJoinStyle":undefined,"borderRadius":0,"borderWidth":2,"offset":0,"spacing":0,"spacingMode":"angular","angle":undefined,"circular":true,"selfJoin":false,"backgroundColor":"rgba(0,0,0,0.1)"}''',
   ),
   (
     spec: <String, Object?>{

@@ -1,8 +1,8 @@
 // Original code, not ported from Chart.js: scale chart generator code.
 //
 // The shared code of the generators of the phase 6 scale reference tests
-// (tool/reference/scale_*_reference.mjs). A generator builds charts with the
-// chart.js 4.5.1 npm dist in Node.js, records what the charts give, and
+// (tool/reference/scale_*_reference.mjs). A generator builds charts with a
+// build of the pinned Chart.js in Node.js, records what the charts give, and
 // writes a Dart file of reference data for a test in test/port/scales/.
 // Nothing in lib/ or test/ runs this code (porting-flow.md section 4).
 //
@@ -11,7 +11,7 @@
 // ADR 0022) in testWidgets cases. A test controller registers through its
 // class value in main(), before the snapshot of the defaults restore
 // (Chart.js ADR 0020, section 8, and Chart.js ADR 0022, section 8). The
-// expected values come from the chart.js 4.5.1 npm dist in the x64 Node.js
+// expected values come from a build of the pinned Chart.js in the x64 Node.js
 // (Chart.js ADR 0010), with the same test controllers as DatasetController
 // subclasses in JavaScript. Node.js has no canvas. Thus the Node.js side uses
 // a mock context that measures text with the advance widths and the 'kern'
@@ -30,28 +30,49 @@
 // How to run a generator
 // ----------------------
 //
-// Get the dist with `npm install chart.js@4.5.1` in a scratch folder. The
-// dist imports @kurkle/color from the node_modules folder, so a tarball of
-// `npm pack` alone is not sufficient. Then, from packages/flutter_chartjs,
-// with an x64 build of Node.js v24.12.0 and with the Dart SDK on the PATH
-// (the generator formats its output with `dart format`):
+// Build Chart.js at the pinned commit (the `commit` of the Chart.js entry of
+// tool/port_sources.yaml) in a scratch clone outside the repository. npm has
+// no build of a commit pin. The `packageManager` of the Chart.js
+// package.json gives pnpm 8, which corepack supplies:
 //
-//   CHARTJS_DIST=<scratch>/node_modules/chart.js/dist/chart.js \
+//   git clone --filter=blob:none https://github.com/chartjs/Chart.js <build>
+//   git -C <build> checkout <commit>
+//   cd <build>
+//   corepack pnpm install --frozen-lockfile
+//   corepack pnpm build
+//
+// The dist imports @kurkle/color from <build>/node_modules. Then, from
+// packages/flutter_chartjs, with an x64 build of Node.js v24.12.0 and with
+// the Dart SDK on the PATH (the generator formats its output with
+// `dart format`):
+//
+//   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/scale_<name>_reference.mjs
 //
 // The first argument can also give the path of dist/chart.js. On Apple
 // silicon, run the darwin-x64 build of Node.js under Rosetta:
 //
 //   /usr/bin/arch -x86_64 <node-v24.12.0-darwin-x64>/bin/node \
-//     tool/reference/scale_<name>_reference.mjs \
-//     <scratch>/node_modules/chart.js/dist/chart.js
+//     tool/reference/scale_<name>_reference.mjs <build>/dist/chart.js
 //
-// The generator stops unless Node.js is an x64 build and the package.json
-// next to dist/ gives the name chart.js and the version 4.5.1. It also needs
-// the submodule third_party/chartjs-test-utils (`dart run melos run
-// upstream`). The output file records the sha256 of dist/chart.js and
-// dist/chunks/helpers.dataset.js, because the repository does not pin the
-// dist.
+// The generator stops unless all of these are true:
+// - Node.js is an x64 build.
+// - The package.json next to dist/ gives the name chart.js and the release
+//   of the pin: the version of tool/port_sources.yaml without its "v" and
+//   before "+". A commit pin does not change the package.json version.
+// - The folder of that package.json is the top folder of a git checkout at
+//   the pinned commit, and no tracked file of the checkout has a change.
+// The check cannot find a dist/ that is older than the checkout. Thus, run
+// the build again after each checkout. The generator also needs the
+// submodule third_party/chartjs-test-utils (`dart run melos run upstream`).
+// The output file records the pin version and the commit of the build.
+//
+// A check of the method (2026-10-20): the same steps at the tag v4.5.1 give
+// dist/chart.js, dist/helpers.js and dist/chunks/helpers.dataset.js of the
+// chart.js 4.5.1 npm package. The only difference is the year in the
+// banner. At the commit pin, the helpers chunk is dist/chunks/index.js,
+// because the lockfile of the commit has rollup 3.30.0 (3.20.2 at v4.5.1).
+// Its code is the code of v4.5.1 with the upstream changes of the range.
 //
 // The limits of the text measure. Outside them, the mock stops with an
 // error:
@@ -79,8 +100,7 @@
 // for each chart, and writeReference().
 
 import {execFileSync} from 'node:child_process';
-import {createHash} from 'node:crypto';
-import {existsSync, readFileSync, writeFileSync} from 'node:fs';
+import {existsSync, readFileSync, realpathSync, writeFileSync} from 'node:fs';
 import {relative} from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 
@@ -88,15 +108,38 @@ const THIRD_PARTY = new URL('../../../../third_party/', import.meta.url);
 const CONTEXT = new URL('chartjs-test-utils/src/context.js', THIRD_PARTY);
 const FONTS = new URL('../../../chartjs_test_utils/lib/fonts/', import.meta.url);
 const PACKAGE_ROOT = fileURLToPath(new URL('../../', import.meta.url));
-
-/** The pinned version of Chart.js (tool/port_sources.yaml). */
-const VERSION = '4.5.1';
+const PORT_SOURCES = new URL('../port_sources.yaml', import.meta.url);
 
 /** Writes [message] to stderr and stops the process. */
 function stop(message) {
   console.error(message);
   process.exit(1);
 }
+
+/**
+ * Reads the Chart.js pin of tool/port_sources.yaml. `version` is the version
+ * of the entry without its "v": `<release>+<sha8>` for a commit pin
+ * (doc/upstream-tracking.md 2.4). `release` is the part before "+", the
+ * version of the Chart.js package.json at the pin. `commit` is the full
+ * commit of the submodule pin.
+ */
+function readPin() {
+  const path = fileURLToPath(PORT_SOURCES);
+  const entry = readFileSync(path, 'utf8')
+    .split(/^ {2}- header: /m)
+    .find((e) => e.startsWith('Chart.js\n'));
+  const version = entry?.match(/^ {4}version: "?v([^"\s]+)"?\s*$/m)?.[1];
+  const commit = entry?.match(/^ {6}commit: "?([0-9a-f]{40})"?\s*$/m)?.[1];
+  if (!version || !commit) stop(`${path} has no version and commit for Chart.js.`);
+  const [release, sha8] = version.split('+');
+  if (sha8 !== undefined && !commit.startsWith(sha8)) {
+    stop(`${path}: the version ${version} does not name the commit ${commit}.`);
+  }
+  return {version, release, commit};
+}
+
+/** The Chart.js pin of tool/port_sources.yaml (readPin). */
+const PIN = readPin();
 
 if (!existsSync(fileURLToPath(CONTEXT))) {
   stop(
@@ -117,8 +160,8 @@ const {default: Context} = await import(
 /** The module of the dist, after loadChartJs(). */
 let chartJs = null;
 
-/** The file URL of dist/chart.js, after loadChartJs(). */
-let distUrl = null;
+/** The git commit of the build, after loadChartJs(). */
+let buildCommit = null;
 
 /**
  * The cartesian test controller `scaleTest`: category on the index axis and
@@ -133,13 +176,44 @@ export let ScaleTestController = null;
 export let RadialTestController = null;
 
 /**
- * Loads the chart.js npm dist and returns its module.
+ * Stops the process unless the folder [root] is the top folder of a git
+ * checkout at the pinned commit, with no change to a tracked file. Returns
+ * the commit.
+ */
+function checkBuildCommit(root) {
+  const git = (...args) =>
+    execFileSync('git', ['-C', root, ...args], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+    }).trim();
+  const build = `Build Chart.js in a clone at the commit ${PIN.commit} (see the header).`;
+  let top = null;
+  try {
+    top = git('rev-parse', '--show-toplevel');
+  } catch {
+    stop(`${root} is not a git checkout. ${build}`);
+  }
+  if (realpathSync(top) !== realpathSync(root)) {
+    stop(`${root} is not the top folder of the git checkout ${top}. ${build}`);
+  }
+  const head = git('rev-parse', 'HEAD');
+  if (head !== PIN.commit) {
+    stop(`The build is at the commit ${head}; the pin is ${PIN.commit}. ${build}`);
+  }
+  const changes = git('status', '--porcelain', '--untracked-files=no');
+  if (changes) stop(`The checkout ${root} has changes to tracked files:\n${changes}`);
+  return head;
+}
+
+/**
+ * Loads a build of the pinned Chart.js and returns its module.
  *
  * The path of dist/chart.js comes from the first argument of the process or
  * from the environment variable CHARTJS_DIST. The function stops the process
- * unless Node.js is an x64 build (Chart.js ADR 0010) and the package.json
- * next to dist/ gives the name chart.js and the version 4.5.1. A second call
- * returns the same module.
+ * unless Node.js is an x64 build (Chart.js ADR 0010), the package.json next
+ * to dist/ gives the name chart.js and the release of the pin, and its
+ * folder is a git checkout at the pinned commit without changes
+ * (checkBuildCommit). A second call returns the same module.
  */
 export async function loadChartJs() {
   if (chartJs) return chartJs;
@@ -151,22 +225,23 @@ export async function loadChartJs() {
   }
   const dist = process.argv[2] ?? process.env.CHARTJS_DIST;
   if (!dist || !existsSync(dist)) {
-    stop('Give the path of chart.js/dist/chart.js as the first argument, or set CHARTJS_DIST.');
+    stop('Give the path of dist/chart.js of the build as the first argument, or set CHARTJS_DIST.');
   }
   const url = pathToFileURL(dist);
   const packageJson = new URL('../package.json', url);
   if (!existsSync(fileURLToPath(packageJson))) {
-    stop(`${fileURLToPath(packageJson)} is missing: ${dist} is not in a chart.js dist.`);
+    stop(`${fileURLToPath(packageJson)} is missing: ${dist} is not in a Chart.js build.`);
   }
   const {name, version} = JSON.parse(readFileSync(packageJson, 'utf8'));
   if (name !== 'chart.js') {
     stop(`${fileURLToPath(packageJson)} gives the package ${name}, not chart.js.`);
   }
-  if (version !== VERSION) {
-    stop(`The dist is chart.js ${version}; the pin is ${VERSION}.`);
+  if (version !== PIN.release) {
+    stop(`The build is chart.js ${version}; the pin is ${PIN.version}.`);
   }
+  const commit = checkBuildCommit(fileURLToPath(new URL('..', url)));
   chartJs = await import(url.href);
-  distUrl = url;
+  buildCommit = commit;
   ScaleTestController = cartesianTestController('scaleTest', {
     scales: {_index_: {type: 'category'}, _value_: {type: 'linear'}},
   });
@@ -566,7 +641,7 @@ export class LiberationContext extends Context {
    * Sets the first font, '10px sans-serif', and drops the saved fonts. A
    * write of the canvas size resets the context to its default state (HTML,
    * "set bitmap dimensions"), as `_resetForResize` of canvas_ui.dart does.
-   * retinaScale writes the size (helpers.dom.ts:234-235).
+   * retinaScale writes the size (helpers.dom.ts:236-237).
    */
   resetFontState() {
     this._font = INITIAL_FONT;
@@ -961,13 +1036,6 @@ function dart(v, state) {
   throw new Error(`No Dart literal for ${String(v)}`);
 }
 
-/** The sha256 of the dist file [path], relative to dist/. */
-function distSha256(path) {
-  return createHash('sha256')
-    .update(readFileSync(new URL(path, distUrl)))
-    .digest('hex');
-}
-
 /**
  * Writes the Dart file [outPath] with the [cases] of runCase() and the
  * widths of every text that a LiberationContext measured, and formats it
@@ -975,7 +1043,7 @@ function distSha256(path) {
  *
  * [name] is the lowerCamelCase prefix of the Dart names: for
  * `scaleLinear`, the constants `scaleLinearReferenceNode`, `...V8`,
- * `...Arch`, `...Dist` and `...DistSha256`, the typedefs
+ * `...Arch`, `...Dist` and `...Commit`, the typedefs
  * `ScaleLinearReferenceCase` and `ScaleLinearReferenceWidth`, and the lists
  * `scaleLinearReference` and `scaleLinearReferenceWidths`. [title] is the
  * subject of the port-only marker on line 1.
@@ -995,14 +1063,13 @@ export function writeReference(outPath, name, cases, {title = name} = {}) {
     .map((m) => `  (font: ${dart(m.font, state)}, text: ${dart(m.text, state)}, width: ${num(m.width)}),\n`)
     .join('');
   const generator = relative(PACKAGE_ROOT, fileURLToPath(pathToFileURL(process.argv[1])));
-  const chartSha = distSha256('chart.js');
-  const helpersSha = distSha256('chunks/helpers.dataset.js');
   const out = `// Original code, not ported from Chart.js: ${title} reference data.
 
 // Generated by ${generator}. Do not edit.
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
-// the chart.js ${VERSION} npm dist, with the Liberation Sans mock context of
-// tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
+// a build of Chart.js v${PIN.version} at the commit
+// ${buildCommit}, with the Liberation Sans mock
+// context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
 ${state.undefined ? "\nimport 'package:flutter_chartjs/src/js/js_undefined.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
@@ -1013,15 +1080,12 @@ const String ${name}ReferenceV8 = '${process.versions.v8}';
 /// The architecture of the Node.js build that generated the data.
 const String ${name}ReferenceArch = '${process.arch}';
 
-/// The version of the chart.js npm dist that generated the data.
-const String ${name}ReferenceDist = '${VERSION}';
+/// The Chart.js version of the build that generated the data: the pin
+/// version of tool/port_sources.yaml, without its "v".
+const String ${name}ReferenceDist = '${PIN.version}';
 
-/// The sha256 of the files of the dist that generated the data. The
-/// repository does not pin the dist.
-const Map<String, String> ${name}ReferenceDistSha256 = {
-  'dist/chart.js': '${chartSha}',
-  'dist/chunks/helpers.dataset.js': '${helpersSha}',
-};
+/// The Chart.js commit of the build that generated the data.
+const String ${name}ReferenceCommit = '${buildCommit}';
 
 /// One chart of the generator (runCase of scale_chart_common.mjs).
 ///

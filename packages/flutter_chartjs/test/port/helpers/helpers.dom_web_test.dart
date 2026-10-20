@@ -189,7 +189,7 @@ void main() {
       expect([chart.canvas.width, chart.canvas.height], [200, 100]);
     });
 
-    test('rounds the sizes to one decimal and truncates the bitmap', () {
+    test('rounds the sizes to one decimal and floors the bitmap', () {
       // The reference rows of helpers.dom_test.dart, from the upstream
       // helpers.dom.ts in Node.js v24.12.0 on x64.
       final chart = _Chart(300.05, 149.95);
@@ -206,6 +206,16 @@ void main() {
       final chart = _Chart(800, 400);
       expect(retinaScale(chart, 2), isTrue);
       expect(retinaScale(chart, 2), isFalse);
+      expect(chart.ctx.transforms, hasLength(1));
+    });
+
+    test('a fractional device size that does not change gives false', () {
+      // The canvas gets Math.floor of the device size (helpers.dom.ts:230-231,
+      // ledger row #12142), from the reference of helpers.dom_test.dart.
+      final chart = _Chart(300.04, 150.06);
+      expect(retinaScale(chart, 2), isTrue);
+      expect(retinaScale(chart, 2), isFalse);
+      expect([chart.canvas.width, chart.canvas.height], [600, 300]);
       expect(chart.ctx.transforms, hasLength(1));
     });
   });

@@ -6,8 +6,10 @@ translated to Dart and drawn with Flutter's own canvas. No WebView, no JavaScrip
 Why this approach, and what already exists: [prior art](prior-art/README.md) and
 [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
 
-- **Upstream:** Chart.js **v4.5.1** (2025-10-13), MIT, pinned as the git submodule
-  `third_party/Chart.js` ([ADR 0005](../../../docs/adr/0005-pin-upstream-sources.md)).
+- **Upstream:** Chart.js **v4.5.1+7169e651**, MIT, pinned as the git submodule
+  `third_party/Chart.js` ([ADR 0005](../../../docs/adr/0005-pin-upstream-sources.md)). This is a
+  commit pin of 2026-10-20 ([upstream-tracking.md](upstream-tracking.md) §2.4): the `master`
+  commit `7169e651` (2026-10-03), after the release v4.5.1 (2025-10-13).
   `melos run upstream` checks it out. Backports and commit pins follow
   [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md).
 - **Progress:** [parity.md](parity.md), one row per upstream source file and spec.
@@ -17,7 +19,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   defaults and the JS builtin sites of the pinned Chart.js. Tool 4 of
   [porting-flow.md](porting-flow.md) §4 writes it.
 - **Upstream after the pin:** [upstream-ledger.md](upstream-ledger.md) lists the upstream commits
-  after the pinned tag, with their triage ([upstream-tracking.md](upstream-tracking.md)).
+  after the pin, with their triage ([upstream-tracking.md](upstream-tracking.md)).
 - **Text metrics:** [text-metrics.md](text-metrics.md), the text-metric probe of phase 3. It
   compares the text metrics of the canvas layer with the Chrome canvas, with the same test font.
 - **Performance:** [performance.md](performance.md), the profile builds of the gallery stress demo
@@ -72,15 +74,15 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 
 ## What gets ported
 
-| Upstream | Files | Lines (v4.5.1) |
+| Upstream | Files | Lines (v4.5.1+7169e651) |
 |---|---:|---:|
-| `src/` implementation (helpers, core, elements, scales, controllers, plugins, platform) | 83 | 20,138 |
-| `src/types` declarations (shape of the public options API) | 7 | 4,070 |
-| `test/specs` (Jasmine) | 54 | 25,962 |
-| `test/fixtures` image tests (662 PNG reference renders) | 1,324 | — |
+| `src/` implementation (helpers, core, elements, scales, controllers, plugins, platform) | 83 | 20,251 |
+| `src/types` declarations (shape of the public options API) | 7 | 4,119 |
+| `test/specs` (Jasmine) | 54 | 26,375 |
+| `test/fixtures` image tests (667 PNG reference renders) | 1,334 | — |
 
 Plus the runtime dependency [`@kurkle/color`](https://github.com/kurkle/color) (MIT,
-Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the v4.5.1 lockfile), which
+Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the lockfile of the pin), which
 `helpers.color.ts` wraps for CSS colour parsing and mixing.
 
 ## How a module is ported
@@ -89,7 +91,7 @@ Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the v4.5.1 lockfile), which
    upstream structure and names (Dart-cased) so upstream releases can be diffed and
    replayed file by file.
 2. Start the Dart file with a header naming its source, license and holder, for example
-   `// Ported from Chart.js v4.5.1 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).`
+   `// Ported from Chart.js v4.5.1+7169e651 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).`
    Code from another project (such as `@kurkle/color`) also adds that project's notice to the
    package LICENSE and `REUSE.toml` ([AGENTS.md](../../../AGENTS.md#licensing)).
 3. Port the matching spec from `test/specs` next to it.

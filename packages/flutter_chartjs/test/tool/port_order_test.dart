@@ -453,6 +453,54 @@ void main() {
       );
     });
 
+    test('reads the parity.md links of a commit pin', () {
+      const commit = '7169e65147a47f3720957a6f156a33c838ab9f57';
+      final repo = _Repo()
+        ..module('src/core/core.ready.js', [
+          "import Element from './core.element.js';",
+        ], status: 'not started');
+      repo.tree.write('$_package/tool/port_sources.yaml', [
+        for (final line in _portSources)
+          switch (line) {
+            '    version: "v4.5.1"' => '    version: "v4.5.1+7169e651"',
+            '      ref: "v4.5.1"' => '      ref: "$commit"',
+            '      commit: 9c5cf9fac7ec04a71b516e2aff3f7d76876be369' =>
+              '      commit: $commit',
+            _ => line,
+          },
+      ]);
+      const commitBlob = 'https://github.com/chartjs/Chart.js/blob/$commit/';
+      final rows = [...repo.parity];
+      repo.parity
+        ..clear()
+        ..addAll([for (final row in rows) row.replaceAll(_blob, commitBlob)]);
+      final order = repo.compute();
+      expect(describeFindings(order.findings), isEmpty);
+      expect(order.version, 'v4.5.1+7169e651');
+      expect(
+        _module(order, 'src/core/core.element.ts').category,
+        ModuleCategory.done,
+      );
+      expect(
+        _module(order, 'src/core/core.ready.js').category,
+        ModuleCategory.ready,
+      );
+
+      // A link with the tag of the release is not a link of the pin.
+      repo.parity
+        ..clear()
+        ..addAll(rows);
+      expect(
+        describeFindings(repo.compute().findings),
+        contains(
+          _warning(
+            '$_package/doc/parity.md: no row for src/core/core.ready.js: the '
+            'helper counts it as not started.',
+          ),
+        ),
+      );
+    });
+
     test('resolves imported names through re-exports', () {
       final repo = _Repo()
         ..module('src/core/core.a.js', [

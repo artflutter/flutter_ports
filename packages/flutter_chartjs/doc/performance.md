@@ -1025,7 +1025,7 @@ The change has no measured cost. The upstream hit element ranks first in any cas
 ### 10.3 Parsed items of any type
 
 The review of phase 5 made `ChartMeta.parsed` a `List<Object?>`, as `_parsed: unknown[]` is
-(index.d.ts:473). With `parsing: false` and primitive data, upstream throws nothing, where the
+(index.d.ts:503). With `parsing: false` and primitive data, upstream throws nothing, where the
 port with a `List<Map>` threw a `TypeError`. The hot readers (`getMinMax`, `getAllParsedValues`,
 the stacks, `core.interaction` and `helpers.extras`) read a Map item with the Map read, and another
 item with `jsGet`. A scratch A/B benchmark reads `isFinite(item['y'])` for 20000 items. Bed: Apple
@@ -1599,7 +1599,7 @@ for each call:
 - A radar or radial draw makes tens of position calls. Thus the class gains less than 1 µs for
   each draw. The record rule of Chart.js ADR 0003 applies.
 - The bar, doughnut and polar area controllers of phase 7 call `getDataVisibility` for each
-  element (`controller.bar.js:592`, `controller.polarArea.js:180`).
+  element (`controller.bar.js:592`, `controller.polarArea.js:182`).
 
 Source: Evidence E10 of Chart.js ADR 0025. Both choices stay Open in the ADR (Open 4 and Open 5).
 The mode `axes` of the stress entry (section 6) can give the frame figures of ADR Open 2 (a
@@ -1817,10 +1817,10 @@ run (129.74 ms before, 21.75 ms after):
 The gains are profile shares times benchmark times. They are estimates, not measurements, and
 each change needs the A/B evidence of section 11.7.
 
-1. **The tick font for each tick.** `resolveTickFontOptions` (`core.scale.dart:2883`, called at
-   `:1786` and `:2302`) takes 70.2 % of the category update at 5000 after section 11.7, about
+1. **The tick font for each tick.** `resolveTickFontOptions` (`core.scale.dart:2890`, called at
+   `:1791` and `:2307`) takes 70.2 % of the category update at 5000 after section 11.7, about
    15 ms. It takes 10.1 / 15.0 / 12.5 % of the linear / logarithmic / time update. Upstream makes
-   the same calls (`core.scale.js:1698`). The port adds a constant of about 3 µs for each call.
+   the same calls (`core.scale.js:1700`). The port adds a constant of about 3 µs for each call.
    - Form (a) keeps the structure: a number path in `toLineHeight` (`helpers.options.dart:58`)
      and a memo for the `_fontStyle` test (`:374`). For a `double`, the result of the RegExp is
      known when the JS string has no exponent and no sign. The path must keep the exponent limits

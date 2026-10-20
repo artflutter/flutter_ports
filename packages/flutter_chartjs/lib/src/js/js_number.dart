@@ -63,7 +63,7 @@ bool jsTruthy(Object? value) => switch (value) {
 
 /// The JS form `value || 0` before arithmetic, for example
 /// `options.radius || 0` (element.point.ts:83-85) and `options.offset || 0`
-/// (element.arc.ts:396-397).
+/// (element.arc.ts:472-473).
 ///
 /// A falsy value ([jsTruthy]) gives 0. Another value gives its `ToNumber`
 /// ([jsToNumber]), which the arithmetic after the read applies. Thus a

@@ -104,6 +104,13 @@ list:
         sources[3].dartPathOf('src/utils.js'),
         'packages/chartjs_test_utils/lib/src/utils.dart',
       );
+      // A commit pin links its full commit, a tag pin its tag.
+      expect(chartJs.isCommitPin, chartJs.version.contains('+'));
+      expect(
+        chartJs.treeRef,
+        chartJs.isCommitPin ? chartJs.pinCommit : chartJs.version,
+      );
+      expect(sources[2].treeRef, sources[2].version);
     });
   });
 
@@ -197,6 +204,37 @@ list:
       expect(compareVersions([4, 5, 0], [4, 5, 1]), isNegative);
       expect(compareVersions([4, 10], [4, 9, 9]), isPositive);
       expect(compareVersions([5, 3], [5, 3, 0]), 0);
+    });
+
+    test('read a commit pin as a release and a commit', () {
+      final pin = parsePortVersion('v4.5.1+7169e651')!;
+      expect(pin.release, [4, 5, 1]);
+      expect(pin.commit, '7169e651');
+      expect(parsePortVersion('4.5.1')!.commit, isNull);
+      expect(parsePortVersion('5.3')!.release, [5, 3]);
+      for (final bad in [
+        'v4.5.1+7169e65',
+        'v4.5.1+7169e6510',
+        'v4.5.1+7169E651',
+        'v4.5.1+',
+        '+7169e651',
+        'v4.5.1-beta',
+      ]) {
+        expect(parsePortVersion(bad), isNull, reason: bad);
+      }
+    });
+
+    test('put a commit pin after its release', () {
+      int? compare(String a, String b) =>
+          comparePortVersions(parsePortVersion(a)!, parsePortVersion(b)!);
+      expect(compare('v4.5.1', 'v4.5.1+7169e651'), isNegative);
+      expect(compare('v4.5.1+7169e651', 'v4.5.1'), isPositive);
+      expect(compare('v4.5.1+7169e651', 'v4.5.1+7169e651'), 0);
+      expect(compare('v4.5.1+7169e651', 'v4.6.0'), isNegative);
+      expect(compare('v4.4.9', 'v4.5.1+7169e651'), isNegative);
+      expect(compare('v4.6.0', 'v4.5.1+7169e651'), isPositive);
+      // Two commits of one release have no order without the history.
+      expect(compare('v4.5.1+2898a6d1', 'v4.5.1+7169e651'), isNull);
     });
   });
 

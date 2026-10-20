@@ -992,7 +992,7 @@ void _update(
   });
 }
 
-/// core.layouts.js:283 the default export, `Chart.layouts` (index.d.ts:788).
+/// core.layouts.js:283 the default export, `Chart.layouts` (index.d.ts:818).
 ///
 /// The layout service is very self explanatory. It's responsible for the
 /// layout within a chart.
@@ -1001,7 +1001,7 @@ void _update(
 /// It is this service's responsibility of carrying out that layout.
 ///
 /// Upstream exports an object of four functions, and no code changes it.
-/// index.d.ts:788 declares it as an object type. Ported code only reads it.
+/// index.d.ts:818 declares it as an object type. Ported code only reads it.
 /// Thus it is a record of the four functions (Chart.js ADR 0003).
 /// `layouts.addBox(chart, item)` calls a function as upstream does.
 const ({

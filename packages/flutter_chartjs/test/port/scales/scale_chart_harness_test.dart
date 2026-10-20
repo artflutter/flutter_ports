@@ -14,7 +14,7 @@ import 'scale_chart_harness_reference.dart';
 // The self-test of the method of the phase 6 scale reference tests
 // (scale_chart_harness.dart, tool/reference/scale_chart_common.mjs), with
 // the cases of tool/reference/scale_chart_harness_reference.mjs. The
-// generator builds each chart with the chart.js 4.5.1 npm dist in Node.js
+// generator builds each chart with a build of the pinned Chart.js in Node.js
 // v24.12.0 on x64 (Chart.js ADR 0010). Its mock context measures text in
 // Liberation Sans 2.1.5, the test font of the harness.
 //
@@ -191,6 +191,7 @@ void main() {
     node: scaleChartHarnessReferenceNode,
     arch: scaleChartHarnessReferenceArch,
     dist: scaleChartHarnessReferenceDist,
+    commit: scaleChartHarnessReferenceCommit,
   );
 
   group('test scale charts against upstream', () {

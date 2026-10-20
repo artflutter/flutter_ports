@@ -87,7 +87,7 @@ class CanvasDemo extends StatelessWidget {
 
 // Point styles.
 
-/// The point styles of `PointStyle` (index.d.ts:1995), `false`, and an
+/// The point styles of `PointStyle` (index.d.ts:2040), `false`, and an
 /// image.
 const List<String> pointStyleNames = [
   'circle',

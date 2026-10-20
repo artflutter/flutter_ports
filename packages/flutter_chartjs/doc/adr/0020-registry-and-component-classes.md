@@ -553,7 +553,7 @@ The statics of `Chart` in `lib/src/core/core.controller.dart` (`core.controller.
 static final Defaults defaults = core_defaults.defaults;
 static AnyObject get overrides => core_defaults.overrides;
 static final Registry registry = core_registry.registry;
-static const String version = chartJsVersion;
+static const String version = chartJsPackageVersion;
 static Chart? getChart(Object? key) => _getChart(key);
 
 static void register(List<Object?> items) {
@@ -571,8 +571,10 @@ static void unregister(List<Object?> items) {
   This decision needs only the iteration of its values in the `jsObjectKeys` order
   (`invalidatePlugins`, `:1265-1267`).
 - `static getChart = getChart` becomes a static method. The result is the same.
-- `version` is `chartJsVersion` of `lib/src/upstream.dart`. Upstream reads the version from
-  `package.json` (`core.controller.js:12`). Thus a bump changes both.
+- `version` is `chartJsPackageVersion` of `lib/src/upstream.dart`. Upstream reads the version from
+  `package.json` (`core.controller.js:12`). Thus a bump changes both. Under a commit pin,
+  `chartJsVersion` is `<release>+<sha8>`, and `chartJsPackageVersion` is the release, as in the
+  `package.json` of the pin (upstream-tracking.md §2.4).
 - The instance getter `registry` (`:229-231`) has no Dart form. Dart forbids it beside the static
   `Chart.registry` (probe 7). `index.d.ts:565` declares only the static. 52 spec lines read the
   static.

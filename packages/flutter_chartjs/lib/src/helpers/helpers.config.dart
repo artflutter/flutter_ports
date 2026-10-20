@@ -893,7 +893,7 @@ List<String> _resolveKeysFromAllScopes(List<Object?> scopes) {
 /// helpers.config.ts:437 `_parseObjectDataRadialScale`.
 ///
 /// The function reads `this`, the dataset controller that
-/// `controller.polarArea.js:108` binds. Thus it is a [JsFunction]
+/// `controller.polarArea.js:110` binds. Thus it is a [JsFunction]
 /// (`lib/src/js/js_function.dart`). Its closure takes `this` (a
 /// [DatasetController]), `meta` (a [ChartMeta]), `data` (a `List<Object?>`),
 /// `start` and `count` (`double`s). Call it with [jsCall] and the controller

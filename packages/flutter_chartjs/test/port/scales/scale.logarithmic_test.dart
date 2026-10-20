@@ -24,11 +24,12 @@ import 'scale_logarithmic_reference.dart';
 // The port-only tests of lib/src/scales/scale.logarithmic.dart.
 //
 // The reference group compares real charts with the charts of
-// tool/reference/scale_logarithmic_reference.mjs: the chart.js 4.5.1 npm
-// dist in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with a mock context
-// that measures text in Liberation Sans 2.1.5, the test font of the harness
-// (scale_chart_harness.dart, tool/reference/scale_chart_common.mjs). Each
-// chart comes from acquireChart in a testWidgets case (Chart.js ADR 0022).
+// tool/reference/scale_logarithmic_reference.mjs: a build of the pinned
+// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with a mock
+// context that measures text in Liberation Sans 2.1.5, the test font of the
+// harness (scale_chart_harness.dart, tool/reference/scale_chart_common.mjs).
+// Each chart comes from acquireChart in a testWidgets case (Chart.js ADR
+// 0022).
 // An action case changes the chart and calls chart.update() before the
 // observations, with the action of the same case name in the generator.
 //
@@ -217,6 +218,7 @@ void main() {
     node: scaleLogarithmicReferenceNode,
     arch: scaleLogarithmicReferenceArch,
     dist: scaleLogarithmicReferenceDist,
+    commit: scaleLogarithmicReferenceCommit,
   );
 
   group('the class value (Chart.js ADR 0020)', () {

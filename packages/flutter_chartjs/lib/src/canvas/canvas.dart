@@ -255,7 +255,7 @@ double _limitScale(double scale, double length, double sum) =>
 /// lib.dom.d.ts `CanvasFillRule`: `'nonzero'` or `'evenodd'`.
 ///
 /// Upstream passes the rule as a string (`element.bar.js:192`,
-/// `element.arc.ts:37`, `filler.drawing.js:142`).
+/// `element.arc.ts:37`, `filler.drawing.js:161`).
 typedef CanvasFillRule = String;
 
 /// lib.dom.d.ts `CanvasImageSource`: an image that

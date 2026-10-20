@@ -1063,9 +1063,10 @@ const SCENARIOS = [
     ],
   },
   {
-    // v4.5.1 clearStacks returns at the first parsed item without a value
-    // (core.datasetController.js:220, ledger row #12155).
-    name: 'clearStacks returns early',
+    // clearStacks continues after a parsed item without a value
+    // (core.datasetController.js:220, ledger row #12155). v4.5.1 returns
+    // there and keeps the values of the next items in the stacks.
+    name: 'clearStacks continues after an item without a value',
     scales: [LINEAR_X, {...LINEAR_Y, options: {stacked: true}}],
     options: {parsing: false},
     datasets: [{data: [{x: 0}, {x: 1, y: 2}]}, {data: [{x: 0, y: 1}, {x: 1, y: 3}]}],

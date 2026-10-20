@@ -6,7 +6,7 @@
   [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md),
   [upstream-tracking.md](upstream-tracking.md)
 
-This document defines how one Chart.js v4.5.1 module becomes Dart code in
+This document defines how one module of the pinned Chart.js becomes Dart code in
 `packages/flutter_chartjs`. This document contains the steps, the decisions, the test harness, the
 per-module tooling and the phase plan. [upstream-tracking.md](upstream-tracking.md) owns the
 upstream tooling (upstream ledger, status script, watch workflow, bump report, bump PR gate, header
@@ -35,7 +35,7 @@ the `differences.md` schema.
    - When two Dart forms give the upstream behavior, choose the faster form (1.1).
 
    ```dart
-   // Ported from Chart.js v4.5.1 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).
+   // Ported from Chart.js v4.5.1+7169e651 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).
    import 'dart:math' as math;
 
    import 'package:flutter_chartjs/src/js/js_math.dart';
@@ -771,7 +771,9 @@ check also examines that package. It fails unless all of these conditions are tr
   `REUSE.toml`.
 - The source path exists at the pin. When a submodule is not checked out, the paths come from the
   `parity.md` links and the file lists in `port_sources.yaml`. The CI job `port-checks` checks out
-  the submodules. Thus CI compares the paths with the pinned trees.
+  the submodules. Thus CI compares the paths with the pinned trees. A checked-out submodule at
+  another commit than its pin fails the check. Under a commit pin, the `parity.md` links name the
+  full pin commit.
 - The Dart path equals the mapped path. For Chart.js `src`, 2.5 gives the path. A spec for
   `test/specs/<base>.tests.js` is `test/specs/<base>_test.dart` (section 1, step 5).
   `test/index.js` maps to `test/flutter_test_config.dart`. For other projects,
@@ -780,7 +782,8 @@ check also examines that package. It fails unless all of these conditions are tr
   columns, because the line-length exemption needs a path. A marker is a line comment. A
   `DIVERGES` block comment fails.
 
-A Chart.js version older than `chartJsVersion` is stale. The header restamp belongs to
+A Chart.js version older than `chartJsVersion` is stale. Under a commit pin, the version is
+`<release>+<sha8>`, and a header of the release alone is stale. The header restamp belongs to
 upstream-tracking.
 
 **`differences.md` schema.** Each row is one difference. One or more `DIVERGES` hunks name it. Port-only files are not rows. The
@@ -886,7 +889,7 @@ the imports of the symbols that its status lists in backticks. These rules apply
   needs. For each type, it names the Dart file that declares it: a file of `lib/src/types`, or the
   Dart file of the done module.
 - An import of a JSON file of the pin is data, not a module. `core.controller.js:12` imports
-  `version` from `package.json`. The port has `chartJsVersion` for it.
+  `version` from `package.json`. The port has `chartJsPackageVersion` for it.
 - A package import is done when `tool/port_sources.yaml` has an entry for the package, for example
   `@kurkle/color`.
 - Modules that import each other are ready together when no other import blocks them.
@@ -912,7 +915,8 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 - Elements import only `core.element` from core. 20 of 21 element cases need no chart.
 - 14 of the 23 core, element and scale spec files call `acquireChart`. Thus phase exits count cases.
 - Master (unreleased, milestone 4.6.0) fixes `retinaScale` (#12142). It also changes doughnut
-  spacing (#12238). ADR 0006 decides both.
+  spacing (#12238). ADR 0006 decides both. The commit pin `4.5.1+7169e651` of 2026-10-20
+  ([upstream-tracking.md](upstream-tracking.md) §2.4) brings both.
 
 | Phase | Scope | Exit criteria |
 |---|---|---|
@@ -923,7 +927,7 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 | 4. Elements | done; `core.element`, point, line, bar, arc, `elements/index`; the type members; `jsOrZero` and `js_webidl.dart` of `lib/src/js`; tool 1 roots | 20 of 21 element cases pass. Result: the five phase 4 spec files have 22 cases. 21 pass, 0 fail and 1 skips as `blocked: core.controller` (`element.line`, "should not cache path when animations are enabled"). 20 of the 21 element cases pass. `test:cases` reports 226 passed, 0 failed, 48 skipped and 0 missing cases in the 22 ported spec files. The port-only tests `test/port/core/core.element_test.dart` and `test/port/elements/` (the four elements and `index`) test the behavior that the specs do not test. Four generators of `tool/reference/` (point, line, bar and arc) write the reference data of the four element tests from an x64 build of Node.js v24.12.0. Chart.js ADR 0017 records the gate 4 decision (proposed). [performance.md](performance.md) §8 has the element draw cost on the Pixel 8a, on macOS and in Chrome with dart2wasm, and a number path in `toTRBL` and `toTRBLCorners` that cuts the bar draw time on macOS by about 12 % |
 | 5. Core | `core.config` with hunks H0-H3 and their tests; registry to controller; phase-5 harness rows; tools 6 and 8 | non-chart core cases pass; others skipped `blocked: <module>`. Result of the port step and the harness step (2026-10-20): all 21 core modules have the status `ported`. The 14 core spec files have 286 cases. 98 pass, 0 fail and 188 skip. The 36 non-chart cases of the new core spec files pass: `core.animation` 6, `core.animations` 8, `core.animator` 1, `core.controller` 4, `core.layouts` 1, `core.registry` 15 and `core.scale` 1. The harness rows of phase 5 are done: `acquireChart`, `releaseChart`, `releaseCharts`, `triggerMouseEvent`, the release at the unmount and the built-in registration. Through the harness, 32 more `core.controller` cases pass (36/85), 19 `core.plugin` cases (19/19) and 3 `core.scale` cases (4/41). 188 core cases skip. Of these, 13 wait for a scale of phase 6, 164 for a controller of phase 7 and 10 for a plugin of phase 8. 1 case is `n/a` (DOM element ids). Of the 76 cases of the port step that waited for the harness, 74 pass. 1 skips as `diverges: platform-canvas-no-shadow`, and 1 as `blocked: scale.linear`. The review of phase 5 made two changes. The `data: []` case of `core.controller` passes: an array data gives a new Map (`adapt-config-objects`). The `core.scale` case "should throw error on scale with custom name without axis type" skips as `blocked: scale.linear`: its throw needs `defaults.scales.linear`. `core.controller.tests.js:918` passes too. It was `n/a` before. Outside core, `helpers.canvas` has 14/14, `helpers.dom` 7/22, `platform.basic` 2/5 and `platform.dom` 15/21. `test:cases` reports 337 passed, 0 failed, 213 skipped and 0 missing cases in the 32 ported spec files. No case skips as `blocked: harness`. Tools 6 and 8 run in `check:port`. The gallery has the Core tab and the stress mode `chart`. The adversarial review and the figures of the typed options on a real chart path come next |
 | 6. Scales | seven scales; default date adapter on `DateFormat` (ICU tokens) | non-chart scale cases pass; moment-token cases skip as `diverges`. Result of the port, the specs and the fixes (2026-10-20): the seven scale modules and `src/scales/index.js` have the status `ported`, and `lib/src/index.dart` registers the six scales. The default date adapter is the five port-only files `lib/src/core/date_*.dart` (Chart.js ADR 0024). The five scale spec files have 233 cases. 22 pass, 0 fail and 211 skip: `scale.category` 2/19, `scale.linear` 7/45, `scale.logarithmic` 2/60, `scale.radialLinear` 2/23 and `scale.time` 9/86. 11 cases without a chart pass: the registration and the default config of each scale, and the date library of `scale.time`. 11 chart cases pass: 5 of `scale.linear` and 6 of `scale.time`. Of the 211 skips, 59 are `diverges: adapt-date-moment-format`. 140 wait for a controller of phase 7 and 12 for `plugin.legend` of phase 8. The 13 core cases that waited for a scale pass: `core.controller` 43/85 and `core.scale` 10/41. `test:cases` reports 372 passed, 0 failed, 411 skipped and 0 missing cases in the 37 ported spec files. The port-only tests compare 445 charts of the seven scale files and 8 charts of the harness with the chart.js 4.5.1 npm dist. They use the Liberation Sans widths, and the time charts use chartjs-adapter-moment 1.0.1 on moment 2.29.4. The date adapter gives the moment result for each reference call, also for the corpus of 357,576 calls. The 59 `diverges` cases of `scale.time` have port-only twins with ICU patterns: 2 pass and 57 wait for `controller.line`. Chart.js ADRs 0024 and 0025 record the gate 6 decisions (accepted 2026-10-20). The fixes wrote Chart.js ADR 0026 (accepted 2026-10-20) for the number formatting guards. The gallery has the Axes tab, the stress mode `axes` and the frameless benchmark `lib/main_bench.dart`. [performance.md](performance.md) §10.10-§10.11, §11 and §12 have the figures. On the Pixel 8a, the scale path runs at 53-58 FPS with 5000 points for the linear, logarithmic and time axes (§11.6). A category axis with 5000 labels ran at 7 FPS: the canvas metrics cache missed on each label. A larger cache with an eviction in one pass gives 29 FPS (§11.7). The iPhone, macOS and Chrome series wait (§11.8) |
-| 7. Controllers | bar first, then the other seven; fixture smoke runner | controller and earlier chart-blocked cases pass or have rows; fixture smoke tests pass for the ported types; gallery shows every type |
+| 7. Controllers | bar first, then the other seven; fixture smoke runner | controller and earlier chart-blocked cases pass or have rows; fixture smoke tests pass for the ported types; gallery shows every type. The commit pin landed before phase 7 (2026-10-20): Chart.js `4.5.1+7169e651`, the `master` commit after v4.5.1 ([upstream-tracking.md](upstream-tracking.md) §2.4). It ported #12130, #12142, #12155 and #12238 into the started modules. Phase 7 ports from the pin: `controller.doughnut` and `controller.polarArea` with the `spacingMode` of #12238 and its 3 new spec cases, and the fixture `controller.line/stacking/stack-cache` of #12155. The scale generators of phase 6 now read a build of the pinned commit, and their data did not change |
 | 8. Plugins | seven plugins; hunks H4a-H4c and H5 and their tests; input adapter for legend and tooltip | plugin cases pass; `plugin.*` fixture smoke tests pass |
 | 9. Flutter API and release | public widget on the host; theme API; keyboard and semantics; docs; published floor (2.12); pana | `flutter_chartjs` 0.1.0 on pub.dev |
 

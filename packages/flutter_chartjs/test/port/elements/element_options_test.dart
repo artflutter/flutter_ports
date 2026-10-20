@@ -202,6 +202,7 @@ final List<_Kind> _kinds = [
       'borderWidth': (o) => o.borderWidthValue,
       'offset': (o) => o.offsetValue,
       'spacing': (o) => o.spacingValue,
+      'spacingMode': (o) => o.spacingModeValue,
       'angle': (o) => o.angleValue,
       'circular': (o) => o.circularValue,
       'selfJoin': (o) => o.selfJoinValue,

@@ -581,8 +581,8 @@ final class UpstreamRow {
   /// The fixture count of a spec row, or null.
   final int? fixtures;
 
-  /// The link of the upstream file.
-  String get url => '${source.url}/blob/${source.version}/$path';
+  /// The link of the upstream file, at the pinned tree.
+  String get url => '${source.url}/blob/${source.treeRef}/$path';
 
   /// The first cell of the row.
   String get link => '[`$path`]($url)';

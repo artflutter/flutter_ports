@@ -17,14 +17,13 @@ import 'package:test/test.dart';
 // platform-dom-container, platform-dom-computed-style,
 // platform-dom-supported and platform-relative-position.
 //
-// The expected values of the reference tables come from the upstream
-// helpers.dom.ts at v4.5.1 in Node.js v24.12.0 on x64 (darwin-x64 under
-// Rosetta), run with type stripping. The DOM of the reference is a stub: a
-// computed style with 0px margins, paddings and borders, `max-width: none`
-// and `max-height: none`, and a parent node whose getBoundingClientRect has
-// the container size. The stub canvas is a plain object, so it keeps a
-// fractional width and height. The DOM truncates them (ToUint32), and the
-// tables below give the truncated values.
+// The expected values of the reference tables and of the retinaScale cases
+// come from the upstream helpers.dom.ts at the pin in Node.js v24.12.0 on x64
+// (darwin-x64 under Rosetta), run with type stripping. The DOM of the
+// reference is a stub: a computed style with 0px margins, paddings and
+// borders, `max-width: none` and `max-height: none`, and a parent node whose
+// getBoundingClientRect has the container size. The stub canvas converts an
+// assigned width and height with ToUint32, as the DOM does.
 //
 // The file runs on the VM only: helpers/index.dart exports helpers.extras,
 // which imports package:flutter/scheduler.dart.
@@ -352,16 +351,47 @@ void main() {
       expect(chart.ctx.calls, hasLength(1));
     });
 
-    test('a fractional device size changes on each call', () {
-      // The canvas truncates 600.1 to 600, and 600 !== 600.1.
+    test('a fractional device size that does not change gives false', () {
+      // The canvas gets Math.floor(600.1) = 600 and Math.floor(300.1) = 300
+      // (helpers.dom.ts:230-231, ledger row #12142). The second call
+      // compares 600 with 600 and 300 with Math.floor(300.2) = 300. v4.5.1
+      // compares the canvas with the fractional device size and gives true.
       final chart = _Chart(300.04, 150.06);
       expect(retinaScale(chart, 2), isTrue);
-      expect(retinaScale(chart, 2), isTrue);
+      expect(retinaScale(chart, 2), isFalse);
+      expect([chart.width, chart.height], [300, 150.1]);
+      expect([chart.canvas.width, chart.canvas.height], [600, 300]);
+      expect(chart.ctx.calls, hasLength(1));
+    });
+
+    test('a resize inside one device pixel gives false', () {
+      // `_resize` stops when retinaScale gives false (core.controller.js:288).
+      // The style takes the new size, and the canvas keeps its size.
+      final chart = _Chart(300.3, 150.2);
+      expect(retinaScale(chart, 1, true), isTrue);
+      expect([chart.canvas.width, chart.canvas.height], [300, 150]);
+      chart
+        ..width = 300.6
+        ..height = 150.7;
+      expect(retinaScale(chart, 1, true), isFalse);
+      expect([chart.width, chart.height], [300.6, 150.7]);
+      expect([chart.canvas.width, chart.canvas.height], [300, 150]);
+      expect(chart.canvas.style.values, {
+        'height': '150.7px',
+        'width': '300.6px',
+      });
+      expect(chart.ctx.calls, hasLength(1));
+      chart.width = 301.2;
+      expect(retinaScale(chart, 1, true), isTrue);
+      expect([chart.canvas.width, chart.canvas.height], [301, 150]);
       expect(chart.ctx.calls, hasLength(2));
     });
 
     test('a non-finite device size gives 0', () {
+      // Math.floor keeps NaN and Infinity. The canvas converts them to 0,
+      // and 0 is not equal to NaN or Infinity: each call gives true.
       final chart = _Chart(double.nan, double.infinity);
+      expect(retinaScale(chart, 1), isTrue);
       expect(retinaScale(chart, 1), isTrue);
       expect([chart.canvas.width, chart.canvas.height], [0, 0]);
       expect(chart.canvas.style.values, {
@@ -464,7 +494,7 @@ void main() {
     });
 
     test('a fractional device width can differ from upstream by 1 px', () {
-      // retinaScale gives the canvas trunc(round1(300.5 * 1)) = 300 device
+      // retinaScale gives the canvas floor(round1(300.5 * 1)) = 300 device
       // pixels. Upstream gives Math.round(150.6 / 300.5 * 300) = 150. The
       // port drops the factor 300 / 300.5 and gives Math.round(150.6) = 151.
       final fractional = _Chart(300.5, 150);

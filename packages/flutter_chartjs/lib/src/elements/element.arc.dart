@@ -9,8 +9,8 @@
 /// [ArcElement.options] are the resolved options, a Map.
 ///
 /// The module functions of upstream (`clipSelf`, `clipArc`,
-/// `parseBorderRadius`, `pathArc`, `drawArc` and `drawBorder`) are private
-/// here, because upstream does not export them.
+/// `parseBorderRadius`, `pathFullCircle`, `pathArc`, `drawArc` and
+/// `drawBorder`) are private here, because upstream does not export them.
 ///
 /// ## Options
 ///
@@ -122,6 +122,12 @@ Object? _offset(Object? options) =>
 /// The option `spacing` of [options], as [_borderAlign] reads `borderAlign`.
 Object? _spacing(Object? options) =>
     options is ArcOptions ? options.spacingValue : jsGet(options, 'spacing');
+
+/// The option `spacingMode` of [options], as [_borderAlign] reads
+/// `borderAlign`.
+Object? _spacingMode(Object? options) => options is ArcOptions
+    ? options.spacingModeValue
+    : jsGet(options, 'spacingMode');
 
 /// The option `circular` of [options], as [_borderAlign] reads
 /// `borderAlign`.
@@ -318,7 +324,53 @@ _BorderRadius _parseBorderRadius(
   return (x: x + r * math.cos(theta), y: y + r * math.sin(theta));
 }
 
-/// element.arc.ts:116 `pathArc`.
+/// element.arc.ts:101 `pathFullCircle`.
+///
+/// Path the full ring of an arc as two subpaths: the outer circle, and the
+/// inner circle in the opposite direction. The path has no radial line
+/// between the two circles. When the inner radius after the spacing, the
+/// offset and the pixel margin is not more than 0, the path is only the
+/// outer circle, a full disc.
+void _pathFullCircle(
+  CanvasRenderingContext2D ctx,
+  ArcElement element,
+  double offset,
+  double spacing,
+) {
+  final ArcElement(
+    :x,
+    :y,
+    startAngle: start,
+    :pixelMargin,
+    innerRadius: innerR,
+  ) = element;
+  final outerRadius = jsMax(
+    element.outerRadius + spacing + offset - pixelMargin,
+    0,
+  );
+  final innerRadius = innerR > 0
+      ? innerR + spacing + offset + pixelMargin
+      : 0.0;
+
+  ctx
+    ..beginPath()
+    ..arc(x, y, outerRadius, start, start + tau);
+
+  if (innerRadius > 0) {
+    // Start the inner contour as a separate subpath to avoid a seam
+    // connector.
+    ctx
+      ..moveTo(
+        x + math.cos(start) * innerRadius,
+        y + math.sin(start) * innerRadius,
+      )
+      ..arc(x, y, innerRadius, start + tau, start, true);
+  }
+
+  ctx.closePath();
+}
+
+/// element.arc.ts:138 `pathArc`.
 ///
 /// Path the arc, respecting border radius by separating into left and right
 /// halves.
@@ -335,6 +387,21 @@ _BorderRadius _parseBorderRadius(
 ///   \           /
 ///    6<---b<---5    Inner
 /// ```
+///
+/// The option `spacingMode` selects how [spacing] trims the angles
+/// (element.arc.ts:165-211):
+/// - `'proportional'`: one trim for both radii, from the average radius
+///   without spacing, the trim of Chart.js v4.5.1.
+/// - `'parallel'`: one trim for each radius, so that the gap between two
+///   arcs has the same width at both radii. An inner radius of 0 becomes
+///   the smallest radius that can give this gap, but stays below the outer
+///   radius.
+/// - Every other value, also `'angular'`, `undefined` and `null`: one trim
+///   for both radii, the arc sine of the spacing over the average radius.
+///
+/// Each trim stays below half of the angle that remains after the offset
+/// trim. A full circle with `selfJoin` on a circular arc goes to
+/// [_pathFullCircle].
 void _pathArc(
   CanvasRenderingContext2D ctx,
   ArcElement element,
@@ -350,17 +417,31 @@ void _pathArc(
     :pixelMargin,
     innerRadius: innerR,
   ) = element;
+  final options = element.options;
+  // `const {spacingMode = 'angular'} = element.options`: the default
+  // replaces only undefined. The code compares the value with two strings
+  // only. Every other value, also JS undefined and JS null, takes the branch
+  // of 'angular'. Thus the raw value gives the same branch.
+  final spacingMode = _spacingMode(options);
+  final alpha = end - start;
+
+  if (circular && jsTruthy(_selfJoin(options)) && alpha.abs() >= tau - 1e-4) {
+    _pathFullCircle(ctx, element, offset, spacing);
+    return;
+  }
 
   final outerRadius = jsMax(
     element.outerRadius + spacing + offset - pixelMargin,
     0,
   );
-  final innerRadius = innerR > 0
-      ? innerR + spacing + offset + pixelMargin
-      : 0.0;
+  var innerRadius = innerR > 0 ? innerR + spacing + offset + pixelMargin : 0.0;
 
-  var spacingOffset = 0.0;
-  final alpha = end - start;
+  var outerSpacingOffset = 0.0;
+  var innerSpacingOffset = 0.0;
+  final beta = outerRadius > 0
+      ? jsMax(0.001, alpha * outerRadius - offset / pi) / outerRadius
+      : 0.001;
+  final angleOffset = (alpha - beta) / 2;
 
   if (jsTruthy(spacing)) {
     // When spacing is present, it is the same for all items
@@ -368,36 +449,87 @@ void _pathArc(
     // the distance is the same as it would be without the spacing
     final noSpacingInnerRadius = innerR > 0 ? innerR - spacing : 0.0;
     final noSpacingOuterRadius = outerRadius > 0 ? outerRadius - spacing : 0.0;
-    final avNogSpacingRadius =
+    final avgNoSpacingRadius =
         (noSpacingInnerRadius + noSpacingOuterRadius) / 2;
-    final adjustedAngle = avNogSpacingRadius != 0
-        ? (alpha * avNogSpacingRadius) / (avNogSpacingRadius + spacing)
+    // Upstream computes proportionalOffset in an arrow function that it
+    // calls at once. The local adjustedAngle has no other reader.
+    final adjustedAngle = avgNoSpacingRadius != 0
+        ? (alpha * avgNoSpacingRadius) / (avgNoSpacingRadius + spacing)
         : alpha;
-    spacingOffset = (alpha - adjustedAngle) / 2;
+    final proportionalOffset = (alpha - adjustedAngle) / 2;
+    final angularOffset = avgNoSpacingRadius > 0
+        // js-ok: the last bit of asin changes only the pixels of the arc.
+        ? math.asin(jsMin(1, spacing / avgNoSpacingRadius))
+        : 0.0;
+
+    // Keep spacing trims below half the available span after base offset
+    // trimming.
+    final maxOffset = jsMax(0, beta / 2 - 0.001);
+    final maxOffsetSin = math.sin(maxOffset);
+
+    if (spacingMode == 'parallel') {
+      if (innerRadius == 0 && maxOffsetSin > 0) {
+        // A root radius of zero cannot realize a non-zero parallel separator
+        // width.
+        // Raise the root just enough for the available angular span.
+        final minInnerRadius = spacing / maxOffsetSin;
+        final maxInnerRadius = jsMax(0, outerRadius - 0.001);
+        innerRadius = jsMin(minInnerRadius, maxInnerRadius);
+      }
+
+      // Use one bounded spacing value for both radii so large spacing keeps
+      // stable geometry.
+      final maxParallelSpacing = jsMin(
+        outerRadius > 0 ? outerRadius * maxOffsetSin : double.infinity,
+        innerRadius > 0 ? innerRadius * maxOffsetSin : double.infinity,
+      );
+      final parallelSpacing = jsMin(spacing, maxParallelSpacing);
+
+      outerSpacingOffset = outerRadius > 0
+          // js-ok: the last bit of asin changes only the pixels of the arc.
+          ? math.asin(jsMin(1, parallelSpacing / outerRadius))
+          : jsMin(maxOffset, angularOffset);
+      innerSpacingOffset = innerRadius > 0
+          // js-ok: the last bit of asin changes only the pixels of the arc.
+          ? math.asin(jsMin(1, parallelSpacing / innerRadius))
+          : outerSpacingOffset;
+    } else if (spacingMode == 'proportional') {
+      outerSpacingOffset = jsMin(maxOffset, proportionalOffset);
+      innerSpacingOffset = jsMin(maxOffset, proportionalOffset);
+    } else {
+      outerSpacingOffset = jsMin(maxOffset, angularOffset);
+      innerSpacingOffset = jsMin(maxOffset, angularOffset);
+    }
   }
 
-  final beta = jsMax(0.001, alpha * outerRadius - offset / pi) / outerRadius;
-  final angleOffset = (alpha - beta) / 2;
-  final startAngle = start + angleOffset + spacingOffset;
-  final endAngle = end - angleOffset - spacingOffset;
+  final outerStartAngle = start + angleOffset + outerSpacingOffset;
+  final outerEndAngle = end - angleOffset - outerSpacingOffset;
+  final innerStartAngle = start + angleOffset + innerSpacingOffset;
+  final innerEndAngle = end - angleOffset - innerSpacingOffset;
+  final angleDelta = jsMin(
+    outerEndAngle - outerStartAngle,
+    innerEndAngle - innerStartAngle,
+  );
   final (:outerStart, :outerEnd, :innerStart, :innerEnd) = _parseBorderRadius(
     element,
     innerRadius,
     outerRadius,
-    endAngle - startAngle,
+    angleDelta,
   );
 
   final outerStartAdjustedRadius = outerRadius - outerStart;
   final outerEndAdjustedRadius = outerRadius - outerEnd;
   final outerStartAdjustedAngle =
-      startAngle + outerStart / outerStartAdjustedRadius;
-  final outerEndAdjustedAngle = endAngle - outerEnd / outerEndAdjustedRadius;
+      outerStartAngle + outerStart / outerStartAdjustedRadius;
+  final outerEndAdjustedAngle =
+      outerEndAngle - outerEnd / outerEndAdjustedRadius;
 
   final innerStartAdjustedRadius = innerRadius + innerStart;
   final innerEndAdjustedRadius = innerRadius + innerEnd;
   final innerStartAdjustedAngle =
-      startAngle + innerStart / innerStartAdjustedRadius;
-  final innerEndAdjustedAngle = endAngle - innerEnd / innerEndAdjustedRadius;
+      innerStartAngle + innerStart / innerStartAdjustedRadius;
+  final innerEndAdjustedAngle =
+      innerEndAngle - innerEnd / innerEndAdjustedRadius;
 
   ctx.beginPath();
 
@@ -422,12 +554,12 @@ void _pathArc(
         pCenter.y,
         outerEnd,
         outerEndAdjustedAngle,
-        endAngle + halfPi,
+        outerEndAngle + halfPi,
       );
     }
 
     // The line from point 3 to point 4
-    final p4 = _rThetaToXY(innerEndAdjustedRadius, endAngle, x, y);
+    final p4 = _rThetaToXY(innerEndAdjustedRadius, innerEndAngle, x, y);
     ctx.lineTo(p4.x, p4.y);
 
     // The corner segment from point 4 to point 5
@@ -442,22 +574,22 @@ void _pathArc(
         pCenter.x,
         pCenter.y,
         innerEnd,
-        endAngle + halfPi,
+        innerEndAngle + halfPi,
         innerEndAdjustedAngle + math.pi,
       );
     }
 
     // The inner arc from point 5 to point b to point 6
     final innerMidAdjustedAngle =
-        ((endAngle - (innerEnd / innerRadius)) +
-            (startAngle + (innerStart / innerRadius))) /
+        ((innerEndAngle - (innerEnd / innerRadius)) +
+            (innerStartAngle + (innerStart / innerRadius))) /
         2;
     ctx
       ..arc(
         x,
         y,
         innerRadius,
-        endAngle - (innerEnd / innerRadius),
+        innerEndAngle - (innerEnd / innerRadius),
         innerMidAdjustedAngle,
         true,
       )
@@ -466,7 +598,7 @@ void _pathArc(
         y,
         innerRadius,
         innerMidAdjustedAngle,
-        startAngle + (innerStart / innerRadius),
+        innerStartAngle + (innerStart / innerRadius),
         true,
       );
 
@@ -483,12 +615,12 @@ void _pathArc(
         pCenter.y,
         innerStart,
         innerStartAdjustedAngle + math.pi,
-        startAngle - halfPi,
+        innerStartAngle - halfPi,
       );
     }
 
     // The line from point 7 to point 8
-    final p8 = _rThetaToXY(outerStartAdjustedRadius, startAngle, x, y);
+    final p8 = _rThetaToXY(outerStartAdjustedRadius, outerStartAngle, x, y);
     ctx.lineTo(p8.x, p8.y);
 
     // The corner segment from point 8 to point 1
@@ -503,7 +635,7 @@ void _pathArc(
         pCenter.x,
         pCenter.y,
         outerStart,
-        startAngle - halfPi,
+        outerStartAngle - halfPi,
         outerStartAdjustedAngle,
       );
     }
@@ -522,7 +654,7 @@ void _pathArc(
   ctx.closePath();
 }
 
-/// element.arc.ts:218 `drawArc`.
+/// element.arc.ts:289 `drawArc`.
 double _drawArc(
   CanvasRenderingContext2D ctx,
   ArcElement element,
@@ -547,7 +679,7 @@ double _drawArc(
   return endAngle;
 }
 
-/// element.arc.ts:241 `drawBorder`.
+/// element.arc.ts:312 `drawBorder`.
 void _drawBorder(
   CanvasRenderingContext2D ctx,
   ArcElement element,
@@ -593,6 +725,7 @@ void _drawBorder(
   }
 
   var endAngle = element.endAngle;
+  final isFullCircle = (endAngle - startAngle).abs() >= tau - 1e-4;
   if (jsTruthy(fullCircles)) {
     _pathArc(ctx, element, offset, spacing, endAngle, circular);
     for (var i = 0; i < fullCircles; ++i) {
@@ -608,9 +741,13 @@ void _drawBorder(
     _clipArc(ctx, element, endAngle);
   }
 
+  // A full ring has no seam to join. The inner radius in the `undefined`
+  // state is NaN, and NaN > 0 is false, as `undefined > 0` is.
+  final skipSelfClip = isFullCircle && element.innerRadius > 0;
   // `borderRadius === 0`: the Dart `==` of a number and 0 is true only for
   // 0 and -0, and false for every value that is not a number.
-  if (jsTruthy(_selfJoin(options)) &&
+  if (!skipSelfClip &&
+      jsTruthy(_selfJoin(options)) &&
       endAngle - startAngle >= pi &&
       borderRadius == 0 &&
       borderJoinStyle != 'miter') {
@@ -623,32 +760,32 @@ void _drawBorder(
   }
 }
 
-/// `value || TAU` for the number [value] (element.arc.ts:233, :274).
+/// `value || TAU` for the number [value] (element.arc.ts:304, :346).
 double _orTau(double value) => jsTruthy(value) ? value : tau;
 
-/// element.arc.ts:292 `ArcProps`, the animated properties of an
+/// element.arc.ts:365 `ArcProps`, the animated properties of an
 /// [ArcElement]: the `T` of `Element<ArcProps, ArcOptions>`.
 ///
 /// A number is a `double`. It is NaN in the `undefined` state of the
 /// element (Chart.js ADR 0017, section 4).
 abstract interface class ArcProps implements Point {
-  /// element.arc.ts:293 `startAngle: number`.
+  /// element.arc.ts:366 `startAngle: number`.
   double get startAngle;
 
-  /// element.arc.ts:294 `endAngle: number`.
+  /// element.arc.ts:367 `endAngle: number`.
   double get endAngle;
 
-  /// element.arc.ts:295 `innerRadius: number`.
+  /// element.arc.ts:368 `innerRadius: number`.
   double get innerRadius;
 
-  /// element.arc.ts:296 `outerRadius: number`.
+  /// element.arc.ts:369 `outerRadius: number`.
   double get outerRadius;
 
-  /// element.arc.ts:297 `circumference: number`.
+  /// element.arc.ts:370 `circumference: number`.
   double get circumference;
 }
 
-/// element.arc.ts:300 `ArcElement extends Element<ArcProps, ArcOptions>`.
+/// element.arc.ts:373 `ArcElement extends Element<ArcProps, ArcOptions>`.
 ///
 /// The arc of one data value of a doughnut, pie or polar area chart. The
 /// center is ([x], [y]). The arc goes from [startAngle] to [endAngle], in
@@ -656,20 +793,20 @@ abstract interface class ArcProps implements Point {
 ///
 /// ## Properties
 ///
-/// The numeric properties of upstream are typed members (Chart.js ADR 0017,
+/// The properties of upstream are typed members (Chart.js ADR 0017,
 /// sections 3 and 4). [circumference], [endAngle], [innerRadius],
 /// [outerRadius] and [startAngle] start in the `undefined` state, and their
 /// getters give NaN in that state. [pixelMargin] and [fullCircles] start at
-/// 0. The access by name reads and writes each of them by its upstream
-/// name, and stores [undefined] again.
+/// 0, and [circular] starts false. The access by name reads and writes each
+/// of them by its upstream name, and stores [undefined] again.
 ///
 /// A reader that must tell `undefined` from NaN reads the property by name
 /// or through `getProps`: [inRange] reads `circumference` with
-/// `valueOrDefault` (element.arc.ts:364).
+/// `valueOrDefault` (element.arc.ts:440).
 ///
 /// ## Options
 ///
-/// [options] are the resolved options (`ArcOptions`, index.d.ts:1850), a
+/// [options] are the resolved options (`ArcOptions`, index.d.ts:1882), a
 /// Map. The [defaults] list the keys.
 ///
 /// ## Range on one axis
@@ -679,25 +816,27 @@ abstract interface class ArcProps implements Point {
 /// 0017, section 1). Thus [inXRange] and [inYRange] give false (the
 /// difference `adapt-arc-axis-range`).
 class ArcElement extends Element implements types.VisualElement, ArcProps {
-  /// element.arc.ts:336 `constructor(cfg)`.
+  /// element.arc.ts:411 `constructor(cfg)`.
   ///
   /// [options], [circumference], [startAngle], [endAngle], [innerRadius]
   /// and [outerRadius] start in the `undefined` state. [pixelMargin] and
-  /// [fullCircles] start at 0. Then the constructor writes each key of
-  /// [cfg] by name, as `Object.assign(this, cfg)` does: an `int` becomes a
-  /// `double`, and a value outside the type of a property throws an
-  /// [ArgumentError]. Dart `null` for [cfg] stands for JS `undefined`.
+  /// [fullCircles] start at 0, and [circular] starts false. Then the
+  /// constructor writes each key of [cfg] by name, as
+  /// `Object.assign(this, cfg)` does: an `int` becomes a `double`, and a
+  /// value outside the type of a property throws an [ArgumentError]. Dart
+  /// `null` for [cfg] stands for JS `undefined`.
   ArcElement([AnyObject? cfg]) {
     pixelMargin = 0;
     fullCircles = 0;
+    circular = false;
 
     if (cfg != null) assign(cfg);
   }
 
-  /// element.arc.ts:302 `static id = 'arc'`.
+  /// element.arc.ts:375 `static id = 'arc'`.
   static const String id = 'arc';
 
-  /// element.arc.ts:304 `static defaults`, in the upstream key order.
+  /// element.arc.ts:377 `static defaults`, in the upstream key order.
   static final AnyObject defaults = {
     'borderAlign': 'center',
     'borderColor': '#fff',
@@ -708,28 +847,29 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     'borderWidth': 2.0,
     'offset': 0.0,
     'spacing': 0.0,
+    'spacingMode': 'angular',
     'angle': undefined,
     'circular': true,
     'selfJoin': false,
   };
 
-  /// element.arc.ts:319 `static defaultRoutes`.
+  /// element.arc.ts:393 `static defaultRoutes`.
   static final AnyObject defaultRoutes = {
     'backgroundColor': 'backgroundColor',
   };
 
-  /// element.arc.ts:323 `static descriptors`. The `_indexable` function is
+  /// element.arc.ts:397 `static descriptors`. The `_indexable` function is
   /// a Dart closure (Chart.js ADR 0006).
   static final AnyObject descriptors = {
     '_scriptable': true,
     '_indexable': (String name) => name != 'borderDash',
   };
 
-  /// element.arc.ts:300 `class ArcElement extends Element` as a value (Chart.js
+  /// element.arc.ts:373 `class ArcElement extends Element` as a value (Chart.js
   /// ADR 0020, section 3).
   ///
   /// Its statics are [id], [defaults], [defaultRoutes] and [descriptors], in
-  /// the upstream order of declaration (element.arc.ts:302-326). They are the
+  /// the upstream order of declaration (element.arc.ts:375-400). They are the
   /// objects of the static fields. Its `construct` calls `ArcElement(cfg)` with
   /// the `cfg` of [elementCfgArg].
   static final JsClass jsClass = JsClass(
@@ -765,7 +905,11 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   /// The value of [startAngle]. Dart `null` stands for JS `undefined`.
   double? _startAngle;
 
-  /// element.arc.ts:328 `circumference: number`: the sweep of the arc, in
+  /// The value of [circular]. Dart `null` stands for JS `undefined`. The
+  /// name `_circular` is the function that reads the option `circular`.
+  bool? _circularFlag;
+
+  /// element.arc.ts:402 `circumference: number`: the sweep of the arc, in
   /// radians.
   ///
   /// NaN in the `undefined` state, the start value. JS `null` never reaches
@@ -775,14 +919,14 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
 
   set circumference(double value) => _circumference = value;
 
-  /// element.arc.ts:329 `endAngle: number`. NaN in the `undefined` state,
+  /// element.arc.ts:403 `endAngle: number`. NaN in the `undefined` state,
   /// the start value, as [circumference].
   @override
   double get endAngle => _endAngle ?? double.nan;
 
   set endAngle(double value) => _endAngle = value;
 
-  /// element.arc.ts:330 `fullCircles: number`: the count of full circles
+  /// element.arc.ts:404 `fullCircles: number`: the count of full circles
   /// in [circumference], that [draw] sets.
   ///
   /// It starts at 0. NaN after a write by name of [undefined].
@@ -790,21 +934,21 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
 
   set fullCircles(double value) => _fullCircles = value;
 
-  /// element.arc.ts:331 `innerRadius: number`. NaN in the `undefined`
+  /// element.arc.ts:405 `innerRadius: number`. NaN in the `undefined`
   /// state, the start value, as [circumference].
   @override
   double get innerRadius => _innerRadius ?? double.nan;
 
   set innerRadius(double value) => _innerRadius = value;
 
-  /// element.arc.ts:332 `outerRadius: number`. NaN in the `undefined`
+  /// element.arc.ts:406 `outerRadius: number`. NaN in the `undefined`
   /// state, the start value, as [circumference].
   @override
   double get outerRadius => _outerRadius ?? double.nan;
 
   set outerRadius(double value) => _outerRadius = value;
 
-  /// element.arc.ts:333 `pixelMargin: number`: 0.33 for an inner border,
+  /// element.arc.ts:407 `pixelMargin: number`: 0.33 for an inner border,
   /// else 0. [draw] sets it.
   ///
   /// It starts at 0. NaN after a write by name of [undefined].
@@ -812,15 +956,23 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
 
   set pixelMargin(double value) => _pixelMargin = value;
 
-  /// element.arc.ts:334 `startAngle: number`. NaN in the `undefined`
+  /// element.arc.ts:408 `startAngle: number`. NaN in the `undefined`
   /// state, the start value, as [circumference].
   @override
   double get startAngle => _startAngle ?? double.nan;
 
   set startAngle(double value) => _startAngle = value;
 
+  /// element.arc.ts:409 `circular: boolean`.
+  ///
+  /// It starts false. Dart `null` after a write by name of [undefined]. No
+  /// upstream code reads it: [draw] reads the option `circular`.
+  bool? get circular => _circularFlag;
+
+  set circular(bool value) => _circularFlag = value;
+
   /// The JS property read `element[prop]` (Chart.js ADR 0017, section 5),
-  /// for the properties of element.arc.ts:328-334. Other names go to
+  /// for the properties of element.arc.ts:402-409. Other names go to
   /// `Element`.
   @override
   Object? operator [](String prop) => switch (prop) {
@@ -831,13 +983,15 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     'outerRadius' => _outerRadius ?? undefined,
     'pixelMargin' => _pixelMargin ?? undefined,
     'startAngle' => _startAngle ?? undefined,
+    'circular' => _circularFlag ?? undefined,
     _ => super[prop],
   };
 
   /// The JS property write `element[prop] = value` (Chart.js ADR 0017,
-  /// section 5), for the properties of element.arc.ts:328-334. Each accepts
-  /// a `num` or [undefined], and throws an [ArgumentError] for another
-  /// value. Other names go to `Element`.
+  /// section 5), for the properties of element.arc.ts:402-409. Each numeric
+  /// property accepts a `num` or [undefined], and `circular` accepts a
+  /// `bool` or [undefined]. Another value throws an [ArgumentError]. Other
+  /// names go to `Element`.
   @override
   void operator []=(String prop, Object? value) {
     switch (prop) {
@@ -855,12 +1009,14 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
         _pixelMargin = toNumberProp(prop, value);
       case 'startAngle':
         _startAngle = toNumberProp(prop, value);
+      case 'circular':
+        _circularFlag = toBoolProp(prop, value);
       default:
         super[prop] = value;
     }
   }
 
-  /// element.arc.ts:353 `inRange(chartX, chartY, useFinalPosition)`.
+  /// element.arc.ts:429 `inRange(chartX, chartY, useFinalPosition)`.
   ///
   /// Whether the point ([chartX], [chartY]) is in the arc: its angle is
   /// between the angles, or the circumference is a full circle, and its
@@ -938,7 +1094,7 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     bool? useFinalPosition,
   ]) => false;
 
-  /// element.arc.ts:372 `getCenterPoint(useFinalPosition)`.
+  /// element.arc.ts:448 `getCenterPoint(useFinalPosition)`.
   ///
   /// The point at the middle angle and at the middle radius, plus half of
   /// the `offset` and `spacing` options. Dart `null` for [useFinalPosition]
@@ -972,7 +1128,7 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     );
   }
 
-  /// element.arc.ts:390 `tooltipPosition(useFinalPosition)`: the
+  /// element.arc.ts:466 `tooltipPosition(useFinalPosition)`: the
   /// [getCenterPoint].
   @override
   ElementPoint tooltipPosition([
@@ -981,7 +1137,7 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     return getCenterPoint(useFinalPosition);
   }
 
-  /// element.arc.ts:394 `draw(ctx)`.
+  /// element.arc.ts:470 `draw(ctx)`.
   ///
   /// It sets [pixelMargin] and [fullCircles] first. It draws nothing for a
   /// [circumference] of 0 or a negative radius. Upstream `draw` takes no

@@ -31,8 +31,8 @@ import 'scale_time_reference.dart';
 // The port-only tests of lib/src/scales/scale.time.dart.
 //
 // The reference group compares real charts with the charts of
-// tool/reference/scale_time_reference.mjs: the chart.js 4.5.1 npm dist with
-// chartjs-adapter-moment 1.0.1 on moment 2.29.4 in the zone 'Etc/UTC', in
+// tool/reference/scale_time_reference.mjs: a build of the pinned Chart.js
+// with chartjs-adapter-moment 1.0.1 on moment 2.29.4 in the zone 'Etc/UTC', in
 // Node.js v24.12.0 on x64 (Chart.js ADR 0010, Chart.js ADR 0024), with a mock
 // context that measures text in Liberation Sans 2.1.5, the test font of the
 // harness (scale_chart_harness.dart, scale_time_harness.dart). Each chart
@@ -213,6 +213,7 @@ void main() {
     node: scaleTimeReferenceNode,
     arch: scaleTimeReferenceArch,
     dist: scaleTimeReferenceDist,
+    commit: scaleTimeReferenceCommit,
   );
   testAdapterOrigin(scaleTimeReferenceAdapter);
 
@@ -403,8 +404,8 @@ void main() {
   });
 
   // The throws of the upstream update for options that the reference cases
-  // cannot hold. The Node.js probe of the review gave each result with the
-  // chart.js 4.5.1 dist and chartjs-adapter-moment 1.0.1.
+  // cannot hold. The Node.js probe gave each result with a build of the
+  // pinned Chart.js and chartjs-adapter-moment 1.0.1.
   group('the throws of upstream', () {
     final times = [_t0, _t0 + 5 * _day];
 

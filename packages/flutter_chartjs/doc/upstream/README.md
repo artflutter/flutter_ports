@@ -5,7 +5,7 @@ the JSON files by hand. Tool 4 writes them from the pinned `third_party/Chart.js
 
 | File | Contents |
 |---|---|
-| `manifest.json` | The spec cases, the image fixtures, the defaults inventory and the JS builtin sites of Chart.js v4.5.1 |
+| `manifest.json` | The spec cases, the image fixtures, the defaults inventory and the JS builtin sites of the pinned Chart.js (the commit pin v4.5.1+7169e651) |
 | `fixtures.json` | The fixture configs that are pure data, by fixture path |
 
 ## Make the files again
@@ -52,11 +52,13 @@ A case calls `acquireChart` when its `it` body, or a `beforeEach` or `beforeAll`
 Each spec file also has `fixtureGroups`: the `describe` blocks whose body is
 `jasmine.fixture.specs(<prefix>)`. These blocks make no spec cases. The fixtures are separate.
 
-## Counts at v4.5.1
+## Counts at the pin
 
-The tool prints these counts. Tool 4 found:
-- 54 spec files and 1,022 cases. 701 cases are `chart` and 321 cases are `non-chart`. No case is
-  `pending`. 10 cases have a ` #2` name.
+The tool prints these counts. Tool 4 found at the commit pin v4.5.1+7169e651:
+- 54 spec files and 1,036 cases. 707 cases are `chart` and 329 cases are `non-chart`. No case is
+  `pending`. 10 cases have a ` #2` name. v4.5.1 had 1,022 cases (701 `chart`, 321 `non-chart`).
+  The commit pin adds 3 `chart` cases to `core.scale`, 8 `non-chart` cases to `element.arc`, 1
+  `chart` case to `controller.doughnut` and 2 `chart` cases to `controller.polarArea`.
 - 163 `loop` cases from 26 call sites in 8 spec files. porting-flow.md names 31 loop-generated
   cases. That number is the 31 cases of `helpers.easing.tests.js` only. The other 132 cases come
   from loops in `controller.bar`, `core.datasetController`, `core.interaction`, `core.scale`,
@@ -68,7 +70,8 @@ The tool prints these counts. Tool 4 found:
   `helpers.dom` (15) and `core.helpers` (2). With these files, the count is 210.
 - 5 `non-chart` cases in `core.defaults` (3) and `core.ticks` (2). This number agrees with
   porting-flow.md.
-- 662 fixtures. 516 fixture configs are pure data.
+- 667 fixtures. 519 fixture configs are pure data. v4.5.1 had 662 fixtures, with 516 pure data
+  configs.
 
 ## Fixtures
 
@@ -130,7 +133,7 @@ Limits:
 global `parseFloat`, `parseInt`, `isNaN` and `isFinite`, `.sort(` and `.toFixed(`. `builtins.counts`
 gives the count for each name. The scan reads tokens, so comments and strings do not count. The
 scan reads a `.ts` file without its types. A bare name that the file imports or declares is not a
-site. For example `core.scale.js` imports `isFinite` from `helpers.core`. v4.5.1 has no `.toFixed(`
+site. For example `core.scale.js` imports `isFinite` from `helpers.core`. The pin has no `.toFixed(`
 site.
 
 Limits: the scan does not resolve values. It does not find a builtin that the code reads through a

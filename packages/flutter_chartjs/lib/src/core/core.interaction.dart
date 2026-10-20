@@ -8,7 +8,7 @@
 /// holds the concrete [Element] of `core.element.dart`, the type that the
 /// typedef of core.interaction.js:10 names.
 ///
-/// A data element is an [Element] (index.d.ts:454). Upstream calls the
+/// A data element is an [Element] (index.d.ts:484). Upstream calls the
 /// methods of `VisualElement` on it by name. The port casts it to
 /// `types.VisualElement` at the call, and a cast that fails throws a
 /// `TypeError`, as the call of an absent method does. `getAxisItems` tests
@@ -53,10 +53,10 @@ import 'package:meta/meta.dart';
 
 /// core.interaction.js:10 `InteractionItem`, the object
 /// `{element, datasetIndex, index}` of an interaction mode
-/// (index.d.ts:727).
+/// (index.d.ts:757).
 ///
 /// It implements `types.ActiveElement`, because the chart keeps the items
-/// as its active elements (index.d.ts:490-491). TypeScript accepts them by
+/// as its active elements (index.d.ts:520-521). TypeScript accepts them by
 /// structure. [datasetIndex] and [index] are numbers (Chart.js ADR 0010).
 ///
 /// Two items are equal when their fields are equal, as the `toEqual` of a
@@ -104,7 +104,7 @@ final class InteractionItem implements types.ActiveElement {
       'index: ${jsNumberToString(index)}}';
 }
 
-/// index.d.ts:733 `InteractionModeFunction`, the type of a function of
+/// index.d.ts:763 `InteractionModeFunction`, the type of a function of
 /// [Interaction.modes].
 ///
 /// [e] is the event: a `types.ChartEvent`, or a `NativeEvent` of
@@ -123,7 +123,7 @@ typedef InteractionModeFunction =
     ]);
 
 /// The callback of [Interaction.evaluateInteractionItems]: the element, the
-/// dataset index and the index of the element (index.d.ts:783).
+/// dataset index and the index of the element (index.d.ts:813).
 typedef InteractionHandler =
     void Function(Element element, double datasetIndex, double index);
 
@@ -141,7 +141,7 @@ double? _positionValue(Point position, Object? axis) =>
       _ => null,
     };
 
-/// The JS read `point[key]` of a parsed item (`unknown[]`, index.d.ts:473):
+/// The JS read `point[key]` of a parsed item (`unknown[]`, index.d.ts:503):
 /// the Map read for a Map, else [jsGet]. The Map read gives Dart `null` for
 /// an absent key, where JavaScript gives `undefined`. `isNullOrUndef` gives
 /// the same result for both.
@@ -254,7 +254,7 @@ Object? _parsedValue(Object? point, String key) =>
 /// @param {boolean} [intersect] - consider intersecting items
 ///
 /// Each data element is an [Element] (see the library documentation). The
-/// handler gets the index as a number. index.d.ts:785 declares a result,
+/// handler gets the index as a number. index.d.ts:815 declares a result,
 /// but upstream returns `undefined`.
 void _evaluateInteractionItems(
   types.Chart chart,
@@ -584,7 +584,7 @@ bool _inAxisRange(
 /// The option `options.axis || fallback` of core.interaction.js:272, :308,
 /// :338 and :354.
 ///
-/// index.d.ts:722 types `axis` as a string. The functions of this library
+/// index.d.ts:752 types `axis` as a string. The functions of this library
 /// take the value as it is, as upstream does: a value that is not a string
 /// or a `List` throws a `TypeError` where upstream calls `axis.indexOf`
 /// (core.interaction.js:95).
@@ -843,7 +843,7 @@ List<InteractionItem> _y(
 }
 
 /// core.interaction.js:252 the default export, `Chart.Interaction`
-/// (index.d.ts:773).
+/// (index.d.ts:803).
 ///
 /// Contains interaction related functions
 /// @namespace Chart.Interaction

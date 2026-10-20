@@ -49,7 +49,7 @@ typedef PluginDescriptor = ({Object plugin, AnyObject options});
 ///
 /// `Array.prototype.filter` also passes the index and the array. The one
 /// caller, the event filter of `core.controller.js:1170`, reads only the
-/// descriptor. `index.d.ts:555` declares `notifyPlugins` without a filter.
+/// descriptor. `index.d.ts:585` declares `notifyPlugins` without a filter.
 /// Thus no user function reaches it (Chart.js ADR 0020, section 7).
 typedef FilterCallback = bool Function(PluginDescriptor value);
 

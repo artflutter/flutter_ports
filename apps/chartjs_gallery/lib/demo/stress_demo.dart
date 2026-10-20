@@ -1059,7 +1059,7 @@ class StressDemoState extends State<StressDemo> {
       final doughnut = ring ~/ _arcRings;
       final x = (doughnut % columns + 0.5) * cellWidth;
       final y = (doughnut ~/ columns + 0.5) * cellHeight;
-      // controller.doughnut.js:234-235: each ring has the same weight.
+      // controller.doughnut.js:237-238: each ring has the same weight.
       final ringOuter = outerRadius - ringWidth * (ring % _arcRings);
       final ringInner = ringOuter - ringWidth;
       var total = 0.0;

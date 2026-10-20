@@ -1,10 +1,10 @@
 // Original code, not ported from Chart.js: linear scale base reference generator.
 //
 // It writes test/port/scales/scale_linearbase_reference.dart, the data of
-// test/port/scales/scale.linearbase_test.dart: real charts of the chart.js
-// 4.5.1 npm dist with test scales that extend LinearScaleBase (see the header
-// of tool/reference/scale_chart_common.mjs for the method, the usage and the
-// limits).
+// test/port/scales/scale.linearbase_test.dart: real charts of a build
+// of the pinned Chart.js with test scales that extend LinearScaleBase (see
+// the header of tool/reference/scale_chart_common.mjs for the method, the
+// usage and the limits).
 //
 // The dist does not export LinearScaleBase. The class is the prototype of
 // LinearScale: Object.getPrototypeOf(C.LinearScale). The test scales are:
@@ -28,7 +28,7 @@
 // v24.12.0:
 //
 //   node tool/reference/scale_linearbase_reference.mjs \
-//     <scratch>/node_modules/chart.js/dist/chart.js
+//     <build>/dist/chart.js
 //
 // or with the environment variable CHARTJS_DIST.
 

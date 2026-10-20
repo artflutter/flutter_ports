@@ -296,7 +296,7 @@ List<T> _slice<T>(List<T> list, double begin, [double? end]) {
   return from < to ? list.sublist(from, to) : <T>[];
 }
 
-/// The JS read `point[key]` of a parsed item (`unknown[]`, index.d.ts:473):
+/// The JS read `point[key]` of a parsed item (`unknown[]`, index.d.ts:503):
 /// the Map read for a Map, else [jsGet]. The Map read gives Dart `null` for
 /// an absent key, where JavaScript gives `undefined`. `isNullOrUndef` gives
 /// the same result for both.

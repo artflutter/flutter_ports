@@ -348,7 +348,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
 
   /// `Object.assign(this, source)`, the copy of a plain object into the
   /// element. The element constructors call it with their `cfg`
-  /// (element.point.ts:58, element.arc.ts:349, element.bar.js:175,
+  /// (element.point.ts:58, element.arc.ts:425, element.bar.js:175,
   /// element.line.js:295). `updateElement` calls it with the new properties
   /// (core.datasetController.js:900).
   ///
@@ -432,7 +432,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
 ///
 /// The element constructors copy `cfg` with `if (cfg) Object.assign(this,
 /// cfg)` (element.point.ts:57-59, element.line.js:294-296,
-/// element.bar.js:174-176, element.arc.ts:348-350). Thus an absent argument,
+/// element.bar.js:174-176, element.arc.ts:424-426). Thus an absent argument,
 /// [undefined], JS `null` and the other falsy values give Dart `null`, the
 /// default of the Dart constructor. A Map gives itself. Another value throws
 /// a [TypeError]. Upstream copies the own enumerable properties of such a

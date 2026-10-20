@@ -1,7 +1,8 @@
 # Agent onboarding
 
 Dart pub workspace + Melos 8 monorepo of native Dart/Flutter ports of JavaScript chart
-libraries. First port: Chart.js v4.5.1 → `packages/flutter_chartjs`. Second port: D3 v7.9.0 →
+libraries. First port: Chart.js v4.5.1+7169e651 (a commit pin after v4.5.1) →
+`packages/flutter_chartjs`. Second port: D3 v7.9.0 →
 `packages/flutter_d3_port`, in phase 0 (scaffold and design, no ported code).
 
 ## Commands
@@ -71,11 +72,13 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   `packages/flutter_chartjs/doc/upstream/` from `third_party/Chart.js`. It needs Node.js 22.18 or
   later. The CI job `upstream-manifest` fails when the committed files differ.
 - `dart run melos run upstream:check`: fail unless `third_party/Chart.js` is pinned to the release
-  tag named by `chartJsVersion`. CI runs it too. It also fails unless `third_party/d3` is at the
-  tag `v<d3Version>`. Each other D3 gitlink must be the commit of its `ref` and equal its `commit`
-  in `packages/flutter_d3_port/tool/port_sources.yaml`. The script reads the gitlinks from the
-  index and the tags with `git ls-remote`. It needs no submodule checkout. It also fails on a
-  submodule of `.gitmodules` that no entry of a `tool/port_sources.yaml` pins.
+  tag named by `chartJsVersion`. For a commit pin (`<last version>+<sha8>`), the gitlink must
+  start with `<sha8>`, and the tag `v<last version>` must exist. CI runs it too. It also fails
+  unless `third_party/d3` is at the tag `v<d3Version>`. Each other D3 gitlink must be the commit
+  of its `ref` and equal its `commit` in `packages/flutter_d3_port/tool/port_sources.yaml`. The
+  script reads the gitlinks from the index and the tags with `git ls-remote`. It needs no
+  submodule checkout. It also fails on a submodule of `.gitmodules` that no entry of a
+  `tool/port_sources.yaml` pins.
 - `dart run melos run gallery` (Chrome) / `gallery:macos` / `gallery:device` (Android/iOS):
   run the gallery.
 - `dart run melos run gallery:build:web` / `gallery:build:android` / `gallery:build:ios`: build the
@@ -264,8 +267,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     yet. `test --no-select` runs its tests. In D3 phase 1, ADR 0008 adds the package to tools 1-3.
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
-  - Shallow git submodules at release tags: `Chart.js` (`v4.5.1`), `kurkle-color` (`v0.3.2`) and
-    `chartjs-test-utils` (`v0.4.0`). The last two come from Chart.js ADR 0011.
+  - Shallow git submodules: `Chart.js` at the commit pin `7169e651` after `v4.5.1`
+    (`packages/flutter_chartjs/doc/upstream-tracking.md` §2.4), and `kurkle-color` (`v0.3.2`) and
+    `chartjs-test-utils` (`v0.4.0`) at release tags. The last two come from Chart.js ADR 0011.
   - The 34 D3 submodules, also shallow at release tags (D3 ADR 0001): `d3` (`v7.9.0`), the 30
     `d3-*` modules, `internmap`, `delaunator` (`v5.1.0`) and `robust-predicates` (`v3.0.3`).
     `packages/flutter_d3_port/tool/port_sources.yaml` gives the tag and the commit of each.
@@ -285,10 +289,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 2. **Mirror upstream structure.** Same module split and names (Dart-cased), so upstream releases can
    be diffed and replayed. Each ported file starts with a header naming its source, license and
    holder, `// Ported from <project> <version> <path> (<SPDX license>, <copyright holder>).`, e.g.
-   `// Ported from Chart.js v4.5.1 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).`
-   A file with no upstream source starts with the port-only marker
-   `// Original code, not ported from Chart.js: <reason>.` instead. All files under `test/port/`
-   and `tool/` are port-only. `check:headers` enforces line 1.
+   `// Ported from Chart.js v4.5.1+7169e651 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).`
+   Under a commit pin, the version is `v<last version>+<sha8>`. A file with no upstream source
+   starts with the port-only marker `// Original code, not ported from Chart.js: <reason>.`
+   instead. All files under `test/port/` and `tool/` are port-only. `check:headers` enforces
+   line 1.
 3. **Port the specs.** Upstream `test/specs/<module>.tests.js` becomes a test file in `test/specs/`
    (see below). Behaviour without an upstream spec still needs tests.
 4. **Track parity.** Update the status text of the module in
@@ -302,13 +307,17 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
    `git -C third_party/Chart.js fetch --depth 1 origin tag <old-tag> tag <new-tag>`,
    `git -C third_party/Chart.js checkout <new-tag>`, review
    `git -C third_party/Chart.js diff <old-tag> <new-tag> -- src test/specs test/fixtures`, and the
-   bump report once it exists. Then run `git add third_party/Chart.js` and update `chartJsVersion`
-   and the Chart.js `version`, `ref` and `commit` in
-   `packages/flutter_chartjs/tool/port_sources.yaml`. Run `upstream:manifest`. Port the diff for
-   every started module. Close the ledger rows of the range. Restamp the headers
-   (`packages/flutter_chartjs/doc/upstream-tracking.md` §4.8). Update the status texts in
-   `doc/status.yaml` and run `dart run melos run parity`. Backports follow ADR 0006. They never move the submodule.
-   `upstream:check` and `packages/flutter_chartjs/test/upstream_test.dart` fail on a mismatch.
+   bump report once it exists. A commit pin (`packages/flutter_chartjs/doc/upstream-tracking.md`
+   §2.4) fetches the full commit in place of `<new-tag>`: then `chartJsVersion` is
+   `<last version>+<sha8>`, and the Chart.js `ref` and `commit` are the full commit. Then run
+   `git add third_party/Chart.js` and update `chartJsVersion` and the Chart.js `version`, `ref`
+   and `commit` in `packages/flutter_chartjs/tool/port_sources.yaml`. Run `upstream:manifest`.
+   Port the diff for every started module. Close the ledger rows of the range. Move the Chart.js
+   citations of `doc/differences.md` to the new pin (`upstream-tracking.md` §4.9). Restamp the
+   headers (`packages/flutter_chartjs/doc/upstream-tracking.md` §4.8). Update the status texts in
+   `doc/status.yaml` and run `dart run melos run parity`. Backports follow ADR 0006. They never
+   move the submodule. `upstream:check` and `packages/flutter_chartjs/test/upstream_test.dart`
+   fail on a mismatch.
 
 The rules below come from the accepted ADRs and from two plans. The plans, `porting-flow.md` and
 `upstream-tracking.md`, are still proposed. The doc paths are relative to
@@ -507,9 +516,11 @@ are relative to `packages/flutter_d3_port/doc/`.
   `test/port/core/*_reference.dart` (animation, interaction, layouts, scale, scale autoskip,
   dataset controller, registry, controller and date adapter), `test/port/scales/*_reference.dart`
   (the scale chart harness and the seven scales of phase 6) and `test/port/theme/*_reference.dart`
-  (light and precedence). They stop unless Node.js is an x64 build. The scale generators run the
-  chart.js 4.5.1 npm dist (the first argument or `CHARTJS_DIST`) through
-  `scale_chart_common.mjs`, which measures text in Liberation Sans 2.1.5 from the TTF tables.
+  (light and precedence). They stop unless Node.js is an x64 build. The scale generators run a
+  build of Chart.js at the pinned commit (`dist/chart.js` of a clone outside the repository, the
+  first argument or `CHARTJS_DIST`) through `scale_chart_common.mjs`. Its header gives the build
+  steps. It stops unless the clone is at the `commit` of `tool/port_sources.yaml`, and it
+  measures text in Liberation Sans 2.1.5 from the TTF tables.
   `date_adapter_reference.mjs` and the time-scale generators also need a `node_modules` folder
   with moment 2.29.4, moment-timezone 0.5.42 and chartjs-adapter-moment 1.0.1, and run with
   `TZ=UTC`. `date_adapter_reference.mjs` takes the folder as its argument. The time-scale

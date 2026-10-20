@@ -2,7 +2,7 @@
 //
 // It writes test/port/scales/scale_time_reference.dart, the data of
 // test/port/scales/scale.time_test.dart: real charts with the time scale of
-// the chart.js 4.5.1 npm dist and the date adapter of the specs (see the
+// a build of the pinned Chart.js and the date adapter of the specs (see the
 // headers of tool/reference/scale_chart_common.mjs and
 // tool/reference/scale_time_common.mjs for the method, the usage and the
 // limits).
@@ -20,7 +20,7 @@
 // Usage, from packages/flutter_chartjs, with an x64 build of Node.js
 // v24.12.0:
 //
-//   CHARTJS_DIST=<scratch>/node_modules/chart.js/dist/chart.js \
+//   CHARTJS_DIST=<build>/dist/chart.js \
 //   MOMENT_NODE_MODULES=<scratch>/node_modules \
 //     node tool/reference/scale_time_reference.mjs
 

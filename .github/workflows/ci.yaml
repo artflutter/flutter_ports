@@ -36,8 +36,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       # On ubuntu only, this step checks out shallow submodules by path.
-      # packages/flutter_chartjs/test/upstream_test.dart compares
-      # chartJsVersion with third_party/Chart.js/package.json.
+      # packages/flutter_chartjs/test/upstream_test.dart compares the part of
+      # chartJsVersion before "+" with third_party/Chart.js/package.json.
       # packages/flutter_d3_port/test/upstream_test.dart compares d3Version
       # with third_party/d3/package.json. CI does not clone the 33 other D3
       # repositories.
@@ -139,9 +139,10 @@ jobs:
 
   upstream-pin:
     # The third_party/Chart.js gitlink must be the commit of the release tag
-    # named by chartJsVersion. The third_party/d3 gitlink must be the commit of
-    # the release tag named by d3Version. Each other D3 gitlink must be the
-    # commit of its tag in packages/flutter_d3_port/tool/port_sources.yaml.
+    # named by chartJsVersion. For a commit pin "<last version>+<sha8>", the
+    # gitlink must start with <sha8>. The third_party/d3 gitlink must be the
+    # commit of the release tag named by d3Version. Each other D3 gitlink must
+    # be the commit of its tag in packages/flutter_d3_port/tool/port_sources.yaml.
     # Each submodule of .gitmodules must be the pin of a port_sources.yaml
     # entry. Needs no submodule checkout.
     runs-on: ubuntu-latest

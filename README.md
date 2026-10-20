@@ -17,7 +17,7 @@ For the D3 packages, see the [D3 prior-art survey](packages/flutter_d3_port/doc/
 
 | Port | Upstream | Package | Progress |
 |---|---|---|---|
-| Chart.js | [chartjs/Chart.js](https://github.com/chartjs/Chart.js) v4.5.1 (MIT) | [`flutter_chartjs`](packages/flutter_chartjs) | [parity tracker](packages/flutter_chartjs/doc/parity.md) |
+| Chart.js | [chartjs/Chart.js](https://github.com/chartjs/Chart.js) v4.5.1+7169e651, a commit pin after v4.5.1 (MIT) | [`flutter_chartjs`](packages/flutter_chartjs) | [parity tracker](packages/flutter_chartjs/doc/parity.md) |
 | D3 | [d3/d3](https://github.com/d3/d3) v7.9.0 with its 30 modules, internmap, delaunator and robust-predicates (ISC, with d3-ease BSD-3-Clause and robust-predicates Unlicense) | [`flutter_d3_port`](packages/flutter_d3_port) | [parity tracker](packages/flutter_d3_port/doc/parity.md) |
 
 ## Layout

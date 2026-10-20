@@ -3,7 +3,7 @@
 /// Port of `src/platform/platform.base.js`.
 ///
 /// The class implements the `BasePlatform` interface of
-/// `lib/src/types/index.dart` (index.d.ts:2167). Both have the same name.
+/// `lib/src/types/index.dart` (index.d.ts:2212). Both have the same name.
 /// Thus this file imports the type library with the prefix `types`.
 ///
 /// This library is a pure layer: it imports only the canvas interface and
