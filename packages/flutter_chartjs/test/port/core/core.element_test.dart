@@ -251,6 +251,61 @@ void main() {
     });
   });
 
+  // core.element.ts does not declare `hidden`. The port declares it for the
+  // read of each draw (performance.md section 10.6). It must keep any value
+  // as an extra property does: the draw tests its ToBoolean
+  // (core.datasetController.js:730, the scenario 'draw with hidden values'
+  // of core.datasetController_test.dart).
+  group('hidden', () {
+    test('starts undefined', () {
+      final elem = Element();
+      expect(elem.hidden, _isUndefined);
+      expect(elem['hidden'], _isUndefined);
+      expect(_Box()['hidden'], _isUndefined);
+    });
+
+    test('keeps any value, as an extra property does', () {
+      final map = <String, Object?>{};
+      for (final value in <Object?>[
+        true,
+        false,
+        1,
+        0,
+        'a',
+        '',
+        map,
+        null,
+        undefined,
+      ]) {
+        final byName = Element()..['hidden'] = value;
+        final extra = Element()..['hiddenExtra'] = value;
+        expect(byName.hidden, same(value), reason: '$value');
+        expect(byName['hidden'], same(value), reason: '$value');
+        expect(byName['hidden'], same(extra['hiddenExtra']), reason: '$value');
+        final typed = Element()..hidden = value;
+        expect(typed['hidden'], same(value), reason: '$value');
+      }
+      // NaN is not identical to itself in JavaScript (dart2js).
+      final nan = Element()..['hidden'] = double.nan;
+      expect(nan.hidden, isNaN);
+      expect(nan['hidden'], isNaN);
+    });
+
+    test('a subclass reads and writes it through super', () {
+      final elem = _Box()..['hidden'] = true;
+      expect(elem.hidden, isTrue);
+      expect(elem['hidden'], isTrue);
+      elem.hidden = undefined;
+      expect(elem['hidden'], _isUndefined);
+    });
+
+    test('assign writes it', () {
+      final elem = Element()..assign({'hidden': 0, 'x': 1});
+      expect(elem.hidden, 0);
+      expect(elem.x, 1.0);
+    });
+  });
+
   group('assign', () {
     test('writes each key through operator []=', () {
       final options = <String, Object?>{'radius': 2};

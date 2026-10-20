@@ -804,7 +804,9 @@ final class _Run {
       case 'setActive':
         (_element(args[0], args[1])! as Element).active = args[2]! as bool;
       case 'setHidden':
-        (_element(args[0], args[1])! as Element)['hidden'] = args[2];
+        (_element(args[0], args[1])! as Element)['hidden'] = _materialize(
+          args[2],
+        );
       case 'hover':
         controller(args[0]).setHoverStyle(
           _element(args[0], args[1])! as Element,

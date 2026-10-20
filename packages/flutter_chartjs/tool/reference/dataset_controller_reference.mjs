@@ -605,7 +605,7 @@ function run(spec) {
         chart.getDatasetMeta(args[0]).data[args[1]].active = args[2];
         return;
       case 'setHidden':
-        chart.getDatasetMeta(args[0]).data[args[1]].hidden = args[2];
+        chart.getDatasetMeta(args[0]).data[args[1]].hidden = materialize(args[2]);
         return;
       case 'hover':
         controller(args[0]).setHoverStyle(
@@ -1158,6 +1158,29 @@ const SCENARIOS = [
       ['drawRange', 0, 0, 0],
       ['setDataset', 0, 'drawActiveElementsOnTop', false],
       ['configure', 0],
+      ['draw', 0],
+      ['trace'],
+    ],
+  },
+  {
+    // core.datasetController.js:730 `if (element.hidden)`: the ToBoolean of
+    // any value that a user writes into `hidden`.
+    name: 'draw with hidden values',
+    labels: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+    scales: [CATEGORY_X, LINEAR_Y],
+    elements: {dataset: null, data: 'point'},
+    datasets: [{data: [1, 2, 3, 4, 5, 6, 7, 8]}],
+    steps: [
+      ['build'],
+      ['elements', true],
+      ['setHidden', 0, 0, 1],
+      ['setHidden', 0, 1, 'a'],
+      ['setHidden', 0, 2, {}],
+      ['setHidden', 0, 3, 0],
+      ['setHidden', 0, 4, ''],
+      ['setHidden', 0, 5, null],
+      ['setHidden', 0, 6, UNDEFINED],
+      ['setHidden', 0, 7, false],
       ['draw', 0],
       ['trace'],
     ],

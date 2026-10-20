@@ -63,6 +63,9 @@ import 'package:meta/meta.dart';
 ///   `undefined` again.
 /// - A reader that must tell `undefined` from NaN reads the property by name
 ///   or through [getProps].
+/// - [hidden] is not an upstream property of the class. Upstream code adds
+///   it to a data element, and the types give it no type. Thus it holds any
+///   value, as an extra property does.
 ///
 /// ## Access by name
 ///
@@ -219,6 +222,20 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// `core.animations.js` creates the Map. JS `null` never reaches it.
   Map<String, types.Animation>? $animations;
 
+  /// core.datasetController.js:730 `element.hidden`: a truthy value hides
+  /// the data element in the draw of its dataset.
+  ///
+  /// core.element.ts does not declare it, and the types give it no type.
+  /// `_updateVisibility` writes a boolean (core.controller.js:898), and user
+  /// code can write any value. `DatasetController.draw` reads it for each
+  /// element in each draw (core.datasetController.js:730). Thus the class
+  /// declares it, as Chart.js ADR 0017 (Consequences) permits for a property
+  /// that a ported caller reads often (performance.md §10.6).
+  ///
+  /// It keeps any value, as the Map of extra properties does: the
+  /// [undefined] sentinel in the start state, and Dart `null` for JS `null`.
+  Object? hidden = undefined;
+
   /// core.element.ts:17 `tooltipPosition(useFinalPosition: boolean):
   /// Point`.
   ///
@@ -289,6 +306,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
     'active' => active,
     'options' => options ?? undefined,
     r'$animations' => $animations ?? undefined,
+    'hidden' => hidden,
     _ => _extra(prop),
   };
 
@@ -301,6 +319,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// - `options` accepts a `Map<String, Object?>` or [undefined].
   /// - `$animations` accepts a `Map<String, types.Animation>` or
   ///   [undefined].
+  /// - `hidden` accepts any value, as an extra property does ([hidden]).
   /// - Another name stores [value] as it is in the Map of extra properties:
   ///   also Dart `null` for JS `null` and the [undefined] sentinel.
   ///
@@ -320,6 +339,8 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
         options = toObjectProp<Map<String, Object?>>(prop, value);
       case r'$animations':
         $animations = toObjectProp<Map<String, types.Animation>>(prop, value);
+      case 'hidden':
+        hidden = value;
       default:
         (_extras ??= <String, Object?>{})[prop] = value;
     }

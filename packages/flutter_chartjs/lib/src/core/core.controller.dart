@@ -1757,7 +1757,7 @@ class Chart implements types.Chart {
   /// `defined(dataIndex)` is a test for a value.
   /// `meta.controller._resolveAnimations(undefined, mode)` is
   /// `resolveAnimations` (Chart.js ADR 0012). `meta.data[dataIndex].hidden`
-  /// is a write by name of the element. An index without an element throws
+  /// is a write of [Element.hidden]. An index without an element throws
   /// a [TypeError], as in JavaScript.
   void _updateVisibility(
     double datasetIndex,
@@ -1769,7 +1769,7 @@ class Chart implements types.Chart {
     final anims = meta.controller!.resolveAnimations(null, mode);
 
     if (dataIndex != null) {
-      (_elementAt(meta.data, dataIndex)! as Element)['hidden'] = !visible;
+      (_elementAt(meta.data, dataIndex)! as Element).hidden = !visible;
       update();
     } else {
       setDatasetVisibility(datasetIndex, visible);

@@ -1401,7 +1401,7 @@ class DatasetController
 
     for (i = start; i < start + count; ++i) {
       final element = _at(elements, i)! as Element;
-      if (jsTruthy(element['hidden'])) {
+      if (jsTruthy(element.hidden)) {
         continue;
       }
       if (element.active && drawActiveElementsOnTop) {

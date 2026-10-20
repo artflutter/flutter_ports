@@ -455,9 +455,14 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
 - Typed element options (section 8.4): the elements read typed options without a Map lookup.
   Phase 5 makes them in a chart: `resolveNamedOptions` makes the typed class of the element type,
   and the option copies of `cloneIfNotShared` and `resolveTargetOptions` keep it
-  ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md)). The figures of the chart path
-  on the four platforms (the mode `chart`, section 6) are not recorded yet. Options that are plain
-  Maps still cost the lookups of section 8.2.
+  ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md)). Section 10.7 has the draw cost
+  for each point of case (a) on the Pixel 8a and macOS. The other cases and the other platforms of
+  the mode `chart` (section 6) are not recorded yet. Options that are plain Maps still cost the
+  lookups of section 8.2.
+- `elements` 20000 + 0 on the Pixel 8a: over 31 pairs, the FPS median of the phase 5 builds misses
+  the criterion of plan §6.3 by 0.9 FPS. The draw follows the frequency of the big core, and at the
+  same frequency the phase 5 build is not slower (section 10.8). A series at a fixed core frequency
+  needs a device with root access.
 - Animations: the figures of the animated stress case (`CALL=animate`, section 10.4) on the Pixel
   8a, macOS, Chrome with dart2wasm and the iPhone are not recorded yet.
 - Arcs: the native path calls (`Path.arcTo`) cost the most (section 8.2). Cut 1 of
@@ -970,3 +975,238 @@ animator in a real chart. `drawMs` is the draw that the animator calls. `animato
 the N animations before that draw. The figures on the Pixel 8a, macOS, Chrome with dart2wasm and
 the iPhone are open (section 7).
 
+
+### 10.5 CPU profile of the chart path
+
+The mode `chart` in case (a) ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md)
+§8: `CALL=draw`, `SHARING=1`, typed options) and the mode `elements` with `LINE=0` draw the same
+N points. This section compares their CPU profiles at 20000 + 0.
+
+**Method.**
+- **Code.** Commit `286470e`, the phase 5 tree before the change of section 10.6. Each mode has
+  its own profile build, as in section 9.1.
+- **Profile.** A script starts one fresh process. A CPU profile of 10 seconds comes from the VM
+  service (`getCpuSamples`, a sample period of 1 ms). On the Pixel 8a, `adb forward` gives the
+  port of the VM service. The counts are the samples under the draw: `_StressChart.draw` in the
+  mode `chart`, `DemoChart.render` in the mode `elements`.
+- **Interrupt samples.** In all profiles, 16 to 44 % of the samples have the VM tag
+  `DRT_InterruptOrStackOverflow`. Such a sample goes to the function with the next interrupt
+  check, for example a function entry. Thus a count of one small function can include these
+  samples. A comparison of two builds uses the samples without this tag.
+- **GC.** The VM timeline (the streams `GC`, `Dart` and `Embedder`) of 10 seconds gives the
+  scavenges of `elements` 20000 + 0 with its line, before (`cd9024f`) and after (`286470e`).
+
+**Results.**
+
+| Part of the draw | macOS, `chart` | macOS, `elements` | Pixel 8a, `chart` | Pixel 8a, `elements` |
+|---|---|---|---|---|
+| All samples of the draw | 1946 | 1923 | 5376 | 3779 |
+| `PointElement.draw` | 1355 | 1376 | 4278 | 2478 |
+| The loop of `DatasetController.draw` or `_drawElements` without `PointElement.draw` | 287 | 47 | 103 | 159 |
+| The read `element['hidden']` of that loop | 256 (169 with the interrupt tag) | — | 31 | — |
+
+- **Upstream work.** For each point, the chart path does the loop of
+  `core.datasetController.js:728-738`: the read `element.hidden`, the read `element.active`, and
+  the call `element.draw(ctx, area)`. For each draw, `Chart.draw` clears the canvas, calls the
+  plugin hooks, sorts the visible metas and reads the clip of the dataset
+  (`core.controller.js:698-809`). These parts of each draw are below 1 % of the samples.
+- **Costs of the port.** The read `element['hidden']` goes through the `switch` of
+  `PointElement.operator []` (8 names), the `switch` of `Element.operator []` (5 names) and
+  `Element._extra`. On macOS it has 13 % of the samples of the chart draw (7 % without the
+  interrupt samples). On the Pixel 8a it has 0.6 %. `_at` with a `double` index, `jsTruthy`, the
+  casts `as Element` and `as types.VisualElement`, and the read
+  `jsGet(options, 'drawActiveElementsOnTop')` have 0.1 to 0.7 % together. Section 10.6 removes
+  the cost of the read `hidden`. After that change, the loop has 18 of 1757 samples (1 %) on
+  macOS.
+- **Work of the elements mode only.** The mode `elements` writes `x` and `y` of each point in
+  each frame. Each write stores a new boxed `double` into an old element. Case (a) writes no
+  positions.
+- **`PointElement.draw`.** Both modes call it with the same options and the same canvas. On the
+  Pixel 8a, the counts of its small functions differ between the two builds (for example
+  `canvasNumber`, 6.3 % and 2.5 %). The two builds have other code, and thus other inline
+  decisions.
+- **GC of `elements` 20000 + 0.** Before and after, the timeline has 195 scavenges in 10 seconds.
+  `CollectNewGeneration` takes 1054 ms before and 1033 ms after. `IterateStoreBuffers`, the scan of
+  the old elements that point to the new boxed values, takes 1521 ms and 1441 ms on the scavenger
+  tasks. The GC does not change.
+- **`elements` 20000 + 0, before and after.** Without the interrupt samples, the shares of the
+  functions are equal in the two builds: for example `PointElement.draw` 57.6 % and 57.8 %,
+  `LineElement.draw` 27.7 % and 27.8 %, and the native atlas draw 15.5 % and 15.6 %. Section 10.8
+  has the frame figures.
+
+### 10.6 Change: the declared `hidden` of `Element`
+
+`DatasetController.draw` reads `element.hidden` for each element in each draw
+(`core.datasetController.js:730`). `core.element.ts` does not declare `hidden`.
+`_updateVisibility` writes it (`core.controller.js:898`), and user code can write any value.
+[Chart.js ADR 0017](adr/0017-element-properties.md) (Consequences) permits a declared property
+when a ported caller reads it often.
+
+The forms:
+
+| Form | The read in `DatasetController.draw` |
+|---|---|
+| Upstream | `if (element.hidden)`: a property read of the element. A data element without the property gives `undefined`. |
+| Before (the port of phase 5) | `jsTruthy(element['hidden'])`: the read by name of section 10.5, which ends in `Element._extra`. |
+| After | `jsTruthy(element.hidden)`: the field `Object? hidden = undefined` of `Element`. The read and the write by name use the same field. |
+
+A third form puts `'hidden'` first in each `switch`. It keeps a string compare for each element and
+each draw. The field has less work, so the third form was not measured.
+
+**Behavior.** The field keeps any value, as an extra property does: the `undefined` sentinel at the
+start, Dart `null` for JS `null`, and other values as they are. The write by name, `assign` and the
+animations write it by name. `_updateVisibility` writes it with the setter. The tests:
+- `test/port/core/core.element_test.dart`, group `hidden`.
+- `test/port/core/core.datasetController_test.dart`, scenario `draw with hidden values`. The
+  reference comes from `src/core/core.datasetController.js` in Node.js v24.12.0 on x64. The values
+  `1`, `'a'` and `{}` hide their point. The values `0`, `''`, `null`, `undefined` and `false` do
+  not. The before form also passes this scenario.
+
+**Figures.** "Before" is `286470e` and "after" is the change. Each scenario has 3 ABBA pairs of
+fresh processes, as in section 9.1. A rerun has 3 more pairs. The cells give the medians of FPS /
+draw (ms) / raster (ms). A difference is the mean of the pair differences, after minus before,
+with its 95 % bootstrap interval.
+
+| Platform | Scenario | Before | After | Draw difference | FPS difference |
+|---|---|---|---|---|---|
+| Pixel 8a | `chart` case (a), 1000 | 58.2 / 5.66 / 4.94 | 58.5 / 5.58 / 5.04 | -0.11 (-0.23 to -0.02) | +0.21 (+0.15 to +0.31) |
+| Pixel 8a | the same, rerun | 58.8 / 5.42 / 4.80 | 58.9 / 5.10 / 4.83 | -0.33 (-0.36 to -0.31) | +0.06 (-0.34 to +0.50) |
+| Pixel 8a | `chart` case (a), 5000 | 58.2 / 7.80 / 4.93 | 58.4 / 7.59 / 4.91 | -0.24 (-0.32 to -0.11) | +0.23 (-0.32 to +0.67) |
+| Pixel 8a | `chart` case (a), 20000 | 46.7 / 14.42 / 8.18 | 53.4 / 13.02 / 8.24 | -0.50 (-2.05 to +0.82) | +2.15 (-6.00 to +11.63) |
+| Pixel 8a | the same, rerun | 46.1 / 14.29 / 8.20 | 53.1 / 13.26 / 8.02 | -0.75 (-1.03 to -0.36) | +3.17 (+0.84 to +7.01) |
+| Pixel 8a | `chart` case (a), `SHARING=0`, 20000 | 37.7 / 15.85 / 8.42 | 39.5 / 15.19 / 8.66 | -1.13 (-2.91 to +0.13) | +2.91 (-1.50 to +8.47) |
+| macOS | `chart` case (a), 5000 | 60.0 / 1.63 / 0.78 | 60.0 / 1.57 / 0.80 | -0.07 (-0.08 to -0.06) | -0.37 (-1.10 to +0.00) |
+| macOS | `chart` case (a), 20000 | 60.0 / 5.53 / 1.56 | 59.8 / 5.18 / 1.65 | -0.34 (-0.36 to -0.32) | +0.09 (-0.22 to +0.66) |
+| macOS | the same, rerun | 60.0 / 5.60 / 1.60 | 60.0 / 5.27 / 1.61 | -0.31 (-0.34 to -0.29) | +0.11 (+0.00 to +0.33) |
+| macOS | `chart` case (a), `SHARING=0`, 20000 | 60.0 / 5.54 / 1.54 | 60.0 / 5.24 / 1.54 | -0.31 (-0.33 to -0.30) | -0.03 (-0.09 to +0.00) |
+| Chrome (dart2wasm) | `chart` case (a), 5000 | 60.2 / 1.87 / 1.85 | 60.3 / 1.76 / 1.87 | -0.11 (-0.15 to -0.05) | +0.05 (-0.02 to +0.10) |
+| Chrome (dart2wasm) | `chart` case (a), 20000 | 60.2 / 5.83 / 2.32 | 60.2 / 5.40 / 2.30 | -0.42 (-0.48 to -0.34) | -0.01 (-0.09 to +0.07) |
+| macOS | `elements`, `LINE=0`, 20000 | 59.9 / 5.63 / 1.54 | 60.0 / 5.69 / 1.55 | +0.04 (-0.02 to +0.07) | +0.09 (+0.00 to +0.17) |
+| Pixel 8a | `bars` 1000 (6 pairs) | 45.1 / 11.31 / 14.93 | 46.7 / 10.73 / 14.50 | -0.23 (-0.63 to +0.17) | +0.66 (-0.96 to +2.35) |
+
+- The rows with a rerun had one run outside the limits of plan §6.3 in the first series: on the
+  Pixel 8a, one run of 40.7 FPS at 20000 and one raster time of 5.48 ms at 1000, and on macOS one
+  raster time of 2.96 ms. The reruns pass.
+- The change makes the chart draw faster on the three platforms: by 0.31 to 0.34 ms (6 %) on
+  macOS and 0.42 ms (7 %) in Chrome at 20000, and by 0.11 to 0.75 ms on the Pixel 8a. No measured
+  scenario is slower. `elements` and `bars` do not read `hidden`, and their figures do not change.
+- Decision: keep the change (porting-flow.md §1.1). The upstream behavior is the same, and the
+  lines of `DatasetController.draw` keep the upstream form. Thus it needs no `DIVERGES` marker
+  and no `differences.md` row.
+- The Pixel 8a battery temperature was 33.5 to 36.2 degrees Celsius in these series. In the first
+  macOS series, another window was in front at the start or at the end of 5 runs. These runs have
+  58.7 to 60.1 FPS, and their draw times are near the times of the other runs. The macOS rerun had
+  the stress window in front in all runs. In Chrome, another window was in front at the start of
+  one run, with 60.2 FPS.
+
+### 10.7 The draw cost for each point (Chart.js ADR 0021 §8)
+
+[Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) §8 gives the acceptance: in case
+(a) with typed classes, the draw time for each point equals the mode `elements` with typed options.
+The mode `elements` with `LINE=0` draws the same points without a line (section 6).
+
+**Method.** Each series alternates the chart build and the elements build of the same N (ABBA, 3
+pairs at each N). A difference is the mean of the pair differences, chart minus elements, with its
+95 % bootstrap interval. The cost for each point is the change of the draw time from N = 1000 to N
+= 20000, divided by 19000. The difference for each point comes from the pair differences.
+
+**Results** (the draw medians in ms, with the range of the runs):
+
+| Platform and code | N | Chart, case (a) | Elements, `LINE=0` | Chart minus elements |
+|---|---|---|---|---|
+| Pixel 8a, before section 10.6 | 1000 | 5.67 (5.56-5.76) | 5.53 (5.34-5.58) | +0.18 (-0.02 to +0.33) |
+| | 5000 | 7.84 (7.72-7.97) | 7.67 (7.43-7.86) | +0.19 (-0.14 to +0.54) |
+| | 20000 | 12.84 (12.34-13.14) | 12.98 (12.85-13.17) | -0.23 (-0.51 to -0.03) |
+| Pixel 8a, after section 10.6 | 1000 | 5.75 (5.37-5.84) | 5.40 (5.38-5.59) | +0.20 (-0.22 to +0.46) |
+| | 5000 | 7.50 (7.44-7.50) | 7.49 (7.48-7.77) | -0.10 (-0.27 to +0.02) |
+| | 20000 | 14.79 (12.73-16.10) | 14.02 (13.36-17.05) | -0.27 (-0.95 to +0.77) |
+| macOS, before section 10.6 | 1000 | 0.57 (0.57-0.57) | 0.56 (0.55-0.56) | +0.01 (+0.01 to +0.02) |
+| | 5000 | 1.71 (1.71-1.71) | 1.63 (1.63-1.65) | +0.07 (+0.06 to +0.08) |
+| | 20000 | 5.65 (5.61-5.72) | 5.66 (5.65-5.67) | +0.00 (-0.05 to +0.05) |
+| macOS, after section 10.6 | 1000 | 0.53 (0.53-0.55) | 0.54 (0.53-0.54) | +0.00 (-0.01 to +0.01) |
+| | 5000 | 1.60 (1.57-1.61) | 1.61 (1.60-1.62) | -0.02 (-0.03 to -0.01) |
+| | 20000 | 5.27 (5.27-5.28) | 5.63 (5.62-5.66) | -0.36 (-0.39 to -0.34) |
+
+The cost for each point, in µs:
+
+| Platform and code | Chart, case (a) | Elements, `LINE=0` | Chart minus elements |
+|---|---|---|---|
+| Pixel 8a, before section 10.6 | 0.377 | 0.392 | -0.021 (-0.036 to -0.007) |
+| Pixel 8a, after section 10.6 | 0.476 | 0.454 | -0.025 (-0.067 to +0.028) |
+| macOS, before section 10.6 | 0.267 | 0.268 | -0.001 (-0.003 to +0.002) |
+| macOS, after section 10.6 | 0.249 | 0.268 | -0.019 (-0.021 to -0.018) |
+
+- **Acceptance.** Case (a) passes on the Pixel 8a and on macOS, also before section 10.6. The
+  cost for each point of the chart is equal to the elements mode or smaller. After section 10.6,
+  the chart draw at 20000 points is 0.36 ms (6 %) shorter than the elements mode on macOS.
+- **The earlier figures.** A first measurement gave 16.63 ms for the chart at 20000 and 13.70 ms
+  for the elements mode. These figures came from two series about 30 minutes apart, at a battery
+  temperature of 26.6 and 36.3 degrees Celsius. On the Pixel 8a, the frequency of the big core
+  changes from 1.4 to 2.9 GHz between runs (section 10.8). Thus only figures of the same ABBA
+  series are comparable. The per-point medians of the second Pixel 8a series include a thermal
+  drift: the 20000 runs go from 12.7 to 17.1 ms. The pair differences cancel the drift.
+- **The remaining difference.** At 1000 points on the Pixel 8a, the chart draw is 0.18 to 0.20 ms
+  longer, with intervals that include 0. This part does not grow with N. It is the work of each
+  draw: `Chart.draw` clears the canvas, calls the plugin hooks, sorts the visible metas and reads
+  the clip of the dataset (section 10.5). This is upstream work. No difference for each point
+  remains.
+
+### 10.8 `elements` 20000 + 0 on the Pixel 8a
+
+The regression set of phase 5 (before is `cd9024f`, after is `286470e`, 3 ABBA pairs) missed the
+FPS median criterion of plan §6.3 in `elements` 20000 + 0. This section measures more pairs and
+looks for a cause.
+
+**Series.** Each row is one ABBA series. "Phase 5" is `286470e` or the change of section 10.6.
+That change does not touch the draw of the mode `elements`. The cells give the medians of FPS /
+draw (ms) / raster (ms). The differences are phase 5 minus before.
+
+| Series | Pairs | Before | Phase 5 | Draw difference | FPS difference | Plan §6.3 |
+|---|---|---|---|---|---|---|
+| `286470e`, the regression set and 6 more pairs | 9 | 43.1 / 15.15 / 8.88 | 38.1 / 16.21 / 9.10 | +0.75 (+0.12 to +1.39) | -2.59 (-4.74 to -0.56) | miss: FPS median, draw median |
+| Section 10.6, set 1 | 6 | 42.6 / 15.00 / 9.00 | 42.5 / 15.41 / 9.03 | +0.15 (-0.81 to +1.03) | -0.01 (-2.94 to +2.69) | pass |
+| Section 10.6, set 2 | 6 | 32.2 / 18.66 / 9.09 | 31.3 / 19.49 / 9.41 | +0.68 (-0.44 to +1.80) | -1.90 (-4.98 to +0.20) | pass |
+| `286470e`, with the core frequency | 4 | 36.6 / 16.68 / 9.15 | 35.2 / 17.38 / 9.04 | +0.23 (-0.69 to +1.03) | -0.79 (-1.58 to +0.21) | miss: FPS median 35.2 (limit 35.6) |
+| `286470e`, with the core frequency | 6 | 37.7 / 16.76 / 8.70 | 38.6 / 16.08 / 8.86 | -0.20 (-0.88 to +0.37) | -0.38 (-2.31 to +1.76) | pass |
+| All | 31 | 38.7 / 15.84 / 8.93 | 36.8 / 16.74 / 9.09 | +0.37 (-0.03 to +0.76) | -1.30 (-2.46 to -0.20) | miss: FPS median 36.8 (limit 37.7) |
+
+**Controls.**
+- **A change in other code.** The worktree of the ADR 0021 §8 variant changes one line of
+  `core.datasetController.dart`, which the mode `elements` does not run. Against `286470e`, its
+  build gives +0.04 ms of draw (-0.54 to +0.62) and -0.11 FPS (-1.24 to +0.95) over 6 pairs.
+- **`Element implements types.PropertyAccess`.** A probe build with `types.ElementPropertyRead`
+  in place of `types.PropertyAccess` (one line, on top of section 10.6) is not faster: +0.79 ms of
+  draw (+0.02 to +1.60) over 6 pairs, and -0.17 ms (-0.60 to +0.37) at the same core frequency
+  (see below). The other phase 5 changes of the element files (the statics `jsClass`,
+  `elementCfgArg` and `element_options.dart`) do not run in the draw of this mode.
+- **Profile and GC.** Section 10.5: the shares of the functions and the GC are equal in the two
+  builds.
+
+**The core frequency.** Two series sample the frequency of the big core (cpu8) and the core of
+the UI thread every 0.1 s on the device, in the window of each `STRESS` line. In 6 pairs, the mean
+frequency falls from 2.82 to 1.43 GHz, and the draw rises from 13.9 to 20.1 ms. When the core is
+slow, the UI thread also moves to the middle cores. A least-squares fit of the 12 runs gives
+`draw = 7.95 ms + 19.11 ms GHz / f`, with a residual of 0.60 ms. At the same frequency, the phase 5
+build is 0.26 ms faster (-0.76 to +0.24, a bootstrap over the pairs). The probe series gives
+-0.17 ms (-0.60 to +0.37) in the same way.
+
+**The rest of the regression set** (before `cd9024f`, after the change of section 10.6, 3 pairs):
+
+| Scenario | Before | After | Draw difference | FPS difference | Plan §6.3 |
+|---|---|---|---|---|---|
+| `primitives` 20000 + 0 | 59.2 / 10.50 / 9.56 | 59.2 / 10.58 / 9.66 | +0.16 (+0.08 to +0.28) | -0.27 (-0.66 to +0.16) | pass |
+| `bars` 1000 | 49.1 / 10.80 / 14.04 | 47.0 / 11.09 / 14.93 | +0.31 (-0.24 to +0.88) | -2.91 (-6.60 to -1.05) | miss: FPS median 47.0 (limit 48.1) |
+| `arcs` 1000 | 34.9 / 16.23 / 20.57 | 34.4 / 16.23 / 20.52 | -0.10 (-0.70 to +0.39) | -0.51 (-1.71 to +0.13) | pass |
+| `elements` 5000 + 50 | 57.8 / 8.41 / 6.08 | 58.7 / 8.28 / 6.28 | -0.16 (-0.26 to -0.10) | +0.95 (+0.82 to +1.18) | pass |
+
+**Result.**
+- Over 31 pairs, the phase 5 builds draw `elements` 20000 + 0 0.37 ms (2.7 %) longer, and the
+  FPS median misses the criterion of plan §6.3 by 0.9 FPS. The raster time is 0.18 ms longer
+  (+0.01 to +0.35). The time of the UI thread outside the draw does not change (-0.02 ms).
+- The draw follows the frequency of the big core, which the thermal control of the phone sets.
+  At the same frequency, the phase 5 build is not slower. The profile, the GC and the two controls
+  show no code path that costs more. Thus no faster form is available, and no change follows.
+- `bars` 1000 misses the FPS criterion against `cd9024f`. Section 10.6 does not cause the miss:
+  against `286470e`, the change gives -0.23 ms of draw and +0.66 FPS over 6 pairs. Section 9.5
+  has the spread of `bars` 1000 on this phone.
+- `primitives` 20000 + 0 missed with one run in the regression set. It passes in this series.
