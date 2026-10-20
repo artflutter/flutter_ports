@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1 src/helpers/index.ts (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.5.1+7169e651 src/helpers/index.ts (MIT, Chart.js Contributors).
 
 /// Port of `src/helpers/index.ts`: the helpers that upstream exports as
 /// `Chart.helpers`. The export list is the upstream list. The

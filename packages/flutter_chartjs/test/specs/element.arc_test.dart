@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1 test/specs/element.arc.tests.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.5.1+7169e651 test/specs/element.arc.tests.js (MIT, Chart.js Contributors).
 import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/pure.dart';

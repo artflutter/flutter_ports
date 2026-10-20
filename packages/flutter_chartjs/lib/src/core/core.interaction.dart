@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1 src/core/core.interaction.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.5.1+7169e651 src/core/core.interaction.js (MIT, Chart.js Contributors).
 
 /// Port of `src/core/core.interaction.js`.
 ///

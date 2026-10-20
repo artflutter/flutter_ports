@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1 test/specs/helpers.options.tests.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.5.1+7169e651 test/specs/helpers.options.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/core/core.defaults.dart'
     as chart

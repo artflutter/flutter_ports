@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1 test/specs/helpers.core.tests.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.5.1+7169e651 test/specs/helpers.core.tests.js (MIT, Chart.js Contributors).
 import 'dart:convert';
 import 'dart:typed_data';
 

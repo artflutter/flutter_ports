@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1 test/index.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.5.1+7169e651 test/index.js (MIT, Chart.js Contributors).
 
 /// Port of `test/index.js`, the set-up of the Chart.js specs
 /// (porting-flow.md section 3, "`test/index.js` equivalent").

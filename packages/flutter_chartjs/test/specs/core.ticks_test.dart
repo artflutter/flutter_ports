@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1 test/specs/core.ticks.tests.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.5.1+7169e651 test/specs/core.ticks.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/core/core.ticks.dart' show ticks;
 import 'package:flutter_chartjs/src/js/js_function.dart';

@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1 test/specs/scale.linear.tests.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.5.1+7169e651 test/specs/scale.linear.tests.js (MIT, Chart.js Contributors).
 @TestOn('vm')
 library;
 

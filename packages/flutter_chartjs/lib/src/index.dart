@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1 src/index.ts (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.5.1+7169e651 src/index.ts (MIT, Chart.js Contributors).
 
 /// Port of `src/index.ts`, the part of phase 6: the exports of the ported
 /// modules, the four namespaces and [registerables] (Chart.js ADR 0020,

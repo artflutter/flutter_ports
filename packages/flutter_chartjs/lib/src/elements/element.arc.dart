@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1 src/elements/element.arc.ts (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.5.1+7169e651 src/elements/element.arc.ts (MIT, Chart.js Contributors).
 
 /// Port of `src/elements/element.arc.ts`: the arc element of the doughnut,
 /// pie and polar area charts.
