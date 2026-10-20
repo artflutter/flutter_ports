@@ -1,0 +1,2371 @@
+[
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests"
+    ],
+    "it": "should correctly determine the unit",
+    "test": "should correctly determine the unit",
+    "line": 84,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The case asserts only scale._unit of a line chart with a dataset. The probe gives pass and equal values in the modes all and none. The data uses Math.random for y and a moment parse with 'MMM DD YYYY' in the test body only; the port builds the same x values without a moment format.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests",
+      "when rendering several days"
+    ],
+    "it": "should be bounded by the nearest week beginnings",
+    "test": "should be bounded by the nearest week beginnings",
+    "line": 214,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The line chart has a dataset with no data, thus it needs controller.line. The probe gives pass and equal values in the modes all and none. The bounds read getValueForPixel at scale.left and scale.right; the default legend is at the top and does not change the horizontal layout.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests",
+      "when rendering several days"
+    ],
+    "it": "should convert between screen coordinates and times",
+    "test": "should convert between screen coordinates and times",
+    "line": 221,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The probe gives pass and equal values in the modes all and none. The assertions read horizontal pixels and values only, with the matcher toBeCloseToTime of the spec (a moment diff in hours, a test-side helper).",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests",
+      "when rendering several years"
+    ],
+    "it": "should be bounded by nearest step's year start and end",
+    "test": "should be bounded by nearest step's year start and end",
+    "line": 267,
+    "kind": "chart",
+    "currentSkip": "blocked: plugin.legend",
+    "modules": [
+      "scale.time",
+      "scale.linear",
+      "core.adapters",
+      "plugin.legend"
+    ],
+    "verdict": "blocked: plugin.legend",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "fail",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "Information only: the probe confirms the skip. The chart has no dataset; without the legend, ctx.font at the x fit is not the legend font (plugin.legend.js:143), _getLabelCapacity changes and the unit becomes month, not year. In the mode none the case fails. Skeptic check: the probe gives pass in the mode only:legend and fail in the modes none and without:legend; the other without:<id> modes give pass. Thus the legend alone changes the asserted values.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests",
+      "when rendering several years"
+    ],
+    "it": "should build the correct ticks",
+    "test": "should build the correct ticks",
+    "line": 283,
+    "kind": "chart",
+    "currentSkip": "blocked: plugin.legend",
+    "modules": [
+      "scale.time",
+      "scale.linear",
+      "core.adapters",
+      "plugin.legend"
+    ],
+    "verdict": "blocked: plugin.legend",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "fail",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "Information only: the probe confirms the skip. The chart has no dataset; without the legend, ctx.font at the x fit is not the legend font (plugin.legend.js:143), _getLabelCapacity changes and the unit becomes month, not year. In the mode none the labels are \"Jul 2005\", \"Nov 2005\", ... Skeptic check: the probe gives pass in the mode only:legend and fail in the modes none and without:legend; the other without:<id> modes give pass. Thus the legend alone changes the asserted values.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests",
+      "when rendering several years"
+    ],
+    "it": "should have ticks with accurate labels",
+    "test": "should have ticks with accurate labels",
+    "line": 287,
+    "kind": "chart",
+    "currentSkip": "blocked: plugin.legend",
+    "modules": [
+      "scale.time",
+      "scale.linear",
+      "core.adapters",
+      "plugin.legend"
+    ],
+    "verdict": "blocked: plugin.legend",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "fail",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "Information only: the probe confirms the skip. The chart has no dataset; without the legend, ctx.font at the x fit is not the legend font (plugin.legend.js:143), _getLabelCapacity changes and the unit becomes month, not year. In the mode none the case fails. Skeptic check: the probe gives pass in the mode only:legend and fail in the modes none and without:legend; the other without:<id> modes give pass. Thus the legend alone changes the asserted values.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests"
+    ],
+    "it": "should get the correct label for a data value",
+    "test": "should get the correct label for a data value",
+    "line": 305,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The assertions read getLabelForValue of a parsed value through the controller (getParsed) and of a tick pixel. The probe gives pass and equal values in the modes all and none. The default adapter gives the lower-case day period of moment (Chart.js ADR 0024, decision 6).",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests",
+      "when ticks.callback is specified"
+    ],
+    "it": "should get the correct labels for ticks",
+    "test": "should get the correct labels for ticks",
+    "line": 368,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The assertions read the count and the text of the tick labels after the auto skip. The probe gives pass and equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests",
+      "when ticks.callback is specified"
+    ],
+    "it": "should update ticks.callback correctly",
+    "test": "should update ticks.callback correctly",
+    "line": 376,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The case writes ticks.callback in chart.options and calls chart.update(). The probe gives pass and equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests"
+    ],
+    "it": "should get the correct label when time is specified as a string",
+    "test": "should get the correct label when time is specified as a string",
+    "line": 390,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The assertions read getLabelForValue of a parsed value (getParsed of the line controller). The probe gives pass and equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests"
+    ],
+    "it": "should get the correct label for a timestamp",
+    "test": "should get the correct label for a timestamp",
+    "line": 490,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The case uses parsing.xAxisKey 't' and reads getLabelForValue of a parsed value. The probe gives pass and equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests"
+    ],
+    "it": "should get the correct pixel for only one data in the dataset",
+    "test": "should get the correct pixel for only one data in the dataset",
+    "line": 522,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The assertion compares getValueForPixel(getPixelForValue(v)) with v; no plugin changes this round trip. The probe gives pass and equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests"
+    ],
+    "it": "does not create a negative width chart when hidden",
+    "test": "does not create a negative width chart when hidden",
+    "line": 548,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "static",
+    "probe": {
+      "all": "unsupported",
+      "none": "unsupported",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The probe gives unsupported: it has no DOM layout for a wrapper with display: none. The Dart DOM stand-in gives a display: none subtree the size 0 (chartjs_test_utils lib/src/dom.dart, used by core.controller_test.dart), and with a chart width of 0 every box gets 0, so the legend cannot change scales.y.width, scales.y.maxWidth or chart.width. Skeptic check: a probe spec of the same chart with a 0 x 0 canvas and responsive false gives pass and the value 0 for the three assertions in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests",
+      "when ticks.source",
+      "is \"labels\""
+    ],
+    "it": "should correctly handle empty `data.labels` using \"day\" if `time.unit` is undefined`",
+    "test": "should correctly handle empty `data.labels` using \"day\" if `time.unit` is undefined`",
+    "line": 639,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The assertions read scale.min and scale.max from Date.now() and an empty label list; the parser 'YYYY' gives no asserted value. The probe gives pass and equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests",
+      "when ticks.source",
+      "is \"labels\""
+    ],
+    "it": "should correctly handle empty `data.labels` using `time.unit`",
+    "test": "should correctly handle empty `data.labels` using `time.unit`",
+    "line": 650,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The assertions read scale.min and scale.max from Date.now() with the unit year and an empty label list. The probe gives pass and equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests",
+      "when ticks.source",
+      "is \"data\""
+    ],
+    "it": "should correctly handle empty `data.labels` and hidden datasets using `time.unit`",
+    "test": "should correctly handle empty `data.labels` and hidden datasets using `time.unit`",
+    "line": 744,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The case sets meta.hidden of dataset 1 and reads scale.min, scale.max from Date.now() and an empty label list. The probe gives pass and equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests"
+    ],
+    "it": "should handle offset when there are more data points than ticks",
+    "test": "should handle offset when there are more data points than ticks",
+    "line": 1125,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.timeseries",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The assertions read getPixelForDecimal(0) and (1) as absolute pixels (29 and 512), which depend on the y axis width. The probe gives pass and equal values in the modes all and none. The top-level config key plugins: {legend: false} is not an array and does not disable the legend; the legend at the top does not change the x pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.time.tests.js",
+    "dartFile": "test/specs/scale.time_test.dart",
+    "describe": [
+      "Time scale tests"
+    ],
+    "it": "should pass timestamp to ticks callback",
+    "test": "should pass timestamp to ticks callback",
+    "line": 1308,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The assertion reads only the type of the value that the tick callback gets. The probe gives pass and equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format"
+    ],
+    "it": "should get the correct label for a data value by format",
+    "test": "adapt-date-moment-format should get the correct label for a data value by format",
+    "line": 416,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:416 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts the text of xScale.format with the pattern 'yyyy-MM-dd' and 'yyyy-MM'; no plugin touches it.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format"
+    ],
+    "it": "should round to isoWeekday",
+    "test": "adapt-date-moment-format should round to isoWeekday",
+    "line": 459,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:459 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. The twin asserts the tick values in place of the moment 'WW' labels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source",
+      "is \"labels\""
+    ],
+    "it": "should generate ticks from \"data.labels\"",
+    "test": "adapt-date-moment-format when ticks.source is \"labels\" should generate ticks from \"data.labels\"",
+    "line": 603,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:603 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max and the tick labels with the parser 'yyyy'.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source",
+      "is \"labels\""
+    ],
+    "it": "should not add ticks for min and max if they extend the labels range",
+    "test": "adapt-date-moment-format when ticks.source is \"labels\" should not add ticks for min and max if they extend the labels range",
+    "line": 611,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:611 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max and the tick labels with the parser 'yyyy'.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source",
+      "is \"labels\""
+    ],
+    "it": "should not duplicate ticks if min and max are the labels limits",
+    "test": "adapt-date-moment-format when ticks.source is \"labels\" should not duplicate ticks if min and max are the labels limits",
+    "line": 625,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:625 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max and the tick labels with the parser 'yyyy'.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source",
+      "is \"data\""
+    ],
+    "it": "should generate ticks from \"datasets.data\"",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" should generate ticks from \"datasets.data\"",
+    "line": 696,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:696 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max and the tick labels with the parser 'yyyy'.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source",
+      "is \"data\""
+    ],
+    "it": "should not add ticks for min and max if they extend the labels range",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" should not add ticks for min and max if they extend the labels range",
+    "line": 704,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:704 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max and the tick labels with the parser 'yyyy'.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source",
+      "is \"data\""
+    ],
+    "it": "should not duplicate ticks if min and max are the labels limits",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" should not duplicate ticks if min and max are the labels limits",
+    "line": 718,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:718 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max and the tick labels with the parser 'yyyy'.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source",
+      "is \"data\""
+    ],
+    "it": "should correctly handle empty `data.labels` using \"day\" if `time.unit` is undefined`",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" should correctly handle empty `data.labels` using \"day\" if `time.unit` is undefined`",
+    "line": 732,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:732 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max and the tick labels with the parser 'yyyy'.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is true and scale type",
+      "is \"timeseries\""
+    ],
+    "it": "should space data out with the same gap, whatever their time values",
+    "test": "adapt-date-moment-format when normalized is true and scale type is \"timeseries\" should space data out with the same gap, whatever their time values",
+    "line": 792,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:792 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels (some absolute: 86, 388, 71, 401); the y axis is hidden and the legend at the top does not change them.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is true and scale type",
+      "is \"timeseries\""
+    ],
+    "it": "should add a step before if scale.min is before the first data",
+    "test": "adapt-date-moment-format when normalized is true and scale type is \"timeseries\" should add a step before if scale.min is before the first data",
+    "line": 803,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:803 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels (some absolute: 86, 388, 71, 401); the y axis is hidden and the legend at the top does not change them.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is true and scale type",
+      "is \"timeseries\""
+    ],
+    "it": "should add a step after if scale.max is after the last data",
+    "test": "adapt-date-moment-format when normalized is true and scale type is \"timeseries\" should add a step after if scale.max is after the last data",
+    "line": 817,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:817 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels (some absolute: 86, 388, 71, 401); the y axis is hidden and the legend at the top does not change them.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is true and scale type",
+      "is \"timeseries\""
+    ],
+    "it": "should add steps before and after if scale.min/max are outside the data range",
+    "test": "adapt-date-moment-format when normalized is true and scale type is \"timeseries\" should add steps before and after if scale.min/max are outside the data range",
+    "line": 830,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:830 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels (some absolute: 86, 388, 71, 401); the y axis is hidden and the legend at the top does not change them.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is true and scale type",
+      "is \"time\""
+    ],
+    "it": "should space data out with a gap relative to their time values",
+    "test": "adapt-date-moment-format when normalized is true and scale type is \"time\" should space data out with a gap relative to their time values",
+    "line": 870,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:870 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left and scale.width.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is true and scale type",
+      "is \"time\""
+    ],
+    "it": "should take in account scale min and max if outside the ticks range",
+    "test": "adapt-date-moment-format when normalized is true and scale type is \"time\" should take in account scale min and max if outside the ticks range",
+    "line": 881,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:881 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left and scale.width.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is false and scale type",
+      "is \"timeseries\""
+    ],
+    "it": "should space data out with the same gap, whatever their time values",
+    "test": "adapt-date-moment-format when normalized is false and scale type is \"timeseries\" should space data out with the same gap, whatever their time values",
+    "line": 792,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:792 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels (some absolute: 86, 388, 71, 401); the y axis is hidden and the legend at the top does not change them.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is false and scale type",
+      "is \"timeseries\""
+    ],
+    "it": "should add a step before if scale.min is before the first data",
+    "test": "adapt-date-moment-format when normalized is false and scale type is \"timeseries\" should add a step before if scale.min is before the first data",
+    "line": 803,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:803 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels (some absolute: 86, 388, 71, 401); the y axis is hidden and the legend at the top does not change them.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is false and scale type",
+      "is \"timeseries\""
+    ],
+    "it": "should add a step after if scale.max is after the last data",
+    "test": "adapt-date-moment-format when normalized is false and scale type is \"timeseries\" should add a step after if scale.max is after the last data",
+    "line": 817,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:817 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels (some absolute: 86, 388, 71, 401); the y axis is hidden and the legend at the top does not change them.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is false and scale type",
+      "is \"timeseries\""
+    ],
+    "it": "should add steps before and after if scale.min/max are outside the data range",
+    "test": "adapt-date-moment-format when normalized is false and scale type is \"timeseries\" should add steps before and after if scale.min/max are outside the data range",
+    "line": 830,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:830 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels (some absolute: 86, 388, 71, 401); the y axis is hidden and the legend at the top does not change them.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is false and scale type",
+      "is \"time\""
+    ],
+    "it": "should space data out with a gap relative to their time values",
+    "test": "adapt-date-moment-format when normalized is false and scale type is \"time\" should space data out with a gap relative to their time values",
+    "line": 870,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:870 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left and scale.width.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when normalized is false and scale type",
+      "is \"time\""
+    ],
+    "it": "should take in account scale min and max if outside the ticks range",
+    "test": "adapt-date-moment-format when normalized is false and scale type is \"time\" should take in account scale min and max if outside the ticks range",
+    "line": 881,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:881 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left and scale.width.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when bounds",
+      "is \"data\""
+    ],
+    "it": "should preserve the data range",
+    "test": "adapt-date-moment-format when bounds is \"data\" should preserve the data range",
+    "line": 905,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:905 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max with the parser 'MM/dd HH:mm', x pixels relative to the scale and the tick labels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when bounds",
+      "is \"labels\""
+    ],
+    "it": "should preserve the label range",
+    "test": "adapt-date-moment-format when bounds is \"labels\" should preserve the label range",
+    "line": 941,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:941 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts absolute x pixels 60 and 426; the y axis is hidden and the legend at the top does not change them.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"auto\" and bounds \"data\""
+    ],
+    "it": "should expand scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"auto\" and bounds \"data\" should expand scale to the min/max range",
+    "line": 1010,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1010 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"auto\" and bounds \"data\""
+    ],
+    "it": "should shrink scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"auto\" and bounds \"data\" should shrink scale to the min/max range",
+    "line": 1032,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1032 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"auto\" and bounds \"ticks\""
+    ],
+    "it": "should expand scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"auto\" and bounds \"ticks\" should expand scale to the min/max range",
+    "line": 1010,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1010 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"auto\" and bounds \"ticks\""
+    ],
+    "it": "should shrink scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"auto\" and bounds \"ticks\" should shrink scale to the min/max range",
+    "line": 1032,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1032 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"data\" and bounds \"data\""
+    ],
+    "it": "should expand scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"data\" and bounds \"data\" should expand scale to the min/max range",
+    "line": 1010,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1010 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"data\" and bounds \"data\""
+    ],
+    "it": "should shrink scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"data\" and bounds \"data\" should shrink scale to the min/max range",
+    "line": 1032,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1032 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"data\" and bounds \"ticks\""
+    ],
+    "it": "should expand scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"data\" and bounds \"ticks\" should expand scale to the min/max range",
+    "line": 1010,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1010 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"data\" and bounds \"ticks\""
+    ],
+    "it": "should shrink scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"data\" and bounds \"ticks\" should shrink scale to the min/max range",
+    "line": 1032,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1032 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"labels\" and bounds \"data\""
+    ],
+    "it": "should expand scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"labels\" and bounds \"data\" should expand scale to the min/max range",
+    "line": 1010,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1010 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"labels\" and bounds \"data\""
+    ],
+    "it": "should shrink scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"labels\" and bounds \"data\" should shrink scale to the min/max range",
+    "line": 1032,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1032 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"labels\" and bounds \"ticks\""
+    ],
+    "it": "should expand scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"labels\" and bounds \"ticks\" should expand scale to the min/max range",
+    "line": 1010,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1010 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when min and/or max are defined",
+      "and ticks.source is \"labels\" and bounds \"ticks\""
+    ],
+    "it": "should shrink scale to the min/max range",
+    "test": "adapt-date-moment-format when min and/or max are defined and ticks.source is \"labels\" and bounds \"ticks\" should shrink scale to the min/max range",
+    "line": 1032,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1032 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts scale.min, scale.max, x pixels relative to the scale and the tick range.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"auto\" and scale type is \"timeseries\""
+    ],
+    "it": "should not add offset from the edges",
+    "test": "adapt-date-moment-format when ticks.source is \"auto\" and scale type is \"timeseries\" should not add offset from the edges",
+    "line": 1086,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1086 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"auto\" and scale type is \"timeseries\""
+    ],
+    "it": "should add offset from the edges if offset is true",
+    "test": "adapt-date-moment-format when ticks.source is \"auto\" and scale type is \"timeseries\" should add offset from the edges if offset is true",
+    "line": 1093,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1093 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"auto\" and scale type is \"timeseries\""
+    ],
+    "it": "should not add offset if min and max extend the labels range",
+    "test": "adapt-date-moment-format when ticks.source is \"auto\" and scale type is \"timeseries\" should not add offset if min and max extend the labels range",
+    "line": 1109,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1109 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"auto\" and scale type is \"time\""
+    ],
+    "it": "should not add offset from the edges",
+    "test": "adapt-date-moment-format when ticks.source is \"auto\" and scale type is \"time\" should not add offset from the edges",
+    "line": 1086,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1086 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"auto\" and scale type is \"time\""
+    ],
+    "it": "should add offset from the edges if offset is true",
+    "test": "adapt-date-moment-format when ticks.source is \"auto\" and scale type is \"time\" should add offset from the edges if offset is true",
+    "line": 1093,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1093 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"auto\" and scale type is \"time\""
+    ],
+    "it": "should not add offset if min and max extend the labels range",
+    "test": "adapt-date-moment-format when ticks.source is \"auto\" and scale type is \"time\" should not add offset if min and max extend the labels range",
+    "line": 1109,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1109 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"data\" and scale type is \"timeseries\""
+    ],
+    "it": "should not add offset from the edges",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" and scale type is \"timeseries\" should not add offset from the edges",
+    "line": 1086,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1086 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"data\" and scale type is \"timeseries\""
+    ],
+    "it": "should add offset from the edges if offset is true",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" and scale type is \"timeseries\" should add offset from the edges if offset is true",
+    "line": 1093,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1093 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"data\" and scale type is \"timeseries\""
+    ],
+    "it": "should not add offset if min and max extend the labels range",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" and scale type is \"timeseries\" should not add offset if min and max extend the labels range",
+    "line": 1109,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1109 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"data\" and scale type is \"time\""
+    ],
+    "it": "should not add offset from the edges",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" and scale type is \"time\" should not add offset from the edges",
+    "line": 1086,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1086 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"data\" and scale type is \"time\""
+    ],
+    "it": "should add offset from the edges if offset is true",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" and scale type is \"time\" should add offset from the edges if offset is true",
+    "line": 1093,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1093 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"data\" and scale type is \"time\""
+    ],
+    "it": "should not add offset if min and max extend the labels range",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" and scale type is \"time\" should not add offset if min and max extend the labels range",
+    "line": 1109,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1109 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"labels\" and scale type is \"timeseries\""
+    ],
+    "it": "should not add offset from the edges",
+    "test": "adapt-date-moment-format when ticks.source is \"labels\" and scale type is \"timeseries\" should not add offset from the edges",
+    "line": 1086,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1086 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"labels\" and scale type is \"timeseries\""
+    ],
+    "it": "should add offset from the edges if offset is true",
+    "test": "adapt-date-moment-format when ticks.source is \"labels\" and scale type is \"timeseries\" should add offset from the edges if offset is true",
+    "line": 1093,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1093 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"labels\" and scale type is \"timeseries\""
+    ],
+    "it": "should not add offset if min and max extend the labels range",
+    "test": "adapt-date-moment-format when ticks.source is \"labels\" and scale type is \"timeseries\" should not add offset if min and max extend the labels range",
+    "line": 1109,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1109 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"labels\" and scale type is \"time\""
+    ],
+    "it": "should not add offset from the edges",
+    "test": "adapt-date-moment-format when ticks.source is \"labels\" and scale type is \"time\" should not add offset from the edges",
+    "line": 1086,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1086 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"labels\" and scale type is \"time\""
+    ],
+    "it": "should add offset from the edges if offset is true",
+    "test": "adapt-date-moment-format when ticks.source is \"labels\" and scale type is \"time\" should add offset from the edges if offset is true",
+    "line": 1093,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1093 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"labels\" and scale type is \"time\""
+    ],
+    "it": "should not add offset if min and max extend the labels range",
+    "test": "adapt-date-moment-format when ticks.source is \"labels\" and scale type is \"time\" should not add offset if min and max extend the labels range",
+    "line": 1109,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1109 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"data\" and scale type is \"timeseries\""
+    ],
+    "it": "should add offset if min and max extend the labels range and offset is true",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" and scale type is \"timeseries\" should add offset if min and max extend the labels range and offset is true",
+    "line": 1190,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1190 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"data\" and scale type is \"time\""
+    ],
+    "it": "should add offset if min and max extend the labels range and offset is true",
+    "test": "adapt-date-moment-format when ticks.source is \"data\" and scale type is \"time\" should add offset if min and max extend the labels range and offset is true",
+    "line": 1190,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1190 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"labels\" and scale type is \"timeseries\""
+    ],
+    "it": "should add offset if min and max extend the labels range and offset is true",
+    "test": "adapt-date-moment-format when ticks.source is \"labels\" and scale type is \"timeseries\" should add offset if min and max extend the labels range and offset is true",
+    "line": 1190,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.timeseries",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1190 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "port:test/port/scales/scale.time_test.dart",
+    "dartFile": "test/port/scales/scale.time_test.dart",
+    "describe": [
+      "adapt-date-moment-format",
+      "when ticks.source is \"labels\" and scale type is \"time\""
+    ],
+    "it": "should add offset if min and max extend the labels range and offset is true",
+    "test": "adapt-date-moment-format when ticks.source is \"labels\" and scale type is \"time\" should add offset if min and max extend the labels range and offset is true",
+    "line": 1190,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.time",
+      "scale.linear",
+      "core.adapters"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Twin of scale.time.tests.js:1190 with ICU patterns (Chart.js ADR 0024). The upstream case gives pass and equal values in the modes all and none. It asserts x pixels relative to scale.left, scale.width and the tick pixels.",
+    "verified": "confirmed"
+  }
+]

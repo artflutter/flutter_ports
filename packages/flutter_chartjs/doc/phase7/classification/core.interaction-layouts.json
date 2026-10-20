@@ -1,0 +1,1790 @@
+[
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "point mode"
+    ],
+    "it": "should return all items under the point",
+    "test": "should return all items under the point",
+    "line": 25,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "point mode"
+    ],
+    "it": "should return an empty array when no items are found",
+    "test": "should return an empty array when no items are found",
+    "line": 43,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "index mode",
+      "intersect: true"
+    ],
+    "it": "gets correct items",
+    "test": "gets correct items",
+    "line": 80,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "index mode",
+      "intersect: true"
+    ],
+    "it": "returns empty array when nothing found",
+    "test": "returns empty array when nothing found",
+    "line": 98,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "index mode",
+      "intersect: false"
+    ],
+    "it": "axis: x gets correct items",
+    "test": "axis: x gets correct items",
+    "line": 136,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "index mode",
+      "intersect: false"
+    ],
+    "it": "axis: y gets correct items",
+    "test": "axis: y gets correct items",
+    "line": 153,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.bar",
+      "element.bar"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and the case acquires a bar chart. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "index mode",
+      "intersect: false"
+    ],
+    "it": "axis: xy gets correct items",
+    "test": "axis: xy gets correct items",
+    "line": 178,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "dataset mode",
+      "intersect: true"
+    ],
+    "it": "should return all items in the dataset of the first item found",
+    "test": "should return all items in the dataset of the first item found",
+    "line": 219,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "dataset mode",
+      "intersect: true"
+    ],
+    "it": "should return an empty array if nothing found",
+    "test": "should return an empty array if nothing found",
+    "line": 236,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "dataset mode",
+      "intersect: false"
+    ],
+    "it": "axis: x gets correct items",
+    "test": "axis: x gets correct items",
+    "line": 274,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.bar",
+      "element.bar"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and a bar chart. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "dataset mode",
+      "intersect: false"
+    ],
+    "it": "axis: y gets correct items",
+    "test": "axis: y gets correct items",
+    "line": 295,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.bar",
+      "element.bar"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and a bar chart. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "dataset mode",
+      "intersect: false"
+    ],
+    "it": "axis: xy gets correct items",
+    "test": "axis: xy gets correct items",
+    "line": 309,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.bar",
+      "element.bar"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and a bar chart. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "nearest mode",
+      "intersect: false",
+      "axis: xy"
+    ],
+    "it": "should return the nearest item",
+    "test": "should return the nearest item",
+    "line": 366,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.polarArea",
+      "scale.radialLinear",
+      "element.arc"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and a polar area chart (legend off). The assertion compares element identities; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "nearest mode",
+      "intersect: false",
+      "axis: xy"
+    ],
+    "it": "should return all items at the same nearest distance",
+    "test": "should return all items at the same nearest distance",
+    "line": 382,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.polarArea",
+      "scale.radialLinear",
+      "element.arc"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and a polar area chart (legend off). The assertion compares element identities; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "nearest mode",
+      "intersect: false",
+      "axis: x"
+    ],
+    "it": "should return all items at current x",
+    "test": "should return all items at current x",
+    "line": 408,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.polarArea",
+      "scale.radialLinear",
+      "element.arc"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and a polar area chart (legend off). The assertion compares element identities; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "nearest mode",
+      "intersect: false",
+      "axis: x"
+    ],
+    "it": "should return all items at nearest x-distance",
+    "test": "should return all items at nearest x-distance",
+    "line": 432,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.polarArea",
+      "scale.radialLinear",
+      "element.arc"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and a polar area chart (legend off). The assertion compares element identities; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "nearest mode",
+      "intersect: false",
+      "axis: y"
+    ],
+    "it": "should return item with value 30",
+    "test": "should return item with value 30",
+    "line": 458,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.polarArea",
+      "scale.radialLinear",
+      "element.arc"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and a polar area chart (legend off). The assertion compares element identities; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "nearest mode",
+      "intersect: false",
+      "axis: y"
+    ],
+    "it": "should return all items at value 40",
+    "test": "should return all items at value 40",
+    "line": 481,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.polarArea",
+      "scale.radialLinear",
+      "element.arc"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and a polar area chart (legend off). The assertion compares element identities; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "nearest mode",
+      "intersect: false",
+      "axis: r"
+    ],
+    "it": "should return item with value 9",
+    "test": "should return item with value 9",
+    "line": 507,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.polarArea",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.polarArea",
+      "scale.radialLinear",
+      "element.arc"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and a polar area chart (legend off). The assertion compares element identities; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "nearest mode",
+      "intersect: false",
+      "axis: r"
+    ],
+    "it": "should return item with value 1 when clicked outside of it",
+    "test": "should return item with value 1 when clicked outside of it",
+    "line": 523,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.polarArea",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction",
+      "controller.polarArea",
+      "scale.radialLinear",
+      "element.arc"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The beforeEach acquires a line chart and a polar area chart (legend off). The assertion compares element identities; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "nearest mode",
+      "intersect: true",
+      "axis=xy"
+    ],
+    "it": "should return the nearest item",
+    "test": "should return the nearest item",
+    "line": 563,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "nearest mode",
+      "intersect: true",
+      "axis=xy"
+    ],
+    "it": "should return the nearest item even if 2 intersect",
+    "test": "should return the nearest item even if 2 intersect",
+    "line": 591,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "nearest mode",
+      "intersect: true",
+      "axis=xy"
+    ],
+    "it": "should return the all items if more than 1 are at the same distance",
+    "test": "should return the all items if more than 1 are at the same distance",
+    "line": 621,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "x mode"
+    ],
+    "it": "should return items at the same x value when intersect is false",
+    "test": "should return items at the same x value when intersect is false",
+    "line": 677,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "x mode"
+    ],
+    "it": "should return items at the same x value when intersect is true",
+    "test": "should return items at the same x value when intersect is true",
+    "line": 711,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "y mode"
+    ],
+    "it": "should return items at the same y value when intersect is false",
+    "test": "should return items at the same y value when intersect is false",
+    "line": 769,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "y mode"
+    ],
+    "it": "should return items at the same y value when intersect is true",
+    "test": "should return items at the same y value when intersect is true",
+    "line": 803,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "tooltip element of scatter chart"
+    ],
+    "it": "out-of-range datapoints are not shown in tooltip",
+    "test": "out-of-range datapoints are not shown in tooltip",
+    "line": 839,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.scatter",
+    "modules": [
+      "controller.scatter",
+      "scale.linear",
+      "element.point",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The default legend moves the chart area, so the y pixels of the points differ between the modes all and none (changedBy legend). The assertion reads only toContain of the first element, and the hit set is the same in both modes. Thus no plugin changes the asserted result. The skeptic run confirms it: the hit set has the same elements (the same x pixels) in the modes all and none; only the y pixels differ by less than 0.2 px.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction",
+      "tooltip element of scatter chart"
+    ],
+    "it": "out-of-range datapoints are shown in tooltip if included",
+    "test": "out-of-range datapoints are shown in tooltip if included",
+    "line": 874,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.scatter",
+    "modules": [
+      "controller.scatter",
+      "scale.linear",
+      "element.point",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The default legend moves the chart area, so the y pixels of the points differ between the modes all and none (changedBy legend). The assertion reads only toContain of the first element, and the hit set is the same in both modes. Thus no plugin changes the asserted result. The skeptic run confirms it: the hit set has the same elements (the same x pixels) in the modes all and none; only the y pixels differ by less than 0.2 px.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 0 when clicking on element with index 0 in test case 1 if spanGaps=true",
+    "test": "should select nearest non-null element with index 0 when clicking on element with index 0 in test case 1 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 1 when clicking on element with index 1 in test case 2 if spanGaps=true",
+    "test": "should select nearest non-null element with index 1 when clicking on element with index 1 in test case 2 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 1 when clicking on element with index 2 in test case 3 if spanGaps=true",
+    "test": "should select nearest non-null element with index 1 when clicking on element with index 2 in test case 3 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 1 when clicking on element with index 3 in test case 4 if spanGaps=true",
+    "test": "should select nearest non-null element with index 1 when clicking on element with index 3 in test case 4 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 6 when clicking on element with index 4 in test case 5 if spanGaps=true",
+    "test": "should select nearest non-null element with index 6 when clicking on element with index 4 in test case 5 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 6 when clicking on element with index 5 in test case 6 if spanGaps=true",
+    "test": "should select nearest non-null element with index 6 when clicking on element with index 5 in test case 6 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 6 when clicking on element with index 6 in test case 7 if spanGaps=true",
+    "test": "should select nearest non-null element with index 6 when clicking on element with index 6 in test case 7 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 7 when clicking on element with index 7 in test case 8 if spanGaps=true",
+    "test": "should select nearest non-null element with index 7 when clicking on element with index 7 in test case 8 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 1 when clicking on element with index 3 in test case 9 if spanGaps=true",
+    "test": "should select nearest non-null element with index 1 when clicking on element with index 3 in test case 9 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 6 when clicking on element with index 4 in test case 10 if spanGaps=true",
+    "test": "should select nearest non-null element with index 6 when clicking on element with index 4 in test case 10 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 1 when clicking on element with index 3 in test case 11 if spanGaps=true",
+    "test": "should select nearest non-null element with index 1 when clicking on element with index 3 in test case 11 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 6 when clicking on element with index 4 in test case 12 if spanGaps=true",
+    "test": "should select nearest non-null element with index 6 when clicking on element with index 4 in test case 12 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 1 when clicking on element with index 0 in test case 13 if spanGaps=true",
+    "test": "should select nearest non-null element with index 1 when clicking on element with index 0 in test case 13 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 0 when clicking on element with index 1 in test case 14 if spanGaps=true",
+    "test": "should select nearest non-null element with index 0 when clicking on element with index 1 in test case 14 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 2 when clicking on element with index 0 in test case 15 if spanGaps=true",
+    "test": "should select nearest non-null element with index 2 when clicking on element with index 0 in test case 15 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.interaction.tests.js",
+    "dartFile": "test/specs/core.interaction_test.dart",
+    "describe": [
+      "Core.Interaction"
+    ],
+    "it": "should select nearest non-null element with index 0 when clicking on element with index 2 in test case 16 if spanGaps=true",
+    "test": "should select nearest non-null element with index 0 when clicking on element with index 2 in test case 16 if spanGaps=true",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "scale.category",
+      "scale.linear",
+      "element.point",
+      "element.line",
+      "core.interaction"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with spanGaps and the default legend. The assertion compares element identities of meta data; the probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.layouts.tests.js",
+    "dartFile": "test/specs/core.layouts_test.dart",
+    "describe": [
+      "Chart.layouts"
+    ],
+    "it": "should fit a simple chart with 2 scales",
+    "test": "should fit a simple chart with 2 scales",
+    "line": 17,
+    "kind": "chart",
+    "currentSkip": "blocked: plugin.legend",
+    "modules": [
+      "controller.bar",
+      "scale.category",
+      "scale.linear",
+      "element.bar",
+      "core.layouts",
+      "plugin.legend"
+    ],
+    "verdict": "blocked: plugin.legend",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "fail",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "Bar chart with the default legend. In the mode none the asserted top of the chart area is 10.2, not 32; only the removal of the legend changes it. The skip stays.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.layouts.tests.js",
+    "dartFile": "test/specs/core.layouts_test.dart",
+    "describe": [
+      "Chart.layouts"
+    ],
+    "it": "should fit scales that are in the top and right positions",
+    "test": "should fit scales that are in the top and right positions",
+    "line": 53,
+    "kind": "chart",
+    "currentSkip": "blocked: plugin.legend",
+    "modules": [
+      "controller.bar",
+      "scale.category",
+      "scale.linear",
+      "element.bar",
+      "core.layouts",
+      "plugin.legend"
+    ],
+    "verdict": "blocked: plugin.legend",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "fail",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "Bar chart with the default legend. In the mode none the scale and chart area pixels move by the legend height; only the removal of the legend changes them. The skip stays.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.layouts.tests.js",
+    "dartFile": "test/specs/core.layouts_test.dart",
+    "describe": [
+      "Chart.layouts"
+    ],
+    "it": "should fit scales that overlap the chart area",
+    "test": "should fit scales that overlap the chart area",
+    "line": 101,
+    "kind": "chart",
+    "currentSkip": "blocked: plugin.legend",
+    "modules": [
+      "controller.radar",
+      "scale.radialLinear",
+      "element.line",
+      "element.point",
+      "core.layouts",
+      "plugin.legend"
+    ],
+    "verdict": "blocked: plugin.legend",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "fail",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "Radar chart with the default legend. In the mode none the scale top is 0, not 32. The skip stays. The case also needs controller.radar of phase 7.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.layouts.tests.js",
+    "dartFile": "test/specs/core.layouts_test.dart",
+    "describe": [
+      "Chart.layouts"
+    ],
+    "it": "should fit multiple axes in the same position",
+    "test": "should fit multiple axes in the same position",
+    "line": 128,
+    "kind": "chart",
+    "currentSkip": "blocked: plugin.legend",
+    "modules": [
+      "controller.bar",
+      "scale.category",
+      "scale.linear",
+      "element.bar",
+      "core.layouts",
+      "plugin.legend"
+    ],
+    "verdict": "blocked: plugin.legend",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "fail",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "Bar chart with three axes and the default legend. In the mode none the asserted tops are 10.2, not 32. The skip stays.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.layouts.tests.js",
+    "dartFile": "test/specs/core.layouts_test.dart",
+    "describe": [
+      "Chart.layouts"
+    ],
+    "it": "should fit a full width box correctly",
+    "test": "should fit a full width box correctly",
+    "line": 187,
+    "kind": "chart",
+    "currentSkip": "blocked: plugin.legend",
+    "modules": [
+      "controller.bar",
+      "scale.category",
+      "scale.linear",
+      "element.bar",
+      "core.layouts",
+      "plugin.legend"
+    ],
+    "verdict": "blocked: plugin.legend",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "fail",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "Bar chart with the default legend and a full width box. In the mode none the pixels move by the legend height. The skip stays.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.layouts.tests.js",
+    "dartFile": "test/specs/core.layouts_test.dart",
+    "describe": [
+      "Chart.layouts",
+      "padding settings"
+    ],
+    "it": "should apply a single padding to all dimensions",
+    "test": "should apply a single padding to all dimensions",
+    "line": 243,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "scale.category",
+      "scale.linear",
+      "element.bar",
+      "core.layouts"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The spec sets legend: false and title: false, and both scales have display: false. The probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.layouts.tests.js",
+    "dartFile": "test/specs/core.layouts_test.dart",
+    "describe": [
+      "Chart.layouts",
+      "padding settings"
+    ],
+    "it": "should apply padding in all positions",
+    "test": "should apply padding in all positions",
+    "line": 286,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "scale.category",
+      "scale.linear",
+      "element.bar",
+      "core.layouts"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The spec sets legend: false and title: false, and both scales have display: false. The probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.layouts.tests.js",
+    "dartFile": "test/specs/core.layouts_test.dart",
+    "describe": [
+      "Chart.layouts",
+      "padding settings"
+    ],
+    "it": "should default to 0 padding if no dimensions specified",
+    "test": "should default to 0 padding if no dimensions specified",
+    "line": 334,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "scale.category",
+      "scale.linear",
+      "element.bar",
+      "core.layouts"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The spec sets legend: false and title: false, and both scales have display: false. The probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.layouts.tests.js",
+    "dartFile": "test/specs/core.layouts_test.dart",
+    "describe": [
+      "Chart.layouts",
+      "ordering by weight"
+    ],
+    "it": "should keep higher weights outside",
+    "test": "should keep higher weights outside",
+    "line": 379,
+    "kind": "chart",
+    "currentSkip": "blocked: plugin.legend",
+    "modules": [
+      "controller.bar",
+      "scale.category",
+      "scale.linear",
+      "element.bar",
+      "core.layouts",
+      "plugin.legend",
+      "plugin.title"
+    ],
+    "verdict": "blocked: plugin.legend",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "error",
+      "equal": false,
+      "changedBy": [
+        "legend",
+        "title"
+      ]
+    },
+    "note": "The case reads chart.legend and chart.titleBlock. Without the legend plugin it throws a TypeError at :414 (legend.right). Without the title plugin it throws a TypeError at :415 (title.top). The probe in the mode only:legend also gives this error, so the case needs both plugins. The skip stays.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.layouts.tests.js",
+    "dartFile": "test/specs/core.layouts_test.dart",
+    "describe": [
+      "Chart.layouts",
+      "ordering by weight"
+    ],
+    "it": "should correctly set weights of scales and order them",
+    "test": "should correctly set weights of scales and order them",
+    "line": 418,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "scale.category",
+      "scale.linear",
+      "element.bar",
+      "core.layouts"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The default legend is on, but the assertions read only the scale weights and the relative order of the scales. The probe gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "core.layouts.tests.js",
+    "dartFile": "test/specs/core.layouts_test.dart",
+    "describe": [
+      "Chart.layouts",
+      "box sizing"
+    ],
+    "it": "should correctly compute y-axis width to fit labels",
+    "test": "should correctly compute y-axis width to fit labels",
+    "line": 544,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "scale.category",
+      "scale.linear",
+      "element.bar",
+      "core.layouts"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The spec sets legend: false. The y-axis width (30) depends on the text metrics of the tick labels; the probe passes with Liberation Sans and gives equal values in the modes all and none.",
+    "verified": "confirmed"
+  }
+]

@@ -1,0 +1,1118 @@
+[
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly determine the max & min data values",
+    "test": "Should correctly determine the max & min data values",
+    "line": 20,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should handle when only a min value is provided",
+    "test": "Should handle when only a min value is provided",
+    "line": 54,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with labels. The case reads only the scale min. The probe values are equal in the modes all and none.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should handle when only a max value is provided",
+    "test": "Should handle when only a max value is provided",
+    "line": 76,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly determine the max & min of string data values",
+    "test": "Should correctly determine the max & min of string data values",
+    "line": 99,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change. The data are strings: the parse of the bar controller applies.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly determine the max & min when no values provided and suggested minimum and maximum are set",
+    "test": "Should correctly determine the max & min when no values provided and suggested minimum and maximum are set",
+    "line": 133,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly determine the max & min data values ignoring hidden datasets",
+    "test": "Should correctly determine the max & min data values ignoring hidden datasets",
+    "line": 180,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change. A hidden dataset is excluded by the controller meta.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly determine the max & min data values ignoring data that is NaN",
+    "test": "Should correctly determine the max & min data values ignoring data that is NaN",
+    "line": 215,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The case changes the data (NaN values) and calls update. It reads only min and max. The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly determine the max & min data values for small numbers",
+    "test": "Should correctly determine the max & min data values for small numbers",
+    "line": 252,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly determine the max & min for scatter data",
+    "test": "Should correctly determine the max & min for scatter data",
+    "line": 276,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with {x, y} points on two linear scales. The asserted min and max are equal in both modes.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly get the label for the given index",
+    "test": "Should correctly get the label for the given index",
+    "line": 318,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "getLabelForValue(7) gives '7'. It reads no layout value. The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly use the locale setting when getting a label",
+    "test": "Should correctly use the locale setting when getting a label",
+    "line": 357,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.linear",
+      "helpers.intl"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Locale 'de-DE' formats 7.07 as '7,07' through the ported number format (js_intl). The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly determine the min and max data values when stacked mode is turned on",
+    "test": "Should correctly determine the min and max data values when stacked mode is turned on",
+    "line": 397,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.bar",
+      "controller.line",
+      "element.bar",
+      "element.line",
+      "element.point",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Line chart with bar and line datasets: it needs both controllers. The stacked min and max are equal in both modes.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly determine the min and max data values when stacked mode is turned on and there are hidden datasets",
+    "test": "Should correctly determine the min and max data values when stacked mode is turned on and there are hidden datasets",
+    "line": 438,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Stacked bar chart with a hidden dataset. The asserted min and max are equal in both modes.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly determine the min and max data values when stacked mode is turned on there are multiple types of datasets",
+    "test": "Should correctly determine the min and max data values when stacked mode is turned on there are multiple types of datasets",
+    "line": 477,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.bar",
+      "controller.line",
+      "element.bar",
+      "element.line",
+      "element.point",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Bar chart with a line dataset: it needs both controllers. The case calls determineDataLimits and reads min and max. The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should ensure that the scale has a max and min that are not equal - large positive numbers",
+    "test": "Should ensure that the scale has a max and min that are not equal - large positive numbers",
+    "line": 530,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should ensure that the scale has a max and min that are not equal - large negative numbers",
+    "test": "Should ensure that the scale has a max and min that are not equal - large negative numbers",
+    "line": 555,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should use the suggestedMin and suggestedMax options",
+    "test": "Should use the suggestedMin and suggestedMax options",
+    "line": 602,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should use the min and max options",
+    "test": "Should use the min and max options",
+    "line": 628,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change. The labels '-1,010' and '1,010' come from the ported number format.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should use min, max and stepSize to create fixed spaced ticks",
+    "test": "Should use min, max and stepSize to create fixed spaced ticks",
+    "line": 657,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should create decimal steps if stepSize is a decimal number",
+    "test": "Should create decimal steps if stepSize is a decimal number",
+    "line": 732,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale",
+      "precision"
+    ],
+    "it": "Should create integer steps if precision is 0",
+    "test": "Should create integer steps if precision is 0",
+    "line": 761,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale",
+      "precision"
+    ],
+    "it": "Should round the step size to the given number of decimal places",
+    "test": "Should round the step size to the given number of decimal places",
+    "line": 789,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "should forcibly include 0 in the range if the beginAtZero option is used",
+    "test": "should forcibly include 0 in the range if the beginAtZero option is used",
+    "line": 819,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The probe values differ only in the serialized scale of 'expect(chart.scales.y).not.toEqual(undefined)': the legend moves the scale layout fields. That assertion and the asserted min, max and labels do not change. The tick labels after each update are equal in both modes.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should generate tick marks in the correct order in reversed mode",
+    "test": "Should generate tick marks in the correct order in reversed mode",
+    "line": 855,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Reversed linear scale. The labels, start and end are equal in both modes.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "should use the correct number of decimal places in the default format function",
+    "test": "should use the correct number of decimal places in the default format function",
+    "line": 880,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The labels of the default format function are equal in both modes.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should correctly limit the maximum number of ticks",
+    "test": "Should correctly limit the maximum number of ticks",
+    "line": 901,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The labels for each maxTicksLimit and stepSize are equal in both modes. The default legend does not change the tick count here.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should bound to data",
+    "test": "Should bound to data",
+    "line": 948,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "bounds 'data' gives min 1 and max 99. The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should build labels using the user supplied callback",
+    "test": "Should build labels using the user supplied callback",
+    "line": 970,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The user callback builds the labels. The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should get the correct pixel value for a point",
+    "test": "Should get the correct pixel value for a point",
+    "line": 998,
+    "kind": "chart",
+    "currentSkip": "blocked: plugin.legend",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.linear",
+      "plugin.legend"
+    ],
+    "verdict": "blocked: plugin.legend",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "fail",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The asserted y pixels (32, 258) are fixed numbers that include the height of the default legend. Without the legend, the case fails (10.2 and 246.9).",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "should fit correctly",
+    "test": "should fit correctly",
+    "line": 1041,
+    "kind": "chart",
+    "currentSkip": "blocked: plugin.legend",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.linear",
+      "plugin.legend"
+    ],
+    "verdict": "blocked: plugin.legend",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "fail",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The asserted y scale heights (450, 429) include the height of the default legend. Without the legend, the case fails (473.4 and 451).",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "should fit correctly when display is turned off",
+    "test": "should fit correctly when display is turned off",
+    "line": 1112,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.line",
+    "modules": [
+      "controller.line",
+      "element.line",
+      "element.point",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The y scale width is 0 when its ticks, border and title are off. The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "max and min value should be valid and finite when charts datasets are hidden",
+    "test": "max and min value should be valid and finite when charts datasets are hidden",
+    "line": 1165,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Horizontal stacked bar chart. The case sets meta.hidden on each dataset and reads x min and max. The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "max and min value should be valid when min is set and all datasets are hidden",
+    "test": "max and min value should be valid when min is set and all datasets are hidden",
+    "line": 1209,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Horizontal bar chart with all datasets hidden and min 20. The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "min settings should be used if set to zero",
+    "test": "min settings should be used if set to zero",
+    "line": 1237,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Horizontal bar chart with min 0. The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "max settings should be used if set to zero",
+    "test": "max settings should be used if set to zero",
+    "line": 1264,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Horizontal bar chart with max 0. The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should get correct pixel values when horizontal",
+    "test": "Should get correct pixel values when horizontal",
+    "line": 1291,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "Horizontal bar chart. The assertions compare pixels with chartArea.left and right. The legend at the top does not change them. The probe values are equal.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "Should get correct pixel values when vertical",
+    "test": "Should get correct pixel values when vertical",
+    "line": 1332,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe+static",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": false,
+      "changedBy": [
+        "legend"
+      ]
+    },
+    "note": "The legend moves chartArea.top (32 with the legend, 10.2 without). Each assertion compares a scale pixel with chartArea of the same chart, so the case passes in both modes. No plugin value is asserted.",
+    "verified": "confirmed"
+  },
+  {
+    "spec": "scale.linear.tests.js",
+    "dartFile": "test/specs/scale.linear_test.dart",
+    "describe": [
+      "Linear Scale"
+    ],
+    "it": "should not throw errors when chart size is negative",
+    "test": "should not throw errors when chart size is negative",
+    "line": 1372,
+    "kind": "chart",
+    "currentSkip": "blocked: controller.bar",
+    "modules": [
+      "controller.bar",
+      "element.bar",
+      "scale.category",
+      "scale.linear"
+    ],
+    "verdict": "phase7",
+    "evidence": "probe",
+    "probe": {
+      "all": "pass",
+      "none": "pass",
+      "equal": true,
+      "changedBy": []
+    },
+    "note": "The chart has 'plugins: false' and a 0 x 0 canvas. It asserts only that no error occurs. The probe values are equal.",
+    "verified": "confirmed"
+  }
+]
