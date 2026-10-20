@@ -35,8 +35,11 @@ const Set<String> pureDartLibraries = {
 
 /// The other libraries of pure layers. [collectionLibrary] gives
 /// `mergeSort` to `jsSort` from phase 2 (Chart.js ADR 0010, Sort).
+/// `package:clock/clock.dart` gives `clock.now()` to `jsDateNow` from phase 5
+/// (Chart.js ADR 0010, section 6).
 const Set<String> purePackageLibraries = {
   collectionLibrary,
+  'package:clock/clock.dart',
   'package:meta/meta.dart',
   'package:intl/intl.dart',
   'package:intl/number_symbols.dart',
@@ -90,6 +93,27 @@ const Map<String, String> forbiddenInLib = {
 ///
 /// `core.element` and every file of `lib/src/elements/` are roots (Chart.js
 /// ADR 0017, section 10). Their specs run on the VM, dart2js and dart2wasm.
+///
+/// `core.config` and `core.adapters` are roots (Chart.js ADR 0021, section
+/// 7). Their port-only tests run on the VM, dart2js and dart2wasm.
+///
+/// `core.interaction` and `core.layouts` are roots. Their upstream imports
+/// are helpers other than `helpers.extras`. Their specs and port-only tests
+/// run on the VM, dart2js and dart2wasm.
+///
+/// `core.animation` and the port-only `animation_spec` are roots (Chart.js
+/// ADR 0019, section 1). `core.animations` and `core.animator` are not:
+/// `core.animator` imports `helpers.extras`.
+///
+/// `core.typedRegistry` is a root (Chart.js ADR 0020, section 10). It imports
+/// `core.defaults`, `helpers.core` and the JS runtime. `core.registry` and
+/// `core.plugins` are not roots: `core.registry` imports `core.scale`, which
+/// imports `helpers.extras`.
+///
+/// The theme compiler and the internal presets of `lib/src/theme/` are
+/// roots (Chart.js ADR 0001, theming.md §7). Their port-only tests run on
+/// the VM, dart2js and dart2wasm. The theme widget of phase 9 uses the
+/// Flutter framework, so the directory is not a root as a whole.
 const List<String> pureRoots = [
   'lib/src/js/**',
   'lib/src/types/**',
@@ -97,10 +121,19 @@ const List<String> pureRoots = [
   'lib/src/helpers/helpers.*.dart',
   'lib/src/core/core.defaults.dart',
   'lib/src/core/core.element.dart',
+  'lib/src/core/core.config.dart',
+  'lib/src/core/core.adapters.dart',
+  'lib/src/core/core.interaction.dart',
+  'lib/src/core/core.layouts.dart',
+  'lib/src/core/core.animation.dart',
+  'lib/src/core/animation_spec.dart',
+  'lib/src/core/core.typedRegistry.dart',
   'lib/src/elements/**',
   'lib/src/platform/platform.base.dart',
   'lib/src/platform/platform.basic.dart',
   'lib/src/platform/native_event.dart',
+  'lib/src/theme/compile.dart',
+  'lib/src/theme/presets.dart',
 ];
 
 /// Files that match [pureRoots] but are not pure-layer roots.

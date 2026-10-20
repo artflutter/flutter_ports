@@ -2,11 +2,14 @@
 import 'dart:collection';
 
 import 'package:flutter_chartjs/src/js/js_array.dart';
+import 'package:flutter_chartjs/src/js/js_class.dart';
+import 'package:flutter_chartjs/src/js/js_function.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
-// The expected values come from Node.js v24.12.0: obj[key] for each input.
+// The expected values come from Node.js v24.12.0: obj[key] for each input,
+// and Object.freeze and Object.isFrozen in an ES module (strict mode) on x64.
 
 /// A Map that answers `operator []` for a key that it does not contain, as
 /// an object with an inherited property.
@@ -48,6 +51,21 @@ final class _NullProxy extends MapBase<String, Object?>
 
   @override
   void clear() {}
+}
+
+/// An object with the frozen state of Chart.js ADR 0021.
+final class _Freezable implements JsFreezable {
+  @override
+  bool isFrozen = false;
+
+  /// The count of the calls of [freeze].
+  int freezes = 0;
+
+  @override
+  void freeze() {
+    isFrozen = true;
+    freezes++;
+  }
 }
 
 void main() {
@@ -123,6 +141,22 @@ void main() {
       expect(jsGet('abc', 'size'), same(undefined));
     });
 
+    test('reads the static properties of a class value', () {
+      // class A { static id = 'a'; static n = null; } class B extends A {}
+      // B.id is 'a', B.n is null and B.x is undefined.
+      final a = JsClass('A', statics: {'id': 'a', 'n': null});
+      final b = JsClass('B', superclass: a);
+      expect(jsGet(b, 'id'), 'a');
+      expect(jsGet(b, 'n'), isNull);
+      expect(jsGet(b, 'x'), same(undefined));
+      // ({1: 'one'})[1] reads the key '1' of a class value too.
+      b['1'] = 'one';
+      expect(jsGet(b, 1.0), 'one');
+      // A.name is 'A' in JavaScript. The function properties are not static
+      // properties of a class value (Chart.js ADR 0020, section 1).
+      expect(jsGet(a, 'name'), same(undefined));
+    });
+
     test('gives undefined for other values', () {
       // (5).x and true.x are undefined. (() => 0).length is 0 in
       // JavaScript, and undefined in the port.
@@ -135,6 +169,119 @@ void main() {
       // null.x and undefined.x throw a TypeError.
       expect(() => jsGet(null, 'x'), throwsA(isA<TypeError>()));
       expect(() => jsGet(undefined, 'x'), throwsA(isA<TypeError>()));
+    });
+  });
+  group('jsObjectFreeze', () {
+    test('freezes a JsFreezable and returns it', () {
+      // Object.freeze(o) === o, and Object.isFrozen(o) is then true.
+      final object = _Freezable();
+      expect(jsObjectFreeze(object), same(object));
+      expect(object.isFrozen, isTrue);
+      expect(jsObjectIsFrozen(object), isTrue);
+      // A second freeze returns the object again.
+      expect(jsObjectFreeze(object), same(object));
+      expect(object.freezes, 2);
+    });
+
+    test('returns another value with no change', () {
+      // Object.freeze(5) is 5, Object.freeze('s') is 's', Object.freeze(null)
+      // is null and Object.freeze(undefined) is undefined.
+      expect(jsObjectFreeze(5), 5);
+      expect(jsObjectFreeze('s'), 's');
+      expect(jsObjectFreeze(null), isNull);
+      expect(jsObjectFreeze(undefined), same(undefined));
+      final list = [1.0];
+      expect(jsObjectFreeze(list), same(list));
+    });
+
+    test('js-semantics-object-freeze: a plain Map stays writable', () {
+      // const o = {a: 1}; Object.freeze(o); o.a = 2 throws a TypeError in
+      // strict mode, and Object.isFrozen(o) is true. The port freezes only a
+      // JsFreezable.
+      final map = <String, Object?>{'a': 1.0};
+      expect(jsObjectFreeze(map), same(map));
+      map['a'] = 2.0;
+      expect(map['a'], 2.0);
+      expect(jsObjectIsFrozen(map), isFalse);
+    });
+  });
+
+  group('jsObjectIsFrozen', () {
+    test('is true for a primitive', () {
+      // Object.isFrozen of null, undefined, 1, NaN, 's' and true is true.
+      for (final value in <Object?>[
+        null,
+        undefined,
+        1.0,
+        double.nan,
+        's',
+        '',
+        true,
+        false,
+      ]) {
+        expect(jsObjectIsFrozen(value), isTrue, reason: '$value');
+      }
+    });
+
+    test('is the frozen state of a JsFreezable', () {
+      final object = _Freezable();
+      expect(jsObjectIsFrozen(object), isFalse);
+      object.freeze();
+      expect(jsObjectIsFrozen(object), isTrue);
+    });
+
+    test('is false for each other value', () {
+      // Object.isFrozen({}), Object.isFrozen([]), Object.isFrozen(() => 1)
+      // and Object.isFrozen(class A {}) are false. A Map.unmodifiable is
+      // not a JsFreezable (js-semantics-object-freeze).
+      for (final value in <Object?>[
+        <String, Object?>{},
+        Map<String, Object?>.unmodifiable({'a': 1.0}),
+        <Object?>[],
+        () => 1.0,
+        JsClass('A'),
+      ]) {
+        expect(jsObjectIsFrozen(value), isFalse, reason: '$value');
+      }
+    });
+  });
+
+  group('jsTypeof', () {
+    test('gives the typeof of each kind of value', () {
+      // typeof undefined, null, true, 0, NaN, 's', {}, [], () => 1 and
+      // class C {} in Node.js v24.12.0 on x64.
+      final values = <Object?>[
+        undefined,
+        null,
+        true,
+        0.0,
+        double.nan,
+        's',
+        <String, Object?>{},
+        <Object?>[],
+        () => 1.0,
+        JsClass('C'),
+      ];
+      expect(values.map(jsTypeof), [
+        'undefined',
+        'object',
+        'boolean',
+        'number',
+        'number',
+        'string',
+        'object',
+        'object',
+        'function',
+        'function',
+      ]);
+    });
+
+    test('gives function for a JsFunction and number for an int', () {
+      expect(jsTypeof(JsFunction((Object? self) => self)), 'function');
+      expect(jsTypeof(1), 'number');
+      expect(jsTypeof(false), 'boolean');
+      expect(jsTypeof(''), 'string');
+      expect(jsTypeof(Object()), 'object');
     });
   });
 }

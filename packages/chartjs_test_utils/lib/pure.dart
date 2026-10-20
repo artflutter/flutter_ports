@@ -11,10 +11,17 @@
 ///   restore on the VM, dart2js and dart2wasm. Under `flutter test`, the
 ///   config file runs [setUpDefaultsRestore] too. The second restore of a
 ///   test finds the scopes restored already, and changes nothing.
+/// - [setUpBuiltins] and [removeBuiltins]: the config file registers the
+///   built-in components before `main()` (`harness-register-builtins`).
+///   [setUpSpecs] removes them again, because `dart test` has no such
+///   registration.
 /// - `createMockContext` and `MockContext` (`src/index.js`,
-///   `src/context.js`).
-/// - `toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf` and
-///   `toEqualOptions` (`src/matchers.js`, `src/matchers.options.js`).
+///   `src/context.js`). Both are in `src/context.dart`
+///   (`harness-index-pure-split`), because `src/index.dart` is not a pure
+///   layer.
+/// - `toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf`,
+///   `toBeValidChart`, `toBeChartOfSize` and `toEqualOptions`
+///   (`src/matchers.js`, `src/matchers.options.js`).
 ///
 /// The harness part that needs the Flutter engine is
 /// `package:chartjs_test_utils/flutter.dart`.
@@ -31,10 +38,15 @@ import 'dart:collection';
 import 'package:flutter_chartjs/src/core/core.defaults.dart';
 import 'package:test/test.dart';
 
-export 'src/context.dart' show ContextCall, MockContext;
-export 'src/index.dart' show createMockContext;
+export 'src/context.dart' show ContextCall, MockContext, createMockContext;
 export 'src/matchers.dart'
-    show toBeCloseToPixel, toBeCloseToPoint, toEqualOneOf, toEqualOptions;
+    show
+        toBeChartOfSize,
+        toBeCloseToPixel,
+        toBeCloseToPoint,
+        toBeValidChart,
+        toEqualOneOf,
+        toEqualOptions;
 
 /// Sets up the specs of one pure-layer spec file. Call it first in `main()`.
 ///
@@ -45,9 +57,57 @@ export 'src/matchers.dart'
 /// }
 /// ```
 ///
-/// The set-up is [setUpDefaultsRestore].
+/// The set-up is [removeBuiltins], then [setUpDefaultsRestore]. Thus a
+/// pure-layer spec file runs on the same scopes on the VM, dart2js and
+/// dart2wasm: the scopes of the modules, with no built-in component. A spec
+/// file with chart cases does not call it: its charts need the built-in
+/// components (`harness-register-builtins`).
 void setUpSpecs() {
+  removeBuiltins();
   setUpDefaultsRestore();
+}
+
+/// The removal of the built-in components of [setUpBuiltins], until a call
+/// of [removeBuiltins].
+void Function()? _builtinsRemoval;
+
+/// Registers the built-in components of the specs, before `main()` of each
+/// test file (Chart.js ADR 0022, section 8, `harness-register-builtins`).
+///
+/// `packages/flutter_chartjs/test/flutter_test_config.dart` calls it before
+/// [setUpDefaultsRestore]: [register] calls `Chart.register` with the four
+/// namespaces of `src/index.ts`, as the UMD entry `src/index.umd.ts:28`
+/// does. [unregister] calls `Chart.unregister` with the same namespaces.
+///
+/// The function first takes a snapshot of [defaults], [overrides] and
+/// [descriptors]. A later [removeBuiltins] calls [unregister] and then puts
+/// back that snapshot. This library does not import the registry, because
+/// it is not a pure layer.
+void setUpBuiltins(void Function() register, void Function() unregister) {
+  final modules = _Snapshot.take([defaults, overrides, descriptors]);
+  register();
+  _builtinsRemoval = () {
+    unregister();
+    modules.restore();
+  };
+}
+
+/// Removes the built-in components of [setUpBuiltins] from the current test
+/// file. Call it in `main()`, before the first test. [setUpSpecs] calls it.
+///
+/// A test file that compares the scopes or the registry with a run of the
+/// modules alone calls it. Under `dart test`, nothing registers the built-in
+/// components, and the call does nothing: it does not read [defaults].
+/// Under `flutter test`, the call unregisters them and puts back the scopes
+/// of the modules. Thus the test file has the same state on every platform.
+/// It also has no conflict with a registration of its own through a new
+/// `TypedRegistry`: a second route of one property throws, as
+/// `Object.defineProperties` does. The `items` of a registry that a test
+/// file makes itself do not change.
+void removeBuiltins() {
+  final removal = _builtinsRemoval;
+  _builtinsRemoval = null;
+  removal?.call();
 }
 
 /// Restores the global scopes of `core.defaults.js` after each test of the

@@ -60,7 +60,12 @@ package.
     [Chart.js ADR 0016: Frame scheduling](../packages/flutter_chartjs/doc/adr/0016-frame-scheduling.md)
     (it supersedes Chart.js ADR 0007 on acceptance),
     [Chart.js ADR 0017: Element properties](../packages/flutter_chartjs/doc/adr/0017-element-properties.md),
-    [Chart.js ADR 0018: Typed element options](../packages/flutter_chartjs/doc/adr/0018-typed-element-options.md).
+    [Chart.js ADR 0018: Typed element options](../packages/flutter_chartjs/doc/adr/0018-typed-element-options.md),
+    [Chart.js ADR 0019: Animation](../packages/flutter_chartjs/doc/adr/0019-animation.md),
+    [Chart.js ADR 0020: Registry and component classes](../packages/flutter_chartjs/doc/adr/0020-registry-and-component-classes.md),
+    [Chart.js ADR 0021: Typed options in the resolver](../packages/flutter_chartjs/doc/adr/0021-typed-options-in-the-resolver.md),
+    [Chart.js ADR 0022: Chart test harness on Flutter](../packages/flutter_chartjs/doc/adr/0022-chart-test-harness.md),
+    [Chart.js ADR 0023: Underscore members with a colliding name](../packages/flutter_chartjs/doc/adr/0023-underscore-member-collisions.md).
   - Prior art: [overview](../packages/flutter_chartjs/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs/doc/prior-art/js-runtimes.md),

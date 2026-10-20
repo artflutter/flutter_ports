@@ -37,6 +37,7 @@ import 'package:flutter_chartjs/src/helpers/helpers.math.dart'
     show isBetween, limitValue;
 import 'package:flutter_chartjs/src/helpers/helpers.options.dart'
     show toTRBL, toTRBLCorners;
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
@@ -245,9 +246,11 @@ TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
 
 /// element.bar.js:103 `inRange`.
 ///
-/// Dart `null` for [x] or [y] is the JS `null` that `inXRange` and
-/// `inYRange` pass. Upstream also tests that `bar` is truthy. The callers
-/// pass `this`, which is never null. Thus the port omits that test.
+/// Dart `null` for [x] or [y] is JS `null`: the `null` that `inXRange` and
+/// `inYRange` pass, or a `null` coordinate of the event position that an
+/// interaction mode passes to `inRange`. Upstream also tests that `bar` is
+/// truthy. The callers pass `this`, which is never null. Thus the port omits
+/// that test.
 bool _inRange(
   BarElement bar,
   double? x,
@@ -320,7 +323,10 @@ _Rect _inflateRect(_Rect rect, double amount, [_Rect? refRect]) {
 /// writes `enableBorderRadius` (:410, :219) and `borderSkipped` (:202-232)
 /// through `updateElement`. The element reads both in each [draw]. Thus the
 /// port declares them too (Chart.js ADR 0017, section 3).
-class BarElement extends Element implements types.VisualElement {
+///
+/// The class implements `types.VisualElementRange`, because upstream has a
+/// [getRange] (element.bar.js:223, Chart.js ADR 0020, section 9).
+class BarElement extends Element implements types.VisualElementRange {
   /// element.bar.js:164 `constructor(cfg)`.
   ///
   /// `options`, [horizontal], [base], [width], [height] and [inflateAmount]
@@ -349,6 +355,20 @@ class BarElement extends Element implements types.VisualElement {
     'backgroundColor': 'backgroundColor',
     'borderColor': 'borderColor',
   };
+
+  /// element.bar.js:141 `class BarElement extends Element` as a value (Chart.js
+  /// ADR 0020, section 3).
+  ///
+  /// Its statics are [id], [defaults] and [defaultRoutes], in the upstream
+  /// order of declaration (element.bar.js:143-162). They are the objects of the
+  /// static fields. Its `construct` calls `BarElement(cfg)` with the `cfg` of
+  /// [elementCfgArg].
+  static final JsClass jsClass = JsClass(
+    'BarElement',
+    superclass: Element.jsClass,
+    statics: {'id': id, 'defaults': defaults, 'defaultRoutes': defaultRoutes},
+    construct: (newTarget, args) => BarElement(elementCfgArg(args)),
+  );
 
   /// The value of [horizontal]. Dart `null` stands for JS `undefined`.
   bool? _horizontal;
@@ -538,19 +558,19 @@ class BarElement extends Element implements types.VisualElement {
 
   /// element.bar.js:203 `inRange(mouseX, mouseY, useFinalPosition)`.
   @override
-  bool inRange(double mouseX, double mouseY, [bool? useFinalPosition]) {
+  bool inRange(double? mouseX, double? mouseY, [bool? useFinalPosition]) {
     return _inRange(this, mouseX, mouseY, useFinalPosition);
   }
 
   /// element.bar.js:207 `inXRange(mouseX, useFinalPosition)`.
   @override
-  bool inXRange(double mouseX, [bool? useFinalPosition]) {
+  bool inXRange(double? mouseX, [bool? useFinalPosition]) {
     return _inRange(this, mouseX, null, useFinalPosition);
   }
 
   /// element.bar.js:211 `inYRange(mouseY, useFinalPosition)`.
   @override
-  bool inYRange(double mouseY, [bool? useFinalPosition]) {
+  bool inYRange(double? mouseY, [bool? useFinalPosition]) {
     return _inRange(this, null, mouseY, useFinalPosition);
   }
 
@@ -579,6 +599,7 @@ class BarElement extends Element implements types.VisualElement {
 
   /// element.bar.js:223 `getRange(axis)`: half the [width] for the axis
   /// `'x'`, else half the [height].
+  @override
   double getRange(String axis) {
     return axis == 'x' ? width / 2 : height / 2;
   }

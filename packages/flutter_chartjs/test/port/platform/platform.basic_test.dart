@@ -5,7 +5,7 @@ import 'package:flutter_chartjs/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
-// test/specs/platform.basic_test.dart waits for core.controller. These tests
+// test/specs/platform.basic_test.dart covers the chart cases. These tests
 // cover the two methods of src/platform/platform.basic.js without a chart.
 
 /// A canvas element whose `getContext('2d')` gives [context].

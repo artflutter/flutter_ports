@@ -22,6 +22,19 @@
 /// - Each known key has a getter `<key>Value` for the element code. It gives
 ///   the raw value, or [undefined] for an absent key: the result of
 ///   `jsGet(options, key)`. It does no Map lookup.
+/// - [GenericElementOptions] holds the options of an element type without a
+///   typed class, in one Map (Chart.js ADR 0021, section 2).
+///
+/// The producers of the resolver use the classes (Chart.js ADR 0021):
+/// - [createElementOptions] gives the new, empty options object of an
+///   element type id. `_resolveElementOptions` passes it to
+///   `resolveNamedOptions` (core.datasetController.js:821).
+/// - [copyOptions] is `Object.assign({}, options)`. The copy of an
+///   [ElementOptions] is its [ElementOptions.clone], of the same class.
+/// - An [ElementOptions] is a `JsFreezable`. `Object.freeze` of the cached
+///   options (core.datasetController.js:831) sets its frozen state. In that
+///   state, a write throws a [TypeError], as in the strict mode of an ES
+///   module.
 ///
 /// This library is a pure layer. It imports neither `dart:ui` nor
 /// `package:flutter`.
@@ -31,7 +44,9 @@ import 'dart:collection';
 
 import 'package:flutter_chartjs/src/helpers/helpers.canvas.dart'
     show DrawPointOptions;
+import 'package:flutter_chartjs/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs/src/js/js_number.dart' show jsToNumber;
+import 'package:flutter_chartjs/src/js/js_object.dart' show JsFreezable;
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 
@@ -103,7 +118,26 @@ Object? _mapRead(Object? raw) => identical(raw, _absent) ? null : raw;
 /// absent key, as `jsGet(options, key)` gives. The element code reads each
 /// option through one small function that also takes a plain Map (Chart.js
 /// ADR 0018, section 4).
-abstract class ElementOptions extends MapBase<String, Object?> {
+///
+/// ## Copies and the frozen state
+///
+/// [clone] is the copy `Object.assign({}, options)` in the same class
+/// (Chart.js ADR 0021, section 3). [freeze] is `Object.freeze(options)`
+/// (core.datasetController.js:831). In the frozen state, the options behave
+/// as a frozen object in strict mode (Chart.js ADR 0021, section 5):
+/// - [operator []=] throws a [TypeError] for each key, also for a write of
+///   the same value.
+/// - [remove] throws a [TypeError] for a present key. It returns Dart `null`
+///   for an absent key, as a `delete` of an absent property succeeds.
+/// - [clear] throws a [TypeError] when the options contain a key.
+/// - The members of [MapBase] that write, for example `addAll` and `update`,
+///   write through these three members. Thus they throw too.
+/// - The reads do not change.
+///
+/// The freeze is shallow, as `Object.freeze` is. A Map value of frozen
+/// options stays writable, for example `$animations`.
+abstract class ElementOptions extends MapBase<String, Object?>
+    implements JsFreezable {
   /// Options with the entries of [source], in the key order of [source].
   ///
   /// Each entry goes through [operator []=]. Dart `null` for [source] gives
@@ -116,12 +150,45 @@ abstract class ElementOptions extends MapBase<String, Object?> {
     }
   }
 
+  /// The copy of the base fields of [source] for [clone]: `$shared`,
+  /// `$animations` and a new Map of extra keys with the same entries in the
+  /// same order. The copy is not frozen.
+  ElementOptions._copy(ElementOptions source)
+    : _shared = source._shared,
+      _animations = source._animations,
+      _extra = switch (source._extra) {
+        null => null,
+        final extra => Map<String, Object?>.of(extra),
+      };
+
   Object? _shared = _absent;
   Object? _animations = _absent;
 
   /// The extra keys: the keys that are not known. Dart `null` before the
   /// first write of an extra key.
   AnyObject? _extra;
+
+  /// Whether [freeze] has run.
+  bool _frozen = false;
+
+  /// `Object.isFrozen(options)`: whether [freeze] has run.
+  @override
+  bool get isFrozen => _frozen;
+
+  /// `Object.freeze(options)` (core.datasetController.js:831): a later write
+  /// throws a [TypeError]. No member clears the frozen state.
+  @override
+  void freeze() {
+    _frozen = true;
+  }
+
+  /// `Object.assign({}, options)`: new options of the same class with the
+  /// same entries in the same order (Chart.js ADR 0021, section 3).
+  ///
+  /// The copy is shallow, as `Object.assign` is: the values are the same
+  /// objects. The copy has a new Map of extra keys. It is not frozen, also
+  /// when these options are frozen.
+  ElementOptions clone();
 
   /// The known keys of the subclass, in their order: its static `knownKeys`.
   List<String> get _knownKeys;
@@ -176,8 +243,13 @@ abstract class ElementOptions extends MapBase<String, Object?> {
 
   /// Writes [value] for [key]: to the field of a known key, else to the Map
   /// of extra keys.
+  ///
+  /// Throws a [TypeError] in the frozen state, as a write into a frozen
+  /// object in strict mode does.
   @override
   void operator []=(String key, Object? value) {
+    // A JavaScript TypeError: a write into a frozen object.
+    if (_frozen) throw TypeError();
     if (!_store(key, value)) {
       (_extra ??= <String, Object?>{})[key] = value;
     }
@@ -190,11 +262,23 @@ abstract class ElementOptions extends MapBase<String, Object?> {
         (_extra?.containsKey(key) ?? false);
   }
 
+  /// Removes [key] and returns its value, or Dart `null` for an absent key.
+  ///
+  /// Throws a [TypeError] for a present key in the frozen state, as a
+  /// `delete` of a property of a frozen object in strict mode does.
   @override
   Object? remove(Object? key) {
     if (key is! String) return null;
     final raw = _rawOf(key);
-    if (identical(raw, _absent)) return _extra?.remove(key);
+    if (identical(raw, _absent)) {
+      final extra = _extra;
+      if (extra == null || !extra.containsKey(key)) return null;
+      // A JavaScript TypeError: a delete of a property of a frozen object.
+      if (_frozen) throw TypeError();
+      return extra.remove(key);
+    }
+    // A JavaScript TypeError: a delete of a property of a frozen object.
+    if (_frozen) throw TypeError();
     _store(key, _absent);
     return raw;
   }
@@ -231,8 +315,14 @@ abstract class ElementOptions extends MapBase<String, Object?> {
   @override
   bool get isNotEmpty => length != 0;
 
+  /// Removes each key.
+  ///
+  /// Throws a [TypeError] in the frozen state when the options contain a key,
+  /// as the `delete` of each property does.
   @override
   void clear() {
+    // A JavaScript TypeError: a delete of a property of a frozen object.
+    if (_frozen && isNotEmpty) throw TypeError();
     for (final key in _knownKeys) {
       _store(key, _absent);
     }
@@ -274,6 +364,20 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
   /// [ElementOptions.new]).
   PointOptions([super.source]);
 
+  /// The copy of [source] for [clone]: each field, and the base fields of
+  /// `ElementOptions._copy`.
+  PointOptions._copy(PointOptions super.source)
+    : _borderWidth = source._borderWidth,
+      _hitRadius = source._hitRadius,
+      _hoverBorderWidth = source._hoverBorderWidth,
+      _hoverRadius = source._hoverRadius,
+      _pointStyle = source._pointStyle,
+      _radius = source._radius,
+      _rotation = source._rotation,
+      _backgroundColor = source._backgroundColor,
+      _borderColor = source._borderColor,
+      super._copy();
+
   /// The known keys: `$shared`, the keys of `PointElement.defaults`
   /// (element.point.ts:31-39), the keys of `PointElement.defaultRoutes`
   /// (element.point.ts:44-47), and `$animations`.
@@ -303,6 +407,11 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
 
   @override
   List<String> get _knownKeys => knownKeys;
+
+  /// `Object.assign({}, options)`: a new [PointOptions] with each field of
+  /// these options (Chart.js ADR 0021, section 3). It is not frozen.
+  @override
+  PointOptions clone() => PointOptions._copy(this);
 
   /// element.point.ts:32 `borderWidth`: the raw value, or [undefined] for an
   /// absent key.
@@ -409,6 +518,25 @@ final class LineOptions extends ElementOptions {
   /// [ElementOptions.new]).
   LineOptions([super.source]);
 
+  /// The copy of [source] for [clone]: each field, and the base fields of
+  /// `ElementOptions._copy`.
+  LineOptions._copy(LineOptions super.source)
+    : _borderCapStyle = source._borderCapStyle,
+      _borderDash = source._borderDash,
+      _borderDashOffset = source._borderDashOffset,
+      _borderJoinStyle = source._borderJoinStyle,
+      _borderWidth = source._borderWidth,
+      _capBezierPoints = source._capBezierPoints,
+      _cubicInterpolationMode = source._cubicInterpolationMode,
+      _fill = source._fill,
+      _spanGaps = source._spanGaps,
+      _stepped = source._stepped,
+      _tension = source._tension,
+      _backgroundColor = source._backgroundColor,
+      _borderColor = source._borderColor,
+      _segment = source._segment,
+      super._copy();
+
   /// The known keys: `$shared`, the keys of `LineElement.defaults`
   /// (element.line.js:250-262), the keys of `LineElement.defaultRoutes`
   /// (element.line.js:267-270), `segment` and `$animations`.
@@ -448,6 +576,11 @@ final class LineOptions extends ElementOptions {
 
   @override
   List<String> get _knownKeys => knownKeys;
+
+  /// `Object.assign({}, options)`: a new [LineOptions] with each field of
+  /// these options (Chart.js ADR 0021, section 3). It is not frozen.
+  @override
+  LineOptions clone() => LineOptions._copy(this);
 
   /// element.line.js:251 `borderCapStyle`: the raw value, or [undefined] for
   /// an absent key.
@@ -570,6 +703,18 @@ final class BarOptions extends ElementOptions {
   /// [ElementOptions.new]).
   BarOptions([super.source]);
 
+  /// The copy of [source] for [clone]: each field, and the base fields of
+  /// `ElementOptions._copy`.
+  BarOptions._copy(BarOptions super.source)
+    : _borderSkipped = source._borderSkipped,
+      _borderWidth = source._borderWidth,
+      _borderRadius = source._borderRadius,
+      _inflateAmount = source._inflateAmount,
+      _pointStyle = source._pointStyle,
+      _backgroundColor = source._backgroundColor,
+      _borderColor = source._borderColor,
+      super._copy();
+
   /// The known keys: `$shared`, the keys of `BarElement.defaults`
   /// (element.bar.js:148-154), the keys of `BarElement.defaultRoutes`
   /// (element.bar.js:159-162), and `$animations`.
@@ -595,6 +740,11 @@ final class BarOptions extends ElementOptions {
 
   @override
   List<String> get _knownKeys => knownKeys;
+
+  /// `Object.assign({}, options)`: a new [BarOptions] with each field of
+  /// these options (Chart.js ADR 0021, section 3). It is not frozen.
+  @override
+  BarOptions clone() => BarOptions._copy(this);
 
   /// element.bar.js:149 `borderSkipped`: the raw value, or [undefined] for an
   /// absent key.
@@ -667,6 +817,24 @@ final class ArcOptions extends ElementOptions {
   /// [ElementOptions.new]).
   ArcOptions([super.source]);
 
+  /// The copy of [source] for [clone]: each field, and the base fields of
+  /// `ElementOptions._copy`.
+  ArcOptions._copy(ArcOptions super.source)
+    : _borderAlign = source._borderAlign,
+      _borderColor = source._borderColor,
+      _borderDash = source._borderDash,
+      _borderDashOffset = source._borderDashOffset,
+      _borderJoinStyle = source._borderJoinStyle,
+      _borderRadius = source._borderRadius,
+      _borderWidth = source._borderWidth,
+      _offset = source._offset,
+      _spacing = source._spacing,
+      _angle = source._angle,
+      _circular = source._circular,
+      _selfJoin = source._selfJoin,
+      _backgroundColor = source._backgroundColor,
+      super._copy();
+
   /// The known keys: `$shared`, the keys of `ArcElement.defaults`
   /// (element.arc.ts:304-317), the keys of `ArcElement.defaultRoutes`
   /// (element.arc.ts:319-321), and `$animations`.
@@ -704,6 +872,11 @@ final class ArcOptions extends ElementOptions {
 
   @override
   List<String> get _knownKeys => knownKeys;
+
+  /// `Object.assign({}, options)`: a new [ArcOptions] with each field of
+  /// these options (Chart.js ADR 0021, section 3). It is not frozen.
+  @override
+  ArcOptions clone() => ArcOptions._copy(this);
 
   /// element.arc.ts:305 `borderAlign`: the raw value, or [undefined] for an
   /// absent key.
@@ -810,3 +983,132 @@ final class ArcOptions extends ElementOptions {
     return true;
   }
 }
+
+/// The resolved options of an element type without a typed class (Chart.js
+/// ADR 0021, section 2): a custom element type, or a subclass of an element
+/// class with its own id.
+///
+/// It has no known keys. It keeps each key, also `$shared` and
+/// `$animations`, in one `LinkedHashMap`. Thus its key order is the
+/// insertion order of JavaScript. It has the frozen state and [clone] of
+/// [ElementOptions].
+final class GenericElementOptions extends ElementOptions {
+  /// Options with the entries of [source], in its key order (see
+  /// [ElementOptions.new]).
+  GenericElementOptions([super.source]) : _map = <String, Object?>{};
+
+  /// The copy of [source] for [clone]: a new Map with the same entries in the
+  /// same order.
+  GenericElementOptions._copy(GenericElementOptions super.source)
+    : _map = Map<String, Object?>.of(source._map),
+      super._copy();
+
+  /// Each key, also `$shared` and `$animations`, in insertion order.
+  final AnyObject _map;
+
+  @override
+  List<String> get _knownKeys => const [];
+
+  /// `Object.assign({}, options)`: a new [GenericElementOptions] with the
+  /// entries of these options in their order (Chart.js ADR 0021, section 3).
+  /// It is not frozen.
+  @override
+  GenericElementOptions clone() => GenericElementOptions._copy(this);
+
+  /// core.config.js:352 `$shared`: the raw value, or [undefined] for an
+  /// absent key.
+  @override
+  Object? get $sharedValue => _mapValue(r'$shared');
+
+  /// core.animations.js:71 `$animations`: the raw value, or [undefined] for
+  /// an absent key.
+  @override
+  Object? get $animationsValue => _mapValue(r'$animations');
+
+  /// The value of [key], or [undefined] for an absent key, as
+  /// `jsGet(options, key)` gives.
+  Object? _mapValue(String key) {
+    final value = _map[key];
+    return value == null && !_map.containsKey(key) ? undefined : value;
+  }
+
+  @override
+  Object? operator [](Object? key) => _map[key];
+
+  /// Writes [value] for [key].
+  ///
+  /// Throws a [TypeError] in the frozen state, as a write into a frozen
+  /// object in strict mode does.
+  @override
+  void operator []=(String key, Object? value) {
+    // A JavaScript TypeError: a write into a frozen object.
+    if (_frozen) throw TypeError();
+    _map[key] = value;
+  }
+
+  @override
+  bool containsKey(Object? key) => _map.containsKey(key);
+
+  /// Removes [key] and returns its value, or Dart `null` for an absent key.
+  ///
+  /// Throws a [TypeError] for a present key in the frozen state, as a
+  /// `delete` of a property of a frozen object in strict mode does.
+  @override
+  Object? remove(Object? key) {
+    // A JavaScript TypeError: a delete of a property of a frozen object.
+    if (_frozen && _map.containsKey(key)) throw TypeError();
+    return _map.remove(key);
+  }
+
+  /// The keys in insertion order: the keys of a `LinkedHashMap`.
+  @override
+  Iterable<String> get keys => _map.keys;
+
+  @override
+  int get length => _map.length;
+
+  /// Removes each key.
+  ///
+  /// Throws a [TypeError] in the frozen state when the options contain a key,
+  /// as the `delete` of each property does.
+  @override
+  void clear() {
+    // A JavaScript TypeError: a delete of a property of a frozen object.
+    if (_frozen && _map.isNotEmpty) throw TypeError();
+    _map.clear();
+  }
+}
+
+/// The new, empty options object of the element type [elementType] (Chart.js
+/// ADR 0021, section 1).
+///
+/// `_resolveElementOptions` passes it to `resolveNamedOptions` as `into`
+/// (core.datasetController.js:821), where upstream makes the object literal
+/// `{$shared: true}` (core.config.js:352). The ids `'point'`, `'line'`,
+/// `'bar'` and `'arc'` of the four element classes (element.point.ts:22,
+/// element.line.js:245, element.bar.js:143, element.arc.ts:302) give their
+/// typed classes. Another value gives a [GenericElementOptions]. The result
+/// is not frozen.
+// DIVERGES(chartjs): adapt-typed-element-options, the class of the id.
+ElementOptions createElementOptions(Object? elementType) =>
+    switch (elementType) {
+      'point' => PointOptions(),
+      'line' => LineOptions(),
+      'bar' => BarOptions(),
+      'arc' => ArcOptions(),
+      _ => GenericElementOptions(),
+    };
+
+/// `Object.assign({}, options)` for an options object (Chart.js ADR 0021,
+/// section 3): `cloneIfNotShared` (core.datasetController.js:230),
+/// `getSharedOptions` (:871), `resolveTargetOptions` (core.animations.js:159)
+/// and the bubble controller (controller.bubble.js:157).
+///
+/// An [ElementOptions] gives its [ElementOptions.clone], of the same class.
+/// Another Map gives a new plain Map with the keys of [jsObjectKeys], in that
+/// order, and the values of `options[key]`. Thus a resolver gives the values
+/// of its `get` trap. The copy is not frozen.
+// DIVERGES(chartjs): adapt-typed-element-options, the copy keeps the class.
+AnyObject copyOptions(AnyObject options) => options is ElementOptions
+    ? options.clone()
+    : {for (final key in jsObjectKeys(options)) key: options[key]};

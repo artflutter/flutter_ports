@@ -58,6 +58,7 @@ import 'package:flutter_chartjs/src/helpers/helpers.math.dart'
         tau;
 import 'package:flutter_chartjs/src/helpers/helpers.options.dart'
     show readValueToProps;
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
@@ -724,6 +725,25 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     '_indexable': (String name) => name != 'borderDash',
   };
 
+  /// element.arc.ts:300 `class ArcElement extends Element` as a value (Chart.js
+  /// ADR 0020, section 3).
+  ///
+  /// Its statics are [id], [defaults], [defaultRoutes] and [descriptors], in
+  /// the upstream order of declaration (element.arc.ts:302-326). They are the
+  /// objects of the static fields. Its `construct` calls `ArcElement(cfg)` with
+  /// the `cfg` of [elementCfgArg].
+  static final JsClass jsClass = JsClass(
+    'ArcElement',
+    superclass: Element.jsClass,
+    statics: {
+      'id': id,
+      'defaults': defaults,
+      'defaultRoutes': defaultRoutes,
+      'descriptors': descriptors,
+    },
+    construct: (newTarget, args) => ArcElement(elementCfgArg(args)),
+  );
+
   /// The value of [circumference]. Dart `null` stands for JS `undefined`.
   double? _circumference;
 
@@ -846,7 +866,8 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   /// between the angles, or the circumference is a full circle, and its
   /// distance is between the radii plus half of the spacing and of the
   /// border width. Dart `null` for [useFinalPosition] stands for JS
-  /// `undefined`.
+  /// `undefined`. Dart `null` for [chartX] or [chartY] is JS `null`, which
+  /// the subtraction of `getAngleFromPoint` reads as 0.
   ///
   /// It reads the properties through `getProps` with `jsToNumber`. It reads
   /// `circumference` with `valueOrDefault`: `undefined` gives the sweep from
@@ -856,14 +877,14 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   /// NaN, so the result is the same.
   @override
   bool inRange(
-    double chartX,
-    double chartY, [
+    double? chartX,
+    double? chartY, [
     bool? useFinalPosition,
   ]) {
     final point = getProps(const ['x', 'y'], useFinalPosition);
     final (:angle, :distance) = getAngleFromPoint(
       ElementPoint(jsToNumber(point['x']), jsToNumber(point['y'])),
-      ElementPoint(chartX, chartY),
+      ElementPoint(chartX ?? 0, chartY ?? 0),
     );
     final props = getProps(const [
       'startAngle',
@@ -904,7 +925,7 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   // DIVERGES(chartjs): adapt-arc-axis-range, no upstream inXRange.
   @override
   bool inXRange(
-    double mouseX, [
+    double? mouseX, [
     bool? useFinalPosition,
   ]) => false;
 
@@ -913,7 +934,7 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   // DIVERGES(chartjs): adapt-arc-axis-range, no upstream inYRange.
   @override
   bool inYRange(
-    double mouseY, [
+    double? mouseY, [
     bool? useFinalPosition,
   ]) => false;
 

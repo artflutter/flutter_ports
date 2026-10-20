@@ -27,6 +27,7 @@ import 'package:flutter_chartjs/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs/src/helpers/helpers.math.dart' show limitValue;
 import 'package:flutter_chartjs/src/js/js_math.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
+import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs/src/types/index.dart';
 
 /// helpers.extras.ts:7 `fontString`.
@@ -243,7 +244,9 @@ double textX(
       if (jsTruthy(spanGaps)) {
         final distanceToDefinedLo = _slice(parsed, 0, start + 1).reversed
             .toList()
-            .indexWhere((point) => !isNullOrUndef(point[vScale!.axis]));
+            .indexWhere(
+              (point) => !isNullOrUndef(_parsedValue(point, vScale!.axis)),
+            );
         start -= math.max<int>(0, distanceToDefinedLo);
       }
       start = limitValue(start, 0, pointCount - 1);
@@ -262,10 +265,13 @@ double textX(
                   1.0,
       );
       if (jsTruthy(spanGaps)) {
-        final distanceToDefinedHi = _slice(
-          parsed,
-          end - 1,
-        ).indexWhere((point) => !isNullOrUndef(point[vScale!.axis]));
+        final distanceToDefinedHi =
+            _slice(
+              parsed,
+              end - 1,
+            ).indexWhere(
+              (point) => !isNullOrUndef(_parsedValue(point, vScale!.axis)),
+            );
         end += math.max<int>(0, distanceToDefinedHi);
       }
       count = limitValue(end, start, pointCount) - start;
@@ -289,6 +295,13 @@ List<T> _slice<T>(List<T> list, double begin, [double? end]) {
   final to = end == null ? length : bound(end);
   return from < to ? list.sublist(from, to) : <T>[];
 }
+
+/// The JS read `point[key]` of a parsed item (`unknown[]`, index.d.ts:473):
+/// the Map read for a Map, else [jsGet]. The Map read gives Dart `null` for
+/// an absent key, where JavaScript gives `undefined`. `isNullOrUndef` gives
+/// the same result for both.
+Object? _parsedValue(Object? point, String key) =>
+    point is Map<dynamic, dynamic> ? point[key] : jsGet(point, key);
 
 /// helpers.extras.ts:146 `newRanges`, the object literal
 /// `{xmin, xmax, ymin, ymax}` of `_scaleRangesChanged`.

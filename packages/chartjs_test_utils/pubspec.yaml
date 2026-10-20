@@ -15,6 +15,10 @@ environment:
 resolution: workspace
 
 dependencies:
+  # The harness tasks of lib/src/dom.dart are due at clock.now(), the fake
+  # clock of testWidgets (Chart.js ADR 0022). The constraint is the clock
+  # constraint of flutter_chartjs (Chart.js ADR 0010).
+  clock: ^1.1.2
   # lib/flutter.dart, the flutter test part of the harness, installs the test
   # font with FontLoader (Chart.js ADR 0015). pure.dart does not import it.
   flutter:
@@ -22,11 +26,11 @@ dependencies:
   # flutter_chartjs has a dev_dependency on this package. The workspace
   # resolves the cycle (porting-flow.md section 3).
   flutter_chartjs: ^0.0.1
+  # lib/src/dom.dart, the DOM stand-in, attaches its body with the test
+  # binding and pumps frames (Chart.js ADR 0022). pure.dart does not import
+  # it.
+  flutter_test:
+    sdk: flutter
   # pure.dart runs with `dart test` on the VM, dart2js and dart2wasm. The
   # constraint is the test constraint of flutter_chartjs.
   test: ^1.31.0
-
-dev_dependencies:
-  # The tests of lib/flutter.dart lay out paragraphs in the flutter tester.
-  flutter_test:
-    sdk: flutter

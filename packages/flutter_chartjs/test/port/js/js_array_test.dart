@@ -1,10 +1,13 @@
 // Original code, not ported from Chart.js: tests of lib/src/js/js_array.dart.
+import 'package:flutter_chartjs/src/helpers/helpers.config.dart'
+    show createResolver;
 import 'package:flutter_chartjs/src/js/js_array.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
 // The expected values come from Node.js v24.12.0 (V8 13.6): array.sort(compare)
-// and Object.keys(object) for each input.
+// and Object.keys(object) for each input, and Object.getOwnPropertyNames of
+// an object and of a resolver of the pinned helpers.config.ts.
 
 /// An element with a sort key and its position before the sort.
 typedef _Item = ({int key, int position});
@@ -176,6 +179,68 @@ void main() {
       ]) {
         expect(jsArrayIndex(key), isNull, reason: key);
       }
+    });
+  });
+
+  group('jsOwnPropertyNames', () {
+    test('gives the keys of a Map in the order of Object.keys', () {
+      // Object.getOwnPropertyNames({b: 1, 10: 2, a: 3, 2: 4}).
+      expect(
+        jsOwnPropertyNames(<String, Object?>{'b': 1, '10': 2, 'a': 3, '2': 4}),
+        ['2', '10', 'b', 'a'],
+      );
+      expect(jsOwnPropertyNames(<String, Object?>{}), isEmpty);
+    });
+
+    test('gives the ownKeys trap of a resolver, with the later scopes', () {
+      // _createResolver([{a: 1, 10: 'x'}, {b: 2, a: 3, 2: 'y'}]): the own
+      // names are ['10', 'a', '2', 'b'], and Object.keys gives ['10', 'a'].
+      final resolver = createResolver([
+        <String, Object?>{'a': 1, '10': 'x'},
+        <String, Object?>{'b': 2, 'a': 3, '2': 'y'},
+      ]);
+      expect(jsOwnPropertyNames(resolver), ['10', 'a', '2', 'b']);
+      expect(jsObjectKeys(resolver), ['10', 'a']);
+    });
+  });
+
+  group('jsSplice', () {
+    // [0, 1, 2, 3, 4].splice(...args) in Node.js v24.12.0 on x64: the
+    // arguments, the removed elements and the array after the call. Dart
+    // null stands for an absent deleteCount.
+    final cases = <(double, double?, List<Object?>, List<int>, List<Object?>)>[
+      (1, 2, [], [1, 2], [0, 3, 4]),
+      (1, null, [], [1, 2, 3, 4], [0]),
+      (-1, 1, [], [4], [0, 1, 2, 3]),
+      (-10, 2, [], [0, 1], [2, 3, 4]),
+      (7, 2, [], [], [0, 1, 2, 3, 4]),
+      (2, 10, [], [2, 3, 4], [0, 1]),
+      (2, -3, [], [], [0, 1, 2, 3, 4]),
+      (1.7, 1.9, [], [1], [0, 2, 3, 4]),
+      (double.nan, 2, [], [0, 1], [2, 3, 4]),
+      (1, double.nan, [], [], [0, 1, 2, 3, 4]),
+      (double.infinity, 1, [], [], [0, 1, 2, 3, 4]),
+      (double.negativeInfinity, 1, [], [0], [1, 2, 3, 4]),
+      (1, double.infinity, [], [1, 2, 3, 4], [0]),
+      (1, 0, ['a', 'b'], [], [0, 'a', 'b', 1, 2, 3, 4]),
+      (1, 2, ['a'], [1, 2], [0, 'a', 3, 4]),
+      (-2, -0.5, ['a'], [], [0, 1, 2, 'a', 3, 4]),
+    ];
+    for (final (start, deleteCount, items, removed, after) in cases) {
+      test('splice($start, $deleteCount, ...$items)', () {
+        final list = <Object?>[0, 1, 2, 3, 4];
+        expect(jsSplice(list, start, deleteCount, items), removed);
+        expect(list, after);
+      });
+    }
+
+    test('an empty array', () {
+      // [].splice(-1, 1) and [].splice(0, 0, 'a').
+      final empty = <Object?>[];
+      expect(jsSplice(empty, -1, 1), isEmpty);
+      expect(empty, isEmpty);
+      expect(jsSplice(empty, 0, 0, ['a']), isEmpty);
+      expect(empty, ['a']);
     });
   });
 }

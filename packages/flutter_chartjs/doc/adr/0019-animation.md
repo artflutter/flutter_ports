@@ -492,6 +492,11 @@ Future<List<T>> jsPromiseAll<T>(List<Future<T>> futures);
 - `jsPromiseAll(futures)` is `Promise.all`.
   - A list with items gives `Future.wait(futures, eagerError: true)`. `Promise.all` also rejects at
     the first rejection (Evidence, F8).
+  - For a list with items, the result is the future of a `Completer.sync()`. `Future.wait`
+    completes or fails in the job that settles the last item or the first rejected item. Then a
+    new job of `jsEnqueuePromiseJob` settles the result. `Promise.all` also settles in the reaction
+    job of that item, and its `then` runs in a later job. Thus a continuation of the result runs
+    one job after that item, as in JavaScript.
   - An empty list gives the future of a `Completer.sync()`. A job of `jsEnqueuePromiseJob`
     completes it with an empty list (Evidence, J3). `Future.wait([])` completes in a Dart
     microtask, also inside a checkpoint (Evidence, J2). `Promise.all([])` settles in a promise
@@ -511,8 +516,9 @@ Future<List<T>> jsPromiseAll<T>(List<Future<T>> futures);
 - The animator frame callback (`core.animator.js:44-51`) runs inside
   `jsRunWithMicrotaskCheckpoint`. Thus a promise chain that the animator callback starts finishes
   at the end of that callback, before the next frame callback of the same frame. With the sync
-  completers, `Future.wait` and the `then` callback run inside the job that settles the last
-  future (Evidence, J2 and J3).
+  completers, `Future.wait` completes inside the job that settles the last future. The `then`
+  callback of `awaitAll` runs in the later job that `jsPromiseAll` adds to the same checkpoint
+  (Evidence, J2 and J3).
 - Outside the animator callback, a job runs as a Dart microtask, after the synchronous code.
   Examples are `update()` from a throttled event callback, `chart.stop()` and user code. A browser
   runs these jobs at the end of the current task or frame callback. Thus one difference stays. The
@@ -692,10 +698,13 @@ runs.
   F1 and P5).
 - `jsMapForEach` costs 91 ns (AOT) and 152 ns (wasm) in each frame with one chart. `Map.forEach`
   costs 6.4 ns and 7.3 ns (Evidence, F6).
-- [performance.md](../performance.md) gets a section "Animations (phase 5)" with these figures. The
-  rows `adapt-animation-number-path`, `adapt-animation-color-cache` and `adapt-animation-spec` name
-  that section. Phase 7 adds an animated data update to the stress mode of the gallery. It records
-  the frame figures on the Pixel 8a, macOS, Chrome with dart2wasm and the iPhone.
+- [performance.md](../performance.md) §10.1 "Animations" has these figures and the figures of the
+  port. The rows `adapt-animation-number-path`, `adapt-animation-color-cache` and
+  `adapt-animation-spec` name that section. Phase 5 adds the case `CALL=animate` to the stress
+  mode `chart` of the gallery ([performance.md](../performance.md) §6 and §10.4). It loops an
+  animation of `x` and `y` of each point. The key `animatorMs` gives the time of the animator tick
+  without its draw. The performance step of phase 5 records the frame figures of this case on the
+  Pixel 8a, macOS, Chrome with dart2wasm and the iPhone.
 
 ### 12. Tests
 
@@ -747,17 +756,22 @@ runs.
 **Port-only tests.**
 - `test/port/core/core.animation_test.dart` (pure, VM, dart2js and dart2wasm):
   - Group `adapt-animation-number-path`: a randomized equivalence test in the form of probe P3. It
-    compares the number path with the generic path. The targets are a `PointElement`, an
-    `ArcElement`, `PointOptions` and a plain Map. The values are doubles, `undefined`, JS `null`,
-    NaN, -0, the infinities, booleans and strings. The cfg values have loops, delays and easings.
-    Spec writes of `from` and `to` and calls of `update` occur between the ticks. After each tick,
-    the test compares the active state, the target value, its type and the thrown error type.
+    compares the number path with the generic path. The targets are a plain Map, `PointOptions` and
+    the four element classes: `PointElement`, `LineElement`, `BarElement` and `ArcElement`. The
+    values are doubles, `undefined`, JS `null`, NaN, -0, the infinities, booleans and strings. The
+    cfg values have loops, delays and easings. Spec writes of `from` and `to` and calls of `update`
+    occur between the ticks. After each tick, the test compares the active state, the target value,
+    its type and the thrown error type.
+  - The same group: for each of the four element classes, the setter and the write by name of `x`
+    and `y` store the same state. The values are 1.5, NaN, -0, 3 and the infinities.
   - Group `adapt-animation-color-cache`: the two color interpolators. The inputs are:
     - the 256 alpha bytes of a hex color and the `rgba()` alphas from 0 to 1
     - color names, invalid strings and `''`
     - `null`, `undefined`, a `CanvasGradient` and numbers
 
-    Each pair runs in both directions at 11 factors. A second test changes `from` and `to` between
+    Each pair of the color list runs in both directions, and so does each `rgba()` alpha. Each alpha
+    byte runs from `'#336699xx'` to `'#FF0000'`. Every eighth byte also runs from `'#FF0000'` back
+    to `'#336699xx'`. Each pair runs at 11 factors. A second test changes `from` and `to` between
     the calls.
   - Group `adapt-animation-spec`: the same animation writes for a plain Map cfg and for an
     `AnimationSpec`.
@@ -767,6 +781,12 @@ runs.
     - a user `fn` with one parameter: it gets `from` only
     - a `JsFunction` `fn`: it gets the animation as `this`
     - the number interpolator with `null`, `undefined` and booleans
+- `test/port/core/core.animation_cancel_test.dart` (VM), group `Animation.cancel`. `cancel()`
+  ticks at `Date.now()` before it stops (`core.animation.js:67-74`). The test checks the value of
+  that tick and the order of the write and of the rejection. The expected values come from the x64
+  reference engine, with a fake `Date.now`. The targets are a plain Map, `PointElement.x` and
+  `BarElement.y`, on the number path and on the generic path. The file imports `package:clock`.
+  `check:lib-imports` does not let a web test import it. Thus the file has `@TestOn('vm')`.
 - `test/port/core/animation_spec_test.dart` (pure, VM, dart2js and dart2wasm), group
   `adapt-animation-spec`: the Map protocol of `AnimationSpec` against a plain Map.
 - `test/port/core/core.animations_test.dart` (VM):
@@ -792,6 +812,8 @@ runs.
     - A re-hover in that frame keeps the hover options.
     - An update inside the animator callback with no active animation (an empty `jsPromiseAll`)
       assigns the shared options at the checkpoint.
+    - An update with the duration 0 in the `progress` listener of the frame that ends a `$shared`
+      options chain keeps the options of that chain, as upstream.
     - `update()` outside a frame rejects in a microtask, after the synchronous code.
   - Group `jsMapForEach in _update`: `chart.destroy()` in `onComplete` throws nothing. A chart that
     starts in `onComplete` gets its ticks in the same frame.
@@ -806,7 +828,8 @@ runs.
   - `jsMapForEach`: additions, deletions and the documented case of a second add
   - `jsDateNow` under `withClock` and under `testWidgets`
   - the job order of `js_promise.dart`: nested checkpoints, a throw in the callback, an empty
-    `jsPromiseAll` and an eager rejection
+    `jsPromiseAll`, an eager rejection, and the continuation of a list with items one job after
+    its last item
 - Phase 7 adds a hover test at the chart level. A bar chart with animations gets a `mousemove`
   through the harness. The test examines the colors at 0, 200 and 400 ms. It also examines the
   identity of the shared options after `mouseout`.
@@ -1015,9 +1038,12 @@ criterion:
 - A promise chain that the animator callback starts finishes inside that callback. Other microtasks
   still run after all frame callbacks of a frame. Thus the jobs of a throttled event callback still
   run after the later frame callbacks of the same frame (Open).
-- Inside one checkpoint, a continuation runs in the job that settles its future. JavaScript runs
-  the `then` of `Promise.all` in a later job. Thus the order of two continuations inside one
-  checkpoint can differ from JavaScript. No Chart.js code reads that order.
+- Inside one checkpoint, the continuation of a `wait()` future runs in the job that settles that
+  future. `jsPromiseAll` settles its result one job after its last item, as `Promise.all` does.
+  Thus the `then` of `awaitAll` runs in a later job, as in JavaScript. `_animateOptions` reads that
+  order (`core.animations.js:55-59`). An example is an update with an empty `awaitAll` in the
+  `progress` listener of the frame that ends a `$shared` options chain. The target keeps the
+  options of the earlier chain, as upstream.
 - `Animation.wait()` returns a `Future<void>`. It completes at the checkpoint or in a microtask,
   never inside the call that settles it.
 - A user `wait()` without an error handler gives an uncaught async error when the animation is
@@ -1074,7 +1100,9 @@ criterion:
   with a test switch for `_refresh`, or drive the frames with pumps.
 - **The cost of `jsObjectKeys(values)` in `_createAnimations`.** It makes a list for each call. A
   data update of 20000 points makes 20000 calls. No probe measured it.
-- **Device figures** on the Pixel 8a, the iPhone, macOS and Chrome (phase 7, the gallery).
+- **Device figures** on the Pixel 8a, the iPhone, macOS and Chrome, from the case `CALL=animate`
+  of the gallery (section 11). The performance step of phase 5 measures them.
+  [performance.md](../performance.md) §7 lists them as not recorded yet.
 
 ## Evidence
 

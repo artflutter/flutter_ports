@@ -86,11 +86,20 @@ this id to pair markers and rows.
     // DIVERGES(chartjs): theme-H1, theme scale styles fill first.
     final theme = _themeOf(config);
     if (theme != null) {
-      final themeScales = theme['scales'] as Map<String, Object?>?;
-      mergeIf(scale, [themeScales?[scale['type']], theme['scale']]);
+      final themeScales = theme['scales'];
+      mergeIf(scale, [
+        if (themeScales is AnyObject) jsGet(themeScales, jsGet(scale, 'type')),
+        theme['scale'],
+      ]);
     }
-    mergeIf(scale, [defaultScales[scale['type']], defaults['scale']]);
+    mergeIf(scale, [
+      jsGet(defaults['scales'], jsGet(scale, 'type')),
+      defaults['scale'],
+    ]);
 ```
+
+The port tests the type of `theme['scales']`. A theme `scales` value that is not a Map thus gives
+no source and no throw. `_themeOf` gives null for a `$theme` value that is not a Map.
 
 `mergeIf` applies its sources in order. It fills only absent keys (`helpers.core.ts:272-282,
 310-323`). The separate call thus gives the result of one longer list. The upstream line stays
@@ -111,6 +120,10 @@ For bar `backgroundColor`, from highest to lowest:
 5. `defaults`, whose routes read `Defaults.*`
 6. descriptors
 
+The defaults level has three parts in this order: the controller defaults `defaults.datasets[type]`,
+the element defaults `defaults.elements[type]`, and the root defaults that the routes read. The
+theme beats all three. `test/port/theme/precedence_test.dart` pins this order.
+
 Lookup is prefix-major. In active mode, the resolver searches every scope for
 `barHoverBackgroundColor` and `hoverBackgroundColor` before `backgroundColor`
 (`core.datasetController.js:815`). A static theme hover color thus beats the derived hover color of
@@ -120,7 +133,10 @@ derives the hover color from the base color that won (`core.defaults.js:62-64`).
 
 Scales: user `scales.<id>` > chart-type and dataset-type overrides (`core.config.js:89, 102`) >
 `theme.scales[type]` > `theme.scale` > `defaults.scales[type]` > `defaults.scale`. Plugins and
-chart level: user options > `overrides[type]` > theme > defaults.
+chart level: user options > `overrides[type]` > theme > defaults. The chart-type overrides reach
+a scale of the user options through its axis (`core.config.js:78-90`). Then each dataset adds the
+overrides of `dataset.type || config.type` to its scales (`core.config.js:93-104`). Thus a
+dataset without a type also adds the chart-type overrides to the scales that it creates.
 
 ### 3.3 Compile step and emitted keys
 
@@ -143,24 +159,43 @@ Emitted:
 - the `raw` keys that pass the guard
 - `transitions.theme.animation.{duration,easing}` and `transitions.themeFrame.animation.duration: 0`
 
+In phase 5, the tokens emit only the root `color`, the `scale` keys and the element keys. Phase 6
+adds the `scales.radialLinear` keys. Phase 8 adds the plugin keys and the palette keys.
+
 Never emitted. A debug assert and the emission test enforce this list.
 
 - Root `backgroundColor`, `borderColor` and `font`. The `''` scope key resolves to the theme root
   (`helpers.core.ts:338`), ahead of `defaults.elements.<type>`. These keys then beat the arc's
   `'#fff'`.
 - Static `hover*Color` keys.
-- Behavior keys: `events`, `interaction`, `onHover`, `onClick`, `animation`, `animations`,
-  `responsive`, `maintainAspectRatio`, `aspectRatio`, `indexAxis`, `type`, `datasets`, `parsing`,
-  `devicePixelRatio`, `locale`, `layout`, `display`, `enabled`, `forceOverride`. The tooltip also
-  resolves `interaction` (`plugin.tooltip.js:1349`).
+- Behavior keys: `events`, `interaction`, `hover`, `onHover`, `onClick`, `animation`,
+  `animations`, `responsive`, `maintainAspectRatio`, `aspectRatio`, `indexAxis`, `type`,
+  `datasets`, `parsing`, `devicePixelRatio`, `locale`, `layout`, `display`, `enabled`,
+  `forceOverride`. The tooltip also resolves `interaction` (`plugin.tooltip.js:1349`). The
+  resolver finds the `hover` scopes of every scope before the `interaction` scopes
+  (`helpers.config.ts:346-351`, `core.defaults.js:168-170`). Thus a theme `hover` beats the
+  `interaction` of the user options and of `overrides[type]`. It then changes the hover elements
+  (`core.controller.js:1259-1260`).
+- The interaction keys under `plugins.tooltip`: `mode`, `intersect`, `axis` and
+  `includeInvisible` (`core.defaults.js:66-70`, `core.interaction.js:272, 308`). The tooltip
+  resolves them from `plugins.tooltip`, then from `interaction` (`core.config.js:267-275`). The
+  theme scope of `plugins.tooltip` comes before `defaults.interaction` (H2). Thus a theme key
+  changes the tooltip elements (`plugin.tooltip.js:1200`).
 - `plugins.<id>: bool`. Only user options can use it (`core.plugins.js:101-107, 146-154`).
 - `scales.<id>` other than a scale type. These keys are dead. H1 reads only
   `scales[<scale type>]`. Chart-level lookups find every defaulted key in the scale copy-in first.
   Scale ids belong to one chart. Key enumeration reads only `scopes[0]` (`helpers.config.ts:73-75`).
-  No axis thus appears, also for the allowed `scales.radialLinear` key.
+  No axis thus appears, also for the allowed `scales.radialLinear` key. The guard knows the six
+  scale ids of v4.5.1: `scale.category.js:36`, `scale.linear.js:8`, `scale.logarithmic.js:76`,
+  `scale.radialLinear.js:340`, `scale.time.js:201` and `scale.timeseries.js:36`. A third-party
+  scale type fails the guard.
 - `_`-prefixed keys, read as descriptors (`helpers.config.ts:200-212`), and `$` keys other than
   the palette.
-- Functions, and nulls. A JS null is a value.
+- Functions, nulls and the `undefined` sentinel. A JS null is a value. A stored `undefined` blocks
+  the scale defaults in the merge of H1.
+
+The compiler leaves out a `raw` List with a rejected item as a whole. It leaves out a Map without
+keys. A theme with only `transitions` keys compiles to null.
 
 ### 3.4 Fonts
 
@@ -237,6 +272,19 @@ uses `'default'`, as any upstream option change does. The widget never uses `'no
 elements then keep their old colors. It never uses `'resize'`, because that mode skips the radar
 line options (`controller.radar.js:61-62`).
 
+The modes `'theme'` and `'themeFrame'` need no code in the animation files. The resolver reads the
+emitted `transitions` keys (section 3.8). [Chart.js ADR 0019](adr/0019-animation.md) §10
+(proposed) leaves the reduced-motion policy to the phase 9 widget. The core, the animator and the
+chart host have no reduced-motion code. The Open section of that ADR lists these candidates:
+- `animation: false` in a port-only scope of the widget while the preference is on. The user
+  `onComplete` and `onProgress` callbacks then stop.
+- A flag for each chart that `_createAnimations` reads one time. It keeps the user callbacks. It
+  also stops the animation of a theme removal.
+- `'themeFrame'` for theme switches only, as above. Theme removal then needs a mode with the
+  duration 0 and without the theme scope.
+
+The phase 9 decision does not write `defaults.animation`, because `defaults` is global.
+
 ### 3.8 Animation of a theme change
 
 The compiler emits `transitions.theme` with 200 ms and `'linear'`, the values of forui's
@@ -261,6 +309,9 @@ A null token themes nothing. A partial theme thus restates nothing.
 | `palette` | `BORDER_COLORS`, `BACKGROUND_COLORS` (`plugin.colors.ts:14-25`) | `plugins.colors.$borderColors`, `plugins.colors.$backgroundColors` |
 | `typography.font` | `Defaults.font` (`core.defaults.js:54-60`) | `scale.ticks.font`, `scale.title.font`, `plugins.legend.labels.font`, `plugins.legend.title.font`, `plugins.tooltip.bodyFont`. Without weight: `plugins.title.font`, `plugins.subtitle.font`, `plugins.tooltip.titleFont`, `plugins.tooltip.footerFont` |
 | `typography.pointLabels` | point-label size 10 (`scale.radialLinear.js:383-385`) | `scales.radialLinear.pointLabels.font`: the base font without size, then this font |
+
+"At alpha 0.75" replaces the alpha of the surface color, as `plugin.colors.ts:25` replaces the
+alpha of the palette.
 
 `ChartThemes.light` writes `borderColor: Color.from(alpha: 0.1, red: 0, green: 0, blue: 0)`.
 This keeps the alpha exact. `Color(0x1A000000)` emits `rgba(0, 0, 0, 0.10196078431372549)`
@@ -401,7 +452,8 @@ specs such as `controller.line.tests.js:784-799` thus run unthemed. Theme tests 
   file. It keeps `lib/` free of `material`, `cupertino`, `material_ui` and `forui`. The forui
   adapter is its own package. The Material snippet lives in the gallery.
 - `dart run melos run parity` writes the `differences.md` row count by category into the `core.config` and
-  `plugin.colors` rows of `parity.md`. Nobody edits these notes by hand.
+  `plugin.colors` rows of `parity.md`. Nobody edits these notes by hand. The status texts of these
+  rows in `doc/status.yaml` hold the placeholder `{{differences}}`.
 - Port-only tests live under `test/port/theme/`.
 
 ## 8. Tests
@@ -413,7 +465,8 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    `ChartThemes.none` compiles to null, no dependence on `TargetPlatform`.
 2. **Precedence** (H1, H2, H3, H5). A sentinel table has one row per level of section 3.2, for
    elements, scales, plugins and chart level. The palette beats the theme element colors. User
-   colors disable the palette.
+   colors disable the palette. In phase 5, the palette rows are skipped placeholders in
+   `test/port/theme/precedence_test.dart`. Phase 8 gives them `testWidgets` bodies.
 3. **The light preset equals upstream** (H4a, H4b, H4c, H5). The test resolves 8 chart types with
    the colors plugin on and off. It compares element options (default and active) and the scale,
    legend, tooltip, title and subtitle keys, with colors parsed. The JS prototype matched 16 of 16
@@ -433,6 +486,8 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    `plugin.legend.js:286, 314, 319`) fails when it changes. The JS prototype covered 6 types
    without scatter and pie, with no hover. It found no leak. The active-element case waits for
    `IdentityChartHover`.
+
+Section 10 ("Phase 5 state") names the test files and the test groups of phase 5.
 
 Required in phase 9:
 
@@ -496,6 +551,45 @@ theming work in each phase.
 | 9. Flutter API and release | public theme classes and presets, the theme widget and its sync, docs, tests 7-9 | public widget |
 | After 0.1.0 | section 5.2 items on demand, `flutter_chartjs_forui` | ADR: Toolchain pin and library floor |
 
+**Phase 5 state.** These parts exist:
+- The hunks H0-H3 in `lib/src/core/core.config.dart`, with the rows `theme-H0` to `theme-H3`. The
+  groups `theme-H0` to `theme-H3` of `test/port/core/core.config_test.dart` pin them.
+- Test 1 at the `Config` level, and the element, scale, plugin and chart-level rows of test 2. They
+  use raw Map themes, and they write `defaults` and `overrides` directly. They also pin the derived
+  hover color of section 3.2.
+- `lib/src/theme/compile.dart`: `compileChartTheme` over raw Map themes, the emission guard and the
+  deep freeze. Until phase 9, a theme is a raw Map theme with the fields `colors`, `typography` and
+  `raw`. A color token is a `RawThemeColor` record of sRGB components from 0 to 1.
+- `lib/src/theme/presets.dart`: the internal `ChartThemes.light` and `ChartThemes.none`. The light
+  preset holds `colors.color`, `colors.borderColor`, `colors.backgroundColor`, `colors.surface`
+  and `typography.font`.
+- The tests in `test/port/theme/`. `compile_test.dart` has test 1 and test 5 without a chart.
+  `presets_test.dart` compares the light preset with `light_reference.dart`, the phase 5 part of
+  test 3. `target_platform_test.dart` runs test 1 under each `TargetPlatform`, on the VM.
+- `presets_test.dart` registers the four elements through a new `TypedRegistry` in its `main()`,
+  before the snapshot of the defaults restore. It has no copy of `registerDefaults`.
+- `test/flutter_test_config.dart` registers the built-in components before the snapshot of the
+  restore (row `harness-register-builtins`). `presets_test.dart` calls `setUpSpecs()` first. That
+  call removes the built-in components again.
+- Test 1 at the chart level and the non-palette rows of test 2 with test-registered components, in
+  `test/port/theme/precedence_test.dart`. Its `main()` registers two dataset controllers with a
+  point element, the scale `themeLinear` and the plugin `themeProbe`. Each chart comes from
+  `acquireChart` of [Chart.js ADR 0022](adr/0022-chart-test-harness.md).
+- Test 1 there: a chart without an effective theme resolves the upstream options and gets the
+  upstream scope lists. A theme puts its scopes in the positions of section 3.2.
+- Test 2 there: one row for each level of section 3.2, for elements, scales, plugins and the chart
+  level. User colors beat the theme. The theme base color gives the derived hover color.
+- `tool/reference/theme_precedence_reference.mjs` writes the expected values. It runs each chart
+  with the upstream `core.config.js` and with a JavaScript prototype of the hunks H0-H3.
+
+These parts wait:
+- The palette rows of test 2 and the pins of H4a-H4c and H5 come with `plugin.colors` in phase 8.
+  `precedence_test.dart` lists them as skipped tests with the reason `'blocked: plugin.colors'`.
+- The plugin tokens and the palette come in phase 8. `typography.pointLabels` and the
+  `scales.radialLinear` keys come in phase 6.
+
+Chart.js ADR 0001 stays proposed beyond its four invariants. Only the maintainer accepts it.
+
 ## 11. Risks, open questions and alternatives
 
 Risks:
@@ -506,8 +600,9 @@ Risks:
 - A theme switch discards imperative `chart.options` edits.
 - A `'themeFrame'` update during an animation retargets that animation. The animation then ends on
   its own schedule (`core.animation.js:51-64`).
-- Theme removal under reduced motion animates, unless ADR: Animation disables chart animations
-  under reduced motion. porting-flow.md, decision 2.9, must list this item.
+- Theme removal under reduced motion animates for 1000 ms, the default duration.
+  [Chart.js ADR 0019](adr/0019-animation.md) §10 (proposed) leaves the reduced-motion policy to the
+  phase 9 widget (section 3.7). porting-flow.md, decision 2.9, lists this item.
 - It is possible that `$theme` and the palette keys collide with future upstream keys. The coverage
   test flags any `$` key in the inventory.
 

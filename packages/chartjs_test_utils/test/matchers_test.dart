@@ -1,8 +1,10 @@
 // Original code, not ported from Chart.js: tests of the harness matchers.
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
+import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
 // The pass and fail results follow chartjs-test-utils 0.4.0
@@ -18,6 +20,136 @@ final class _Point implements Point {
   @override
   final double? y;
 }
+
+/// The inline style of [_Canvas].
+final class _Style implements CSSStyleDeclaration {
+  _Style(String cssText) {
+    for (final declaration in cssText.split(';')) {
+      final colon = declaration.indexOf(':');
+      if (colon < 0) continue;
+      final name = declaration.substring(0, colon).trim();
+      final value = declaration.substring(colon + 1).trim();
+      if (name.isNotEmpty && value.isNotEmpty) _properties[name] = value;
+    }
+  }
+
+  final Map<String, String> _properties = {};
+
+  @override
+  String getPropertyValue(String property) => _properties[property] ?? '';
+
+  @override
+  String getPropertyPriority(String property) => '';
+
+  @override
+  void setProperty(String property, String? value, [String? priority]) {
+    if (value == null || value.isEmpty) {
+      _properties.remove(property);
+    } else {
+      _properties[property] = value;
+    }
+  }
+}
+
+/// A canvas with the render size [width] x [height] and the inline style
+/// [style].
+final class _Canvas implements HTMLCanvasElement {
+  _Canvas(this.width, this.height, [String style = '']) : style = _Style(style);
+
+  @override
+  int width;
+
+  @override
+  int height;
+
+  @override
+  final _Style style;
+
+  @override
+  CanvasRenderingContext2D? getContext(String contextId) => null;
+
+  @override
+  String? getAttribute(String name) => null;
+
+  @override
+  void setAttribute(String name, String value) {}
+
+  @override
+  void removeAttribute(String name) {}
+}
+
+/// The mock context of [_Canvas].
+final class _Context extends MockContext {
+  _Context(this.canvas);
+
+  @override
+  final HTMLCanvasElement canvas;
+}
+
+/// A platform with the device pixel ratio [ratio].
+final class _Platform implements types.BasePlatform {
+  _Platform(this.ratio);
+
+  final double ratio;
+
+  @override
+  double getDevicePixelRatio() => ratio;
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// A chart with the members that the chart matchers read.
+final class _Chart implements types.Chart {
+  _Chart({
+    required this.canvas,
+    required this.width,
+    required this.height,
+    CanvasRenderingContext2D? ctx,
+    bool noContext = false,
+    Object? devicePixelRatio,
+    double platformRatio = 1,
+  }) : ctx = noContext
+           ? null
+           : (ctx ?? (canvas == null ? null : _Context(canvas))),
+       options = {'devicePixelRatio': devicePixelRatio},
+       platform = _Platform(platformRatio);
+
+  @override
+  final HTMLCanvasElement? canvas;
+
+  @override
+  final CanvasRenderingContext2D? ctx;
+
+  @override
+  double width;
+
+  @override
+  double height;
+
+  @override
+  final Map<String, Object?> options;
+
+  @override
+  final types.BasePlatform platform;
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// A chart on a canvas of [rw] x [rh] with the inline style [style]. The
+/// chart has the size of the render size divided by [ratio].
+_Chart _chartOn(
+  int rw,
+  int rh, [
+  String style = '',
+  double ratio = 1,
+]) => _Chart(
+  canvas: _Canvas(rw, rh, style),
+  width: rw / ratio,
+  height: rh / ratio,
+  platformRatio: ratio,
+);
 
 /// The mismatch text of [matcher] for [actual].
 String _mismatch(Matcher matcher, Object? actual) {
@@ -186,6 +318,57 @@ void main() {
       expect(resolver, isNot(toEqualOptions({'color': 'blue'})));
     });
 
+    // `for (const key in expected)` with `hasOwnProperty` gives the keys of
+    // Object.keys. For a resolver, the getOwnPropertyDescriptor trap reads
+    // only the first scope (helpers.config.ts:73-75). The values come from
+    // the pinned helpers.config.ts and matchers.options.js in Node.js
+    // v24.12.0 on x64.
+    test('an expected resolver compares the keys of its first scope', () {
+      final resolver = createResolver([
+        <String, Object?>{'a': 1},
+        <String, Object?>{'a': 2, 'b': 3},
+      ]);
+      expect(resolver.keys, ['a', 'b']);
+      expect(<String, Object?>{'a': 1}, toEqualOptions(resolver));
+      expect(
+        _mismatch(toEqualOptions(resolver), <String, Object?>{'a': 2}),
+        'a: Expected 2 to equal 1',
+      );
+    });
+
+    test('an expected resolver with a fallback chain ends', () {
+      // The sub-resolver of `scales` falls back to `scale`. Its ownKeys give
+      // `grid`, and `scales.grid.grid` is a resolver again. Object.keys
+      // gives no key of `scales`.
+      List<Object?> scopes() => [
+        <String, Object?>{'scales': <String, Object?>{}},
+        <String, Object?>{
+          'scale': <String, Object?>{
+            'grid': <String, Object?>{'display': true},
+          },
+        },
+        <String, Object?>{
+          'scales': <String, Object?>{'_fallback': 'scale'},
+        },
+      ];
+      final resolver = createResolver(scopes());
+      final scales = resolver['scales']! as Map<String, Object?>;
+      expect(scales.keys, ['grid']);
+      expect(
+        (scales['grid']! as Map<String, Object?>)['grid'],
+        isA<Map<String, Object?>>(),
+      );
+      expect(
+        <String, Object?>{'scales': <String, Object?>{}},
+        toEqualOptions(resolver),
+      );
+      expect(createResolver(scopes()), toEqualOptions(resolver));
+      expect(
+        _mismatch(toEqualOptions(resolver), <String, Object?>{}),
+        'scales: Expected undefined to be an object',
+      );
+    });
+
     test('reports each difference with its path', () {
       expect(
         _mismatch(
@@ -227,6 +410,189 @@ void main() {
           },
         ),
         'a: Expected [1,"x"] to equal 1',
+      );
+    });
+
+    test('a mismatch without a result of matches gives no text', () {
+      // package:matcher calls describeMismatch also after a throw in
+      // matches. Then the report shows the throw.
+      expect(
+        toEqualOptions({
+          'a': 1,
+        }).describeMismatch(1, StringDescription(), {}, false).toString(),
+        '',
+      );
+    });
+  });
+
+  // matchers.js:106-174 with the three hunks of the row
+  // harness-chart-matchers (Chart.js ADR 0022, section 9). The display size
+  // values of a canvas with one px style come from Chrome (probe SP2 of
+  // Chart.js ADR 0022).
+  group('harness-chart-matchers', () {
+    test('toBeValidChart passes for a chart with a canvas and a context', () {
+      expect(_chartOn(300, 150), toBeValidChart());
+    });
+
+    test('toBeValidChart gives the upstream messages in their order', () {
+      expect(
+        _mismatch(toBeValidChart(), 5),
+        'Expected 5 to be an instance of Chart',
+      );
+      expect(
+        _mismatch(
+          toBeValidChart(),
+          _Chart(canvas: null, width: 300, height: 150),
+        ),
+        'Expected canvas to be an instance of HTMLCanvasElement',
+      );
+      expect(
+        _mismatch(
+          toBeValidChart(),
+          _Chart(
+            canvas: _Canvas(300, 150),
+            width: 300,
+            height: 150,
+            noContext: true,
+          ),
+        ),
+        'Expected context to be an instance of CanvasRenderingContext2D',
+      );
+      expect(
+        _mismatch(
+          toBeValidChart(),
+          _Chart(canvas: _Canvas(300, 150), width: 300, height: double.nan),
+        ),
+        'Expected height to be a strict finite number',
+      );
+      expect(
+        _mismatch(
+          toBeValidChart(),
+          _Chart(
+            canvas: _Canvas(300, 150),
+            width: double.infinity,
+            height: 150,
+          ),
+        ),
+        'Expected width to be a strict finite number',
+      );
+    });
+
+    test('a canvas without a px style has the render size', () {
+      expect(
+        _chartOn(300, 150),
+        toBeChartOfSize({'dw': 300, 'dh': 150, 'rw': 300, 'rh': 150}),
+      );
+    });
+
+    test('a side with a px style has that value', () {
+      expect(
+        _chartOn(300, 150, 'width: 320px; height: 240px'),
+        toBeChartOfSize({'dw': 320, 'dh': 240, 'rw': 300, 'rh': 150}),
+      );
+      // parseInt('345.42px', 10) is 345.
+      expect(
+        _chartOn(300, 150, 'width: 345.42px; height: 150px'),
+        toBeChartOfSize({'dw': 345, 'dh': 150, 'rw': 300, 'rh': 150}),
+      );
+    });
+
+    test('one px style keeps the aspect ratio of the render size', () {
+      // 405 * 150 / 300 is 202.5, and parseInt truncates it.
+      expect(
+        _chartOn(300, 150, 'width: 405px'),
+        toBeChartOfSize({'dw': 405, 'dh': 202, 'rw': 300, 'rh': 150}),
+      );
+      // 425 * 410 / 400 is 435.625.
+      expect(
+        _chartOn(400, 410, 'width: 425px'),
+        toBeChartOfSize({'dw': 425, 'dh': 435, 'rw': 400, 'rh': 410}),
+      );
+      // 401 * 400 / 200 is 802.
+      expect(
+        _chartOn(400, 200, 'height: 401px'),
+        toBeChartOfSize({'dw': 802, 'dh': 401, 'rw': 400, 'rh': 200}),
+      );
+    });
+
+    test('display none gives auto, thus 0, for a side without a px style', () {
+      expect(
+        _chartOn(300, 150, 'display: none'),
+        toBeChartOfSize({'dw': 0, 'dh': 0, 'rw': 300, 'rh': 150}),
+      );
+      expect(
+        _chartOn(300, 150, 'display: none; width: 200px'),
+        toBeChartOfSize({'dw': 200, 'dh': 0, 'rw': 300, 'rh': 150}),
+      );
+    });
+
+    test('the pixel ratio is the option, else the one of the platform', () {
+      // The platform ratio 3: the chart is a third of the render size.
+      expect(
+        _chartOn(960, 720, 'width: 320px; height: 240px', 3),
+        toBeChartOfSize({'dw': 320, 'dh': 240, 'rw': 960, 'rh': 720}),
+      );
+      // The option `devicePixelRatio` 2 takes the place of the platform.
+      final chart = _Chart(
+        canvas: _Canvas(640, 480, 'width: 320px; height: 240px'),
+        width: 320,
+        height: 240,
+        devicePixelRatio: 2,
+        platformRatio: 3,
+      );
+      expect(
+        chart,
+        toBeChartOfSize({'dw': 320, 'dh': 240, 'rw': 640, 'rh': 480}),
+      );
+    });
+
+    test('toBeChartOfSize gives the upstream messages in their order', () {
+      final size = {'dw': 300, 'dh': 150, 'rw': 300, 'rh': 150};
+      expect(_mismatch(toBeChartOfSize(size), 5), contains('instance of'));
+      // The sanity check of the chart height against the render height.
+      expect(
+        _mismatch(
+          toBeChartOfSize(size),
+          _Chart(canvas: _Canvas(300, 150), width: 300, height: 100),
+        ),
+        'Expected chart height 100 to be equal to original render height '
+        '150',
+      );
+      expect(
+        _mismatch(
+          toBeChartOfSize(size),
+          _Chart(canvas: _Canvas(300, 150), width: 200, height: 150),
+        ),
+        'Expected chart width 200 to be equal to original render width 300',
+      );
+      // A validity check replaces the message of a sanity check.
+      expect(
+        _mismatch(
+          toBeChartOfSize({'dw': 300, 'dh': 100, 'rw': 300, 'rh': 150}),
+          _Chart(canvas: _Canvas(300, 150), width: 300, height: 100),
+        ),
+        'Expected display height 150 to be equal to 100',
+      );
+      expect(
+        _mismatch(
+          toBeChartOfSize({'dw': 30, 'dh': 150, 'rw': 300, 'rh': 150}),
+          _chartOn(300, 150),
+        ),
+        'Expected display width 300 to be equal to 30',
+      );
+      expect(
+        _mismatch(
+          toBeChartOfSize({'dw': 300, 'dh': 150, 'rw': 300, 'rh': 15}),
+          _chartOn(300, 150),
+        ),
+        'Expected render height 150 to be equal to 15',
+      );
+      expect(
+        _mismatch(
+          toBeChartOfSize({'dw': 300, 'dh': 150, 'rw': 3, 'rh': 150}),
+          _chartOn(300, 150),
+        ),
+        'Expected render width 300 to be equal to 3',
       );
     });
   });

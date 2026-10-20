@@ -12,8 +12,10 @@
 /// - a [JsFunction], for a function that reads `this`. Its closure receives
 ///   `this` as its first parameter, and the arguments after it.
 ///
-/// [jsIsFunction] is `typeof value === 'function'` for these values. Ported
-/// code calls a function value from the user or from options through
+/// [jsIsFunction] is `typeof value === 'function'` for these values, and for
+/// a class value ([JsClass], Chart.js ADR 0020). A class value is a function
+/// that needs `new`: [jsConstruct] constructs it, and [jsCall] throws for it.
+/// Ported code calls a function value from the user or from options through
 /// [jsCall], or through [jsCall1] for one argument. A direct call of a Dart
 /// closure skips the rules below. Thus
 /// ported code calls a closure directly only if the port itself made it and
@@ -80,6 +82,7 @@
 ///   an argument of a wrong type.
 library;
 
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 
 /// A JavaScript function that reads `this`.
@@ -97,9 +100,14 @@ final class JsFunction {
 /// The largest count of positional parameters that [jsCall] tests: 8.
 const int jsMaxArity = 8;
 
-/// `typeof value === 'function'`: whether [value] is a Dart [Function] or a
-/// [JsFunction].
-bool jsIsFunction(Object? value) => value is Function || value is JsFunction;
+/// `typeof value === 'function'`: whether [value] is a Dart [Function], a
+/// [JsFunction] or a class value ([JsClass]).
+///
+/// `typeof C` is `'function'` for a class `C` (Chart.js ADR 0020, section 2).
+/// Thus `isFunction` of `helpers.core` gives true for a class value, and
+/// `callback` calls [jsCall] for it, as upstream calls the class.
+bool jsIsFunction(Object? value) =>
+    value is Function || value is JsFunction || value is JsClass;
 
 /// `function.apply(thisArg, args)`, `function.call(thisArg, ...args)` and
 /// `function(...args)`: calls [function] with [args] and returns its result.
@@ -113,9 +121,13 @@ bool jsIsFunction(Object? value) => value is Function || value is JsFunction;
 /// not change [args].
 ///
 /// Throws an [ArgumentError] if [function] is not a function value, where
-/// JavaScript throws a `TypeError`. Also throws an [ArgumentError] if the
-/// closure takes no count of positional arguments up to [jsMaxArity] (for
-/// example, a closure with a required named parameter).
+/// JavaScript throws a `TypeError`. Also throws an [ArgumentError] for a
+/// class value ([JsClass]), where JavaScript throws a `TypeError`, because a
+/// class constructor needs `new` (Chart.js ADR 0020, section 2). `callback`
+/// and the resolver reach this throw where upstream reaches its throw. Also
+/// throws an [ArgumentError] if the closure takes no count of positional
+/// arguments up to [jsMaxArity] (for example, a closure with a required named
+/// parameter).
 Object? jsCall(
   Object? function,
   List<Object?> args, {

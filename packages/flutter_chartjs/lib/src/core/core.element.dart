@@ -14,10 +14,12 @@
 /// - [ElementProps] is the result of [Element.getProps]. [Element]
 ///   implements it. Thus the branch that returns the element allocates
 ///   nothing.
-/// - [Element] also implements `types.ElementPropertyRead`, the read by
-///   name of `lib/src/types/index.dart`. A ported helper that must tell
-///   `undefined` from NaN reads a point through it, without an import of
-///   this library (Chart.js ADR 0017, section 5).
+/// - [Element] also implements `types.PropertyAccess`, the read and the
+///   write by name of `lib/src/types/index.dart`, and thus
+///   `types.ElementPropertyRead`. A ported helper that must tell `undefined`
+///   from NaN reads a point through it, without an import of this library
+///   (Chart.js ADR 0017, section 5). The animations read and write their
+///   targets through it (Chart.js ADR 0019, section 2).
 /// - [ElementPoint] is the object literal `{x, y}` of
 ///   [Element.tooltipPosition] and of `getCenterPoint`.
 ///
@@ -31,6 +33,7 @@ library;
 
 import 'package:flutter_chartjs/src/helpers/helpers.math.dart' show isNumber;
 import 'package:flutter_chartjs/src/js/js_array.dart' show jsObjectKeys;
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/animation.dart' as types;
@@ -100,6 +103,10 @@ import 'package:meta/meta.dart';
 ///   before [assign].
 /// - Its static members `id`, `defaults`, `defaultRoutes` and `descriptors`
 ///   are static fields (Chart.js ADR 0017, section 2).
+/// - Its static field `jsClass` is the class as a value (Chart.js ADR 0020,
+///   section 3). Its `superclass` is [Element.jsClass]. Its `statics` hold
+///   the static fields in the upstream order of declaration. Its `construct`
+///   calls the constructor with [elementCfgArg].
 ///
 /// ```dart
 /// class BoxElement extends Element implements types.VisualElement {
@@ -138,8 +145,7 @@ import 'package:meta/meta.dart';
 ///   // draw, inRange, inXRange, inYRange and getCenterPoint.
 /// }
 /// ```
-class Element
-    implements types.Element, types.ElementPropertyRead, ElementProps {
+class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// core.element.ts:6 the implicit constructor of `Element`.
   ///
   /// [x], [y], [options] and [$animations] start in the `undefined` state.
@@ -152,6 +158,20 @@ class Element
   /// core.element.ts:9 `static defaultRoutes = undefined`: the [undefined]
   /// sentinel.
   static const Object defaultRoutes = undefined;
+
+  /// core.element.ts:6 `class Element` as a value (Chart.js ADR 0020,
+  /// section 3).
+  ///
+  /// Its statics are [defaults] and [defaultRoutes], with the [undefined]
+  /// sentinel as an own value (core.element.ts:8-9). It has no `id`. Its
+  /// `construct` ignores the arguments, as the implicit constructor of
+  /// `Element` does. A class value that extends it without a `construct` of
+  /// its own constructs an [Element].
+  static final JsClass jsClass = JsClass(
+    'Element',
+    statics: {'defaults': defaults, 'defaultRoutes': defaultRoutes},
+    construct: (newTarget, args) => Element(),
+  );
 
   /// The value of [x]. Dart `null` stands for JS `undefined`.
   double? _x;
@@ -287,6 +307,7 @@ class Element
   /// Throws an [ArgumentError] for a value outside the type of a declared
   /// property. A subclass handles its own names first and passes the other
   /// names to `super`.
+  @override
   void operator []=(String prop, Object? value) {
     switch (prop) {
       case 'x':
@@ -382,6 +403,29 @@ class Element
     final value = extras[prop];
     return value == null && !extras.containsKey(prop) ? undefined : value;
   }
+}
+
+/// The `cfg` of `new XElement(cfg)` from the arguments [args] of the
+/// `construct` closure of an element class value (Chart.js ADR 0020, section
+/// 3): the first item of [args].
+///
+/// The element constructors copy `cfg` with `if (cfg) Object.assign(this,
+/// cfg)` (element.point.ts:57-59, element.line.js:294-296,
+/// element.bar.js:174-176, element.arc.ts:348-350). Thus an absent argument,
+/// [undefined], JS `null` and the other falsy values give Dart `null`, the
+/// default of the Dart constructor. A Map gives itself. Another value throws
+/// a [TypeError]. Upstream copies the own enumerable properties of such a
+/// value, for example the characters of a string.
+// DIVERGES(chartjs): adapt-component-class-role, a non-Map cfg throws.
+@internal
+AnyObject? elementCfgArg(List<Object?> args) {
+  final cfg = args.isEmpty ? undefined : args[0];
+  return switch (cfg) {
+    final AnyObject map => map,
+    _ when !jsTruthy(cfg) => null,
+    // A JavaScript value that the port does not copy into an element.
+    _ => throw TypeError(),
+  };
 }
 
 /// core.element.ts:31-33 the result type of `getProps`: `Pick<T, P[number]>`

@@ -76,39 +76,138 @@ abstract interface class ChartMetaClip {
 /// index.d.ts:477 `ChartMeta`, with the members of `ChartMetaCommon`
 /// (index.d.ts:441).
 abstract interface class ChartMeta {
+  /// index.d.ts:442 `type: string`, the dataset type.
+  /// `getMatchingVisibleMetas` compares it with `===` (core.scale.js:1686).
+  String get type;
+
+  /// index.d.ts:443 `controller: DatasetController`. `core.interaction.js:23`
+  /// reads it.
+  ///
+  /// Dart `null` stands for JS `null`, the start value
+  /// (core.controller.js:839). `buildOrUpdateControllers` assigns the
+  /// controller (core.controller.js:448). A reader that calls a member of a
+  /// `null` controller throws a `TypeError`, as in JavaScript.
+  DatasetController? get controller;
+
+  /// index.d.ts:447 `index: number`, the dataset index. The interaction
+  /// items copy it as `datasetIndex` (core.interaction.js:78, :289).
+  double get index;
+
+  /// index.d.ts:450 `stack: number`, the `stack` option of the dataset
+  /// that `buildOrUpdateElements` copies (core.datasetController.js:420).
+  ///
+  /// The value is the raw option value: the `undefined` sentinel of
+  /// `lib/src/js/js_undefined.dart` stands for JS `undefined`, the start
+  /// value (the meta of core.controller.js:835 has no `stack`), and Dart
+  /// `null` is JS `null`. A JS `null` stack is a stack: `isStacked` tests
+  /// `meta.stack !== undefined` (core.datasetController.js:121).
+  abstract Object? stack;
+
+  /// index.d.ts:452 `indexAxis: 'x' | 'y'`. `buildOrUpdateControllers`
+  /// writes it before it constructs the controller
+  /// (core.controller.js:432), and `linkScales` reads it
+  /// (core.datasetController.js:309). Dart `null` stands for JS
+  /// `undefined`.
+  String? get indexAxis;
+
+  /// index.d.ts:454 `data: TElement[]`, the data elements of the dataset.
+  ///
+  /// `TElement extends Element = Element`. Thus an item is an [Element].
+  /// The interaction code reads the members of `VisualElement` and of the
+  /// concrete `Element` of `core.element.dart` from it
+  /// (core.interaction.js:82-83, :125, :146).
+  List<Element> get data;
+
   /// index.d.ts:455 `dataset?: TDatasetElement`. Dart `null` stands for JS
   /// `null`, the start value (core.controller.js:838), and for `undefined`.
   /// The readers test only its truthiness (helpers.extras.ts:96).
-  Element? get dataset;
+  /// `addElements` assigns it (core.datasetController.js:400).
+  abstract Element? dataset;
+
+  /// index.d.ts:457 `hidden: boolean`, the visibility override of the
+  /// dataset. Dart `null` stands for JS `null`, the start value
+  /// (core.controller.js:840). `createStack` tests its truthiness
+  /// (core.datasetController.js:231).
+  bool? get hidden;
+
+  /// index.d.ts:459 `xAxisID?: string`, the id of the x scale.
+  /// `getMatchingVisibleMetas` reads it as `meta[axis + 'AxisID']`
+  /// (core.scale.js:1683-1687). Dart `null` stands for JS `undefined` and
+  /// for JS `null`: the start value is `null` (core.controller.js:841), and
+  /// a dataset can give `null`. The readers compare it with a scale id, which
+  /// neither value equals. `linkScales` assigns it
+  /// (core.datasetController.js:306).
+  abstract String? xAxisID;
+
+  /// index.d.ts:460 `yAxisID?: string`, the id of the y scale. Dart `null`
+  /// stands for JS `undefined` and `null`, as for [xAxisID]
+  /// (core.controller.js:842).
+  abstract String? yAxisID;
+
+  /// index.d.ts:461 `rAxisID?: string`, the id of the radial scale. Dart
+  /// `null` stands for JS `undefined`, as for [xAxisID].
+  abstract String? rAxisID;
+
+  /// index.d.ts:462 `iAxisID: string`, the id of the index scale.
+  /// `linkScales` assigns it (core.datasetController.js:310). Dart `null`
+  /// stands for JS `undefined`, as for [xAxisID].
+  abstract String? iAxisID;
+
+  /// index.d.ts:463 `vAxisID: string`, the id of the value scale.
+  /// `linkScales` assigns it (core.datasetController.js:311). Dart `null`
+  /// stands for JS `undefined`, as for [xAxisID].
+  abstract String? vAxisID;
 
   /// index.d.ts:465 `xScale?: Scale`. Dart `null` stands for JS
   /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
-  Scale? get xScale;
+  /// `linkScales` assigns it and the other four scales
+  /// (core.datasetController.js:312-316).
+  abstract Scale? xScale;
 
   /// index.d.ts:466 `yScale?: Scale`. Dart `null` stands for JS
   /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
-  Scale? get yScale;
+  abstract Scale? yScale;
+
+  /// index.d.ts:467 `rScale?: Scale`. Dart `null` stands for JS
+  /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
+  abstract Scale? rScale;
 
   /// index.d.ts:468 `iScale?: Scale`. Dart `null` stands for JS
   /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
-  Scale? get iScale;
+  abstract Scale? iScale;
 
   /// index.d.ts:469 `vScale?: Scale`. Dart `null` stands for JS
   /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
-  Scale? get vScale;
+  abstract Scale? vScale;
 
-  /// index.d.ts:471 `_sorted: boolean`.
-  bool get sorted;
+  /// index.d.ts:471 `_sorted: boolean`. `parse` assigns it
+  /// (core.datasetController.js:462, :483).
+  abstract bool sorted;
+
+  /// index.d.ts:472 `_stacked: boolean | 'single'`, the result of
+  /// `isStacked` (core.datasetController.js:119-122).
+  ///
+  /// The value is the `stacked` option of the value scale when it is
+  /// truthy, for example `true` or `'single'`, else a `bool`. Dart `null`
+  /// stands for JS `undefined`, the start value. The readers test its
+  /// truthiness, and `buildOrUpdateElements` compares it with `!==`
+  /// (core.datasetController.js:428).
+  abstract Object? stacked;
 
   /// index.d.ts:473 `_parsed: unknown[]`.
   ///
-  /// Each entry is a parsed data object, which ported code reads by an axis
-  /// key (helpers.extras.ts:103, :111). Chart.js ADR 0006 makes a JS plain
-  /// object a Map.
-  List<Map<String, Object?>> get parsed;
+  /// An entry is any value. The `parse*Data` methods give parsed data
+  /// objects, which ported code reads by an axis key (helpers.extras.ts:103,
+  /// :111). Chart.js ADR 0006 makes a JS plain object a Map. With `parsing:
+  /// false`, `parse` assigns the data array itself
+  /// (core.datasetController.js:461), and its items can be primitives. The
+  /// doughnut controller writes numbers (controller.doughnut.js:150, :161).
+  /// Dart `null` is a JS `null` entry, and the `undefined` sentinel a hole.
+  abstract List<Object?> parsed;
 
-  /// index.d.ts:474 `_clip: ChartMetaClip`.
-  ChartMetaClip get clip;
+  /// index.d.ts:474 `_clip: ChartMetaClip`. `_update` assigns it
+  /// (core.datasetController.js:704).
+  abstract ChartMetaClip clip;
 
   /// helpers.extras.ts:145 `_scaleRanges`. `index.d.ts` does not declare
   /// it. `_scaleRangesChanged` reads it and assigns it (:153). Dart `null`
@@ -143,6 +242,23 @@ abstract interface class ActiveDataPoint {
   double get index;
 }
 
+/// index.d.ts:490 `ActiveElement`, an item of `getActiveElements()`
+/// (index.d.ts:546).
+///
+/// The interaction modes give the `InteractionItem` of `core.interaction.js`
+/// (core.interaction.js:10), which has the same members.
+/// `setActiveElements` makes the object `{datasetIndex, element, index}`
+/// (core.controller.js:1104-1108).
+abstract interface class ActiveElement implements ActiveDataPoint {
+  /// index.d.ts:491 `element: Element`.
+  ///
+  /// Dart `null` stands for JS `undefined`: `setActiveElements` copies
+  /// `meta.data[index]`, which is `undefined` for an index without an
+  /// element (core.controller.js:1106). A reader that calls a member of it
+  /// throws a `TypeError`, as in JavaScript.
+  Element? get element;
+}
+
 /// index.d.ts:494 `Chart`.
 abstract interface class Chart {
   /// index.d.ts:499 `readonly platform: BasePlatform`.
@@ -162,6 +278,16 @@ abstract interface class Chart {
   /// (`platform.dom.js:246`).
   CanvasRenderingContext2D? get ctx;
 
+  /// index.d.ts:503 `readonly config: ChartConfiguration`.
+  ///
+  /// The chart of `core.controller.js` keeps its `Config` of
+  /// `core.config.js` here (core.controller.js:124). The dataset controller
+  /// reads the scope keys, the scopes and the resolvers from it
+  /// (core.datasetController.js:439, :813, :851). Those members are not in
+  /// `ChartConfiguration`. Thus the reader casts the value to the `Config`
+  /// of `lib/src/core/core.config.dart`.
+  ChartConfiguration get config;
+
   /// core.controller.js:168 `$proxies`, the event proxies of
   /// `platform.dom.js` for each event type. `index.d.ts` does not declare
   /// it.
@@ -173,6 +299,32 @@ abstract interface class Chart {
   /// `removeEventListener` assigns (`platform.dom.js:365`).
   abstract Map<String, Object?>? platformProxies;
 
+  /// core.controller.js:156 `_stacks`, the stacks of the datasets by stack
+  /// key. `index.d.ts` does not declare it.
+  ///
+  /// The structure is `{stackKey: {indexValue: {datasetIndex: value}}}`
+  /// (core.datasetController.js:154). The keys are the `ToString` of the
+  /// upstream keys. `updateStacks` assigns `{}` when it is absent. Dart
+  /// `null` stands for JS `undefined`, the start value, and for the `delete`
+  /// of core.controller.js:406. JS `null` never reaches it.
+  abstract Map<String, Object?>? stacks;
+
+  /// core.controller.js:171 `_animationsDisabled`: `!options.animation` of
+  /// the last update (core.controller.js:480). `index.d.ts` does not
+  /// declare it. `includeOptions` tests its truthiness
+  /// (core.datasetController.js:879). Dart `null` stands for JS
+  /// `undefined`, the start value.
+  bool? get animationsDisabled;
+
+  /// core.controller.js:174 `_dataChanges`, the data changes since the last
+  /// update. `index.d.ts` does not declare it.
+  ///
+  /// Each item is `[datasetIndex, method, start, count]`: `_sync` of the
+  /// dataset controller adds it (core.datasetController.js:1048). The
+  /// method is `'_insertElements'` or `'_removeElements'`, and the numbers
+  /// are `double` values.
+  List<List<Object?>> get dataChanges;
+
   /// index.d.ts:504 `readonly width: number`. `retinaScale` assigns it
   /// through the `PrivateChart` type (helpers.dom.ts:218), so it has a
   /// setter.
@@ -183,17 +335,81 @@ abstract interface class Chart {
   /// setter.
   abstract double height;
 
+  /// index.d.ts:507 `readonly boxes: LayoutItem[]`, the layout boxes.
+  ///
+  /// The constructor sets `[]` (core.controller.js:157). An array is always
+  /// truthy. Thus the tests of `core.layouts.js:292`, `:319` and `:32` for a
+  /// chart without boxes have no Dart form. `layouts.addBox` and
+  /// `layouts.removeBox` change the list.
+  List<LayoutItem> get boxes;
+
   /// index.d.ts:508 `readonly currentDevicePixelRatio: number`.
   /// `_alignPixel` reads it (helpers.canvas.ts:126). `retinaScale` assigns
   /// it through the `PrivateChart` type (helpers.dom.ts:233), so it has a
   /// setter.
   abstract double currentDevicePixelRatio;
 
-  /// index.d.ts:509 `readonly chartArea: ChartArea`.
-  ChartArea get chartArea;
+  /// index.d.ts:509 `readonly chartArea: ChartArea`. `layouts.update`
+  /// assigns it (core.layouts.js:439), so it has a setter.
+  ///
+  /// Dart `null` stands for JS `undefined`, the start value
+  /// (core.controller.js:159), until the first layout. A reader that reads
+  /// an edge of it throws a `TypeError`, as in JavaScript. The setter takes
+  /// a [ChartArea]: no ported code assigns `undefined`.
+  ChartArea? get chartArea;
+  set chartArea(ChartArea value);
+
+  /// index.d.ts:510 `readonly scales: { [key: string]: Scale }`, the scales
+  /// by id. `core.scale.js:144`, `:1064` and `:1182` read the scale of an
+  /// object position from it.
+  Map<String, Scale> get scales;
+
+  /// index.d.ts:516 `data: ChartData`, the data object of the
+  /// configuration. A Map (Chart.js ADR 0006). `Scale.getLabels` reads its
+  /// `labels`, `xLabels` and `yLabels` (core.scale.js:359-361).
+  Map<String, Object?> get data;
 
   /// index.d.ts:517 `options: ChartOptions<TType>`.
   Map<String, Object?> get options;
+
+  /// index.d.ts:531 `draw(): void`: draws the chart.
+  ///
+  /// The animator calls it in each frame in which an animation of the chart
+  /// ticks (core.animator.js:88-89, Chart.js ADR 0019, section 1).
+  void draw();
+
+  /// index.d.ts:533 `isPointInArea(point: Point): boolean`.
+  bool isPointInArea(Point point);
+
+  /// index.d.ts:536 `getSortedVisibleDatasetMetas(): ChartMeta[]`.
+  List<ChartMeta> getSortedVisibleDatasetMetas();
+
+  /// index.d.ts:537 `getDatasetMeta(datasetIndex: number): ChartMeta`.
+  ChartMeta getDatasetMeta(double datasetIndex);
+
+  /// core.controller.js:737 `_getSortedDatasetMetas(filterVisible)`: the
+  /// metas in the drawing order, only the visible ones when [filterVisible]
+  /// is true. `index.d.ts` does not declare it. The dataset controller
+  /// reads it (core.datasetController.js:61).
+  List<ChartMeta> getSortedDatasetMetas(
+    // The upstream signature has a positional `filterVisible`.
+    // ignore: avoid_positional_boolean_parameters
+    bool filterVisible,
+  );
+
+  /// index.d.ts:555 `notifyPlugins(hook: string, args?: AnyObject): boolean
+  /// | void`. The scale hooks call it (core.scale.js:535).
+  ///
+  /// Dart `null` for [args] stands for JS `undefined`. The result is the
+  /// result of `notify`: false when a plugin cancels the hook. Dart `null`
+  /// stands for the `void` result, the `undefined` of a notify before the
+  /// hook `install` or after the hook `uninstall` (core.plugins.js:41-43).
+  bool? notifyPlugins(String hook, [Map<String, Object?>? args]);
+
+  /// index.d.ts:557 `isPluginEnabled(pluginId: string): boolean`. The
+  /// dataset controller calls it for the filler
+  /// (core.datasetController.js:287).
+  bool isPluginEnabled(String pluginId);
 
   /// index.d.ts:559 `getContext(): { chart: Chart, type: string }`.
   ///
@@ -205,11 +421,41 @@ abstract interface class Chart {
 
 /// index.d.ts:592 `DatasetController`.
 abstract interface class DatasetController {
+  /// index.d.ts:601 `readonly index: number`, the dataset index.
+  /// `clearStacks` reads it from the meta (core.datasetController.js:210).
+  double get index;
+
+  /// index.d.ts:602 `readonly _cachedMeta: ChartMeta`, the meta of the
+  /// dataset (core.datasetController.js:260). `core.interaction.js:24` and
+  /// `:32` read it.
+  ChartMeta get cachedMeta;
+
+  /// core.datasetController.js:267 `_sharedOptions`, the options that all
+  /// data elements share. `index.d.ts` does not declare it.
+  /// `core.interaction.js:49` tests its truthiness.
+  ///
+  /// Dart `null` stands for JS `undefined`, the start value. JS `null` never
+  /// reaches it. An object is always truthy.
+  Map<String, Object?>? get sharedOptions;
+
   /// core.datasetController.js:443 `_parsing`, the `parsing` option.
   /// `index.d.ts` does not declare it. `_parseObjectDataRadialScale`
   /// (helpers.config.ts:444) reads it as `this._parsing`. Its value is
   /// `false` or an object of the parsing keys (Chart.js ADR 0006).
   Object? get parsing;
+
+  /// index.d.ts:666 `getMinMax(scale: Scale, canStack?: boolean): { min:
+  /// number; max: number }`. `Scale.getMinMax` reads the range of each
+  /// visible dataset of the scale (core.scale.js:312).
+  ///
+  /// Dart `null` for [canStack] stands for JS `undefined`. The result is a
+  /// record.
+  ({double min, double max}) getMinMax(
+    Scale scale, [
+    // The upstream signature has a positional `canStack`.
+    // ignore: avoid_positional_boolean_parameters
+    bool? canStack,
+  ]);
 }
 
 /// index.d.ts:676 `Defaults`, the type of the `defaults` object of
@@ -259,10 +505,15 @@ abstract interface class Tick {
 
 /// index.d.ts:1273 `Scale`.
 abstract interface class Scale implements Element, LayoutItem {
+  /// index.d.ts:1274 `readonly id: string`. `getStackKey` reads it
+  /// (core.datasetController.js:125).
+  String get id;
+
   /// index.d.ts:1277 `readonly chart: Chart`.
   Chart get chart;
 
   /// index.d.ts:1287 `axis: string`.
+  @override
   String get axis;
 
   /// index.d.ts:1289 `min: number`.
@@ -271,12 +522,46 @@ abstract interface class Scale implements Element, LayoutItem {
   /// index.d.ts:1290 `max: number`.
   double get max;
 
+  /// index.d.ts:1292 `getMatchingVisibleMetas(type?: string): ChartMeta[]`.
+  /// Dart `null` for [type] stands for JS `undefined`.
+  /// `getLastIndexInStack` calls it (core.datasetController.js:142).
+  List<ChartMeta> getMatchingVisibleMetas([String? type]);
+
+  /// core.scale.js:240 `_reversePixels`: whether the pixels of the scale run
+  /// against its values (core.scale.js:495). `index.d.ts` does not declare
+  /// it. `core.interaction.js:28` reads it.
+  bool get reversePixels;
+
+  /// core.scale.js:233 `_length`: the length of the scale in pixels.
+  /// `index.d.ts` does not declare it. `determineMaxTicks` reads it
+  /// (core.scale.autoskip.js:52).
+  double get length;
+
+  /// core.scale.js:234 `_maxLength`: the length of the scale with its
+  /// margins. `index.d.ts` does not declare it. `determineMaxTicks` reads it
+  /// (core.scale.autoskip.js:53).
+  double get maxLength;
+
   /// core.element.ts:14 `options: O`, through `Element<unknown, O>`
   /// (index.d.ts:1273).
   @override
   Map<String, Object?> get options;
 
+  /// index.d.ts:1322 `getLabelForValue(value: number): string`.
+  ///
+  /// The scale of `core.scale.js:877` returns [value] as it is. Thus the
+  /// parameter and the result are any value. `getLabelAndValue` applies
+  /// `ToString` to the result (core.datasetController.js:693-694).
+  Object? getLabelForValue(Object? value);
+
   /// index.d.ts:1336 `getPixelForValue`.
+  ///
+  /// index.d.ts:1336 types [value] as a number. core.scale.js:884 documents
+  /// `@param {*} value`, and `scale.category.js:133-139` parses a value that
+  /// is not a number. The callers of `core.scale` pass the value of an
+  /// object position through `ToNumber` (differences.md row
+  /// `adapt-scale-position-value`). Phase 6 decides whether the parameter
+  /// becomes `Object?`, when it ports `scale.category`.
   double getPixelForValue(double value, [double? index]);
 
   /// index.d.ts:1355 `parse`.
@@ -284,6 +569,33 @@ abstract interface class Scale implements Element, LayoutItem {
 
   /// index.d.ts:1356 `getUserBounds`.
   ({double min, double max, bool minDefined, bool maxDefined}) getUserBounds();
+
+  /// index.d.ts:1359 `getLabels(): string[]`. A label is a `String`, a
+  /// `List` of lines or another value (core.scale.js:358-363).
+  /// `parsePrimitiveData` reads it (core.datasetController.js:506).
+  List<Object?> getLabels();
+
+  /// core.scale.js:977 `_tickSize()`: the space of one tick label along the
+  /// scale. `index.d.ts` does not declare it. `determineMaxTicks` calls it
+  /// (core.scale.autoskip.js:51).
+  double tickSize();
+}
+
+/// index.d.ts:1500 `LabelItem`, an item of `Scale.getLabelItems`
+/// (index.d.ts:1360, core.scale.js:1321-1334).
+abstract interface class LabelItem {
+  /// index.d.ts:1501 `label: string | string[]`: a `String`, a `List` of
+  /// lines or another value of the tick callback.
+  Object? get label;
+
+  /// index.d.ts:1502 `font: CanvasFontSpec`.
+  CanvasFontSpec get font;
+
+  /// index.d.ts:1503 `textOffset: number`.
+  double get textOffset;
+
+  /// index.d.ts:1504 `options: RenderTextOpts`.
+  RenderTextOpts get options;
 }
 
 /// index.d.ts:1404 `RenderTextOpts`, the options of `renderText`
@@ -357,7 +669,11 @@ abstract interface class BackdropOptions {
 }
 
 /// index.d.ts:1544 `ChartEvent`.
-abstract interface class ChartEvent {
+///
+/// It implements [Point], because ported code passes an event where
+/// upstream expects a point: `this.isPointInArea(e)`
+/// (core.controller.js:1168). TypeScript accepts it by structure.
+abstract interface class ChartEvent implements Point {
   /// index.d.ts:1545 `type`, one of the DOM event names.
   String get type;
 
@@ -369,9 +685,11 @@ abstract interface class ChartEvent {
   /// index.d.ts:1559 `x: number | null`. `fromNativeEvent` gives JS `null`
   /// for an `undefined` position (`platform.dom.js:116`). Dart `null` stands
   /// for that `null`.
+  @override
   double? get x;
 
   /// index.d.ts:1560 `y: number | null`, as [x].
+  @override
   double? get y;
 
   /// `platform.dom.js:114` `chart`, the chart of the event.
@@ -427,12 +745,19 @@ abstract interface class CanvasFontSpec implements FontSpec {
 /// of `core.element.dart` and implement this interface.
 ///
 /// `getRange?(axis)` (index.d.ts:1822) is optional in TypeScript. Dart has no
-/// optional member. Thus it stays out of this interface until a ported
-/// caller needs it (`core.interaction.js`, phase 5). The classes with an
-/// upstream `getRange` declare it.
+/// optional member. Thus it is the member of the port-only interface
+/// [VisualElementRange] (Chart.js ADR 0020, section 9). The classes with an
+/// upstream `getRange` implement that interface.
 ///
 /// `useFinalPosition?: boolean` is `bool?`. Dart `null` stands for JS
 /// `undefined`, which is falsy. JS `null` never reaches it.
+///
+/// A coordinate of [inRange], [inXRange] and [inYRange] is `double?`. Dart
+/// `null` stands for JS `null`. The interaction modes pass the coordinate of
+/// the event position unchanged (core.interaction.js:125, :174, :234, :236),
+/// and an event coordinate can be JS `null` (`Point`). `BarElement` reads a
+/// `null` coordinate as "ignore this axis" (element.bar.js:103-111). The
+/// other elements do arithmetic on it, where JS `null` is 0.
 abstract interface class VisualElement {
   /// index.d.ts:1817 `draw(ctx: CanvasRenderingContext2D, area?:
   /// ChartArea): void`. Dart `null` stands for an absent [area], JS
@@ -447,8 +772,8 @@ abstract interface class VisualElement {
   /// index.d.ts:1818 `inRange(mouseX, mouseY, useFinalPosition?):
   /// boolean`.
   bool inRange(
-    double mouseX,
-    double mouseY, [
+    double? mouseX,
+    double? mouseY, [
     // The upstream signature has a positional `useFinalPosition`.
     // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
@@ -456,7 +781,7 @@ abstract interface class VisualElement {
 
   /// index.d.ts:1819 `inXRange(mouseX, useFinalPosition?): boolean`.
   bool inXRange(
-    double mouseX, [
+    double? mouseX, [
     // The upstream signature has a positional `useFinalPosition`.
     // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
@@ -464,7 +789,7 @@ abstract interface class VisualElement {
 
   /// index.d.ts:1820 `inYRange(mouseY, useFinalPosition?): boolean`.
   bool inYRange(
-    double mouseY, [
+    double? mouseY, [
     // The upstream signature has a positional `useFinalPosition`.
     // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
@@ -480,6 +805,19 @@ abstract interface class VisualElement {
     // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
   ]);
+}
+
+/// index.d.ts:1822 the optional member `getRange?(axis: 'x' | 'y'): number`
+/// of `VisualElement` (Chart.js ADR 0020, section 9). An element class with
+/// an upstream `getRange` implements it.
+///
+/// `core.interaction.js:54` tests `typeof el.getRange === 'function'`. The
+/// port tests the element against this interface. An element without it
+/// gives `false`, as upstream. `PointElement` and `BarElement` implement
+/// it. `ArcElement` and `LineElement` have no upstream `getRange`.
+abstract interface class VisualElementRange implements VisualElement {
+  /// index.d.ts:1822 `getRange(axis)`.
+  double getRange(String axis);
 }
 
 /// index.d.ts:1837 `Segment`.
@@ -610,7 +948,7 @@ abstract interface class BasePlatform {
 /// core.controller.js:137 passes the `Config` of core.config.js to
 /// `updateConfig`. Its `options` getter returns the options object of the
 /// configuration, which `initOptions` always creates
-/// (core.config.js:47-52).
+/// (core.config.js:115-120).
 abstract interface class ChartConfiguration {
   /// index.d.ts:3872 `options?: ChartOptions<TType>`. A Map
   /// (Chart.js ADR 0006).
@@ -736,4 +1074,18 @@ abstract interface class ElementPropertyRead {
   /// sentinel for a property in the `undefined` state and for an unknown
   /// name.
   Object? operator [](String prop);
+}
+
+/// The JS property read `target[prop]` and the JS property write
+/// `target[prop] = value` of an object that is not a Map (Chart.js ADR 0019,
+/// section 2). It is not a declaration of `index.d.ts`.
+///
+/// The animations read and write their targets by name
+/// (core.animation.js:29, :88, :94, :102; core.animations.js:71, :101,
+/// :121). A target is a Map or a [PropertyAccess]. The concrete `Element` of
+/// `core.element.dart` implements it with its access by name (Chart.js ADR
+/// 0017, section 5).
+abstract interface class PropertyAccess implements ElementPropertyRead {
+  /// The JS property write `target[prop] = value`.
+  void operator []=(String prop, Object? value);
 }

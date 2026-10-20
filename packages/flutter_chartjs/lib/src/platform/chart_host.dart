@@ -24,7 +24,13 @@
 ///   upstream sizes a chart at construction (`core.controller.tests.js:651`).
 ///   A canvas swap reports the detach of the old canvas during the build.
 ///   Later attach and detach changes go through one post-frame callback,
-///   which reports only a net change (Chart.js ADR 0016, decision 9).
+///   which reports only a net change (Chart.js ADR 0016, decision 9). The
+///   test harness reports them earlier, at its mutation checkpoint
+///   ([flushCanvasMutations], Chart.js ADR 0022).
+/// - A [ContainerResizeObserver] that starts on a laid-out host gets its
+///   first notification at the next layout of the host, as a DOM
+///   `ResizeObserver` gets it at the next rendering step (Chart.js ADR
+///   0022).
 /// - A later change of the constraints or of the device pixel ratio reaches
 ///   the [ContainerResizeObserver]s. `createResizeObserver` throttles them
 ///   to one resize in the next frame, as upstream.
@@ -183,6 +189,24 @@ void _notifyConnection(HTMLCanvasElement canvas, {required bool connected}) {
   }
 }
 
+/// The delivery of the `MutationObserver` records at a microtask
+/// checkpoint (`platform.dom.js:129-159`): reports now the net attached
+/// state of each host with a pending connection check, in the order of the
+/// attach and detach changes. The post-frame check of each host then finds
+/// no change.
+///
+/// Only the test harness calls it (Chart.js ADR 0022): its mutation
+/// checkpoint gives a detach and an attach to the chart in the task of the
+/// DOM write, as the DOM does. Without a call, the post-frame check of
+/// Chart.js ADR 0016, decision 9, reports them.
+void flushCanvasMutations() {
+  final hosts = List.of(RenderChartHost._pendingConnectionChecks);
+  RenderChartHost._pendingConnectionChecks.clear();
+  for (final host in hosts) {
+    host._reportConnection();
+  }
+}
+
 // The ResizeObserver of the container.
 
 /// The `ResizeObserver` of `createResizeObserver`
@@ -191,8 +215,10 @@ void _notifyConnection(HTMLCanvasElement canvas, {required bool connected}) {
 ///
 /// [onResize] gets the content size of the container: the max size of the
 /// incoming constraints of the host, `double.infinity` for an unbounded
-/// side. As a DOM `ResizeObserver`, the observer gets the current size when
-/// it starts to observe a laid-out container, and then each change.
+/// side. As a DOM `ResizeObserver`, the observer gets the current size at
+/// the next rendering step after it starts to observe a laid-out container:
+/// the next layout of the host (Chart.js ADR 0022). Then it gets each
+/// change. A [disconnect] before that layout gives no notification.
 /// [onDevicePixelRatio] gets the new device pixel ratio of the host.
 final class ContainerResizeObserver {
   /// Creates an observer with the two callbacks.
@@ -223,6 +249,7 @@ final class ContainerResizeObserver {
   /// `observer.disconnect()`.
   void disconnect() {
     _host?._resizeObservers.remove(this);
+    _host?._pendingFirstResize.remove(this);
     _host = null;
   }
 }
@@ -369,6 +396,8 @@ class RenderChartHost extends RenderBox
         _resizeObservers.add(observer);
       }
       previous._resizeObservers.clear();
+      _pendingFirstResize.addAll(previous._pendingFirstResize);
+      previous._pendingFirstResize.clear();
     }
     canvas
       ..parentNode = this
@@ -419,11 +448,22 @@ class RenderChartHost extends RenderBox
 
   final List<ContainerResizeObserver> _resizeObservers = [];
 
+  /// The observers that wait for their first notification: the next layout
+  /// of the host gives them the current size.
+  final Set<ContainerResizeObserver> _pendingFirstResize = {};
+
   void _addResizeObserver(ContainerResizeObserver observer) {
     _resizeObservers.add(observer);
     if (_laidOut) {
-      // A ResizeObserver reports the current size when it starts.
-      observer.onResize(_contentWidth, _contentHeight);
+      // A DOM ResizeObserver gives the first notification at the next
+      // rendering step. The host never calls markNeedsLayout inside its own
+      // performLayout.
+      _pendingFirstResize.add(observer);
+      if (_inLayout) {
+        _scheduleRelayout();
+      } else {
+        markNeedsLayout();
+      }
     }
   }
 
@@ -451,15 +491,21 @@ class RenderChartHost extends RenderBox
   }
 
   void _scheduleConnectionCheck() {
+    _pendingConnectionChecks.add(this);
     if (_connectionCheckScheduled) {
       return;
     }
     _connectionCheckScheduled = true;
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _connectionCheckScheduled = false;
+      _pendingConnectionChecks.remove(this);
       _reportConnection();
     }, debugLabel: 'RenderChartHost.connection');
   }
+
+  /// The hosts with a pending connection check, in the order of their
+  /// attach or detach. [flushCanvasMutations] reports them.
+  static final Set<RenderChartHost> _pendingConnectionChecks = {};
 
   // The display size of the canvas.
 
@@ -564,14 +610,27 @@ class RenderChartHost extends RenderBox
     _contentHeight = height;
     if (!_laidOut) {
       // The first layout attaches the chart at once: it takes its size
-      // before the first paint.
+      // before the first paint. The observers that the host took over from
+      // an old host get the size now. The observers that the attach report
+      // adds wait for the next layout.
+      final before = List.of(_resizeObservers);
       _laidOut = true;
       _reportConnection();
+      for (final observer in before) {
+        if (_resizeObservers.contains(observer)) {
+          observer.onResize(width, height);
+        }
+      }
+      _pendingFirstResize.removeAll(before);
+    } else if (changed) {
+      _pendingFirstResize.clear();
       for (final observer in List.of(_resizeObservers)) {
         observer.onResize(width, height);
       }
-    } else if (changed) {
-      for (final observer in List.of(_resizeObservers)) {
+    } else if (_pendingFirstResize.isNotEmpty) {
+      final pending = List.of(_pendingFirstResize);
+      _pendingFirstResize.clear();
+      for (final observer in pending) {
         observer.onResize(width, height);
       }
     }
@@ -591,12 +650,16 @@ class RenderChartHost extends RenderBox
       return;
     }
     _relayoutScheduled = true;
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _relayoutScheduled = false;
-      if (!_disposed && attached) {
-        markNeedsLayout();
-      }
-    }, debugLabel: 'RenderChartHost.relayout');
+    SchedulerBinding.instance
+      ..addPostFrameCallback((_) {
+        _relayoutScheduled = false;
+        if (!_disposed && attached) {
+          markNeedsLayout();
+        }
+      }, debugLabel: 'RenderChartHost.relayout')
+      // A layout outside a frame (the forced layout of the test harness)
+      // needs a frame for the callback.
+      ..ensureVisualUpdate();
   }
 
   // Paint.
@@ -672,6 +735,7 @@ class RenderChartHost extends RenderBox
     _tap.dispose();
     _clipLayer.layer = null;
     _resizeObservers.clear();
+    _pendingFirstResize.clear();
     _hide(_canvas);
     super.dispose();
   }

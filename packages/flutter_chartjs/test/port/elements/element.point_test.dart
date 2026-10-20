@@ -6,6 +6,7 @@ import 'package:flutter_chartjs/src/elements/element.point.dart';
 import 'package:flutter_chartjs/src/elements/element_options.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.curve.dart'
     show updateBezierControlPoints;
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/animation.dart' as types;
 import 'package:flutter_chartjs/src/types/basic.dart';
@@ -223,6 +224,41 @@ void main() {
     test('the statics of Element do not change', () {
       expect(Element.defaults, isEmpty);
       expect(Element.defaultRoutes, _isUndefined);
+    });
+
+    test('jsClass is PointElement as a value', () {
+      // From element.point.ts in Node.js v24.12.0 on x64: the own statics of
+      // PointElement are id, defaults and defaultRoutes, and its superclass is
+      // Element. 'descriptors' in PointElement is false. typeof PointElement is
+      // 'function'.
+      final c = PointElement.jsClass;
+      expect(c.name, 'PointElement');
+      expect(c.superclass, same(Element.jsClass));
+      expect(c.id, 'point');
+      expect(c['id'], PointElement.id);
+      expect(c['defaults'], same(PointElement.defaults));
+      expect(c['defaultRoutes'], same(PointElement.defaultRoutes));
+      expect(c.has('descriptors'), isFalse);
+      expect(c.isSubclassOf(Element.jsClass), isTrue);
+      expect(c.isSubclassOf(c), isFalse);
+    });
+
+    test('jsConstruct of jsClass makes a PointElement with the cfg', () {
+      // new PointElement({x: 2}) and new PointElement() (Chart.js ADR 0020,
+      // section 3).
+      final element = jsConstruct(PointElement.jsClass, [
+        <String, Object?>{'x': 2},
+      ]);
+      expect(element, isA<PointElement>());
+      expect((element as PointElement)['x'], 2.0);
+      expect(jsConstruct(PointElement.jsClass, const []), isA<PointElement>());
+      // class My extends PointElement { static id = 'my'; }: the subclass value
+      // constructs a PointElement and reads the statics of PointElement.
+      final my = JsClass('My', superclass: PointElement.jsClass)..['id'] = 'my';
+      expect(jsConstruct(my, const []), isA<PointElement>());
+      expect(my.id, 'my');
+      expect(PointElement.jsClass.id, 'point');
+      expect(my['defaults'], same(PointElement.defaults));
     });
   });
 

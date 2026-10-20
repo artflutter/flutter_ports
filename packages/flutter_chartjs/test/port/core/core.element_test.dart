@@ -1,5 +1,6 @@
 // Original code, not ported from Chart.js: core.element cases with no spec.
 import 'package:flutter_chartjs/src/core/core.element.dart';
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/animation.dart' as types;
 import 'package:flutter_chartjs/src/types/basic.dart';
@@ -518,6 +519,89 @@ void main() {
       expect(Element.defaults, isA<AnyObject>());
       expect(Element.defaults, isEmpty);
       expect(Element.defaultRoutes, _isUndefined);
+    });
+
+    test('jsClass is Element as a value', () {
+      // From src/core/core.element.ts in Node.js v24.12.0 on x64: the own
+      // statics of Element are defaults and defaultRoutes. 'defaultRoutes'
+      // in Element is true, with the value undefined. 'id' in Element and
+      // 'descriptors' in Element are false. The static prototype of Element
+      // is Function.prototype. typeof Element is 'function'.
+      final c = Element.jsClass;
+      expect(c.name, 'Element');
+      expect(c.superclass, isNull);
+      expect(c['defaults'], same(Element.defaults));
+      expect(c.has('defaultRoutes'), isTrue);
+      expect(c['defaultRoutes'], _isUndefined);
+      expect(c.has('id'), isFalse);
+      expect(c.id, _isUndefined);
+      expect(c.has('descriptors'), isFalse);
+      expect(c.isSubclassOf(jsObjectClass), isTrue);
+      expect(c.isSubclassOf(c), isFalse);
+    });
+
+    test('jsConstruct of jsClass makes an Element and ignores the '
+        'arguments', () {
+      // new Element({x: 1}) has x undefined: the implicit constructor of
+      // Element takes no parameter.
+      final element = jsConstruct(Element.jsClass, [
+        <String, Object?>{'x': 1},
+      ]);
+      expect(element, isA<Element>());
+      expect((element as Element)['x'], _isUndefined);
+      // class Custom extends Element {}: the subclass value constructs an
+      // Element (Chart.js ADR 0020, section 3).
+      final custom = JsClass('Custom', superclass: Element.jsClass);
+      expect(jsConstruct(custom, const []), isA<Element>());
+      expect(custom['defaults'], same(Element.defaults));
+    });
+  });
+
+  group('adapt-component-class-role', () {
+    // The element constructors copy cfg with `if (cfg) Object.assign(this,
+    // cfg)`. In Node.js v24.12.0 on x64, new PointElement(), (null), (0) and
+    // (false) copy nothing, new PointElement(5) and (true) copy nothing and
+    // do not throw, and new PointElement('ab') copies the own key '0'. The
+    // port throws a TypeError for a truthy cfg that is not a Map.
+    test('elementCfgArg gives Dart null for an absent or a falsy cfg', () {
+      for (final args in <List<Object?>>[
+        [],
+        [undefined],
+        [null],
+        [0],
+        [-0.0],
+        [double.nan],
+        [false],
+        [''],
+      ]) {
+        expect(elementCfgArg(args), isNull, reason: '$args');
+      }
+    });
+
+    test('elementCfgArg gives a Map as it is', () {
+      final cfg = <String, Object?>{'x': 1};
+      expect(elementCfgArg([cfg, 'ignored']), same(cfg));
+      // An empty object is truthy. Object.assign copies nothing from it.
+      final empty = <String, Object?>{};
+      expect(elementCfgArg([empty]), same(empty));
+    });
+
+    test('elementCfgArg throws a TypeError for a truthy cfg that is not a '
+        'Map', () {
+      for (final value in <Object?>[
+        5,
+        true,
+        'ab',
+        <Object?>[1],
+        JsClass('A'),
+        () {},
+      ]) {
+        expect(
+          () => elementCfgArg([value]),
+          throwsA(isA<TypeError>()),
+          reason: '$value',
+        );
+      }
     });
   });
 

@@ -20,6 +20,7 @@ library;
 
 import 'dart:convert';
 
+import 'package:flutter_chartjs/src/js/js_array.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
@@ -133,8 +134,9 @@ _Comparison _compareObject(
   }
 
   // `for (const key in expected)` with the `hasOwnProperty` test: the keys
-  // of the Map, in order.
-  for (final key in expected.keys) {
+  // of `Object.keys` (jsObjectKeys). For a resolver of helpers.config, the
+  // `getOwnPropertyDescriptor` trap gives only the keys of its first scope.
+  for (final key in jsObjectKeys(expected)) {
     if (key.startsWith('_')) {
       continue;
     }
@@ -201,5 +203,5 @@ final class _ToEqualOptions extends Matcher {
     Description mismatchDescription,
     Map<Object?, Object?> matchState,
     bool verbose,
-  ) => mismatchDescription.add(matchState['message']! as String);
+  ) => mismatchDescription.add(matchState['message'] as String? ?? '');
 }

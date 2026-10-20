@@ -461,8 +461,9 @@ relative to this file.
 - Upstream reference: none.
 - Test: `test/port/elements/element_options_test.dart`, groups `createElementOptions`, `clone` and
   `copyOptions`. `test/port/core/core.config_test.dart`,
-  `test/port/core/core.datasetController_test.dart` and `test/port/core/core.animations_test.dart`,
-  group `adapt-typed-element-options`.
+  `test/port/core/core.datasetController_test.dart`,
+  `test/port/core/core.datasetController_chart_test.dart` and
+  `test/port/core/core.animations_test.dart`, group `adapt-typed-element-options`.
 - On a bump: compare `resolveNamedOptions`, `_resolveElementOptions`, the element ids, the names of
   `defaults.elements` and each `Object.assign({}, …)` of an options object.
 
@@ -548,16 +549,20 @@ relative to this file.
     the names. The typed run gives the order of the known keys. This test pins
     `adapt-typed-element-options`. The restore puts back `defaults` after the test.
   - Names that are not the names of an element type, with `into: null`, give a plain Map.
-- `test/port/core/core.datasetController_test.dart`, with the `acquireChart` of Chart.js ADR 0022.
-  Phase 5 has no concrete controller. Thus the file registers a port-only test controller with the
-  data element type `point` and the dataset element type `line`. The test controller follows the
-  option calls of `controller.line.js:41-120`. `enableOptionSharing` is true, unless a case states
-  false.
-  - The file registers its test controllers and its test element class as class values (Chart.js
-    ADR 0020 §8). Its `main()` registers them before the snapshot of the restore (Chart.js ADR 0022
-    §8).
+- `test/port/core/core.datasetController_chart_test.dart`, with the `acquireChart` of Chart.js ADR
+  0022. Phase 5 has no concrete controller. Thus the file registers a port-only test controller
+  with the data element type `point` and the dataset element type `line`. The test controller
+  follows the option calls of `controller.line.js:41-120`. `enableOptionSharing` is true, unless a
+  case states false.
+  - The file registers its test controllers, its test scale and its test element class as class
+    values (Chart.js ADR 0020 §8). Its `main()` registers them before the snapshot of the restore
+    (Chart.js ADR 0022 §8).
   - The file has `@TestOn('vm')`. Its chart cases are `testWidgets` cases (Chart.js ADR 0022 §1
     and §2).
+  - The chart cases are in a file of their own. `test/port/core/core.datasetController_test.dart`
+    calls `setUpSpecs()`, and `setUpSpecs()` removes the built-in components. That file keeps its
+    fake chart. Its group `adapt-typed-element-options` runs a part of these cases on the fake
+    chart.
   - Group `adapt-typed-element-options`:
     - The shared data options are a frozen `PointOptions` with `$shared` true. The indices 0 and
       1 give the same object. This case is the typed form of

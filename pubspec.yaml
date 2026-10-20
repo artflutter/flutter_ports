@@ -48,15 +48,29 @@ melos:
     check:js-semantics:
       run: dart run packages/flutter_chartjs/tool/check_js_semantics.dart
       description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs and chartjs_test_utils files.
+    port:next:check:
+      run: dart run packages/flutter_chartjs/tool/port_order.dart --check
+      description: Fail when tool 8 cannot read a module of third_party/Chart.js/src, a header line of lib/ or a parity.md status, or when an import does not resolve.
     check:port:
       steps:
         - check:lib-imports
         - check:headers
         - check:js-semantics
-      description: Run check:lib-imports, check:headers and check:js-semantics.
+        - port:next:check
+        - parity:check
+      description: Run check:lib-imports, check:headers, check:js-semantics, port:next:check and parity:check.
     test:cases:
       run: dart run packages/flutter_chartjs/tool/spec_cases.dart
       description: Run the flutter_chartjs spec tests and report each upstream case as passed, failed, skipped or missing (tool 5). Fail on unknown test names and on missing cases of ported modules.
+    port:next:
+      run: dart run packages/flutter_chartjs/tool/port_order.dart
+      description: List the Chart.js modules that are ready to port, with their line counts and the interfaces that they need, and the blocked modules with their missing imports, in phase order (tool 8). Needs the submodule (melos run upstream). Options go after "--", for example "dart run melos run port:next -- --check" (fail when a module, a header or a parity.md status does not parse) or "-- --json".
+    parity:
+      run: dart run packages/flutter_chartjs/tool/parity.dart
+      description: Write packages/flutter_chartjs/doc/parity.md from doc/status.yaml, the pinned upstream files, the Dart headers, the spec case results of tool 5 and doc/differences.md (tool 6). It runs the spec tests and needs the submodules (melos run upstream). Options go after "--", for example "dart run melos run parity -- --dry-run" (print the output) or "-- --import" (read the cells of parity.md into status.yaml).
+    parity:check:
+      run: dart run packages/flutter_chartjs/tool/parity.dart --check
+      description: Fail when packages/flutter_chartjs/doc/parity.md differs from the output of tool 6, or when doc/status.yaml has an error.
 
     upstream:
       run: git submodule update --init --depth 1

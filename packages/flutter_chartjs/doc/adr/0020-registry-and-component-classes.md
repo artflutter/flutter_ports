@@ -267,12 +267,12 @@ Two functions of `lib/src/js/` change. The documentation of a third function cha
   costs about 2 ns on AOT for each notify of 7 plugins, and no measurable time on dart2wasm
   (probe 8).
 - `jsCall` keeps its code. Its last case throws an `ArgumentError` for each value that is not a
-  Dart `Function` or a `JsFunction` (`js_function.dart:130`). Thus it also throws an
+  Dart `Function` or a `JsFunction` (`js_function.dart:142`). Thus it also throws an
   `ArgumentError` for a class value. JavaScript throws a `TypeError`, because a class constructor
   needs `new`. The documentation of `jsCall` names this case. `callback` and the resolver reach the
   throw where upstream reaches its throw.
 
-`jsToString` of a class value gives `toString()` through its last case (`js_number.dart:83`):
+`jsToString` of a class value gives `toString()` through its last case (`js_number.dart:88`):
 `'class <name> {}'`. JavaScript gives the source text of the class. The two texts are the same
 only for a class without a body and without `extends`. This is the row `js-semantics-class-source`
 (section 11).
@@ -883,8 +883,11 @@ The port adds three rows. Each item below gives the columns of `differences.md`.
   - `jsConstruct`: an inherited `construct`, `newTarget`, an empty Map for a base class, and a
     `TypeError` for other values
   - `jsAssign` in the key order of the source
-  - the `jsGet` case, `jsIsFunction`, the `ArgumentError` of `jsCall`, and the group
-    `js-semantics-class-source`
+  - the group `js-semantics-class-source`
+- `test/port/js/js_object_test.dart` is pure. Its group `jsGet` tests the read of the static
+  properties of a class value.
+- `test/port/js/js_function_test.dart` is pure. Its groups `jsIsFunction` and `jsCall` test a class
+  value: `jsIsFunction` gives true, and `jsCall` throws an `ArgumentError`.
 - `test/port/core/core.typedRegistry_test.dart` is pure. `test/port/core/core.registry_test.dart`
   runs on the VM. They test the behaviors of probes 1 and 2 that the specs do not test. The
   expected values are the output of the probes:

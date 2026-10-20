@@ -3,6 +3,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/elements/element.bar.dart';
 import 'package:flutter_chartjs/src/elements/element_options.dart';
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/animation.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
@@ -628,6 +629,41 @@ void main() {
         'backgroundColor',
         'borderColor',
       ]);
+    });
+
+    test('jsClass is BarElement as a value', () {
+      // From element.bar.js in Node.js v24.12.0 on x64: the own statics of
+      // BarElement are id, defaults and defaultRoutes, and its superclass is
+      // Element. 'descriptors' in BarElement is false. typeof BarElement is
+      // 'function'.
+      final c = BarElement.jsClass;
+      expect(c.name, 'BarElement');
+      expect(c.superclass, same(Element.jsClass));
+      expect(c.id, 'bar');
+      expect(c['id'], BarElement.id);
+      expect(c['defaults'], same(BarElement.defaults));
+      expect(c['defaultRoutes'], same(BarElement.defaultRoutes));
+      expect(c.has('descriptors'), isFalse);
+      expect(c.isSubclassOf(Element.jsClass), isTrue);
+      expect(c.isSubclassOf(c), isFalse);
+    });
+
+    test('jsConstruct of jsClass makes a BarElement with the cfg', () {
+      // new BarElement({x: 2}) and new BarElement() (Chart.js ADR 0020,
+      // section 3).
+      final element = jsConstruct(BarElement.jsClass, [
+        <String, Object?>{'x': 2},
+      ]);
+      expect(element, isA<BarElement>());
+      expect((element as BarElement)['x'], 2.0);
+      expect(jsConstruct(BarElement.jsClass, const []), isA<BarElement>());
+      // class My extends BarElement { static id = 'my'; }: the subclass value
+      // constructs a BarElement and reads the statics of BarElement.
+      final my = JsClass('My', superclass: BarElement.jsClass)..['id'] = 'my';
+      expect(jsConstruct(my, const []), isA<BarElement>());
+      expect(my.id, 'my');
+      expect(BarElement.jsClass.id, 'bar');
+      expect(my['defaults'], same(BarElement.defaults));
     });
   });
 

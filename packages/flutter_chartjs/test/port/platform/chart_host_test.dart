@@ -66,8 +66,10 @@ void main() {
       expect(_host(tester).size, const Size(400, 200));
       expect(canvas.getContext2d().isEmpty, isFalse);
 
-      // The initial ResizeObserver notification resizes to the same size in
-      // the next frame, which changes nothing.
+      // The initial ResizeObserver notification comes at the next layout of
+      // the host, and resizes to the same size in the frame after it, which
+      // changes nothing.
+      await tester.pump();
       await tester.pump();
       expect(chart.updates, ['attach']);
       chart.destroy();
@@ -179,6 +181,12 @@ void main() {
       // ResizeObserver notification passes the container size, which gives
       // 200 x 100 in the next frame, as upstream.
       final chart = FakeChart(canvas);
+      expect((chart.width, chart.height), (400.0, 200.0));
+      // Chart.js ADR 0022: the first notification comes at the next layout
+      // of the host (frame 1), and its throttled resize in the next frame
+      // (frame 2), as the DOM gives the ResizeObserver callback in frame 1
+      // and the throttled call in frame 2 (platform.dom.js:197-224).
+      await tester.pump();
       expect((chart.width, chart.height), (400.0, 200.0));
       await tester.pump();
       expect((chart.width, chart.height), (200.0, 100.0));
@@ -729,6 +737,201 @@ void main() {
       expect(chart.attachCalls, ['attached']);
       expect((chart.width, chart.height), (300.0, 300.0));
       chart.destroy();
+    });
+  });
+
+  group('first resize notification at the next layout', () {
+    // Chart.js ADR 0022, section 10: a DOM ResizeObserver gives its first
+    // notification in the rendering step of the next frame, not at
+    // observe().
+
+    /// An observer that records the sizes of its notifications.
+    ContainerResizeObserver recorder(List<Size> sizes) =>
+        ContainerResizeObserver(
+          onResize: (width, height) => sizes.add(Size(width, height)),
+          onDevicePixelRatio: (_) {},
+        );
+
+    testWidgets('an observer of a laid-out host gets the size at the next '
+        'layout', (tester) async {
+      await tester.pumpWidget(_box(ChartHost(canvas: UiCanvasElement())));
+      final sizes = <Size>[];
+      final observer = recorder(sizes)..observe(_host(tester));
+      expect(sizes, isEmpty);
+      expect(tester.binding.hasScheduledFrame, isTrue);
+      await tester.pump();
+      expect(sizes, [const Size(400, 300)]);
+      await tester.pump();
+      expect(sizes, [const Size(400, 300)]);
+      observer.disconnect();
+    });
+
+    testWidgets('a disconnect before the next layout gives no notification', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_box(ChartHost(canvas: UiCanvasElement())));
+      final sizes = <Size>[];
+      recorder(sizes)
+        ..observe(_host(tester))
+        ..disconnect();
+      await tester.pump();
+      expect(sizes, isEmpty);
+    });
+
+    testWidgets('a size change gives a pending observer the new size once', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final sizes = <Size>[];
+      final observer = recorder(sizes)..observe(_host(tester));
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas), width: 500));
+      expect(sizes, [const Size(500, 300)]);
+      await tester.pump();
+      expect(sizes, [const Size(500, 300)]);
+      observer.disconnect();
+    });
+
+    testWidgets('an observer that starts inside a layout waits for a '
+        'relayout after the frame', (tester) async {
+      // A chart that starts before the first layout observes the container
+      // in its attach, inside the first layout of the host.
+      final canvas = UiCanvasElement();
+      final sizes = <Size>[];
+      late final ContainerResizeObserver observer;
+      final mutations = CanvasMutationObserver(({required connected}) {
+        if (connected) {
+          observer = recorder(sizes)
+            ..observe(canvas.parentNode! as RenderChartHost);
+        }
+      })..observe(canvas);
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      expect(sizes, isEmpty);
+      expect(tester.binding.hasScheduledFrame, isTrue);
+      await tester.pump();
+      expect(sizes, [const Size(400, 300)]);
+      observer.disconnect();
+      mutations.disconnect();
+    });
+
+    testWidgets('a new host gives a pending observer the size at its first '
+        'layout', (tester) async {
+      final canvas = UiCanvasElement();
+      Widget build({required bool pad}) => _box(
+        pad
+            ? Padding(
+                padding: EdgeInsets.zero,
+                child: ChartHost(canvas: canvas),
+              )
+            : ChartHost(canvas: canvas),
+        width: 300,
+      );
+      await tester.pumpWidget(build(pad: false));
+      final sizes = <Size>[];
+      final observer = recorder(sizes)..observe(_host(tester));
+      // The new host takes over the pending observer in the same frame.
+      await tester.pumpWidget(build(pad: true));
+      expect(sizes, [const Size(300, 300)]);
+      await tester.pump();
+      expect(sizes, [const Size(300, 300)]);
+      observer.disconnect();
+    });
+  });
+
+  group('flushCanvasMutations', () {
+    // Chart.js ADR 0022, section 10: the mutation checkpoint of the harness
+    // reports the net attached state of each changed host at once.
+
+    /// Shows [canvas] in a host with [key] while [show] is true.
+    Widget build(UiCanvasElement canvas, Key key, ValueNotifier<bool> show) =>
+        _box(
+          ValueListenableBuilder<bool>(
+            valueListenable: show,
+            builder: (context, value, _) =>
+                value ? ChartHost(key: key, canvas: canvas) : const SizedBox(),
+          ),
+        );
+
+    /// The build of the dirty elements, without a frame: the forced build of
+    /// the harness.
+    void forcedBuild(WidgetTester tester) =>
+        tester.binding.buildOwner!.buildScope(tester.binding.rootElement!);
+
+    testWidgets('reports a net detach at once', (tester) async {
+      final canvas = UiCanvasElement();
+      final show = ValueNotifier(true);
+      addTearDown(show.dispose);
+      await tester.pumpWidget(build(canvas, GlobalKey(), show));
+      final calls = <bool>[];
+      final observer = CanvasMutationObserver(
+        ({required connected}) => calls.add(connected),
+      )..observe(canvas);
+      show.value = false;
+      forcedBuild(tester);
+      // The post-frame check has not run.
+      expect(calls, isEmpty);
+      flushCanvasMutations();
+      expect(calls, [false]);
+      await tester.pump();
+      expect(calls, [false]);
+      observer.disconnect();
+    });
+
+    testWidgets('reports a detach and a later attach in order', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      final show = ValueNotifier(true);
+      addTearDown(show.dispose);
+      await tester.pumpWidget(build(canvas, GlobalKey(), show));
+      final calls = <bool>[];
+      final observer = CanvasMutationObserver(
+        ({required connected}) => calls.add(connected),
+      )..observe(canvas);
+      show.value = false;
+      forcedBuild(tester);
+      flushCanvasMutations();
+      show.value = true;
+      forcedBuild(tester);
+      flushCanvasMutations();
+      expect(calls, [false, true]);
+      await tester.pump();
+      expect(calls, [false, true]);
+      expect(_host(tester).isConnected, isTrue);
+      observer.disconnect();
+    });
+
+    testWidgets('a detach and an attach before the call cancel each other', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      final show = ValueNotifier(true);
+      addTearDown(show.dispose);
+      await tester.pumpWidget(build(canvas, GlobalKey(), show));
+      final calls = <bool>[];
+      final observer = CanvasMutationObserver(
+        ({required connected}) => calls.add(connected),
+      )..observe(canvas);
+      show.value = false;
+      forcedBuild(tester);
+      show.value = true;
+      forcedBuild(tester);
+      flushCanvasMutations();
+      await tester.pump();
+      expect(calls, isEmpty);
+      observer.disconnect();
+    });
+
+    testWidgets('does nothing without a pending check', (tester) async {
+      final canvas = UiCanvasElement();
+      await tester.pumpWidget(_box(ChartHost(canvas: canvas)));
+      final calls = <bool>[];
+      final observer = CanvasMutationObserver(
+        ({required connected}) => calls.add(connected),
+      )..observe(canvas);
+      flushCanvasMutations();
+      expect(calls, isEmpty);
+      observer.disconnect();
     });
   });
 

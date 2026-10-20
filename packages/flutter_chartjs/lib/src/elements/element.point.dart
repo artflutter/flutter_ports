@@ -31,6 +31,7 @@ import 'package:flutter_chartjs/src/elements/element_options.dart'
     show PointOptions;
 import 'package:flutter_chartjs/src/helpers/helpers.canvas.dart'
     show DrawPointOptions, drawPoint, isPointInArea;
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax, jsSquare;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
@@ -44,17 +45,18 @@ import 'package:flutter_chartjs/src/types/index.dart' as types;
 ///
 /// [axis] is `'x'` or `'y'`. The value of the axis comes from
 /// [Element.getProps] through `ToNumber`, as the upstream subtraction
-/// applies it.
+/// applies it. Dart `null` for [pos] is JS `null`, which the subtraction
+/// reads as 0.
 bool _inRange(
   PointElement el,
-  double pos,
+  double? pos,
   String axis,
   bool? useFinalPosition,
 ) {
   final options = el.options;
   final value = jsToNumber(el.getProps([axis], useFinalPosition)[axis]);
 
-  return (pos - value).abs() <
+  return ((pos ?? 0) - value).abs() <
       jsToNumber(_radius(options)) + jsToNumber(_hitRadius(options));
 }
 
@@ -115,8 +117,11 @@ typedef PointProps = Point;
 ///
 /// The other properties that a controller adds, for example `$context`, go
 /// to the Map of extra properties of [Element].
+///
+/// The class implements `types.VisualElementRange`, because upstream has a
+/// [getRange] (element.point.ts:102, Chart.js ADR 0020, section 9).
 class PointElement extends Element
-    implements types.RadialPointElement, types.VisualElement {
+    implements types.RadialPointElement, types.VisualElementRange {
   /// element.point.ts:49 `constructor(cfg)`.
   ///
   /// element.point.ts:52-55 set `options`, `parsed`, `skip` and `stop` to
@@ -146,6 +151,20 @@ class PointElement extends Element
     'backgroundColor': 'backgroundColor',
     'borderColor': 'borderColor',
   };
+
+  /// element.point.ts:20 `class PointElement extends Element` as a value
+  /// (Chart.js ADR 0020, section 3).
+  ///
+  /// Its statics are [id], [defaults] and [defaultRoutes], in the upstream
+  /// order of declaration (element.point.ts:22-47). They are the objects of the
+  /// static fields. Its `construct` calls `PointElement(cfg)` with the `cfg` of
+  /// [elementCfgArg].
+  static final JsClass jsClass = JsClass(
+    'PointElement',
+    superclass: Element.jsClass,
+    statics: {'id': id, 'defaults': defaults, 'defaultRoutes': defaultRoutes},
+    construct: (newTarget, args) => PointElement(elementCfgArg(args)),
+  );
 
   /// The value of [parsed]. Dart `null` stands for JS `undefined`.
   Object? _parsed;
@@ -315,18 +334,19 @@ class PointElement extends Element
   /// The test is strict: a mouse position at the distance `hitRadius +
   /// radius` is not in range. `Math.pow(v, 2)` is [jsSquare] (Chart.js ADR
   /// 0010). Throws a [TypeError] when [options] is in the `undefined` state,
-  /// as the upstream property read of `undefined` does.
+  /// as the upstream property read of `undefined` does. Dart `null` for
+  /// [mouseX] or [mouseY] is JS `null`, which the subtraction reads as 0.
   @override
   bool inRange(
-    double mouseX,
-    double mouseY, [
+    double? mouseX,
+    double? mouseY, [
     bool? useFinalPosition,
   ]) {
     final options = this.options;
     final props = getProps(const ['x', 'y'], useFinalPosition);
     final x = jsToNumber(props['x']);
     final y = jsToNumber(props['y']);
-    return (jsSquare(mouseX - x) + jsSquare(mouseY - y)) <
+    return (jsSquare((mouseX ?? 0) - x) + jsSquare((mouseY ?? 0) - y)) <
         jsSquare(
           jsToNumber(_hitRadius(options)) + jsToNumber(_radius(options)),
         );
@@ -335,7 +355,7 @@ class PointElement extends Element
   /// element.point.ts:68 `inXRange(mouseX, useFinalPosition?)`.
   @override
   bool inXRange(
-    double mouseX, [
+    double? mouseX, [
     bool? useFinalPosition,
   ]) {
     return _inRange(this, mouseX, 'x', useFinalPosition);
@@ -344,7 +364,7 @@ class PointElement extends Element
   /// element.point.ts:72 `inYRange(mouseY, useFinalPosition?)`.
   @override
   bool inYRange(
-    double mouseY, [
+    double? mouseY, [
     bool? useFinalPosition,
   ]) {
     return _inRange(this, mouseY, 'y', useFinalPosition);
@@ -427,6 +447,7 @@ class PointElement extends Element
   /// Upstream takes no argument. `core.interaction.js:54` calls it with the
   /// axis. [axis] has no effect, as JavaScript ignores an extra argument
   /// (Chart.js ADR 0017, section 1).
+  @override
   double getRange([String? axis]) {
     final options = this.options ?? const <String, Object?>{};
     // @ts-expect-error Fallbacks should never be hit in practice

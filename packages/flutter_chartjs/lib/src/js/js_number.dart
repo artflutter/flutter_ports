@@ -73,13 +73,18 @@ double jsOrZero(Object? value) => jsTruthy(value) ? jsToNumber(value) : 0;
 /// with `,`, where `null` and [undefined] are empty. A cyclic array recurses
 /// without end: chart data has no such array. A `Map` gives
 /// `'[object Object]'`. Any other object gives its `toString()`, which is
-/// `'undefined'` for [undefined].
+/// `'undefined'` for [undefined]. A function value (a Dart closure or a
+/// `JsFunction`) and a Dart object that stands for a JS object, for example
+/// an element, give their Dart text, where JavaScript gives the source of
+/// the function or `'[object Object]'` (differences.md row
+/// `js-semantics-function-source`).
 String jsToString(Object? value) => switch (value) {
   null => 'null',
   final num n => jsNumberToString(n),
   final List<Object?> list =>
     list.map((e) => e == null || e is Undefined ? '' : jsToString(e)).join(','),
   Map<Object?, Object?>() => '[object Object]',
+  // DIVERGES(chartjs): js-semantics-function-source, the Dart toString().
   _ => value.toString(),
 };
 

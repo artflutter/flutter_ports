@@ -11,6 +11,7 @@
 library;
 
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_math.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
@@ -26,6 +27,19 @@ import 'package:flutter_chartjs/src/types/index.dart' as types;
 class BasePlatform implements types.BasePlatform {
   /// platform.base.js:9 the implicit constructor.
   BasePlatform();
+
+  /// platform.base.js:9 `class BasePlatform` as a value (Chart.js ADR 0020,
+  /// section 3).
+  ///
+  /// `core.controller.js:136` constructs `config.platform` with `new`. Thus
+  /// a platform of the configuration is a class value. It has no statics.
+  /// Its `construct` ignores the arguments, as the implicit constructor
+  /// does. A class value that extends it without a `construct` of its own
+  /// constructs a [BasePlatform].
+  static final JsClass jsClass = JsClass(
+    'BasePlatform',
+    construct: (newTarget, args) => BasePlatform(),
+  );
 
   /// platform.base.js:16 `acquireContext(canvas, aspectRatio)`.
   ///

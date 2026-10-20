@@ -1,10 +1,14 @@
-// Original code, not ported from Chart.js: the JS property read.
+// Original code, not ported from Chart.js: JS property read and Object.freeze.
 
 /// The JavaScript property read `object[key]` (`[[Get]]`) over the Dart
-/// values that stand for JavaScript values (Chart.js ADR 0006).
+/// values that stand for JavaScript values (Chart.js ADR 0006), the frozen
+/// state of `Object.freeze` (Chart.js ADR 0021, section 5), and the `typeof`
+/// operator (Chart.js ADR 0019, section 1).
 library;
 
 import 'package:flutter_chartjs/src/js/js_array.dart';
+import 'package:flutter_chartjs/src/js/js_class.dart';
+import 'package:flutter_chartjs/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 
@@ -21,12 +25,14 @@ import 'package:flutter_chartjs/src/js/js_undefined.dart';
 /// - A `List` or a `String`: the element at a canonical array index, as a
 ///   String of one code unit for a String, and `length` as a `double`. Any
 ///   other key gives [undefined].
+/// - A [JsClass]: the static property `C[key]` through the static prototype
+///   chain ([JsClass.operator []], Chart.js ADR 0020, section 2).
 /// - Any other value: [undefined]. A Dart value has none of the members that
 ///   a JavaScript primitive or function inherits.
 ///
 /// Throws a [TypeError] for `null` and [undefined], where JavaScript throws
 /// a `TypeError`.
-// DIVERGES(chartjs): js-semantics-resolver-objects, Map, List, String only.
+// DIVERGES(chartjs): js-semantics-resolver-objects, Map, List, String, class.
 Object? jsGet(Object? object, Object? key) {
   final name = key is String ? key : jsToString(key);
   switch (object) {
@@ -49,6 +55,8 @@ Object? jsGet(Object? object, Object? key) {
       if (name == 'length') return string.length.toDouble();
       final index = _index(name, string.length);
       return index == null ? undefined : string[index];
+    case final JsClass value:
+      return value[name];
   }
   return undefined;
 }
@@ -59,3 +67,65 @@ int? _index(String key, int length) {
   final index = jsArrayIndex(key);
   return index != null && index < length ? index : null;
 }
+
+/// A Dart object that `Object.freeze` can freeze (Chart.js ADR 0021,
+/// section 5).
+///
+/// In the frozen state, the object behaves as a frozen object in strict
+/// mode, the mode of an ES module: a write throws a [TypeError]. The
+/// options objects of `lib/src/elements/element_options.dart` implement it.
+abstract interface class JsFreezable {
+  /// `Object.isFrozen(this)`.
+  bool get isFrozen;
+
+  /// `Object.freeze(this)`. A later write throws a [TypeError]. No member
+  /// clears the frozen state.
+  void freeze();
+}
+
+/// `Object.freeze(value)`: freezes a [JsFreezable], then returns [value].
+/// Another value returns with no change (core.datasetController.js:831).
+///
+/// JavaScript freezes each object. The port freezes only a [JsFreezable].
+/// No upstream code writes into the objects of the other `Object.freeze`
+/// sites after the freeze (core.datasetController.js:858,
+/// core.layouts.js:395, plugin.tooltip.js:519).
+// DIVERGES(chartjs): js-semantics-object-freeze, only a JsFreezable freezes.
+T jsObjectFreeze<T>(T value) {
+  if (value is JsFreezable) value.freeze();
+  return value;
+}
+
+/// `Object.isFrozen(value)` (core.datasetController.tests.js:975, :997,
+/// :1018).
+///
+/// The frozen state of a [JsFreezable]. True for Dart `null`, [undefined], a
+/// number, a string and a boolean, as for a JavaScript primitive. False for
+/// each other value, also for a `Map.unmodifiable`.
+// DIVERGES(chartjs): js-semantics-object-freeze, only a JsFreezable freezes.
+bool jsObjectIsFrozen(Object? value) => switch (value) {
+  final JsFreezable object => object.isFrozen,
+  null || Undefined() || num() || String() || bool() => true,
+  _ => false,
+};
+
+/// `typeof value`: the type name of [value] (ECMAScript 13.5.3).
+///
+/// - The [undefined] sentinel gives `'undefined'`.
+/// - A `bool` gives `'boolean'`, a `num` gives `'number'` and a `String`
+///   gives `'string'`.
+/// - A value for which [jsIsFunction] is true gives `'function'`: a Dart
+///   `Function`, a `JsFunction` and a class value ([JsClass], Chart.js ADR
+///   0020, section 2).
+/// - Dart `null` (JS `null`) and every other value give `'object'`.
+///
+/// `new Animation` selects its interpolator by this name
+/// (core.animation.js:35).
+String jsTypeof(Object? value) => switch (value) {
+  Undefined() => 'undefined',
+  bool() => 'boolean',
+  num() => 'number',
+  String() => 'string',
+  _ when jsIsFunction(value) => 'function',
+  _ => 'object',
+};

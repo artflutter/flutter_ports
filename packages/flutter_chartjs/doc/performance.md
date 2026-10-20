@@ -4,7 +4,8 @@
   ([Chart.js ADR 0013](adr/0013-canvas-model.md)) and of canvas text
   ([Chart.js ADR 0015](adr/0015-text.md)). Section 8 adds the draw cost of the phase 4 elements
   ([Chart.js ADR 0017](adr/0017-element-properties.md)). Section 9 has the A/B test of cut 2 of
-  [canvas-cuts-plan.md](canvas-cuts-plan.md) in phase 5.
+  [canvas-cuts-plan.md](canvas-cuts-plan.md) in phase 5. Section 10 has the core figures of phase 5:
+  the animations, a hit test and the parsed items.
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0007](adr/0007-frame-scheduling.md) (frame scheduling),
   [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) (no display-only JS exactness).
@@ -42,6 +43,10 @@ the default. The other modes draw the phase 4 elements through their `draw` meth
   that move in each frame.
 - `arcs`: N `ArcElement` objects as doughnuts of 2 rings of 5 slices, with `borderWidth` 2,
   `spacing` 2 and `borderRadius` 4, and angles that move in each frame.
+- `chart` (phase 5): a real `Chart` of N points with the gallery controller
+  `StressPointController`. The points get the typed options of the resolver. Section 6 gives its
+  cases, and [Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) §8 gives its
+  acceptance.
 
 In each frame, the demo writes the moving properties of the elements with their typed setters.
 The draw time includes these writes.
@@ -396,10 +401,39 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   scenario. For one scenario in a fresh process:
   `flutter run --profile -t lib/main_stress.dart --dart-define=SCENARIO=5000x50`.
   `--dart-define=SECONDS=<n>` changes the time of each scenario.
-  `--dart-define=MODE=<primitives|elements|bars|arcs>` selects the mode (section 1). Without
-  `SCENARIO`, the modes `primitives` and `elements` run the six scenarios of section 2, `bars`
-  runs 1000, 5000 and 20000 bars, and `arcs` runs 100, 1000 and 5000 arcs. Each `STRESS` line
-  starts with the key `mode`.
+  `--dart-define=MODE=<primitives|elements|bars|arcs|chart>` selects the mode (section 1).
+  Without `SCENARIO`, the modes `primitives` and `elements` run the six scenarios of section 2,
+  `bars` runs 1000, 5000 and 20000 bars, and `arcs` runs 100, 1000 and 5000 arcs. The mode
+  `chart` runs 1000, 5000 and 20000 chart points without labels. Each `STRESS` line starts with
+  the key `mode`.
+- **The mode `chart`** ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) §8)
+  measures a real `Chart` with the gallery controller `StressPointController`. Each case runs with
+  `animation: false`.
+  - `--dart-define=CALL=draw` (the default) gives case (a): each frame calls `chart.draw()`.
+  - `--dart-define=CALL=update` gives case (b): each frame writes new positions into the data
+    objects, then calls `chart.update('none')`.
+  - `--dart-define=SHARING=0` sets `enableOptionSharing` to false, as in a scatter chart. The
+    default `SHARING=1` gives the sharing of a line chart.
+  - `--dart-define=SCRIPTABLE=1` gives the points a scriptable `backgroundColor`. With
+    `CALL=update`, it gives case (c).
+  - `--dart-define=CALL=animate` gives the animation cost. The chart has
+    `animation: {duration: 1000, loop: true}`. Its first update starts an animation of `x` and
+    `y` of each point, which loops without end. In each frame, the animator ticks the N
+    animations and calls `chart.draw()`. The key `animatorMs` gives the time of that tick
+    without its draw. The tick includes the property writes of the animations (section 10.4).
+  - The chart listens to no event (`events: []`), as the hosts of the other modes take no pointer
+    input. Thus the position of the pointer does not change the figures.
+  - `SHARING`, `SCRIPTABLE` and `LINE` accept only 0 or 1. Another value throws at the start.
+  - Example: `flutter run --profile -t lib/main_stress.dart --dart-define=MODE=chart
+    --dart-define=CALL=update --dart-define=SHARING=0 --dart-define=SCENARIO=5000x0`.
+- `--dart-define=LINE=0` turns off the line of the modes `primitives` and `elements`. The mode
+  `chart` has no line. Thus the acceptance of Chart.js ADR 0021 §8 compares the mode `chart` in
+  case (a) with the mode `elements` with `LINE=0`.
+- Each `STRESS` line has the key `updateMs`: the time of `chart.update()` without its draw. It is
+  0 outside the mode `chart`. In the mode `chart`, `drawMs` is the time of `chart.draw()`, also of
+  the draw inside `chart.update()`. Neither time includes the writes of the positions into the
+  data objects. In the mode `chart`, the line also has the keys `animatorMs`, `call`, `sharing`
+  and `scriptable`. With `LINE=0`, it has the key `line` with the value false.
 - On macOS, run one scenario in each process. In the phase 4 runs, a process that ran several
   scenarios stopped to give frames after about 28 seconds (section 8.1).
 - Take the figures from the first seconds of a fresh process (section 2.5).
@@ -410,17 +444,22 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
 - The plan [canvas-cuts-plan.md](canvas-cuts-plan.md) (proposed) needs a new baseline of the
   six scenarios on the three platforms, and a scenario with arcs, before its cuts land (its
   section 6.3). Cut 2 used an A/B test in place of this baseline (section 9).
-- Cut 2: `bars` 1000 on the Pixel 8a missed the FPS criterion of the plan in two series (section
-  9.3). The cause is not known.
+- Cut 2: `bars` 1000 on the Pixel 8a has a draw time 0.18 ms (1.8 %) longer after C2, in code
+  that C2 does not change (section 9.5). The cause is not known. The frame rate has no measured
+  change. Measure it again in the phase 5 performance work.
 - The 2 degree text rotation snap (section 5.5) stays until the toolchain pin is a stable release
   with the upstream fixes. Then remove it, and run the crash case of section 5.5 again.
 - macOS and Chrome: section 8.1 has the figures of the `primitives` mode with the circle batch.
   They are not the baseline of the plan: they come from one process for each mode, not from 3
   fresh processes for each scenario.
-- Typed element options (section 8.4): the elements read typed options without a Map lookup, but
-  only phase 5 makes them in a chart. `resolveNamedOptions` must make the typed class, and the two
-  option copies of the animations must keep it ([Chart.js ADR 0018](adr/0018-typed-element-options.md)).
-  Options that are plain Maps still cost the lookups of section 8.2.
+- Typed element options (section 8.4): the elements read typed options without a Map lookup.
+  Phase 5 makes them in a chart: `resolveNamedOptions` makes the typed class of the element type,
+  and the option copies of `cloneIfNotShared` and `resolveTargetOptions` keep it
+  ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md)). The figures of the chart path
+  on the four platforms (the mode `chart`, section 6) are not recorded yet. Options that are plain
+  Maps still cost the lookups of section 8.2.
+- Animations: the figures of the animated stress case (`CALL=animate`, section 10.4) on the Pixel
+  8a, macOS, Chrome with dart2wasm and the iPhone are not recorded yet.
 - Arcs: the native path calls (`Path.arcTo`) cost the most (section 8.2). Cut 1 of
   [canvas-cuts-plan.md](canvas-cuts-plan.md) keeps the native arc path (`_nativeArc`), so it does
   not reduce this cost. The bars use `roundRect` now (section 8.4).
@@ -662,8 +701,9 @@ performance acceptance of the plan (§6.3) as an A/B test.
 
 ### 9.1 Method
 
-- **Code.** "Before" is commit `69f9d97`, the library without C2, in a git worktree. "After" is
-  the C2 change on top of `69f9d97`. Both sides ran in one session on 2026-10-19.
+- **Code.** "Before" is commit `69f9d97`, the library without C2, in a git worktree. On the Pixel
+  8a, macOS and Chrome, "after" is the C2 change on top of `69f9d97`, and both sides ran in one
+  session on 2026-10-19. The iPhone ran on 2026-10-20 (see below).
 - **Builds.** Each scenario and each side had its own profile build of
   `apps/chartjs_gallery/lib/main_stress.dart`, with `--dart-define=MODE=<mode>` and
   `--dart-define=SCENARIO=<N>x<M>`. Each run is a fresh process or a fresh page load. It runs one
@@ -699,6 +739,10 @@ The platforms:
   `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp`. One
   tab loaded the page of each run. The raster time is on the skwasm worker. A CanvasKit build
   (`flutter build web --profile`, dart2js) ran one pair at `primitives` 5000 + 50.
+- **iPhone 17 Pro** (iOS 26.6.2, up to 120 Hz, connected by cable): `flutter run --profile` of each
+  side, one smoke pair for each scenario (plan §6.3). "Before" ran in a worktree of `69f9d97` and
+  "after" in a worktree of `cd9024f`, on 2026-10-20, one day after the other platforms. The runs
+  set the Xcode team, and a script restored both project files byte for byte.
 
 ### 9.2 Results
 
@@ -758,6 +802,13 @@ the row.
 | primitives 20000 + 200, runs 4 to 6 | 50.9 / 18.48 / 40.05 | 50.4-51.4 / 18.29-18.71 / 39.80-40.36 | 50.7 / 18.59 / 40.32 | 50.2-50.7 / 18.56-18.78 / 40.30-40.66 | pass |
 | CanvasKit, primitives 5000 + 50, one pair | 39.4 / 2.45 / 23.52 | one run | 39.6 / 2.46 / 22.37 | one run | pass |
 
+**iPhone 17 Pro** (one pair for each scenario):
+
+| Scenario | Before | Before noise | After | After noise | Result |
+|---|---|---|---|---|---|
+| primitives 1000 + 0 | 116.4 / 1.27 / 1.00 | one run | 120.0 / 1.34 / 1.03 | one run | pass |
+| primitives 20000 + 200 | 119.8 / 2.95 / 0.96 | one run | 120.0 / 3.03 / 0.95 | one run | pass |
+
 ### 9.3 Acceptance
 
 - **Pixel 8a.** 9 of 10 scenarios pass. `arcs` 1000 missed in the first series and passed in the
@@ -770,19 +821,152 @@ the row.
   is slower in 6 of the 9 pairs. Single runs of this mode go from 45.9 to 54.1 FPS. In each frame,
   C2 changes only the paint and the size check of the host. The paint uses one `scale` of
   `1 / DPR`, as before C2. The cause of the miss is not known. No library code changed after the
-  runs.
+  runs. Section 9.5 gives an A/A control and 12 more pairs, and the decision.
 - **macOS.** All 10 scenarios pass. `primitives` 20000 + 200 and `elements` 5000 + 50 had one run
   outside the limits in the first series. Other windows covered the stress window in these runs.
   Both scenarios passed in the rerun.
 - **Chrome.** All 10 scenarios pass. `primitives` 20000 + 0 and 20000 + 200 missed the FPS
   criterion in the first series. Both passed in the rerun. The CanvasKit pair passes.
+- **iPhone 17 Pro.** Both smoke pairs pass. Both sides run at the 120 Hz limit. The draw time of
+  the after run is 0.07 ms and 0.08 ms longer, in the limit of 5 % + 0.2 ms.
 
 ### 9.4 Not measured
 
 - `POINT_STYLE=rectRounded` at 5000 + 0 and 20000 + 0 (plan §6.3), also in the CanvasKit run. The
   stress entry has no `POINT_STYLE` define, because work package A3 did not run.
 - The arc micro-benchmark of plan §6.3. It measures cut 1. C2 does not change the arc path.
-- The iPhone 17 Pro smoke runs (`primitives` 1000 + 0 and 20000 + 200). The phone was offline:
-  `flutter run --profile` waited for the device.
 - The cut 2 web checks of plan §6.4 (the browser zoom, a move between displays) and the look at
   the Stress tab on the Pixel 8a (plan §3.8, risk 1). They are not performance figures.
+
+### 9.5 `bars` 1000 on the Pixel 8a: the A/A control and more pairs
+
+The miss of section 9.3 was open item 0 of phase 5. This section tests if C2 causes it.
+
+**Method.**
+- **Code.** "Before" is commit `69f9d97` and "after" is commit `cd9024f` (C2), each in its own git
+  worktree. Each side has one profile build of `bars` 1000, as in section 9.1. A third APK
+  ("control") is a byte copy of the before APK.
+- **Order.** Each series alternates the first side: pair 1 runs A then B, pair 2 runs B then A
+  (ABBA). Thus an effect of the run position cancels.
+- **Series.** An A/A control of before against control (8 pairs). 12 more A/B pairs. A padded
+  control of before against before plus 200 bytes of code that runs once (12 pairs, see below).
+  All series ran on 2026-10-19 with the screen on. The battery temperature was 29.1 to 30.3
+  degrees Celsius in the A/A control and 30.6 to 33.6 in the A/B pairs. It was 34.1 to 35.1 in the
+  padded control.
+- **Interval.** The 95 % interval is the bootstrap percentile interval of the mean pair
+  difference, with 20000 resamples.
+
+**Results.** The side cells give the medians of FPS / draw (ms) / raster (ms). A difference is
+the mean of the pair differences, second side minus first side, with its 95 % interval.
+
+| Series | Pairs | First side | Second side | FPS difference (95 % interval) | Draw difference | Raster difference |
+|---|---|---|---|---|---|---|
+| A/A: before, control | 8 | 48.8 / 9.65 / 13.95 | 48.8 / 9.78 / 14.05 | +0.43 (-2.17 to +2.78) | -0.04 (-0.37 to +0.31) | +0.03 (-0.32 to +0.40) |
+| A/B: before, after (new pairs) | 12 | 47.6 / 10.09 / 14.24 | 46.9 / 10.22 / 14.16 | -0.59 (-1.35 to +0.20) | +0.21 (+0.04 to +0.37) | -0.02 (-0.15 to +0.11) |
+| A/B: before, after (section 9.2 and the new pairs) | 21 | 48.3 / 9.88 / 14.00 | 47.4 / 10.16 / 14.11 | -0.56 (-1.32 to +0.26) | +0.18 (+0.03 to +0.32) | +0.05 (-0.08 to +0.18) |
+| Padded: before, before + 200 bytes | 12 | 45.5 / 10.76 / 14.68 | 46.5 / 10.91 / 14.57 | +0.29 (-1.08 to +1.88) | -0.07 (-0.35 to +0.18) | -0.04 (-0.30 to +0.23) |
+
+- **The acceptance rule on identical APKs.** The A/A control has two blocks of 3 pairs. Both
+  blocks miss the FPS criterion of plan §6.3. Single runs go from 44.5 to 53.1 FPS. Thus the 3-pair
+  rule cannot resolve this scenario on this phone.
+- **The new A/B pairs.** The 12 pairs pass the rule as one set. Of the 4 blocks of 3 pairs, 3 pass
+  and 1 misses.
+- **FPS and raster.** Over the 21 pairs, the 95 % intervals of the FPS and the raster differences
+  include 0. Thus the frame rate and the raster time have no measured change.
+- **The host paint.** The build time minus the draw time is the UI-thread time outside the chart
+  draw. It contains the layout and the paint of the host. After C2, it is 0.05 ms shorter (mean
+  over the 21 pairs).
+- **The draw.** The draw time is 0.18 ms (1.8 %) longer, and its interval excludes 0. This is in
+  the draw limit of the plan (5 % + 0.2 ms). C2 changes no source line of the draw path.
+- **AOT code.** Both builds printed their instruction sizes
+  (`--extra-gen-snapshot-options=--print-instructions-sizes-to`). Each function of
+  `element.bar.dart`, `helpers.canvas.dart`, `canvas_ui_path.dart`, `canvas_ui_paint.dart` and
+  `stress_demo.dart` has the same size in both builds. The per-frame host code of C2 is smaller:
+  `_paintCanvas` has 380 bytes (760 before), and `displaySize` has 336 bytes (`chartSize` had 428).
+  The whole snapshot is 512 bytes larger.
+- **The padded control.** The variant changes one line of `canvas_ui.dart` in the before
+  worktree. The `UiCanvasElement` constructor parses a string once: 200 bytes of code, in the
+  class that C2 changes. The control does not show a placement effect on the draw, and its
+  interval does not exclude an effect of 0.18 ms. The phone was warmer in this series.
+
+**Decision** (decision protocol of phase 5). Cut 2 stays.
+- Priority 1, the upstream behavior: cut 2 passes the 5 named spec cases of plan §3.6. A harness
+  workaround needs `diverges:` rows for the cases with canvas attributes.
+- Priority 2, performance: the frame rate and the raster time have no measured change. The code
+  that C2 changes in each frame is smaller, and the UI-thread time outside the draw is not longer.
+  Thus no faster form of the C2 code is available. The draw shift of 0.18 ms is in code that C2
+  does not change. Its cause is not known.
+- porting-flow.md §1.1 does not block the cut: the frame rate of `bars` 1000 is not measurably
+  slower.
+
+## 10. Core (phase 5)
+
+### 10.1 Animations
+
+The forms of [Chart.js ADR 0019](adr/0019-animation.md) §11 come from the judge probe J1 of that
+ADR. The figures of the real port come from a scratch benchmark of the ported files. Bed: Apple M3
+Max, macOS 26.5.1, Dart 3.12.2. "AOT" is `dart compile exe`. "wasm" is `dart compile wasm -O2`,
+run in Node.js v24.12.0 (arm64), for times only. Each figure of the port is the median of 9 runs,
+and a cell gives the lowest and the highest median of 3 runs.
+
+One animator frame with every item active, in microseconds:
+
+| Case | ADR 0019 §11, form N, AOT | ADR 0019 §11, form N, wasm | Port, AOT | Port, wasm |
+|---|---|---|---|---|
+| 20000 `PointElement` x 2 (`x`, `y`) | 738-784 | 616-670 | 503-518 | 698-705 |
+| 1000 `ArcElement` x 6 | 120 | 139-145 | 100-105 | 153-155 |
+| 1000 Maps x 2 colors | — | — | 556-570 | 312-314 |
+
+Other costs:
+- One `Animation` constructor (row `adapt-animation-spec`) with an `AnimationSpec` config: 185-189
+  ns (AOT) and 93-99 ns (wasm). With a Map config: 298-300 ns (AOT) and 285-298 ns (wasm).
+  The probe F5 of the ADR gave 105 ns (AOT) and 141 ns (wasm) with an `AnimationSpec`. The typed
+  config stays the faster form. The absolute AOT figure of the port differs from the probe.
+- The number path (row `adapt-animation-number-path`) has the typed field `_element`. On AOT,
+  20000 x 2 takes 550-575 us before the field and 503-518 us after it. On wasm, it takes 719-748 us
+  before and 698-705 us after. The 1000 arcs x 6 do not change.
+- The color cache (row `adapt-animation-color-cache`): line by line, a color tick costs 1832-1943
+  ns (AOT) and 1460-1732 ns (wasm). With the cache, it costs 437-489 ns (AOT) and 250-310 ns (wasm)
+  (ADR 0019, Evidence F1).
+- `jsMapForEach` with one chart: 99-109 ns (AOT) and 116-117 ns (wasm) in each frame.
+  `Map.forEach` takes 5-7 ns.
+
+### 10.2 A hit test with a JS `null` coordinate
+
+The review of phase 5 made the coordinates of `inRange`, `inXRange` and `inYRange` `double?`.
+Thus an interaction mode passes a JS `null` coordinate to the element unchanged
+(core.interaction.js:125, :174, :234, :236). A `BarElement` reads `null` as "ignore this axis"
+(element.bar.js:103-111). A nullable parameter can need a boxed value. A scratch A/B benchmark
+calls `inRange` through `types.VisualElement` on 20000 elements, with non-null coordinates. Bed:
+Apple M3 Max, AOT, 27 batches of each side in 3 alternating processes. A cell gives the median and
+the range of the batches, in ns for each call:
+
+| Element | Before (`double`) | After (`double?`) |
+|---|---|---|
+| `PointElement` | 33.8 (32.1-35.9) | 33.6 (32.2-35.6) |
+| `BarElement` | 52.8 (50.2-55.4) | 53.5 (50.8-55.8) |
+
+The change has no measured cost. The upstream hit element ranks first in any case (porting-flow.md
+§1.1).
+
+### 10.3 Parsed items of any type
+
+The review of phase 5 made `ChartMeta.parsed` a `List<Object?>`, as `_parsed: unknown[]` is
+(index.d.ts:473). With `parsing: false` and primitive data, upstream throws nothing, where the
+port with a `List<Map>` threw a `TypeError`. The hot readers (`getMinMax`, `getAllParsedValues`,
+the stacks, `core.interaction` and `helpers.extras`) read a Map item with the Map read, and another
+item with `jsGet`. A scratch A/B benchmark reads `isFinite(item['y'])` for 20000 items. Bed: Apple
+M3 Max, AOT, 13 batches. The typed list `List<Map<String, Object?>>` takes 7.8-8.7 ns for each
+read. The `List<Object?>` with the test `item is Map<dynamic, dynamic>` takes 9.7-10.4 ns. A test
+of `Map<String, Object?>` gives the same time. Thus a full `getMinMax` pass over 20000 items costs
+about 40 us more. A sorted dataset stops at its first and last item. The upstream behavior ranks
+first (porting-flow.md §1.1). The test `Map<dynamic, dynamic>` is the form that dart2wasm tests
+without a compare of the type arguments (the comment of `jsGet`).
+
+### 10.4 The animated stress case
+
+`--dart-define=MODE=chart --dart-define=CALL=animate` (section 6) gives the frame figures of the
+animator in a real chart. `drawMs` is the draw that the animator calls. `animatorMs` is the tick of
+the N animations before that draw. The figures on the Pixel 8a, macOS, Chrome with dart2wasm and
+the iPhone are open (section 7).
+

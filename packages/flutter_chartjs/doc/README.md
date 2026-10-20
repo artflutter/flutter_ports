@@ -30,7 +30,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
   ADRs are in [adr/](adr/). Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
   supersedes Chart.js ADR 0005, and Chart.js ADR 0012 supersedes Chart.js ADR 0004. Chart.js
-  ADR 0001 is accepted for its four invariants only. Chart.js ADRs 0013 to 0018 are proposed.
+  ADR 0001 is accepted for its four invariants only. Chart.js ADRs 0013 to 0023 are proposed.
   Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it is accepted. The other Chart.js ADRs are
   accepted:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md)
@@ -56,6 +56,14 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
     supersedes Chart.js ADR 0007 on acceptance)
   - [Chart.js ADR 0017: Element properties](adr/0017-element-properties.md) (proposed)
   - [Chart.js ADR 0018: Typed element options](adr/0018-typed-element-options.md) (proposed)
+  - [Chart.js ADR 0019: Animation](adr/0019-animation.md) (proposed)
+  - [Chart.js ADR 0020: Registry and component classes](adr/0020-registry-and-component-classes.md)
+    (proposed)
+  - [Chart.js ADR 0021: Typed options in the resolver](adr/0021-typed-options-in-the-resolver.md)
+    (proposed)
+  - [Chart.js ADR 0022: Chart test harness on Flutter](adr/0022-chart-test-harness.md) (proposed)
+  - [Chart.js ADR 0023: Underscore members with a colliding name](adr/0023-underscore-member-collisions.md)
+    (proposed)
 
 ## What gets ported
 
@@ -80,7 +88,8 @@ Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the v4.5.1 lockfile), which
    Code from another project (such as `@kurkle/color`) also adds that project's notice to the
    package LICENSE and `REUSE.toml` ([AGENTS.md](../../../AGENTS.md#licensing)).
 3. Port the matching spec from `test/specs` next to it.
-4. Update the row in [parity.md](parity.md) in the same PR.
+4. Update the status text of the module in [status.yaml](status.yaml) and run
+   `dart run melos run parity` (tool 6), which writes [parity.md](parity.md), in the same PR.
 
 ## Roadmap (draft)
 

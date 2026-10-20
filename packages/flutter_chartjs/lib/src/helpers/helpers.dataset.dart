@@ -53,15 +53,20 @@ double _edgeOf(Object item, String field) => switch ((item, field)) {
 /// helpers.dataset.ts:3 `getSizeForArea`.
 ///
 /// `scale.options.clip` is an option value (Chart.js ADR 0006), and the
-/// test is its ToBoolean.
-double _getSizeForArea(Scale scale, ChartArea chartArea, String field) {
+/// test is its ToBoolean. Dart `null` for [chartArea] stands for the JS
+/// `undefined` of a chart before its first layout: the read of its edge
+/// throws a `TypeError`, as in JavaScript.
+double _getSizeForArea(Scale scale, ChartArea? chartArea, String field) {
   return jsTruthy(scale.options['clip'])
       ? _edgeOf(scale, field)
-      : _edgeOf(chartArea, field);
+      : _edgeOf(chartArea!, field);
 }
 
 /// helpers.dataset.ts:7 `getDatasetArea`.
-TRBL _getDatasetArea(ChartMeta meta, ChartArea chartArea) {
+///
+/// Dart `null` for [chartArea] and for the result stands for JS
+/// `undefined`, as in [_getSizeForArea].
+TRBL? _getDatasetArea(ChartMeta meta, ChartArea? chartArea) {
   final ChartMeta(:xScale, :yScale) = meta;
   if (xScale != null && yScale != null) {
     return _Trbl(
@@ -110,15 +115,15 @@ TRBL? getDatasetClipArea(Chart chart, ChartMeta meta) {
   return _Trbl(
     left: clip.left == false
         ? 0
-        : _subtract(area.left, clip.left == true ? 0 : clip.left),
+        : _subtract(area!.left, clip.left == true ? 0 : clip.left),
     right: clip.right == false
         ? chart.width
-        : _add(area.right, clip.right == true ? 0 : clip.right),
+        : _add(area!.right, clip.right == true ? 0 : clip.right),
     top: clip.top == false
         ? 0
-        : _subtract(area.top, clip.top == true ? 0 : clip.top),
+        : _subtract(area!.top, clip.top == true ? 0 : clip.top),
     bottom: clip.bottom == false
         ? chart.height
-        : _add(area.bottom, clip.bottom == true ? 0 : clip.bottom),
+        : _add(area!.bottom, clip.bottom == true ? 0 : clip.bottom),
   );
 }

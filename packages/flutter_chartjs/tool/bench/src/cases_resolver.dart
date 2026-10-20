@@ -19,14 +19,14 @@ import 'package:flutter_chartjs/src/types/basic.dart';
 import 'fixtures.dart';
 import 'harness.dart';
 
-/// `hasFunction` of `core.config.js:396`.
+/// `hasFunction` of `core.config.js:402-403`.
 bool _hasFunction(Object? value) {
   if (!isObject(value)) return false;
   final object = value! as AnyObject;
   return object.keys.any((key) => isFunction(object[key]));
 }
 
-/// `needContext` of `core.config.js:399`.
+/// `needContext` of `core.config.js:405-418`.
 bool _needContext(Object proxy, List<String> names) {
   final d = descriptors(proxy);
   for (final prop in names) {
@@ -41,7 +41,7 @@ bool _needContext(Object proxy, List<String> names) {
   return false;
 }
 
-/// `Config.resolveNamedOptions` (`core.config.js:353`) with a cached
+/// `Config.resolveNamedOptions` (`core.config.js:351`) with a cached
 /// resolver, as `getResolver` gives it, and a context of the element.
 AnyObject _resolveNamedOptions(
   Resolver resolver,

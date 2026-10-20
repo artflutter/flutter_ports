@@ -1,4 +1,5 @@
 // Original code, not ported from Chart.js: tests of lib/src/js/js_function.dart.
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_function.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:test/test.dart';
@@ -82,6 +83,16 @@ void main() {
       expect(jsIsFunction(identical), isTrue);
       expect(jsIsFunction(_identity), isTrue);
       expect(jsIsFunction(JsFunction((Object? self) => self)), isTrue);
+    });
+
+    test('is true for a class value', () {
+      // typeof (class A {}) is 'function' in Node.js v24.12.0 on x64, also
+      // for a subclass and for the element classes (Chart.js ADR 0020,
+      // section 2).
+      final a = JsClass('A');
+      expect(jsIsFunction(a), isTrue);
+      expect(jsIsFunction(JsClass('B', superclass: a)), isTrue);
+      expect(jsIsFunction(jsObjectClass), isTrue);
     });
 
     test('is false for other values', () {
@@ -183,6 +194,15 @@ void main() {
       expect(() => jsCall(undefined, []), throwsArgumentError);
       expect(() => jsCall(42, []), throwsArgumentError);
       expect(() => jsCall(_Callable(), [1]), throwsArgumentError);
+    });
+
+    test('throws for a class value, which needs new', () {
+      // A() of class A {} throws a TypeError in Node.js v24.12.0 on x64:
+      // "Class constructor A cannot be invoked without 'new'".
+      final a = JsClass('A', construct: (newTarget, args) => 'constructed');
+      expect(() => jsCall(a, []), throwsArgumentError);
+      expect(() => jsCall(a, [1], thisArg: a), throwsArgumentError);
+      expect(() => jsCall1(a, 1), throwsArgumentError);
     });
 
     test('throws for a function that it cannot call', () {

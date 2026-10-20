@@ -179,6 +179,27 @@ void main() {
     );
   });
 
+  test('flags DateTime.now( from phase 5 (Chart.js ADR 0010)', () {
+    expect(
+      _sites([
+        'final a = DateTime.now();',
+        'final b = DateTime . now ( ).millisecondsSinceEpoch;',
+        'final c = jsDateNow() + clock.now().millisecondsSinceEpoch;',
+        "final d = 'DateTime.now()'; // DateTime.now()",
+        'final e = MyDateTime.now() + DateTime.nowUtc + x.now();',
+        'final f = DateTime.now(); // js-ok: a log time stamp only.',
+      ]),
+      ['2 DateTime.now(', '3 DateTime.now('],
+    );
+    expect(
+      _check(['final a = DateTime.now();']).single,
+      endsWith(
+        'Use jsDateNow, which reads clock.now() (Chart.js ADR 0010, '
+        'section 6).',
+      ),
+    );
+  });
+
   test('flags the transcendental dart:math functions', () {
     expect(
       _sites([

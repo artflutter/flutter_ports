@@ -267,7 +267,9 @@ void main() {
       expect(ctx.isEmpty, isTrue);
       expect(ctx.fillStyle, '#000000');
 
-      // An absent attribute and another name do nothing, as in the DOM.
+      // An absent attribute and the style attribute do not reset the
+      // context, as in the DOM. The style attribute reflects the inline
+      // style (Chart.js ADR 0022, section 4).
       ctx
         ..fillStyle = 'red'
         ..fillRect(0, 0, 10, 10);
@@ -276,7 +278,7 @@ void main() {
         ..removeAttribute('style')
         ..setAttribute('style', 'width: 10px');
       expect(ctx.isEmpty, isFalse);
-      expect(element.getAttribute('style'), isNull);
+      expect(element.getAttribute('style'), 'width: 10px');
       element.removeAttribute('height');
       expect((element.width, element.height), (300, 150));
       expect(ctx.isEmpty, isTrue);
@@ -304,6 +306,94 @@ void main() {
       }
       element.setAttribute('height', 'auto');
       expect((element.getAttribute('height'), element.height), ('auto', 150));
+    });
+  });
+
+  group('the style attribute and the other attributes', () {
+    // Chart.js ADR 0022, section 4: chartjs-test-utils src/utils.js:46-50
+    // sets the canvas attributes of a spec with setAttribute, also `style`,
+    // and platform.dom.tests.js:10 sets `id`.
+    test('setAttribute of style replaces the inline style', () {
+      final element = UiCanvasElement();
+      element.style.setProperty('display', 'block');
+      element.setAttribute('style', 'width: 512px; HEIGHT:480px');
+      expect(element.style.getPropertyValue('width'), '512px');
+      expect(element.style.getPropertyValue('height'), '480px');
+      expect(element.style.getPropertyValue('display'), '');
+      // The attribute keeps the text as it was set.
+      expect(element.getAttribute('style'), 'width: 512px; HEIGHT:480px');
+      expect((element.width, element.height), (300, 150));
+    });
+
+    test('a CSSOM write makes the attribute the serialization', () {
+      final element = UiCanvasElement()..setAttribute('style', 'width:10px');
+      expect(element.getAttribute('style'), 'width:10px');
+      // Also a write that changes nothing.
+      element.style.setProperty('height', '');
+      expect(element.getAttribute('style'), 'width: 10px;');
+      element.style.setProperty('display', 'block');
+      expect(element.getAttribute('style'), 'width: 10px; display: block;');
+      element.style.setProperty('display', null);
+      expect(element.getAttribute('style'), 'width: 10px;');
+      element.style.setProperty('width', '');
+      // The attribute stays, with no declarations.
+      expect(element.getAttribute('style'), '');
+
+      final other = UiCanvasElement();
+      other.style.setProperty('width', '20px', 'important');
+      expect(other.getAttribute('style'), 'width: 20px !important;');
+    });
+
+    test('removeAttribute of style empties the inline style', () {
+      final element = UiCanvasElement()
+        ..setAttribute('style', 'width: 512px')
+        ..removeAttribute('STYLE');
+      expect(element.getAttribute('style'), isNull);
+      expect(element.style.getPropertyValue('width'), '');
+      element.setAttribute('style', '');
+      expect(element.getAttribute('style'), '');
+    });
+
+    test('the declarations of a style text', () {
+      final style = UiCanvasElement().style
+        ..cssText =
+            ' width : 455px ; ; height: 355px !IMPORTANT; color; :red; '
+            'background: url("a;b") no-repeat; font-family: x(a;b); '
+            '--Custom: 1; height: 1px';
+      expect(style.getPropertyValue('width'), '455px');
+      expect(style.getPropertyValue('height'), '355px');
+      expect(style.getPropertyPriority('height'), 'important');
+      expect(style.getPropertyValue('color'), '');
+      expect(style.getPropertyValue('background'), 'url("a;b") no-repeat');
+      expect(style.getPropertyValue('font-family'), 'x(a;b)');
+      expect(style.getPropertyValue('--Custom'), '1');
+      expect(style.getPropertyValue('--custom'), '');
+      expect(
+        style.cssText,
+        'width: 455px; height: 355px !important; '
+        'background: url("a;b") no-repeat; font-family: x(a;b); --Custom: 1;',
+      );
+      // The setter replaces the declarations and the attribute.
+      style.cssText = 'width: 640px; height: 480px';
+      expect(style.cssText, 'width: 640px; height: 480px;');
+      expect(style.styleAttribute, 'width: 640px; height: 480px;');
+      expect(style.getPropertyValue('background'), '');
+    });
+
+    test('another attribute keeps its value as a string', () {
+      final element = UiCanvasElement(width: 40, height: 20);
+      final ctx = element.getContext2d()..fillRect(0, 0, 10, 10);
+      element
+        ..setAttribute('id', 'chart-canvas')
+        ..setAttribute('Class', 'a b');
+      expect(element.getAttribute('ID'), 'chart-canvas');
+      expect(element.getAttribute('class'), 'a b');
+      expect(element.getAttribute('title'), isNull);
+      element.removeAttribute('id');
+      expect(element.getAttribute('id'), isNull);
+      // The writes do not reset the context.
+      expect(ctx.isEmpty, isFalse);
+      expect((element.width, element.height), (40, 20));
     });
   });
 

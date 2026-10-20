@@ -1,7 +1,8 @@
 // Original code, not ported from Chart.js: JS sort and key order as in V8.
 
 /// `Array.prototype.sort` and the key order of `Object.keys` for ported code
-/// (Chart.js ADR 0010, "Sort").
+/// (Chart.js ADR 0010, "Sort"), `Object.getOwnPropertyNames` (Chart.js
+/// ADR 0019, section 1), and `Array.prototype.splice` ([jsSplice]).
 ///
 /// A JavaScript array is a `List<Object?>` and a plain object is a
 /// `Map<String, Object?>` (Chart.js ADR 0006).
@@ -93,6 +94,22 @@ List<String> jsObjectKeys(Map<String, Object?> object) {
   return [for (final (_, key) in indices) key, ...others];
 }
 
+/// `Object.getOwnPropertyNames(object)`: the own string keys of [object]
+/// (Chart.js ADR 0019, section 1).
+///
+/// - A [JsProxyObject] gives its [Map.keys], the `ownKeys` trap. For a
+///   resolver of `helpers.config`, these are the keys of all its scopes
+///   (`helpers.config.ts:94-96`). [jsObjectKeys] gives fewer keys there: the
+///   `getOwnPropertyDescriptor` trap reads only the first scope
+///   (`helpers.config.ts:73-75`).
+/// - Another Map gives [jsObjectKeys]. Each key of a Map is an own
+///   enumerable property, so the two functions agree on it.
+///
+/// `Animations.configure` (core.animations.js:21) and `hasFunction`
+/// (core.config.js:402-403) call it.
+List<String> jsOwnPropertyNames(Map<String, Object?> object) =>
+    object is JsProxyObject ? object.keys.toList() : jsObjectKeys(object);
+
 /// The largest array index, 2^32 - 2 (ECMAScript 6.1.7).
 const int _maxArrayIndex = 4294967294;
 
@@ -115,3 +132,53 @@ int? jsArrayIndex(String key) {
   }
   return index <= _maxArrayIndex ? index : null;
 }
+
+/// `array.splice(start, deleteCount, ...items)`: removes [deleteCount]
+/// elements of [list] from [start], inserts [items] there, and returns the
+/// removed elements (ECMAScript 23.1.3.31).
+///
+/// [start] and [deleteCount] go through `ToIntegerOrInfinity`: NaN gives 0,
+/// and a fraction truncates toward zero. A negative [start] counts from the
+/// end of [list]. Both values clamp to [list]. Dart `null` for
+/// [deleteCount] stands for an absent argument: the removal runs to the end
+/// of [list]. The JavaScript `undefined` gives 0, as NaN does.
+///
+/// `_removeElements` of `core.datasetController.js:1030` and `:1035` calls
+/// it with the `start` of `_onDataPop`, which is -1 for an empty dataset.
+List<T> jsSplice<T>(
+  List<T> list,
+  double start, [
+  double? deleteCount,
+  List<T> items = const [],
+]) {
+  final length = list.length;
+  final relativeStart = _toIntegerOrInfinity(start);
+  final int actualStart;
+  if (relativeStart < 0) {
+    final fromEnd = length + relativeStart;
+    actualStart = fromEnd > 0 ? fromEnd.toInt() : 0;
+  } else {
+    actualStart = relativeStart < length ? relativeStart.toInt() : length;
+  }
+  final int actualDeleteCount;
+  if (deleteCount == null) {
+    actualDeleteCount = length - actualStart;
+  } else {
+    final count = _toIntegerOrInfinity(deleteCount);
+    final rest = length - actualStart;
+    actualDeleteCount = count <= 0
+        ? 0
+        : count < rest
+        ? count.toInt()
+        : rest;
+  }
+  final end = actualStart + actualDeleteCount;
+  final removed = list.sublist(actualStart, end);
+  list.replaceRange(actualStart, end, items);
+  return removed;
+}
+
+/// `ToIntegerOrInfinity(value)` (ECMAScript 7.1.5) of a number: NaN gives 0,
+/// an infinity gives itself, and another value truncates toward zero.
+double _toIntegerOrInfinity(double value) =>
+    value.isNaN ? 0 : value.truncateToDouble();

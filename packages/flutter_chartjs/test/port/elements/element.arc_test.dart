@@ -6,6 +6,7 @@ import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/elements/element.arc.dart';
 import 'package:flutter_chartjs/src/elements/element_options.dart';
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/animation.dart' as types;
 import 'package:flutter_chartjs/src/types/basic.dart';
@@ -389,6 +390,40 @@ void main() {
       expect(indexable('borderDash'), isFalse);
       expect(indexable('borderWidth'), isTrue);
       expect(indexable('backgroundColor'), isTrue);
+    });
+
+    test('jsClass is ArcElement as a value', () {
+      // From element.arc.ts in Node.js v24.12.0 on x64: the own statics of
+      // ArcElement are id, defaults, defaultRoutes and descriptors, and its
+      // superclass is Element. typeof ArcElement is 'function'.
+      final c = ArcElement.jsClass;
+      expect(c.name, 'ArcElement');
+      expect(c.superclass, same(Element.jsClass));
+      expect(c.id, 'arc');
+      expect(c['id'], ArcElement.id);
+      expect(c['defaults'], same(ArcElement.defaults));
+      expect(c['defaultRoutes'], same(ArcElement.defaultRoutes));
+      expect(c['descriptors'], same(ArcElement.descriptors));
+      expect(c.isSubclassOf(Element.jsClass), isTrue);
+      expect(c.isSubclassOf(c), isFalse);
+    });
+
+    test('jsConstruct of jsClass makes a ArcElement with the cfg', () {
+      // new ArcElement({x: 2}) and new ArcElement() (Chart.js ADR 0020,
+      // section 3).
+      final element = jsConstruct(ArcElement.jsClass, [
+        <String, Object?>{'x': 2},
+      ]);
+      expect(element, isA<ArcElement>());
+      expect((element as ArcElement)['x'], 2.0);
+      expect(jsConstruct(ArcElement.jsClass, const []), isA<ArcElement>());
+      // class My extends ArcElement { static id = 'my'; }: the subclass value
+      // constructs a ArcElement and reads the statics of ArcElement.
+      final my = JsClass('My', superclass: ArcElement.jsClass)..['id'] = 'my';
+      expect(jsConstruct(my, const []), isA<ArcElement>());
+      expect(my.id, 'my');
+      expect(ArcElement.jsClass.id, 'arc');
+      expect(my['defaults'], same(ArcElement.defaults));
     });
   });
 

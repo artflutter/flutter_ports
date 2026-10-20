@@ -1,8 +1,12 @@
 // Ported from Chart.js v4.5.1 test/specs/helpers.dom.tests.js (MIT, Chart.js Contributors).
-import 'package:chartjs_test_utils/pure.dart';
+@TestOn('vm')
+library;
+
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.dom.dart' as helpers;
-import 'package:test/test.dart';
+import 'package:flutter_chartjs/src/js/js_math.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 // The spec reads the functions from Chart.helpers. Here `helpers` is
 // helpers.dom.dart, which lib/src/helpers/index.dart exports.
@@ -14,8 +18,9 @@ import 'package:test/test.dart';
 // test container of the same size. The cases that test only CSS (max-width,
 // max-height, percentages, padding) or the shadow DOM skip as n/a.
 //
-// helpers.dom.dart is a pure-layer root. Thus the file runs on the VM, dart2js
-// and dart2wasm.
+// The cases that call `acquireChart` are `testWidgets` cases (Chart.js ADR
+// 0022, sections 1 and 2). Thus the file runs on the VM only, although
+// helpers.dom.dart is a pure-layer root. `Math.round` is `jsRound`.
 
 /// A test container: the parent node of a canvas, with the content box
 /// [contentWidth] x [contentHeight].
@@ -58,7 +63,6 @@ Matcher _size(double width, double height) =>
         .having((s) => s.height, 'height', height);
 
 void main() {
-  setUpSpecs();
   group('DOM helpers tests', () {
     test('should get the maximum size for a node', () {
       // A div of 200px x 300px holds the node.
@@ -134,17 +138,51 @@ void main() {
       skip: 'n/a: Flutter has no CSS padding',
     );
 
-    test(
+    testWidgets(
       'should leave styled height and width on canvas if explicitly set',
-      () {},
-      skip: 'blocked: core.controller',
+      (tester) async {
+        final chart = acquireChart({}, {
+          'canvas': <String, Object?>{
+            'height': 200,
+            'width': 200,
+            'style': 'height: 400px; width: 400px;',
+          },
+        });
+
+        // retinaScale(chart, true): JavaScript multiplies with the ratio
+        // `true`, which ToNumber makes 1. The Dart ratio is a `double?`.
+        helpers.retinaScale(chart, 1);
+
+        final canvas = chart.canvas!;
+
+        expect(canvas.style.height, '400px');
+        expect(canvas.style.width, '400px');
+      },
     );
 
-    test(
-      'should handle devicePixelRatio correctly',
-      () {},
-      skip: 'blocked: core.controller',
-    );
+    testWidgets('should handle devicePixelRatio correctly', (tester) async {
+      const chartWidth = 800;
+      const chartHeight = 400;
+      const devicePixelRatio = 0.8999999761581421; // 1.7999999523162842;
+      final chart = acquireChart({}, {
+        'canvas': <String, Object?>{
+          'width': chartWidth,
+          'height': chartHeight,
+        },
+      });
+
+      helpers.retinaScale(chart, devicePixelRatio, true);
+
+      final canvas = chart.canvas!;
+      expect(canvas.width, jsRound(chartWidth * devicePixelRatio));
+      expect(canvas.height, jsRound(chartHeight * devicePixelRatio));
+
+      expect(chart.width, chartWidth);
+      expect(chart.height, chartHeight);
+
+      expect(canvas.style.width, '${chartWidth}px');
+      expect(canvas.style.height, '${chartHeight}px');
+    });
 
     group('getRelativePosition', () {
       // The case also reads canvases with CSS padding, whose position the
@@ -171,13 +209,13 @@ void main() {
       test(
         'Should not return NaN with a custom event',
         () {},
-        skip: 'blocked: core.controller',
+        skip: 'blocked: controller.bar',
       );
 
       test(
         'Should give consistent results for native and chart events',
         () {},
-        skip: 'blocked: core.controller',
+        skip: 'blocked: controller.bar',
       );
     });
 

@@ -94,12 +94,22 @@ const Set<String> _textBaselines = {
 const Set<String> _directions = {'ltr', 'rtl', 'inherit'};
 
 /// A map-backed [CSSStyleDeclaration]: the inline style of a
-/// [UiCanvasElement].
+/// [UiCanvasElement], and the reflection of its `style` attribute
+/// (Chart.js ADR 0022, section 4).
+///
+/// The declarations keep their order. A write of an existing property keeps
+/// its place, as in the CSSOM. The style does not expand shorthand
+/// properties and does not parse values.
 final class UiCssStyleDeclaration implements CSSStyleDeclaration {
   /// An empty style.
   UiCssStyleDeclaration();
 
   final Map<String, (String, String)> _properties = {};
+
+  /// The `style` attribute as it was set, or `null` for no attribute. After
+  /// a CSSOM write, [_serialized] is true and the attribute is [cssText].
+  String? _attribute;
+  bool _serialized = false;
 
   static String _name(String property) =>
       property.startsWith('--') ? property : property.toLowerCase();
@@ -125,12 +135,99 @@ final class UiCssStyleDeclaration implements CSSStyleDeclaration {
     } else {
       _properties[name] = (value, priority ?? '');
     }
+    // Each write makes the attribute the serialization, also a write that
+    // changes nothing. A compare of the old value cost 9 ns more on AOT, and
+    // the attribute text is not a behavior of Chart.js ADR 0009.
+    _serialized = true;
+  }
+
+  /// `cssText`: the declarations as `name: value;`, with ` !important` for
+  /// an important one, joined by one space. The CSSOM serializes a
+  /// declaration block in this form.
+  String get cssText => [
+    for (final MapEntry(key: name, value: (value, priority))
+        in _properties.entries)
+      priority.isEmpty ? '$name: $value;' : '$name: $value !$priority;',
+  ].join(' ');
+
+  /// `cssText = text`: replaces the declarations with the declarations of
+  /// [text]. Then the `style` attribute is [cssText], as the CSSOM updates
+  /// it after the write.
+  set cssText(String text) {
+    _properties.clear();
+    _parseDeclarations(text);
+    _serialized = true;
+  }
+
+  /// The `style` attribute of the element: `getAttribute('style')`. It is
+  /// the text of [styleAttribute] as it was set, until a CSSOM write
+  /// ([setProperty], [cssText]) makes it the serialization [cssText]. It is
+  /// `null` when the element has no `style` attribute.
+  String? get styleAttribute => _serialized ? cssText : _attribute;
+
+  /// `setAttribute('style', value)`, or `removeAttribute('style')` for
+  /// `null`: replaces the declarations with the declarations of [value].
+  set styleAttribute(String? value) {
+    _attribute = value;
+    _serialized = false;
+    _properties.clear();
+    if (value != null) _parseDeclarations(value);
+  }
+
+  static final RegExp _important = RegExp(
+    r'!\s*important\s*$',
+    caseSensitive: false,
+  );
+
+  /// Adds the declarations of [text]: `name: value` items separated by `;`
+  /// outside parentheses and quotes, each with an optional `!important`.
+  /// An item without a name or a value is ignored. A later normal
+  /// declaration does not replace an earlier important one.
+  void _parseDeclarations(String text) {
+    var start = 0;
+    var depth = 0;
+    String? quote;
+    for (var i = 0; i <= text.length; i++) {
+      final char = i < text.length ? text[i] : ';';
+      if (quote != null) {
+        if (char == quote) quote = null;
+      } else if (char == '"' || char == "'") {
+        quote = char;
+      } else if (char == '(') {
+        depth++;
+      } else if (char == ')' && depth > 0) {
+        depth--;
+      } else if (char == ';' && depth == 0) {
+        _addDeclaration(text.substring(start, i));
+        start = i + 1;
+      }
+    }
+  }
+
+  void _addDeclaration(String item) {
+    final colon = item.indexOf(':');
+    if (colon < 0) return;
+    final name = _name(item.substring(0, colon).trim());
+    var value = item.substring(colon + 1).trim();
+    var priority = '';
+    final important = _important.firstMatch(value);
+    if (important != null) {
+      value = value.substring(0, important.start).trim();
+      priority = 'important';
+    }
+    if (name.isEmpty || value.isEmpty) return;
+    if (priority.isEmpty && _properties[name]?.$2 == 'important') return;
+    _properties[name] = (value, priority);
   }
 }
 
-/// The `dart:ui` [HTMLCanvasElement]: the bitmap size, the `width` and
-/// `height` attributes, the style and the one 2D context. Other attribute
-/// names give `null` and do nothing.
+/// The `dart:ui` [HTMLCanvasElement]: the bitmap size, the attributes, the
+/// style and the one 2D context.
+///
+/// The `width` and `height` attributes set the bitmap size. The `style`
+/// attribute reflects the inline [style] (Chart.js ADR 0022, section 4).
+/// Another attribute keeps its value as a string. Attribute names are ASCII
+/// case-insensitive, as in an HTML document.
 ///
 /// It is a [CanvasNode]: the chart host that shows it sets [parentNode].
 final class UiCanvasElement implements HTMLCanvasElement, CanvasNode {
@@ -164,19 +261,45 @@ final class UiCanvasElement implements HTMLCanvasElement, CanvasNode {
   @override
   set height(int value) => _setSize('height', '${math.max(0, value)}');
 
+  /// The attributes other than `width`, `height` and `style`, by lower-case
+  /// name.
+  final Map<String, String> _attributes = {};
+
   @override
   String? getAttribute(String name) => switch (name.toLowerCase()) {
     'width' => _widthAttribute,
     'height' => _heightAttribute,
-    _ => null,
+    'style' => style.styleAttribute,
+    final other => _attributes[other],
   };
 
+  /// `setAttribute(name, value)`: `width` and `height` set the bitmap size,
+  /// `style` replaces the inline style with the declarations of [value],
+  /// and another name keeps [value].
   @override
-  void setAttribute(String name, String value) => _setSize(name, value);
+  void setAttribute(String name, String value) {
+    switch (name.toLowerCase()) {
+      case 'width' || 'height':
+        _setSize(name, value);
+      case 'style':
+        style.styleAttribute = value;
+      case final other:
+        _attributes[other] = value;
+    }
+  }
 
+  /// `removeAttribute(name)`: the removal of `style` empties the inline
+  /// style.
   @override
   void removeAttribute(String name) {
-    if (getAttribute(name) != null) _setSize(name, null);
+    switch (name.toLowerCase()) {
+      case 'width' || 'height':
+        if (getAttribute(name) != null) _setSize(name, null);
+      case 'style':
+        style.styleAttribute = null;
+      case final other:
+        _attributes.remove(other);
+    }
   }
 
   /// Sets the `width` or `height` attribute to [value], or removes it for
@@ -204,7 +327,7 @@ final class UiCanvasElement implements HTMLCanvasElement, CanvasNode {
   static final RegExp _sizePattern = RegExp(r'^[\t\n\f\r ]*\+?(\d+)');
 
   @override
-  final CSSStyleDeclaration style = UiCssStyleDeclaration();
+  final UiCssStyleDeclaration style = UiCssStyleDeclaration();
 
   /// The container of the chart host that shows this canvas, or `null`.
   /// The host sets it when it attaches and clears it when it detaches.

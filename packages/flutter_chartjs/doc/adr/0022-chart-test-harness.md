@@ -329,8 +329,15 @@ extension CssProperties on CSSStyleDeclaration {
 - `getElementById` searches the harness tree for the `id` attribute. `platform.dom.tests.js:8-16`
   needs it, with `setAttribute('id', ...)` and `remove()`.
 - `window.devicePixelRatio` writes the device pixel ratio of
-  `TestWidgetsFlutterBinding.instance.platformDispatcher.implicitView`. The `setUp` of
+  `TestWidgetsFlutterBinding.instance.platformDispatcher.implicitView`. The write keeps the
+  logical size of the view. It also sets the ratio of the standby hosts. The `setUp` of
   `flutter_test_config.dart` sets it back to 1 before each test.
+- The write reaches the live charts. An attached host reports the new ratio. When the ratio of
+  the chart differs, the chart calls `resize()` (`createResizeObserver` of
+  `platform.flutter.dart`). Upstream, the write fires no event, and no chart calls `resize()` for
+  it. `onWindowResize` runs only on a window `resize` event (`platform.dom.js:161-189`). In the
+  port, the specs write the ratio only before a chart exists or after the release of the charts
+  (section 8).
 - `wrapper.style.width = '455px'` and `canvas.style.display = 'block'` keep the upstream text
   through `CssProperties`.
 
@@ -353,7 +360,7 @@ container size of the chart is the content box, as `getMaximumSize` reads it ups
 | no `height` | The height of the content. |
 | `max-width`, `max-height` (px) | A cap of the content box. |
 | `padding` (one px value) | The padding lies outside the content box (CSS `box-sizing: content-box`). |
-| `display: none` | The element and its subtree get the size 0 (`SizedBox.shrink`, Chart.js ADR 0014 §4). The host stays mounted. |
+| `display: none` | The element and its whole subtree get the size 0. Each descendant element and each canvas host gets tight 0 x 0 constraints, as under `SizedBox.shrink` (Chart.js ADR 0014 §4). The hosts stay mounted. |
 | `direction: rtl` | A `Directionality` with `TextDirection.rtl`. |
 | other properties and attributes | Kept. No effect on the layout. |
 
@@ -630,7 +637,7 @@ tearDown(releaseCharts);
 - `tearDown(releaseCharts)` is the fallback. After a failed test, flutter_test keeps the tree
   (`:1955`). The fallback then releases the charts of that test. After a normal test, it finds
   only destroyed charts.
-- The order is the upstream order:
+- The order:
   1. The inline `afterEach` function of the spec (section 2).
   2. `releaseCharts` at the unmount of the body.
   3. The end-of-test assertions of flutter_test.
@@ -639,6 +646,11 @@ tearDown(releaseCharts);
      the restore of `harness-defaults-restore`.
 
   Thus the restore never runs before a chart is destroyed (probes P6 and F11).
+- Steps 1 and 2 keep the upstream order. Jasmine runs the global `afterEach` of
+  `test/index.js:34-36` last, after the `afterEach` blocks of the spec. A spec `afterEach` that
+  stays a `tearDown` (section 2) runs at step 4, after the release. This is the reverse of the
+  Jasmine order. It is safe while such a block reads no chart. An example is the restore of the
+  device pixel ratio (`core.controller.tests.js:1392-1394`).
 - `releaseCharts` keeps the upstream registry: it never deletes a chart. Thus the unmount of each
   later test destroys the earlier charts of the file again, as upstream does after each spec.
   `destroy()` on a destroyed chart must not throw. Upstream skips the canvas part
@@ -789,13 +801,20 @@ and the host changes:
   - Group `harness-trigger-mouse-event`: 1 frame, the event order, the custom types `test` and
     `test2`, a `mouseout` inside the chart, and the Chrome positions of probe SP1.
   - The time order of `waitForResize` and `afterEvent`, with the dropped `replay` (probe F9).
-  - The harness tasks: the order, the microtasks before each task, an `expect` in a task, and the
-    timeout message.
-  - The DOM stand-in: each line of the CSS table, `clientWidth` and `clientHeight` with
-    `display: none`, `getElementById`, the writes that wait, and the mutation checkpoint.
   - The spec-port matrix of the host changes: `core.controller.tests.js:657`, `:697`, `:1065`,
     `:1116`, `:1147`, `:1179` and `:1218`. `:1065` also expects the attach calls
     `[attached, detached, attached]` and the update modes `default`, `attach` and `resize`.
+- `packages/chartjs_test_utils/test/dom_test.dart` (`@TestOn('vm')`):
+  - Group `harness tasks`: the order, the microtasks before each task (also nested microtasks), an
+    `expect` in a task, and the timeout message.
+  - The DOM stand-in, in the groups `document`, `layout`, `writes that wait` and
+    `mutation checkpoint`: each line of the CSS table, `clientWidth` and `clientHeight` with
+    `display: none`, `getElementById`, the writes that wait, and the mutation checkpoint.
+- `packages/chartjs_test_utils/test/index_test.dart` (`@TestOn('vm')`): group
+  `the registry charts` (`acquireChart`, `releaseChart`, `releaseCharts` and `persistent`), and
+  group `harness-release-at-unmount`.
+- `packages/chartjs_test_utils/test/pure_test.dart` is pure: `setUpBuiltins` and `removeBuiltins`
+  of the row `harness-register-builtins`.
 - `packages/chartjs_test_utils/test/matchers_test.dart`, group `harness-chart-matchers`, with the
   values of section 9.
 - `packages/chartjs_test_utils/test/context_test.dart`, group `harness-index-pure-split`.

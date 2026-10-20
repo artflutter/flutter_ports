@@ -266,6 +266,114 @@ void main() {
     }
   });
 
+  test('allows package:clock/clock.dart in lib/ and pure layers', () {
+    tree
+      ..write('lib/src/js/js_date.dart', [
+        _portOnly,
+        "import 'package:clock/clock.dart';",
+      ])
+      ..write('lib/src/widget.dart', [
+        _portOnly,
+        "import 'package:clock/clock.dart' show clock;",
+      ]);
+    expect(run(), isEmpty);
+  });
+
+  test('treats core.animation and animation_spec as roots', () {
+    const sources = {
+      'lib/src/core/core.animation.dart': [
+        _ported,
+        "import 'package:flutter_chartjs/src/core/animation_spec.dart';",
+        "import 'package:flutter_chartjs/src/js/js_math.dart';",
+      ],
+      'lib/src/core/animation_spec.dart': [_portOnly],
+    };
+    tree
+      ..write('lib/src/core/core.animator.dart', [
+        _ported,
+        "import 'package:flutter/scheduler.dart';",
+        "import 'package:flutter_chartjs/src/core/core.animation.dart';",
+      ])
+      ..write('lib/src/core/core.animations.dart', [
+        _ported,
+        "import 'package:flutter_chartjs/src/core/core.animator.dart';",
+      ]);
+    sources.forEach(tree.write);
+    expect(run(), isEmpty);
+
+    for (final MapEntry(key: path, value: saved) in sources.entries) {
+      tree.write(path, [...saved, "import 'package:flutter/widgets.dart';"]);
+      expect(run(), [
+        equals(
+          'error: $path:${saved.length + 1}: imports '
+          'package:flutter/widgets.dart, but the file is in the pure layer '
+          '(pure layers reach neither dart:ui nor package:flutter, '
+          'porting-flow.md 3).',
+        ),
+      ], reason: path);
+      tree.write(path, saved);
+    }
+  });
+
+  test('treats core.config, core.adapters, core.interaction and core.layouts '
+      'as roots', () {
+    const roots = [
+      'lib/src/core/core.config.dart',
+      'lib/src/core/core.adapters.dart',
+      'lib/src/core/core.interaction.dart',
+      'lib/src/core/core.layouts.dart',
+    ];
+    const saved = [
+      _ported,
+      "import 'package:flutter_chartjs/src/js/js_math.dart';",
+    ];
+    for (final path in roots) {
+      tree.write(path, saved);
+    }
+    expect(run(), isEmpty);
+
+    for (final path in roots) {
+      tree.write(path, [...saved, "import 'package:flutter/widgets.dart';"]);
+      expect(run(), [
+        equals(
+          'error: $path:3: imports package:flutter/widgets.dart, but the file '
+          'is in the pure layer (pure layers reach neither dart:ui nor '
+          'package:flutter, porting-flow.md 3).',
+        ),
+      ], reason: path);
+      tree.write(path, saved);
+    }
+  });
+
+  test('treats core.typedRegistry as a root, not core.registry', () {
+    const typedRegistry = 'lib/src/core/core.typedRegistry.dart';
+    const saved = [
+      _ported,
+      "import 'package:flutter_chartjs/src/js/js_math.dart';",
+    ];
+    tree
+      ..write(typedRegistry, saved)
+      ..write('lib/src/core/core.registry.dart', [
+        _ported,
+        "import 'package:flutter/scheduler.dart';",
+        "import 'package:flutter_chartjs/src/core/core.typedRegistry.dart';",
+      ])
+      ..write('lib/src/core/core.plugins.dart', [
+        _ported,
+        "import 'package:flutter_chartjs/src/core/core.registry.dart';",
+      ]);
+    expect(run(), isEmpty);
+
+    tree.write(typedRegistry, [...saved, "import 'dart:ui';"]);
+    expect(run(), [
+      equals(
+        'error: $typedRegistry:3: imports dart:ui, but the file is in the '
+        'pure layer (pure layers reach neither dart:ui nor package:flutter, '
+        'porting-flow.md 3).',
+      ),
+    ]);
+  });
+
   test('excludes helpers.extras from the roots', () {
     tree.write('lib/src/helpers/helpers.extras.dart', [
       _portOnly,
@@ -426,6 +534,119 @@ void main() {
         'error: lib/src/helpers/helpers.math.dart:2: imports '
         'lib/src/theme/theme.dart, but ported files never import '
         'lib/src/theme/ (Chart.js ADR 0001).',
+      ),
+    ]);
+  });
+
+  test('keeps ported tests and exports away from lib/src/theme/', () {
+    tree
+      ..write('lib/src/theme/compile.dart', [_portOnly])
+      ..write('lib/src/helpers/helpers.math.dart', [
+        _ported,
+        "export 'package:flutter_chartjs/src/theme/compile.dart';",
+      ])
+      ..write('test/specs/helpers.math_test.dart', [
+        _ported,
+        "import 'package:flutter_chartjs/src/theme/compile.dart';",
+        "import 'package:test/test.dart';",
+      ])
+      ..write('test/port/theme/compile_test.dart', [
+        _portOnly,
+        "import 'package:flutter_chartjs/src/theme/compile.dart';",
+        "import 'package:test/test.dart';",
+      ]);
+    expect(run(), [
+      equals(
+        'error: lib/src/helpers/helpers.math.dart:2: imports '
+        'lib/src/theme/compile.dart, but ported files never import '
+        'lib/src/theme/ (Chart.js ADR 0001).',
+      ),
+      equals(
+        'error: test/specs/helpers.math_test.dart:2: imports '
+        'lib/src/theme/compile.dart, but ported files never import '
+        'lib/src/theme/ (Chart.js ADR 0001).',
+      ),
+    ]);
+  });
+
+  test('keeps Material, Cupertino and forui out of lib/src/theme/', () {
+    tree.write('lib/src/theme/chart_theme.dart', [
+      _portOnly,
+      "import 'package:flutter/widgets.dart';",
+      "import 'package:flutter/material.dart';",
+      "import 'package:flutter/cupertino.dart';",
+      "import 'package:material_ui/material_ui.dart';",
+      "import 'package:forui/forui.dart';",
+    ]);
+    expect(run(), [
+      contains(
+        'chart_theme.dart:3: imports package:flutter/material.dart '
+        '(Chart.js ADR 0001: no Material in lib/).',
+      ),
+      contains(
+        'chart_theme.dart:4: imports package:flutter/cupertino.dart '
+        '(Chart.js ADR 0001: no Cupertino in lib/).',
+      ),
+      contains(
+        'chart_theme.dart:5: imports package:material_ui/material_ui.dart '
+        '(Chart.js ADR 0001: no Material in lib/).',
+      ),
+      contains(
+        'chart_theme.dart:6: imports package:forui/forui.dart '
+        '(Chart.js ADR 0001: no forui in lib/).',
+      ),
+    ]);
+  });
+
+  test('treats the theme compiler and the presets as roots', () {
+    tree
+      ..write('lib/src/theme/compile.dart', [
+        _portOnly,
+        "import '../js/js_math.dart';",
+      ])
+      ..write('lib/src/theme/presets.dart', [_portOnly])
+      ..write('lib/src/theme/chart_theme.dart', [
+        _portOnly,
+        "import 'package:flutter/widgets.dart';",
+        "import 'compile.dart';",
+      ])
+      ..write('test/port/theme/compile_test.dart', [
+        _portOnly,
+        "import 'package:flutter_chartjs/src/theme/compile.dart';",
+        "import 'package:flutter_chartjs/src/theme/presets.dart';",
+        "import 'package:test/test.dart';",
+      ]);
+    expect(run(), isEmpty);
+
+    tree
+      ..write('lib/src/theme/compile.dart', [
+        _portOnly,
+        "import 'dart:ui' as ui;",
+      ])
+      ..write('lib/src/theme/presets.dart', [
+        _portOnly,
+        "import 'package:flutter/foundation.dart';",
+      ])
+      ..write('test/port/theme/chart_theme_test.dart', [
+        _portOnly,
+        "import 'package:flutter_chartjs/src/theme/chart_theme.dart';",
+      ]);
+    expect(run(), [
+      equals(
+        'error: lib/src/theme/compile.dart:2: imports dart:ui, but the file '
+        'is in the pure layer (pure layers reach neither dart:ui nor '
+        'package:flutter, porting-flow.md 3).',
+      ),
+      equals(
+        'error: lib/src/theme/presets.dart:2: imports '
+        'package:flutter/foundation.dart, but the file is in the pure layer '
+        '(pure layers reach neither dart:ui nor package:flutter, '
+        'porting-flow.md 3).',
+      ),
+      contains(
+        'test/port/theme/chart_theme_test.dart:2: imports '
+        'lib/src/theme/chart_theme.dart, which is not in the pure layer, but '
+        'the file compiles for the web test legs.',
       ),
     ]);
   });

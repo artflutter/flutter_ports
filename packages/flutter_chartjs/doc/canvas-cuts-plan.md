@@ -80,11 +80,68 @@ Changes to the cited files:
 - 2026-10-19, the C2 performance acceptance (§5, §6.3). It adds section 9 to `doc/performance.md`
   and changes its scope line and its section 7. The section numbers that this plan cites do not
   change.
+- 2026-10-19, the `bars` 1000 miss of the C2 acceptance on the Pixel 8a. Section 9.5 of
+  `doc/performance.md` gives an A/A control and 12 more pairs. On two identical APKs, the 3-pair
+  rule of §6.3 also misses. Over 21 pairs, the frame rate and the raster time have no measured
+  change. The draw time is 0.18 ms longer, in code that C2 does not change. Decision: cut 2 stays
+  (priority 1, the upstream behavior). No library file changed. The line numbers of this plan do
+  not change.
+- 2026-10-20, the iPhone 17 Pro smoke pairs of the C2 acceptance (§6.3). Both pairs pass, at the
+  120 Hz limit on both sides (`doc/performance.md` §9.2 and §9.3). No library file changed.
 - 2026-10-19, the gate 5 ADRs of phase 5 in porting-flow.md (§2 table, §2.9, the new §2.16-§2.18).
   The lines of porting-flow.md after line 139 move by +7, and the harness table of §3 moves by +54.
   §3.7 gives the new line numbers. Chart.js ADR 0022 (proposed) also plans two changes of
   `lib/src/platform/chart_host.dart`: the first resize notification at the next layout, and a
   microtask checkpoint for an append or a removal. The work that does them updates this plan.
+- 2026-10-19, the two host changes and the canvas attributes of
+  [Chart.js ADR 0022](adr/0022-chart-test-harness.md) (proposed) §4 and §10, in phase 5.
+  `lib/src/platform/chart_host.dart` gets the first `ResizeObserver` notification at the next
+  layout of the host and the mutation checkpoint `flushCanvasMutations`. It has 78 lines more and
+  14 lines fewer (966 lines). `lib/src/canvas/canvas_ui.dart` gets the reflection of the `style`
+  attribute, `cssText` and the string attributes. It has 131 lines more and 8 lines fewer (1767
+  lines). The lines of `chart_host.dart` after line 26 move by +6 to +64. The lines of
+  `canvas_ui.dart` after line 96 move by +5 to +123. §1.1, §2.3, §2.5 and §5 give the new line
+  numbers. §3.1 keeps the lines of commit 69f9d97. §3.9 and §3.10 keep the lines of the tree
+  after C2. `chart_host_test.dart` gets 9 tests (50 tests), and `canvas_ui_test.dart` gets the
+  group "the style attribute and the other attributes" (5 tests). The test "a later resize with
+  the container height keeps the ratio" of §3.2 and §3.5 now pumps two frames. The first
+  notification comes at the next layout, and its throttled resize in the frame after it. The
+  test still pins the ratio. Phase 5 adds `parity.md` rows above the rows of this plan. §2.7, §3.7
+  and §5 give the new row numbers. The inventory gets two rows. No trigger occurred. The estimates
+  do not change, because the cuts do not remove the new code.
+- 2026-10-20, the phase 5 docs in porting-flow.md (§1 step 1, §1.1, §2.9, §2.15, §3 and §4). They
+  change no text of §2.2 and §2.7, and no cited row of the harness table of §3. The harness table
+  gets a row for `dom.dart`, and its `src/context.js` row and `n/a` row change. The lines of §2.2
+  and §2.7 move by +10. The cited rows of the harness table move by +19. §3.7 gives the new line
+  numbers. No trigger occurred.
+- 2026-10-20, the integration of the phase 5 port. It changes porting-flow.md and `parity.md`. In
+  porting-flow.md, it changes §1 step 5, §2, §2.5, §2.10, §2.14, §2.16, §3, §4 and §5. The text
+  of §2.2 and §2.7 does not change. The
+  harness table of §3 marks the `src/matchers.js` row as done, and the `src/utils.js` row names
+  the two helpers that exist. The line of §2.2 moves by +10, the lines of §2.7 by +14, and the
+  cited rows of the harness table by +30. §3.7 gives the new line numbers. §3.6 gives the new skip
+  reasons of its cases. The new rows of `parity.md` are at the end of the port-only table, so no
+  cited row number moves. No library file that this plan cites changed. No trigger occurred.
+- 2026-10-20, the integration of the harness step, the gallery and tool 6 in porting-flow.md (§1
+  steps 3, 5 and 7, §2.9, §3, §4 and §5) and in `parity.md`. The text and the lines of §2.2 and
+  §2.7 do not change. §2.9 gets one bullet on the ticker mode. Thus the cited rows of the harness
+  table move by +5. The `src/utils.js` row now describes the harness of Chart.js ADR 0022, and a
+  new `src/index.js` row follows it. §3.7 gives the new line numbers. Tool 6 now writes
+  `parity.md`. Its first run moves two rows inside the chartjs-test-utils table and adds two
+  port-only rows at the end. The theme precedence tests added three port-only rows (lines
+  439-441). No cited row number of `parity.md` moves. §3.5 and §3.6 give the real spec results of
+  the harness step. No library file that this plan cites changed. No trigger occurred.
+- 2026-10-20, the fixes of the adversarial review of phase 5. §2.9 of porting-flow.md gets two
+  more lines. Thus the cited rows of the harness table of §3 move by +2 (§3.7). The text of the
+  `src/matchers.js` row changes. The text and the lines of §2.2 and §2.7 do not change. The gallery
+  files of A3 change: `stress_demo.dart` gets the case `CALL=animate` and `events: []` for the mode
+  `chart`, and `main_stress.dart` gets two test parameters. The note on A3 names the mode `chart`.
+  The CSS subset of `dom.dart` now hides the whole subtree of `display: none`. It also gives a
+  canvas with one px style its CSS display size. §3.5 gives the true test lines of
+  `canvas_ui_test.dart` and the new web test of `helpers.dom`. §3.6 gives the real result of
+  three event cases and of the `data: []` case. The new rows of `parity.md` are at the end of the
+  port-only table, so no cited row number moves. No library file that this plan cites changed. No
+  trigger occurred.
 
 ## 1. Why
 
@@ -124,17 +181,19 @@ the estimate (§3.9).
 | The shape tracking of the fast paths (`singleRRect`, `shapePair`, `_trackShape`, the fields `_rrect`, `_shape0`, `_shape1`) | `canvas_ui_path.dart:306-311`, `:321-351` | 37 | None. `ui.Path` does not tell its shapes. | **Keep**. A performance addition (porting-flow.md §1.1). |
 | `rrectContains` and `_cornerContains` (the inner rounded rectangle is inside the outer one) | `canvas_ui_path.dart:938-1049` | 112 | None. `RRect.contains` tests one point. | **Keep**. A performance addition (porting-flow.md §1.1): the condition of `drawDRRect`. |
 | `roundRect` of the interface: `CanvasPath.roundRect`, `RoundRectGeometry`, `roundRectGeometry` (the HTML steps 1 to 11), `Path2D.roundRect`, `RoundRectCommand` | `lib/src/canvas/canvas.dart:92-104`, `:107-253`, `:698-713`, `:961-983` | 199 | None. The pure layer has no `dart:ui`. | **Keep**. A performance addition (porting-flow.md §1.1). |
-| The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect` and `drawDRRect` branch of `fill`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing` and `debugClips` | `canvas_ui.dart:255-262`, `:410-433`, `:1103-1105`, `:1161-1173`, `:1178-1196`, `:1238-1242` | 72 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
+| The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect` and `drawDRRect` branch of `fill`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing` and `debugClips` | `canvas_ui.dart:378-385`, `:533-556`, `:1226-1228`, `:1284-1296`, `:1301-1319`, `:1361-1365` | 72 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
 | `CircleBatch` | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
-| Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1526-1547` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
-| `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:473-486` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
+| Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1649-1670` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
+| `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:519-532` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
 | `UiCanvasElement.devicePixelRatio` and `logicalSize` | removed (`canvas_ui.dart:142`, `:175-192` at 69f9d97) | 0 | The host gives the paint scale | **Done** (C2): removed |
-| The paint mapping: display / bitmap for each axis, exactly 1 / DPR within 1e-3 | `chart_host.dart:606-610`, `:633-644` | 17 | `Canvas.scale` in `UiCanvasContext.paint` | **Done** (C2): the one mapping from the bitmap to the display size |
+| The paint mapping: display / bitmap for each axis, exactly 1 / DPR within 1e-3 | `chart_host.dart:669-673`, `:696-707` | 17 | `Canvas.scale` in `UiCanvasContext.paint` | **Done** (C2): the one mapping from the bitmap to the display size |
 | `initCanvas` over the attributes (`getAttribute`) | `lib/src/platform/platform.flutter.dart:109-178` | 70 | A small attribute model on `UiCanvasElement` | **Done** (C2): line by line |
 | `releaseContext` over the attributes (`removeAttribute`, `setAttribute`) and `_Initial[prop]` | `platform.flutter.dart:458-493`, `:85-86` | 38 | The same attribute model | **Done** (C2): line by line |
-| The attribute model: `UiCanvasElement({int? width, int? height})`, `getAttribute`, `setAttribute`, `removeAttribute`, `_setSize`, and the 3 members of `HTMLCanvasElement` | `canvas_ui.dart:137-204`, `canvas.dart:350-362` | 81 | None. `dart:ui` has no attributes. | **Added** (C2) |
+| The attribute model: `UiCanvasElement({int? width, int? height})`, `getAttribute`, `setAttribute`, `removeAttribute`, `_setSize`, and the 3 members of `HTMLCanvasElement` | `canvas_ui.dart:234-327`, `canvas.dart:350-362` | 107 | None. `dart:ui` has no attributes. | **Added** (C2). Chart.js ADR 0022 §4 adds the `style` attribute and the string attributes. |
+| The reflection of the `style` attribute in `UiCssStyleDeclaration`: `cssText`, `styleAttribute`, the declaration parser and the serialization after a CSSOM write | `canvas_ui.dart:96-222` | ~95 | None. `dart:ui` has no CSS. | **Added** (Chart.js ADR 0022 §4): `acquireChart` sets the canvas attributes with `setAttribute` |
 | `getMaximumSize`, `retinaScale`, `readUsedSize` (ported, with `DIVERGES` rows) | `lib/src/helpers/helpers.dom.dart` | — | None. `AspectRatio` and `SizedBox` give other sizes than upstream. | **Keep**, no change |
-| Host attach at the first layout, resize observers, host follows the chart size, unbounded rule, clip | `chart_host.dart:132-228`, `:388-462`, `:488-631`; `platform.flutter.dart:559-611` | ~280 | None. Flutter layout cannot know the size that Chart.js picks. | **Keep** |
+| The first `ResizeObserver` notification at the next layout (`_pendingFirstResize`) and the mutation checkpoint (`flushCanvasMutations`, `_pendingConnectionChecks`) | `chart_host.dart:192-208`, `:252`, `:399-400`, `:451-468`, `:493-508`, `:612-636`, `:653-662` | ~60 | None. Flutter layout has no rendering step for observers and no microtask checkpoint for the tree. | **Added** (Chart.js ADR 0022 §10): the harness gives the specs the DOM timing |
+| Host attach at the first layout, resize observers, host follows the chart size, unbounded rule, clip | `chart_host.dart:138-255`, `:417-504`, `:534-694`; `platform.flutter.dart:559-611` | ~340 | None. Flutter layout cannot know the size that Chart.js picks. | **Keep** |
 
 ## 2. Cut 1: arcs and transforms on dart:ui
 
@@ -193,17 +252,17 @@ and its own `Float64List`. Never reuse a scratch path or `_m4` for them.
 
 The same aliasing is a defect today, on the web only. Work package W fixes it before cut 1.
 
-- `canvas_ui.dart:1215`: `stroke()` under a transform that is not a similarity calls
+- `canvas_ui.dart:1338`: `stroke()` under a transform that is not a similarity calls
   `_strokeUser(_path.path.transform(t.writeInverseMatrix4(_m4)))`. `_strokeUser` then writes the
-  forward matrix into `_m4` (`:759`) before `drawPath` builds the lazy path. The probe was
+  forward matrix into `_m4` (`:882`) before `drawPath` builds the lazy path. The probe was
   `transform(1, 0, 0, 3, 0, 0)`, a line at y = 10 and `stroke()`. On the VM, rows 27 to 32 had ink.
   On CanvasKit and on skwasm, nothing was drawn.
-- `canvas_ui.dart:1233`: a `Path2D` clip calls `uiPathOf(path2d).transform(s.transform.writeMatrix4(_m4))`.
+- `canvas_ui.dart:1356`: a `Path2D` clip calls `uiPathOf(path2d).transform(s.transform.writeMatrix4(_m4))`.
   The state keeps the clip and replays it into later recordings. After the frame arena discards
   the built path, the path builds again with the value that `_m4` has then. The probe did not show
   it, because the probe rendered no second frame.
 - `canvas_ui_paint.dart:136` and `:373-377`: `shaderFor` keeps a copy in `_lastMatrix`, but
-  `_build(matrix)` gives the caller's matrix (the shared `_m4`, from `canvas_ui.dart:640`) to
+  `_build(matrix)` gives the caller's matrix (the shared `_m4`, from `canvas_ui.dart:763`) to
   `ui.ImageShader`. CanvasKit keeps that reference (`canvaskit/shader.dart:252`) and builds the
   shader again from it when the filter quality changes. The risk is low.
 
@@ -246,8 +305,8 @@ Do step 0 in work package W. Do steps 1 to 6 in work package C1.
 
 0. **Fix the web aliasing** (work package W, its own commit,
    `fix(flutter_chartjs): copy the matrices that the web paths read late`):
-   - `canvas_ui.dart:1215`: `t.writeInverseMatrix4(Float64List(16))`.
-   - `canvas_ui.dart:1233`: `s.transform.writeMatrix4(Float64List(16))`.
+   - `canvas_ui.dart:1338`: `t.writeInverseMatrix4(Float64List(16))`.
+   - `canvas_ui.dart:1356`: `s.transform.writeMatrix4(Float64List(16))`.
    - `canvas_ui_paint.dart` `shaderFor`: call `_build(_lastMatrix)`, so that the shader keeps the
      copy and not the buffer of the caller.
    - Add a comment at each place: the web renderers read the path and the matrix when they build
@@ -368,8 +427,8 @@ Chart.js ADR 0013 is proposed, so the owner edits it in place. Do not change its
 - §7 or §8: one sentence on step 0, and one sentence on the cost of the matrix path.
 - Evidence: the new test file, the probe figures of §2.8 and the web runs.
 - Open: no repository suite runs the `dart:ui` layer on the web. Name the scratch-package method.
-- `parity.md`: row 359 (`canvas_ui_path.dart`), "else cubic Béziers" becomes "else a user-space
-  `ui.Path.arcTo` that `extendWithPath(matrix4:)` appends". Row 358 and row 360 get the matrix
+- `parity.md`: row 376 (`canvas_ui_path.dart`), "else cubic Béziers" becomes "else a user-space
+  `ui.Path.arcTo` that `extendWithPath(matrix4:)` appends". Row 375 and row 377 get the matrix
   copies of step 0. Add a row for `test/port/canvas/canvas_ui_path_test.dart`.
 - `performance.md`: a new section with the arc figures (§2.8 and §6.3).
 - Chart.js ADR 0009 (accepted) does not change. Conics in place of Béziers give a display-only
@@ -574,10 +633,12 @@ C2 ran in phase 5 without W (Deferral, trigger 1). The line numbers below are th
 ### 3.5 Tests
 
 Tests that pin the current behavior (run them before and after):
-- `test/port/platform/chart_host_test.dart` (40 tests, 41 after C2): "first layout" (2), the
-  group "resize" (throttle, DPR change, content drawn before the host at the display size, clip, a
-  later resize keeps the ratio), the group "display size and bitmap stretch" (7, from work package
-  A2, 8 after C2), "unbounded constraints" (4), "dry layout", the group "attach and detach".
+- `test/port/platform/chart_host_test.dart`: 40 tests, 41 after C2 and 50 after Chart.js ADR
+  0022. The tests are "first layout" (2) and the group "resize". The group "resize" tests the
+  throttle, a DPR change, content drawn before the host at the display size, the clip and a later
+  resize that keeps the ratio. Then come the group "display size and bitmap stretch" (7, from work
+  package A2, 8 after C2), "unbounded constraints" (4), "dry layout" and the group "attach and
+  detach".
 - `test/port/platform/platform.flutter_test.dart` (18 tests, 21 after C2): `initCanvas` (5, 7
   after C2), "acquireContext initializes the canvas", "releaseContext restores the canvas",
   "releaseContext restores the initial attributes" (after C2), `getDevicePixelRatio`,
@@ -585,10 +646,14 @@ Tests that pin the current behavior (run them before and after):
 - `test/port/helpers/helpers.dom_test.dart`: `getMaximumSize`, `retinaScale` (8), `readUsedSize`
   (10), `platform-dom-computed-style`.
 - `test/port/canvas/canvas_ui_test.dart`: "device pixel ratio" (2), "toImageSource snapshots the
-  bitmap in device pixels" (836, 926 after C2), "the pictures are in bitmap space at a device pixel
-  ratio" (2.625, 1972, 2062 after C2). The `_render` helper at line 89 reads `logicalSize` and has
-  about 88 callers. After C2, `_render` is at line 84 and takes `dpr`.
-- `test/specs/helpers.dom_test.dart` (5 cases pass).
+  bitmap in device pixels" (836, 926 after C2, 1016 after Chart.js ADR 0022), "the pictures are
+  in bitmap space at a device pixel ratio" (2.625, 1972, 2061 after C2, 2151 after Chart.js ADR
+  0022). The `_render` helper at line 89 reads `logicalSize` and has about 88 callers. After C2,
+  `_render` is at line 84 and takes `dpr`.
+- `test/specs/helpers.dom_test.dart` (7 cases pass. The 2 `retinaScale` cases run through
+  `acquireChart`. Thus the file runs on the VM only.)
+- `test/port/helpers/helpers.dom_web_test.dart` (since the review of phase 5): the 5
+  `getMaximumSize` cases of the spec and `retinaScale` (4), on the VM, dart2js and dart2wasm.
 - `apps/chartjs_gallery/test/` (`canvas_host_demo_test.dart` line 94 expects a non-empty
   `canvas.style` width).
 
@@ -660,7 +725,18 @@ Work package C2 added these tests. They fail on the code before C2:
 
 ### 3.6 Spec case impact (phase 5)
 
-Today every case below is `blocked: core.controller`, except the 5 `helpers.dom` cases that pass.
+On 2026-10-19, every case below was `blocked: core.controller`, except the 5 `helpers.dom` cases
+that pass. Since 2026-10-20, the cases that need only ported modules skip as `blocked: harness`.
+The others skip with the module of the latest phase that they need: the two `helpers.dom` event
+cases as `blocked: controller.bar`, and the `platform.dom` event case as
+`blocked: controller.line`.
+Since the harness step of 2026-10-20, no case skips as `blocked: harness`. The cases of this table
+give the results of the column "After option A". Where a real result differs from the prediction,
+the column "After option A" gives the real result. The two
+`helpers.dom` cases "leave styled height and width" and "handle devicePixelRatio correctly" pass
+through `acquireChart`. The 31 `core.controller` cases of the port step pass. The Retina and
+`devicePixelRatio` cases with the attributes 320 x 240 pass. The case with `data: []` passes
+since the review fix of 2026-10-20: an array data gives a new Map (row `adapt-config-objects`).
 "Current code" means the result that the current code would give when phase 5 runs the case.
 It is the code before C2. After C2, the column "After option A" applies.
 `toBeChartOfSize` (chartjs-test-utils `matchers.js:131-171`) reads the display size from the style.
@@ -676,19 +752,19 @@ The specs never see `chartSize` (`displaySize` after C2) or the stretch. Only `i
 | `platform.dom` | responsive false, "canvas attributes" (305 x 245) | attributes | **fail** (305 x 152) | **pass** | `diverges:` |
 | `platform.dom` | responsive false, "canvas style" (345 x 125), "decimal display" (345.42) | `initCanvas` style read | pass | pass | `diverges:` |
 | `platform.dom` | responsive false, "attributes for the render size and style for the display size" (165 x 85, 345 x 125) | attributes, stretch | **fail** (render from the style) | **pass** | `diverges:` |
-| `platform.dom` | responsive true, "fit parent using aspect ratio" (150 x 245 to 214 x 350) | `initCanvas` style read | pass | pass | fail or `diverges:` |
-| `platform.dom` | destroy, "reset context to default values" | `canvas.width = canvas.width` | pass | pass | pass |
+| `platform.dom` | responsive true, "fit parent using aspect ratio" (150 x 245 to 214 x 350) | `initCanvas` style read | pass | pass. The callback never runs, as upstream. The construction gives 300 x 490, the first observer resize 214 x 350. `test/port/core/core.controller_test.dart`, group "the platform.dom spec cases", pins both sizes | fail or `diverges:` |
+| `platform.dom` | destroy, "reset context to default values" | `canvas.width = canvas.width`, the shadow attributes | `diverges: platform-canvas-no-shadow` | `diverges: platform-canvas-no-shadow`. The canvas layer has no shadow attributes. Cut 2 does not change this result | `diverges: platform-canvas-no-shadow` |
 | `platform.dom` | destroy, "restore canvas initial values" (attribute 180) | attributes, style restore | `n/a` | **pass** | `diverges:` |
-| `platform.dom` | event handling | — | pass | pass | pass |
+| `platform.dom` | event handling | — | pass | `blocked: controller.line` (pass after the controller port) | pass |
 | `platform.dom` | isAttached | — | `n/a` | `n/a` | `n/a` |
 | `helpers.dom` | "leave styled height and width" (attributes 200, style 400) | style read | pass | pass | pass |
 | `helpers.dom` | "handle devicePixelRatio correctly" (attributes 800 x 400) | attributes | pass by chance (800 / 2 = 400) | pass | pass by chance |
-| `helpers.dom` | "Should not return NaN with a custom event", "consistent results" | — | pass | pass | pass |
+| `helpers.dom` | "Should not return NaN with a custom event", "consistent results" | — | pass | `blocked: controller.bar` (pass after the controller port) | pass |
 | `helpers.dom` | 2 cases `diverges: platform-relative-position` | — | unchanged | unchanged | unchanged |
 | `core.controller` | `maintainAspectRatio: false` group: fill parent, onResize, parent width, parent height, invisible (`SizedBox.shrink`), RTL, parent padding (`Padding`), wrapper `display: none` to block | constraints | pass | pass | pass |
 | `core.controller` | `maintainAspectRatio: false`, DPR option change (render width 800, display width 400) | stretch | pass | pass | spec passes, the visible chart has the wrong scale |
-| `core.controller` | canvas `display: none` to block | harness | pass or `n/a: Flutter has no CSS display on the canvas` | same | same |
-| `core.controller` | `max-width` and `max-height` with `display: none` | CSS | `n/a: Flutter has no CSS max-width` | same | same |
+| `core.controller` | canvas `display: none` to block | harness | pass or `n/a: Flutter has no CSS display on the canvas` | pass, through the first notification of the resize observer | same |
+| `core.controller` | `max-width` and `max-height` with `display: none` | CSS | `n/a: Flutter has no CSS max-width` | pass. The harness CSS subset has `max-width` and `max-height`. `getMaximumSize` gives the height width / 2 for a zero height (`helpers.dom.ts:186-190`) | same |
 | `core.controller` | `maintainAspectRatio: true` (2 cases, `canvas: {style: ''}`) | ratio 2 | pass | pass | pass |
 | `core.controller` | Retina scale and `config.options.devicePixelRatio`, "implicit display size" (2 cases, attributes 320 x 240) | attributes | **fail** (320 x 160) | **pass** | fail |
 | `core.controller` | Retina scale and `config.options.devicePixelRatio`, "explicit display size" (2 cases, style 320 x 240) | `initCanvas` style read | pass | pass | `diverges:` |
@@ -698,7 +774,9 @@ The specs never see `chartSize` (`displaySize` after C2) or the stretch. Only `i
 
 Net for option A: 5 named cases and the default 512 x 512 canvas go from fail or `n/a` to pass. No
 new `differences.md` row. No skip reason changes now, because every affected case is still
-`blocked: core.controller`. Thus `test:cases` gives the same output.
+`blocked: core.controller`. Thus `test:cases` gives the same output. The integration of
+2026-10-20 changed these reasons to `blocked: harness` and to the modules above. The counts of
+`test:cases` did not change. The harness step changed the counts of `test:cases`.
 
 ### 3.7 ADR and doc changes
 
@@ -721,19 +799,21 @@ are for work package P. The line numbers below are the lines after C2.
   applies the scale that the host gives. Delete the bullet on the `UiCanvasElement.devicePixelRatio`
   write. "The content keeps bitmap pixels across a DPR change" stays. The stretch bullet points to
   Chart.js ADR 0014 §5. Evidence: the test names.
-- **`porting-flow.md`** (proposed): §2.2 (line 190), "`paint` applies `scale(1 / devicePixelRatio)`"
-  becomes "`paint` maps the bitmap pixels with the scale of the host". §2.7 (lines 270-273): one
-  bullet on the canvas attributes. §3, harness table (lines 527-528), `acquireChart`: 512 x 512 as
+- **`porting-flow.md`** (proposed): §2.2 (line 210), "`paint` applies `scale(1 / devicePixelRatio)`"
+  becomes "`paint` maps the bitmap pixels with the scale of the host". §2.7 (lines 294-297): one
+  bullet on the canvas attributes. §3, harness table (lines 583-584), `acquireChart`: 512 x 512 as
   attributes (`UiCanvasElement(width: 512, height: 512)`), the `canvas.style` option fills the
   inline style, a wrapper style becomes a `SizedBox`, `ConstrainedBox` or `Padding`, and the
-  default wrapper is a box of the canvas display size. `toBeChartOfSize`: the display width and
-  height come from the display size with the CSS rule for one style.
-- **`parity.md`:** row 358 (`canvas_ui.dart`: no `devicePixelRatio` and no `logicalSize`, the
-  attributes, the paint scale), row 365 (`platform.flutter.dart`: `initCanvas` and
-  `releaseContext` line by line over the attributes), row 366 (`chart_host.dart`: "the DOM bitmap
-  stretch" becomes "paint maps the bitmap to the display size"), row 371 (`canvas_ui_test.dart`)
-  and row 401 (`chart_host_test.dart`). The spec rows do not change. C2 also changed row 363
-  (`canvas.dart`: the 3 attribute members) and row 400 (`platform.flutter_test.dart`: the new
+  default wrapper is a box of the canvas display size. `toBeChartOfSize`: the display size rule of
+  Chart.js ADR 0022 §9 (the inline px styles, else the render size, with the CSS rule for one
+  style), in a pure layer. The harness step of
+  2026-10-20 changed the wrapper part: a wrapper style goes through the CSS subset of `dom.dart`.
+- **`parity.md`:** row 375 (`canvas_ui.dart`: no `devicePixelRatio` and no `logicalSize`, the
+  attributes, the paint scale), row 382 (`platform.flutter.dart`: `initCanvas` and
+  `releaseContext` line by line over the attributes), row 383 (`chart_host.dart`: "the DOM bitmap
+  stretch" becomes "paint maps the bitmap to the display size"), row 389 (`canvas_ui_test.dart`)
+  and row 419 (`chart_host_test.dart`). The spec rows do not change. C2 also changed row 380
+  (`canvas.dart`: the 3 attribute members) and row 418 (`platform.flutter_test.dart`: the new
   tests).
 - **`differences.md`:** no row for option A.
 - **`performance.md`:** record the figures after the change (§6.3). C2 did not record them.
@@ -856,22 +936,27 @@ commit. The rows differ, so the edits do not overlap. Run the gates of §6.2 bef
 | ID | Title | Files touched | Depends on | Parallel with | Deliverable | Acceptance | Estimate |
 |---|---|---|---|---|---|---|---|
 | A1 | Cut 1 tests | `test/port/canvas/canvas_ui_path_test.dart` (new), `doc/parity.md` (new row) | — | A2, A3, I | The 20 tests of §2.6. The web probe results of the current code, in the commit message. | Green on the current code. Gates of §6.2. | ~400 test lines, 1 day |
-| A2 | Cut 2 tests | `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (row 401) | — | A1, A3, I | The 7 tests of §3.5 that pin the stretch and the display size | Green on the current code. Gates. | 241 test lines, 0.5 day. **Done in phase 5** (2026-10-19, trigger 1) |
+| A2 | Cut 2 tests | `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (row 419) | — | A1, A3, I | The 7 tests of §3.5 that pin the stretch and the display size | Green on the current code. Gates. | 241 test lines, 0.5 day. **Done in phase 5** (2026-10-19, trigger 1) |
 | A3 | Arc scenario and new baselines | `apps/chartjs_gallery/lib/demo/stress_demo.dart`, `apps/chartjs_gallery/lib/main_stress.dart`, `apps/chartjs_gallery/test/canvas_host_demo_test.dart` (if needed), `apps/chartjs_gallery/test/stress_elements_test.dart` (if needed), `doc/performance.md` (new baseline section) | — | A1, A2, I | `--dart-define=POINT_STYLE=<style>` in the stress entry. The baseline of §6.3 on 3 platforms. A scratch micro-benchmark of 5000 wedges (not committed). See the note on A3 below. | Baseline recorded with the commit hash. Old tables marked stale. | ~40 lines, 1 day of runs |
 | I | Renderer probes (optional) | `apps/chartjs_gallery/integration_test/canvas_paths_test.dart` (new), `apps/chartjs_gallery/pubspec.yaml`, root `pubspec.lock` | — | A1, A2, A3 | The web probes of §2.6 as a gallery integration test | Runs on the Pixel 8a, on macOS and in Chrome (dart2js and `--wasm`). Merge alone (lock file). | ~150 lines, 1 day |
-| W | Web matrix aliasing fix | `lib/src/canvas/canvas_ui.dart` (1215, 1233), `lib/src/canvas/canvas_ui_paint.dart` (`shaderFor`), `doc/parity.md` (rows 358, 360) | A1 | A2, A3 | Step 0 of §2.5 | VM pixels unchanged. The stroke probe and the clip probe pass on CanvasKit and on skwasm. | ~6 lines, 0.5 day |
-| C1 | Cut 1 code | `lib/src/canvas/canvas_ui_path.dart`, `test/port/canvas/canvas_ui_path_test.dart` (thresholds only), `doc/parity.md` (row 359) | A1, W | C2 | Steps 1 to 6 of §2.5 | All tests green. Web probes pass. Perf of §6.3 within the thresholds. | ~-45 net library lines, 1 day |
-| C2 | Cut 2 code (option A) | `lib/src/canvas/canvas.dart`, `lib/src/canvas/canvas_ui.dart`, `lib/src/platform/platform.flutter.dart`, `lib/src/platform/chart_host.dart`, `test/port/canvas/canvas_ui_test.dart`, `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (rows 358, 365, 366, 371, 401) | A2, W | C1 | Steps 1 to 6 of §3.4 and the test changes of §3.5 | All tests green. Gallery unchanged on web, macOS and the Pixel 8a. Perf within the thresholds. | ~-10 net library lines, ~+100 test lines, 1.5 days. **Done in phase 5** (2026-10-19, trigger 1) without W, with steps 1 to 7 of §3.4: net +25 library lines, +223 and -67 test lines (§3.9, §3.10). It also changed `canvas_ui_round_rect_test.dart`, `pixel_compare.dart`, `element.arc_test.dart`, `helpers.canvas_test.dart`, Chart.js ADR 0013, Chart.js ADR 0014, `porting-flow.md` and the `parity.md` rows 363 and 400. Its perf runs are in [performance.md](performance.md) §9 (the C2 acceptance below this table). |
+| W | Web matrix aliasing fix | `lib/src/canvas/canvas_ui.dart` (1338, 1356), `lib/src/canvas/canvas_ui_paint.dart` (`shaderFor`), `doc/parity.md` (rows 375, 377) | A1 | A2, A3 | Step 0 of §2.5 | VM pixels unchanged. The stroke probe and the clip probe pass on CanvasKit and on skwasm. | ~6 lines, 0.5 day |
+| C1 | Cut 1 code | `lib/src/canvas/canvas_ui_path.dart`, `test/port/canvas/canvas_ui_path_test.dart` (thresholds only), `doc/parity.md` (row 376) | A1, W | C2 | Steps 1 to 6 of §2.5 | All tests green. Web probes pass. Perf of §6.3 within the thresholds. | ~-45 net library lines, 1 day |
+| C2 | Cut 2 code (option A) | `lib/src/canvas/canvas.dart`, `lib/src/canvas/canvas_ui.dart`, `lib/src/platform/platform.flutter.dart`, `lib/src/platform/chart_host.dart`, `test/port/canvas/canvas_ui_test.dart`, `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (rows 375, 382, 383, 389, 419) | A2, W | C1 | Steps 1 to 6 of §3.4 and the test changes of §3.5 | All tests green. Gallery unchanged on web, macOS and the Pixel 8a. Perf within the thresholds. | ~-10 net library lines, ~+100 test lines, 1.5 days. **Done in phase 5** (2026-10-19, trigger 1) without W, with steps 1 to 7 of §3.4: net +25 library lines, +223 and -67 test lines (§3.9, §3.10). It also changed `canvas_ui_round_rect_test.dart`, `pixel_compare.dart`, `element.arc_test.dart`, `helpers.canvas_test.dart`, Chart.js ADR 0013, Chart.js ADR 0014, `porting-flow.md` and the `parity.md` rows 380 and 418. Its perf runs are in [performance.md](performance.md) §9 (the C2 acceptance below this table). |
 | D | Docs | `doc/adr/0013-canvas-model.md`, `doc/adr/0014-input-events-and-chart-host.md`, `doc/porting-flow.md` | C1, C2 | P | §2.7 and §3.7 (ADR and porting-flow parts), and a "Removal" bullet in Chart.js ADR 0013 §8.1 (§4.1). C2 did the §3.7 part in phase 5. | Status lines unchanged. Links resolve. | ~60 changed lines, 0.5 day |
 | P | Perf results and cut 3 notes | `doc/performance.md` (results section, §7), this plan (status of each work package) | A3, C1, C2 | D | The figures of §6.3 after C1 and after C2. The removal criteria of §4. The draft of the Flutter feature request. | Every scenario within the thresholds of §6.3, or the miss explained | ~60 lines, 1 day of runs. The figures after C2 are done in phase 5 ([performance.md](performance.md) §9). |
 
 **C2 performance acceptance** (2026-10-19, [performance.md](performance.md) §9). All scenarios
 pass on macOS and in Chrome. On the Pixel 8a, 9 of 10 scenarios pass: `bars` 1000 fails the FPS
 criterion of §6.3 in the first series and in the rerun, with draw and raster in the limits.
+Section 9.5 of `performance.md` gives an A/A control: on two identical APKs, the 3-pair rule also
+misses. Over 21 pairs, the frame rate and the raster time have no measured change. Decision: cut 2
+stays (priority 1, the upstream behavior). The two iPhone 17 Pro smoke pairs pass, at the 120 Hz
+limit on both sides (§9.2 and §9.3 of `performance.md`).
 
 **Note on A3 (phase 4).** Phase 4 added the scene modes of the stress tab (§6.3). The stress
-entry takes `--dart-define=MODE=<primitives|elements|bars|arcs>`, and the default is
-`primitives`. For A3, this means:
+entry takes `--dart-define=MODE=<primitives|elements|bars|arcs|chart>`, and the default is
+`primitives`. Phase 5 added the mode `chart`: a real chart path with the typed options of the
+resolver. For A3, this means:
 - The `arcs` mode draws `ArcElement` wedges under the retina scale. Thus `MODE=arcs` at 5000 + 0
   can serve the arc micro-benchmark (a) on all three platforms.
 - The micro-benchmark (b), under a skew, still needs the scratch package. No mode draws under a

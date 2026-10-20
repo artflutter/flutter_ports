@@ -446,3 +446,14 @@ class MockContext implements CanvasRenderingContext2D {
     double? dh,
   ]) => _missing('drawImage');
 }
+
+/// index.js:33 `createMockContext`: a new [MockContext].
+///
+/// Upstream declares it in `src/index.js`, which also holds `acquireChart`
+/// and the chart registry. Those need the Flutter engine, so `index.dart`
+/// is not a pure layer (Chart.js ADR 0022, section 1). The function moves
+/// here. Thus `pure.dart` exports it and stays pure.
+// DIVERGES(chartjs): harness-index-pure-split, index.js:33 in context.dart.
+MockContext createMockContext() {
+  return MockContext();
+}

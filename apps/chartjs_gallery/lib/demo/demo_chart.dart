@@ -5,6 +5,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs/src/helpers/helpers.canvas.dart'
+    as helpers
+    show isPointInArea;
 import 'package:flutter_chartjs/src/helpers/index.dart'
     show DrawPointOptions, clearCanvas, retinaScale;
 import 'package:flutter_chartjs/src/platform/chart_host.dart';
@@ -28,21 +31,24 @@ typedef DemoDraw = void Function(DemoChart chart, CanvasRenderingContext2D ctx);
 /// - `bindEvents`: `platform.addEventListener` for each type of the
 ///   `events` option, and the `attach`, `detach` and `resize` listeners of a
 ///   responsive chart (core.controller.js:964-1049).
-/// - [render] clears the canvas with `clearCanvas` and calls [draw].
+/// - [render] clears the canvas with `clearCanvas` and calls [drawFrame].
+///   [draw], the method of `types.Chart` that the animator calls, renders.
 /// - [destroy] removes the listeners and calls `releaseContext`.
 ///
-/// It has no scales, datasets, plugins or animations.
+/// It has no scales, datasets, boxes, plugins or animations. The members
+/// of `types.Chart` for these parts give an empty result.
 final class DemoChart implements types.Chart {
   /// `new Chart(item, {options})`: a responsive chart on [item].
   DemoChart(
     Object? item, {
-    required this.draw,
+    required DemoDraw draw,
     bool maintainAspectRatio = false,
     double aspectRatio = 2,
     List<String> events = const [],
     this.onEvent,
     this.onResize,
-  }) : options = {
+  }) : drawFrame = draw,
+       options = {
          'responsive': true,
          'maintainAspectRatio': maintainAspectRatio,
          'aspectRatio': aspectRatio,
@@ -66,7 +72,7 @@ final class DemoChart implements types.Chart {
   }
 
   /// Draws a frame.
-  DemoDraw draw;
+  DemoDraw drawFrame;
 
   /// Called with each event that the platform delivers.
   void Function(types.ChartEvent event)? onEvent;
@@ -86,6 +92,22 @@ final class DemoChart implements types.Chart {
   @override
   Map<String, Object?>? platformProxies = {};
 
+  /// The configuration `{options}` of the chart.
+  @override
+  late final types.ChartConfiguration config = _DemoConfiguration(options);
+
+  /// No stacks: the demo has no datasets.
+  @override
+  Map<String, Object?>? stacks;
+
+  /// The demo has no animated updates.
+  @override
+  bool? get animationsDisabled => null;
+
+  /// No data changes: the demo has no datasets.
+  @override
+  final List<List<Object?>> dataChanges = [];
+
   @override
   double width = 0;
 
@@ -98,8 +120,55 @@ final class DemoChart implements types.Chart {
   @override
   final Map<String, Object?> options;
 
+  /// The chart area: the whole canvas, until a caller sets another area.
   @override
-  ChartArea get chartArea => Box(0, 0, width, height);
+  ChartArea get chartArea => _chartArea ?? Box(0, 0, width, height);
+
+  @override
+  set chartArea(ChartArea value) => _chartArea = value;
+
+  ChartArea? _chartArea;
+
+  /// No layout boxes.
+  @override
+  List<types.LayoutItem> get boxes => const [];
+
+  /// No scales.
+  @override
+  Map<String, types.Scale> get scales => const {};
+
+  /// The data of a chart without datasets.
+  @override
+  final Map<String, Object?> data = {
+    'labels': <Object?>[],
+    'datasets': <Object?>[],
+  };
+
+  /// core.controller.js:845 `isPointInArea`, without the padding of the
+  /// layout.
+  @override
+  bool isPointInArea(Point point) => helpers.isPointInArea(point, chartArea);
+
+  /// No datasets.
+  @override
+  List<types.ChartMeta> getSortedVisibleDatasetMetas() => const [];
+
+  /// No datasets: every index throws.
+  @override
+  types.ChartMeta getDatasetMeta(double datasetIndex) =>
+      throw RangeError('The demo chart has no datasets.');
+
+  /// No datasets.
+  @override
+  List<types.ChartMeta> getSortedDatasetMetas(bool filterVisible) => const [];
+
+  /// No plugins: no plugin cancels the hook.
+  @override
+  bool notifyPlugins(String hook, [Map<String, Object?>? args]) => true;
+
+  /// No plugins.
+  @override
+  bool isPluginEnabled(String pluginId) => false;
 
   @override
   Map<String, Object?> getContext() => {'chart': this, 'type': 'chart'};
@@ -112,7 +181,7 @@ final class DemoChart implements types.Chart {
   /// The count of [render] calls.
   int renders = 0;
 
-  /// The time of the last [draw], in microseconds.
+  /// The time of the last [drawFrame], in microseconds.
   int lastDrawMicros = 0;
 
   final Map<String, Function> _listeners = {};
@@ -176,7 +245,7 @@ final class DemoChart implements types.Chart {
     final stopwatch = Stopwatch()..start();
     clearCanvas(canvas, context);
     context.save();
-    draw(this, context);
+    drawFrame(this, context);
     context.restore();
     lastDrawMicros = stopwatch.elapsedMicroseconds;
     renders++;
@@ -235,6 +304,12 @@ final class DemoChart implements types.Chart {
     }
   }
 
+  /// core.controller.js:697 `draw()`: the animator calls it in each frame of
+  /// an animation (core.animator.js:89). The demo has no layers, so it
+  /// renders.
+  @override
+  void draw() => render();
+
   /// core.controller.js:937 `destroy`.
   void destroy() {
     final context = ctx;
@@ -254,6 +329,14 @@ final class DemoChart implements types.Chart {
     canvas = null;
     ctx = null;
   }
+}
+
+/// The `config` of a [DemoChart]: only its `options`.
+final class _DemoConfiguration implements types.ChartConfiguration {
+  _DemoConfiguration(this.options);
+
+  @override
+  final Map<String, Object?> options;
 }
 
 /// A [ChartHost] that shows a [DemoChart].

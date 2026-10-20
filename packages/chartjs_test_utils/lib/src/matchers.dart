@@ -11,13 +11,15 @@
 /// The port has:
 /// - [toBeCloseToPixel] (matchers.js:58), [toBeCloseToPoint]
 ///   (matchers.js:76) and [toEqualOneOf] (matchers.js:89);
+/// - [toBeValidChart] (matchers.js:106) and [toBeChartOfSize]
+///   (matchers.js:131). They test a chart and its canvas through the pure
+///   interfaces `types.Chart`, `HTMLCanvasElement`,
+///   `CanvasRenderingContext2D` and `CSSStyleDeclaration` (Chart.js ADR
+///   0022, section 9, `harness-chart-matchers`);
 /// - `toEqualOptions` from `matchers.options.dart`, which matchers.js:229
 ///   re-exports.
 ///
-/// Not ported yet, or not ported:
-/// - `toBeValidChart` (matchers.js:106) and `toBeChartOfSize` (matchers.js:131)
-///   test a chart and its canvas. They come with the chart in phase 5
-///   (porting-flow.md section 3).
+/// Not ported:
 /// - `toEqualImageData` (matchers.js:176), with `toPercent`,
 ///   `createImageData`, `canvasFromImageData` and `buildPixelMatchPreview`
 ///   (matchers.js:7-56): `n/a`. The port compares no image (Chart.js ADR
@@ -31,10 +33,12 @@ library;
 // ignore_for_file: implementation_imports
 
 import 'package:chartjs_test_utils/src/matchers.options.dart';
+import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/js/js_math.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
+import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
 export 'package:chartjs_test_utils/src/matchers.options.dart'
@@ -138,4 +142,196 @@ final class _ToEqualOneOf extends Matcher {
   @override
   Description describe(Description description) =>
       description.add('one of ').addDescriptionOf(expecteds);
+}
+
+/// matchers.js:106 `toBeValidChart()`: whether the actual value is a chart
+/// with a canvas, a context and a finite size.
+///
+/// The messages and their order are the upstream messages of :111-121.
+/// `actual instanceof Chart` is a test for `types.Chart`. The two
+/// `Object.prototype.toString` tags are tests for [HTMLCanvasElement] and
+/// [CanvasRenderingContext2D]. `typeof actual.height !== 'number'` is always
+/// false for the `double` of `types.Chart`.
+Matcher toBeValidChart() => const _ToBeValidChart();
+
+final class _ToBeValidChart extends Matcher {
+  const _ToBeValidChart();
+
+  /// The `message` of `compare` (matchers.js:108-121): Dart `null` for a
+  /// pass.
+  static String? messageOf(Object? actual) {
+    String? message;
+
+    // DIVERGES(chartjs): harness-chart-matchers, Dart types for the tags.
+    if (actual is! types.Chart) {
+      message = 'Expected ${jsToString(actual)} to be an instance of Chart';
+    } else if (actual.canvas is! HTMLCanvasElement) {
+      message = 'Expected canvas to be an instance of HTMLCanvasElement';
+    } else if (actual.ctx is! CanvasRenderingContext2D) {
+      message =
+          'Expected context to be an instance of CanvasRenderingContext2D';
+    } else if (!actual.height.isFinite) {
+      message = 'Expected height to be a strict finite number';
+    } else if (!actual.width.isFinite) {
+      message = 'Expected width to be a strict finite number';
+    }
+
+    return message;
+  }
+
+  @override
+  bool matches(Object? actual, Map<Object?, Object?> matchState) {
+    final message = messageOf(actual);
+    if (message != null) matchState['message'] = message;
+    return message == null;
+  }
+
+  @override
+  Description describe(Description description) =>
+      description.add('a valid chart');
+
+  @override
+  Description describeMismatch(
+    Object? item,
+    Description mismatchDescription,
+    Map<Object?, Object?> matchState,
+    bool verbose,
+  ) => mismatchDescription.add('${matchState['message']}');
+}
+
+/// matchers.js:131 `toBeChartOfSize()`: whether the actual value is a valid
+/// chart with the display size `dw` x `dh` and the render size `rw` x `rh`.
+///
+/// [expected] is the spec object with the keys `dw`, `dh`, `rw` and `rh`.
+/// The messages and their order are the upstream messages of :150-166. The
+/// row `harness-chart-matchers` covers two hunks:
+/// - `getComputedStyle(canvas)` (:141) is the display size rule of the
+///   harness ([computedCanvasSize]).
+/// - `window.devicePixelRatio` (:142) is `actual.platform
+///   .getDevicePixelRatio()`. For a chart on the Flutter platform, it is the
+///   device pixel ratio of the view of its host.
+Matcher toBeChartOfSize(Map<String, Object?> expected) =>
+    _ToBeChartOfSize(expected);
+
+final class _ToBeChartOfSize extends Matcher {
+  const _ToBeChartOfSize(this.expected);
+
+  final Map<String, Object?> expected;
+
+  @override
+  bool matches(Object? actual, Map<Object?, Object?> matchState) {
+    final res = _ToBeValidChart.messageOf(actual);
+    if (res != null) {
+      matchState['message'] = res;
+      return false;
+    }
+
+    final chart = actual! as types.Chart;
+    String? message;
+    final canvas = chart.ctx!.canvas;
+    // DIVERGES(chartjs): harness-chart-matchers, the display size rule.
+    final style = computedCanvasSize(canvas);
+    final devicePixelRatio = chart.options['devicePixelRatio'];
+    // DIVERGES(chartjs): harness-chart-matchers, the ratio of the platform.
+    final pixelRatio = jsTruthy(devicePixelRatio)
+        ? jsToNumber(devicePixelRatio)
+        : chart.platform.getDevicePixelRatio();
+    final dh = _parseInt(style.height);
+    final dw = _parseInt(style.width);
+    final rh = canvas.height;
+    final rw = canvas.width;
+    final orh = rh / pixelRatio;
+    final orw = rw / pixelRatio;
+
+    // sanity checks
+    if (chart.height != orh) {
+      message =
+          'Expected chart height ${jsNumberToString(chart.height)} to be '
+          'equal to original render height ${jsNumberToString(orh)}';
+    } else if (chart.width != orw) {
+      message =
+          'Expected chart width ${jsNumberToString(chart.width)} to be '
+          'equal to original render width ${jsNumberToString(orw)}';
+    }
+
+    // validity checks
+    if (dh != expected['dh']) {
+      message =
+          'Expected display height $dh to be equal to '
+          '${jsToString(expected['dh'])}';
+    } else if (dw != expected['dw']) {
+      message =
+          'Expected display width $dw to be equal to '
+          '${jsToString(expected['dw'])}';
+    } else if (rh != expected['rh']) {
+      message =
+          'Expected render height $rh to be equal to '
+          '${jsToString(expected['rh'])}';
+    } else if (rw != expected['rw']) {
+      message =
+          'Expected render width $rw to be equal to '
+          '${jsToString(expected['rw'])}';
+    }
+
+    if (message != null) matchState['message'] = message;
+    return message == null;
+  }
+
+  @override
+  Description describe(Description description) =>
+      description.add('a chart of size ').addDescriptionOf(expected);
+
+  @override
+  Description describeMismatch(
+    Object? item,
+    Description mismatchDescription,
+    Map<Object?, Object?> matchState,
+    bool verbose,
+  ) => mismatchDescription.add('${matchState['message']}');
+}
+
+/// `getComputedStyle(canvas)` of `toBeChartOfSize` (matchers.js:141): the
+/// display width and height of [canvas], in px, or Dart `null` for `auto`
+/// (Chart.js ADR 0022, section 9).
+///
+/// - A side with an inline px style has that value.
+/// - With one px style only, the other side keeps the aspect ratio of the
+///   render size: the CSS rule for a replaced element. A render width or
+///   height of 0 gives no ratio: the side has its render size.
+/// - Without a px style, a side has the render size.
+/// - A canvas with its own `display: none` gives `auto` for a side without
+///   a px style.
+({double? width, double? height}) computedCanvasSize(HTMLCanvasElement canvas) {
+  final style = canvas.style;
+  final styleWidth = _px(style.getPropertyValue('width'));
+  final styleHeight = _px(style.getPropertyValue('height'));
+  final rw = canvas.width.toDouble();
+  final rh = canvas.height.toDouble();
+  if (style.getPropertyValue('display') == 'none') {
+    return (width: styleWidth, height: styleHeight);
+  }
+  return (
+    width:
+        styleWidth ??
+        (styleHeight != null && rh != 0 ? styleHeight * rw / rh : rw),
+    height:
+        styleHeight ??
+        (styleWidth != null && rw != 0 ? styleWidth * rh / rw : rh),
+  );
+}
+
+/// The number of a px length, for example `'455px'`, or Dart `null` for
+/// another value.
+double? _px(String value) {
+  final text = value.trim();
+  if (!text.endsWith('px')) return null;
+  return double.tryParse(text.substring(0, text.length - 2).trim());
+}
+
+/// `parseInt(value, 10) || 0` of a px value: the integer part, toward zero.
+/// `auto` (Dart `null`) gives NaN, and `|| 0` gives 0.
+int _parseInt(double? value) {
+  if (value == null || !value.isFinite) return 0;
+  // js-ok: parseInt keeps the integer part, which truncates toward zero.
+  return value.truncate();
 }

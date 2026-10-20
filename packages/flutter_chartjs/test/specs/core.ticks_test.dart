@@ -71,13 +71,13 @@ void main() {
     test(
       'Should generate linear spaced ticks with correct precision',
       () {},
-      skip: 'blocked: core.controller',
+      skip: 'blocked: controller.line',
     );
 
     test(
       'Should generate logarithmic spaced ticks with correct precision',
       () {},
-      skip: 'blocked: core.controller',
+      skip: 'blocked: controller.line',
     );
 
     group('formatters.numeric', () {

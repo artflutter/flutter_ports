@@ -1,14 +1,85 @@
 // Ported from Chart.js v4.5.1 test/specs/helpers.canvas.tests.js (MIT, Chart.js Contributors).
+@TestOn('vm')
+library;
+
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs/src/canvas/canvas.dart';
+import 'package:flutter_chartjs/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs/src/helpers/helpers.canvas.dart' as helpers;
-import 'package:flutter_chartjs/src/types/index.dart';
-import 'package:test/test.dart';
+import 'package:flutter_chartjs/src/types/index.dart' hide Chart;
+import 'package:flutter_test/flutter_test.dart';
 
 // The spec reads the functions from Chart.helpers. Here `helpers` is
 // helpers.canvas.dart. The upstream `_` exports drop the underscore (Chart.js
 // ADR 0012): `_isPointInArea` is `isPointInArea`, `_longestText` is
 // `longestText` and `_measureText` is `measureText`. The cache object `{}` of
 // `_longestText` is a `LongestTextCache`.
+//
+// The clearCanvas cases call `acquireChart`. They are `testWidgets` cases
+// (Chart.js ADR 0022, sections 1 and 2). Thus the file runs on the VM only,
+// although helpers.canvas.dart is a pure layer.
+
+/// One call that a Jasmine spy recorded: `this` and the arguments.
+typedef _Call = ({Object? object, List<Object?> args});
+
+/// The calls of a Jasmine spy: `spy.calls`.
+final class _Calls {
+  final List<_Call> _all = [];
+
+  /// `calls.count()`.
+  int count() => _all.length;
+
+  /// `calls.first()`.
+  _Call first() => _all.first;
+}
+
+/// The canvas context of a chart after `spyOn(chart.ctx, 'clearRect')`.
+///
+/// A Dart object cannot replace one of its methods. Thus the spy is a second
+/// context that takes the place of `chart.ctx`. Its `clearRect` records each
+/// call and does nothing else, as a Jasmine spy without `callThrough`. It
+/// forwards the other members that the case and the release of the chart
+/// call to the context of the chart: `canvas`, `save`, `restore` and
+/// `resetTransform`. Another member throws a `NoSuchMethodError`.
+final class _ClearRectSpy implements CanvasRenderingContext2D {
+  _ClearRectSpy(this._context);
+
+  final CanvasRenderingContext2D _context;
+
+  /// `chart.ctx.clearRect.calls`.
+  final _Calls calls = _Calls();
+
+  @override
+  void clearRect(double x, double y, double w, double h) {
+    calls._all.add((object: this, args: [x, y, w, h]));
+  }
+
+  @override
+  HTMLCanvasElement get canvas => _context.canvas;
+
+  @override
+  void save() => _context.save();
+
+  @override
+  void restore() => _context.restore();
+
+  @override
+  void resetTransform() => _context.resetTransform();
+
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// `spyOn(chart.ctx, 'clearRect')`. Jasmine removes a spy after the spec,
+/// after the release of the chart. The spy here stays on the chart.
+void _spyOnClearRect(Chart chart) {
+  chart.ctx = _ClearRectSpy(chart.ctx!);
+}
+
+/// `chart.ctx.clearRect.calls` of a context with a spy.
+_Calls _clearRectCalls(CanvasRenderingContext2D? ctx) =>
+    (ctx! as _ClearRectSpy).calls;
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
 final class _Point implements Point {
@@ -123,25 +194,39 @@ final class _Opts implements RenderTextOpts {
 }
 
 void main() {
-  setUpSpecs();
   group('Chart.helpers.canvas', () {
     // `describe('auto', jasmine.fixture.specs('helpers'))` makes no spec
     // cases. Chart.js v4.5.1 has no `test/fixtures/helpers` directory, so the
     // group has 0 fixtures. The fixture runner of phase 7 registers it.
 
     group('clearCanvas', () {
-      // The spec calls acquireChart and spies on the canvas context.
-      test(
-        'should clear the chart canvas',
-        () {},
-        skip: 'blocked: core.controller',
-      );
+      testWidgets('should clear the chart canvas', (tester) async {
+        final chart = acquireChart({}, {
+          'canvas': <String, Object?>{'style': 'width: 150px; height: 245px'},
+        });
 
-      test(
-        'should not throw error when chart is null',
-        () {},
-        skip: 'blocked: core.controller',
-      );
+        _spyOnClearRect(chart);
+
+        helpers.clearCanvas(chart.canvas, chart.ctx);
+
+        expect(_clearRectCalls(chart.ctx).count(), 1);
+        expect(_clearRectCalls(chart.ctx).first().object, same(chart.ctx));
+        expect(_clearRectCalls(chart.ctx).first().args, [0, 0, 150, 245]);
+      });
+
+      testWidgets('should not throw error when chart is null', (tester) async {
+        void createAndClearChart() {
+          final chart = acquireChart({}, {'canvas': null})
+            // explicitly set canvas and ctx to null since setting it in
+            // acquireChart doesn't do anything
+            ..canvas = null
+            ..ctx = null;
+
+          helpers.clearCanvas(chart.canvas, chart.ctx);
+        }
+
+        expect(createAndClearChart, returnsNormally);
+      });
     });
 
     group('isPointInArea', () {

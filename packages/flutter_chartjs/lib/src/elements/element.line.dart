@@ -56,6 +56,7 @@ import 'package:flutter_chartjs/src/helpers/helpers.interpolation.dart'
         steppedInterpolation;
 import 'package:flutter_chartjs/src/helpers/helpers.segment.dart'
     show boundSegments, computeSegments;
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_math.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
@@ -673,6 +674,25 @@ class LineElement extends Element
     '_indexable': (String name) => name != 'borderDash' && name != 'fill',
   };
 
+  /// element.line.js:243 `class LineElement extends Element` as a value
+  /// (Chart.js ADR 0020, section 3).
+  ///
+  /// Its statics are [id], [defaults], [defaultRoutes] and [descriptors], in
+  /// the upstream order of declaration (element.line.js:245-276). They are the
+  /// objects of the static fields. Its `construct` calls `LineElement(cfg)`
+  /// with the `cfg` of [elementCfgArg].
+  static final JsClass jsClass = JsClass(
+    'LineElement',
+    superclass: Element.jsClass,
+    statics: {
+      'id': id,
+      'defaults': defaults,
+      'defaultRoutes': defaultRoutes,
+      'descriptors': descriptors,
+    },
+    construct: (newTarget, args) => LineElement(elementCfgArg(args)),
+  );
+
   /// element.line.js:282 `animated = true`.
   ///
   /// When it is true, [draw] drops the cached path and the control points
@@ -1037,8 +1057,8 @@ class LineElement extends Element
   /// [NoSuchMethodError].
   @override
   bool inRange(
-    double mouseX,
-    double mouseY, [
+    double? mouseX,
+    double? mouseY, [
     bool? useFinalPosition,
   ]) => throw NoSuchMethodError.withInvocation(
     this,
@@ -1049,7 +1069,7 @@ class LineElement extends Element
   /// call throws a [NoSuchMethodError], as for [inRange].
   @override
   bool inXRange(
-    double mouseX, [
+    double? mouseX, [
     bool? useFinalPosition,
   ]) => throw NoSuchMethodError.withInvocation(
     this,
@@ -1060,7 +1080,7 @@ class LineElement extends Element
   /// call throws a [NoSuchMethodError], as for [inRange].
   @override
   bool inYRange(
-    double mouseY, [
+    double? mouseY, [
     bool? useFinalPosition,
   ]) => throw NoSuchMethodError.withInvocation(
     this,

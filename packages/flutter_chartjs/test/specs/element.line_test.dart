@@ -56,7 +56,7 @@ void main() {
         // `chart.getDatasetMeta(0).dataset['_path']`, which gives the
         // `undefined` sentinel.
       },
-      skip: 'blocked: core.controller',
+      skip: 'blocked: controller.line',
     );
   });
 }

@@ -535,7 +535,8 @@ String capitalize(String str) {
 bool defined(Object? value) => !identical(value, undefined);
 
 /// helpers.core.ts:393 `isFunction`: `typeof value === 'function'`, which is
-/// [jsIsFunction]: a Dart [Function] or a [JsFunction].
+/// [jsIsFunction]: a Dart [Function], a [JsFunction] or a class value
+/// (`JsClass`, Chart.js ADR 0020).
 bool isFunction(Object? value) => jsIsFunction(value);
 
 /// helpers.core.ts:396 `setsEqual`.

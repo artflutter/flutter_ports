@@ -14,18 +14,39 @@ phase of each module.
   and pure layers. Thus it compiles with dart2js and dart2wasm.
   - `setUpSpecs()`: the spec set-up for `dart test`. `dart test` does not read
     `flutter_test_config.dart`. Thus each pure-layer spec file calls `setUpSpecs()` first in
-    `main()`. It calls `setUpDefaultsRestore()`, which takes a snapshot of `defaults`, `overrides`
-    and `descriptors` of `core.defaults` once for each file and restores the snapshot after each
-    test. `flutter_chartjs/test/flutter_test_config.dart` calls `setUpDefaultsRestore()` too.
+    `main()`. It calls `removeBuiltins()` and `setUpDefaultsRestore()`. `setUpDefaultsRestore()`
+    takes a snapshot of `defaults`, `overrides` and `descriptors` of `core.defaults` once for each
+    file and restores the snapshot after each test. `flutter_chartjs/test/flutter_test_config.dart`
+    calls `setUpDefaultsRestore()` too.
+  - `setUpBuiltins()` and `removeBuiltins()`: `flutter_test_config.dart` registers the built-in
+    components before `main()` of each test file, as the UMD entry of the Chart.js specs does.
+    `removeBuiltins()` unregisters them again. Thus a pure-layer spec file has the same state under
+    `flutter test` and `dart test`. A spec file with chart cases does not call `setUpSpecs()`.
   - `createMockContext()` and `MockContext` (`src/index.js`, `src/context.js`): the mock canvas
-    context that records calls.
-  - The matchers `toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf` (`src/matchers.js`) and
-    `toEqualOptions` (`src/matchers.options.js`), as `package:matcher` matchers:
-    `expect(actual, toBeCloseToPixel(expected))`.
+    context that records calls. Both are in `lib/src/context.dart`, because `lib/src/index.dart`
+    is not a pure layer (Chart.js ADR 0022).
+  - The matchers `toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf`, `toBeValidChart`,
+    `toBeChartOfSize` (`src/matchers.js`) and `toEqualOptions` (`src/matchers.options.js`), as
+    `package:matcher` matchers: `expect(actual, toBeCloseToPixel(expected))`. The two chart
+    matchers read only the pure interfaces of a chart and its canvas.
 - `package:chartjs_test_utils/flutter.dart`: the part that needs the Flutter engine, for
-  `flutter test` only. `installTestFont()` registers the test font, Liberation Sans 2.1.5, under
-  the names `Helvetica Neue`, `Helvetica`, `Arial`, `Liberation Sans` and `sans-serif`. Phase 5
-  adds `acquireChart` and the other chart helpers here.
+  `flutter test` only. A test that imports it needs `@TestOn('vm')`.
+  - `installTestFont()` registers the test font, Liberation Sans 2.1.5, under the names
+    `Helvetica Neue`, `Helvetica`, `Arial`, `Liberation Sans` and `sans-serif`.
+  - The DOM stand-in of the chart specs (`lib/src/dom.dart`, Chart.js ADR 0022): `document`,
+    `window`, the `div` elements (`HarnessElement`) and the canvas elements in chart hosts, a
+    subset of CSS, the harness body, the mutation checkpoint, `setTimeout`, `pumpFrames`,
+    `waitForDone` and `afterEachChart`. Write
+    `final canvas = document.createElement<HTMLCanvasElement>('canvas');`.
+  - `acquireChart`, `releaseChart` and `releaseCharts` (`src/index.js`, `src/utils.js`). The
+    function `acquireChart` works only in the body of a `testWidgets` test. It gives a chart that is
+    attached at its construction. The unmount of the harness body calls `releaseCharts`.
+  - `waitForResize` and `afterEvent` (`src/utils.js`): they replace the function fields `resize`
+    and `eventHandler` of one chart (Chart.js ADR 0022).
+  - `triggerMouseEvent` (`src/utils.js`): it dispatches an event to the listeners of the canvas.
+    Then it pumps frames of 16 ms until the chart handled the event.
+
+`flutter_test` and `clock` are regular dependencies, because `lib/src/dom.dart` imports them.
 
 ## License
 

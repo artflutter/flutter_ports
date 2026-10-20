@@ -15,11 +15,12 @@ the `differences.md` schema.
 
 ## 1. Life cycle of one module port
 
-1. **Choose.** Pick a module whose value dependencies are ported. Use the phase table (section 5)
-   until `dart run melos run port:next` exists. Run the module-start check
-   ([upstream-tracking.md](upstream-tracking.md) §4.3). From phase 3,
-   `dart run melos run upstream:status` does this check. If a newer tag exists, the bump PR comes
-   first.
+1. **Choose.** Run `dart run melos run port:next` (tool 8, section 4). Pick a ready module of the
+   current phase. Each value import of a ready module is done. Read the interfaces that the module
+   needs. Declare each interface that is not declared, and add the members that the module reads
+   (2.4). A blocked module waits for the modules that the list names. Run the module-start check
+   ([upstream-tracking.md](upstream-tracking.md) §4.3). When the melos script `upstream:status`
+   exists, it does this check. If a newer tag exists, the bump PR comes first.
 2. **Read the source** at its pin (rule 1, 2.13). From phase 2, also read its manifest entry.
 3. **Write the Dart file.**
    - Map the path (2.5). Line 1 is the rule-2 header.
@@ -29,8 +30,8 @@ the `differences.md` schema.
      (2.4).
    - Mark each hunk that does not translate upstream lines with
      `// DIVERGES(chartjs): <row id>, <reason>` and a `differences.md` row (section 4).
-   - Start a port-only file with `// Original code, not ported from Chart.js: <reason>.` List it
-     in the port-only section of `parity.md`.
+   - Start a port-only file with `// Original code, not ported from Chart.js: <reason>.` Add its
+     row to the `port-only` list of `doc/status.yaml`.
    - When two Dart forms give the upstream behavior, choose the faster form (1.1).
 
    ```dart
@@ -67,18 +68,25 @@ the `differences.md` schema.
    - `group()` and `test()` names equal the `describe` and `it` names. The 10 duplicated names get
      ` #2` and ` #3`.
    - The skip reasons are `'blocked: <module>'`, `'n/a: <reason>'` and `'diverges: <row id>'`.
-   - A spec file that reaches `dart:ui` has `@TestOn('vm')` directly below its header lines. A
-     pure-layer spec file uses `package:test` (section 3).
+   - A case that needs a module of a later phase skips as `'blocked: <module>'`, with the missing
+     module of the latest phase. A chart case that needs only ported modules passes through the
+     harness of [Chart.js ADR 0022](adr/0022-chart-test-harness.md). Since the harness step of
+     phase 5, no case skips as `'blocked: harness'`.
+   - A spec file that reaches `dart:ui` or creates a chart has `@TestOn('vm')` directly below its
+     header lines. A pure-layer spec file without a chart case uses `package:test` (section 3).
    - The harness restores `defaults` after each test. Port a `beforeAll` that changes `defaults`
      as `setUp` plus `tearDown`.
+   - A spec that calls `push`, `pop`, `shift`, `splice` or `unshift` on a dataset `data` List calls
+     `notifyArrayListeners(list, method, args)` after the change (row `platform-array-events`).
+     Without the call, the chart resyncs at the next update and does not animate an insert.
    - Put tests of port-only behavior in `test/port/`.
 6. **Fixtures.** From phase 7, register the fixture directory with the runner (upstream prefix
    match). Hand-port configs with functions to `test/fixtures/hand/`.
 7. **Status.** The values are `not started`, `in progress`, `partial` (with a symbol list),
-   `ported`, `replaced`, `distributed` and `n/a` (with a reason). Until tool 6 lands in
-   phase 5, edit `parity.md` by hand. After that, `packages/flutter_chartjs/doc/status.yaml` holds the manual
-   states. Tool 6 writes `parity.md`. The upstream status script reads the same source. The first
-   PR with a new value updates the `parity.md` legend.
+   `ported`, `replaced`, `distributed` and `n/a` (with a reason). `doc/status.yaml` holds the
+   status text of each row. Tool 6 writes `parity.md` from it (section 4). Do not edit `parity.md`.
+   A row that `status.yaml` does not list is `not started`. The upstream status script reads the
+   same source. The first PR with a new value updates the legend in `status.yaml`.
 8. **Gallery.** When a chart type renders, update `apps/chartjs_gallery/lib/main.dart:9-19`.
 9. **Gates.** Run `format:check`, `analyze`, `test --no-select`, `test:web` and `check:port`.
    Also run each other tool of section 4 that exists in that phase, and `upstream:ledger:check`
@@ -116,6 +124,15 @@ Apply the rule in this way:
   add code, also to a file that a deferred plan cites. That change updates the plan in the same
   commit (§5.1).
 
+[Chart.js ADR 0020](adr/0020-registry-and-component-classes.md) §13 (proposed) gives this reading
+of the rule for a gain that only a microbenchmark measures:
+- A faster form that keeps the upstream structure can take such a gain. It needs no more records.
+- A faster form that changes the upstream structure needs a gain in the frame figures of
+  [performance.md](performance.md). These figures have a resolution of 0.1 ms. A smaller gain does
+  not count for such a form.
+- [Chart.js ADR 0019](adr/0019-animation.md) (proposed) applies the same threshold to its
+  alternative `NumberSlots`. The maintainer decides this reading of the rule.
+
 ## 2. Decisions
 
 "Gate" is the first phase whose code depends on the ADR. The maintainers accept each ADR before
@@ -138,7 +155,9 @@ reads that [performance.md](performance.md) §8.2 measured (§1.1). The subsecti
 and gate 4 decisions keep a summary and the link.
 Phase 5 wrote the gate 5 decisions as the proposed files of Chart.js ADRs 0019-0022 (2026-10-19).
 A design panel of three drafts, a judge and a synthesis wrote each of them. Their subsections are
-2.9, 2.16, 2.17 and 2.18.
+2.9, 2.16, 2.17 and 2.18. The port of `core.datasetController` wrote Chart.js ADR 0023 (proposed,
+2026-10-20): the names of underscore members that collide with a member of their class. 2.5 has
+its summary.
 The other subsections stay proposals in this document until their ADR files exist.
 
 | Subsection | ADR | Gate |
@@ -161,6 +180,7 @@ The other subsections stay proposals in this document until their ADR files exis
 | 2.16 | [Chart.js ADR 0020: Registry and component classes](adr/0020-registry-and-component-classes.md) (proposed) | 5 |
 | 2.17 | [Chart.js ADR 0021: Typed options in the resolver](adr/0021-typed-options-in-the-resolver.md) (proposed) | 5 |
 | 2.18 | [Chart.js ADR 0022: Chart test harness on Flutter](adr/0022-chart-test-harness.md) (proposed) | 5 |
+| 2.5 | [Chart.js ADR 0023: Underscore members with a colliding name](adr/0023-underscore-member-collisions.md) (proposed) | 5 |
 
 ADR 0006 (gate 1) belongs to [upstream-tracking.md](upstream-tracking.md).
 
@@ -246,6 +266,10 @@ needs `// ignore_for_file: file_names`. Upstream `_`-prefixed exports drop the u
 `_`-prefixed member that other modules read also drops the underscore. It carries `@internal`.
 A member of an interface in `lib/src/types/` does not carry it, because a type library imports
 only other type libraries.
+[Chart.js ADR 0023](adr/0023-underscore-member-collisions.md) (proposed) adds one rule. When the
+class or a superclass already has a member with the name without the underscore, the Dart name
+gets a trailing underscore: `_update` is `update_`, and `_getSharedOptions` is
+`getSharedOptions_`. The `_dataset` of the meta is `ChartMeta.dataset_`.
 
 ### 2.6 Chart.js ADR 0009: No display-only JS exactness, image comparison part (gate 2)
 
@@ -282,17 +306,18 @@ evidence and the items that stay open. In short:
 - The text-metric probe ([text-metrics.md](text-metrics.md)) found all 80 widths equal to the
   Chrome widths. Baseline offsets differ by less than 1 px. These differences are display-only.
 
-### 2.9 ADR: Animation (gate 5), with Chart.js ADR 0007 for `helpers.extras` and the animator frame source (gate 2)
+### 2.9 Chart.js ADR 0019: Animation (gate 5), with Chart.js ADR 0007 for `helpers.extras` and the animator frame source (gate 2)
 
 [Chart.js ADR 0007: Frame scheduling](adr/0007-frame-scheduling.md) holds the gate 2 part:
 `requestAnimFrame`, `throttled` and `debounce` in `helpers.extras` (`helpers.extras.ts:14-61`),
 and the frame source of the animator. `requestAnimFrame` calls
 `SchedulerBinding.scheduleFrameCallback`. `throttled` coalesces calls to one in each frame.
 `debounce` uses a `dart:async` `Timer`. `Chart.destroy()` cancels that `Timer`. `core.animator.js` stays
-one module-level animator on `requestAnimFrame`. The chart host mutes a chart under
-`TickerMode(enabled: false)`. Thus `core.animator.js` has two small `DIVERGES` hunks.
+one module-level animator on `requestAnimFrame`. `TickerMode(enabled: false)` mutes a chart
+(the last bullet of this section). Thus `core.animator.js` has two small `DIVERGES` hunks for the
+mute: the mute and the skip of a muted chart. Its third row is the promise checkpoint (see below).
 [Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) gives the clock: `jsDateNow()` on
-`clock.now()`. The rest of this subsection stays a proposal for ADR: Animation (gate 5).
+`clock.now()`.
 
 [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (proposed, phase 3) states
 the complete scheduling decision again. It changes decision 9 of Chart.js ADR 0007. The first
@@ -309,12 +334,21 @@ decision, its evidence and the items that stay open. In short:
 - A promise checkpoint (`lib/src/js/js_promise.dart`) runs the promise jobs of an animator frame
   callback at the end of that callback, as a browser does. Without it, a re-hover in the frame
   that ends a 400 ms un-hover gives a wrong resolved option.
-- Four `adapt` and `platform` hunks make the frame cheaper: a typed animation config, a number
-  path on `double` values, a color cache for each animation, and the checkpoint.
+- Three `adapt` hunks make the frame cheaper: a typed animation config, a number path on
+  `double` values and a color cache for each animation. The checkpoint is a `platform` hunk for
+  the behavior: the resolved option.
 - Reduced motion has no code in the core. The phase 9 widget decides it. The theme modes need no
-  code.
-- The ADR expects 15 of the 16 cases of the three animation specs to pass. One case needs a bar
-  chart and skips as `'blocked: controller.bar'`.
+  code. Until phase 9, a theme removal under reduced motion animates for 1000 ms
+  ([theming.md](theming.md) §11).
+- 15 of the 16 cases of the three animation specs pass. One case of `core.animator` needs a bar
+  chart. It skips as `'blocked: controller.bar'`.
+- The specs with a `done` callback are `testWidgets` cases. They wait with `setTimeout` and
+  `waitForDone` of the harness (section 3, "Frames in tests").
+- The chart host owns no chart (Chart.js ADR 0014 §2). It reports the ticker state through
+  `ChartHost.onTickerModeChanged`. The owner of a chart connects it to `animator.mute` and
+  `animator.unmute`. The owner also mutes a chart that it creates under
+  `TickerMode(enabled: false)`. The gallery `ChartCanvas` does this. The phase 9 widget does it
+  for the public API.
 
 ### 2.10 ADR: Dates (gate 6)
 
@@ -341,6 +375,13 @@ decision, its evidence and the items that stay open. In short:
   `dart:js_interop` (ADR 0001). Safari has no `Temporal`. Its native build compiles Rust from
   source with cargo. Its native time-zone code gives wrong local midnights on some DST days. Its
   license is not detected, its repository returns 404, and it has no verified publisher.
+
+**Phase 5 state.** `lib/src/core/core.adapters.dart` exists, a pure layer. Its `DateAdapter`
+members take and give JS values (`Object?`). `DateAdapterBase.prototype` holds the members that
+`override` assigns (row `adapt-date-adapter-prototype`). The class value `DateAdapterBase.jsClass`
+is the `_date` of `adapters`. The default adapter of phase 6 can subclass `DateAdapterBase` with
+narrower return types. It can also call `DateAdapterBase.override`, as the chartjs-adapter
+packages do. The ADR of phase 6 confirms or narrows the `Object?` form.
 
 **Evidence.**
 - `scale.time.tests.js` mentions `moment` 85 times. Of 145 classified time-scale cases, 97 parse
@@ -446,6 +487,9 @@ and the items that stay open. In short:
   functions.
 - `core.element.dart`, `lib/src/elements/` and `lib/src/js/js_webidl.dart` are pure layers. Their
   specs and tests run on the VM, with dart2js and with dart2wasm.
+- [Chart.js ADR 0020](adr/0020-registry-and-component-classes.md) §3 answers the Open item on how
+  the registry reads the static members. `Element` and each element class have a static `jsClass`,
+  the class as a value (2.16).
 
 ### 2.15 Chart.js ADR 0018: Typed element options (gate 4)
 
@@ -464,8 +508,12 @@ and the items that stay open. In short:
 - The getter of a known key gives the raw value, or `undefined` for an absent key, with no Map
   lookup. The element code reads each option through one small function, which also takes a
   plain Map. `PointOptions` implements `DrawPointOptions`.
-- Phase 4 makes typed options in the gallery. Phase 5 makes them in `resolveNamedOptions` and
-  keeps the class in the copies of `cloneIfNotShared` and `resolveTargetOptions`.
+- Phase 4 makes typed options in the gallery.
+  [Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) (2.17) decides the phase 5 part.
+  `createElementOptions` picks the typed class by the element type id, not by the `names` of
+  `resolveNamedOptions`. Another id gets `GenericElementOptions`. `resolveNamedOptions` fills the
+  object that its caller gives. `copyOptions` keeps the class in a copy, through `clone`. The
+  options have a frozen state.
 - Each element test that compares with reference data runs with plain Map options and with typed
   options.
 
@@ -483,6 +531,12 @@ short:
 - `getRange` is in the port-only interface `VisualElementRange`.
 - Section 13 of the ADR reads the performance rule of §1.1 for a form that changes the upstream
   structure: its gain must show in the frame figures, which have a resolution of 0.1 ms.
+- Phase 5 ported `core.typedRegistry`, `core.registry` and `core.plugins`. `core.typedRegistry`
+  is a pure layer. `core.registry` imports `core.datasetController` and `core.scale`, as
+  upstream does. The spec `core.registry.tests.js` passes its 15 cases through `Chart.register`.
+- The typed hook slots (CT, the Alternatives of the ADR) wait for phase 8. Phase 8 measures the
+  built-in plugins in the gallery. A new ADR adopts CT when the dispatch shows in the frame
+  figures.
 
 ### 2.17 Chart.js ADR 0021: Typed options in the resolver (gate 5)
 
@@ -516,19 +570,23 @@ and the items that stay open. In short:
 **Package.** `packages/chartjs_test_utils` (`publish_to: none`) mirrors the npm package module by
 module. It is a dev_dependency of `flutter_chartjs`. It also depends on `flutter_chartjs`. Probes
 showed that the workspace resolves this cycle. The harness, its notices and the test font stay
-outside the published archive. Port exactly 0.4.0 (`package.json:90`).
+outside the published archive. Port exactly 0.4.0 (`package.json:90`). `dom.dart` pumps frames
+with the test binding and runs its tasks on `clock.now()`. Thus `flutter_test` and `clock` are
+regular dependencies of the package ([Chart.js ADR 0022](adr/0022-chart-test-harness.md) §1).
 
 | Upstream (0.4.0) | Dart | Phase |
 |---|---|---|
 | — | `pure.dart` (spec set-up for `dart test`) | 2, done |
-| `src/context.js`, `src/index.js` | `MockContext implements CanvasRenderingContext2D`, `createMockContext` | 3, done |
-| `src/matchers.js`, `src/matchers.options.js` | matchers: `toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf`, `toEqualOptions` | 3, done |
+| `src/context.js`, `src/index.js` | `MockContext implements CanvasRenderingContext2D`, `createMockContext` (in `context.dart`, row `harness-index-pure-split`, so that `pure.dart` stays pure) | 3, done |
+| `src/matchers.js`, `src/matchers.options.js` | matchers: `toBeCloseToPixel`, `toBeCloseToPoint`, `toEqualOneOf`, `toEqualOptions` (it reads the keys of the expected object with `jsObjectKeys`, as `for...in` with `hasOwnProperty` does. For a resolver, these are the keys of the first scope, `helpers.config.ts:73-75`) | 3, done |
 | — | test font (`installTestFont` of `flutter.dart`, [Chart.js ADR 0015](adr/0015-text.md)) | 3, done |
-| `src/matchers.js` | `toBeValidChart`, `toBeChartOfSize` (the display width and height from the display size of the host, with the CSS rule for one style) | 5 |
-| `src/utils.js` | `acquireChart` (512×512 as attributes, `UiCanvasElement(width: 512, height: 512)`, the `canvas.style` option as the inline style, a wrapper style as a `SizedBox`, `ConstrainedBox` or `Padding`, a default wrapper of the canvas display size, `animation: false`, `locale: 'en-US'`), `afterEvent`, `triggerMouseEvent`, `waitForResize` | 5 |
+| `src/matchers.js` | `toBeValidChart`, `toBeChartOfSize` (the display size from the inline px style and the render size of the canvas, with the CSS rule for one style and `auto` for a canvas with `display: none`, [Chart.js ADR 0022](adr/0022-chart-test-harness.md) §9), in a pure layer | 5, done |
+| `src/utils.js` | `acquireChart`, `releaseChart`, `afterEvent` and `waitForResize` (over the function fields of `Chart`), and `triggerMouseEvent` (a `NativeEvent` to the listeners of the canvas, frames of 16 ms). `acquireChart` is synchronous and works only in the body of a `testWidgets` test. It gives 512×512 as attributes of the `UiCanvasElement` of `document.createElement`, and the `canvas.style` option as the inline style. The wrapper has the class `chartjs-wrapper` in the DOM stand-in, with the CSS subset of `dom.dart`. The default wrapper is a box of the canvas display size. A forced layout attaches the chart at its construction. The defaults are `animation: false`, `responsive: false` and `locale: 'en-US'`. `useOffscreenCanvas` gives a canvas that no host shows | 5, done |
+| `src/index.js` | `acquireChart`, `releaseChart`, `releaseCharts` and the registry `charts`. `releaseCharts` never deletes a chart. `index.dart` imports `utils.dart` with the prefix `utils` ([Chart.js ADR 0012](adr/0012-dart-file-naming.md), Collisions). The re-export of `src/fixture.js` waits for phase 7 | 5, done |
+| — | `dom.dart`, exported by `flutter.dart` ([Chart.js ADR 0022](adr/0022-chart-test-harness.md) §3, §7 and §8): the DOM stand-in (`document`, `window`, `div` and `canvas` nodes, a subset of CSS), the harness body, the mutation checkpoint, the harness tasks of `setTimeout`, `pumpFrames` (frames of 16 ms, the Jasmine timeout after 5000 ms), `waitForDone` and `afterEachChart` | 5, done |
 | `src/fixture.js` | `specsFromFixtures` as a smoke runner (prefix match, plugin rule, `run` hook), no image comparison | 7 |
 | `src/spriting.js`; pixelmatch `index.js`; Canvas-call recordings | not ported (`n/a`): no image comparison ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)) | — |
-| `injectWrapperCSS`, `useShadowDOM`, `useOffscreenCanvas` | not ported (`n/a`) | — |
+| `injectWrapperCSS`, `useShadowDOM` | not ported (`n/a`). The class `chartjs-wrapper` of `dom.dart` gives the effect of the `injectWrapperCSS` rule. `useShadowDOM` throws an `UnsupportedError`. The `useShadowDOM` cases of `helpers.dom` skip as `'n/a: Flutter has no shadow DOM'` | — |
 
 **Licensing.** The harness has no pixelmatch code. Thus its `LICENSE` has no ISC notice. Its
 `LICENSE` has the SIL OFL 1.1 notice of the test font as a separate component
@@ -537,21 +595,29 @@ outside the published archive. Port exactly 0.4.0 (`package.json:90`).
 **`test/index.js` equivalent.** From phase 3, `packages/flutter_chartjs/test/flutter_test_config.dart`
 ports `test/index.js`. It translates DPR 1 (`:5`). The UTC zone line (`:23`) has no Dart
 counterpart: the specs use the default date adapter in UTC (phase 6). The disabled colors plugin
-(`:25-28`, phase 8) and `releaseCharts()` (`:34-36`, phase 5) come later. Two port-only hunks carry
-`DIVERGES` markers and `harness-*` rows. Phase 3 added the file with DPR 1 and the two rows:
-- `harness-defaults-restore`: the restore of `defaults` and `overrides` in `tearDown`, from a
-  snapshot after the harness setup. It calls `setUpDefaultsRestore()` of `pure.dart`.
+(`:25-28`) comes in phase 8. Four port-only hunks carry `DIVERGES` markers and `harness-*` rows.
+Phase 3 added the file with DPR 1 and the first two rows. Phase 5 added the last two rows:
+- `harness-defaults-restore`: the restore of `defaults`, `overrides` and `descriptors` in
+  `tearDown`, from a snapshot after the harness setup. It calls `setUpDefaultsRestore()` of
+  `pure.dart`.
 - `harness-test-font`: the test font install.
+- `harness-register-builtins`: the call of `src/index.umd.ts:28` before `main()` and before the
+  snapshot of the restore ([Chart.js ADR 0022](adr/0022-chart-test-harness.md) §8). `setUpSpecs()`
+  of `pure.dart` removes the built-in components again.
+- `harness-release-at-unmount`: `releaseCharts()` (`:34-36`) at the unmount of the harness body,
+  with a `tearDown` as the fallback.
 
-The colors plugin line comes in phase 8. `releaseCharts()` comes in phase 5.
+The colors plugin line comes in phase 8.
 
 The harness installs no theme ([Chart.js ADR 0001](adr/0001-theming.md)). Thus no ported spec
 depends on the platform that flutter_test reports (`TargetPlatform.android`).
 
 `dart test` does not read `flutter_test_config.dart`. Thus each pure-layer spec file calls the
 same set-up from `package:chartjs_test_utils/pure.dart`. Phase 2 added `pure.dart`. It restores
-`defaults` and `overrides` after each test. `pure.dart` is a port-only file. Thus its restore has no
-`DIVERGES` marker and no row.
+`defaults`, `overrides` and `descriptors` after each test. Its `setUpSpecs()` also removes the built-in
+components. Thus a pure-layer file has the same state under `flutter test` and `dart test`. A spec
+file with chart cases does not call `setUpSpecs()`. `pure.dart` is a port-only file. Thus its
+restore has no `DIVERGES` marker and no row.
 
 **Frames in tests.** The scheduling of [Chart.js ADR 0007](adr/0007-frame-scheduling.md) runs only
 when the test pumps.
@@ -560,10 +626,34 @@ when the test pumps.
 - `setUp` runs outside the `FakeAsync` zone of `testWidgets`. Its timers are real. `clock.now()`
   there gives real time. Thus a ported `beforeEach` that acquires a chart runs at the
   start of each `testWidgets` body. 29 `beforeEach` blocks in 10 spec files acquire a chart.
-- The harness helpers pump. `triggerMouseEvent` resolves after the throttled event callback. Specs
-  call it 104 times in 13 files. `waitForResize` resolves after the next resize. Specs call it
-  32 times in 2 files.
+- `acquireChart` is synchronous and runs no frame. It throws a `StateError` outside the body of a
+  `testWidgets` test.
+- A ported `afterEach` that reads or acquires a chart is a local function. Each test calls it last
+  in its body ([Chart.js ADR 0022](adr/0022-chart-test-harness.md) §2).
+- A ported `beforeEach` that writes the DOM for a case with `Chart(...)` is a local function too.
+  Each case calls it first. A `setUp` writes only the element tree, and the canvas stays on its
+  standby host. An `afterEach` that reads no chart stays a `tearDown`. An example is the group
+  `context acquisition` of `test/specs/platform.dom_test.dart`.
+- `triggerMouseEvent` pumps. It resolves after the throttled event callback. A type with a
+  listener needs one frame of 16 ms. A type without a listener fails with the Jasmine timeout
+  message. Specs call it 104 times in 13 files. `waitForResize` does not pump. It replaces the
+  `resize` field of the chart, and its callback runs after the next resize. The pumps of
+  `waitForDone` run that resize. Specs call it 32 times in 2 files.
 - A spec with `resizeDelay` pumps past the delay. `pumpAndSettle` does not wait for a `Timer`.
+- A spec with `setTimeout` or a Jasmine `done` callback is a `testWidgets` test. It calls
+  `setTimeout` and `waitForDone` of `dom.dart` ([Chart.js ADR 0022](adr/0022-chart-test-harness.md)
+  §7). `setTimeout` adds a harness task that is due at `clock.now()` plus the delay. A harness task
+  is not a `Timer`.
+- `pumpFrames` and `waitForDone` pump frames of 16 ms. Between the pumps, they run the due harness
+  tasks in the zone of the test body. Thus an `expect` in a task works. After 5000 ms of fake time,
+  they fail with the Jasmine timeout message.
+- A port of a `setTimeout` with one long pump fails ([Chart.js ADR 0019](adr/0019-animation.md),
+  Consequences).
+- A resize observer of the chart host gets its first notification at the next layout of the host.
+  Its throttled resize comes in the frame after that layout (Chart.js ADR 0022 §10).
+- An append or a removal in `dom.dart` schedules one microtask, the mutation checkpoint. It lays
+  out the harness body and calls `flushCanvasMutations`. Thus the attach and detach listeners of the
+  platform run in the task of the write.
 
 **Where tests run.**
 
@@ -585,6 +675,23 @@ and the files of `lib/src/elements/` ([Chart.js ADR 0017](adr/0017-element-prope
 `helpers.options` and `helpers.curve` import `helpers.canvas`. Thus the canvas interface must stay
 free of `dart:ui` (2.2). Tool 1 computes the closure.
 
+These phase 5 files are pure layers too:
+- `core.config` ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md), section 7) and
+  `core.adapters` (the `pureRoots` of `tool/src/lib_imports.dart`)
+- `core.interaction` and `core.layouts`
+- `core.animation` and the port-only `animation_spec` ([Chart.js ADR 0019](adr/0019-animation.md),
+  section 1)
+- `core.typedRegistry` ([Chart.js ADR 0020](adr/0020-registry-and-component-classes.md), section
+  10)
+- the theme compiler and the internal presets of `lib/src/theme/` (`compile.dart` and
+  `presets.dart`, [theming.md](theming.md) §7)
+
+`core.animations`, `core.animator`, `core.scale` and `core.scale.autoskip` are not pure layers.
+`core.animator` and `core.scale` import `helpers.extras`. `core.datasetController`,
+`core.registry`, `core.plugins` and `core.controller` are not pure layers either.
+`core.datasetController` imports `core.animations`, and `core.registry` imports `core.scale`.
+`core.plugins` imports `core.registry`, and `core.controller` imports the platform layer.
+
 On 3.44.9, `dart test -p chrome` runs in a Flutter package with a `test` dev_dependency (probe).
 `--tags` does not stop the compile of other files. `@TestOn('vm')` stops it. `flutter test` still
 runs `@TestOn('vm')` files.
@@ -602,7 +709,8 @@ this variable. A `CI=true` rule cannot do this, because GitHub sets `CI=true` in
 ## 4. Tooling owned by this flow
 
 **1. Library import guard** (`tool/check_lib_imports.dart`, `check:lib-imports`, phase 1). The
-melos script `check:port` and the CI job `port-checks` run tools 1-3. Tool 1 uses allowlists:
+melos script `check:port` and the CI job `port-checks` run tools 1-3 and the checks of tools 6
+and 8. Tool 1 uses allowlists:
 - `lib/`: `dart:async`, `collection`, `convert`, `core`, `math`, `typed_data` and `ui`, the
   `package:flutter/` libraries `foundation`, `gestures`, `painting`, `rendering`, `scheduler`,
   `semantics`, `services` and `widgets`, `package:meta/meta.dart`, `package:intl/intl.dart` with
@@ -610,6 +718,14 @@ melos script `check:port` and the CI job `port-checks` run tools 1-3. Tool 1 use
   `package:collection/collection.dart` with `show mergeSort`. From phase 5, also
   `package:clock/clock.dart` ([Chart.js ADR 0010](adr/0010-js-numeric-semantics.md)).
 - Pure layers: the same list without `dart:ui` and `package:flutter`, over the transitive closure.
+  The roots of the closure are the list `pureRoots` of `tool/src/lib_imports.dart`:
+  - `lib/src/js/`, `lib/src/types/`, `lib/src/kurkle_color/` and the helpers except
+    `helpers.extras`
+  - `core.defaults`, `core.element`, `core.config`, `core.adapters`, `core.interaction`,
+    `core.layouts`, `core.animation`, `animation_spec` and `core.typedRegistry`
+  - the files of `lib/src/elements/`
+  - `platform.base`, `platform.basic` and `native_event`
+  - `compile.dart` and `presets.dart` of `lib/src/theme/`
 - Test files without `@TestOn('vm')`: pure layers, `package:test` and `pure.dart` only.
 - The harness: the closure of `packages/chartjs_test_utils/lib/pure.dart` is a pure layer. It
   imports only pure libraries, `package:test` and the pure layers of `flutter_chartjs`.
@@ -662,7 +778,8 @@ package. It flags these forms:
   Use `jsMax` and `jsMin` ([Chart.js ADR 0010](adr/0010-js-numeric-semantics.md)).
 - from phase 2, the sorts of `package:collection`: `mergeSort(`, `insertionSort(`, `.sorted(`,
   `.sortedBy(`, `.sortedByCompare(`, `.sortBy(`, `.sortByCompare(` and `.sortRange(`
-- from phase 5, `DateTime.now(`
+- from phase 5, `DateTime.now(`. Ported code reads the time through `jsDateNow`, because only
+  `clock.now()` follows the fake clock of `testWidgets` and `withClock`.
 
 A site passes with `// js-ok: <reason>` at the end of its line, or alone on the line before it.
 The lexical rules read the code without comments and strings. The interpolation rule and the
@@ -683,11 +800,41 @@ manifests or git.
 2). Each upstream case is `passed`, `failed`, `skipped(<reason>)` or `missing`. The tool fails on
 unknown names. It also fails on `missing` cases in `ported` modules.
 
-**6. Parity generator** (`tool/parity.dart`, `parity` and `parity:check`, phase 5). It derives the
-Dart target from the headers. It adds case and fixture columns, plus sections for port-only files,
-the Flutter input mapping and `test/types`. It also writes the `differences.md` row count by
-category into the `parity.md` row of each file with `DIVERGES` hunks ([theming.md](theming.md)
-§7).
+**6. Parity generator** (`tool/parity.dart`, `parity` and `parity:check`, phase 5). It writes
+`doc/parity.md` from these inputs:
+1. The files of the pinned copies in `third_party/` and their `wc -l` line counts. Each file gets
+   one row.
+2. The rule-2 headers of the Dart files of both packages. They give the Dart target of a row. A
+   `dart` entry of `status.yaml` gives the target of a row without a header, for example
+   `platform.flutter.dart` for `platform.dom.js`.
+3. `doc/status.yaml`: the text outside the tables, the status text of each row and the port-only
+   rows.
+4. The case results of tool 5, and the case and fixture counts of `doc/upstream/manifest.json`.
+5. The `DIVERGES` markers and the rows of `differences.md`.
+
+The spec table has the columns Cases and Fixtures. Placeholders in the texts of `status.yaml` give
+the derived values:
+- `{{differences}}` gives the `differences.md` row count by category and the links of the hunks
+  of the row ([theming.md](theming.md) §7). For a spec row, the rows of its `diverges:` skip
+  reasons also count.
+- `{{passed}}`, `{{failed}}`, `{{skipped}}`, `{{missing}}`, `{{cases}}` and
+  `{{skipped:<reason>}}` give the case counts of tool 5.
+- `{{platforms}}` gives the test legs from `@TestOn('vm')`. `{{files:<glob>}}` counts files.
+  `{{rows:<area>:<status>}}` counts the rows of a Summary area.
+
+These findings are errors:
+- a `status.yaml` entry of a file that no table lists
+- a status that does not start with a value of section 1 step 7
+- an unknown placeholder, or a placeholder without a value
+- a row with hunks and no `{{differences}}`
+- a `dart` entry of a row with a header
+
+These findings are warnings: a row with a Dart file and the status `not started`, a port-only Dart
+file that no port-only row names, and a port-only path that does not exist. `parity:check` fails
+when `parity.md` differs from the output, or on an error. `check:port` and the CI job
+`port-checks` run it. `--import` reads the cells of `parity.md` back into `status.yaml`.
+`--import --base <file>` keeps the entries of the cells that did not change after `<file>`. The
+sections for the Flutter input mapping and for `test/types` do not exist yet.
 
 **7. Fixture smoke runner** (`test:fixtures`, job `fixtures`, phase 7). It builds a chart from
 each fixture config of a ported module and renders one frame. A test passes when no exception
@@ -695,8 +842,38 @@ occurs. The runner compares no pixels and keeps no ledger
 ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)). It reads the configs that tool 4
 writes and the hand-ported configs in `test/fixtures/hand/`.
 
-**8. Port-order helper** (`tool/port_order.dart`, `port:next`, phase 5). It lists the ready
-modules and the interfaces that each module needs.
+**8. Port-order helper** (`tool/port_order.dart`, `port:next`, phase 5). It reads each `.js` and
+`.ts` file of `third_party/Chart.js/src`, with its imports, re-exports and JSDoc `import()` types.
+It also reads the port state of each module:
+- A Dart file in `lib/` at the mapped path (2.5), whose rule-2 header names the module, starts the
+  module. The status `in progress` or `partial` also starts it.
+- The `parity.md` status `ported`, `replaced`, `distributed` or `n/a` makes the module done.
+
+A module that is not started is ready when each value import is done. A `partial` module satisfies
+the imports of the symbols that its status lists in backticks. These rules apply:
+- An imported name that a module re-exports (an `index` file) is an import of the module that
+  declares the name. Thus `plugin.colors.ts:1` needs `controller.doughnut.js`,
+  `controller.polarArea.js` and `core.defaults.js`, not `src/index.ts`.
+- A type-only import does not block a module (2.4). The type-only imports are `import type`,
+  `export type`, a `type` specifier, an import of a `.d.ts` file, each import in a `.d.ts` file
+  and a JSDoc `import()` type. The helper lists these types as the interfaces that the module
+  needs. For each type, it names the Dart file that declares it: a file of `lib/src/types`, or the
+  Dart file of the done module.
+- An import of a JSON file of the pin is data, not a module. `core.controller.js:12` imports
+  `version` from `package.json`. The port has `chartJsVersion` for it.
+- A package import is done when `tool/port_sources.yaml` has an entry for the package, for example
+  `@kurkle/color`.
+- Modules that import each other are ready together when no other import blocks them.
+- The phase table does not name a phase for `src/index.ts`, `src/index.umd.ts` and `src/types.ts`.
+  The helper gives them phase 9.
+
+The list gives the ready modules in the phase order of section 5, with the upstream line count and
+the number of modules that need each module. It also gives the modules in progress and the blocked
+modules with their missing imports. `--json` prints the same data. `--check` fails in three
+cases. The helper cannot read a module or a header line of `lib/`. A `parity.md` status is not a
+value of section 1 step 7. An import does not resolve. The melos script `port:next:check` runs this
+mode in `check:port` and in the CI job `port-checks`, which checks out the submodules. Without the
+submodule, each mode exits with 2. Thus a gate without the checkout fails.
 
 **Node and ADR 0001.** A dev-time Node tool is not runtime. Nothing in `lib/` or `test/` loads it.
 [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md) records this in its Decision.
@@ -718,7 +895,7 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 | 2. JS runtime, helpers, defaults | done; rest of `lib/src/js` and `lib/src/types`; helpers except `helpers.canvas` and `helpers.dom`, plus `toFontString` and `_isPointInArea`; `core.defaults` closure; @kurkle/color; null-vs-undefined resolver tests; `pure.dart`; tools 4-5 | 181 non-chart helper cases and 5 `core.defaults`/`core.ticks` cases pass on VM, pure-layer cases also on dart2js and dart2wasm; `test:cases` reports none missing. Result: 179 of the 181 helper cases pass. The 2 `helpers.color` cases that need a canvas pattern and gradient skip as `blocked: helpers.canvas`. `test/port/helpers/helpers.color_test.dart` tests the same behavior with test classes. `helpers.rtl` is in progress: `overrideTextDirection` and `restoreTextDirection` need the canvas layer. `src/helpers/index.ts` re-exports `helpers.dom`. Both wait for phase 3 |
 | 3. Canvas, text, platform, harness | done; `lib/src/canvas`; rest of `helpers.canvas`; rest of `helpers.rtl`; `helpers.dom`; `src/helpers/index.ts`; `platform.*`; internal chart host; phase-3 harness rows | non-chart canvas and DOM cases pass; the 2 `helpers.color` canvas cases pass; text-metric probe recorded. Result: the five phase 3 spec files have 66 cases. 21 pass, 0 fail and 45 skip. The 12 non-chart `helpers.canvas` cases, the 4 `helpers.color` cases and the 5 `helpers.dom` cases with a Flutter equivalent pass. 28 cases skip as `blocked: core.controller`, 15 as `n/a` (CSS, the shadow DOM, DOM ids, iframes, a web worker) and 2 as `diverges: platform-relative-position`. `test:cases` reports 205 passed, 0 failed, 47 skipped and 0 missing cases in the 17 ported spec files. The text-metric probe ([text-metrics.md](text-metrics.md)) found all 80 widths equal to Chrome. Chart.js ADRs 0013-0015 record the gate 3 decisions (proposed) |
 | 4. Elements | done; `core.element`, point, line, bar, arc, `elements/index`; the type members; `jsOrZero` and `js_webidl.dart` of `lib/src/js`; tool 1 roots | 20 of 21 element cases pass. Result: the five phase 4 spec files have 22 cases. 21 pass, 0 fail and 1 skips as `blocked: core.controller` (`element.line`, "should not cache path when animations are enabled"). 20 of the 21 element cases pass. `test:cases` reports 226 passed, 0 failed, 48 skipped and 0 missing cases in the 22 ported spec files. The port-only tests `test/port/core/core.element_test.dart` and `test/port/elements/` (the four elements and `index`) test the behavior that the specs do not test. Four generators of `tool/reference/` (point, line, bar and arc) write the reference data of the four element tests from an x64 build of Node.js v24.12.0. Chart.js ADR 0017 records the gate 4 decision (proposed). [performance.md](performance.md) §8 has the element draw cost on the Pixel 8a, on macOS and in Chrome with dart2wasm, and a number path in `toTRBL` and `toTRBLCorners` that cuts the bar draw time on macOS by about 12 % |
-| 5. Core | `core.config` with hunks H0-H3 and their tests; registry to controller; phase-5 harness rows; tools 6 and 8 | non-chart core cases pass; others skipped `blocked: <module>` |
+| 5. Core | `core.config` with hunks H0-H3 and their tests; registry to controller; phase-5 harness rows; tools 6 and 8 | non-chart core cases pass; others skipped `blocked: <module>`. Result of the port step and the harness step (2026-10-20): all 21 core modules have the status `ported`. The 14 core spec files have 286 cases. 98 pass, 0 fail and 188 skip. The 36 non-chart cases of the new core spec files pass: `core.animation` 6, `core.animations` 8, `core.animator` 1, `core.controller` 4, `core.layouts` 1, `core.registry` 15 and `core.scale` 1. The harness rows of phase 5 are done: `acquireChart`, `releaseChart`, `releaseCharts`, `triggerMouseEvent`, the release at the unmount and the built-in registration. Through the harness, 32 more `core.controller` cases pass (36/85), 19 `core.plugin` cases (19/19) and 3 `core.scale` cases (4/41). 188 core cases skip. Of these, 13 wait for a scale of phase 6, 164 for a controller of phase 7 and 10 for a plugin of phase 8. 1 case is `n/a` (DOM element ids). Of the 76 cases of the port step that waited for the harness, 74 pass. 1 skips as `diverges: platform-canvas-no-shadow`, and 1 as `blocked: scale.linear`. The review of phase 5 made two changes. The `data: []` case of `core.controller` passes: an array data gives a new Map (`adapt-config-objects`). The `core.scale` case "should throw error on scale with custom name without axis type" skips as `blocked: scale.linear`: its throw needs `defaults.scales.linear`. `core.controller.tests.js:918` passes too. It was `n/a` before. Outside core, `helpers.canvas` has 14/14, `helpers.dom` 7/22, `platform.basic` 2/5 and `platform.dom` 15/21. `test:cases` reports 337 passed, 0 failed, 213 skipped and 0 missing cases in the 32 ported spec files. No case skips as `blocked: harness`. Tools 6 and 8 run in `check:port`. The gallery has the Core tab and the stress mode `chart`. The adversarial review and the figures of the typed options on a real chart path come next |
 | 6. Scales | seven scales; default date adapter on `DateFormat` (ICU tokens) | non-chart scale cases pass; moment-token cases skip as `diverges` |
 | 7. Controllers | bar first, then the other seven; fixture smoke runner | controller and earlier chart-blocked cases pass or have rows; fixture smoke tests pass for the ported types; gallery shows every type |
 | 8. Plugins | seven plugins; hunks H4a-H4c and H5 and their tests; input adapter for legend and tooltip | plugin cases pass; `plugin.*` fixture smoke tests pass |

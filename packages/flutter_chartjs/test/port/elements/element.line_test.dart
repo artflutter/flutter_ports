@@ -7,6 +7,7 @@ import 'package:flutter_chartjs/src/elements/element.point.dart';
 import 'package:flutter_chartjs/src/elements/element_options.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.interpolation.dart'
     show InterpolatedPoint;
+import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
@@ -414,6 +415,40 @@ void main() {
       expect(indexable('fill'), isFalse);
       expect(indexable('borderColor'), isTrue);
       expect(indexable('tension'), isTrue);
+    });
+
+    test('jsClass is LineElement as a value', () {
+      // From element.line.js in Node.js v24.12.0 on x64: the own statics of
+      // LineElement are id, defaults, defaultRoutes and descriptors, and its
+      // superclass is Element. typeof LineElement is 'function'.
+      final c = LineElement.jsClass;
+      expect(c.name, 'LineElement');
+      expect(c.superclass, same(Element.jsClass));
+      expect(c.id, 'line');
+      expect(c['id'], LineElement.id);
+      expect(c['defaults'], same(LineElement.defaults));
+      expect(c['defaultRoutes'], same(LineElement.defaultRoutes));
+      expect(c['descriptors'], same(LineElement.descriptors));
+      expect(c.isSubclassOf(Element.jsClass), isTrue);
+      expect(c.isSubclassOf(c), isFalse);
+    });
+
+    test('jsConstruct of jsClass makes a LineElement with the cfg', () {
+      // new LineElement({x: 2}) and new LineElement() (Chart.js ADR 0020,
+      // section 3).
+      final element = jsConstruct(LineElement.jsClass, [
+        <String, Object?>{'x': 2},
+      ]);
+      expect(element, isA<LineElement>());
+      expect((element as LineElement)['x'], 2.0);
+      expect(jsConstruct(LineElement.jsClass, const []), isA<LineElement>());
+      // class My extends LineElement { static id = 'my'; }: the subclass value
+      // constructs a LineElement and reads the statics of LineElement.
+      final my = JsClass('My', superclass: LineElement.jsClass)..['id'] = 'my';
+      expect(jsConstruct(my, const []), isA<LineElement>());
+      expect(my.id, 'my');
+      expect(LineElement.jsClass.id, 'line');
+      expect(my['defaults'], same(LineElement.defaults));
     });
   });
 
