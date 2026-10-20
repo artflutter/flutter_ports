@@ -174,6 +174,13 @@ Changes to the cited files:
   change. `demo_chart.dart`, which §3.1 cites, gets `getDataVisibility`. `DemoChart` keeps its
   default `UiCanvasElement()`, so §3.1 does not change. Thus the references and the estimates do
   not change. No trigger occurred.
+- 2026-10-20, the metrics cache of `lib/src/canvas/canvas_ui_text.dart` (performance.md §13). The
+  bound of the metrics cache goes from 2048 to 32768 entries. The eviction of the metrics cache
+  and of the paragraph cache removes the oldest quarter in one pass. The measured widths do not
+  change. `canvas_ui_text.dart` has 538 lines. `canvas_ui_text_test.dart` gets the tests of the
+  cache (11 tests). This plan cites no line of `canvas_ui_text.dart`, and the cuts do not remove
+  its code. Thus the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
+  estimates do not change. No trigger occurred.
 
 ## 1. Why
 

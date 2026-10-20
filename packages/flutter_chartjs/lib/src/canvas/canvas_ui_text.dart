@@ -354,7 +354,19 @@ final class CanvasTextMetricsData {
 const int paragraphCacheSize = 512;
 
 /// The bound of the metrics cache.
-const int _metricsCacheSize = 2048;
+///
+/// A category axis measures half of its labels again in each update: the
+/// upstream `garbageCollect` (core.scale.js:71) deletes the older half of
+/// the label widths of the scale after the fit, and the two halves
+/// alternate. The cache thus sees a cycle of all the labels, and an LRU
+/// cache smaller than the cycle never hits. The bound keeps the cycle of
+/// 20000 labels (the stress cases) with room for the other texts.
+///
+/// An entry takes 104 to 128 bytes on the 64-bit Dart VM 3.12 with 8-byte
+/// pointers: the key record (32), the metrics (48) and the slots of the
+/// hash table (24 to 48). The text is the string of the caller. A full
+/// cache takes 3.3 to 4.0 MiB.
+const int metricsCacheSize = 32768;
 
 final LinkedHashMap<Object, CanvasTextLayout> _layouts = LinkedHashMap();
 
@@ -363,6 +375,29 @@ final LinkedHashMap<(CanvasFont, String), CanvasTextMetricsData> _metrics =
 
 /// The count of entries in the paragraph cache, for tests.
 int get canvasParagraphCacheLength => _layouts.length;
+
+/// The count of entries in the metrics cache, for tests.
+int get canvasMetricsCacheLength => _metrics.length;
+
+/// Removes the oldest quarter of the entries of the LRU cache [cache], the
+/// first ones in its order, and gives each removed value to [evicted].
+///
+/// One pass over the keys finds them. A `LinkedHashMap` keeps the slot of
+/// a removed entry until its table compacts, and `keys.first` walks over
+/// these slots. Removing one entry at a time with `keys.first` walked them
+/// again for each entry. A quarter keeps the entries in use, for example
+/// the labels of an axis, where clearing the cache would measure them all
+/// again.
+void _evictOldest<K, V>(
+  LinkedHashMap<K, V> cache, [
+  void Function(V value)? evicted,
+]) {
+  final oldest = cache.keys.take(cache.length ~/ 4).toList(growable: false);
+  for (final key in oldest) {
+    final value = cache.remove(key) as V;
+    evicted?.call(value);
+  }
+}
 
 /// [text] with each ASCII whitespace character as a space: canvas text
 /// is one line (the DOM text preparation algorithm).
@@ -438,7 +473,7 @@ CanvasTextLayout layoutCanvasText(
     // `TextPainter` disposes its old paragraph. Left to the garbage
     // collector, a paragraph for each frame (a text that changes in each
     // frame) piles up native memory.
-    _layouts.remove(_layouts.keys.first)!.paragraph.dispose();
+    _evictOldest(_layouts, (layout) => layout.paragraph.dispose());
   }
   _rememberMetrics(font, text, layout);
   return layout;
@@ -448,9 +483,7 @@ void _rememberMetrics(CanvasFont font, String text, CanvasTextLayout layout) {
   final key = (font, text);
   if (_metrics.containsKey(key)) return;
   _metrics[key] = CanvasTextMetricsData._(layout);
-  if (_metrics.length > _metricsCacheSize) {
-    _metrics.remove(_metrics.keys.first);
-  }
+  if (_metrics.length > metricsCacheSize) _evictOldest(_metrics);
 }
 
 /// The metrics of [text] in [font], from the LRU metrics cache.
@@ -472,9 +505,7 @@ CanvasTextMetricsData measureCanvasText(CanvasFont font, String text) {
   // Never painted: it can go now.
   paragraph.dispose();
   _metrics[key] = data;
-  if (_metrics.length > _metricsCacheSize) {
-    _metrics.remove(_metrics.keys.first);
-  }
+  if (_metrics.length > metricsCacheSize) _evictOldest(_metrics);
   return data;
 }
 

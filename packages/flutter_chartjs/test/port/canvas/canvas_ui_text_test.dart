@@ -1,4 +1,4 @@
-// Original code, not ported from Chart.js: tests of the canvas font weights.
+// Original code, not ported from Chart.js: tests of the canvas text.
 @TestOn('vm')
 library;
 
@@ -297,6 +297,106 @@ void main() {
         ..font = '10px monospace'
         ..font = 'oblique 95deg 100px $_family';
       expect(ctx.font, '10px monospace');
+    });
+  });
+
+  // The caches of the text layer. A category axis measures half of its
+  // labels in each update, and the halves alternate (core.scale.js:71
+  // `garbageCollect`). Thus the metrics cache sees a cycle of all the
+  // labels. A cache smaller than the cycle missed on each text and built a
+  // paragraph for it.
+  group('caches', () {
+    final font = parseCanvasFont('12px $_family')!;
+
+    // It runs before the cycle below: the metrics cache has only the texts
+    // of the groups above.
+    test('a full metrics cache removes its oldest quarter', () {
+      final before = canvasMetricsCacheLength;
+      const removed = (metricsCacheSize + 1) ~/ 4;
+      expect(before, lessThan(removed - 1));
+      final texts = [
+        for (var i = before; i < metricsCacheSize; i++) 'fill $i',
+      ];
+      final metrics = [for (final text in texts) measureCanvasText(font, text)];
+      expect(canvasMetricsCacheLength, metricsCacheSize);
+      // A hit moves the first fill text to the end of the order.
+      expect(
+        identical(measureCanvasText(font, texts.first), metrics.first),
+        isTrue,
+      );
+      // One more text removes the oldest quarter: the texts of the groups
+      // above and the fill texts 1 to `gone`.
+      measureCanvasText(font, 'one more');
+      expect(canvasMetricsCacheLength, metricsCacheSize + 1 - removed);
+      final gone = removed - before;
+      for (final i in [0, gone + 1, texts.length - 1]) {
+        expect(
+          identical(measureCanvasText(font, texts[i]), metrics[i]),
+          isTrue,
+          reason: texts[i],
+        );
+      }
+      expect(
+        identical(measureCanvasText(font, texts[gone]), metrics[gone]),
+        isFalse,
+      );
+    });
+
+    test('a cycle of 10000 texts measured twice gives the same widths, and '
+        'the second pass builds no paragraph', () {
+      final texts = [for (var i = 0; i < 10000; i++) 'cycle label $i'];
+      final first = [for (final text in texts) measureCanvasText(font, text)];
+      final length = canvasMetricsCacheLength;
+      expect(length, lessThanOrEqualTo(metricsCacheSize));
+      for (var i = 0; i < texts.length; i++) {
+        final second = measureCanvasText(font, texts[i]);
+        // A miss builds a paragraph and new metrics. A hit gives the
+        // metrics of the first pass.
+        expect(identical(second, first[i]), isTrue, reason: texts[i]);
+        expect(second.width, first[i].width, reason: texts[i]);
+      }
+      // A miss adds an entry.
+      expect(canvasMetricsCacheLength, length);
+      // The cached widths are the widths of a new paragraph.
+      for (var i = 0; i < texts.length; i += 97) {
+        final layout = layoutCanvasText(font, texts[i], ui.TextDirection.ltr);
+        expect(first[i].width, layout.width, reason: texts[i]);
+        layout.paragraph.dispose();
+      }
+    });
+
+    test('a full paragraph cache removes and disposes its oldest quarter', () {
+      const black = ui.Color(0xFF000000);
+      CanvasTextLayout layout(String text) => layoutCanvasText(
+        font,
+        text,
+        ui.TextDirection.ltr,
+        color: black,
+        cacheKey: black,
+      );
+      final before = canvasParagraphCacheLength;
+      const removed = (paragraphCacheSize + 1) ~/ 4;
+      expect(before, lessThan(removed));
+      final layouts = [
+        for (var i = before; i < paragraphCacheSize; i++)
+          layout('paragraph $i'),
+      ];
+      expect(canvasParagraphCacheLength, paragraphCacheSize);
+      layout('one more paragraph');
+      expect(canvasParagraphCacheLength, paragraphCacheSize + 1 - removed);
+      final gone = removed - before;
+      for (var i = 0; i < layouts.length; i++) {
+        expect(
+          layouts[i].paragraph.debugDisposed,
+          i < gone,
+          reason: 'paragraph ${before + i}',
+        );
+      }
+      // A kept layout comes from the cache.
+      expect(
+        identical(layout('paragraph ${paragraphCacheSize - 1}'), layouts.last),
+        isTrue,
+      );
     });
   });
 }

@@ -520,9 +520,10 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   gave no measured gain, so the port does not declare it (section 10.11).
 - Closed in phase 6: the benchmark of the chart path without frames is the gallery entry
   `lib/main_bench.dart` (section 6).
-- Scales (phase 6): this document has no frame figures of the scale path yet. The mode `axes` of
-  the stress entry and the `axes` cases of the frameless benchmark measure them (section 6).
-  Chart.js ADR 0025 needs them for its Open 2 (a logarithmic value axis with `CALL=update`). In
+- Scales (phase 6): section 11.6 has the frame figures of the scale path on the Pixel 8a, and
+  section 11.7 the change of the metrics cache. Section 11.8 lists the open forms. The iPhone,
+  macOS and Chrome with dart2wasm are not measured. The logarithmic value axis with
+  `CALL=update` of section 11.6 answers the Open 2 of Chart.js ADR 0025 on the Pixel 8a. In
   phase 7, it needs them for its Open 1 (a `timeseries` axis, a radar chart). Chart.js ADR 0024 needs the figures of a
   time axis with ISO labels on the Pixel 8a, macOS, Chrome with dart2wasm and the iPhone (its
   Open 1, section 12.5). The mode `axes` gives timestamps, not ISO labels.
@@ -1644,6 +1645,206 @@ The best of 7 runs of 200,000 calls of `JsNumberFormat.format`, in ns for each c
   1,395-1,402 ns for compact `1.5e20`.
 - Rejected forms: `toStringAsExponential()` for the digits is 6-22 % slower than
   `jsNumberToString`. The intl mantissa for scientific notation takes 430-600 ns.
+
+### 11.6 The scale path on the Pixel 8a
+
+The scale path of phase 6 on the Pixel 8a (`4B071JEKB17363`), on 2026-10-20. The code is
+the phase 6 work at the start of the review step: `7e6b834` and the uncommitted phase 6 changes.
+The review fixes after that point do not change `canvas_ui_text.dart` or the benchmark. One of
+them leaves the update at the construction and at the first resize out of the parts of the
+stress line (`StressAxesTiming.reset`). Thus the benchmark times hold for commit `cd422b4`. The method is that of section 6: profile APKs,
+one fresh process for each run, and a gate before each run (the battery at 33.0 degrees Celsius or
+less and the big core at 2.8 GHz or more in a busy loop, or 10 minutes). A loop on the phone reads
+the frequency of the big core and the core of the UI thread every 0.25 s.
+
+**Frameless benchmark** (`CASES=axes`, `N=1000,5000,20000`, the default timing). Four processes.
+A cell is the mean of the run medians of the runs whose case window ran at 2.8 GHz or more, in ms.
+The time axis runs last in each process, so it has 1 or 2 such runs at 5000 and 20000.
+
+| Scale | Figure | 1000 | 5000 | 20000 |
+|---|---|---:|---:|---:|
+| linear | update | 0.701 | 1.496 | 4.644 |
+| linear | layout | 0.452 | 0.773 | 2.008 |
+| linear | datasetsUpdate | 0.133 | 0.565 | 2.309 |
+| linear | draw (`CALL=draw`) | 0.469 | 1.879 | 7.068 |
+| logarithmic | update | 0.986 | 2.035 | 6.209 |
+| logarithmic | layout | 0.663 | 1.009 | 2.244 |
+| logarithmic | datasetsUpdate | 0.197 | 0.879 | 3.594 |
+| logarithmic | draw (`CALL=draw`) | 0.544 | 1.933 | 7.270 |
+| category | update | 4.108 | 127.323 | 535.352 |
+| category | layout | 3.841 | 126.099 | 532.271 |
+| category | datasetsUpdate | 0.144 | 0.650 | 2.479 |
+| category | draw (`CALL=draw`) | 0.636 | 2.056 | 7.590 |
+| time | update | 1.064 | 1.678 | 5.380 |
+| time | layout | 0.764 | 0.911 | 2.599 |
+| time | datasetsUpdate | 0.141 | 0.601 | 2.471 |
+| time | draw (`CALL=draw`) | 0.637 | 1.945 | 7.642 |
+
+- The x axis has 11 ticks (linear), 25 (logarithmic), 34 (category), and 33, 14 and 28 (time at
+  1000, 5000 and 20000).
+- The draw of the scales is small: the draw minus the dataset draw is 0.15-0.33 ms at 5000 for
+  each type.
+- The category update is not linear in N: 31 times from 1000 to 5000 points, then 4.2 times to
+  20000. Section 11.7 gives the cause.
+
+**Stress entry** (`MODE=axes`, `SCENARIO=1000x0,5000x0,20000x0`, `SECONDS=7`, one process for
+each scale and call). FPS / update ms:
+
+| Scale | `CALL=update`, 1000 | 5000 | 20000 | `CALL=draw`, FPS at 1000 / 5000 / 20000 |
+|---|---|---|---|---|
+| linear | 58.0 / 3.29 | 56.4 / 3.26 | 31.5 / 5.75 | 58.7 / 58.4 / 57.5 |
+| logarithmic | 58.3 / 3.67 | 53.5 / 4.01 | 29.7 / 6.85 | 57.9 / 58.5 / 57.9 |
+| category | 52.4 / 8.09 | 7.4 / 120.30 | 1.5-1.8 / 527-625 (90 s runs) | 58.2 / 58.2 / 57.8 |
+| time | 57.4 / 3.93 | 53.1 / 3.55 | 30.6 / 6.06 | 58.0 / 58.1 / 57.5 |
+
+- With a light load, the governor keeps the big core at 1.0-2.0 GHz and the UI thread often runs
+  on another core. Thus the stress times are larger than the benchmark times. Use the benchmark
+  for the times.
+- The category axis at 20000 gave fewer than 30 frames in 7 s. The cell gives two runs of 90 s.
+- The stress host is phone-sized, so the x axis has 6, 11, 14 and 11-14 ticks.
+
+**CPU profiles** (the update at 5000 points in the stress entry, 10 s of samples at 1 ms, the
+samples under `Chart.update` and not under a draw). Inclusive shares in %:
+
+| Frame | linear | logarithmic | category | time |
+|---|---:|---:|---:|---:|
+| `Scale.update` | 53.7 | 52.5 | 99.4 | 57.2 |
+| `DatasetController.getMinMax` | 28.0 | 21.5 | 0.1 | 23.5 |
+| `generateTickLabels` | 6.5 | 6.5 | 0.9 | 5.4 |
+| `_computeLabelSizes` | 9.9 | 16.6 | 98.0 | 11.8 |
+| `resolveTickFontOptions` | 10.1 | 15.0 | 13.1 | 12.5 |
+| `measureCanvasText` | 0.0 | 0.8 | 82.7 | 0.3 |
+| `Chart._updateDatasets` | 35.8 | 40.7 | 0.5 | 31.2 |
+| `jsLog10` | - | 14.4 | - | - |
+| `LocalZone.offsetAt` | - | - | - | 4.2 |
+| resolver reads (`ContextResolver.[]`, `Resolver.[]`) | 13.2 | 11.1 | 2.6 | 13.4 |
+| `jsGet`, all callers | 32.1 | 25.3 | 2.2 | 29.6 |
+
+- One category update with 5000 labels makes 2500 canvas measures and 5127 calls of
+  `resolveTickFontOptions`. A linear update makes 0 and 94. Counted on the host.
+- A category axis measures N/2 labels in each update, as upstream does. `calculateLabelRotation`
+  measures all N labels (`core.scale.js:797`, `:819`). After `autoSkip`, `_labelSizes` is null
+  (`core.scale.js:458-459`). `fit` then measures the kept ticks, and `garbageCollect`
+  (`core.scale.js:71`, `:855`) deletes the older half of the label widths of the scale. The halves
+  alternate, so the canvas layer sees a cycle of all N labels.
+- Upstream makes the same calls, and the text shape cache of Chrome makes them cheap. The port
+  built a paragraph for each miss of its metrics cache (section 11.7).
+
+### 11.7 Change: the metrics cache of the canvas text
+
+The metrics cache of `canvas_ui_text.dart` (port-only, Chart.js ADRs 0013 and 0015) held 2048
+entries in LRU order. With more than about 2048 labels, a category axis missed on each of its N/2
+measures in each update. Each miss built and laid out a paragraph: 63.9 % of the update at 5000.
+The eviction `_metrics.remove(_metrics.keys.first)` walked the deleted slots of the
+`LinkedHashMap` for each entry: 14.8 %. The paragraph cache had the same eviction.
+
+The change:
+- The bound `metricsCacheSize` is 32768. An LRU cache must hold the whole cycle of N labels to
+  hit, so a bound of 16384 would miss on each label at 20000.
+- `_evictOldest` removes the oldest quarter of either cache in one pass over the keys. A clear
+  when full would measure all the labels of an axis again.
+- An entry takes 104-128 bytes on the 64-bit Dart VM (the key record 32, the metrics 48, the
+  table slots 24-48). A full cache takes 3.3-4.0 MiB, without the label strings.
+- The paragraph build does not change, so the widths do not change. A test compares the cached
+  widths with fresh paragraphs, and the text metrics reference test passes. The upstream
+  structure does not change.
+
+**Frameless benchmark, ABBA.** The protocol was written before the first run. A is the code of
+section 11.6, and B is A with the change. One APK for each side (`CASES=axes.linear,axes.category`,
+`N=5000,20000`, the default timing). 6 pairs, with the gate of section 11.6 before each pair. A
+pair is left out of a case when one of its two case windows ran below 2.5 GHz. The rule: keep the
+change when the category update has an interval below 0 at 5000 and at 20000, the linear update at
+5000 (the control) has no interval above 0, and the ticks and the rotation are equal on both
+sides.
+- Pairs 2 and 6 (both B first) ran at 1.2-2.5 GHz in their case windows and are left out of every
+  case. 4 pairs remain, 3 of them A first. With 4 pairs, the sign-flip p is 0.125 or more.
+- The battery was at 31.4-33.2 degrees Celsius in the analyzed runs. Each analyzed case window ran
+  at 2.74-2.91 GHz.
+
+| Case | Figure | A (ms) | B (ms) | B - A (95 % interval) | % |
+|---|---|---:|---:|---|---:|
+| category update, 5000 | update | 126.576 | 20.864 | -105.712 (-106.173 to -105.407) | -83.5 |
+| category update, 20000 | update | 531.961 | 98.078 | -433.883 (-439.944 to -429.899) | -81.6 |
+| linear update, 5000 (control) | update | 1.514 | 1.518 | +0.003 (-0.016 to +0.024) | +0.2 |
+| linear update, 20000 | update | 4.623 | 4.633 | +0.010 (-0.143 to +0.143) | +0.2 |
+| category draw, 5000 | draw | 2.043 | 2.051 | +0.007 (-0.040 to +0.038) | +0.4 |
+| category draw, 20000 | draw | 7.518 | 7.552 | +0.034 (-0.126 to +0.142) | +0.5 |
+| linear draw, 5000 | draw | 1.791 | 1.832 | +0.041 (-0.054 to +0.106) | +2.3 |
+| linear draw, 20000 | draw | 7.146 | 7.242 | +0.095 (-0.173 to +0.283) | +1.3 |
+
+- **Decision: keep.** Both category intervals lie below 0, the control interval includes 0, and
+  the ticks (34) and the rotation (50) are equal in each pair. The two left out pairs give the
+  same sign: -135.5 and -146.9 ms at 5000, -511.2 and -623.8 ms at 20000.
+- Some secondary figures have an interval that excludes 0: the `end` of the linear draw at 20000,
+  +0.116 ms (+0.065 to +0.162), and the dataset draw of the category update at 5000, +0.161 ms
+  (+0.063 to +0.226). The draw after a category update at 20000 is 1.342 ms faster (-2.017 to
+  -0.404). At 4 pairs a percentile interval is weak evidence (section 10.11). The first run of a
+  pair draws faster, and 3 of the 4 pairs run A first. The cause of these differences is not
+  measured.
+
+**Stress entry after the change** (`SCENARIO=1000x0,5000x0,20000x0`, `SECONDS=30`, one run, the
+battery at 33.0 degrees Celsius). The before columns are the runs of section 11.6 with `SECONDS=7`
+and 90:
+
+| N | FPS before | FPS after | update ms before | update ms after |
+|---:|---|---:|---|---:|
+| 1000 | 50.9-52.4 | 50.9 | 8.09-8.35 | 8.32 |
+| 5000 | 6.8-7.4 | 28.8 | 120.30-131.99 | 21.91 |
+| 20000 | 1.5-1.8 | 7.65 | 527.15-625.22 | 106.09 |
+
+**CPU profile after the change** (the category update at 5000, as in section 11.6). The paragraph
+build and the eviction walk are gone. Inclusive shares, and the share times the update time of the
+run (129.74 ms before, 21.75 ms after):
+
+| Frame | Before | After |
+|---|---|---|
+| `measureCanvasText` | 82.7 % (107.3 ms) | 4.4 % (0.96 ms) |
+| `resolveTickFontOptions` | 13.1 % (17.0 ms) | 70.2 % (15.3 ms) |
+| `toFont` | 6.5 % (8.4 ms) | 33.8 % (7.4 ms) |
+| `toLineHeight` | 2.7 % (3.5 ms) | 12.9 % (2.8 ms) |
+| `ContextResolver.setContext` | 2.5 % (3.3 ms) | 14.5 % (3.2 ms) |
+| `Scale.getContext` | 2.1 % (2.7 ms) | 10.8 % (2.3 ms) |
+| `generateTickLabels` | 0.9 % (1.1 ms) | 6.9 % (1.5 ms) |
+| `UiCanvasContext.font=` | 0.7 % (1.0 ms) | 3.5 % (0.8 ms) |
+
+- The top self frame after the change is `_RegExp._ExecuteMatch`, 11.9 %: 7.0 % from
+  `toLineHeight` and 4.8 % from the font style test of `toFont`.
+- A cache hit costs about 0.4 µs. The LRU move (`remove` and the insert) is about 0.7 ms of each
+  update at 5000.
+
+### 11.8 Open: the scale path
+
+The gains are profile shares times benchmark times. They are estimates, not measurements, and
+each change needs the A/B evidence of section 11.7.
+
+1. **The tick font for each tick.** `resolveTickFontOptions` (`core.scale.dart:2883`, called at
+   `:1786` and `:2302`) takes 70.2 % of the category update at 5000 after section 11.7, about
+   15 ms. It takes 10.1 / 15.0 / 12.5 % of the linear / logarithmic / time update. Upstream makes
+   the same calls (`core.scale.js:1698`). The port adds a constant of about 3 µs for each call.
+   - Form (a) keeps the structure: a number path in `toLineHeight` (`helpers.options.dart:58`)
+     and a memo for the `_fontStyle` test (`:374`). For a `double`, the result of the RegExp is
+     known when the JS string has no exponent and no sign. The path must keep the exponent limits
+     (1e21, 1e-7) and -0. The two RegExps take about 18 % of the category update at 5000 (about
+     3.8 ms) and 2-3.6 % of the other updates (0.03-0.07 ms).
+   - Form (b) changes the structure: resolve the tick font once for each update when no scope of
+     `ticks.font` is scriptable or indexable, and use it for each tick. It needs a `DIVERGES`
+     marker and an `adapt` row. Up to -15 ms at 5000 and about -65 ms at 20000 on the category
+     axis. -0.15 / -0.31 / -0.21 ms at 5000 on linear / logarithmic / time.
+2. **`getMinMax` of a value axis**, O(N) as upstream: 28.0 / 21.5 / 23.5 % of the linear /
+   logarithmic / time update. The generic `jsGet` reads at `core.datasetController.dart:1241`
+   and `:1280` (the `skip` closure at `:1278`) take 12.5 / 10.4 / 11.3 %, against 3.8 / 3.1 /
+   4.1 % for `_parsedValue`. The form is the Map read of section 11.2 for both reads. The read
+   of the other axis keeps `undefined`: `jsToNumber(null)` is 0, `jsToNumber(undefined)` is NaN.
+   -3 to -5 %: 0.05-0.09 ms at 5000 and 0.2-0.35 ms at 20000.
+3. **`jsLog10` for each point** in `LogarithmicScale.getPixelForValue`
+   (`scale.logarithmic.dart:401`, `fdlibm_log.dart`): 14.4 % of the logarithmic update, about
+   59 ns for each call. The word access through `ByteData` (`_hi`, `_lo`, `_setHi`) takes 3.8 %,
+   and the `k.toDouble()` conversions about 7 %. The form keeps the fdlibm arithmetic bit-exact,
+   with views that do not box and a conversion that does not allocate. The fdlibm reference tests
+   guard it. -7 to -11 % of the logarithmic update: 0.15-0.22 ms at 5000 and 0.6-0.9 ms at 20000.
+4. **Platforms.** The figures of sections 11.6 and 11.7 come from the Pixel 8a only. The iPhone
+   17 Pro was not connected, and the Mac had no idle window for the macOS and Chrome series.
+
 
 ## 12. Dates (phase 6)
 
