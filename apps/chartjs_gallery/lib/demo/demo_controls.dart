@@ -143,10 +143,12 @@ class ToggleChips extends StatelessWidget {
 }
 
 /// One segment of a [SegmentChoice]: the key of the segment, its short
-/// text, its tooltip and its value.
+/// text, its icon, its tooltip and its value. With an `icon`, the segment
+/// shows the icon only.
 typedef SegmentChoiceItem<T> = ({
   String key,
   String text,
+  IconData? icon,
   String tooltip,
   T value,
 });
@@ -161,8 +163,9 @@ final ButtonStyle _segmentStyle = SegmentedButton.styleFrom(
 /// A short [label] and a segmented button with one selected segment, at
 /// the full width that it gets.
 ///
-/// The label of each segment has the [ValueKey] of the `key` of its item. A
-/// tap on a segment selects its value.
+/// The label of each segment, or its icon when the item has one, has the
+/// [ValueKey] of the `key` of its item. A tap on a segment selects its
+/// value.
 class SegmentChoice<T> extends StatelessWidget {
   /// Creates the control.
   const SegmentChoice({
@@ -209,12 +212,17 @@ class SegmentChoice<T> extends StatelessWidget {
                 ButtonSegment<T>(
                   value: item.value,
                   tooltip: item.tooltip,
-                  label: Text(
-                    item.text,
-                    key: ValueKey(item.key),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  icon: item.icon == null
+                      ? null
+                      : Icon(item.icon, key: ValueKey(item.key)),
+                  label: item.icon != null
+                      ? null
+                      : Text(
+                          item.text,
+                          key: ValueKey(item.key),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                 ),
             ],
             selected: {value},

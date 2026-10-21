@@ -10,9 +10,10 @@ import 'package:chartjs_gallery/demo/chart_canvas.dart';
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
-import 'package:chartjs_gallery/demo/stress_point_controller.dart';
+import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
@@ -31,11 +32,7 @@ import 'package:flutter_chartjs/src/types/geometric.dart' show ChartArea;
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 
 export 'package:chartjs_gallery/demo/stress_chart_config.dart'
-    show stressAnimateMs;
-
-/// The point counts of the stress tab: the N choices of the modes
-/// [StressMode.primitives] and [StressMode.elements].
-const List<int> stressPointCounts = [1000, 5000, 20000];
+    show StressChartType, stressAnimateMs, stressArcCounts, stressPointCounts;
 
 /// The label counts of the stress tab.
 const List<int> stressLabelCounts = [0, 50, 200];
@@ -60,12 +57,12 @@ enum StressMode {
   /// N `ArcElement` objects as the slices of doughnut rings.
   arcs([100, 1000, 5000], 'arcs'),
 
-  /// N points of a real `Chart` of phase 5 (Chart.js ADR 0021, section 8):
-  /// `core.controller`, `core.config`, the producers of `DatasetController`
-  /// and `PointElement`, with the gallery controller
-  /// `StressPointController`. [StressChartCall] selects the call of each
-  /// frame.
-  chart(stressPointCounts, 'chart points'),
+  /// N items of a real `Chart` with the ported controller of a
+  /// [StressChartType] (Chart.js ADR 0031, sections 3 and 5): `line` and
+  /// `scatter` draw the points of phase 5 (Chart.js ADR 0021, section 8) on
+  /// two hidden unit scales. The N choices are the counts of the type.
+  /// [StressChartCall] selects the call of each frame.
+  chart(stressPointCounts, 'chart items'),
 
   /// The chart of [chart] on real scales of phase 6 (`lib/demo/
   /// stress_axes.dart`): an x axis of a [StressAxisType], a linear or
@@ -114,10 +111,13 @@ enum StressChartCall {
 /// `animatorMs` is the time of the animator tick without its draw, for
 /// [StressChartCall.animate]. Both are 0 in the other modes.
 ///
-/// The mode [StressMode.axes] also gives the parts of `StressAxesTiming`
-/// (`layoutMs`, `datasetsUpdateMs` and `datasetsDrawMs`), and the tick count
-/// (`ticks`, after the auto skip) and the `labelRotation` (`rotation`) of
-/// the x axis. They are 0 in the other modes.
+/// The modes [StressMode.chart] and [StressMode.axes] also give the parts
+/// of `StressChartTiming` (`elementsMs`, `layoutMs`, `datasetsUpdateMs` and
+/// `datasetsDrawMs`). The mode [StressMode.chart] gives `sharing`, the
+/// `enableOptionSharing` of the controller of dataset 0 (the value of the
+/// type before the first chart). The mode [StressMode.axes] gives the tick
+/// count (`ticks`, after the auto skip) and the `labelRotation`
+/// (`rotation`) of the x axis. They are 0 or false in the other modes.
 typedef StressStats = ({
   StressMode mode,
   int points,
@@ -127,11 +127,13 @@ typedef StressStats = ({
   double drawMs,
   double updateMs,
   double animatorMs,
+  double elementsMs,
   double layoutMs,
   double datasetsUpdateMs,
   double datasetsDrawMs,
   int ticks,
   double rotation,
+  bool sharing,
   double buildMs,
   double buildMaxMs,
   double rasterMs,
@@ -148,11 +150,13 @@ const StressStats _noStats = (
   drawMs: 0,
   updateMs: 0,
   animatorMs: 0,
+  elementsMs: 0,
   layoutMs: 0,
   datasetsUpdateMs: 0,
   datasetsDrawMs: 0,
   ticks: 0,
   rotation: 0,
+  sharing: false,
   buildMs: 0,
   buildMaxMs: 0,
   rasterMs: 0,
@@ -171,10 +175,10 @@ const StressStats _noStats = (
 ///   one `LineElement`.
 /// - [StressMode.bars]: N `BarElement` objects with heights that move.
 /// - [StressMode.arcs]: N `ArcElement` objects with angles that move.
-/// - [StressMode.chart]: a real `Chart` of N points. Each frame calls
-///   `chart.draw()`, or writes the moving positions into the data objects
-///   and calls `chart.update('none')` ([StressChartCall]). An inline plugin
-///   draws the labels and the title in its `afterDraw` hook.
+/// - [StressMode.chart]: a real `Chart` of N items of a [StressChartType].
+///   Each frame calls `chart.draw()`, or writes the moving values into the
+///   data and calls `chart.update('none')` ([StressChartCall]). An inline
+///   plugin draws the labels and the title in its `afterDraw` hook.
 /// - [StressMode.axes]: the chart of [StressMode.chart] on real scales. An
 ///   update gives the scales new data limits, ticks, label sizes and a
 ///   rotation, and maps each point with `getPixelForValue`.
@@ -182,7 +186,7 @@ const StressStats _noStats = (
 /// The element modes make their elements once for each mode and N. Each
 /// frame writes the properties that move with the typed setters, and then
 /// calls `draw` of each element. The mode [StressMode.chart] makes a new
-/// chart for each N, `enableOptionSharing` value and `backgroundColor`
+/// chart for each N, chart type, `showLine` value and `backgroundColor`
 /// form. The mode [StressMode.axes] makes a new chart for each N, scale
 /// type and `autoSkip` value.
 ///
@@ -194,14 +198,14 @@ const StressStats _noStats = (
 ///
 /// Every control has a `ValueKey` (`stress.mode.bars`, `stress.n.5000`,
 /// `stress.m.200`, `stress.start`, `stress.chart.call.update`,
-/// `stress.chart.sharing`, `stress.axes.scale.time`, …) so that automation
+/// `stress.chart.type.bar`, `stress.axes.scale.time`, …) so that automation
 /// can drive it.
 class StressDemo extends StatefulWidget {
   /// Creates the stress tab.
   ///
   /// [initialMode], [initialN] and [initialM] set the first mode, item count
   /// and label count. [initialSpin] and [initialLine] set the first state of
-  /// two layer switches. [initialCall], [initialSharing] and
+  /// two layer switches. [initialCall], [initialType], [initialShowLine] and
   /// [initialScriptable] set the case of the mode [StressMode.chart].
   /// [initialCall], [initialScale], [initialYScale] and [initialAutoSkip]
   /// set the case of the mode [StressMode.axes]. The mode [StressMode.axes]
@@ -216,7 +220,8 @@ class StressDemo extends StatefulWidget {
     this.initialSpin = false,
     this.initialLine = true,
     this.initialCall = StressChartCall.draw,
-    this.initialSharing = true,
+    this.initialType = StressChartType.line,
+    this.initialShowLine = false,
     this.initialScriptable = false,
     this.initialScale = StressAxisType.linear,
     this.initialYScale = StressAxisType.linear,
@@ -245,11 +250,15 @@ class StressDemo extends StatefulWidget {
   /// The first call of each frame in the mode [StressMode.chart].
   final StressChartCall initialCall;
 
-  /// The first `enableOptionSharing` of the chart points: true as in a line
-  /// chart, false as in a scatter chart.
-  final bool initialSharing;
+  /// The first chart type of the mode [StressMode.chart].
+  final StressChartType initialType;
 
-  /// Whether the chart points start with a scriptable `backgroundColor`.
+  /// Whether a `line` or `scatter` chart of the mode [StressMode.chart]
+  /// starts with its line (the dataset option `showLine`). The other types
+  /// have no line: they take false.
+  final bool initialShowLine;
+
+  /// Whether the chart items start with a scriptable `backgroundColor`.
   final bool initialScriptable;
 
   /// The first scale type of the x axis in the mode [StressMode.axes].
@@ -278,7 +287,8 @@ class StressDemoState extends State<StressDemo> {
   static final int _maxPoints = stressPointCounts.reduce(math.max);
 
   late StressMode _mode = widget.initialMode;
-  late int _n = widget.initialN ?? _mode.counts.first;
+  late StressChartType _type = widget.initialType;
+  late int _n = widget.initialN ?? _countsOf(_mode).first;
   late int _m = widget.initialM ?? stressLabelCounts[1];
   bool _points = true;
   late bool _line = widget.initialLine;
@@ -289,7 +299,7 @@ class StressDemoState extends State<StressDemo> {
       _mode == StressMode.axes && widget.initialCall == StressChartCall.animate
       ? StressChartCall.draw
       : widget.initialCall;
-  late bool _sharing = widget.initialSharing;
+  late bool _showLine = widget.initialShowLine;
   late bool _scriptable = widget.initialScriptable;
   late StressAxisType _scale = widget.initialScale;
   late StressAxisType _yScale = widget.initialYScale;
@@ -301,14 +311,17 @@ class StressDemoState extends State<StressDemo> {
   DemoChart? _chart;
   int? _frameId;
 
-  // The modes [StressMode.chart] and [StressMode.axes]: the chart and its
-  // data objects `{x, y}`.
+  // The modes [StressMode.chart] and [StressMode.axes]: the chart, its
+  // dataset data and the timing plugin.
   _StressChart? _stressChart;
-  List<AnyObject> _chartData = const [];
+  List<Object?> _chartData = const [];
+  final StressChartTiming _timing = StressChartTiming();
 
-  // The mode [StressMode.axes]: the data and the timing plugin.
+  // The mode [StressMode.chart]: the items of the chart.
+  StressChartScene? _chartScene;
+
+  // The mode [StressMode.axes]: the data objects of the chart.
   StressAxesScene? _axesScene;
-  final StressAxesTiming _axesTiming = StressAxesTiming();
 
   // Point positions and velocities, in fractions of the chart per second.
   // The chart benchmark (lib/bench/chart_bench.dart) uses the same points.
@@ -339,7 +352,8 @@ class StressDemoState extends State<StressDemo> {
   int _windowDrawMicros = 0;
   int _windowUpdateMicros = 0;
   int _windowAnimatorMicros = 0;
-  // The parts of [StressAxesTiming] of the frame calls of the window.
+  // The parts of [StressChartTiming] of the frame calls of the window.
+  int _windowElementsTicks = 0;
   int _windowLayoutTicks = 0;
   int _windowDatasetsUpdateTicks = 0;
   int _windowDatasetsDrawTicks = 0;
@@ -348,6 +362,7 @@ class StressDemoState extends State<StressDemo> {
   double _drawMs = 0;
   double _updateMs = 0;
   double _animatorMs = 0;
+  double _elementsMs = 0;
   double _layoutMs = 0;
   double _datasetsUpdateMs = 0;
   double _datasetsDrawMs = 0;
@@ -385,10 +400,20 @@ class StressDemoState extends State<StressDemo> {
   @visibleForTesting
   int get debugFrames => _frames;
 
-  /// The data objects `{x, y}` of the chart of the modes [StressMode.chart]
-  /// and [StressMode.axes].
+  /// The dataset data of the chart of the modes [StressMode.chart] and
+  /// [StressMode.axes]: the data objects `{x, y}` of `line`, `scatter` and
+  /// the mode axes, the objects `{x, y, r}` of `bubble`, or numbers.
   @visibleForTesting
-  List<AnyObject> get debugChartData => _chartData;
+  List<Object?> get debugChartData => _chartData;
+
+  /// The N choices of [mode]: the counts of the chart type in the mode
+  /// [StressMode.chart], else the counts of the mode.
+  List<int> _countsOf(StressMode mode) =>
+      mode == StressMode.chart ? _type.counts : mode.counts;
+
+  /// Whether the chart of the mode [StressMode.chart] shows its line: only a
+  /// `line` or `scatter` chart has one.
+  bool get _effectiveShowLine => _showLine && _type.points;
 
   @override
   void initState() {
@@ -424,6 +449,7 @@ class StressDemoState extends State<StressDemo> {
       _windowDrawMicros = 0;
       _windowUpdateMicros = 0;
       _windowAnimatorMicros = 0;
+      _windowElementsTicks = 0;
       _windowLayoutTicks = 0;
       _windowDatasetsUpdateTicks = 0;
       _windowDatasetsDrawTicks = 0;
@@ -447,7 +473,8 @@ class StressDemoState extends State<StressDemo> {
   /// [StressChartCall.animate] to [StressChartCall.draw].
   void _setScene({StressMode? mode, int? n}) {
     final newMode = mode ?? _mode;
-    final newN = n ?? (mode == null ? _n : math.min(_n, newMode.counts.last));
+    final newN =
+        n ?? (mode == null ? _n : math.min(_n, _countsOf(newMode).last));
     if (newMode == _mode && newN == _n) return;
     // The modes of the demo chart share one host. The modes chart and axes
     // have a host of their own, and a new host for each N. A new host gives
@@ -487,23 +514,35 @@ class StressDemoState extends State<StressDemo> {
     _stressChart = null;
   }
 
-  /// Sets the case of the mode [StressMode.chart]. A change of the sharing,
-  /// of the `backgroundColor` form, or to or from
+  /// Sets the case of the mode [StressMode.chart]. A change of the chart
+  /// type, of `showLine`, of the `backgroundColor` form, or to or from
   /// [StressChartCall.animate] (another `animation` option) makes a new
-  /// chart.
-  void _setChartCase({StressChartCall? call, bool? sharing, bool? scriptable}) {
+  /// chart. A new type keeps the index of N in the counts of the type.
+  void _setChartCase({
+    StressChartCall? call,
+    StressChartType? type,
+    bool? showLine,
+    bool? scriptable,
+  }) {
     final newCall = call ?? _call;
     final animated = newCall == StressChartCall.animate;
     final animatedChanged = animated != (_call == StressChartCall.animate);
     _call = newCall;
-    final newSharing = sharing ?? _sharing;
+    final newType = type ?? _type;
+    final newShowLine = showLine ?? _showLine;
     final newScriptable = scriptable ?? _scriptable;
-    if (newSharing == _sharing &&
+    if (newType == _type &&
+        newShowLine == _showLine &&
         newScriptable == _scriptable &&
         !animatedChanged) {
       return;
     }
-    _sharing = newSharing;
+    if (newType != _type) {
+      final index = _type.counts.indexOf(_n);
+      if (index >= 0) _n = newType.counts[index];
+    }
+    _type = newType;
+    _showLine = newShowLine;
     _scriptable = newScriptable;
     _stressChart = null;
   }
@@ -631,31 +670,33 @@ class StressDemoState extends State<StressDemo> {
   }
 
   /// `new Chart(canvas, config)` of the mode [StressMode.chart]: one dataset
-  /// of N points of `StressPointController` at the positions of the moving
-  /// points, with `animation: false`, or the looping animation of
+  /// of N items of the chart type at the values of the moving points, with
+  /// `animation: false`, or the looping animation of
   /// [StressChartCall.animate]. `stressChartConfig` gives the config, which
   /// the chart benchmark (lib/bench/chart_bench.dart) also uses.
   ///
   /// The inline plugin `stressLabels` draws the M labels and the title in
   /// its `afterDraw` hook, as the other modes draw them after their items.
+  /// The plugin of [StressChartTiming] times the parts.
   Chart _createChart(UiCanvasElement canvas) {
     registerGalleryComponents();
-    final data = _chartData = _field.data(_n);
+    final scene = _chartScene = StressChartScene(_type, _n, _field);
+    _chartData = scene.data;
     return _StressChart(
       canvas,
       stressChartConfig(
-        data: data,
-        sharing: _sharing,
+        scene: scene,
         scriptable: _scriptable,
+        showLine: _effectiveShowLine,
         animate: _call == StressChartCall.animate,
-        plugins: [_labelsPlugin],
+        plugins: [_labelsPlugin, _timing.plugin],
       ),
     );
   }
 
-  /// `new Chart(canvas, config)` of the mode [StressMode.axes]: the chart of
-  /// [_createChart] with the scales of `stressAxesConfig`, and the timing
-  /// plugin of [StressAxesTiming].
+  /// `new Chart(canvas, config)` of the mode [StressMode.axes]: a
+  /// `LineController` chart on the scales of `stressAxesConfig`, and the
+  /// timing plugin of [StressChartTiming].
   Chart _createAxesChart(UiCanvasElement canvas) {
     registerGalleryComponents();
     final scene = _axesScene = StressAxesScene(
@@ -670,7 +711,7 @@ class StressDemoState extends State<StressDemo> {
       stressAxesConfig(
         scene: scene,
         autoSkip: _autoSkip,
-        plugins: [_labelsPlugin, _axesTiming.plugin],
+        plugins: [_labelsPlugin, _timing.plugin],
       ),
     );
   }
@@ -752,10 +793,11 @@ class StressDemoState extends State<StressDemo> {
       _drawMs = _windowDrawMicros / _windowFrames / 1000;
       _updateMs = _windowUpdateMicros / _windowFrames / 1000;
       _animatorMs = _windowAnimatorMicros / _windowFrames / 1000;
-      // The parts of the mode axes: the hooks of the frame calls of the
-      // window ([_chartFrame]).
+      // The parts of the modes chart and axes: the hooks of the frame calls
+      // of the window ([_chartFrame]).
       double perFrame(int ticks) =>
-          ticks / StressAxesTiming.ticksPerMs / _windowFrames;
+          ticks / StressChartTiming.ticksPerMs / _windowFrames;
+      _elementsMs = perFrame(_windowElementsTicks);
       _layoutMs = perFrame(_windowLayoutTicks);
       _datasetsUpdateMs = perFrame(_windowDatasetsUpdateTicks);
       _datasetsDrawMs = perFrame(_windowDatasetsDrawTicks);
@@ -764,6 +806,7 @@ class StressDemoState extends State<StressDemo> {
       _windowDrawMicros = 0;
       _windowUpdateMicros = 0;
       _windowAnimatorMicros = 0;
+      _windowElementsTicks = 0;
       _windowLayoutTicks = 0;
       _windowDatasetsUpdateTicks = 0;
       _windowDatasetsDrawTicks = 0;
@@ -786,26 +829,25 @@ class StressDemoState extends State<StressDemo> {
   ///
   /// The draw time is the time of `chart.draw()`, also inside
   /// `chart.update()`. The update time is the time of `chart.update()`
-  /// without its draw. The writes of the positions into the data objects
-  /// are in neither time. In the mode [StressMode.axes], the plugin of
-  /// [StressAxesTiming] times the parts. The parts count only the hooks of
-  /// this call, as the draw time does: not the update at the construction of
-  /// a chart, and not the update of a resize of its host.
+  /// without its draw. The writes of the values into the data are in
+  /// neither time. The plugin of [StressChartTiming] times the parts. The
+  /// parts count only the hooks of this call, as the draw time does: not the
+  /// update at the construction of a chart, and not the update of a resize
+  /// of its host.
   void _chartFrame(_StressChart chart) {
     if (_call == StressChartCall.animate) {
       _animateFrame(chart);
       return;
     }
     if (_call == StressChartCall.update) {
-      final axesScene = _mode == StressMode.axes ? _axesScene : null;
-      if (axesScene != null) {
-        axesScene.write(_field);
+      if (_mode == StressMode.axes) {
+        _axesScene?.write(_field);
       } else {
-        _field.write(_chartData);
+        _chartScene?.write(_field);
       }
     }
     chart.drawMicros = 0;
-    final timing = _axesTiming..reset();
+    final timing = _timing..reset();
     final watch = Stopwatch()..start();
     switch (_call) {
       case StressChartCall.draw:
@@ -819,6 +861,7 @@ class StressDemoState extends State<StressDemo> {
     final total = watch.elapsedMicroseconds;
     _windowDrawMicros += chart.drawMicros;
     _windowUpdateMicros += total - chart.drawMicros;
+    _windowElementsTicks += timing.elementsTicks;
     _windowLayoutTicks += timing.layoutTicks;
     _windowDatasetsUpdateTicks += timing.datasetsUpdateTicks;
     _windowDatasetsDrawTicks += timing.datasetsDrawTicks;
@@ -836,7 +879,7 @@ class StressDemoState extends State<StressDemo> {
   void _animateFrame(_StressChart chart) {
     if (!_animating) {
       _animating = true;
-      _field.write(_chartData);
+      _chartScene?.write(_field);
       if (!identical(_listenedChart, chart)) {
         _listenedChart = chart;
         animator.listen(chart, 'progress', (_) {
@@ -888,11 +931,13 @@ class StressDemoState extends State<StressDemo> {
       drawMs: _drawMs,
       updateMs: _updateMs,
       animatorMs: _animatorMs,
+      elementsMs: _elementsMs,
       layoutMs: _layoutMs,
       datasetsUpdateMs: _datasetsUpdateMs,
       datasetsDrawMs: _datasetsDrawMs,
       ticks: axes?.ticks ?? 0,
       rotation: axes?.rotation ?? 0,
+      sharing: _mode == StressMode.chart && _sharingOf(stressChart),
       buildMs: avg(build),
       buildMaxMs: max(build),
       rasterMs: avg(raster),
@@ -901,6 +946,11 @@ class StressDemoState extends State<StressDemo> {
     );
     widget.onStats?.call(_stats.value);
   }
+
+  /// The `enableOptionSharing` of the controller of dataset 0 of [chart],
+  /// or the value of the chart type before the first update.
+  bool _sharingOf(Chart? chart) =>
+      chart?.getDatasetMeta(0).controller?.enableOptionSharing ?? _type.sharing;
 
   static const PointOptions _pointOptions = PointOptions(
     pointStyle: 'circle',
@@ -1204,6 +1254,7 @@ class StressDemoState extends State<StressDemo> {
               (
                 key: 'stress.mode.${mode.name}',
                 text: modeText[mode]!,
+                icon: null,
                 tooltip: mode.name,
                 value: mode,
               ),
@@ -1211,12 +1262,36 @@ class StressDemoState extends State<StressDemo> {
           value: _mode,
           onChanged: (mode) => setState(() => _setScene(mode: mode)),
         ),
+        if (_mode == StressMode.chart) ...[
+          gap,
+          SegmentChoice<StressChartType>(
+            label: 'type',
+            items: [
+              for (final type in StressChartType.values)
+                (
+                  key: 'stress.chart.type.${type.name}',
+                  text: type.name,
+                  icon: _typeIcons[type],
+                  tooltip: type.name,
+                  value: type,
+                ),
+            ],
+            value: _type,
+            onChanged: (type) => setState(() => _setChartCase(type: type)),
+          ),
+        ],
         gap,
         SegmentChoice<int>(
           label: 'N',
           items: [
-            for (final v in _mode.counts)
-              (key: 'stress.n.$v', text: count(v), tooltip: '$v', value: v),
+            for (final v in _countsOf(_mode))
+              (
+                key: 'stress.n.$v',
+                text: count(v),
+                icon: null,
+                tooltip: '$v',
+                value: v,
+              ),
           ],
           value: _n,
           onChanged: (v) => setState(() => _setScene(n: v)),
@@ -1229,6 +1304,7 @@ class StressDemoState extends State<StressDemo> {
               (
                 key: 'stress.m.$v',
                 text: count(v),
+                icon: null,
                 tooltip: '$v labels',
                 value: v,
               ),
@@ -1246,6 +1322,7 @@ class StressDemoState extends State<StressDemo> {
                   (
                     key: 'stress.chart.call.${call.name}',
                     text: callText[call]!,
+                    icon: null,
                     tooltip: call.name,
                     value: call,
                   ),
@@ -1263,6 +1340,7 @@ class StressDemoState extends State<StressDemo> {
                 (
                   key: 'stress.axes.scale.${type.name}',
                   text: axisText[type]!,
+                  icon: null,
                   tooltip: type.name,
                   value: type,
                 ),
@@ -1278,6 +1356,7 @@ class StressDemoState extends State<StressDemo> {
                 (
                   key: 'stress.axes.yScale.${type.name}',
                   text: axisText[type]!,
+                  icon: null,
                   tooltip: type.name,
                   value: type,
                 ),
@@ -1289,6 +1368,43 @@ class StressDemoState extends State<StressDemo> {
       ],
     );
   }
+
+  /// The icon of each chart type on the line `type` of the mode
+  /// [StressMode.chart].
+  static const Map<StressChartType, IconData> _typeIcons = {
+    StressChartType.line: Icons.show_chart,
+    StressChartType.scatter: Icons.scatter_plot,
+    StressChartType.bar: Icons.bar_chart,
+    StressChartType.bubble: Icons.bubble_chart,
+    StressChartType.doughnut: Icons.donut_large,
+    StressChartType.pie: Icons.pie_chart,
+    StressChartType.polarArea: Icons.track_changes,
+    StressChartType.radar: Icons.radar,
+  };
+
+  /// The controller class of each chart type, for the card.
+  static const Map<StressChartType, String> _controllerNames = {
+    StressChartType.line: 'LineController',
+    StressChartType.scatter: 'ScatterController',
+    StressChartType.bar: 'BarController',
+    StressChartType.bubble: 'BubbleController',
+    StressChartType.doughnut: 'DoughnutController',
+    StressChartType.pie: 'PieController',
+    StressChartType.polarArea: 'PolarAreaController',
+    StressChartType.radar: 'RadarController',
+  };
+
+  /// The data element class of each chart type, for the card.
+  static const Map<StressChartType, String> _elementNames = {
+    StressChartType.line: 'PointElement',
+    StressChartType.scatter: 'PointElement',
+    StressChartType.bar: 'BarElement',
+    StressChartType.bubble: 'PointElement',
+    StressChartType.doughnut: 'ArcElement',
+    StressChartType.pie: 'ArcElement',
+    StressChartType.polarArea: 'ArcElement',
+    StressChartType.radar: 'PointElement',
+  };
 
   /// The on/off options of the mode, as one segmented button of icons.
   Widget _optionToggles(bool layers) {
@@ -1318,13 +1434,14 @@ class StressDemoState extends State<StressDemo> {
           onChanged: (v) => setState(() => _spin = v),
         ),
         if (_mode == StressMode.chart) ...[
-          (
-            key: 'stress.chart.sharing',
-            icon: Icons.share,
-            tooltip: 'enableOptionSharing',
-            value: _sharing,
-            onChanged: (v) => setState(() => _setChartCase(sharing: v)),
-          ),
+          if (_type.points)
+            (
+              key: 'stress.chart.showLine',
+              icon: Icons.timeline,
+              tooltip: 'showLine',
+              value: _showLine,
+              onChanged: (v) => setState(() => _setChartCase(showLine: v)),
+            ),
           (
             key: 'stress.chart.scriptable',
             icon: Icons.functions,
@@ -1371,13 +1488,14 @@ class StressDemoState extends State<StressDemo> {
             StressChartCall.animate => 'core.animator: the tick of N looping '
                 'animations and chart.draw()',
           }} · '
-          'StressPointController · PointElement.draw × N · '
+          'controllers: ${_controllerNames[_type]} · '
+          '${_elementNames[_type]}.draw × N · '
           'plugin afterDraw: renderText × M (rotated)',
     StressMode.axes =>
       'helpers.extras: requestAnimFrame each frame · core.controller: '
           '${_call == StressChartCall.update ? _updateCall : 'chart.draw()'} · '
           'scales: ${_scale.name} x, ${_yScale.name} y · '
-          'StressPointController: getPixelForValue × 2N · '
+          'LineController: getPixelForValue × 2N · '
           'PointElement.draw × N · plugin afterDraw: renderText × M (rotated)',
   };
 
@@ -1402,19 +1520,20 @@ class StressDemoState extends State<StressDemo> {
                       .toDouble();
                   if (_mode.runsChart) {
                     final axes = _mode == StressMode.axes;
-                    // A new N, sharing, backgroundColor form or a change to
-                    // or from the call animate (mode chart), or a new N,
-                    // scale type or autoSkip (mode axes) gives a new host,
-                    // thus a new chart. A ChartCanvas makes its chart only
-                    // once.
+                    // A new N, chart type, showLine, backgroundColor form or
+                    // a change to or from the call animate (mode chart), or
+                    // a new N, scale type or autoSkip (mode axes) gives a new
+                    // host, thus a new chart. A ChartCanvas makes its chart
+                    // only once.
                     return KeyedSubtree(
                       key: ValueKey(
                         axes
                             ? (_n, _scale, _yScale, _autoSkip)
                             : (
                                 _n,
-                                _sharing,
+                                _type,
                                 _scriptable,
+                                _effectiveShowLine,
                                 _call == StressChartCall.animate,
                               ),
                       ),
@@ -1457,9 +1576,15 @@ class StressDemoState extends State<StressDemo> {
                     if (stats.mode == StressMode.chart) ...[
                       ('update', '${ms(stats.updateMs)} ms'),
                       ('animator', '${ms(stats.animatorMs)} ms'),
+                      ('elements', '${ms(stats.elementsMs)} ms'),
+                      ('layout', '${ms(stats.layoutMs)} ms'),
+                      ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
+                      ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
+                      ('sharing', '${stats.sharing}'),
                     ],
                     if (stats.mode == StressMode.axes) ...[
                       ('update', '${ms(stats.updateMs)} ms'),
+                      ('elements', '${ms(stats.elementsMs)} ms'),
                       ('layout', '${ms(stats.layoutMs)} ms'),
                       ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
                       ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
@@ -1490,11 +1615,13 @@ class StressDemoState extends State<StressDemo> {
                 '(recording into a ui.Picture). In the element modes, it '
                 'also has the writes of the element properties. update: the '
                 'time of chart.update() without its draw. animator: the tick '
-                'of the animations before their draw (call animate). layout, '
-                'datasets update and datasets draw (mode axes): the parts '
-                'between the plugin hooks, in the draw and update calls of '
-                'the frames only. Draw minus datasets draw is the '
-                'draw of the scales, the labels and the title. build and '
+                'of the animations before their draw (call animate). '
+                'elements, layout, datasets update and datasets draw (modes '
+                'chart and axes): the parts between the plugin hooks, in the '
+                'draw and update calls of the frames only. elements is the '
+                'parse and the first getMaxOverflow. Draw minus datasets '
+                'draw is the draw of the scales, the labels and the title. '
+                'sharing: enableOptionSharing of the controller. build and '
                 'raster: FrameTiming of the last 120 '
                 'frames. Profile on a device with flutter run --profile.',
                 style: theme.textTheme.bodySmall,

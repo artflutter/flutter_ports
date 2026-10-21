@@ -11,10 +11,11 @@
 /// - [StressAxisType]: the scale types of the defines `SCALE` and `YSCALE`.
 /// - [StressAxesScene]: the data objects of N points, at the positions of a
 ///   `StressPointField`.
-/// - [stressAxesConfig]: the config of the chart.
-/// - [StressAxesTiming]: the time of the layout, of the dataset update and
-///   of the dataset draw, from the hooks of an inline plugin. The library
-///   does not change.
+/// - [stressAxesConfig]: the config of the chart, a `LineController` chart
+///   of points without a line.
+///
+/// `StressChartTiming` (`lib/demo/stress_timing.dart`) gives the time of the
+/// parts of the chart path.
 library;
 
 import 'dart:math' as math;
@@ -62,8 +63,8 @@ double stressAxesValue(double fraction, StressAxisType type) =>
 /// The data objects of a chart of the stress mode `axes`.
 ///
 /// The data objects are in the internal format of the scales, the parsed
-/// items of `parsing: false` (the default of `StressPointController`): the
-/// x of a category point is the index of its label, and the x of a time
+/// items of `parsing: false` (an option of [stressAxesConfig]): the x of a
+/// category point is the index of its label, and the x of a time
 /// point is a timestamp in ms. Thus an update does not parse the data.
 ///
 /// With `parsing: false`, the data must be sorted by the index axis
@@ -136,10 +137,18 @@ final class StressAxesScene {
   }
 }
 
-/// The config of a chart of the stress mode `axes`: the config of
-/// `stressChartConfig` (one dataset of `StressPointController`, shared
-/// options, `animation: false`, `events: []`) with the scales `x` and `y`
-/// of [scene], and the labels of a category axis.
+/// The config of a chart of the stress mode `axes` (Chart.js ADR 0031
+/// section 4): a `LineController` chart of one dataset of the data objects
+/// of [scene], with the scales `x` and `y` of [scene] and the labels of a
+/// category axis.
+///
+/// The dataset has `showLine: false` (the line has `borderWidth: 0`,
+/// controller.line.js:63-65, thus it does not draw) and `clip: false`. The
+/// chart has `parsing: false` (the data is sorted), `layout.autoPadding:
+/// false`, `animation: false`, `events: []` and `maintainAspectRatio:
+/// false`. Thus the chart area and the split of `drawMs` are those of
+/// phase 6: no overflow padding, and no dataset clip that moves the flush of
+/// the circle batch into the dataset draw.
 ///
 /// [autoSkip] is the option `ticks.autoSkip` of the x axis. A category axis
 /// without it draws N rotated labels in each frame. [options] adds chart
@@ -149,26 +158,40 @@ AnyObject stressAxesConfig({
   required bool autoSkip,
   AnyObject options = const {},
   List<Object?> plugins = const [],
-}) {
-  final config = stressChartConfig(
-    data: scene.data,
-    sharing: true,
-    scriptable: false,
-    options: {
-      ...options,
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': scene.x.name,
-          'ticks': <String, Object?>{'autoSkip': autoSkip},
-        },
-        'y': <String, Object?>{'type': scene.y.name},
+}) => <String, Object?>{
+  'type': 'line',
+  'data': <String, Object?>{
+    if (scene.labels.isNotEmpty) 'labels': scene.labels,
+    'datasets': <Object?>[
+      <String, Object?>{
+        'data': scene.data,
+        'backgroundColor': stressChartBackground,
+        'borderColor': '#36A2EB',
+        'borderWidth': 1.0,
+        'pointStyle': 'circle',
+        'radius': 3.0,
+        'showLine': false,
+        'clip': false,
       },
+    ],
+  },
+  'options': <String, Object?>{
+    'animation': false,
+    'events': <String>[],
+    'maintainAspectRatio': false,
+    'parsing': false,
+    'layout': <String, Object?>{'autoPadding': false},
+    ...options,
+    'scales': <String, Object?>{
+      'x': <String, Object?>{
+        'type': scene.x.name,
+        'ticks': <String, Object?>{'autoSkip': autoSkip},
+      },
+      'y': <String, Object?>{'type': scene.y.name},
     },
-    plugins: plugins,
-  );
-  (config['data']! as AnyObject)['labels'] = scene.labels;
-  return config;
-}
+  },
+  'plugins': <Object?>[...plugins],
+};
 
 /// The tick count after the auto skip and the `labelRotation` of the x scale
 /// of [chart], or Dart `null` before the first layout.
@@ -183,89 +206,4 @@ AnyObject stressAxesConfig({
     ticks: ticks.length,
     rotation: jsToNumber(scale.labelRotation),
   );
-}
-
-/// The time of three parts of the chart path, from the hooks of an inline
-/// plugin ([plugin]), in the ticks of a `Stopwatch`.
-///
-/// - layout: `beforeLayout` to `afterLayout`, the update and the fit of the
-///   scales (`layouts.update`): the data limits, the ticks, the label
-///   sizes, the rotation and the auto skip.
-/// - datasetsUpdate: `beforeDatasetsUpdate` to `afterDatasetsUpdate`, the
-///   update of the elements: `getPixelForValue` for each point.
-/// - datasetsDraw: `beforeDatasetsDraw` to `afterDatasetsDraw`, the draw of
-///   the points. The draw time without this part is the draw of the scales
-///   and of the other plugins: in the stress tab, also the labels and the
-///   title of the plugin `stressLabels`.
-///
-/// The hooks run in `chart.update()` and `chart.draw()` (core.controller.js
-/// notifies each of them). A call of `draw` alone gives no layout and no
-/// update time.
-///
-/// The parts add the hooks of all the calls of the chart: also the update at
-/// the construction of the chart and the update of a resize. To time one
-/// call only, call [StressAxesTiming.reset] before the call and read the
-/// parts after it, as the stress tab does.
-final class StressAxesTiming {
-  /// The clock of the hooks.
-  static final Stopwatch _watch = Stopwatch()..start();
-
-  /// The ticks of a `Stopwatch` in one millisecond.
-  static final double ticksPerMs = _watch.frequency / 1000;
-
-  /// The ticks of the layouts since the last [take].
-  int layoutTicks = 0;
-
-  /// The ticks of the dataset updates since the last [take].
-  int datasetsUpdateTicks = 0;
-
-  /// The ticks of the dataset draws since the last [take].
-  int datasetsDrawTicks = 0;
-
-  int _layoutStart = 0;
-  int _datasetsUpdateStart = 0;
-  int _datasetsDrawStart = 0;
-
-  /// The inline plugin `stressAxesTiming`. A hook returns Dart `null`
-  /// (JS `undefined`): it cancels nothing.
-  late final AnyObject plugin = <String, Object?>{
-    'id': 'stressAxesTiming',
-    'beforeLayout': (Object? chart, Object? args, Object? options) {
-      _layoutStart = _watch.elapsedTicks;
-    },
-    'afterLayout': (Object? chart, Object? args, Object? options) {
-      layoutTicks += _watch.elapsedTicks - _layoutStart;
-    },
-    'beforeDatasetsUpdate': (Object? chart, Object? args, Object? options) {
-      _datasetsUpdateStart = _watch.elapsedTicks;
-    },
-    'afterDatasetsUpdate': (Object? chart, Object? args, Object? options) {
-      datasetsUpdateTicks += _watch.elapsedTicks - _datasetsUpdateStart;
-    },
-    'beforeDatasetsDraw': (Object? chart, Object? args, Object? options) {
-      _datasetsDrawStart = _watch.elapsedTicks;
-    },
-    'afterDatasetsDraw': (Object? chart, Object? args, Object? options) {
-      datasetsDrawTicks += _watch.elapsedTicks - _datasetsDrawStart;
-    },
-  };
-
-  /// The ticks of each part since the last call, by the name of the part:
-  /// `layout`, `datasetsUpdate` and `datasetsDraw`. It resets the parts.
-  Map<String, int> take() {
-    final parts = {
-      'layout': layoutTicks,
-      'datasetsUpdate': datasetsUpdateTicks,
-      'datasetsDraw': datasetsDrawTicks,
-    };
-    reset();
-    return parts;
-  }
-
-  /// Sets each part to 0.
-  void reset() {
-    layoutTicks = 0;
-    datasetsUpdateTicks = 0;
-    datasetsDrawTicks = 0;
-  }
 }

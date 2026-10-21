@@ -1,11 +1,13 @@
 // Original code, not ported from Chart.js: tests of the gallery ChartCanvas.
 
 import 'package:chartjs_gallery/demo/chart_canvas.dart';
-import 'package:chartjs_gallery/demo/stress_point_controller.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs/src/controllers/index.dart';
 import 'package:flutter_chartjs/src/core/core.animator.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
+import 'package:flutter_chartjs/src/core/core.registry.dart';
 import 'package:flutter_chartjs/src/elements/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -16,13 +18,14 @@ Future<void> _frames(WidgetTester tester, int count) async {
   }
 }
 
-/// A chart with one point at the middle of the chart area. Its first update
-/// animates the point from the bottom of the chart area for 1000 ms (the
-/// default `animation.duration`).
+/// A line chart with one point at the middle of the chart area: the hidden
+/// unit scales of `unitScales`. Its first update animates the point from
+/// the bottom of the chart area for 1000 ms (the default
+/// `animation.duration`).
 Chart _create(UiCanvasElement canvas) {
   registerGalleryComponents();
   return Chart(canvas, <String, Object?>{
-    'type': StressPointController.id,
+    'type': 'line',
     'data': <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
@@ -32,11 +35,34 @@ Chart _create(UiCanvasElement canvas) {
         },
       ],
     },
-    'options': <String, Object?>{'maintainAspectRatio': false},
+    'options': <String, Object?>{
+      'maintainAspectRatio': false,
+      'scales': unitScales(),
+    },
   });
 }
 
 void main() {
+  test('registerGalleryComponents registers the eight controllers of phase '
+      '7 once', () {
+    registerGalleryComponents();
+    registerGalleryComponents();
+    final items = registry.controllers.items;
+    expect(items.keys, [
+      'bar',
+      'bubble',
+      'doughnut',
+      'line',
+      'pie',
+      'polarArea',
+      'radar',
+      'scatter',
+    ]);
+    expect(items.keys, isNot(contains('stressPoint')));
+    expect(items['line'], same(LineController.jsClass));
+    expect(items['scatter'], same(ScatterController.jsClass));
+  });
+
   testWidgets('chart canvas: a chart made under a disabled TickerMode is '
       'muted until the TickerMode turns on', (tester) async {
     final enabled = ValueNotifier(false);
@@ -59,6 +85,8 @@ void main() {
     );
     // The widget makes the chart after the first frame.
     final chart = created!;
+    expect(chart.config.type, 'line');
+    expect(chart.getDatasetMeta(0).controller, isA<LineController>());
     final point = chart.getDatasetMeta(0).data.single as PointElement;
     final area = chart.chartArea!;
     final start = point.y;

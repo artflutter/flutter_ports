@@ -22,9 +22,9 @@
 ///   recording also draws the pending circles of the circle batch.
 ///
 /// A scene can also time parts of the update and the draw itself
-/// ([ChartBenchScene.takeParts]). The cases of the mode `axes` time the
+/// ([ChartBenchScene.takeParts]). Each case times the element update, the
 /// layout, the dataset update and the dataset draw with the hooks of an
-/// inline plugin (`StressAxesTiming`).
+/// inline plugin (`StressChartTiming`, Chart.js ADR 0031, section 6).
 ///
 /// The timing loop follows `packages/flutter_chartjs/tool/bench/src/
 /// harness.dart`: a warm-up, a calibration, and timed batches. A batch runs
@@ -40,9 +40,10 @@ library;
 
 import 'dart:ui' as ui;
 
+import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
-import 'package:chartjs_gallery/demo/stress_point_controller.dart';
+import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
@@ -128,6 +129,9 @@ final class ChartBenchScene {
   final Map<String, Object?> Function(Chart chart)? describe;
 }
 
+/// The counts of a case without its own counts and without the define `N`.
+const List<int> chartBenchDefaultCounts = [1000, 5000, 20000];
+
 /// One case of the benchmark.
 ///
 /// The BENCH line of a case has the keys `mode` and `case`, and the keys of
@@ -140,7 +144,12 @@ final class ChartBenchCase {
     required this.call,
     required this.scene,
     this.keys = const {},
+    this.counts,
   });
+
+  /// The point counts of the case without the define `N`, or Dart `null`
+  /// for [chartBenchDefaultCounts].
+  final List<int>? counts;
 
   /// The mode, for example `chart`.
   final String mode;
@@ -156,7 +165,7 @@ final class ChartBenchCase {
   /// timing.
   final ChartBenchScene Function(int n) scene;
 
-  /// The other keys of the BENCH line, for example `sharing`.
+  /// The other keys of the BENCH line, for example `type` and `sharing`.
   final Map<String, Object?> keys;
 
   /// The mode and the name: `chart.b`.
@@ -168,38 +177,48 @@ final class ChartBenchCase {
       selector == mode || selector == name || selector == id;
 }
 
-/// A case of the stress mode chart (Chart.js ADR 0021, section 8), with the
-/// config of `stressChartConfig` and the points of `StressPointField`.
+/// A case of the stress mode chart (Chart.js ADR 0021, section 8; Chart.js
+/// ADR 0031, sections 3 and 7), with the config of `stressChartConfig`, the
+/// items of a `StressChartScene` of [type] at the values of
+/// `StressPointField`, and the parts of `StressChartTiming`.
 ChartBenchCase _stressCase(
   String name,
   ChartBenchCall call, {
-  required bool sharing,
+  required StressChartType type,
   bool scriptable = false,
+  List<int>? counts,
 }) => ChartBenchCase(
   mode: 'chart',
   name: name,
   call: call,
-  keys: {'sharing': sharing, 'scriptable': scriptable},
+  keys: {'type': type.name, 'sharing': type.sharing, 'scriptable': scriptable},
+  counts: counts,
   scene: (n) {
     registerGalleryComponents();
     final field = StressPointField(n);
-    final data = field.data(n);
+    final scene = StressChartScene(type, n, field);
+    final timing = StressChartTiming();
     return ChartBenchScene(
       config: stressChartConfig(
-        data: data,
-        sharing: sharing,
+        scene: scene,
         scriptable: scriptable,
         options: chartBenchOptions,
+        plugins: [timing.plugin],
       ),
-      change: () => field
-        ..step(n, chartBenchStep)
-        ..write(data),
+      change: () => scene.write(field..step(n, chartBenchStep)),
+      takeParts: timing.take,
     );
   },
 );
 
+/// A case `chart.<type>` of a type other than `line` and `scatter`
+/// (Chart.js ADR 0031, section 7): the name is the type, without the
+/// scriptable color, with the counts of the type.
+ChartBenchCase _typeCase(StressChartType type, ChartBenchCall call) =>
+    _stressCase(type.name, call, type: type, counts: type.counts);
+
 /// A case of the stress mode axes: the config of `stressAxesConfig`, the
-/// points of `StressPointField` and the parts of `StressAxesTiming`. The y
+/// points of `StressPointField` and the parts of `StressChartTiming`. The y
 /// axis is linear, and the x axis has `ticks.autoSkip`.
 ChartBenchCase _axesCase(StressAxisType scale, ChartBenchCall call) =>
     ChartBenchCase(
@@ -220,7 +239,7 @@ ChartBenchCase _axesCase(StressAxisType scale, ChartBenchCall call) =>
           y: StressAxisType.linear,
           positions: field,
         );
-        final timing = StressAxesTiming();
+        final timing = StressChartTiming();
         return ChartBenchScene(
           config: stressAxesConfig(
             scene: scene,
@@ -248,12 +267,19 @@ ChartBenchCase _axesCase(StressAxisType scale, ChartBenchCall call) =>
 ///
 /// The mode `chart` has the cases of the stress mode chart. They have no
 /// labels and no title: the stress mode draws them in a plugin of the
-/// gallery, not in the chart path.
-/// - `a`: `chart.draw()`. The points do not move.
+/// gallery, not in the chart path. The BENCH line of each has the keys
+/// `type`, `sharing` (the `enableOptionSharing` of the controller) and
+/// `scriptable`, and the parts `elements`, `layout`, `datasetsUpdate` and
+/// `datasetsDraw`.
+/// - `a`: `chart.draw()` of a `line` chart. The points do not move.
 /// - `b`: new positions in the data objects, then `chart.update('none')`,
-///   with `enableOptionSharing` true (a line chart) and false (a scatter
-///   chart).
-/// - `c`: as `b` with the sharing, and a scriptable `backgroundColor`.
+///   of a `line` chart (`enableOptionSharing` true) and of a `scatter`
+///   chart (false).
+/// - `c`: as `b` with `line`, and a scriptable `backgroundColor`.
+///
+/// The cases `a`, `b` and `c` keep the names and the keys of phase 5
+/// (Chart.js ADR 0021, section 8): `line` and `scatter` draw the points of
+/// phase 5 on two hidden unit scales (Chart.js ADR 0031, section 3).
 ///
 /// The mode `axes` has the cases of the stress mode axes: the points of
 /// case `b` on real scales of phase 6. The name of a case is the scale type
@@ -262,17 +288,33 @@ ChartBenchCase _axesCase(StressAxisType scale, ChartBenchCall call) =>
 /// values then `chart.update('none')` (the data limits, the ticks, the label
 /// sizes, the fit and `getPixelForValue` for each point). The y values
 /// move. The x values are fixed and sorted, as `parsing: false` needs
-/// (`StressAxesScene`). The BENCH
-/// line has the parts `layout`, `datasetsUpdate` and `datasetsDraw`, and the
-/// keys `ticks` (the tick count after the auto skip) and `rotation` (the
+/// (`StressAxesScene`). The BENCH line has the four parts, and the keys
+/// `ticks` (the tick count after the auto skip) and `rotation` (the
 /// `labelRotation`) of the x axis after the last batch.
+///
+/// After the `axes` cases, the mode `chart` has the cases of the six other
+/// types (Chart.js ADR 0031, sections 5 and 7): `chart.bar`, `chart.bubble`,
+/// `chart.doughnut`, `chart.pie`, `chart.polarArea` and `chart.radar`, each
+/// with `chart.draw()` and with new values then `chart.update('none')`.
+/// Each runs the counts of its type without the define `N`. Thus a default
+/// run times the cases of phase 5 and phase 6 first. The selector `chart`
+/// selects 16 cases; `CASES=a,b,c` selects the cases of Chart.js ADR 0021,
+/// section 8.
 final List<ChartBenchCase> chartBenchCases = [
-  _stressCase('a', ChartBenchCall.draw, sharing: true),
-  _stressCase('b', ChartBenchCall.update, sharing: true),
-  _stressCase('b', ChartBenchCall.update, sharing: false),
-  _stressCase('c', ChartBenchCall.update, sharing: true, scriptable: true),
+  _stressCase('a', ChartBenchCall.draw, type: StressChartType.line),
+  _stressCase('b', ChartBenchCall.update, type: StressChartType.line),
+  _stressCase('b', ChartBenchCall.update, type: StressChartType.scatter),
+  _stressCase(
+    'c',
+    ChartBenchCall.update,
+    type: StressChartType.line,
+    scriptable: true,
+  ),
   for (final scale in StressAxisType.values)
     for (final call in ChartBenchCall.values) _axesCase(scale, call),
+  for (final type in StressChartType.values)
+    if (!type.points)
+      for (final call in ChartBenchCall.values) _typeCase(type, call),
 ];
 
 /// The cases of [selection], a comma list of selectors (see

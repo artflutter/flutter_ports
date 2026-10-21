@@ -2,7 +2,8 @@
 
 import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/axes_demo.dart';
-import 'package:chartjs_gallery/demo/stress_point_controller.dart';
+import 'package:chartjs_gallery/demo/demo_common.dart';
+import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
@@ -19,6 +20,10 @@ import 'package:flutter_test/flutter_test.dart';
 /// A tall desktop window.
 const Size _desktop = Size(1200, 1600);
 
+/// A Pixel 8a: 412 x 915 logical pixels at DPR 2.625.
+const Size _phone = Size(412, 915);
+const double _phoneDpr = 2.625;
+
 /// Pumps [count] frames of 16 ms. The demo page has a running animation
 /// (the line dash of the Canvas tab), so pumpAndSettle would not return.
 Future<void> _frames(WidgetTester tester, [int count = 4]) async {
@@ -27,11 +32,16 @@ Future<void> _frames(WidgetTester tester, [int count = 4]) async {
   }
 }
 
-/// Pumps the demo page in a desktop window and opens the Axes tab.
-Future<AxesDemoState> _pumpAxes(WidgetTester tester) async {
+/// Pumps the demo page in a desktop window (or at [size] and [dpr]) and
+/// opens the Axes tab.
+Future<AxesDemoState> _pumpAxes(
+  WidgetTester tester, {
+  Size size = _desktop,
+  double dpr = 1,
+}) async {
   tester.view
-    ..physicalSize = _desktop
-    ..devicePixelRatio = 1;
+    ..physicalSize = size * dpr
+    ..devicePixelRatio = dpr;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     MaterialApp(
@@ -63,20 +73,6 @@ Future<void> _tap(WidgetTester tester, String key) async {
   await _frames(tester);
 }
 
-/// Scrolls the slider of [key] into view and drags it to its minimum
-/// ([max] false) or its maximum ([max] true).
-Future<void> _slide(
-  WidgetTester tester,
-  String key, {
-  required bool max,
-}) async {
-  final finder = find.byKey(ValueKey(key));
-  await tester.ensureVisible(finder);
-  await tester.pump();
-  await tester.drag(finder, Offset(max ? 2000 : -2000, 0));
-  await _frames(tester);
-}
-
 /// The scale [id] of [chart].
 Scale _scale(Chart chart, String id) => chart.scales[id]!;
 
@@ -92,9 +88,41 @@ String _row(AxesDemoState state, String name) =>
 Object? _tickOption(Chart chart, String id, String key) =>
     jsGet(_scale(chart, id).options['ticks'], key);
 
-/// Whether the chip of [key] is selected.
-bool _selected(WidgetTester tester, String key) =>
-    tester.widget<ChoiceChip>(find.byKey(ValueKey(key))).selected;
+/// Whether the segment of [key] is on: the selected segment of a
+/// [SegmentChoice], or an option of a [SegmentToggles] that is on.
+bool _selected(WidgetTester tester, String key) {
+  final control = tester.widget(
+    find.ancestor(
+      of: find.byKey(ValueKey(key)),
+      matching: find.byWidgetPredicate(
+        (w) => w is SegmentChoice || w is SegmentToggles,
+      ),
+    ),
+  );
+  return switch (control) {
+    final SegmentToggles toggles => toggles.isSelected(key),
+    final SegmentChoice<Object?> choice => choice.isSelected(key),
+    _ => throw StateError('No segmented control holds $key.'),
+  };
+}
+
+/// The widgets of the Axes tab that Chart.js ADR 0031 section 10.2 does
+/// not allow: chips, sliders, menus and horizontal scrollables.
+Finder get _forbidden => find.descendant(
+  of: find.byType(AxesDemo),
+  matching: find.byWidgetPredicate(
+    (w) =>
+        w is ChoiceChip ||
+        w is FilterChip ||
+        w is ToggleChips ||
+        w is SliderControl ||
+        w is Slider ||
+        w is PopupMenuButton ||
+        w is DropdownButton ||
+        (w is Scrollable &&
+            axisDirectionToAxis(w.axisDirection) == Axis.horizontal),
+  ),
+);
 
 /// Expects each point of [chart] at the pixels of the raw parsed values on
 /// the scales x and y.
@@ -125,7 +153,7 @@ void main() {
     final chart = state.chart!;
     expect(chart.platform, isA<FlutterPlatform>());
     expect(chart.attached, isTrue);
-    expect(chart.config.type, StressPointController.id);
+    expect(chart.config.type, 'line');
     expect(chart.width, tester.getSize(_host).width);
     expect(chart.height, 360);
     expect(_scale(chart, 'x'), isA<LinearScale>());
@@ -183,11 +211,12 @@ void main() {
       'axes.x.position.top',
       'axes.y.position.left',
       'axes.y.position.right',
+      'axes.help',
       'axes.ticks.autoSkip',
-      'axes.ticks.maxRotation',
-      'axes.ticks.minRotation',
-      'axes.ticks.maxTicksLimit',
-      'axes.ticks.font.size',
+      for (final v in ['0', '30', '50', '90']) 'axes.ticks.maxRotation.$v',
+      for (final v in ['0', '30', '45', '90']) 'axes.ticks.minRotation.$v',
+      for (final v in ['0', '5', '10', '20']) 'axes.ticks.maxTicksLimit.$v',
+      for (final v in ['8', '12', '16', '24']) 'axes.ticks.font.size.$v',
       for (final align in axesDemoAligns) 'axes.ticks.align.$align',
       'axes.grid.display',
       'axes.grid.offset',
@@ -205,6 +234,18 @@ void main() {
     for (final key in keys) {
       expect(find.byKey(ValueKey(key)), findsOneWidget, reason: key);
     }
+    // The texts of the time unit segments: `mon` fits in the 34.4 px of a
+    // unit segment at 360 x 640 in Roboto. The tooltip gives the name.
+    for (final (unit, text) in [
+      ('auto', 'auto'),
+      ('day', 'day'),
+      ('week', 'week'),
+      ('month', 'mon'),
+      ('year', 'year'),
+    ]) {
+      final key = ValueKey('axes.time.unit.$unit');
+      expect(tester.widget<Text>(find.byKey(key)).data, text, reason: unit);
+    }
     for (final key in [
       'axes.x.type.linear',
       'axes.y.type.linear',
@@ -213,12 +254,134 @@ void main() {
       'axes.bounds.auto',
       'axes.time.unit.auto',
       'axes.locale.en-US',
+      'axes.x.position.bottom',
+      'axes.y.position.left',
+      'axes.ticks.maxRotation.50',
+      'axes.ticks.minRotation.0',
+      'axes.ticks.maxTicksLimit.0',
+      'axes.ticks.font.size.12',
+      'axes.ticks.autoSkip',
+      'axes.grid.display',
+      'axes.border.display',
     ]) {
       expect(_selected(tester, key), isTrue, reason: key);
     }
+    for (final key in [
+      'axes.reverse',
+      'axes.beginAtZero',
+      'axes.grid.offset',
+      'axes.title.display',
+      'axes.data.randomize',
+      'axes.data.add',
+      'axes.data.remove',
+    ]) {
+      expect(_selected(tester, key), isFalse, reason: key);
+    }
   });
 
-  testWidgets('axes: the type chips give new scales', (tester) async {
+  testWidgets('axes: x, y and N are above the chart, the other parameters '
+      'after the readout (Chart.js ADR 0031, section 10.7)', (tester) async {
+    await _pumpAxes(tester);
+    expect(_forbidden, findsNothing);
+    expect(
+      find.descendant(
+        of: find.byType(AxesDemo),
+        matching: find.byType(DemoCard),
+      ),
+      findsOneWidget,
+    );
+    double top(String key) => tester.getRect(find.byKey(ValueKey(key))).top;
+    double bottom(String key) =>
+        tester.getRect(find.byKey(ValueKey(key))).bottom;
+    // One line each, from the top.
+    final above = ['axes.x.type.linear', 'axes.y.type.linear', 'axes.count.12'];
+    final after = [
+      'axes.x.position.bottom',
+      'axes.y.position.left',
+      'axes.bounds.auto',
+      'axes.time.unit.auto',
+      'axes.locale.en-US',
+      'axes.ticks.align.center',
+      'axes.reverse',
+      'axes.ticks.maxRotation.50',
+      'axes.ticks.minRotation.0',
+      'axes.ticks.maxTicksLimit.0',
+      'axes.ticks.font.size.12',
+    ];
+    var last = 0.0;
+    for (final key in above) {
+      expect(top(key), greaterThan(last), reason: key);
+      last = bottom(key);
+    }
+    expect(top('axes.host'), greaterThan(last));
+    expect(top('axes.readout'), greaterThanOrEqualTo(bottom('axes.host')));
+    last = bottom('axes.readout');
+    for (final key in after) {
+      expect(top(key), greaterThan(last), reason: key);
+      last = bottom(key);
+    }
+    expect(top('axes.help'), greaterThan(last));
+    // The toggles and the commands are on one line.
+    for (final key in [
+      'axes.beginAtZero',
+      'axes.ticks.autoSkip',
+      'axes.grid.display',
+      'axes.grid.offset',
+      'axes.border.display',
+      'axes.title.display',
+      'axes.data.randomize',
+      'axes.data.add',
+      'axes.data.remove',
+    ]) {
+      expect(
+        tester.getCenter(find.byKey(ValueKey(key))).dy,
+        tester.getCenter(find.byKey(const ValueKey('axes.reverse'))).dy,
+        reason: key,
+      );
+    }
+    for (final button in tester.widgetList<SegmentedButton<Object?>>(
+      find.descendant(
+        of: find.byType(AxesDemo),
+        matching: find.byWidgetPredicate((w) => w is SegmentedButton),
+      ),
+    )) {
+      expect(button.expandedInsets, EdgeInsets.zero);
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('axes: the chart is in view at 412 x 915 '
+      '(Chart.js ADR 0031, section 10.4)', (tester) async {
+    final state = await _pumpAxes(tester, size: _phone, dpr: _phoneDpr);
+    final page = find
+        .descendant(
+          of: find.byType(AxesDemo),
+          matching: find.byWidgetPredicate(
+            (w) => w is Scrollable && w.axisDirection == AxisDirection.down,
+          ),
+        )
+        .first;
+    expect(tester.state<ScrollableState>(page).position.pixels, 0);
+    final view = Offset.zero & _phone;
+    final host = tester.getRect(find.byKey(const ValueKey('axes.host')));
+    expect(host.height, 300);
+    expect(view.contains(host.topLeft), isTrue, reason: '$host');
+    expect(
+      view.contains(host.bottomRight - const Offset(0.01, 0.01)),
+      isTrue,
+      reason: '$host',
+    );
+    expect(state.chart!.height, 300);
+    expect(_forbidden, findsNothing);
+    // A tap on a command after the readout needs a scroll. The segment
+    // runs the command and does not stay on.
+    await _tap(tester, 'axes.data.add');
+    expect(state.dataOf(0), hasLength(13));
+    expect(_selected(tester, 'axes.data.add'), isFalse);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('axes: the type segments give new scales', (tester) async {
     final state = await _pumpAxes(tester);
     final chart = state.chart!;
     final linear = _scale(chart, 'x');
@@ -335,25 +498,36 @@ void main() {
     expect(x.ticks, hasLength(skipped));
 
     // maxRotation 0 keeps the labels flat.
-    await _slide(tester, 'axes.ticks.maxRotation', max: false);
+    await _tap(tester, 'axes.ticks.maxRotation.0');
+    expect(_selected(tester, 'axes.ticks.maxRotation.0'), isTrue);
+    expect(_selected(tester, 'axes.ticks.maxRotation.50'), isFalse);
     expect(_tickOption(chart, 'x', 'maxRotation'), 0);
     expect(jsToNumber(x.labelRotation), 0);
     // minRotation 90 turns them up.
-    await _slide(tester, 'axes.ticks.minRotation', max: true);
+    await _tap(tester, 'axes.ticks.minRotation.90');
     expect(_tickOption(chart, 'x', 'minRotation'), 90);
     expect(jsToNumber(x.labelRotation), 90);
     expect(_row(state, 'x'), endsWith('rotation 90.0'));
+    // minRotation 45 with maxRotation 0: minRotation >= maxRotation gives
+    // the rotation minRotation (core.scale.js:595-596).
+    await _tap(tester, 'axes.ticks.minRotation.45');
+    expect(_tickOption(chart, 'x', 'minRotation'), 45);
+    expect(jsToNumber(x.labelRotation), 45);
+    await _tap(tester, 'axes.ticks.minRotation.90');
 
-    // maxTicksLimit 30 limits the auto skip. The value 0 writes no option.
-    await _slide(tester, 'axes.ticks.maxTicksLimit', max: true);
-    expect(_tickOption(chart, 'x', 'maxTicksLimit'), 30);
-    expect(x.ticks!.length, lessThanOrEqualTo(30));
-    await _slide(tester, 'axes.ticks.maxTicksLimit', max: false);
+    // maxTicksLimit 20 limits the auto skip. The value 0 writes no option.
+    await _tap(tester, 'axes.ticks.maxTicksLimit.20');
+    expect(_tickOption(chart, 'x', 'maxTicksLimit'), 20);
+    expect(x.ticks!.length, lessThanOrEqualTo(20));
+    await _tap(tester, 'axes.ticks.maxTicksLimit.5');
+    expect(_tickOption(chart, 'x', 'maxTicksLimit'), 5);
+    expect(x.ticks!.length, lessThanOrEqualTo(5));
+    await _tap(tester, 'axes.ticks.maxTicksLimit.0');
     expect(_tickOption(chart, 'x', 'maxTicksLimit'), same(undefined));
     // The flat labels of 90 degrees leave space for more ticks.
     expect(x.ticks!.length, greaterThan(30));
 
-    await _slide(tester, 'axes.ticks.font.size', max: true);
+    await _tap(tester, 'axes.ticks.font.size.24');
     expect(jsGet(_tickOption(chart, 'y', 'font'), 'size'), 24);
 
     await _tap(tester, 'axes.ticks.align.start');

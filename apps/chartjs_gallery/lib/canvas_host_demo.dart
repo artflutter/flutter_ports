@@ -40,9 +40,9 @@ canvasHostDemoTabs = [
   (key: 'axes', label: 'Axes', icon: Icons.straighten, build: AxesDemo.new),
 ];
 
-/// A live demo of the phase 3, 4, 5 and 6 ports: the canvas layer, the
-/// canvas and DOM helpers, the Flutter platform, the internal chart host,
-/// the elements, the core and the scales.
+/// A live demo of the phase 3 to 7 ports: the canvas layer, the canvas and
+/// DOM helpers, the Flutter platform, the internal chart host, the
+/// elements, the core, the scales and the controllers.
 ///
 /// Each drawing is a chart host (`ChartHost`) that shows a
 /// `UiCanvasElement`. In the first five tabs, a small demo chart makes the
@@ -50,11 +50,11 @@ canvasHostDemoTabs = [
 /// `retinaScale`, `addEventListener`) and draws with the ported
 /// `helpers.canvas`, `helpers.rtl` and `helpers.dom`. The Elements tab draws
 /// the ported `BarElement`, `LineElement`, `PointElement` and `ArcElement` of
-/// phase 4, and tests the pointer with their `inRange`. The Core tab and the
-/// `chart` mode of the Stress tab run a real `Chart` of phase 5 with a
-/// gallery controller and no scales. The Axes tab and the `axes` mode of the
-/// Stress tab run that chart on the scales of phase 6. No chart type renders
-/// yet: the controllers come in phase 7.
+/// phase 4, and tests the pointer with their `inRange`. The `chart` mode of
+/// the Stress tab runs a real `Chart` of each of the eight ported
+/// controllers of phase 7 (Chart.js ADR 0031). The Core tab, the Axes tab
+/// and the `axes` mode of the Stress tab run a `LineController` chart, the
+/// last two on the scales of phase 6.
 class CanvasHostDemoPage extends StatelessWidget {
   /// Creates the demo page.
   const CanvasHostDemoPage({super.key});

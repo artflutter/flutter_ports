@@ -9,7 +9,7 @@ import 'dart:math' as math;
 import 'package:chartjs_gallery/demo/chart_canvas.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
-import 'package:chartjs_gallery/demo/stress_point_controller.dart';
+import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
@@ -49,6 +49,33 @@ const List<String> axesDemoTimeUnits = ['auto', 'day', 'week', 'month', 'year'];
 /// The values of the chart option `locale`.
 const List<String> axesDemoLocales = ['en-US', 'de-DE'];
 
+/// The values of the option `ticks.maxRotation`, in degrees.
+const List<double> axesDemoMaxRotations = [0, 30, 50, 90];
+
+/// The values of the option `ticks.minRotation`, in degrees.
+const List<double> axesDemoMinRotations = [0, 30, 45, 90];
+
+/// The values of the option `ticks.maxTicksLimit`. 0 writes no option: the
+/// default of the scale type.
+const List<double> axesDemoMaxTicksLimits = [0, 5, 10, 20];
+
+/// The values of the option `ticks.font.size`, in px.
+const List<double> axesDemoFontSizes = [8, 12, 16, 24];
+
+/// The short text of a scale type segment.
+const Map<String, String> _typeText = {
+  'linear': 'lin',
+  'logarithmic': 'log',
+  'category': 'cat',
+  'time': 'time',
+};
+
+/// The short text of a time unit segment, when the name of the unit is too
+/// long for a segment on a phone. The tooltip gives the name. At 360 x 640 a
+/// unit segment has 34.4 px for its text; `month` is 40.3 px wide in Roboto
+/// `labelLarge`, `mon` 28.0 px.
+const Map<String, String> _unitText = {'month': 'mon'};
+
 /// The datasets of the chart: the label, the colors and the point style.
 const List<({String label, String background, String border, String style})>
 _datasetStyles = [
@@ -70,8 +97,8 @@ _datasetStyles = [
 /// x axis and a y axis.
 ///
 /// The chart is a `Chart` of `core.controller` on a `UiCanvasElement` of a
-/// chart host. Its type is the gallery controller `StressPointController`,
-/// on its scale path: each point gets the pixels of
+/// chart host. Its type is `line`, the ported `LineController` (Chart.js
+/// ADR 0031, section 4): each point gets the pixels of
 /// `iScale.getPixelForValue` and `vScale.getPixelForValue`. The x axis is a
 /// `LinearScale`, a `LogarithmicScale`, a `CategoryScale` or a `TimeScale`,
 /// and the y axis is a `LinearScale` or a `LogarithmicScale`.
@@ -94,8 +121,11 @@ _datasetStyles = [
 /// `beginAtZero` and `bounds` apply to both axes. The chart has no
 /// animation: the Core tab shows the animations.
 ///
-/// Each control has a `ValueKey` (`axes.x.type.time`, `axes.ticks.autoSkip`,
-/// `axes.data.add`, ...).
+/// Each parameter is a full-width segmented button (Chart.js ADR 0031,
+/// section 10). The lines `x`, `y` and `N` are above the chart. The other
+/// parameters come after the readout (section 10.7). Each segment has a
+/// `ValueKey` (`axes.x.type.time`, `axes.ticks.autoSkip`,
+/// `axes.ticks.maxRotation.50`, `axes.data.add`, ...).
 class AxesDemo extends StatefulWidget {
   /// Creates the axes tab.
   const AxesDemo({super.key});
@@ -323,7 +353,7 @@ class AxesDemoState extends State<AxesDemo> {
   Chart _create(UiCanvasElement canvas) {
     registerGalleryComponents();
     return Chart(canvas, <String, Object?>{
-      'type': StressPointController.id,
+      'type': 'line',
       'data': _data,
       'options': _options,
       'plugins': <Object?>[_pointerPlugin],
@@ -446,85 +476,178 @@ class AxesDemoState extends State<AxesDemo> {
 
   // Controls.
 
-  Widget _choices<T>(
+  /// The text of [value] in a key: the integer text of a number.
+  static String _keyText(Object? value) =>
+      value is double ? value.toInt().toString() : '$value';
+
+  /// The line [label] of the option [name]: a segment for each value of
+  /// [values], with the key `axes.<name>.<value>`. [data] gives new data
+  /// arrays before the update.
+  Widget _choice<T>(
     String name,
     String label,
     List<T> values,
     T value,
     ValueChanged<T> onSelected, {
+    String Function(T value)? text,
     bool data = false,
-  }) {
-    return Wrap(
-      spacing: 6,
-      runSpacing: 4,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: [
-        SizedBox(width: 92, child: Text(label)),
-        for (final v in values)
-          ChoiceChip(
-            key: ValueKey('axes.$name.$v'),
-            label: Text('$v'),
-            selected: v == value,
-            onSelected: (_) => _change(() => onSelected(v), data: data),
-          ),
-      ],
-    );
-  }
-
-  Widget _slider(
-    String key,
-    String label,
-    double value,
-    double min,
-    double max,
-    ValueChanged<double> onChanged, {
-    String Function(double value)? format,
-  }) => SliderControl(
+  }) => SegmentChoice<T>(
     label: label,
-    sliderKey: ValueKey(key),
+    items: [
+      for (final v in values)
+        (
+          key: 'axes.$name.${_keyText(v)}',
+          text: text?.call(v) ?? _keyText(v),
+          icon: null,
+          tooltip: '$name ${_keyText(v)}',
+          value: v,
+        ),
+    ],
     value: value,
-    min: min,
-    max: max,
-    divisions: (max - min).round(),
-    format: format,
-    onChanged: (v) => _change(() => onChanged(v)),
+    onChanged: (v) => _change(() => onSelected(v), data: data),
   );
 
-  ({String key, String label, bool value, ValueChanged<bool> onChanged})
-  _toggle(String key, String label, bool value, ValueChanged<bool> set) => (
+  /// An on/off segment of the option of [key].
+  SegmentToggleItem _toggle(
+    String key,
+    IconData icon,
+    String tooltip,
+    bool value,
+    ValueChanged<bool> set,
+  ) => (
     key: key,
-    label: label,
+    icon: icon,
+    tooltip: tooltip,
     value: value,
     onChanged: (v) => _change(() => set(v)),
   );
 
-  Widget _button(String key, String label, VoidCallback onPressed) =>
-      OutlinedButton(
-        key: ValueKey(key),
-        onPressed: onPressed,
-        child: Text(label),
-      );
+  /// A command segment: it is never on, and a tap runs [command].
+  static SegmentToggleItem _command(
+    String key,
+    IconData icon,
+    String tooltip,
+    VoidCallback command,
+  ) => (
+    key: key,
+    icon: icon,
+    tooltip: tooltip,
+    value: false,
+    onChanged: (_) => command(),
+  );
+
+  Widget _toggles() => SegmentToggles(
+    items: [
+      _toggle('axes.reverse', Icons.swap_horiz, 'reverse', _reverse, (v) {
+        _reverse = v;
+      }),
+      _toggle(
+        'axes.beginAtZero',
+        Icons.exposure_zero,
+        'beginAtZero',
+        _beginAtZero,
+        (v) => _beginAtZero = v,
+      ),
+      _toggle(
+        'axes.ticks.autoSkip',
+        Icons.skip_next,
+        'ticks.autoSkip',
+        _autoSkip,
+        (v) => _autoSkip = v,
+      ),
+      _toggle(
+        'axes.grid.display',
+        Icons.grid_on,
+        'grid.display',
+        _gridDisplay,
+        (
+          v,
+        ) {
+          _gridDisplay = v;
+        },
+      ),
+      _toggle(
+        'axes.grid.offset',
+        Icons.vertical_split,
+        'grid.offset',
+        _gridOffset,
+        (v) => _gridOffset = v,
+      ),
+      _toggle(
+        'axes.border.display',
+        Icons.border_outer,
+        'border.display',
+        _borderDisplay,
+        (v) => _borderDisplay = v,
+      ),
+      _toggle(
+        'axes.title.display',
+        Icons.title,
+        'title.display',
+        _titleDisplay,
+        (v) => _titleDisplay = v,
+      ),
+      _command('axes.data.randomize', Icons.shuffle, 'randomize', _randomize),
+      _command(
+        'axes.data.add',
+        Icons.add,
+        'add a point',
+        () => _resize(add: true),
+      ),
+      _command(
+        'axes.data.remove',
+        Icons.remove,
+        'remove a point',
+        () => _resize(add: false),
+      ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    const gap = SizedBox(height: 6);
     return DemoPageBody(
       children: [
         DemoCard(
           title: 'Chart',
           source:
-              'core.controller: buildOrUpdateScales · scales: LinearScale, '
-              'LogarithmicScale, CategoryScale, TimeScale · core.adapters: '
-              'the default date adapter · StressPointController: '
-              'getPixelForValue',
+              'core.controller: buildOrUpdateScales, update() · scales: '
+              'LinearScale, LogarithmicScale, CategoryScale, TimeScale · '
+              'core.adapters: the default date adapter · LineController: '
+              'getPixelForValue · options.scales[id]: type, position, '
+              'bounds, reverse, beginAtZero, time.unit, ticks, grid, border, '
+              'title · options.locale · parsing: true → scale.parse',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'A real Chart of the ported core with the ported scales. '
-                'Move the mouse over the chart, or touch it: the readout '
-                'maps the pointer to a value of each scale and back.',
-                style: theme.textTheme.bodySmall,
+              _choice(
+                'x.type',
+                'x',
+                axesDemoXTypes,
+                _xType,
+                (v) => _xType = v,
+                text: (v) => _typeText[v]!,
+                data: true,
+              ),
+              gap,
+              _choice(
+                'y.type',
+                'y',
+                axesDemoYTypes,
+                _yType,
+                (v) => _yType = v,
+                text: (v) => _typeText[v]!,
+                data: true,
+              ),
+              gap,
+              _choice(
+                'count',
+                'N',
+                axesDemoCounts,
+                _count,
+                _setCount,
+                data: true,
               ),
               const SizedBox(height: 12),
               LayoutBuilder(
@@ -543,208 +666,104 @@ class AxesDemoState extends State<AxesDemo> {
                   rows: readoutRows,
                 ),
               ),
-            ],
-          ),
-        ),
-        DemoCard(
-          title: 'Scales',
-          source:
-              'options.scales.x.type · options.scales.y.type · position · '
-              'bounds · time.unit · options.locale → chart.update()',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _choices(
-                'x.type',
-                'x type',
-                axesDemoXTypes,
-                _xType,
-                (v) => _xType = v,
-                data: true,
-              ),
-              const SizedBox(height: 8),
-              _choices(
-                'y.type',
-                'y type',
-                axesDemoYTypes,
-                _yType,
-                (v) => _yType = v,
-                data: true,
-              ),
-              const SizedBox(height: 8),
-              _choices(
+              // The split of Chart.js ADR 0031, section 10.7 (Open, for the
+              // maintainer): the other 17 parameters do not fit above a
+              // chart that is in view on a phone. They come after the
+              // readout.
+              const SizedBox(height: 12),
+              _choice(
                 'x.position',
-                'x position',
+                'x pos',
                 const ['bottom', 'top'],
                 _xPosition,
                 (v) => _xPosition = v,
               ),
-              const SizedBox(height: 8),
-              _choices(
+              gap,
+              _choice(
                 'y.position',
-                'y position',
+                'y pos',
                 const ['left', 'right'],
                 _yPosition,
                 (v) => _yPosition = v,
               ),
-              const SizedBox(height: 8),
-              _choices(
+              gap,
+              _choice(
                 'bounds',
-                'bounds',
+                'bound',
                 axesDemoBounds,
                 _bounds,
                 (v) => _bounds = v,
               ),
-              const SizedBox(height: 8),
-              _choices(
+              gap,
+              _choice(
                 'time.unit',
-                'time unit',
+                'unit',
                 axesDemoTimeUnits,
                 _timeUnit,
                 (v) => _timeUnit = v,
+                text: (v) => _unitText[v] ?? v,
               ),
-              const SizedBox(height: 8),
-              _choices(
+              gap,
+              _choice(
                 'locale',
                 'locale',
                 axesDemoLocales,
                 _locale,
                 (v) => _locale = v,
               ),
-              const SizedBox(height: 8),
-              ToggleChips(
-                toggles: [
-                  _toggle('axes.reverse', 'reverse', _reverse, (v) {
-                    _reverse = v;
-                  }),
-                  _toggle('axes.beginAtZero', 'beginAtZero', _beginAtZero, (
-                    v,
-                  ) {
-                    _beginAtZero = v;
-                  }),
-                ],
-              ),
-            ],
-          ),
-        ),
-        DemoCard(
-          title: 'Ticks',
-          source:
-              'options.scales[id].ticks: autoSkip, maxRotation, minRotation, '
-              'maxTicksLimit, font.size, align',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ToggleChips(
-                toggles: [
-                  _toggle('axes.ticks.autoSkip', 'autoSkip', _autoSkip, (v) {
-                    _autoSkip = v;
-                  }),
-                ],
-              ),
-              DemoControlGrid(
-                children: [
-                  _slider(
-                    'axes.ticks.maxRotation',
-                    'maxRotation',
-                    _maxRotation,
-                    0,
-                    90,
-                    (v) => _maxRotation = v,
-                  ),
-                  _slider(
-                    'axes.ticks.minRotation',
-                    'minRotation',
-                    _minRotation,
-                    0,
-                    90,
-                    (v) => _minRotation = v,
-                  ),
-                  // 0 writes no option: the default of the scale type.
-                  _slider(
-                    'axes.ticks.maxTicksLimit',
-                    'maxTicksLimit',
-                    _maxTicksLimit,
-                    0,
-                    30,
-                    (v) => _maxTicksLimit = v,
-                    format: (v) => v == 0 ? 'auto' : v.toStringAsFixed(0),
-                  ),
-                  _slider(
-                    'axes.ticks.font.size',
-                    'font size',
-                    _fontSize,
-                    8,
-                    24,
-                    (v) => _fontSize = v,
-                  ),
-                ],
-              ),
-              _choices(
+              gap,
+              _choice(
                 'ticks.align',
                 'align',
                 axesDemoAligns,
                 _align,
                 (v) => _align = v,
               ),
-            ],
-          ),
-        ),
-        DemoCard(
-          title: 'Grid, border and title',
-          source:
-              'options.scales[id].grid.display · grid.offset · '
-              'border.display · title.display',
-          child: ToggleChips(
-            toggles: [
-              _toggle('axes.grid.display', 'grid', _gridDisplay, (v) {
-                _gridDisplay = v;
-              }),
-              _toggle('axes.grid.offset', 'grid offset', _gridOffset, (v) {
-                _gridOffset = v;
-              }),
-              _toggle('axes.border.display', 'border', _borderDisplay, (v) {
-                _borderDisplay = v;
-              }),
-              _toggle('axes.title.display', 'title', _titleDisplay, (v) {
-                _titleDisplay = v;
-              }),
-            ],
-          ),
-        ),
-        DemoCard(
-          title: 'Data',
-          source:
-              'data.labels · data.datasets[i].data · parsing: true → '
-              'scale.parse',
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _choices(
-                'count',
-                'points',
-                axesDemoCounts,
-                _count,
-                _setCount,
-                data: true,
+              gap,
+              _toggles(),
+              gap,
+              _choice(
+                'ticks.maxRotation',
+                'max°',
+                axesDemoMaxRotations,
+                _maxRotation,
+                (v) => _maxRotation = v,
+              ),
+              gap,
+              _choice(
+                'ticks.minRotation',
+                'min°',
+                axesDemoMinRotations,
+                _minRotation,
+                (v) => _minRotation = v,
+              ),
+              gap,
+              // 0 writes no option: the default of the scale type.
+              _choice(
+                'ticks.maxTicksLimit',
+                'ticks',
+                axesDemoMaxTicksLimits,
+                _maxTicksLimit,
+                (v) => _maxTicksLimit = v,
+                text: (v) => v == 0 ? 'auto' : _keyText(v),
+              ),
+              gap,
+              _choice(
+                'ticks.font.size',
+                'font',
+                axesDemoFontSizes,
+                _fontSize,
+                (v) => _fontSize = v,
               ),
               const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  _button('axes.data.randomize', 'randomize', _randomize),
-                  _button(
-                    'axes.data.add',
-                    'add point',
-                    () => _resize(add: true),
-                  ),
-                  _button(
-                    'axes.data.remove',
-                    'remove point',
-                    () => _resize(add: false),
-                  ),
-                ],
+              Text(
+                'A real line chart of the ported core with the ported '
+                'scales. Move the mouse over the chart, or touch it: the '
+                'readout maps the pointer to a value of each scale and back. '
+                'The scale options apply to both axes. The chart has no '
+                'animation: the Core tab shows the animations.',
+                key: const ValueKey('axes.help'),
+                style: theme.textTheme.bodySmall,
               ),
             ],
           ),

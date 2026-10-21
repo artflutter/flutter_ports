@@ -1,16 +1,25 @@
 // Original code, not ported from Chart.js: tests of the stress mode chart.
 
+import 'dart:convert';
+import 'dart:math' as math;
+
+import 'package:chartjs_gallery/bench/chart_bench.dart'
+    show chartBenchHeight, chartBenchOptions, chartBenchWidth;
 import 'package:chartjs_gallery/demo/chart_canvas.dart';
 import 'package:chartjs_gallery/demo/demo_chart.dart' show DemoCanvasState;
+import 'package:chartjs_gallery/demo/gallery_components.dart';
+import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
-import 'package:chartjs_gallery/demo/stress_point_controller.dart';
 import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs/src/controllers/index.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/elements/element_options.dart';
 import 'package:flutter_chartjs/src/elements/index.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart' show jsObjectIsFrozen;
 import 'package:flutter_chartjs/src/platform/platform.flutter.dart';
+import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'stress_controls.dart';
@@ -26,14 +35,17 @@ Future<void> _frames(WidgetTester tester, [int count = 4]) async {
   }
 }
 
-/// Pumps a stress tab in the mode chart with [_n] points and 10 labels. It
-/// gives the list that receives the published figures.
+/// Pumps a stress tab in the mode chart with [n] items of [type] and [m]
+/// labels. It gives the list that receives the published figures.
 Future<List<StressStats>> _pumpChart(
   WidgetTester tester, {
   StressChartCall call = StressChartCall.draw,
-  bool sharing = true,
+  StressChartType type = StressChartType.line,
+  bool showLine = false,
   bool scriptable = false,
   bool autoStart = true,
+  int n = _n,
+  int m = 10,
 }) async {
   final stats = <StressStats>[];
   await tester.pumpWidget(
@@ -41,10 +53,11 @@ Future<List<StressStats>> _pumpChart(
       home: Scaffold(
         body: StressDemo(
           initialMode: StressMode.chart,
-          initialN: _n,
-          initialM: 10,
+          initialN: n,
+          initialM: m,
           initialCall: call,
-          initialSharing: sharing,
+          initialType: type,
+          initialShowLine: showLine,
           initialScriptable: scriptable,
           autoStart: autoStart,
           onStats: stats.add,
@@ -74,28 +87,124 @@ Future<void> _tap(WidgetTester tester, String key) async {
   await _frames(tester);
 }
 
-/// Whether the menu item of [key] is checked.
+/// Whether the control of [key] is selected.
 Future<bool> _selected(WidgetTester tester, String key) =>
     stressSelected(tester, key);
+
+/// The controller class of each chart type.
+final Map<StressChartType, Matcher> _controllerClass = {
+  StressChartType.line: isA<LineController>(),
+  StressChartType.scatter: isA<ScatterController>(),
+  StressChartType.bar: isA<BarController>(),
+  StressChartType.bubble: isA<BubbleController>(),
+  StressChartType.doughnut: isA<DoughnutController>(),
+  StressChartType.pie: isA<PieController>(),
+  StressChartType.polarArea: isA<PolarAreaController>(),
+  StressChartType.radar: isA<RadarController>(),
+};
+
+/// The data element class of each chart type.
+final Map<StressChartType, Matcher> _elementClass = {
+  StressChartType.line: isA<PointElement>(),
+  StressChartType.scatter: isA<PointElement>(),
+  StressChartType.bar: isA<BarElement>(),
+  StressChartType.bubble: isA<PointElement>(),
+  StressChartType.doughnut: isA<ArcElement>(),
+  StressChartType.pie: isA<ArcElement>(),
+  StressChartType.polarArea: isA<ArcElement>(),
+  StressChartType.radar: isA<PointElement>(),
+};
+
+/// A frameless chart of [scene] on a `UiCanvasElement` of the benchmark
+/// size, as the frameless benchmark makes it (`BasicPlatform`, no host).
+Chart _framelessChart(StressChartScene scene) {
+  registerGalleryComponents();
+  return Chart(
+    UiCanvasElement(width: chartBenchWidth, height: chartBenchHeight),
+    stressChartConfig(
+      scene: scene,
+      scriptable: false,
+      options: chartBenchOptions,
+    ),
+  );
+}
+
+/// Checks that the controller of [chart] draws all [n] points, that no
+/// point has `skip`, and that each point is at the pixel of the fractions
+/// of [scene] within 1e-9 px (Chart.js ADR 0031, section 3).
+void _expectAllDrawn(Chart chart, StressChartScene scene, int n, String at) {
+  final meta = chart.getDatasetMeta(0);
+  final controller = meta.controller!;
+  // The test reads `_drawStart` and `_drawCount` of the controller, as the
+  // draw does (core.datasetController.js:723-736).
+  // ignore: invalid_use_of_internal_member
+  final drawStart = controller.drawStart;
+  // See drawStart.
+  // ignore: invalid_use_of_internal_member
+  final drawCount = controller.drawCount;
+  expect(drawStart == null || drawStart == 0, isTrue, reason: at);
+  expect(drawCount == null || drawCount == n, isTrue, reason: at);
+  final area = chart.chartArea!;
+  final points = meta.data;
+  expect(points, hasLength(n), reason: at);
+  for (var i = 0; i < n; i++) {
+    final point = points[i] as PointElement;
+    final item = scene.data[i]! as Map<String, Object?>;
+    final x = item['x']! as double;
+    final y = item['y']! as double;
+    if (point.skip == true ||
+        (point.x - (area.left + x * area.width)).abs() > 1e-9 ||
+        (point.y - (area.bottom - y * area.height)).abs() > 1e-9) {
+      fail(
+        '$at: point $i at (${point.x}, ${point.y}), skip ${point.skip}, '
+        'fractions ($x, $y), area ${area.left} ${area.top} ${area.right} '
+        '${area.bottom}',
+      );
+    }
+  }
+}
+
+/// Collects the STRESS lines of [body].
+Future<List<Map<String, Object?>>> _stressLines(
+  Future<void> Function() body,
+) async {
+  final lines = <String>[];
+  final old = debugPrint;
+  debugPrint = (message, {wrapWidth}) {
+    if (message != null && message.startsWith('STRESS {')) {
+      lines.add(message);
+    }
+  };
+  try {
+    await body();
+  } finally {
+    // flutter_test checks the debug variables before the tearDown.
+    debugPrint = old;
+  }
+  return [
+    for (final line in lines)
+      jsonDecode(line.substring('STRESS '.length)) as Map<String, Object?>,
+  ];
+}
 
 void main() {
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
 
   for (final call in [StressChartCall.draw, StressChartCall.update]) {
-    for (final sharing in [true, false]) {
+    for (final type in [StressChartType.line, StressChartType.scatter]) {
       testWidgets(
-        'chart, ${call.name}, sharing $sharing: the loop runs the chart',
+        'chart, ${call.name}, ${type.name}: the loop runs the chart',
         (tester) async {
-          final stats = await _pumpChart(tester, call: call, sharing: sharing);
+          final stats = await _pumpChart(tester, call: call, type: type);
           await _frames(tester, 10);
           final chart = _chart(tester);
           expect(chart.platform, isA<FlutterPlatform>());
-          expect(chart.config.type, StressPointController.id);
+          expect(chart.config.type, type.name);
           expect(chart.options['animation'], false);
           final meta = chart.getDatasetMeta(0);
-          expect(meta.controller, isA<StressPointController>());
-          expect(meta.controller!.enableOptionSharing, sharing);
+          expect(meta.controller, _controllerClass[type]);
+          expect(meta.controller!.enableOptionSharing, type.sharing);
           final points = _points(tester);
           expect(points, hasLength(_n));
           final first = (x: points.first.x, y: points.first.y);
@@ -114,13 +223,16 @@ void main() {
           expect(identical(_points(tester).first, points.first), isTrue);
           final data = _state(tester).debugChartData;
           expect(data, hasLength(_n));
-          if (call == StressChartCall.update) {
-            final area = chart.chartArea!;
-            expect(
-              points[7].x,
-              area.left + (data[7]['x']! as double) * area.width,
-            );
-          }
+          final area = chart.chartArea!;
+          final item = data[7]! as Map<String, Object?>;
+          expect(
+            points[7].x,
+            closeTo(area.left + (item['x']! as double) * area.width, 1e-9),
+          );
+          expect(
+            points[7].y,
+            closeTo(area.bottom - (item['y']! as double) * area.height, 1e-9),
+          );
 
           // The points get typed options. With the sharing, they hold the
           // one copy of getSharedOptions, as in a line chart. Without it,
@@ -129,7 +241,7 @@ void main() {
           final options = points.first.options;
           expect(options, isA<PointOptions>());
           expect(jsObjectIsFrozen(options), isFalse);
-          expect(identical(points[1].options, options), sharing);
+          expect(identical(points[1].options, options), type.sharing);
           expect(options!['radius'], 3);
           expect(options['backgroundColor'], 'rgba(54, 162, 235, 0.45)');
 
@@ -140,11 +252,259 @@ void main() {
           expect(stats.last.points, _n);
           expect(stats.last.labels, 10);
           expect(stats.last.frames, greaterThan(0));
+          expect(stats.last.sharing, type.sharing);
           expect(tester.takeException(), isNull);
         },
       );
     }
   }
+
+  for (final type in StressChartType.values) {
+    testWidgets('chart, ${type.name}: the controller of the type at '
+        '${type.counts.first} items', (tester) async {
+      await _pumpChart(
+        tester,
+        type: type,
+        n: type.counts.first,
+        m: 0,
+        call: StressChartCall.update,
+      );
+      await _frames(tester, 6);
+      final chart = _chart(tester);
+      expect(chart.config.type, type.name);
+      final meta = chart.getDatasetMeta(0);
+      expect(meta.type, type.name);
+      expect(meta.controller, _controllerClass[type]);
+      expect(meta.controller!.enableOptionSharing, type.sharing);
+      expect(meta.data, hasLength(type.counts.first));
+      expect(meta.data.first, _elementClass[type]);
+      // Only line and radar have a dataset element. Scatter has none with
+      // showLine: false (controller.scatter.js:16).
+      if (type == StressChartType.line || type == StressChartType.radar) {
+        expect(meta.dataset, isA<LineElement>());
+      } else {
+        expect(meta.dataset, isNull);
+      }
+      // Bar, doughnut, pie, polarArea and radar have the labels `Point <i>`.
+      expect(
+        chart.data['labels'],
+        hasLength(
+          type.points || type == StressChartType.bubble ? 0 : type.counts.first,
+        ),
+      );
+      await _tap(tester, 'stress.start');
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  for (final type in [StressChartType.line, StressChartType.scatter]) {
+    test('${type.name}, update: 600 frames at 5000 points draw all points at '
+        'the fraction pixels', () {
+      const n = 5000;
+      final field = StressPointField(n);
+      final scene = StressChartScene(type, n, field);
+      final chart = _framelessChart(scene);
+      try {
+        // The data of the field is not sorted by x, and each bounce clamps
+        // a position to exactly 0 or 1 (stress_chart_config.dart).
+        expect(chart.getDatasetMeta(0).sorted, isTrue);
+        _expectAllDrawn(chart, scene, n, 'start');
+        var bounds = 0;
+        for (var frame = 0; frame < 600; frame++) {
+          scene.write(field..step(n, 1 / 60));
+          chart.update('none');
+          _expectAllDrawn(chart, scene, n, 'frame $frame');
+          for (var i = 0; i < n; i++) {
+            if (field.x[i] == 0 || field.x[i] == 1) bounds++;
+          }
+        }
+        // The loop has bounces: points at x = 0 and x = 1.
+        expect(bounds, greaterThan(0));
+      } finally {
+        chart.destroy();
+      }
+    });
+
+    test('${type.name}: unsorted x with a point at x = 1 in the middle: all '
+        'points draw', () {
+      const xs = [0.4, 0.9, 1.0, 0.0, 0.25, 1.0, 0.6];
+      final field = StressPointField(xs.length);
+      for (var i = 0; i < xs.length; i++) {
+        field.x[i] = xs[i];
+      }
+      final scene = StressChartScene(type, xs.length, field);
+      final chart = _framelessChart(scene);
+      try {
+        _expectAllDrawn(chart, scene, xs.length, 'trap');
+        final x = chart.scales['x']!;
+        expect((x.min, x.max), (0, 1));
+      } finally {
+        chart.destroy();
+      }
+    });
+
+    test('${type.name}: the chart area is the canvas, and the dataset has no '
+        'clip', () {
+      final scene = StressChartScene(type, 50, StressPointField(50));
+      final chart = _framelessChart(scene);
+      try {
+        final area = chart.chartArea!;
+        expect(
+          (area.left, area.top, area.right, area.bottom),
+          (0, 0, chartBenchWidth, chartBenchHeight),
+        );
+        expect(chart.getDatasetMeta(0).clip.disabled, isTrue);
+        final y = chart.scales['y']!;
+        expect((y.min, y.max), (0, 1));
+        expect(y.options['display'], false);
+      } finally {
+        chart.destroy();
+      }
+    });
+  }
+
+  for (final type in [StressChartType.polarArea, StressChartType.radar]) {
+    test('${type.name}: the range of r is 0 to 1 after an update', () {
+      final field = StressPointField(100);
+      final scene = StressChartScene(type, 100, field);
+      final chart = _framelessChart(scene);
+      try {
+        scene.write(field..step(100, 0.5));
+        chart.update('none');
+        final r = chart.scales['r']!;
+        expect((r.min, r.max), (0, 1));
+      } finally {
+        chart.destroy();
+      }
+    });
+  }
+
+  for (final type in [StressChartType.doughnut, StressChartType.pie]) {
+    test('${type.name}: each arc has the outer radius of the chart area', () {
+      final scene = StressChartScene(type, 100, StressPointField(100));
+      final chart = _framelessChart(scene);
+      try {
+        final meta = chart.getDatasetMeta(0);
+        // The default radius '100%' of the controller applies: the dataset
+        // has no radius (controller.doughnut.js:216-229, with borderWidth 1,
+        // no offset and no spacing).
+        expect(meta.controller!.options['radius'], '100%');
+        final area = chart.chartArea!;
+        final expected =
+            (math.min(area.right - area.left, area.bottom - area.top) - 1) / 2;
+        expect(expected, greaterThan(100));
+        for (final element in meta.data) {
+          final arc = element as ArcElement;
+          expect(arc.outerRadius, closeTo(expected, 1e-9));
+          expect(
+            arc.innerRadius,
+            closeTo(type == StressChartType.doughnut ? expected / 2 : 0, 1e-9),
+          );
+        }
+      } finally {
+        chart.destroy();
+      }
+    });
+  }
+
+  test('StressChartScene: the data of each type, and the write', () {
+    final field = StressPointField(4);
+    for (final type in StressChartType.values) {
+      final scene = StressChartScene(type, 4, field);
+      expect(scene.data, hasLength(4), reason: type.name);
+      expect(
+        scene.labels,
+        type.points || type == StressChartType.bubble
+            ? isEmpty
+            : ['Point 0', 'Point 1', 'Point 2', 'Point 3'],
+        reason: type.name,
+      );
+    }
+    final line = StressChartScene(StressChartType.line, 4, field);
+    expect(line.data[2], {'x': field.x[2], 'y': field.y[2]});
+    final bubble = StressChartScene(StressChartType.bubble, 4, field);
+    final r = (bubble.data[1]! as Map<String, Object?>)['r']! as double;
+    final v = field.vx[1] / 0.3;
+    expect(r, 2 + 4 * v * v);
+    final bar = StressChartScene(StressChartType.bar, 4, field);
+    expect(bar.data[3], field.y[3]);
+    final pie = StressChartScene(StressChartType.pie, 4, field);
+    expect(pie.data[0], 0.05 + 0.95 * field.y[0]);
+
+    field.step(4, 0.5);
+    for (final scene in [line, bubble, bar, pie]) {
+      scene.write(field);
+    }
+    expect(line.data[2], {'x': field.x[2], 'y': field.y[2]});
+    // bubble keeps its r.
+    expect(bubble.data[1], {'x': field.x[1], 'y': field.y[1], 'r': r});
+    expect(bar.data[3], field.y[3]);
+    expect(pie.data[0], 0.05 + 0.95 * field.y[0]);
+  });
+
+  test('stressChartConfig: the options of each type', () {
+    final field = StressPointField(3);
+    AnyObject config(StressChartType type, {bool showLine = false}) =>
+        stressChartConfig(
+          scene: StressChartScene(type, 3, field),
+          scriptable: false,
+          showLine: showLine,
+        );
+    for (final type in StressChartType.values) {
+      final c = config(type);
+      final options = c['options']! as Map<String, Object?>;
+      final dataset =
+          ((c['data']! as Map<String, Object?>)['datasets']! as List).single
+              as Map<String, Object?>;
+      expect(c['type'], type.name);
+      expect(options['events'], isEmpty);
+      expect(dataset.containsKey('optionSharing'), isFalse);
+      expect(dataset['backgroundColor'], stressChartBackground);
+      if (type.points) {
+        expect(options['parsing'], false);
+        expect(options['layout'], {'autoPadding': false});
+        expect(options['scales'], unitScales(hideTicks: true));
+        expect(dataset['showLine'], false);
+        expect(dataset['clip'], false);
+        expect(dataset['pointStyle'], 'circle');
+        expect(dataset['radius'], 3.0);
+      } else {
+        expect(options.containsKey('parsing'), isFalse);
+        expect(dataset.containsKey('pointStyle'), isFalse);
+        expect(dataset.containsKey('radius'), isFalse);
+        expect(dataset.containsKey('showLine'), isFalse);
+        expect(dataset.containsKey('clip'), isFalse);
+      }
+    }
+    expect(
+      (config(StressChartType.doughnut)['options']! as Map<String, Object?>)
+          .containsKey('scales'),
+      isFalse,
+    );
+    final radar = config(StressChartType.radar)['options']!;
+    expect(
+      (radar as Map<String, Object?>)['scales'],
+      {
+        'r': {
+          'type': 'radialLinear',
+          'display': false,
+          'ticks': {'display': false},
+          'min': 0,
+          'max': 1,
+        },
+      },
+    );
+    final scatter = config(StressChartType.scatter, showLine: true);
+    expect(
+      (((scatter['data']! as Map<String, Object?>)['datasets']! as List).single
+          as Map<String, Object?>)['showLine'],
+      true,
+    );
+    expect(
+      () => config(StressChartType.bar, showLine: true),
+      throwsArgumentError,
+    );
+  });
 
   testWidgets('chart, update, scriptable: each point resolves its color', (
     tester,
@@ -182,7 +542,9 @@ void main() {
       'stress.chart.host',
       'stress.chart.call.draw',
       'stress.chart.call.update',
-      'stress.chart.sharing',
+      for (final type in StressChartType.values)
+        'stress.chart.type.${type.name}',
+      'stress.chart.showLine',
       'stress.chart.scriptable',
       'stress.n.1000',
       'stress.m.0',
@@ -192,10 +554,18 @@ void main() {
     ]) {
       expect(await stressControlExists(tester, key), isTrue, reason: key);
     }
+    expect(await stressControlExists(tester, 'stress.chart.sharing'), isFalse);
     expect(await _selected(tester, 'stress.mode.chart'), isTrue);
+    expect(await _selected(tester, 'stress.chart.type.line'), isTrue);
     expect(await _selected(tester, 'stress.chart.call.draw'), isTrue);
+    expect(await _selected(tester, 'stress.chart.showLine'), isFalse);
     expect(await stressControlExists(tester, 'stress.layer.points'), isFalse);
     expect(find.byKey(const ValueKey('stress.host')), findsNothing);
+    // The type segments show their icons, with the key on the icon.
+    expect(
+      tester.widget(find.byKey(const ValueKey('stress.chart.type.radar'))),
+      isA<Icon>().having((i) => i.icon, 'icon', Icons.radar),
+    );
     final first = _chart(tester);
 
     // The call changes the frames, not the chart.
@@ -203,12 +573,14 @@ void main() {
     expect(await _selected(tester, 'stress.chart.call.update'), isTrue);
     expect(identical(_chart(tester), first), isTrue);
 
-    // The sharing makes a new chart. The old chart is destroyed.
-    await _tap(tester, 'stress.chart.sharing');
+    // showLine makes a new chart with the line. The old chart is destroyed.
+    await _tap(tester, 'stress.chart.showLine');
     final second = _chart(tester);
     expect(identical(second, first), isFalse);
     expect(first.canvas, isNull);
-    expect(second.getDatasetMeta(0).controller!.enableOptionSharing, isFalse);
+    expect(await _selected(tester, 'stress.chart.showLine'), isTrue);
+    final line = second.getDatasetMeta(0).dataset! as LineElement;
+    expect(line.options!['borderWidth'], 1);
 
     // N makes a new chart of N points.
     await _tap(tester, 'stress.n.1000');
@@ -223,6 +595,63 @@ void main() {
       _points(tester)[1].options!['backgroundColor'],
       'rgba(255, 99, 132, 0.45)',
     );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('chart: each type segment makes a chart of its type', (
+    tester,
+  ) async {
+    await _pumpChart(tester, autoStart: false, m: 0);
+    await _frames(tester);
+    // The first N of the point counts. A new type keeps the index of N.
+    await _tap(tester, 'stress.n.1000');
+    var chart = _chart(tester);
+    for (final type in [
+      ...StressChartType.values.skip(1),
+      StressChartType.line,
+    ]) {
+      final key = 'stress.chart.type.${type.name}';
+      await _tap(tester, key);
+      expect(await _selected(tester, key), isTrue, reason: key);
+      final next = _chart(tester);
+      expect(identical(next, chart), isFalse, reason: key);
+      expect(chart.canvas, isNull, reason: key);
+      chart = next;
+      expect(chart.config.type, type.name, reason: key);
+      expect(
+        chart.getDatasetMeta(0).controller,
+        _controllerClass[type],
+        reason: key,
+      );
+      // The N line shows the counts of the type, and the index of N stays.
+      for (final count in {...stressPointCounts, ...stressArcCounts}) {
+        expect(
+          await stressControlExists(tester, 'stress.n.$count'),
+          type.counts.contains(count),
+          reason: '$key $count',
+        );
+      }
+      expect(
+        await _selected(tester, 'stress.n.${type.counts.first}'),
+        isTrue,
+        reason: key,
+      );
+      expect(
+        chart.getDatasetMeta(0).data,
+        hasLength(type.counts.first),
+        reason: key,
+      );
+      expect(
+        await stressControlExists(tester, 'stress.chart.showLine'),
+        type.points,
+        reason: key,
+      );
+      expect(
+        await stressControlExists(tester, 'stress.chart.sharing'),
+        isFalse,
+        reason: key,
+      );
+    }
     expect(tester.takeException(), isNull);
   });
 
@@ -299,9 +728,10 @@ void main() {
     /// the Stopwatch, real time: runAsync lets it pass.
     Future<List<StressStats>> run(
       WidgetTester tester,
-      StressChartCall call,
-    ) async {
-      final stats = await _pumpChart(tester, call: call);
+      StressChartCall call, {
+      StressChartType type = StressChartType.line,
+    }) async {
+      final stats = await _pumpChart(tester, call: call, type: type);
       for (var k = 0; k < 4; k++) {
         await _frames(tester, 20);
         await tester.runAsync(
@@ -315,20 +745,39 @@ void main() {
     testWidgets('draw: drawMs only', (tester) async {
       final stats = await run(tester, StressChartCall.draw);
       expect(stats, isNotEmpty);
-      expect(stats.last.drawMs, greaterThan(0));
-      expect(stats.last.updateMs, lessThan(stats.last.drawMs));
-      expect(stats.last.animatorMs, 0);
+      final last = stats.last;
+      expect(last.drawMs, greaterThan(0));
+      expect(last.updateMs, lessThan(last.drawMs));
+      expect(last.animatorMs, 0);
+      // A draw has no element update, no layout and no dataset update.
+      expect(last.elementsMs, 0);
+      expect(last.layoutMs, 0);
+      expect(last.datasetsUpdateMs, 0);
+      expect(last.datasetsDrawMs, greaterThan(0));
+      expect(last.datasetsDrawMs, lessThan(last.drawMs));
     });
 
-    testWidgets('update: the draw of update counts in drawMs', (tester) async {
-      final stats = await run(tester, StressChartCall.update);
-      expect(stats, isNotEmpty);
-      // update('none') draws: the draw inside it counts in drawMs, and the
-      // rest in updateMs.
-      expect(stats.last.drawMs, greaterThan(0));
-      expect(stats.last.updateMs, greaterThan(0));
-      expect(stats.last.animatorMs, 0);
-    });
+    for (final type in [StressChartType.line, StressChartType.bar]) {
+      testWidgets('update, ${type.name}: the four parts', (tester) async {
+        final stats = await run(tester, StressChartCall.update, type: type);
+        expect(stats, isNotEmpty);
+        final last = stats.last;
+        // update('none') draws: the draw inside it counts in drawMs, and the
+        // rest in updateMs.
+        expect(last.drawMs, greaterThan(0));
+        expect(last.updateMs, greaterThan(0));
+        expect(last.animatorMs, 0);
+        expect(last.elementsMs, greaterThan(0));
+        expect(last.layoutMs, greaterThan(0));
+        expect(last.datasetsUpdateMs, greaterThan(0));
+        // The three update parts are in the update time, without its draw.
+        expect(
+          last.elementsMs + last.layoutMs + last.datasetsUpdateMs,
+          lessThan(last.updateMs),
+        );
+        expect(last.datasetsDrawMs, lessThan(last.drawMs));
+      });
+    }
 
     testWidgets('animate: the animator ticks and draws in each frame', (
       tester,
@@ -357,6 +806,59 @@ void main() {
     expect(_chart(tester).options['events'], isEmpty);
   });
 
+  for (final (type, showLine) in [
+    (StressChartType.line, false),
+    (StressChartType.scatter, true),
+    (StressChartType.bar, false),
+  ]) {
+    testWidgets('main_stress gives the keys of the mode chart, ${type.name}, '
+        'showLine $showLine', (tester) async {
+      final lines = await _stressLines(() async {
+        await tester.pumpWidget(
+          StressProfileApp(
+            mode: StressMode.chart,
+            scenarios: const [(300, 0)],
+            type: type,
+            showLine: showLine,
+          ),
+        );
+        await _frames(tester, 40);
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 600)),
+        );
+        await _frames(tester, 5);
+        await tester.pump(const Duration(seconds: stressSeconds));
+      });
+      expect(lines, hasLength(1));
+      final line = lines.single;
+      expect(line['mode'], 'chart');
+      expect(line['n'], 300);
+      expect(line['call'], 'draw');
+      expect(line['type'], type.name);
+      expect(line['sharing'], type.sharing);
+      expect(line['scriptable'], false);
+      if (showLine) {
+        expect(line['showLine'], true);
+      } else {
+        expect(line.keys, isNot(contains('showLine')));
+      }
+      for (final key in [
+        'animatorMs',
+        'elementsMs',
+        'layoutMs',
+        'datasetsUpdateMs',
+        'datasetsDrawMs',
+      ]) {
+        expect(line[key], matches(RegExp(r'^\d+\.\d\d$')), reason: key);
+      }
+      final host = tester.state<ChartCanvasState>(
+        find.byKey(const ValueKey('stress.chart.host')),
+      );
+      expect(host.chart!.config.type, type.name);
+      await tester.pumpWidget(const SizedBox());
+    });
+  }
+
   testWidgets('main_stress keeps a late publish out of the next scenario', (
     tester,
   ) async {
@@ -364,14 +866,7 @@ void main() {
     // more. When its window closes in that frame, it publishes the figures
     // of scenario 1. Scenario 2 runs fewer than 30 frames and has no window
     // of its own, so its line must give 0 frames per second.
-    final lines = <String>[];
-    final old = debugPrint;
-    debugPrint = (message, {wrapWidth}) {
-      if (message != null && message.startsWith('STRESS {')) {
-        lines.add(message);
-      }
-    };
-    try {
+    final lines = await _stressLines(() async {
       await tester.pumpWidget(
         const StressProfileApp(
           mode: StressMode.primitives,
@@ -385,14 +880,67 @@ void main() {
       await tester.pump(const Duration(seconds: stressSeconds));
       await _frames(tester, 10);
       await tester.pump(const Duration(seconds: stressSeconds));
-    } finally {
-      // flutter_test checks the debug variables before the tearDown.
-      debugPrint = old;
-    }
+    });
     expect(lines, hasLength(2));
-    expect(lines[0], contains('"n":300'));
-    expect(lines[1], contains('"n":600'));
-    expect(lines[1], contains('"fps":"0.00"'));
+    expect(lines[0]['n'], 300);
+    expect(lines[1]['n'], 600);
+    expect(lines[1]['fps'], '0.00');
     await tester.pumpWidget(const SizedBox());
+  });
+
+  test('the defines TYPE, SHARING and SHOWLINE (Chart.js ADR 0031, section '
+      '5.6)', () {
+    const chart = StressMode.chart;
+    // Without TYPE: SHARING=0 gives scatter, SHARING=1 or no SHARING line.
+    expect(parseStressType('', '', chart), StressChartType.line);
+    expect(parseStressType('', '1', chart), StressChartType.line);
+    expect(parseStressType('', '0', chart), StressChartType.scatter);
+    for (final type in StressChartType.values) {
+      expect(parseStressType(type.name, '', chart), type);
+    }
+    // With both: SHARING=1 needs line, SHARING=0 needs scatter.
+    expect(parseStressType('line', '1', chart), StressChartType.line);
+    expect(parseStressType('scatter', '0', chart), StressChartType.scatter);
+    expect(() => parseStressType('line', '0', chart), throwsArgumentError);
+    expect(() => parseStressType('scatter', '1', chart), throwsArgumentError);
+    expect(() => parseStressType('bar', '1', chart), throwsArgumentError);
+    expect(() => parseStressType('', '2', chart), throwsArgumentError);
+    // An unknown name, and TYPE in another mode.
+    expect(() => parseStressType('area', '', chart), throwsArgumentError);
+    expect(
+      () => parseStressType('bar', '', StressMode.axes),
+      throwsArgumentError,
+    );
+    expect(parseStressType('', '1', StressMode.axes), StressChartType.line);
+
+    expect(parseStressShowLine('0', StressChartType.bar, chart), isFalse);
+    expect(parseStressShowLine('1', StressChartType.line, chart), isTrue);
+    expect(parseStressShowLine('1', StressChartType.scatter, chart), isTrue);
+    expect(
+      () => parseStressShowLine('1', StressChartType.radar, chart),
+      throwsArgumentError,
+    );
+    expect(
+      () => parseStressShowLine('1', StressChartType.line, StressMode.axes),
+      throwsArgumentError,
+    );
+    expect(
+      () => parseStressShowLine('2', StressChartType.line, chart),
+      throwsArgumentError,
+    );
+  });
+
+  test('stressDefaultScenarios of the mode chart: the counts of the type', () {
+    expect(
+      stressDefaultScenarios(StressMode.chart, StressChartType.line),
+      [(1000, 0), (5000, 0), (20000, 0)],
+    );
+    expect(
+      stressDefaultScenarios(StressMode.chart, StressChartType.radar),
+      [(100, 0), (1000, 0), (5000, 0)],
+    );
+    expect(stressDefaultScenarios(StressMode.chart), [
+      for (final n in stressType.counts) (n, 0),
+    ]);
   });
 }

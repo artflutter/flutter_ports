@@ -30,7 +30,8 @@ const bool stressSpin = bool.fromEnvironment('SPIN');
 
 /// Whether the modes `primitives` and `elements` draw their line of N
 /// points: `--dart-define=LINE=1` (the default) or `--dart-define=LINE=0`.
-/// The mode `chart` has no line. Thus `LINE=0` gives the `elements` scene
+/// The mode `chart` of `line` without `SHOWLINE=1` draws no line
+/// (Chart.js ADR 0031, section 3). Thus `LINE=0` gives the `elements` scene
 /// that compares with it (Chart.js ADR 0021, section 8, the acceptance).
 final bool stressLine = _flag(
   'LINE',
@@ -92,16 +93,68 @@ final bool stressAutoSkip = _flag(
   ),
 );
 
-/// `enableOptionSharing` of the chart points in the mode `chart`:
-/// `--dart-define=SHARING=1` (the default) as in a line chart,
-/// `--dart-define=SHARING=0` as in a scatter chart.
-final bool stressSharing = _flag(
-  'SHARING',
-  const String.fromEnvironment(
-    'SHARING',
-    defaultValue: '1',
-  ),
+/// The chart type of the mode `chart`: `--dart-define=TYPE=<name>` of
+/// [StressChartType]. `SHARING` is an alias: without `TYPE`, `SHARING=0`
+/// gives `scatter`, and `SHARING=1` or no `SHARING` gives `line`. With both
+/// defines, `SHARING=1` needs `TYPE=line` and `SHARING=0` needs
+/// `TYPE=scatter`. `TYPE` in another mode, an unknown name, or another pair
+/// throws an [ArgumentError] at the start (Chart.js ADR 0031, section 5).
+final StressChartType stressType = parseStressType(
+  const String.fromEnvironment('TYPE'),
+  const String.fromEnvironment('SHARING'),
+  stressMode,
 );
+
+/// The chart type of the defines [type] (`TYPE`) and [sharing] (`SHARING`)
+/// in the mode [mode]: see [stressType]. An empty string is a define that
+/// is not given. `SHARING` in another mode than `chart` has no effect, as
+/// before Chart.js ADR 0031.
+StressChartType parseStressType(String type, String sharing, StressMode mode) {
+  if (type.isNotEmpty && mode != StressMode.chart) {
+    throw ArgumentError.value(type, 'TYPE', 'Not in MODE=chart');
+  }
+  final shared = sharing.isEmpty ? null : _flag('SHARING', sharing);
+  if (type.isEmpty) {
+    return shared == false ? StressChartType.scatter : StressChartType.line;
+  }
+  final chartType = StressChartType.values.byName(type);
+  if (shared != null &&
+      chartType != (shared ? StressChartType.line : StressChartType.scatter)) {
+    throw ArgumentError.value(
+      type,
+      'TYPE',
+      'Not ${shared ? 'line' : 'scatter'} (SHARING=$sharing)',
+    );
+  }
+  return chartType;
+}
+
+/// Whether line and scatter show their line: `--dart-define=SHOWLINE=1`.
+/// The default is 0. `SHOWLINE=1` with another type or in another mode
+/// throws an [ArgumentError] at the start.
+final bool stressShowLine = parseStressShowLine(
+  const String.fromEnvironment('SHOWLINE', defaultValue: '0'),
+  stressType,
+  stressMode,
+);
+
+/// The value of the define `SHOWLINE` [value] for the chart type [type] in
+/// the mode [mode]: see [stressShowLine].
+bool parseStressShowLine(
+  String value,
+  StressChartType type,
+  StressMode mode,
+) {
+  final showLine = _flag('SHOWLINE', value);
+  if (showLine && (mode != StressMode.chart || !type.points)) {
+    throw ArgumentError.value(
+      value,
+      'SHOWLINE',
+      'Not MODE=chart with TYPE=line or TYPE=scatter',
+    );
+  }
+  return showLine;
+}
 
 /// Whether the chart points have a scriptable `backgroundColor` in the mode
 /// `chart`: `--dart-define=SCRIPTABLE=1`. With `CALL=update`, this is case
@@ -127,8 +180,14 @@ bool _flag(String name, String value) => switch (value) {
 ///   `packages/flutter_chartjs/doc/performance.md`.
 /// - `bars`: 1000, 5000 and 20000 bars without labels.
 /// - `arcs`: 100, 1000 and 5000 arcs without labels.
-/// - `chart` and `axes`: 1000, 5000 and 20000 chart points without labels.
-List<(int, int)> stressDefaultScenarios(StressMode mode) => switch (mode) {
+/// - `chart`: the counts of [type] (default [stressType]) without labels:
+///   1000, 5000 and 20000 points, bars or bubbles, or 100, 1000 and 5000
+///   arcs or radar points.
+/// - `axes`: 1000, 5000 and 20000 chart points without labels.
+List<(int, int)> stressDefaultScenarios(
+  StressMode mode, [
+  StressChartType? type,
+]) => switch (mode) {
   StressMode.primitives || StressMode.elements => const [
     (1000, 0),
     (1000, 50),
@@ -137,7 +196,8 @@ List<(int, int)> stressDefaultScenarios(StressMode mode) => switch (mode) {
     (1000, 200),
     (20000, 200),
   ],
-  StressMode.bars || StressMode.chart || StressMode.axes => const [
+  StressMode.chart => [for (final n in (type ?? stressType).counts) (n, 0)],
+  StressMode.bars || StressMode.axes => const [
     (1000, 0),
     (5000, 0),
     (20000, 0),
@@ -164,13 +224,15 @@ List<(int, int)> _parse(String value) => value.isEmpty
 /// after the first 30 frames, and `STRESS done` at the end. `updateMs` is the
 /// time of `chart.update()` without its draw. In the mode `chart`, the line
 /// also has `animatorMs`, the time of the animator tick without its draw
-/// (`CALL=animate`), and the keys `call`, `sharing` and `scriptable` of the
-/// defines.
+/// (`CALL=animate`), the keys `call`, `type` and `scriptable` of the
+/// defines, `showLine` (only when true), `sharing` (the
+/// `enableOptionSharing` of the controller of dataset 0), and the means
+/// `elementsMs`, `layoutMs`, `datasetsUpdateMs` and `datasetsDrawMs` of the
+/// parts of `StressChartTiming` (`lib/demo/stress_timing.dart`).
 /// In the mode `axes`, the line has the keys `call`, `scale`, `yScale` and
 /// `autoSkip` of the defines, the tick count `ticks` (after the auto skip)
 /// and the `labelRotation` `rotation` of the x axis at the end, and the
-/// means `layoutMs`, `datasetsUpdateMs` and `datasetsDrawMs` of the parts of
-/// `StressAxesTiming` (`lib/demo/stress_axes.dart`).
+/// means of the four parts.
 /// With `LINE=0`, it has the key `line` with the value false.
 /// Fresh processes give the most stable figures: run one scenario at a time
 /// with `--dart-define=MODE=<mode> --dart-define=SCENARIO=<N>x<M>`.
@@ -180,10 +242,10 @@ void main() {
 
 /// The app of the profiling entry.
 class StressProfileApp extends StatefulWidget {
-  /// Creates the app. [mode], [scenarios], [scale], [yScale] and [autoSkip]
-  /// default to [stressMode], [stressScenarios], [stressScale],
-  /// [stressYScale] and [stressAutoSkip], the values of the defines. A test
-  /// gives them.
+  /// Creates the app. [mode], [scenarios], [scale], [yScale], [autoSkip],
+  /// [type] and [showLine] default to [stressMode], [stressScenarios],
+  /// [stressScale], [stressYScale], [stressAutoSkip], [stressType] and
+  /// [stressShowLine], the values of the defines. A test gives them.
   const StressProfileApp({
     super.key,
     this.mode,
@@ -191,6 +253,8 @@ class StressProfileApp extends StatefulWidget {
     this.scale,
     this.yScale,
     this.autoSkip,
+    this.type,
+    this.showLine,
   });
 
   /// The mode of the scenarios, or Dart `null` for [stressMode].
@@ -210,6 +274,12 @@ class StressProfileApp extends StatefulWidget {
   /// [stressAutoSkip].
   final bool? autoSkip;
 
+  /// The chart type of the mode `chart`, or Dart `null` for [stressType].
+  final StressChartType? type;
+
+  /// `showLine` of the mode `chart`, or Dart `null` for [stressShowLine].
+  final bool? showLine;
+
   @override
   State<StressProfileApp> createState() => _StressProfileAppState();
 }
@@ -228,6 +298,10 @@ class _StressProfileAppState extends State<StressProfileApp> {
   StressAxisType get _yScale => widget.yScale ?? stressYScale;
 
   bool get _autoSkip => widget.autoSkip ?? stressAutoSkip;
+
+  StressChartType get _type => widget.type ?? stressType;
+
+  bool get _showLine => widget.showLine ?? stressShowLine;
 
   @override
   void initState() {
@@ -263,8 +337,14 @@ class _StressProfileAppState extends State<StressProfileApp> {
           if (_mode == StressMode.chart) ...{
             'animatorMs': avg((s) => s.animatorMs),
             'call': stressCall.name,
-            'sharing': stressSharing,
+            'type': _type.name,
+            'sharing': last?.sharing ?? _type.sharing,
             'scriptable': stressScriptable,
+            if (_showLine) 'showLine': true,
+            'elementsMs': avg((s) => s.elementsMs),
+            'layoutMs': avg((s) => s.layoutMs),
+            'datasetsUpdateMs': avg((s) => s.datasetsUpdateMs),
+            'datasetsDrawMs': avg((s) => s.datasetsDrawMs),
           },
           if (_mode == StressMode.axes) ...{
             'call': stressCall.name,
@@ -273,6 +353,7 @@ class _StressProfileAppState extends State<StressProfileApp> {
             'autoSkip': _autoSkip,
             'ticks': last?.ticks,
             'rotation': last?.rotation.toStringAsFixed(2),
+            'elementsMs': avg((s) => s.elementsMs),
             'layoutMs': avg((s) => s.layoutMs),
             'datasetsUpdateMs': avg((s) => s.datasetsUpdateMs),
             'datasetsDrawMs': avg((s) => s.datasetsDrawMs),
@@ -309,7 +390,8 @@ class _StressProfileAppState extends State<StressProfileApp> {
           initialSpin: stressSpin,
           initialLine: stressLine,
           initialCall: stressCall,
-          initialSharing: stressSharing,
+          initialType: _type,
+          initialShowLine: _showLine,
           initialScriptable: stressScriptable,
           initialScale: _scale,
           initialYScale: _yScale,

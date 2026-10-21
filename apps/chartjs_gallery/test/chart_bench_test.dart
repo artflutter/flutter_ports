@@ -5,9 +5,9 @@ import 'dart:convert';
 import 'package:chartjs_gallery/bench/chart_bench.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
-import 'package:chartjs_gallery/demo/stress_point_controller.dart';
 import 'package:chartjs_gallery/main_bench.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chartjs/src/controllers/index.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/elements/index.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart' show jsToNumber;
@@ -32,6 +32,41 @@ List<String> _keys(String part) => [
   '${part}P10Ms',
   '${part}P90Ms',
 ];
+
+/// The four parts of `StressChartTiming` in a BENCH line.
+const List<String> _parts = [
+  'elements',
+  'layout',
+  'datasetsUpdate',
+  'datasetsDraw',
+];
+
+/// Collects the BENCH lines of [body].
+Future<List<String>> _benchLines(Future<void> Function() body) async {
+  final lines = <String>[];
+  final old = debugPrint;
+  debugPrint = (message, {wrapWidth}) {
+    if (message != null && message.startsWith('BENCH')) lines.add(message);
+  };
+  try {
+    await body();
+  } finally {
+    // flutter_test checks the debug variables before the tearDown.
+    debugPrint = old;
+  }
+  return lines;
+}
+
+/// Pumps a [ChartBenchApp] until it prints `BENCH done`.
+Future<void> _runApp(WidgetTester tester, ChartBenchApp app) async {
+  await tester.pumpWidget(app);
+  for (var i = 0; i < 200; i++) {
+    await tester.pump();
+    if (find.textContaining('Done (').evaluate().isNotEmpty) break;
+  }
+  // The frame of the last status.
+  await tester.pump();
+}
 
 /// The only case of [selection].
 ChartBenchCase _case(String selection) =>
@@ -72,6 +107,7 @@ void main() {
     expect(line['mode'], 'chart');
     expect(line['case'], 'c');
     expect(line['n'], 10);
+    expect(line['type'], 'line');
     expect(line['sharing'], true);
     expect(line['scriptable'], true);
     expect(line['call'], 'update');
@@ -81,7 +117,12 @@ void main() {
     expect(line['batchIterations'], isA<int>());
     expect(line['iterations'], line['batchIterations']);
     expect(line['warmupIterations'], greaterThanOrEqualTo(1));
-    for (final key in [..._keys('update'), ..._keys('draw'), ..._keys('end')]) {
+    for (final key in [
+      ..._keys('update'),
+      ..._keys('draw'),
+      ..._keys('end'),
+      for (final part in _parts) ..._keys(part),
+    ]) {
       expect(line[key], _figure, reason: key);
     }
     expect(line['width'], chartBenchWidth);
@@ -110,7 +151,8 @@ void main() {
       onChart: (c) {
         chart = c;
         expect(c.platform, isA<BasicPlatform>());
-        expect(c.config.type, StressPointController.id);
+        expect(c.config.type, 'line');
+        expect(c.getDatasetMeta(0).controller, isA<LineController>());
         expect(c.options['responsive'], false);
         expect(c.options['animation'], false);
         expect(c.options['events'], isEmpty);
@@ -124,14 +166,23 @@ void main() {
     expect(chart, isNotNull);
     expect(chart!.canvas, isNull);
     expect(Chart.instances.values, isNot(contains(chart)));
-    // Case (a) only draws: the line has no update figures. The mode chart
-    // has no scales, thus no tick keys.
+    // Case (a) only draws: the line has no update figures, and the parts of
+    // the update are 0. The hidden scales of the mode chart give no tick
+    // keys.
     expect(line['call'], 'draw');
+    expect(line['type'], 'line');
     expect(line.keys, isNot(contains('updateMedianMs')));
     expect(line.keys, isNot(contains('ticks')));
-    for (final key in [..._keys('draw'), ..._keys('end')]) {
+    for (final key in [
+      ..._keys('draw'),
+      ..._keys('end'),
+      for (final part in _parts) ..._keys(part),
+    ]) {
       expect(line[key], _figure, reason: key);
     }
+    expect(line['elementsMedianMs'], '0.000');
+    expect(line['layoutMedianMs'], '0.000');
+    expect(line['datasetsUpdateMedianMs'], '0.000');
   });
 
   testWidgets('the update cases move the points of the stress mode', (
@@ -158,7 +209,7 @@ void main() {
         final area = c.chartArea!;
         expect(
           points.first.x,
-          area.left + (first['x']! as double) * area.width,
+          closeTo(area.left + (first['x']! as double) * area.width, 1e-9),
         );
         expect(points[0].options!['backgroundColor'], stressChartBackground);
         expect(points[1].options!['backgroundColor'], stressChartBackgroundOdd);
@@ -216,9 +267,7 @@ void main() {
       ..._keys('update'),
       ..._keys('draw'),
       ..._keys('end'),
-      ..._keys('layout'),
-      ..._keys('datasetsUpdate'),
-      ..._keys('datasetsDraw'),
+      for (final part in _parts) ..._keys(part),
     ]) {
       expect(line[key], _figure, reason: key);
     }
@@ -238,6 +287,7 @@ void main() {
     expect(draw['ticks'], greaterThan(1));
     expect(draw['rotation'], matches(RegExp(r'^\d+\.\d\d$')));
     expect(draw.keys, isNot(contains('updateMedianMs')));
+    expect(draw['elementsMedianMs'], '0.000');
     expect(draw['layoutMedianMs'], '0.000');
     expect(draw['datasetsUpdateMedianMs'], '0.000');
     expect(draw['datasetsDrawMedianMs'], _figure);
@@ -306,7 +356,8 @@ void main() {
       for (final c in chartBenchCases)
         if (c.mode == 'chart') c,
     ]);
-    expect(selectChartBenchCases('chart'), hasLength(4));
+    expect(selectChartBenchCases('chart'), hasLength(16));
+    expect(selectChartBenchCases('a,b,c'), hasLength(4));
     final axes = selectChartBenchCases('axes');
     expect(
       [for (final c in axes) c.id],
@@ -327,6 +378,7 @@ void main() {
     final b = selectChartBenchCases('b');
     expect(b, hasLength(2));
     expect([for (final c in b) c.keys['sharing']], [true, false]);
+    expect([for (final c in b) c.keys['type']], ['line', 'scatter']);
     expect(selectChartBenchCases(' c , chart.a ').map((c) => c.name), [
       'a',
       'c',
@@ -339,5 +391,183 @@ void main() {
     expect(parseChartBenchCounts(' 10 '), [10]);
     expect(() => parseChartBenchCounts('0'), throwsArgumentError);
     expect(() => parseChartBenchCounts('1k'), throwsFormatException);
+  });
+
+  test('the cases a, b and c keep their keys and get the key type', () {
+    final cases = selectChartBenchCases('a,b,c');
+    expect(
+      [for (final c in cases) c.id],
+      [
+        'chart.a',
+        'chart.b',
+        'chart.b',
+        'chart.c',
+      ],
+    );
+    expect(
+      [for (final c in cases) c.keys],
+      [
+        {'type': 'line', 'sharing': true, 'scriptable': false},
+        {'type': 'line', 'sharing': true, 'scriptable': false},
+        {'type': 'scatter', 'sharing': false, 'scriptable': false},
+        {'type': 'line', 'sharing': true, 'scriptable': true},
+      ],
+    );
+    expect([for (final c in cases) c.counts], [null, null, null, null]);
+  });
+
+  test('the cases chart.<type> come after the axes cases, two calls each', () {
+    final ids = [for (final c in chartBenchCases) c.id];
+    final lastAxes = ids.lastIndexWhere((id) => id.startsWith('axes.'));
+    final types = chartBenchCases.sublist(lastAxes + 1);
+    expect(ids.indexWhere((id) => id.startsWith('axes.')), 4);
+    expect(
+      [for (final c in types) '${c.id} ${c.call.name}'],
+      [
+        for (final type in StressChartType.values)
+          if (!type.points)
+            for (final call in ChartBenchCall.values)
+              'chart.${type.name} ${call.name}',
+      ],
+    );
+    expect(types, hasLength(12));
+    for (final c in types) {
+      final type = StressChartType.values.byName(c.name);
+      expect(c.mode, 'chart');
+      expect(c.keys, {
+        'type': type.name,
+        'sharing': type.sharing,
+        'scriptable': false,
+      });
+      expect(c.counts, type.counts);
+    }
+    for (final selector in ['bar', 'chart.bar']) {
+      expect(
+        [for (final c in selectChartBenchCases(selector)) c.call],
+        [ChartBenchCall.draw, ChartBenchCall.update],
+        reason: selector,
+      );
+    }
+    // No case has the type of the deleted gallery controller.
+    for (final c in chartBenchCases) {
+      expect(c.keys['type'], isNot('stressPoint'), reason: c.id);
+    }
+    expect(chartBenchDefaultCounts, [1000, 5000, 20000]);
+  });
+
+  testWidgets('a case without N runs its own counts, and N overrides them', (
+    tester,
+  ) async {
+    const settings = ChartBenchSettings(batches: 1, batchMs: 1, warmupMs: 1);
+    // A tiny copy of chart.radar with two counts.
+    final radar = selectChartBenchCases('chart.radar').first;
+    final small = ChartBenchCase(
+      mode: radar.mode,
+      name: radar.name,
+      call: radar.call,
+      scene: radar.scene,
+      keys: radar.keys,
+      counts: const [5, 7],
+    );
+    final own = await _benchLines(
+      () => _runApp(tester, ChartBenchApp(cases: [small], settings: settings)),
+    );
+    expect(own.last, 'BENCH done');
+    expect(
+      [
+        for (final line in own.take(own.length - 1))
+          (jsonDecode(line.substring('BENCH '.length)) as Map)['n'],
+      ],
+      [5, 7],
+    );
+    await tester.pumpWidget(const SizedBox());
+    final overridden = await _benchLines(
+      () => _runApp(
+        tester,
+        ChartBenchApp(cases: [small], counts: const [3], settings: settings),
+      ),
+    );
+    expect(overridden, hasLength(2));
+    expect(
+      (jsonDecode(overridden.first.substring('BENCH '.length)) as Map)['n'],
+      3,
+    );
+    expect(benchCounts, isNull);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a tiny run of each case chart.<type> gives its keys and parts', (
+    tester,
+  ) async {
+    final types = [
+      for (final c in chartBenchCases)
+        if (c.mode == 'chart' && !['a', 'b', 'c'].contains(c.name)) c,
+    ];
+    expect(types, hasLength(12));
+    for (final benchCase in types) {
+      final type = StressChartType.values.byName(benchCase.name);
+      final reason = '${benchCase.id} ${benchCase.call.name}';
+      Object? before;
+      final line = runChartBenchCase(
+        benchCase,
+        10,
+        _settings,
+        onChart: (c) {
+          expect(c.config.type, type.name, reason: reason);
+          final controller = c.getDatasetMeta(0).controller!;
+          expect(controller.enableOptionSharing, type.sharing, reason: reason);
+          expect(c.getDatasetMeta(0).data, hasLength(10), reason: reason);
+          before = c.getDatasetMeta(0).data.first;
+        },
+      );
+      expect(before, isNotNull, reason: reason);
+      expect(line['mode'], 'chart', reason: reason);
+      expect(line['case'], type.name, reason: reason);
+      expect(line['type'], type.name, reason: reason);
+      expect(line['sharing'], type.sharing, reason: reason);
+      expect(line['scriptable'], false, reason: reason);
+      expect(line['n'], 10, reason: reason);
+      for (final key in [
+        if (benchCase.call == ChartBenchCall.update) ..._keys('update'),
+        ..._keys('draw'),
+        ..._keys('end'),
+        for (final part in _parts) ..._keys(part),
+      ]) {
+        expect(line[key], _figure, reason: '$reason $key');
+      }
+      if (benchCase.call == ChartBenchCall.update) {
+        expect(
+          double.parse(line['elementsMedianMs']! as String),
+          greaterThan(0),
+          reason: reason,
+        );
+      }
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  test('an update of a case chart.<type> moves the values', () {
+    for (final name in [
+      'bar',
+      'bubble',
+      'doughnut',
+      'pie',
+      'polarArea',
+      'radar',
+    ]) {
+      final benchCase = selectChartBenchCases(
+        'chart.$name',
+      ).singleWhere((c) => c.call == ChartBenchCall.update);
+      final scene = benchCase.scene(10);
+      final datasets =
+          (scene.config['data']! as Map<String, Object?>)['datasets']!
+              as List<Object?>;
+      final data =
+          (datasets.single! as Map<String, Object?>)['data']! as List<Object?>;
+      final before = jsonEncode(data);
+      scene.change!();
+      expect(jsonEncode(data), isNot(before), reason: name);
+      expect(scene.takeParts!().keys, _parts, reason: name);
+    }
   });
 }

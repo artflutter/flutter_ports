@@ -117,7 +117,10 @@ void main() {
       tester.getTopLeft(phase3).dy,
       lessThan(tester.getTopLeft(phase2).dy),
     );
-    expect(find.textContaining('no chart type renders yet'), findsOneWidget);
+    expect(
+      find.textContaining('render through the ported controllers'),
+      findsOneWidget,
+    );
 
     await tester.tap(phase3);
     await _frames(tester, 30);
@@ -307,6 +310,33 @@ void main() {
     final stopped = _renders(tester);
     await _frames(tester, 5);
     expect(_renders(tester), stopped);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('stress: in the mode chart, the chart is in view at 412 x 915 '
+      '(Chart.js ADR 0031, section 10)', (tester) async {
+    await _pumpDemo(tester);
+    await _openTab(tester, 'stress');
+    // The mode line is at the top of the tab: a tap needs no scroll.
+    await tester.tap(find.byKey(const ValueKey('stress.mode.chart')));
+    await _frames(tester, 6);
+    final view = Offset.zero & _phone;
+    for (final type in ['line', 'bar']) {
+      await tester.tap(find.byKey(ValueKey('stress.chart.type.$type')));
+      await _frames(tester, 6);
+      final position = tester.state<ScrollableState>(_page).position;
+      expect(position.pixels, 0, reason: type);
+      final host = tester.getRect(
+        find.byKey(const ValueKey('stress.chart.host')),
+      );
+      expect(host.height, greaterThan(0), reason: type);
+      expect(view.contains(host.topLeft), isTrue, reason: '$type $host');
+      expect(
+        view.contains(host.bottomRight - const Offset(0.01, 0.01)),
+        isTrue,
+        reason: '$type $host',
+      );
+    }
     expect(tester.takeException(), isNull);
   });
 

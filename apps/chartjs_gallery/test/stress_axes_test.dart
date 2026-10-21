@@ -2,12 +2,13 @@
 
 import 'dart:convert';
 
+import 'package:chartjs_gallery/bench/chart_bench.dart';
 import 'package:chartjs_gallery/demo/chart_canvas.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
-import 'package:chartjs_gallery/demo/stress_point_controller.dart';
 import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chartjs/src/controllers/index.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.scale.dart';
 import 'package:flutter_chartjs/src/elements/index.dart';
@@ -108,6 +109,73 @@ Future<void> _tap(WidgetTester tester, String key) async {
 Future<bool> _selected(WidgetTester tester, String key) =>
     stressSelected(tester, key);
 
+/// The data object [i] of the chart of the stress tab.
+Map<String, Object?> _item(WidgetTester tester, int i) =>
+    _state(tester).debugChartData[i]! as Map<String, Object?>;
+
+/// The chart areas of the stress mode axes at commit `0e0ab93`, before
+/// Chart.js ADR 0031: the phase 5 gallery controller, overflow false.
+/// The probe `scratchpad/step45/G-U2/base/apps/chartjs_gallery/test/
+/// probe_area_test.dart` (a `git archive` of `0e0ab93`) gave them on
+/// 2026-10-21: the tab with 300 points and 10 labels in the default test
+/// view of 800 x 600 (a host of 736 x 441.6), and the frameless benchmark
+/// case `axes.<scale>` with 300 points (800 x 480). The time axis is not
+/// here: its ticks depend on the local time zone of the default date
+/// adapter.
+const Map<StressAxisType, List<double>> _tabAreas0e0ab93 = {
+  StressAxisType.linear: [50, 10.2, 715, 413.2],
+  StressAxisType.logarithmic: [50, 10.2, 721.9689600190867, 353.9961251985197],
+  StressAxisType.category: [
+    56.99415921366931,
+    10.2,
+    736,
+    335.61105856366424,
+  ],
+};
+
+/// See [_tabAreas0e0ab93].
+const Map<StressAxisType, List<double>> _benchAreas0e0ab93 = {
+  StressAxisType.linear: [50, 10.2, 779, 451.59999999999997],
+  StressAxisType.logarithmic: [
+    50,
+    10.2,
+    785.9689600190867,
+    392.39612519851966,
+  ],
+  StressAxisType.category: [
+    56.994159213669306,
+    10.2,
+    790.9249799518752,
+    374.0110585636642,
+  ],
+};
+
+/// The tick count and the `labelRotation` of the x axis at `0e0ab93`, from
+/// the probe of [_tabAreas0e0ab93]: the tab, then the benchmark.
+const Map<StressAxisType, ((int, double), (int, double))> _ticks0e0ab93 = {
+  StressAxisType.linear: ((11, 0), (11, 0)),
+  StressAxisType.logarithmic: ((25, 50), (25, 50)),
+  StressAxisType.category: ((30, 50), (34, 50)),
+};
+
+/// Checks that the chart area of [chart] is [expected] within 1e-9 px, and
+/// that the x axis has the tick count and the rotation of [ticks].
+void _expectArea(
+  Chart chart,
+  List<double> expected,
+  (int, double) ticks,
+  String reason,
+) {
+  final area = chart.chartArea!;
+  final actual = [area.left, area.top, area.right, area.bottom];
+  for (var i = 0; i < 4; i++) {
+    expect(actual[i], closeTo(expected[i], 1e-9), reason: '$reason $i');
+  }
+  final x = chart.scales['x']!;
+  expect(x.ticks, hasLength(ticks.$1), reason: reason);
+  expect(jsToNumber(x.labelRotation), ticks.$2, reason: reason);
+}
+
 /// The scale class of each scale type.
 final Map<StressAxisType, Matcher> _scaleClass = {
   StressAxisType.linear: isA<LinearScale>(),
@@ -129,9 +197,23 @@ void main() {
           await _frames(tester, 10);
           final chart = _chart(tester);
           expect(chart.platform, isA<FlutterPlatform>());
-          expect(chart.config.type, StressPointController.id);
+          expect(chart.config.type, 'line');
           expect(chart.options['animation'], false);
           expect(chart.options['events'], isEmpty);
+          expect(chart.options['parsing'], false);
+          // Chart.js ADR 0031 section 4: the points without the line, no
+          // dataset clip, and the chart area of phase 6.
+          expect(chart.getDatasetMeta(0).controller, isA<LineController>());
+          expect(chart.getDatasetMeta(0).dataset, isA<LineElement>());
+          final dataset =
+              (chart.data['datasets']! as List<Object?>).single!
+                  as Map<String, Object?>;
+          expect(dataset['showLine'], false);
+          expect(chart.getDatasetMeta(0).clip.disabled, isTrue);
+          final before = _tabAreas0e0ab93[scale];
+          if (before != null) {
+            _expectArea(chart, before, _ticks0e0ab93[scale]!.$1, scale.name);
+          }
           final x = _scale(tester, 'x');
           final y = _scale(tester, 'y');
           expect(x, _scaleClass[scale]);
@@ -161,24 +243,25 @@ void main() {
           // point (core.datasetController.js:625-655): the x values rise.
           for (var i = 1; i < _n; i++) {
             expect(
-              jsToNumber(data[i]['x']),
-              greaterThan(jsToNumber(data[i - 1]['x'])),
+              jsToNumber(_item(tester, i)['x']),
+              greaterThan(jsToNumber(_item(tester, i - 1)['x'])),
             );
           }
           expect(chart.getDatasetMeta(0).sorted, isTrue);
           expect(
             _scale(tester, 'x').min,
-            lessThanOrEqualTo(jsToNumber(data.first['x'])),
+            lessThanOrEqualTo(jsToNumber(_item(tester, 0)['x'])),
           );
           expect(
             _scale(tester, 'x').max,
-            greaterThanOrEqualTo(jsToNumber(data.last['x'])),
+            greaterThanOrEqualTo(jsToNumber(_item(tester, _n - 1)['x'])),
           );
           // controller.line.js:97-98: the pixels of the raw parsed values.
           final scaleX = _scale(tester, 'x');
           final scaleY = _scale(tester, 'y');
-          expect(points[7].x, scaleX.getPixelForValue(data[7]['x'], 7));
-          expect(points[7].y, scaleY.getPixelForValue(data[7]['y'], 7));
+          final item = _item(tester, 7);
+          expect(points[7].x, scaleX.getPixelForValue(item['x'], 7));
+          expect(points[7].y, scaleY.getPixelForValue(item['y'], 7));
           expect(points[7].options!['radius'], 3);
 
           // Stopping publishes the figures with the x ticks.
@@ -228,6 +311,8 @@ void main() {
       'stress.chart.call.animate',
       'stress.chart.sharing',
       'stress.chart.scriptable',
+      'stress.chart.showLine',
+      'stress.chart.type.line',
       'stress.axes.yScale.category',
       'stress.chart.host',
       'stress.host',
@@ -261,7 +346,7 @@ void main() {
     await _tap(tester, 'stress.axes.yScale.logarithmic');
     expect(_scale(tester, 'y'), isA<LogarithmicScale>());
     expect(identical(_chart(tester), third), isFalse);
-    final value = _state(tester).debugChartData.first['y']! as double;
+    final value = _item(tester, 0)['y']! as double;
     expect(value, inInclusiveRange(1, 100000));
 
     // N makes a new chart of N points.
@@ -289,10 +374,13 @@ void main() {
     expect(await _selected(tester, 'stress.chart.call.draw'), isTrue);
     expect(_chart(tester).options['animation'], false);
     expect(_scale(tester, 'x'), isA<LinearScale>());
-    // Back in the mode chart, the chart has no scales.
+    // Back in the mode chart, the chart has the two hidden unit scales of
+    // Chart.js ADR 0031 section 3.
     await _tap(tester, 'stress.mode.chart');
-    expect(_chart(tester).scales, isEmpty);
-    expect(_chart(tester).getDatasetMeta(0).iScale, isNull);
+    expect(_chart(tester).config.type, 'line');
+    expect(_scale(tester, 'x').options['display'], false);
+    expect(_scale(tester, 'y').options['display'], false);
+    expect((_scale(tester, 'y').min, _scale(tester, 'y').max), (0, 1));
     expect(tester.takeException(), isNull);
   });
 
@@ -313,6 +401,7 @@ void main() {
     for (final window in windows) {
       expect(window.drawMs, greaterThan(0));
       expect(window.datasetsDrawMs, greaterThan(0));
+      expect(window.elementsMs, 0);
       expect(window.layoutMs, 0);
       expect(window.datasetsUpdateMs, 0);
     }
@@ -339,6 +428,7 @@ void main() {
     expect(started, isNotEmpty);
     expect(switched, isNotEmpty);
     for (final window in [...started, ...switched]) {
+      expect(window.elementsMs, 0);
       expect(window.layoutMs, 0);
       expect(window.datasetsUpdateMs, 0);
       expect(window.datasetsDrawMs, greaterThan(0));
@@ -371,6 +461,7 @@ void main() {
       expect(last.drawMs, greaterThan(0));
       expect(last.datasetsDrawMs, greaterThan(0));
       expect(last.datasetsDrawMs, lessThan(last.drawMs));
+      expect(last.elementsMs, 0);
       expect(last.layoutMs, 0);
       expect(last.datasetsUpdateMs, 0);
       expect(last.ticks, greaterThan(1));
@@ -382,11 +473,12 @@ void main() {
       expect(stats, isNotEmpty);
       final last = stats.last;
       expect(last.updateMs, greaterThan(0));
+      expect(last.elementsMs, greaterThan(0));
       expect(last.layoutMs, greaterThan(0));
       expect(last.datasetsUpdateMs, greaterThan(0));
-      // Both parts are in the update time, without its draw.
+      // The three parts are in the update time, without its draw.
       expect(
-        last.layoutMs + last.datasetsUpdateMs,
+        last.elementsMs + last.layoutMs + last.datasetsUpdateMs,
         lessThan(last.updateMs),
       );
       expect(last.datasetsDrawMs, lessThan(last.drawMs));
@@ -435,10 +527,16 @@ void main() {
     // Without the auto skip, the category axis has a tick for each point.
     expect(line['ticks'], 300);
     expect(line['rotation'], matches(RegExp(r'^\d+\.\d\d$')));
-    for (final key in ['layoutMs', 'datasetsUpdateMs', 'datasetsDrawMs']) {
+    for (final key in [
+      'elementsMs',
+      'layoutMs',
+      'datasetsUpdateMs',
+      'datasetsDrawMs',
+    ]) {
       expect(line[key], matches(RegExp(r'^\d+\.\d\d$')), reason: key);
     }
     expect(line.keys, isNot(contains('sharing')));
+    expect(line.keys, isNot(contains('type')));
     expect(line.keys, isNot(contains('animatorMs')));
     final host = tester.state<ChartCanvasState>(
       find.byKey(const ValueKey('stress.axes.host')),
@@ -446,6 +544,26 @@ void main() {
     expect(host.chart!.scales['y'], isA<LogarithmicScale>());
     await tester.pumpWidget(const SizedBox());
   });
+
+  for (final scale in _benchAreas0e0ab93.keys) {
+    test('axes.${scale.name}: the chart area of the benchmark equals the '
+        'area at 0e0ab93', () {
+      runChartBenchCase(
+        selectChartBenchCases('axes.${scale.name}').first,
+        300,
+        const ChartBenchSettings(batches: 1, batchMs: 1, warmupMs: 1),
+        onChart: (chart) {
+          expect(chart.config.type, 'line');
+          _expectArea(
+            chart,
+            _benchAreas0e0ab93[scale]!,
+            _ticks0e0ab93[scale]!.$2,
+            scale.name,
+          );
+        },
+      );
+    });
+  }
 
   test('stressDefaultScenarios of the mode axes', () {
     expect(stressDefaultScenarios(StressMode.axes), [

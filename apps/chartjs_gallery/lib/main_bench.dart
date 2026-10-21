@@ -8,18 +8,27 @@ import 'package:flutter/material.dart';
 
 /// The cases of the benchmark entry: `--dart-define=CASES=a,c` gives a
 /// comma list of selectors. A selector is a mode (`chart` or `axes`), a case
-/// name (`b`, `time`) or both (`chart.b`, `axes.time`). Without the define,
-/// it runs all cases of [chartBenchCases]. A selector that selects no case
-/// throws an [ArgumentError] at the start.
+/// name (`b`, `time`, `bar`) or both (`chart.b`, `axes.time`, `chart.bar`).
+/// Without the define, it runs all cases of [chartBenchCases]: the cases
+/// `chart.a`, `chart.b` and `chart.c` of Chart.js ADR 0021 section 8, the
+/// eight `axes` cases, and the twelve cases `chart.<type>` of Chart.js ADR
+/// 0031 section 7 (`bar`, `bubble`, `doughnut`, `pie`, `polarArea` and
+/// `radar`, each with `draw` and `update`). The selector `chart` selects 16
+/// cases. `CASES=a,b,c` selects the cases of Chart.js ADR 0021 section 8. A
+/// selector that selects no case throws an [ArgumentError] at the start.
 final List<ChartBenchCase> benchCases = selectChartBenchCases(
   const String.fromEnvironment('CASES'),
 );
 
 /// The point counts N of each case: `--dart-define=N=1000,5000` gives a
-/// comma list. Without the define, the counts are 1000, 5000 and 20000.
-final List<int> benchCounts = parseChartBenchCounts(
-  const String.fromEnvironment('N', defaultValue: '1000,5000,20000'),
-);
+/// comma list for all cases. Without the define, it is Dart `null`: each
+/// case runs its own counts ([ChartBenchCase.counts]), or
+/// [chartBenchDefaultCounts] (1000, 5000 and 20000). The radial types of
+/// the cases `chart.<type>` have 100, 1000 and 5000.
+final List<int>? benchCounts = _counts(const String.fromEnvironment('N'));
+
+List<int>? _counts(String value) =>
+    value.isEmpty ? null : parseChartBenchCounts(value);
 
 /// The timing of each case: `--dart-define=BATCHES=<n>` timed batches of
 /// `--dart-define=BATCH_MS=<ms>` each, after a warm-up of
@@ -46,12 +55,14 @@ List<int> parseChartBenchCounts(String value) => [
 ///
 /// `flutter run --profile -t lib/main_bench.dart` shows a status text. After
 /// the first frame, it runs each case of [benchCases] for each N of
-/// [benchCounts] (`lib/bench/chart_bench.dart`). It prints one line
-/// `BENCH {json}` for each case and N, with the times of `update`, `draw`
-/// and the end of the recording, and `BENCH done` at the end. The cases of
-/// the mode `axes` also give the times of `layout`, `datasetsUpdate` and
-/// `datasetsDraw`, and the tick count `ticks` and the `labelRotation`
-/// `rotation` of the x axis. No frame drives the charts: the cases hold the
+/// [benchCounts], or of the counts of the case (`lib/bench/chart_bench.dart`).
+/// It prints one line `BENCH {json}` for each case and N, with the times of
+/// `update`, `draw` and the end of the recording, and `BENCH done` at the
+/// end. Each case also gives the times of the parts `elements`, `layout`,
+/// `datasetsUpdate` and `datasetsDraw`. The cases of the mode `chart` give
+/// the keys `type`, `sharing` and `scriptable`. The cases of the mode `axes`
+/// give the tick count `ticks` and the `labelRotation` `rotation` of the x
+/// axis. No frame drives the charts: the cases hold the
 /// UI thread. Thus the status shows the case of the last frame.
 ///
 /// Keep the app in front: on a phone, a background app gets slower cores.
@@ -72,13 +83,14 @@ void main() {
 class ChartBenchApp extends StatefulWidget {
   /// Creates the app. [cases], [counts] and [settings] default to
   /// [benchCases], [benchCounts] and [benchSettings], the values of the
-  /// defines. A test gives them.
+  /// defines. A test gives them. With no [counts] and no define `N`, each
+  /// case runs its own counts.
   const ChartBenchApp({super.key, this.cases, this.counts, this.settings});
 
   /// The cases, or Dart `null` for [benchCases].
   final List<ChartBenchCase>? cases;
 
-  /// The point counts, or Dart `null` for [benchCounts].
+  /// The point counts of all cases, or Dart `null` for [benchCounts].
   final List<int>? counts;
 
   /// The timing, or Dart `null` for [benchSettings].
@@ -106,7 +118,8 @@ class _ChartBenchAppState extends State<ChartBenchApp> {
     final settings = widget.settings ?? benchSettings;
     final runs = [
       for (final benchCase in cases)
-        for (final n in counts) (benchCase, n),
+        for (final n in counts ?? benchCase.counts ?? chartBenchDefaultCounts)
+          (benchCase, n),
     ];
     for (var i = 0; i < runs.length; i++) {
       final (benchCase, n) = runs[i];

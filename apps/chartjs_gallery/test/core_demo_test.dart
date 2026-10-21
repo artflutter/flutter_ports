@@ -2,20 +2,27 @@
 
 import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/core_demo.dart';
-import 'package:chartjs_gallery/demo/stress_point_controller.dart';
+import 'package:chartjs_gallery/demo/demo_common.dart';
+import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chartjs/src/controllers/index.dart';
 import 'package:flutter_chartjs/src/core/core.animator.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/elements/element_options.dart';
 import 'package:flutter_chartjs/src/elements/index.dart';
-import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs/src/js/js_object.dart'
+    show jsGet, jsObjectIsFrozen;
 import 'package:flutter_chartjs/src/platform/chart_host.dart';
 import 'package:flutter_chartjs/src/platform/platform.flutter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A tall desktop window: the whole Core tab is in view.
 const Size _desktop = Size(1200, 1600);
+
+/// A Pixel 8a: 412 x 915 logical pixels at DPR 2.625.
+const Size _phone = Size(412, 915);
+const double _phoneDpr = 2.625;
 
 /// Pumps [count] frames of 16 ms, the frame interval of a browser. The
 /// demo page has a running animation (the line dash of the Canvas tab), so
@@ -26,11 +33,16 @@ Future<void> _frames(WidgetTester tester, [int count = 4]) async {
   }
 }
 
-/// Pumps the demo page in a desktop window and opens the Core tab.
-Future<CoreDemoState> _pumpCore(WidgetTester tester) async {
+/// Pumps the demo page in a desktop window (or at [size] and [dpr]) and
+/// opens the Core tab.
+Future<CoreDemoState> _pumpCore(
+  WidgetTester tester, {
+  Size size = _desktop,
+  double dpr = 1,
+}) async {
   tester.view
-    ..physicalSize = _desktop
-    ..devicePixelRatio = 1;
+    ..physicalSize = size * dpr
+    ..devicePixelRatio = dpr;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     MaterialApp(
@@ -104,24 +116,61 @@ Future<void> _tap(WidgetTester tester, String key) async {
   await _frames(tester);
 }
 
+/// Whether the segment of [key] is on: the selected segment of a
+/// [SegmentChoice], or an option of a [SegmentToggles] that is on.
+bool _selected(WidgetTester tester, String key) {
+  final control = tester.widget(
+    find.ancestor(
+      of: find.byKey(ValueKey(key)),
+      matching: find.byWidgetPredicate(
+        (w) => w is SegmentChoice || w is SegmentToggles,
+      ),
+    ),
+  );
+  return switch (control) {
+    final SegmentToggles toggles => toggles.isSelected(key),
+    final SegmentChoice<Object?> choice => choice.isSelected(key),
+    _ => throw StateError('No segmented control holds $key.'),
+  };
+}
+
+/// The widgets of the Core tab that Chart.js ADR 0031 section 10.2 does
+/// not allow: chips, sliders, menus and horizontal scrollables.
+Finder get _forbidden => find.descendant(
+  of: find.byType(CoreDemo),
+  matching: find.byWidgetPredicate(
+    (w) =>
+        w is ChoiceChip ||
+        w is FilterChip ||
+        w is ToggleChips ||
+        w is SliderControl ||
+        w is Slider ||
+        w is PopupMenuButton ||
+        w is DropdownButton ||
+        (w is Scrollable &&
+            axisDirectionToAxis(w.axisDirection) == Axis.horizontal),
+  ),
+);
+
 void main() {
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
   tearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
 
-  testWidgets('core: the tab shows a real Chart of the gallery controller', (
+  testWidgets('core: the tab shows a real Chart of the LineController', (
     tester,
   ) async {
     final state = await _pumpCore(tester);
     final chart = state.chart!;
     expect(chart.platform, isA<FlutterPlatform>());
     expect(chart.attached, isTrue);
-    expect(chart.config.type, StressPointController.id);
+    expect(chart.config.type, 'line');
     expect(chart.width, tester.getSize(_host).width);
     expect(chart.height, 320);
-    // The controller is the registered gallery class.
+    // The controller is the ported LineController (Chart.js ADR 0031,
+    // section 4).
     final meta = chart.getDatasetMeta(0);
-    expect(meta.controller, isA<StressPointController>());
-    expect(meta.dataset, isNull);
+    expect(meta.controller, isA<LineController>());
+    expect(meta.dataset, isA<LineElement>());
     for (var d = 0; d < 2; d++) {
       final data = chart.getDatasetMeta(d.toDouble()).data;
       expect(data, hasLength(12));
@@ -132,12 +181,33 @@ void main() {
       for (final point in data) {
         expect(identical((point as PointElement).options, options), isTrue);
       }
-      // controller: x and y are fractions of the chart area.
+      // The cache holds the frozen options (core.datasetController.js:831).
+      // The points get the copy of getSharedOptions, which is not frozen
+      // (core.datasetController.js:871).
+      expect(options![r'$shared'], isTrue);
+      expect(jsObjectIsFrozen(options), isFalse);
+      // The hidden unit scales: each point is at the pixels of
+      // getPixelForValue of the scales, and x and y are fractions of the
+      // chart area.
       final area = chart.chartArea!;
-      final item = state.dataOf(d)[2];
-      final point = data[2] as PointElement;
-      expect(point.x, area.left + (item['x']! as double) * area.width);
-      expect(point.y, area.bottom - (item['y']! as double) * area.height);
+      final x = chart.scales['x']!;
+      final y = chart.scales['y']!;
+      expect(x.options['display'], false);
+      expect(y.options['display'], false);
+      for (var i = 0; i < data.length; i++) {
+        final item = state.dataOf(d)[i];
+        final point = data[i] as PointElement;
+        expect(point.x, x.getPixelForValue(item['x'], i.toDouble()));
+        expect(point.y, y.getPixelForValue(item['y'], i.toDouble()));
+        expect(
+          point.x,
+          closeTo(area.left + (item['x']! as double) * area.width, 1e-9),
+        );
+        expect(
+          point.y,
+          closeTo(area.bottom - (item['y']! as double) * area.height, 1e-9),
+        );
+      }
     }
     expect(_radius(_point(chart, 0, 0)), 6);
     expect(
@@ -153,28 +223,173 @@ void main() {
     final keys = [
       'core.host',
       'core.readout',
+      'core.help',
       for (final mode in coreDemoModes) 'core.mode.$mode',
       for (final axis in coreDemoAxes) 'core.axis.$axis',
       'core.intersect',
-      'core.hover.duration',
-      'core.animation.duration',
       'core.animation',
       'core.dataset.0',
       'core.dataset.1',
       'core.data.randomize',
       'core.data.add',
       'core.data.remove',
+      for (final ms in ['0', '200', '400', '1000', '2000'])
+        'core.hover.duration.$ms',
+      for (final ms in ['0', '400', '1000', '2000', '3000'])
+        'core.animation.duration.$ms',
     ];
     for (final key in keys) {
       expect(find.byKey(ValueKey(key)), findsOneWidget, reason: key);
     }
     expect(coreDemoModes, ['index', 'dataset', 'point', 'nearest', 'x', 'y']);
+    // The short texts of the mode segments: each fits in the 26 px of a
+    // mode segment at 360 x 640 in Roboto. The tooltip gives the name.
+    for (final (mode, text) in [
+      ('index', 'idx'),
+      ('dataset', 'set'),
+      ('point', 'pt'),
+      ('nearest', 'nrst'),
+      ('x', 'x'),
+      ('y', 'y'),
+    ]) {
+      final key = ValueKey('core.mode.$mode');
+      expect(tester.widget<Text>(find.byKey(key)).data, text, reason: mode);
+    }
+    // The line labels of GA section 3.13.
+    for (final label in ['mode', 'axis', 'hover', 'update']) {
+      expect(
+        find.descendant(of: find.byType(CoreDemo), matching: find.text(label)),
+        findsOneWidget,
+        reason: label,
+      );
+    }
+    // The defaults.
+    for (final key in [
+      'core.mode.nearest',
+      'core.axis.xy',
+      'core.intersect',
+      'core.animation',
+      'core.dataset.0',
+      'core.dataset.1',
+      'core.hover.duration.400',
+      'core.animation.duration.1000',
+    ]) {
+      expect(_selected(tester, key), isTrue, reason: key);
+    }
+    for (final key in [
+      'core.mode.index',
+      'core.axis.x',
+      'core.hover.duration.1000',
+      'core.animation.duration.400',
+      'core.data.randomize',
+      'core.data.add',
+      'core.data.remove',
+    ]) {
+      expect(_selected(tester, key), isFalse, reason: key);
+    }
+    // The icon segments of the toggles.
+    for (final (key, icon) in [
+      ('core.intersect', Icons.ads_click),
+      ('core.animation', Icons.animation),
+      ('core.dataset.0', Icons.looks_one),
+      ('core.dataset.1', Icons.looks_two),
+      ('core.data.randomize', Icons.shuffle),
+      ('core.data.add', Icons.add),
+      ('core.data.remove', Icons.remove),
+    ]) {
+      expect(tester.widget<Icon>(find.byKey(ValueKey(key))).icon, icon);
+    }
+  });
+
+  testWidgets('core: the controls are segmented buttons above the chart '
+      '(Chart.js ADR 0031, section 10)', (tester) async {
+    await _pumpCore(tester);
+    expect(_forbidden, findsNothing);
     expect(
-      tester
-          .widget<ChoiceChip>(find.byKey(const ValueKey('core.mode.nearest')))
-          .selected,
-      isTrue,
+      find.descendant(
+        of: find.byType(CoreDemo),
+        matching: find.byType(DemoCard),
+      ),
+      findsOneWidget,
     );
+    // From the top: the five control lines, the chart, the readout, the
+    // help text.
+    final lines = [
+      'core.mode.index',
+      'core.axis.x',
+      'core.intersect',
+      'core.hover.duration.0',
+      'core.animation.duration.0',
+    ];
+    var bottom = 0.0;
+    for (final key in lines) {
+      final rect = tester.getRect(find.byKey(ValueKey(key)));
+      expect(rect.top, greaterThan(bottom), reason: key);
+      bottom = rect.bottom;
+    }
+    final host = tester.getRect(find.byKey(const ValueKey('core.host')));
+    final readout = tester.getRect(find.byKey(const ValueKey('core.readout')));
+    final help = tester.getRect(find.byKey(const ValueKey('core.help')));
+    expect(host.top, greaterThan(bottom));
+    expect(readout.top, greaterThanOrEqualTo(host.bottom));
+    expect(help.top, greaterThanOrEqualTo(readout.bottom));
+    // Each line is a full-width segmented button.
+    expect(
+      find.descendant(
+        of: find.byType(CoreDemo),
+        matching: find.byType(SegmentChoice<String>),
+      ),
+      findsNWidgets(2),
+    );
+    expect(
+      find.descendant(
+        of: find.byType(CoreDemo),
+        matching: find.byType(SegmentChoice<double>),
+      ),
+      findsNWidgets(2),
+    );
+    expect(
+      find.descendant(
+        of: find.byType(CoreDemo),
+        matching: find.byType(SegmentToggles),
+      ),
+      findsOneWidget,
+    );
+    for (final button in tester.widgetList<SegmentedButton<Object?>>(
+      find.descendant(
+        of: find.byType(CoreDemo),
+        matching: find.byWidgetPredicate((w) => w is SegmentedButton),
+      ),
+    )) {
+      expect(button.expandedInsets, EdgeInsets.zero);
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('core: the chart is in view at 412 x 915 '
+      '(Chart.js ADR 0031, section 10.4)', (tester) async {
+    final state = await _pumpCore(tester, size: _phone, dpr: _phoneDpr);
+    final page = find
+        .descendant(
+          of: find.byType(CoreDemo),
+          matching: find.byWidgetPredicate(
+            (w) => w is Scrollable && w.axisDirection == AxisDirection.down,
+          ),
+        )
+        .first;
+    expect(tester.state<ScrollableState>(page).position.pixels, 0);
+    final view = Offset.zero & _phone;
+    final host = tester.getRect(find.byKey(const ValueKey('core.host')));
+    expect(host.height, 280);
+    expect(view.contains(host.topLeft), isTrue, reason: '$host');
+    expect(
+      view.contains(host.bottomRight - const Offset(0.01, 0.01)),
+      isTrue,
+      reason: '$host',
+    );
+    expect(state.chart!.height, 280);
+    expect(_forbidden, findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('core: a hover animates the hover options for 400 ms', (
@@ -238,11 +453,9 @@ void main() {
   ) async {
     final state = await _pumpCore(tester);
     final chart = state.chart!;
-    await tester.drag(
-      find.byKey(const ValueKey('core.hover.duration')),
-      const Offset(-2000, 0),
-    );
-    await _frames(tester);
+    await _tap(tester, 'core.hover.duration.0');
+    expect(_selected(tester, 'core.hover.duration.0'), isTrue);
+    expect(_selected(tester, 'core.hover.duration.400'), isFalse);
     expect(
       jsGet(
         jsGet(
@@ -262,18 +475,56 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('core: the hover duration 1000 makes the hover transition '
+      'longer', (tester) async {
+    final state = await _pumpCore(tester);
+    final chart = state.chart!;
+    Object? resolved() => jsGet(
+      jsGet(jsGet(chart.options['transitions'], 'active'), 'animation'),
+      'duration',
+    );
+    expect(resolved(), 400);
+    await _tap(tester, 'core.hover.duration.1000');
+    expect(_selected(tester, 'core.hover.duration.1000'), isTrue);
+    expect(_selected(tester, 'core.hover.duration.400'), isFalse);
+    // The resolved option of the chart, not only the user option.
+    expect(resolved(), 1000);
+    final point = _point(chart, 0, 4);
+    final mouse = await _mouse(tester);
+    await _moveTo(tester, mouse, point.x, point.y);
+    await _frames(tester, 2);
+    expect(state.activeLabel, 'd0#4');
+    // 40 frames of 16 ms are 640 ms: more than 400 ms, less than 1000 ms.
+    await _frames(tester, 40);
+    expect(animator.running(chart), isTrue);
+    expect(_radius(point), inExclusiveRange(6, 12));
+    await _frames(tester, 30);
+    expect(animator.running(chart), isFalse);
+    expect(_radius(point), 12);
+    // The readout of the active point: the typed options of the hover
+    // transition. They are not shared and not frozen (the hover colors are
+    // scriptable).
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('core.readout')),
+        matching: find.textContaining(
+          r'PointOptions, $shared false, not frozen',
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('core: the mode index finds the point of each dataset', (
     tester,
   ) async {
     final state = await _pumpCore(tester);
     final chart = state.chart!;
+    expect(jsGet(chart.options['interaction'], 'mode'), 'nearest');
     await _tap(tester, 'core.mode.index');
-    expect(
-      tester
-          .widget<ChoiceChip>(find.byKey(const ValueKey('core.mode.index')))
-          .selected,
-      isTrue,
-    );
+    expect(_selected(tester, 'core.mode.index'), isTrue);
+    expect(_selected(tester, 'core.mode.nearest'), isFalse);
     expect(jsGet(chart.options['interaction'], 'mode'), 'index');
     final point = _point(chart, 0, 7);
     final mouse = await _mouse(tester);
@@ -285,6 +536,7 @@ void main() {
     // Without intersect, a place far from each point finds the nearest
     // index.
     await _tap(tester, 'core.intersect');
+    expect(_selected(tester, 'core.intersect'), isFalse);
     expect(jsGet(chart.options['interaction'], 'intersect'), false);
     await _moveOff(tester, mouse, chart);
     await _frames(tester, 3);
@@ -292,14 +544,12 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('core: the axis chips set the axis of the interaction', (
+  testWidgets('core: the axis segments set the axis of the interaction', (
     tester,
   ) async {
     final state = await _pumpCore(tester);
     final chart = state.chart!;
-    bool selected(String axis) => tester
-        .widget<ChoiceChip>(find.byKey(ValueKey('core.axis.$axis')))
-        .selected;
+    bool selected(String axis) => _selected(tester, 'core.axis.$axis');
     expect(selected('xy'), isTrue);
     expect(jsGet(chart.options['interaction'], 'axis'), 'xy');
 
@@ -335,11 +585,8 @@ void main() {
   ) async {
     final state = await _pumpCore(tester);
     final chart = state.chart!;
-    final slider = find.byKey(const ValueKey('core.animation.duration'));
-    await tester.ensureVisible(slider);
-    await tester.pump();
-    await tester.drag(slider, const Offset(3000, 0));
-    await _frames(tester);
+    await _tap(tester, 'core.animation.duration.3000');
+    expect(_selected(tester, 'core.animation.duration.3000'), isTrue);
     expect(jsGet(chart.config.options['animation'], 'duration'), 3000);
     expect(jsGet(chart.options['animation'], 'duration'), 3000);
     await _settle(tester, chart);
@@ -383,6 +630,9 @@ void main() {
     expect(point.y, isNot(y));
 
     await _tap(tester, 'core.data.add');
+    // A command segment runs its command and does not stay on.
+    expect(_selected(tester, 'core.data.add'), isFalse);
+    expect(state.dataOf(0), hasLength(13));
     await _frames(tester, 70);
     for (var d = 0; d < 2; d++) {
       final data = chart.getDatasetMeta(d.toDouble()).data;
@@ -393,24 +643,24 @@ void main() {
     }
     await _tap(tester, 'core.data.remove');
     await _tap(tester, 'core.data.remove');
+    expect(_selected(tester, 'core.data.remove'), isFalse);
     await _frames(tester, 70);
     expect(chart.getDatasetMeta(0).data, hasLength(11));
     expect(chart.getDatasetMeta(1).data, hasLength(11));
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('core: the dataset chips hide and show a dataset', (
+  testWidgets('core: the dataset segments hide and show a dataset', (
     tester,
   ) async {
     final state = await _pumpCore(tester);
     final chart = state.chart!;
-    FilterChip chip() =>
-        tester.widget<FilterChip>(find.byKey(const ValueKey('core.dataset.1')));
-    expect(chip().selected, isTrue);
+    bool selected() => _selected(tester, 'core.dataset.1');
+    expect(selected(), isTrue);
 
     await _tap(tester, 'core.dataset.1');
     expect(chart.isDatasetVisible(1), isFalse);
-    expect(chip().selected, isFalse);
+    expect(selected(), isFalse);
     // The hide transition animates.
     expect(animator.running(chart), isTrue);
     await _frames(tester, 70);
@@ -419,7 +669,7 @@ void main() {
 
     await _tap(tester, 'core.dataset.1');
     expect(chart.isDatasetVisible(1), isTrue);
-    expect(chip().selected, isTrue);
+    expect(selected(), isTrue);
     await _frames(tester, 70);
     expect(chart.getSortedVisibleDatasetMetas(), hasLength(2));
     expect(tester.takeException(), isNull);
@@ -431,6 +681,7 @@ void main() {
     final state = await _pumpCore(tester);
     final chart = state.chart!;
     await _tap(tester, 'core.animation');
+    expect(_selected(tester, 'core.animation'), isFalse);
     expect(chart.options['animation'], false);
     final point = _point(chart, 0, 2);
     final mouse = await _mouse(tester);
