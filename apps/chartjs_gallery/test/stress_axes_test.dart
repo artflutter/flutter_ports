@@ -515,9 +515,9 @@ void main() {
       debugPrint = old;
     }
     expect(lines, hasLength(1));
-    final line =
-        jsonDecode(lines.single.substring('STRESS '.length))
-            as Map<String, Object?>;
+    final line = jsonDecode(
+      lines.single.substring('STRESS '.length),
+    ) as Map<String, Object?>;
     expect(line['mode'], 'axes');
     expect(line['n'], 300);
     expect(line['call'], 'draw');

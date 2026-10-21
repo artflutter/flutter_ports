@@ -56,8 +56,11 @@ const String _transparent = 'transparent';
 
 /// core.animation.js:6-25 the type of a member of `interpolators`: the value
 /// at [factor] between [from] and [to].
-typedef Interpolator =
-    Object? Function(Object? from, Object? to, double factor);
+typedef Interpolator = Object? Function(
+  Object? from,
+  Object? to,
+  double factor,
+);
 
 /// core.animation.js:7 `interpolators.boolean`.
 Object? _boolean(Object? from, Object? to, double factor) {

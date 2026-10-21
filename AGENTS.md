@@ -15,9 +15,19 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos โ
 - `dart run melos run format` / `format:check`
 - `dart run melos run analyze`: `dart analyze --fatal-infos` over the workspace.
 - `dart run melos run test --no-select`: `flutter test --exclude-tags fixtures` in every package
-  with a `test/` dir. `--no-select` skips the interactive package picker. On ubuntu, CI also fetches
-  the three Chart.js submodules and `third_party/d3` by path, for the `test/upstream_test.dart` of
-  `flutter_chartjs` and of `flutter_d3_port`.
+  with a `test/` dir. `--no-select` skips the interactive package picker. Options after `--` go to
+  each `flutter test` call, for example
+  `dart run melos run test --no-select -- --experimental-faster-testing --total-shards=3 --shard-index=0`.
+  Without `--`, melos stops with an error. The CI job `test` runs this command with the shard
+  indexes 0, 1 and 2 on each OS, in bash. `--experimental-faster-testing` compiles the test files of a package into one test app and runs
+  each file in its own engine. Flutter ignores the flag for a package with one test file. On a
+  16-core Mac, the flag makes the local run slower. Thus the script does not set it. The flag writes
+  Dart files into `build/isolate_spawning_tester/` of each package, and `format:check` fails on
+  them. Delete these folders before `format:check`. package:test puts a part of the tests of each
+  file in each shard, in the order of the file ([Tests](#tests)). A shard with no tests fails. On
+  ubuntu, CI also fetches the three Chart.js submodules, `third_party/d3` and the two ECharts
+  submodules by path in each shard, for the `test/upstream_test.dart` of `flutter_chartjs`,
+  `flutter_d3_port` and `flutter_echarts_port`.
 - `dart run melos run test:web`: the `flutter_chartjs` and `chartjs_test_utils` tests without
   `@TestOn('vm')`, in Chrome, compiled with dart2js and with dart2wasm. It needs a local Google
   Chrome. CI job: `test-web`.
@@ -45,7 +55,7 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos โ
 - `dart run melos run test:cases`: tool 5. It runs `test/specs/` and reports each upstream case of
   `doc/upstream/manifest.json` as passed, failed, skipped or missing. It fails on an unknown test
   name, a bad skip reason and a missing case of a `ported` module. CI runs it in the ubuntu `test`
-  leg. It passes `--exclude-tags fixtures`, as tool 6 does.
+  leg of shard 0. It passes `--exclude-tags fixtures`, as tool 6 does.
 - `dart run melos run test:fixtures`: tool 7, the fixture smoke tests of `flutter_chartjs`
   (Chart.js ADR 0029). It is tool 5 with `--fixtures`: it runs the tests with the tag `fixtures`
   of the spec files with a fixture group and of `test/port/fixtures/`. It reports each upstream
@@ -664,6 +674,13 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
 
 ## Tests
 
+- The CI job `test` runs the tests in three shards (`--total-shards=3`). package:test puts a
+  continuous part of the tests of each test file in each shard. Thus a test must not need the result
+  of an earlier test of its file. A test that uses the state of an earlier test makes that state
+  again, or checks it only when that test ran in the same shard. Examples are the group
+  `harness-register-builtins` of `packages/flutter_chartjs/test/port/flutter_test_config_test.dart`,
+  `packages/flutter_chartjs/test/port/core/date_format_locale_test.dart` and the group
+  `harness-release-at-unmount` of `packages/chartjs_test_utils/test/index_test.dart`.
 - A pure-layer file reaches neither `dart:ui` nor `package:flutter` through its direct or indirect
   imports. `check:lib-imports` computes the pure layers from the roots in
   `packages/flutter_chartjs/tool/src/lib_imports.dart`. The roots include `lib/src/js/`,
@@ -898,4 +915,6 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
 - CI jobs (`.github/workflows/ci.yaml`): `format`, `analyze`, `test` (ubuntu, macOS, Windows),
   `test-web`, `fixtures`, `port-checks`, `upstream-manifest`, `gallery-web`, `gallery-android`,
   `gallery-ios`, `upstream-pin`, `reuse` and `dco`.
-- Toolchain: Flutter 3.44.9, pinned in `.fvmrc`; CI reads the same file.
+- Toolchain: Flutter 3.47.7 (Dart 3.13.5), pinned in `.fvmrc`; CI reads the same file. All
+  packages and the gallery have the floor `sdk: ^3.13.0` and `flutter: ">=3.47.0"`
+  (`packages/flutter_chartjs/doc/porting-flow.md` ยง2.12).

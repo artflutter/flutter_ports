@@ -317,13 +317,12 @@ void merger(
 
 /// helpers.core.ts:237 the type of `MergeOptions.merger`: merges `source[key]`
 /// into `target`.
-typedef Merger =
-    void Function(
-      String key,
-      AnyObject target,
-      AnyObject source,
-      MergeOptions options,
-    );
+typedef Merger = void Function(
+  String key,
+  AnyObject target,
+  AnyObject source,
+  MergeOptions options,
+);
 
 /// helpers.core.ts:236 `MergeOptions`.
 final class MergeOptions {

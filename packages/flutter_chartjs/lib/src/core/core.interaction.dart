@@ -112,20 +112,22 @@ final class InteractionItem implements types.ActiveElement {
 /// (helpers.dom.ts:105). [options] are the `InteractionOptions` of
 /// core.interaction.js:9, a plain object (Chart.js ADR 0006). Dart `null`
 /// for [useFinalPosition] stands for an absent argument, JS `undefined`.
-typedef InteractionModeFunction =
-    List<InteractionItem> Function(
-      types.Chart chart,
-      Object e,
-      Map<String, Object?> options, [
-      // The upstream signature has a positional `useFinalPosition`.
-      // ignore: avoid_positional_boolean_parameters
-      bool? useFinalPosition,
-    ]);
+typedef InteractionModeFunction = List<InteractionItem> Function(
+  types.Chart chart,
+  Object e,
+  Map<String, Object?> options, [
+  // The upstream signature has a positional `useFinalPosition`.
+  // ignore: avoid_positional_boolean_parameters
+  bool? useFinalPosition,
+]);
 
 /// The callback of [Interaction.evaluateInteractionItems]: the element, the
 /// dataset index and the index of the element (index.d.ts:813).
-typedef InteractionHandler =
-    void Function(Element element, double datasetIndex, double index);
+typedef InteractionHandler = void Function(
+  Element element,
+  double datasetIndex,
+  double index,
+);
 
 /// `position[axis]` of core.interaction.js:76: the coordinate of the axis
 /// `'x'` or `'y'`.

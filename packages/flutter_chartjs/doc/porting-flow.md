@@ -280,10 +280,9 @@ display-only JS exactness. In short:
   `x * x` for all of 23 million probe inputs. Thus the result is the JS result on every target.
   `ToNumber` of a `double?` value whose `null` is JS `null`, such as `Point.x` and `Point.y`, is
   `(e ?? 0)`, not `jsToNumber(e)`.
-- Where the Dart SDK or a package that Flutter 3.44.9 pins gives the JS result, the port uses it.
-  The port-only `jsSort` calls `mergeSort` of
-  `package:collection`. `jsDateNow()` reads `clock.now()` of `package:clock`. The `FakeAsync` zone
-  of `testWidgets` fakes that clock.
+- Where the Dart SDK or a package that Flutter 3.47.7 depends on gives the JS result, the port
+  uses it. The port-only `jsSort` calls `mergeSort` of `package:collection`. `jsDateNow()` reads
+  `clock.now()` of `package:clock`. The `FakeAsync` zone of `testWidgets` fakes that clock.
 - `Intl.NumberFormat` is the `NumberFormat` of `package:intl`. The port-only adapter
   `lib/src/js/js_intl.dart` maps the JS locale and options onto it
   ([Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md)). Its guards write the V8
@@ -450,36 +449,42 @@ has three conditions. The theme hooks H0-H3 in `core.config` and H4a-H4c and H5 
 `plugin.colors` are `DIVERGES` hunks. The harness runs with no theme and with the colors plugin disabled. `lib/`
 imports neither forui nor Material.
 
-### 2.12 ADR: Toolchain pin and library floor (gate: the PR that moves `.fvmrc`)
+### 2.12 ADR: Toolchain pin and library floor (gate: the change that moves `.fvmrc` to 3.47.7)
 
-**Decision.**
-- Keep `.fvmrc` at 3.44.9. The evidence in this document comes from 3.44.9.
-- Move the pin in its own PR when a measurement or the forui adapter (after 0.1.0,
-  [theming.md](theming.md) §5.3) needs 3.47. That PR
-  moves to 3.47.7 with the iOS deployment-target migration. It updates the toolchain lines of
-  AGENTS.md Conventions and CONTRIBUTING.md Setup.
-- That PR also adds a CI `floor` job on 3.44.9. It re-runs the sort probe and the cycle probe on
-  3.47.7.
-- Keep `flutter_chartjs` at `sdk: ^3.12.0`, `flutter: ">=3.44.0"`. Phase 9 sets the published floor.
-- The floor job does not use `.github/actions/setup` (a root `flutter pub get`). It writes this
-  `pubspec_overrides.yaml` in `packages/flutter_chartjs`, in CI only:
-
-  ```yaml
-  resolution:
-  dependency_overrides:
-    chartjs_test_utils:
-      path: ../chartjs_test_utils
-  ```
-
-  It runs `dart analyze` (no lints), `flutter test` with a harness-based spec, and
-  `flutter pub downgrade && flutter test`.
-- Keep very_good_analysis at ^10.3.0 until the floor job exists.
+**Decision** (the porting lead, on the request of the maintainer, 2026-10-21).
+- Pin `.fvmrc` at Flutter 3.47.7 (Dart 3.13.5). CI reads the same file.
+- All packages of the workspace and the gallery have the floor `sdk: ^3.13.0` and
+  `flutter: ">=3.47.0"`. The root `pubspec.yaml` has `sdk: ^3.13.0`. Phase 9 sets the published
+  floor.
+- No CI `floor` job. A job on 3.44.9 cannot resolve a `^3.13.0` floor.
+- The gallery takes the deployment targets of the 3.47.7 app templates: iOS 15.0 and macOS 12.0.
+- A test constraint (a dependency or a dev_dependency) that matches a pin of the Flutter SDK
+  follows the pin. Thus `test` is `^1.31.1`, the version with the `test_api` pin 0.7.12 of
+  `flutter_test` in 3.47.7. `chartjs_test_utils` has `test` as a dependency, and the other
+  packages have it as a dev_dependency.
+- The change that moves the pin updates the toolchain lines of AGENTS.md Conventions,
+  CONTRIBUTING.md Setup and README.md. A probe line that names an older version stays as evidence.
+- This change keeps very_good_analysis at ^10.3.0. A move to 11.0.0 (`sdk: ^3.13.0`) is its own
+  change.
 - Do not move to 3.50 before two changes: a fix of cli_launcher #28 and a gallery on `material_ui`.
 
-**Evidence.** On 3.47.7, all gates pass (`sdkfloor/logs/q2-*`). The floor job found a 3.47-only API
-that the workspace analyzer missed. With only `resolution:`, a harness dev_dependency does not
-resolve. On the 3.50 beta, `flutter/material.dart` is deprecated. `dart run melos` crashes on Dart
-3.14.
+**Evidence.** The sdkfloor probe of 2026-10-16 gave the evidence for a CI `floor` job, and this
+decision rejects that job. In that probe, all gates passed on 3.47.7 (`sdkfloor/logs/q2-*`). The
+floor job of the probe found a 3.47-only API that the workspace analyzer missed. With only
+`resolution:`, a harness dev_dependency did not resolve. On the 3.50 beta, `flutter/material.dart` is deprecated. `dart run melos` crashes on Dart
+3.14. On 2026-10-21, `dart pub get` of Dart 3.12.2 (Flutter 3.44.9) failed on a package with
+`sdk: ^3.13.0`. On Dart 3.13.5, a package with `sdk: ^3.13.0` compiles primary constructors and
+`const new()`. With `sdk: ^3.12.0`, the analyzer rejects both (`primary-constructors`).
+
+On 2026-10-21, the sort probe and the cycle probe ran again on 3.47.7. The results are the same
+as on 3.44.9:
+- `List.sort` is not stable above 32 elements on the VM JIT, the VM AOT, dart2wasm and DDC. 2360
+  of 3000 lists are not stable, and the shortest of them has 34 elements. On dart2js,
+  `List.sort` is stable.
+- `mergeSort` of `package:collection` 1.19.1 is stable on every target.
+- The dev_dependency cycle of the workspace resolves on 3.47.7. `pub get`, `analyze` and a
+  `testWidgets` test pass. `--enforce-lockfile` keeps the lock file.
+- Flutter 3.47.7 depends on `collection: ^1.19.1`. This is a constraint, not an exact pin.
 
 ### 2.13 Chart.js ADR 0035: Third-party sources (gate 1)
 
@@ -929,11 +934,13 @@ These phase 5 files are pure layers too:
 
 On 3.44.9, `dart test -p chrome` runs in a Flutter package with a `test` dev_dependency (probe).
 `--tags` does not stop the compile of other files. `@TestOn('vm')` stops it. `flutter test` still
-runs `@TestOn('vm')` files.
+runs `@TestOn('vm')` files. On 3.47.7 (2026-10-21),
+`dart test -p chrome -c dart2js test/specs/helpers.math_test.dart` in `packages/flutter_chartjs`
+passed its 12 tests.
 
-The matrix does not use `flutter test --platform chrome`. That flag is deprecated in 3.44.9. Its
-JS leg compiles with DDC (`web_test_compiler.dart:113-176`), not with dart2js. `flutter build web`
-uses dart2js.
+The matrix does not use `flutter test --platform chrome`. That flag is deprecated in 3.47.7, as in
+3.44.9. Its JS leg compiles with DDC (`lib/src/test/web_test_compiler.dart:113-176` of
+`flutter_tools`), not with dart2js. `flutter build web` uses dart2js.
 
 **Fixture selection.** From phase 7 (tool 7), the melos `test` script, `test:cases` and tool 6
 pass `--exclude-tags fixtures`. `test:fixtures` runs tool 5 with `--fixtures`, which runs

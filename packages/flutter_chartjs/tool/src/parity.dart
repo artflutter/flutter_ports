@@ -978,14 +978,22 @@ int _countFiles(ParityModel model, String glob) {
 String _cell(String text) => text.replaceAll(RegExp(r'(?<!\\)\|'), r'\|');
 
 /// One table row of [cells]. An empty cell is one space.
-String _tableRow(List<String> cells) =>
-    '|${[for (final cell in cells) cell.isEmpty ? ' ' : ' $cell '].join('|')}|';
+String _tableRow(List<String> cells) {
+  final padded = [
+    for (final cell in cells)
+      if (cell.isEmpty) ' ' else ' $cell ',
+  ];
+  return '|${padded.join('|')}|';
+}
 
 /// The header and the separator lines of a table.
-List<String> _tableHead(List<String> names, List<bool> numeric) => [
-  _tableRow(names),
-  '|${[for (final n in numeric) n ? '---:' : '---'].join('|')}|',
-];
+List<String> _tableHead(List<String> names, List<bool> numeric) {
+  final separators = [
+    for (final n in numeric)
+      if (n) '---:' else '---',
+  ];
+  return [_tableRow(names), '|${separators.join('|')}|'];
+}
 
 /// The result of [renderParity].
 final class ParityOutput {

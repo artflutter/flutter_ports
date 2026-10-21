@@ -167,12 +167,11 @@ typedef RadialPointPosition = ({double x, double y, double angle});
 ///
 /// [value] is the parsed value r, unchanged: any JS value (Chart.js ADR
 /// 0025, section 9).
-typedef RadialPointPositionOf =
-    RadialPointPosition Function(
-      types.Scale scale,
-      double index,
-      Object? value,
-    );
+typedef RadialPointPositionOf = RadialPointPosition Function(
+  types.Scale scale,
+  double index,
+  Object? value,
+);
 
 /// The radial test controller of the generators: a point for each value, at
 /// the position of `getPointPositionForValue` of the scale r
@@ -365,8 +364,10 @@ List<Object?> drawCalls(Chart chart) {
 
 /// The keys that a test adds to the observations of a scale: the `extra`
 /// function of `observe` of the generator, with the same keys.
-typedef ScaleObservations =
-    Map<String, Object?> Function(Scale scale, Chart chart);
+typedef ScaleObservations = Map<String, Object?> Function(
+  Scale scale,
+  Chart chart,
+);
 
 /// The observations of [chart] after its layout, with the keys of `observe`
 /// of the generators.
@@ -585,10 +586,12 @@ Set<int> _barClipsToRemove(List<Object?> actual, List<Object?> matchers) {
   if (expectedFills.length != actualFills.length) return const {};
   return {
     for (var k = 0; k < expectedFills.length; k++)
-      if (expectedFills[k] case (
-        ring: true,
-        :final int clip,
-      ) when actualFills[k].ring && actualFills[k].clip == null)
+      if (expectedFills[k]
+          case (
+            ring: true,
+            :final int clip,
+          )
+          when actualFills[k].ring && actualFills[k].clip == null)
         clip,
   };
 }

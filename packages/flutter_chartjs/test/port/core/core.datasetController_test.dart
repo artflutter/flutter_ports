@@ -1035,9 +1035,10 @@ final class _Run {
               ? _elementTypes[datasetElement]
               : datasetElement,
         });
-        meta.controllerValue =
-            jsConstruct(_testControllerClass, [chart, i.toDouble()])
-                as DatasetController;
+        meta.controllerValue = jsConstruct(_testControllerClass, [
+          chart,
+          i.toDouble(),
+        ]) as DatasetController;
       }
     }
   }

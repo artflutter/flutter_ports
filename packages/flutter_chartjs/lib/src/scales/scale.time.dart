@@ -491,10 +491,9 @@ class TimeScale extends Scale {
         ? currentTime
         : (options['time'] = <String, Object?>{});
     // scale.time.js:271 `adapter.init(opts)` is the cascade.
-    final adapter = this.adapter =
-        (jsConstruct(adapters['_date'], [jsGet(options['adapters'], 'date')])
-              as DateAdapter)
-          ..init(chartOptions);
+    final adapter = this.adapter = (jsConstruct(adapters['_date'], [
+      jsGet(options['adapters'], 'date'),
+    ]) as DateAdapter)..init(chartOptions);
 
     // Backward compatibility: before introducing adapter, `displayFormats`
     // was supposed to contain *all* unit/string pairs but this can't be
@@ -803,7 +802,8 @@ class TimeScale extends Scale {
 
     // @ts-ignore
     return [
-      for (final x in jsSort(ticks.keys.toList(), _sorter)) x == 0 ? 0.0 : x,
+      for (final x in jsSort(ticks.keys.toList(), _sorter))
+        if (x == 0) 0.0 else x,
     ];
   }
 

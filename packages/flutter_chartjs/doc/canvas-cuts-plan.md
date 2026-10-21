@@ -284,6 +284,27 @@ Changes to the cited files:
   porting-flow.md moves. The `parity.md` rows that this plan cites do not change. Thus the
   references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No
   trigger occurred.
+- 2026-10-21, the toolchain pin moves from Flutter 3.44.9 to the stable release 3.47.7 (Dart
+  3.13.5). The pubspecs require Dart `^3.13.0` and Flutter `>=3.47.0`. The 3.13 formatter and
+  `dart fix` change these cited files: `lib/src/platform/chart_host.dart` gets one blank line
+  after line 69, so its lines after line 69 move by +1 (967 lines). §1.1 gives the new line
+  numbers. `apps/chartjs_gallery/lib/demo/canvas_demo.dart` loses the import of `dart:async` at
+  line 5, so `UiCanvasElement(width: 32, height: 32)` moves from line 125 to line 124. §3.1 gives
+  the new line and the line of 69f9d97. `lib/src/canvas/canvas_ui.dart` changes line 150 (`cssText`) in place, so no line
+  moves. `apps/chartjs_gallery/lib/demo/stress_chart_config.dart` gets one line more, and this
+  plan cites no line of it. 3.47.7 has none of the three fixes of the text rotation snap (§4.2).
+  Thus trigger 3 did not occur. The probes of §1, §2.2 and the figures of performance.md stay the
+  results on Flutter 3.44.9: no probe of this plan ran again on 3.47.7. porting-flow.md gets text
+  in §2.3, §2.12 and §3. One bullet of §2.3 (line 283) loses one line, so the lines after it move
+  by -1: §2.7 moves from line 329 to line 328. §2.12 gets 6 lines more. §2.2 stays at line 239.
+  The cited rows of the harness table (`toBeChartOfSize` of `src/matchers.js`, and `src/utils.js`)
+  move from lines 756-757 to lines 761-762. The text of §2.2, of §2.7 and of these rows does not
+  change. The phase 7 review (`b2049ca`) moved §2.2 from line 236 to line 239, §2.7 from line 326
+  to line 329 and the cited rows from lines 747-748 to lines 756-757, and this list has no entry
+  for it. Thus the figures 236, 326 and 747-748 of the three entries above are the lines before
+  that review. §3.7 now gives the lines of the current porting-flow.md: §2.2 at lines 248-249,
+  §2.7 at lines 341-344 and the harness rows at lines 761-762. The inventory (§1.1), the tests of
+  §2.6 and §3.5 and the estimates do not change.
 
 ## 1. Why
 
@@ -326,16 +347,16 @@ the estimate (§3.9).
 | The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect` and `drawDRRect` branch of `fill`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing` and `debugClips` | `canvas_ui.dart:378-385`, `:533-556`, `:1226-1228`, `:1284-1296`, `:1301-1319`, `:1361-1365` | 72 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
 | `CircleBatch` | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
 | Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1649-1670` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
-| `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:519-532` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
+| `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:520-533` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
 | `UiCanvasElement.devicePixelRatio` and `logicalSize` | removed (`canvas_ui.dart:142`, `:175-192` at 69f9d97) | 0 | The host gives the paint scale | **Done** (C2): removed |
-| The paint mapping: display / bitmap for each axis, exactly 1 / DPR within 1e-3 | `chart_host.dart:669-673`, `:696-707` | 17 | `Canvas.scale` in `UiCanvasContext.paint` | **Done** (C2): the one mapping from the bitmap to the display size |
+| The paint mapping: display / bitmap for each axis, exactly 1 / DPR within 1e-3 | `chart_host.dart:670-674`, `:697-708` | 17 | `Canvas.scale` in `UiCanvasContext.paint` | **Done** (C2): the one mapping from the bitmap to the display size |
 | `initCanvas` over the attributes (`getAttribute`) | `lib/src/platform/platform.flutter.dart:109-178` | 70 | A small attribute model on `UiCanvasElement` | **Done** (C2): line by line |
 | `releaseContext` over the attributes (`removeAttribute`, `setAttribute`) and `_Initial[prop]` | `platform.flutter.dart:458-493`, `:85-86` | 38 | The same attribute model | **Done** (C2): line by line |
 | The attribute model: `UiCanvasElement({int? width, int? height})`, `getAttribute`, `setAttribute`, `removeAttribute`, `_setSize`, and the 3 members of `HTMLCanvasElement` | `canvas_ui.dart:234-327`, `canvas.dart:350-362` | 107 | None. `dart:ui` has no attributes. | **Added** (C2). Chart.js ADR 0022 §4 adds the `style` attribute and the string attributes. |
 | The reflection of the `style` attribute in `UiCssStyleDeclaration`: `cssText`, `styleAttribute`, the declaration parser and the serialization after a CSSOM write | `canvas_ui.dart:96-222` | ~95 | None. `dart:ui` has no CSS. | **Added** (Chart.js ADR 0022 §4): `acquireChart` sets the canvas attributes with `setAttribute` |
 | `getMaximumSize`, `retinaScale`, `readUsedSize` (ported, with `DIVERGES` rows) | `lib/src/helpers/helpers.dom.dart` | — | None. `AspectRatio` and `SizedBox` give other sizes than upstream. | **Keep**, no change |
-| The first `ResizeObserver` notification at the next layout (`_pendingFirstResize`) and the mutation checkpoint (`flushCanvasMutations`, `_pendingConnectionChecks`) | `chart_host.dart:192-208`, `:252`, `:399-400`, `:451-468`, `:493-508`, `:612-636`, `:653-662` | ~60 | None. Flutter layout has no rendering step for observers and no microtask checkpoint for the tree. | **Added** (Chart.js ADR 0022 §10): the harness gives the specs the DOM timing |
-| Host attach at the first layout, resize observers, host follows the chart size, unbounded rule, clip | `chart_host.dart:138-255`, `:417-504`, `:534-694`; `platform.flutter.dart:559-611` | ~340 | None. Flutter layout cannot know the size that Chart.js picks. | **Keep** |
+| The first `ResizeObserver` notification at the next layout (`_pendingFirstResize`) and the mutation checkpoint (`flushCanvasMutations`, `_pendingConnectionChecks`) | `chart_host.dart:193-209`, `:253`, `:400-401`, `:452-469`, `:494-509`, `:613-637`, `:654-663` | ~60 | None. Flutter layout has no rendering step for observers and no microtask checkpoint for the tree. | **Added** (Chart.js ADR 0022 §10): the harness gives the specs the DOM timing |
+| Host attach at the first layout, resize observers, host follows the chart size, unbounded rule, clip | `chart_host.dart:139-256`, `:418-505`, `:535-695`; `platform.flutter.dart:559-611` | ~340 | None. Flutter layout cannot know the size that Chart.js picks. | **Keep** |
 
 ## 2. Cut 1: arcs and transforms on dart:ui
 
@@ -677,9 +698,10 @@ lines of that commit. §3.10 gives the code after C2.
 `platform-dom-computed-style` stay valid.
 
 Users outside the package: `apps/chartjs_gallery/lib/demo/demo_chart.dart` (`DemoChart` with a
-default `UiCanvasElement()`, responsive only) and `apps/chartjs_gallery/lib/demo/canvas_demo.dart:125`
-(`UiCanvasElement(width: 32, height: 32)` for `toImageSource`). No gallery code reads
-`devicePixelRatio`, `logicalSize` or `chartSize`.
+default `UiCanvasElement()`, responsive only) and `apps/chartjs_gallery/lib/demo/canvas_demo.dart:124`
+(`UiCanvasElement(width: 32, height: 32)` for `toImageSource`). This line number is the line of
+2026-10-21. At 69f9d97, the line is 125. No gallery code reads `devicePixelRatio`, `logicalSize`
+or `chartSize`.
 
 ### 3.2 Why Flutter layout does not replace the Chart.js sizing
 
@@ -927,7 +949,8 @@ Chart.js ADR 0013 and Chart.js ADR 0014 are proposed, so the owner edits them in
 change their status lines. Chart.js ADR 0034 and Chart.js ADR 0016 do not change.
 
 Work package C2 made these changes in phase 5, except the `performance.md` figures. These figures
-are for work package P. The line numbers below are the lines after C2.
+are for work package P. The line numbers below are the lines after C2. The porting-flow.md line
+numbers are the lines of 2026-10-21, after the toolchain change.
 - **Chart.js ADR 0014:**
   - §2 (lines 86-93): "the display size of the canvas" is the px styles that `retinaScale` writes,
     else the render size.
@@ -942,12 +965,12 @@ are for work package P. The line numbers below are the lines after C2.
   applies the scale that the host gives. Delete the bullet on the `UiCanvasElement.devicePixelRatio`
   write. "The content keeps bitmap pixels across a DPR change" stays. The stretch bullet points to
   Chart.js ADR 0014 §5. Evidence: the test names.
-- **`porting-flow.md`** (proposed): §2.2 (line 220), "`paint` applies `scale(1 / devicePixelRatio)`"
-  becomes "`paint` maps the bitmap pixels with the scale of the host". §2.7 (lines 312-315): one
-  bullet on the canvas attributes. §3, harness table (lines 610-611), `acquireChart`: 512 x 512 as
-  attributes (`UiCanvasElement(width: 512, height: 512)`), the `canvas.style` option fills the
-  inline style, a wrapper style becomes a `SizedBox`, `ConstrainedBox` or `Padding`, and the
-  default wrapper is a box of the canvas display size. `toBeChartOfSize`: the display size rule of
+- **`porting-flow.md`** (proposed): §2.2 (lines 248-249), "`paint` applies
+  `scale(1 / devicePixelRatio)`" becomes "`paint` maps the bitmap pixels with the scale of the
+  host". §2.7 (lines 341-344): one bullet on the canvas attributes. §3, harness table (lines
+  761-762), `acquireChart`: 512 x 512 as attributes (`UiCanvasElement(width: 512, height: 512)`),
+  the `canvas.style` option fills the inline style, a wrapper style becomes a `SizedBox`,
+  `ConstrainedBox` or `Padding`, and the default wrapper is a box of the canvas display size. `toBeChartOfSize`: the display size rule of
   Chart.js ADR 0022 §9 (the inline px styles, else the render size, with the CSS rule for one
   style), in a pure layer. The harness step of
   2026-10-20 changed the wrapper part: a wrapper style goes through the CSS subset of `dom.dart`.
@@ -1065,10 +1088,20 @@ the skwasm strike-cache race. The fixes are on Flutter `master`:
 - [flutter/flutter#194139](https://github.com/flutter/flutter/pull/194139) makes the semaphores
   of the FreeType locks work.
 
-On 2026-10-19, the stable release 3.47.7 has none of the three. **Removal criterion:** the
-toolchain pin (`.fvmrc`) is a stable release with all three changes. Then remove the snap and its
-test group "rotated text", and run the crash case of performance.md §5.5 (20000 + 200, `SPIN=true`)
-6 times with 0 crashes.
+On 2026-10-19, the stable release 3.47.7 has none of the three.
+
+On 2026-10-21, the toolchain pin (`.fvmrc`) is the stable release 3.47.7 (Dart 3.13.5, engine
+`deb287481e`). It has none of the three changes. Its release branch `flutter-3.47-candidate.0`
+left `master` on 2026-07-08, before the three merges. The cherry-pick of #190048 to that branch
+(flutter/flutter#192115) closed without a merge. The engine sources of 3.47.7 have no
+`skwasm/wasm_worker_semaphore.cc`, and `skwasm/surface.cc` does not set a strike cache for each
+thread. #190048 is in the beta releases from 3.48.0-0.1.pre, and #191014 is in the beta releases
+from 3.49.0-0.1.pre. #194139 merged on 2026-10-17. Only `master` has it: the beta release
+3.50.0-0.1.pre does not. Thus trigger 3 did not occur.
+
+**Removal criterion:** the toolchain pin (`.fvmrc`) is a stable release with all three changes.
+Then remove the snap and its test group "rotated text", and run the crash case of performance.md
+§5.5 (20000 + 200, `SPIN=true`) 6 times with 0 crashes.
 
 ## 5. Work packages
 

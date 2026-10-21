@@ -686,7 +686,10 @@ void main() {
           ref: _pinCommit,
           commit: _pinCommit,
         ))
-          line == '    version: "5.3"' ? '    version: "5.3+7169e651"' : line,
+          if (line == '    version: "5.3"')
+            '    version: "5.3+7169e651"'
+          else
+            line,
       ]);
       restampHeaders();
       const stale =

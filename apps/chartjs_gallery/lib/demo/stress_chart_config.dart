@@ -215,7 +215,8 @@ final class StressChartScene {
     }
     final arcs = _arcs(type);
     return [
-      for (var i = 0; i < n; i++) arcs ? 0.05 + 0.95 * field.y[i] : field.y[i],
+      for (var i = 0; i < n; i++)
+        if (arcs) 0.05 + 0.95 * field.y[i] else field.y[i],
     ];
   }
 

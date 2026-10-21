@@ -54,6 +54,10 @@ final JsClass _keptElement = JsClass(
 /// Whether a test found [_keptElement] that an earlier test registered.
 bool _keptFound = false;
 
+/// The number of tests of the group `harness-register-builtins` that
+/// registered or found [_keptElement].
+int _keptRuns = 0;
+
 /// The width of 'Hello' in a paragraph of [family] at 12px.
 double _helloWidth(String family) {
   final builder = ui.ParagraphBuilder(ui.ParagraphStyle())
@@ -213,6 +217,7 @@ void main() {
     // The first test of the two registers _keptElement. The other finds it
     // in the items of the registry, without its defaults.
     void registerOrFind() {
+      _keptRuns++;
       if (Chart.registry.elements.items.containsKey('harnessKept')) {
         expect(_elementDefaults('harnessKept'), same(undefined));
         _keptFound = true;
@@ -229,8 +234,10 @@ void main() {
 
     test('the restore removes the defaults of that component', registerOrFind);
 
+    // A test shard (`--total-shards`) can run one of the two tests only.
+    // Then that test registers _keptElement and finds nothing.
     tearDownAll(() {
-      expect(_keptFound, isTrue);
+      expect(_keptFound, _keptRuns == 2);
     });
 
     testWidgets('a chart of acquireChart resolves the element defaults', (

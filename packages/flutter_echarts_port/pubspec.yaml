@@ -16,8 +16,8 @@ topics:
   - canvas
 
 environment:
-  sdk: ^3.12.0
-  flutter: ">=3.44.0"
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
 
 resolution: workspace
 
@@ -27,6 +27,6 @@ dependencies:
 
 dev_dependencies:
   # The tests use package:test. The constraint is the test constraint of
-  # flutter_chartjs. 1.31.0 matches the test_api pin of flutter_test in
-  # Flutter 3.44.9.
-  test: ^1.31.0
+  # flutter_chartjs. 1.31.1 matches the test_api pin of flutter_test in
+  # Flutter 3.47.7 (0.7.12).
+  test: ^1.31.1

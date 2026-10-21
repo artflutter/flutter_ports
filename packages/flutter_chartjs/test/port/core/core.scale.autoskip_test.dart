@@ -47,9 +47,10 @@ final class _Scale implements types.Scale {
 /// `c.majors`.
 List<Tick> _ticks(AutoskipReferenceCase c) => [
   for (var i = 0; i < c.count; i++)
-    c.majors.contains(i)
-        ? Tick(value: i.toDouble(), major: true)
-        : Tick(value: i.toDouble()),
+    if (c.majors.contains(i))
+      Tick(value: i.toDouble(), major: true)
+    else
+      Tick(value: i.toDouble()),
 ];
 
 void main() {

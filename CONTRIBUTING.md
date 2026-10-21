@@ -3,11 +3,11 @@
 Thanks for helping. The porting rules live in [AGENTS.md](AGENTS.md#porting-rules). They apply
 to people as much as to agents.
 
-- **Setup:** Flutter 3.44.9 (`.fvmrc`), then `flutter pub get` and `dart run melos run upstream`
-  at the repository root. `upstream` checks out every `third_party/` submodule. Install the git
-  hooks with [lefthook](https://lefthook.dev) 1.0 or newer: `lefthook install`. The `test:web`
-  script needs Google Chrome. To generate reference data, use an x64 build of Node.js v24.12.0
-  ([AGENTS.md](AGENTS.md#tests); Chart.js ADR 0032).
+- **Setup:** Flutter 3.47.7 with Dart 3.13.5 (`.fvmrc`), then `flutter pub get` and
+  `dart run melos run upstream` at the repository root. `upstream` checks out every `third_party/`
+  submodule. Install the git hooks with [lefthook](https://lefthook.dev) 1.0 or newer:
+  `lefthook install`. The `test:web` script needs Google Chrome. To generate reference data, use
+  an x64 build of Node.js v24.12.0 ([AGENTS.md](AGENTS.md#tests); Chart.js ADR 0032).
 - **DCO:** sign off every commit (`git commit -s`), certifying the
   [Developer Certificate of Origin](https://developercertificate.org/). The lefthook `commit-msg`
   hook and the CI `dco` job check for the `Signed-off-by` trailer.

@@ -32,8 +32,8 @@
 ## Context
 
 All line numbers are at the pins: `third_party/echarts` at `6.1.0` (`c5a48f5f`) and
-`third_party/zrender` at `6.1.0` (`32b66867`). The Flutter lines are at Flutter 3.44.9
-(`.fvmrc`).
+`third_party/zrender` at `6.1.0` (`32b66867`). The Flutter lines are at Flutter 3.44.9,
+the `.fvmrc` pin on the date of this ADR. The pin moved to 3.47.7 on 2026-10-21.
 
 **The DOM in the two repositories.** ECharts `src/` reads the DOM in few files:
 - `core/echarts.ts`: `init`, `getDom`, `dispose`, the instance attribute, the DPR fallback, the

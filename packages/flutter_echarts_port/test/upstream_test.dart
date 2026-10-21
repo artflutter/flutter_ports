@@ -152,9 +152,9 @@ void main() {
   test(
     'echartsVersion matches the checked-out upstream submodule',
     () {
-      final upstream =
-          jsonDecode(echartsManifest!.readAsStringSync())
-              as Map<String, Object?>;
+      final upstream = jsonDecode(
+        echartsManifest!.readAsStringSync(),
+      ) as Map<String, Object?>;
       expect(upstream['version'], echartsVersion);
     },
     skip: skipUnless(echartsManifest),
@@ -163,9 +163,9 @@ void main() {
   test(
     'zrenderVersion is the zrender version that ECharts requires',
     () {
-      final upstream =
-          jsonDecode(echartsManifest!.readAsStringSync())
-              as Map<String, Object?>;
+      final upstream = jsonDecode(
+        echartsManifest!.readAsStringSync(),
+      ) as Map<String, Object?>;
       final dependencies = upstream['dependencies']! as Map<String, Object?>;
       expect(dependencies['zrender'], zrenderVersion);
     },
@@ -175,9 +175,9 @@ void main() {
   test(
     'zrenderVersion matches the checked-out zrender submodule',
     () {
-      final upstream =
-          jsonDecode(zrenderManifest!.readAsStringSync())
-              as Map<String, Object?>;
+      final upstream = jsonDecode(
+        zrenderManifest!.readAsStringSync(),
+      ) as Map<String, Object?>;
       expect(upstream['version'], zrenderVersion);
     },
     skip: skipUnless(zrenderManifest),

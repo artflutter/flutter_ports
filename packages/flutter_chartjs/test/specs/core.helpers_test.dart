@@ -33,9 +33,9 @@ void main() {
       // a prototype (Object.create(null)). The case checks the two upstream
       // facts on the Dart values.
       test('should not allow prototype pollution', () {
-        final source =
-            jsonDecode('{"__proto__":{"polluted": true}}')
-                as Map<String, Object?>;
+        final source = jsonDecode(
+          '{"__proto__":{"polluted": true}}',
+        ) as Map<String, Object?>;
         final test = helpers.clone(source)! as Map<String, Object?>;
         // test.prototype
         expect(_get(test, 'prototype'), same(undefined));

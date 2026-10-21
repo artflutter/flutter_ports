@@ -53,7 +53,7 @@ typedef RawThemeColor = ({double alpha, double red, double green, double blue});
 ///
 /// A channel is `(x * 255.0).round().clamp(0, 255)`, the 8-bit value of a
 /// `dart:ui` `Color` (`Color._floatToInt8`, `painting.dart:221-223`, Flutter
-/// 3.44.9). The alpha is clamped to the range from 0 to 1. Thus
+/// 3.47.7). The alpha is clamped to the range from 0 to 1. Thus
 /// `(alpha: 0.1, red: 0, green: 0, blue: 0)` gives `'rgba(0, 0, 0, 0.1)'`.
 /// The alpha of `Color(0x1A000000)` gives
 /// `'rgba(0, 0, 0, 0.10196078431372549)'` instead (theming.md §4).

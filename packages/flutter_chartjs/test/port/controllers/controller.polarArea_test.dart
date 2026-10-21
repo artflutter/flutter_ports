@@ -268,13 +268,11 @@ void main() {
     );
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
-      final snapshot =
-          jsonDecode(
-                File(
-                  'test/port/theme/light_snapshot.json',
-                ).readAsStringSync(),
-              )
-              as Map<String, Object?>;
+      final snapshot = jsonDecode(
+        File(
+          'test/port/theme/light_snapshot.json',
+        ).readAsStringSync(),
+      ) as Map<String, Object?>;
       final config =
           copyReference(controllerPolarAreaReference.first.config)!
               as AnyObject;
@@ -433,7 +431,7 @@ void main() {
         expect(
           [
             for (var i = 0; i < 3; i++)
-              chart.getDataVisibility(i.toDouble()) ? '1' : '0',
+              if (chart.getDataVisibility(i.toDouble())) '1' else '0',
           ].join(),
           visible,
         );
@@ -464,7 +462,7 @@ void main() {
       expect(
         [
           for (var i = 0; i < 4; i++)
-            chart.getDataVisibility(i.toDouble()) ? '1' : '0',
+            if (chart.getDataVisibility(i.toDouble())) '1' else '0',
         ].join(),
         '1101',
       );

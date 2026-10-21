@@ -21,11 +21,11 @@ The repository now needs more names than ADR 0003 gives:
 - **The harness.** `packages/chartjs_test_utils` is the port of chartjs-test-utils 0.4.0
   ([Chart.js ADR 0035](../../packages/flutter_chartjs/doc/adr/0035-third-party-sources.md)). ADR
   0003 does not name it. The Chart.js porting flow plans the fix: "A new ADR that supersedes ADR
-  0003 records `chartjs_test_utils`" (`packages/flutter_chartjs/doc/porting-flow.md:973`).
+  0003 records `chartjs_test_utils`" (`packages/flutter_chartjs/doc/porting-flow.md:1240`).
 - **The design-system adapters.** Three Chart.js documents plan a new ADR that supersedes ADR
   0003. They are [theming.md](../../packages/flutter_chartjs/doc/theming.md) §5.3 item 1
-  (`theming.md:421-423`), Chart.js ADR 0001 (`0001-theming.md:107-110`) and the forui survey
-  (`prior-art/forui-theming.md:497-500`). In that ADR, first-party design-system adapters take the
+  (`theming.md:424-426`), Chart.js ADR 0001 (`0001-theming.md:107-110`) and the forui survey
+  (`prior-art/forui-theming.md:504-507`). In that ADR, first-party design-system adapters take the
   name `flutter_chartjs_<system>`. The adapters stay `publish_to: none` until their first release.
   The first adapter is `flutter_chartjs_forui`, after Chart.js 0.1.0.
 - **The D3 port.** On 2026-10-20, the maintainer selected the name `flutter_d3_port` for the D3
@@ -135,15 +135,15 @@ This ADR states the complete naming rule. It supersedes ADR 0003 on acceptance.
 - Four Chart.js documents plan a superseder of ADR 0003: the porting flow, theming.md, the forui
   survey and Chart.js ADR 0001. This ADR is that superseder. After acceptance, these citations of
   ADR 0003 are stale. The Chart.js work updates them. This ADR does not edit them:
-  - `packages/flutter_chartjs/doc/porting-flow.md:973-975`
-  - `packages/flutter_chartjs/doc/theming.md:421-423` (§5.3, item 1)
-  - `packages/flutter_chartjs/doc/prior-art/forui-theming.md:497-500`
+  - `packages/flutter_chartjs/doc/porting-flow.md:1240-1242`
+  - `packages/flutter_chartjs/doc/theming.md:424-426` (§5.3, item 1)
+  - `packages/flutter_chartjs/doc/prior-art/forui-theming.md:504-507`
   - `packages/flutter_chartjs/doc/prior-art/README.md:119-120` (the taken Chart.js names)
 - Chart.js ADR 0001 keeps its text. Its Consequences ask for a new ADR that supersedes ADR 0003
   (`0001-theming.md:107-110`). This ADR is that ADR.
 - The forui adapter change writes no ADR for its name. It still adds the `commitlint.yaml` scope,
   the AGENTS.md line, the package `LICENSE` and the `REUSE.toml` annotation
-  (`theming.md:424-426`).
+  (`theming.md:427-429`).
 - D3 phase 0 adds the scope `flutter_d3_port`. D3 phase 4 adds the scope `d3_gallery`. Stage 1 of
   ADR 0008 adds the scopes `js_semantics` and `port_tools`.
 - The README and the pub.dev description of each port library state that the package is a native

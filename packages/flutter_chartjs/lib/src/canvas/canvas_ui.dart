@@ -147,7 +147,7 @@ final class UiCssStyleDeclaration implements CSSStyleDeclaration {
   String get cssText => [
     for (final MapEntry(key: name, value: (value, priority))
         in _properties.entries)
-      priority.isEmpty ? '$name: $value;' : '$name: $value !$priority;',
+      if (priority.isEmpty) '$name: $value;' else '$name: $value !$priority;',
   ].join(' ');
 
   /// `cssText = text`: replaces the declarations with the declarations of

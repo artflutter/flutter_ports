@@ -1088,16 +1088,14 @@ class Chart implements types.Chart {
       } else {
         final scaleClass = registry.getScale(scaleType);
         // DIVERGES(chartjs): adapt-component-class-role, cast throws earlier.
-        scale =
-            jsConstruct(scaleClass, [
-                  <String, Object?>{
-                    'id': id,
-                    'type': scaleType,
-                    'ctx': ctx,
-                    'chart': this,
-                  },
-                ])
-                as Scale;
+        scale = jsConstruct(scaleClass, [
+          <String, Object?>{
+            'id': id,
+            'type': scaleType,
+            'ctx': ctx,
+            'chart': this,
+          },
+        ]) as Scale;
         scales[scale.id] = scale;
       }
 
@@ -1212,9 +1210,10 @@ class Chart implements types.Chart {
               : datasetElementType,
         });
         // DIVERGES(chartjs): adapt-component-class-role, cast throws earlier.
-        meta.controller =
-            jsConstruct(controllerClass, [this, i.toDouble()])
-                as DatasetController;
+        meta.controller = jsConstruct(controllerClass, [
+          this,
+          i.toDouble(),
+        ]) as DatasetController;
         newControllers.add(meta.controller!);
       }
     }

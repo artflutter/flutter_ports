@@ -3,7 +3,7 @@ description: Native Dart/Flutter ports of popular JavaScript chart libraries.
 publish_to: none
 
 environment:
-  sdk: ^3.12.0
+  sdk: ^3.13.0
 
 workspace:
   - packages/flutter_chartjs
@@ -29,7 +29,7 @@ melos:
       run: dart analyze --fatal-infos
       description: Analyze the whole workspace.
     test:
-      description: Run the tests of every package that has a test/ directory, without the fixture smoke tests (the tag fixtures, Chart.js ADR 0029).
+      description: Run the tests of every package that has a test/ directory, without the fixture smoke tests (the tag fixtures, Chart.js ADR 0029). Options go after "--" and go to each flutter test call, for example "dart run melos run test --no-select -- --experimental-faster-testing --total-shards=3 --shard-index=0" (one compiled test app for each package, and the first of three shards, as in CI).
       exec:
         command: flutter test --exclude-tags fixtures
         concurrency: 1

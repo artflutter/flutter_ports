@@ -1350,7 +1350,7 @@ void main() {
       <Object?>['01', null, true, ''].forEach(chart.toggleDataVisibility);
       String visibilities(int count) => [
         for (var i = 0; i < count; i++)
-          chart.getDataVisibility(i.toDouble()) ? '1' : '0',
+          if (chart.getDataVisibility(i.toDouble())) '1' else '0',
       ].join();
       expect(visibilities(4), '1111');
       chart

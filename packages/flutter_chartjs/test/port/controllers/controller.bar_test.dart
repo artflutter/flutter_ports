@@ -154,13 +154,11 @@ void main() {
     );
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
-      final snapshot =
-          jsonDecode(
-                File(
-                  'test/port/theme/light_snapshot.json',
-                ).readAsStringSync(),
-              )
-              as Map<String, Object?>;
+      final snapshot = jsonDecode(
+        File(
+          'test/port/theme/light_snapshot.json',
+        ).readAsStringSync(),
+      ) as Map<String, Object?>;
       final config =
           copyReference(controllerBarReference.first.config)! as AnyObject;
       config[themeConfigKey] = compileChartTheme(ChartThemes.light);

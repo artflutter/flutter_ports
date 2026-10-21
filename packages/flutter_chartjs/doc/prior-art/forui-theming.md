@@ -303,12 +303,17 @@ No test covers `copyWith` or `lerp` for each style.
 | forui 0.26.0 to 0.27.6, `forui_cli` 0.27.0, `forui_internal_gen` | `>=3.13.0-0` | `>=3.47.0-0` |
 | `material_ui` 1.0.0 to 1.3.0 | `^3.12.0` | `>=3.44.0` |
 | `material_ui` 1.4.0 and later | `^3.13.0` | `>=3.47.0` |
-| `flutter_chartjs` | `^3.12.0` | `>=3.44.0` |
+| `flutter_chartjs` | `^3.13.0` | `>=3.47.0` (since 2026-10-21) |
 
 This repository pins Flutter 3.44.9 (Dart 3.12.2). The Flutter 3.47 line became stable on
 2026-08-12. Its latest patch, 3.47.7, shipped on 2026-10-08. From 0.15.0 to 0.27.6, forui raised
 its floor only in the first minor release after each new Flutter stable line. For the last three
 lines, that release came 3 to 12 days later: 0.18.0 for 3.41, 0.22.0 for 3.44 and 0.26.0 for 3.47.
+
+Update of 2026-10-21: the pin moved to Flutter 3.47.7 (Dart 3.13.5). The floor of
+`flutter_chartjs` and of the other packages moved to sdk `^3.13.0` and flutter `>=3.47.0`
+([porting-flow.md §2.12](../porting-flow.md)). The other parts of this page give the state of
+2026-10-16, except the text that names 2026-10-21. That text is an addition of 2026-10-21.
 
 On Dart 3.12.2, the analyzer rejects primary constructors and `const new(...)`. The diagnostics are
 `experiment_not_enabled` and `experiment_not_enabled_off_by_default`, for the feature
@@ -429,12 +434,14 @@ the theme, through the `theme-review` action.
 
 **Things we do not take**
 
-- **forui, `material_ui` or Material as a dependency of the library.** The library keeps sdk
-  `^3.12.0` and flutter `>=3.44.0`. Its only Flutter imports are `package:flutter/widgets.dart` and
+- **forui, `material_ui` or Material as a dependency of the library.** The library kept sdk
+  `^3.12.0` and flutter `>=3.44.0` until 2026-10-21. Its only Flutter imports are `package:flutter/widgets.dart` and
   the lower layers. Under Chart.js ADR 0001, AGENTS.md rule 5 gets the list of
   forbidden imports ([porting-flow.md §6](../porting-flow.md)). The import guard (porting-flow.md tool 1)
   enforces the list. Why: the library must not depend on a design system. The Flutter 3.47 pin that
-  forui 0.26 needs is a separate change (ADR: Toolchain pin and library floor).
+  forui 0.26 needs is a separate change (ADR: Toolchain pin and library floor). On 2026-10-21,
+  that change moved the library floor to sdk `^3.13.0` and flutter `>=3.47.0`. The library still
+  does not depend on a design system.
 - **`ThemeExtension` as the slot for the chart theme, also in adapters.** Why: the two
   `ThemeExtension` types do not mix. Our test adapter without `ThemeExtension` worked on both forui
   lines.

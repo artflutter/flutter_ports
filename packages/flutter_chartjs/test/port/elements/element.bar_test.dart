@@ -96,7 +96,12 @@ List<Object?> _calls(List<(String, List<Object?>)> calls) => [
       'name': name,
       'args': [
         for (final arg in args)
-          if (arg is num) arg.isNaN ? isNaN : closeTo(arg, 1e-9) else arg,
+          if (arg is num && arg.isNaN)
+            isNaN
+          else if (arg is num)
+            closeTo(arg, 1e-9)
+          else
+            arg,
       ],
     },
 ];

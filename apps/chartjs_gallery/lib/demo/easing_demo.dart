@@ -2,7 +2,6 @@
 // phase 9. The demo imports the ported files directly.
 // ignore_for_file: implementation_imports
 
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
@@ -47,7 +46,7 @@ class _EasingDemoState extends State<EasingDemo>
 
   void _play(String name) {
     setState(() => _selected = name);
-    unawaited(_controller.forward(from: 0));
+    _controller.forward(from: 0);
   }
 
   @override

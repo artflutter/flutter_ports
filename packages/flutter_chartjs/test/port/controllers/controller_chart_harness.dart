@@ -544,15 +544,15 @@ const Set<String> _colorCalls = {'setFillStyle', 'setStrokeStyle'};
 /// `setFillStyle` and `setStrokeStyle`.
 List<Object?> _parseCallColors(List<Object?> calls) => [
   for (final call in calls.cast<Map<String, Object?>>())
-    _colorCalls.contains(call['name'])
-        ? <String, Object?>{
-            'name': call['name'],
-            'args': [
-              for (final arg in call['args']! as List<Object?>)
-                _parseColor(arg),
-            ],
-          }
-        : call,
+    if (_colorCalls.contains(call['name']))
+      <String, Object?>{
+        'name': call['name'],
+        'args': [
+          for (final arg in call['args']! as List<Object?>) _parseColor(arg),
+        ],
+      }
+    else
+      call,
 ];
 
 /// The reference text [text] of the calls with the parsed form of the

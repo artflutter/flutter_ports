@@ -1637,7 +1637,10 @@ void main() {
       };
       List<Object?> parsed(String json) => [
         for (final color in jsonDecode(json) as List<Object?>)
-          color == '<undefined>' ? color : kurkle.Color(color).rgbString(),
+          if (color == '<undefined>')
+            color
+          else
+            kurkle.Color(color).rgbString(),
       ];
       expect(parsed(lines['colors']!), parsed(_upstream(upstream, 'colors')));
       for (final label in ['scales', 'fonts', 'size']) {
@@ -1776,13 +1779,11 @@ void main() {
         jsonDecode(observed) as List<Object?>,
         containsAllInOrder(
           (jsonDecode(
-                    _upstream(
-                      'radial tick backdrop',
-                      'no theme, defaults.font.size 30',
-                    ),
-                  )
-                  as List<Object?>)
-              .skip(1),
+            _upstream(
+              'radial tick backdrop',
+              'no theme, defaults.font.size 30',
+            ),
+          ) as List<Object?>).skip(1),
         ),
       );
     });

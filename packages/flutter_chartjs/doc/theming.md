@@ -36,7 +36,8 @@ Goals:
 5. **Static values:** default-mode element options stay `$shared` and frozen
    (`core.datasetController.js:823-832`).
 6. **A correct runtime switch** with native color animation and reduced motion.
-7. **An unchanged library floor:** `sdk: ^3.12.0`, `flutter: ">=3.44.0"`.
+7. **No library floor change for theming:** the floor is `sdk: ^3.13.0`, `flutter: ">=3.47.0"`
+   (porting-flow.md §2.12, since 2026-10-21). Theming does not raise it.
 
 Non-goals:
 
@@ -55,7 +56,7 @@ Non-goals:
 | `copyWith` without tokens, `touch: true` hard-coded, custom icons lost (`forui/0.27.6:forui/lib/src/theme/theme_data.dart:1411-1418, 617`) | `copyWith` carries every field | adopt, fixed | forui loses fields |
 | `FThemeData` factory (`forui/0.27.6:forui/lib/src/theme/theme_data.dart:614-618`), `FColors` (`forui/0.27.6:forui/lib/src/theme/colors.dart:280-299`) | `ChartColors`, named after the `Chart.defaults` fields. The compiler derives every key from them | adapt | The same one-way derivation. Equal names keep bump audits mechanical |
 | `FTypography`, `FSizes` (`forui/0.27.6:forui/lib/src/theme/sizes.dart:7`), `FAdaptiveScope` (`forui/0.27.6:forui/lib/src/theme/adaptive_scope.dart:24-38`) | `ChartTypography` of `ChartFont`. No sizes and no platform in 0.1.0 | adapt | Chart.js reads `FontSpec`. Core never reads the platform. `flutter_test` reports Android |
-| Generated deltas and sentinels | Chart.js options beat the theme key by key | reject | Options are partial already. Deltas "sometimes confuse even us, the maintainers". LLMs do worse (`forui/0.27.6:design_docs/shipped/untime_retrospective.md:26-32`). The generator needs Dart 3.13 |
+| Generated deltas and sentinels | Chart.js options beat the theme key by key | reject | Options are partial already. Deltas "sometimes confuse even us, the maintainers". LLMs do worse (`forui/0.27.6:design_docs/shipped/untime_retrospective.md:26-32`). The generator needs Dart 3.13. Since 2026-10-21, the library floor is Dart 3.13. Thus this reason no longer applies |
 | `FVariants` (`forui/0.27.6:forui/lib/src/theme/variants.dart:173-190`) | modes `default` and `active` | reject | More modes need dataset-controller hunks |
 | Blue-screen goldens (`forui/0.27.6:forui/test/src/test_scaffold.dart:14`) | a blue-screen pixel assertion | adopt | It shows that no color bypasses the theme |
 
@@ -149,7 +150,8 @@ leak into other charts.
 
 Colors become `rgba()` strings with 8-bit sRGB channels and an alpha from `jsNumberToString`. Other
 color spaces convert through `ColorSpace.extendedSRGB` and clamp, because a direct Display P3 to
-sRGB `withValues` only clamps (`dart:ui` `painting.dart:3919-3932, 4071-4074`, 3.44.9 and 3.47.7).
+sRGB `withValues` only clamps (`dart:ui` `painting.dart:3901-3914, 4053-4056` of 3.47.7,
+`:3919-3932, 4071-4074` of 3.44.9).
 Fonts become `FontSpec` maps of the non-null fields.
 
 Emitted:
@@ -320,8 +322,7 @@ instead.
 ## 5. API sketch (decided in phase 9)
 
 The theme classes stay internal until phase 9. The sketch fixes only the names that the mechanism
-tests use. The samples compile under Dart 3.12: no primary constructors, no dot shorthands, no
-`const new`.
+tests use. The samples compile under Dart 3.13, the library floor (porting-flow.md §2.12).
 
 ### 5.1 The 0.1.0 surface
 
@@ -402,7 +403,9 @@ forui code goes into the library.
 `packages/flutter_chartjs_forui` gives the widget `FChartTheme` and `toApproximateChartTheme` on
 `FThemeData`, after the model of `toApproximateMaterialTheme`
 (`forui/0.27.6:forui/lib/src/theme/theme_data.dart:981`). It is not a `ThemeExtension`. It uses
-forui's floor: `forui: ^0.27.0`, `sdk: ^3.13.0`, `flutter: ">=3.47.0"`.
+forui's floor: `forui: ^0.27.0`, `sdk: ^3.13.0`, `flutter: ">=3.47.0"`. Since 2026-10-21, the
+library has the same `sdk` and `flutter` floor (porting-flow.md §2.12). Thus the floor no longer
+blocks an adapter on forui 0.27.
 
 Mapping: `color` ← `mutedForeground`, `borderColor` ← `border`, `backgroundColor` ← `primary`
 at alpha 0.1, `surface` ← `background`. The tooltip maps `inverseSurface` ← `foreground` and

@@ -69,7 +69,8 @@ final List<Function> _byArity = [
 /// The arguments that a JavaScript function with [arity] parameters gets from
 /// a call with [args]: the first [arity] items, padded with undefined.
 List<Object?> _received(List<Object?> args, int arity) => [
-  for (var i = 0; i < arity; i++) i < args.length ? args[i] : undefined,
+  for (var i = 0; i < arity; i++)
+    if (i < args.length) args[i] else undefined,
 ];
 
 /// The arguments 1 to [count].

@@ -28,7 +28,7 @@ import '../scales/scale_chart_harness.dart' show drawCalls;
 // title and the tooltip are off. The case with an active element waits for
 // `IdentityChartHover` (theming.md §8 item 6).
 //
-// The read is the paint call of the chart host (chart_host.dart:706,
+// The read is the paint call of the chart host (chart_host.dart:707,
 // `_paintCanvas`): `UiCanvasContext.paint` of the chart canvas into a
 // `ui.PictureRecorder` over an opaque rectangle of the blue. Each pixel must
 // be exactly `20 50 c0 ff`. No tolerance and no golden file. On a failure,
@@ -138,7 +138,7 @@ AnyObject _config(String type, {AnyObject? theme}) {
 }
 
 /// The bytes of the bitmap of [chart] over an opaque [background], as the
-/// chart host paints it (chart_host.dart:706).
+/// chart host paints it (chart_host.dart:707).
 Future<ByteData> chartPixelsOver(
   WidgetTester tester,
   Chart chart,
@@ -195,10 +195,12 @@ List<(int, String)> _leaks(Chart chart) {
   final calls = drawCalls(chart);
   return [
     for (var i = 0; i < calls.length; i++)
-      if (calls[i] case {
-        'name': final String name,
-        'args': [final Object? value, ...],
-      } when _styleSetters.contains(name) && !_keepsBlue(value))
+      if (calls[i]
+          case {
+            'name': final String name,
+            'args': [final Object? value, ...],
+          }
+          when _styleSetters.contains(name) && !_keepsBlue(value))
         (i, '$name $value'),
   ];
 }

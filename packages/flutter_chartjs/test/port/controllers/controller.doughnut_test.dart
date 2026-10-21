@@ -489,7 +489,7 @@ void main() {
         expect(
           [
             for (var i = 0; i < 3; i++)
-              chart.getDataVisibility(i.toDouble()) ? '1' : '0',
+              if (chart.getDataVisibility(i.toDouble())) '1' else '0',
           ].join(),
           visible,
         );
@@ -547,7 +547,7 @@ void main() {
           expect(
             [
               for (var i = 0; i < data.length; i++)
-                chart.getDataVisibility(i.toDouble()) ? '1' : '0',
+                if (chart.getDataVisibility(i.toDouble())) '1' else '0',
             ].join(),
             visible,
           );

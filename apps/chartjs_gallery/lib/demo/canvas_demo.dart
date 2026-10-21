@@ -2,7 +2,6 @@
 // phase 9. The demo imports the ported files directly.
 // ignore_for_file: implementation_imports
 
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/demo_chart.dart';
@@ -807,7 +806,7 @@ class _PaintCardState extends State<_PaintCard>
   @override
   void initState() {
     super.initState();
-    if (_animate) unawaited(_ticker.start());
+    if (_animate) _ticker.start();
   }
 
   @override
@@ -947,7 +946,7 @@ class _PaintCardState extends State<_PaintCard>
                 onChanged: (v) => setState(() {
                   _animate = v;
                   if (v) {
-                    unawaited(_ticker.start());
+                    _ticker.start();
                   } else {
                     _ticker.stop();
                   }

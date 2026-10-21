@@ -101,9 +101,9 @@ void main() {
     expect(lines, hasLength(2));
     expect(lines.last, 'BENCH done');
     expect(lines.first, startsWith('BENCH {'));
-    final line =
-        jsonDecode(lines.first.substring('BENCH '.length))
-            as Map<String, Object?>;
+    final line = jsonDecode(
+      lines.first.substring('BENCH '.length),
+    ) as Map<String, Object?>;
     expect(line['mode'], 'chart');
     expect(line['case'], 'c');
     expect(line['n'], 10);

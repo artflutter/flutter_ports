@@ -21,7 +21,10 @@ import 'package:test/test.dart';
 // removes it. Thus these cases are in a file of their own: the other date
 // tests run in a process with the en_US data only.
 //
-// The cases depend on each other and run in the order of the file.
+// The cases depend on each other and run in the order of the file. A test
+// shard (`--total-shards`) can run a part of the cases. Thus each case after
+// the first load of the date data loads the data again. The load does not
+// change data that is already loaded.
 
 /// The time of the fields in UTC.
 double _at(int y, [int m = 1, int d = 1, int h = 0]) =>
@@ -77,7 +80,8 @@ void main() {
     expect(adapter.parse('4. März 2015', 'd. MMMM yyyy'), _at(2015, 3, 4));
   });
 
-  test('an alias of en_US after initializeDateFormatting', () {
+  test('an alias of en_US after initializeDateFormatting', () async {
+    await initializeDateFormatting();
     // The date data has no key for an alias. The members use en_US, also
     // for the patterns that the cache has from before the data, and they
     // do not throw (Chart.js ADR 0024, decision 6).
@@ -91,7 +95,8 @@ void main() {
     }
   });
 
-  test('a locale that intl does not know gives en_US, not a throw', () {
+  test('a locale that intl does not know gives en_US, not a throw', () async {
+    await initializeDateFormatting();
     // After initializeDateFormatting, the DateFormat constructor throws an
     // ArgumentError for such a locale. moment keeps `en` for a locale
     // without data.
@@ -102,10 +107,14 @@ void main() {
     expect(adapter.startOf(t, 'week'), _at(2014, 12, 28));
   });
 
-  test('a locale with a region that intl does not know uses the language', () {
-    Intl.defaultLocale = 'de_XX';
-    adapter.formats();
-    expect(adapter.format(t, 'MMMM'), 'Januar');
-    expect(adapter.startOf(t, 'week'), _at(2014, 12, 29));
-  });
+  test(
+    'a locale with a region that intl does not know uses the language',
+    () async {
+      await initializeDateFormatting();
+      Intl.defaultLocale = 'de_XX';
+      adapter.formats();
+      expect(adapter.format(t, 'MMMM'), 'Januar');
+      expect(adapter.startOf(t, 'week'), _at(2014, 12, 29));
+    },
+  );
 }

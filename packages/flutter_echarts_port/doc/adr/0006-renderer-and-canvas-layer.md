@@ -230,7 +230,7 @@ The layer has seven gaps for zrender and ECharts:
    (Chart.js ADR 0013 §7).
 4. `getImageData` and `putImageData` are absent.
 5. `toDataURL` is absent.
-6. The host shows one canvas (`ChartHost`, `lib/src/platform/chart_host.dart:266`).
+6. The host shows one canvas (`ChartHost`, `lib/src/platform/chart_host.dart:267`).
 7. The canvas has no `ctx.dpr` expando. The `width` setter takes an `int`.
 
 **Dependencies of the Chart.js layer.** `canvas.dart:26` imports `lib/src/types/color.dart` of the
