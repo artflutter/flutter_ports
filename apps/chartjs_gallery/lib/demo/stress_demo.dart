@@ -466,15 +466,18 @@ class StressDemoState extends State<StressDemo> {
     }
   }
 
-  /// Sets the mode and N. A change of the mode keeps N, but not above the
-  /// largest count of the new mode. A change of either makes the elements
-  /// again. In the modes [StressMode.chart] and [StressMode.axes], a change
-  /// of N makes a new chart. The mode [StressMode.axes] changes the call
+  /// Sets the mode and N. A change of the mode keeps N when N is one of the
+  /// counts of the new mode. Else it takes the count of the new mode at the
+  /// index of N in the counts of the old mode, as a new chart type does. An
+  /// N that is not one of the old counts (an `initialN` of a test) stays,
+  /// but not above the largest count of the new mode. An explicit [n] wins.
+  /// A change of either makes the elements again. In the modes
+  /// [StressMode.chart] and [StressMode.axes], a change of N makes a new
+  /// chart. The mode [StressMode.axes] changes the call
   /// [StressChartCall.animate] to [StressChartCall.draw].
   void _setScene({StressMode? mode, int? n}) {
     final newMode = mode ?? _mode;
-    final newN =
-        n ?? (mode == null ? _n : math.min(_n, _countsOf(newMode).last));
+    final newN = n ?? (mode == null ? _n : _countForMode(newMode));
     if (newMode == _mode && newN == _n) return;
     // The modes of the demo chart share one host. The modes chart and axes
     // have a host of their own, and a new host for each N. A new host gives
@@ -491,6 +494,15 @@ class StressDemoState extends State<StressDemo> {
     _mode = newMode;
     _n = newN;
     _buildScene();
+  }
+
+  /// The N of [mode] after a change from the current mode (see [_setScene]).
+  int _countForMode(StressMode mode) {
+    final counts = _countsOf(mode);
+    if (counts.contains(_n)) return _n;
+    final index = _countsOf(_mode).indexOf(_n);
+    if (index < 0) return math.min(_n, counts.last);
+    return index < counts.length ? counts[index] : counts.first;
   }
 
   /// Sets the case of the mode [StressMode.axes]. A change makes a new

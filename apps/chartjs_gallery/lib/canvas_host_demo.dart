@@ -66,16 +66,18 @@ class CanvasHostDemoPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Phase 3: canvas and host'),
+          // The tabs show their icons only, with the label as a tooltip:
+          // the seven tabs fit a phone without a horizontal scroll (Chart.js
+          // ADR 0031, section 10).
           bottom: TabBar(
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            labelPadding: const EdgeInsets.symmetric(horizontal: 14),
             tabs: [
               for (final tab in canvasHostDemoTabs)
-                Tab(
-                  key: ValueKey('phase3.tab.${tab.key}'),
-                  icon: Icon(tab.icon),
-                  text: tab.label,
+                Tooltip(
+                  message: tab.label,
+                  child: Tab(
+                    key: ValueKey('phase3.tab.${tab.key}'),
+                    icon: Icon(tab.icon),
+                  ),
                 ),
             ],
           ),

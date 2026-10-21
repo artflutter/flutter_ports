@@ -313,32 +313,85 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('stress: in the mode chart, the chart is in view at 412 x 915 '
+  testWidgets('stress: in each mode, the host is in view at 412 x 915 '
       '(Chart.js ADR 0031, section 10)', (tester) async {
     await _pumpDemo(tester);
     await _openTab(tester, 'stress');
-    // The mode line is at the top of the tab: a tap needs no scroll.
-    await tester.tap(find.byKey(const ValueKey('stress.mode.chart')));
-    await _frames(tester, 6);
     final view = Offset.zero & _phone;
-    for (final type in ['line', 'bar']) {
-      await tester.tap(find.byKey(ValueKey('stress.chart.type.$type')));
-      await _frames(tester, 6);
+    void expectInView(String host, String reason) {
       final position = tester.state<ScrollableState>(_page).position;
-      expect(position.pixels, 0, reason: type);
-      final host = tester.getRect(
-        find.byKey(const ValueKey('stress.chart.host')),
-      );
-      expect(host.height, greaterThan(0), reason: type);
-      expect(view.contains(host.topLeft), isTrue, reason: '$type $host');
+      expect(position.pixels, 0, reason: reason);
+      final rect = tester.getRect(find.byKey(ValueKey(host)));
+      expect(rect.height, greaterThan(0), reason: reason);
+      expect(view.contains(rect.topLeft), isTrue, reason: '$reason $rect');
       expect(
-        view.contains(host.bottomRight - const Offset(0.01, 0.01)),
+        view.contains(rect.bottomRight - const Offset(0.01, 0.01)),
         isTrue,
-        reason: '$type $host',
+        reason: '$reason $rect',
       );
+    }
+
+    for (final mode in StressMode.values) {
+      // The mode line is at the top of the tab: a tap needs no scroll.
+      await tester.tap(find.byKey(ValueKey('stress.mode.${mode.name}')));
+      await _frames(tester, 6);
+      final host = switch (mode) {
+        StressMode.chart => 'stress.chart.host',
+        StressMode.axes => 'stress.axes.host',
+        _ => 'stress.host',
+      };
+      if (mode == StressMode.chart) {
+        for (final type in ['line', 'bar']) {
+          await tester.tap(find.byKey(ValueKey('stress.chart.type.$type')));
+          await _frames(tester, 6);
+          expectInView(host, '${mode.name} $type');
+        }
+      } else {
+        expectInView(host, mode.name);
+      }
     }
     expect(tester.takeException(), isNull);
   });
+
+  for (final size in [_phone, const Size(360, 640)]) {
+    testWidgets('the tab bar does not scroll, and each tab is in view at '
+        '${size.width.toInt()} x ${size.height.toInt()} (Chart.js ADR 0031, '
+        'section 10)', (tester) async {
+      await _pumpDemo(tester, size: size);
+      final bar = find.byType(TabBar);
+      expect(
+        find.descendant(
+          of: bar,
+          matching: find.byWidgetPredicate(
+            (w) =>
+                w is Scrollable &&
+                axisDirectionToAxis(w.axisDirection) == Axis.horizontal,
+          ),
+        ),
+        findsNothing,
+      );
+      final view = Offset.zero & size;
+      for (final tab in canvasHostDemoTabs) {
+        final rect = tester.getRect(
+          find.byKey(ValueKey('phase3.tab.${tab.key}')),
+        );
+        expect(rect.width, greaterThan(0), reason: tab.key);
+        expect(view.contains(rect.topLeft), isTrue, reason: '${tab.key} $rect');
+        expect(
+          view.contains(rect.bottomRight - const Offset(0.01, 0.01)),
+          isTrue,
+          reason: '${tab.key} $rect',
+        );
+      }
+      await tester.tap(find.byKey(const ValueKey('phase3.tab.axes')));
+      await _frames(tester);
+      expect(
+        DefaultTabController.of(tester.element(bar)).index,
+        canvasHostDemoTabs.indexWhere((tab) => tab.key == 'axes'),
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   testWidgets('canvas: a card keeps its state when it scrolls out of view', (
     tester,
@@ -495,8 +548,8 @@ int _renders(WidgetTester tester) => tester
 
 /// Scrolls the tab of [key] into view and taps it.
 ///
-/// The tab bar scrolls. It keeps the selected tab in view, so that another
-/// tab can be out of view on a phone.
+/// The tab bar does not scroll: each tab is in view on a phone. The scroll
+/// into view is a guard for a smaller test view.
 Future<void> _tapTab(WidgetTester tester, String key) async {
   final tab = find.byKey(ValueKey('phase3.tab.$key'));
   await tester.ensureVisible(tab);

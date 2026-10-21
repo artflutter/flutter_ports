@@ -722,6 +722,31 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('chart: a new mode takes the count at the index of N', (
+    tester,
+  ) async {
+    await _pumpChart(
+      tester,
+      type: StressChartType.doughnut,
+      n: 100,
+      autoStart: false,
+    );
+    await _frames(tester);
+    expect(await _selected(tester, 'stress.n.100'), isTrue);
+    // 100 is the first count of a doughnut, and 1000 the first of the bars.
+    await _tap(tester, 'stress.mode.bars');
+    expect(await _selected(tester, 'stress.n.1000'), isTrue);
+    expect(_state(tester).debugElements, hasLength(1000));
+    expect(_state(tester).debugElements, everyElement(isA<BarElement>()));
+    // 1000 is a count of the arcs too: N stays.
+    await _tap(tester, 'stress.mode.arcs');
+    expect(await _selected(tester, 'stress.n.1000'), isTrue);
+    await _tap(tester, 'stress.n.100');
+    await _tap(tester, 'stress.mode.primitives');
+    expect(await _selected(tester, 'stress.n.1000'), isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
   group('the timing split', () {
     /// Runs the mode chart with [call] for 4 windows of real time, and
     /// gives the published figures. The window of the figures is 500 ms of
