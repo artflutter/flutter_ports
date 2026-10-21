@@ -146,3 +146,11 @@
 	path = third_party/robust-predicates
 	url = https://github.com/mourner/robust-predicates
 	shallow = true
+[submodule "third_party/echarts"]
+	path = third_party/echarts
+	url = https://github.com/apache/echarts
+	shallow = true
+[submodule "third_party/zrender"]
+	path = third_party/zrender
+	url = https://github.com/ecomfe/zrender
+	shallow = true

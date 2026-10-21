@@ -1,0 +1,83 @@
+# The projects that packages/flutter_echarts_port ports code from (ECharts
+# ADR 0001). Each "// Ported from" header must name a project of this file,
+# with the same license and holder. The first entry is Apache ECharts, the
+# upstream repository of ADR 0005. The second entry is zrender, the renderer
+# of ECharts. It is at the exact version that the ECharts package.json
+# requires.
+#
+# packages/flutter_echarts_port/test/upstream_test.dart and
+# tool/check_upstream_pin.sh read this file. The test compares each gitlink
+# with "commit". The script compares each gitlink with the upstream commit of
+# "ref" (git ls-remote). Both also fail on a submodule of .gitmodules that no
+# entry of a packages/*/tool/port_sources.yaml file pins.
+#
+# Keys of an entry, as in packages/flutter_chartjs/tool/port_sources.yaml:
+# - header: the project name in the header.
+# - version: the header version. It is equal to the pin ref. The ECharts and
+#   zrender release tags have no "v" prefix.
+# - version_source: where the version comes from.
+# - url: the project repository.
+# - language: the language of the source. "js" is JavaScript or TypeScript,
+#   as in packages/flutter_chartjs/tool/port_sources.yaml.
+# - spdx: the SPDX license identifier of the repository LICENSE.
+# - holder: the copyright holder, as the header, the package LICENSE or
+#   NOTICE and REUSE.toml write it. The ECharts LICENSE has no copyright
+#   line. Its holder is the copyright line of the ECharts NOTICE without the
+#   year. The zrender holder is the copyright line of the zrender LICENSE
+#   without the year.
+# - pin: the reference copy in this repository. kind "submodule" is a git
+#   submodule at the commit "commit" (tag "ref"). Both tags are lightweight
+#   tags. Thus "commit" is the commit that the tag names.
+# - targets: the Dart path of a source path (ECharts ADR 0002). A "source"
+#   that ends with "/" is a directory. Its files map into the "dart"
+#   directory. The map changes ".test.ts" to "_test.dart" and ".ts" to
+#   ".dart". Any other "source" is one file. Its "dart" is the Dart file. A
+#   file target applies before a directory target.
+# - files, file_index: the source paths that exist at the pin. Phase 0 ports
+#   no file. Thus no entry has these keys yet.
+#
+# Five ECharts files embed d3 code under BSD-3-Clause:
+# src/chart/treemap/treemapLayout.ts, src/chart/tree/layoutHelper.ts,
+# src/chart/graph/forceHelper.ts, src/util/number.ts and src/scale/Time.ts.
+# The "Apache ECharts Subcomponents" section of the ECharts LICENSE names the
+# first four. src/scale/Time.ts:20-28 has the same d3 block. ECharts ADR 0001
+# gives the header and the notices of their ports.
+#
+# All paths are relative to the repository root. Only "source" is relative
+# to the project root.
+
+sources:
+  - header: Apache ECharts
+    version: "6.1.0"
+    version_source: echartsVersion in packages/flutter_echarts_port/lib/src/upstream.dart
+    url: https://github.com/apache/echarts
+    language: js
+    spdx: Apache-2.0
+    holder: The Apache Software Foundation
+    pin:
+      kind: submodule
+      path: third_party/echarts
+      ref: "6.1.0"
+      commit: c5a48f5f97d23e5379720870b8444cd05b50ffb4
+    targets:
+      - source: src/
+        dart: packages/flutter_echarts_port/lib/src/echarts/
+      - source: test/ut/spec/
+        dart: packages/flutter_echarts_port/test/specs/echarts/
+  - header: zrender
+    version: "6.1.0"
+    version_source: zrenderVersion in packages/flutter_echarts_port/lib/src/upstream.dart
+    url: https://github.com/ecomfe/zrender
+    language: js
+    spdx: BSD-3-Clause
+    holder: Baidu Inc.
+    pin:
+      kind: submodule
+      path: third_party/zrender
+      ref: "6.1.0"
+      commit: 32b6686724832dcea026e9443d056ea216ed0ab2
+    targets:
+      - source: src/
+        dart: packages/flutter_echarts_port/lib/src/zrender/
+      - source: test/ut/spec/
+        dart: packages/flutter_echarts_port/test/specs/zrender/

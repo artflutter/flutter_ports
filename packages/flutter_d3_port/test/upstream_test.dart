@@ -114,6 +114,18 @@ bool _hasGit(Directory root) {
   }
 }
 
+/// The `tool/port_sources.yaml` files of the workspace packages under
+/// [root], sorted by path. Each file lists the submodules of one port.
+List<File> _sourceFiles(Directory root) {
+  final packages = Directory('${root.path}/packages');
+  if (!packages.existsSync()) return const [];
+  return [
+    for (final dir in packages.listSync().whereType<Directory>())
+      if (File('${dir.path}/tool/port_sources.yaml').existsSync())
+        File('${dir.path}/tool/port_sources.yaml'),
+  ]..sort((a, b) => a.path.compareTo(b.path));
+}
+
 void main() {
   test('d3Version is a plain release version', () {
     expect(d3Version, matches(RegExp(r'^\d+\.\d+\.\d+$')));
@@ -160,18 +172,13 @@ void main() {
       });
 
       // The gitlink tests below read the entries. This test also finds a
-      // submodule without an entry. The Chart.js file lists the Chart.js
-      // submodules.
+      // submodule without an entry. Each port lists its submodules in its
+      // own tool/port_sources.yaml.
       test('each submodule of .gitmodules is the pin of an entry', () {
-        final chartjsSources = File(
-          '${root!.path}/packages/flutter_chartjs/tool/port_sources.yaml',
-        );
         final pins = [
-          for (final source in [
-            ...sources,
-            ..._readSources(chartjsSources.readAsStringSync()),
-          ])
-            if (source['pin.kind'] == 'submodule') source['pin.path'],
+          for (final file in _sourceFiles(root!))
+            for (final source in _readSources(file.readAsStringSync()))
+              if (source['pin.kind'] == 'submodule') source['pin.path'],
         ];
         expect(
           _submodulePaths(File('${root.path}/.gitmodules').readAsStringSync()),

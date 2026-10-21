@@ -9,6 +9,7 @@ workspace:
   - packages/flutter_chartjs
   - packages/chartjs_test_utils
   - packages/flutter_d3_port
+  - packages/flutter_echarts_port
   - apps/chartjs_gallery
 
 dev_dependencies:
@@ -78,10 +79,10 @@ melos:
 
     upstream:
       run: git submodule update --init --depth 1
-      description: Check out every pinned third_party/ submodule (Chart.js, @kurkle/color, chartjs-test-utils, d3 and the 33 other D3 repositories). Reference for porting, not shipped.
+      description: Check out every pinned third_party/ submodule (Chart.js, @kurkle/color, chartjs-test-utils, d3 and the 33 other D3 repositories, Apache ECharts and zrender). Reference for porting, not shipped.
     upstream:check:
       run: bash tool/check_upstream_pin.sh
-      description: Fail unless third_party/Chart.js is pinned to the release tag named by chartJsVersion (for a commit pin <last version>+<sha8>, to a commit that starts with <sha8>), third_party/d3 to the release tag named by d3Version, and each other D3 submodule to the commit of its tag in packages/flutter_d3_port/tool/port_sources.yaml.
+      description: Fail unless third_party/Chart.js is pinned to the release tag named by chartJsVersion (for a commit pin <last version>+<sha8>, to a commit that starts with <sha8>), third_party/d3 to the release tag named by d3Version, each other D3 submodule to the commit of its tag in packages/flutter_d3_port/tool/port_sources.yaml, and third_party/echarts and third_party/zrender to the release tags named by echartsVersion and zrenderVersion.
     upstream:manifest:
       run: cd packages/flutter_chartjs && node tool/upstream_manifest/upstream_manifest.mjs --src ../../third_party/Chart.js --out doc/upstream/manifest.json
       description: Write packages/flutter_chartjs/doc/upstream/manifest.json and fixtures.json from third_party/Chart.js (tool 4). Needs Node.js 22.18 or later (CI uses 24.12.0) and the submodule (melos run upstream).

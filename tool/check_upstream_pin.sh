@@ -11,8 +11,16 @@
 # - Each other D3 submodule: the tag "ref" of its entry in
 #   packages/flutter_d3_port/tool/port_sources.yaml. The gitlink must also
 #   equal the "commit" of the entry.
-# - Each submodule of .gitmodules: the pin of an entry of
-#   packages/flutter_chartjs/tool/port_sources.yaml or of the D3 file.
+# Also fails unless the ECharts gitlinks are the commits of their tags (ECharts
+# ADR 0001):
+# - third_party/echarts: the release tag named by echartsVersion
+#   (packages/flutter_echarts_port/lib/src/upstream.dart). The ECharts tags
+#   have no "v" prefix.
+# - third_party/zrender: the release tag named by zrenderVersion.
+# - The gitlinks must also equal the "commit" of their entries in
+#   packages/flutter_echarts_port/tool/port_sources.yaml.
+# - Each submodule of .gitmodules: the pin of an entry of a
+#   packages/*/tool/port_sources.yaml file.
 # Reads the gitlinks from the index. Thus it needs no submodule checkout. It
 # also works before the first commit. It gets the commit of each tag with
 # git ls-remote.
@@ -95,7 +103,7 @@ fi
 
 # The commit of tag <tag> in the repository <url>. Empty if the tag does not
 # exist. Status 1 if git ls-remote fails.
-d3_tag_commit() {
+tag_commit() {
   local refs commit
   refs=$(git ls-remote "$1" "refs/tags/$2" "refs/tags/$2^{}" </dev/null) || return 1
   # An annotated tag lists its commit as refs/tags/<tag>^{}. A lightweight tag
@@ -107,41 +115,42 @@ d3_tag_commit() {
   echo "$commit"
 }
 
-d3_failed=0
+failed=0
 # Compares the gitlink of <path> with the commit of tag <tag> and with the
-# commit <recorded> of port_sources.yaml. Sets d3_failed to 1 on a mismatch.
-d3_check_pin() {
-  local path=$1 tag=$2 recorded=$3 pinned url expected
+# commit <recorded> of the port_sources.yaml file <sources>. Sets failed to 1
+# on a mismatch.
+check_pin() {
+  local path=$1 tag=$2 recorded=$3 sources=$4 pinned url expected
   pinned=$(git ls-files --stage -- "$path" | awk '$1 == "160000" { print $2 }')
   if [ -z "$pinned" ]; then
     echo "$path is not recorded as a submodule" >&2
-    d3_failed=1
+    failed=1
     return
   fi
   if ! url=$(git config -f .gitmodules "submodule.$path.url"); then
     echo "$path has no url in .gitmodules" >&2
-    d3_failed=1
+    failed=1
     return
   fi
-  if ! expected=$(d3_tag_commit "$url" "$tag"); then
+  if ! expected=$(tag_commit "$url" "$tag"); then
     echo "git ls-remote failed for $url" >&2
-    d3_failed=1
+    failed=1
     return
   fi
   if [ -z "$expected" ]; then
     echo "Tag $tag not found in $url" >&2
-    d3_failed=1
+    failed=1
     return
   fi
   if [ "$pinned" != "$expected" ]; then
     echo "$path is pinned to $pinned, but $tag is $expected." >&2
     echo "Check out the tag in the submodule and stage it: git add $path" >&2
-    d3_failed=1
+    failed=1
     return
   fi
   if [ "$recorded" != "$pinned" ]; then
-    echo "$d3_sources gives commit $recorded for $path, but the gitlink is $pinned." >&2
-    d3_failed=1
+    echo "$sources gives commit $recorded for $path, but the gitlink is $pinned." >&2
+    failed=1
     return
   fi
   echo "$path is pinned to $tag ($pinned)"
@@ -165,26 +174,77 @@ while read -r path ref commit <&3; do
     d3_seen=1
     if [ "$ref" != "v$d3_version" ]; then
       echo "$d3_sources gives ref $ref for third_party/d3, but d3Version is $d3_version." >&2
-      d3_failed=1
+      failed=1
     fi
-    d3_check_pin "$path" "v$d3_version" "$commit"
+    check_pin "$path" "v$d3_version" "$commit" "$d3_sources"
   else
-    d3_check_pin "$path" "$ref" "$commit"
+    check_pin "$path" "$ref" "$commit" "$d3_sources"
   fi
 done 3<<<"$d3_pins"
 if [ "$d3_seen" = 0 ]; then
   echo "$d3_sources has no entry for third_party/d3" >&2
-  d3_failed=1
+  failed=1
 fi
 
-# The loop above examines only the D3 entries. This loop finds a submodule
-# without an entry. The Chart.js file lists the Chart.js submodules.
-chartjs_sources=packages/flutter_chartjs/tool/port_sources.yaml
-listed=$(awk '$1 == "path:" { print $2 }' "$chartjs_sources" "$d3_sources")
+# ECharts. The script examines both ECharts pins and reports each failure.
+echarts_upstream=packages/flutter_echarts_port/lib/src/upstream.dart
+echarts_sources=packages/flutter_echarts_port/tool/port_sources.yaml
+echarts_version=$(sed -n "s/^const String echartsVersion = '\(.*\)';\$/\1/p" "$echarts_upstream")
+zrender_version=$(sed -n "s/^const String zrenderVersion = '\(.*\)';\$/\1/p" "$echarts_upstream")
+if [ -z "$echarts_version" ] || [ -z "$zrender_version" ]; then
+  echo "echartsVersion or zrenderVersion not found in $echarts_upstream" >&2
+  exit 1
+fi
+if [ ! -f "$echarts_sources" ]; then
+  echo "$echarts_sources not found" >&2
+  exit 1
+fi
+
+# One line "<path> <ref> <commit>" for each pin block of a port_sources.yaml.
+read_pins() {
+  awk '
+    $1 == "pin:" { path = ""; ref = ""; next }
+    $1 == "path:" { path = $2 }
+    $1 == "ref:" { ref = $2; gsub(/"/, "", ref) }
+    $1 == "commit:" { print path, ref, $2 }
+  ' "$1"
+}
+
+echarts_seen=0
+zrender_seen=0
+while read -r path ref commit <&3; do
+  case "$path" in
+    third_party/echarts)
+      echarts_seen=1
+      expected_ref=$echarts_version
+      ;;
+    third_party/zrender)
+      zrender_seen=1
+      expected_ref=$zrender_version
+      ;;
+    *)
+      expected_ref=$ref
+      ;;
+  esac
+  if [ "$ref" != "$expected_ref" ]; then
+    echo "$echarts_sources gives ref $ref for $path, but $echarts_upstream gives $expected_ref." >&2
+    failed=1
+  fi
+  check_pin "$path" "$expected_ref" "$commit" "$echarts_sources"
+done 3< <(read_pins "$echarts_sources")
+if [ "$echarts_seen" = 0 ] || [ "$zrender_seen" = 0 ]; then
+  echo "$echarts_sources needs an entry for third_party/echarts and for third_party/zrender" >&2
+  failed=1
+fi
+
+# The loops above examine the D3 and ECharts entries. This loop finds a
+# submodule without an entry. Each port lists its submodules in its own
+# tool/port_sources.yaml. The Chart.js file lists the Chart.js submodules.
+listed=$(awk '$1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)
 while read -r _ path <&3; do
   if ! grep -qxF -- "$path" <<<"$listed"; then
     echo "$path is in .gitmodules, but no port_sources.yaml entry pins it." >&2
-    d3_failed=1
+    failed=1
   fi
 done 3< <(git config -f .gitmodules --get-regexp '^submodule\..*\.path$')
-exit "$d3_failed"
+exit "$failed"
