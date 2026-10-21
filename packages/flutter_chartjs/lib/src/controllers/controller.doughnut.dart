@@ -34,8 +34,6 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
-import 'dart:math' as math;
-
 import 'package:flutter_chartjs/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs;
 import 'package:flutter_chartjs/src/helpers/helpers.core.dart'
@@ -47,7 +45,8 @@ import 'package:flutter_chartjs/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs/src/js/js_array.dart'
     show JsStringList, jsSetIndex;
 import 'package:flutter_chartjs/src/js/js_class.dart';
-import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax, jsMin;
+import 'package:flutter_chartjs/src/js/js_math.dart'
+    show jsCos, jsMax, jsMin, jsSin;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet, jsGetIndex;
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
@@ -79,10 +78,10 @@ _RatioAndOffset _getRatioAndOffset(
   if (circumference < tau) {
     final startAngle = rotation;
     final endAngle = startAngle + circumference;
-    final startX = math.cos(startAngle);
-    final startY = math.sin(startAngle);
-    final endX = math.cos(endAngle);
-    final endY = math.sin(endAngle);
+    final startX = jsCos(startAngle);
+    final startY = jsSin(startAngle);
+    final endX = jsCos(endAngle);
+    final endY = jsSin(endAngle);
     // `Math.max(a, a * cutout, b, b * cutout)` and `Math.min(...)`.
     double calcMax(double angle, double a, double b) =>
         angleBetween(angle, startAngle, endAngle, true)
@@ -677,7 +676,7 @@ List<Object?> _generateLabels(types.Chart chart) {
 ///
 /// Each style value is a read [jsGet]: an absent key gives [undefined], for
 /// example `lineJoin` of the default `borderJoinStyle`. `index` is a number
-/// (Chart.js ADR 0010).
+/// (Chart.js ADR 0032).
 Map<String, Object?> _labelItem(
   types.Chart chart,
   Object? label,

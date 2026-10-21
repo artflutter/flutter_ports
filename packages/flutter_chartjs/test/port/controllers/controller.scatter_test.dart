@@ -34,7 +34,7 @@ import 'controller_scatter_reference.dart';
 //
 // The reference group compares real scatter charts with the charts of
 // tool/reference/controller_scatter_reference.mjs: a build of the pinned
-// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with a mock
+// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with a mock
 // context that measures text in Liberation Sans 2.1.5. Each chart comes from
 // acquireChart in a testWidgets case (Chart.js ADR 0022). The case runs its
 // steps and compares the observations, the hit queries and the draw calls
@@ -332,7 +332,7 @@ void main() {
     // The switch of controller.scatter.js:71-95 (Chart.js issue #11333).
     // The expected results come from the pinned build in Node.js v24.12.0
     // on x64: the probe `probe_showline.mjs`. Its source and its output
-    // `probe_showline.out` are in doc/phase7/review/wave3/U-scatter-report.md,
+    // `probe_showline.out` are in .handover/phase7/review/wave3/U-scatter-report.md,
     // section "Fixes", finding U-scatter-R2. The generator cannot give these
     // cases: it has no step that writes an option.
     group('showLine', () {

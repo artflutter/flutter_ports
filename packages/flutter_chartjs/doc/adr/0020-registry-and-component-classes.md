@@ -1,6 +1,6 @@
 # Chart.js ADR 0020: Registry and component classes
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (type-only dependencies, records),
   [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (plain objects as Maps, the

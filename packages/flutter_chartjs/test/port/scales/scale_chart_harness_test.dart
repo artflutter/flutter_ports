@@ -21,7 +21,7 @@ import 'scale_chart_harness_reference.dart';
 // (scale_chart_harness.dart, tool/reference/scale_chart_common.mjs), with
 // the cases of tool/reference/scale_chart_harness_reference.mjs. The
 // generator builds each chart with a build of the pinned Chart.js in Node.js
-// v24.12.0 on x64 (Chart.js ADR 0010). Its mock context measures text in
+// v24.12.0 on x64 (Chart.js ADR 0032). Its mock context measures text in
 // Liberation Sans 2.1.5, the test font of the harness.
 //
 // Each chart comes from acquireChart in a testWidgets case (Chart.js ADR

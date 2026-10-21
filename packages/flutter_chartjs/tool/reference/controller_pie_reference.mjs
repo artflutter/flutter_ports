@@ -106,16 +106,13 @@ const legendItems = named('legendItems', (chart) => {
 /**
  * Two pie datasets with the labels a, b, c, d, with [extra1] and [extra2].
  *
- * The data of the second dataset is not the data of the doughnut generator
- * ([5, 15, 10, 20]). With those values, the case `the step
- * toggleDataVisibility` has a hit tie at its step 2 (the steps count from 0:
- * after the third toggle, only the index 3 is hidden). The arc centers of
- * dataset 1, indices 1 and 2, are symmetric to the line x + y = 512 through
- * the chart center, and the hit point 12, (244, 268), is on that line. Query
- * 10, ['index', false, 'xy', false], then compares two distances that are
- * equal in Dart. The last bit of `Math.sin(3.665191429188092)` selects the
- * item: V8 gives index 2 and Dart gives index 1 (the hit ties of
- * porting-flow.md section 3). The values 5 and 12 have no such symmetry.
+ * The data of the second dataset is the data of the doughnut generator
+ * ([5, 15, 10, 20]). The case `the step toggleDataVisibility` has a hit tie
+ * at its step 2 (the steps count from 0: only the index 3 hidden): the hit
+ * point 12, (244, 268), is on the line x + y = 512, and query 10 compares
+ * two equal distances. `Math.sin(3.665191429188092)` decides the item.
+ * `jsSin` gives the V8 bits on every target (Chart.js ADR 0032). The case
+ * pins the tie.
  */
 const two = (extra1, extra2, options = undefined) => ({
   type: 'pie',
@@ -123,7 +120,7 @@ const two = (extra1, extra2, options = undefined) => ({
     labels: ['a', 'b', 'c', 'd'],
     datasets: [
       {data: [10, 20, 30, 15], ...extra1},
-      {data: [5, 15, 12, 20], ...extra2},
+      {data: [5, 15, 10, 20], ...extra2},
     ],
   },
   ...(options === undefined ? {} : {options}),

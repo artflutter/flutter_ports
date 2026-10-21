@@ -26,9 +26,9 @@ import 'interaction_reference.dart';
 // and element calls come from src/core/core.interaction.js at v4.5.1, run
 // with type stripping in Node.js v24.12.0 on x64 over the same scenes.
 // interaction_reference.dart has the data, which
-// tool/reference/interaction_reference.mjs writes (Chart.js ADR 0010). The
+// tool/reference/interaction_reference.mjs writes (Chart.js ADR 0032). The
 // tests compare them exactly: the items and the calls are the protected
-// behavior of Chart.js ADR 0009, and the positions are the results of
+// behavior of Chart.js ADR 0034, and the positions are the results of
 // IEEE operations.
 //
 // The element calls of a query are the calls of inRange, inXRange, inYRange

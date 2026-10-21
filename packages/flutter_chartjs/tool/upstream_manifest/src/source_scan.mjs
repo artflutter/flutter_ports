@@ -4,7 +4,7 @@
 // scans read a .ts file after Node.js strips its types (the types become
 // white space, so lines and columns stay):
 // - builtinSites: the calls and reads of JS builtins whose Dart translation
-//   needs lib/src/js (Chart.js ADR 0010): Math.*, Number.*, Intl.*,
+//   needs lib/src/js (Chart.js ADR 0032): Math.*, Number.*, Intl.*,
 //   Date.now, the global parseFloat, parseInt, isNaN and isFinite, and the
 //   methods .sort( and .toFixed(. A bare name that the file imports or
 //   declares is a Chart.js function, not the builtin (core.scale.js imports

@@ -1,6 +1,6 @@
 # Chart.js ADR 0022: Chart test harness on Flutter
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (objects as Maps),
   [Chart.js ADR 0009](0009-no-display-only-js-exactness.md) (the protected behavior),

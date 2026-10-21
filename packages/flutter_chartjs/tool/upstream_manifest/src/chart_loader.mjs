@@ -6,7 +6,7 @@
 // Chart object. It does not build Chart.js: Node.js strips the TypeScript
 // types of src/**/*.ts when it loads them (Node.js 22.18 or later), and the
 // hooks below only resolve names. Nothing is written into the checkout
-// (Chart.js ADR 0011).
+// (Chart.js ADR 0035).
 //
 // - A `./x.js` import of a file that exists only as `./x.ts` loads the `.ts`
 //   file, as the bundler of Chart.js does.

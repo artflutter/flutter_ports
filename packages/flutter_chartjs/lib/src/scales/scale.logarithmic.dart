@@ -15,7 +15,7 @@
 /// - Options are the resolvers of `helpers.config` (Chart.js ADR 0006). The
 ///   scale reads an option with `options[key]` or [jsGet], and tests it
 ///   with [jsTruthy].
-/// - Numbers are `double` (Chart.js ADR 0010). A property that starts JS
+/// - Numbers are `double` (Chart.js ADR 0032). A property that starts JS
 ///   `undefined` and holds a number starts as NaN. `log10` is the fdlibm
 ///   port of helpers.math, which gives the bits of V8. `Math.pow` is
 ///   `dart:math` `pow` with `double` operands.
@@ -73,19 +73,19 @@ double _log10Floor(double v) => log10(v).floorToDouble();
 /// (scale.logarithmic.js:115-116). `log10` applies `ToNumber` to it
 /// ([jsToNumber]): `log10(0)` is -Infinity, and the result is 0.
 double _changeExponent(double? v, double m) =>
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
     math.pow(10.0, _log10Floor(jsToNumber(v)) + m).toDouble();
 
 /// scale.logarithmic.js:11 `isMajor`.
 bool _isMajor(double tickVal) {
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
   final remain = tickVal / (math.pow(10.0, _log10Floor(tickVal)));
   return remain == 1;
 }
 
 /// scale.logarithmic.js:16 `steps`.
 double _steps(double min, double max, double rangeExp) {
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
   final rangeStep = math.pow(10.0, rangeExp).toDouble();
   final start = (min / rangeStep).floorToDouble();
   final end = (max / rangeStep).ceilToDouble();
@@ -129,19 +129,19 @@ List<Tick> _generateTicks(
   final ticks = <Tick>[];
   final minExp = _log10Floor(min);
   var exp = _startExp(min, max);
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
   var precision = exp < 0 ? math.pow(10.0, exp.abs()).toDouble() : 1.0;
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
   final stepSize = math.pow(10.0, exp).toDouble();
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
   final base = minExp > exp ? math.pow(10.0, minExp).toDouble() : 0.0;
   final start = jsRound((min - base) * precision) / precision;
   final offset = ((min - base) / stepSize / 10).floorToDouble() * stepSize * 10;
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
   var significand = ((start - offset) / math.pow(10.0, exp)).floorToDouble();
   var value = finiteOrDefault(
     generationOptions.min,
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
     jsRound((base + offset + significand * math.pow(10.0, exp)) * precision) /
         precision,
   );
@@ -161,7 +161,7 @@ List<Tick> _generateTicks(
     }
     value =
         jsRound(
-          // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+          // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
           (base + offset + significand * math.pow(10.0, exp)) * precision,
         ) /
         precision;
@@ -364,7 +364,7 @@ class LogarithmicScale extends Scale {
   /// decimal is not the shortest round-trip form of its double gets other
   /// digits. For example, `'9007199254740993'` gives `9,007,199,254,740,993`
   /// in V8 and `9,007,199,254,740,992` in the port. Only the digits of the
-  /// label change (Chart.js ADR 0009). The `ticks.format` option is a Map of
+  /// label change (Chart.js ADR 0034). The `ticks.format` option is a Map of
   /// the number format options, or another value, which gives no options.
   @override
   Object? getLabelForValue(Object? value) {
@@ -426,7 +426,7 @@ class LogarithmicScale extends Scale {
   @override
   double getValueForPixel(double pixel) {
     final decimal = getDecimalForPixel(pixel);
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
     return math.pow(10.0, _startValue + decimal * _valueRange).toDouble();
   }
 }

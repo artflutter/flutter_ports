@@ -17,8 +17,8 @@ import 'package:flutter_test/flutter_test.dart';
 // npm package (dist/chart.umd.cjs) in Node.js v24.12.0 on x64. The groups
 // platform-request-anim-frame, js-semantics-debounce-args and
 // platform-debounce-cancel pin the differences.md rows of the same names
-// (Chart.js ADR 0007, decision 11). helpers.extras is not a pure layer. Thus
-// this file runs on the VM only (Chart.js ADR 0007, decision 10).
+// (Chart.js ADR 0016, decision 11). helpers.extras is not a pure layer. Thus
+// this file runs on the VM only (Chart.js ADR 0016, decision 10).
 
 /// A scale object literal `{axis, getUserBounds, getPixelForValue}` (or
 /// `{min, max}`), passed as a [Scale]. The other members are absent.

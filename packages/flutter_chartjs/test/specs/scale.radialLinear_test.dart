@@ -19,6 +19,7 @@ import 'package:flutter_chartjs/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // `Chart.registry` and `Chart.defaults` are the statics of Chart of
@@ -96,8 +97,7 @@ AnyObject _optionsR(Chart chart, [String? key]) {
 void main() {
   // Tests for the radial linear scale used by the polar area and radar charts
   group('Test the radial linear scale', () {
-    // describe('auto', jasmine.fixture.specs('scale.radialLinear')): a
-    // fixture group of phase 7, not a case.
+    group('auto', fixture.specs('scale.radialLinear'));
 
     test('Should register the constructor with the registry', () {
       final constructor = Chart.registry.getScale('radialLinear');

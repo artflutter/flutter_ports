@@ -1,0 +1,220 @@
+{
+  "schema": 1,
+  "source": {
+    "project": "Chart.js",
+    "version": "probe",
+    "commit": null
+  },
+  "specs": [],
+  "fixtures": {
+    "items": [
+      {
+        "path": "scale.timeseries/a.json",
+        "sha256": "e8f1f6e960d68a07537b8b5022005b32bfd88393112663d29ed799592918da01",
+        "png": "scale.timeseries/a.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      },
+      {
+        "path": "aXb/c.json",
+        "sha256": "ac6400fa34ec9dc975b26677f1475b36a3007fc81adb42276106e62189d5a4ec",
+        "png": "aXb/c.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      },
+      {
+        "path": "edge/x.json",
+        "sha256": "93deaff551b92be2ed09969ef83f8926649303166d9775a3b0a9a8c35af4a2b5",
+        "png": "edge/x.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      },
+      {
+        "path": "edge/xy.json",
+        "sha256": "e002adcf97f4e6cbde39410cde0ddae187acc6e163fd7c49efe6aa72e25572ac",
+        "png": "edge/xy.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      },
+      {
+        "path": "rule/none.js",
+        "sha256": "eb4974ea86ff5469c906a070ac495fdf6f8a26916c61ee2c6a29ccb7e9d87b61",
+        "png": "rule/none.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "rule/instance.js",
+        "sha256": "09160988e2850f549bb43fc63eb6e8122ec985eebfe0c45bd5e37647ecdc45ea",
+        "png": "rule/instance.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "rule/object.js",
+        "sha256": "7a57ebf3a407da5721679169cd175ac13819b729306df63bb1a2585762782992",
+        "png": "rule/object.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "plugin.x/keep.js",
+        "sha256": "cdd6b374ec6f28e61649046b82007846f3d02ef75af086768148fedd359456e3",
+        "png": "plugin.x/keep.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "run/sync.js",
+        "sha256": "65ae9e676a7a8e7ee68b6659e40d1c163da0abdf87e4f04fe79eac5e60ccc2bd",
+        "png": "run/sync.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "run/future.js",
+        "sha256": "9d27c1b420baec05c08426ad77e1ffe8ac572bf2f47083b6551ed649f7741f79",
+        "png": "run/future.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "run/never.js",
+        "sha256": "d4f487782f25e74c1b17323ac6689e7b342e99c50218b680931bb0d04b0e7173",
+        "png": "run/never.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "run/throws.js",
+        "sha256": "31b3dfa8f711a5cd84eeb703939c6e7654ef7faf7b9a1b14782b5d1b4db2f0c3",
+        "png": "run/throws.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "run/async-throws.js",
+        "sha256": "0162c2ffb0185fad82e6ee7fd29b34a4ba325f7c55bbde0fb7ce25b128f98bf7",
+        "png": "run/async-throws.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "png/none.json",
+        "sha256": "6ea560d1be7c7dbf120d232cfceaa5aec43f95ce202fcf8d1e9e8a7b3c138b06",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      },
+      {
+        "path": "source/both.json",
+        "sha256": "2962075a1175187219e5f90547b2799af7403c6eb4e93f0ff7a32046e2e0c2eb",
+        "png": "source/both.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      },
+      {
+        "path": "source/impure.js",
+        "sha256": "618f84ebd99f6db2cb24619625125925fa1b9000bf58c72643e6684a82e58da2",
+        "png": "source/impure.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "source/stale.js",
+        "sha256": "a5f31b5318e771e046db2a9fe65177e471cb2b615093448ddc9dd7949b6b3291",
+        "png": "source/stale.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": false
+      },
+      {
+        "path": "source/skip.json",
+        "sha256": "5232a78caeabdc7909327da84b2abef73c8b665dc996b2758e40754d01000ac6",
+        "png": "source/skip.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      },
+      {
+        "path": "source/stale-skip.json",
+        "sha256": "6d41b82d2847954ff7b03399dcecc2f1bcd728be5a86168d550dd177842264fe",
+        "png": "source/stale-skip.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      },
+      {
+        "path": "source/blocked.json",
+        "sha256": "6b214ffb6a90b6a9509a758a2e5f703dd31db95e2f24b6ede91d8ad20db6618c",
+        "png": "source/blocked.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      },
+      {
+        "path": "upstream/changed.json",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "png": "upstream/changed.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      },
+      {
+        "path": "upstream/missing.json",
+        "sha256": "3684e16651a13d46b8ee8829831cb34f68c00354eea43f4dfce298eb264ec08e",
+        "png": "upstream/missing.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      },
+      {
+        "path": "crlf/lines.json",
+        "sha256": "7bdce19a0592a791b10a69c520a1bda5b7fd20cdc6fb980ec56144aa087feb69",
+        "png": "crlf/lines.png",
+        "specs": [
+          "probe.tests.js"
+        ],
+        "data": true
+      }
+    ],
+    "orphans": 0
+  }
+}

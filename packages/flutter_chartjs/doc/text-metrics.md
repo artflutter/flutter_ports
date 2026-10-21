@@ -5,7 +5,7 @@
 - Date: 2026-10-19
 - Related: [porting-flow.md](porting-flow.md) §2.8 (Text) and §3 (Test harness),
   [Chart.js ADR 0015](adr/0015-text.md) (Text, proposed),
-  [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md).
+  [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md).
 
 This document compares the text metrics of the canvas layer (`UiCanvasContext.measureText` in
 `lib/src/canvas/canvas_ui.dart`) with the text metrics of the Chrome canvas. Both sides use the
@@ -28,7 +28,7 @@ same font files: Liberation Sans 2.1.5 (SIL OFL 1.1) in `packages/chartjs_test_u
 The widths control behavior: Chart.js uses `measureText(...).width` for the tick, legend and
 tooltip layout. The baseline offsets and the bounding boxes only move pixels. Chart.js reads
 `actualBoundingBox*` only in `helpers.canvas.ts:422-426`, for the underline and the strikethrough
-of `renderText`. Thus these differences are display-only (Chart.js ADR 0009). The port keeps
+of `renderText`. Thus these differences are display-only (Chart.js ADR 0034). The port keeps
 them.
 
 `test/port/canvas/text_metrics_test.dart` checks the result on each run. It fails when a width is
@@ -265,7 +265,7 @@ canvas layer gives 0 for `start` alignment.
 An underline of `renderText` uses `actualBoundingBoxDescent`. Thus the canvas layer draws an
 underline lower than Chrome: for text with no descender, 2.8 px lower at 12px. The underline
 and the strikethrough span the advance box, not the ink box. These are pixel differences only
-(Chart.js ADR 0009).
+(Chart.js ADR 0034).
 
 ## 6. Repeat the probe
 
@@ -296,7 +296,7 @@ Do these steps from `packages/flutter_chartjs`:
    OS in §2.
 
 The reference engine is Chrome, not V8. Thus the x64 rule of
-[Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) does not apply to this probe.
+[Chart.js ADR 0032](adr/0032-js-numeric-semantics.md) does not apply to this probe.
 
 ## 7. Limits
 

@@ -101,6 +101,10 @@ list:
         'packages/flutter_chartjs/lib/src/js/fdlibm_atan.dart',
       );
       expect(
+        sources[1].dartPathOf('s_sin.c'),
+        'packages/flutter_chartjs/lib/src/js/fdlibm_trig.dart',
+      );
+      expect(
         sources[3].dartPathOf('src/utils.js'),
         'packages/chartjs_test_utils/lib/src/utils.dart',
       );

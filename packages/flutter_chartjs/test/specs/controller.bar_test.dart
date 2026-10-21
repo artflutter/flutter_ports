@@ -17,6 +17,7 @@ import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
@@ -80,8 +81,7 @@ final class _ResetTransformContext extends MockContext {
 
 void main() {
   group('Chart.controllers.bar', () {
-    // describe('auto', jasmine.fixture.specs('controller.bar')): a fixture
-    // group of phase 7 (Chart.js ADR 0029), not a case.
+    group('auto', fixture.specs('controller.bar'));
 
     test('should be registered as dataset controller', () {
       expect(jsTypeof(Chart.registry.controllers.items['bar']), 'function');

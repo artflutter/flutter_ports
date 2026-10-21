@@ -11,9 +11,9 @@
 //
 //   node tool/reference/number_to_string_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0010), and the script stops
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
 // on any other architecture. Number::toString is exact, so other engines give
-// the same strings, but Chart.js ADR 0010 takes all reference data from one
+// the same strings, but Chart.js ADR 0032 takes all reference data from one
 // engine.
 
 import {writeFileSync} from 'node:fs';

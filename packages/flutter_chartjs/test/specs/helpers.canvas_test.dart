@@ -10,6 +10,7 @@ import 'package:flutter_chartjs/src/helpers/helpers.canvas.dart' as helpers;
 import 'package:flutter_chartjs/src/types/index.dart' hide Chart;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // The spec reads the functions from Chart.helpers. Here `helpers` is
@@ -183,9 +184,9 @@ final class _Opts implements RenderTextOpts {
 
 void main() {
   group('Chart.helpers.canvas', () {
-    // `describe('auto', jasmine.fixture.specs('helpers'))` makes no spec
-    // cases. Chart.js v4.5.1 has no `test/fixtures/helpers` directory, so the
-    // group has 0 fixtures. The fixture runner of phase 7 registers it.
+    // Chart.js v4.5.1+7169e651 has no `test/fixtures/helpers` directory, so
+    // the group has 0 fixtures.
+    group('auto', fixture.specs('helpers'));
 
     group('clearCanvas', () {
       testWidgets('should clear the chart canvas', (tester) async {

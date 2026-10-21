@@ -15,7 +15,7 @@
 /// The metrics come from the paragraph: the advance width, the ascent and
 /// the descent of the font. `dart:ui` gives no glyph ink boxes, thus the
 /// `actualBoundingBox*` values of `measureText` use the font ascent and
-/// descent (Chart.js ADR 0009: no display-only exactness).
+/// descent (Chart.js ADR 0034: no display-only exactness).
 library;
 
 import 'dart:collection';

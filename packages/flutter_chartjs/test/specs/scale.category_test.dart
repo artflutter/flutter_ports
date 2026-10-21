@@ -13,6 +13,7 @@ import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // The spec reads Chart.registry and Chart.defaults, the static members
@@ -57,8 +58,7 @@ List<Object?> _getLabels(Scale scale) => [
 
 void main() {
   group('Category scale tests', () {
-    // describe('auto', jasmine.fixture.specs('scale.category')): a fixture
-    // group of phase 7, not a case.
+    group('auto', fixture.specs('scale.category'));
 
     test('Should register the constructor with the registry', () {
       final constructor = Chart.registry.getScale('category');

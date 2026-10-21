@@ -26,10 +26,11 @@ SOFTWARE.
 
 fdlibm 5.3
 
-lib/src/js/fdlibm_log.dart and lib/src/js/fdlibm_atan.dart are Dart ports of
-e_log.c, e_log10.c, s_atan.c and e_atan2.c from fdlibm 5.3
-(https://www.netlib.org/fdlibm/), which carry this notice (SPDX license
-identifier SunPro):
+lib/src/js/fdlibm_log.dart, lib/src/js/fdlibm_atan.dart and
+lib/src/js/fdlibm_trig.dart are Dart ports of e_log.c, e_log10.c, s_atan.c,
+e_atan2.c, s_sin.c, s_cos.c, k_sin.c, k_cos.c, e_rem_pio2.c, k_rem_pio2.c and
+s_scalbn.c from fdlibm 5.3 (https://www.netlib.org/fdlibm/), which carry this
+notice (SPDX license identifier SunPro):
 
 Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
 

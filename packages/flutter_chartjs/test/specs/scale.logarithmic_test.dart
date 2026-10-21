@@ -21,6 +21,7 @@ import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // The spec reads `Chart.registry`, `Chart.defaults` and `Chart.Ticks`.
@@ -147,8 +148,7 @@ Chart _acquireWhenChart(Map<String, Object?> setup) {
 
 void main() {
   group('Logarithmic Scale tests', () {
-    // describe('auto', jasmine.fixture.specs('scale.logarithmic')): a
-    // fixture group of phase 7, not a case.
+    group('auto', fixture.specs('scale.logarithmic'));
 
     test('should register', () {
       final constructor = Chart.registry.getScale('logarithmic');

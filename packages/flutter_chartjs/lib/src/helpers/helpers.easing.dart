@@ -19,13 +19,13 @@ bool _atEdge(double t) => t == 0 || t == 1;
 /// helpers.easing.ts:4 `elasticIn`.
 double _elasticIn(double t, double s, double p) =>
     // DIVERGES(chartjs): js-semantics-dart-math, dart:math sin and pow.
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+    // js-ok: pow with doubles, sin display only (Chart.js ADR 0032).
     -(math.pow(2.0, 10 * (t -= 1)) * math.sin((t - s) * tau / p));
 
 /// helpers.easing.ts:5 `elasticOut`.
 double _elasticOut(double t, double s, double p) =>
     // DIVERGES(chartjs): js-semantics-dart-math, dart:math sin and pow.
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+    // js-ok: pow with doubles, sin display only (Chart.js ADR 0032).
     math.pow(2.0, -10 * t) * math.sin((t - s) * tau / p) + 1;
 
 /// helpers.easing.ts:12 `effects`.
@@ -72,33 +72,36 @@ final Map<String, double Function(double t)> effects = {
       : 0.5 * ((t -= 2) * t * t * t * t + 2),
 
   // DIVERGES(chartjs): js-semantics-dart-math, dart:math cos.
+  // js-ok: display only (Chart.js ADR 0032)
   'easeInSine': (t) => -math.cos(t * halfPi) + 1,
 
   // DIVERGES(chartjs): js-semantics-dart-math, dart:math sin.
+  // js-ok: display only (Chart.js ADR 0032)
   'easeOutSine': (t) => math.sin(t * halfPi),
 
   // DIVERGES(chartjs): js-semantics-dart-math, dart:math cos.
+  // js-ok: display only (Chart.js ADR 0032)
   'easeInOutSine': (t) => -0.5 * (math.cos(pi * t) - 1),
 
   // DIVERGES(chartjs): js-semantics-dart-math, dart:math pow.
   'easeInExpo': (t) => (t == 0)
       ? 0
-      // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+      // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
       : math.pow(2.0, 10 * (t - 1)).toDouble(),
 
   // DIVERGES(chartjs): js-semantics-dart-math, dart:math pow.
   'easeOutExpo': (t) => (t == 1)
       ? 1
-      // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+      // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
       : -math.pow(2.0, -10 * t) + 1,
 
   // DIVERGES(chartjs): js-semantics-dart-math, dart:math pow.
   'easeInOutExpo': (t) => _atEdge(t)
       ? t
       : t < 0.5
-      // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+      // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
       ? 0.5 * math.pow(2.0, 10 * (t * 2 - 1))
-      // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+      // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
       : 0.5 * (-math.pow(2.0, -10 * (t * 2 - 1)) + 2),
 
   'easeInCirc': (t) => (t >= 1) ? t : -(math.sqrt(1 - t * t) - 1),

@@ -19,7 +19,7 @@ import 'rounded_rect_upstream.dart';
 // The fill and clip area is the same. The tests compare the pixels: no
 // pixel differs in area, the worst channel differs by at most 24 on
 // anti-aliased edge pixels, and the inked areas differ by less than 1 %
-// (Chart.js ADR 0009).
+// (Chart.js ADR 0034).
 
 /// A JavaScript object literal `{topLeft, topRight, bottomLeft,
 /// bottomRight}`, passed as [TRBLCorners].

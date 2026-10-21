@@ -4,11 +4,12 @@
 // test/port/theme/precedence_test.dart: theming.md section 8 test 1 at the
 // chart level, the rows of test 2 that need no palette, the hunk H1 with the
 // real category, linear and radial linear scales (theming.md section 10,
-// phase 6), the part of test 5 that needs no controller of phase 7, the
-// singleton read at scale.radialLinear.js:14 (theming.md section 9), and a
-// radial chart without a theme that has the values that the tokens replace
-// in `defaults` (theming.md section 4), on charts with test-registered
-// components. The file has the Node.js version,
+// phase 6), test 5 with the test controllers and with the bar and doughnut
+// controllers of phase 7, the singleton read at scale.radialLinear.js:14
+// (theming.md section 9), a radial chart without a theme that has the values
+// that the tokens replace in `defaults` (theming.md section 4), and the
+// hover steps on the 8 chart types of phase 7 (Chart.js ADR 0030, section
+// 10). The file has the Node.js version,
 // V8 version and architecture in its header. The cases are fixed, so a rerun on the same
 // Node.js writes the same file. Nothing in lib/ or test/ runs this script
 // (porting-flow.md section 4).
@@ -41,7 +42,11 @@
 // `themeReal` and `themeReal2` with the scale overrides `_index_` of the type
 // `category` and `_value_` of the type `linear`, and the radial test
 // controller `themeRadial`: the index axis `r` and the scale override `r` of
-// the type `radialLinear`, as controller.radar.js:11-34 has them. A chart is
+// the type `radialLinear`, as controller.radar.js:11-34 has them. For test 5
+// on real charts and for the hover steps, it also registers the pinned
+// src/controllers/controller.{bar,bubble,doughnut,line,pie,polarArea,radar,
+// scatter}.js, as the Dart harness registers them (flutter_test_config.dart).
+// A chart is
 // made as `_acquireChart` of chartjs-test-utils makes it
 // (src/utils.js:36-105): a 512 x 512 canvas, and `animation: false`,
 // `responsive: false` and `locale: 'en-US'` in the options. Node.js has no
@@ -49,6 +54,19 @@
 // width and the height of a radial scale. These values do not depend on the
 // platform or on a text measurement. A canvas has the mock context of
 // third_party/chartjs-test-utils/src/context.js.
+//
+// The hover steps (Chart.js ADR 0030, section 10): for each of the 8 chart
+// types, `chart._eventHandler(e)` gets a `mousemove` at the rounded center
+// of the element 0 of the dataset 0, then a `mousemove` at the rounded
+// center of the element 1, then a `mouseout` at the same point. After each
+// step, the scenario records the active elements and some options of both
+// elements. The `upstream` run writes the values that the hover theme
+// replaces into `defaults` (theming.md section 4) and removes them after the
+// scenario. The `prototype` run gives the chart the compiled hover theme
+// under `$theme` and writes nothing into `defaults`. The script stops when
+// the two runs give other lines. The element positions come from the mock
+// `measureText` of chartjs-test-utils. Thus they are not the positions of
+// the Dart charts, and the scenario records no position.
 //
 // A row of a precedence table writes its sentinels into the global scopes
 // (`defaults` and `overrides`) and removes them after the row, as the
@@ -64,13 +82,83 @@
 //
 //   node tool/reference/theme_precedence_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0010), and the script stops
-// on any other architecture.
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
+// on any other architecture. It also stops unless each of the checkouts
+// third_party/Chart.js, third_party/kurkle-color and
+// third_party/chartjs-test-utils is at the `commit` of its entry in
+// tool/port_sources.yaml and has no change in src/.
 
 import {execFileSync} from 'node:child_process';
 import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 import {registerHooks} from 'node:module';
 import {fileURLToPath} from 'node:url';
+
+/**
+ * The submodules that the script reads: the header of the entry in
+ * tool/port_sources.yaml, the folder in third_party/ and the folders that the
+ * script imports from. The script also reads the package.json of Chart.js
+ * (core.controller.js:12), but the load hook gives it the version of the pin.
+ */
+const PINNED = [
+  {header: 'Chart.js', folder: 'Chart.js', paths: ['src']},
+  {header: '@kurkle/color', folder: 'kurkle-color', paths: ['src']},
+  {header: 'chartjs-test-utils', folder: 'chartjs-test-utils', paths: ['src']},
+];
+
+/**
+ * Stops unless each submodule of PINNED is at the `commit` of its entry in
+ * tool/port_sources.yaml, with no change in the folders that the script
+ * imports from. The read of a commit is the one of readPin in
+ * scale_chart_common.mjs. A folder that is not a git checkout also stops the
+ * script.
+ */
+function checkPin() {
+  const sources = fileURLToPath(new URL('../port_sources.yaml', import.meta.url));
+  const entries = readFileSync(sources, 'utf8').split(/^ {2}- header: /m);
+  for (const {header, folder, paths} of PINNED) {
+    const entry = entries.find(
+      (e) => e.startsWith(`${header}\n`) || e.startsWith(`"${header}"\n`),
+    );
+    const commit = entry?.match(/^ {6}commit: "?([0-9a-f]{40})"?\s*$/m)?.[1];
+    if (!commit) {
+      console.error(`${sources} has no commit for ${header}.`);
+      process.exit(1);
+    }
+    const checkout = fileURLToPath(
+      new URL(`../../../../third_party/${folder}`, import.meta.url),
+    );
+    const git = (...args) => {
+      try {
+        return execFileSync('git', ['-C', checkout, ...args], {
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'pipe'],
+        }).trim();
+      } catch (error) {
+        console.error(
+          `git ${args.join(' ')} failed in ${checkout}: ` +
+            `${error.message.trim()}\n` +
+            'Check out the submodules with `dart run melos run upstream`.',
+        );
+        process.exit(1);
+      }
+    };
+    const head = git('rev-parse', 'HEAD');
+    if (head !== commit) {
+      console.error(
+        `${checkout} is at ${head}, not at the pin ${commit} of ${header}. ` +
+          'Check out the submodules with `dart run melos run upstream`.',
+      );
+      process.exit(1);
+    }
+    if (git('status', '--porcelain', '--', ...paths) !== '') {
+      console.error(
+        `${checkout} has changes in ${paths.join(', ')}. ` +
+          'The script reads the pin.',
+      );
+      process.exit(1);
+    }
+  }
+}
 
 if (process.arch !== 'x64') {
   console.error(
@@ -83,7 +171,9 @@ if (process.arch !== 'x64') {
 const MODE = process.env.THEME_PRECEDENCE_MODE;
 
 if (MODE === undefined) {
-  // The parent process: run both modes, then write the Dart file.
+  // The parent process: check the pin, run both modes, then write the Dart
+  // file.
+  checkPin();
   const run = (mode) =>
     JSON.parse(
       execFileSync(process.execPath, [fileURLToPath(import.meta.url)], {
@@ -105,6 +195,16 @@ const SCALE = new URL('core/core.scale.js', SRC);
 const CATEGORY = new URL('scales/scale.category.js', SRC);
 const LINEAR = new URL('scales/scale.linear.js', SRC);
 const RADIAL_LINEAR = new URL('scales/scale.radialLinear.js', SRC);
+const CONTROLLERS = [
+  'bar',
+  'bubble',
+  'doughnut',
+  'line',
+  'pie',
+  'polarArea',
+  'radar',
+  'scatter',
+].map((name) => new URL(`controllers/controller.${name}.js`, SRC));
 const DEFAULTS = new URL('core/core.defaults.js', SRC);
 const ELEMENTS = new URL('elements/index.js', SRC);
 const HELPERS_CORE = new URL('helpers/helpers.core.ts', SRC);
@@ -121,6 +221,7 @@ for (const url of [
   CATEGORY,
   LINEAR,
   RADIAL_LINEAR,
+  ...CONTROLLERS,
   DEFAULTS,
   ELEMENTS,
   HELPERS_CORE,
@@ -267,6 +368,10 @@ const {ArcElement, BarElement, LineElement, PointElement} = await import(
 const {resolveObjectKey} = await import(HELPERS_CORE.href);
 const {toFont} = await import(HELPERS_OPTIONS.href);
 const {default: Context} = await import(CONTEXT.href);
+const controllerClasses = [];
+for (const url of CONTROLLERS) {
+  controllerClasses.push((await import(url.href)).default);
+}
 
 // ---------------------------------------------------------------------------
 // The observations.
@@ -462,6 +567,7 @@ Chart.register(
   themeController('themeReal2', 'category', 'linear'),
   RadialController,
 );
+Chart.register(...controllerClasses);
 
 const charts = [];
 
@@ -1359,6 +1465,181 @@ axes('axes of a radial chart with cartesian theme keys', 'themeRadial', {
     linear: {ticks: {color: 'red'}},
   },
 });
+// Test 5 on the bar and doughnut controllers of phase 7 (Chart.js ADR 0030,
+// section 9). The bar chart has the scales x and y of its overrides
+// (controller.bar.js:44-55). The doughnut chart has no scale.
+axes('axes of a bar chart without a theme', 'bar', null);
+axes('axes of a bar chart with a radialLinear theme key', 'bar', {
+  scales: {
+    radialLinear: {pointLabels: {color: 'red'}, angleLines: {color: 'red'}},
+  },
+});
+axes('axes of a bar chart with the light preset', 'bar', compiledLight);
+axes('axes of a doughnut chart without a theme', 'doughnut', null);
+axes('axes of a doughnut chart with cartesian theme keys', 'doughnut', {
+  scale: {ticks: {color: 'red'}},
+  scales: {
+    category: {ticks: {color: 'red'}},
+    linear: {ticks: {color: 'red'}},
+  },
+});
+axes('axes of a doughnut chart with the light preset', 'doughnut', compiledLight);
+
+// ---------------------------------------------------------------------------
+// The hover steps on the 8 chart types (Chart.js ADR 0030, section 10).
+
+/**
+ * The compiled theme of the raw Map theme `_hoverTheme` of
+ * precedence_test.dart: the color tokens `color`, `borderColor` and
+ * `backgroundColor`. The Dart test compares it with the result of
+ * `compileChartTheme`.
+ */
+const compiledHover = {
+  color: 'rgba(51, 102, 153, 1)',
+  scale: {
+    ticks: {color: 'rgba(51, 102, 153, 1)'},
+    title: {color: 'rgba(51, 102, 153, 1)'},
+    grid: {color: 'rgba(0, 128, 0, 0.5)'},
+    border: {color: 'rgba(0, 128, 0, 0.5)'},
+  },
+  scales: {
+    radialLinear: {
+      pointLabels: {color: 'rgba(51, 102, 153, 1)'},
+      angleLines: {color: 'rgba(0, 128, 0, 0.5)'},
+    },
+  },
+  elements: {
+    point: {
+      borderColor: 'rgba(0, 128, 0, 0.5)',
+      backgroundColor: 'rgba(200, 0, 0, 1)',
+    },
+    line: {
+      borderColor: 'rgba(0, 128, 0, 0.5)',
+      backgroundColor: 'rgba(200, 0, 0, 1)',
+    },
+    bar: {
+      borderColor: 'rgba(0, 128, 0, 0.5)',
+      backgroundColor: 'rgba(200, 0, 0, 1)',
+    },
+    arc: {backgroundColor: 'rgba(200, 0, 0, 1)'},
+  },
+  transitions: {
+    theme: {animation: {duration: 200, easing: 'linear'}},
+    themeFrame: {animation: {duration: 0}},
+  },
+};
+
+/**
+ * The values that the tokens of the hover theme replace (theming.md section
+ * 4, the column "Replaces"), by the dot path in `defaults`.
+ */
+const hoverReplaced = {
+  backgroundColor: 'rgba(200, 0, 0, 1)',
+  borderColor: 'rgba(0, 128, 0, 0.5)',
+  color: 'rgba(51, 102, 153, 1)',
+};
+
+/** The data of the hover chart of the type [type]: one dataset. */
+function hoverData(type) {
+  switch (type) {
+    case 'scatter':
+      return {
+        datasets: [
+          {
+            data: [
+              {x: 1, y: 2},
+              {x: 5, y: 8},
+              {x: 9, y: 4},
+            ],
+          },
+        ],
+      };
+    case 'bubble':
+      return {
+        datasets: [
+          {
+            data: [
+              {x: 1, y: 2, r: 5},
+              {x: 5, y: 8, r: 5},
+              {x: 9, y: 4, r: 5},
+            ],
+          },
+        ],
+      };
+    default:
+      return {labels: ['a', 'b', 'c'], datasets: [{data: [3, 5, 2]}]};
+  }
+}
+
+/** The observed options of [element]. */
+function hoverOptions(element) {
+  const o = element.options;
+  const result = {
+    backgroundColor: o.backgroundColor,
+    borderColor: o.borderColor,
+    borderWidth: o.borderWidth,
+    hoverBackgroundColor: o.hoverBackgroundColor,
+    hoverBorderColor: o.hoverBorderColor,
+  };
+  if (element instanceof PointElement) result.radius = o.radius;
+  return result;
+}
+
+/** The scenario `hover <type>`. */
+function hover(type) {
+  scenario(`hover ${type}`, (observe) =>
+    row(() => {
+      const config = {type, data: hoverData(type), options: {}};
+      if (MODE === 'upstream') {
+        for (const [path, value] of Object.entries(hoverReplaced)) {
+          put(defaults, path, value);
+        }
+      } else {
+        config.$theme = compiledHover;
+      }
+      const chart = acquireChart(config);
+      const meta = chart.getDatasetMeta(0);
+      const center = (index) => {
+        const {x, y} = meta.data[index].getCenterPoint();
+        return {x: Math.round(x), y: Math.round(y)};
+      };
+      const step = (eventType, point) => {
+        chart._eventHandler({
+          type: eventType,
+          x: point.x,
+          y: point.y,
+          native: {type: eventType},
+        });
+        observe(
+          'active',
+          chart
+            .getActiveElements()
+            .map(({datasetIndex, index}) => [datasetIndex, index]),
+        );
+        observe('element 0', hoverOptions(meta.data[0]));
+        observe('element 1', hoverOptions(meta.data[1]));
+      };
+      step('mousemove', center(0));
+      const second = center(1);
+      step('mousemove', second);
+      step('mouseout', second);
+    }),
+  );
+}
+
+scenario('hover theme', (observe) => observe('theme', compiledHover));
+for (const type of [
+  'bar',
+  'bubble',
+  'doughnut',
+  'line',
+  'pie',
+  'polarArea',
+  'radar',
+  'scatter',
+]) {
+  hover(type);
+}
 
 // ---------------------------------------------------------------------------
 // The option scopes of one chart (section 8, test 1).
@@ -1518,6 +1799,16 @@ function writeDart(upstream, prototype) {
       throw new Error(`The two runs differ in ${key}.`);
     }
   }
+  // The hover steps: the compiled theme must give the options of the
+  // replaced values (Chart.js ADR 0030, section 10).
+  const lines = (run, name) =>
+    run.scenarios.find((s) => s.name === name).lines.join('\n');
+  for (const {name} of upstream.scenarios) {
+    if (!name.startsWith('hover ')) continue;
+    if (lines(upstream, name) !== lines(prototype, name)) {
+      throw new Error(`The two runs differ in the scenario ${name}.`);
+    }
+  }
   const out = fileURLToPath(
     new URL('../../test/port/theme/precedence_reference.dart', import.meta.url),
   );
@@ -1526,9 +1817,9 @@ function writeDart(upstream, prototype) {
 
 // Generated by tool/reference/theme_precedence_reference.mjs. Do not edit.
 // Node.js ${node} (${platform}-${arch}), V8 ${v8}:
-// src/core/core.controller.js and the category, linear and radial linear
-// scales at the pinned Chart.js, with the upstream src/core/core.config.js
-// and with a JavaScript prototype of the hunks H0-H3.
+// src/core/core.controller.js, the category, linear and radial linear
+// scales and the 8 controllers at the pinned Chart.js, with the upstream
+// src/core/core.config.js and with a JavaScript prototype of the hunks H0-H3.
 // ${upstream.scenarios.length} scenarios.
 
 /// The Node.js version that generated the data.

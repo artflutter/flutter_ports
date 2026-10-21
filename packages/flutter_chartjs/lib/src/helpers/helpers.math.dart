@@ -63,7 +63,7 @@ double niceNum(double range) {
   range = almostEquals(range, roundedRange, range / 1000)
       ? roundedRange
       : range;
-  // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0010).
+  // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0032).
   final niceRange = math.pow(10.0, log10(range).floorToDouble()).toDouble();
   final fraction = range / niceRange;
   final niceFraction = fraction <= 1

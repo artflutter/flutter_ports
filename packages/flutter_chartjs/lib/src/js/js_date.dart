@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: Date.now() on package:clock.
 
-/// `Date.now()` for ported code (Chart.js ADR 0010, sections 1 and 6).
+/// `Date.now()` for ported code (Chart.js ADR 0032, sections 1 and 6).
 ///
 /// [jsDateNow] reads `clock.now()` of `package:clock`. Inside `testWidgets`,
 /// the `FakeAsync` zone replaces that clock, and `tester.pump` moves it.
@@ -15,7 +15,7 @@ library;
 import 'package:clock/clock.dart';
 
 /// `Date.now()`: the milliseconds since the epoch of `clock.now()`, as a
-/// `double` (Chart.js ADR 0010, section 6).
+/// `double` (Chart.js ADR 0032, section 6).
 ///
 /// The value is a whole number, as `Date.now()` gives. Ported code calls it
 /// at each upstream `Date.now()`: `core.animator.js:57`, `:169` and `:201`,

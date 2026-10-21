@@ -18,6 +18,7 @@ import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
@@ -82,8 +83,7 @@ AnyObject _arcOptions() => <String, Object?>{
 
 void main() {
   group('Chart.controllers.doughnut', () {
-    // describe('auto', jasmine.fixture.specs('controller.doughnut')): a
-    // fixture group of phase 7 (Chart.js ADR 0029), not a case.
+    group('auto', fixture.specs('controller.doughnut'));
 
     // :4 The case also reads `Chart.controllers.pie`. flutter_test_config.dart
     // registers the pie controller with the built-in components.

@@ -19,9 +19,9 @@
 //
 //   node tool/reference/draw_point_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0010), and the script stops
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
 // on any other architecture. The test compares each number with closeTo, but
-// Chart.js ADR 0010 takes all reference data from one engine.
+// Chart.js ADR 0032 takes all reference data from one engine.
 
 import {execFileSync} from 'node:child_process';
 import {existsSync, writeFileSync} from 'node:fs';

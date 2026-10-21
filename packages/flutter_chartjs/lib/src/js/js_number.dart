@@ -4,7 +4,7 @@
 /// globals `parseFloat`, `isNaN` and `isFinite`, `Number::toString`, the
 /// form `value || 0`, the operator `+` and the relational comparison `a < b`
 /// ([jsLessThan], Chart.js ADR 0027) over the Dart values that stand for
-/// JavaScript values (Chart.js ADR 0010).
+/// JavaScript values (Chart.js ADR 0032).
 ///
 /// The value mapping: `null` is JS `null`, [undefined] is JS `undefined`
 /// (Chart.js ADR 0006), `bool` is a boolean, `num` is a number, `String` is a
@@ -186,7 +186,7 @@ const List<String> _monthNames = [
 /// long ICU name, for example `' (Coordinated Universal Time)'`. No Dart
 /// platform gives that name, so the text ends after the offset. The name
 /// changes only the text, not the order of two texts with the same time
-/// and offset (Chart.js ADR 0009). The offsets of the platform follow the
+/// and offset (Chart.js ADR 0034). The offsets of the platform follow the
 /// differences.md row `platform-date-local-offset`.
 String _dateToString(DateTime date) {
   final local = date.toLocal();

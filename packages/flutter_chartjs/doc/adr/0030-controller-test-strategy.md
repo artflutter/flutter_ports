@@ -1,6 +1,6 @@
 # Chart.js ADR 0030: Controller test strategy
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-21
 - Related: [Chart.js ADR 0001](0001-theming.md) (the four theming invariants),
   [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (the `undefined` sentinel),
@@ -100,7 +100,7 @@ numbers below refer to Chart.js `v4.5.1+7169e651`, read in `third_party/Chart.js
   `blocked: controller.line`.
 - `tool/src/spec_cases.dart:24-30`: tool 5 accepts a fixture test in a fixture group of the
   manifest when its name is the fixture path.
-- `doc/phase7/classification/all.json`, with decision D1 of `summary.md` §8: 536 records, 503
+- `.handover/phase7/classification/all.json`, with decision D1 of `summary.md` §8: 536 records, 503
   `phase7`, 21 `blocked: plugin.legend`, 11 `blocked: plugin.tooltip`, 1
   `blocked: plugin.filler`. 501 of the 503 `phase7` records pass in the probe mode `none`. 2 are
   `unsupported` in the probe and have a variant as evidence (`summary.md` §5 items 2 and 3).
@@ -179,7 +179,7 @@ numbers below refer to Chart.js `v4.5.1+7169e651`, read in `third_party/Chart.js
    not Dart literals: one JSON line `items[p]` for each point, in the form of the draw calls
    (decision D8 of the phase lead, 2026-10-21). The reason is the data size. A probe of 3 cases
    gave 1,521,132 bytes with the hit items as literals and 495,325 bytes with the text (the U0
-   report, R6: [U0-report.md](../phase7/review/wave1/U0-report.md)). Thus the 23 bar cases of
+   report, R6: [U0-report.md](../../../../.handover/phase7/review/wave1/U0-report.md)). Thus the 23 bar cases of
    section 7 need about 11.7 MB as literals and about 3.8 MB as text (an estimate: the size of a
    case changes with its steps). Only the text fits in two data files of 2.5 MB. The compare does
    not change: each item `items[p][q]` is the list `[[datasetIndex, index], ...]`, and the items
@@ -399,7 +399,7 @@ wait for phase 8.
 6. **The plugin cases.** The 21 legend skips keep `blocked: plugin.legend`, and the 3 tooltip
    skips of `core.controller` keep their reason. No skip changes its reason. The 3 cases of
    decision D1 (`controller.bar.tests.js:1426`, `:1442`, `:1538`) get bodies.
-7. **The lift check.** A temporary script `doc/phase7/classification/lift_check.py` reads
+7. **The lift check.** A temporary script `.handover/phase7/classification/lift_check.py` reads
    `all.json` and the output of `flutter test --reporter json test/specs test/port`. It maps each
    record to its Dart test by the field `test` (the full name). It fails when a `phase7` record does
    not pass, or when a `blocked: plugin.<id>` record does not skip with exactly that reason. The
@@ -408,7 +408,7 @@ wait for phase 8.
    wave, and the lift agent of that wave lifts it. At the pin, these are 3 cases of
    `controller.bar.tests.js` that need `controller.line` (`:70`, `:310`, `:671`). The script also covers the 57 twins, which tool 5 does not read. It prints the
    counts by spec file against
-   `summary.md` §2 with D1. The script goes with `doc/phase7/` in the last commit of the phase.
+   `summary.md` §2 with D1. The script goes with `.handover/phase7/` in the last commit of the phase.
 8. **A case that fails after the lift.** The classification gives a pass in the mode `none` for
    501 of the 503 records. Thus a failure is a defect of the port, of the transcription or of the
    harness. The rules:
@@ -488,7 +488,7 @@ wait for phase 8.
 Each option has a score in the order of [porting-flow.md](../porting-flow.md) §1.1: behavior,
 performance, structure, code.
 
-**The three drafts.** The judge (`doc/phase7/design/test-strategy/judge.md`, a working file of
+**The three drafts.** The judge (`.handover/phase7/design/test-strategy/judge.md`, a working file of
 the phase) chose the fidelity draft. It won questions 1, 2 and 4. The simplicity draft won
 question 3. This ADR takes the fidelity draft with parts of the other two:
 
@@ -607,7 +607,7 @@ chart cases in `test/port/`: tool 5 then reports them missing. Rejected.
 The probes are in the session scratchpad folder
 `/private/tmp/claude-501/-Users-vasilich-IdeaProjects-flutter-ports/7a9baa8a-bd9d-417b-a53e-11aebf47f21e/scratchpad/design/`
 (below: `<design>`). They ran Chart.js built at `7169e651` on an x64 build of Node.js v24.12.0
-under Rosetta (Chart.js ADR 0010), and Flutter 3.44.9 on macOS. `doc/phase7/env-setup.sh` makes
+under Rosetta (Chart.js ADR 0010), and Flutter 3.44.9 on macOS. `.handover/phase7/env-setup.sh` makes
 the environment again.
 
 - **E1, `Path2D` (fidelity P1b, judge J1):** `<design>/test-strategy-fidelity/path2d_probe.mjs`,

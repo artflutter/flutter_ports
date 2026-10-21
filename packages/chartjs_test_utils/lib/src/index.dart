@@ -17,8 +17,10 @@
 /// - `createMockContext` (index.js:33): in `context.dart`, so that
 ///   `package:chartjs_test_utils/pure.dart` keeps it
 ///   (`harness-index-pure-split`).
-/// - The re-export of `src/fixture.js` (index.js:5), `specsFromFixtures`:
-///   phase 7, as a smoke runner.
+/// - The re-export of `src/fixture.js` (index.js:5): `fixture.dart`, the
+///   smoke runner of Chart.js ADR 0029 (`specsFromFixtures`,
+///   `specFromFixture`, `FixtureSource` and its types).
+///   `package:chartjs_test_utils/flutter.dart` exports them.
 /// - `injectWrapperCSS` (index.js:37): `n/a`. Flutter has no CSS. The DOM
 ///   stand-in (`dom.dart`) gives the class `chartjs-wrapper` the effect of
 ///   the rule.
@@ -38,7 +40,7 @@ import 'package:flutter_chartjs/src/js/js_number.dart';
 // ignore: implementation_imports
 import 'package:flutter_chartjs/src/js/js_object.dart';
 
-// index.js:5 `export * from './fixture'`: phase 7.
+export 'fixture.dart';
 export 'utils.dart' show afterEvent, triggerMouseEvent, waitForResize;
 
 /// index.js:9 `charts`: keep track of all acquired charts to automatically

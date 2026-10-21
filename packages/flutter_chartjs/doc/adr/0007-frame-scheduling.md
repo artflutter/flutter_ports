@@ -1,6 +1,7 @@
 # Chart.js ADR 0007: Frame scheduling
 
 - Status: accepted (2026-10-18)
+- Superseded by: [Chart.js ADR 0016](0016-frame-scheduling.md) (2026-10-21)
 - Date: 2026-10-17
 
 ## Context

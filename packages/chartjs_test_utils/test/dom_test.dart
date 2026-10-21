@@ -812,6 +812,54 @@ void main() {
       expect(clock.now().difference(start), greaterThanOrEqualTo(specTimeout));
     });
 
+    testWidgets('two pumpFrames loops at the same time end', (tester) async {
+      // The fixture runner settles a run hook that awaits triggerMouseEvent:
+      // two loops at the same time. Before the fix, the two drains waited
+      // for each other without end.
+      var inner = false;
+      unawaited(pumpFrames(() => true).then((_) => inner = true));
+      expect(await pumpFrames(() => inner), 0);
+      expect(inner, isTrue);
+    });
+
+    testWidgets('a waiting pumpFrames loop sees each step of the other loop', (
+      tester,
+    ) async {
+      final start = clock.now();
+      var frameRan = false;
+      var innerDone = false;
+      // The inner loop starts in a microtask of the drain of the outer loop,
+      // as a hook of the runner does. It waits for the frame of the outer
+      // loop, and it tests its condition after that step.
+      scheduleMicrotask(() {
+        unawaited(
+          pumpFrames(() => frameRan).then((_) => innerDone = true),
+        );
+      });
+      SchedulerBinding.instance.scheduleFrameCallback((_) => frameRan = true);
+      expect(await pumpFrames(() => innerDone), 1);
+      // One frame for the callback, and no second loop that pumps.
+      expect(clock.now().difference(start), frameInterval);
+    });
+
+    testWidgets('pumpFrame runs the due tasks, then pumps one frame', (
+      tester,
+    ) async {
+      final start = clock.now();
+      final log = <String>[];
+      setTimeout(() => log.add('task at ${clock.now().difference(start)}'));
+      setTimeout(() => log.add('late task'), 100);
+      SchedulerBinding.instance.scheduleFrameCallback(
+        (_) => log.add('frame at ${clock.now().difference(start)}'),
+      );
+      await pumpFrame();
+      expect(log, [
+        'task at ${Duration.zero}',
+        'frame at $frameInterval',
+      ]);
+      expect(clock.now().difference(start), frameInterval);
+    });
+
     testWidgets('a pending task at the end of a test is not a Timer', (
       tester,
     ) async {

@@ -11,7 +11,7 @@
 /// - Options are the resolvers of `helpers.config` (Chart.js ADR 0006). The
 ///   scale reads an option with `options[key]` or [jsGet], tests it with
 ///   [jsTruthy], and applies [jsToNumber] before arithmetic.
-/// - Numbers are `double` (Chart.js ADR 0010). A property that starts JS
+/// - Numbers are `double` (Chart.js ADR 0032). A property that starts JS
 ///   `undefined` and holds a number starts as NaN.
 /// - The `_` members that other modules read drop the underscore and carry
 ///   `@internal` (Chart.js ADR 0012, Chart.js ADR 0025, section 6):
@@ -156,7 +156,7 @@ List<Tick> _generateTicks(
   if (!isNullOrUndef(precision)) {
     // If the user specified a precision, round to that number of decimal
     // places
-    // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0010).
+    // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0032).
     factor = math.pow(10.0, jsToNumber(precision)).toDouble();
     spacing = (spacing * factor).ceilToDouble() / factor;
   }
@@ -220,7 +220,7 @@ List<Tick> _generateTicks(
   final exponent = isNullOrUndef(precision)
       ? decimalPlaces_
       : jsToNumber(precision);
-  // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0010).
+  // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0032).
   factor = math.pow(10.0, exponent).toDouble();
   niceMin = jsRound(jsToNumber(niceMin) * factor) / factor;
   niceMax = jsRound(jsToNumber(niceMax) * factor) / factor;
@@ -290,7 +290,7 @@ double _relativeLabelSize(
   final horizontal = generationOptions.horizontal;
   final minRotation = generationOptions.minRotation;
   final rad = toRadians(minRotation);
-  final sinOrCos = horizontal ? math.sin(rad) : math.cos(rad);
+  final sinOrCos = horizontal ? jsSin(rad) : jsCos(rad);
   final ratio = jsTruthy(sinOrCos) ? sinOrCos : 0.001;
   final length = 0.75 * minSpacing * jsToString(value).length;
   return jsMin(minSpacing / ratio, length);
@@ -539,7 +539,7 @@ class LinearScaleBase extends Scale {
   /// decimal is not the shortest round-trip form of its double gets other
   /// digits. For example, `'9007199254740993'` gives `9,007,199,254,740,993`
   /// in V8 and `9,007,199,254,740,992` in the port. Only the digits of the
-  /// label change (Chart.js ADR 0009). The `ticks.format` option is a Map of
+  /// label change (Chart.js ADR 0034). The `ticks.format` option is a Map of
   /// the number format options, or another value, which gives no options:
   /// `new Intl.NumberFormat(locale, options)` reads no option from it.
   @override

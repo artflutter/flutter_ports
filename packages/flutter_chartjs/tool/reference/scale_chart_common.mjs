@@ -12,7 +12,7 @@
 // class value in main(), before the snapshot of the defaults restore
 // (Chart.js ADR 0020, section 8, and Chart.js ADR 0022, section 8). The
 // expected values come from a build of the pinned Chart.js in the x64 Node.js
-// (Chart.js ADR 0010), with the same test controllers as DatasetController
+// (Chart.js ADR 0032), with the same test controllers as DatasetController
 // subclasses in JavaScript. Node.js has no canvas. Thus the Node.js side uses
 // a mock context that measures text with the advance widths and the 'kern'
 // pairs of Liberation Sans 2.1.5, the test font of the harness
@@ -66,9 +66,11 @@
 //   before "+". A commit pin does not change the package.json version.
 // - The folder of that package.json is the top folder of a git checkout at
 //   the pinned commit, and no tracked file of the checkout has a change.
+// - The submodule third_party/chartjs-test-utils is at the `commit` of its
+//   entry in tool/port_sources.yaml and has no change in src/ (checkPin).
+//   Check it out with `dart run melos run upstream`.
 // The check cannot find a dist/ that is older than the checkout. Thus, run
-// the build again after each checkout. The generator also needs the
-// submodule third_party/chartjs-test-utils (`dart run melos run upstream`).
+// the build again after each checkout.
 // The output file records the pin version and the commit of the build.
 //
 // A check of the method (2026-10-20): the same steps at the tag v4.5.1 give
@@ -152,6 +154,62 @@ if (!existsSync(fileURLToPath(CONTEXT))) {
   );
 }
 
+/**
+ * The submodules that this file reads: the header of the entry in
+ * tool/port_sources.yaml, the folder in third_party/ and the folders that the
+ * file imports from. The Chart.js code comes from the build of dist/, not
+ * from third_party/Chart.js (checkBuildCommit).
+ */
+const PINNED = [
+  {header: 'chartjs-test-utils', folder: 'chartjs-test-utils', paths: ['src']},
+];
+
+/**
+ * Stops unless each submodule of PINNED is at the `commit` of its entry in
+ * tool/port_sources.yaml, with no change in the folders that this file
+ * imports from. It is a copy of checkPin in theme_precedence_reference.mjs.
+ * The read of a commit is the one of readPin. A folder that is not a git
+ * checkout also stops the process.
+ */
+function checkPin() {
+  const sources = fileURLToPath(PORT_SOURCES);
+  const entries = readFileSync(sources, 'utf8').split(/^ {2}- header: /m);
+  for (const {header, folder, paths} of PINNED) {
+    const entry = entries.find(
+      (e) => e.startsWith(`${header}\n`) || e.startsWith(`"${header}"\n`),
+    );
+    const commit = entry?.match(/^ {6}commit: "?([0-9a-f]{40})"?\s*$/m)?.[1];
+    if (!commit) stop(`${sources} has no commit for ${header}.`);
+    const checkout = fileURLToPath(new URL(folder, THIRD_PARTY));
+    const git = (...args) => {
+      try {
+        return execFileSync('git', ['-C', checkout, ...args], {
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'pipe'],
+        }).trim();
+      } catch (error) {
+        stop(
+          `git ${args.join(' ')} failed in ${checkout}: ` +
+            `${error.message.trim()}\n` +
+            'Check out the submodules with `dart run melos run upstream`.',
+        );
+      }
+    };
+    const head = git('rev-parse', 'HEAD');
+    if (head !== commit) {
+      stop(
+        `${checkout} is at ${head}, not at the pin ${commit} of ${header}. ` +
+          'Check out the submodules with `dart run melos run upstream`.',
+      );
+    }
+    if (git('status', '--porcelain', '--', ...paths) !== '') {
+      stop(`${checkout} has changes in ${paths.join(', ')}. The generator reads the pin.`);
+    }
+  }
+}
+
+checkPin();
+
 // context.js is an ES module in a package without a "type".
 const {default: Context} = await import(
   'data:text/javascript;base64,' +
@@ -214,7 +272,7 @@ function checkBuildCommit(root) {
  *
  * The path of dist/chart.js comes from the first argument of the process or
  * from the environment variable CHARTJS_DIST. The function stops the process
- * unless Node.js is an x64 build (Chart.js ADR 0010), the package.json next
+ * unless Node.js is an x64 build (Chart.js ADR 0032), the package.json next
  * to dist/ gives the name chart.js and the release of the pin, and its
  * folder is a git checkout at the pinned commit without changes
  * (checkBuildCommit). A second call returns the same module.

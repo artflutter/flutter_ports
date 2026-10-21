@@ -37,12 +37,13 @@ import 'scale_reference.dart';
 //
 // The expected values are in scale_reference.dart, which
 // tool/reference/scale_reference.mjs writes from src/core/core.scale.js at
-// v4.5.1+7169e651 in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with the mock
+// v4.5.1+7169e651 in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with the mock
 // context of chartjs-test-utils. Both sides use a test subclass of Scale with
 // fixed ticks and a linear mapping, a fake chart, and options that resolve
 // through the user options, `defaults.scale` and `descriptors.scale`. Names
-// and strings compare exactly, numbers with closeTo (Chart.js ADR 0009):
-// `Math.asin`, `Math.sin` and `Math.cos` can differ in the last bit.
+// and strings compare exactly, numbers with closeTo (Chart.js ADR 0034):
+// `Math.asin` and the `Math.sin` and `Math.cos` of a display-only site can
+// differ in the last bit.
 //
 // The other groups test the parts of the Dart form: the test of an
 // overridden `draw` in `_layers`, the class value and the throws.

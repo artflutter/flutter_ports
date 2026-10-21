@@ -22,9 +22,9 @@ import 'point_reference.dart';
 // expected values are in point_reference.dart, which
 // tool/reference/point_reference.mjs writes from src/elements/element.point.ts
 // at v4.5.1 in Node.js v24.12.0 on x64, with the mock context of
-// chartjs-test-utils (Chart.js ADR 0010). The hit tests, size and getRange
+// chartjs-test-utils (Chart.js ADR 0032). The hit tests, size and getRange
 // compare exactly. The draw calls compare the names exactly and each number
-// with closeTo (Chart.js ADR 0009).
+// with closeTo (Chart.js ADR 0034).
 //
 // Each comparison with the reference runs twice (Chart.js ADR 0018, section
 // 6): with the plain Map options of the reference, and with a PointOptions
@@ -583,7 +583,7 @@ void main() {
   // element.point.ts:15, :65 and :105. A bubble makes a string radius from
   // a string `r` (controller.bubble.js:165). The expected values come from
   // the pinned build in Node.js v24.12.0 on x64 (probe point_radius.mjs of
-  // phase7/review/wave2/W2-int-report.md).
+  // .handover/phase7/review/wave2/W2-int-report.md).
   group('string options join in the JS +', () {
     // (options, getRange, the distances of inRange(d, 0) that hit, the
     // distances of inXRange(d) that hit), for the distances 5, 9, 50, 100,
@@ -623,7 +623,7 @@ void main() {
 
     // `size` (element.point.ts:84-86): `radius && options.borderWidth || 0`
     // keeps a string `borderWidth`, and `radius + borderWidth` joins.
-    // Probe point_size.mjs of phase7/review/wave2/W2-int-report.md.
+    // Probe point_size.mjs of .handover/phase7/review/wave2/W2-int-report.md.
     final sizes = <(Map<String, Object?>, double)>[
       ({'radius': 3, 'borderWidth': '1'}, 62),
       ({'radius': '3', 'borderWidth': 1}, 8),

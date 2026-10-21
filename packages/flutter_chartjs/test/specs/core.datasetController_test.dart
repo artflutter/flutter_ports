@@ -20,16 +20,15 @@ import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // The spec tests Chart.DatasetController, the DatasetController of
 // lib/src/core/core.datasetController.dart. Each case acquires a line, bar,
 // scatter or radar chart with datasets. Thus each case needs a controller of
-// phase 7 and the scales of phase 6. A case whose controller is not ported
-// yet skips with the blocking module of the classification. A chart case is
-// a `testWidgets` case, and the file runs on the VM (Chart.js ADR 0030,
-// section 12 item 5). It does not call `setUpSpecs()`: its charts need the
-// built-in components.
+// phase 7 and the scales of phase 6. A chart case is a `testWidgets` case,
+// and the file runs on the VM (Chart.js ADR 0030, section 12 item 5). It
+// does not call `setUpSpecs()`: its charts need the built-in components.
 //
 // The spec forms:
 // - `chart._stacks` is `chart.stacks`. The keys of a stack are the
@@ -128,8 +127,7 @@ bool _isExtensible(List<Object?> data) {
 
 void main() {
   group('Chart.DatasetController', () {
-    // describe('auto', jasmine.fixture.specs('core.datasetController')): a
-    // fixture group of phase 7, not a case.
+    group('auto', fixture.specs('core.datasetController'));
 
     testWidgets('should listen for dataset data insertions or removals', (
       tester,
@@ -721,10 +719,44 @@ void main() {
       },
     );
 
-    test(
+    testWidgets(
       'should synchronize insert before removal when parsing is off',
-      () {},
-      skip: 'blocked: controller.scatter',
+      (tester) async {
+        // https://github.com/chartjs/Chart.js/issues/9511
+        final data = <Object?>[
+          <String, Object?>{'x': 0, 'y': 1},
+          <String, Object?>{'x': 2, 'y': 7},
+          <String, Object?>{'x': 3, 'y': 5},
+        ];
+        final chart = acquireChart(<String, Object?>{
+          'type': 'scatter',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'data': data},
+            ],
+          },
+          'options': <String, Object?>{
+            'parsing': false,
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 10},
+              'y': <String, Object?>{'type': 'linear', 'min': 0, 'max': 10},
+            },
+          },
+        });
+
+        final meta = chart.getDatasetMeta(0);
+        final controller = meta.controller!;
+
+        _push(data, [
+          <String, Object?>{'x': 10, 'y': 6},
+        ]);
+        _splice(data, 0, 1, const []);
+        chart.update();
+
+        expect(meta.data.length, 3);
+        expect(controller.getParsed(0), same(data[0]));
+        expect(controller.getParsed(2), same(data[2]));
+      },
     );
 
     testWidgets(
@@ -1571,11 +1603,180 @@ void main() {
     });
 
     group('getContext', () {
-      test(
-        'should reflect updated data',
-        () {},
-        skip: 'blocked: controller.scatter',
-      );
+      testWidgets('should reflect updated data', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'scatter',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 1, 'y': 0},
+                  <String, Object?>{'x': 2, 'y': '1'},
+                ],
+              },
+            ],
+          },
+        });
+        var meta = chart.getDatasetMeta(0);
+
+        expect(
+          meta.controller!.getContext(null, true, 'test'),
+          objectContaining(<String, Object?>{
+            'active': true,
+            'datasetIndex': 0,
+            'dataset': _dataset(chart, 0),
+            'index': 0,
+            'mode': 'test',
+          }),
+        );
+        expect(
+          meta.controller!.getContext(1, false, 'datatest'),
+          objectContaining(<String, Object?>{
+            'active': false,
+            'datasetIndex': 0,
+            'dataset': _dataset(chart, 0),
+            'dataIndex': 1,
+            'element': meta.data[1],
+            'index': 1,
+            'parsed': <String, Object?>{'x': 2, 'y': 1},
+            'raw': <String, Object?>{'x': 2, 'y': '1'},
+            'mode': 'datatest',
+          }),
+        );
+
+        ((_dataset(chart, 0)['data']! as List<Object?>)[1]!
+                as Map<String, Object?>)['y'] =
+            5;
+        chart.update();
+
+        expect(
+          meta.controller!.getContext(1, false, 'datatest'),
+          objectContaining(<String, Object?>{
+            'active': false,
+            'datasetIndex': 0,
+            'dataset': _dataset(chart, 0),
+            'dataIndex': 1,
+            'element': meta.data[1],
+            'index': 1,
+            'parsed': <String, Object?>{'x': 2, 'y': 5},
+            'raw': <String, Object?>{'x': 2, 'y': 5},
+            'mode': 'datatest',
+          }),
+        );
+
+        chart.data['datasets'] = <Object?>[
+          <String, Object?>{
+            'data': <Object?>[
+              <String, Object?>{'x': 0, 'y': 0},
+              <String, Object?>{'x': 1, 'y': 1},
+            ],
+          },
+        ];
+        chart.update();
+        // meta is re-created when dataset is replaced
+        meta = chart.getDatasetMeta(0);
+
+        expect(
+          meta.controller!.getContext(null, false, 'test2'),
+          objectContaining(<String, Object?>{
+            'active': false,
+            'datasetIndex': 0,
+            'dataset': _dataset(chart, 0),
+            'index': 0,
+            'mode': 'test2',
+          }),
+        );
+        expect(
+          meta.controller!.getContext(1, true, 'datatest2'),
+          objectContaining(<String, Object?>{
+            'active': true,
+            'datasetIndex': 0,
+            'dataset': _dataset(chart, 0),
+            'dataIndex': 1,
+            'element': meta.data[1],
+            'index': 1,
+            'parsed': <String, Object?>{'x': 1, 'y': 1},
+            'raw': <String, Object?>{'x': 1, 'y': 1},
+            'mode': 'datatest2',
+          }),
+        );
+
+        _unshift(_dataset(chart, 0)['data']! as List<Object?>, [
+          <String, Object?>{'x': -1, 'y': -1},
+        ]);
+        chart.update();
+        expect(
+          meta.controller!.getContext(0, true, 'unshift'),
+          objectContaining(<String, Object?>{
+            'active': true,
+            'datasetIndex': 0,
+            'dataset': _dataset(chart, 0),
+            'dataIndex': 0,
+            'element': meta.data[0],
+            'index': 0,
+            'parsed': <String, Object?>{'x': -1, 'y': -1},
+            'raw': <String, Object?>{'x': -1, 'y': -1},
+            'mode': 'unshift',
+          }),
+        );
+        expect(
+          meta.controller!.getContext(2, true, 'unshift2'),
+          objectContaining(<String, Object?>{
+            'active': true,
+            'datasetIndex': 0,
+            'dataset': _dataset(chart, 0),
+            'dataIndex': 2,
+            'element': meta.data[2],
+            'index': 2,
+            'parsed': <String, Object?>{'x': 1, 'y': 1},
+            'raw': <String, Object?>{'x': 1, 'y': 1},
+            'mode': 'unshift2',
+          }),
+        );
+
+        // `chart.data.datasets.unshift(...)`: no listener watches the
+        // datasets array.
+        (jsGet(chart.data, 'datasets')! as List<Object?>).insert(
+          0,
+          <String, Object?>{
+            'data': <Object?>[
+              <String, Object?>{'x': 10, 'y': 20},
+            ],
+          },
+        );
+        chart.update();
+        meta = chart.getDatasetMeta(0);
+        expect(
+          meta.controller!.getContext(0, true, 'unshift3'),
+          objectContaining(<String, Object?>{
+            'active': true,
+            'datasetIndex': 0,
+            'dataset': _dataset(chart, 0),
+            'dataIndex': 0,
+            'element': meta.data[0],
+            'index': 0,
+            'parsed': <String, Object?>{'x': 10, 'y': 20},
+            'raw': <String, Object?>{'x': 10, 'y': 20},
+            'mode': 'unshift3',
+          }),
+        );
+
+        meta = chart.getDatasetMeta(1);
+        expect(
+          meta.controller!.getContext(2, true, 'unshift4'),
+          objectContaining(<String, Object?>{
+            'active': true,
+            'datasetIndex': 1,
+            'dataset': _dataset(chart, 1),
+            'dataIndex': 2,
+            'element': meta.data[2],
+            'index': 2,
+            'parsed': <String, Object?>{'x': 1, 'y': 1},
+            'raw': <String, Object?>{'x': 1, 'y': 1},
+            'mode': 'unshift4',
+          }),
+        );
+      });
     });
   });
 }

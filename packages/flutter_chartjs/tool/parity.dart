@@ -17,8 +17,9 @@ Usage: dart run tool/parity.dart [options] [<package directory>]
 Writes doc/parity.md from doc/status.yaml, the files of the pinned
 third_party/ copies, the headers of the Dart files, the case results of the
 spec tests (tool 5) and doc/differences.md. The default package is the
-package of this tool. It runs `flutter test --reporter json test/specs`
-for the case results. It needs the submodules (melos run upstream).
+package of this tool. It runs `flutter test --exclude-tags fixtures
+--reporter json test/specs` for the case results. It needs the submodules
+(melos run upstream).
 
 Through melos, put the options after "--":
 dart run melos run parity -- --dry-run
@@ -252,13 +253,15 @@ bool _hasSpecs(String package) {
       specs.listSync(recursive: true).any((f) => f.path.endsWith('.dart'));
 }
 
-/// The JSON reporter output of `flutter test --reporter json test/specs` in
-/// [package] and its standard error, or empty texts without spec files.
+/// The JSON reporter output of `flutter test --exclude-tags fixtures
+/// --reporter json test/specs` ([caseTestArguments]) in [package] and its
+/// standard error, or empty texts without spec files. The fixture smoke
+/// tests do not run (Chart.js ADR 0029, section 10).
 Future<({String output, String error})> _runSpecs(String package) async {
   if (!_hasSpecs(package)) return (output: '', error: '');
   final process = await Process.run(
     'flutter',
-    ['test', '--reporter', 'json', 'test/specs'],
+    caseTestArguments,
     workingDirectory: package,
     runInShell: Platform.isWindows,
   );

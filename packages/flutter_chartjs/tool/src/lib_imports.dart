@@ -10,7 +10,7 @@
 ///   `package:chartjs_test_utils/pure.dart`.
 /// - Ported files do not import `lib/src/theme/` (Chart.js ADR 0001).
 /// - `lib/` imports `package:collection/collection.dart` only with
-///   `show mergeSort` (Chart.js ADR 0010, Sort).
+///   `show mergeSort` (Chart.js ADR 0032, Sort).
 /// - The `lib/pure.dart` closure of the harness package `chartjs_test_utils`
 ///   is a pure layer too. It also imports `package:test` and the pure layers
 ///   of the checked package (porting-flow.md 3).
@@ -34,9 +34,9 @@ const Set<String> pureDartLibraries = {
 };
 
 /// The other libraries of pure layers. [collectionLibrary] gives
-/// `mergeSort` to `jsSort` from phase 2 (Chart.js ADR 0010, Sort).
+/// `mergeSort` to `jsSort` from phase 2 (Chart.js ADR 0032, Sort).
 /// `package:clock/clock.dart` gives `clock.now()` to `jsDateNow` from phase 5
-/// (Chart.js ADR 0010, section 6).
+/// (Chart.js ADR 0032, section 6).
 const Set<String> purePackageLibraries = {
   collectionLibrary,
   'package:clock/clock.dart',
@@ -50,7 +50,7 @@ const Set<String> purePackageLibraries = {
 const String collectionLibrary = 'package:collection/collection.dart';
 
 /// The names that `lib/` shows from [collectionLibrary]. The other sorts of
-/// the library are not those of `Array.prototype.sort` (Chart.js ADR 0010,
+/// the library are not those of `Array.prototype.sort` (Chart.js ADR 0032,
 /// Sort).
 const Set<String> collectionNames = {'mergeSort'};
 
@@ -246,7 +246,7 @@ final class _Edge {
           library,
           directive.line,
           '${directive.keyword}s $collectionLibrary without '
-          '"show ${collectionNames.join(', ')}" (Chart.js ADR 0010, Sort).',
+          '"show ${collectionNames.join(', ')}" (Chart.js ADR 0032, Sort).',
         );
       }
     }

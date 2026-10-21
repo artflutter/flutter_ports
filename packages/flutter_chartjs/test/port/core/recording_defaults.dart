@@ -40,7 +40,7 @@ final class RecordingDefaults implements Defaults {
 /// `undefined` is `"<undefined>"`, `Ticks.formatters.values` is
 /// `"<values>"` and any other function is `"<fn>"`.
 ///
-/// A number must be a `double` (Chart.js ADR 0010). An `int` gives
+/// A number must be a `double` (Chart.js ADR 0032). An `int` gives
 /// `"<int>"`, so the comparison with the probe fails.
 String probeJson(Object? value) => switch (value) {
   null => 'null',

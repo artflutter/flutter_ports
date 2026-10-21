@@ -4,7 +4,7 @@
 - Date: 2026-10-20
 - Gate: D3 phase 1 for the pure interface, because the d3-path pilot implements it. D3 phase 4
   for the `dart:ui` builder, because d3-shape and the gallery draw with it.
-- Related: [Chart.js ADR 0009](../../../flutter_chartjs/doc/adr/0009-no-display-only-js-exactness.md)
+- Related: [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)
   (no Chromium geometry),
   [Chart.js ADR 0013](../../../flutter_chartjs/doc/adr/0013-canvas-model.md) (proposed: the
   canvas layer of the Chart.js port), [D3 ADR 0002](0002-file-naming-and-layout.md) (port-only
@@ -112,7 +112,7 @@ abstract interface class CanvasPath {
   the DOM. `roundRect` and `ellipse` are not in the interface. No D3 module calls them.
 - The parameter names are those of `d3-path src/path.js`. Thus the port of `Path` keeps them, as
   `avoid_renaming_method_parameters` asks.
-- Numbers are `double`, as Chart.js ADR 0010 §7 asks. The D3 callers convert their numbers with
+- Numbers are `double`, as Chart.js ADR 0032 §7 asks. The D3 callers convert their numbers with
   `+x` before the call.
 - `ccw` is an `Object?`. An implementation tests it with `jsTruthy`. This is the ToBoolean of
   WebIDL and the `!!ccw` of `d3-path src/path.js:101`. The form also keeps
@@ -144,7 +144,7 @@ d3-shape and the gallery.
   DOM `IndexSizeError`.
 - It has no transform, no style, no text and no device pixel ratio. D3 calls none of them on a
   context. Transforms belong to the Flutter canvas of the caller.
-- It has no Chromium-exact arc geometry. The principle of Chart.js ADR 0009 (decision 3) applies:
+- It has no Chromium-exact arc geometry. The principle of Chart.js ADR 0034 (decision 3) applies:
   the arc points are display values.
 - The implementation is new code of this package. It does not copy `canvas_ui_path.dart`.
 - Port-only tests in `test/port/canvas/` compare the path of each rule with the expected geometry

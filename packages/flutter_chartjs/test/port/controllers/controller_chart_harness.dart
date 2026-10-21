@@ -7,7 +7,7 @@
 ///
 /// - A generator `tool/reference/controller_<name>_reference.mjs` builds
 ///   each chart of its cases with a build of Chart.js at the pinned commit in
-///   the x64 Node.js v24.12.0 (Chart.js ADR 0010), through
+///   the x64 Node.js v24.12.0 (Chart.js ADR 0032), through
 ///   `tool/reference/controller_chart_common.mjs`. It runs the steps of each
 ///   case, and records the observations, the hit queries and the draw calls.
 /// - A test file `controller.<name>_test.dart` builds the same charts with

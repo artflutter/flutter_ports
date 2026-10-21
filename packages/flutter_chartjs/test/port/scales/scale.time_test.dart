@@ -33,7 +33,7 @@ import 'scale_time_reference.dart';
 // The reference group compares real charts with the charts of
 // tool/reference/scale_time_reference.mjs: a build of the pinned Chart.js
 // with chartjs-adapter-moment 1.0.1 on moment 2.29.4 in the zone 'Etc/UTC', in
-// Node.js v24.12.0 on x64 (Chart.js ADR 0010, Chart.js ADR 0024), with a mock
+// Node.js v24.12.0 on x64 (Chart.js ADR 0032, Chart.js ADR 0024), with a mock
 // context that measures text in Liberation Sans 2.1.5, the test font of the
 // harness (scale_chart_harness.dart, scale_time_harness.dart). Each chart
 // comes from acquireChart in a testWidgets case (Chart.js ADR 0022), at the

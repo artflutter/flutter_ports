@@ -12,7 +12,7 @@
 ///   section 8).
 /// - The expected values come from a generator in
 ///   `tool/reference/scale_*_reference.mjs`. It runs a build of Chart.js at
-///   the pinned commit in the x64 Node.js v24.12.0 (Chart.js ADR 0010), with
+///   the pinned commit in the x64 Node.js v24.12.0 (Chart.js ADR 0032), with
 ///   the same test controllers as `DatasetController` subclasses in
 ///   JavaScript (`tool/reference/scale_chart_common.mjs`).
 /// - Node.js has no canvas. The Node.js side measures text with the advance
@@ -447,12 +447,12 @@ Map<String, Object?> observeChart(Chart chart, {ScaleObservations? extra}) {
 /// A matcher of a reference value.
 ///
 /// - A number: [closeTo] with 1e-9, or with `n.abs() * 1e-12` above 1e3.
-///   `dart:math` can differ from V8 in the last bit (Chart.js ADR 0009,
+///   `dart:math` can differ from V8 in the last bit (Chart.js ADR 0034,
 ///   `js-semantics-dart-math`).
 /// - NaN: [isNaN]. An infinity: [equals].
 /// - `{'num': s}`, a number that JSON cannot hold: `'NaN'`, `'Infinity'`,
 ///   `'-Infinity'` or `'-0'`. `'-0'` matches both zeros: no behavior
-///   depends on the sign of a zero pixel (Chart.js ADR 0009).
+///   depends on the sign of a zero pixel (Chart.js ADR 0034).
 /// - Lists and maps: item by item. Other values: `==`.
 Object? referenceMatcher(Object? expected) => switch (expected) {
   final num n when n.isNaN => isNaN,
@@ -742,7 +742,7 @@ typedef ScaleChartCase = ({
 typedef ScaleChartWidth = ({String font, String text, double width});
 
 /// A test that the reference comes from Node.js v24.12.0 on x64 (Chart.js
-/// ADR 0010) and from a build of the pinned Chart.js: [dist] is
+/// ADR 0032) and from a build of the pinned Chart.js: [dist] is
 /// [chartJsVersion], and [commit] is a full commit. For a commit pin, the
 /// commit starts with the sha8 of [chartJsVersion].
 void testReferenceOrigin({

@@ -15,7 +15,7 @@
 // The output depends only on the checkout: the same checkout gives the same
 // bytes on any Node.js 24 and any architecture. Nothing in lib/ or test/
 // runs this script, and it writes nothing into the checkout (Chart.js ADR
-// 0011). spec_cases.dart (tool 5) reads the manifest.
+// 0035). spec_cases.dart (tool 5) reads the manifest.
 //
 // Usage, from packages/flutter_chartjs, with Node.js 22.18 or later:
 //

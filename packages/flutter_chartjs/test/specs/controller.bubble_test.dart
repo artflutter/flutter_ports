@@ -15,6 +15,7 @@ import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
@@ -63,8 +64,7 @@ Object? _option(Object element, String key) => jsGet(_options(element), key);
 
 void main() {
   group('Chart.controllers.bubble', () {
-    // describe('auto', jasmine.fixture.specs('controller.bubble')): a fixture
-    // group of phase 7 (Chart.js ADR 0029), not a case.
+    group('auto', fixture.specs('controller.bubble'));
 
     test('should be registered as dataset controller', () {
       expect(jsTypeof(Chart.registry.controllers.items['bubble']), 'function');

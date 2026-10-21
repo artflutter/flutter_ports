@@ -54,9 +54,12 @@ package.
     [Chart.js ADR 0007: Frame scheduling](../packages/flutter_chartjs/doc/adr/0007-frame-scheduling.md),
     [Chart.js ADR 0008: Number formatting on package:intl](../packages/flutter_chartjs/doc/adr/0008-number-formatting-on-package-intl.md)
     (superseded by Chart.js ADR 0026),
-    [Chart.js ADR 0009: No display-only JS exactness](../packages/flutter_chartjs/doc/adr/0009-no-display-only-js-exactness.md),
-    [Chart.js ADR 0010: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0010-js-numeric-semantics.md),
-    [Chart.js ADR 0011: Third-party sources](../packages/flutter_chartjs/doc/adr/0011-third-party-sources.md),
+    [Chart.js ADR 0009: No display-only JS exactness](../packages/flutter_chartjs/doc/adr/0009-no-display-only-js-exactness.md)
+    (superseded by Chart.js ADR 0034 on acceptance),
+    [Chart.js ADR 0010: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0010-js-numeric-semantics.md)
+    (superseded by Chart.js ADR 0032 on acceptance),
+    [Chart.js ADR 0011: Third-party sources](../packages/flutter_chartjs/doc/adr/0011-third-party-sources.md)
+    (superseded by Chart.js ADR 0035 on acceptance),
     [Chart.js ADR 0012: Dart file naming](../packages/flutter_chartjs/doc/adr/0012-dart-file-naming.md),
     [Chart.js ADR 0024: Dates](../packages/flutter_chartjs/doc/adr/0024-dates.md),
     [Chart.js ADR 0025: Scale value parameters](../packages/flutter_chartjs/doc/adr/0025-scale-value-parameters.md),
@@ -74,7 +77,13 @@ package.
     [Chart.js ADR 0020: Registry and component classes](../packages/flutter_chartjs/doc/adr/0020-registry-and-component-classes.md),
     [Chart.js ADR 0021: Typed options in the resolver](../packages/flutter_chartjs/doc/adr/0021-typed-options-in-the-resolver.md),
     [Chart.js ADR 0022: Chart test harness on Flutter](../packages/flutter_chartjs/doc/adr/0022-chart-test-harness.md),
-    [Chart.js ADR 0023: Underscore members with a colliding name](../packages/flutter_chartjs/doc/adr/0023-underscore-member-collisions.md).
+    [Chart.js ADR 0023: Underscore members with a colliding name](../packages/flutter_chartjs/doc/adr/0023-underscore-member-collisions.md),
+    [Chart.js ADR 0032: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0032-js-numeric-semantics.md)
+    (it supersedes Chart.js ADR 0010 on acceptance),
+    [Chart.js ADR 0034: No display-only JS exactness](../packages/flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)
+    (it supersedes Chart.js ADR 0009 on acceptance),
+    [Chart.js ADR 0035: Third-party sources](../packages/flutter_chartjs/doc/adr/0035-third-party-sources.md)
+    (it supersedes Chart.js ADR 0011 on acceptance).
   - Prior art: [overview](../packages/flutter_chartjs/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs/doc/prior-art/js-runtimes.md),

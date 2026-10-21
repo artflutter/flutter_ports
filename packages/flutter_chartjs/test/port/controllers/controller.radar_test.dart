@@ -31,7 +31,7 @@ import 'controller_radar_reference.dart';
 //
 // The reference group compares real radar charts with the charts of
 // tool/reference/controller_radar_reference.mjs: a build of the pinned
-// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with a mock
+// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with a mock
 // context that measures text in Liberation Sans 2.1.5. Each chart comes from
 // acquireChart in a testWidgets case (Chart.js ADR 0022). The case runs its
 // steps and compares the observations, the hit queries and the draw calls
@@ -85,6 +85,24 @@ AnyObject _radar(
   },
   'options': ?options,
 };
+
+/// The `[datasetIndex, index]` pairs of the hit items of [mode] at
+/// ([x], [y]) with `intersect: true` and the keys of [extra].
+List<List<Object?>> _hitsAt(
+  Chart chart,
+  double x,
+  double y,
+  String mode, [
+  Map<String, Object?> extra = const {},
+]) => [
+  for (final item in chart.getElementsAtEventForMode(
+    ReferenceEvent(x, y),
+    mode,
+    <String, Object?>{'intersect': true, ...extra},
+    false,
+  ))
+    [item.datasetIndex, item.index],
+];
 
 /// The data List of the dataset 0 of [chart].
 List<Object?> _data0(Chart chart) =>
@@ -338,8 +356,116 @@ void main() {
       final y = point.$animations!['y']! as animation.Animation;
       expect([x.from, x.to], [25.0, 25.0]);
       expect([y.from, y.to], [256.0, 256.0]);
-      await tester.pump(const Duration(milliseconds: 1100));
+      // At 500 ms the new point is at its target, drawn and hit
+      // (pins_probe.out, `pin1 radar`). A NaN start gives x NaN and no hit.
+      await tester.pump(const Duration(milliseconds: 500));
       expect([point.x, point.y], [25.0, 256.0]);
+      expect(_hitsAt(chart, 25, 256, 'point'), [
+        [0, 3],
+      ]);
+      expect(_hitsAt(chart, 25, 256, 'nearest'), [
+        [0, 3],
+      ]);
+      await tester.pump(const Duration(milliseconds: 600));
+      expect([point.x, point.y], [25.0, 256.0]);
+    });
+
+    // A reset at a NaN center writes NaN, not undefined. The next animation
+    // then starts at NaN, and the point is not drawn and not hit until it
+    // ends (pin_e2_probe.out, `E2 radar`; Chart.js ADR 0033).
+    testWidgets('a reset at a NaN center keeps NaN, and the next animation '
+        'starts at NaN', (tester) async {
+      final chart = acquireChart(
+        _radar(
+          const [65.0, 59.0, 90.0, 81.0, 56.0],
+          labels: const ['a', 'b', 'c', 'd', 'e'],
+          options: <String, Object?>{'animation': <String, Object?>{}},
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 5000));
+      final meta = chart.getDatasetMeta(0);
+      final point = meta.data[1] as Element;
+      final dataset =
+          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject;
+      (jsGet(chart.options, 'scales')! as AnyObject)['r2'] = <String, Object?>{
+        'type': 'radialLinear',
+        'position': 'left',
+      };
+      dataset['rAxisID'] = 'r2';
+      chart.update();
+      await tester.pump(const Duration(milliseconds: 5000));
+      expect((meta.rScale! as types.RadialLinearScale).xCenter, isNaN);
+
+      chart.reset();
+      final read = point as types.ElementPropertyRead;
+      expect(read['x'], isNaN);
+      expect(read['y'], isNaN);
+      expect(read['skip'], isTrue);
+
+      dataset['rAxisID'] = 'r';
+      chart.update();
+      expect((meta.rScale! as types.RadialLinearScale).xCenter, 376.0);
+      final x = point.$animations!['x']! as animation.Animation;
+      final y = point.$animations!['y']! as animation.Animation;
+      expect(x.from, isNaN);
+      expect(x.to, closeTo(389.4495078835456, 1e-9));
+      expect(y.from, isNaN);
+      expect(y.to, closeTo(251.62998998399627, 1e-9));
+      const qx = 389.4495078835456;
+      const qy = 251.62998998399627;
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(point.x, isNaN);
+      expect(_hitsAt(chart, qx, qy, 'point'), isEmpty);
+      await tester.pump(const Duration(milliseconds: 499));
+      expect(point.x, isNaN);
+      expect(_hitsAt(chart, qx, qy, 'point'), isEmpty);
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(point.x, closeTo(389.4495078835456, 1e-9));
+      expect(_hitsAt(chart, qx, qy, 'point'), [
+        [0, 1],
+      ]);
+    });
+
+    // A point with r null has x and y NaN. When it gets a value, its
+    // animation starts at NaN, as upstream (pins_probe.out, `pin3 radar`;
+    // Chart.js ADR 0033). A NaN that stands for undefined would start it at
+    // the target.
+    testWidgets('a point with a null value animates from NaN when it gets a '
+        'value', (tester) async {
+      final chart = acquireChart(
+        _radar(
+          const <Object?>[1.0, null, 3.0, 2.0],
+          labels: const ['a', 'b', 'c', 'd'],
+          options: <String, Object?>{'animation': <String, Object?>{}},
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 5000));
+      final point = chart.getDatasetMeta(0).data[1] as Element;
+      final read = point as types.ElementPropertyRead;
+      expect(read['x'], isNaN);
+      expect(read['y'], isNaN);
+      expect(read['skip'], isTrue);
+
+      _data0(chart)[1] = 2.0;
+      chart.update();
+      expect(read['skip'], isFalse);
+      final x = point.$animations!['x']! as animation.Animation;
+      final y = point.$animations!['y']! as animation.Animation;
+      expect(x.from, isNaN);
+      expect(x.to, 371.5);
+      expect(y.from, isNaN);
+      expect(y.to, 256.0);
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(point.x, isNaN);
+      expect(_hitsAt(chart, 371.5, 256, 'point'), isEmpty);
+      await tester.pump(const Duration(milliseconds: 499));
+      expect(point.x, isNaN);
+      expect(_hitsAt(chart, 371.5, 256, 'point'), isEmpty);
+      await tester.pump(const Duration(milliseconds: 600));
+      expect([point.x, point.y], [371.5, 256.0]);
+      expect(_hitsAt(chart, 371.5, 256, 'point'), [
+        [0, 1],
+      ]);
     });
   });
 }

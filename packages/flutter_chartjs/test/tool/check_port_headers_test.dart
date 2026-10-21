@@ -450,6 +450,56 @@ void main() {
     });
   });
 
+  group('fixture configs', () {
+    const fixture = 'test/fixtures/controller.bar/baseLine/mid-x.js';
+    const hand =
+        '$_package/test/fixtures/hand/controller.bar/baseLine/mid-x.dart';
+
+    test('map to test/fixtures/hand/ in tool/port_sources.yaml', () {
+      final chartJs = parsePortSources(
+        File('tool/port_sources.yaml').readAsStringSync(),
+      ).firstWhere((source) => source.header == 'Chart.js');
+      expect(chartJs.dartPathOf(fixture), hand);
+      final target = chartJs.targets.singleWhere(
+        (target) => target.source == 'test/fixtures/',
+      );
+      expect(target.dart, '$_package/test/fixtures/hand/');
+      // The candidates of a directory target: `.js` first, then `.ts` and
+      // `.d.ts`. The check takes the one that exists at the pin.
+      expect(target.sourcesOf(hand).first, fixture);
+      expect(target.sourcesOf('$_package/test/fixtures/index.dart'), isEmpty);
+    });
+
+    test('pass the header check at the mapped path only', () {
+      tree
+        ..write('$_package/tool/port_sources.yaml', [
+          for (final line in _portSources) ...[
+            if (line == '      - source: test/index.js') ...[
+              '      - source: test/fixtures/',
+              '        dart: $_package/test/fixtures/hand/',
+            ],
+            line,
+          ],
+        ])
+        ..write('third_party/Chart.js/$fixture', ['//']);
+      replaceFile('test/fixtures/hand/controller.bar/baseLine/mid-x.dart', [
+        _chartJs(fixture),
+        '// ignore_for_file: file_names',
+      ]);
+      replaceFile('test/fixtures/index.dart', [_portOnly]);
+      expect(run(), isEmpty);
+      replaceFile('test/fixtures/hand/controller.bar/mid-x.dart', [
+        _chartJs(fixture),
+      ]);
+      expect(run(), [
+        _error(
+          'test/fixtures/hand/controller.bar/mid-x.dart:1: the Dart path of '
+          '$fixture is $hand (porting-flow.md 2.5), not this file.',
+        ),
+      ]);
+    });
+  });
+
   group('versions', () {
     const restamp = 'Restamp it (upstream-tracking.md 4.8).';
 

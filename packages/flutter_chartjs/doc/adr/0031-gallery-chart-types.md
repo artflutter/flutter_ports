@@ -1,6 +1,6 @@
 # Chart.js ADR 0031: Gallery chart types and the stress controller
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-21
 - Related: [Chart.js ADR 0009](0009-no-display-only-js-exactness.md) (the protected behavior),
   [Chart.js ADR 0010](0010-js-numeric-semantics.md) (the reference engine),
@@ -14,13 +14,13 @@
   values, a parallel decision of phase 7),
   [porting-flow.md](../porting-flow.md) §1.1 (the performance rule),
   [performance.md](../performance.md) §6, §9 and §11.6,
-  [phase7-progress.md](../phase7-progress.md) decision D3 (the layout rule of the user),
-  [phase7/design/gallery/judge.md](../phase7/design/gallery/judge.md) (the panel)
+  [phase7-progress.md](../../../../.handover/phase7-progress.md) decision D3 (the layout rule of the user),
+  [phase7/design/gallery/judge.md](../../../../.handover/phase7/design/gallery/judge.md) (the panel)
 
 ## Context
 
 Phase 7 ports the eight controllers of `src/controllers/`. Two exit items of the phase prompt
-(`doc/phase7/kickstart-prompt.md`) touch the gallery `apps/chartjs_gallery`:
+(`.handover/phase7/kickstart-prompt.md`) touch the gallery `apps/chartjs_gallery`:
 
 - "The gallery shows every chart type." Today the home list (`lib/main.dart:11-21`, `:88-94`)
   shows nine disabled tiles with "Not ported yet".
@@ -80,7 +80,7 @@ The line numbers below refer to Chart.js `v4.5.1+7169e651` (`third_party/Chart.j
 | `packages/flutter_chartjs/lib/src/platform/platform.flutter.dart:560-605` | With an unbounded height and a truthy aspect ratio, the bounded width and the ratio give the height (Chart.js ADR 0014). |
 | `packages/flutter_chartjs/lib/src/core/core.datasetController.dart:784-789` | The port prints the `fill` warning. |
 | `packages/flutter_chartjs/doc/performance.md` §6 | The define `SHARING` of the mode `chart`, and the acceptance of Chart.js ADR 0021 §8: case (a) against the mode `elements` with `LINE=0`. |
-| `packages/flutter_chartjs/doc/phase7/perf/before/` | The before figures at commit `0e0ab93` (raw files). |
+| `.handover/phase7/perf/before/` | The before figures at commit `0e0ab93` (raw files). |
 
 ### Probe results
 
@@ -480,4 +480,4 @@ name the upstream part of each difference.
 - Simplicity draft (`.../scratchpad/design/gallery-simplicity/`): P1 `p1_*.out`; P2 `p2_none.out`,
   `p2_all.out`; P3 `p3_types.out`; P4 `p4_area_numbers.out`.
 - The Chart.js build at the pin: `.../scratchpad/env/chartjs-build/dist/chart.js`.
-- The drafts and the judge: `doc/phase7/design/gallery/`.
+- The drafts and the judge: `.handover/phase7/design/gallery/`.

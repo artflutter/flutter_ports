@@ -268,7 +268,7 @@ final class _ChartEvent implements types.ChartEvent {
 /// [listener] is the `attached` function of core.controller.js:1022, a
 /// `void Function()`. The host reports a net attach once, after the frame
 /// of the change, as the DOM delivers the mutation records of one task
-/// together (Chart.js ADR 0007, decision 9). The first layout of the host
+/// together (Chart.js ADR 0016, decision 9). The first layout of the host
 /// reports it at once.
 CanvasMutationObserver createAttachObserver(
   types.Chart chart,

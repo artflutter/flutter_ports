@@ -140,7 +140,7 @@ void main() {
         ]);
       const message =
           'imports package:collection/collection.dart without '
-          '"show mergeSort" (Chart.js ADR 0010, Sort).';
+          '"show mergeSort" (Chart.js ADR 0032, Sort).';
       expect(run(), [
         'error: lib/src/js/js_array.dart:2: $message',
         'error: lib/src/widget.dart:2: $message',

@@ -77,8 +77,10 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // index.js:13 `injectWrapperCSS()`: n/a. Flutter has no CSS. The chart
   // host has no border, margin or padding.
 
-  // index.js:15-19 `jasmine.fixture` (phase 7) and
-  // `jasmine.triggerMouseEvent` (phase 5): the specs import them.
+  // index.js:15-17 `jasmine.fixture` is `specs` of `test/fixtures/index.dart`,
+  // which the spec files import with the prefix `fixture` (Chart.js ADR
+  // 0029). index.js:19 `jasmine.triggerMouseEvent` (phase 5): the specs
+  // import it.
 
   // Set a fixed time zone (and, in particular, disable Daylight Saving Time)
   // for more stable test results.

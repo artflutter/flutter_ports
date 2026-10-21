@@ -1,6 +1,6 @@
 # Chart.js ADR 0019: Animation
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0001](0001-theming.md) (theming),
   [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (options and the `undefined`

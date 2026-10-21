@@ -1,6 +1,6 @@
 # Chart.js ADR 0027: Parsed data in the controllers
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-21
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (records for inline object types),
   [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (the `undefined` sentinel),
@@ -21,7 +21,7 @@
   [performance.md](../performance.md) §10.3, §11.2 and §11.8 item 2,
   [differences.md](../differences.md) rows `js-semantics-resolver-objects` and
   `platform-array-events`,
-  [phase7/design/parsed-data/judge.md](../phase7/design/parsed-data/judge.md) (the panel result)
+  [phase7/design/parsed-data/judge.md](../../../../.handover/phase7/design/parsed-data/judge.md) (the panel result)
 
 ## Context
 
@@ -361,7 +361,7 @@ void jsSetIndex<T>(List<T> list, int index, T value) {
      the function (Chart.js ADR 0020). A primitive (`null`, `undefined`, a number, a string or a
      boolean) throws the `TypeError` of a write into a primitive. Each other value, for example a
      `DateTime` (a JS `Date`, Chart.js ADR 0024) or a function, takes the Expando entry.
-   - The reason (S3 fix R1, [S3-report.md](../phase7/review/wave1/S3-report.md)): upstream writes
+   - The reason (S3 fix R1, [S3-report.md](../../../../.handover/phase7/review/wave1/S3-report.md)): upstream writes
      `_stacks` into a `Date`, a function and a class, and does not throw. A throw is a protected
      behavior (Chart.js ADR 0009). A subclass without an own `_stacks` reads the object of its
      superclass through `jsGet`, as upstream reads it through the prototype chain. The name of the
@@ -699,10 +699,10 @@ v24.12.0 under Rosetta. The benchmarks ran on an Apple M3 Max, macOS 26.5.1, Dar
     `:686-698`
   - `src/elements/element.bar.js:127-140`, `:152`, `:172`, `:179-196`
   - `src/helpers/helpers.config.ts:444-452`, `src/types/index.d.ts:124`, `:134`, `:503`, `:2171`
-- **E1, the panel:** [judge.md](../phase7/design/parsed-data/judge.md),
-  [draft-fidelity.md](../phase7/design/parsed-data/draft-fidelity.md),
-  [draft-performance.md](../phase7/design/parsed-data/draft-performance.md),
-  [draft-simplicity.md](../phase7/design/parsed-data/draft-simplicity.md).
+- **E1, the panel:** [judge.md](../../../../.handover/phase7/design/parsed-data/judge.md),
+  [draft-fidelity.md](../../../../.handover/phase7/design/parsed-data/draft-fidelity.md),
+  [draft-performance.md](../../../../.handover/phase7/design/parsed-data/draft-performance.md),
+  [draft-simplicity.md](../../../../.handover/phase7/design/parsed-data/draft-simplicity.md).
 - **E2, fidelity probes and benchmarks:** `<design>/parsed-data-fidelity/`: `probe.mjs` (F-P1),
   `probe2.mjs` (F-P2), `probe3.mjs` (F-P3, the shares of the bar update), `probe4.mjs` (F-P4),
   each with its `.out`; `bench/bin/index_read_bench.dart` (the index read) and

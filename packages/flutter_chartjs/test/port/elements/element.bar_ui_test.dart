@@ -27,7 +27,7 @@ import '../helpers/rounded_rect_upstream.dart';
 // clip: an edge pixel differs by up to c - c² = 1/4 of a channel, 64 of
 // 255. Where the border ring and the fill meet the outer edge, two fills
 // and the anti-aliasing of the arc path add up to about 8 more (Chart.js
-// ADR 0009). Two fills of other colors on an edge can also change the
+// ADR 0034). Two fills of other colors on an edge can also change the
 // color of an opaque pixel a little.
 //
 // Each case runs twice (Chart.js ADR 0018, section 6): with plain Map

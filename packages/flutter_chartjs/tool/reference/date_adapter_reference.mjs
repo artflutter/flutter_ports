@@ -53,7 +53,7 @@
 //   TZ=UTC node tool/reference/date_adapter_reference.mjs \
 //     <scratch>/node_modules [--full <file>]
 //
-// The script stops unless Node.js is v24.12.0 on x64 (Chart.js ADR 0010),
+// The script stops unless Node.js is v24.12.0 on x64 (Chart.js ADR 0032),
 // TZ is UTC at the start, and the three packages have the versions of the
 // Chart.js lockfile. `--full <file>` also writes the corpus of 357,576 calls
 // (the 356,180 calls of the fidelity draft of Chart.js ADR 0024 and 1,396

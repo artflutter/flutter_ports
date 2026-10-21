@@ -341,11 +341,14 @@ void drawPointLegend(
   switch (style) {
     case 'triangle':
       width = hasW ? w! / 2 : radius;
+      // js-ok: display only (Chart.js ADR 0032)
       ctx.moveTo(x + math.sin(rad) * width, y - math.cos(rad) * radius);
       rad += twoThirdsPi;
+      // js-ok: display only (Chart.js ADR 0032)
       ctx.lineTo(x + math.sin(rad) * width, y - math.cos(rad) * radius);
       rad += twoThirdsPi;
       ctx
+        // js-ok: display only (Chart.js ADR 0032)
         ..lineTo(x + math.sin(rad) * width, y - math.cos(rad) * radius)
         ..closePath();
     case 'rectRounded':
@@ -359,11 +362,15 @@ void drawPointLegend(
       // https://github.com/chartjs/Chart.js/issues/5858
       cornerRadius = radius * 0.516;
       size = radius - cornerRadius;
+      // js-ok: display only (Chart.js ADR 0032)
       xOffset = math.cos(rad + quarterPi) * size;
       xOffsetW =
+          // js-ok: display only (Chart.js ADR 0032)
           math.cos(rad + quarterPi) * (hasW ? w! / 2 - cornerRadius : size);
+      // js-ok: display only (Chart.js ADR 0032)
       yOffset = math.sin(rad + quarterPi) * size;
       yOffsetW =
+          // js-ok: display only (Chart.js ADR 0032)
           math.sin(rad + quarterPi) * (hasW ? w! / 2 - cornerRadius : size);
       ctx
         ..arc(x - xOffsetW, y - yOffset, cornerRadius, rad - pi, rad - halfPi)
@@ -383,9 +390,13 @@ void drawPointLegend(
       continue rectRot;
     rectRot:
     case 'rectRot':
+      // js-ok: display only (Chart.js ADR 0032)
       xOffsetW = math.cos(rad) * (hasW ? w! / 2 : radius);
+      // js-ok: display only (Chart.js ADR 0032)
       xOffset = math.cos(rad) * radius;
+      // js-ok: display only (Chart.js ADR 0032)
       yOffset = math.sin(rad) * radius;
+      // js-ok: display only (Chart.js ADR 0032)
       yOffsetW = math.sin(rad) * (hasW ? w! / 2 : radius);
       ctx
         ..moveTo(x - xOffsetW, y - yOffset)
@@ -399,9 +410,13 @@ void drawPointLegend(
       continue cross;
     cross:
     case 'cross':
+      // js-ok: display only (Chart.js ADR 0032)
       xOffsetW = math.cos(rad) * (hasW ? w! / 2 : radius);
+      // js-ok: display only (Chart.js ADR 0032)
       xOffset = math.cos(rad) * radius;
+      // js-ok: display only (Chart.js ADR 0032)
       yOffset = math.sin(rad) * radius;
+      // js-ok: display only (Chart.js ADR 0032)
       yOffsetW = math.sin(rad) * (hasW ? w! / 2 : radius);
       ctx
         ..moveTo(x - xOffsetW, y - yOffset)
@@ -409,9 +424,13 @@ void drawPointLegend(
         ..moveTo(x + yOffsetW, y - xOffset)
         ..lineTo(x - yOffsetW, y + xOffset);
     case 'star':
+      // js-ok: display only (Chart.js ADR 0032)
       xOffsetW = math.cos(rad) * (hasW ? w! / 2 : radius);
+      // js-ok: display only (Chart.js ADR 0032)
       xOffset = math.cos(rad) * radius;
+      // js-ok: display only (Chart.js ADR 0032)
       yOffset = math.sin(rad) * radius;
+      // js-ok: display only (Chart.js ADR 0032)
       yOffsetW = math.sin(rad) * (hasW ? w! / 2 : radius);
       ctx
         ..moveTo(x - xOffsetW, y - yOffset)
@@ -419,9 +438,13 @@ void drawPointLegend(
         ..moveTo(x + yOffsetW, y - xOffset)
         ..lineTo(x - yOffsetW, y + xOffset);
       rad += quarterPi;
+      // js-ok: display only (Chart.js ADR 0032)
       xOffsetW = math.cos(rad) * (hasW ? w! / 2 : radius);
+      // js-ok: display only (Chart.js ADR 0032)
       xOffset = math.cos(rad) * radius;
+      // js-ok: display only (Chart.js ADR 0032)
       yOffset = math.sin(rad) * radius;
+      // js-ok: display only (Chart.js ADR 0032)
       yOffsetW = math.sin(rad) * (hasW ? w! / 2 : radius);
       ctx
         ..moveTo(x - xOffsetW, y - yOffset)
@@ -429,7 +452,9 @@ void drawPointLegend(
         ..moveTo(x + yOffsetW, y - xOffset)
         ..lineTo(x - yOffsetW, y + xOffset);
     case 'line':
+      // js-ok: display only (Chart.js ADR 0032)
       xOffset = hasW ? w! / 2 : math.cos(rad) * radius;
+      // js-ok: display only (Chart.js ADR 0032)
       yOffset = math.sin(rad) * radius;
       ctx
         ..moveTo(x - xOffset, y - yOffset)
@@ -438,8 +463,9 @@ void drawPointLegend(
       ctx
         ..moveTo(x, y)
         ..lineTo(
+          // js-ok: display only (Chart.js ADR 0032)
           x + math.cos(rad) * (hasW ? w! / 2 : radius),
-          y + math.sin(rad) * radius,
+          y + math.sin(rad) * radius, // js-ok: display only (Chart.js ADR 0032)
         );
     case false:
       ctx.closePath();
@@ -470,7 +496,7 @@ void drawPointLegend(
 /// A null [point] or [area] stands for a falsy JavaScript value: `null` or
 /// `undefined`. A null [margin] stands for `undefined`. A null `point.x` or
 /// `point.y` is JS `null`, which the relational operators make 0: the port
-/// writes `point.x ?? 0` (Chart.js ADR 0010).
+/// writes `point.x ?? 0` (Chart.js ADR 0032).
 ///
 /// Upstream returns `point` itself when `point` is falsy and [area] is not.
 /// Here the result is `false` (`adapt-point-in-area-bool`, differences.md).
@@ -521,7 +547,7 @@ void unclipArea(CanvasRenderingContext2D ctx) {
 /// point of a segment. A null [flip] is JS `undefined`. [mode] is the
 /// `stepped` option value (`element.line.js:89`): `true`, `'before'`,
 /// `'after'` or `'middle'`. A null coordinate is JS `null`, which `ToNumber`
-/// makes 0 (Chart.js ADR 0010).
+/// makes 0 (Chart.js ADR 0032).
 void steppedLineTo(
   CanvasPath ctx,
   Point? previous,

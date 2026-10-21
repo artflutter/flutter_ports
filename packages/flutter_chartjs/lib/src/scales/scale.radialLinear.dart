@@ -10,7 +10,7 @@
 /// - Options are the resolvers of `helpers.config` (Chart.js ADR 0006). The
 ///   scale reads an option with `options[key]` or [jsGet], tests it with
 ///   [jsTruthy], and applies [jsToNumber] before arithmetic.
-/// - Numbers are `double` (Chart.js ADR 0010). A property that starts JS
+/// - Numbers are `double` (Chart.js ADR 0032). A property that starts JS
 ///   `undefined` and holds a number starts as NaN.
 /// - The value methods take any JS value (Chart.js ADR 0025, section 1).
 ///   They have no fast path (Chart.js ADR 0025, Open 1). The object
@@ -28,8 +28,6 @@
 /// Thus this library is not a pure layer.
 library;
 
-import 'dart:math' as math;
-
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs/src/core/core.scale.dart';
@@ -45,7 +43,8 @@ import 'package:flutter_chartjs/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs/src/helpers/helpers.options.dart'
     show ParsedFont, createContext, toFont, toPadding, toTRBLCorners;
 import 'package:flutter_chartjs/src/js/js_class.dart';
-import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax, jsMin, jsRound;
+import 'package:flutter_chartjs/src/js/js_math.dart'
+    show jsCos, jsMax, jsMin, jsRound, jsSin;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
@@ -367,8 +366,8 @@ void _updateLimits(
   _Limit hLimits,
   _Limit vLimits,
 ) {
-  final sin = math.sin(angle).abs();
-  final cos = math.cos(angle).abs();
+  final sin = jsSin(angle).abs();
+  final cos = jsCos(angle).abs();
   double x;
   double y;
   if (hLimits.start < orig.l) {
@@ -839,6 +838,7 @@ class RadialLinearScale extends LinearScaleBase
   /// element (`types.RadialLinearScale.xCenter`). Thus the start value is
   /// not NaN, as [drawingArea] is. In arithmetic and in a canvas call, this
   /// file reads `xCenter ?? double.nan`: `undefined` gives NaN there.
+  /// Chart.js ADR 0033 records this form.
   @override
   double? xCenter;
 
@@ -1041,8 +1041,8 @@ class RadialLinearScale extends LinearScaleBase
   ]) {
     final angle = getIndexAngle(index) - halfPi + additionalAngle;
     return (
-      x: math.cos(angle) * distanceFromCenter + (xCenter ?? double.nan),
-      y: math.sin(angle) * distanceFromCenter + (yCenter ?? double.nan),
+      x: jsCos(angle) * distanceFromCenter + (xCenter ?? double.nan),
+      y: jsSin(angle) * distanceFromCenter + (yCenter ?? double.nan),
       angle: angle,
     );
   }

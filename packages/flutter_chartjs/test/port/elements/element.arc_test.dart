@@ -126,8 +126,9 @@ ArcElement _arc(
 /// Expects that [actual] is [expected]: a number within 1e-9 (relative
 /// above 1), NaN for NaN, a list item by item, and any other value equal.
 ///
-/// The reference numbers are V8 numbers. `dart:math` `sin` and `cos` can
-/// differ in the last bit on other engines (Chart.js ADR 0010).
+/// The reference numbers are V8 numbers. The display-only sites of the arc
+/// call `dart:math` `sin` and `cos`, which can differ in the last bit on
+/// other engines (Chart.js ADR 0032).
 void _expectValue(Object? actual, Object? expected, String where) {
   switch (expected) {
     case final num n when n.isNaN:
@@ -488,7 +489,7 @@ void main() {
     // `rAdjust` of element.arc.ts:439 is the JS `+` of `spacing` and
     // `borderWidth`: a string option joins. The expected values come from
     // the pinned build in Node.js v24.12.0 on x64 (probe arc_inrange.mjs of
-    // phase7/review/wave2/W2-int-report.md): the hit distances on the
+    // .handover/phase7/review/wave2/W2-int-report.md): the hit distances on the
     // diagonal of a quarter arc with the radii 10 and 40.
     group('string options join in the JS +', () {
       const distances = [5, 12, 30, 41, 44, 60, 66, 70];
@@ -523,7 +524,7 @@ void main() {
 
   group('getCenterPoint', () {
     test('has the reference of Node.js v24.12.0 on x64', () {
-      expect(arcCenterReference, hasLength(11));
+      expect(arcCenterReference, hasLength(13));
     });
 
     for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
@@ -540,10 +541,43 @@ void main() {
       });
     }
 
+    // The half angles of the two sin ties of phase 7 (Chart.js ADR 0032):
+    // the query point is at the same distance from two arc centers, so the
+    // last bit of the center decides the hit item. The center equals the V8
+    // value bit for bit. With dart:math sin, the y of the second case on
+    // macOS is -0.4999999999999998 (a probe). For the first case on Windows,
+    // the y 120.76582809807277 is an inference: it is the only 1-ulp change
+    // that gives the hit of CI run 39544591156. No Windows run measured it
+    // (Chart.js ADR 0032, Open 1).
+    group('the half angles of the sin ties', () {
+      for (final c in arcCenterReference.where(
+        (c) => c.name.startsWith('half angle '),
+      )) {
+        test('${c.name} equals V8 bit for bit', () {
+          final center = _arc(c.cfg).getCenterPoint(c.useFinalPosition);
+          expect(center.x, c.x);
+          expect(center.y, c.y);
+        });
+      }
+
+      test('has the two cases', () {
+        expect(
+          [
+            for (final c in arcCenterReference)
+              if (c.name.startsWith('half angle ')) (c.x, c.y),
+          ],
+          [
+            (391.2341719019272, 120.7658280980728),
+            (-0.8660254037844388, -0.4999999999999997),
+          ],
+        );
+      });
+    });
+
     // A string `spacing` or `offset` joins in the JS `+` of
     // element.arc.ts:459. The expected values come from the pinned build in
     // Node.js v24.12.0 on x64 (probe arc_center.mjs of
-    // phase7/review/wave2/W2-int-report.md). The center moves: it is the
+    // .handover/phase7/review/wave2/W2-int-report.md). The center moves: it is the
     // point of the `nearest` and `index` hit modes.
     group('string options join in the JS +', () {
       final cases = <(Map<String, Object?>, double, double)>[

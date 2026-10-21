@@ -7,7 +7,7 @@
   steps), [ADR 0006](../../../../docs/adr/0006-follow-upstream-between-releases.md) (ledger,
   backports and commit pins), [ADR 0007](../../../../docs/adr/0007-package-names.md) (the package
   name), [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (the shared
-  port tools), [Chart.js ADR 0011](../../../flutter_chartjs/doc/adr/0011-third-party-sources.md)
+  port tools), [Chart.js ADR 0035](../../../flutter_chartjs/doc/adr/0035-third-party-sources.md)
   (the precedent for other projects), [D3 ADR 0002](0002-file-naming-and-layout.md) (the Dart
   paths), [D3 ADR 0004](0004-spec-harness.md) (the spec harness)
 
@@ -19,7 +19,7 @@ version also lives in code. Two checks compare that version with the pin. Each p
 other projects that it takes code from in its own ADR.
 [ADR 0006](../../../../docs/adr/0006-follow-upstream-between-releases.md) adds the upstream ledger,
 the backports and the commit pins.
-[Chart.js ADR 0011](../../../flutter_chartjs/doc/adr/0011-third-party-sources.md) applies these
+[Chart.js ADR 0035](../../../flutter_chartjs/doc/adr/0035-third-party-sources.md) applies these
 rules to the Chart.js port.
 
 **One port, 34 repositories.** D3 has no single code repository. The `d3` repository holds the
@@ -206,7 +206,7 @@ the design. The ADR stays `proposed` until the maintainer accepts it.
      exception to that item. ADR 0006 item 4 puts the bump first when a bump can move the pin to
      a newer tag. The pin rule of item 3 does not let a bump pin a tag outside the ranges. Each
      port lists its other projects in its own ADR (ADR 0005, Consequences). In the same way,
-     Chart.js ADR 0011 item 5 (accepted) pins `@kurkle/color` and chartjs-test-utils at the
+     Chart.js ADR 0035 item 5 pins `@kurkle/color` and chartjs-test-utils at the
      versions of the Chart.js lockfile, not at their newest tags.
    - **Bump first.** Before a file goes from `not started` to `in progress`, the porter lists the
      newer tags of its repository (ADR 0006 item 4).
@@ -260,7 +260,7 @@ the design. The ADR stays `proposed` until the maintainer accepts it.
      `Copyright 2026 Vasiliy Ditsyak`. The ISC text of the 32 ISC repositories comes last.
    - The line of Mike Bostock merges the ten year ranges of the pins into one line. Item 4 keeps
      the exact line of each repository. The union 2010-2026 covers every range. All other lines
-     stay verbatim, as Chart.js ADR 0011 item 6 asks.
+     stay verbatim, as Chart.js ADR 0035 item 6 asks.
    - The `REUSE.toml` table for `packages/flutter_d3_port/**` has `SPDX-License-Identifier = "ISC"`
      and the copyrights `2010-2026 Mike Bostock` and `2026 Vasiliy Ditsyak`. It replaces the MIT
      table `**` for the package.
@@ -468,7 +468,7 @@ the design. The ADR stays `proposed` until the maintainer accepts it.
   - The `yarn.lock` of the d3 default branch still locks 3.1.0 (`:1155-1156`, `gh api`,
     2026-10-20). Thus ADR 0006 item 5 gives no commit pin.
 
-  The Chart.js reason for its lockfile does not apply. Chart.js ADR 0011 keeps the lockfile
+  The Chart.js reason for its lockfile does not apply. Chart.js ADR 0035 keeps the lockfile
   versions because the Chart.js specs and fixture thresholds come from them. Each D3 repository
   brings its own specs at its own tag. The d3 bundle test examines only the exports.
 - **The newest tag of each repository, without the ranges.** Rejected. Today the set is the same.
@@ -476,7 +476,7 @@ the design. The ADR stays `proposed` until the maintainer accepts it.
 - **Nested submodules at `third_party/d3/<repository name>`.** Rejected. `third_party/d3` is itself
   a submodule. Its work tree cannot hold other submodules of this repository.
 - **A version constant in code for each repository.** Rejected. ADR 0005 item 4 asks for the
-  version of the upstream repository in code. Chart.js ADR 0011 compares only the gitlinks of its
+  version of the upstream repository in code. Chart.js ADR 0035 compares only the gitlinks of its
   other projects. The pin script of item 5 also compares each D3 gitlink with its tag.
 - **Combined holder strings,** for example `Mike Bostock and Robert Penner` for d3-ease or
   `Observable, Inc. and Mapbox` for d3-delaunay. Rejected. Tool 2 requires the exact string in the
@@ -488,7 +488,7 @@ the design. The ADR stays `proposed` until the maintainer accepts it.
   with the union of the years covers each of them.
 - **A PSF-2.0 component for `fsum.js`.** The maintainer rejected it (item 11). It adds
   `LICENSES/PSF-2.0.txt` and a `REUSE.toml` table for one file that upstream publishes as ISC.
-- **No GeographicLib component.** Rejected. Chart.js ADR 0011 item 6 takes the notices from the
+- **No GeographicLib component.** Rejected. Chart.js ADR 0035 item 6 takes the notices from the
   license file at the pin.
 - **Separate `port_sources.yaml` entries for ColorBrewer and quickselect.** Rejected. A header then
   names a project that the port does not read (AGENTS.md rule 1). Each entry also needs a pin.

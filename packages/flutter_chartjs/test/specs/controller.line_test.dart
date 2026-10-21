@@ -2,8 +2,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:math' as math;
-
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs, which does not export lib/src
@@ -13,6 +11,7 @@ import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/elements/element.line.dart';
 import 'package:flutter_chartjs/src/elements/element.point.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.core.dart' as helpers;
+import 'package:flutter_chartjs/src/js/js_math.dart' show jsSin;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
@@ -21,6 +20,7 @@ import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
@@ -109,8 +109,7 @@ final class _PointEvent implements types.ChartEvent {
 
 void main() {
   group('Chart.controllers.line', () {
-    // describe('auto', jasmine.fixture.specs('controller.line')): a fixture
-    // group of phase 7 (Chart.js ADR 0029), not a case.
+    group('auto', fixture.specs('controller.line'));
 
     test('should be registered as dataset controller', () {
       expect(jsTypeof(Chart.registry.controllers.items['line']), 'function');
@@ -994,7 +993,7 @@ void main() {
     testWidgets('should render a million points', (tester) async {
       final data = <Object?>[];
       for (var x = 0; x < 1e6; x++) {
-        data.add(<String, Object?>{'x': x, 'y': math.sin(x / 10000)});
+        data.add(<String, Object?>{'x': x, 'y': jsSin(x / 10000)});
       }
       void createChart() {
         acquireChart(<String, Object?>{

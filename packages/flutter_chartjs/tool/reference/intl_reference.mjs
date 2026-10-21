@@ -39,7 +39,7 @@
 //
 //   node tool/reference/intl_reference.mjs
 //
-// The reference is V8 13.6 with ICU 77.1 on x64 (Chart.js ADR 0010), and
+// The reference is V8 13.6 with ICU 77.1 on x64 (Chart.js ADR 0032), and
 // the script stops on any other architecture.
 
 import {existsSync, writeFileSync} from 'node:fs';

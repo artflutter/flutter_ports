@@ -137,7 +137,7 @@ final class UiCssStyleDeclaration implements CSSStyleDeclaration {
     }
     // Each write makes the attribute the serialization, also a write that
     // changes nothing. A compare of the old value cost 9 ns more on AOT, and
-    // the attribute text is not a behavior of Chart.js ADR 0009.
+    // the attribute text is not a behavior of Chart.js ADR 0034.
     _serialized = true;
   }
 
@@ -1645,7 +1645,7 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
   /// and 200 turning labels, 2 of 3 runs crashed without a snap, 1 of 6
   /// with a step of 0.5 degrees, and 0 of 6 with 2 degrees. Snapped
   /// rotations reuse the cached strikes. A label shows at most 1 degree
-  /// away from its angle, a display-only difference (Chart.js ADR 0009).
+  /// away from its angle, a display-only difference (Chart.js ADR 0034).
   Float64List _snappedTextMatrix(UiTransform t, double x, double y) {
     final angle = (t.angle / _textAngleStep).roundToDouble() * _textAngleStep;
     final scale = t.scaleFactor;

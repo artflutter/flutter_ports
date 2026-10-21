@@ -81,7 +81,7 @@ List<Object?> _generateLabels(types.Chart chart) {
 ///
 /// The keys keep the order of the upstream literal. A key of `style` that is
 /// absent gives [jsGet]'s `undefined`, as the JS property read does. `index`
-/// is a `double` (Chart.js ADR 0010).
+/// is a `double` (Chart.js ADR 0032).
 Map<String, Object?> _item(
   types.Chart chart,
   Object? label,
@@ -219,7 +219,7 @@ class PolarAreaController extends DatasetController {
   /// `Intl.NumberFormat.prototype.format` applies `ToIntlMathematicalValue`:
   /// for a string with more digits than a `double` keeps, upstream formats
   /// the exact decimal. The difference is in the digits only (Chart.js ADR
-  /// 0009). A parsed item that is `null` or `undefined` throws a [TypeError]
+  /// 0034). A parsed item that is `null` or `undefined` throws a [TypeError]
   /// at the read of `r`, as upstream.
   @override
   ({Object? label, String value}) getLabelAndValue(double index) {

@@ -1,6 +1,6 @@
 # Chart.js ADR 0018: Typed element options
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (options and the
   `undefined` sentinel), [Chart.js ADR 0017](0017-element-properties.md) (element properties),

@@ -22,11 +22,11 @@ resolution: workspace
 
 dependencies:
   # jsDateNow reads clock.now(), the clock that the FakeAsync zone of
-  # testWidgets moves (Chart.js ADR 0010 section 6). 1.1.2 is the version that
+  # testWidgets moves (Chart.js ADR 0032 section 6). 1.1.2 is the version that
   # fake_async already resolves in the workspace.
   clock: ^1.1.2
-  # jsSort calls mergeSort, a stable sort (Chart.js ADR 0010). 1.19.1 is the
-  # pin of Flutter 3.44.9.
+  # jsSort calls mergeSort, a stable sort (Chart.js ADR 0032, Sort). 1.19.1 is
+  # the pin of Flutter 3.44.9.
   collection: ^1.19.1
   flutter:
     sdk: flutter

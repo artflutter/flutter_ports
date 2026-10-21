@@ -3,7 +3,7 @@
 /// Port of `src/core/core.animations.defaults.js`.
 ///
 /// Option objects are `Map<String, Object?>`, `undefined` is the [undefined]
-/// sentinel and numbers are `double` (Chart.js ADRs 0006 and 0010). A
+/// sentinel and numbers are `double` (Chart.js ADRs 0006 and 0032). A
 /// function value is a Dart closure (`lib/src/js/js_function.dart`).
 /// [Defaults] is the interface of the `defaults` object of
 /// `core.defaults.js`.

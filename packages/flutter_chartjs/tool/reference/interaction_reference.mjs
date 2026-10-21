@@ -25,7 +25,7 @@
 //
 //   node tool/reference/interaction_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0010), and the script stops
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
 // on any other architecture.
 
 import {execFileSync} from 'node:child_process';

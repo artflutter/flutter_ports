@@ -5,7 +5,7 @@
 /// A JavaScript array is a [List] and a plain object is a
 /// `Map<String, Object?>` (Chart.js ADR 0006). The `{lo, hi}` results of the
 /// binary searches are records of two list indices. Thus they are `int`
-/// values (Chart.js ADR 0010, "Translation rules").
+/// values (Chart.js ADR 0032, "Translation rules").
 ///
 /// A Dart [List] has no methods that a program can redefine. Thus
 /// [listenArrayEvents] does not hook `push`, `pop`, `shift`, `splice` and
@@ -225,7 +225,7 @@ _StubListener _stubListener<T>(ArrayListener<T> listener) => _StubListener(
 
 /// The call `object[method](...args)` of helpers.collection.ts:142.
 ///
-/// A JavaScript number is a [double] (Chart.js ADR 0010). Thus a [num]
+/// A JavaScript number is a [double] (Chart.js ADR 0032). Thus a [num]
 /// item becomes a [double], and the `index` and `deleteCount` of
 /// `'splice'` go through [jsToNumber]. The VM, dart2js and dart2wasm then
 /// give the same items.

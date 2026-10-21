@@ -4,7 +4,7 @@
 
 ## Checklist
 
-- [ ] `dart run melos run format:check`, `analyze`, `test --no-select`, `test:web`, `test:cases` and `check:port` pass
+- [ ] `dart run melos run format:check`, `analyze`, `test --no-select`, `test:web`, `test:cases`, `test:fixtures` and `check:port` pass
 - [ ] Commits follow Conventional Commits and are signed off (`git commit -s`, DCO)
 - [ ] Ported code is translated from the pinned upstream source (not from memory), names its upstream file in a header comment, and keeps the upstream copyright notice
 - [ ] Ported behaviour is covered by tests (ported from the upstream specs where they exist)

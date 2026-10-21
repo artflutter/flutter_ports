@@ -7,7 +7,7 @@
   accessors and the `Function.length` overloads get wide use from phase 2.
 - Related: [Chart.js ADR 0006](../../../flutter_chartjs/doc/adr/0006-options-representation-and-resolver.md)
   (the `undefined` sentinel and the three states),
-  [Chart.js ADR 0010](../../../flutter_chartjs/doc/adr/0010-js-numeric-semantics.md) (§1: `jsCall`
+  [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (§1: `jsCall`
   and `JsFunction`),
   [Chart.js ADR 0020](../../../flutter_chartjs/doc/adr/0020-registry-and-component-classes.md)
   (proposed: class values), [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md)
@@ -89,7 +89,7 @@ change. d3-format and d3-time-format assign their exported default formats again
 export is a live binding.
 
 **The runtime.** `js_function.dart` of the Chart.js port gives `jsCall`, `jsCall1`, `jsIsFunction`
-and `JsFunction` (Chart.js ADR 0010 §1). `jsCall` reads the parameter count of a Dart closure with
+and `JsFunction` (Chart.js ADR 0032 §1). `jsCall` reads the parameter count of a Dart closure with
 function-type tests, up to `jsMaxArity` (8). It drops the extra arguments. It pads the absent
 arguments with the `undefined` sentinel of `js_undefined.dart`. A `JsFunction` wraps a closure
 whose first parameter is `this`. An object with a `call` method is not a function value for

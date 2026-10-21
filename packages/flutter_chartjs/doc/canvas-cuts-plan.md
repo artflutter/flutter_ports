@@ -2,10 +2,10 @@
 
 - Status: proposed, deferred
 - Date: 2026-10-19
-- Related: [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) (accepted),
+- Related: [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (proposed),
   [Chart.js ADR 0013](adr/0013-canvas-model.md), [Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md),
   [Chart.js ADR 0015](adr/0015-text.md), [Chart.js ADR 0016](adr/0016-frame-scheduling.md) (all
-  proposed), [performance.md](performance.md), [porting-flow.md](porting-flow.md) §2.2
+  accepted), [performance.md](performance.md), [porting-flow.md](porting-flow.md) §2.2
 
 This plan removes code of the phase 3 canvas layer and of the chart host where Dart or Flutter
 already gives the function. It has three cuts and nine work packages. Each work package has one
@@ -231,6 +231,50 @@ Changes to the cited files:
   upper tables and the port-only table. The `parity.md` rows that this plan cites do not change. Thus
   the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change.
   No trigger occurred.
+- 2026-10-21, Chart.js ADR 0032 (proposed) and Chart.js ADR 0033 (accepted).
+  `lib/src/elements/element.arc.dart` calls `jsSin` and `jsCos` in `getCenterPoint` (lines
+  1148-1149) and gets `js-ok` comments on 14 draw lines. The draw path of the arc does not change:
+  its calls stay on `dart:math`. `test/port/elements/element.arc_test.dart`, which §3.5 cites for
+  its `_Canvas` fake, gets two `getCenterPoint` reference cases and the group `the half angles of
+  the sin ties`. The fix of the trig review (R7) changes only the comment of that group. The fake
+  does not change. porting-flow.md gets text in §2, §2.19, §3 and §4. This change does not edit the
+  text of §2.2, of §2.7 and of the cited rows of the harness table of §3. The entry of the ADR
+  numbers and statuses below records the other edits of §2.2 and §2.7. In the work tree after the
+  doc fixes of step 4, §2.2 is at line 236, §2.7 at line 326, and the cited rows of the harness
+  table at lines 747-748. This plan cites no line of `element.arc.dart`, and the cuts do not remove
+  its code. Thus the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates
+  do not change. No trigger occurred.
+- 2026-10-21, step 4 of phase 7 (F-int, Chart.js ADR 0029, proposed). porting-flow.md gets text
+  in §1 step 6, §2 (the new subsection 2.22, the row and the text of Chart.js ADR 0033 and the
+  text of Chart.js ADRs 0032, 0034 and 0035), §3 (the harness rows of `src/index.js`, `dom.dart`
+  and `src/fixture.js`, the row "Fixture smoke tests" and "Fixture selection"), §4, §5 (the phase
+  7 row) and §6. This change does not edit the text of §2.2, of §2.7 and of the cited rows of the
+  harness table of §3 (`src/matchers.js` and `src/utils.js`). In the work tree after the doc fixes
+  of step 4, §2.2 is at line 236, §2.7 at line 326, and the cited rows of the harness table at
+  lines 747-748. `doc/performance.md` §13.8 gets the trigger of its frame figures (Chart.js ADR
+  0032, Open 2): an item of step 7 of phase 7. One line of §6 and one line of §13.5 get a new
+  wrap. Their content does not change.
+  `packages/chartjs_test_utils/lib/src/dom.dart` gets `pumpFrame` and a `pumpFrames` that lets
+  only one loop pump at a time. The CSS subset, the harness body and the forced layout do not
+  change. The 20 spec files with a fixture group call the fixture runner, and
+  `test/specs/helpers.canvas_test.dart` gets the empty group `auto`. `element.point_test.dart`
+  moves to the VM. This plan cites none of these lines, and the cuts do not remove their code.
+  Thus the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not
+  change. No trigger occurred.
+- 2026-10-21, the ADR numbers and statuses. A parallel session moved the citations of three ADRs:
+  Chart.js ADR 0009 to Chart.js ADR 0034, Chart.js ADR 0010 to Chart.js ADR 0032 and Chart.js ADR
+  0011 to Chart.js ADR 0035. These three new ADRs are proposed. The porting lead accepted Chart.js
+  ADRs 0013-0023 (2026-10-21). The Related line of this plan and §2.7, §3.2 and §3.7 now cite
+  Chart.js ADR 0034 in place of Chart.js ADR 0009. The Related line gives Chart.js ADRs 0013-0016 as
+  accepted. In porting-flow.md, the arc-math bullet of §2.2 cites Chart.js ADR 0034 in place of
+  Chart.js ADR 0009. The first sentences of §2.2 and §2.7 no longer call Chart.js ADRs 0013 and 0014
+  proposed. The other text of §2.2 and §2.7 does not change. One bullet of porting-flow.md §2.22
+  gets a new wrap, so the cited rows of the harness table moved from lines 746-747 to lines 747-748.
+  Their text does not change. §2.7 and §3.7 of this plan tell the owner to edit Chart.js ADRs 0013
+  and 0014 in place. These ADRs are accepted now. Thus the owner of each of these work packages
+  writes a new ADR that supersedes the changed decision, and does not edit the accepted ADR. The
+  references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No
+  trigger occurred.
 
 ## 1. Why
 
@@ -520,7 +564,7 @@ Chart.js ADR 0013 is proposed, so the owner edits it in place. Do not change its
   `ui.Path.arcTo` that `extendWithPath(matrix4:)` appends". Row 375 and row 377 get the matrix
   copies of step 0. Add a row for `test/port/canvas/canvas_ui_path_test.dart`.
 - `performance.md`: a new section with the arc figures (§2.8 and §6.3).
-- Chart.js ADR 0009 (accepted) does not change. Conics in place of Béziers give a display-only
+- Chart.js ADR 0034 does not change. Conics in place of Béziers give a display-only
   difference. Thus there is no `DIVERGES` row and no superseding ADR.
 - `porting-flow.md` §2.2 and `differences.md` do not change.
 
@@ -639,7 +683,7 @@ Chart.js must stay the one source of the chart size. The ported `getMaximumSize`
 - `round1`, `Math.floor` and the default ratio of 2 (#4659) shape the size.
 - `onResize`, the `resize` plugin hook and `resizeDelay` run from `_resize`.
 - A change of `options.aspectRatio` and then `chart.resize()` runs inside Chart.js.
-- The size changes the ticks and the hit tests, so Chart.js ADR 0009 requires the upstream size.
+- The size changes the ticks and the hit tests, so Chart.js ADR 0034 requires the upstream size.
 
 Flutter layout still has a role. The parent widgets (`SizedBox`, `AspectRatio`, `Expanded`,
 `Padding`) set the constraints, and the constraints are the container of `getMaximumSize`.
@@ -871,7 +915,7 @@ new `differences.md` row. No skip reason changes now, because every affected cas
 ### 3.7 ADR and doc changes
 
 Chart.js ADR 0013 and Chart.js ADR 0014 are proposed, so the owner edits them in place. Do not
-change their status lines. Chart.js ADR 0009 and Chart.js ADR 0016 do not change.
+change their status lines. Chart.js ADR 0034 and Chart.js ADR 0016 do not change.
 
 Work package C2 made these changes in phase 5, except the `performance.md` figures. These figures
 are for work package P. The line numbers below are the lines after C2.

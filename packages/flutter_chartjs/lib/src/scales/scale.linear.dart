@@ -10,7 +10,7 @@
 /// - Options are the resolvers of `helpers.config` (Chart.js ADR 0006). The
 ///   scale reads an option with `options[key]` or [jsGet], and applies
 ///   [jsToNumber] before arithmetic.
-/// - Numbers are `double` (Chart.js ADR 0010).
+/// - Numbers are `double` (Chart.js ADR 0032).
 /// - The value methods take any JS value (Chart.js ADR 0025).
 ///   [LinearScale.getPixelForValue] starts with the port-only fast path for
 ///   a `double` of Chart.js ADR 0025, section 3.
@@ -23,14 +23,12 @@
 /// Thus this library is not a pure layer.
 library;
 
-import 'dart:math' as math;
-
 import 'package:flutter_chartjs/src/core/core.scale.dart';
 import 'package:flutter_chartjs/src/core/core.ticks.dart' show formatters;
 import 'package:flutter_chartjs/src/helpers/helpers.core.dart' show isFinite;
 import 'package:flutter_chartjs/src/helpers/helpers.math.dart' show toRadians;
 import 'package:flutter_chartjs/src/js/js_class.dart';
-import 'package:flutter_chartjs/src/js/js_math.dart' show jsMin;
+import 'package:flutter_chartjs/src/js/js_math.dart' show jsCos, jsMin, jsSin;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs/src/scales/scale.linearbase.dart';
@@ -103,7 +101,7 @@ class LinearScale extends LinearScaleBase {
     final minRotation = toRadians(
       jsToNumber(jsGet(options['ticks'], 'minRotation')),
     );
-    final sinOrCos = horizontal ? math.sin(minRotation) : math.cos(minRotation);
+    final sinOrCos = horizontal ? jsSin(minRotation) : jsCos(minRotation);
     final ratio = jsTruthy(sinOrCos) ? sinOrCos : 0.001;
     final tickFont = resolveTickFontOptions(0);
     return (length / jsMin(40, jsToNumber(tickFont.lineHeight) / ratio))

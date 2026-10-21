@@ -10,6 +10,7 @@ import 'package:flutter_chartjs/src/core/core.layouts.dart';
 import 'package:flutter_chartjs/src/core/core.scale.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // The spec reads Chart.layouts, which src/index.umd.ts sets to the default
@@ -34,8 +35,7 @@ List<Object?> _getLabels(Scale scale) => [
 
 void main() {
   group('Chart.layouts', () {
-    // describe('auto', jasmine.fixture.specs('core.layouts')): a fixture
-    // group of phase 7, not a case.
+    group('auto', fixture.specs('core.layouts'));
 
     test('should be exposed through Chart.layouts', () {
       expect(layouts, isNotNull);

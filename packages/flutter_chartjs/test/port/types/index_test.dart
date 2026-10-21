@@ -54,6 +54,12 @@ bool _sameOptions(Map<String, Object?> a, Map<String, Object?> b) {
   return true;
 }
 
+/// The static type of [value] at the call site.
+Type _staticType<T>(T value) => T;
+
+/// The type [T] as a value.
+Type _type<T>() => T;
+
 void main() {
   group('types.Chart', () {
     testWidgets('the visibility members, legend and update', (tester) async {
@@ -202,6 +208,10 @@ void main() {
       expect(t.yCenter, scale.yCenter);
       expect(t.xCenter, 256.0);
       expect(t.yCenter, 256.0);
+      // Chart.js ADR 0033: the interface type is double? (Dart null is the
+      // undefined start value).
+      expect(_staticType(t.xCenter), _type<double?>());
+      expect(_staticType(t.yCenter), _type<double?>());
       expect(t.getIndexAngle(1), scale.getIndexAngle(1));
       expect(
         t.getDistanceFromCenterForValue(4.0),

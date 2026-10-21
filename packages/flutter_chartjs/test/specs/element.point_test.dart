@@ -1,21 +1,27 @@
 // Ported from Chart.js v4.5.1+7169e651 test/specs/element.point.tests.js (MIT, Chart.js Contributors).
+@TestOn('vm')
+library;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/elements/element.point.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import '../fixtures/index.dart' as fixture;
 
 // The spec constructs Chart.elements.PointElement. Here it is the
 // PointElement of element.point.dart (Chart.js ADR 0017). An object literal
 // is a Map (Chart.js ADR 0006), and an integer becomes a double at the
 // write. The literal {x, y} of tooltipPosition and getCenterPoint is an
 // ElementPoint, which compares with equals.
+//
+// The fixture group `auto` runs charts (Chart.js ADR 0029). Thus the file
+// runs on the VM with flutter_test, and it does not call `setUpSpecs()`:
+// the charts need the built-in components of `flutter_test_config.dart`.
 
 void main() {
-  setUpSpecs();
-
   group('Chart.elements.PointElement', () {
-    // describe('auto', jasmine.fixture.specs('element.point')): a fixture
-    // group of phase 7, not a case.
+    group('auto', fixture.specs('element.point'));
 
     test('Should correctly identify as in range', () {
       // Mock out the point as if we were made by the controller

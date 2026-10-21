@@ -44,13 +44,80 @@
 //
 //   node tool/reference/theme_light_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0010), and the script stops
-// on any other architecture.
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
+// on any other architecture. It also stops unless each of the checkouts
+// third_party/Chart.js and third_party/kurkle-color is at the `commit` of its
+// entry in tool/port_sources.yaml and has no change in src/.
 
 import {execFileSync} from 'node:child_process';
-import {existsSync, writeFileSync} from 'node:fs';
+import {existsSync, readFileSync, writeFileSync} from 'node:fs';
 import {registerHooks} from 'node:module';
 import {fileURLToPath} from 'node:url';
+
+/**
+ * The submodules that the script reads: the header of the entry in
+ * tool/port_sources.yaml, the folder in third_party/ and the folders that the
+ * script imports from.
+ */
+const PINNED = [
+  {header: 'Chart.js', folder: 'Chart.js', paths: ['src']},
+  {header: '@kurkle/color', folder: 'kurkle-color', paths: ['src']},
+];
+
+/**
+ * Stops unless each submodule of PINNED is at the `commit` of its entry in
+ * tool/port_sources.yaml, with no change in the folders that the script
+ * imports from. It is a copy of checkPin in theme_precedence_reference.mjs.
+ * The read of a commit is the one of readPin in scale_chart_common.mjs. A
+ * folder that is not a git checkout also stops the script.
+ */
+function checkPin() {
+  const sources = fileURLToPath(new URL('../port_sources.yaml', import.meta.url));
+  const entries = readFileSync(sources, 'utf8').split(/^ {2}- header: /m);
+  for (const {header, folder, paths} of PINNED) {
+    const entry = entries.find(
+      (e) => e.startsWith(`${header}\n`) || e.startsWith(`"${header}"\n`),
+    );
+    const commit = entry?.match(/^ {6}commit: "?([0-9a-f]{40})"?\s*$/m)?.[1];
+    if (!commit) {
+      console.error(`${sources} has no commit for ${header}.`);
+      process.exit(1);
+    }
+    const checkout = fileURLToPath(
+      new URL(`../../../../third_party/${folder}`, import.meta.url),
+    );
+    const git = (...args) => {
+      try {
+        return execFileSync('git', ['-C', checkout, ...args], {
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'pipe'],
+        }).trim();
+      } catch (error) {
+        console.error(
+          `git ${args.join(' ')} failed in ${checkout}: ` +
+            `${error.message.trim()}\n` +
+            'Check out the submodules with `dart run melos run upstream`.',
+        );
+        process.exit(1);
+      }
+    };
+    const head = git('rev-parse', 'HEAD');
+    if (head !== commit) {
+      console.error(
+        `${checkout} is at ${head}, not at the pin ${commit} of ${header}. ` +
+          'Check out the submodules with `dart run melos run upstream`.',
+      );
+      process.exit(1);
+    }
+    if (git('status', '--porcelain', '--', ...paths) !== '') {
+      console.error(
+        `${checkout} has changes in ${paths.join(', ')}. ` +
+          'The script reads the pin.',
+      );
+      process.exit(1);
+    }
+  }
+}
 
 if (process.arch !== 'x64') {
   console.error(
@@ -90,6 +157,8 @@ for (const url of [
     process.exit(1);
   }
 }
+
+checkPin();
 
 registerHooks({
   resolve(specifier, context, nextResolve) {

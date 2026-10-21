@@ -35,7 +35,7 @@ import 'controller_line_reference.dart';
 //
 // The reference group compares real line charts with the charts of
 // tool/reference/controller_line_reference.mjs: a build of the pinned
-// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with a mock
+// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with a mock
 // context that measures text in Liberation Sans 2.1.5. Each chart comes from
 // acquireChart in a testWidgets case (Chart.js ADR 0022). The case runs its
 // steps and compares the observations, the hit queries and the draw calls
@@ -445,7 +445,7 @@ void main() {
     // `beforeLayout` leaves `chart.chartArea` unset, and the draw of the
     // line (:140) gives it to `updateControlPoints`. The expected results
     // come from the pinned build in Node.js v24.12.0 on x64 (a probe of the
-    // fix of U-line-R1, recorded in phase7/review/wave2/U-line-report.md):
+    // fix of U-line-R1, recorded in .handover/phase7/review/wave2/U-line-report.md):
     // only `capBezierPoints` with two points or more throws. The generator
     // cannot give these cases: its observation reads `chartArea.left`.
     group('a plugin cancels the first layout', () {

@@ -6,9 +6,9 @@
 - Related: [ADR 0001](0001-native-ports-not-wrappers.md) (no JavaScript at runtime),
   [ADR 0006](0006-follow-upstream-between-releases.md) (the backport line),
   [ADR 0007](0007-package-names.md) (the names `js_semantics` and `port_tools`),
-  [Chart.js ADR 0010](../../packages/flutter_chartjs/doc/adr/0010-js-numeric-semantics.md) (the JS
+  [Chart.js ADR 0032](../../packages/flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (the JS
   runtime of the Chart.js port),
-  [Chart.js ADR 0011](../../packages/flutter_chartjs/doc/adr/0011-third-party-sources.md) (the
+  [Chart.js ADR 0035](../../packages/flutter_chartjs/doc/adr/0035-third-party-sources.md) (the
   fdlibm copy), [D3 ADR 0003](../../packages/flutter_d3_port/doc/adr/0003-number-to-string.md)
   (number strings in D3),
   [D3 ADR 0006](../../packages/flutter_d3_port/doc/adr/0006-generators-accessors-and-js-values.md)
@@ -16,9 +16,9 @@
 
 ## Context
 
-**The runtime of the Chart.js port.** Chart.js ADR 0010 §1 (accepted 2026-10-19) puts the JS
-runtime in "an unexported library in `packages/flutter_chartjs/lib/src/js/`". Ported files call
-it "where upstream calls a builtin or relies on an implicit JS conversion". At commit `75178b5`
+**The runtime of the Chart.js port.** Chart.js ADR 0032 §1 puts the JS runtime in "an unexported
+library in `packages/flutter_chartjs/lib/src/js/`". Ported files call it "where upstream calls a
+builtin or relies on an implicit JS conversion". At commit `75178b5`
 (2026-10-20), the folder has 14 files with 2,313 lines (`wc -l lib/src/js/*.dart`). 169 Dart
 files import it (`git grep -l 'package:flutter_chartjs/src/js/' -- '*.dart'`):
 - 149 files of `flutter_chartjs`: 56 in `lib/` (7 of them in `lib/src/js/`), 89 in `test/` and 4
@@ -60,7 +60,7 @@ flags an import of the `src/` of another package.
   `js_object`, `js_function`, `js_math`, `js_date`) has 11 files with 1,881 lines. It contains
   `js_class` and the two fdlibm ports. Its only packages are `collection` and `clock`.
 - The other 3 files (432 lines) serve Chart.js only. `js_intl` gives `Intl.NumberFormat` on
-  package:intl (Chart.js ADR 0008). `js_promise` gives the promise jobs of Chart.js ADR 0019.
+  package:intl (Chart.js ADR 0026). `js_promise` gives the promise jobs of Chart.js ADR 0019.
   `js_webidl` gives the Canvas 2D setter conversions of Chart.js ADR 0017.
 - `JsProxyObject` (`js_array.dart:52`) models a JS `Proxy` as a Map. The Chart.js resolvers of
   `helpers.config` implement it. `jsObjectKeys` and `jsGet` test for it.
@@ -83,7 +83,7 @@ A sixth marker, `js_promise.dart:60`, is outside the closure
 **Tests.** 10 test files in `packages/flutter_chartjs/test/port/js/` test the closure. They have
 2,325 lines. Three generated files with 18,971 lines hold their reference data:
 `log10_reference.dart`, `atan2_reference.dart` and `number_to_string_reference.dart`. The x64
-generators of Chart.js ADR 0010 §2 write them. Two tests import more than the runtime.
+generators of Chart.js ADR 0032 §2 write them. Two tests import more than the runtime.
 `js_array_test.dart:2-3` imports `createResolver` of `helpers.config`. `js_date_test.dart` uses
 `flutter_test` with `@TestOn('vm')`.
 
@@ -100,14 +100,14 @@ generators of Chart.js ADR 0010 §2 write them. Two tests import more than the r
 - `tool/src/lib_imports.dart:117-137`: the pure roots of the Chart.js port. `:71-81`: the forbidden
   imports, with Chart.js ADR 0001 as the rule. `:148-151`: `package:chartjs_test_utils/pure.dart`
   in the web-test allowlist. `:154`: the theme directory.
-- The messages of `tool/src/js_semantics.dart` cite Chart.js ADR 0010 (for example `:98`, `:181`
+- The messages of `tool/src/js_semantics.dart` cite Chart.js ADR 0032 (for example `:98`, `:181`
   and `:267`).
 - Tool 1 follows only the imports of the examined package (`lib_imports.dart:424-435`). An import
   of another workspace package must be in an allowlist.
 
 **The Chart.js work.** Another session works on `flutter_chartjs` now. Commit `0baaec2`
 (2026-10-20) changed `lib/src/js/`. A move of the runtime edits 169 files of that work. It also
-changes Chart.js ADR 0010 §1, an accepted ADR. The deferred plan
+changes Chart.js ADR 0032 §1. A changed decision needs a new ADR. The deferred plan
 `packages/flutter_chartjs/doc/canvas-cuts-plan.md` cites 8 of the 169 files.
 
 ## Decision
@@ -156,7 +156,7 @@ changes Chart.js ADR 0010 §1, an accepted ADR. The deferred plan
       commit in `packages/js_semantics/README.md`.
    2. Copy the 10 tests of these files and the generators `log10_reference.mjs`,
       `atan2_reference.mjs` and `number_to_string_reference.mjs`. Run the copied generators to
-      write the copies of the three reference files (Chart.js ADR 0010 §2).
+      write the copies of the three reference files (Chart.js ADR 0032 §2).
    3. In the copy of `js_array_test.dart`, replace `createResolver` with a port-only
       `JsProxyObject`. Write the copy of `js_date_test.dart` with `package:test` and `withClock`.
    4. Give the copies the headers and markers of item 4. The copies can rewrite their doc
@@ -174,7 +174,7 @@ changes Chart.js ADR 0010 §1, an accepted ADR. The deferred plan
      commit, the maintainer or the Chart.js work agrees to the edit of
      `packages/flutter_chartjs/lib/src/js/`.
    - This ADR decides where the runtime is. It does not change what a runtime function does. The
-     rules of Chart.js ADR 0010 apply to the copies. D3 ADR 0003 states how D3 applies these
+     rules of Chart.js ADR 0032 apply to the copies. D3 ADR 0003 states how D3 applies these
      rules.
 7. **Stage 2 (the Chart.js migration).** Stage 2 is one change of the Chart.js port. The Chart.js
    work selects its time. Its revisit point is the first Chart.js phase boundary after stage 1.
@@ -196,7 +196,7 @@ changes Chart.js ADR 0010 §1, an accepted ADR. The deferred plan
    5. Remove the fdlibm targets of `flutter_chartjs` from its `tool/port_sources.yaml`. Remove
       the two old paths from the fdlibm table of `REUSE.toml`. Remove the fdlibm component from
       `packages/flutter_chartjs/LICENSE`.
-   6. Write a new ADR that supersedes Chart.js ADR 0010. It restates that ADR with the new
+   6. Write a new ADR that supersedes Chart.js ADR 0032. It restates that ADR with the new
       runtime location of §1.
    7. Update the other citations. These are AGENTS.md (Layout and the JS runtime rule), the tool
       1 allowlist of `packages/flutter_chartjs/doc/porting-flow.md` §4 and the tool messages that
@@ -217,7 +217,7 @@ changes Chart.js ADR 0010 §1, an accepted ADR. The deferred plan
      5. The pure roots, their exceptions, and the allowlists of `lib/`, of pure layers and of
         web tests.
      6. The forbidden imports with their rules, and the theme directory, or none.
-     7. The ADR names in the messages, for example `Chart.js ADR 0010`.
+     7. The ADR names in the messages, for example `Chart.js ADR 0032`.
    - The backport line takes `<owner>/<repo>` from the `url` of the `port_sources.yaml` entry
      that its `// Ported from` line names. The grammar stays that of
      [ADR 0006](0006-follow-upstream-between-releases.md) item 3.
@@ -255,8 +255,8 @@ changes Chart.js ADR 0010 §1, an accepted ADR. The deferred plan
   `package:flutter_chartjs/src/`. Each D3 user gets the Chart.js port and its Flutter layers. The
   two ports then share one release cycle.
 - **Move the runtime at once, with no stage 1.** Rejected for now. The move edits 169 files while
-  another session works on them. It also supersedes the accepted Chart.js ADR 0010 at once. Stage
-  2 gives the same end state, at a time that the Chart.js work selects.
+  another session works on them. It also needs a new ADR that supersedes Chart.js ADR 0032 at
+  once. Stage 2 gives the same end state, at a time that the Chart.js work selects.
 - **Leave `js_class.dart` out of the shared package.** Rejected. Without that file, the shared
   `js_function.dart` and `js_object.dart` differ from their Chart.js copies. The drift check then
   cannot compare them.
@@ -276,7 +276,7 @@ changes Chart.js ADR 0010 §1, an accepted ADR. The deferred plan
   Each fix of a copied file waits for an agreement with the Chart.js work.
 - New D3 builtins go only into `js_semantics`, for example the number strings of D3 ADR 0003. The
   Chart.js port can use them after stage 2.
-- Stage 1 needs the x64 build of Node.js v24.12.0 for the copied generators (Chart.js ADR 0010
+- Stage 1 needs the x64 build of Node.js v24.12.0 for the copied generators (Chart.js ADR 0032
   §2).
 - The new packages use only packages that the root `pubspec.lock` has: `analyzer` 12.1.0
   (`pubspec.lock:12-19`), `clock` 1.1.2 (`:116-123`), `collection` 1.19.1 (`:124-131`) and
@@ -288,6 +288,6 @@ changes Chart.js ADR 0010 §1, an accepted ADR. The deferred plan
   item on its roadmap.
 - Stage 2 also changes files outside the runtime: AGENTS.md, `REUSE.toml`, and the
   `porting-flow.md` §4, `differences.md`, `port_sources.yaml` and `canvas-cuts-plan.md` of the
-  Chart.js port. It adds a new ADR that supersedes Chart.js ADR 0010.
+  Chart.js port. It adds a new ADR that supersedes Chart.js ADR 0032.
 - The [D3 porting flow](../../packages/flutter_d3_port/doc/porting-flow.md) records stage 2 as a
   deferred plan (§5.1). Its roadmap puts the release model in D3 phase 8.

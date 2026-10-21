@@ -86,6 +86,63 @@ Map<String, Object?> _manifestJson() => {
 
 Manifest _manifest() => Manifest.parse(jsonEncode(_manifestJson()));
 
+/// A spec of the fixture manifest with one fixture group.
+Map<String, Object?> _fixtureSpec(String file, String name, int fixtures) => {
+  'file': file,
+  'lines': 9,
+  'fixtureGroups': [
+    {
+      'describe': [name, 'auto'],
+      'prefix': file.substring(0, file.indexOf('.')),
+      'line': 2,
+      'fixtures': fixtures,
+    },
+  ],
+  'cases': [
+    {
+      'describe': [name],
+      'it': 'works',
+      'test': 'works',
+      'line': 4,
+      'loop': false,
+      'kind': 'non-chart',
+    },
+  ],
+};
+
+/// A manifest for the fixture mode: `a.tests.js` (3 fixtures), `c.tests.js`
+/// (1 fixture, no Dart file in the tests), `d.tests.js` (1 fixture) and
+/// `h.tests.js` (a fixture group without fixtures).
+Map<String, Object?> _fixtureManifestJson() => {
+  'schema': 1,
+  'source': {'project': 'Chart.js', 'version': '4.5.1', 'commit': null},
+  'specs': [
+    _fixtureSpec('a.tests.js', 'A', 3),
+    _fixtureSpec('c.tests.js', 'C', 1),
+    _fixtureSpec('d.tests.js', 'D', 1),
+    _fixtureSpec('h.tests.js', 'H', 0),
+  ],
+  'fixtures': {
+    'items': [
+      for (final (path, spec) in [
+        ('a/one.json', 'a.tests.js'),
+        ('a/two.js', 'a.tests.js'),
+        ('a/three.js', 'a.tests.js'),
+        ('c/x.json', 'c.tests.js'),
+        ('d/y.json', 'd.tests.js'),
+      ])
+        {
+          'path': path,
+          'specs': [spec],
+        },
+    ],
+    'orphans': <Object?>[],
+  },
+};
+
+Manifest _fixtureManifest() =>
+    Manifest.parse(jsonEncode(_fixtureManifestJson()));
+
 /// JSON reporter lines for one suite of `test/specs/<file>`.
 final class _Reporter {
   final List<String> lines = [
@@ -94,17 +151,18 @@ final class _Reporter {
   ];
   var _id = 0;
   var _suite = -1;
+  var _time = 0;
 
-  void suite(String file) {
+  void suite(String file, {String folder = 'test/specs'}) {
     _suite = _id++;
     lines.add(
       jsonEncode({
         'type': 'suite',
-        'suite': {'id': _suite, 'path': '/repo/pkg/test/specs/$file'},
+        'suite': {'id': _suite, 'path': '/repo/pkg/$folder/$file'},
       }),
     );
     final loading = _id++;
-    _start(loading, 'loading /repo/pkg/test/specs/$file', [], null);
+    _start(loading, 'loading /repo/pkg/$folder/$file', [], null);
     _done(loading, 'success', hidden: true);
   }
 
@@ -130,13 +188,22 @@ final class _Reporter {
     String result = 'success',
     String? skip,
     int? line,
+    int? ms,
   }) {
     final id = _id++;
-    _start(id, fullName, groups, skip, line: line);
+    _start(
+      id,
+      fullName,
+      groups,
+      skip,
+      line: line,
+      time: ms == null ? null : _time,
+    );
     if (result == 'error') {
       lines.add(jsonEncode({'type': 'error', 'testID': id, 'error': 'boom'}));
     }
-    _done(id, result, skipped: skip != null);
+    if (ms != null) _time += ms;
+    _done(id, result, skipped: skip != null, time: ms == null ? null : _time);
   }
 
   void _start(
@@ -145,9 +212,11 @@ final class _Reporter {
     List<int> groups,
     String? skip, {
     int? line,
+    int? time,
   }) => lines.add(
     jsonEncode({
       'type': 'testStart',
+      'time': ?time,
       'test': {
         'id': id,
         'name': name,
@@ -164,9 +233,11 @@ final class _Reporter {
     String result, {
     bool hidden = false,
     bool skipped = false,
+    int? time,
   }) => lines.add(
     jsonEncode({
       'type': 'testDone',
+      'time': ?time,
       'testID': id,
       'result': result,
       'skipped': skipped,
@@ -381,7 +452,7 @@ void main() {
         status: 'partial: `minMax`',
         required: false,
       ));
-      // Chart.js ADR 0009 removes the status `verified`.
+      // The status `verified` does not exist (Chart.js ADR 0034).
       expect(requiredBy('core.legacy.tests.js', statuses), (
         status: 'verified',
         required: false,
@@ -579,6 +650,279 @@ void main() {
         'total                        4       1       0        0        3',
         '',
       ]);
+    });
+  });
+
+  group('fixture mode', () {
+    String inA(String message) => 'error: pkg/test/specs/a_test.dart$message';
+    String inTwins(String message) =>
+        'error: pkg/test/port/fixtures/twins_test.dart$message';
+    String inX(String message) => 'error: pkg/test/specs/x_test.dart$message';
+
+    test('the case mode and tool 6 exclude the fixture tests', () {
+      expect(caseTestArguments, [
+        'test',
+        '--exclude-tags',
+        'fixtures',
+        '--reporter',
+        'json',
+        'test/specs',
+      ]);
+    });
+
+    test('selects the spec files with fixtures and test/port/fixtures', () {
+      final manifest = _fixtureManifest();
+      final present = {'test/specs/a_test.dart', 'test/specs/d_test.dart'};
+      var selection = selectFixtureFiles(manifest, present.contains);
+      expect(selection.specs, ['a.tests.js', 'd.tests.js']);
+      expect(selection.absent, ['c.tests.js']);
+      expect(selection.files, [
+        'test/specs/a_test.dart',
+        'test/specs/d_test.dart',
+      ]);
+      present.add(portFixtureTests);
+      selection = selectFixtureFiles(manifest, present.contains);
+      expect(selection.files, [
+        'test/specs/a_test.dart',
+        'test/specs/d_test.dart',
+        'test/port/fixtures',
+      ]);
+      expect(fixtureTestArguments(selection.files), [
+        'test',
+        '--tags',
+        'fixtures',
+        '--reporter',
+        'json',
+        'test/specs/a_test.dart',
+        'test/specs/d_test.dart',
+        'test/port/fixtures',
+      ]);
+      expect(manifest.specs['a.tests.js']!.fixtureGroups.single.fixtures, 3);
+      expect(manifest.specs['a.tests.js']!.fixtureGroups.single.line, 2);
+    });
+
+    test('a prefix is a regular expression source', () {
+      const group = FixtureGroup(['T', 'auto'], 'scale.time');
+      expect(group.matches('scale.timeseries/a.json'), isTrue);
+      expect(group.matches('scaleXtime/a.js'), isTrue);
+      expect(group.matches('scale.time.json'), isFalse);
+      expect(group.matches('scale.time/a.png'), isFalse);
+    });
+
+    const noSubmodule =
+        'n/a: the submodule third_party/Chart.js is not checked out';
+    late _Reporter r;
+    late int aRoot;
+    late int aGroup;
+    late int aAuto;
+
+    void suiteA() {
+      r = _Reporter()..suite('a_test.dart');
+      aRoot = r.group('', null);
+      aGroup = r.group('A', aRoot);
+      aAuto = r.group('A auto', aGroup);
+    }
+
+    FixturesResult compare() => compareFixtures(
+      _fixtureManifest(),
+      parseReporterOutput(r.output),
+      ['a.tests.js'],
+      displayPrefix: 'pkg/',
+    );
+
+    test('reports passed, failed, skipped and missing fixtures', () {
+      suiteA();
+      r
+        ..test('A auto a/one.json', [aRoot, aGroup, aAuto], ms: 30)
+        ..test(
+          'A auto a/two.js',
+          [aRoot, aGroup, aAuto],
+          result: 'error',
+          line: 5,
+          ms: 70,
+        )
+        ..suite('index_test.dart', folder: 'test/port/fixtures');
+      final portRoot = r.group('', null);
+      r.test('twin', [portRoot], ms: 50);
+      final result = compare();
+      final report = result.reports.single;
+      expect(report.spec, 'a.tests.js');
+      expect(report.fixtures, 3);
+      expect(report.passed, 1);
+      expect(report.failed, 1);
+      expect(report.skippedCount, 0);
+      expect(report.missing, 1);
+      expect(result.portPassed, 1);
+      expect(result.portFailed, 0);
+      expect(describeFindings(result.findings), [
+        inA(':5: "A auto a/two.js" failed.'),
+        inA(
+          ': missing fixture "a/three.js" of '
+          'the group "A auto".',
+        ),
+      ]);
+      expect([for (final t in result.slowest) t.milliseconds], [70, 50, 30]);
+      final table = renderFixtureTable(result);
+      expect(table, contains('a.tests.js'));
+      expect(table, contains('port-only tests'));
+      expect(table, contains('The 3 slowest tests (not a gate):'));
+      expect(table, contains('70 ms  test/specs/a_test.dart: A auto a/two.js'));
+    });
+
+    test('counts the skips by reason and fails on a bad reason', () {
+      suiteA();
+      r
+        ..test(
+          'A auto a/one.json',
+          [aRoot, aGroup, aAuto],
+          skip: 'blocked: plugin.filler',
+        )
+        ..test('A auto a/two.js', [aRoot, aGroup, aAuto], skip: noSubmodule)
+        ..test(
+          'A auto a/three.js',
+          [aRoot, aGroup, aAuto],
+          skip: 'later',
+          line: 9,
+        );
+      final result = compare();
+      expect(result.reports.single.skipped, {
+        'blocked: plugin.filler': 1,
+        noSubmodule: 1,
+        'later': 1,
+      });
+      expect(describeFindings(result.findings), [
+        inA(
+          ':9: "A auto a/three.js" has the skip reason "later". '
+          "Use 'blocked: <module>', 'n/a: <reason>' or 'diverges: <row id>'.",
+        ),
+      ]);
+      expect(
+        renderFixtureTable(result),
+        contains('  skipped 1: blocked: plugin.filler'),
+      );
+    });
+
+    test('fails on unknown, repeated and ungrouped tests', () {
+      suiteA();
+      r
+        ..test('A auto a/one.json', [aRoot, aGroup, aAuto])
+        ..test('A auto /base/test/fixtures/a/one.json', [
+          aRoot,
+          aGroup,
+          aAuto,
+        ], line: 3)
+        ..test('A auto b/z.json', [aRoot, aGroup, aAuto], line: 4)
+        ..test('A auto a/two.js', [aRoot, aGroup, aAuto])
+        ..test('A auto a/three.js', [aRoot, aGroup, aAuto])
+        ..test('A works', [aRoot, aGroup], line: 6);
+      expect(describeFindings(compare().findings), [
+        inA(
+          ':3: '
+          '"A auto /base/test/fixtures/a/one.json" repeats a fixture test.',
+        ),
+        inA(
+          ':4: "A auto b/z.json" is not a '
+          'fixture of the prefix "a".',
+        ),
+        inA(
+          ':6: "A works" has the tag fixtures '
+          'but is not in a fixture group of test/specs/a.tests.js.',
+        ),
+      ]);
+    });
+
+    test('fails on a fixture group that is not called', () {
+      suiteA();
+      final result = compare();
+      expect(result.reports.single.missing, 3);
+      expect(describeFindings(result.findings), [
+        inA(
+          ': the fixture group "A auto" is not '
+          "called: add group('auto', fixture.specs('a')) "
+          '(test/specs/a.tests.js:2).',
+        ),
+      ]);
+    });
+
+    test('fails on a failed port-only test, a repeat and a hook', () {
+      r = _Reporter()..suite('twins_test.dart', folder: 'test/port/fixtures');
+      final root = r.group('', null);
+      final twins = r.group('twins', root);
+      r
+        ..test('twins x', [root, twins], result: 'failure', line: 7)
+        ..test('twins y', [root, twins], line: 8)
+        ..test('twins y', [root, twins], line: 9)
+        ..test('twins (setUpAll)', [root, twins], result: 'error', line: 2)
+        ..suite('x_test.dart');
+      final xRoot = r.group('', null);
+      r.test('X works', [xRoot], line: 3);
+      final result = compare();
+      expect(result.portPassed, 1);
+      expect(result.portFailed, 1);
+      expect(describeFindings(result.findings), [
+        inTwins(
+          ':2: setUpAll of '
+          '"twins" failed: boom',
+        ),
+        inTwins(':7: "twins x" failed.'),
+        inTwins(
+          ':9: "twins y" repeats '
+          'the name of line 8.',
+        ),
+        inX(
+          ': is not a spec file with a fixture '
+          'group of the manifest.',
+        ),
+        inA(
+          ': the fixture group "A auto" is not '
+          "called: add group('auto', fixture.specs('a')) "
+          '(test/specs/a.tests.js:2).',
+        ),
+      ]);
+    });
+
+    test('the command reports the fixtures of a results file', () async {
+      final tree = FileTree()
+        ..writeText(
+          'doc/upstream/manifest.json',
+          jsonEncode(_fixtureManifestJson()),
+        )
+        ..write('test/specs/a_test.dart', ['//'])
+        ..write('test/port/fixtures/index_test.dart', ['//']);
+      suiteA();
+      r
+        ..test('A auto a/one.json', [aRoot, aGroup, aAuto])
+        ..test('A auto a/two.js', [aRoot, aGroup, aAuto], skip: 'n/a: probe')
+        ..test('A auto a/three.js', [aRoot, aGroup, aAuto]);
+      tree.writeText('results.json', r.output);
+      final out = StringBuffer();
+      final args = [
+        '--fixtures',
+        '--results',
+        tree.path('results.json'),
+        tree.root,
+      ];
+      expect(await command.run(args, out: out), 0, reason: '$out');
+      expect(
+        out.toString(),
+        contains('test:fixtures: 3 Dart tests with the tag fixtures'),
+      );
+      expect(
+        out.toString(),
+        contains(
+          'test:fixtures: no Dart spec file for c.tests.js, d.tests.js.',
+        ),
+      );
+      expect(out.toString(), contains('test:fixtures: passed, 2 files'));
+
+      tree.writeText(
+        'results.json',
+        r.output.replaceAll('a/three.js', 'a/3.js'),
+      );
+      out.clear();
+      expect(await command.run(args, out: out), 1);
+      expect(out.toString(), contains('missing fixture "a/three.js"'));
+      expect(out.toString(), contains('test:fixtures: failed'));
     });
   });
 

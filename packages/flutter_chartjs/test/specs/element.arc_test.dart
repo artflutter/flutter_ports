@@ -3,17 +3,19 @@ import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/elements/element.arc.dart';
-import 'package:flutter_chartjs/src/js/js_math.dart' show jsAtan2, jsMin;
+import 'package:flutter_chartjs/src/js/js_math.dart'
+    show jsAtan2, jsCos, jsMin, jsSin;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:test/test.dart';
 
 // The spec constructs Chart.elements.ArcElement. Here it is the ArcElement
 // of element.arc.dart (Chart.js ADR 0017). An object literal is a Dart Map
 // literal, and the constructor writes each number as a double. `Math` is
-// dart:math, with jsAtan2 and jsMin of the JS runtime for Math.atan2 and
-// Math.min. `window.createMockContext()` is createMockContext of
-// chartjs_test_utils. A recorded call is a Map with the keys 'name' and
-// 'args'.
+// dart:math, with jsAtan2, jsMin, jsSin and jsCos of the JS runtime for
+// Math.atan2, Math.min, Math.sin and Math.cos (Chart.js ADR 0032: the inputs
+// of inRange are a hit test). `window.createMockContext()` is
+// createMockContext of chartjs_test_utils. A recorded call is a Map with the
+// keys 'name' and 'args'.
 
 /// Jasmine `toBeCloseTo(expected, precision)`: within half a unit in the
 /// `precision`-th decimal place. Jasmine's default precision is 2.
@@ -76,8 +78,8 @@ void main() {
       for (final radius in [5.0, 7.5, 10.0]) {
         for (var angle = 0.0; angle <= 360; angle += 22.5) {
           final rad = angle / 180 * math.pi;
-          final x = math.sin(rad) * radius;
-          final y = math.cos(rad) * radius;
+          final x = jsSin(rad) * radius;
+          final y = jsCos(rad) * radius;
           expect(
             arc.inRange(x, y),
             isTrue,
@@ -90,8 +92,8 @@ void main() {
       for (final radius in [4.0, 11.0]) {
         for (var angle = 0.0; angle <= 360; angle += 22.5) {
           final rad = angle / 180 * math.pi;
-          final x = math.sin(rad) * radius;
-          final y = math.cos(rad) * radius;
+          final x = jsSin(rad) * radius;
+          final y = jsCos(rad) * radius;
           expect(
             arc.inRange(x, y),
             isFalse,

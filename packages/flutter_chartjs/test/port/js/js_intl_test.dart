@@ -150,7 +150,7 @@ void main() {
   // `new Intl.NumberFormat(locale)` in the reference engine throws for
   // these locales. Thus a chart with such an `options.locale` throws in
   // `new Chart(...)`: formatNumber runs when the chart makes its tick
-  // labels. A throw is protected behavior (Chart.js ADR 0009).
+  // labels. A throw is protected behavior (Chart.js ADR 0034).
   group('jsNumberFormatLocale throws as V8', () {
     test('a TypeError for null and for a primitive item of a list', () {
       // V8: "Cannot convert undefined or null to object" for null, and

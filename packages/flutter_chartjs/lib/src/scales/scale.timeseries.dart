@@ -7,7 +7,7 @@
 /// a position, and a position back to a time, by linear interpolation
 /// between the entries.
 ///
-/// - Numbers are `double` (Chart.js ADR 0010).
+/// - Numbers are `double` (Chart.js ADR 0032).
 /// - An entry of the lookup table is a Map `{'time': time, 'pos': pos}`
 ///   (Chart.js ADR 0006): [lookupByKey] reads the entries by key. `time` can
 ///   be Dart `null`, the JS `null` timestamp of a label that the adapter

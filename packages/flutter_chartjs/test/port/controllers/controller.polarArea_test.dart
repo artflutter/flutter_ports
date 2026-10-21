@@ -39,7 +39,7 @@ import 'controller_polar_area_reference.dart';
 //
 // The reference group compares real polar area charts with the charts of
 // tool/reference/controller_polar_area_reference.mjs: a build of the pinned
-// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with a mock
+// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with a mock
 // context that measures text in Liberation Sans 2.1.5. Each chart comes from
 // acquireChart in a testWidgets case (Chart.js ADR 0022). The case runs its
 // steps and compares the observations, the hit queries and the draw calls
@@ -197,6 +197,24 @@ AnyObject _one(List<Object?> labels, List<Object?> data) => <String, Object?>{
     ],
   },
 };
+
+/// The `[datasetIndex, index]` pairs of the hit items of [mode] at
+/// ([x], [y]) with `intersect: true` and the keys of [extra].
+List<List<Object?>> _hitsAt(
+  Chart chart,
+  double x,
+  double y,
+  String mode, [
+  Map<String, Object?> extra = const {},
+]) => [
+  for (final item in chart.getElementsAtEventForMode(
+    ReferenceEvent(x, y),
+    mode,
+    <String, Object?>{'intersect': true, ...extra},
+    false,
+  ))
+    [item.datasetIndex, item.index],
+];
 
 void main() {
   testReferenceOrigin(
@@ -510,7 +528,26 @@ void main() {
       final y = arc.$animations!['y']! as animation.Animation;
       expect([x.from, x.to], [256.0, 256.0]);
       expect([y.from, y.to], [256.0, 256.0]);
-      await tester.pump(const Duration(milliseconds: 1100));
+      // At 500 ms the new arc is drawn and hit at the middle of its final
+      // area (pins_probe.out, `pin1 polarArea`). A NaN start gives x NaN and
+      // no hit in each mode.
+      await tester.pump(const Duration(milliseconds: 500));
+      expect([arc.x, arc.y], [256.0, 256.0]);
+      const qx = 168.31875913286808;
+      const qy = 168.3187591328681;
+      expect(_hitsAt(chart, qx, qy, 'point'), [
+        [0, 3],
+      ]);
+      expect(_hitsAt(chart, qx, qy, 'nearest'), [
+        [0, 3],
+      ]);
+      expect(_hitsAt(chart, qx, qy, 'nearest', {'axis': 'r'}), [
+        [0, 3],
+      ]);
+      expect(_hitsAt(chart, qx, qy, 'index', {'axis': 'r'}), [
+        [0, 3],
+      ]);
+      await tester.pump(const Duration(milliseconds: 600));
       expect([arc.x, arc.y], [256.0, 256.0]);
     });
 
@@ -553,6 +590,62 @@ void main() {
       final x = arc.$animations!['x']! as animation.Animation;
       expect(x.from, 256.0);
       expect(x.to, isNaN);
+    });
+
+    // A reset at a NaN center writes NaN, not undefined. The next animation
+    // then starts at NaN, and the arc is not drawn and not hit until it ends
+    // (pin_e2_probe.out, `E2 polarArea`; Chart.js ADR 0033).
+    testWidgets('a reset at a NaN center keeps NaN, and the next animation '
+        'starts at NaN', (tester) async {
+      final config = _one(
+        <Object?>['a', 'b', 'c', 'd', 'e'],
+        <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
+      );
+      config['options'] = <String, Object?>{
+        'animation': <String, Object?>{},
+      };
+      final chart = acquireChart(config);
+      await tester.pump(const Duration(milliseconds: 5000));
+      final meta = chart.getDatasetMeta(0);
+      final arc = meta.data[1] as Element;
+      final dataset =
+          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject;
+      (jsGet(chart.options, 'scales')! as AnyObject)['r2'] = <String, Object?>{
+        'type': 'radialLinear',
+        'position': 'left',
+      };
+      dataset['rAxisID'] = 'r2';
+      chart.update();
+      await tester.pump(const Duration(milliseconds: 5000));
+
+      chart.reset();
+      expect((meta.rScale! as types.RadialLinearScale).xCenter, isNaN);
+      final read = arc as types.ElementPropertyRead;
+      expect(read['x'], isNaN);
+      expect(read['y'], isNaN);
+
+      dataset['rAxisID'] = 'r';
+      chart.update();
+      expect((meta.rScale! as types.RadialLinearScale).xCenter, 376.0);
+      final x = arc.$animations!['x']! as animation.Animation;
+      final y = arc.$animations!['y']! as animation.Animation;
+      expect(x.from, isNaN);
+      expect(x.to, 376.0);
+      expect(y.from, isNaN);
+      expect(y.to, 256.0);
+      const qx = 411.91189405530497;
+      const qy = 267.668481707598;
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(arc.x, isNaN);
+      expect(_hitsAt(chart, qx, qy, 'nearest'), isEmpty);
+      await tester.pump(const Duration(milliseconds: 499));
+      expect(arc.x, isNaN);
+      expect(_hitsAt(chart, qx, qy, 'nearest'), isEmpty);
+      await tester.pump(const Duration(milliseconds: 600));
+      expect([arc.x, arc.y], [376.0, 256.0]);
+      expect(_hitsAt(chart, qx, qy, 'nearest'), [
+        [0, 1],
+      ]);
     });
   });
 }

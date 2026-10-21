@@ -2,7 +2,7 @@
 
 /// Port of `src/helpers/helpers.extras.ts`.
 ///
-/// Chart.js ADR 0007 decides the three scheduling helpers:
+/// Chart.js ADR 0016 decides the three scheduling helpers:
 /// - [requestAnimFrame] registers a Flutter frame callback
 ///   (`platform-request-anim-frame`, differences.md).
 /// - [throttled] calls its function at most one time in each frame, with the
@@ -44,7 +44,7 @@ String fontString(double pixelSize, String fontStyle, String fontFamily) {
 ///
 /// Registers [callback] for the next frame through
 /// [SchedulerBinding.scheduleFrameCallback], which also schedules a frame
-/// (Chart.js ADR 0007, decision 1). Returns the callback id, as
+/// (Chart.js ADR 0016, decision 1). Returns the callback id, as
 /// `window.requestAnimationFrame` does. The id is the `int` handle of
 /// [SchedulerBinding.cancelFrameCallbackWithId]. [callback] gets no frame
 /// time stamp, because the upstream callbacks take no argument.
@@ -65,7 +65,7 @@ int requestAnimFrame(void Function() callback) {
 ///
 /// The variadic `TArgs` is one type parameter [T]. A caller with more than
 /// one argument passes a record or a Flutter value type, for example
-/// `Size?` (Chart.js ADR 0007, decision 2). The upstream `thisArg` has no
+/// `Size?` (Chart.js ADR 0016, decision 2). The upstream `thisArg` has no
 /// Dart counterpart: a Dart closure takes `this` from the code around it.
 /// Each throttled function coalesces its own calls to one call in each
 /// frame.
@@ -128,7 +128,7 @@ Debounced<T> debounce<T>(void Function(T args) fn, double delay) {
 }
 
 /// The result of [debounce]: the upstream debounced function, plus
-/// [cancel] (Chart.js ADR 0007, decision 4).
+/// [cancel] (Chart.js ADR 0016, decision 4).
 ///
 /// `platform-debounce-cancel` (differences.md): upstream returns a plain
 /// function and never clears its timeout. `Chart.destroy()` calls
@@ -201,7 +201,7 @@ double textX(
 /// @private
 ///
 /// `start` and `count` are JS numbers, thus `double` values (Chart.js ADR
-/// 0010). They are always integers: list positions and lengths. The `lo`
+/// 0032). They are always integers: list positions and lengths. The `lo`
 /// and `hi` of [lookupByKey] are `int` values, which the port converts.
 /// `_parsed.slice(…)` is [_slice].
 ///

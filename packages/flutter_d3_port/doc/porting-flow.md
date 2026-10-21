@@ -159,9 +159,9 @@ number, at its gate or before it. If a later port needs the same decision, the d
 
 The D3 ADRs take rules from three Chart.js ADRs. A Chart.js ADR binds only the Chart.js port.
 Thus each D3 ADR states the rules that it takes:
-- [Chart.js ADR 0009](../../flutter_chartjs/doc/adr/0009-no-display-only-js-exactness.md): no
+- [Chart.js ADR 0034](../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md): no
   display-only JS exactness. D3 ADR 0003 names the D3 results that are not display-only.
-- [Chart.js ADR 0010](../../flutter_chartjs/doc/adr/0010-js-numeric-semantics.md): the JS
+- [Chart.js ADR 0032](../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md): the JS
   numeric rules and the reference engine. D3 ADR 0003 and D3 ADR 0004 take them.
 - [Chart.js ADR 0012](../../flutter_chartjs/doc/adr/0012-dart-file-naming.md): the upstream
   spelling of file names. D3 ADR 0002 adapts it.
@@ -219,7 +219,7 @@ decision. It changes no file before D3 phase 1. In short:
   `flutter_d3_port` depends on it. The drift check `check:js-runtime-drift` fails when a shared
   file and its Chart.js copy differ. Stage 1 changes no file of `flutter_chartjs`.
 - **Stage 2** is the Chart.js migration, one change of the Chart.js port. The Chart.js work
-  selects its time. It also writes a new ADR that supersedes Chart.js ADR 0010.
+  selects its time. It also writes a new ADR that supersedes Chart.js ADR 0032.
 - A port-only file of `js_semantics` starts with
   `// Original code, not ported from any project: <reason>.` A difference there carries
   `// DIVERGES(ecmascript): <row id>, <reason>`, with its row in
@@ -237,7 +237,7 @@ decision. It changes no file before D3 phase 1. In short:
   v7.9.0 `yarn.lock` locks older versions of these three.
 - The `d3` bundle repository is the upstream repository of ADR 0005. `d3Version = '7.9.0'` is in
   the port-only `lib/src/upstream.dart`. The 33 other repositories are the "other projects" of the
-  port, as in Chart.js ADR 0011. Each one is an entry of `tool/port_sources.yaml`.
+  port, as in Chart.js ADR 0035. Each one is an entry of `tool/port_sources.yaml`.
 - The status unit is one upstream source file. The newest tag is per repository. A bump moves one
   repository. The ledger has one section for each repository.
 - The license of the code of the port is ISC, as upstream. The ADR lists each license component
@@ -279,8 +279,8 @@ decision. It changes no file before D3 phase 1. In short:
 [D3 ADR 0003](adr/0003-number-to-string.md) (proposed) holds the decision. In short:
 - In some modules, a string is the result: d3-format, the path strings of d3-path and d3-geo,
   d3-color and d3-time-format. In these modules, JS-exact digits are behavior.
-- Thus the principle of Chart.js ADR 0009 does not exempt these strings. The ADR takes the rules
-  of Chart.js ADR 0010.
+- Thus the principle of Chart.js ADR 0034 does not exempt these strings. The ADR takes the rules
+  of Chart.js ADR 0032.
 - Evidence: the 24 d3-format test files have 168 cases with 711 `assert.strictEqual` calls, most
   of them on strings. 6 more calls are in line comments. The pilot of phase 1 compares the number strings with reference strings of
   an x64 Node.js.
@@ -290,7 +290,7 @@ decision. It changes no file before D3 phase 1. In short:
 [D3 ADR 0004](adr/0004-spec-harness.md) (proposed) holds the decision. In short:
 - The specs use `package:test` with the upstream test names. A port-only stand-in of the Node
   `assert` module and the ported `test/asserts.js` helpers keep the upstream assertions.
-- Reference values come only from an x64 build of Node.js v24.12.0 (Chart.js ADR 0010).
+- Reference values come only from an x64 build of Node.js v24.12.0 (Chart.js ADR 0032).
 - The skip reasons are `blocked:`, `n/a:` and `diverges:`.
 - The harness restores the default locales of d3-format and d3-time-format after each test. Both
   modules set a mutable default locale when they load (d3-format `src/defaultLocale.js:7`,
@@ -410,7 +410,7 @@ row.
   (`test/snapshots.js:28`).
 - d3-axis has 2 HTML snapshots. d3-contour has 2 SVG snapshots. jsdom makes them.
 - The Chart.js port compares no images
-  ([Chart.js ADR 0009](../../flutter_chartjs/doc/adr/0009-no-display-only-js-exactness.md)).
+  ([Chart.js ADR 0034](../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)).
 
 **Proposal.** The image snapshot cases skip with an `n/a` reason. A port-only smoke test draws
 the same projections through the `dart:ui` builder. Path-string goldens from a pinned world-atlas
@@ -509,7 +509,7 @@ are per repository, for example `test/asserts.js`. Thus the ported helpers go un
 and of Chrome. Thus the harness installs the zone in the test.
 
 **Reference values.** Reference values come only from an x64 build of Node.js v24.12.0 (Chart.js
-ADR 0010, D3 ADR 0004). On Apple silicon, the darwin-x64 build runs under Rosetta. The D3 tests
+ADR 0032, D3 ADR 0004). On Apple silicon, the darwin-x64 build runs under Rosetta. The D3 tests
 carry their expected values inline. Thus a reference generator is necessary only for port-only
 tests, for example the number strings of D3 ADR 0003.
 
@@ -691,8 +691,8 @@ in the same commit (AGENTS.md). The Chart.js session owns the plan. Coordinate t
 
 **ADRs.** An accepted ADR does not change. A changed decision gets a new ADR that states the
 complete decision and supersedes the old ADR. Stage 2 of ADR 0008 changes the runtime location of
-Chart.js ADR 0010 §1 and the tool 1 allowlist of the Chart.js porting flow §4. Thus stage 2 writes
-a new ADR that supersedes Chart.js ADR 0010 (ADR 0008 item 7).
+Chart.js ADR 0032 §1 and the tool 1 allowlist of the Chart.js porting flow §4. Thus stage 2 writes
+a new ADR that supersedes Chart.js ADR 0032 (ADR 0008 item 7).
 
 ## 7. Risks and open questions
 
@@ -703,7 +703,7 @@ longer applies stays in the list as closed.
 1. **Shared work with the Chart.js session.** Stage 1 of ADR 0008 changes no Chart.js file. Stage
    2 changes the runtime imports and the tools of `flutter_chartjs`. Until stage 2, a fix of a
    copied runtime file needs the agreement of the Chart.js work (ADR 0008 item 6).
-2. **Accepted Chart.js ADRs.** Stage 2 needs a new ADR that supersedes Chart.js ADR 0010
+2. **Accepted Chart.js ADRs.** Stage 2 needs a new ADR that supersedes Chart.js ADR 0032
    (section 6).
 3. **Many small upstreams.** The port has 34 repositories and 34 ledger sections. Each phase start
    applies the bump-first and commit-pin rules of ADR 0006 to each repository of the phase.

@@ -1,34 +1,35 @@
 // Original code, not ported from Chart.js: JS Math builtins with V8 semantics.
 
 /// `Math` and `Number` builtins for ported code, with the results of the
-/// reference engine of Chart.js ADR 0010: V8 13.6 in Node.js v24.12.0 on
+/// reference engine of Chart.js ADR 0032: V8 13.6 in Node.js v24.12.0 on
 /// x64.
 ///
 /// Ported code calls these instead of the `dart:math` and `num` members whose
 /// results differ from JavaScript. Numbers are `double`, as in JavaScript.
 ///
-/// [jsLog10] and [jsAtan2] are pure-Dart ports of fdlibm 5.3, so the VM,
-/// dart2js and dart2wasm give the same bits. V8 on x64 compiles fdlibm
-/// without fused multiply-add, as these ports compute. V8 on arm64 contracts
-/// to fused multiply-add, and Chrome 155 computes `Math.log`, `Math.log10`
-/// and `Math.atan2` another way, so both differ from the reference in the
-/// last bit for some inputs.
+/// [jsLog10], [jsAtan2], [jsSin] and [jsCos] are pure-Dart ports of fdlibm
+/// 5.3, so the VM, dart2js and dart2wasm give the same bits. V8 on x64
+/// compiles fdlibm without fused multiply-add, as these ports compute. V8 on
+/// arm64 contracts to fused multiply-add, and Chrome 155 computes `Math.log`,
+/// `Math.log10`, `Math.atan2`, `Math.sin` and `Math.cos` another way, so both
+/// differ from the reference in the last bit for some inputs.
 ///
 /// [jsMax] and [jsMin] take `double` operands, as `Math.max` and `Math.min`
 /// do. Ported code calls `dart:math` `max` and `min` only for `int` operands
-/// (Chart.js ADR 0010).
+/// (Chart.js ADR 0032).
 ///
-/// `Math.sin`, `Math.cos` and `Math.pow` have no port here. Ported code calls
-/// `dart:math` `sin`, `cos` and `pow` with double operands (Chart.js ADR
-/// 0010). Their last bit can differ from V8, and no chart behavior depends
-/// on it. `dart:math` `pow` gives 1 for `pow(1, NaN)` and
-/// `pow(+-1, +-Infinity)`, where JavaScript gives NaN.
+/// `Math.pow` has no port here. Ported code calls `dart:math` `pow` with
+/// double operands (Chart.js ADR 0032). `dart:math` `pow` gives 1 for
+/// `pow(1, NaN)` and `pow(+-1, +-Infinity)`, where JavaScript gives NaN. A
+/// `Math.sin` or `Math.cos` call whose result reaches only the canvas or an
+/// easing value calls `dart:math` with a `js-ok` comment (Chart.js ADR 0032).
 library;
 
 import 'dart:math' as math;
 
 import 'package:flutter_chartjs/src/js/fdlibm_atan.dart';
 import 'package:flutter_chartjs/src/js/fdlibm_log.dart';
+import 'package:flutter_chartjs/src/js/fdlibm_trig.dart';
 
 /// `Number.EPSILON`: 2^-52, the gap between 1 and the next double.
 const double numberEpsilon = 2.220446049250313e-16;
@@ -76,7 +77,7 @@ double jsToInt32(double x) {
 const bool jsMaxMinCompare = bool.fromEnvironment('dart.tool.dart2wasm');
 
 /// `Math.max(a, b)` for two doubles: NaN if [a] or [b] is NaN, and +0 for
-/// +0 and -0 in either order (Chart.js ADR 0010).
+/// +0 and -0 in either order (Chart.js ADR 0032).
 ///
 /// The results are the `dart:math` `max` results on every target (see
 /// [jsMaxMinCompare]).
@@ -92,7 +93,7 @@ double jsMax(double a, double b) {
 }
 
 /// `Math.min(a, b)` for two doubles: NaN if [a] or [b] is NaN, and -0 for
-/// +0 and -0 in either order (Chart.js ADR 0010).
+/// +0 and -0 in either order (Chart.js ADR 0032).
 ///
 /// The results are the `dart:math` `min` results on every target (see
 /// [jsMaxMinCompare]).
@@ -107,11 +108,11 @@ double jsMin(double a, double b) {
   return double.nan;
 }
 
-/// `Math.pow(x, 2)`: [x] times [x] (Chart.js ADR 0010).
+/// `Math.pow(x, 2)`: [x] times [x] (Chart.js ADR 0032).
 ///
 /// The product is correctly rounded on every target. On the reference
 /// engine, `Math.pow(x, 2)` gave the bits of `x * x` for all of 23 million
-/// probe inputs (Chart.js ADR 0010, section 4). Thus the result is the JS
+/// probe inputs (Chart.js ADR 0032, section 4). Thus the result is the JS
 /// result: NaN for NaN, +0 for -0, +Infinity for -Infinity and for overflow.
 /// On dart2wasm, `dart:math` `pow` costs about 8 times as much.
 @pragma('vm:prefer-inline')
@@ -133,3 +134,15 @@ double jsLog10(double x) => ieee754Log10(x);
 /// `Math.atan2` on the web. Both differ from V8 in the last bit for about one
 /// input in ten, and the VM differs from the web.
 double jsAtan2(double y, double x) => ieee754Atan2(y, x);
+
+/// `Math.sin(x)`: the fdlibm 5.3 sine, as V8 13.6 on x64 computes it
+/// (Chart.js ADR 0032).
+///
+/// `dart:math` `sin` calls the host C library on the VM and the browser's
+/// `Math.sin` on the web. Each differs from V8 in the last bit for some
+/// inputs, and the last bit can change the hit element of an arc chart.
+double jsSin(double x) => ieee754Sin(x);
+
+/// `Math.cos(x)`: the fdlibm 5.3 cosine, as V8 13.6 on x64 computes it
+/// (Chart.js ADR 0032).
+double jsCos(double x) => ieee754Cos(x);

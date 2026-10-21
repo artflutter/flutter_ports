@@ -14,14 +14,14 @@ import 'package:flutter_chartjs/src/kurkle_color/index.esm.dart' show RGBA;
 // DIVERGES(chartjs): js-semantics-dart-math, dart:math pow.
 double _to(double v) => v <= 0.0031308
     ? v * 12.92
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
     : math.pow(v, 1.0 / 2.4) * 1.055 - 0.055;
 
 /// srgb.js:8 `from`.
 // DIVERGES(chartjs): js-semantics-dart-math, dart:math pow.
 double _from(double v) => v <= 0.04045
     ? v / 12.92
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0010).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0032).
     : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
 
 /// srgb.js:16 `interpolate`.

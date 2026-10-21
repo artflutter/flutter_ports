@@ -132,7 +132,7 @@ void main() {
     }
   });
 
-  // Chart.js ADR 0010: ported code calls jsMax and jsMin for Math.max and
+  // Chart.js ADR 0032: ported code calls jsMax and jsMin for Math.max and
   // Math.min with double operands. The dart2wasm leg runs their comparisons,
   // the VM and dart2js legs run dart:math max and min.
   group('jsMax and jsMin', () {
@@ -208,7 +208,7 @@ void main() {
   });
 
   // The reference of the jsMax and jsMin grid: dart:math max and min give
-  // the JS results on the VM, dart2js and dart2wasm (Chart.js ADR 0010).
+  // the JS results on the VM, dart2js and dart2wasm (Chart.js ADR 0032).
   // Ported code calls them for int operands only.
   group('dart:math max and min', () {
     test('return the larger and the smaller value', () {

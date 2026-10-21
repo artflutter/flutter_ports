@@ -1,6 +1,6 @@
 # Chart.js ADR 0023: Underscore members with a colliding name
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-20
 - Related: [Chart.js ADR 0012](0012-dart-file-naming.md) (names, underscore members),
   [Chart.js ADR 0020](0020-registry-and-component-classes.md) (component classes)

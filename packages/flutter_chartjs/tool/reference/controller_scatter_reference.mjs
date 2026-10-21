@@ -14,7 +14,7 @@
 // - The pin cases of Chart.js ADR 0027, section 9 (names that start with
 //   `parsed:`, the scatter rows of the parsed-data spec, section 7.3, and
 //   the 3-read form of controller.scatter.js:128-133, decision D10 of
-//   doc/phase7-progress.md) and of Chart.js ADR 0028, section 8 (names
+//   .handover/phase7-progress.md) and of Chart.js ADR 0028, section 8 (names
 //   that start with `interfaces:`, the scatter rows of the interfaces spec,
 //   section 7.3, and the override `interaction.mode: 'point'` of
 //   controller.scatter.js:25-27). The themed run does not run them.
@@ -399,7 +399,7 @@ for (const [label, labels] of [
 
 // The override `interaction.mode: 'point'` (controller.scatter.js:25-27)
 // selects the active elements of a hover (core.controller.js
-// `_handleEvent`, Chart.js ADR 0009). The points 0 of the two datasets are
+// `_handleEvent`, Chart.js ADR 0034). The points 0 of the two datasets are
 // 1.3 px apart: the mode 'point' activates both, the mode 'nearest' of the
 // defaults activates only the point 0 of the dataset 0.
 const hoverConfig = scatter(

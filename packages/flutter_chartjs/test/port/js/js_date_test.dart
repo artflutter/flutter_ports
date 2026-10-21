@@ -6,7 +6,7 @@ import 'package:clock/clock.dart';
 import 'package:flutter_chartjs/src/js/js_date.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// jsDateNow reads clock.now() of package:clock (Chart.js ADR 0010, section
+// jsDateNow reads clock.now() of package:clock (Chart.js ADR 0032, section
 // 6). withClock and the FakeAsync zone of testWidgets replace that clock.
 
 void main() {

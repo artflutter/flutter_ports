@@ -30,7 +30,7 @@
 // results do not depend on Date.now(). The cancel() cases replace Date.now
 // with a fake clock, and they restore it at the end. The easings of the scenarios have no
 // Math.sin, Math.cos or Math.pow: the port does not emulate their last bit
-// (Chart.js ADR 0009). Check out the submodules first
+// (Chart.js ADR 0034). Check out the submodules first
 // (`dart run melos run upstream`).
 //
 // Usage, from packages/flutter_chartjs, with an x64 build of Node.js v24.12.0
@@ -39,7 +39,7 @@
 //
 //   node tool/reference/animation_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0010), and the script stops
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
 // on any other architecture.
 
 import {execFileSync} from 'node:child_process';

@@ -27,7 +27,7 @@ import 'line_reference.dart';
 // tool/reference/line_reference.mjs writes from the pinned element.line.js
 // and the mock context of chartjs-test-utils in Node.js v24.12.0 on x64. The
 // other expected values come from a probe of the same sources in the same
-// Node.js. The numbers compare with closeTo (Chart.js ADR 0009).
+// Node.js. The numbers compare with closeTo (Chart.js ADR 0034).
 //
 // Each reference case runs twice (Chart.js ADR 0018, section 6): with the
 // plain Map options of the reference, and with a LineOptions with the same

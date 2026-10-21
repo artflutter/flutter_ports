@@ -164,7 +164,7 @@ void main() {
     expect(
       _check(['final a = list.sorted(compare);']).single,
       endsWith(
-        'Array.prototype.sort is (Chart.js ADR 0010, Sort). Use jsSort.',
+        'Array.prototype.sort is (Chart.js ADR 0032, Sort). Use jsSort.',
       ),
     );
     expect(
@@ -179,7 +179,7 @@ void main() {
     );
   });
 
-  test('flags DateTime.now( from phase 5 (Chart.js ADR 0010)', () {
+  test('flags DateTime.now( from phase 5 (Chart.js ADR 0032)', () {
     expect(
       _sites([
         'final a = DateTime.now();',
@@ -194,7 +194,7 @@ void main() {
     expect(
       _check(['final a = DateTime.now();']).single,
       endsWith(
-        'Use jsDateNow, which reads clock.now() (Chart.js ADR 0010, '
+        'Use jsDateNow, which reads clock.now() (Chart.js ADR 0032, '
         'section 6).',
       ),
     );
@@ -210,6 +210,8 @@ void main() {
         'final d = other.tan(t) + jsAtan2(t, 1) + mathx.log(t);',
       ]),
       [
+        '3 math.sin(',
+        '3 math.cos(',
         '3 math.tan(',
         '4 math.asin(',
         '4 math.acos(',
@@ -222,22 +224,68 @@ void main() {
     expect(
       _sites([
         "import 'dart:math';",
-        'final a = tan(t) + x.atan(t) + log(t);',
+        'final a = tan(t) + x.atan(t) + log(t) + sin(t);',
       ]),
-      ['3 tan(', '3 log('],
+      ['3 tan(', '3 log(', '3 sin('],
     );
     expect(_sites(['final a = math.tan(t) + log(t);']), isEmpty);
   });
 
-  test('accepts dart:math sin and cos (Chart.js ADR 0010)', () {
+  test('flags dart:math sin and cos (Chart.js ADR 0032)', () {
     expect(
       _sites([
         "import 'dart:math' as math;",
-        'final a = math.sin(t) + math.cos(t);',
+        'final a = math.sin(t);',
+        'final b = math.cos(t);',
+      ]),
+      ['3 math.sin(', '4 math.cos('],
+    );
+    expect(
+      _sites([
         "import 'dart:math';",
-        'final b = sin(t) + cos(t);',
+        'final a = sin(t);',
+        'final b = cos(t);',
+      ]),
+      ['3 sin(', '4 cos('],
+    );
+  });
+
+  test('accepts a display-only sin and cos with js-ok (Chart.js ADR 0032)', () {
+    expect(
+      _check([
+        "import 'dart:math' as math;",
+        'final a = math.sin(t); // js-ok: display only (Chart.js ADR 0032)',
+        '// js-ok: display only (Chart.js ADR 0032)',
+        'final b = math.cos(t);',
+        '// js-ok: display only (Chart.js ADR 0032)',
+        'final c = math.sin(t) + math.cos(t);',
       ]),
       isEmpty,
+    );
+    expect(
+      _sites([
+        "import 'dart:math' as math;",
+        'final a = jsSin(t) + jsCos(t) + math.asin(t) + math.acos(t);',
+      ]),
+      ['3 math.asin(', '3 math.acos('],
+    );
+  });
+
+  test('names jsSin and Chart.js ADR 0032 for sin', () {
+    final finding = _check([
+      "import 'dart:math' as math;",
+      'final a = math.sin(t);',
+    ]).single;
+    expect(finding, contains('Call jsSin'));
+    expect(finding, contains('(Chart.js ADR 0032)'));
+    expect(finding, contains('the canvas or an easing value'));
+    expect(
+      _check(["import 'dart:math' as math;", 'final a = math.cos(t);']).single,
+      contains('Call jsCos'),
+    );
+    expect(
+      _check(["import 'dart:math' as math;", 'final a = math.tan(t);']).single,
+      contains('(Chart.js ADR 0032)'),
     );
   });
 

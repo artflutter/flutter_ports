@@ -3,7 +3,7 @@
 # same license and holder. The first entry is the d3 bundle, the upstream
 # repository of ADR 0005. The other 33 entries are the D3 module
 # repositories and the three repositories outside the d3 organization. They
-# are the "other projects" of the port, as in Chart.js ADR 0011.
+# are the "other projects" of the port, as in Chart.js ADR 0035.
 #
 # The pin rule (D3 ADR 0001): each repository is at the newest release tag
 # in the semver ranges of the d3 v7.9.0 package.json. A range of a module

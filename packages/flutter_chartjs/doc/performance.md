@@ -13,8 +13,8 @@
   guards ([Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md)). Section 12 has the
   date figures of phase 6 ([Chart.js ADR 0024](adr/0024-dates.md)).
 - Date: 2026-10-20
-- Related: [Chart.js ADR 0007](adr/0007-frame-scheduling.md) (frame scheduling),
-  [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md) (no display-only JS exactness).
+- Related: [Chart.js ADR 0016](adr/0016-frame-scheduling.md) (frame scheduling),
+  [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (no display-only JS exactness).
 
 This document records the profile builds of the gallery stress demo and the changes that they
 caused. The figures are averages over the first seconds of a fresh process. The figures of
@@ -49,12 +49,16 @@ the default. The other modes draw the phase 4 elements through their `draw` meth
   that move in each frame.
 - `arcs`: N `ArcElement` objects as doughnuts of 2 rings of 5 slices, with `borderWidth` 2,
   `spacing` 2 and `borderRadius` 4, and angles that move in each frame.
-- `chart` (phase 5): a real `Chart` of N points with the gallery controller
-  `StressPointController`. The points get the typed options of the resolver. Section 6 gives its
-  cases, and [Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) §8 gives its
-  acceptance.
+- `chart` (phase 5): a real `Chart` of N points. The points get the typed options of the
+  resolver. Section 6 gives its cases, and
+  [Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) §8 gives its acceptance. Phases
+  5 and 6 used the gallery controller `StressPointController` (commit `0e0ab93`). From phase 7,
+  the mode runs the ported controller of the chart type: `line` (the default) or `scatter` on two
+  hidden unit scales with the scene of phase 5, or one of the six other types
+  ([Chart.js ADR 0031](adr/0031-gallery-chart-types.md) §3 and §5).
 - `axes` (phase 6): the points of the mode `chart` on the real scales of phase 6
-  (`apps/chartjs_gallery/lib/demo/stress_axes.dart`). The x axis is a linear, logarithmic,
+  (`apps/chartjs_gallery/lib/demo/stress_axes.dart`), from phase 7 in a `LineController` chart
+  with `showLine: false`. The x axis is a linear, logarithmic,
   category or time scale. The y axis is a linear or logarithmic scale. Section 6 gives its cases.
 
 In each frame, the demo writes the moving properties of the elements with their typed setters.
@@ -348,7 +352,7 @@ recording was about half of the frame on the phone (section 4.3).
   pixel. In the test "gives the pixels of the separate draws", the largest channel difference
   from the separate draws is 46 of 255, on antialiased edge pixels. One sprite with bilinear
   sampling gave 76 of 255. This is the reason for the sub-pixel atlas. The difference is
-  display-only ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)).
+  display-only ([Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md)).
 
 - **The call size.** One `drawRawAtlas` call takes at most 512 instances. Skwasm copies the
   arrays of a call to the stack of its WebAssembly module. A call of 10000 instances overflowed
@@ -412,19 +416,45 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   `--dart-define=SECONDS=<n>` changes the time of each scenario.
   `--dart-define=MODE=<primitives|elements|bars|arcs|chart|axes>` selects the mode (section 1).
   Without `SCENARIO`, the modes `primitives` and `elements` run the six scenarios of section 2,
-  `bars` runs 1000, 5000 and 20000 bars, and `arcs` runs 100, 1000 and 5000 arcs. The modes
-  `chart` and `axes` run 1000, 5000 and 20000 chart points without labels. Each `STRESS` line
-  starts with the key `mode`.
-- **The mode `chart`** ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) §8)
-  measures a real `Chart` with the gallery controller `StressPointController`. Each case runs with
-  `animation: false`.
+  `bars` runs 1000, 5000 and 20000 bars, and `arcs` runs 100, 1000 and 5000 arcs. The mode
+  `chart` runs the counts of its chart type without labels: 1000, 5000 and 20000 items for
+  `line`, `scatter`, `bar` and `bubble`, and 100, 1000 and 5000 items for `doughnut`, `pie`,
+  `polarArea` and `radar`. The mode `axes` runs 1000, 5000 and 20000 chart points without labels.
+  Each `STRESS` line starts with the key `mode`.
+- **The mode `chart`** ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) §8,
+  [Chart.js ADR 0031](adr/0031-gallery-chart-types.md) §3 and §5) measures a real `Chart` with a
+  ported controller. Phases 5 and 6 used the gallery controller `StressPointController`. The
+  before side of an A/B is a worktree of commit `0e0ab93`, which has the class. Each case runs
+  with `animation: false`.
+  - `--dart-define=TYPE=<line|scatter|bar|bubble|doughnut|pie|polarArea|radar>` selects the
+    chart type. The default is `line`. The stress tab has the same choice in the `type` line (8
+    icon segments, keys `stress.chart.type.<name>`). `TYPE` in another mode throws an
+    `ArgumentError` at the start.
+  - `line` and `scatter` keep the scene of phase 5: `type: 'line'` with `showLine: false`, or
+    `type: 'scatter'`, with `parsing: false`, `layout.autoPadding: false`, the dataset option
+    `clip: false` and two hidden linear scales (`display: false`, `ticks.display: false`; x with
+    `suggestedMin: 0` and `suggestedMax: 1`, y with `min: 0` and `max: 1`). The reason: the x data
+    is not sorted. With these bounds, all points draw, and each pixel equals the pixel of the
+    phase 5 fraction path within 5.7e-14 px. A user `max` on x drops points with `parsing: false`.
+    `autoPadding: false` keeps the phase 5 chart area (0, 0, 800, 480 in the benchmark), and
+    `clip: false` keeps the phase 5 split of `drawMs` and of the end of the recording (section
+    13.5).
+  - The six other types use the default parsing of their controller, hidden scales with user
+    bounds (`min: 0`, `max: 1`; the radial types on `r`), one `backgroundColor`, the border color
+    `#36A2EB` and `borderWidth` 1. Doughnut and pie have no scales. The other options are the
+    upstream defaults. These cases have no before figures.
+  - `--dart-define=SHARING=<0|1>` is an alias of `TYPE`: without `TYPE`, `SHARING=0` gives
+    `scatter` (no option sharing) and `SHARING=1` gives `line` (option sharing). Thus the command
+    lines of phases 5 and 6 stay valid. With both defines, `SHARING=1` needs `TYPE=line` and
+    `SHARING=0` needs `TYPE=scatter`. Another pair throws an `ArgumentError` at the start.
+  - `--dart-define=SHOWLINE=1` shows the line of `line` and `scatter` (the toggle
+    `stress.chart.showLine` of the stress tab). With another type or in another mode, it throws an
+    `ArgumentError` at the start.
   - `--dart-define=CALL=draw` (the default) gives case (a): each frame calls `chart.draw()`.
   - `--dart-define=CALL=update` gives case (b): each frame writes new positions into the data
     objects, then calls `chart.update('none')`.
-  - `--dart-define=SHARING=0` sets `enableOptionSharing` to false, as in a scatter chart. The
-    default `SHARING=1` gives the sharing of a line chart.
-  - `--dart-define=SCRIPTABLE=1` gives the points a scriptable `backgroundColor`. With
-    `CALL=update`, it gives case (c).
+  - `--dart-define=SCRIPTABLE=1` gives the elements of each type a scriptable `backgroundColor`.
+    With `CALL=update`, it gives case (c).
   - `--dart-define=CALL=animate` gives the animation cost. The chart has
     `animation: {duration: 1000, loop: true}`. Its first update starts an animation of `x` and
     `y` of each point, which loops without end. In each frame, the animator ticks the N
@@ -432,11 +462,25 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
     without its draw. The tick includes the property writes of the animations (section 10.4).
   - The chart listens to no event (`events: []`), as the hosts of the other modes take no pointer
     input. Thus the position of the pointer does not change the figures.
-  - `SHARING`, `SCRIPTABLE` and `LINE` accept only 0 or 1. Another value throws at the start.
+  - `SHARING`, `SCRIPTABLE`, `SHOWLINE` and `LINE` accept only 0 or 1. Another value throws at
+    the start.
   - Example: `flutter run --profile -t lib/main_stress.dart --dart-define=MODE=chart
-    --dart-define=CALL=update --dart-define=SHARING=0 --dart-define=SCENARIO=5000x0`.
+    --dart-define=CALL=update --dart-define=SHARING=0 --dart-define=SCENARIO=5000x0`. The same
+    case with the new define: `--dart-define=TYPE=scatter`.
+- **The timing parts.** In the modes `chart` and `axes` and in each case of the frameless
+  benchmark, the inline plugin `StressChartTiming` (`lib/demo/stress_timing.dart`) takes four
+  parts from the hooks of the chart. The library does not change. `elements` is
+  `beforeElementsUpdate` to `beforeLayout`: `buildOrUpdateElements` of each dataset (the parse)
+  and the first `getMaxOverflow`. `layout` is the layout. `datasetsUpdate` has the dataset
+  updates, with the second `getMaxOverflow`. `datasetsDraw` is the draw of the datasets. A draw
+  without an update gives `elements`, `layout` and `datasetsUpdate` 0. The plugin adds no time
+  outside the spread (section 13.5, G7).
 - **The mode `axes`** runs the points of the mode `chart` on real scales of phase 6
-  (`lib/demo/stress_axes.dart`).
+  (`lib/demo/stress_axes.dart`). From phase 7, the chart is `type: 'line'` with
+  `showLine: false`, `parsing: false`, `layout.autoPadding: false` and the dataset option
+  `clip: false`. Thus the chart area and the split of `drawMs` of phase 6 stay. A test pins the
+  chart area, the x ticks and the rotation against `0e0ab93` for the linear, logarithmic and
+  category axes. The time axis has no pin: its ticks depend on the local time zone.
   - `--dart-define=SCALE=<linear|logarithmic|category|time>` selects the x axis (the default is
     `linear`). `--dart-define=YSCALE=<linear|logarithmic>` selects the y axis.
     `--dart-define=AUTOSKIP=0` turns off `ticks.autoSkip` of the x axis.
@@ -445,16 +489,18 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
     in order, and only the y values move. A time point has a timestamp, not an ISO text.
   - The `STRESS` line has the keys `call`, `scale`, `yScale` and `autoSkip`, the tick count
     `ticks` (after the auto skip) and the `rotation` of the x axis at the end, and the means
-    `layoutMs`, `datasetsUpdateMs` and `datasetsDrawMs`. An inline plugin of the gallery takes
-    them from the hooks of the chart. The library does not change.
+    `elementsMs`, `layoutMs`, `datasetsUpdateMs` and `datasetsDrawMs` of the timing parts.
 - `--dart-define=LINE=0` turns off the line of the modes `primitives` and `elements`. The mode
-  `chart` has no line. Thus the acceptance of Chart.js ADR 0021 §8 compares the mode `chart` in
-  case (a) with the mode `elements` with `LINE=0`.
+  `chart` of `line` without `SHOWLINE=1` has no line: the line has `borderWidth` 0
+  (`controller.line.js:63-65`). Thus the acceptance of Chart.js ADR 0021 §8 compares the mode
+  `chart` in case (a) with the mode `elements` with `LINE=0`.
 - Each `STRESS` line has the key `updateMs`: the time of `chart.update()` without its draw. It is
   0 outside the modes `chart` and `axes`. In these modes, `drawMs` is the time of `chart.draw()`,
   also of the draw inside `chart.update()`. Neither time includes the writes of the positions into the
-  data objects. In the mode `chart`, the line also has the keys `animatorMs`, `call`, `sharing`
-  and `scriptable`. With `LINE=0`, it has the key `line` with the value false.
+  data objects. In the mode `chart`, the line also has the keys `animatorMs`, `call`, `type`,
+  `sharing` (the `enableOptionSharing` of the controller of dataset 0), `scriptable`, `showLine`
+  (only when true) and the four timing parts. With `LINE=0`, it has the key `line` with the value
+  false.
 - On macOS, run one scenario in each process. In the phase 4 runs, a process that ran several
   scenarios stopped to give frames after about 28 seconds (section 8.1).
 - Take the figures from the first seconds of a fresh process (section 2.5).
@@ -466,18 +512,27 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   - After the first frame, the app runs each case for each N. It prints one line `BENCH {json}`
     for each case and N, and `BENCH done` at the end. A line has the median, p10 and p90 of
     `update('none')` without its draw, of `draw()` and of the end of the recording into a
-    `ui.PictureRecorder`. The `axes` cases also give `layout`, `datasetsUpdate` and
-    `datasetsDraw`, and `ticks` and `rotation` of the x axis.
-  - The cases: `chart.a` (draw), `chart.b` (update, with and without sharing) and `chart.c`
-    (update, scriptable), the cases (a) to (c) of the mode `chart`. For each scale type of the mode
-    `axes`, a draw case and an update case, for example `axes.time`.
+    `ui.PictureRecorder`. Each case also gives the four timing parts `elements`, `layout`,
+    `datasetsUpdate` and `datasetsDraw`. The `chart` cases give the keys `type`, `sharing` and
+    `scriptable`. The `axes` cases give `ticks` and `rotation` of the x axis.
+  - The cases, in this order: `chart.a` (draw, `line`), `chart.b` (update, `line` with sharing and
+    `scatter` without sharing) and `chart.c` (update, `line`, scriptable), the cases (a) to (c) of
+    the mode `chart`. For each scale type of the mode `axes`, a draw case and an update case, for
+    example `axes.time`. Then the 12 cases `chart.<type>` of Chart.js ADR 0031 §7: `bar`,
+    `bubble`, `doughnut`, `pie`, `polarArea` and `radar`, each with `draw` and `update`. A default
+    run thus times the cases with before figures first. The `before` lines join on `mode`, `case`,
+    `sharing`, `scriptable` and `n`.
+  - Each case has its own point counts (`ChartBenchCase.counts`): the counts of its chart type in
+    the mode `chart`, else 1000, 5000 and 20000.
   - The loop is the loop of `tool/bench/src/harness.dart`: a warm-up, a calibration, then
     batches of a fixed number of iterations. A batch figure is the mean of its iterations, so
     each batch carries its part of the garbage collection. The update cases move the points
     outside the timing.
   - Defines: `CASES` (a comma list of modes, names or `mode.name`, the default is all cases), `N`
-    (the default is `1000,5000,20000`), `BATCHES` (15), `BATCH_MS` (200) and `WARMUP_MS` (1000).
-    An unknown selector throws at the start.
+    (a comma list of counts for all cases; without it, each case runs its own counts), `BATCHES`
+    (15), `BATCH_MS` (200) and `WARMUP_MS` (1000). A selector that selects no case throws at the
+    start. The selector `chart` selects 16 cases. `CASES=a,b,c` selects the cases of Chart.js ADR
+    0021 §8, for a before/after run against `0e0ab93`.
   - Example: `flutter build apk --profile --target-platform android-arm64 -t lib/main_bench.dart
     --dart-define=CASES=c --dart-define=N=5000`. Install and start the APK, and read the lines
     with `adb logcat -d -s flutter:I`. On a cool Pixel 8a at 2.9 GHz, case c at 5000 gave an
@@ -490,6 +545,21 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
     pacing, not the noise of the core frequency between processes. Thus an A/B comparison still
     runs fresh processes in ABBA order, with a gate on the temperature and the core frequency
     (section 10.11).
+- **The A/B of phase 7** (Chart.js ADR 0031 §8). Step 7 measures three sides of the cases
+  `chart.a`, `chart.b` (sharing on and off) and `chart.c` on the Pixel 8a:
+  - A: a worktree of commit `0e0ab93` (the phase 5 config, the fraction path of
+    `StressPointController`).
+  - A': the same worktree with the bridge patch of
+    [phase7/design/gallery/spec.md](../../../.handover/phase7/design/gallery/spec.md) §6. The patch
+    changes only `apps/chartjs_gallery/lib/demo/stress_chart_config.dart`: the hidden unit scales,
+    `layout.autoPadding: false` and `clip: false`, on the scale path of `StressPointController`.
+    Check it with `git apply --check`. Before the first run, a test in the worktree confirms that
+    the pixels equal `getPixelForValue`.
+  - B: the phase 7 tree.
+  - A to A' is the cost of the hidden scales. A' to B is the cost of the ported controllers. Report
+    each pair apart, with the part `elements` of B. Each pair uses fresh processes in ABBA order,
+    the gates on the temperature and the core frequency, and a bootstrap interval. The before
+    figures are in [phase7/perf/before.md](../../../.handover/phase7/perf/before.md).
 - **Baselines.** Section 4.5 describes the plain Flutter and the Chrome canvas baselines.
 
 ## 7. Open
@@ -1949,8 +2019,8 @@ benchmark outside the repository, medians in ns for each call:
 
 ## 13. Controllers (phase 7)
 
-The figures of the decisions of phase 7. Chart.js ADRs 0027, 0028 and 0030 (proposed) give the
-evidence files. The step 7 figures on the phones come in section 13.6.
+The figures of the decisions of phase 7. Chart.js ADRs 0027, 0028, 0030 and 0031 (proposed) give
+the evidence files. The step 7 figures on the phones come in section 13.6.
 
 ### 13.1 The parsed read (Chart.js ADR 0027)
 
@@ -2095,6 +2165,22 @@ for each update of a dataset, against 1.1 ns and 0.6 ns for typed setters. The r
 - The `refresh` field of the animator (unit A1, `harness-method-fields`) is one field call for each
   frame: AOT 0.82-0.89 ns for the field call against 0.82-0.85 ns for the method call, dart2wasm
   0.337 ns against 0.336 ns (ADR 0029 Evidence E6). No frame effect. A1 took no new measurement.
+- The cost of one fixture test (ADR 0029 Evidence E5, 300 tests): an empty `testWidgets` 2.2 ms,
+  with `acquireChart` 4.9 ms, with the frame of `pumpFrame` 5.5 ms, a skipped `test()` 0.04 ms.
+- The first full run of `test:fixtures` (step 4, F-int, 2026-10-21, Apple M3 Max, with the
+  submodule and `FIXTURES_REQUIRED=1`): 565 tests with the tag `fixtures` in 20 spec files and
+  `test/port/fixtures/moment_twins_test.dart` (529 fixtures and 36 twins) in 6.2 s wall time, with
+  the compile. 457 fixtures and 36 twins pass, 72 fixtures skip. The 10 slowest tests take 243-281
+  ms each: each is the first chart of its test file (for example
+  `controller.scatter/showLine/changed.js` 281 ms, `controller.line/borderCapStyle/scriptable.js`
+  269 ms, `controller.polarArea/angle-array.json` 264 ms). The other tests take a few ms each.
+  The H units measured about 1 s for the 140 tests of the three radial prefixes and less than 1 s
+  for the 98 tests of `controller.bar`, `controller.bubble` and `controller.scatter`.
+- `test --no-select` excludes the tag. Thus the fixtures add only the compile of the registry
+  import to the default run (0.24-0.37 s for 20 test files, ADR 0029 Evidence E4).
+- Open (ADR 0029 Open item 2): when the hand ports of phase 8 make the import of
+  `test/fixtures/index.dart` cost more than 4 s for each run of `test:fixtures` with `-j 1`, each
+  spec file imports a registry of its own prefix.
 
 ### 13.4 The writable `DatasetController.ctx` (Chart.js ADR 0030)
 
@@ -2111,9 +2197,44 @@ for each update of a dataset, against 1.1 ns and 0.6 ns for typed setters. The r
   `controller_polar_area_reference.dart` 44 cases in 1,600,128 bytes and
   `controller_radar_reference.dart` 16 cases in 1,029,531 bytes. Wave 3:
   `controller_scatter_reference.dart` 17 cases in 1,324,744 bytes and
-  `controller_pie_reference.dart` 8 cases in 511,303 bytes. Each file is below 2.5 MB.
+  `controller_pie_reference.dart` 8 cases in 510,783 bytes (511,303 bytes before the pie data
+  `[5, 15, 10, 20]` of Chart.js ADR 0032). Each file is below 2.5 MB.
 - The bar `draw` reads `ctx` for each bar, as `controller.bar.js:677`. A read before the loop is
   0.36 ns faster for each bar on AOT and 0.25 ns slower on wasm (ADR 0030 Open 3, section 13.7).
+
+### 13.5 The stress chart of phase 7 (Chart.js ADR 0031)
+
+The figures of the decision for the config of the stress mode `chart` (section 6). The Dart
+figures come from `flutter test` (JIT) or from dart2wasm, the Node.js figures from the x64 Node.js
+v24.12.0 and the Chart.js build at the pin. The Node.js times are relative only. The ADR Evidence
+gives the commands and the files. The phone figures of step 7 come in section 13.6.
+
+| Id | Probe | Result |
+|---|---|---|
+| J2 | Node.js, 5000 points, 600 frames with bounces, `update('none')` in each frame | The chosen form (x `suggestedMin`/`suggestedMax`, y `min`/`max`, `parsing: false`, `autoPadding: false`, `clip: false`, `ticks.display: false`): chart area 0, 0, 800, 480, no dataset clip, x range 0 to 1, all points draw, pixel error 5.7e-14 px against the fraction path. x `max: 1 + 2^-20`: all points draw, error 7.6e-4 px. The default padding and clip: chart area 5, 5, 795, 475. Bounds on x and y with `parsing: false`: 5000 points (line) and 2500 points (scatter) do not draw. |
+| G1 | Dart, the phase 5 config against the hidden unit scales | With `autoPadding: false` and `clip: false`, the chart area is 0, 0, 800, 480 on both sides, and the pixels are equal within 5.7e-14 px. Without `autoPadding: false`, the area is 5, 5, 795, 475. |
+| G2 | Dart, 5000 points, 600 frames | `parsing: false` with x `max: 1` gives up to 1250 points with `skip` or a wrong pixel. With parsing, or with a bound that no point reaches, 0. |
+| G3, J3 | Dart, `update('none')` at 20000 points with sharing | The phase 5 fraction path 0.94-0.99 ms, the hidden unit scales with `parsing: false` 1.59 ms, the same with `parsing: true` 6.4-6.99 ms. The draw after a parsed update is 4.80 ms against 3.93 ms (garbage collection). The draw of the chosen form equals the phase 5 draw: 3.69 against 3.71 ms (JIT), 3.61 against 3.65 ms (wasm). The update costs 0.14-0.6 ms more than phase 5 at 1000-20000 points: the layout of the two hidden scales and `getPixelForValue`. |
+| G4 | Dart | `ticks.display: false` on the two hidden scales saves 0.03-0.07 ms of each update (no auto skip, `core.scale.js:457`). |
+| G5 | Dart JIT | The `getMaxOverflow` loop of scatter adds 0.20, 0.93 and 4.69 ms to an update of 1000, 5000 and 20000 points without sharing. This is upstream work (`controller.scatter.js:156-166`) that `StressPointController` did not do. |
+| G6 | Dart JIT, mode `axes` | A dataset clip of 5 px moves the circle flush into `draw()`: `drawMs` grows by 24 % at 20000 points (3.91 to 4.84 ms). The sum of the draw and the end changes by 3 %. Thus `clip: false` keeps the phase 6 split. |
+| G7 | Dart JIT | The timing plugin `StressChartTiming` adds no time outside the spread: at 20000 points, update 1.516 against 1.492 ms, draw 3.806 against 3.858 ms. |
+| G8 | Node.js | With `parsing: false`, a radar chart has `iScale` and `vScale` both `r`. `getMinMax(r)` then reads only the first and the last value, and the range is wrong. `min` and `max` on `r` give the correct range. Thus the radial types have bounds on `r`. |
+
+- E5b (Node.js): a hidden category axis with `ticks.display` true costs 24.0 ms for an update of
+  5000 bars, against 9.4 ms without the ticks. Thus each hidden scale of the type cases has
+  `ticks.display: false`. An indexable `backgroundColor` of 7 colors gives 12.5 ms for an update
+  of a doughnut of 1000 arcs, against 1.0 ms with one color. Thus the type cases have one color.
+- After the gallery change, the chart areas of the mode `axes` and of the cases `axes.*` equal
+  those of `0e0ab93` for the linear, logarithmic and category axes (a test of the gallery). Thus
+  the phase 6 figures of sections 11.6 and 11.7 stay comparable for the chart area.
+- The cases `chart.doughnut` and `chart.pie` draw arcs of the full chart area: the dataset of
+  these types has no `radius` (the doughnut option `radius` is `'100%'`,
+  `controller.doughnut.js:229`). Measure them only on a tree with this fix (review G-U2, F1).
+- The before figures of the cases `chart.a`, `chart.b`, `chart.c` and `axes.*` and of the stress
+  modes `chart` and `axes` are in
+  [phase7/perf/before.md](../../../.handover/phase7/perf/before.md) (commit `0e0ab93`). Step 7
+  (G-U6) measures the sides A, A' and B of section 6 and writes section 13.6.
 
 ### 13.7 Open: the controllers
 
@@ -2157,4 +2278,90 @@ for each update of a dataset, against 1.1 ns and 0.6 ns for typed setters. The r
    (item 7). D11 adds a null check of `xCenter` and `yCenter` in `getPointPosition` and in the
    polar area `updateElements`, and `jsToString` in place of `jsNumberToString` in
    `toggleDataVisibility` (not a hot path). Each form is the only form with the upstream behavior.
-   No unit measured them.
+   Section 13.9 measures the null check of the centers: 0.5-0.9 ns for each
+   `getPointPositionForValue` call on AOT, +0.2 to +10 ns on dart2wasm by kernel, and 3-5 ns less
+   for each radar item on dart2wasm. No unit measured `jsToString` in `toggleDataVisibility` (not
+   a hot path). `getPointPosition` calls `jsSin` and `jsCos` in each radial draw (Chart.js ADR
+   0032, figures in section 13.8).
+
+### 13.8 Sine and cosine (Chart.js ADR 0032)
+
+`jsSin` and `jsCos` (`lib/src/js/fdlibm_trig.dart`, form a2) replace `dart:math` at the 20
+protected calls. The 52 display-only calls keep `dart:math`.
+
+Micro figures of the decision (Chart.js ADR 0032, Alternatives considered): ns for each call,
+direct calls, 4,096 inputs, best of 15 rounds, two runs, Apple M3 Max, Dart 3.12.2. The arc range
+is `[-π/2, 3π/2)`. dart2wasm and dart2js run in Node.js v24.12.0 arm64.
+
+| Target | Range | `dart:math` sin / cos | a1 sin | a2 sin / cos | C sin / cos | v2 sin / cos |
+|---|---|---|---|---|---|---|
+| AOT | arc | 3.6 / 3.3 | 10.6-11.0 | 9.8 / 9.9-10.0 | 8.7-8.9 / 9.3-9.4 | 16.0-16.1 / 15.9-16.2 |
+| AOT | \|x\| < π/4 | 3.3 / 3.3 | 6.7 | 6.9-7.8 / 5.9-6.5 | 5.0 / 5.7-6.1 | 6.5-6.6 / 11.1-11.2 |
+| dart2wasm | arc | 20.9-21.3 / 22.3-22.8 | 19.8-20.5 | 14.7-14.9 / 15.4-15.8 | 8.1-8.3 / 9.5-9.6 | 30.0-30.6 / 28.7-29.4 |
+| dart2wasm | \|x\| < π/4 | 11.1 / 15.0 | 4.2 | 4.2 / 5.8-5.9 | 4.1 / 12.8-13.0 | 10.5 / 16.5-16.8 |
+| dart2js | arc | 5.9 / 6.1 | 22.5 | 19.8 / 19.0 | 13.4 / 14.4 | 23.4 / 23.4 |
+| dart2js | \|x\| < π/4 | 2.7 / 3.2 | 7.3 | 7.3 / 9.0 | 9.5 / 14.2 | 7.1 / 16.1 |
+
+- Chrome 155 with dart2wasm: `dart:math` `sin` 6.6 ns, a2 10.5 ns for chart angles (+3.9 ns).
+  On dart2wasm in Node.js, `dart:math` calls the JS `Math.sin` through a slow import, so the port
+  is faster there.
+- The committed file against the a2 candidate (the same bench, two runs; scratchpad
+  `trig/impl/bench_*.out`): AOT arc sin 9.46-9.52 ns (a2 9.84-10.03 ns, `dart:math` 3.34-3.36
+  ns), cos 9.50-9.63 ns; dart2wasm arc sin 15.13 ns (a2 14.77 ns), cos 15.45 ns; dart2js arc
+  sin 20.26 ns (a2 19.78 ns). The differences are within the spread. The committed file gives 0
+  mismatches against x64 V8 on 5,691,981 inputs on AOT, dart2wasm and dart2js.
+- The Pixel 8a (draft P, AOT, bionic): `dart:math` 9.92-10.08 ns in the arc range, form C
+  23.29-24.02 ns (+13.7 ns). a2 was not measured on the phone.
+- The calls for each phase (draft P, upstream `Math.sin` and `Math.cos`, protected and display
+  calls): one hit query over 1000 arcs, 2,000 calls (`getCenterPoint`); a radar update of 12
+  labels and 50 datasets, 1,538 calls (`getPointPosition` 1,512, `updateLimits` 24, `_tickSize`
+  2); a radar draw, 264 calls (`getPointPosition`); a line or bar update, 14 protected calls
+  (`fit`, `_tickSize`, `computeTickLimit`). The draw paths with many calls (`drawPointLegend`
+  60,000 for each frame of a 10,000-point `triangle` line, the arc draw and path code 11,000 for
+  1000 arcs) keep `dart:math`.
+- Cost: one hit query over 1000 arcs, about 12 µs on AOT M3 and 27 µs on the Pixel 8a (form C);
+  one radial scale draw, at most 4.4 µs, 0.03 % of a 16.7 ms frame.
+- No frame figure yet (Chart.js ADR 0032, Open 2). The frame figures move to step 7 of phase 7,
+  the performance step. They are an item of that step, next to unit G-U6 of the phase 7 work plan
+  ([phase7/design/work-plan.md](../../../.handover/phase7/design/work-plan.md) §6). Decision D19
+  of [phase7-progress.md](../../../.handover/phase7-progress.md) adds the item to step 7. The start
+  of step 7 is the trigger. Then the gallery bench of §6 measures the radar, polar area and arc hit
+  cases on the Pixel 8a and in Chrome with dart2wasm, and this section records the frame, draw
+  and raster figures.
+
+### 13.9 The radial centers (Chart.js ADR 0033)
+
+`xCenter` and `yCenter` stay `double?` (decision D11 item a). The reads are
+`xCenter ?? double.nan` in arithmetic and canvas calls.
+
+Microbenchmark of the forms (ADR 0033 Alternatives; Apple M3 Max, Dart 3.12.2; ns for each call or
+item; the range of 3 process medians of 15 samples; wasm on Node.js v24.12.0 arm64, V8 as in
+Chrome):
+
+| Kernel | A `double?` | N `double` | S `Object?` | F flag | R by name |
+|---|---|---|---|---|---|
+| `getPointPositionForValue`, AOT | 10.61-11.03 | 10.06-10.18 | 11.08-11.41 | 10.05-10.36 | 10.06-10.17 |
+| `getPointPositionForValue`, wasm | 18.43-19.01 | 18.11-18.31 | 18.35-18.97 | 17.96-18.37 | 18.04-18.32 |
+| radar properties, default, AOT | 97.08-98.62 | 96.55-96.88 | 96.66-99.09 | 95.77-99.01 | 94.65-97.91 |
+| radar properties, default, wasm | 64.71-66.30 | 67.92-69.01 | 93.35-97.48 | 70.11-71.29 | 68.97-70.59 |
+| radar properties, reset, AOT | 94.23-97.57 | 92.89-95.44 | 95.34-98.00 | 99.09-102.77 | 92.31-96.39 |
+| radar properties, reset, wasm | 63.60-64.75 | 67.18-69.04 | 92.90-96.93 | 68.89-71.45 | 73.53-76.64 |
+| polar area properties, AOT | 161.41-163.21 | 161.47-162.95 | 161.72-162.48 | 159.06-161.98 | 158.27-161.51 |
+| polar area properties, wasm | 61.29-61.89 | 64.11-64.55 | 61.44-63.16 | 61.60-62.58 | 62.05-62.42 |
+
+- The replica of `getPointPositionForValue` with `getIndexAngle` behind the interface: AOT A
+  54.2-54.7 ns, N 53.7-53.9 ns; wasm A 75.9-77.7 ns, N 68.5-69.5 ns. A re-run under machine load
+  gave A +1.2 to +7.6 ns against N on wasm.
+- The update denominator: a real `chart.update()` with 1000 items (JIT, `animation: false`,
+  median of 25) costs 33.58 µs for each radar item and 4.33 µs for each polar area item.
+- A small inlined AOT kernel (`bench_pos.dart`) showed 12 ns when `?? double.nan` is inside the
+  record literal (19.2-21.5 ns against 7.7-9.1 ns). The replica and the real code under JIT (60 ns
+  for both forms) do not show it.
+- Scripts (ADR 0033 Evidence E5, in the session scratchpad):
+  `trig/radial-center-performance/bench/bench.dart` (`aot.out`, `wasm.out`),
+  `update_cost_test.dart` (`update_cost.out`),
+  `trig/radial-center-simplicity/bench/bin/bench_replica.dart` and `bench_pos.dart`
+  (`aot_replica.out`, `wasm_replica.out`, `aot_pos.out`), `jit_bench.out`, and the judge re-runs
+  in `trig/radial-center-judge/`.
+- No frame figure. The form keeps the structure, so the microbenchmark is sufficient (Chart.js ADR
+  0020 §13).

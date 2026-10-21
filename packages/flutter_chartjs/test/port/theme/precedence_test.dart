@@ -11,6 +11,7 @@ import 'package:flutter_chartjs/src/core/core.datasetController.dart';
 import 'package:flutter_chartjs/src/core/core.defaults.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/core/core.scale.dart';
+import 'package:flutter_chartjs/src/elements/element.point.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.core.dart'
     show resolveObjectKey;
 import 'package:flutter_chartjs/src/helpers/helpers.options.dart' show toFont;
@@ -45,6 +46,11 @@ import 'precedence_reference.dart';
 // creates no axis), and the singleton read at scale.radialLinear.js:14
 // (theming.md §9).
 //
+// The phase 7 row of theming.md §10 adds §8 test 5 on the real bar and
+// doughnut controllers, and the group `hover` on the 8 chart types
+// (Chart.js ADR 0030, sections 9 and 10). flutter_test_config.dart
+// registers the 8 controllers with the built-in components.
+//
 // main() registers two dataset controllers with a point element
 // (`themeTest` and `themeTest2`), the scale `themeLinear` and the plugin
 // `themeProbe` through their class values and Maps, before the snapshot of
@@ -52,9 +58,9 @@ import 'precedence_reference.dart';
 // section 8). For the real scales, it also registers the category, linear
 // and radial linear scales, two dataset controllers `themeReal` and
 // `themeReal2` with these scales, and the radial test controller
-// `themeRadial`: lib/src/index.dart does not register the scales yet. The
-// radar controller comes in phase 7. The built-in elements come from
-// flutter_test_config.dart. Each chart comes from acquireChart of the
+// `themeRadial`. The scales are built-in components now, and the second
+// registration changes nothing. The built-in elements and the 8 controllers
+// come from flutter_test_config.dart. Each chart comes from acquireChart of the
 // harness (Chart.js ADR 0022). The theme Map goes into the raw configuration
 // under `$theme`, as the chart widget of phase 9 puts it there (theming.md
 // §3.1).
@@ -694,6 +700,120 @@ List<String> _axes(String type, Object? theme) {
     jsObjectKeys(chart.options['scales']! as AnyObject).join(','),
   );
   observe('config scales', chart.config.options['scales']);
+  return lines;
+}
+
+/// The raw Map theme of the group `hover` (Chart.js ADR 0030, section 10):
+/// the color tokens `color`, `borderColor` and `backgroundColor`. The
+/// generator writes the values that they replace into `defaults` for its
+/// upstream run (theming.md §4).
+const AnyObject _hoverTheme = <String, Object?>{
+  'colors': <String, Object?>{
+    'color': (alpha: 1.0, red: 0.2, green: 0.4, blue: 0.6),
+    'borderColor': (alpha: 0.5, red: 0.0, green: 0.5, blue: 0.0),
+    'backgroundColor': (alpha: 1.0, red: 200 / 255, green: 0.0, blue: 0.0),
+  },
+};
+
+/// The 8 chart types of phase 7, in code unit order.
+const List<String> _chartTypes = [
+  'bar',
+  'bubble',
+  'doughnut',
+  'line',
+  'pie',
+  'polarArea',
+  'radar',
+  'scatter',
+];
+
+/// The data of the hover chart of the type [type] in the generator: one
+/// dataset with three values.
+AnyObject _hoverData(String type) => switch (type) {
+  'scatter' || 'bubble' => <String, Object?>{
+    'datasets': [
+      <String, Object?>{
+        'data': <Object?>[
+          for (final (x, y) in [(1, 2), (5, 8), (9, 4)])
+            <String, Object?>{'x': x, 'y': y, if (type == 'bubble') 'r': 5},
+        ],
+      },
+    ],
+  },
+  _ => <String, Object?>{
+    'labels': <Object?>['a', 'b', 'c'],
+    'datasets': [
+      <String, Object?>{
+        'data': <Object?>[3, 5, 2],
+      },
+    ],
+  },
+};
+
+/// The observed options of [element] in the hover scenarios: the keys of
+/// `hoverOptions` of the generator, in its order.
+AnyObject _hoverOptions(Element element) {
+  final o = element.options;
+  return <String, Object?>{
+    for (final key in [
+      'backgroundColor',
+      'borderColor',
+      'borderWidth',
+      'hoverBackgroundColor',
+      'hoverBorderColor',
+      if (element is PointElement) 'radius',
+    ])
+      key: jsGet(o, key),
+  };
+}
+
+/// The rounded center of the element [index] of the dataset 0 of [chart]:
+/// `Math.round` of each coordinate of `getCenterPoint()`, as the generator
+/// gives it to `_eventHandler`.
+AnyObject _hoverPoint(Chart chart, int index) {
+  final center = (_point(chart, index) as types.VisualElement).getCenterPoint();
+  // Math.round: floor(x + 0.5).
+  double round(Object? value) => (jsToNumber(value) + 0.5).floorToDouble();
+  return <String, Object?>{'x': round(center.x), 'y': round(center.y)};
+}
+
+/// The observations of the scenario `hover <type>` of the generator: the
+/// chart of the type [type] with the compiled [_hoverTheme], a `mousemove`
+/// at the element 0, a `mousemove` at the element 1 and a `mouseout`. After
+/// each step, the active elements of `getActiveElements()` and the options
+/// of both elements.
+Future<List<String>> _hover(String type) async {
+  final lines = <String>[];
+  void observe(String label, Object? value) =>
+      lines.add('$label: ${_text(value)}');
+
+  final chart = acquireChart(<String, Object?>{
+    'type': type,
+    'data': _hoverData(type),
+    'options': <String, Object?>{},
+    themeConfigKey: compileChartTheme(_hoverTheme),
+  });
+  Future<void> step(String eventType, AnyObject point) async {
+    await triggerMouseEvent(chart, eventType, point);
+    final active = chart.getActiveElements();
+    for (final item in active) {
+      // The active element is the element of its index in the meta.
+      expect(
+        item.element,
+        same(chart.getDatasetMeta(item.datasetIndex).data[item.index.toInt()]),
+      );
+    }
+    observe('active', [
+      for (final item in active) [item.datasetIndex, item.index],
+    ]);
+    observe('element 0', _hoverOptions(_point(chart)));
+    observe('element 1', _hoverOptions(_point(chart, 1)));
+  }
+
+  await step('mousemove', _hoverPoint(chart, 0));
+  final second = _hoverPoint(chart, 1);
+  await step('mousemove', second);
+  await step('mouseout', second);
   return lines;
 }
 
@@ -1669,11 +1789,11 @@ void main() {
   });
 
   group('test 5: a theme scale type creates no axis', () {
-    // theming.md §3.3 and §8 test 5, the part without the controllers of
-    // phase 7. Key enumeration of a resolver reads only its first scope
-    // (helpers.config.ts:73-75). The cartesian test controller stands for
-    // the bar controller, and the radial test controller for the radar
-    // controller.
+    // theming.md §3.3 and §8 test 5. Key enumeration of a resolver reads
+    // only its first scope (helpers.config.ts:73-75). The first cases use
+    // the test controllers: the cartesian test controller and the radial
+    // test controller pin the generic path. The cases of Chart.js ADR 0030,
+    // section 9, use the real bar and doughnut controllers.
     for (final (name, type, theme) in <(String, String, Object?)>[
       ('axes of a cartesian chart without a theme', 'themeReal', null),
       (
@@ -1725,5 +1845,95 @@ void main() {
         expect(_prototype(name, 'scales'), 'x,y');
       },
     );
+
+    // Chart.js ADR 0030, section 9: the bar chart keeps the axes x and y of
+    // its overrides, and the doughnut chart gets no axis.
+    const redTicks = <String, Object?>{
+      'ticks': <String, Object?>{'color': 'red'},
+    };
+    for (final (name, type, theme) in <(String, String, Object?)>[
+      ('axes of a bar chart without a theme', 'bar', null),
+      (
+        'axes of a bar chart with a radialLinear theme key',
+        'bar',
+        <String, Object?>{
+          'scales': <String, Object?>{
+            'radialLinear': <String, Object?>{
+              'pointLabels': <String, Object?>{'color': 'red'},
+              'angleLines': <String, Object?>{'color': 'red'},
+            },
+          },
+        },
+      ),
+      (
+        'axes of a bar chart with the light preset',
+        'bar',
+        compileChartTheme(ChartThemes.light),
+      ),
+      ('axes of a doughnut chart without a theme', 'doughnut', null),
+      (
+        'axes of a doughnut chart with cartesian theme keys',
+        'doughnut',
+        <String, Object?>{
+          'scale': redTicks,
+          'scales': <String, Object?>{'category': redTicks, 'linear': redTicks},
+        },
+      ),
+      (
+        'axes of a doughnut chart with the light preset',
+        'doughnut',
+        compileChartTheme(ChartThemes.light),
+      ),
+    ]) {
+      testWidgets(name, (tester) async {
+        final observed = _axes(type, theme).join('\n');
+        expect(observed, themePrecedencePrototype[name]);
+        if (theme == null) expect(observed, themePrecedenceUpstream[name]);
+        expect(_prototype(name, 'scales'), type == 'bar' ? 'x,y' : isEmpty);
+      });
+    }
+  });
+
+  group('hover', () {
+    // Chart.js ADR 0030, section 10. The oracle is upstream with the values
+    // that the hover theme replaces in `defaults`, the method of the group
+    // 'a compiled theme on a radial chart'. The generator stops when the
+    // prototype with the compiled theme gives other lines. The positions
+    // come from the mock measureText of the generator. Thus each side hovers
+    // the center of its own elements, and the lines have no position.
+    test('the hover theme compiles to the theme of the generator', () {
+      expect(
+        _json(compileChartTheme(_hoverTheme)),
+        _prototype('hover theme', 'theme'),
+      );
+    });
+
+    for (final type in _chartTypes) {
+      testWidgets('hover $type gives the options of the replaced values', (
+        tester,
+      ) async {
+        expect(
+          (await _hover(type)).join('\n'),
+          themePrecedenceUpstream['hover $type'],
+        );
+        expect(
+          themePrecedencePrototype['hover $type'],
+          themePrecedenceUpstream['hover $type'],
+        );
+      });
+    }
+
+    testWidgets('the active bar background is #B40000', (tester) async {
+      // theming.md §3.2: getHoverColor of rgb(200, 0, 0)
+      // (core.defaults.js:62-64).
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': _hoverData('bar'),
+        'options': <String, Object?>{},
+        themeConfigKey: compileChartTheme(_hoverTheme),
+      });
+      await triggerMouseEvent(chart, 'mousemove', _hoverPoint(chart, 0));
+      expect(jsGet(_point(chart).options, 'backgroundColor'), '#B40000');
+    });
   });
 }

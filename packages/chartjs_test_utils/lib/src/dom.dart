@@ -18,7 +18,8 @@
 ///   the task of the write, as the `MutationObserver` records do.
 /// - [setTimeout] makes a harness task on `clock.now()`. [pumpFrames] and
 ///   [waitForDone] pump frames of [frameInterval] and run the due tasks
-///   between the pumps.
+///   between the pumps. [pumpFrame] runs the due tasks and pumps one frame
+///   (the fixture runner, Chart.js ADR 0029).
 /// - [afterEachChart] registers a function that the unmount of the body
 ///   calls: `releaseCharts` (`harness-release-at-unmount`).
 ///
@@ -525,6 +526,14 @@ final class _Harness {
   final List<_Task> tasks = [];
   int taskOrder = 0;
 
+  /// Whether a [pumpFrames] loop holds the pump: it drains the microtasks,
+  /// runs the due tasks or pumps a frame.
+  bool pumping = false;
+
+  /// The step that a waiting [pumpFrames] loop awaits. The loop that holds
+  /// the pump completes it after each step.
+  Completer<void>? step;
+
   TestWidgetsFlutterBinding get binding =>
       TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -573,6 +582,8 @@ final class _Harness {
     rebuildWaits = false;
     mutationWaits = false;
     tearDownRegistered = false;
+    pumping = false;
+    step = null;
     tasks.clear();
     for (final host in standbyHosts.values) {
       host.dispose();
@@ -1248,22 +1259,60 @@ Future<void> _runDueTasks() async {
 /// advances the fake clock and runs the frame callbacks, the build, the
 /// layout and the paint: the order of the HTML event loop. After
 /// [specTimeout] of fake time, it fails with the Jasmine timeout message.
+///
+/// Only one loop holds the pump at a time. A loop that starts while another
+/// loop holds it (the fixture runner settles a `run` hook that awaits
+/// `triggerMouseEvent`) does not drain and does not pump: it awaits each
+/// step of the other loop and then tests [condition]. Two loops that drain
+/// at the same time wait for each other without end, because the await of
+/// each drain is a microtask that the other drain counts. A waiting loop
+/// does not test the timeout: the loop that holds the pump has its own.
+/// When that loop ends, the waiting loop takes the pump.
 Future<int> pumpFrames(bool Function() condition) async {
-  final binding = _harness.binding;
+  final harness = _harness;
+  final binding = harness.binding;
   final end = clock.now().add(specTimeout);
   var frames = 0;
   while (true) {
-    await _runDueTasks();
-    if (condition()) return frames;
-    if (!clock.now().isBefore(end)) {
-      fail(
-        'Timeout - Async function did not complete within '
-        '${specTimeout.inMilliseconds}ms',
-      );
+    if (harness.pumping) {
+      await (harness.step ??= Completer<void>()).future;
+      if (condition()) return frames;
+      frames++;
+      continue;
     }
-    await binding.pump(frameInterval);
-    frames++;
+    harness.pumping = true;
+    try {
+      await _runDueTasks();
+      if (condition()) return frames;
+      if (!clock.now().isBefore(end)) {
+        fail(
+          'Timeout - Async function did not complete within '
+          '${specTimeout.inMilliseconds}ms',
+        );
+      }
+      await binding.pump(frameInterval);
+      frames++;
+    } finally {
+      harness.pumping = false;
+      final step = harness.step;
+      harness.step = null;
+      step?.complete();
+    }
   }
+}
+
+/// One frame for the image load task of the fixture runner (Chart.js ADR
+/// 0029, section 7): runs the due harness tasks, and then one pump of
+/// [frameInterval] with the frame callbacks, the build, the layout and the
+/// paint.
+///
+/// `fixture.js:57` loads the PNG in a later task. The port compares no image
+/// (Chart.js ADR 0034, section 4). Thus this frame stands for that task, and
+/// it puts the paint of the chart into each smoke test
+/// (`harness-fixture-frame`).
+Future<void> pumpFrame() async {
+  await _runDueTasks();
+  await _harness.binding.pump(frameInterval);
 }
 
 /// Runs [spec] with a Jasmine `done` callback. Then calls [pumpFrames]

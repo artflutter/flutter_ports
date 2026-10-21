@@ -1,0 +1,4 @@
+# The fixture smoke tests of tool 7 (Chart.js ADR 0029). The melos script
+# `test` excludes them. `test:fixtures` runs them.
+tags:
+  fixtures:

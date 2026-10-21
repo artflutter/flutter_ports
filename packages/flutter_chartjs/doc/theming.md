@@ -487,8 +487,8 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    without scatter and pie, with no hover. It found no leak. The active-element case waits for
    `IdentityChartHover`.
 
-Section 10 ("Phase 5 state" and "Phase 6 state") names the test files and the test groups of
-phases 5 and 6.
+Section 10 ("Phase 5 state", "Phase 6 state" and "Phase 7 state") names the test files and the
+test groups of phases 5 to 7.
 
 Required in phase 9:
 
@@ -544,7 +544,7 @@ theming work in each phase.
 |---|---|---|
 | 0. Now | the forui survey, this document and Chart.js ADR 0001 (proposed), linked from `docs/README.md`, `packages/flutter_chartjs/doc/prior-art/README.md` (Pages) and `packages/flutter_chartjs/doc/README.md` (Chart.js ADR 0001 and this document) | — |
 | 1. Decisions and minimum tooling | Chart.js ADR 0001 is accepted for its four invariants only. The rest stays proposed. porting-flow.md, section 6, adds the four invariants of Chart.js ADR 0001 to AGENTS.md rule 5 | — |
-| 2. JS runtime, helpers, defaults | a faithful `core.defaults` singleton, `getHoverColor`, `jsNumberToString` | [Chart.js ADR 0010](adr/0010-js-numeric-semantics.md) |
+| 2. JS runtime, helpers, defaults | a faithful `core.defaults` singleton, `getHoverColor`, `jsNumberToString` | [Chart.js ADR 0032](adr/0032-js-numeric-semantics.md) |
 | 3. Canvas, text, platform, harness | CSS `rgba()` and font strings in the canvas layer, a harness without a theme | ADR: Canvas model, ADR: Text |
 | 4. Elements | nothing | — |
 | 5. Core | a Dart prototype of H0-H3, then Chart.js ADR 0001 accepted. H0-H3, `compile.dart` over raw Map themes, the guard, internal `ChartThemes.light`, test 1 and the non-palette rows of test 2 with test-registered components, `differences.md` rows | `core.config`, `helpers.config`, [Chart.js ADR 0006](adr/0006-options-representation-and-resolver.md) |
@@ -617,14 +617,40 @@ theming work in each phase.
   inventory). `THEME_SNAPSHOT_UPDATE=1` writes the snapshot again. The test reads only the
   defaults. Thus a color in `overrides` stays a risk of §11 until a SHADOWED check exists.
 
+**Phase 7 state.** These parts exist, in addition to the parts of phase 6 ([Chart.js ADR
+0030](adr/0030-controller-test-strategy.md), sections 8-11):
+- Test 3 for the 8 chart types: each controller test file
+  `test/port/controllers/controller.<name>_test.dart` has the group
+  `theming.md §8 test 3: the light preset`. It runs the reference cases of its generator with
+  `compileChartTheme(ChartThemes.light)`. `testControllerChartCases` compares `defaults` after
+  each themed case. The 6 files of charts with scales also have the test
+  `the light preset leaves no stale scale key`. A doughnut or a pie chart has no scale, so that
+  check has no path to examine there.
+- Test 5 on the real bar and doughnut controllers: the group
+  `test 5: a theme scale type creates no axis` of `precedence_test.dart` has 6 more cases. A bar
+  chart keeps the scale ids `x,y`, and a doughnut chart has no scale, with and without a theme
+  scale key.
+- The group `hover` of `precedence_test.dart`: for the 8 chart types, the steps of
+  `triggerMouseEvent` with the compiled hover theme give the options of an upstream chart with the
+  replaced values in `defaults`. The active bar background is `#B40000`
+  (`core.defaults.js:62-64`). `tool/reference/theme_precedence_reference.mjs` registers the 8
+  pinned controllers and writes 47 scenarios. It stops unless `third_party/Chart.js`,
+  `third_party/kurkle-color` and `third_party/chartjs-test-utils` are at their commits of
+  `tool/port_sources.yaml`, with no change in `src/`.
+- The blue screen without plugins: `test/port/theme/blue_screen_test.dart` (VM only). A theme with
+  each color token at `#2050c0` paints only that blue over a background of the same blue, for the
+  8 chart types, with no tolerance. The committed known-leaks list is empty. A control chart
+  without the theme paints other pixels, and the 8 themed charts leave `defaults` unchanged.
+
 These parts wait:
 - The palette rows of test 2 and the pins of H4a-H4c and H5 come with `plugin.colors` in phase 8.
   `precedence_test.dart` lists them as skipped tests with the reason `'blocked: plugin.colors'`.
-- The plugin tokens and the palette come in phase 8.
-- Test 3 for the 8 chart types, and test 5 on a doughnut and a bar chart, come with the controllers
-  in phase 7.
+- The plugin tokens and the palette come in phase 8. A new color token also goes into
+  `_blueTheme` of `blue_screen_test.dart`, or the blue screen can show a leak of the plugins.
+- The blue screen with an active element waits for `IdentityChartHover` (§8 item 6).
 
-Chart.js ADR 0001 stays proposed beyond its four invariants. Only the maintainer accepts it.
+Chart.js ADR 0001 stays proposed beyond its four invariants. The porting lead accepts the rest
+when phase 8 implements the hunks H4a-H4c and H5.
 
 ## 11. Risks, open questions and alternatives
 

@@ -14,7 +14,7 @@
 /// keep their order: fill 1, stroke 1, fill 2, ... The
 /// result is the result of the separate draws, because `srcOver` is
 /// associative. Only the position differs, by at most half a step
-/// (1 / 8 pixel), a display-only difference (Chart.js ADR 0009).
+/// (1 / 8 pixel), a display-only difference (Chart.js ADR 0034).
 ///
 /// The atlas samples bilinearly. Where a whole bitmap pixel is a whole
 /// device pixel, each sample is one texel, so no sprite is resampled. A

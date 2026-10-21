@@ -21,7 +21,7 @@ import 'pixel_compare.dart';
 // each fast path with the arc path that the canvas drew before: the upstream
 // arcs and lines of addRoundedRectPath (helpers.canvas.ts:498-527).
 //
-// Thresholds of the pixel tests (Chart.js ADR 0009): no pixel differs in
+// Thresholds of the pixel tests (Chart.js ADR 0034): no pixel differs in
 // area (a pixel that each render has fully opaque or fully transparent),
 // the worst channel differs by at most _edge on anti-aliased edge pixels,
 // and the inked areas differ by less than 1 %.

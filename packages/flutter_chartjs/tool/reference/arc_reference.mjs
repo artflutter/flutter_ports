@@ -22,9 +22,9 @@
 //
 //   node tool/reference/arc_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0010), and the script stops
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
 // on any other architecture. The test compares each number with closeTo, but
-// Chart.js ADR 0010 takes all reference data from one engine.
+// Chart.js ADR 0032 takes all reference data from one engine.
 
 import {execFileSync} from 'node:child_process';
 import {existsSync, writeFileSync} from 'node:fs';
@@ -260,6 +260,9 @@ addCenter('sector, offset 4 and spacing 2', {...SECTOR, options: {offset: 4, spa
 addCenter('sector, offset 0 and spacing 3', {...SECTOR, options: {offset: 0, spacing: 3}});
 addCenter('full circle', {x: 2, y: 2, startAngle: 0, endAngle: TAU, innerRadius: 0, outerRadius: 2, options: {spacing: 0, offset: 0, borderWidth: 0}});
 addCenter('start angle undefined', {...SECTOR, startAngle: undefined, options: {offset: 0, spacing: 0}});
+// The two half angles of the sin ties of phase 7 (Chart.js ADR 0032).
+addCenter('half angle -pi/4 (the Windows CI tie)', {x: 256, y: 256, startAngle: -Math.PI / 2, endAngle: 0, innerRadius: 0, outerRadius: 382.5, options: {spacing: 0, offset: 0, borderWidth: 0}});
+addCenter('half angle 7pi/6 (the U-pie tie)', {x: 0, y: 0, startAngle: Math.PI, endAngle: 4 * Math.PI / 3, innerRadius: 0, outerRadius: 2, options: {spacing: 0, offset: 0, borderWidth: 0}});
 addCenter('offset absent', {...SECTOR, options: {spacing: 0}});
 addCenter('offset null', {...SECTOR, options: {offset: null, spacing: 2}});
 addCenter('animations', {...SECTOR, options: {offset: 4, spacing: 2}}, {startAngle: [true, 1], outerRadius: [false, 50], x: [true, 100]}, [undefined, false, true]);

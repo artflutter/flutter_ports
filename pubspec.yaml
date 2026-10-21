@@ -28,9 +28,9 @@ melos:
       run: dart analyze --fatal-infos
       description: Analyze the whole workspace.
     test:
-      description: Run the tests of every package that has a test/ directory.
+      description: Run the tests of every package that has a test/ directory, without the fixture smoke tests (the tag fixtures, Chart.js ADR 0029).
       exec:
-        command: flutter test
+        command: flutter test --exclude-tags fixtures
         concurrency: 1
         failFast: true
       packageFilters:
@@ -60,6 +60,9 @@ melos:
         - port:next:check
         - parity:check
       description: Run check:lib-imports, check:headers, check:js-semantics, port:next:check and parity:check.
+    test:fixtures:
+      run: dart run packages/flutter_chartjs/tool/spec_cases.dart --fixtures
+      description: Run the fixture smoke tests of flutter_chartjs (tool 7) and report each fixture as passed, failed, skipped or missing. Fail on a failed, missing or unknown fixture and on a bad skip reason. Without the submodule third_party/Chart.js, each fixture skips; with FIXTURES_REQUIRED=1, it fails.
     test:cases:
       run: dart run packages/flutter_chartjs/tool/spec_cases.dart
       description: Run the flutter_chartjs spec tests and report each upstream case as passed, failed, skipped or missing (tool 5). Fail on unknown test names and on missing cases of ported modules.

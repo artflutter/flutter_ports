@@ -276,7 +276,7 @@ class ChartHost extends LeafRenderObjectWidget {
 
   /// Called when the `TickerMode` of the host changes, with the new
   /// `enabled` value. `core.animator` mutes the chart while it is false
-  /// (Chart.js ADR 0007, decision 7).
+  /// (Chart.js ADR 0016, decision 7).
   final ValueChanged<bool>? onTickerModeChanged;
 
   static double _devicePixelRatio(BuildContext context) =>

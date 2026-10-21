@@ -10,6 +10,8 @@ import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.defaults.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
+import 'package:flutter_chartjs/src/helpers/helpers.collection.dart'
+    show notifyArrayListeners;
 import 'package:flutter_chartjs/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs/src/js/js_array.dart';
 import 'package:flutter_chartjs/src/js/js_function.dart';
@@ -50,8 +52,9 @@ import '../support/jasmine.dart';
 //   `new Error(m)` is a StateError with the message m.
 //
 // flutter_test_config.dart registers the built-in components before main().
-// Thus the scales of phase 6 are in the registry, and their defaults are in
-// `defaults.scales`.
+// Thus the scales of phase 6 and the controllers of phase 7 are in the
+// registry, and the defaults of the scales are in `defaults.scales`. The
+// pie and line cases get their controller from the registry.
 //
 // Three cases without acquireChart build a chart with
 // `Chart(canvas, config)` on a canvas of `document.createElement`. Its
@@ -74,6 +77,13 @@ import '../support/jasmine.dart';
 // - `'before-' + args.index` is `jsToString` of the index.
 // - A `beforeEach` or an `afterEach` that reads a chart is a local function
 //   that each case calls first or last.
+// - `push`, `pop`, `shift`, `splice` and `unshift` of `chart.data.labels` or
+//   of a data array are `_push`, `_pop`, `_shift`, `_splice` and `_unshift`:
+//   the change of the List, then `notifyArrayListeners`, the body of the
+//   hooked method (differences.md row platform-array-events). The labels
+//   array has no listeners, so its notification does nothing, as upstream.
+// - `chart.data.labels` is `_labels(chart)`, and
+//   `chart.data.datasets[i].data` is `_data(chart, i)`.
 
 /// :3 `const overrides = Chart.overrides`: `overrides.line`.
 Map<String, Object?> get _line =>
@@ -96,6 +106,50 @@ List<Object?> _activeElements(Chart chart) => [
 
 /// `point.y` of a data element.
 double _y(types.Element point) => (point as Element).y;
+
+/// `chart.data.labels`.
+List<Object?> _labels(Chart chart) =>
+    jsGet(chart.data, 'labels')! as List<Object?>;
+
+/// `chart.data.datasets[index].data`.
+List<Object?> _data(Chart chart, int index) =>
+    jsGet(_datasets(chart)[index], 'data')! as List<Object?>;
+
+/// `array.push(...items)`: the change, then the notification of the hooked
+/// method (differences.md row platform-array-events).
+void _push(List<Object?> array, List<Object?> items) {
+  array.addAll(items);
+  notifyArrayListeners(array, 'push', items);
+}
+
+/// `array.pop()`.
+void _pop(List<Object?> array) {
+  if (array.isNotEmpty) array.removeLast();
+  notifyArrayListeners(array, 'pop', const []);
+}
+
+/// `array.shift()`.
+void _shift(List<Object?> array) {
+  if (array.isNotEmpty) array.removeAt(0);
+  notifyArrayListeners(array, 'shift', const []);
+}
+
+/// `array.splice(start, deleteCount, ...items)`.
+void _splice(
+  List<Object?> array,
+  int start,
+  int deleteCount, [
+  List<Object?> items = const [],
+]) {
+  jsSplice(array, start.toDouble(), deleteCount.toDouble(), items);
+  notifyArrayListeners(array, 'splice', [start, deleteCount, ...items]);
+}
+
+/// `array.unshift(...items)`.
+void _unshift(List<Object?> array, List<Object?> items) {
+  array.insertAll(0, items);
+  notifyArrayListeners(array, 'unshift', items);
+}
 
 void main() {
   group('Chart', () {
@@ -325,11 +379,16 @@ void main() {
         lineDefaults['spanGaps'] = defaultSpanGaps;
       });
 
-      test(
-        'should initialize config with default dataset options',
-        () {},
-        skip: 'blocked: controller.pie',
-      );
+      testWidgets('should initialize config with default dataset options', (
+        tester,
+      ) async {
+        final pieDefaults = jsGet(defaults['datasets'], 'pie');
+
+        final chart = acquireChart(<String, Object?>{'type': 'pie'});
+
+        final options = chart.options;
+        expect(options['circumference'], jsGet(pieDefaults, 'circumference'));
+      });
 
       testWidgets('should override axis positions that are incorrect', (
         tester,
@@ -2510,23 +2569,127 @@ void main() {
         expect(meta.hidden, true);
       });
 
-      test(
-        'should toggle data visibility by index',
-        () {},
-        skip: 'blocked: controller.pie',
-      );
+      testWidgets('should toggle data visibility by index', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'pie',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[1, 2, 3],
+              },
+            ],
+          },
+        });
 
-      test(
+        expect(chart.getDataVisibility(1), true);
+
+        chart.toggleDataVisibility(1);
+        expect(chart.getDataVisibility(1), false);
+
+        chart.update();
+        expect(chart.getDataVisibility(1), false);
+      });
+
+      testWidgets(
         'should maintain data visibility indices when data changes',
-        () {},
-        skip: 'blocked: controller.pie',
+        (tester) async {
+          final chart = acquireChart(<String, Object?>{
+            'type': 'pie',
+            'data': <String, Object?>{
+              'labels': <Object?>['0', '1', '2', '3'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[0, 1, 2, 3],
+                },
+                <String, Object?>{
+                  'data': <Object?>[0, 1, 2, 3],
+                },
+              ],
+            },
+          })..toggleDataVisibility(3);
+
+          _splice(_labels(chart), 1, 1);
+          _splice(_data(chart, 0), 1, 1);
+          _splice(_data(chart, 1), 1, 1);
+          chart.update();
+
+          expect(chart.getDataVisibility(0), true);
+          expect(chart.getDataVisibility(1), true);
+          expect(chart.getDataVisibility(2), false);
+
+          _unshift(_labels(chart), <Object?>['-1', '-2']);
+          _unshift(_data(chart, 0), <Object?>[-1, -2]);
+          _unshift(_data(chart, 1), <Object?>[-1, -2]);
+          chart.update();
+
+          expect(chart.getDataVisibility(0), true);
+          expect(chart.getDataVisibility(1), true);
+          expect(chart.getDataVisibility(2), true);
+          expect(chart.getDataVisibility(3), true);
+          expect(chart.getDataVisibility(4), false);
+
+          _shift(_labels(chart));
+          _shift(_data(chart, 0));
+          _shift(_data(chart, 1));
+          chart.update();
+
+          expect(chart.getDataVisibility(0), true);
+          expect(chart.getDataVisibility(1), true);
+          expect(chart.getDataVisibility(2), true);
+          expect(chart.getDataVisibility(3), false);
+
+          _pop(_labels(chart));
+          _pop(_data(chart, 0));
+          _pop(_data(chart, 1));
+          chart.update();
+
+          expect(chart.getDataVisibility(0), true);
+          expect(chart.getDataVisibility(1), true);
+          expect(chart.getDataVisibility(2), true);
+          expect(chart.getDataVisibility(3), true);
+
+          chart.toggleDataVisibility(1);
+          _splice(_labels(chart), 1, 0, <Object?>['b']);
+          _splice(_data(chart, 0), 1, 0, <Object?>[1]);
+          _splice(_data(chart, 1), 1, 0, <Object?>[1]);
+          chart.update();
+
+          expect(chart.getDataVisibility(0), true);
+          expect(chart.getDataVisibility(1), true);
+          expect(chart.getDataVisibility(2), false);
+          expect(chart.getDataVisibility(3), true);
+        },
       );
 
-      test(
+      testWidgets(
         'should leave data visibility indices intact when data changes in '
         'non-uniform way',
-        () {},
-        skip: 'blocked: controller.pie',
+        (tester) async {
+          final chart = acquireChart(<String, Object?>{
+            'type': 'pie',
+            'data': <String, Object?>{
+              'labels': <Object?>['0', '1', '2', '3'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[0, 1, 2, 3],
+                },
+                <String, Object?>{
+                  'data': <Object?>[0, 1, 2, 3],
+                },
+              ],
+            },
+          })..toggleDataVisibility(0);
+
+          _push(_labels(chart), <Object?>['a']);
+          _pop(_data(chart, 0));
+          _push(_data(chart, 1), <Object?>[5]);
+          chart.update();
+
+          expect(chart.getDataVisibility(0), false);
+          expect(chart.getDataVisibility(1), true);
+          expect(chart.getDataVisibility(2), true);
+          expect(chart.getDataVisibility(3), true);
+        },
       );
     });
 
@@ -2557,17 +2720,37 @@ void main() {
         skip: 'n/a: Flutter has no DOM element ids',
       );
 
-      test(
-        'should get the chart from an HTMLCanvasElement',
-        () {},
-        skip: 'blocked: controller.pie',
-      );
+      testWidgets('should get the chart from an HTMLCanvasElement', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'pie',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[1, 2, 3],
+              },
+            ],
+          },
+        });
+        expect(Chart.getChart(chart.canvas), same(chart));
+      });
 
-      test(
-        'should get the chart from an CanvasRenderingContext2D',
-        () {},
-        skip: 'blocked: controller.pie',
-      );
+      testWidgets('should get the chart from an CanvasRenderingContext2D', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'pie',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[1, 2, 3],
+              },
+            ],
+          },
+        });
+        expect(Chart.getChart(chart.ctx), same(chart));
+      });
 
       test(
         'should return undefined when a chart is not found or bad data is '
@@ -2579,11 +2762,36 @@ void main() {
     });
 
     group('active elements', () {
-      test(
-        'should set the active elements',
-        () {},
-        skip: 'blocked: controller.pie',
-      );
+      testWidgets('should set the active elements', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'pie',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[1, 2, 3],
+                'borderColor': 'red',
+                'hoverBorderColor': 'blue',
+              },
+            ],
+          },
+        });
+
+        final meta = chart.getDatasetMeta(0);
+        final arc0 = meta.data[0] as Element;
+        var props = arc0.getProps(const ['borderColor']);
+        expect(jsGet(props['options'], 'borderColor'), jasmineEquals('red'));
+
+        chart.setActiveElements(<Object?>[
+          <String, Object?>{'datasetIndex': 0, 'index': 0},
+        ]);
+
+        props = arc0.getProps(const ['borderColor']);
+        expect(jsGet(props['options'], 'borderColor'), jasmineEquals('blue'));
+
+        final active = chart.getActiveElements();
+        expect(active.length, jasmineEquals(1));
+        expect(active[0].element, same(meta.data[0]));
+      });
     });
 
     testWidgets(

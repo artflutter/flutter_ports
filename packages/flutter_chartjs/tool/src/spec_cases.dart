@@ -31,6 +31,21 @@
 ///
 /// A failed `setUpAll` or `tearDownAll` of a group is an error of its own.
 /// It is not an unknown name.
+///
+/// The case mode runs the spec tests without the fixture smoke tests
+/// ([caseTestArguments]: `--exclude-tags fixtures`). The fixture mode
+/// (`--fixtures`, Chart.js ADR 0029, section 10) runs only the fixture tests
+/// ([fixtureTestArguments]) of the spec files that [selectFixtureFiles]
+/// gives, and [compareFixtures] reports each fixture as passed, failed,
+/// skipped or missing. Errors of the fixture mode:
+/// - a failed fixture test, a failed `setUpAll` or `tearDownAll`, or a file
+///   that does not load;
+/// - a missing fixture, and a fixture group with fixtures and no Dart test;
+/// - a tagged test outside a fixture group, or a test in a fixture group
+///   that is not a fixture of its prefix;
+/// - a repeated full name;
+/// - a bad skip reason;
+/// - a failed port-only test of `test/port/fixtures/`.
 library;
 
 import 'dart:convert';
@@ -103,13 +118,26 @@ final class ManifestCase {
 /// A `describe` whose body is `jasmine.fixture.specs(prefix)`.
 final class FixtureGroup {
   /// A fixture group at the [describe] path.
-  const FixtureGroup(this.describe, this.prefix);
+  const FixtureGroup(this.describe, this.prefix, {this.fixtures, this.line});
 
   /// The `describe` names of the group, outermost first.
   final List<String> describe;
 
-  /// The fixture path prefix.
+  /// The fixture path prefix: a regular expression source, as
+  /// chartjs-test-utils `src/fixture.js:74` uses it.
   final String prefix;
+
+  /// The number of fixtures that the group runs upstream, or null when the
+  /// manifest does not give it.
+  final int? fixtures;
+
+  /// The line of the `describe` call in the upstream spec file.
+  final int? line;
+
+  /// Whether the fixture [path] (relative to `test/fixtures/`) matches the
+  /// prefix (`src/fixture.js:74`).
+  bool matches(String path) =>
+      RegExp('^$prefix.+\\.(json|js)\$').hasMatch(path);
 }
 
 /// One upstream spec file of the manifest.
@@ -202,6 +230,8 @@ final class Manifest {
           FixtureGroup(
             _strings(g['describe'], '$file fixture group describe'),
             _field<String>(g, 'prefix', '$file fixture group'),
+            fixtures: _as<int?>(g['fixtures'], '$file fixture group fixtures'),
+            line: _as<int?>(g['line'], '$file fixture group line'),
           ),
       ];
       specs[file] = ManifestSpec(file, cases, groups, fixtures[file] ?? {});
@@ -259,9 +289,11 @@ final class DartTest {
     required this.result,
     this.line,
     this.skipReason,
+    this.milliseconds,
   });
 
-  /// The spec file, as `test/specs/<base>_test.dart`.
+  /// The spec file, as `test/specs/<base>_test.dart`, or a port-only test
+  /// file, as `test/port/...`.
   final String file;
 
   /// The group names, outermost first, without the root group.
@@ -278,6 +310,10 @@ final class DartTest {
 
   /// The skip reason, when [result] is [TestResult.skipped].
   final String? skipReason;
+
+  /// The time from the `testStart` event to the `testDone` event, when both
+  /// events give it.
+  final int? milliseconds;
 
   /// The full name: [groups] and [name], joined with spaces.
   String get fullName => [...groups, name].join(' ');
@@ -339,10 +375,12 @@ const Map<String, String> _hookTests = {
   '(tearDownAll)': 'tearDownAll',
 };
 
-/// The `test/specs/...` part of the suite [path], or [path].
+/// The `test/specs/...` or `test/port/...` part of the suite [path], or
+/// [path].
 String _specPath(String path) {
   final posix = posixPath(path);
-  final index = posix.lastIndexOf('test/specs/');
+  var index = posix.lastIndexOf('test/specs/');
+  if (index < 0) index = posix.lastIndexOf('test/port/');
   return index < 0 ? posix : posix.substring(index);
 }
 
@@ -353,6 +391,7 @@ ReporterOutput parseReporterOutput(String output) {
   final suites = <int, String>{};
   final groups = <int, ({String name, int? parent})>{};
   final starts = <int, Map<String, Object?>>{};
+  final startTimes = <int, int>{};
   final tests = <int, DartTest>{};
   final order = <int>[];
   final loadErrors = <String, String>{};
@@ -380,6 +419,9 @@ ReporterOutput parseReporterOutput(String output) {
       case 'testStart':
         final test = decoded['test']! as Map<String, Object?>;
         starts[test['id']! as int] = test;
+        if (decoded['time'] case final int time) {
+          startTimes[test['id']! as int] = time;
+        }
       case 'error':
         final id = decoded['testID']! as int;
         errors[id] ??= '${decoded['error']}';
@@ -413,6 +455,8 @@ ReporterOutput parseReporterOutput(String output) {
         }
         final metadata = start['metadata'] as Map<String, Object?>? ?? {};
         final skipped = decoded['skipped'] == true;
+        final startTime = startTimes[id];
+        final doneTime = decoded['time'];
         tests[id] = DartTest(
           file: file,
           groups: _groupNames(groupIds, groups),
@@ -424,6 +468,9 @@ ReporterOutput parseReporterOutput(String output) {
               : TestResult.failure,
           line: start['line'] as int?,
           skipReason: skipped ? metadata['skipReason'] as String? : null,
+          milliseconds: startTime != null && doneTime is int
+              ? doneTime - startTime
+              : null,
         );
         order.add(id);
     }
@@ -612,22 +659,7 @@ SpecCasesResult compareCases(
   Map<String, String> parity, {
   String displayPrefix = '',
 }) {
-  final findings = <Finding>[];
-  for (final MapEntry(:key, :value) in output.loadErrors.entries) {
-    findings.add(Finding('$displayPrefix$key', null, 'does not load: $value'));
-  }
-  for (final hook in output.hookFailures) {
-    final group = hook.groups.isEmpty
-        ? 'the top level'
-        : '"${hook.groups.join(' ')}"';
-    findings.add(
-      Finding(
-        '$displayPrefix${hook.file}',
-        hook.line,
-        '${hook.hook} of $group failed: ${hook.error}',
-      ),
-    );
-  }
+  final findings = _runFindings(output, displayPrefix);
   final byFile = <String, List<DartTest>>{};
   for (final test in output.tests) {
     (byFile[test.file] ??= []).add(test);
@@ -684,24 +716,8 @@ SpecCasesResult compareCases(
       if (test.result == TestResult.failure) {
         findings.add(Finding(shown, test.line, '"${test.fullName}" failed.'));
       }
-      if (test.result == TestResult.skipped &&
-          !isValidSkipReason(test.skipReason)) {
-        findings.add(
-          Finding(
-            shown,
-            test.line,
-            test.skipReason == null
-                ? '"${test.fullName}" is skipped without a skip reason. '
-                      'testWidgets takes only `skip: true`, so write a '
-                      'skipped case as a test() with '
-                      "`skip: 'blocked: <module>'`, `'n/a: <reason>'` or "
-                      "`'diverges: <row id>'`."
-                : '"${test.fullName}" has the skip reason '
-                      '"${test.skipReason}". '
-                      "Use 'blocked: <module>', 'n/a: <reason>' or "
-                      "'diverges: <row id>'.",
-          ),
-        );
+      if (_skipFinding(test, shown) case final finding?) {
+        findings.add(finding);
       }
     }
     final parityState = requiredBy(spec.file, parity);
@@ -737,6 +753,50 @@ SpecCasesResult compareCases(
     );
   }
   return SpecCasesResult(reports, findings);
+}
+
+/// The findings of the files that do not load and of the failed group
+/// hooks of [output].
+List<Finding> _runFindings(ReporterOutput output, String displayPrefix) {
+  final findings = <Finding>[];
+  for (final MapEntry(:key, :value) in output.loadErrors.entries) {
+    findings.add(Finding('$displayPrefix$key', null, 'does not load: $value'));
+  }
+  for (final hook in output.hookFailures) {
+    final group = hook.groups.isEmpty
+        ? 'the top level'
+        : '"${hook.groups.join(' ')}"';
+    findings.add(
+      Finding(
+        '$displayPrefix${hook.file}',
+        hook.line,
+        '${hook.hook} of $group failed: ${hook.error}',
+      ),
+    );
+  }
+  return findings;
+}
+
+/// The finding of a skipped [test] with a bad skip reason in [shown], or
+/// null.
+Finding? _skipFinding(DartTest test, String shown) {
+  if (test.result != TestResult.skipped || isValidSkipReason(test.skipReason)) {
+    return null;
+  }
+  return Finding(
+    shown,
+    test.line,
+    test.skipReason == null
+        ? '"${test.fullName}" is skipped without a skip reason. '
+              'testWidgets takes only `skip: true`, so write a '
+              'skipped case as a test() with '
+              "`skip: 'blocked: <module>'`, `'n/a: <reason>'` or "
+              "`'diverges: <row id>'`."
+        : '"${test.fullName}" has the skip reason '
+              '"${test.skipReason}". '
+              "Use 'blocked: <module>', 'n/a: <reason>' or "
+              "'diverges: <row id>'.",
+  );
 }
 
 CaseStatus _status(DartTest? test) => switch (test?.result) {
@@ -808,5 +868,367 @@ String renderTable(List<SpecReport> reports, {bool verbose = false}) {
     );
   }
   buffer.writeln(row('total', countsOf(reports), ''));
+  return buffer.toString();
+}
+
+// The fixture mode (Chart.js ADR 0029, section 10).
+
+/// The tag of the fixture smoke tests (Chart.js ADR 0029, section 10).
+const String fixturesTag = 'fixtures';
+
+/// The `flutter test` arguments of the case mode and of tool 6: the spec
+/// tests without the fixture smoke tests.
+const List<String> caseTestArguments = [
+  'test',
+  '--exclude-tags',
+  fixturesTag,
+  '--reporter',
+  'json',
+  'test/specs',
+];
+
+/// The folder of the port-only fixture tests, relative to the package.
+const String portFixtureTests = 'test/port/fixtures';
+
+/// The `flutter test` arguments of the fixture mode for the test [files]
+/// (relative to the package).
+List<String> fixtureTestArguments(List<String> files) => [
+  'test',
+  '--tags',
+  fixturesTag,
+  '--reporter',
+  'json',
+  ...files,
+];
+
+/// The selection of the fixture mode.
+typedef FixtureSelection = ({
+  List<String> specs,
+  List<String> absent,
+  List<String> files,
+});
+
+/// The upstream spec files with a fixture group that runs at least one
+/// fixture upstream, split into the `specs` whose Dart spec file [exists]
+/// and the `absent` others. The `files` are the Dart spec files of the
+/// `specs`, and [portFixtureTests] when it [exists]. [exists] takes a path
+/// relative to the package.
+FixtureSelection selectFixtureFiles(
+  Manifest manifest,
+  bool Function(String path) exists,
+) {
+  final specs = <String>[];
+  final absent = <String>[];
+  for (final spec in manifest.specs.values) {
+    if (!spec.fixtureGroups.any((g) => (g.fixtures ?? 0) > 0)) continue;
+    (exists(dartSpecOf(spec.file)) ? specs : absent).add(spec.file);
+  }
+  return (
+    specs: specs,
+    absent: absent,
+    files: [
+      for (final spec in specs) dartSpecOf(spec),
+      if (exists(portFixtureTests)) portFixtureTests,
+    ],
+  );
+}
+
+/// The fixtures of one upstream spec file in the fixture mode.
+final class FixtureReport {
+  /// The report of [spec] with the [fixtures] of its groups.
+  FixtureReport(this.spec, this.fixtures);
+
+  /// The upstream spec file.
+  final String spec;
+
+  /// The number of fixtures of the fixture groups.
+  final int fixtures;
+
+  /// The number of passed fixtures.
+  int passed = 0;
+
+  /// The number of failed fixtures.
+  int failed = 0;
+
+  /// The number of skipped fixtures, by skip reason.
+  final Map<String, int> skipped = {};
+
+  /// The number of missing fixtures.
+  int missing = 0;
+
+  /// The number of skipped fixtures.
+  int get skippedCount => skipped.values.fold(0, (n, count) => n + count);
+}
+
+/// The result of [compareFixtures].
+final class FixturesResult {
+  /// The [reports], the counts of the port-only tests and the [findings].
+  const FixturesResult({
+    required this.reports,
+    required this.portPassed,
+    required this.portFailed,
+    required this.slowest,
+    required this.findings,
+  });
+
+  /// One report for each selected spec file, in manifest order.
+  final List<FixtureReport> reports;
+
+  /// The passed and the failed port-only tests (outside `test/specs/`).
+  final int portPassed;
+
+  /// The failed port-only tests.
+  final int portFailed;
+
+  /// The 10 slowest tests, the slowest first. Not a gate.
+  final List<DartTest> slowest;
+
+  /// The errors.
+  final List<Finding> findings;
+}
+
+/// Maps the Dart [output] of the fixture mode onto the fixtures of the
+/// selected upstream [specs] of [manifest]. A test outside `test/specs/` is
+/// a port-only test: only its result counts. Paths in findings start with
+/// [displayPrefix].
+FixturesResult compareFixtures(
+  Manifest manifest,
+  ReporterOutput output,
+  List<String> specs, {
+  String displayPrefix = '',
+}) {
+  final findings = _runFindings(output, displayPrefix);
+  final byFile = <String, List<DartTest>>{};
+  for (final test in output.tests) {
+    (byFile[test.file] ??= []).add(test);
+  }
+  final selected = {for (final spec in specs) dartSpecOf(spec)};
+  var portPassed = 0;
+  var portFailed = 0;
+  for (final MapEntry(key: file, value: tests) in byFile.entries) {
+    final shown = '$displayPrefix$file';
+    if (file.startsWith('test/specs/')) {
+      if (!selected.contains(file)) {
+        findings.add(
+          Finding(
+            shown,
+            null,
+            'is not a spec file with a fixture group of the manifest.',
+          ),
+        );
+      }
+      continue;
+    }
+    final names = <String, DartTest>{};
+    for (final test in tests) {
+      if (names[test.fullName] case final earlier?) {
+        findings.add(
+          Finding(
+            shown,
+            test.line,
+            '"${test.fullName}" repeats the name of line ${earlier.line}.',
+          ),
+        );
+        continue;
+      }
+      names[test.fullName] = test;
+      switch (test.result) {
+        case TestResult.success:
+          portPassed++;
+        case TestResult.failure:
+          portFailed++;
+          findings.add(
+            Finding(shown, test.line, '"${test.fullName}" failed.'),
+          );
+        case TestResult.skipped:
+          if (_skipFinding(test, shown) case final finding?) {
+            findings.add(finding);
+          }
+      }
+    }
+  }
+
+  final reports = <FixtureReport>[];
+  for (final specFile in specs) {
+    final spec = manifest.specs[specFile]!;
+    final dartFile = dartSpecOf(specFile);
+    final shown = '$displayPrefix$dartFile';
+    final expected = {
+      for (final group in spec.fixtureGroups)
+        group: [
+          for (final path in spec.fixtures)
+            if (group.matches(path)) path,
+        ],
+    };
+    final report = FixtureReport(
+      specFile,
+      expected.values.fold(0, (n, paths) => n + paths.length),
+    );
+    final seen = {for (final group in spec.fixtureGroups) group: <String>{}};
+    final called = <FixtureGroup>{};
+    for (final test in byFile[dartFile] ?? const <DartTest>[]) {
+      final group = spec.fixtureGroups
+          .where((g) => _key(g.describe) == _key(test.groups))
+          .firstOrNull;
+      if (group == null) {
+        findings.add(
+          Finding(
+            shown,
+            test.line,
+            '"${test.fullName}" has the tag $fixturesTag but is not in a '
+            'fixture group of test/specs/$specFile.',
+          ),
+        );
+        continue;
+      }
+      called.add(group);
+      final name = test.name.startsWith(fixtureUrlPrefix)
+          ? test.name.substring(fixtureUrlPrefix.length)
+          : test.name;
+      if (!expected[group]!.contains(name)) {
+        findings.add(
+          Finding(
+            shown,
+            test.line,
+            '"${test.fullName}" is not a fixture of the prefix '
+            '"${group.prefix}".',
+          ),
+        );
+        continue;
+      }
+      if (!seen[group]!.add(name)) {
+        findings.add(
+          Finding(
+            shown,
+            test.line,
+            '"${test.fullName}" repeats a fixture test.',
+          ),
+        );
+        continue;
+      }
+      switch (test.result) {
+        case TestResult.success:
+          report.passed++;
+        case TestResult.failure:
+          report.failed++;
+          findings.add(
+            Finding(shown, test.line, '"${test.fullName}" failed.'),
+          );
+        case TestResult.skipped:
+          final reason = test.skipReason ?? '';
+          report.skipped[reason] = (report.skipped[reason] ?? 0) + 1;
+          if (_skipFinding(test, shown) case final finding?) {
+            findings.add(finding);
+          }
+      }
+    }
+    for (final MapEntry(key: group, value: paths) in expected.entries) {
+      if (paths.isEmpty) continue;
+      if (!called.contains(group)) {
+        report.missing += paths.length;
+        findings.add(
+          Finding(
+            shown,
+            null,
+            'the fixture group "${group.describe.join(' ')}" is not called: '
+            "add group('${group.describe.last}', "
+            "fixture.specs('${group.prefix}')) "
+            '(test/specs/$specFile:${group.line}).',
+          ),
+        );
+        continue;
+      }
+      for (final path in paths) {
+        if (seen[group]!.contains(path)) continue;
+        report.missing++;
+        findings.add(
+          Finding(
+            shown,
+            null,
+            'missing fixture "$path" of the group '
+            '"${group.describe.join(' ')}".',
+          ),
+        );
+      }
+    }
+    reports.add(report);
+  }
+  final timed = [
+    for (final test in output.tests)
+      if (test.milliseconds != null && test.result != TestResult.skipped) test,
+  ]..sort((a, b) => b.milliseconds!.compareTo(a.milliseconds!));
+  return FixturesResult(
+    reports: reports,
+    portPassed: portPassed,
+    portFailed: portFailed,
+    slowest: timed.take(10).toList(),
+    findings: findings,
+  );
+}
+
+/// The table of the fixture mode: one row for each selected spec file with
+/// its skip reasons, the port-only tests, the totals and the 10 slowest
+/// tests.
+String renderFixtureTable(FixturesResult result) {
+  final buffer = StringBuffer();
+  final reports = result.reports;
+  const label = 'upstream spec';
+  final width = [
+    label,
+    'total',
+    'port-only tests',
+    for (final r in reports) r.spec,
+  ].fold(0, (w, text) => text.length > w ? text.length : w);
+  const columns = ['fixtures', 'passed', 'failed', 'skipped', 'missing'];
+  String row(String name, List<int> counts) => [
+    name.padRight(width),
+    for (var i = 0; i < counts.length; i++)
+      '${counts[i]}'.padLeft(columns[i].length),
+  ].join(' ').trimRight();
+
+  buffer.writeln([label.padRight(width), ...columns].join(' '));
+  final reasons = <String, int>{};
+  for (final r in reports) {
+    buffer.writeln(
+      row(r.spec, [r.fixtures, r.passed, r.failed, r.skippedCount, r.missing]),
+    );
+    for (final MapEntry(:key, :value) in r.skipped.entries) {
+      buffer.writeln('  skipped $value: $key');
+      reasons[key] = (reasons[key] ?? 0) + value;
+    }
+  }
+  buffer
+    ..writeln(
+      row('port-only tests', [
+        result.portPassed + result.portFailed,
+        result.portPassed,
+        result.portFailed,
+        0,
+        0,
+      ]),
+    )
+    ..writeln(
+      row('total', [
+        reports.fold(0, (n, r) => n + r.fixtures),
+        reports.fold(0, (n, r) => n + r.passed),
+        reports.fold(0, (n, r) => n + r.failed),
+        reports.fold(0, (n, r) => n + r.skippedCount),
+        reports.fold(0, (n, r) => n + r.missing),
+      ]),
+    );
+  final sorted = reasons.entries.toList()
+    ..sort((a, b) => b.value.compareTo(a.value));
+  for (final MapEntry(:key, :value) in sorted) {
+    buffer.writeln('  skipped $value: $key');
+  }
+  if (result.slowest.isNotEmpty) {
+    buffer.writeln('The ${result.slowest.length} slowest tests (not a gate):');
+    for (final test in result.slowest) {
+      buffer.writeln(
+        '  ${'${test.milliseconds} ms'.padLeft(9)}  ${test.file}: '
+        '${test.fullName}',
+      );
+    }
+  }
   return buffer.toString();
 }

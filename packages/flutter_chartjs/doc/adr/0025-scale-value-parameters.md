@@ -1,6 +1,7 @@
 # Chart.js ADR 0025: Scale value parameters
 
 - Status: accepted (2026-10-20)
+- Superseded in part by: [Chart.js ADR 0033](0033-radial-scale-centers.md) (2026-10-21), for §5 `xCenter` and `yCenter`
 - Date: 2026-10-20
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (type libraries, a member with its
   first caller, records for inline object types),

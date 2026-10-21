@@ -1,0 +1,282 @@
+{
+  "scale.timeseries/a.json": {
+    "config": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "a",
+          "b"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "options": {
+      "canvas": {
+        "height": 64,
+        "width": 64
+      }
+    }
+  },
+  "aXb/c.json": {
+    "config": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "a",
+          "b"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "options": {
+      "canvas": {
+        "height": 64,
+        "width": 64
+      }
+    }
+  },
+  "edge/x.json": {
+    "config": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "a",
+          "b"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "options": {
+      "canvas": {
+        "height": 64,
+        "width": 64
+      }
+    }
+  },
+  "edge/xy.json": {
+    "config": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "a",
+          "b"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "options": {
+      "canvas": {
+        "height": 64,
+        "width": 64
+      }
+    }
+  },
+  "png/none.json": {
+    "config": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "a",
+          "b"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "options": {
+      "canvas": {
+        "height": 64,
+        "width": 64
+      }
+    }
+  },
+  "source/both.json": {
+    "config": {
+      "type": "nope"
+    }
+  },
+  "source/skip.json": {
+    "config": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "a",
+          "b"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "options": {
+      "canvas": {
+        "height": 64,
+        "width": 64
+      }
+    }
+  },
+  "source/stale-skip.json": {
+    "config": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "a",
+          "b"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "options": {
+      "canvas": {
+        "height": 64,
+        "width": 64
+      }
+    }
+  },
+  "source/blocked.json": {
+    "config": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "a",
+          "b"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "options": {
+      "canvas": {
+        "height": 64,
+        "width": 64
+      }
+    }
+  },
+  "upstream/changed.json": {
+    "config": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "a",
+          "b"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "options": {
+      "canvas": {
+        "height": 64,
+        "width": 64
+      }
+    }
+  },
+  "upstream/missing.json": {
+    "config": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "a",
+          "b"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "options": {
+      "canvas": {
+        "height": 64,
+        "width": 64
+      }
+    }
+  },
+  "crlf/lines.json": {
+    "config": {
+      "type": "bar",
+      "data": {
+        "labels": [
+          "a",
+          "b"
+        ],
+        "datasets": [
+          {
+            "data": [
+              1,
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "options": {
+      "canvas": {
+        "height": 64,
+        "width": 64
+      }
+    }
+  }
+}

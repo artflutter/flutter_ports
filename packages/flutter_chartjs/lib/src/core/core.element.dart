@@ -51,7 +51,7 @@ import 'package:meta/meta.dart';
 /// ## Properties
 ///
 /// Each upstream property is a typed member with the upstream name. A
-/// number is a `double` (Chart.js ADR 0010).
+/// number is a `double` (Chart.js ADR 0032).
 ///
 /// - A property that starts JS `undefined` has a nullable private field.
 ///   Dart `null` stands for `undefined`. JS `null` never reaches these

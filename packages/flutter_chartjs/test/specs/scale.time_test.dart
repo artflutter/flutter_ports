@@ -21,6 +21,7 @@ import 'package:flutter_chartjs/src/scales/scale.time.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // The spec reads Chart.registry and Chart.defaults, the static members
@@ -173,8 +174,7 @@ Map<String, Object?> _cloneTimeDefaults() =>
 
 void main() {
   group('Time scale tests', () {
-    // describe('auto', jasmine.fixture.specs('scale.time')): a fixture group
-    // of phase 7, not a case.
+    group('auto', fixture.specs('scale.time'));
 
     // The upstream test environment loads moment.js and
     // chartjs-adapter-moment, the date library of the time scale

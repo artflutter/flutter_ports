@@ -23,7 +23,7 @@
 /// - `toEqualImageData` (matchers.js:176), with `toPercent`,
 ///   `createImageData`, `canvasFromImageData` and `buildPixelMatchPreview`
 ///   (matchers.js:7-56): `n/a`. The port compares no image (Chart.js ADR
-///   0009).
+///   0034).
 ///
 /// This library is a pure layer.
 library;

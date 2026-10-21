@@ -54,6 +54,8 @@ sources:
         dart: packages/flutter_chartjs/lib/src/
       - source: test/specs/
         dart: packages/flutter_chartjs/test/specs/
+      - source: test/fixtures/
+        dart: packages/flutter_chartjs/test/fixtures/hand/
       - source: test/index.js
         dart: packages/flutter_chartjs/test/flutter_test_config.dart
     files:
@@ -80,15 +82,36 @@ sources:
         dart: packages/flutter_chartjs/lib/src/js/fdlibm_atan.dart
       - source: e_atan2.c
         dart: packages/flutter_chartjs/lib/src/js/fdlibm_atan.dart
+      - source: s_sin.c
+        dart: packages/flutter_chartjs/lib/src/js/fdlibm_trig.dart
+      - source: s_cos.c
+        dart: packages/flutter_chartjs/lib/src/js/fdlibm_trig.dart
+      - source: k_sin.c
+        dart: packages/flutter_chartjs/lib/src/js/fdlibm_trig.dart
+      - source: k_cos.c
+        dart: packages/flutter_chartjs/lib/src/js/fdlibm_trig.dart
+      - source: e_rem_pio2.c
+        dart: packages/flutter_chartjs/lib/src/js/fdlibm_trig.dart
+      - source: k_rem_pio2.c
+        dart: packages/flutter_chartjs/lib/src/js/fdlibm_trig.dart
+      - source: s_scalbn.c
+        dart: packages/flutter_chartjs/lib/src/js/fdlibm_trig.dart
     files:
       - e_log.c
       - e_log10.c
       - s_atan.c
       - e_atan2.c
+      - s_sin.c
+      - s_cos.c
+      - k_sin.c
+      - k_cos.c
+      - e_rem_pio2.c
+      - k_rem_pio2.c
+      - s_scalbn.c
 
   - header: "@kurkle/color"
     version: "v0.3.2"
-    version_source: the Chart.js v4.5.1 pnpm-lock.yaml, which resolves ^0.3.0 to 0.3.2
+    version_source: the Chart.js v4.5.1+7169e651 pnpm-lock.yaml, which resolves ^0.3.0 to 0.3.2
     url: https://github.com/kurkle/color
     language: js
     spdx: MIT
@@ -120,7 +143,7 @@ sources:
 
   - header: chartjs-test-utils
     version: "v0.4.0"
-    version_source: the Chart.js v4.5.1 package.json:90 (^0.4.0), resolved to 0.4.0 in its pnpm-lock.yaml
+    version_source: the Chart.js v4.5.1+7169e651 package.json:90 (^0.4.0), resolved to 0.4.0 in its pnpm-lock.yaml
     url: https://github.com/chartjs/chartjs-test-utils
     language: js
     spdx: MIT

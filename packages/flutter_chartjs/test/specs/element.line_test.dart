@@ -12,6 +12,8 @@ import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
+
 // The spec constructs Chart.elements.LineElement. Here it is the LineElement
 // of element.line.dart (Chart.js ADR 0017). The case of :14 acquires a line
 // chart with a Jasmine `done` callback. It is a `testWidgets` case with
@@ -22,8 +24,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   // Tests for the line element
   group('Chart.elements.LineElement', () {
-    // describe('auto', jasmine.fixture.specs('element.line')): a fixture
-    // group of phase 7, not a case.
+    group('auto', fixture.specs('element.line'));
 
     test('should be constructed', () {
       // `points: [1, 2, 3, 4]`: a `List<PointElement>` does not take

@@ -21,7 +21,7 @@ import 'animation_reference.dart';
 // src/core/core.animation.js at v4.5.1, run with type stripping in Node.js
 // v24.12.0 on x64. animation_reference.dart has the scenarios and the color
 // data, which tool/reference/animation_reference.mjs writes (Chart.js ADR
-// 0010). The explicit cases below come from the same engine.
+// 0032). The explicit cases below come from the same engine.
 //
 // Each tick uses a date relative to `start` in whole milliseconds. Thus the
 // results do not depend on the clock. The interpolations are IEEE arithmetic

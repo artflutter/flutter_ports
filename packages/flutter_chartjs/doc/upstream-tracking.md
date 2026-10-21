@@ -317,10 +317,10 @@ Sections:
    without import-only, comment-only and annotation-only hunks (such as #10879).
 3. **JS-semantics hotspots.** Added `Math.round`, `Math.floor`, `Math.ceil`, `%`, `| 0`,
    `Math.log10`, `parseFloat`, `Number(`, `Date.now(`, string coercion and `.sort(`, for
-   [Chart.js ADR 0010](adr/0010-js-numeric-semantics.md).
+   [Chart.js ADR 0032](adr/0032-js-numeric-semantics.md).
 4. **Specs.** Added, removed and renamed cases (spec-case tracking).
 5. **Fixtures.** Added, removed and changed fixture configs, by config hash. The port compares no
-   PNGs ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)).
+   PNGs ([Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md)).
 6. **Defaults and theming.** The defaults-inventory diff from the manifest, the option-key diff of
    `src/types/index.d.ts`, the theme hunks in changed hosts, and the output of the theming
    coverage snapshot test (ADDED, REMOVED, CHANGED, theming.md §8, test 4). v4.5.1..master:

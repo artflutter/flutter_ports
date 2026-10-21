@@ -34,7 +34,9 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR 0004, and Chart.js ADR
   0026 supersedes Chart.js ADR 0008. Chart.js ADR 0001 is accepted for its four invariants only.
   Chart.js ADRs 0013 to 0023 are proposed. Chart.js ADR 0016 supersedes Chart.js ADR 0007 when it
-  is accepted. The other Chart.js ADRs are accepted:
+  is accepted. Chart.js ADR 0032 supersedes Chart.js ADR 0010, Chart.js ADR 0034 supersedes
+  Chart.js ADR 0009, and Chart.js ADR 0035 supersedes Chart.js ADR 0011. These three are proposed
+  until the porting lead accepts them. The other Chart.js ADRs are accepted:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md)
   - [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md) (superseded by
     Chart.js ADR 0010)
@@ -48,8 +50,11 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0008: Number formatting on package:intl](adr/0008-number-formatting-on-package-intl.md)
     (superseded by Chart.js ADR 0026)
   - [Chart.js ADR 0009: No display-only JS exactness](adr/0009-no-display-only-js-exactness.md)
-  - [Chart.js ADR 0010: JS numeric semantics](adr/0010-js-numeric-semantics.md)
-  - [Chart.js ADR 0011: Third-party sources](adr/0011-third-party-sources.md)
+    (superseded by Chart.js ADR 0034 on acceptance)
+  - [Chart.js ADR 0010: JS numeric semantics](adr/0010-js-numeric-semantics.md) (superseded by
+    Chart.js ADR 0032 on acceptance)
+  - [Chart.js ADR 0011: Third-party sources](adr/0011-third-party-sources.md) (superseded by
+    Chart.js ADR 0035 on acceptance)
   - [Chart.js ADR 0012: Dart file naming](adr/0012-dart-file-naming.md)
   - [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md) (proposed)
   - [Chart.js ADR 0014: Input events and the chart host](adr/0014-input-events-and-chart-host.md)
@@ -71,6 +76,12 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0025: Scale value parameters](adr/0025-scale-value-parameters.md)
   - [Chart.js ADR 0026: Number formatting on package:intl](adr/0026-number-formatting-on-package-intl.md)
     (it supersedes Chart.js ADR 0008)
+  - [Chart.js ADR 0032: JS numeric semantics](adr/0032-js-numeric-semantics.md) (proposed. It
+    supersedes Chart.js ADR 0010 on acceptance.)
+  - [Chart.js ADR 0034: No display-only JS exactness](adr/0034-no-display-only-js-exactness.md)
+    (proposed. It supersedes Chart.js ADR 0009 on acceptance.)
+  - [Chart.js ADR 0035: Third-party sources](adr/0035-third-party-sources.md) (proposed. It
+    supersedes Chart.js ADR 0011 on acceptance.)
 
 ## What gets ported
 
@@ -170,7 +181,7 @@ and gate 2 decisions. All of them are accepted. An example is the options repres
   first paint, and one tap recognizer in the gesture arena.
 - **Animation.** `requestAnimationFrame` maps onto `SchedulerBinding.scheduleFrameCallback`.
   `core.animator.js` stays one module-level animator on `requestAnimFrame`
-  ([Chart.js ADR 0007](adr/0007-frame-scheduling.md)). ADR: Animation (gate 5,
+  ([Chart.js ADR 0016](adr/0016-frame-scheduling.md)). ADR: Animation (gate 5,
   [porting-flow.md](porting-flow.md) §2.9) decides reduced motion, the theme-change modes and the
   `core.animator` tests.
 - **Dates.** Time scales need a date adapter, and upstream ships none. Decided in
@@ -178,8 +189,8 @@ and gate 2 decisions. All of them are accepted. An example is the options repres
   chartjs-adapter-moment 1.0.1 on moment 2.29.4. Its calendar works on wall milliseconds with
   integer day arithmetic, and `DateTime` gives the local offsets. It uses ICU format patterns of
   `DateFormat` in place of moment tokens
-  ([Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md)). It uses local time by default,
+  ([Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md)). It uses local time by default,
   and UTC in the specs.
-- **Visual verification.** Decided in [Chart.js ADR 0009](adr/0009-no-display-only-js-exactness.md):
+- **Visual verification.** Decided in [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md):
   no image comparison against the upstream PNGs. The fixture configs run as smoke tests. Flutter
   goldens test only Flutter behavior.

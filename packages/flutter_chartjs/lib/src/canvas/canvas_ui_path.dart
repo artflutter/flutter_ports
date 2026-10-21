@@ -27,7 +27,7 @@
 ///
 /// The arc and ellipse curves are `dart:ui` arcs when the transform keeps
 /// them circular or axis-aligned, else cubic Bézier curves. The layer has no
-/// Chromium-exact arc math (Chart.js ADR 0009).
+/// Chromium-exact arc math (Chart.js ADR 0034).
 library;
 
 import 'dart:math' as math;
@@ -529,7 +529,7 @@ final class UiPathBuilder implements CanvasPath {
   /// of the mapped rectangle when the path goes clockwise in bitmap space
   /// (`addRRect` has no direction argument). Its contour starts at another
   /// point of the outline than the HTML path: a dashed stroke starts its
-  /// pattern there, a display-only difference (Chart.js ADR 0009). Else, and
+  /// pattern there, a display-only difference (Chart.js ADR 0034). Else, and
   /// under another transform, the path gets the segments of
   /// [_roundRectSegments]. Then a new subpath starts at (x, y).
   @override

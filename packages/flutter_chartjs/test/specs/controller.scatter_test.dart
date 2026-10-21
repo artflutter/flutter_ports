@@ -10,6 +10,8 @@ import 'package:flutter_chartjs/src/elements/element.line.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
+
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
 // chart reaches the chart host and dart:ui. Each chart case is a
 // `testWidgets` case with the harness of Chart.js ADR 0022, section 2. The
@@ -29,8 +31,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Chart.controllers.scatter', () {
-    // :2 describe('auto', jasmine.fixture.specs('controller.scatter')): a
-    // fixture group of phase 7 (Chart.js ADR 0029), not a case.
+    group('auto', fixture.specs('controller.scatter'));
 
     test('should be registered as dataset controller', () {
       expect(jsTypeof(Chart.registry.controllers.items['scatter']), 'function');

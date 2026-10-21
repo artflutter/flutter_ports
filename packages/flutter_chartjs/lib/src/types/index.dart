@@ -6,7 +6,7 @@
 /// Each interface gets its members when a ported caller needs them. A
 /// TypeScript property becomes an abstract getter, and a setter is added when
 /// a ported caller assigns through the type. `number` is `double`, also for
-/// an index (Chart.js ADR 0010). An inline object type that ported code only
+/// an index (Chart.js ADR 0032). An inline object type that ported code only
 /// reads is a record.
 ///
 /// `index.d.ts` also names classes of other modules: `Element`
@@ -683,7 +683,8 @@ abstract interface class RadialLinearScale implements Scale {
   /// Dart `null` stands for JS `undefined`, the value before the first
   /// layout of the scale (scale.radialLinear.js:416). The radar and polar
   /// area controllers write it into a new element as `undefined` when they
-  /// reset the element before that layout.
+  /// reset the element before that layout. Chart.js ADR 0033 records this
+  /// form.
   double? get xCenter;
 
   /// index.d.ts:3678 `yCenter`. controller.polarArea.js:168 and

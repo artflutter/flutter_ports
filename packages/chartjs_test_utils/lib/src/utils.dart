@@ -18,7 +18,7 @@
 ///   canvas and pumps frames until the chart handled it.
 ///
 /// `createCanvas` and `readImageData` (:3-23) are `n/a`: the port compares
-/// no image (Chart.js ADR 0009). `injectCSS` (:117) is `n/a`: Flutter has no
+/// no image (Chart.js ADR 0034). `injectCSS` (:117) is `n/a`: Flutter has no
 /// CSS. The DOM stand-in `dom.dart` gives the class `chartjs-wrapper` the
 /// effect of the rule of `injectWrapperCSS`.
 ///
@@ -67,7 +67,7 @@ import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 // utils.js:1 imports spritingOn and spritingOff: n/a. The port compares no
-// image (Chart.js ADR 0009).
+// image (Chart.js ADR 0034).
 
 // utils.js:3 `createCanvas(w, h)` and utils.js:10 `readImageData(url,
 // callback)`: n/a. Only the image comparison of fixtures calls them.

@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: JS sort and key order as in V8.
 
 /// `Array.prototype.sort` and the key order of `Object.keys` for ported code
-/// (Chart.js ADR 0010, "Sort"), `Object.getOwnPropertyNames` (Chart.js
+/// (Chart.js ADR 0032, "Sort"), `Object.getOwnPropertyNames` (Chart.js
 /// ADR 0019, section 1), `Array.prototype.splice` ([jsSplice]), the write
 /// `list[index] = value` ([jsSetIndex], Chart.js ADR 0027) and a string as
 /// an array-like value ([JsStringList]).

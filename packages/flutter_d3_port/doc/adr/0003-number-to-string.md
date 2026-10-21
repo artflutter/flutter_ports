@@ -4,11 +4,11 @@
 - Date: 2026-10-20
 - Gate: D3 phase 1. The pilot ports d3-path and d3-format. d3-array `ticks.js` of the pilot calls
   `Math.log10`.
-- Related: [Chart.js ADR 0008](../../../flutter_chartjs/doc/adr/0008-number-formatting-on-package-intl.md)
+- Related: [Chart.js ADR 0026](../../../flutter_chartjs/doc/adr/0026-number-formatting-on-package-intl.md)
   (number formatting as display text),
-  [Chart.js ADR 0009](../../../flutter_chartjs/doc/adr/0009-no-display-only-js-exactness.md) (no
+  [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md) (no
   display-only JS exactness),
-  [Chart.js ADR 0010](../../../flutter_chartjs/doc/adr/0010-js-numeric-semantics.md) (the JS
+  [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (the JS
   numeric rules and the reference engine),
   [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (the shared runtime
   `js_semantics`), [D3 ADR 0004](0004-spec-harness.md) (reference values and specs),
@@ -17,11 +17,12 @@
 
 ## Context
 
-[Chart.js ADR 0009](../../../flutter_chartjs/doc/adr/0009-no-display-only-js-exactness.md) gives
+[Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md) gives
 this principle: the port emulates JavaScript only where the result changes behavior. For the
-Chart.js port, the behavior is the ticks, the hit element, the item order, the resolved option and
-a throw. Number strings are display text there. Thus
-[Chart.js ADR 0008](../../../flutter_chartjs/doc/adr/0008-number-formatting-on-package-intl.md)
+Chart.js port, the behavior is the ticks, the hit element, the item order, the resolved option, a
+throw, and a value that reaches a layout, a scale, an element property, a hit test, a discrete
+decision or a public return value. Number strings are display text there. Thus
+[Chart.js ADR 0026](../../../flutter_chartjs/doc/adr/0026-number-formatting-on-package-intl.md)
 formats numbers with package:intl. A Chart.js ADR binds only the Chart.js port. This ADR states
 how D3 applies these rules.
 
@@ -55,7 +56,7 @@ not find the defect.
 **Probe P1 of the research of 2026-10-20.** It compared Dart with JavaScript for 38 doubles. The
 inputs had ±0, ties (0.5, 2.5, −2.5, 1.005, 99.995, 0.045), 1e21, 1.5e21, 1e100, 2^53, the largest
 double, 5e-324 and 2.2250738585072014e-308. The JavaScript side ran on an arm64 build of Node.js
-v24.12.0. Chart.js ADR 0010 §2 takes reference values only from an x64 build. Thus these results
+v24.12.0. Chart.js ADR 0032 §2 takes reference values only from an x64 build. Thus these results
 are indicative only.
 - The probe called these methods for each value:
   - `toStringAsFixed(p)` for p in {0, 1, 2, 3, 6, 20}
@@ -97,7 +98,7 @@ methods. d3-format formats `Math.abs(value)`. It takes the sign from
 ### 1. Strings are behavior
 
 In the D3 port, a string that a public function returns is behavior. For a given double, its
-digits are the digits of the reference engine of Chart.js ADR 0010 §2. This rule applies to these
+digits are the digits of the reference engine of Chart.js ADR 0032 §2. This rule applies to these
 strings:
 - the strings of d3-format
 - the path strings of d3-path, d3-geo and d3-delaunay
@@ -106,7 +107,7 @@ strings:
 - the string interpolators of d3-interpolate
 - the formatters of d3-dsv
 
-The principle of Chart.js ADR 0009 applies to the D3 port with this list of behavior:
+The principle of Chart.js ADR 0034 applies to the D3 port with this list of behavior:
 - the strings of this section
 - the tick values and the interval boundaries of d3-array, d3-scale and d3-time
 - the containment and hit results, for example d3-polygon `polygonContains`, d3-geo `contains`,
@@ -117,17 +118,19 @@ The principle of Chart.js ADR 0009 applies to the D3 port with this list of beha
 A difference in the last bit of a value that does not change one of these results is display
 only.
 
-### 2. The rules of Chart.js ADR 0010
+### 2. The rules of Chart.js ADR 0032
 
-The D3 port applies these parts of Chart.js ADR 0010. The runtime is `js_semantics`
+The D3 port applies these parts of Chart.js ADR 0032. The runtime is `js_semantics`
 ([ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md)).
 - §1, the JS runtime: ported files call it where upstream calls a builtin or relies on an implicit
   JS conversion.
 - §2, the reference engine: an x64 build of Node.js v24.12.0
   ([D3 ADR 0004](0004-spec-harness.md) section 5).
 - §3, the transcendental builtins: `Math.log10` is `jsLog10`. `Math.atan2` is `jsAtan2`.
-  `Math.sin`, `Math.cos` and `Math.pow` are `dart:math` with `double` operands. The other
-  builtins arrive with their first ported caller, by the rule of §3 (section 5).
+  `Math.sin` and `Math.cos` are `jsSin` and `jsCos` at a site whose result reaches a behavior of
+  section 1. At the other sites, they are `dart:math` with `double` operands. `Math.pow` is
+  `dart:math` with `double` operands. The other builtins arrive with their first ported caller,
+  by the rule of §3 (section 5).
 - §4, the exact builtins: `jsMax`, `jsMin`, `jsSquare` and the `(e ?? 0)` rule.
 - §5, the sort: `jsSort`. The D3 comparators can return NaN, for example `ascending` for `null`
   (`d3-array src/ascending.js:2`).
@@ -166,7 +169,7 @@ the string of the reference engine on the VM, with dart2js and with dart2wasm.
 
 ### 4. Translation rules
 
-These rules add to the table of Chart.js ADR 0010 §7. They are translation rules. They need no
+These rules add to the table of Chart.js ADR 0032 §7. They are translation rules. They need no
 `DIVERGES` marker and no `differences.md` row.
 
 | JavaScript | Dart |
@@ -175,7 +178,7 @@ These rules add to the table of Chart.js ADR 0010 §7. They are translation rule
 | `${+(a > b)}`, a boolean as a number in a string | `${a > b ? 1 : 0}`. An `int` prints with no fraction on each target |
 | `cw = 1 ^ ccw` with a boolean `ccw` (`d3-path src/path.js:110`) | `final cw = ccw ? 0 : 1;` |
 | `Math.round(x * k) / k` | `jsRound(x * k) / k` |
-| `10 ** d` and `Math.pow(10, d)` for an integer `d` | `math.pow(10.0, d)` with `// js-ok: integer exponent`. Chart.js ADR 0010 found the V8 bits for each integer from -340 to 320 on the three targets |
+| `10 ** d` and `Math.pow(10, d)` for an integer `d` | `math.pow(10.0, d)` with `// js-ok: integer exponent`. Chart.js ADR 0032 found the V8 bits for each integer from -340 to 320 on the three targets |
 | `+("1e" + x)` (`d3-scale src/log.js:24`) | `jsToNumber('1e${jsNumberToString(x)}')` |
 | `x.toFixed(p)`, `x.toExponential(p)`, `x.toPrecision(p)`, `x.toString(radix)`, `x.toLocaleString("en")` | the functions of section 3 |
 
@@ -188,25 +191,25 @@ gives the JS result for each input carries `// js-ok: <reason>`.
 
 - `Math.log10` is `jsLog10` in d3-array and d3-scale.
 - `Math.atan2` is `jsAtan2` at each site. The last bit can change a containment result in d3-geo.
-- `Math.log` and `Math.log2` of the d3-scale log scale (phase 3) follow Chart.js ADR 0010 §3 at
+- `Math.log` and `Math.log2` of the d3-scale log scale (phase 3) follow Chart.js ADR 0032 §3 at
   their port. `fdlibm_log.dart` already has `ieee754Log`. Netlib fdlibm 5.3 has no `log2`. Before
   the port of `d3-scale src/log.js`, a probe compares the log-scale ticks of `ieee754Log(x) / ln2`
   with the reference engine. If no tick differs, the site uses that form with `// js-ok`. If a tick
   differs, a new source for `log2` needs its own entry in `port_sources.yaml`
   ([D3 ADR 0001](0001-upstream-sources.md) item 18).
 - `Math.exp`, `Math.log1p`, `Math.expm1`, `Math.hypot`, `Math.cbrt`, `Math.tan`, `Math.asin`,
-  `Math.acos` and `Math.atan` arrive with their first caller, by the rule of Chart.js ADR 0010 §3.
+  `Math.acos` and `Math.atan` arrive with their first caller, by the rule of Chart.js ADR 0032 §3.
 - A spec case that asserts a geometry string with all digits can fail in its last digit through a
   `dart:math` result. Then the case skips as `'diverges: js-semantics-dart-math'`. The first such
   case adds this row to [differences.md](../differences.md). No such case is known now.
 
 ## Alternatives considered
 
-- **Strings as display text,** as Chart.js ADR 0008 did for `Intl.NumberFormat`. Rejected. The
+- **Strings as display text,** as Chart.js ADR 0026 does for `Intl.NumberFormat`. Rejected. The
   strings are the return values of public functions. The specs compare them exactly. The 168
   d3-format cases alone compare strings. The wrappers of section 3 are short. The rejected
   ICU-exact formatter of Chart.js had about 1,800 lines
-  (Chart.js ADR 0010, Alternatives considered).
+  (Chart.js ADR 0032, Alternatives considered).
 - **The Dart number methods with no wrapper.** Rejected. 17 cells of probe P1 differ for −0. The
   plain `toString()` and `round()` differ on the VM and dart2wasm.
 - **package:intl for `toLocaleString("en")`.** Rejected. D3 needs only the grouped digits of an
@@ -214,11 +217,11 @@ gives the JS result for each input carries `// js-ok: <reason>`.
 - **`BigInt.from(x).toString()` for `toLocaleString("en")`.** Rejected. It writes the exact binary
   value, for example `10000000000000000159…` for 1e100. JavaScript writes the shortest round-trip
   digits.
-- **fdlibm ports of every transcendental builtin.** Rejected, by the reasons of Chart.js ADR 0009,
+- **fdlibm ports of every transcendental builtin.** Rejected, by the reasons of Chart.js ADR 0034,
   decision 1. A bit-for-bit port is due only where a last bit changes a result of section 1.
 - **A cross-port ADR for the JS numeric rules now.** Not chosen. ADR 0008 moves the runtime. It
   does not change what a runtime function does (ADR 0008 item 6). This ADR states the D3 use of
-  Chart.js ADR 0010. A later cross-port ADR can state the rules for all ports.
+  Chart.js ADR 0032. A later cross-port ADR can state the rules for all ports.
 
 ## Consequences
 
@@ -232,7 +235,7 @@ gives the JS result for each input carries `// js-ok: <reason>`.
 - Phase 1 runs probe P1 again on the x64 reference engine. Its inputs go into the reference data,
   with more ties, the 1e21 boundary, subnormals and random bit patterns for each precision.
 - Tool 3 for D3 flags the Dart number-to-string methods of section 4.
-- The D3 port has no package:intl dependency. Thus Chart.js ADR 0008 has no D3 counterpart.
+- The D3 port has no package:intl dependency. Thus Chart.js ADR 0026 has no D3 counterpart.
 - A geometry string can still differ from JavaScript in a last digit through `dart:math`. Such a
   case skips with the reason of section 5 and a row.
 

@@ -1,6 +1,6 @@
 # Chart.js ADR 0028: Controller interfaces and values
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-21
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (type libraries, a member with its
   first ported caller, records for inline object types),
@@ -19,11 +19,12 @@
   [Chart.js ADR 0030](0030-controller-test-strategy.md) §3 and §4 (the test files of the
   controllers, the `error` and `extra` keys of a reference case),
   [Chart.js ADR 0031](0031-gallery-chart-types.md) §9 (`DemoChart`),
+  [Chart.js ADR 0033](0033-radial-scale-centers.md) (the radial scale centers),
   [porting-flow.md](../porting-flow.md) §1.1 (the performance rule),
   [performance.md](../performance.md) §10.7 and §11.3,
   [differences.md](../differences.md) rows `adapt-line-points-elements`,
   `adapt-component-class-role` and `adapt-chart-registry-getter`,
-  [phase7/design/interfaces-values/judge.md](../phase7/design/interfaces-values/judge.md) (the
+  [phase7/design/interfaces-values/judge.md](../../../../.handover/phase7/design/interfaces-values/judge.md) (the
   panel result)
 
 ## Context
@@ -303,10 +304,10 @@ a layout (for example `position: 'left'`). The reset of a new radar or polar are
 first layout of its scale writes `undefined` into the element, and the animation then starts at
 its target (`core.animation.js:31-32`). With `double` and NaN for both values, a controller cannot
 tell them apart, and the drawn element and the hit element change. The scale reads
-`xCenter ?? double.nan` in arithmetic and canvas calls. Accepted Chart.js ADR 0025 §5 gives
-`double get xCenter` and `double get yCenter`. An accepted ADR does not change. The maintainer
-decides the record of this difference (a new ADR that supersedes Chart.js ADR 0025, or another
-record).
+`xCenter ?? double.nan` in arithmetic and canvas calls.
+[Chart.js ADR 0033](0033-radial-scale-centers.md) (proposed) records these two forms. On
+acceptance, it supersedes the bullet `double get xCenter`, `double get yCenter` of Chart.js ADR
+0025 §5, only.
 
 `types.Chart`:
 
@@ -503,7 +504,7 @@ gets the new members:
   of `getDataVisibility` (section 4), the rows of the hunk with the hover row and the frozen throw
   (section 5), the option functions against the probe items (section 6), and the namespace and
   the registry (section 7). The implementation spec
-  (`doc/phase7/design/interfaces-values/spec.md`) gives the cases. The test files follow Chart.js
+  (`.handover/phase7/design/interfaces-values/spec.md`) gives the cases. The test files follow Chart.js
   ADR 0030 §3.
 - `performance.md` records the figures of the Measurements section.
 
@@ -671,10 +672,10 @@ All files are in the session scratchpad folder
   - `core/core.typedRegistry.js:24-44`
   - `types/index.d.ts:373-375`, `:543`, `:559`, `:568-571`, `:641`, `:656`, `:658`, `:674`,
     `:688`, `:2022-2026`, `:2414-2418`, `:3676-3685`
-- **E1, the panel:** [judge.md](../phase7/design/interfaces-values/judge.md),
-  [draft-fidelity.md](../phase7/design/interfaces-values/draft-fidelity.md),
-  [draft-performance.md](../phase7/design/interfaces-values/draft-performance.md),
-  [draft-simplicity.md](../phase7/design/interfaces-values/draft-simplicity.md).
+- **E1, the panel:** [judge.md](../../../../.handover/phase7/design/interfaces-values/judge.md),
+  [draft-fidelity.md](../../../../.handover/phase7/design/interfaces-values/draft-fidelity.md),
+  [draft-performance.md](../../../../.handover/phase7/design/interfaces-values/draft-performance.md),
+  [draft-simplicity.md](../../../../.handover/phase7/design/interfaces-values/draft-simplicity.md).
 - **E2, judge runs:** `<design>/interfaces-values-judge/`: `bin/points_judge.dart` (question 3),
   `run.sh`, `out/points_aot.out`, `out/points_wasm.out`; `lintprobe/analyze.out` (question 7);
   `out/probe_spacing_simplicity.rerun` (the rerun of the S probe, byte-identical).

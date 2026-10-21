@@ -5,7 +5,7 @@
 /// cache, the locale and the ISO default text of moment. The parse with a
 /// pattern ([parseDateWall], decision 5) uses the same cache.
 ///
-/// A format string is an ICU pattern of `DateFormat` (Chart.js ADR 0009,
+/// A format string is an ICU pattern of `DateFormat` (Chart.js ADR 0034,
 /// section 5). The ten patterns of [dateFormats] give the en_US text of the
 /// `FORMATS` of chartjs-adapter-moment 1.0.1. Four of them write the day
 /// period in lower case, as moment `a` does.

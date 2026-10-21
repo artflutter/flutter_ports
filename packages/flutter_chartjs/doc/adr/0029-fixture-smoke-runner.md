@@ -1,13 +1,13 @@
 # Chart.js ADR 0029: Fixture smoke runner
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-21
 - Related: [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (raw Map configs,
   `jsonDecode` output, the `undefined` sentinel),
-  [Chart.js ADR 0009](0009-no-display-only-js-exactness.md) §4 and §5 (no image comparison, the
+  [Chart.js ADR 0034](0034-no-display-only-js-exactness.md) §4 and §5 (no image comparison, the
   smoke test, the moment format strings),
-  [Chart.js ADR 0010](0010-js-numeric-semantics.md) (the reference engine),
-  [Chart.js ADR 0011](0011-third-party-sources.md) (`tool/port_sources.yaml`),
+  [Chart.js ADR 0032](0032-js-numeric-semantics.md) (the reference engine),
+  [Chart.js ADR 0035](0035-third-party-sources.md) (`tool/port_sources.yaml`),
   [Chart.js ADR 0012](0012-dart-file-naming.md) (the upstream spelling, `file_names`, the
   underscore members),
   [Chart.js ADR 0016](0016-frame-scheduling.md) (`requestAnimFrame`),
@@ -28,11 +28,11 @@
 ## Context
 
 Phase 7 adds tool 7, the fixture smoke runner (`porting-flow.md` §4 item 7). The kickstart prompt
-of phase 7 (`doc/phase7/kickstart-prompt.md:143-148`) names its parts: the port of `src/fixture.js`
+of phase 7 (`.handover/phase7/kickstart-prompt.md:143-148`) names its parts: the port of `src/fixture.js`
 of chartjs-test-utils 0.4.0 without the image comparison, the tag `fixtures`, the melos script
 `test:fixtures`, the CI job `fixtures`, and the hand ports of the configs with functions in
 `test/fixtures/hand/`. The exit criterion (`:178`) is: "The fixture smoke tests pass for the
-ported chart types, also in the CI job `fixtures`." Chart.js ADR 0009 §4 (accepted) fixes the
+ported chart types, also in the CI job `fixtures`." Chart.js ADR 0034 §4 fixes the
 test: "A smoke test builds the chart and renders one frame. It passes when no exception occurs."
 
 Three questions stay open in other ADRs. Chart.js ADR 0019 (Open) leaves two forms for the six
@@ -277,14 +277,14 @@ order:
    of 5000 ms). An error of the hook fails the test after the settle.
 5. A fixture without a PNG fails (`:52-55`). All 667 fixtures have one at the pin.
 6. `await pumpFrame()`: the image load task of `readImageData` (`:57`). This is the frame of
-   Chart.js ADR 0009 §4. It puts the paint path of `canvas_ui.dart` into each smoke test.
-7. `toEqualImageData` (`:58`) is `n/a` (Chart.js ADR 0009 §4).
+   Chart.js ADR 0034 §4. It puts the paint path of `canvas_ui.dart` into each smoke test.
+7. `toEqualImageData` (`:58`) is `n/a` (Chart.js ADR 0034 §4).
 8. In the `finally`: `utils.releaseChart(chart)` (`:59`). Upstream releases only after the image
    comparison. The release after a failure stops the frame callbacks of the failed chart and
    changes no result.
 
 The test passes when no step throws and flutter_test reports no `FlutterError`. The runner adds no
-other assertion (Chart.js ADR 0009 §4).
+other assertion (Chart.js ADR 0034 §4).
 
 ### 8. The fixture options
 
@@ -315,7 +315,7 @@ other assertion (Chart.js ADR 0009 §4).
    y scale has 4 ticks with the plugins and 7 ticks without them, and `title` or `subtitle` alone
    gives the 4 ticks.
 3. **Moment format strings.** A fixture that parses with a moment format string skips as
-   `'diverges: adapt-date-moment-format'`, as the row and Chart.js ADR 0009 §5 ask for a spec case.
+   `'diverges: adapt-date-moment-format'`, as the row and Chart.js ADR 0034 §5 ask for a spec case.
    39 fixtures do this: 17 `controller.bar/bar-thickness-*.json`, 12 `scale.time` and 10
    `scale.timeseries`. `scale.time/invalid-data.js` is one of them: `'25:15:00'` with
    `'HH:mm:ss'` is an invalid date in moment and the next day in the `tryParse` of intl, so the
@@ -439,10 +439,10 @@ CI job `fixtures` and reports fixtures that need a phase 8 plugin as passed.
 | A static rule: skip when a phase 8 plugin is active | P | It skips 25 fixtures that need no plugin. |
 | `invalid-data.js` runs, because `HH:mm:ss` has one meaning in moment and ICU | F | The parse differs (§9 item 3). |
 | One `testWidgets` for each group | P (form D) | 3.3 ms less for each fixture. It loses the name, the skip reason and the isolation of each fixture. |
-| No frame after the `run` hook | P | 0.6 ms less for each fixture (E5). The paint path then gets no smoke test, and Chart.js ADR 0009 §4 asks for one frame. |
+| No frame after the `run` hook | P | 0.6 ms less for each fixture (E5). The paint path then gets no smoke test, and Chart.js ADR 0034 §4 asks for one frame. |
 | The frame in the `finally`, also after a failed hook | S | The frame can add a second error to the report. |
 | A port of `spriting.js` with a text hook in `canvas_ui.dart` | F | The sprite widths change the ticks of 4 fixtures and the layout of 121 more, but the smoke test asserts neither, and the library behavior does not change. It contradicts Chart.js ADR 0022 §4 item 5 and touches a file of the deferred `canvas-cuts-plan.md`. |
-| The canvas size part of `toEqualImageData` | F | Chart.js ADR 0009 §4 (accepted) says that a smoke test passes when no exception occurs. It also needs a tool 4 change for 3 DPR fixtures (Open item 3). |
+| The canvas size part of `toEqualImageData` | F | Chart.js ADR 0034 §4 says that a smoke test passes when no exception occurs. It also needs a tool 4 change for 3 DPR fixtures (Open item 3). |
 
 ## Consequences
 
@@ -475,17 +475,17 @@ CI job `fixtures` and reports fixtures that need a phase 8 plugin as passed.
    `test:fixtures` with `-j 1` (the method of E4). Then each spec file imports a registry of its
    own prefix.
 3. **The canvas size check.** Owner: the maintainer. Trigger: a defect in the device size of a DPR
-   chart that the smoke tests did not find. Then a new ADR supersedes Chart.js ADR 0009 §4 in part,
-   tool 4 writes the PNG size, and the runner compares it with the canvas size
+   chart that the smoke tests did not find. Then a new ADR restates and supersedes Chart.js ADR
+   0034, tool 4 writes the PNG size, and the runner compares it with the canvas size
    (`matchers.js:197-207`).
 
 ## Evidence
 
 All files are in the session scratchpad folder
 `/private/tmp/claude-501/-Users-vasilich-IdeaProjects-flutter-ports/7a9baa8a-bd9d-417b-a53e-11aebf47f21e/scratchpad/design/`
-(below: `<design>`). The drafts are `doc/phase7/design/fixture-runner/draft-*.md`, and the judgment
+(below: `<design>`). The drafts are `.handover/phase7/design/fixture-runner/draft-*.md`, and the judgment
 is `judge.md` in the same folder. The Node.js probes ran on an x64 build of Node.js v24.12.0 under
-Rosetta, against the Chart.js build at `7169e651` (Chart.js ADR 0010). The Dart figures come from
+Rosetta, against the Chart.js build at `7169e651` (Chart.js ADR 0032). The Dart figures come from
 an Apple M3 Max, Flutter 3.44.9 and Dart 3.12.2.
 
 - **E1, upstream source.** chartjs-test-utils v0.4.0 `src/fixture.js:1-93`, `src/index.js:5`,

@@ -12,7 +12,7 @@
 ///   scale reads an option with `options[key]` or [jsGet], tests it with
 ///   [jsTruthy], and applies [jsToNumber] before arithmetic. The adapter
 ///   gets the raw option values, as upstream gives them.
-/// - Numbers are `double` (Chart.js ADR 0010). `+value` of an adapter
+/// - Numbers are `double` (Chart.js ADR 0032). `+value` of an adapter
 ///   result is [jsToNumber]. `Date.now()` is [jsDateNow].
 /// - The value methods take any JS value (Chart.js ADR 0025).
 ///   [TimeScale.getDecimalForValue] starts with the port-only fast path for
@@ -36,8 +36,6 @@
 /// Thus this library is not a pure layer.
 library;
 
-import 'dart:math' as math;
-
 import 'package:flutter_chartjs/src/core/core.adapters.dart';
 import 'package:flutter_chartjs/src/core/core.scale.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.collection.dart'
@@ -51,7 +49,8 @@ import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_date.dart' show jsDateNow;
 import 'package:flutter_chartjs/src/js/js_function.dart'
     show jsCall, jsIsFunction;
-import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax, jsMin;
+import 'package:flutter_chartjs/src/js/js_math.dart'
+    show jsCos, jsMax, jsMin, jsSin;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
@@ -958,8 +957,8 @@ class TimeScale extends Scale {
             : jsGet(ticksOpts, 'minRotation'),
       ),
     );
-    final cosRotation = math.cos(angle);
-    final sinRotation = math.sin(angle);
+    final cosRotation = jsCos(angle);
+    final sinRotation = jsSin(angle);
     final tickFontSize = resolveTickFontOptions(0).size ?? double.nan;
 
     return (

@@ -11,6 +11,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.defaults.dart';
 import 'package:flutter_chartjs/src/core/core.scale.dart';
+import 'package:flutter_chartjs/src/js/js_array.dart';
 import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_math.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
@@ -18,15 +19,21 @@ import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // The spec reads Chart.defaults, which is `defaults` of core.defaults.dart.
 // Its chart cases call `acquireChart`. Thus they are `testWidgets` cases, and
-// the file runs on the VM (Chart.js ADR 0022, sections 1 and 2). A case that
-// needs a module of a later phase skips with the missing module of the
-// latest phase. flutter_test_config.dart registers the built-in components
-// before main(). Thus the category and linear scales of phase 6 are in the
-// registry.
+// the file runs on the VM (Chart.js ADR 0022, sections 1 and 2).
+// flutter_test_config.dart registers the built-in components before main().
+// Thus the category and linear scales of phase 6 and the controllers of
+// phase 7 are in the registry.
+//
+// `Object.keys(chart.scales).sort()` is `jsSort` of the keys with
+// `String.compareTo`: the keys are strings, and the default comparator of
+// `Array.prototype.sort` and `String.compareTo` both compare the UTF-16 code
+// units.
+// `expect(fn).not.toThrow()` is `expect(fn, returnsNormally)`.
 //
 // An option function of the spec, for example `afterBuildTicks`, is a Dart
 // closure. The scale calls it through `jsCall` (Chart.js ADR 0006).
@@ -196,8 +203,7 @@ List<String> _gridLineNames(String prefix) {
 
 void main() {
   group('Core.scale', () {
-    // describe('auto', jasmine.fixture.specs('core.scale')): a fixture group
-    // of phase 7, not a case.
+    group('auto', fixture.specs('core.scale'));
 
     test('should provide default scale label options', () {
       final scale = _member(defaults, 'scale');
@@ -677,11 +683,43 @@ void main() {
         expect(scale.layers!().length, 3);
       });
 
-      test(
+      testWidgets(
         'should create the chart with custom scale ids without axis or '
         'position options',
-        () {},
-        skip: 'blocked: controller.scatter',
+        (tester) async {
+          Chart createChart() {
+            return acquireChart(<String, Object?>{
+              'type': 'scatter',
+              'data': <String, Object?>{
+                'datasets': <Object?>[
+                  <String, Object?>{
+                    'data': <Object?>[
+                      <String, Object?>{'x': 0, 'y': 0},
+                      <String, Object?>{'x': 1, 'y': 1},
+                      <String, Object?>{'x': 2, 'y': 2},
+                    ],
+                    'xAxisID': 'customIDx',
+                    'yAxisID': 'customIDy',
+                  },
+                ],
+              },
+              'options': <String, Object?>{
+                'scales': <String, Object?>{
+                  'customIDx': <String, Object?>{
+                    'type': 'linear',
+                    'display': false,
+                  },
+                  'customIDy': <String, Object?>{
+                    'type': 'linear',
+                    'display': false,
+                  },
+                },
+              },
+            });
+          }
+
+          expect(createChart, returnsNormally);
+        },
       );
 
       testWidgets('should default to one layer for custom scales', (
@@ -831,35 +869,122 @@ void main() {
     });
 
     group('min and max', () {
-      test(
-        'should be limited to visible data',
-        () {},
-        skip: 'blocked: controller.scatter',
-      );
+      testWidgets('should be limited to visible data', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'scatter',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 100, 'y': 100},
+                  <String, Object?>{'x': -100, 'y': -100},
+                ],
+              },
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 10, 'y': 10},
+                  <String, Object?>{'x': -10, 'y': -10},
+                ],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'id': 'x',
+                'type': 'linear',
+                'min': -20,
+                'max': 20,
+              },
+              'y': <String, Object?>{'id': 'y', 'type': 'linear'},
+            },
+          },
+        });
+
+        expect(chart.scales['x']!.min, jasmineEquals(-20));
+        expect(chart.scales['x']!.max, jasmineEquals(20));
+        expect(chart.scales['y']!.min, jasmineEquals(-10));
+        expect(chart.scales['y']!.max, jasmineEquals(10));
+      });
     });
 
     group('overrides', () {
-      test(
-        'should create new scale',
-        () {},
-        skip: 'blocked: controller.scatter',
-      );
+      testWidgets('should create new scale', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'scatter',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 100, 'y': 100},
+                  <String, Object?>{'x': -100, 'y': -100},
+                ],
+              },
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 10, 'y': 10},
+                  <String, Object?>{'x': -10, 'y': -10},
+                ],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x2': <String, Object?>{'type': 'linear', 'min': -20, 'max': 20},
+            },
+          },
+        });
 
-      test(
-        'should create new scale with custom name',
-        () {},
-        skip: 'blocked: controller.scatter',
-      );
+        expect(
+          jsSort(chart.scales.keys.toList(), (a, b) => a.compareTo(b)),
+          jasmineEquals(<Object?>['x', 'x2', 'y']),
+        );
+      });
+
+      testWidgets('should create new scale with custom name', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'scatter',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 100, 'y': 100},
+                  <String, Object?>{'x': -100, 'y': -100},
+                ],
+              },
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 10, 'y': 10},
+                  <String, Object?>{'x': -10, 'y': -10},
+                ],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'scaleX': <String, Object?>{
+                'axis': 'x',
+                'type': 'linear',
+                'min': -20,
+                'max': 20,
+              },
+            },
+          },
+        });
+
+        expect(
+          jsSort(chart.scales.keys.toList(), (a, b) => a.compareTo(b)),
+          jasmineEquals(<Object?>['scaleX', 'x', 'y']),
+        );
+      });
 
       // :743-763 the Error comes from determineAxis (core.config.js:52), in
       // the first loop of mergeScaleConfig. That loop runs in the Config
-      // constructor, before the chart reads its controller. Thus the case
-      // does not need controller.scatter. It needs `defaults.scales.linear`:
-      // without it, determineAxis throws a TypeError first. Upstream
-      // registers controller.scatter, so its bare `toThrow()` can only
-      // catch the determineAxis Error. Here the chart has no scatter
-      // controller, and `acquireChart` also throws when determineAxis does
-      // not throw. Thus the matcher checks the message of determineAxis.
+      // constructor, before the chart reads its controller. It needs
+      // `defaults.scales.linear`: without it, determineAxis throws a
+      // TypeError first. The bare `toThrow()` of upstream can only catch the
+      // determineAxis Error. The matcher checks the message of
+      // determineAxis, so another Error does not pass the case.
       testWidgets(
         'should throw error on scale with custom name without axis type',
         (tester) async {
@@ -904,11 +1029,41 @@ void main() {
         },
       );
 
-      test(
-        'should read options first to determine axis',
-        () {},
-        skip: 'blocked: controller.scatter',
-      );
+      testWidgets('should read options first to determine axis', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'scatter',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 100, 'y': 100},
+                  <String, Object?>{'x': -100, 'y': -100},
+                ],
+              },
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 10, 'y': 10},
+                  <String, Object?>{'x': -10, 'y': -10},
+                ],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'xavier': <String, Object?>{
+                'axis': 'y',
+                'type': 'linear',
+                'min': -20,
+                'max': 20,
+              },
+            },
+          },
+        });
+
+        expect(chart.scales['xavier']!.axis, 'y');
+      });
 
       testWidgets('should center labels when rotated in x axis', (
         tester,

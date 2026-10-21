@@ -48,7 +48,7 @@ import 'dataset_controller_reference.dart';
 // The expected observations are in dataset_controller_reference.dart, which
 // tool/reference/dataset_controller_reference.mjs writes from
 // src/core/core.datasetController.js at the pin in Node.js v24.12.0 on x64
-// (Chart.js ADR 0010). Both sides run the same scenarios: a test controller
+// (Chart.js ADR 0032). Both sides run the same scenarios: a test controller
 // that follows the option calls of controller.line.js:41-120, on a fake chart
 // with fake scales, with the element classes of the registry and a custom
 // element class. The observations are texts: numbers as `String(x)`, objects

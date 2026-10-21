@@ -21,7 +21,7 @@ The tool uses only `node:` modules. It gives the same bytes on x64 and on arm64.
 `upstream-manifest` runs the tool with Node.js 24.12.0. The job fails when the committed files
 differ from the output. Run the tool in each Chart.js bump PR.
 
-The tool does not build Chart.js and writes nothing into `third_party/` (Chart.js ADR 0011). It
+The tool does not build Chart.js and writes nothing into `third_party/` (Chart.js ADR 0035). It
 loads `src/index.umd.ts` through Node.js type stripping. Two module hooks resolve `./x.js` to
 `./x.ts` and give the `version` of `package.json`. A stub replaces `@kurkle/color`.
 

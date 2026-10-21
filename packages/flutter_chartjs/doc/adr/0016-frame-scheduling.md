@@ -1,6 +1,6 @@
 # Chart.js ADR 0016: Frame scheduling
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-19
 - Supersedes: [Chart.js ADR 0007](0007-frame-scheduling.md) (on acceptance)
 - Related: [Chart.js ADR 0014](0014-input-events-and-chart-host.md) (the chart host),

@@ -22,11 +22,11 @@ import 'bar_reference.dart';
 // v24.12.0 on x64. The draw calls go to the upstream mock context of
 // chartjs-test-utils 0.4.0, padded to the parameter lists of MockContext
 // (harness-mock-optional-args). bar_reference.dart has the data, which
-// tool/reference/bar_reference.mjs writes (Chart.js ADR 0010).
+// tool/reference/bar_reference.mjs writes (Chart.js ADR 0032).
 //
 // The range results are booleans, and the points are the results of one
 // IEEE operation. Thus the tests compare them exactly. The draw calls compare
-// each number with closeTo (Chart.js ADR 0009), and NaN with isNaN.
+// each number with closeTo (Chart.js ADR 0034), and NaN with isNaN.
 //
 // The draw of the port has two DIVERGES forms (differences.md). The
 // comparison with the reference translates each of them back into the

@@ -14,6 +14,7 @@ import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // The spec calls the modes of Chart.Interaction, which is the Interaction of
@@ -45,7 +46,8 @@ import '../support/jasmine.dart';
 //   object of a `describe` is a variable of the group closure, shared by the
 //   charts of its cases, as upstream.
 // - `chart.data.datasets[i]` is `_dataset(chart, i)`.
-// - `expect(elements).not.toContain(x)` is `isNot(contains(x))`.
+// - `expect(elements).not.toContain(x)` is `isNot(contains(x))`, and
+//   `expect(elements).toContain(x)` is `contains(x)`.
 
 /// The event object `{type: 'click', chart, native: true, x, y}` of the
 /// spec.
@@ -181,8 +183,7 @@ _testCases = [
 
 void main() {
   group('Core.Interaction', () {
-    // describe('auto', jasmine.fixture.specs('core.interaction')): a fixture
-    // group of phase 7, not a case.
+    group('auto', fixture.specs('core.interaction'));
 
     group('point mode', () {
       late Chart chart;
@@ -999,17 +1000,76 @@ void main() {
     });
 
     group('tooltip element of scatter chart', () {
-      test(
-        'out-of-range datapoints are not shown in tooltip',
-        () {},
-        skip: 'blocked: controller.scatter',
-      );
+      testWidgets('out-of-range datapoints are not shown in tooltip', (
+        tester,
+      ) async {
+        final data = <Object?>[];
+        for (var i = 0; i < 1000; i++) {
+          data.add(<String, Object?>{'x': i, 'y': i});
+        }
 
-      test(
-        'out-of-range datapoints are shown in tooltip if included',
-        () {},
-        skip: 'blocked: controller.scatter',
-      );
+        final chart = acquireChart(<String, Object?>{
+          'type': 'scatter',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'data': data},
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'min': 2},
+            },
+          },
+        });
+
+        final meta0 = chart.getDatasetMeta(0);
+        final firstElement = _data(meta0, 0);
+
+        final evt = _Event(chart, firstElement.x, firstElement.y);
+
+        final elements = _elements(
+          Interaction.modes['point']!(chart, evt, <String, Object?>{
+            'intersect': true,
+          }),
+        );
+        expect(elements, isNot(contains(firstElement)));
+      });
+
+      testWidgets('out-of-range datapoints are shown in tooltip if included', (
+        tester,
+      ) async {
+        final data = <Object?>[];
+        for (var i = 0; i < 1000; i++) {
+          data.add(<String, Object?>{'x': i, 'y': i});
+        }
+
+        final chart = acquireChart(<String, Object?>{
+          'type': 'scatter',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'data': data},
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'min': 2},
+            },
+          },
+        });
+
+        final meta0 = chart.getDatasetMeta(0);
+        final firstElement = _data(meta0, 0);
+
+        final evt = _Event(chart, firstElement.x, firstElement.y);
+
+        final elements = _elements(
+          Interaction.modes['point']!(chart, evt, <String, Object?>{
+            'intersect': true,
+            'includeInvisible': true,
+          }),
+        );
+        expect(elements, contains(firstElement));
+      });
     });
 
     for (var i = 0; i < _testCases.length; i++) {

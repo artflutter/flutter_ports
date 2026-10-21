@@ -19,7 +19,7 @@ Only a port whose `flutter_<library>` name is taken decides its name in its own 
 
 The repository now needs more names than ADR 0003 gives:
 - **The harness.** `packages/chartjs_test_utils` is the port of chartjs-test-utils 0.4.0
-  ([Chart.js ADR 0011](../../packages/flutter_chartjs/doc/adr/0011-third-party-sources.md)). ADR
+  ([Chart.js ADR 0035](../../packages/flutter_chartjs/doc/adr/0035-third-party-sources.md)). ADR
   0003 does not name it. The Chart.js porting flow plans the fix: "A new ADR that supersedes ADR
   0003 records `chartjs_test_utils`" (`packages/flutter_chartjs/doc/porting-flow.md:973`).
 - **The design-system adapters.** Three Chart.js documents plan a new ADR that supersedes ADR

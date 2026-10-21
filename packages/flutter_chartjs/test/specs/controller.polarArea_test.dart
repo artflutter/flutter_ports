@@ -17,6 +17,7 @@ import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
@@ -88,8 +89,7 @@ void _expectArc(ChartMeta meta, int i, _ArcValues expected) {
 
 void main() {
   group('Chart.controllers.polarArea', () {
-    // describe('auto', jasmine.fixture.specs('controller.polarArea')): a
-    // fixture group of phase 7 (Chart.js ADR 0029), not a case.
+    group('auto', fixture.specs('controller.polarArea'));
 
     testWidgets(
       'should update the scale correctly when data visibility is changed',
