@@ -181,7 +181,7 @@ abstract interface class Element implements Point {
   /// core.element.ts:13 `active = false`. controller.bar.js:418 reads it.
   bool get active;
 
-  /// The `hidden` property: core.controller.js:899 writes it,
+  /// The `hidden` property: core.controller.js:898 writes it,
   /// core.datasetController.js:730 reads it. core.element.ts does not
   /// declare it. Any JS value: the [undefined] sentinel in the start state.
   /// controller.bar.js:676 reads it.
@@ -291,11 +291,16 @@ No `DIVERGES` marker.
   The body does not change. The doc gets:
 
 ```dart
-  /// index.d.ts:641 declares a string label. The overrides of scatter,
-  /// bubble, doughnut, pie, polar area and radar return the raw label of
-  /// `chart.data.labels`: any value, Dart `null` for JS `null`, or the
-  /// [undefined] sentinel (Chart.js ADR 0028, section 2). [value] is always
-  /// a string.
+  /// index.d.ts:641 declares a string label. The overrides of other
+  /// controllers do not convert their label to a string. Scatter, bubble,
+  /// doughnut, pie and polar area return `labels[index] || ''` of
+  /// `chart.data.labels` (for example controller.scatter.js:51). Radar
+  /// returns `vScale.getLabels()[index]` (controller.radar.js:44), and
+  /// core.scale.js:358-361 reads the scale option `labels` first, then
+  /// `xLabels` or `yLabels`, and `chart.data.labels` last. Thus the label
+  /// can be any value: Dart `null` for JS `null`, or the [undefined]
+  /// sentinel (Chart.js ADR 0028, section 2). The `value` is always a
+  /// string.
 ```
 
 - `updateElement` (DC:1673-1683):

@@ -1,9 +1,10 @@
 // Original code, not ported from Chart.js: JS number coercion as in V8.
 
 /// The JavaScript coercions `ToNumber`, `ToBoolean` and `ToString`, the
-/// globals `parseFloat`, `isNaN` and `isFinite`, `Number::toString` and the
-/// form `value || 0` over the Dart values that stand for JavaScript values
-/// (Chart.js ADR 0010).
+/// globals `parseFloat`, `isNaN` and `isFinite`, `Number::toString`, the
+/// form `value || 0`, the operator `+` and the relational comparison `a < b`
+/// ([jsLessThan], Chart.js ADR 0027) over the Dart values that stand for
+/// JavaScript values (Chart.js ADR 0010).
 ///
 /// The value mapping: `null` is JS `null`, [undefined] is JS `undefined`
 /// (Chart.js ADR 0006), `bool` is a boolean, `num` is a number, `String` is a
@@ -96,13 +97,37 @@ Object jsAdd(Object? a, Object? b) {
 bool _isNumberPrimitive(Object? value) =>
     value == null || value is Undefined || value is bool || value is num;
 
+/// The JavaScript relational comparison `a < b` (ECMAScript IsLessThan):
+/// two numbers compare as numbers, two strings by their code units, and
+/// other values by the `ToNumber` of their `ToPrimitive` with the hint
+/// `number`. `a > b` is `jsLessThan(b, a)` (Chart.js ADR 0027).
+bool jsLessThan(Object? a, Object? b) {
+  if (a is num && b is num) return a < b;
+  final pa = _toPrimitiveNumber(a);
+  final pb = _toPrimitiveNumber(b);
+  if (pa is String && pb is String) return pa.compareTo(pb) < 0;
+  return jsToNumber(pa) < jsToNumber(pb);
+}
+
+/// `ToPrimitive(value, number)`: a `DateTime` (a JS `Date`) gives its time
+/// value (`valueOf`); another object gives its [jsToString]. Thus an array
+/// that contains a `DateTime` gives the `Date.prototype.toString` text of
+/// that item: `[new Date(0)] < 'A'` is false.
+Object? _toPrimitiveNumber(Object? value) => switch (value) {
+  null || Undefined() || bool() || num() || String() => value,
+  final DateTime date => jsToNumber(date),
+  _ => jsToString(value),
+};
+
 /// ECMAScript `ToString(value)`, the coercion of `'' + value`, of a template
 /// literal and of `String(value)`.
 ///
 /// A number gives [jsNumberToString]. An array gives the join of its elements
 /// with `,`, where `null` and [undefined] are empty. A cyclic array recurses
 /// without end: chart data has no such array. A `Map` gives
-/// `'[object Object]'`. Any other object gives its `toString()`, which is
+/// `'[object Object]'`. A `DateTime` (a JS `Date`, Chart.js ADR 0024) gives
+/// the text of `Date.prototype.toString` without the zone name
+/// ([_dateToString]). Any other object gives its `toString()`, which is
 /// `'undefined'` for [undefined]. A function value (a Dart closure or a
 /// `JsFunction`) and a Dart object that stands for a JS object, for example
 /// an element, give their Dart text, where JavaScript gives the source of
@@ -114,9 +139,69 @@ String jsToString(Object? value) => switch (value) {
   final List<Object?> list =>
     list.map((e) => e == null || e is Undefined ? '' : jsToString(e)).join(','),
   Map<Object?, Object?>() => '[object Object]',
+  final DateTime date => _dateToString(date),
   // DIVERGES(chartjs): js-semantics-function-source, the Dart toString().
   _ => value.toString(),
 };
+
+/// The weekday names of `DateString` (ECMAScript 21.4.4.41.2), from Monday,
+/// the [DateTime.weekday] 1.
+const List<String> _weekdayNames = [
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thu',
+  'Fri',
+  'Sat',
+  'Sun',
+];
+
+/// The month names of `DateString` (ECMAScript 21.4.4.41.2), from January,
+/// the [DateTime.month] 1.
+const List<String> _monthNames = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+/// `Date.prototype.toString` (ECMAScript 21.4.4.41, `ToDateString`): the
+/// local time of [date] in the zone of the platform, as the engine uses its
+/// local zone, for example `'Thu Jan 01 1970 00:00:00 GMT+0000'`.
+///
+/// The text is `DateString`, `TimeString` and `TimeZoneString`: the weekday,
+/// the month, the day, the year with 4 digits or more (`'-0001'` for the
+/// year -1, `'10000'`), the time, and the offset as `GMT` with a sign and
+/// the hours and minutes. The seconds of an offset fall away, as in V8.
+///
+/// ECMAScript lets the implementation give an empty zone name. V8 adds the
+/// long ICU name, for example `' (Coordinated Universal Time)'`. No Dart
+/// platform gives that name, so the text ends after the offset. The name
+/// changes only the text, not the order of two texts with the same time
+/// and offset (Chart.js ADR 0009). The offsets of the platform follow the
+/// differences.md row `platform-date-local-offset`.
+String _dateToString(DateTime date) {
+  final local = date.toLocal();
+  String two(int value) => value.toString().padLeft(2, '0');
+  final year = local.year;
+  final yearText =
+      '${year < 0 ? '-' : ''}${year.abs().toString().padLeft(4, '0')}';
+  final offset = local.timeZoneOffset.inMinutes;
+  final offsetText =
+      '${offset < 0 ? '-' : '+'}${two(offset.abs() ~/ 60)}'
+      '${two(offset.abs() % 60)}';
+  return '${_weekdayNames[local.weekday - 1]} ${_monthNames[local.month - 1]} '
+      '${two(local.day)} $yearText ${two(local.hour)}:${two(local.minute)}:'
+      '${two(local.second)} GMT$offsetText';
+}
 
 /// ECMAScript `Number::toString(x, 10)`, the string of `String(x)` and
 /// `'' + x` for a number: `'12'`, `'0.000001'`, `'1e+21'`, `'1.5e-7'`, and

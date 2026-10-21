@@ -6,8 +6,9 @@ import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
 // The expected values come from Node.js v24.12.0 (V8 13.6): array.sort(compare)
-// and Object.keys(object) for each input, and Object.getOwnPropertyNames of
-// an object and of a resolver of the pinned helpers.config.ts.
+// and Object.keys(object) for each input, Object.getOwnPropertyNames of an
+// object and of a resolver of the pinned helpers.config.ts, and the write
+// array[index] = value.
 
 /// An element with a sort key and its position before the sort.
 typedef _Item = ({int key, int position});
@@ -241,6 +242,52 @@ void main() {
       expect(empty, isEmpty);
       expect(jsSplice(empty, 0, 0, ['a']), isEmpty);
       expect(empty, ['a']);
+    });
+  });
+
+  group('jsSetIndex', () {
+    test('appends at the length', () {
+      // const a = [1, 2]; a[2] = 3 gives [1, 2, 3].
+      final list = <Object?>[1.0, 2.0];
+      jsSetIndex(list, 2, 3.0);
+      expect(list, [1.0, 2.0, 3.0]);
+      final empty = <Object?>[];
+      jsSetIndex(empty, 0, 'a');
+      expect(empty, ['a']);
+    });
+
+    test('replaces an item below the length', () {
+      // const a = [1, 2]; a[0] = 9 gives [9, 2].
+      final list = <Object?>[1.0, 2.0];
+      jsSetIndex(list, 0, 9.0);
+      expect(list, [9.0, 2.0]);
+    });
+
+    test('throws a RangeError past the length', () {
+      // const a = [1, 2]; a[3] = 9 gives the length 4 and a hole at 2 in
+      // JavaScript (differences.md row platform-array-events).
+      final list = <Object?>[1.0, 2.0];
+      expect(() => jsSetIndex(list, 3, 9.0), throwsA(isA<RangeError>()));
+      expect(list, [1.0, 2.0]);
+    });
+
+    test('throws a RangeError for a negative index', () {
+      // const a = [1, 2]; a[-1] = 9 writes the property '-1' in JavaScript:
+      // no throw, and the length stays 2 (differences.md row
+      // platform-array-events).
+      final list = <Object?>[1.0, 2.0];
+      expect(() => jsSetIndex(list, -1, 9.0), throwsA(isA<RangeError>()));
+      expect(list, [1.0, 2.0]);
+    });
+
+    test('throws a TypeError for a value of another type', () {
+      // A List<int> takes no double: the run-time check of the covariant
+      // type argument fails, at the length and below it. The value is not
+      // whole, because a whole double is an int on dart2js.
+      final List<Object?> ints = <int>[1, 2];
+      expect(() => jsSetIndex(ints, 2, 3.5), throwsA(isA<TypeError>()));
+      expect(() => jsSetIndex(ints, 0, 3.5), throwsA(isA<TypeError>()));
+      expect(ints, [1, 2]);
     });
   });
 }

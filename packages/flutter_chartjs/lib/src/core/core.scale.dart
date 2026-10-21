@@ -806,6 +806,7 @@ class Scale extends _ScalePrototype
   ///
   /// Dart `null` stands for the JS `null` of an update in progress
   /// (core.scale.js:410): the hooks before `buildTicks` read it.
+  @override
   List<Tick>? ticks = [];
 
   /// core.scale.js:228 `_gridLineItems`.
@@ -835,11 +836,13 @@ class Scale extends _ScalePrototype
   /// core.scale.js:237 `_startPixel`. NaN stands for JS `undefined`.
   /// controller.bar.js:549 reads it.
   @internal
+  @override
   double startPixel = double.nan;
 
   /// core.scale.js:239 `_endPixel`. NaN stands for JS `undefined`.
   /// controller.bar.js:550 reads it.
   @internal
+  @override
   double endPixel = double.nan;
 
   /// core.scale.js:240 `_reversePixels`.
@@ -883,6 +886,7 @@ class Scale extends _ScalePrototype
   /// scale.time.js:251, scale.timeseries.js:138 and controller.bar.js:8 read
   /// and write it.
   @internal
+  @override
   AnyObject cache = {};
 
   /// core.scale.js:248 `_dataLimitsCached`.
@@ -1884,6 +1888,7 @@ class Scale extends _ScalePrototype
   /// @return {*}
   ///
   /// Dart `null` stands for the JS `undefined` of the base class.
+  @override
   double? getValueForPixel(double pixel) => null;
 
   /// core.scale.js:906 `getPixelForTick(index)`.
@@ -1894,6 +1899,7 @@ class Scale extends _ScalePrototype
   /// @return {number}
   ///
   /// Dart `null` stands for the JS `null` of an index out of the range.
+  @override
   double? getPixelForTick(int index) {
     final ticks = this.ticks!;
     if (index < 0 || index > ticks.length - 1) {
@@ -1908,6 +1914,7 @@ class Scale extends _ScalePrototype
   /// The coordinate (0, 0) is at the upper-left corner of the canvas
   /// @param {number} decimal
   /// @return {number}
+  @override
   double getPixelForDecimal(double decimal) {
     if (reversePixels) {
       // Upstream reassigns its parameter.
@@ -1935,6 +1942,7 @@ class Scale extends _ScalePrototype
   /// Returns the pixel for the minimum chart value
   /// The coordinate (0, 0) is at the upper-left corner of the canvas
   /// @return {number}
+  @override
   double getBasePixel() {
     return getPixelForValue(getBaseValue());
   }
@@ -2581,6 +2589,7 @@ class Scale extends _ScalePrototype
   /// for a `double` tick value: a number of the same value is equal, and a
   /// `String` is not (Chart.js ADR 0025). The result is the `lineWidth`
   /// option as a number.
+  @override
   double getLineWidthForValue(Object? value) {
     final grid = options['grid'];
     if (!_isVisible() || !jsTruthy(jsGet(grid, 'display'))) {

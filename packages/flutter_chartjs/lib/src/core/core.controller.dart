@@ -74,7 +74,7 @@ import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs/src/js/js_number.dart';
-import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet, jsGetIndex;
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/platform/index.dart'
     show BasePlatform, detectPlatform;
@@ -331,6 +331,7 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
   /// name without the leading underscore (Chart.js ADR 0023). The specs read
   /// it (core.controller.tests.js:1973).
   @internal
+  @override
   final Object? dataset_;
 
   /// core.controller.js:846 `_parsed: []`.
@@ -421,6 +422,12 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
   @override
   types.ScaleRanges? scaleRanges;
 
+  /// index.d.ts:374 `DoughnutMetaExtensions.total`: the total of the
+  /// doughnut or pie dataset. Dart `null` stands for JS `undefined`, the
+  /// start value. controller.doughnut.js:235 writes it.
+  @override
+  double? total;
+
   /// core.animations.js:71 `$animations`, the running animations of the
   /// meta. The [undefined] sentinel is the absent property.
   Object? _animations = undefined;
@@ -432,9 +439,9 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
   /// The JS property read `meta[prop]`.
   ///
   /// The names of the literal and of the later writes read their fields.
-  /// Dart `null` stands for the JS `null` of a start value. Another name
-  /// reads the Map of extra properties, and gives [undefined] for an absent
-  /// property.
+  /// Dart `null` stands for the JS `null` of a start value. [total] gives
+  /// [undefined] for Dart `null`. Another name reads the Map of extra
+  /// properties, and gives [undefined] for an absent property.
   @override
   Object? operator [](String prop) => switch (prop) {
     'type' => _type,
@@ -464,6 +471,7 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
     'vScale' => vScale ?? undefined,
     '_scaleRanges' => scaleRanges ?? undefined,
     '_clip' => _clip ?? undefined,
+    'total' => total ?? undefined,
     r'$animations' => _animations,
     _ => _extra(prop),
   };
@@ -481,8 +489,9 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
   ///
   /// `visible`, `$animations`, `type`, `label` and the extra properties take
   /// any value. A typed field takes a value of its type: another value
-  /// throws a [TypeError]. `data` and `_dataset` are final: a write throws
-  /// an [UnsupportedError]. No ported code writes them by name.
+  /// throws a [TypeError]. [total] takes a number or [undefined]. `data` and
+  /// `_dataset` are final: a write throws an [UnsupportedError]. No ported
+  /// code writes them by name.
   @override
   void operator []=(String prop, Object? value) {
     switch (prop) {
@@ -538,6 +547,8 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
         clip = value! as types.ChartMetaClip;
       case '_scaleRanges':
         scaleRanges = value is Undefined ? null : value as types.ScaleRanges?;
+      case 'total':
+        total = value is Undefined ? null : (value as num?)?.toDouble();
       case 'data' || '_dataset':
         throw UnsupportedError('The meta keeps its $prop.');
       default:
@@ -838,6 +849,12 @@ class Chart implements types.Chart {
   /// core.controller.js:509 `_minPadding`. Dart `null` stands for JS
   /// `undefined`, the value before the first update.
   double? _minPadding;
+
+  /// index.d.ts:543 `legend`: the legend element. Dart `null` stands for JS
+  /// `undefined`, the start value. The legend plugin of phase 8 writes it
+  /// (plugin.legend.js:602) and deletes it (:609).
+  @override
+  types.LegendElement? legend;
 
   /// core.controller.js:197 `get aspectRatio()`.
   ///
@@ -1158,7 +1175,7 @@ class Chart implements types.Chart {
     _removeUnreferencedMetasets();
 
     for (var i = 0, ilen = datasets.length; i < ilen; i++) {
-      final dataset = _item(datasets, i.toDouble());
+      final dataset = jsGetIndex(datasets, i.toDouble());
       var meta = getDatasetMeta(i.toDouble());
       final datasetType = jsGet(dataset, 'type');
       final type = jsTruthy(datasetType) ? datasetType : config.type;
@@ -1229,6 +1246,7 @@ class Chart implements types.Chart {
   /// [mode] is an update mode `String`, a function of the context
   /// `{datasetIndex}`, or [undefined] for an absent argument (index.d.ts:559).
   /// The hooks get it as it is.
+  @override
   void update([Object? mode = undefined]) {
     final config = this.config..update();
     final options = _options = config.createResolver(
@@ -1679,7 +1697,7 @@ class Chart implements types.Chart {
   /// the dataset object, by [identical].
   @override
   ChartMeta getDatasetMeta(double datasetIndex) {
-    final dataset = _item(_datasets, datasetIndex);
+    final dataset = jsGetIndex(_datasets, datasetIndex);
     final metasets = this.metasets;
     ChartMeta? meta;
     for (var i = metasets.length - 1; i >= 0; i--) {
@@ -1710,13 +1728,15 @@ class Chart implements types.Chart {
   }
 
   /// core.controller.js:859 `getVisibleDatasetCount()`.
+  @override
   double getVisibleDatasetCount() {
     return getSortedVisibleDatasetMetas().length.toDouble();
   }
 
   /// core.controller.js:863 `isDatasetVisible(datasetIndex)`.
+  @override
   bool isDatasetVisible(double datasetIndex) {
-    final dataset = _item(_datasets, datasetIndex);
+    final dataset = jsGetIndex(_datasets, datasetIndex);
     if (!jsTruthy(dataset)) {
       return false;
     }
@@ -1741,14 +1761,22 @@ class Chart implements types.Chart {
   }
 
   /// core.controller.js:881 `toggleDataVisibility(index)`.
+  @override
   void toggleDataVisibility(double index) {
     final key = jsNumberToString(index);
     _hiddenIndices[key] = !jsTruthy(_hiddenIndices[key]);
   }
 
   /// core.controller.js:885 `getDataVisibility(index)`.
+  ///
+  /// An empty `_hiddenIndices` gives `undefined` for each key, and the
+  /// upstream line gives true. The early return skips the key string in that
+  /// state (Chart.js ADR 0028, section 4).
   @override
   bool getDataVisibility(double index) {
+    // Port-only fast path with the upstream result (Chart.js ADR 0028,
+    // section 4).
+    if (_hiddenIndices.isEmpty) return true;
     return !jsTruthy(_hiddenIndices[jsNumberToString(index)]);
   }
 
@@ -2310,15 +2338,6 @@ class Chart implements types.Chart {
 /// `each(Chart.instances, ...)` takes the charts in the `Object.keys` order.
 void _invalidatePlugins() {
   each(Chart.instances, (Chart chart) => chart.plugins.invalidate());
-}
-
-/// The read `list[index]` of a JS array for a number [index]: the item at a
-/// whole index below the length, else [undefined].
-Object? _item(List<Object?> list, double index) {
-  if (index >= 0 && index < list.length && index == index.truncateToDouble()) {
-    return list[index.toInt()];
-  }
-  return undefined;
 }
 
 /// The read `meta.data[index]` of a data element: the element at a whole

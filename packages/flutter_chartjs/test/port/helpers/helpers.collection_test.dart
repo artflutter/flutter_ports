@@ -39,6 +39,17 @@ final class _Point implements PointElement {
 
   @override
   double cp2y = double.nan;
+
+  // The members of Chart.js ADR 0028 that this test does not read.
+  @override
+  bool get active => false;
+
+  @override
+  Object? get hidden => undefined;
+
+  @override
+  double size([Map<String, Object?>? options]) =>
+      throw UnsupportedError('size');
 }
 
 /// A listener that records each call, as the JavaScript objects of the

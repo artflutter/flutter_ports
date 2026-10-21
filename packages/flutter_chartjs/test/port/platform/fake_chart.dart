@@ -137,9 +137,10 @@ final class FakeChart implements types.Chart {
     }
   }
 
-  /// `update(mode)`: renders the chart.
-  void update([String mode = 'default']) {
-    updates.add(mode);
+  /// `update(mode)`: renders the chart. The fake takes a mode string.
+  @override
+  void update([Object? mode = 'default']) {
+    updates.add(mode! as String);
     final context = ctx!;
     final pixelRatio = currentDevicePixelRatio;
     context

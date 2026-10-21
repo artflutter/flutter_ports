@@ -204,9 +204,13 @@ double textX(
 /// 0010). They are always integers: list positions and lengths. The `lo`
 /// and `hi` of [lookupByKey] are `int` values, which the port converts.
 /// `_parsed.slice(…)` is [_slice].
+///
+/// Upstream reads the length and `_lookupByKey` of the points. Thus the
+/// parameter takes the data elements of the meta (Chart.js ADR 0028,
+/// section 3).
 ({double start, double count}) getStartAndCountOfVisiblePoints(
   ChartMeta meta,
-  List<PointElement> points,
+  List<Element> points,
   // The upstream signature has a positional `animationsDisabled`.
   // ignore: avoid_positional_boolean_parameters
   bool animationsDisabled,

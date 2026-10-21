@@ -205,6 +205,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// core.element.ts:13 `active = false`.
   ///
   /// It is not optional. Thus a write by name accepts only a `bool`.
+  @override
   bool active = false;
 
   /// core.element.ts:14 `options: O`, the resolved options of the element
@@ -234,6 +235,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   ///
   /// It keeps any value, as the Map of extra properties does: the
   /// [undefined] sentinel in the start state, and Dart `null` for JS `null`.
+  @override
   Object? hidden = undefined;
 
   /// core.element.ts:17 `tooltipPosition(useFinalPosition: boolean):

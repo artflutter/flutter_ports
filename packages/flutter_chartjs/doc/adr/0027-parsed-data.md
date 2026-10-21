@@ -287,9 +287,19 @@ void jsSetIndex<T>(List<T> list, int index, T value) {
   item[iScale.axis] = iScale.parse(resolveObjectKey(obj, iAxisKey! as String), i);
   ```
 
-  Thus the `TypeError` of a bad key comes at the same call as upstream, after the `iScale.parse`
-  of the first item, and a parse of 0 items does not throw. `helpers.config.dart:922` has the same
-  form.
+  Thus, for a key that throws upstream, the `TypeError` comes at the same call as upstream, after
+  the `iScale.parse` of the first item, and a parse of 0 items does not throw.
+  `helpers.config.dart:922` has the same form.
+- A known difference of this form: the cast throws for each key that is not a `String`.
+  Upstream throws only when the cache of `resolveObjectKey` has no entry for the `ToString` of
+  the key (`helpers.core.ts:379`). Then `_splitKey` calls `key.split` (`helpers.core.ts:348`),
+  which throws. The cache holds `''`, `'x'` and `'y'` from the start (`helpers.core.ts:335-342`),
+  and each string key of an earlier call. Thus the keys `[]` (the string `''`) and `[['y']]` (the
+  option resolver gives `['y']`, the string `'y'`) do not throw upstream, but throw a `TypeError`
+  in the port (U-bar-lib review, F3). The existing casts of `helpers.config.dart:922` and of DC
+  `_keyOr` have the same difference. The doc of `parseObjectData` in `controller.bar.dart` states
+  it. The cast does not change, for two reasons: the cache of `resolveObjectKey` is private to
+  `helpers.core.dart`, and it holds the string keys of earlier calls (process state).
 - `jsGet(true, 'xAxisKey')` is `undefined`, so `parsing: true` and `{}` give the defaults.
 - `_keyOr` (DC:1188) stays private. The three `_parsedValue` copies stay private.
 - A known residual: DC `parseObjectData` (DC:1169-1170) casts in `_keyOr`, before the loop.
@@ -302,32 +312,61 @@ void jsSetIndex<T>(List<T> list, int index, T value) {
    example `item[2]` at `bubble.js:62`) or `jsToNumber` (the unary `+`).
 2. A controller writes only into items that it makes: `item = {}` (`bar.js:163`, `:333`) and the
    `AnyObject` results of `super.parse*Data` (`bubble.js:47-76`).
-3. The `_stacks` of a List item. DC gets a private `Expando` and an `@internal` reader:
+3. The `_stacks` of an item that is not a Map. DC gets a private `Expando`, a private test for a
+   JS primitive and an `@internal` reader:
 
    ```dart
-   /// The `_stacks` property of the parsed items that are Lists. A Dart List
+   /// The `_stacks` property of the parsed items that are objects without a
+   /// property Map: a List, and each value that is not a Map, a class value or
+   /// a primitive, for example a [DateTime] or a function. Such a Dart value
    /// has no named property. Upstream writes `item._stacks = {}` into the
-   /// array (core.datasetController.js:165).
-   final Expando<Object> _listStacks = Expando('_stacks');
+   /// array, the `Date` or the function (core.datasetController.js:165).
+   final Expando<Object> _objectStacks = Expando('_stacks');
+
+   /// Whether [item] is a JS primitive: a property write into it throws a
+   /// `TypeError` in strict code. A record is not a JS value. It counts here,
+   /// because an [Expando] cannot take it.
+   bool _isPrimitive(Object? item) =>
+       item == null ||
+       item is Undefined ||
+       item is num ||
+       item is String ||
+       item is bool ||
+       item is Record;
 
    /// The read `item._stacks` of a parsed item (core.datasetController.js:165,
    /// :218, :599, :610; controller.bar.js:405, :615).
    ///
    /// A Map gives Dart `null` for an absent key, as `_parsedValue` does. Each
    /// reader tests the truthiness, or reads a property of the result, which
-   /// throws a [TypeError] for both `null` and [undefined].
+   /// throws a [TypeError] for both `null` and [undefined]. A class value and a
+   /// primitive give [jsGet]: the static property through the superclass chain
+   /// for a class value, [undefined] for a number, a [TypeError] for `null`.
+   /// Each other value, for example a List or a [DateTime], gives the entry
+   /// that `_updateStacks` wrote for it, or Dart `null` (Chart.js ADR 0027).
    @internal
    Object? stacksOf(Object? item) {
      if (item is Map<dynamic, dynamic>) return item['_stacks'];
-     if (item is List<dynamic>) return _listStacks[item];
-     return jsGet(item, '_stacks');
+     if (item is List<dynamic>) return _objectStacks[item];
+     if (item is JsClass || _isPrimitive(item)) return jsGet(item, '_stacks');
+     return _objectStacks[item!];
    }
    ```
 
-   - The Map case comes first. A Map item pays the cost of `_parsedValue` and no more.
-   - The write at DC:353-356: a Map takes the key (the marker of
-     `js-semantics-resolver-objects` stays), a List takes the Expando entry, and each other value
-     throws the `TypeError` of a write into a primitive.
+   - The Map case comes first and the List case second. A Map item pays the cost of
+     `_parsedValue` and no more.
+   - The write in `_updateStacks` (dc.js:165) is a `switch` on the item. A Map takes the key (the
+     marker of `js-semantics-resolver-objects` stays). A List takes the Expando entry. A class
+     value (`JsClass`) takes an own static property `_stacks`, as upstream adds the property to
+     the function (Chart.js ADR 0020). A primitive (`null`, `undefined`, a number, a string or a
+     boolean) throws the `TypeError` of a write into a primitive. Each other value, for example a
+     `DateTime` (a JS `Date`, Chart.js ADR 0024) or a function, takes the Expando entry.
+   - The reason (S3 fix R1, [S3-report.md](../phase7/review/wave1/S3-report.md)): upstream writes
+     `_stacks` into a `Date`, a function and a class, and does not throw. A throw is a protected
+     behavior (Chart.js ADR 0009). A subclass without an own `_stacks` reads the object of its
+     superclass through `jsGet`, as upstream reads it through the prototype chain. The name of the
+     Expando is `_objectStacks`, because it holds the `_stacks` of a List, a `DateTime` and a
+     function.
    - The readers: DC:351, :428, :1224, :1245, `bar.js:405` and `bar.js:615`.
    - The change lands after the measurement of Open 1.
 4. The doughnut keeps one cast: `jsGet(getDataset(), 'data')! as List<Object?>`
@@ -382,7 +421,7 @@ form of that operator (Chart.js ADR 0010, Chart.js ADR 0017 §8):
 | `bar.js:571`, `:574-576` `length !== value`, `start = length - value` | `length != value`; `jsToNumber(length) - jsToNumber(value)` |
 | `bar.js:593` `start + length` | `jsAdd(start, length)` |
 | `bar.js:601-602` `Math.abs(size) < minBarLength`, `* minBarLength` | `final minBarLength = jsToNumber(jsGet(options, 'minBarLength'))`, once at the read |
-| `bar.js:603` `value === actualBase` | `value == actualBase` |
+| `bar.js:603` `value === actualBase` | `_strictEquals(value, actualBase)` |
 | `bar.js:178` `vScale.min >= actualBase` | `vScale.min >= jsToNumber(actualBase)` |
 | `bar.js:544` `barThickness \|\| computeMinSampleSize(meta)` | `jsTruthy(barThickness) ? barThickness : computeMinSampleSize(meta)`, the ruler field `Object? min` |
 | `bar.js:66`, `:656` `ruler.min * ...` | `jsToNumber(ruler.min) * ...` |
@@ -391,7 +430,7 @@ form of that operator (Chart.js ADR 0010, Chart.js ADR 0017 §8):
 | `bar.js:640`, `:652`, `:656` `valueOrDefault(maxBarThickness, Infinity)` in `Math.min` | `jsMin(jsToNumber(valueOrDefault(raw, double.infinity)), ...)` |
 | `bar.js:645` `options.barThickness === 'flex'` | `jsGet(options, 'barThickness') == 'flex'` |
 | `bar.js:206`, `:211`, `:218` `!edge`, `edge === true`, `edge === 'middle'` | `!jsTruthy(edge)`, `edge == true`, `edge == 'middle'` |
-| `bar.js:220`, `:222` `(stack._top \|\| 0) === index` | `jsOrZero(jsGetKey(stack, '_top')) == index` |
+| `bar.js:220`, `:222` `(stack._top \|\| 0) === index` | `_strictEquals(_orZero(jsGetKey(stack, '_top')), index)`, with `_orZero(v)` = `jsTruthy(v) ? v : 0.0` (not `jsOrZero`: no arithmetic follows, and the `ToNumber` of `jsOrZero` can make `'0'` or `true` equal to the dataset index, U-bar-lib review F1) |
 | `line.js:104`, `scatter.js:133` `parsed[iAxis] - prevParsed[iAxis]` | `jsToNumber(...) - jsToNumber(...)`; `prevParsed` can be `false`, and `jsGetKey(false, key)` is `undefined` |
 | `line.js:128`, `scatter.js:169` `dataset.options && dataset.options.borderWidth \|\| 0` | the raw value (`Object?`); `jsMax` of the `ToNumber` values |
 | `bubble.js:75` `item && item.r && +item.r` | the value of the `&&` chain: `!jsTruthy(item) ? item : !jsTruthy(r) ? r : jsToNumber(r)` |
@@ -403,6 +442,15 @@ form of that operator (Chart.js ADR 0010, Chart.js ADR 0017 §8):
 
 - Dart `==` gives the `===` result for `double`, `String`, `bool`, `null` and the `undefined`
   sentinel. Two Maps or Lists compare by identity in both.
+- Dart `==` does not give the `===` result for two `DateTime` values. Dart compares their time
+  values, and `===` compares two `Date` objects by identity (a `DateTime` is a JS `Date`, Chart.js
+  ADR 0024). Thus, where both operands of `===` can be a data value or an option value, the
+  controller compares with a private `_strictEquals` (the function of `scale.category.dart` and
+  `core.layouts.dart`): two numbers and two strings by value, each other pair by identity. The
+  bar sites are `bar.js:220` and `:222` (above), `:444` (the `skipNull` find), `:462` and `:521`
+  (`stacks.indexOf`, as `any` and `indexWhere`) and `:603` (above). The reason is the
+  U-bar-lib review, F2: two separate `Date` stack names give two stacks upstream and one stack
+  with Dart `==`, thus other bar positions and another hit element (Chart.js ADR 0009).
 - A value that upstream reads once for several numeric uses gets its `jsToNumber` once, at the
   read, when each use applies `ToNumber` (`minBarLength`).
 - The bar ruler (`bar.js:546-556`) is a private record (Chart.js ADR 0003) with `Object? min` and
@@ -439,6 +487,10 @@ form of that operator (Chart.js ADR 0010, Chart.js ADR 0017 §8):
     _ => jsToString(value),
   };
   ```
+
+  `jsToString` of a `DateTime` gives the `Date.prototype.toString` text without the zone name,
+  for example `'Thu Jan 01 1970 00:00:00 GMT+0000'`, and `lib/src/js/` is port-only, thus this
+  has no `differences.md` row (decision D7 of the phase lead, Chart.js ADR 0009).
 
 ### 8. The hot loops
 

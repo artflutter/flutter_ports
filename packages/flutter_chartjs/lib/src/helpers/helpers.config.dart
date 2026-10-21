@@ -917,7 +917,7 @@ List<Map<String, Object?>> _parseObjectDataRadialScale(
 
   for (var i = 0.0, ilen = count; i < ilen; ++i) {
     final index = i + start;
-    final item = jsGet(data, jsNumberToString(index));
+    final item = jsGetIndex(data, index);
     parsed.add({
       'r': iScale!.parse(resolveObjectKey(item, key! as String), index),
     });

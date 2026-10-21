@@ -312,6 +312,81 @@ void main() {
     });
   });
 
+  group('jsLessThan', () {
+    // The results of `a < b` in Node.js v24.12.0 on x64. A DateTime is
+    // new Date(Date.UTC(year, 0, 1)).
+    test('compares two strings by their code units', () {
+      expect(jsLessThan('10', '9'), isTrue);
+      expect(jsLessThan('a', 'B'), isFalse);
+      // '\u{1F600}' < '\uFFFF' is true: the code unit 0xD83D is first.
+      expect(jsLessThan('\u{1F600}', '\uFFFF'), isTrue);
+    });
+
+    test('compares two numbers as numbers', () {
+      expect(jsLessThan(10.0, 9.0), isFalse);
+      expect(jsLessThan(_nan, _nan), isFalse);
+      expect(jsLessThan(-0.0, 0.0), isFalse);
+    });
+
+    test('compares the ToNumber of a string and a number', () {
+      expect(jsLessThan('10', 9.0), isFalse);
+      expect(jsLessThan(9.0, '9'), isFalse);
+      expect(jsLessThan('', 1.0), isTrue);
+      expect(jsLessThan('abc', 1.0), isFalse);
+    });
+
+    test('compares null as 0 and undefined as NaN', () {
+      expect(jsLessThan(null, 1.0), isTrue);
+      expect(jsLessThan(-1.0, null), isTrue);
+      expect(jsLessThan('-1', null), isTrue);
+      expect(jsLessThan(null, false), isFalse);
+      expect(jsLessThan(null, undefined), isFalse);
+      expect(jsLessThan(undefined, 1.0), isFalse);
+      expect(jsLessThan(1.0, undefined), isFalse);
+    });
+
+    test('compares a boolean as a number', () {
+      expect(jsLessThan(true, 2.0), isTrue);
+      expect(jsLessThan(false, true), isTrue);
+    });
+
+    test('compares a DateTime by its time value', () {
+      // The ISO strings compare in the reverse order: '+010000-01-01...'
+      // is before '9999-01-01...'.
+      expect(jsLessThan(DateTime.utc(10000), DateTime.utc(9999)), isFalse);
+      expect(jsLessThan(DateTime.utc(9999), DateTime.utc(10000)), isTrue);
+      // new Date(5) < 6 is true, 6 < new Date(5) is false and
+      // new Date(0) < '1' is true.
+      final date = DateTime.fromMillisecondsSinceEpoch(5, isUtc: true);
+      expect(jsLessThan(date, 6.0), isTrue);
+      expect(jsLessThan(6.0, date), isFalse);
+      expect(jsLessThan(DateTime.utc(1970), '1'), isTrue);
+    });
+
+    test('compares an array or an object through its ToString', () {
+      // [2] < '10' compares '2' with '10' as strings.
+      expect(jsLessThan([2.0], '10'), isFalse);
+      expect(jsLessThan('10', [2.0]), isTrue);
+      expect(jsLessThan([1.0, 2.0], '1,3'), isTrue);
+      // ({}) < 1 compares NaN, the ToNumber of '[object Object]'.
+      expect(jsLessThan(<String, Object?>{}, 1.0), isFalse);
+    });
+
+    test('compares an array of dates through the Date text', () {
+      // In each zone of the probe: [new Date(0)] < 'A' is false (the
+      // weekday is first), and [new Date(1e12)] < [new Date(0)] is true
+      // ('Sat' or 'Sun' before 'Thu' or 'Wed').
+      final d0 = DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
+      final d1 = DateTime.fromMillisecondsSinceEpoch(
+        1000000000000,
+        isUtc: true,
+      );
+      expect(jsLessThan([d0], 'A'), isFalse);
+      expect(jsLessThan([d1], [d0]), isTrue);
+      expect(jsLessThan([d0], [d1]), isFalse);
+    });
+  });
+
   group('jsToString', () {
     test('converts primitive values', () {
       expect(jsToString(null), 'null');
@@ -342,6 +417,86 @@ void main() {
 
     test('gives [object Object] for a plain object', () {
       expect(jsToString(<String, Object?>{'a': 1}), '[object Object]');
+    });
+
+    group('a DateTime', () {
+      // String(new Date(t)) in Node.js v24.12.0 on x64 with TZ=UTC, without
+      // the zone name ' (Coordinated Universal Time)'.
+      const utcTexts = {
+        0: 'Thu Jan 01 1970 00:00:00 GMT+0000',
+        -1: 'Wed Dec 31 1969 23:59:59 GMT+0000',
+        1000000000000: 'Sun Sep 09 2001 01:46:40 GMT+0000',
+        1704085629000: 'Mon Jan 01 2024 05:07:09 GMT+0000',
+        -62185708800000: 'Tue Jun 01 -0001 00:00:00 GMT+0000',
+        253402300799000: 'Fri Dec 31 9999 23:59:59 GMT+0000',
+        253402300800000: 'Sat Jan 01 10000 00:00:00 GMT+0000',
+        8640000000000000: 'Sat Sep 13 275760 00:00:00 GMT+0000',
+        -8640000000000000: 'Tue Apr 20 -271821 00:00:00 GMT+0000',
+      };
+      DateTime at(int ms) => DateTime.fromMillisecondsSinceEpoch(ms);
+      // The engine prints the local time of the platform zone. The exact
+      // texts need a platform zone with the offset 0 at each time.
+      final utcHost = utcTexts.keys.every(
+        (ms) => at(ms).timeZoneOffset == Duration.zero,
+      );
+
+      test(
+        'gives the Date.prototype.toString text in UTC',
+        () {
+          for (final MapEntry(key: ms, value: text) in utcTexts.entries) {
+            expect(jsToString(at(ms)), text, reason: '$ms');
+            expect(
+              jsToString(DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true)),
+              text,
+              reason: '$ms, isUtc',
+            );
+          }
+        },
+        skip: utcHost ? false : 'the platform zone is not UTC',
+      );
+
+      test('gives the local time of the platform zone', () {
+        // The same text in each zone, from the fields of the local time.
+        final shape = RegExp(
+          '^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) '
+          r'(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d) '
+          r'(-?\d{4,}) (\d\d):(\d\d):(\d\d) GMT([+-])(\d\d)(\d\d)$',
+        );
+        for (final ms in [...utcTexts.keys, 1718000000000, 1711848600000]) {
+          final date = DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
+          final local = date.toLocal();
+          final match = shape.firstMatch(jsToString(date));
+          expect(match, isNotNull, reason: jsToString(date));
+          final offset = local.timeZoneOffset.inMinutes;
+          expect(
+            [
+              for (final i in [3, 4, 5, 6, 7, 9, 10]) int.parse(match![i]!),
+              match![8],
+            ],
+            [
+              local.day,
+              local.year,
+              local.hour,
+              local.minute,
+              local.second,
+              offset.abs() ~/ 60,
+              offset.abs() % 60,
+              if (offset < 0) '-' else '+',
+            ],
+            reason: '$ms',
+          );
+        }
+      });
+
+      test('reaches the arrays, the operator + and parseFloat', () {
+        // In each zone: String([d, null, d]) joins the two texts with ',,',
+        // d + '' is String(d), and parseFloat(d) is NaN.
+        final date = DateTime.fromMillisecondsSinceEpoch(0, isUtc: true);
+        final text = jsToString(date);
+        expect(jsToString([date, null, date]), '$text,,$text');
+        expect(jsAdd(date, ''), text);
+        expect(jsParseFloat(date), isNaN);
+      });
     });
   });
 

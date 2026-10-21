@@ -115,6 +115,8 @@ Apply the rule in this way:
 - Measure before you choose. A form with no measured gain keeps the upstream structure.
 - A faster form that keeps the upstream structure needs no more records. An example is the number
   path of `toTRBL` ([performance.md](performance.md) §8.3).
+- A `final` local for a repeated read of the same key of the same item in one loop pass keeps the
+  structure under the one-read rule of [Chart.js ADR 0027](adr/0027-parsed-data.md) §8.
 - A faster form that changes the upstream structure or the canvas calls gets a `DIVERGES` marker
   and an `adapt` row in `differences.md` (section 4). The row names the figure in
   `performance.md`. A port-only test pins the upstream behavior of both forms.
@@ -165,6 +167,11 @@ three drafts, a judge and a synthesis wrote it. Its subsection is 2.10. The fixe
 Chart.js ADR 0026 (2026-10-20): the number formatting of Chart.js ADR 0008 with the six guards of
 `js_intl.dart`. 2.3 has its summary. Chart.js ADRs 0024, 0025 and 0026 are accepted
 (2026-10-20). Chart.js ADR 0026 supersedes Chart.js ADR 0008.
+Phase 7 wrote the gate 7 decisions as the proposed files of Chart.js ADRs 0027-0031 (2026-10-21).
+A design panel of three drafts, a judge and a synthesis wrote each of them. Their subsections are
+2.20 (Chart.js ADR 0027), 2.21 (Chart.js ADR 0028) and 2.23 (Chart.js ADR 0030). The subsection
+2.22 of Chart.js ADR 0029 (the fixture smoke runner) comes with the fixture runner. Chart.js ADR
+0031 (the gallery chart types) changes no rule of this flow. Thus it has no subsection.
 The other subsections stay proposals in this document until their ADR files exist.
 
 | Subsection | ADR | Gate |
@@ -190,6 +197,9 @@ The other subsections stay proposals in this document until their ADR files exis
 | 2.5 | [Chart.js ADR 0023: Underscore members with a colliding name](adr/0023-underscore-member-collisions.md) (proposed) | 5 |
 | 2.10 | [Chart.js ADR 0024: Dates](adr/0024-dates.md) | 6 |
 | 2.19 | [Chart.js ADR 0025: Scale value parameters](adr/0025-scale-value-parameters.md) | 6 |
+| 2.20 | [Chart.js ADR 0027: Parsed data in the controllers](adr/0027-parsed-data.md) (proposed) | 7 |
+| 2.21 | [Chart.js ADR 0028: Controller interfaces and values](adr/0028-controller-interfaces.md) (proposed) | 7 |
+| 2.23 | [Chart.js ADR 0030: Controller test strategy](adr/0030-controller-test-strategy.md) (proposed) | 7 |
 
 ADR 0006 (gate 1) belongs to [upstream-tracking.md](upstream-tracking.md).
 
@@ -590,6 +600,72 @@ short:
 - `Scale` implements `MinMax`. `setMinAndMaxByKey` reads a tick by its `value`.
 - A phase 7 reader that passes `parsed[axis]` to a scale keeps `undefined` for an absent key.
 
+### 2.20 Chart.js ADR 0027: Parsed data in the controllers (gate 7)
+
+[Chart.js ADR 0027](adr/0027-parsed-data.md) (proposed) holds the decision, its evidence and the
+items that stay open. In short:
+- A parsed item, a data item and a stack object are any value. `jsGetKey` of `js_object.dart` is
+  the read `object[key]` with a String key: it gives the `jsGet` result, with a Map case first. A
+  read of a resolver or of an option object stays `jsGet`.
+- `jsGetIndex` is the read `object[index]` with a number index, `jsSetIndex` is the write
+  `list[index] = value` (a write at the length appends), and `jsLessThan` is the operator `a < b`
+  on raw values (two strings by their code units, a `DateTime` by its time value). They replace
+  the private index helpers of `core.datasetController` and `core.controller`.
+- `core.datasetController` reads parsed items and stack objects with `jsGetKey`. The reads that
+  test with `isFinite` or the truthiness keep `_parsedValue`. `stacksOf` (`@internal`) reads
+  `item._stacks`: a List, a `DateTime` or a function item keeps it in an `Expando`, and a
+  primitive item throws a `TypeError`, as upstream.
+- A controller casts no data item, parsed item or data value. A parsing key is cast to `String` at
+  the `resolveObjectKey` call. A raw option value stays `Object?` until its upstream operator,
+  which then has its runtime form (`jsToNumber`, `jsTruthy`, `jsAdd`, `==` or a `===` by identity
+  for two possible `Date` operands).
+- Each hot loop is ported literally first. The one-read rule (a `final` local for a repeated read
+  of the same key of the same item in one loop pass) applies to the line and scatter loops. The
+  structure changes of the bar, bubble, polar area and radar loops wait for step 7.
+- No `DIVERGES` marker and no new row. The rows `js-semantics-resolver-objects` and
+  `platform-array-events` get new text.
+
+### 2.21 Chart.js ADR 0028: Controller interfaces and values (gate 7)
+
+[Chart.js ADR 0028](adr/0028-controller-interfaces.md) (proposed) holds the decision, its evidence
+and the items that stay open. In short:
+- A controller reads the members of other modules through `lib/src/types/`. It imports no
+  concrete chart, meta, scale or element module, and it casts only to a `types` interface or to a
+  class of its own library, at the upstream read. `lib/src/types/index.dart` gets the members
+  that the controllers read first, `RadialLinearScale` and a minimal `LegendElement`.
+- `getLabelAndValue` gives `({Object? label, String value})`: the label keeps its JS type.
+- The `points` setter of `LineElement` takes a `List<types.Element>` and copies a list that is
+  not a `List<types.PointElement>` (the row `adapt-line-points-elements`).
+- `getDataVisibility` returns `true` at once for an empty `_hiddenIndices`: a fast path with the
+  upstream result. `ChartMeta.total` is a typed field, and `Chart.legend` a field that the legend
+  plugin of phase 8 writes.
+- The polar area hunk of #12238 is the upstream lines. The option functions of `defaults` and
+  `overrides` are tear-offs of top-level functions.
+- `lib/src/controllers/index.dart` exports the controllers, and the `controllers` namespace of
+  `lib/src/index.dart` registers them in the order of the bundle. The integration agent of each
+  wave adds the controllers of that wave.
+
+### 2.23 Chart.js ADR 0030: Controller test strategy (gate 7)
+
+[Chart.js ADR 0030](adr/0030-controller-test-strategy.md) (proposed) holds the decision, its
+evidence and the items that stay open. In short:
+- `DatasetController.ctx` is writable, as the JS property `_ctx`. One `drawCalls` on both sides
+  records the element draws. The 8 phase 6 reference files were generated again with the element
+  draws.
+- A `Path2D` argument records as `{path, calls}`. The controller generators define a recording
+  `Path2D` before the dist loads.
+- One generator and one reference test file for each controller, on the shared
+  `tool/reference/controller_chart_common.mjs` and `test/port/controllers/controller_chart_harness.dart`.
+  A case has the observations after `acquireChart` and after each step, the hit queries and the
+  draw calls of one draw. The pin cases `parsed:` and `interfaces:` serve Chart.js ADRs 0027 and
+  0028.
+- Each controller test file runs its cases again with the light preset (theme test 3). Theme test
+  5, the hover tests and the blue screen come with the theme unit of step 4.
+- The lift of the `blocked: controller.*` skips follows a temporary check of all 536 records of
+  the classification (`doc/phase7/tools/lift_check.py`).
+- The 7 controller spec files follow the conventions of §13 and share the Jasmine matchers and
+  spies of `test/support/jasmine.dart`.
+
 ## 3. Test harness
 
 **Package.** `packages/chartjs_test_utils` (`publish_to: none`) mirrors the npm package module by
@@ -680,6 +756,41 @@ when the test pumps.
 - An append or a removal in `dom.dart` schedules one microtask, the mutation checkpoint. It lays
   out the harness body and calls `flushCanvasMutations`. Thus the attach and detach listeners of the
   platform run in the task of the write.
+
+**Reference tests of the controllers.** From phase 7, the port-only reference tests of the dataset
+controllers follow [Chart.js ADR 0030](adr/0030-controller-test-strategy.md) §1-§7:
+- One generator for each controller, `tool/reference/controller_<name>_reference.mjs`, on the
+  shared `controller_chart_common.mjs`. It runs a build of the pinned Chart.js in the x64 Node.js
+  v24.12.0, with the checks of `scale_chart_common.mjs`, and defines a recording `Path2D` before
+  the dist loads. It writes `test/port/controllers/controller_<name>_reference.dart`: Dart `const`
+  literals, one JSON-lines string of the draw calls for each case, and one JSON line of hit items
+  for each query point. A data file has at most 2.5 MB. A probe line of a comment note has at most
+  75 characters, because the generator stops on a comment line of more than 80 characters.
+- One test file for each controller, `test/port/controllers/controller.<name>_test.dart`
+  (`@TestOn('vm')`), on the harness `controller_chart_harness.dart`. Each case is one
+  `testWidgets` case: `acquireChart`, the steps (`update`, `setDatasetVisibility`,
+  `toggleDataVisibility`, `setActive`, `push`, `splice`, `reset`, `hover`, `mouseout`), and after
+  each step the observations of the chart area, the scales, the stacks, the datasets and the hit
+  queries. The draw calls of one `chart.draw()` come last. A step that throws stands in `steps` as
+  `{do}` without observations, and the case expects the throw at the same place: a JS `TypeError`
+  is a Dart `TypeError`.
+- `drawCalls` puts the recording context in `chart.ctx`, in each `scale.ctx` and in the writable
+  `DatasetController.ctx`. Thus the draw calls have the element draws. A `Path2D` argument records
+  as `{path, calls}` (`test/port/canvas/path2d_record.dart`). `expectCalls` removes the reference
+  `clip` of the border ring of each bar that the port draws without a `clip` (row
+  [`adapt-bar-clip`](differences.md#adapt-bar-clip)).
+- Each file runs its cases again with the light preset ([theming.md](theming.md) §8 test 3). The
+  colors then compare in their parsed form, the options compare only the keys of upstream, and the
+  test compares `defaults` with its state before the run. The pin cases `parsed:` and
+  `interfaces:` run unthemed only.
+- `flutter_test_config.dart` registers the controllers of each finished wave with the built-in
+  components. A unit tests its controller before that: its test files register the controller
+  class in `main()` until the integration agent of the wave removes the line.
+- The spec ports share the Jasmine matchers and spies of `test/support/jasmine.dart`: a spy of a
+  function value is a recording function value, and a spy of a method is a spy object in the slot
+  that the library reads (`meta.data[i]`, `meta.dataset`, the listeners of a data array,
+  `chart.ctx`). A draw spy of an element with a running animation throws a `StateError`. Jasmine
+  `this` is a set of `late` variables of the group closure.
 
 **Where tests run.**
 
@@ -927,7 +1038,7 @@ The roadmap in `packages/flutter_chartjs/doc/README.md` changes for these reason
 | 4. Elements | done; `core.element`, point, line, bar, arc, `elements/index`; the type members; `jsOrZero` and `js_webidl.dart` of `lib/src/js`; tool 1 roots | 20 of 21 element cases pass. Result: the five phase 4 spec files have 22 cases. 21 pass, 0 fail and 1 skips as `blocked: core.controller` (`element.line`, "should not cache path when animations are enabled"). 20 of the 21 element cases pass. `test:cases` reports 226 passed, 0 failed, 48 skipped and 0 missing cases in the 22 ported spec files. The port-only tests `test/port/core/core.element_test.dart` and `test/port/elements/` (the four elements and `index`) test the behavior that the specs do not test. Four generators of `tool/reference/` (point, line, bar and arc) write the reference data of the four element tests from an x64 build of Node.js v24.12.0. Chart.js ADR 0017 records the gate 4 decision (proposed). [performance.md](performance.md) §8 has the element draw cost on the Pixel 8a, on macOS and in Chrome with dart2wasm, and a number path in `toTRBL` and `toTRBLCorners` that cuts the bar draw time on macOS by about 12 % |
 | 5. Core | `core.config` with hunks H0-H3 and their tests; registry to controller; phase-5 harness rows; tools 6 and 8 | non-chart core cases pass; others skipped `blocked: <module>`. Result of the port step and the harness step (2026-10-20): all 21 core modules have the status `ported`. The 14 core spec files have 286 cases. 98 pass, 0 fail and 188 skip. The 36 non-chart cases of the new core spec files pass: `core.animation` 6, `core.animations` 8, `core.animator` 1, `core.controller` 4, `core.layouts` 1, `core.registry` 15 and `core.scale` 1. The harness rows of phase 5 are done: `acquireChart`, `releaseChart`, `releaseCharts`, `triggerMouseEvent`, the release at the unmount and the built-in registration. Through the harness, 32 more `core.controller` cases pass (36/85), 19 `core.plugin` cases (19/19) and 3 `core.scale` cases (4/41). 188 core cases skip. Of these, 13 wait for a scale of phase 6, 164 for a controller of phase 7 and 10 for a plugin of phase 8. 1 case is `n/a` (DOM element ids). Of the 76 cases of the port step that waited for the harness, 74 pass. 1 skips as `diverges: platform-canvas-no-shadow`, and 1 as `blocked: scale.linear`. The review of phase 5 made two changes. The `data: []` case of `core.controller` passes: an array data gives a new Map (`adapt-config-objects`). The `core.scale` case "should throw error on scale with custom name without axis type" skips as `blocked: scale.linear`: its throw needs `defaults.scales.linear`. `core.controller.tests.js:918` passes too. It was `n/a` before. Outside core, `helpers.canvas` has 14/14, `helpers.dom` 7/22, `platform.basic` 2/5 and `platform.dom` 15/21. `test:cases` reports 337 passed, 0 failed, 213 skipped and 0 missing cases in the 32 ported spec files. No case skips as `blocked: harness`. Tools 6 and 8 run in `check:port`. The gallery has the Core tab and the stress mode `chart`. The adversarial review and the figures of the typed options on a real chart path come next |
 | 6. Scales | seven scales; default date adapter on `DateFormat` (ICU tokens) | non-chart scale cases pass; moment-token cases skip as `diverges`. Result of the port, the specs and the fixes (2026-10-20): the seven scale modules and `src/scales/index.js` have the status `ported`, and `lib/src/index.dart` registers the six scales. The default date adapter is the five port-only files `lib/src/core/date_*.dart` (Chart.js ADR 0024). The five scale spec files have 233 cases. 22 pass, 0 fail and 211 skip: `scale.category` 2/19, `scale.linear` 7/45, `scale.logarithmic` 2/60, `scale.radialLinear` 2/23 and `scale.time` 9/86. 11 cases without a chart pass: the registration and the default config of each scale, and the date library of `scale.time`. 11 chart cases pass: 5 of `scale.linear` and 6 of `scale.time`. Of the 211 skips, 59 are `diverges: adapt-date-moment-format`. 140 wait for a controller of phase 7 and 12 for `plugin.legend` of phase 8. The 13 core cases that waited for a scale pass: `core.controller` 43/85 and `core.scale` 10/41. `test:cases` reports 372 passed, 0 failed, 411 skipped and 0 missing cases in the 37 ported spec files. The port-only tests compare 445 charts of the seven scale files and 8 charts of the harness with the chart.js 4.5.1 npm dist. They use the Liberation Sans widths, and the time charts use chartjs-adapter-moment 1.0.1 on moment 2.29.4. The date adapter gives the moment result for each reference call, also for the corpus of 357,576 calls. The 59 `diverges` cases of `scale.time` have port-only twins with ICU patterns: 2 pass and 57 wait for `controller.line`. Chart.js ADRs 0024 and 0025 record the gate 6 decisions (accepted 2026-10-20). The fixes wrote Chart.js ADR 0026 (accepted 2026-10-20) for the number formatting guards. The gallery has the Axes tab, the stress mode `axes` and the frameless benchmark `lib/main_bench.dart`. [performance.md](performance.md) §10.10-§10.11, §11 and §12 have the figures. On the Pixel 8a, the scale path runs at 53-58 FPS with 5000 points for the linear, logarithmic and time axes (§11.6). A category axis with 5000 labels ran at 7 FPS: the canvas metrics cache missed on each label. A larger cache with an eviction in one pass gives 29 FPS (§11.7). The iPhone, macOS and Chrome series wait (§11.8) |
-| 7. Controllers | bar first, then the other seven; fixture smoke runner | controller and earlier chart-blocked cases pass or have rows; fixture smoke tests pass for the ported types; gallery shows every type. The commit pin landed before phase 7 (2026-10-20): Chart.js `4.5.1+7169e651`, the `master` commit after v4.5.1 ([upstream-tracking.md](upstream-tracking.md) §2.4). It ported #12130, #12142, #12155 and #12238 into the started modules. Phase 7 ports from the pin: `controller.doughnut` and `controller.polarArea` with the `spacingMode` of #12238 and its 3 new spec cases, and the fixture `controller.line/stacking/stack-cache` of #12155. The scale generators of phase 6 now read a build of the pinned commit, and their data did not change |
+| 7. Controllers | bar first, then the other seven; fixture smoke runner | controller and earlier chart-blocked cases pass or have rows; fixture smoke tests pass for the ported types; gallery shows every type. The commit pin landed before phase 7 (2026-10-20): Chart.js `4.5.1+7169e651`, the `master` commit after v4.5.1 ([upstream-tracking.md](upstream-tracking.md) §2.4). It ported #12130, #12142, #12155 and #12238 into the started modules. Phase 7 ports from the pin: `controller.doughnut` and `controller.polarArea` with the `spacingMode` of #12238 and its 3 new spec cases, and the fixture `controller.line/stacking/stack-cache` of #12155. The scale generators of phase 6 now read a build of the pinned commit, and their data did not change. Result of wave 1 (2026-10-21): the shared layer of Chart.js ADRs 0027, 0028 and 0030 (proposed) and `controller.bar` have landed. `lib/src/js/` has `jsGetKey`, `jsGetIndex`, `jsSetIndex` and `jsLessThan`. `core.datasetController` reads parsed items through them and `stacksOf`, and its `ctx` is writable. `lib/src/types/index.dart` has the members of Chart.js ADR 0028. `lib/src/controllers/index.dart` exports `BarController`, and the namespace `controllers` registers it. The 8 phase 6 reference files were generated again with the element draws (8,455,931 to 9,069,771 bytes). `test/port/controllers/controller.bar_test.dart` compares 23 bar charts with upstream, again with the light preset, and 27 pin cases. The spec `controller.bar` has 51/55 cases that pass; 3 skip as `blocked: controller.line` and 1 as `blocked: plugin.tooltip`. `test:cases` reports 434 passed, 0 failed, 415 skipped and 187 missing cases in the 38 ported spec files (before phase 7: 383, 0, 411 and 242 in 37 files). The lift check `doc/phase7/tools/lift_check.py` finds 62 of the 122 records of wave 1 and earlier that pass. The other 60 skip as `blocked: controller.bar` in 8 spec files outside the controller spec files, and the lift of wave 1 (L1) takes them |
 | 8. Plugins | seven plugins; hunks H4a-H4c and H5 and their tests; input adapter for legend and tooltip | plugin cases pass; `plugin.*` fixture smoke tests pass |
 | 9. Flutter API and release | public widget on the host; theme API; keyboard and semantics; docs; published floor (2.12); pana | `flutter_chartjs` 0.1.0 on pub.dev |
 

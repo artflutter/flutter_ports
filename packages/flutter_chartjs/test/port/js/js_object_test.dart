@@ -1,6 +1,8 @@
 // Original code, not ported from Chart.js: tests of lib/src/js/js_object.dart.
 import 'dart:collection';
 
+import 'package:flutter_chartjs/src/helpers/helpers.config.dart'
+    show attachContext, createResolver;
 import 'package:flutter_chartjs/src/js/js_array.dart';
 import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_function.dart';
@@ -10,6 +12,8 @@ import 'package:test/test.dart';
 
 // The expected values come from Node.js v24.12.0: obj[key] for each input,
 // and Object.freeze and Object.isFrozen in an ES module (strict mode) on x64.
+// The resolver reads of jsGetKey come from _createResolver and
+// _attachContext of the build of Chart.js at the pin (dist/helpers.js).
 
 /// A Map that answers `operator []` for a key that it does not contain, as
 /// an object with an inherited property.
@@ -67,6 +71,9 @@ final class _Freezable implements JsFreezable {
     freezes++;
   }
 }
+
+const double _nan = double.nan;
+const double _inf = double.infinity;
 
 void main() {
   group('jsGet', () {
@@ -171,6 +178,137 @@ void main() {
       expect(() => jsGet(undefined, 'x'), throwsA(isA<TypeError>()));
     });
   });
+
+  group('jsGetKey', () {
+    /// Expects that `jsGetKey(object, key)` is [expected] and is identical to
+    /// `jsGet(object, key)`. A String result is equal: dart2wasm makes a new
+    /// String for each read of a String index.
+    void expectKey(Object? object, String key, Object? expected) {
+      final value = jsGetKey(object, key);
+      expect(
+        value,
+        identical(expected, undefined) ? same(undefined) : expected,
+      );
+      final other = jsGet(object, key);
+      expect(
+        identical(value, other) || (value is String && value == other),
+        isTrue,
+        reason: key,
+      );
+    }
+
+    test('reads a Map as jsGet does', () {
+      // ({a: 1}).a is 1, ({a: 1}).b is undefined and ({a: null}).a is null.
+      expectKey(<String, Object?>{'a': 1.0}, 'a', 1.0);
+      expectKey(<String, Object?>{'a': 1.0}, 'b', undefined);
+      expectKey(<String, Object?>{'a': null}, 'a', isNull);
+      expectKey(<String, Object?>{'u': undefined}, 'u', undefined);
+      // ({x: 2.5}).x is 2.5 and ({x: 2.5}).y is undefined.
+      expectKey(<String, double>{'x': 2.5}, 'x', 2.5);
+      expectKey(<String, double>{'x': 2.5}, 'y', undefined);
+      expectKey(_Inheriting(), 'inherited', 'p');
+    });
+
+    test('gives the get trap of a resolver', () {
+      // _createResolver([{a: 1, n: null}, {b: 2}]): a is 1, b is 2, n is
+      // null, zz is undefined, _scopes is the scopes array and _cacheable
+      // is true.
+      final scopes = <Object?>[
+        <String, Object?>{'a': 1.0, 'n': null},
+        <String, Object?>{'b': 2.0},
+      ];
+      final resolver = createResolver(scopes);
+      expectKey(resolver, 'a', 1.0);
+      expectKey(resolver, 'b', 2.0);
+      expectKey(resolver, 'n', isNull);
+      expectKey(resolver, 'zz', undefined);
+      expectKey(resolver, '_scopes', same(scopes));
+      expectKey(resolver, '_cacheable', isTrue);
+      // _attachContext(resolver, ctx): a is 1, n is null, zz is undefined,
+      // _context is ctx and _proxy is the resolver.
+      final context = <String, Object?>{'index': 1.0};
+      final proxy = attachContext(resolver, context);
+      expectKey(proxy, 'a', 1.0);
+      expectKey(proxy, 'n', isNull);
+      expectKey(proxy, 'zz', undefined);
+      expectKey(proxy, '_context', same(context));
+      expectKey(proxy, '_proxy', same(resolver));
+      // The get trap of a proxy gives its result as it is: Dart null.
+      expectKey(_NullProxy(), 'a', isNull);
+    });
+
+    test('reads a List, a String and the other values as jsGet does', () {
+      // ['x', 'y']['0'] is 'x', .length is 2 and .r is undefined.
+      expectKey(<Object?>['x', 'y'], '0', 'x');
+      expectKey(<Object?>['x', 'y'], 'length', 2.0);
+      expectKey(<Object?>['x', 'y'], 'r', undefined);
+      // 'ab'['0'] is 'a' and 'ab'.length is 2.
+      expectKey('ab', '0', 'a');
+      expectKey('ab', 'length', 2.0);
+      // (5).x and true.x are undefined.
+      expectKey(5.0, 'x', undefined);
+      expectKey(true, 'x', undefined);
+      // class A { static id = 'a'; } class B extends A {}: B.id is 'a'.
+      final b = JsClass(
+        'B',
+        superclass: JsClass('A', statics: {'id': 'a'}),
+      );
+      expectKey(b, 'id', 'a');
+    });
+
+    test('throws for null and undefined, as jsGet does', () {
+      // null.x and undefined.x throw a TypeError.
+      for (final object in [null, undefined]) {
+        expect(() => jsGetKey(object, 'x'), throwsA(isA<TypeError>()));
+        expect(() => jsGet(object, 'x'), throwsA(isA<TypeError>()));
+      }
+    });
+  });
+
+  group('jsGetIndex', () {
+    test('reads the item at a whole index in range of a List', () {
+      final list = <Object?>['a', 'b', 'c'];
+      // ['a', 'b', 'c'][0] is 'a', [1] is 'b' and [-0] is 'a'.
+      expect(jsGetIndex(list, 0), 'a');
+      expect(jsGetIndex(list, 1), 'b');
+      expect(jsGetIndex(list, -0), 'a');
+      // [1.5], [-1], [NaN], [Infinity], [-Infinity], [3] (the length) and
+      // [4] are undefined.
+      for (final index in [1.5, -1.0, _nan, _inf, -_inf, 3.0, 4.0]) {
+        expect(jsGetIndex(list, index), same(undefined), reason: '$index');
+      }
+      // [null, undefined][0] is null.
+      expect(jsGetIndex(<Object?>[null, undefined], 0), isNull);
+      expect(jsGetIndex(<Object?>[null, undefined], 1), same(undefined));
+    });
+
+    test('reads a typed List', () {
+      // [1.5, 2.5][1] is 2.5.
+      expect(jsGetIndex(<double>[1.5, 2.5], 1), 2.5);
+      expect(jsGetIndex(<double>[1.5, 2.5], 2), same(undefined));
+    });
+
+    test('reads another value through the ToString of the index', () {
+      // ({'1': 'one'})[1] is 'one' and [1.5] is undefined.
+      final map = <String, Object?>{'1': 'one', '1.5': 'h', '0': 'z'};
+      expect(jsGetIndex(map, 1), 'one');
+      // ({'1.5': 'h'})[1.5] is 'h' and ({'0': 'z'})[-0] is 'z'.
+      expect(jsGetIndex(map, 1.5), 'h');
+      expect(jsGetIndex(map, -0), 'z');
+      expect(jsGetIndex(<String, Object?>{'1': 'one'}, 1.5), same(undefined));
+      // 'abc'[0] is 'a', 'abc'[3] is undefined and (5)[0] is undefined.
+      expect(jsGetIndex('abc', 0), 'a');
+      expect(jsGetIndex('abc', 3), same(undefined));
+      expect(jsGetIndex(5.0, 0), same(undefined));
+    });
+
+    test('throws for null and undefined, as JavaScript does', () {
+      // null[0] and undefined[0] throw a TypeError.
+      expect(() => jsGetIndex(null, 0), throwsA(isA<TypeError>()));
+      expect(() => jsGetIndex(undefined, 0), throwsA(isA<TypeError>()));
+    });
+  });
+
   group('jsObjectFreeze', () {
     test('freezes a JsFreezable and returns it', () {
       // Object.freeze(o) === o, and Object.isFrozen(o) is then true.

@@ -16,6 +16,7 @@ import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
+import '../canvas/path2d_record.dart';
 import 'line_reference.dart';
 
 // Upstream behavior that test/specs/element.line.tests.js does not check
@@ -149,45 +150,6 @@ List<Object?> _expectedCalls(List<LineReferenceCall> calls) => [
     },
 ];
 
-/// The ids of the Path2D objects of one case, in the order of the first
-/// sight, as the generator numbers them.
-final class _PathIds {
-  final Map<Path2D, int> _ids = {};
-
-  /// The id of [path], or null for no path.
-  int? of(Path2D? path) =>
-      path == null ? null : _ids.putIfAbsent(path, () => _ids.length + 1);
-}
-
-/// A recorded argument [value] with a Path2D as its id and its commands.
-Object? _actual(Object? value, _PathIds ids) => switch (value) {
-  final Path2D path => {
-    'path': ids.of(path),
-    'calls': _actualCalls(_replay(path), ids),
-  },
-  final List<Object?> list => [for (final item in list) _actual(item, ids)],
-  _ => value,
-};
-
-/// The recorded calls [calls] with each Path2D argument as its id and its
-/// commands.
-List<Object?> _actualCalls(List<ContextCall> calls, _PathIds ids) => [
-  for (final call in calls)
-    {
-      'name': call['name'],
-      'args': [
-        for (final arg in call['args']! as List<Object?>) _actual(arg, ids),
-      ],
-    },
-];
-
-/// The calls of the commands of [path] on a new mock context.
-List<ContextCall> _replay(Path2D path) {
-  final ctx = createMockContext();
-  path.replay(ctx);
-  return ctx.getCalls();
-}
-
 /// The double of the reference argument [args] at [index], or null for an
 /// absent argument.
 double? _arg(List<Object?> args, int index) =>
@@ -221,7 +183,7 @@ Matcher _expectedPoint(LineReferencePoint point) => isA<LineReferencePoint>()
 void _run(LineReferenceCase c, AnyObject Function(AnyObject) form) {
   final points = <types.PointElement>[for (final p in c.points) _point(p)];
   final line = _line(c, points, form);
-  final ids = _PathIds();
+  final ids = PathIds();
 
   for (var i = 0; i < c.steps.length; i++) {
     final step = c.steps[i];
@@ -282,7 +244,7 @@ void _run(LineReferenceCase c, AnyObject Function(AnyObject) form) {
     }
 
     expect(
-      _actualCalls(ctx.getCalls(), ids),
+      recordedCalls(ctx.getCalls(), ids),
       _expectedCalls(step.calls),
       reason: '$reason: calls',
     );
@@ -838,6 +800,80 @@ void main() {
         () => line['_points'] = <Point>[InterpolatedPoint(1, 2)],
         throwsArgumentError,
       );
+    });
+
+    // The setter and the write by name take a `List<types.Element>` (Chart.js
+    // ADR 0028, section 3): a `List<types.PointElement>` stays as it is, and
+    // another list gives a typed copy with the same elements.
+    test('a List<types.PointElement> stays the same list', () {
+      final list = <types.PointElement>[
+        PointElement({'x': 0, 'y': 1}),
+        PointElement({'x': 2, 'y': 3}),
+      ];
+      final line = LineElement()..points = list;
+      expect(identical(line.points, list), isTrue);
+      final other = <types.PointElement>[
+        PointElement({'x': 4, 'y': 5}),
+      ];
+      line['points'] = other;
+      expect(identical(line.points, other), isTrue);
+      expect(identical(line['points'], other), isTrue);
+    });
+
+    test('a List<types.Element> of point elements gives a typed copy', () {
+      final elements = <types.Element>[
+        PointElement({'x': 0, 'y': 10}),
+        PointElement({'x': 10, 'y': 20}),
+        PointElement({'x': 20, 'y': 15}),
+      ];
+      for (final write in <void Function(LineElement line)>[
+        (line) => line.points = elements,
+        (line) => line['points'] = elements,
+      ]) {
+        final line = _simpleLine(_options());
+        final segments = line.segments;
+        line
+          ..['_path'] = Path2D()
+          ..['_pointsUpdated'] = true;
+        write(line);
+        final points = line.points;
+        expect(points, isA<List<types.PointElement>>());
+        expect(identical(points, elements), isFalse);
+        expect(points, hasLength(3));
+        for (var i = 0; i < 3; i++) {
+          expect(identical(points[i], elements[i]), isTrue, reason: '$i');
+        }
+        // The setter drops the segments, the path and the control points
+        // state.
+        expect(line['_segments'], same(undefined));
+        expect(line['_path'], same(undefined));
+        expect(line['_pointsUpdated'], isFalse);
+        expect(line.segments, isNot(same(segments)));
+        expect(line.first()!.x, 0);
+        expect(line.last()!.y, 15);
+      }
+    });
+
+    test('an element that is not a point element throws a TypeError', () {
+      final elements = <types.Element>[
+        PointElement({'x': 0, 'y': 10}),
+        Element(),
+      ];
+      final line = _simpleLine(_options());
+      final points = line.points;
+      expect(() => line.points = elements, throwsA(isA<TypeError>()));
+      expect(() => line['points'] = elements, throwsA(isA<TypeError>()));
+      // The copy throws before the write: the points do not change.
+      expect(identical(line.points, points), isTrue);
+    });
+
+    test('undefined clears the points, and another value throws an '
+        'ArgumentError', () {
+      final line = _simpleLine(_options())..['points'] = undefined;
+      expect(line['points'], same(undefined));
+      expect(() => line.points, throwsA(isA<TypeError>()));
+      expect(() => line['points'] = 5, throwsArgumentError);
+      expect(line['points'], same(undefined));
     });
 
     test('point elements with the same x and y give the upstream line', () {

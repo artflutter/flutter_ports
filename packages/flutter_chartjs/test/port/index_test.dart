@@ -16,8 +16,9 @@ import 'package:flutter_test/flutter_test.dart';
 // elements/index.js (:1-4) is arc, line, point, bar. The scale classes
 // register in the order category, linear, logarithmic, radialLinear, time,
 // timeseries: the code unit order and the source order of scales/index.js
-// (:1-6) are the same. In phase 6, only the namespaces `elements` and
-// `scales` have entries.
+// (:1-6) are the same. The namespace `controllers` has the controllers of
+// the waves of phase 7 that are ported (wave 1: `BarController`), and
+// `plugins` has no entry before phase 8.
 //
 // The library also exports the names of src/core/index.ts and of the other
 // index modules. The test reads some of them, so that a missing export
@@ -73,8 +74,20 @@ void main() {
     expect(scales['TimeSeriesScale'], same(TimeSeriesScale.jsClass));
   });
 
+  test('the namespace controllers has the export names in code unit order', () {
+    // The bundle keys of `Object.keys(controllers)` are BarController,
+    // BubbleController, DoughnutController, LineController, PieController,
+    // PolarAreaController, RadarController and ScatterController (code unit
+    // order). The Map has the keys of the ported controllers in that order.
+    expect(jsObjectKeys(controllers), ['BarController']);
+    expect(controllers['BarController'], same(BarController.jsClass));
+    expect(
+      () => controllers['X'] = BarController.jsClass,
+      throwsA(isA<UnsupportedError>()),
+    );
+  });
+
   test('the namespaces of later phases are empty', () {
-    expect(controllers, isEmpty);
     expect(plugins, isEmpty);
   });
 
@@ -112,7 +125,13 @@ void main() {
       'time',
       'timeseries',
     ]);
-    expect(registry.controllers.items, isEmpty);
+    // The controllers register in the order bar, bubble, doughnut, line,
+    // pie, polarArea, radar, scatter (the registered subset). Each one adds
+    // its defaults to `defaults.datasets` and its overrides to `overrides`.
+    expect(jsObjectKeys(registry.controllers.items), ['bar']);
+    expect(registry.controllers.items['bar'], same(BarController.jsClass));
+    expect(jsObjectKeys(defaults.get('datasets')), ['bar']);
+    expect(jsObjectKeys(Chart.overrides), ['bar']);
     expect(registry.plugins.items, isEmpty);
   });
 

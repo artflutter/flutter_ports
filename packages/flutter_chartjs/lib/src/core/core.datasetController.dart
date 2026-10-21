@@ -52,13 +52,13 @@ import 'package:flutter_chartjs/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs/src/helpers/helpers.options.dart'
     show createContext;
 import 'package:flutter_chartjs/src/js/js_array.dart'
-    show jsObjectKeys, jsSplice;
+    show jsObjectKeys, jsSetIndex, jsSplice;
 import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart'
-    show jsGet, jsObjectFreeze;
+    show jsGet, jsGetIndex, jsGetKey, jsObjectFreeze;
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
@@ -204,7 +204,7 @@ Object? _applyStack(
       }
       break;
     }
-    otherValue = jsGet(stack.values, _indexKey(datasetIndex));
+    otherValue = jsGetKey(stack.values, _indexKey(datasetIndex));
     if (isFinite(otherValue) &&
         (singleMode ||
             (sum == 0 ||
@@ -308,7 +308,7 @@ double? _getLastIndexInStack(
   String type,
 ) {
   for (final meta in vScale.getMatchingVisibleMetas(type).reversed) {
-    final value = jsToNumber(jsGet(stack, _indexKey(meta.index)));
+    final value = jsToNumber(jsGetKey(stack, _indexKey(meta.index)));
     if ((positive && value > 0) || (!positive && value < 0)) {
       return meta.index;
     }
@@ -324,10 +324,16 @@ double? _getLastIndexInStack(
 ///
 /// A parsed item is any value (`unknown[]`, index.d.ts:503). With `parsing:
 /// false`, the items are the data items. `item._stacks = {}` writes into the
-/// item. A write into a primitive throws a `TypeError` in the strict code of
-/// an ES module, and so does the port. A write into a Map of a narrower
-/// value type than `Object?` throws a [TypeError] too, where upstream writes
-/// into the plain object (differences.md row `js-semantics-resolver-objects`).
+/// item. A List item takes its `_stacks` through [stacksOf], as upstream
+/// adds the property to the array (Chart.js ADR 0027). A class value takes
+/// an own static property, as upstream adds the property to the function
+/// (Chart.js ADR 0020). Each other object, for example a [DateTime] (a JS
+/// `Date`, Chart.js ADR 0024) or a function, takes it through [stacksOf]
+/// too. A write into a primitive (a number, a string or a boolean) throws a
+/// `TypeError` in the strict code of an ES module, and so does the port. A
+/// write into a Map of a narrower value type than `Object?` throws a
+/// [TypeError] too, where upstream writes into the plain object
+/// (differences.md row `js-semantics-resolver-objects`).
 void _updateStacks(DatasetController controller, List<Object?> parsed) {
   final chart = controller.chart;
   final meta = controller.cachedMeta;
@@ -346,14 +352,24 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
 
   for (var i = 0; i < ilen; ++i) {
     final item = parsed[i];
-    final index = jsGet(item, iAxis);
-    final value = jsGet(item, vAxis);
-    var itemStacks = _parsedValue(item, '_stacks');
+    final index = jsGetKey(item, iAxis);
+    final value = jsGetKey(item, vAxis);
+    var itemStacks = stacksOf(item);
     if (!jsTruthy(itemStacks)) {
-      // A JavaScript TypeError: a property write into a primitive.
-      if (item is! Map<dynamic, dynamic>) throw TypeError();
       // DIVERGES(chartjs): js-semantics-resolver-objects, a narrow Map throws.
-      item['_stacks'] = itemStacks = <String, Object?>{};
+      switch (item) {
+        case final Map<dynamic, dynamic> map:
+          map['_stacks'] = itemStacks = <String, Object?>{};
+        case final List<dynamic> list:
+          _objectStacks[list] = itemStacks = <String, Object?>{};
+        case final JsClass value:
+          value['_stacks'] = itemStacks = <String, Object?>{};
+        case _ when _isPrimitive(item):
+          // A JavaScript TypeError: a property write into a primitive.
+          throw TypeError();
+        default:
+          _objectStacks[item!] = itemStacks = <String, Object?>{};
+      }
     }
     stack = (itemStacks! as AnyObject)[vAxis] = _getOrCreateStack(
       stacks,
@@ -425,16 +441,16 @@ void _clearStacks(types.ChartMeta meta, [List<Object?>? items]) {
   // The property key of `stacks[axis][datasetIndex]`.
   final datasetKey = _indexKey(datasetIndex);
   for (final parsed in parsedItems) {
-    final stacks = _parsedValue(parsed, '_stacks');
+    final stacks = stacksOf(parsed);
     if (!jsTruthy(stacks) ||
-        identical(jsGet(stacks, axis), undefined) ||
-        identical(jsGet(jsGet(stacks, axis), datasetKey), undefined)) {
+        identical(jsGetKey(stacks, axis), undefined) ||
+        identical(jsGetKey(jsGetKey(stacks, axis), datasetKey), undefined)) {
       continue;
     }
-    final axisStacks = jsGet(stacks, axis)! as AnyObject..remove(datasetKey);
-    final visualValues = jsGet(axisStacks, '_visualValues');
+    final axisStacks = jsGetKey(stacks, axis)! as AnyObject..remove(datasetKey);
+    final visualValues = jsGetKey(axisStacks, '_visualValues');
     if (!identical(visualValues, undefined) &&
-        !identical(jsGet(visualValues, datasetKey), undefined)) {
+        !identical(jsGetKey(visualValues, datasetKey), undefined)) {
       (visualValues! as AnyObject).remove(datasetKey);
     }
   }
@@ -506,21 +522,6 @@ T? _at<T extends Object>(List<T> list, double index) {
   return null;
 }
 
-/// The JS read `data[index]` of a data array: [undefined] for an index that
-/// names no item.
-Object? _item(List<Object?> data, double index) {
-  if (index >= 0 && index < data.length) {
-    final i = index.toInt();
-    if (i == index) return data[i];
-  }
-  return undefined;
-}
-
-/// The JS read `object[index]` for a number [index]: the item of a List
-/// without the `ToString` of the key, else [jsGet].
-Object? _getIndex(Object? object, double index) =>
-    object is List<Object?> ? _item(object, index) : jsGet(object, index);
-
 /// The property keys `'0'` to `'63'`.
 final List<String> _indexKeys = [
   for (var i = 0; i < 64; i++) jsNumberToString(i),
@@ -537,21 +538,6 @@ String _indexKey(double index) {
   return jsNumberToString(index);
 }
 
-/// The JS write `list[index] = value`: a write at the length appends.
-///
-/// Upstream leaves a hole for an index after the length. Dart throws a
-/// [RangeError]. `parse` writes the items in order from its start.
-/// `_resyncElements` gives a start at most the length. `_insertElements`
-/// gives the start of the caller of `onDataSplice`, which can be past the
-/// length (differences.md row `platform-array-events`).
-void _setAt<T>(List<T> list, int index, T value) {
-  if (index == list.length) {
-    list.add(value);
-  } else {
-    list[index] = value;
-  }
-}
-
 /// The JS read `item[key]` of a parsed item: the Map read for a Map, else
 /// [jsGet].
 ///
@@ -564,24 +550,41 @@ void _setAt<T>(List<T> list, int index, T value) {
 Object? _parsedValue(Object? item, String key) =>
     item is Map<dynamic, dynamic> ? item[key] : jsGet(item, key);
 
-/// The JavaScript relational comparison `a < b` (ECMAScript 7.2.13).
-///
-/// Two numbers compare as numbers, two strings by their code units, and
-/// other values by their `ToNumber` after `ToPrimitive`.
-bool _lessThan(Object? a, Object? b) {
-  if (a is num && b is num) return a < b;
-  final pa = _toPrimitive(a);
-  final pb = _toPrimitive(b);
-  if (pa is String && pb is String) return pa.compareTo(pb) < 0;
-  return jsToNumber(pa) < jsToNumber(pb);
-}
+/// The `_stacks` property of the parsed items that are objects without a
+/// property Map: a List, and each value that is not a Map, a class value or
+/// a primitive, for example a [DateTime] or a function. Such a Dart value
+/// has no named property. Upstream writes `item._stacks = {}` into the
+/// array, the `Date` or the function (core.datasetController.js:165).
+final Expando<Object> _objectStacks = Expando('_stacks');
 
-/// `ToPrimitive(value)` of a value without `valueOf`: an object gives its
-/// `ToString`.
-Object? _toPrimitive(Object? value) => switch (value) {
-  null || Undefined() || bool() || num() || String() => value,
-  _ => jsToString(value),
-};
+/// Whether [item] is a JS primitive: a property write into it throws a
+/// `TypeError` in strict code. A record is not a JS value. It counts here,
+/// because an [Expando] cannot take it.
+bool _isPrimitive(Object? item) =>
+    item == null ||
+    item is Undefined ||
+    item is num ||
+    item is String ||
+    item is bool ||
+    item is Record;
+
+/// The read `item._stacks` of a parsed item (core.datasetController.js:165,
+/// :218, :599, :610; controller.bar.js:405, :615).
+///
+/// A Map gives Dart `null` for an absent key, as `_parsedValue` does. Each
+/// reader tests the truthiness, or reads a property of the result, which
+/// throws a [TypeError] for both `null` and [undefined]. A class value and a
+/// primitive give [jsGet]: the static property through the superclass chain
+/// for a class value, [undefined] for a number, a [TypeError] for `null`.
+/// Each other value, for example a List or a [DateTime], gives the entry
+/// that `_updateStacks` wrote for it, or Dart `null` (Chart.js ADR 0027).
+@internal
+Object? stacksOf(Object? item) {
+  if (item is Map<dynamic, dynamic>) return item['_stacks'];
+  if (item is List<dynamic>) return _objectStacks[item];
+  if (item is JsClass || _isPrimitive(item)) return jsGet(item, '_stacks');
+  return _objectStacks[item!];
+}
 
 /// `this.datasetElementType.id` and `this.dataElementType.id`
 /// (core.datasetController.js:789, :798, Chart.js ADR 0020, section 4).
@@ -684,9 +687,10 @@ class DatasetController
 
   /// core.datasetController.js:257 `_ctx`, the context of the chart.
   /// controller.bar.js:677 reads it. Dart `null` stands for the JS `null` of
-  /// a chart without a context.
+  /// a chart without a context. It is writable, as the JS property: the
+  /// reference tests put a recording context here.
   @internal
-  final CanvasRenderingContext2D? ctx;
+  CanvasRenderingContext2D? ctx;
 
   /// core.datasetController.js:258 `index`, the dataset index
   /// (index.d.ts:631). [updateIndex] writes it.
@@ -714,6 +718,7 @@ class DatasetController
   ///
   /// The constructor calls [initialize], which calls [configure] first.
   /// Thus no reader finds the `undefined` start value.
+  @override
   late AnyObject options;
 
   /// core.datasetController.js:264 `_parsing`, the `parsing` option: `false`
@@ -857,7 +862,7 @@ class DatasetController
   /// The dataset `chart.data.datasets[index]`: a Map, or [undefined] for an
   /// index that names no dataset.
   Object? getDataset() {
-    return _getIndex(jsGet(chart.data, 'datasets'), index);
+    return jsGetIndex(jsGet(chart.data, 'datasets'), index);
   }
 
   /// core.datasetController.js:323 `getMeta()`.
@@ -1023,7 +1028,7 @@ class DatasetController
 
     var sorted = (start == 0 && count == data.length) || meta.sorted;
     // `start > 0 && meta._parsed[start - 1]`.
-    var prev = start > 0 ? _item(meta.parsed, start - 1) : false;
+    var prev = start > 0 ? jsGetIndex(meta.parsed, start - 1) : false;
     int i;
     Object? cur;
     List<Object?> parsed;
@@ -1034,7 +1039,7 @@ class DatasetController
         ..parsed = parsed = data
         ..sorted = true;
     } else {
-      final first = _item(data, start);
+      final first = jsGetIndex(data, start);
       if (isArray(first)) {
         parsed = parseArrayData(meta, data, start, count);
       } else if (isObject(first)) {
@@ -1044,12 +1049,13 @@ class DatasetController
       }
 
       bool isNotInOrderComparedToPrev() =>
-          jsGet(cur, iAxis) == null ||
-          (jsTruthy(prev) && _lessThan(jsGet(cur, iAxis), jsGet(prev, iAxis)));
+          jsGetKey(cur, iAxis) == null ||
+          (jsTruthy(prev) &&
+              jsLessThan(jsGetKey(cur, iAxis), jsGetKey(prev, iAxis)));
       final parsedItems = meta.parsed;
       final offset = start.toInt();
       for (i = 0; i < count; ++i) {
-        _setAt(parsedItems, i + offset, cur = parsed[i]);
+        jsSetIndex(parsedItems, i + offset, cur = parsed[i]);
         if (sorted) {
           if (isNotInOrderComparedToPrev()) {
             sorted = false;
@@ -1101,8 +1107,8 @@ class DatasetController
         // `singleScale || iScale.parse(...)`.
         iAxis: singleScale
             ? singleScale
-            : iScale.parse(_item(labels, index), index),
-        vAxis: vScale.parse(_item(data, index), index),
+            : iScale.parse(jsGetIndex(labels, index), index),
+        vAxis: vScale.parse(jsGetIndex(data, index), index),
       });
     }
     return parsed;
@@ -1134,7 +1140,7 @@ class DatasetController
 
     for (var i = 0, ilen = count.toInt(); i < ilen; ++i) {
       index = i + start;
-      item = _item(data, index);
+      item = jsGetIndex(data, index);
       parsed.add(<String, Object?>{
         'x': xScale.parse(jsGet(item, '0'), index),
         'y': yScale.parse(jsGet(item, '1'), index),
@@ -1174,7 +1180,7 @@ class DatasetController
 
     for (var i = 0, ilen = count.toInt(); i < ilen; ++i) {
       index = i + start;
-      item = _item(data, index);
+      item = jsGetIndex(data, index);
       parsed.add(<String, Object?>{
         'x': xScale.parse(resolveObjectKey(item, xAxisKey), index),
         'y': yScale.parse(resolveObjectKey(item, yAxisKey), index),
@@ -1196,8 +1202,9 @@ class DatasetController
   /// a controller that writes numbers (controller.doughnut.js:153, :164).
   /// An index that names no parsed item gives [undefined]. Dart `null` is a
   /// JS `null` item.
+  @override
   Object? getParsed(double index) {
-    return _item(cachedMeta.parsed, index);
+    return jsGetIndex(cachedMeta.parsed, index);
   }
 
   /// core.datasetController.js:586 `getDataElement(index)`.
@@ -1218,10 +1225,10 @@ class DatasetController
   Object? applyStack(types.Scale scale, Object? parsed, [Object? mode]) {
     final chart = this.chart;
     final meta = cachedMeta;
-    final value = jsGet(parsed, scale.axis);
+    final value = jsGetKey(parsed, scale.axis);
     final stack = DatasetStack(
       _getSortedDatasetIndices(chart, true),
-      jsGet(jsGet(jsGet(parsed, '_stacks'), scale.axis), '_visualValues'),
+      jsGetKey(jsGetKey(stacksOf(parsed), scale.axis), '_visualValues'),
     );
     return _applyStack(stack, value, meta.index, mode: mode);
   }
@@ -1237,12 +1244,12 @@ class DatasetController
     Object? parsed,
     DatasetStack? stack,
   ) {
-    final parsedValue = jsGet(parsed, scale.axis);
+    final parsedValue = jsGetKey(parsed, scale.axis);
     // `parsedValue === null ? NaN : parsedValue`.
     Object? value = parsedValue ?? double.nan;
     final values = stack == null
         ? null
-        : jsGet(jsGet(parsed, '_stacks'), scale.axis);
+        : jsGetKey(stacksOf(parsed), scale.axis);
     if (stack != null && jsTruthy(values)) {
       stack.values = values;
       value = _applyStack(stack, parsedValue, cachedMeta.index);
@@ -1276,7 +1283,7 @@ class DatasetController
 
     bool skip() {
       parsed = parsedItems[i];
-      final otherValue = jsToNumber(jsGet(parsed, otherScale.axis));
+      final otherValue = jsToNumber(jsGetKey(parsed, otherScale.axis));
       return !isFinite(_parsedValue(parsed, scale.axis)) ||
           otherMin > otherValue ||
           otherMax < otherValue;
@@ -1336,17 +1343,28 @@ class DatasetController
   ///
   /// The result is a record of the object `{label, value}`. `'' + value` is
   /// [jsToString].
-  ({String label, String value}) getLabelAndValue(double index) {
+  ///
+  /// index.d.ts:641 declares a string label. The overrides of other
+  /// controllers do not convert their label to a string. Scatter, bubble,
+  /// doughnut, pie and polar area return `labels[index] || ''` of
+  /// `chart.data.labels` (for example controller.scatter.js:51). Radar
+  /// returns `vScale.getLabels()[index]` (controller.radar.js:44), and
+  /// core.scale.js:358-361 reads the scale option `labels` first, then
+  /// `xLabels` or `yLabels`, and `chart.data.labels` last. Thus the label
+  /// can be any value: Dart `null` for JS `null`, or the [undefined]
+  /// sentinel (Chart.js ADR 0028, section 2). The `value` is always a
+  /// string.
+  ({Object? label, String value}) getLabelAndValue(double index) {
     final meta = cachedMeta;
     final iScale = meta.iScale;
     final vScale = meta.vScale;
     final parsed = getParsed(index);
     return (
       label: iScale != null
-          ? jsToString(iScale.getLabelForValue(jsGet(parsed, iScale.axis)))
+          ? jsToString(iScale.getLabelForValue(jsGetKey(parsed, iScale.axis)))
           : '',
       value: vScale != null
-          ? jsToString(vScale.getLabelForValue(jsGet(parsed, vScale.axis)))
+          ? jsToString(vScale.getLabelForValue(jsGetKey(parsed, vScale.axis)))
           : '',
     );
   }
@@ -1425,10 +1443,9 @@ class DatasetController
   /// @return {object} style object
   ///
   /// Dart `null` for [index] and [active] stands for JS `undefined`.
+  @override
   AnyObject getStyle(
     double? index, [
-    // The upstream signature has a positional `active`.
-    // ignore: avoid_positional_boolean_parameters
     bool? active,
   ]) {
     final mode = jsTruthy(active) ? 'active' : 'default';
@@ -1465,7 +1482,7 @@ class DatasetController
       }
       context = elementContext! as AnyObject;
       context['parsed'] = getParsed(index);
-      context['raw'] = _getIndex(jsGet(dataset, 'data'), index);
+      context['raw'] = jsGetIndex(jsGet(dataset, 'data'), index);
       context['index'] = context['dataIndex'] = index;
     } else {
       context = $context ??= _createDatasetContext(
@@ -1498,6 +1515,7 @@ class DatasetController
   /// @protected
   ///
   /// Dart `null` for [mode] stands for JS `undefined`.
+  @override
   AnyObject resolveDataElementOptions(double index, [String? mode]) {
     return _resolveElementOptions(_idOf(dataElementType), mode, index);
   }
@@ -1670,14 +1688,20 @@ class DatasetController
   ///
   /// `Object.assign(element, properties)` is [Element.assign] (Chart.js ADR
   /// 0017, section 6). Dart `null` for [index] stands for JS `undefined`.
+  ///
+  /// index.d.ts:674 types [element] as `TElement | TDatasetElement`. Thus the
+  /// parameter is a `types.Element`, and a controller passes its elements
+  /// without a cast (Chart.js ADR 0028, section 1).
   void updateElement(
-    Element element,
+    types.Element element,
     double? index,
     AnyObject properties,
     String mode,
   ) {
     if (_isDirectUpdateMode(mode)) {
-      element.assign(properties);
+      // Each data and dataset element is an Element: the casts of
+      // addElements and _insertElements (row adapt-component-class-role).
+      (element as Element).assign(properties);
     } else {
       resolveAnimations(index, mode).update(element, properties);
     }

@@ -214,6 +214,15 @@ abstract interface class ChartMeta {
   /// stands for JS `undefined` (Chart.js ADR 0006). JS `null` never reaches
   /// it.
   abstract ScaleRanges? scaleRanges;
+
+  /// core.controller.js:845 `_dataset`, the dataset object of the meta. The
+  /// trailing underscore follows Chart.js ADR 0023. controller.line.js:43
+  /// reads it.
+  Object? get dataset_;
+
+  /// index.d.ts:374 `DoughnutMetaExtensions.total`. Dart `null` stands for
+  /// JS `undefined`, the value before controller.doughnut.js:235 writes it.
+  abstract double? total;
 }
 
 /// helpers.extras.ts:146 the type `{xmin, xmax, ymin, ymax}` of
@@ -421,6 +430,27 @@ abstract interface class Chart {
   /// so it is an object, not a record. `core.controller` returns
   /// `createContext(null, {...})`, a `ContextObject` of `helpers.options`.
   Map<String, Object?> getContext();
+
+  /// index.d.ts:543 `readonly legend?: LegendElement`. Dart `null` stands
+  /// for JS `undefined`. The legend plugin (phase 8) writes it
+  /// (plugin.legend.js:602) and deletes it (:609). controller.doughnut.js:97
+  /// reads it.
+  LegendElement? get legend;
+
+  /// index.d.ts:559 `update(mode?)`. controller.doughnut.js:127 calls it.
+  void update([Object? mode]);
+
+  /// index.d.ts:568 `getVisibleDatasetCount()`.
+  /// controller.polarArea.js:155 calls it.
+  double getVisibleDatasetCount();
+
+  /// index.d.ts:569 `isDatasetVisible(datasetIndex)`.
+  /// controller.doughnut.js:192 calls it.
+  bool isDatasetVisible(double datasetIndex);
+
+  /// index.d.ts:571 `toggleDataVisibility(index)`.
+  /// controller.doughnut.js:126 calls it.
+  void toggleDataVisibility(double index);
 }
 
 /// index.d.ts:622 `DatasetController`.
@@ -464,6 +494,26 @@ abstract interface class DatasetController {
     // ignore: avoid_positional_boolean_parameters
     bool? canStack,
   ]);
+
+  /// core.datasetController.js:262 `options`, the resolver of the dataset
+  /// options. index.d.ts does not declare it. controller.bar.js:437 reads it.
+  Map<String, Object?> get options;
+
+  /// index.d.ts:688 `getParsed(index)`. controller.bar.js:440 calls it.
+  Object? getParsed(double index);
+
+  /// index.d.ts:656 `getStyle(index, active)`. controller.doughnut.js:101
+  /// calls it.
+  Map<String, Object?> getStyle(
+    double? index, [
+    // The upstream signature has a positional `active`.
+    // ignore: avoid_positional_boolean_parameters
+    bool? active,
+  ]);
+
+  /// index.d.ts:658 `resolveDataElementOptions(index, mode)`.
+  /// controller.doughnut.js:354 calls it.
+  Map<String, Object?> resolveDataElementOptions(double index, [String? mode]);
 }
 
 /// index.d.ts:706 `Defaults`, the type of the `defaults` object of
@@ -588,6 +638,60 @@ abstract interface class Scale implements Element, LayoutItem {
   /// scale. `index.d.ts` does not declare it. `determineMaxTicks` calls it
   /// (core.scale.autoskip.js:51).
   double tickSize();
+
+  /// core.scale.js:247 `_cache`. controller.bar.js:8 reads it.
+  Map<String, Object?> get cache;
+
+  /// index.d.ts:1321 `ticks`. controller.bar.js:47 reads it.
+  List<Tick>? get ticks;
+
+  /// index.d.ts:1346. controller.bar.js:48 calls it.
+  double? getPixelForTick(int index);
+
+  /// index.d.ts:1382. controller.bar.js:396 calls it.
+  double getBasePixel();
+
+  /// core.scale.js:237 `_startPixel`. controller.bar.js:549 reads it.
+  double get startPixel;
+
+  /// core.scale.js:239 `_endPixel`. controller.bar.js:550 reads it.
+  double get endPixel;
+
+  /// index.d.ts:1339. controller.bar.js:606 calls it.
+  double getPixelForDecimal(double decimal);
+
+  /// index.d.ts:1374. controller.bar.js:615 calls it.
+  double? getValueForPixel(double pixel);
+
+  /// index.d.ts:1357. The value is any JS value (Chart.js ADR 0025 §1).
+  /// controller.bar.js:620 calls it.
+  double getLineWidthForValue(Object? value);
+}
+
+/// index.d.ts:3676 `RadialLinearScale`. `RadialLinearScale` of
+/// `scale.radialLinear.dart` implements it. The filler of phase 8 tests
+/// `scale is RadialLinearScale` for `if (scale.getPointPositionForValue)`
+/// (filler.target.js:50).
+abstract interface class RadialLinearScale implements Scale {
+  /// index.d.ts:3677 `xCenter`. controller.polarArea.js:167 reads it.
+  double get xCenter;
+
+  /// index.d.ts:3678 `yCenter`. controller.polarArea.js:168 reads it.
+  double get yCenter;
+
+  /// index.d.ts:3681. controller.polarArea.js:169 calls it.
+  double getIndexAngle(double index);
+
+  /// index.d.ts:3682. The value is any JS value (Chart.js ADR 0025 §1).
+  /// controller.polarArea.js:182 calls it.
+  double getDistanceFromCenterForValue(Object? value);
+
+  /// index.d.ts:3685. The result is a record (Chart.js ADR 0003).
+  /// controller.radar.js:88 calls it.
+  ({double x, double y, double angle}) getPointPositionForValue(
+    double index,
+    Object? value,
+  );
 }
 
 /// index.d.ts:1530 `LabelItem`, an item of `Scale.getLabelItems`
@@ -896,6 +1000,22 @@ abstract interface class LineElement implements Element {
   /// absent key are two states. The port copies `null` as the `undefined`
   /// sentinel of `lib/src/js/js_undefined.dart`.
   double? get datasetIndex;
+
+  /// index.d.ts:2025 `updateControlPoints(chartArea, indexAxis)`.
+  /// controller.line.js:140 calls it.
+  void updateControlPoints(ChartArea chartArea, [String? indexAxis]);
+}
+
+/// index.d.ts:2414 `LegendElement`, with the members that the option
+/// functions of the controllers read (controller.doughnut.js:97, :126).
+/// The `Legend` class of phase 8 implements it and adds `Element` and
+/// `LayoutItem`.
+abstract interface class LegendElement {
+  /// index.d.ts:2415 `chart`.
+  Chart get chart;
+
+  /// index.d.ts:2418 `options`, the resolver of the legend options.
+  Map<String, Object?> get options;
 }
 
 /// index.d.ts:2212 `BasePlatform`.
@@ -992,6 +1112,15 @@ abstract interface class Element implements Point {
   /// stands for JS `undefined` (Chart.js ADR 0006). JS `null` never reaches
   /// it.
   Map<String, Object?>? get options;
+
+  /// core.element.ts:13 `active = false`. controller.bar.js:418 reads it.
+  bool get active;
+
+  /// The `hidden` property: core.controller.js:898 writes it,
+  /// core.datasetController.js:730 reads it. core.element.ts does not
+  /// declare it. Any JS value: the `undefined` sentinel in the start state.
+  /// controller.bar.js:676 reads it.
+  Object? get hidden;
 }
 
 /// element.point.ts:20 `PointElement`, which index.d.ts:17 re-exports.
@@ -1014,6 +1143,9 @@ abstract interface class PointElement implements Element, SplinePoint {
   /// element.point.ts:26 `stop?: boolean`. Dart `null` stands for JS
   /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
   bool? get stop;
+
+  /// element.point.ts:81 `size(options)`. controller.line.js:133 calls it.
+  double size([Map<String, Object?>? options]);
 }
 
 /// controller.radar.js:96 the property `angle` of a radar [PointElement].

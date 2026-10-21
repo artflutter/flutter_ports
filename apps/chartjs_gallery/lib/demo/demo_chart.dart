@@ -178,6 +178,30 @@ final class DemoChart implements types.Chart {
   @override
   Map<String, Object?> getContext() => {'chart': this, 'type': 'chart'};
 
+  /// core.controller.js:863 `isDatasetVisible(datasetIndex)`. The demo
+  /// chart has no datasets.
+  @override
+  bool isDatasetVisible(double datasetIndex) => false;
+
+  /// core.controller.js:859 `getVisibleDatasetCount()`. The demo chart has
+  /// no datasets.
+  @override
+  double getVisibleDatasetCount() => 0;
+
+  /// core.controller.js:881 `toggleDataVisibility(index)`. The demo chart
+  /// has no data.
+  @override
+  void toggleDataVisibility(double index) {}
+
+  /// core.controller.js:475 `update(mode)`. core.controller.js:536: an
+  /// update ends with a render. The demo chart has only the render.
+  @override
+  void update([Object? mode]) => render();
+
+  /// index.d.ts:543 `legend`. The demo chart has no legend.
+  @override
+  types.LegendElement? get legend => null;
+
   double? _aspectRatio;
 
   /// `chart.attached`: the canvas is shown by a laid-out host.

@@ -25,10 +25,11 @@
 ///   integer px sizes, the regular and bold faces and the families of the
 ///   harness. Outside them, the generator stops with an error.
 /// - The Dart side records the calls of one `chart.draw()` after the layout
-///   with a [RecordingContext] in place of `chart.ctx` and of each
-///   `scale.ctx` ([drawCalls]). A dataset controller draws its elements on
-///   the context of its construction, a final field. Thus the calls have no
-///   element draws, on both sides. The observations compare the points.
+///   with a [RecordingContext] in place of `chart.ctx`, of each `scale.ctx`
+///   and of the writable `ctx` of each dataset controller ([drawCalls],
+///   Chart.js ADR 0030). Thus the calls have the element draws, on both
+///   sides. A `Path2D` argument records as `{path, calls}`
+///   (`test/port/canvas/path2d_record.dart`).
 ///
 /// The parts:
 ///
@@ -39,9 +40,14 @@
 /// - [RecordingContext] and [drawCalls]: the calls of one draw.
 /// - [observeChart]: the observations of `observe` of the generators.
 /// - [referenceMatcher], [callMatchers], [copyReference]: the comparison.
-/// - [expectScaleChart], [testScaleChartCases], [testReferenceOrigin] and
+/// - [expectScaleObservations], [expectCalls], [expectScaleChart],
+///   [testScaleChartCases], [testReferenceOrigin] and
 ///   [testReferenceWidths]: the checks and the test cases of a reference
-///   file.
+///   file. The controller harness
+///   (`test/port/controllers/controller_chart_harness.dart`) uses them too.
+///   [expectCalls] removes the reference `clip` of the border ring of each
+///   bar that the port draws without a `clip` (differences.md
+///   `adapt-bar-clip`).
 ///
 /// This library is not a test file: `flutter test` runs only the files that
 /// end in `_test.dart`. It is not a pure layer. A test that imports it needs
@@ -67,6 +73,7 @@ import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_chartjs/src/upstream.dart' show chartJsVersion;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../canvas/path2d_record.dart';
 import '../helpers/rounded_rect_upstream.dart';
 
 // ---------------------------------------------------------------------------
@@ -310,40 +317,47 @@ final class RecordingContext extends MockContext {
       replayRoundRectAsUpstream(this, x, y, w, h, radii);
 }
 
-/// The calls of one `chart.draw()`: `drawCalls(chart)` of the generators.
+/// The calls of one `chart.draw()`: `drawCalls(chart)` of the generators,
+/// with the element draws.
 ///
 /// The function puts a [RecordingContext] over `chart.ctx` in place of
-/// `chart.ctx` and of the `ctx` of each scale, as
-/// controller.bar.tests.js:1677-1696 and core.scale.tests.js:184-186 do.
-/// A scale takes the context of the chart only when the chart creates it
-/// (core.controller.js:357-362). Thus the function sets each scale. Then it
-/// draws and puts back the old contexts. The layout is done already: the
-/// label widths come from the caches of the scales.
-///
-/// A dataset controller draws its elements on `DatasetController.ctx`, the
-/// context of the chart at the construction of the controller
-/// (core.datasetController.js:257 `_ctx`). That field is final. Thus the
-/// elements draw on the real context, and the records have no element
-/// draws. The generator draws its elements on a second context for the same
-/// result. The observations of [observeChart] compare the points.
-List<ContextCall> drawCalls(Chart chart) {
+/// `chart.ctx`, of the `ctx` of each scale (core.controller.js:357-362) and
+/// of the `ctx` of each dataset controller whose context is the context of
+/// the chart (core.datasetController.js:257 `_ctx`). Then it draws once and
+/// puts back the old contexts. The layout is done already: the label widths
+/// come from the caches of the scales. Each `Path2D` argument becomes
+/// `{path, calls}` (path2d_record.dart).
+List<Object?> drawCalls(Chart chart) {
   final target = chart.ctx!;
   final recording = RecordingContext(target);
   final scales = chart.scales.values.toList();
-  final contexts = [for (final scale in scales) scale.ctx];
+  final scaleContexts = [for (final scale in scales) scale.ctx];
+  final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
+  final controllers = <DatasetController>[
+    for (var i = 0; i < datasets.length; i++)
+      if (chart.getDatasetMeta(i.toDouble()).controller
+          case final DatasetController c when identical(c.ctx, target))
+        c,
+  ];
   chart.ctx = recording;
   for (final scale in scales) {
     scale.ctx = recording;
+  }
+  for (final controller in controllers) {
+    controller.ctx = recording;
   }
   try {
     chart.draw();
   } finally {
     chart.ctx = target;
     for (var i = 0; i < scales.length; i++) {
-      scales[i].ctx = contexts[i];
+      scales[i].ctx = scaleContexts[i];
+    }
+    for (final controller in controllers) {
+      controller.ctx = target;
     }
   }
-  return recording.getCalls();
+  return recordedCalls(recording.getCalls());
 }
 
 // ---------------------------------------------------------------------------
@@ -462,25 +476,142 @@ Object? referenceMatcher(Object? expected) => switch (expected) {
 
 /// The matchers of the calls of a reference text: one JSON array
 /// `[name, ...args]` for each line, as the records `{name, args}` of
-/// [MockContext].
+/// [MockContext]. A `Path2D` argument `{path, calls}` of the generators
+/// matches the form of `recordedCalls` (path2d_record.dart): the id
+/// exactly, and its calls with the same rules.
 List<Object?> callMatchers(Object? text) => [
   for (final line in (text! as String).split('\n'))
-    if (line.isNotEmpty)
-      () {
-        final call = jsonDecode(line) as List<Object?>;
-        return {'name': call[0], 'args': referenceMatcher(call.sublist(1))};
-      }(),
+    if (line.isNotEmpty) _callMatcher(jsonDecode(line) as List<Object?>),
 ];
 
+/// The matcher of one reference call `[name, ...args]`.
+Map<String, Object?> _callMatcher(List<Object?> call) => {
+  'name': call[0],
+  'args': [for (final arg in call.skip(1)) _argMatcher(arg)],
+};
+
+/// The matcher of one argument of a reference call: a `Path2D` record
+/// `{path, calls}`, a List item by item, or [referenceMatcher].
+Object? _argMatcher(Object? arg) => switch (arg) {
+  {'path': final int id, 'calls': final List<Object?> calls}
+      when arg.length == 2 =>
+    <String, Object?>{
+      'path': id,
+      'calls': [
+        for (final call in calls) _callMatcher(call! as List<Object?>),
+      ],
+    },
+  final List<Object?> list => [for (final item in list) _argMatcher(item)],
+  _ => referenceMatcher(arg),
+};
+
+/// The calls of the rectangle paths of a bar: `addNormalRectPath`
+/// (element.bar.js:123-125) and `addRoundedRectPath`
+/// (helpers.canvas.ts:498-527). The `roundRect` of the port records as the
+/// upstream calls ([RecordingContext]).
+const Set<String> _barPathCalls = {
+  'rect',
+  'moveTo',
+  'lineTo',
+  'arc',
+  'closePath',
+};
+
+/// The `fill('evenodd')` calls of the calls with the names [names] and the
+/// first arguments [firstArgs], in order. For each: `ring` is true when the
+/// calls since its `beginPath` have the form of the border ring of a bar
+/// (element.bar.js:186-192): path calls, at most one `clip`, then one
+/// `setFillStyle`. `clip` is the index of that `clip`, or Dart `null`.
+List<({bool ring, int? clip})> _evenOddFills(
+  List<Object?> names,
+  List<Object?> firstArgs,
+) {
+  final fills = <({bool ring, int? clip})>[];
+  for (var f = 0; f < names.length; f++) {
+    if (names[f] != 'fill' || firstArgs[f] != 'evenodd') continue;
+    var ring = false;
+    int? clip;
+    if (f > 0 && names[f - 1] == 'setFillStyle') {
+      for (var k = f - 2; k >= 0; k--) {
+        final name = names[k];
+        if (name == 'beginPath') {
+          ring = true;
+          break;
+        }
+        if (name == 'clip' && clip == null) {
+          clip = k;
+        } else if (!_barPathCalls.contains(name)) {
+          break;
+        }
+      }
+    }
+    fills.add((ring: ring, clip: ring ? clip : null));
+  }
+  return fills;
+}
+
+/// The indexes of the reference calls [matchers] that the row
+/// `adapt-bar-clip` of differences.md removes for the recorded calls
+/// [actual].
+///
+/// Upstream clips to the outer rectangle before it fills the border ring
+/// of a bar (element.bar.js:186-189). The port does not call `clip` when
+/// `inflateAmount` is 0 (element.bar.dart `draw`). The row says: "the tests
+/// remove `clip` from the reference calls of such a bar". The k-th
+/// `fill('evenodd')` of [matchers] pairs with the k-th of [actual]. When
+/// the reference fill is a ring with a `clip` and the recorded fill is a
+/// ring without a `clip`, that `clip` goes. When the two counts differ,
+/// nothing goes: the compare then fails.
+///
+/// The path arguments still compare. A reference bar with an amount that
+/// is not 0 has an outer path that `inflateRect` moves by the amount
+/// (element.bar.js:127-139): the ring is there only when an edge of the
+/// outer rectangle differs from the inner one. Thus a port bar with the
+/// amount 0 in its place fails at a path argument.
+Set<int> _barClipsToRemove(List<Object?> actual, List<Object?> matchers) {
+  Object? nameOf(Object? call) => (call! as Map<String, Object?>)['name'];
+  Object? firstArgOf(Object? call) => switch ((call! as Map)['args']) {
+    [final first, ...] => first,
+    _ => null,
+  };
+  final expectedFills = _evenOddFills(
+    [for (final m in matchers) nameOf(m)],
+    [for (final m in matchers) firstArgOf(m)],
+  );
+  final actualFills = _evenOddFills(
+    [for (final c in actual) nameOf(c)],
+    [for (final c in actual) firstArgOf(c)],
+  );
+  if (expectedFills.length != actualFills.length) return const {};
+  return {
+    for (var k = 0; k < expectedFills.length; k++)
+      if (expectedFills[k] case (
+        ring: true,
+        :final int clip,
+      ) when actualFills[k].ring && actualFills[k].clip == null)
+        clip,
+  };
+}
+
 /// Expects the recorded calls [actual] to match the reference text
-/// [expected], call by call. The [reason] of a failure names the index of
-/// the call.
+/// [expected], call by call. [actual] has the form of `recordedCalls`
+/// (path2d_record.dart), as [drawCalls] gives it. The [reason] of a failure
+/// names the index of the call.
+///
+/// Before the compare, the `clip` of the border ring of each bar that the
+/// port draws without a `clip` goes from the reference calls (the row
+/// `adapt-bar-clip` of differences.md, [_barClipsToRemove]).
 void expectCalls(
-  List<ContextCall> actual,
+  List<Object?> actual,
   Object? expected, {
   String reason = 'calls',
 }) {
-  final matchers = callMatchers(expected);
+  final all = callMatchers(expected);
+  final removed = _barClipsToRemove(actual, all);
+  final matchers = [
+    for (var i = 0; i < all.length; i++)
+      if (!removed.contains(i)) all[i],
+  ];
   final count = math.min(actual.length, matchers.length);
   for (var i = 0; i < count; i++) {
     expect(actual[i], matchers[i], reason: '$reason: call $i');
@@ -509,6 +640,70 @@ Object? copyReference(
   _ => value,
 };
 
+/// The keys of the observations that [expectScaleObservations] compares.
+const List<String> _scaleObservationKeys = ['chartArea', 'scales', 'points'];
+
+/// Expects the observations [observed] (the Map of [observeChart], or a Map
+/// with the same keys) to match [expected], for each key of [expected]:
+/// `chartArea`, `scales` and `points`. A failure names the key:
+/// `chartArea`, `scales.<id>.<key>` or `points`. [expected] must have no
+/// other key: a key that no check reads cannot fail.
+///
+/// The controller harness calls it for the keys `chartArea` and `scales`,
+/// with the name of the observation in [label]: each reason starts with
+/// it.
+void expectScaleObservations(
+  Map<String, Object?> observed,
+  Map<String, Object?> expected, {
+  String label = '',
+}) {
+  final prefix = label.isEmpty ? '' : '$label: ';
+  expect(
+    expected.keys.where((key) => !_scaleObservationKeys.contains(key)),
+    isEmpty,
+    reason: '${prefix}the keys of the scale observations',
+  );
+  if (expected.containsKey('chartArea')) {
+    expect(
+      observed['chartArea'],
+      referenceMatcher(expected['chartArea']),
+      reason: '${prefix}chartArea',
+    );
+  }
+  if (expected.containsKey('scales')) {
+    final scales = observed['scales']! as Map<String, Object?>;
+    final expectedScales = expected['scales']! as Map<String, Object?>;
+    expect(
+      scales.keys,
+      orderedEquals(expectedScales.keys),
+      reason: '${prefix}scale ids',
+    );
+    for (final MapEntry(key: id, :value) in expectedScales.entries) {
+      final scale = scales[id]! as Map<String, Object?>;
+      final expectedScale = value! as Map<String, Object?>;
+      expect(
+        scale.keys,
+        orderedEquals(expectedScale.keys),
+        reason: '${prefix}keys of scale $id',
+      );
+      for (final key in expectedScale.keys) {
+        expect(
+          scale[key],
+          referenceMatcher(expectedScale[key]),
+          reason: '${prefix}scales.$id.$key',
+        );
+      }
+    }
+  }
+  if (expected.containsKey('points')) {
+    expect(
+      observed['points'],
+      referenceMatcher(expected['points']),
+      reason: '${prefix}points',
+    );
+  }
+}
+
 /// Expects [chart] to give the observations and the draw calls of
 /// [expected], the `expected` of a reference case. A failure names the key:
 /// `chartArea`, `scales.<id>.<key>`, `points` or the index of the call.
@@ -524,36 +719,9 @@ void expectScaleChart(
     unorderedEquals(['chartArea', 'scales', 'points', 'drawCalls']),
     reason: 'the keys of the reference case',
   );
-  final observed = observeChart(chart, extra: extra);
-  expect(
-    observed['chartArea'],
-    referenceMatcher(expected['chartArea']),
-    reason: 'chartArea',
-  );
-  final scales = observed['scales']! as Map<String, Object?>;
-  final expectedScales = expected['scales']! as Map<String, Object?>;
-  expect(scales.keys, orderedEquals(expectedScales.keys), reason: 'scale ids');
-  for (final MapEntry(key: id, :value) in expectedScales.entries) {
-    final scale = scales[id]! as Map<String, Object?>;
-    final expectedScale = value! as Map<String, Object?>;
-    expect(
-      scale.keys,
-      orderedEquals(expectedScale.keys),
-      reason: 'keys of scale $id',
-    );
-    for (final key in expectedScale.keys) {
-      expect(
-        scale[key],
-        referenceMatcher(expectedScale[key]),
-        reason: 'scales.$id.$key',
-      );
-    }
-  }
-  expect(
-    observed['points'],
-    referenceMatcher(expected['points']),
-    reason: 'points',
-  );
+  expectScaleObservations(observeChart(chart, extra: extra), {
+    for (final key in _scaleObservationKeys) key: expected[key],
+  });
   expectCalls(drawCalls(chart), expected['drawCalls'], reason: 'draw');
 }
 

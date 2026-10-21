@@ -17,6 +17,8 @@ import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/core/core.interaction.dart';
 import 'package:flutter_chartjs/src/core/core.registry.dart';
 import 'package:flutter_chartjs/src/core/core.scale.dart';
+import 'package:flutter_chartjs/src/helpers/helpers.collection.dart'
+    show notifyArrayListeners;
 import 'package:flutter_chartjs/src/index.dart' show registerables;
 import 'package:flutter_chartjs/src/js/js_array.dart';
 import 'package:flutter_chartjs/src/js/js_class.dart';
@@ -1188,6 +1190,156 @@ void main() {
       meta['_clip'] = clip;
       expect(meta['_clip'], same(clip));
       expect(meta.clip, same(clip));
+    });
+  });
+
+  group('getDataVisibility', () {
+    // core.controller.js:885 `!this._hiddenIndices[index]`, with the
+    // port-only early return for an empty `_hiddenIndices` (Chart.js ADR
+    // 0028, section 4). The results are the upstream results in each state.
+    const indices = <double>[
+      0,
+      1,
+      1.5,
+      -1,
+      // The negative zero is not the int 0.
+      // ignore: prefer_int_literals
+      -0.0,
+      double.nan,
+      double.infinity,
+    ];
+
+    testWidgets('a chart with no hidden index gives true for each index', (
+      tester,
+    ) async {
+      final chart = acquireChart(_testConfig([_points('a')]));
+      for (final index in [...indices, 1e21]) {
+        expect(chart.getDataVisibility(index), isTrue, reason: '$index');
+      }
+    });
+
+    testWidgets('toggleDataVisibility hides one index, and a second toggle '
+        'shows it again', (tester) async {
+      final chart = acquireChart(_testConfig([_points('a')]))
+        ..toggleDataVisibility(3);
+      expect(chart.getDataVisibility(3), isFalse);
+      for (final index in indices) {
+        expect(chart.getDataVisibility(index), isTrue, reason: '$index');
+      }
+      // The Map holds `'3': false` and is not empty: the upstream line.
+      chart.toggleDataVisibility(3);
+      expect(chart.getDataVisibility(3), isTrue);
+      for (final index in indices) {
+        expect(chart.getDataVisibility(index), isTrue, reason: '$index');
+      }
+    });
+
+    testWidgets('a fraction and NaN are keys of their own', (tester) async {
+      final chart = acquireChart(_testConfig([_points('a')]))
+        ..toggleDataVisibility(1.5);
+      expect(chart.getDataVisibility(1.5), isFalse);
+      expect(chart.getDataVisibility(1), isTrue);
+      expect(chart.getDataVisibility(2), isTrue);
+      chart.toggleDataVisibility(double.nan);
+      expect(chart.getDataVisibility(double.nan), isFalse);
+      for (final index in [0.0, 1.0, 2.0]) {
+        expect(chart.getDataVisibility(index), isTrue, reason: '$index');
+      }
+    });
+
+    testWidgets('the moves of _updateHiddenIndices '
+        '(core.controller.tests.js:2109)', (tester) async {
+      // The upstream case uses a pie chart. The pie controller comes in
+      // phase 7, wave 3. Thus the chart has two datasets of the test
+      // controller with the same changes, as the uniform data changes of
+      // core.controller.js:581 need.
+      AnyObject item(num x) => <String, Object?>{'x': x, 'y': x};
+      AnyObject dataset() => <String, Object?>{
+        'data': <Object?>[item(0), item(1), item(2), item(3)],
+      };
+      final labels = <Object?>['0', '1', '2', '3'];
+      final config = _testConfig([dataset(), dataset()]);
+      (config['data']! as AnyObject)['labels'] = labels;
+      final chart = acquireChart(config);
+      List<Object?> dataOf(int i) =>
+          jsGet(jsGet(chart.data['datasets'], i.toDouble()), 'data')!
+              as List<Object?>;
+      // The hooked array methods: the change, then the listeners.
+      void change(
+        String method,
+        void Function(List<Object?> list) apply, [
+        List<Object?> args = const [],
+      ]) {
+        apply(labels);
+        for (final i in [0, 1]) {
+          final data = dataOf(i);
+          apply(data);
+          notifyArrayListeners(data, method, args);
+        }
+      }
+
+      void expectVisibility(List<bool> expected) {
+        for (var i = 0; i < expected.length; i++) {
+          expect(
+            chart.getDataVisibility(i.toDouble()),
+            expected[i],
+            reason: 'index $i',
+          );
+        }
+      }
+
+      chart.toggleDataVisibility(3);
+      change('splice', (l) => jsSplice(l, 1, 1), [1.0, 1.0]);
+      chart.update();
+      expectVisibility([true, true, false]);
+
+      change('unshift', (l) => l.insertAll(0, [item(-1), item(-2)]), [
+        item(-1),
+        item(-2),
+      ]);
+      chart.update();
+      expectVisibility([true, true, true, true, false]);
+
+      change('shift', (l) => l.removeAt(0));
+      chart.update();
+      expectVisibility([true, true, true, false]);
+
+      // The pop removes the hidden index: the Map is empty again, and the
+      // early return gives the upstream result.
+      change('pop', (l) => l.removeLast());
+      chart.update();
+      expectVisibility([true, true, true, true]);
+
+      chart.toggleDataVisibility(1);
+      change('splice', (l) => jsSplice(l, 1, 0, [item(1)]), [
+        1.0,
+        0.0,
+        item(1),
+      ]);
+      chart.update();
+      expectVisibility([true, true, false, true]);
+    });
+  });
+
+  group('ChartMeta.total', () {
+    // index.d.ts:374 `DoughnutMetaExtensions.total` (Chart.js ADR 0028,
+    // section 1): a typed field with the read and the write by name.
+    test('a meta without a doughnut gives undefined, and the write by name '
+        'sets the field', () {
+      final chart = Chart(5, <String, Object?>{});
+      addTearDown(chart.destroy);
+      final meta = chart.getDatasetMeta(0);
+      expect(meta.total, isNull);
+      expect(meta['total'], same(undefined));
+      meta['total'] = 5;
+      expect(meta.total, 5.0);
+      expect(meta.total, isA<double>());
+      expect(meta['total'], 5.0);
+      meta['total'] = undefined;
+      expect(meta.total, isNull);
+      expect(meta['total'], same(undefined));
+      expect(() => meta['total'] = 'a', throwsA(isA<TypeError>()));
+      expect(meta.total, isNull);
     });
   });
 

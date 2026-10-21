@@ -14,6 +14,7 @@ library;
 
 import 'package:flutter_chartjs/src/helpers/helpers.extras.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
+import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -71,6 +72,17 @@ final class _Point implements PointElement {
 
   @override
   double cp2y = double.nan;
+
+  // The members of Chart.js ADR 0028 that this test does not read.
+  @override
+  bool get active => false;
+
+  @override
+  Object? get hidden => undefined;
+
+  @override
+  double size([Map<String, Object?>? options]) =>
+      throw UnsupportedError('size');
 }
 
 /// A dataset meta object.

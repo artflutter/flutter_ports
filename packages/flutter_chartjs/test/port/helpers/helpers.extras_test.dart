@@ -75,6 +75,13 @@ final class _Dataset implements Element {
 
   @override
   double get y => 0;
+
+  // The members of Chart.js ADR 0028 that this test does not read.
+  @override
+  bool get active => false;
+
+  @override
+  Object? get hidden => undefined;
 }
 
 /// A point element `{x, y}`, passed as a [PointElement]. The control points
@@ -108,6 +115,17 @@ final class _Point implements PointElement {
 
   @override
   double cp2y = double.nan;
+
+  // The members of Chart.js ADR 0028 that this test does not read.
+  @override
+  bool get active => false;
+
+  @override
+  Object? get hidden => undefined;
+
+  @override
+  double size([Map<String, Object?>? options]) =>
+      throw UnsupportedError('size');
 }
 
 /// A dataset meta object literal, passed as a [ChartMeta].
@@ -298,6 +316,25 @@ void main() {
         start: 1,
         count: 7,
       ));
+    });
+
+    test('takes the data elements of the meta as a List<Element>', () {
+      // Upstream reads the length and `_lookupByKey` of the points (Chart.js
+      // ADR 0028, section 3): the same items in a List<Element> give the
+      // same result.
+      for (final pixel in <double Function(double)>[
+        _Scale._times10,
+        (value) => value * 5,
+      ]) {
+        final (meta, points) = _visible(_xs, both, pixel: pixel);
+        final elements = <Element>[...points];
+        for (final disabled in [true, false]) {
+          expect(
+            getStartAndCountOfVisiblePoints(meta, elements, disabled),
+            getStartAndCountOfVisiblePoints(meta, points, disabled),
+          );
+        }
+      }
     });
 
     test('limits the points to min or max only', () {

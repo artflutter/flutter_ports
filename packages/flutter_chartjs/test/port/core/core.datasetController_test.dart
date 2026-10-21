@@ -21,6 +21,7 @@ import 'package:flutter_chartjs/src/elements/element.point.dart';
 import 'package:flutter_chartjs/src/elements/element_options.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
+import 'package:flutter_chartjs/src/helpers/helpers.math.dart' show MinMax;
 import 'package:flutter_chartjs/src/helpers/helpers.options.dart'
     show createContext;
 import 'package:flutter_chartjs/src/js/js_array.dart';
@@ -431,6 +432,13 @@ final class _Meta implements types.ChartMeta {
   /// `_dataset`.
   final Object? datasetObject;
 
+  // The members of Chart.js ADR 0028 that this test does not read.
+  @override
+  Object? get dataset_ => datasetObject;
+
+  @override
+  double? total;
+
   @override
   late String type;
 
@@ -595,6 +603,7 @@ final class _FakeChart implements types.Chart {
       getSortedDatasetMetas(true);
 
   // core.controller.js:866-875.
+  @override
   bool isDatasetVisible(double datasetIndex) {
     final dataset = jsGet(jsGet(data, 'datasets'), datasetIndex);
     if (!jsTruthy(dataset)) {
@@ -1273,6 +1282,181 @@ void main() {
         isA<Map<String, Object?>>(),
       );
     });
+
+    // stacksOf is the read `item._stacks` (Chart.js ADR 0027). For a value
+    // that is not a List, it gives the value of the Map read for a Map and
+    // of jsGet for another value, as the earlier form of the readers.
+    test('stacksOf reads the _stacks of a Map, a number and null', () {
+      final stacks = <String, Object?>{};
+      expect(stacksOf(<String, Object?>{'_stacks': stacks}), same(stacks));
+      // An absent key gives Dart null, as the Map read does.
+      expect(stacksOf(<String, Object?>{'x': 1.0}), isNull);
+      expect(stacksOf(5.0), same(jsGet(5.0, '_stacks')));
+      expect(stacksOf(5.0), same(undefined));
+      expect(stacksOf(true), same(undefined));
+      expect(() => stacksOf(null), throwsA(isA<TypeError>()));
+      expect(() => stacksOf(undefined), throwsA(isA<TypeError>()));
+    });
+
+    test('stacksOf gives the entry that updateStacks writes for a List', () {
+      // core.datasetController.js:165 writes `item._stacks = {}` into an
+      // array item. The port keeps the property in an Expando.
+      final items = <Object?>[
+        <Object?>[0.0, 1.0],
+        <Object?>[1.0, 2.0],
+      ];
+      expect(stacksOf(items[0]), isNull);
+      final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
+      run._dataset(0)['data'] = items;
+      run.step(<Object?>['elements', false]);
+      for (final item in items) {
+        final itemStacks = stacksOf(item);
+        expect(itemStacks, isA<Map<String, Object?>>());
+        expect(jsObjectKeys(itemStacks! as Map<String, Object?>), ['y']);
+        // The same entry at each read.
+        expect(stacksOf(item), same(itemStacks));
+      }
+      // An array has no property x or y: the index key of both items is
+      // 'undefined', so both items share one stack, as upstream.
+      final stack = jsGetKey(stacksOf(items[0]), 'y');
+      expect(jsGetKey(stacksOf(items[1]), 'y'), same(stack));
+      expect(jsObjectKeys(stack! as Map<String, Object?>), [
+        '0',
+        '_top',
+        '_bottom',
+        '_visualValues',
+      ]);
+      expect(jsGetKey(stack, '0'), same(undefined));
+      // The Expando entry belongs to the List object, not to its items.
+      expect(stacksOf(<Object?>[0.0, 1.0]), isNull);
+    });
+
+    test('a stack change moves a List item to the new stack', () {
+      // core.datasetController.js:416-419: a change of the dataset stack
+      // calls clearStacks (:208-227), which reads `parsed._stacks` of each
+      // item. An array has no property y, so the value of the dataset in the
+      // old stack is undefined, and clearStacks skips the item (:220). Then
+      // updateStacks puts the item into the stack of the new key.
+      final items = <Object?>[
+        <Object?>[0.0, 1.0],
+      ];
+      final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
+      run._dataset(0)['data'] = items;
+      run.step(<Object?>['elements', false]);
+      final itemStacks = stacksOf(items[0])! as AnyObject;
+      final oldStack = itemStacks['y']! as AnyObject;
+      expect(oldStack.containsKey('0'), isTrue);
+      run
+        ..step(<Object?>['setDataset', 0, 'stack', 'other'])
+        ..step(<Object?>['elements', false]);
+      expect(jsObjectKeys(run.chart.stacks!), ['x.y.test', 'x.y.other']);
+      // The same `_stacks` object, with the stack of the new key.
+      expect(stacksOf(items[0]), same(itemStacks));
+      final newStack = itemStacks['y']! as AnyObject;
+      expect(identical(newStack, oldStack), isFalse);
+      expect(jsGetKey(newStack, '0'), same(undefined));
+      // clearStacks skips the undefined value: the key stays.
+      expect(oldStack.containsKey('0'), isTrue);
+    });
+
+    // applyStack (core.datasetController.js:599) and updateRangeFromParsed
+    // (:610) read `parsed._stacks[scale.axis]` through stacksOf. No upstream
+    // controller calls them with an array item: getMinMax skips the item
+    // (:633-636). A direct call reads the stack of the item.
+    test('applyStack and updateRangeFromParsed read the List stacks', () {
+      final items = <Object?>[
+        <Object?>[0.0, 1.0],
+        <Object?>[1.0, 2.0],
+      ];
+      final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
+      run._dataset(0)['data'] = items;
+      run.step(<Object?>['elements', false]);
+      final controller = run.controller(0);
+      final yScale = run.chart.scales['y']!;
+      // The Node.js probe of the pinned build gives undefined.
+      expect(controller.applyStack(yScale, items[0]), same(undefined));
+      // The Node.js probe gives the range NaN, NaN without a throw.
+      final range = _MinMax(double.infinity, double.negativeInfinity);
+      final stack = DatasetStack(<double>[0], null);
+      controller.updateRangeFromParsed(range, yScale, items[0], stack);
+      expect(range.min, isNaN);
+      expect(range.max, isNaN);
+      // updateRangeFromParsed writes the stack of the item into the values.
+      expect(stack.values, same(jsGetKey(stacksOf(items[0]), 'y')));
+    });
+
+    // A Date (Chart.js ADR 0024) and a function are objects: the write
+    // `item._stacks = {}` (core.datasetController.js:165) adds the property.
+    // The Node.js probe of the pinned build gives no throw and the key y.
+    test('DateTime and function data items take the stacks', () {
+      Object? f0() => null;
+      Object? f1() => null;
+      for (final items in <List<Object?>>[
+        <Object?>[DateTime.utc(1970), DateTime.utc(1971)],
+        <Object?>[f0, f1],
+      ]) {
+        final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
+        run._dataset(0)['data'] = items;
+        run.step(<Object?>['elements', false]);
+        for (final item in items) {
+          final itemStacks = stacksOf(item);
+          expect(itemStacks, isA<Map<String, Object?>>());
+          expect(jsObjectKeys(itemStacks! as Map<String, Object?>), ['y']);
+          expect(stacksOf(item), same(itemStacks));
+        }
+        // The applyStack of the Node.js probe gives undefined.
+        expect(
+          run.controller(0).applyStack(run.chart.scales['y']!, items[0]),
+          same(undefined),
+        );
+      }
+      // The Expando entry belongs to the object: an equal DateTime has none.
+      expect(stacksOf(DateTime.utc(1970)), isNull);
+    });
+
+    test('a class value takes the stacks as a static property', () {
+      // A class is a function (Chart.js ADR 0020). The Node.js probe with
+      // `class A { static x = 0; static y = 1; }` and `class B extends A {}`:
+      // A gets an own `_stacks`, B reads the `_stacks` of A through its
+      // static prototype and writes no own property. Both items put the
+      // value 1 into the stack '0' of A.
+      final a = JsClass('A', statics: <String, Object?>{'x': 0.0, 'y': 1.0});
+      final b = JsClass('B', superclass: a);
+      final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
+      run._dataset(0)['data'] = <Object?>[a, b];
+      run.step(<Object?>['elements', false]);
+      expect(a.has('_stacks'), isTrue);
+      final itemStacks = a['_stacks'];
+      expect(itemStacks, isA<Map<String, Object?>>());
+      expect(jsObjectKeys(itemStacks! as Map<String, Object?>), ['y']);
+      expect(stacksOf(a), same(itemStacks));
+      expect(stacksOf(b), same(itemStacks));
+      expect(jsObjectKeys(run.chart.stacks!['x.y.test']! as AnyObject), [
+        '0',
+      ]);
+      expect(jsGetKey(jsGetKey(itemStacks, 'y'), '0'), 1.0);
+    });
+
+    test('a primitive data item throws at the write of _stacks', () {
+      // A property write into a number, a string or a boolean in the strict
+      // code of an ES module. The Node.js probe of the pinned build gives
+      // "Cannot create property '_stacks' on number '1'" and "... on string
+      // 'a'". The port throws the plain TypeError of the write, not the
+      // Dart _TypeError of a later cast.
+      for (final items in <List<Object?>>[
+        <Object?>[1.0, 2.0],
+        <Object?>['a', 'b'],
+        <Object?>[true, false],
+      ]) {
+        final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
+        run._dataset(0)['data'] = items;
+        expect(
+          () => run.step(<Object?>['elements', false]),
+          throwsA(predicate((e) => e.runtimeType == TypeError)),
+          reason: '$items',
+        );
+      }
+    });
   });
 
   group('adapt-typed-element-options', () {
@@ -1495,4 +1679,15 @@ final class _ModeController extends DatasetController {
   void update(String mode) {
     modes.add(mode);
   }
+}
+
+/// A plain `{min, max}` object for `updateRangeFromParsed`.
+final class _MinMax implements MinMax {
+  _MinMax(this.min, this.max);
+
+  @override
+  double min;
+
+  @override
+  double max;
 }

@@ -48,6 +48,17 @@ final class _Point implements PointElement {
 
   @override
   double cp2y = double.nan;
+
+  // The members of Chart.js ADR 0028 that this test does not read.
+  @override
+  bool get active => false;
+
+  @override
+  Object? get hidden => undefined;
+
+  @override
+  double size([Map<String, Object?>? options]) =>
+      throw UnsupportedError('size');
 }
 
 /// A radar point element `{x: 0, y: 0, angle}`. The control points are NaN,
@@ -84,6 +95,17 @@ final class _RadialPoint implements RadialPointElement {
 
   @override
   double cp2y = double.nan;
+
+  // The members of Chart.js ADR 0028 that this test does not read.
+  @override
+  bool get active => false;
+
+  @override
+  Object? get hidden => undefined;
+
+  @override
+  double size([Map<String, Object?>? options]) =>
+      throw UnsupportedError('size');
 }
 
 /// The points of a pattern: `o` is a point, `s` a skipped point and `t` a

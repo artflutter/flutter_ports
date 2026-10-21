@@ -21,11 +21,15 @@
 // Against the 80 Chrome widths of
 // test/port/canvas/text_metrics_reference.dart, the largest difference is
 // 5.0e-7 px. The Dart side records the draw calls with a recording context
-// that the test puts in place of chart.ctx and each scale.ctx after the
-// layout (test/port/scales/scale_chart_harness.dart). A dataset controller
-// draws its elements on the context of its construction, a final field in
-// Dart. Thus the draw calls of both sides have no element draws (see
-// drawCalls); the observations compare the points.
+// that the test puts in place of chart.ctx, of each scale.ctx and of the
+// writable ctx of each dataset controller after the layout
+// (test/port/scales/scale_chart_harness.dart, Chart.js ADR 0030). Thus the
+// draw calls of both sides have the element draws (see drawCalls).
+//
+// The users of this file: the generators of the phase 6 scale reference
+// tests, and tool/reference/controller_chart_common.mjs with the generators
+// of the phase 7 controller reference tests
+// (tool/reference/controller_*_reference.mjs, Chart.js ADR 0030).
 //
 // How to run a generator
 // ----------------------
@@ -818,14 +822,30 @@ function setterValue(name, v) {
   }
 }
 
-/** A JSON value with each number that JSON cannot hold as `{num: s}`. */
-function jsonValue(v) {
+/**
+ * A JSON value with each number that JSON cannot hold as `{num: s}`.
+ *
+ * A `Path2D` (the recorder of tool/reference/controller_chart_common.mjs)
+ * becomes `{path: <id>, calls: [[name, ...args], ...]}`: the id of the path
+ * in [ids], and its commands with the arguments of dartCall. The ids start
+ * at 1 in the order of the first sight. [ids] maps each path to its id: one
+ * Map for one dartCalls call. The Dart side gives the same form
+ * (recordedCalls of test/port/canvas/path2d_record.dart).
+ */
+export function jsonValue(v, ids = new Map()) {
   if (typeof v === 'number' && (!Number.isFinite(v) || Object.is(v, -0))) {
     return {num: Object.is(v, -0) ? '-0' : String(v)};
   }
-  if (Array.isArray(v)) return v.map(jsonValue);
+  if (Array.isArray(v)) return v.map((x) => jsonValue(x, ids));
+  if (globalThis.Path2D && v instanceof globalThis.Path2D) {
+    if (!ids.has(v)) ids.set(v, ids.size + 1);
+    return {
+      path: ids.get(v),
+      calls: v.calls.map(([name, args]) => dartCall(name, args, ids)),
+    };
+  }
   if (v && typeof v === 'object') {
-    return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, jsonValue(x)]));
+    return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, jsonValue(x, ids)]));
   }
   return v;
 }
@@ -876,63 +896,58 @@ function dartArgs(name, args) {
 }
 
 /** The calls of dartCalls, which `dart` writes as a raw string. */
-class CallsText {
+export class CallsText {
   constructor(text) {
     this.text = text;
   }
 }
 
 /**
+ * The call that the Dart MockContext records for the upstream call [name]
+ * with the arguments [args], as the JSON array `[name, ...args]` (see
+ * dartCalls). A `Path2D` argument gets its id in [ids] (jsonValue).
+ */
+function dartCall(name, args, ids) {
+  const list = dartArgs(name, args);
+  const pad = PAD[name];
+  if (pad) while (list.length < pad) list.push(null);
+  if (name.startsWith('set') && name !== 'setLineDash' && name !== 'setTransform') {
+    list[0] = setterValue(name, args[0]);
+  }
+  if (name === 'setLineDash') list[0] = list[0].map(Number);
+  return [name, ...list.map((a) => jsonValue(a, ids))];
+}
+
+/**
  * The calls that the Dart MockContext records for the upstream calls, as
  * text: one JSON array `[name, ...args]` for each line. A number that JSON
  * cannot hold is `{"num": "NaN"}`, `{"num": "Infinity"}`, `{"num":
- * "-Infinity"}` or `{"num": "-0"}`.
+ * "-Infinity"}` or `{"num": "-0"}`. A `Path2D` argument is `{"path": <id>,
+ * "calls": [...]}` (jsonValue). The ids start at 1 in each call of this
+ * function.
  *
  * The port draws a rounded rectangle with one `roundRect` call
  * (differences.md `adapt-rounded-rect-path`). The recording context of the
  * Dart test records it as the upstream arcs and lines. Thus the upstream
  * calls stay as they are here.
  */
-function dartCalls(calls) {
-  const lines = calls.map(({name, args}) => {
-    const list = dartArgs(name, args);
-    const pad = PAD[name];
-    if (pad) while (list.length < pad) list.push(null);
-    if (name.startsWith('set') && name !== 'setLineDash' && name !== 'setTransform') {
-      list[0] = setterValue(name, args[0]);
-    }
-    if (name === 'setLineDash') list[0] = list[0].map(Number);
-    return JSON.stringify([name, ...list.map(jsonValue)]);
-  });
+export function dartCalls(calls) {
+  const ids = new Map();
+  const lines = calls.map(({name, args}) => JSON.stringify(dartCall(name, args, ids)));
   return new CallsText(lines.join('\n'));
 }
 
 /**
- * The calls of one `chart.draw()`, after the layout: the calls on the
- * context of the chart, which is also the context of each scale. The Dart
- * test (drawCalls of scale_chart_harness.dart) records the same draw with a
- * recording context in place of `chart.ctx` and of each `scale.ctx`.
- *
- * A dataset controller keeps the context of its construction, `_ctx`
- * (core.datasetController.js:257), and draws its elements on it. The Dart
- * field is final, so the Dart test cannot put the recording context there.
- * Thus here the controllers draw on a second context that records nothing
- * for the output: the calls have no element draws. The observations compare
- * the points.
+ * The calls of one `chart.draw()`, after the layout, with the element
+ * draws: the context of the chart is also the context of each scale and
+ * of each dataset controller (core.datasetController.js:257). The Dart
+ * test (drawCalls of scale_chart_harness.dart) puts its recording context
+ * in the same three places.
  */
 export function drawCalls(chart) {
   const ctx = chart.ctx;
-  const controllers = chart.data.datasets
-    .map((_, i) => chart.getDatasetMeta(i).controller)
-    .filter((controller) => controller && controller._ctx === ctx);
-  const sink = new LiberationContext();
-  for (const controller of controllers) controller._ctx = sink;
   ctx.resetCalls();
-  try {
-    chart.draw();
-  } finally {
-    for (const controller of controllers) controller._ctx = ctx;
-  }
+  chart.draw();
   const calls = dartCalls(ctx.getCalls());
   ctx.resetCalls();
   return calls;
@@ -1013,6 +1028,11 @@ function dart(v, state) {
     // A control character gets an escape: a Dart string on one line cannot
     // hold a line break.
     const quote = v.includes("'") && !v.includes('"') ? '"' : "'";
+    // A raw string for a `$` or a backslash (use_raw_strings), when it
+    // needs no escape: no control character and no quote of its kind.
+    if (/[\\$]/.test(v) && !/[\x00-\x1f\x7f]/.test(v) && !v.includes(quote)) {
+      return `r${quote}${v}${quote}`;
+    }
     const escaped = v
       .replace(/[\\$]/g, '\\$&')
       .replaceAll(quote, `\\${quote}`)
@@ -1046,10 +1066,24 @@ function dart(v, state) {
  * `...Arch`, `...Dist` and `...Commit`, the typedefs
  * `ScaleLinearReferenceCase` and `ScaleLinearReferenceWidth`, and the lists
  * `scaleLinearReference` and `scaleLinearReferenceWidths`. [title] is the
- * subject of the port-only marker on line 1.
+ * subject of the port-only marker on line 1. [notes] are lines of a
+ * comment after the header (the probes of the controller generators). A
+ * comment line of more than 80 characters stops the generator: the lint
+ * lines_longer_than_80_chars fails `analyze --fatal-infos` on it, and a
+ * data file must not change by hand.
  */
-export function writeReference(outPath, name, cases, {title = name} = {}) {
+export function writeReference(outPath, name, cases, {title = name, notes = []} = {}) {
   loaded();
+  for (const line of notes) {
+    const comment = `// ${line}`.trimEnd();
+    if (comment.length > 80) {
+      throw new Error(
+        `The note line "${comment}" has ${comment.length} characters. A ` +
+          'comment line of a data file has at most 80 (the lint ' +
+          'lines_longer_than_80_chars). Write the probe with shorter lines.',
+      );
+    }
+  }
   const type = name[0].toUpperCase() + name.slice(1);
   const state = {undefined: false};
   const body = cases
@@ -1070,7 +1104,7 @@ export function writeReference(outPath, name, cases, {title = name} = {}) {
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${state.undefined ? "\nimport 'package:flutter_chartjs/src/js/js_undefined.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.undefined ? "\nimport 'package:flutter_chartjs/src/js/js_undefined.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

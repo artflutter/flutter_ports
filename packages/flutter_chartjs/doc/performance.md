@@ -1584,6 +1584,9 @@ machine, the SDK and the compilers are those of section 11.1. In ns for each ite
 
 Source: Evidence E9 of Chart.js ADR 0025.
 
+Phase 7 adopted this read as the T form of `jsGetKey`; the `isFinite` read keeps `_parsedValue`
+(section 13.1).
+
 ### 11.3 The position result and `getDataVisibility`
 
 The machine, the SDK and the compilers are those of section 11.1. 20000 calls, 3 processes, in ns
@@ -1602,6 +1605,9 @@ for each call:
   element (`controller.bar.js:592`, `controller.polarArea.js:182`).
 
 Source: Evidence E10 of Chart.js ADR 0025. Both choices stay Open in the ADR (Open 4 and Open 5).
+
+`getDataVisibility`: the early return of Chart.js ADR 0028 §4 (section 13.2); ADR 0025 Open 4 is
+closed.
 The mode `axes` of the stress entry (section 6) can give the frame figures of ADR Open 2 (a
 logarithmic value axis, `CALL=update`). Phase 7 adds the frame figures of Open 1 (a `timeseries`
 axis, a radar chart).
@@ -1835,7 +1841,8 @@ each change needs the A/B evidence of section 11.7.
    and `:1280` (the `skip` closure at `:1278`) take 12.5 / 10.4 / 11.3 %, against 3.8 / 3.1 /
    4.1 % for `_parsedValue`. The form is the Map read of section 11.2 for both reads. The read
    of the other axis keeps `undefined`: `jsToNumber(null)` is 0, `jsToNumber(undefined)` is NaN.
-   -3 to -5 %: 0.05-0.09 ms at 5000 and 0.2-0.35 ms at 20000.
+   -3 to -5 %: 0.05-0.09 ms at 5000 and 0.2-0.35 ms at 20000. Adopted in phase 7 as the T form;
+   the `isFinite` read keeps `_parsedValue` (section 13.1).
 3. **`jsLog10` for each point** in `LogarithmicScale.getPixelForValue`
    (`scale.logarithmic.dart:401`, `fdlibm_log.dart`): 14.4 % of the logarithmic update, about
    59 ns for each call. The word access through `ByteData` (`_hi`, `_lo`, `_setHi`) takes 3.8 %,
@@ -1939,3 +1946,177 @@ benchmark outside the repository, medians in ns for each call:
   for direct calls, a new ADR decides between the typed direct call and a subclass. The mode
   `axes` of the stress entry and the frameless benchmark give the time axis with timestamps. A
   case with ISO labels does not exist yet.
+
+## 13. Controllers (phase 7)
+
+The figures of the decisions of phase 7. Chart.js ADRs 0027, 0028 and 0030 (proposed) give the
+evidence files. The step 7 figures on the phones come in section 13.6.
+
+### 13.1 The parsed read (Chart.js ADR 0027)
+
+Bed: Apple M3 Max, macOS 26.5.1, Dart 3.12.2. AOT is `dart compile exe`. wasm is
+`dart compile wasm -O2`, run in the arm64 Node.js v24.12.0 (times only). The judge benchmark
+imports the real `jsGet`, `jsToNumber`, `jsMin`, `jsMax`, `isFinite`, `JsProxyObject` and
+`undefined` of `lib/src/`. 20000 items `{'x': i, 'y': v}`, `null` for 10 % of the `y` values.
+"Mixed" runs each loop first over a `JsProxyObject`, a narrow Map, a List and a number. Each cell
+gives the lowest and the highest paired difference of 6 processes, in ns for each item, and the
+count of processes below 0.
+
+| Difference | AOT plain | AOT mixed | wasm plain | wasm mixed |
+|---|---|---|---|---|
+| `getMinMax` T minus the code before phase 7 | -1.76..-1.13 (6/6) | -2.09..-1.04 (6/6) | -1.75..-0.46 (6/6) | -2.89..-1.50 (6/6) |
+| `getMinMax` `jsGetKey` for 3 reads minus T | +0.61..+1.46 (0/6) | +0.75..+1.59 (0/6) | +0.37..+1.51 (0/6) | +0.97..+2.18 (0/6) |
+| line, 5 reads: `jsGetKey` minus `jsGet` | -3.39..-2.22 (6/6) | -2.63..-0.27 (6/6) | -5.20..-1.75 (6/6) | -3.20..-1.22 (6/6) |
+| line: 3 reads minus 5 reads (`jsGetKey`) | -16.11..-14.97 (6/6) | -16.61..-15.97 (6/6) | -24.36..-23.05 (6/6) | -24.29..-23.07 (6/6) |
+| line: 2 reads minus 5 reads (`jsGetKey`) | -23.28..-22.42 (6/6) | -24.33..-23.28 (6/6) | -36.46..-33.11 (6/6) | -35.29..-33.20 (6/6) |
+
+- "T" is `jsGetKey` for the read of the other axis and of the range, and `_parsedValue` for the
+  `isFinite` read. DC has this form from phase 7.
+- The 2-read form is the one-read rule of the line and scatter loops (ADR 0027 §8): 22 to 24 ns
+  (AOT) and 33 to 36 ns (wasm) less for each point, about 0.47 ms (AOT) and 0.7 ms (wasm) for each
+  update of 20000 points. This is a calculation from the microbenchmark, not a frame figure.
+
+The read `array[i]` with a number index, in ns for each read:
+
+| Read | AOT | wasm |
+|---|---|---|
+| `jsGet(data, jsNumberToString(index))` (the old read of `helpers.config.dart`) | 21.49-21.93 | 17.16-17.42 |
+| the body of `jsGetIndex` (the old `_item` of DC) | 3.33-3.39 | 1.41-1.45 |
+| the same body behind a `List` test, in the doughnut loop | 5.61-5.84 | 5.70-6.01 |
+| the same body in the same loop without the test | 5.50-5.75 | 5.69-6.00 |
+
+A `jsGet` with the Map case first is 1.9 ns (AOT) and 1.0 ns (wasm) slower for each resolver read,
+and 4.8 ns and 2.0 ns slower for each List or String read (P-B4). `lib/src/` had 444 `jsGet(`
+calls on 2026-10-21, most of them option reads through resolvers. Thus `jsGet` does not change, and
+the Map case comes first only in `jsGetKey`.
+
+**`stacksOf`** (ADR 0027 Open 1, unit S3 of wave 1). The bed of the judge benchmark: 20000
+`Map<String, Object?>` items with `_stacks`, the DC code of 2026-10-21 and the real runtime,
+virtual scale calls over two live classes. 3 runs of 6 rounds of 4 processes, alternate order, 21
+samples of 10 passes for each case. Other agents ran in parallel (load average 4 to 7). The cells
+give the paired difference "with `stacksOf`" minus "without", minimum..maximum of 6 processes, in
+ns for each item, and the count of processes above +0.5 ns:
+
+| Platform, mode | Case | Run 1 | Run 2 | Run 3 |
+|---|---|---|---|---|
+| AOT plain | `updateRangeFromParsed` with a stack | -2.52..-0.93 (0/6) | -2.22..-0.50 (0/6) | -2.20..-0.32 (0/6) |
+| AOT plain | the body of `_updateStacks` | -13.59..-0.33 (0/6) | -9.78..-2.41 (0/6) | -9.94..-7.14 (0/6) |
+| AOT plain | the write path (each pass writes `_stacks`) | +6.43..+11.35 (6/6) | -4.32..+3.10 (2/6) | -4.47..+7.47 (5/6) |
+| AOT mixed | `updateRangeFromParsed` with a stack | -1.05..+0.12 (0/6) | -0.91..+1.03 (3/6) | -3.46..+1.89 (3/6) |
+| AOT mixed | the body of `_updateStacks` | -17.90..-7.15 (0/6) | -9.98..-5.61 (0/6) | -10.86..-5.72 (0/6) |
+| AOT mixed | the write path | +1.13..+12.87 (6/6) | -13.47..+0.45 (0/6) | -4.12..+3.47 (3/6) |
+| wasm plain | `updateRangeFromParsed` with a stack | -1.38..+3.84 (4/6) | -0.90..+1.41 (4/6) | +0.24..+1.72 (3/6) |
+| wasm plain | the body of `_updateStacks` | -16.54..-0.35 (0/6) | -22.10..+3.26 (1/6) | -29.64..-11.85 (0/6) |
+| wasm plain | the write path | -14.27..-0.10 (0/6) | -26.49..-1.70 (0/6) | -20.63..-2.24 (0/6) |
+| wasm mixed | `updateRangeFromParsed` with a stack | -0.63..+5.29 (3/6) | -0.05..+0.79 (1/6) | -0.75..+1.61 (2/6) |
+| wasm mixed | the body of `_updateStacks` | -17.54..+13.18 (2/6) | -16.35..+5.77 (2/6) | -15.75..+7.50 (4/6) |
+| wasm mixed | the write path | -7.70..+5.69 (4/6) | -8.72..+5.61 (2/6) | -10.78..+11.75 (4/6) |
+
+- The medians of run 3, in ns for each item: AOT `updateRangeFromParsed` 52.8-55.2, the body of
+  `_updateStacks` 196-215, the write path 292-304; wasm 72.9-76.7, 349-397 and 417-440.
+- The two loops of the ADR have no platform and mode with a paired loss above 0.5 ns in each of
+  the 6 processes, in each run. The threshold of ADR 0027 Open 1 is not crossed. Decision D5 of the
+  phase lead lands `stacksOf` in all cases.
+- The write path is not in the ADR. Run 1 had an AOT loss of +1.1 to +12.9 ns in each process.
+  Run 2 and run 3, with a binary that has one more function, did not repeat it: a code layout
+  effect within the noise of a loop of 300 ns. The write runs once for each item, at the first
+  parse.
+- The `switch` of the write is faster than an `if` chain on AOT: the chain costs +2.86..+9.61 ns
+  (6/6) in run 2 and -1.07..+11.80 ns (5/6) in run 3.
+
+**`===` in the bar `skipNull` find** (`controller.bar.js:443-450`, unit U-bar of wave 1). Two
+`Date` values are `===` only when they are the same object. Thus the find compares with
+`_strictEquals` (`==` for numbers and strings, else `identical`), the only form with the upstream
+behavior. AOT, 1000 parsed Maps, 20000 finds, three rounds, in ns for each compared item: Dart `==`
+10.32-11.12, `_strictEquals` 11.21-11.36. The cost is 2-9 % of the find; `jsGetKey` takes most of
+its time.
+
+### 13.2 The interfaces and values (Chart.js ADR 0028)
+
+The bed of section 13.1. The figures are the range of the medians of 3 or 4 processes.
+
+**The points of a line** (ADR 0028 §3). The real `LineElement` and `PointElement`, `animated`
+true (each draw runs `updateControlPoints` and builds the path again). `draw_typed` draws a line
+with a `List<types.PointElement>`. `draw_view` draws a line with the cast view
+`meta.data.cast<types.PointElement>()`. `set_copy` is the copy `List<types.PointElement>.generate`
+of a `List<types.Element>`. µs for each op:
+
+| Case | `draw_typed` | `draw_view` | view extra for each draw | `set_copy` (once for each update) |
+|---|---|---|---|---|
+| AOT, 1000, tension 0 | 19.70-19.91 | 23.68-23.75 | +3.8-4.1 (19-20 %) | 2.18-2.21 |
+| AOT, 1000, tension 0.4 | 50.60-51.65 | 54.77-55.63 | +3.2-4.2 (6-8 %) | 2.20-2.22 |
+| AOT, 20000, tension 0 | 240.82-245.26 | 252.10-261.87 | +9.5-16.6 (4-7 %) | 42.67-43.55 |
+| AOT, 20000, tension 0.4 | 1420.91-1455.53 | 1482.94-1521.95 | +27-71 (2-5 %) | 43.07-43.72 |
+| wasm, 1000, tension 0 | 27.60-27.97 | 31.21-31.52 | +3.3-3.9 (12-14 %) | 3.55-3.60 |
+| wasm, 1000, tension 0.4 | 93.91-95.97 | 110.58-111.63 | +15.7-16.7 (17-18 %) | 3.63-3.75 |
+| wasm, 20000, tension 0 | 424.85-435.59 | 470.62-483.80 | +44-58 (10-14 %) | 94.08-96.82 |
+| wasm, 20000, tension 0.4 | 2257.47-2269.19 | 2588.03-2688.28 | +320-431 (14-19 %) | 94.77-95.98 |
+
+- The view costs at each draw, the copy once for each update. The copy costs less than the view
+  from 1 to 5 draws for each update. An animation of the default 1000 ms draws about 60 frames.
+- Of the copy forms (`points_copy`), `generate` is the fastest by a factor of 2 to 6: 36.3-40.5 µs
+  (AOT) and 56.5-66.8 µs (wasm) for 20000 elements, against 160.4-165.8 µs and 375.9-433.9 µs for
+  `List.of(data.cast())`.
+
+**`getDataVisibility`** (ADR 0028 §4, P-B7). ns for each call. "I" is the body before phase 7
+through `types.Chart`, "C" the same body after a cast to `Chart`, "IF" the interface call with
+the early return:
+
+| State | Platform | I | C | IF |
+|---|---|---|---|---|
+| no hidden index | AOT | 14.9-18.8 | 14.8-18.4 | 2.7-4.1 |
+| no hidden index | wasm | 15.7-23.0 | 12.2-21.1 | 2.5-3.7 |
+| one hidden index | AOT | 17.5-22.2 | 19.1-21.8 | 17.5-22.4 |
+| one hidden index | wasm | 18.4-26.2 | 19.6-24.0 | 18.4-26.5 |
+
+- The early return costs 0.4-0.9 ns more than a loop without a call. With a hidden index, it costs
+  nothing measurable. For an update of 20000 bars without a hidden index, the calculation gives
+  0.24-0.35 ms less. This is not a frame figure (section 13.7).
+
+**The interface call, the writes by name and `total`** (ADR 0028, question 1). With one class
+hierarchy behind an interface, the interface call costs the same as the call after a cast:
+`getBasePixel()` 3.4 ns (AOT) and 3.2-3.3 ns (wasm); the `active` getter 0.4 ns and 0.3 ns. The
+three writes by name of `controller.line.js:57-59` cost 4.7-4.8 ns (AOT) and 39.5-40.2 ns (wasm)
+for each update of a dataset, against 1.1 ns and 0.6 ns for typed setters. The read of the typed
+`ChartMeta.total` costs 0.7 ns. A read by name through the extras Map of `ChartMeta` costs
+11.2-11.7 ns (AOT) and 18.1-18.7 ns (wasm).
+
+### 13.4 The writable `DatasetController.ctx` (Chart.js ADR 0030)
+
+- The cost of a writable field (ADR 0030 Evidence E3): AOT, 1.835 ns for each element draw with
+  the final field and 1.770 ns with the writable field. Ratios writable / final of 0.95-1.08 on AOT
+  and 0.99-1.02 on wasm. No frame effect.
+- The data of the reference tests: with the element draws, the 8 phase 6 reference files grow by
+  7.3 % (8,455,931 to 9,069,771 bytes). The hit items of a controller observation are one JSON line
+  for each point: a probe of 3 bar cases took 1,521,132 bytes with the items as a Dart literal and
+  495,325 bytes as JSON lines. `controller_bar_reference.dart` has 50 cases in 1,786,242 bytes.
+- The bar `draw` reads `ctx` for each bar, as `controller.bar.js:677`. A read before the loop is
+  0.36 ns faster for each bar on AOT and 0.25 ns slower on wasm (ADR 0030 Open 3, section 13.7).
+
+### 13.7 Open: the controllers
+
+1. **The step 7 list of Chart.js ADR 0027 §8** (ADR 0027 Open 3). Each form gets an A/B with the
+   frame figures (the frameless benchmark and the Pixel 8a, section 6). Each one is ported
+   literally now:
+   - the bar memo of `_getAxis`, `getFirstScaleIdForIndexAxis` and `_getStacks` for each bar
+     (`controller.bar.js:434-508`, `:636-650`). Prior evidence: the memo removes 34 to 43 % of the
+     bar `updateElements` time in V8, 6 % with `skipNull` (P-P2); the shares of
+     `_calculateBarIndexPixels`, `_getStacks` and `_getAxis` in an upstream bar update (F-P3);
+   - the `skipNull` find (`controller.bar.js:443-450`), O(bars x datasets x points) upstream too;
+   - `(parsed._stacks || {})` with a new empty Map for each bar without stacks
+     (`controller.bar.js:405`);
+   - the option copy for each bubble item, the double option resolution of polar area, the
+     resolution for each radar point, and the typed setters in place of the writes by name of the
+     line and scatter loops (waves 2 and 3).
+2. **`prefer-inline` on `jsGetKey`** (ADR 0027 Open 5): no gain was measured in the line loop. The
+   trigger is Chart.js ADR 0025 Open 3, the same question for `jsToNumber`.
+3. **Form T and the frame figures** (ADR 0028 Open 1). The stress mode `chart` with
+   `LineController` and 20000 points, `CALL=update` and `CALL=draw`, form K against form T, on the
+   Pixel 8a and in Chrome with dart2wasm. A gain of 0.1 ms or more for each frame goes to a new ADR.
+   The same session records the stress mode `axes` with `BarController` and 20000 bars,
+   `CALL=update`, with and without the early return of `getDataVisibility` (a record, not a
+   decision).
+4. **The read of `ctx` for each bar** (ADR 0030 Open 3). The trigger is a profile of the bar draw
+   on the Pixel 8a that shows the read in the loop.
+5. **The write path of `stacksOf`** (section 13.1): only if the maintainer wants it measured again,
+   for example on the Pixel 8a in step 7.

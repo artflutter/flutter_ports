@@ -2,12 +2,18 @@
 @TestOn('vm')
 library;
 
+import 'dart:convert';
+
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.scale.dart';
+import 'package:flutter_chartjs/src/elements/element.bar.dart';
 import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../canvas/path2d_record.dart';
 import 'scale_chart_harness.dart';
 import 'scale_chart_harness_reference.dart';
 
@@ -32,8 +38,10 @@ import 'scale_chart_harness_reference.dart';
 //
 // The cases compare the chart area, each scale (ticks, labels, box, label
 // rotation, paddings and the pixel mapping), the points and the calls of
-// one draw. The group of widths measures each text of the generator on the
-// canvas of the harness.
+// one draw, with the element draws (Chart.js ADR 0030). The group of widths
+// measures each text of the generator on the canvas of the harness. The
+// group 'drawCalls' checks that drawCalls records the element draws and
+// puts back each context.
 
 /// The test scale `harnessLinear` of the generator: the range of the data
 /// (`getMinMax`), five ticks at equal steps from min to max, and a linear
@@ -176,6 +184,38 @@ final Map<String, Object?> _functions = {
   'withUnit': (Object? value) => '${jsToString(value)} kg',
 };
 
+/// The reference text of [calls]: one JSON line `[name, ...args]` for each
+/// call, as the generators write it.
+String _callsText(List<List<Object?>> calls) =>
+    calls.map(jsonEncode).join('\n');
+
+/// The records `{name, args}` of [calls], the form of `recordedCalls`.
+List<Object?> _records(List<List<Object?>> calls) => [
+  for (final call in calls)
+    <String, Object?>{'name': call.first, 'args': call.sublist(1)},
+];
+
+/// The upstream calls of a bar with a border (element.bar.js:179-200): the
+/// ring with the `clip` and the fill. [outer] is the outer rectangle as
+/// `inflateRect` gives it.
+List<List<Object?>> _upstreamBar({
+  List<Object?> outer = const [0, 0, 10, 10],
+  bool clip = true,
+}) => [
+  ['save'],
+  ['beginPath'],
+  ['rect', ...outer],
+  if (clip) ['clip', null, null],
+  ['rect', 2, 2, 6, 6],
+  ['setFillStyle', 'red'],
+  ['fill', 'evenodd', null],
+  ['beginPath'],
+  ['rect', 2, 2, 6, 6],
+  ['setFillStyle', 'blue'],
+  ['fill', null, null],
+  ['restore'],
+];
+
 void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
@@ -204,5 +244,195 @@ void main() {
 
   group('Liberation Sans widths of the generator', () {
     testReferenceWidths(scaleChartHarnessReferenceWidths);
+  });
+
+  group('drawCalls', () {
+    testWidgets('records the point draws of the test controller and puts '
+        'back each context', (tester) async {
+      final chart = acquireChart({
+        'type': 'harnessTest',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[
+                <String, Object?>{'x': 0, 'y': 1},
+                <String, Object?>{'x': 5, 'y': 3},
+                <String, Object?>{'x': 10, 'y': 2},
+              ],
+            },
+          ],
+        },
+      });
+      final context = chart.ctx;
+      final scales = chart.scales.values.toList();
+      final scaleContexts = [for (final scale in scales) scale.ctx];
+      final controller = chart.getDatasetMeta(0).controller!;
+      expect(identical(controller.ctx, context), isTrue);
+
+      final calls = drawCalls(chart);
+
+      // One `arc` for each point: the circle of drawPoint
+      // (helpers.canvas.ts). The scales draw no arc.
+      final arcs = [
+        for (final call in calls.cast<Map<String, Object?>>())
+          if (call['name'] == 'arc') call['args']! as List<Object?>,
+      ];
+      expect(arcs, hasLength(3));
+      final points = chart.getDatasetMeta(0).data;
+      for (var i = 0; i < 3; i++) {
+        expect(arcs[i][0], points[i].x, reason: 'arc $i: x');
+        expect(arcs[i][1], points[i].y, reason: 'arc $i: y');
+      }
+      expect(identical(chart.ctx, context), isTrue, reason: 'chart.ctx');
+      for (var i = 0; i < scales.length; i++) {
+        expect(
+          identical(scales[i].ctx, scaleContexts[i]),
+          isTrue,
+          reason: 'scales.${scales[i].id}.ctx',
+        );
+      }
+      expect(
+        identical(controller.ctx, context),
+        isTrue,
+        reason: 'controller.ctx',
+      );
+    });
+
+    testWidgets('leaves a controller with another context as it is', (
+      tester,
+    ) async {
+      final chart = acquireChart({
+        'type': 'harnessTest',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[
+                <String, Object?>{'x': 0, 'y': 1},
+                <String, Object?>{'x': 10, 'y': 2},
+              ],
+            },
+          ],
+        },
+      });
+      final controller = chart.getDatasetMeta(0).controller!;
+      final other = RecordingContext(chart.ctx!);
+      controller.ctx = other;
+      addTearDown(() => controller.ctx = chart.ctx);
+
+      final calls = drawCalls(chart);
+
+      expect(
+        calls.cast<Map<String, Object?>>().where((c) => c['name'] == 'arc'),
+        isEmpty,
+        reason: 'the points draw on the other context',
+      );
+      expect(
+        other.getCalls().where((c) => c['name'] == 'arc'),
+        hasLength(2),
+      );
+      expect(identical(controller.ctx, other), isTrue);
+    });
+  });
+
+  group('expectCalls: adapt-bar-clip', () {
+    test('removes the clip of a ring that the port draws without it', () {
+      expectCalls(
+        _records(_upstreamBar(clip: false)),
+        _callsText(_upstreamBar()),
+      );
+    });
+
+    test('keeps the clip of a ring that the port draws with it', () {
+      expectCalls(_records(_upstreamBar()), _callsText(_upstreamBar()));
+      expect(
+        () => expectCalls(
+          _records(_upstreamBar()),
+          _callsText(_upstreamBar(clip: false)),
+        ),
+        throwsA(isA<TestFailure>()),
+      );
+    });
+
+    test('fails at the outer path for a reference amount that is not 0', () {
+      // inflateRect(outer, 0.33, inner) moves each edge of the outer
+      // rectangle that differs from the inner one (element.bar.js:127-139).
+      expect(
+        () => expectCalls(
+          _records(_upstreamBar(clip: false)),
+          _callsText(_upstreamBar(outer: [-0.33, -0.33, 10.66, 10.66])),
+        ),
+        throwsA(isA<TestFailure>()),
+      );
+    });
+
+    test('keeps a clip that is not in a ring', () {
+      // clipArea (helpers.canvas.ts): no fill('evenodd') after the clip.
+      final reference = [
+        ['save'],
+        ['beginPath'],
+        ['rect', 0, 0, 10, 10],
+        ['clip', null, null],
+        ['fillRect', 0, 0, 5, 5],
+        ['restore'],
+      ];
+      expect(
+        () => expectCalls(
+          _records([
+            for (final call in reference)
+              if (call.first != 'clip') call,
+          ]),
+          _callsText(reference),
+        ),
+        throwsA(isA<TestFailure>()),
+      );
+    });
+
+    test('removes nothing when the counts of the rings differ', () {
+      expect(
+        () => expectCalls(
+          _records(_upstreamBar(clip: false)),
+          _callsText([..._upstreamBar(), ..._upstreamBar()]),
+        ),
+        throwsA(isA<TestFailure>()),
+      );
+    });
+
+    test('pairs the draw of a port bar with the amount 0 with upstream', () {
+      // A bar of 30 x 80 pixels with a border of 2 and the bottom edge
+      // skipped: the port draws the ring without a clip.
+      final bar = BarElement({
+        'horizontal': false,
+        'x': 50,
+        'y': 20,
+        'base': 100,
+        'width': 30,
+        'height': 80,
+        'options': <String, Object?>{
+          'borderColor': 'red',
+          'backgroundColor': 'blue',
+          'borderWidth': 2,
+          'borderRadius': 0,
+        },
+        'borderSkipped': <String, Object?>{'bottom': true},
+        'inflateAmount': 0,
+      });
+      final ctx = createMockContext();
+      bar.draw(ctx);
+      final actual = recordedCalls(ctx.getCalls());
+      final calls = [
+        for (final call in actual.cast<Map<String, Object?>>())
+          [call['name'], ...call['args']! as List<Object?>],
+      ];
+      expect(calls.where((call) => call.first == 'clip'), isEmpty);
+      // The upstream form: the clip after the outer rectangle
+      // (element.bar.js:187-189).
+      final upstream = [...calls]
+        ..insert(calls.indexWhere((c) => c.first == 'rect') + 1, [
+          'clip',
+          null,
+          null,
+        ]);
+      expectCalls(actual, _callsText(upstream));
+    });
   });
 }

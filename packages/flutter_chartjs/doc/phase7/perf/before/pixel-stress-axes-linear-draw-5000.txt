@@ -1,0 +1,16 @@
+# Command: flutter build apk --profile --target-platform android-arm64 -t lib/main_stress.dart --dart-define=MODE=axes --dart-define=SCALE=linear --dart-define=CALL=draw --dart-define=SCENARIO=5000x0 (installed with adb install -r)
+# Start: adb shell am start -n dev.artflutter.chartjs_gallery/.MainActivity (fresh process after am force-stop)
+# Commit: 0e0ab93 (git worktree, detached)
+# Device: Pixel 8a 4B071JEKB17363, google/akita/akita:17/CP3A.260905.009/16091614:user/release-keys
+# Start time: 2026-10-21T00:18:47Z
+# Before run: GATE temp=33.0 freq=2914000 waited=308s pass=1 isKeyguardShowing=false
+# After run: battery temp=33.0 isKeyguardShowing=false
+# Foreground at end: topResumedActivity=ActivityRecord{49492507 u0 dev.artflutter.chartjs_gallery/.MainActivity t1173}
+# Status: done, wall 12 s
+# Frequency samples: pixel-stress-axes-linear-draw-5000.txt.freq.txt (epoch s, cpu8 kHz, UI-thread core, its kHz)
+
+--------- beginning of main
+         1792541930.704 17433 17489 I flutter : The Dart VM service is listening on http://127.0.0.1:38443/WxDUN_JQq6I=/
+         1792541930.708 17433 17463 I flutter : [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+         1792541937.765 17433 17433 I flutter : STRESS {"mode":"axes","n":5000,"m":0,"fps":"57.69","drawMs":"7.80","updateMs":"0.00","call":"draw","scale":"linear","yScale":"linear","autoSkip":true,"ticks":6,"rotation":"0.00","layoutMs":"0.00","datasetsUpdateMs":"0.00","datasetsDrawMs":"5.41","buildMs":"8.54","buildMaxMs":"21.38","rasterMs":"4.73","rasterMaxMs":"10.63"}
+         1792541937.765 17433 17433 I flutter : STRESS done

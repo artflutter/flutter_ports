@@ -1,7 +1,8 @@
 // Original code, not ported from Chart.js: JS property read and Object.freeze.
 
 /// The JavaScript property read `object[key]` (`[[Get]]`) over the Dart
-/// values that stand for JavaScript values (Chart.js ADR 0006), the frozen
+/// values that stand for JavaScript values (Chart.js ADR 0006), its forms
+/// for a property name and a number index (Chart.js ADR 0027), the frozen
 /// state of `Object.freeze` (Chart.js ADR 0021, section 5), and the `typeof`
 /// operator (Chart.js ADR 0019, section 1).
 library;
@@ -66,6 +67,43 @@ Object? jsGet(Object? object, Object? key) {
 int? _index(String key, int length) {
   final index = jsArrayIndex(key);
   return index != null && index < length ? index : null;
+}
+
+/// `object[key]` for a property name [key]: the result of [jsGet] for every
+/// value (Chart.js ADR 0027).
+///
+/// A Map that is not a [JsProxyObject] is read inline: the value of [key],
+/// or [undefined] for a key that the Map does not contain. Every other value
+/// goes to [jsGet]: a resolver gives its `get` trap, a List or a String its
+/// index or `length`, and `null` and [undefined] throw a [TypeError].
+///
+/// Use it for the reads of parsed items, data items and stack objects. A
+/// read of a resolver stays [jsGet] (Chart.js ADR 0017, section 8).
+Object? jsGetKey(Object? object, String key) {
+  // `<dynamic, dynamic>`: see the comment of jsGet.
+  if (object is Map<dynamic, dynamic> && object is! JsProxyObject) {
+    final Object? value = object[key];
+    return value == null && !object.containsKey(key) ? undefined : value;
+  }
+  return jsGet(object, key);
+}
+
+/// `object[index]` for a number [index] (Chart.js ADR 0027): for a List,
+/// the item at a whole [index] below the length, else [undefined]; for
+/// another value, [jsGet].
+///
+/// The `ToPropertyKey` of a number gives an array index only for a whole
+/// number in range. -0 gives the key `'0'`. NaN, a fraction, a negative
+/// number and a number past the end give [undefined].
+Object? jsGetIndex(Object? object, double index) {
+  if (object is List<Object?>) {
+    if (index >= 0 && index < object.length) {
+      final i = index.toInt();
+      if (i == index) return object[i];
+    }
+    return undefined;
+  }
+  return jsGet(object, index);
 }
 
 /// A Dart object that `Object.freeze` can freeze (Chart.js ADR 0021,

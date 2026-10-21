@@ -7,13 +7,14 @@ import 'package:chartjs_test_utils/flutter.dart'
 import 'package:chartjs_test_utils/pure.dart' show toEqualOptions;
 import 'package:flutter_chartjs/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs/src/js/js_function.dart'
-    show JsFunction, jsCall;
+import 'package:flutter_chartjs/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
+
+import '../support/jasmine.dart';
 
 // Each case builds a chart with `acquireChart` (Chart.js ADR 0022): a chart
 // without a type and without datasets, with inline or registered plugins.
@@ -29,105 +30,16 @@ import 'package:flutter_test/flutter_test.dart';
 // section 6). A spec map literal of a JS object has the type
 // `<String, Object?>`, because `acquireChart` writes into it.
 //
-// `spyOn(plugin, 'hook')` is `_spyOn(plugin, 'hook')`: it replaces the hook
-// with a recording function value. `plugin.hook.calls` reads the calls of
-// the spy through the hook of the plugin. `toBe` is `same` for objects,
+// `spyOn(plugin, 'hook')` is `spyOn(plugin, 'hook')` of
+// test/support/jasmine.dart: it replaces the hook with a recording function
+// value. `plugin.hook.calls` reads the calls of the spy through the hook of
+// the plugin. `toBe` is `same` for objects,
 // `toBeTruthy()` and `toBeFalsy()` test [jsTruthy].
 //
 // The case with `done` is `await waitForDone((done) { ... })`, and an
 // `async` case awaits `triggerMouseEvent` (Chart.js ADR 0022, sections 2, 6
 // and 7). The hook `start` runs in the constructor of the chart. Thus the
 // `done` of `:425` comes before `acquireChart` returns.
-
-/// The marker of an argument that a call did not pass.
-const Object _none = Object();
-
-/// `spy.calls` of a Jasmine spy: the arguments of each call.
-final class _Calls {
-  final List<List<Object?>> _args = [];
-
-  /// `calls.count()`.
-  int count() => _args.length;
-
-  /// `calls.first()`: the first call, with its `args`.
-  ({List<Object?> args}) first() => (args: _args.first);
-
-  /// `calls.argsFor(index)`.
-  List<Object?> argsFor(int index) => _args[index];
-
-  /// `calls.reset()`.
-  void reset() => _args.clear();
-}
-
-/// A Jasmine spy of [_spyOn]: a function value that records the arguments
-/// of each call and returns `undefined`, or the result of the original
-/// function after `and.callThrough()`.
-final class _Spy {
-  _Spy(this._original);
-
-  /// The function value that the spy replaces.
-  final Object? _original;
-
-  bool _callThrough = false;
-
-  /// `spy.calls`.
-  final _Calls calls = _Calls();
-
-  /// `spy.and`: the strategy of the spy.
-  late final _SpyStrategy and = _SpyStrategy(this);
-
-  /// The function value of the spy. A hook gets up to three arguments.
-  late final JsFunction function = JsFunction((
-    Object? self, [
-    Object? a = _none,
-    Object? b = _none,
-    Object? c = _none,
-  ]) {
-    final args = [a, b, c].where((arg) => !identical(arg, _none)).toList();
-    calls._args.add(args);
-    return _callThrough ? jsCall(_original, args, thisArg: self) : undefined;
-  });
-}
-
-/// `spy.and` of a [_Spy].
-final class _SpyStrategy {
-  _SpyStrategy(this._spy);
-
-  final _Spy _spy;
-
-  /// `and.callThrough()`: each call also calls the original function, with
-  /// the same `this` and arguments, and returns its result.
-  void callThrough() => _spy._callThrough = true;
-}
-
-/// The spy of each function value of [_spyOn].
-final Expando<_Spy> _spies = Expando('spy');
-
-/// `spyOn(object, method)`: replaces `object[method]` with a spy.
-_Spy _spyOn(Map<String, Object?> object, String method) {
-  final spy = _Spy(object[method]);
-  object[method] = spy.function;
-  _spies[spy.function] = spy;
-  return spy;
-}
-
-/// The spy of the function value [value]. As in Jasmine, a value that is not
-/// a spy throws.
-_Spy _spyOf(Object? value) =>
-    (value is JsFunction ? _spies[value] : null) ??
-    (throw ArgumentError.value(value, 'value', 'is not a spy'));
-
-/// The read `plugin.hook.calls` of a spied hook.
-extension on Object? {
-  /// `spy.calls`.
-  _Calls get calls => _spyOf(this).calls;
-}
-
-/// `toHaveBeenCalled()`: the value is a spy with at least one call.
-Matcher _toHaveBeenCalled() => predicate<Object?>(
-  (actual) => _spyOf(actual).calls.count() > 0,
-  'a spy that has been called',
-);
 
 void main() {
   group('Chart.plugins', () {
@@ -139,7 +51,7 @@ void main() {
         });
         final args = <String, Object?>{'value': 42};
 
-        _spyOn(plugin, 'hook');
+        spyOn(plugin, 'hook');
 
         chart.notifyPlugins('hook', args);
         expect(plugin['hook'].calls.count(), 1);
@@ -156,7 +68,7 @@ void main() {
         final chart = acquireChart(<String, Object?>{});
         final args = <String, Object?>{'value': 42};
 
-        _spyOn(plugin, 'hook');
+        spyOn(plugin, 'hook');
 
         Chart.register([plugin]);
         chart.notifyPlugins('hook', args);
@@ -178,7 +90,7 @@ void main() {
             'plugins': [plugin, plugin],
           });
 
-          _spyOn(plugin, 'hook');
+          spyOn(plugin, 'hook');
 
           Chart.register([
             [plugin, plugin],
@@ -272,13 +184,13 @@ void main() {
 
         final plugins = chart.config.plugins! as List<Object?>;
         for (final plugin in plugins) {
-          _spyOn(plugin! as Map<String, Object?>, 'hook').and.callThrough();
+          spyOn(plugin! as Map<String, Object?>, 'hook').and.callThrough();
         }
 
         final ret = chart.notifyPlugins('hook');
         expect(jsTruthy(ret), isTrue);
         for (final plugin in plugins) {
-          expect(jsGet(plugin, 'hook'), _toHaveBeenCalled());
+          expect(jsGet(plugin, 'hook'), toHaveBeenCalled());
         }
       });
 
@@ -315,18 +227,18 @@ void main() {
 
           final plugins = chart.config.plugins! as List<Object?>;
           for (final plugin in plugins) {
-            _spyOn(plugin! as Map<String, Object?>, 'hook').and.callThrough();
+            spyOn(plugin! as Map<String, Object?>, 'hook').and.callThrough();
           }
 
           final ret = chart.notifyPlugins('hook', <String, Object?>{
             'cancelable': true,
           });
           expect(jsTruthy(ret), isFalse);
-          expect(jsGet(plugins[0], 'hook'), _toHaveBeenCalled());
-          expect(jsGet(plugins[1], 'hook'), _toHaveBeenCalled());
-          expect(jsGet(plugins[2], 'hook'), _toHaveBeenCalled());
-          expect(jsGet(plugins[3], 'hook'), isNot(_toHaveBeenCalled()));
-          expect(jsGet(plugins[4], 'hook'), isNot(_toHaveBeenCalled()));
+          expect(jsGet(plugins[0], 'hook'), toHaveBeenCalled());
+          expect(jsGet(plugins[1], 'hook'), toHaveBeenCalled());
+          expect(jsGet(plugins[2], 'hook'), toHaveBeenCalled());
+          expect(jsGet(plugins[3], 'hook'), isNot(toHaveBeenCalled()));
+          expect(jsGet(plugins[4], 'hook'), isNot(toHaveBeenCalled()));
         },
       );
     });
@@ -345,7 +257,7 @@ void main() {
           },
         });
 
-        _spyOn(plugin, 'hook');
+        spyOn(plugin, 'hook');
 
         Chart.register([plugin]);
         chart
@@ -392,15 +304,15 @@ void main() {
             },
           });
 
-          _spyOn(plugins['a']!, 'hook');
-          _spyOn(plugins['b']!, 'hook');
-          _spyOn(plugins['c']!, 'hook');
+          spyOn(plugins['a']!, 'hook');
+          spyOn(plugins['b']!, 'hook');
+          spyOn(plugins['c']!, 'hook');
 
           chart.notifyPlugins('hook');
 
-          expect(plugins['a']!['hook'], _toHaveBeenCalled());
-          expect(plugins['b']!['hook'], _toHaveBeenCalled());
-          expect(plugins['c']!['hook'], _toHaveBeenCalled());
+          expect(plugins['a']!['hook'], toHaveBeenCalled());
+          expect(plugins['b']!['hook'], toHaveBeenCalled());
+          expect(plugins['c']!['hook'], toHaveBeenCalled());
           expect(
             plugins['a']!['hook'].calls.first().args[2],
             toEqualOptions(<String, Object?>{'a': '123'}),
@@ -436,15 +348,15 @@ void main() {
             },
           });
 
-          _spyOn(plugins['a']!, 'hook');
-          _spyOn(plugins['b']!, 'hook');
-          _spyOn(plugins['c']!, 'hook');
+          spyOn(plugins['a']!, 'hook');
+          spyOn(plugins['b']!, 'hook');
+          spyOn(plugins['c']!, 'hook');
 
           chart.notifyPlugins('hook');
 
-          expect(plugins['a']!['hook'], isNot(_toHaveBeenCalled()));
-          expect(plugins['b']!['hook'], isNot(_toHaveBeenCalled()));
-          expect(plugins['c']!['hook'], _toHaveBeenCalled());
+          expect(plugins['a']!['hook'], isNot(toHaveBeenCalled()));
+          expect(plugins['b']!['hook'], isNot(toHaveBeenCalled()));
+          expect(plugins['c']!['hook'], toHaveBeenCalled());
 
           Chart.unregister([plugins['a']]);
         },
@@ -467,11 +379,11 @@ void main() {
             },
           });
 
-          _spyOn(plugin, 'hook');
+          spyOn(plugin, 'hook');
 
           chart.notifyPlugins('hook');
 
-          expect(plugin['hook'], _toHaveBeenCalled());
+          expect(plugin['hook'], toHaveBeenCalled());
           expect(
             jsObjectKeys(
               plugin['hook'].calls.first().args[2]! as Map<String, Object?>,
@@ -496,11 +408,11 @@ void main() {
           };
 
           Chart.register([plugin]);
-          _spyOn(plugin, 'hook');
+          spyOn(plugin, 'hook');
 
           acquireChart().notifyPlugins('hook');
 
-          expect(plugin['hook'], _toHaveBeenCalled());
+          expect(plugin['hook'], toHaveBeenCalled());
           expect(
             plugin['hook'].calls.first().args[2],
             toEqualOptions(<String, Object?>{'a': 'foobar'}),
@@ -526,10 +438,10 @@ void main() {
           },
         });
 
-        _spyOn(plugin, 'hook');
+        spyOn(plugin, 'hook');
         chart.notifyPlugins('hook');
 
-        expect(plugin['hook'], _toHaveBeenCalled());
+        expect(plugin['hook'], toHaveBeenCalled());
         expect(
           plugin['hook'].calls.first().args[2],
           toEqualOptions(<String, Object?>{'foo': 'foo', 'bar': 'bar'}),
@@ -550,11 +462,11 @@ void main() {
           },
         });
 
-        _spyOn(plugin, 'hook');
+        spyOn(plugin, 'hook');
 
         chart.notifyPlugins('hook');
 
-        expect(plugin['hook'], _toHaveBeenCalled());
+        expect(plugin['hook'], toHaveBeenCalled());
         expect(
           plugin['hook'].calls.first().args[2],
           toEqualOptions(<String, Object?>{'foo': 'foo'}),
@@ -567,7 +479,7 @@ void main() {
         plugin['hook'].calls.reset();
         chart.notifyPlugins('hook');
 
-        expect(plugin['hook'], _toHaveBeenCalled());
+        expect(plugin['hook'], toHaveBeenCalled());
         expect(
           plugin['hook'].calls.first().args[2],
           toEqualOptions(<String, Object?>{'bar': 'bar'}),
@@ -624,11 +536,11 @@ void main() {
           'options': <String, Object?>{'plugins': false},
         });
 
-        _spyOn(plugin, 'hook');
+        spyOn(plugin, 'hook');
 
         chart.notifyPlugins('hook');
 
-        expect(plugin['hook'], isNot(_toHaveBeenCalled()));
+        expect(plugin['hook'], isNot(toHaveBeenCalled()));
       });
 
       testWidgets('should not restart plugins when a double register occurs', (

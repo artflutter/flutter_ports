@@ -728,7 +728,12 @@ final class PointLabelItem implements types.TRBL {
 }
 
 /// scale.radialLinear.js:338 `RadialLinearScale extends LinearScaleBase`.
-class RadialLinearScale extends LinearScaleBase {
+///
+/// It implements `types.RadialLinearScale` (index.d.ts:3676): the polar
+/// area and radar controllers read its members through that interface
+/// (Chart.js ADR 0028, section 1).
+class RadialLinearScale extends LinearScaleBase
+    implements types.RadialLinearScale {
   /// scale.radialLinear.js:412 `constructor(cfg)`.
   ///
   /// [cfg] is the object `{id, type, ctx, chart}` of [Scale.new]. The fields
@@ -823,10 +828,12 @@ class RadialLinearScale extends LinearScaleBase {
 
   /// scale.radialLinear.js:416 `xCenter`, the x of the center. NaN stands
   /// for JS `undefined`, the start value.
+  @override
   double xCenter = double.nan;
 
   /// scale.radialLinear.js:418 `yCenter`, the y of the center. NaN stands
   /// for JS `undefined`.
+  @override
   double yCenter = double.nan;
 
   /// scale.radialLinear.js:420 `drawingArea`, the radius of the value
@@ -952,6 +959,7 @@ class RadialLinearScale extends LinearScaleBase {
   ///
   /// `this._pointLabels.length || 1` gives 1 for no labels.
   /// `this.options.startAngle || 0` is [jsOrZero].
+  @override
   double getIndexAngle(double index) {
     final angleMultiplier =
         tau / (pointLabels.isEmpty ? 1 : pointLabels.length);
@@ -964,6 +972,7 @@ class RadialLinearScale extends LinearScaleBase {
   ///
   /// [value] is any JS value (Chart.js ADR 0025). `null` and `undefined`
   /// give NaN. The `-` applies [jsToNumber] to another value.
+  @override
   double getDistanceFromCenterForValue(Object? value) {
     if (isNullOrUndef(value)) {
       return double.nan;
@@ -1026,6 +1035,7 @@ class RadialLinearScale extends LinearScaleBase {
   /// scale.radialLinear.js:529 `getPointPositionForValue(index, value)`.
   ///
   /// [value] is any JS value (Chart.js ADR 0025).
+  @override
   ({double x, double y, double angle}) getPointPositionForValue(
     double index,
     Object? value,

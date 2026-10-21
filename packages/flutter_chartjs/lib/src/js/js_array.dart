@@ -2,7 +2,8 @@
 
 /// `Array.prototype.sort` and the key order of `Object.keys` for ported code
 /// (Chart.js ADR 0010, "Sort"), `Object.getOwnPropertyNames` (Chart.js
-/// ADR 0019, section 1), and `Array.prototype.splice` ([jsSplice]).
+/// ADR 0019, section 1), `Array.prototype.splice` ([jsSplice]) and the write
+/// `list[index] = value` ([jsSetIndex], Chart.js ADR 0027).
 ///
 /// A JavaScript array is a `List<Object?>` and a plain object is a
 /// `Map<String, Object?>` (Chart.js ADR 0006).
@@ -56,6 +57,25 @@ abstract interface class JsProxyObject implements Map<String, Object?> {
   /// The keys keep the order of the `ownKeys` trap. The engine does not move
   /// the array-index keys of a proxy to the front.
   List<String> objectKeys();
+}
+
+/// The JS write `list[index] = value` (Chart.js ADR 0027): a write at the
+/// length appends.
+///
+/// JavaScript leaves a hole for an index past the length, and a negative
+/// index writes a property (`list[-1] = v` gives the key `'-1'`, and the
+/// length does not change). Dart throws a [RangeError] for both
+/// (differences.md row `platform-array-events`). `parse` writes the items in
+/// order from its start, so its index is never negative. `_resyncElements`
+/// gives a start at most the length. `_insertElements` gives the start of
+/// the caller of `onDataSplice`, which can be past the length. A negative
+/// start fails before the write, at the insert of the elements.
+void jsSetIndex<T>(List<T> list, int index, T value) {
+  if (index == list.length) {
+    list.add(value);
+  } else {
+    list[index] = value;
+  }
 }
 
 /// `Object.keys(object)`: the keys of [object] in the ECMAScript

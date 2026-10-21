@@ -175,7 +175,15 @@ numbers below refer to Chart.js `v4.5.1+7169e651`, read in `third_party/Chart.js
    generators move to `registerPhase7` in the same change, because the phase 6 Dart tests run
    with the controllers registered.
 6. The data format is the phase 6 form: Dart `const` literals, and one raw JSON-lines string of
-   the draw calls for each case. A data file has at most 2.5 MB. A generator with more data
+   the draw calls for each case. The hit items (`hits.items` of each observation) are text too,
+   not Dart literals: one JSON line `items[p]` for each point, in the form of the draw calls
+   (decision D8 of the phase lead, 2026-10-21). The reason is the data size. A probe of 3 cases
+   gave 1,521,132 bytes with the hit items as literals and 495,325 bytes with the text (the U0
+   report, R6: [U0-report.md](../phase7/review/wave1/U0-report.md)). Thus the 23 bar cases of
+   section 7 need about 11.7 MB as literals and about 3.8 MB as text (an estimate: the size of a
+   case changes with its steps). Only the text fits in two data files of 2.5 MB. The compare does
+   not change: each item `items[p][q]` is the list `[[datasetIndex, index], ...]`, and the items
+   compare exactly (sections 4 and 5). A data file has at most 2.5 MB. A generator with more data
    writes two data files, `controller_<name>_reference.dart` and
    `controller_<name>_reference_2.dart`, from one case list.
 7. Each reference case is one `testWidgets` case. A batch saves about 4 ms for each case and hides

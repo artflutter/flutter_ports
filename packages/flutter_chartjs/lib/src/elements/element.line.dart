@@ -793,6 +793,7 @@ class LineElement extends Element
   ///
   /// Each point is a [SplinePoint] (`types.PointElement`): `helpers.curve`
   /// writes its control points.
+  @override
   void updateControlPoints(ChartArea chartArea, [String? indexAxis]) {
     final options = this.options;
     if ((jsTruthy(_tension(options)) ||
@@ -820,12 +821,15 @@ class LineElement extends Element
   ///
   /// Upstream stores any array: `index.d.ts:2026` declares `points:
   /// Point[]`, and the filler writes plain points (filler.helper.js:28-33,
-  /// filler.target.stack.js:29). The port takes only point elements:
-  /// `helpers.segment` reads their `skip` and `stop`, and `helpers.curve`
-  /// writes their control points (the difference
-  /// `adapt-line-points-elements`).
+  /// filler.target.stack.js:29). The port keeps a `List<types.PointElement>`:
+  /// `helpers.segment` reads `skip` and `stop`, and `helpers.curve` writes
+  /// the control points. A `List<types.PointElement>` stays as it is. Another
+  /// list, for example the `meta.data` of a line controller, gives a typed
+  /// copy with the same elements in the same order (Chart.js ADR 0028,
+  /// section 3). An element that is not a `types.PointElement` throws a
+  /// [TypeError] (the difference `adapt-line-points-elements`).
   // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
-  set points(List<types.PointElement> points) => _setPoints(points);
+  set points(List<types.Element> points) => _setPoints(_pointElements(points));
 
   /// element.line.js:315 `get points()`.
   ///
@@ -1123,8 +1127,8 @@ class LineElement extends Element
   /// The JS property write `line[prop] = value` (Chart.js ADR 0017,
   /// section 5).
   ///
-  /// - `points` is the setter [points]: it also drops the cached segments
-  ///   and path. It accepts a `List<types.PointElement>` or [undefined].
+  /// - `points` is the setter [points]: it takes a `List<types.Element>` or
+  ///   [undefined]. It also drops the cached segments and path.
   /// - `_points` writes the field only, as upstream does.
   /// - `_chart` accepts a `types.Chart`, `_path` a [Path2D] and `_segments`
   ///   a `List<types.Segment>`, or [undefined].
@@ -1151,7 +1155,11 @@ class LineElement extends Element
         _path = toObjectProp<Path2D>(prop, value);
       case 'points':
         // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
-        _setPoints(toObjectProp<List<types.PointElement>>(prop, value));
+        _setPoints(
+          value is List<types.Element>
+              ? _pointElements(value)
+              : toObjectProp<List<types.PointElement>>(prop, value),
+        );
       case '_points':
         // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
         _points = toObjectProp<List<types.PointElement>>(prop, value);
@@ -1187,3 +1195,15 @@ double _pointValue(Point point, String property) => switch (point) {
     _ => double.nan,
   },
 };
+
+/// The points of [LineElement.points]: [points] itself when it is a
+/// `List<types.PointElement>`, else a typed copy (Chart.js ADR 0028,
+/// section 3). `List.generate` is the fastest copy on AOT and wasm.
+List<types.PointElement> _pointElements(List<types.Element> points) =>
+    points is List<types.PointElement>
+    ? points
+    : List<types.PointElement>.generate(
+        points.length,
+        (i) => points[i] as types.PointElement,
+        growable: false,
+      );

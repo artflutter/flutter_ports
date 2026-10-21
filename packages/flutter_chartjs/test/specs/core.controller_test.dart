@@ -9,16 +9,15 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.defaults.dart';
-import 'package:flutter_chartjs/src/helpers/helpers.config.dart'
-    show ContextResolver, Resolver;
 import 'package:flutter_chartjs/src/helpers/helpers.core.dart' as helpers;
-import 'package:flutter_chartjs/src/js/js_array.dart';
 import 'package:flutter_chartjs/src/js/js_function.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/platform/platform.basic.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../support/jasmine.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
 // chart reaches the chart host and dart:ui.
@@ -41,9 +40,10 @@ import 'package:flutter_test/flutter_test.dart';
 // - `Chart.defaults` is `defaults` of core.defaults.dart, and
 //   `Chart.helpers.merge` is `merge` of helpers.core.dart.
 //   `delete object.key` is [Map.remove].
-// - `toEqual` of two option objects is [_toEqual], the deep equality of
-//   Jasmine. `jasmine.objectContaining` is [_objectContaining]. An
-//   `expect` on a resolver gives it in an [_Options] (see there).
+// - `toEqual` of two option objects is `jasmineEquals`, the deep equality
+//   of Jasmine. `jasmine.objectContaining` is `objectContaining`. An
+//   `expect` on a resolver gives it in a `JasmineOptions`
+//   (test/support/jasmine.dart).
 //   `new Error(m)` is a StateError with the message m.
 //
 // flutter_test_config.dart registers the built-in components before main().
@@ -58,184 +58,6 @@ import 'package:flutter_test/flutter_test.dart';
 //
 // :3 `const overrides = Chart.overrides` comes with the bodies that read
 // it.
-
-/// A resolver of helpers.config as the actual value of an `expect`.
-///
-/// A failed `expect` prints its actual value with `prettyPrint`, which
-/// reads each key of [Map.keys], the `ownKeys` trap. The `ownKeys` trap of
-/// a scale resolver also gives the keys of its fallback scopes, as upstream:
-/// the keys of `options.grid` include `grid`. Thus the print of the
-/// resolver does not stop, and the test does not end. Jasmine prints to a
-/// depth of 8 only. An [_Options] prints the `Object.keys` ([jsObjectKeys])
-/// of its resolver. [_toEqual] and [_objectContaining] compare the
-/// resolver in it.
-final class _Options {
-  const _Options(this.resolver);
-
-  final Map<String, Object?> resolver;
-
-  @override
-  String toString() => 'resolver {${jsObjectKeys(resolver).join(', ')}}';
-}
-
-/// The value that a matcher compares: the resolver of an [_Options], else
-/// [item].
-Object? _actual(Object? item) => item is _Options ? item.resolver : item;
-
-/// `Object.prototype.hasOwnProperty.call(object, key)`: for a resolver, its
-/// `getOwnPropertyDescriptor` trap.
-bool _hasOwnProperty(Map<String, Object?> object, String key) =>
-    switch (object) {
-      final Resolver resolver => resolver.hasOwnProperty(key),
-      final ContextResolver resolver => resolver.hasOwnProperty(key),
-      _ => object.containsKey(key),
-    };
-
-/// `jasmine.objectContaining(expected)`: each key of [expected] is a
-/// property of the actual object, with a value that is equal by Jasmine
-/// `eq` ([_toEqual]).
-///
-/// Jasmine finds the property with `hasProperty`: `hasOwnProperty`, then
-/// the prototype chain. For a resolver, `hasOwnProperty` is the
-/// `getOwnPropertyDescriptor` trap ([_hasOwnProperty]). It is not
-/// [Map.containsKey], the `has` trap of the `in` operator: the `has` trap
-/// rejects the keys that start with `_`, for example `_jasmineCheckA`. A
-/// Map has no prototype chain (the row `js-semantics-resolver-objects`).
-Matcher _objectContaining(Map<String, Object?> expected) =>
-    _JasmineObjectContaining(expected);
-
-final class _JasmineObjectContaining extends Matcher {
-  const _JasmineObjectContaining(this.expected);
-
-  final Map<String, Object?> expected;
-
-  @override
-  bool matches(Object? item, Map<Object?, Object?> matchState) {
-    final object = _actual(item);
-    if (object is! Map<String, Object?>) return false;
-    for (final MapEntry(:key, :value) in expected.entries) {
-      final path = <String>[key];
-      if (!_hasOwnProperty(object, key) ||
-          !_JasmineEquals._eq(value, jsGet(object, key), [], [], path)) {
-        matchState['path'] = path.join('.');
-        return false;
-      }
-    }
-    return true;
-  }
-
-  @override
-  Description describe(Description description) => description.add(
-    'an object that contains the expected properties (Jasmine '
-    'objectContaining)',
-  );
-
-  @override
-  Description describeMismatch(
-    Object? item,
-    Description mismatchDescription,
-    Map<Object?, Object?> matchState,
-    bool verbose,
-  ) => matchState.containsKey('path')
-      ? mismatchDescription.add('is different at ${matchState['path']}')
-      : mismatchDescription.add('is not an object');
-}
-
-/// Jasmine `toEqual(expected)`: the deep equality `eq` of jasmine-core
-/// (`MatchersUtil.eq`), for the values of these specs.
-///
-/// - Two numbers are equal when both are NaN, or when they have the same
-///   value. A zero equals only a zero with the same sign.
-/// - Two strings compare by value. Other values that are not objects or
-///   arrays compare by identity: booleans, functions, `null` and
-///   [undefined].
-/// - Two arrays are equal when they have the same length and equal items.
-/// - Two objects are equal when they have the same `Object.keys`
-///   ([jsObjectKeys]) and equal values. An object is a Map, also a resolver
-///   of helpers.config. A value is the property read `object[key]`
-///   ([jsGet]), the `get` trap of a resolver. Thus two resolvers that are
-///   not identical can be equal.
-/// - Jasmine keeps a stack of the objects that it compares, for cyclic
-///   values. This matcher keeps the same stack.
-Matcher _toEqual(Object? expected) => _JasmineEquals(expected);
-
-final class _JasmineEquals extends Matcher {
-  const _JasmineEquals(this.expected);
-
-  final Object? expected;
-
-  @override
-  bool matches(Object? item, Map<Object?, Object?> matchState) {
-    final path = <String>[];
-    final pass = _eq(_actual(item), expected, [], [], path);
-    if (!pass) matchState['path'] = path.isEmpty ? '(root)' : path.join('.');
-    return pass;
-  }
-
-  @override
-  Description describe(Description description) =>
-      description.add('a value equal to the expected value (Jasmine eq)');
-
-  @override
-  Description describeMismatch(
-    Object? item,
-    Description mismatchDescription,
-    Map<Object?, Object?> matchState,
-    bool verbose,
-  ) => mismatchDescription.add('is different at ${matchState['path']}');
-
-  /// The recursion of `eq`. [path] gets the keys to the first difference.
-  static bool _eq(
-    Object? a,
-    Object? b,
-    List<Object?> aStack,
-    List<Object?> bStack,
-    List<String> path,
-  ) {
-    if (a is num && b is num) {
-      if (a.isNaN || b.isNaN) return a.isNaN && b.isNaN;
-      return a == b && (a != 0 || a.isNegative == b.isNegative);
-    }
-    if (identical(a, b)) return true;
-    if (a is String && b is String) return a == b;
-    final List<String> keys;
-    switch ((a, b)) {
-      case (final List<Object?> aList, final List<Object?> bList):
-        if (aList.length != bList.length) return false;
-        keys = [for (var i = 0; i < aList.length; i++) '$i'];
-      case (
-        final Map<String, Object?> aMap,
-        final Map<String, Object?> bMap,
-      ):
-        keys = jsObjectKeys(aMap);
-        final bKeys = jsObjectKeys(bMap);
-        if (keys.length != bKeys.length) return false;
-        for (final key in keys) {
-          if (!bKeys.contains(key)) {
-            path.add(key);
-            return false;
-          }
-        }
-      default:
-        return false;
-    }
-    for (var i = aStack.length - 1; i >= 0; i--) {
-      if (identical(aStack[i], a)) return identical(bStack[i], b);
-    }
-    aStack.add(a);
-    bStack.add(b);
-    for (final key in keys) {
-      path.add(key);
-      if (!_eq(jsGet(a, key), jsGet(b, key), aStack, bStack, path)) {
-        return false;
-      }
-      path.removeLast();
-    }
-    aStack.removeLast();
-    bStack.removeLast();
-    return true;
-  }
-}
 
 void main() {
   group('Chart', () {
@@ -412,22 +234,22 @@ void main() {
         final chart = acquireChart(<String, Object?>{'type': 'bar'});
         expect(
           chart.data,
-          _objectContaining({'labels': <Object?>[], 'datasets': <Object?>[]}),
+          objectContaining({'labels': <Object?>[], 'datasets': <Object?>[]}),
         );
         chart.data = <String, Object?>{};
         expect(
           chart.data,
-          _objectContaining({'labels': <Object?>[], 'datasets': <Object?>[]}),
+          objectContaining({'labels': <Object?>[], 'datasets': <Object?>[]}),
         );
         chart.data = null;
         expect(
           chart.data,
-          _objectContaining({'labels': <Object?>[], 'datasets': <Object?>[]}),
+          objectContaining({'labels': <Object?>[], 'datasets': <Object?>[]}),
         );
         chart.data = undefined;
         expect(
           chart.data,
-          _objectContaining({'labels': <Object?>[], 'datasets': <Object?>[]}),
+          objectContaining({'labels': <Object?>[], 'datasets': <Object?>[]}),
         );
       });
 
@@ -569,12 +391,12 @@ void main() {
 
         expect(chart.scales['foo']!.type, 'logarithmic');
         expect(
-          _Options(chart.scales['foo']!.options),
-          _toEqual(jsGet(chart.options['scales'], 'foo')),
+          JasmineOptions(chart.scales['foo']!.options),
+          jasmineEquals(jsGet(chart.options['scales'], 'foo')),
         );
         expect(
-          _Options(chart.scales['foo']!.options),
-          _objectContaining({
+          JasmineOptions(chart.scales['foo']!.options),
+          objectContaining({
             '_jasmineCheckA': 'a0',
             '_jasmineCheckB': 'b1',
             '_jasmineCheckC': 'c2',
@@ -606,12 +428,12 @@ void main() {
 
         expect(chart.scales['x']!.type, 'logarithmic');
         expect(
-          _Options(chart.scales['x']!.options),
-          _toEqual(jsGet(chart.options['scales'], 'x')),
+          JasmineOptions(chart.scales['x']!.options),
+          jasmineEquals(jsGet(chart.options['scales'], 'x')),
         );
         expect(
-          _Options(chart.scales['x']!.options),
-          _objectContaining({
+          JasmineOptions(chart.scales['x']!.options),
+          objectContaining({
             '_jasmineCheckA': 'a0',
             '_jasmineCheckB': 'b1',
             '_jasmineCheckC': 'c2',
@@ -621,12 +443,12 @@ void main() {
 
         expect(chart.scales['y']!.type, 'time');
         expect(
-          _Options(chart.scales['y']!.options),
-          _toEqual(jsGet(chart.options['scales'], 'y')),
+          JasmineOptions(chart.scales['y']!.options),
+          jasmineEquals(jsGet(chart.options['scales'], 'y')),
         );
         expect(
-          _Options(chart.scales['y']!.options),
-          _objectContaining({
+          JasmineOptions(chart.scales['y']!.options),
+          objectContaining({
             '_jasmineCheckA': 'a0',
             '_jasmineCheckB': 'b0',
             '_jasmineCheckC': 'c2',

@@ -3,6 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart' show createMockContext;
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.datasetController.dart';
 import 'package:flutter_chartjs/src/core/core.element.dart';
@@ -213,6 +214,34 @@ void main() {
     _customElement,
   ]);
 
+  group('the writable ctx (Chart.js ADR 0030)', () {
+    testWidgets('a write of ctx changes the context of the next draw', (
+      tester,
+    ) async {
+      // core.datasetController.js:257 `this._ctx = chart.ctx`, and :713
+      // draws the elements on `this._ctx`. The property is writable.
+      final chart = _chart('typedLine');
+      final controller = _controllerOf(chart);
+      expect(identical(controller.ctx, chart.ctx), isTrue);
+      final recording = createMockContext();
+      controller.ctx = recording;
+      expect(identical(controller.ctx, recording), isTrue);
+      expect(identical(chart.ctx, recording), isFalse);
+      chart.draw();
+      final names = recording.getCalls().map((call) => call['name']).toList();
+      // The line and the two points of the dataset draw on the recording
+      // context: the points as circles (helpers.canvas.ts drawPoint).
+      expect(names.where((name) => name == 'arc'), hasLength(2));
+      expect(names, contains('stroke'));
+      // The chart keeps its own context.
+      expect(identical(chart.ctx, recording), isFalse);
+      recording.resetCalls();
+      controller.ctx = chart.ctx;
+      chart.draw();
+      expect(recording.getCalls(), isEmpty);
+    });
+  });
+
   group('adapt-typed-element-options', () {
     testWidgets('the shared data options are a frozen PointOptions', (
       tester,
@@ -415,6 +444,115 @@ void main() {
       expect(options, isA<PointOptions>());
       expect(jsObjectIsFrozen(options), isTrue);
       expect(options![r'$shared'], isFalse);
+    });
+  });
+
+  group('js-semantics-resolver-objects', () {
+    // With `parsing: false` and a stacked value scale, updateStacks writes
+    // `item._stacks = {}` into each data item
+    // (core.datasetController.js:165). A List item keeps the property
+    // through stacksOf (Chart.js ADR 0027). Each test registers its own test
+    // controller and removes it at its end (Chart.js ADR 0022, section 8).
+
+    /// Registers the test controller `stacksPoint` (point data elements, no
+    /// dataset element) for the current test.
+    void registerController() {
+      final controller = _controller(
+        'stacksPoint',
+        false,
+        'point',
+        draw: false,
+      );
+      Chart.register([controller]);
+      addTearDown(() => Chart.unregister([controller]));
+    }
+
+    /// A chart of `stacksPoint` with the data [data], `parsing: false` and
+    /// a stacked y scale.
+    Chart stackedChart(List<Object?> data) => acquireChart({
+      'type': 'stacksPoint',
+      'data': <String, Object?>{
+        'datasets': <Object?>[
+          <String, Object?>{'data': data},
+        ],
+      },
+      'options': <String, Object?>{
+        'parsing': false,
+        'scales': <String, Object?>{
+          'y': <String, Object?>{'stacked': true},
+        },
+      },
+    });
+
+    testWidgets('List data items take the stacks', (tester) async {
+      registerController();
+      final items = <Object?>[
+        <Object?>[0.0, 1.0],
+        <Object?>[1.0, 2.0],
+      ];
+      final chart = stackedChart(items);
+      final meta = chart.getDatasetMeta(0);
+      expect(jsTruthy(meta.stacked), isTrue);
+      expect(identical(meta.parsed, items), isTrue);
+      for (final item in items) {
+        final itemStacks = stacksOf(item);
+        expect(itemStacks, isA<Map<String, Object?>>());
+        expect(jsObjectKeys(itemStacks! as Map<String, Object?>), ['y']);
+      }
+      expect(chart.stacks, isNotNull);
+      // A second update reads the stacks of the items again.
+      chart.update();
+      expect(jsObjectKeys(stacksOf(items[0])! as Map<String, Object?>), [
+        'y',
+      ]);
+    });
+
+    testWidgets('DateTime data items take the stacks', (tester) async {
+      // A Date is an object (Chart.js ADR 0024). The Node.js probe of the
+      // pinned build gives no throw and the key y.
+      registerController();
+      final items = <Object?>[DateTime.utc(1970), DateTime.utc(1971)];
+      final chart = stackedChart(items);
+      expect(jsTruthy(chart.getDatasetMeta(0).stacked), isTrue);
+      for (final item in items) {
+        final itemStacks = stacksOf(item);
+        expect(itemStacks, isA<Map<String, Object?>>());
+        expect(jsObjectKeys(itemStacks! as Map<String, Object?>), ['y']);
+      }
+    });
+
+    testWidgets('number and string data items throw at the write', (
+      tester,
+    ) async {
+      // A property write into a primitive in the strict code of an ES
+      // module. The port throws the plain TypeError of the write, not the
+      // Dart _TypeError of a later cast.
+      registerController();
+      for (final items in <List<Object?>>[
+        <Object?>[1.0, 2.0],
+        <Object?>['a', 'b'],
+      ]) {
+        expect(
+          () => stackedChart(items),
+          throwsA(predicate((e) => e.runtimeType == TypeError)),
+          reason: '$items',
+        );
+      }
+    });
+
+    testWidgets('a data item of a narrow Map type throws a TypeError', (
+      tester,
+    ) async {
+      // The differences.md row: the write of `_stacks` into a
+      // Map<String, double> throws, where upstream writes into the object.
+      registerController();
+      expect(
+        () => stackedChart(<Object?>[
+          <String, double>{'x': 0, 'y': 1},
+          <String, double>{'x': 1, 'y': 2},
+        ]),
+        throwsA(isA<TypeError>()),
+      );
     });
   });
 }

@@ -391,6 +391,7 @@ class PointElement extends Element
   /// `undefined` for an absent key, and [jsOrZero] applies the `|| 0` and
   /// the `ToNumber` of the arithmetic. `|| 0` gives 0 for JS `undefined` and
   /// for JS `null` (Chart.js ADR 0017, section 8).
+  @override
   double size([AnyObject? options]) {
     // Upstream reassigns its parameter.
     // ignore: parameter_assignments

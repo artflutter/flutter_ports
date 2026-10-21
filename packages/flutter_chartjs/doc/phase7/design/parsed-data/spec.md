@@ -37,7 +37,7 @@ bar, line and scatter waves also depend on step 3 (or on its fallback, section 4
 | `test/port/js/js_array_test.dart` | group `jsSetIndex` | 1 |
 | `lib/src/js/js_number.dart` | add `jsLessThan` and its private `_toPrimitiveNumber` | 1 |
 | `test/port/js/js_number_test.dart` | group `jsLessThan` | 1 |
-| `lib/src/core/core.datasetController.dart` | remove `_item`, `_getIndex`, `_setAt`, `_lessThan`, `_toPrimitive`; switch the reads of section 3.1; add `_listStacks` and `stacksOf`; change the write of `_updateStacks` | 2, 3 |
+| `lib/src/core/core.datasetController.dart` | remove `_item`, `_getIndex`, `_setAt`, `_lessThan`, `_toPrimitive`; switch the reads of section 3.1; add `_objectStacks`, `_isPrimitive` and `stacksOf`; change the write of `_updateStacks` | 2, 3 |
 | `lib/src/core/core.controller.dart` | remove `_item` (:2315-2322); its callers (:1161, :1682, :1719) call `jsGetIndex` | 2 |
 | `lib/src/helpers/helpers.config.dart` | :920 reads `jsGetIndex(data, index)` | 2 |
 | `test/port/core/core.datasetController_test.dart` | the group `js-semantics-resolver-objects` gets the unit cases of `stacksOf` (section 7.2) | 3 |
@@ -213,22 +213,40 @@ Remove the import of `jsNumberToString` if it has no other user.
 At the end of the private helpers of DC (after `_parsedValue`):
 
 ```dart
-/// The `_stacks` property of the parsed items that are Lists. A Dart List
+/// The `_stacks` property of the parsed items that are objects without a
+/// property Map: a List, and each value that is not a Map, a class value or
+/// a primitive, for example a [DateTime] or a function. Such a Dart value
 /// has no named property. Upstream writes `item._stacks = {}` into the
-/// array (core.datasetController.js:165).
-final Expando<Object> _listStacks = Expando('_stacks');
+/// array, the `Date` or the function (core.datasetController.js:165).
+final Expando<Object> _objectStacks = Expando('_stacks');
+
+/// Whether [item] is a JS primitive: a property write into it throws a
+/// `TypeError` in strict code. A record is not a JS value. It counts here,
+/// because an [Expando] cannot take it.
+bool _isPrimitive(Object? item) =>
+    item == null ||
+    item is Undefined ||
+    item is num ||
+    item is String ||
+    item is bool ||
+    item is Record;
 
 /// The read `item._stacks` of a parsed item (core.datasetController.js:165,
 /// :218, :599, :610; controller.bar.js:405, :615).
 ///
 /// A Map gives Dart `null` for an absent key, as `_parsedValue` does. Each
 /// reader tests the truthiness, or reads a property of the result, which
-/// throws a [TypeError] for both `null` and [undefined].
+/// throws a [TypeError] for both `null` and [undefined]. A class value and a
+/// primitive give [jsGet]: the static property through the superclass chain
+/// for a class value, [undefined] for a number, a [TypeError] for `null`.
+/// Each other value, for example a List or a [DateTime], gives the entry
+/// that `_updateStacks` wrote for it, or Dart `null` (Chart.js ADR 0027).
 @internal
 Object? stacksOf(Object? item) {
   if (item is Map<dynamic, dynamic>) return item['_stacks'];
-  if (item is List<dynamic>) return _listStacks[item];
-  return jsGet(item, '_stacks');
+  if (item is List<dynamic>) return _objectStacks[item];
+  if (item is JsClass || _isPrimitive(item)) return jsGet(item, '_stacks');
+  return _objectStacks[item!];
 }
 ```
 
@@ -237,28 +255,39 @@ The write in `_updateStacks` (DC:351-357 today):
 ```dart
 var itemStacks = stacksOf(item);
 if (!jsTruthy(itemStacks)) {
+  // DIVERGES(chartjs): js-semantics-resolver-objects, a narrow Map throws.
   switch (item) {
     case final Map<dynamic, dynamic> map:
-      // DIVERGES(chartjs): js-semantics-resolver-objects, a narrow Map throws.
       map['_stacks'] = itemStacks = <String, Object?>{};
     case final List<dynamic> list:
-      _listStacks[list] = itemStacks = <String, Object?>{};
-    default:
+      _objectStacks[list] = itemStacks = <String, Object?>{};
+    case final JsClass value:
+      value['_stacks'] = itemStacks = <String, Object?>{};
+    case _ when _isPrimitive(item):
       // A JavaScript TypeError: a property write into a primitive.
       throw TypeError();
+    default:
+      _objectStacks[item!] = itemStacks = <String, Object?>{};
   }
 }
 ```
 
+A class value takes an own static property, as upstream adds the property to the function
+(Chart.js ADR 0020). A `DateTime` (a JS `Date`, Chart.js ADR 0024) or a function takes the Expando
+entry. Upstream writes `_stacks` into a `Date`, a function and a class, and does not throw (S3 fix
+R1). A throw is a protected behavior (Chart.js ADR 0009).
+
 The readers: DC:351 (above), DC:428 (`final stacks = stacksOf(parsed);`), DC:1224 and DC:1245
 (section 3.1, step 3 column). The bar reads `bar.js:405` and `:615` through it (section 5.1).
 
-Update the doc of `_updateStacks` (DC:331-339): a List item takes `_stacks` through `stacksOf`;
-a primitive throws; a narrow Map throws (the row).
+Update the doc of `_updateStacks` (DC:331-339): a List item, a `DateTime` and a function take
+`_stacks` through `stacksOf`; a class value takes an own static property; a primitive throws; a
+narrow Map throws (the row).
 
 ### 4.2 Behavior check
 
-- `stacksOf` is equal to `_parsedValue(item, '_stacks')` for each value that is not a List.
+- `stacksOf` is equal to `_parsedValue(item, '_stacks')` for a Map, a class value and a
+  primitive. A List, a `DateTime` and a function give their Expando entry.
 - DC:1224, DC:1245 and `bar.js:615` read a property of the result. For an absent `_stacks`, both
   `jsGetKey(null, axis)` and `jsGetKey(undefined, axis)` throw a `TypeError`, as upstream.
 
@@ -299,7 +328,9 @@ test expects the `TypeError`.
    `jsGet(getDataset(), 'data')! as List<Object?>` in the doughnut `parse`.
 5. No call of `_parsedValue`. No new copy of it.
 6. A destructuring default: `valueOrDefault(jsGet(parsing, '<key>'), '<default>')`, and the cast
-   `! as String` at the `resolveObjectKey` call inside the loop.
+   `! as String` at the `resolveObjectKey` call inside the loop. A known difference (ADR 0027 §4):
+   the cast throws for the keys `[]` and `[['y']]`, where upstream finds the `ToString` of the key
+   in the cache of `resolveObjectKey` and does not throw. The doc of `parseObjectData` states it.
 7. A raw option value stays `Object?` until its upstream operator (ADR 0027 §7).
 8. A `final` local for a read only under the one-read rule (ADR 0027 §8).
 9. Each structure change of the step 7 list (ADR 0027 §8) stays literal.
@@ -375,7 +406,7 @@ final iScaleValue = jsTruthy(currentParsed)
     : currentParsed;
 bool? skipNull(types.ChartMeta meta) {
   final parsed = meta.parsed.firstWhere(
-    (item) => jsGetKey(item, iScale.axis) == iScaleValue,
+    (item) => _strictEquals(jsGetKey(item, iScale.axis), iScaleValue),
     orElse: () => undefined,
   );
   final val = jsTruthy(parsed) ? jsGetKey(parsed, meta.vScale!.axis) : parsed;
@@ -385,7 +416,10 @@ bool? skipNull(types.ChartMeta meta) {
 ```
 
 Note: `Array.prototype.find` gives `undefined` when no item matches; `orElse` gives the sentinel.
-Dart `==` gives `===` for the parsed values.
+Dart `==` is not `===` for two `DateTime` values: Dart compares the time values, `===` the identity
+of two `Date` objects. Thus the find compares with the private `_strictEquals` (ADR 0027 §7): two
+numbers and two strings by value, each other pair by identity. `stacks.indexOf` (`bar.js:462`,
+`:521`) uses `_strictEquals` too, through `any` and `indexWhere`.
 
 ```dart
 // controller.bar.js:540 (`_getRuler`, the pixels).
@@ -423,7 +457,7 @@ head = chart.getDataVisibility(index)
 size = head - base;
 if (size.abs() < minBarLength) {
   size = _barSign(size, vScale, actualBase) * minBarLength;
-  if (value == actualBase) base -= size / 2; // `===`: 5 == '5' is false
+  if (_strictEquals(value, actualBase)) base -= size / 2; // `===`: 5 === '5' is false
   ...
   if (jsTruthy(stacked) && !floating) {
     // :615 `parsed._stacks[vScale.axis]._visualValues[datasetIndex] = ...`
@@ -495,13 +529,17 @@ if (!jsTruthy(edge)) { ... }
 if (edge == true) { ... }
 if (edge == 'middle' && jsTruthy(stack)) {
   properties['enableBorderRadius'] = true;
-  if (jsOrZero(jsGetKey(stack, '_top')) == index) {
+  if (_strictEquals(_orZero(jsGetKey(stack, '_top')), index)) {
     edge = top;
-  } else if (jsOrZero(jsGetKey(stack, '_bottom')) == index) {
+  } else if (_strictEquals(_orZero(jsGetKey(stack, '_bottom')), index)) {
     edge = bottom;
   } else { ... }
 }
 ```
+
+`_orZero(v)` is `jsTruthy(v) ? v : 0.0`, the JS `v || 0` without `ToNumber`. No arithmetic
+follows, thus `jsOrZero` does not apply: its `ToNumber` can make a `_top` of `'0'` or `true` equal
+to the dataset index (ADR 0027 §7).
 
 ```dart
 // controller.bar.js:252-256 `setInflateAmount`.
@@ -734,7 +772,7 @@ void parse(double start, double count) {
 
 - New rows: none. New markers: none.
 - The marker `// DIVERGES(chartjs): js-semantics-resolver-objects, a narrow Map throws.` at
-  DC:355 stays at the Map case of the new switch (section 4.1).
+  DC:355 stays before the new switch (section 4.1).
 - Row text changes (integration agent, section 8.4).
 
 ## 7. Tests
@@ -882,8 +920,9 @@ are, in ADR order: §2.20 ADR 0027, §2.21 ADR 0028, §2.22 ADR 0029, §2.23 ADR
 ### 8.4 `doc/differences.md`
 
 Row `js-semantics-resolver-objects`, in the text after "The stacks stay in the user item ...":
-- With section 4.1: "A List data item takes `_stacks` through `stacksOf` (an `Expando`). A
-  primitive data item throws a `TypeError`, as upstream."
+- With section 4.1: "A List, a `DateTime` or a function data item takes `_stacks` through
+  `stacksOf` (an `Expando`). A class value takes it as an own static property. A primitive data
+  item throws a `TypeError`, as upstream."
 - Under the fallback: "A List data item throws a `TypeError` at the write of `_stacks`, where
   upstream adds the property to the array."
 - In both: "With `parsing: false`, `meta.parsed` is the user List. A typed user List, for example
@@ -898,8 +937,8 @@ Each row keeps its markers. `check:headers` pairs them.
 ### 8.5 `doc/status.yaml`
 
 The status text of `core.datasetController` gets one sentence: "The reads of parsed items and
-stack objects use `jsGetKey`; `stacksOf` reads the `_stacks` of a List item (Chart.js ADR
-0027)." Each controller row gets its status from its wave. Run `dart run melos run parity`.
+stack objects use `jsGetKey`; `stacksOf` reads the `_stacks` of a List or another object without
+a property Map (Chart.js ADR 0027)." Each controller row gets its status from its wave. Run `dart run melos run parity`.
 
 ## 9. Not in this spec
 

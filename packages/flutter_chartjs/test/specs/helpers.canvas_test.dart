@@ -10,6 +10,8 @@ import 'package:flutter_chartjs/src/helpers/helpers.canvas.dart' as helpers;
 import 'package:flutter_chartjs/src/types/index.dart' hide Chart;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/jasmine.dart';
+
 // The spec reads the functions from Chart.helpers. Here `helpers` is
 // helpers.canvas.dart. The upstream `_` exports drop the underscore (Chart.js
 // ADR 0012): `_isPointInArea` is `isPointInArea`, `_longestText` is
@@ -19,20 +21,6 @@ import 'package:flutter_test/flutter_test.dart';
 // The clearCanvas cases call `acquireChart`. They are `testWidgets` cases
 // (Chart.js ADR 0022, sections 1 and 2). Thus the file runs on the VM only,
 // although helpers.canvas.dart is a pure layer.
-
-/// One call that a Jasmine spy recorded: `this` and the arguments.
-typedef _Call = ({Object? object, List<Object?> args});
-
-/// The calls of a Jasmine spy: `spy.calls`.
-final class _Calls {
-  final List<_Call> _all = [];
-
-  /// `calls.count()`.
-  int count() => _all.length;
-
-  /// `calls.first()`.
-  _Call first() => _all.first;
-}
 
 /// The canvas context of a chart after `spyOn(chart.ctx, 'clearRect')`.
 ///
@@ -48,11 +36,11 @@ final class _ClearRectSpy implements CanvasRenderingContext2D {
   final CanvasRenderingContext2D _context;
 
   /// `chart.ctx.clearRect.calls`.
-  final _Calls calls = _Calls();
+  final JasmineCalls calls = JasmineCalls();
 
   @override
   void clearRect(double x, double y, double w, double h) {
-    calls._all.add((object: this, args: [x, y, w, h]));
+    calls.add([x, y, w, h], object: this);
   }
 
   @override
@@ -78,7 +66,7 @@ void _spyOnClearRect(Chart chart) {
 }
 
 /// `chart.ctx.clearRect.calls` of a context with a spy.
-_Calls _clearRectCalls(CanvasRenderingContext2D? ctx) =>
+JasmineCalls _clearRectCalls(CanvasRenderingContext2D? ctx) =>
     (ctx! as _ClearRectSpy).calls;
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
