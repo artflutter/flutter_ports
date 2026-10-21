@@ -14,7 +14,8 @@ import 'package:flutter_test/flutter_test.dart';
 // Behavior of Chart.js ADR 0019 that test/specs/core.animator.tests.js does
 // not check (AGENTS.md rule 3): the promise checkpoint of the animator
 // callback, jsMapForEach in `_update`, `stop()` inside a listener, one long
-// pump, the mute of Chart.js ADR 0016 (decision 7) and `listen`.
+// pump, the mute of Chart.js ADR 0016 (decision 7), `listen`, and the members
+// `getAnims`, `update` and `refresh` of Chart.js ADR 0029 (section 6).
 //
 // A test registers a frame callback after the animator callback of a frame
 // with SchedulerBinding.scheduleFrameCallback between two pumps. The frame
@@ -301,7 +302,7 @@ void main() {
     animator.listen(chart, 'progress', (event) => animator.stop(chart));
     await _frames(tester, 1);
     expect(animator.running(chart), isFalse);
-    // _update counted the items of its old list: the loop scheduled the
+    // update counted the items of its old list: the loop scheduled the
     // next frame (core.animator.js:99).
     expect(SchedulerBinding.instance.transientCallbackCount, 1);
     await _frames(tester, 1);
@@ -442,5 +443,138 @@ void main() {
     expect(events[0].numSteps, isNull);
     expect(events[0].currentStep, isNaN);
     animator.remove(chart);
+  });
+
+  group('harness-method-fields', () {
+    // Six fixtures (Chart.js ADR 0029, section 6) replace
+    // `Chart.animator._refresh`, read `_getAnims(chart).items[0]._start` and
+    // call `_update`: controller.doughnut/doughnut-animation.js and
+    // doughnut-animation-hide-last.js, controller.polarArea/
+    // polar-area-animation-rotate.js, polar-area-animation-scale.js and
+    // last-slice-animate.js call `_update(start + i * 500)`.
+    // controller.bar/bar-animation-hide-show.js calls
+    // `_update(Date.now() * 2)` and `_update(start + i * 2000)` (:53-70).
+    testWidgets('a replaced refresh ends the loop, and the restore resumes', (
+      tester,
+    ) async {
+      final saved = animator.refresh;
+      addTearDown(() => animator.refresh = saved);
+      final chart = _Chart();
+      final target = <String, Object?>{'value': 0.0};
+      _start(chart, target, duration: 1000);
+      expect(SchedulerBinding.instance.transientCallbackCount, 1);
+      var calls = 0;
+      animator.refresh = () => calls++;
+      // The callback of the frame runs update and then the replaced field
+      // (core.animator.js:45-49). Thus it registers no frame callback.
+      await _frames(tester, 1);
+      expect(chart.draws, 1);
+      expect(calls, 1);
+      expect(SchedulerBinding.instance.transientCallbackCount, 0);
+      await _frames(tester, 3);
+      expect(chart.draws, 1);
+      expect(calls, 1);
+      expect(target['value'], 10 * (16 / 1000));
+      // The restore and start (:171) resume the loop.
+      animator
+        ..refresh = saved
+        ..start(chart);
+      expect(SchedulerBinding.instance.transientCallbackCount, 1);
+      await _frames(tester, 2);
+      expect(chart.draws, 3);
+      expect(calls, 1);
+      expect(target['value'], 10 * (96 / 1000));
+      animator.remove(chart);
+      await _frames(tester, 1);
+      expect(SchedulerBinding.instance.transientCallbackCount, 0);
+    });
+
+    testWidgets('start and unmute call the field', (tester) async {
+      final saved = animator.refresh;
+      addTearDown(() => animator.refresh = saved);
+      final chart = _Chart();
+      var calls = 0;
+      animator.refresh = () => calls++;
+      _start(chart, <String, Object?>{'value': 0.0}, duration: 1000);
+      expect(calls, 1);
+      expect(SchedulerBinding.instance.transientCallbackCount, 0);
+      animator
+        ..mute(chart)
+        ..unmute(chart);
+      expect(calls, 2);
+      expect(SchedulerBinding.instance.transientCallbackCount, 0);
+      await _frames(tester, 1);
+      expect(chart.draws, 0);
+      animator.remove(chart);
+    });
+
+    testWidgets('update(date) ticks the items of getAnims at the date', (
+      tester,
+    ) async {
+      final saved = animator.refresh;
+      addTearDown(() => animator.refresh = saved);
+      final chart = _Chart();
+      final target = <String, Object?>{'value': 0.0};
+      final progress = <(double?, double?)>[];
+      final complete = <(double?, double?)>[];
+      animator
+        ..refresh = () {}
+        ..listen(
+          chart,
+          'progress',
+          (event) => progress.add((event.currentStep, event.numSteps)),
+        )
+        ..listen(
+          chart,
+          'complete',
+          (event) => complete.add((event.currentStep, event.numSteps)),
+        );
+      final animation = _start(chart, target, duration: 1000);
+      final anims = animator.getAnims(chart);
+      expect(anims.items, [same(animation)]);
+      final start = anims.items[0].start;
+      expect(anims.start, start);
+
+      animator.update(start + 250);
+      expect(target['value'], 2.5);
+      expect(chart.draws, 1);
+      // currentStep is Math.min(date - anims.start, numSteps) (:31).
+      expect(progress, [(250.0, 1000.0)]);
+
+      animator.update(start + 1500);
+      expect(target['value'], 10.0);
+      expect(animation.active(), isFalse);
+      expect(chart.draws, 2);
+      expect(progress.last, (1000.0, 1000.0));
+      expect(complete, isEmpty);
+
+      // The next update removes the ended item and completes (:80-96).
+      animator.update(start + 2000);
+      expect(anims.items, isEmpty);
+      expect(anims.running, isFalse);
+      expect(anims.initial, isFalse);
+      expect(chart.draws, 2);
+      expect(progress, hasLength(2));
+      expect(complete, [(1000.0, 1000.0)]);
+      expect(SchedulerBinding.instance.transientCallbackCount, 0);
+      animator.remove(chart);
+    });
+
+    test('getAnims of a new chart gives a new record', () {
+      final chart = _Chart();
+      final anims = animator.getAnims(chart);
+      expect(anims.running, isFalse);
+      expect(anims.initial, isTrue);
+      expect(anims.items, isEmpty);
+      expect(anims.listeners.keys, ['complete', 'progress']);
+      expect(anims.listeners['complete'], isEmpty);
+      expect(anims.listeners['progress'], isEmpty);
+      expect(anims.start, isNull);
+      expect(anims.duration, isNull);
+      expect(animator.getAnims(chart), same(anims));
+      expect(animator.remove(chart), isTrue);
+      expect(animator.getAnims(chart), isNot(same(anims)));
+      expect(animator.remove(chart), isTrue);
+    });
   });
 }

@@ -484,6 +484,41 @@ void main() {
       });
       expect(() => arc.inRange(1, 1), throwsA(isA<TypeError>()));
     });
+
+    // `rAdjust` of element.arc.ts:439 is the JS `+` of `spacing` and
+    // `borderWidth`: a string option joins. The expected values come from
+    // the pinned build in Node.js v24.12.0 on x64 (probe arc_inrange.mjs of
+    // phase7/review/wave2/W2-int-report.md): the hit distances on the
+    // diagonal of a quarter arc with the radii 10 and 40.
+    group('string options join in the JS +', () {
+      const distances = [5, 12, 30, 41, 44, 60, 66, 70];
+      final cases = <(Map<String, Object?>, Set<int>)>[
+        ({'spacing': '5', 'borderWidth': 1}, {41, 44, 60}),
+        ({'spacing': 5, 'borderWidth': '1'}, {41, 44, 60}),
+        ({'spacing': 5, 'borderWidth': 1}, {30, 41}),
+        ({'spacing': null, 'borderWidth': '2'}, <int>{}),
+      ];
+      for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+        for (final (options, hits) in cases) {
+          test('$name $options', () {
+            final arc = ArcElement({
+              'x': 0,
+              'y': 0,
+              'startAngle': 0,
+              'endAngle': math.pi / 2,
+              'innerRadius': 10,
+              'outerRadius': 40,
+              'circumference': math.pi / 2,
+              'options': form(options),
+            });
+            for (final d in distances) {
+              final c = d * math.sqrt1_2;
+              expect(arc.inRange(c, c, false), hits.contains(d), reason: '$d');
+            }
+          });
+        }
+      }
+    });
   });
 
   group('getCenterPoint', () {
@@ -504,6 +539,49 @@ void main() {
         }
       });
     }
+
+    // A string `spacing` or `offset` joins in the JS `+` of
+    // element.arc.ts:459. The expected values come from the pinned build in
+    // Node.js v24.12.0 on x64 (probe arc_center.mjs of
+    // phase7/review/wave2/W2-int-report.md). The center moves: it is the
+    // point of the `nearest` and `index` hit modes.
+    group('string options join in the JS +', () {
+      final cases = <(Map<String, Object?>, double, double)>[
+        ({'spacing': '5', 'offset': 0}, 122.27085146437294, 62.166621605928164),
+        ({'spacing': 0, 'offset': '6'}, 122.27129025565388, 62.166861318697464),
+        ({'spacing': 5, 'offset': '6'}, 124.46524666037982, 63.365425165207974),
+        (
+          {'spacing': '5', 'offset': '6'},
+          122.2711147391415,
+          62.166765433589745,
+        ),
+        ({'spacing': 5, 'offset': 6}, 127.09536159836526, 64.80226350440476),
+        (
+          {'spacing': null, 'offset': '2'},
+          122.2695350905301,
+          62.165902467620256,
+        ),
+        ({'offset': 1}, double.nan, double.nan),
+      ];
+      for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+        for (final (options, x, y) in cases) {
+          test('$name $options', () {
+            final arc = ArcElement({
+              'x': 100,
+              'y': 50,
+              'startAngle': 0,
+              'endAngle': 1,
+              'innerRadius': 10.5,
+              'outerRadius': 40.25,
+              'options': form(options),
+            });
+            final center = arc.getCenterPoint(false);
+            expect(center.x, x.isNaN ? isNaN : closeTo(x, 1e-9));
+            expect(center.y, y.isNaN ? isNaN : closeTo(y, 1e-9));
+          });
+        }
+      }
+    });
 
     test('tooltipPosition without an argument is the current position', () {
       final arc = _arc(arcCenterReference.last.cfg, {

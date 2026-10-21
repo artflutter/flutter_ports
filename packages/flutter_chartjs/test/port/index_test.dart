@@ -17,8 +17,10 @@ import 'package:flutter_test/flutter_test.dart';
 // register in the order category, linear, logarithmic, radialLinear, time,
 // timeseries: the code unit order and the source order of scales/index.js
 // (:1-6) are the same. The namespace `controllers` has the controllers of
-// the waves of phase 7 that are ported (wave 1: `BarController`), and
-// `plugins` has no entry before phase 8.
+// the waves of phase 7 that are ported (wave 1: `BarController`; wave 2:
+// `BubbleController`, `DoughnutController`, `LineController`,
+// `PolarAreaController` and `RadarController`), and `plugins` has no entry
+// before phase 8.
 //
 // The library also exports the names of src/core/index.ts and of the other
 // index modules. The test reads some of them, so that a missing export
@@ -79,8 +81,26 @@ void main() {
     // BubbleController, DoughnutController, LineController, PieController,
     // PolarAreaController, RadarController and ScatterController (code unit
     // order). The Map has the keys of the ported controllers in that order.
-    expect(jsObjectKeys(controllers), ['BarController']);
+    expect(jsObjectKeys(controllers), [
+      'BarController',
+      'BubbleController',
+      'DoughnutController',
+      'LineController',
+      'PolarAreaController',
+      'RadarController',
+    ]);
     expect(controllers['BarController'], same(BarController.jsClass));
+    expect(controllers['BubbleController'], same(BubbleController.jsClass));
+    expect(
+      controllers['DoughnutController'],
+      same(DoughnutController.jsClass),
+    );
+    expect(controllers['LineController'], same(LineController.jsClass));
+    expect(
+      controllers['PolarAreaController'],
+      same(PolarAreaController.jsClass),
+    );
+    expect(controllers['RadarController'], same(RadarController.jsClass));
     expect(
       () => controllers['X'] = BarController.jsClass,
       throwsA(isA<UnsupportedError>()),
@@ -128,10 +148,29 @@ void main() {
     // The controllers register in the order bar, bubble, doughnut, line,
     // pie, polarArea, radar, scatter (the registered subset). Each one adds
     // its defaults to `defaults.datasets` and its overrides to `overrides`.
-    expect(jsObjectKeys(registry.controllers.items), ['bar']);
+    const ids = ['bar', 'bubble', 'doughnut', 'line', 'polarArea', 'radar'];
+    expect(jsObjectKeys(registry.controllers.items), ids);
     expect(registry.controllers.items['bar'], same(BarController.jsClass));
-    expect(jsObjectKeys(defaults.get('datasets')), ['bar']);
-    expect(jsObjectKeys(Chart.overrides), ['bar']);
+    expect(
+      registry.controllers.items['bubble'],
+      same(BubbleController.jsClass),
+    );
+    // controller.doughnut.tests.js:4-7.
+    expect(
+      registry.controllers.items['doughnut'],
+      same(DoughnutController.jsClass),
+    );
+    expect(registry.controllers.items['line'], same(LineController.jsClass));
+    expect(
+      registry.controllers.items['polarArea'],
+      same(PolarAreaController.jsClass),
+    );
+    expect(
+      registry.controllers.items['radar'],
+      same(RadarController.jsClass),
+    );
+    expect(jsObjectKeys(defaults.get('datasets')), ids);
+    expect(jsObjectKeys(Chart.overrides), ids);
     expect(registry.plugins.items, isEmpty);
   });
 

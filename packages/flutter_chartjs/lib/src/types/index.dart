@@ -930,7 +930,11 @@ abstract interface class VisualElement {
 /// it. `ArcElement` and `LineElement` have no upstream `getRange`.
 abstract interface class VisualElementRange implements VisualElement {
   /// index.d.ts:1852 `getRange(axis)`.
-  double getRange(String axis);
+  ///
+  /// The declared type is `number`, but `PointElement.getRange` gives the JS
+  /// `+` of two options (element.point.ts:105): a `String` when an option is
+  /// a string. Thus the result is an [Object]: a `double` or a `String`.
+  Object getRange(String axis);
 }
 
 /// index.d.ts:1867 `Segment`.
@@ -1003,7 +1007,11 @@ abstract interface class LineElement implements Element {
 
   /// index.d.ts:2025 `updateControlPoints(chartArea, indexAxis)`.
   /// controller.line.js:140 calls it.
-  void updateControlPoints(ChartArea chartArea, [String? indexAxis]);
+  ///
+  /// Dart `null` for [chartArea] is JS `undefined`: the `chartArea` of a
+  /// chart whose plugin cancels the first layout (`beforeLayout` returns
+  /// `false`).
+  void updateControlPoints(ChartArea? chartArea, [String? indexAxis]);
 }
 
 /// index.d.ts:2414 `LegendElement`, with the members that the option

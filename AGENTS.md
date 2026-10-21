@@ -105,7 +105,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `GenericElementOptions`, `clone`, the frozen state, `createElementOptions` and `copyOptions`
     (Chart.js ADR 0021). These files are pure layers. `Element` and each element class have a
     static `jsClass`, the class as a value (Chart.js ADR 0020). `PointElement` and `BarElement`
-    implement `types.VisualElementRange`, the interface of `getRange`. The `points` setter of
+    implement `types.VisualElementRange`, the interface of `getRange`. `getRange` gives an
+    `Object`: the `PointElement` result is the JS `+` of `radius` and `hitRadius` (`jsAdd`), a
+    `String` when an option is a string. The hit tests and `size` of `PointElement` and the
+    `rAdjust` and `getCenterPoint` of `ArcElement` also add their options with `jsAdd`.
+    `LineElement.updateControlPoints` takes a `ChartArea?`: Dart `null` is the JS `undefined` of a
+    chart without a layout. The `points` setter of
     `LineElement` takes `List<types.Element>` and copies a list that is not a
     `List<types.PointElement>` (Chart.js ADR 0028). `lib/src/types/index.dart` also has
     `RadialLinearScale` and `LegendElement` (Chart.js ADR 0028). `RadialLinearScale` of
@@ -125,7 +130,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `removeBox`, `configure` and `update`. A box is a `LayoutItem` of `lib/src/types/layout.dart`.
     - `core.animation.dart` and the port-only `animation_spec.dart` (`AnimationSpec`, the typed
       animation config) are pure layers. `core.animations.dart` and `core.animator.dart` are not:
-      `core.animator` imports `helpers.extras` (Chart.js ADR 0019).
+      `core.animator` imports `helpers.extras` (Chart.js ADR 0019). `core.animator.dart` has
+      `getAnims`, `update`, the `@internal` class `Anims` and the field `refresh` (Chart.js ADR
+      0029 §6). A fixture replaces `refresh` on the singleton (`harness-method-fields`).
     - `core.scale.dart` has `Scale`, `Scale.jsClass` and the port-only `Tick` class of the typedef
       at `core.scale.js:15`. `core.scale.dart` and `core.scale.autoskip.dart` are not pure layers:
       `core.scale` imports `helpers.extras`, and `core.scale.autoskip` imports `core.scale`.
@@ -139,6 +146,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       ADR 0028). The reads of parsed items and stack objects use `jsGetKey`, and the index reads
       use `jsGetIndex` and `jsSetIndex`. `stacksOf` (`@internal`) reads `item._stacks` of a
       parsed item, also of a List item, through an `Expando` (Chart.js ADR 0027).
+      `_insertElements` keeps the old parsed item at each new index below the old length, as the
+      upstream `move` does.
       It is not a pure layer: it imports `core.animations`.
     - `core.typedRegistry.dart` (`TypedRegistry`) is a pure layer. `core.registry.dart`
       (`Registry` and the singleton `registry`) and `core.plugins.dart` (`PluginService` and the
@@ -153,19 +162,46 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       pure layer: it imports the platform layer.
     - `index.dart` has the exports of `src/core/index.ts`. `lib/src/index.dart` is the partial
       port of `src/index.ts`, with the four namespaces and `registerables`. The namespace
-      `controllers` has the controllers of the finished waves of phase 7 (wave 1: `BarController`).
-      Thus `flutter_test_config.dart` registers them with the built-in components.
+      `controllers` has the controllers of the finished waves of phase 7 (wave 1: `BarController`;
+      wave 2: `BubbleController`, `DoughnutController`, `LineController`, `PolarAreaController`
+      and `RadarController`). Thus `flutter_test_config.dart` registers them with the built-in
+      components.
   - `lib/src/controllers/`: the dataset controllers of phase 7. `index.dart` exports them
-    (`BarController` in wave 1). `controller.bar.dart` has `BarController` and its class value
-    `BarController.jsClass` (statics `id`, `defaults`, `overrides`). `getStackCount` and
-    `getStackIndex` are the `_getStackCount` and `_getStackIndex` of upstream with `@internal`,
-    because the spec reads them (Chart.js ADR 0012). A controller reads parsed items with
+    (`BarController` in wave 1; `BubbleController`, `DoughnutController`, `LineController`,
+    `PolarAreaController` and `RadarController` in wave 2). Each controller file has the
+    controller class and its class value `<Name>Controller.jsClass` (statics `id`, `defaults`,
+    `overrides`; the doughnut also `descriptors`). A controller reads parsed items with
     `jsGetKey`, `jsGetIndex` and `stacksOf`, and a raw option value stays `Object?` until its
     upstream operator (Chart.js ADR 0027). It reads the members of other modules through
     `lib/src/types/` (Chart.js ADR 0028). It casts only to a `types` interface or to a class of
-    its own library, at the upstream read. `getLabelAndValue` gives
-    `({Object? label, String value})`. The files are not pure layers: each imports
-    `core.datasetController`.
+    its own library, at the upstream read, and a `List` cast of a value that upstream reads as an
+    array. `getLabelAndValue` gives `({Object? label, String value})`. The files are not pure
+    layers: each imports `core.datasetController`.
+    - `controller.bar.dart`: `getStackCount` and `getStackIndex` are the `_getStackCount` and
+      `_getStackIndex` of upstream with `@internal`, because the spec reads them (Chart.js ADR
+      0012).
+    - `controller.line.dart`: `updateElements` reads each key of a parsed item once in a loop
+      pass (`vValue`, `iValue`), and it reads `prevParsed[iAxis]` at each pass, because the
+      scriptable options of the user run between two passes (the 3-read form of Chart.js ADR
+      0027). `update` writes `_chart`, `_datasetIndex`, `_decimated` and `points` into the line
+      by name (`types.PropertyAccess`), and `draw` casts the line to `types.LineElement`.
+    - `controller.bubble.dart`: the parsed radius goes to `_custom`. `resolveDataElementOptions`
+      copies the options with `copyOptions(values)..[r'$shared'] = false` (Chart.js ADR 0021 §3)
+      and adds the radius with `jsAdd`: a string radius joins, as upstream. `getMaxOverflow`
+      casts each data element to `types.PointElement` at `size`.
+    - `controller.doughnut.dart`: `overrides` holds the tear-offs of the private top-level legend
+      functions `_generateLabels` and `_onClick` (Chart.js ADR 0028 §6). `_onClick` gives the
+      index of the legend item to `toggleDataVisibility` through `_legendIndex`: a number for
+      the text of a number, else NaN. `controller.pie.dart` of wave 3 imports this file.
+    - `controller.polarArea.dart`: it casts the scale `r` to `types.RadialLinearScale` once
+      (`controller.polarArea.js:166`), and it ports the #12238 hunk with `== 0` and
+      `== 'angular'`. `overrides` holds the legend functions as tear-offs of top-level functions.
+      `parseObjectData` calls `parseObjectDataRadialScale` with `jsCall` and the controller as
+      `thisArg`.
+    - `controller.radar.dart`: the write `line.points = points` is a write by name through
+      `types.PropertyAccess`. The cast to `types.RadialLinearScale` stands in the loop of
+      `updateElements`, at `controller.radar.js:88`. The label of `getLabelAndValue` is the raw
+      label.
   - `lib/src/scales/`: the six scales of `scales/index.dart` and `scale.linearbase.dart`
     (`LinearScaleBase`: not exported, not registered). They are not pure layers: each imports
     `core.scale`. The value methods take any JS value (`Object?`). The category, linear and
@@ -199,8 +235,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `test/port/scales/scale_chart_harness.dart` and `scale_time_harness.dart` are helper
     libraries of the scale tests, not test files. `test/port/controllers/` has the controller
     reference tests and their harness `controller_chart_harness.dart` (a library).
-    `controller.bar_test.dart` compares the bar charts of
-    `tool/reference/controller_bar_reference.mjs` (data `controller_bar_reference.dart`).
+    `controller.<name>_test.dart` compares the charts of
+    `tool/reference/controller_<snake>_reference.mjs` (data `controller_<snake>_reference.dart`;
+    `<snake>` is `polar_area` for `polarArea`): bar, line, bubble, doughnut, polar area and radar.
     `test/port/canvas/path2d_record.dart` (the record form of `Path2D` arguments) and
     `test/support/jasmine.dart` (the Jasmine matchers and spies of the spec ports) are pure helper
     libraries. `test/tool/`: tests of the port tools.
@@ -546,7 +583,14 @@ are relative to `packages/flutter_d3_port/doc/`.
 - The test files of a controller unit register the controller in `main()`
   (`Chart.register([<Name>Controller.jsClass])`) until the integration agent of its wave adds the
   controller to the namespace `controllers` (Chart.js ADR 0030 §3 item 4). Then
-  `flutter_test_config.dart` registers it, and the line goes.
+  `flutter_test_config.dart` registers it, and the line goes. A test-only controller subclass
+  with its own id (the polar area subclass with option sharing) registers in the `setUp` of its
+  group and unregisters in the `tearDown`.
+- The JS reference charts get the `BasicPlatform` of Node.js, whose `updateConfig` writes
+  `animation: false` (`platform.basic.js:20-22`). The Dart harness gives the platform of
+  `platform.flutter.dart`, which keeps the option, as the DOM platform does. Thus a controller
+  generator with a case that needs the animation options (the doughnut and polar area `reset`
+  cases) puts the no-op `updateConfig` of `BasePlatform` on `BasicPlatform` first.
 - `toEqualOptions` reads the keys of an expected object with `jsObjectKeys`, as the upstream
   `for...in` with `hasOwnProperty` does. Thus it compares only the keys of the first scope of an
   expected resolver.
@@ -577,15 +621,20 @@ are relative to `packages/flutter_d3_port/doc/`.
   `test/port/core/*_reference.dart` (animation, interaction, layouts, scale, scale autoskip,
   dataset controller, registry, controller and date adapter), `test/port/scales/*_reference.dart`
   (the scale chart harness and the seven scales of phase 6), `test/port/theme/*_reference.dart`
-  (light and precedence) and `test/port/controllers/controller_<name>_reference.dart` (the
-  controllers of phase 7; wave 1: bar). They stop unless Node.js is an x64 build. The scale generators run a
+  (light and precedence) and `test/port/controllers/controller_<snake>_reference.dart` (the
+  controllers of phase 7: bar, line, bubble, doughnut, polar area and radar). They stop unless
+  Node.js is an x64 build. The scale generators run a
   build of Chart.js at the pinned commit (`dist/chart.js` of a clone outside the repository, the
   first argument or `CHARTJS_DIST`) through `scale_chart_common.mjs`. Its header gives the build
   steps. It stops unless the clone is at the `commit` of `tool/port_sources.yaml`, and it
   measures text in Liberation Sans 2.1.5 from the TTF tables.
   `tool/reference/controller_chart_common.mjs` is the shared code of the controller generators.
   It defines a recording `Path2D` before the dist loads. A comment line of a data file has at most
-  80 characters: the generator stops on a longer probe note.
+  80 characters: the generator stops on a longer probe note. `dartArgs` of
+  `scale_chart_common.mjs` applies the WebIDL `ToNumber` to the number arguments of the canvas
+  and `Path2D` calls (also `bezierCurveTo`, `quadraticCurveTo` and the first five arguments of
+  `arc`), as a browser does. A change of `dartArgs` runs each scale and controller generator
+  again, and the data of the generators whose arguments are numbers stays byte-identical.
   `date_adapter_reference.mjs` and the time-scale generators also need a `node_modules` folder
   with moment 2.29.4, moment-timezone 0.5.42 and chartjs-adapter-moment 1.0.1, and run with
   `TZ=UTC`. `date_adapter_reference.mjs` takes the folder as its argument. The time-scale

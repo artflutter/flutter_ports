@@ -1054,8 +1054,10 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     final innerRadius = jsToNumber(props['innerRadius']);
     final outerRadius = jsToNumber(props['outerRadius']);
     final circumference = props['circumference'];
+    // The JS `+` ([jsAdd]): a string `spacing` or `borderWidth` joins
+    // (`'5' + 1` is `'51'`), and the `/` applies `ToNumber`.
     final rAdjust =
-        (jsToNumber(_spacing(options)) + jsToNumber(_borderWidth(options))) / 2;
+        jsToNumber(jsAdd(_spacing(options), _borderWidth(options))) / 2;
     final circumference_ = jsToNumber(
       valueOrDefault<Object?>(circumference, endAngle - startAngle),
     );
@@ -1100,6 +1102,11 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   /// the `offset` and `spacing` options. Dart `null` for [useFinalPosition]
   /// stands for JS `undefined`. A property in the `undefined` state, and an
   /// absent option, give NaN.
+  ///
+  /// The two options enter the sum through the JS `+` ([jsAdd]): a string
+  /// `spacing` or `offset` joins (`50.75 + '5'` is `'50.755'`), and the `/`
+  /// applies `ToNumber` to the result. The center is the tooltip position
+  /// and the point of the `nearest` and `index` hit modes.
   @override
   ElementPoint getCenterPoint([
     bool? useFinalPosition,
@@ -1118,10 +1125,12 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     final endAngle = jsToNumber(props['endAngle']);
     final innerRadius = jsToNumber(props['innerRadius']);
     final outerRadius = jsToNumber(props['outerRadius']);
-    final offset = jsToNumber(_offset(options));
-    final spacing = jsToNumber(_spacing(options));
+    final offset = _offset(options);
+    final spacing = _spacing(options);
     final halfAngle = (startAngle + endAngle) / 2;
-    final halfRadius = (innerRadius + outerRadius + spacing + offset) / 2;
+    final halfRadius =
+        jsToNumber(jsAdd(jsAdd(innerRadius + outerRadius, spacing), offset)) /
+        2;
     return ElementPoint(
       x + math.cos(halfAngle) * halfRadius,
       y + math.sin(halfAngle) * halfRadius,

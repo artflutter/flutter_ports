@@ -579,6 +579,69 @@ void main() {
     });
   });
 
+  // A string `radius` or `hitRadius` joins in the JS `+` of
+  // element.point.ts:15, :65 and :105. A bubble makes a string radius from
+  // a string `r` (controller.bubble.js:165). The expected values come from
+  // the pinned build in Node.js v24.12.0 on x64 (probe point_radius.mjs of
+  // phase7/review/wave2/W2-int-report.md).
+  group('string options join in the JS +', () {
+    // (options, getRange, the distances of inRange(d, 0) that hit, the
+    // distances of inXRange(d) that hit), for the distances 5, 9, 50, 100,
+    // 106, 108 and 300 from a point at (0, 0).
+    final cases = <(Map<String, Object?>, Object, Set<int>, Set<int>)>[
+      (
+        {'radius': '07', 'hitRadius': 1},
+        '071',
+        {5, 9, 50, 100, 106},
+        {5, 9, 50},
+      ),
+      ({'radius': 7, 'hitRadius': '1'}, '71', {5, 9}, {5, 9, 50}),
+      ({'radius': '2', 'hitRadius': '3'}, '23', {5, 9}, {5, 9}),
+      ({'radius': 3, 'hitRadius': 1}, 4.0, <int>{}, <int>{}),
+      ({'radius': null, 'hitRadius': '4'}, 'null4', <int>{}, <int>{}),
+    ];
+    const distances = [5, 9, 50, 100, 106, 108, 300];
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      group(name, () {
+        for (final (options, range, hits, xHits) in cases) {
+          test('$options', () {
+            final point = PointElement({
+              'x': 0.0,
+              'y': 0.0,
+              'options': form(options),
+            });
+            expect(point.getRange(), range);
+            for (final d in distances) {
+              expect(point.inRange(d.toDouble(), 0), hits.contains(d));
+              expect(point.inXRange(d.toDouble()), xHits.contains(d));
+              expect(point.inYRange(d.toDouble()), xHits.contains(d));
+            }
+          });
+        }
+      });
+    }
+
+    // `size` (element.point.ts:84-86): `radius && options.borderWidth || 0`
+    // keeps a string `borderWidth`, and `radius + borderWidth` joins.
+    // Probe point_size.mjs of phase7/review/wave2/W2-int-report.md.
+    final sizes = <(Map<String, Object?>, double)>[
+      ({'radius': 3, 'borderWidth': '1'}, 62),
+      ({'radius': '3', 'borderWidth': 1}, 8),
+      ({'radius': 3, 'hoverRadius': '5', 'borderWidth': '2'}, 104),
+      ({'radius': 0, 'borderWidth': '2'}, 0),
+      ({'radius': 3, 'borderWidth': null}, 6),
+      ({'radius': 3, 'borderWidth': 'a'}, double.nan),
+    ];
+    for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
+      for (final (options, size) in sizes) {
+        test('$name size $options', () {
+          final point = PointElement({'options': form(options)});
+          expect(point.size(), size.isNaN ? isNaN : size);
+        });
+      }
+    }
+  });
+
   group('draw', () {
     for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
       group(name, () {

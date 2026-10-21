@@ -204,6 +204,19 @@ Changes to the cited files:
   at the pin. These changes are in comments, so no cited line moves (`canvas_demo.dart:125`
   stays). This plan cites no line of `helpers.dom.dart`, and the cuts do not remove its code.
   Thus the references, the inventory (§1.1) and the estimates do not change. No trigger occurred.
+- 2026-10-21, the integration of wave 2 of phase 7. `lib/src/elements/element.arc.dart` adds the
+  options of `inRange` (`rAdjust`) and of `getCenterPoint` with the JS `+` (`jsAdd`), as
+  upstream. `test/port/elements/element.arc_test.dart`, which §3.5 cites for its `_Canvas` fake,
+  gets two groups `string options join in the JS +`. The fake does not change, and the draw path
+  of the arc does not change. porting-flow.md gets text in §2.21, §3 and §5. The text of §2.2, of
+  §2.7 and of the cited rows of the harness table of §3 does not change. The cited rows of the
+  harness table are now at lines 690-691 (§3.7 gives 610-611, the lines of phase 6). The
+  `parity.md` row numbers of this plan do not move: the new controller rows replace rows that
+  were there, and the new port-only rows are at the end of the table. The two `helpers.dom` event
+  cases of §3.6 ("Should not return NaN with a custom event" and "consistent results") pass since
+  the lift of wave 1 (L1). This plan cites no line of `element.arc.dart`, and the cuts do not
+  remove its code. Thus the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
+  estimates do not change. No trigger occurred.
 
 ## 1. Why
 

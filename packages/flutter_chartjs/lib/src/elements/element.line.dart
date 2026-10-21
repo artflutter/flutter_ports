@@ -793,8 +793,12 @@ class LineElement extends Element
   ///
   /// Each point is a [SplinePoint] (`types.PointElement`): `helpers.curve`
   /// writes its control points.
+  ///
+  /// Dart `null` for [chartArea] is JS `undefined` (no layout yet).
+  /// `_updateBezierControlPoints` then throws a [TypeError] only when it caps
+  /// a control point (`capBezierPoints`), as upstream does.
   @override
-  void updateControlPoints(ChartArea chartArea, [String? indexAxis]) {
+  void updateControlPoints(ChartArea? chartArea, [String? indexAxis]) {
     final options = this.options;
     if ((jsTruthy(_tension(options)) ||
             _cubicInterpolationMode(options) == 'monotone') &&

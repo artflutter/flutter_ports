@@ -1,0 +1,287 @@
+// Original code, not ported from Chart.js: radar controller reference tests.
+@TestOn('vm')
+library;
+
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs/src/core/core.config.dart' show themeConfigKey;
+import 'package:flutter_chartjs/src/core/core.controller.dart';
+import 'package:flutter_chartjs/src/elements/element.line.dart';
+import 'package:flutter_chartjs/src/helpers/helpers.collection.dart'
+    show notifyArrayListeners;
+import 'package:flutter_chartjs/src/js/js_array.dart' show jsSplice;
+import 'package:flutter_chartjs/src/js/js_object.dart';
+import 'package:flutter_chartjs/src/js/js_undefined.dart';
+import 'package:flutter_chartjs/src/theme/compile.dart';
+import 'package:flutter_chartjs/src/theme/presets.dart';
+import 'package:flutter_chartjs/src/types/basic.dart';
+import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:flutter_test/flutter_test.dart';
+
+import '../scales/scale_chart_harness.dart';
+import 'controller_chart_harness.dart';
+import 'controller_radar_reference.dart';
+
+// The port-only reference tests of lib/src/controllers/controller.radar.dart
+// (Chart.js ADR 0030). The spec port is test/specs/controller.radar_test.dart.
+//
+// The reference group compares real radar charts with the charts of
+// tool/reference/controller_radar_reference.mjs: a build of the pinned
+// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0010), with a mock
+// context that measures text in Liberation Sans 2.1.5. Each chart comes from
+// acquireChart in a testWidgets case (Chart.js ADR 0022). The case runs its
+// steps and compares the observations, the hit queries and the draw calls
+// with the element draws (controller_chart_harness.dart).
+//
+// The 8 cases of Chart.js ADR 0030, section 7 run two times: unthemed, and
+// with the light preset (theming.md section 8 test 3). The cases whose names
+// start with `parsed:` (Chart.js ADR 0027, section 9) or `interfaces:`
+// (Chart.js ADR 0028, section 8) run unthemed only. The groups `parsed
+// data` and `interfaces` hold the pin tests that need no generated value.
+//
+// flutter_test_config.dart registers the radar controller with the
+// built-in components before main() (Chart.js ADR 0030, section 3 item 4).
+
+/// The probes of the key `extra` of the generator, with the same bodies.
+final Map<String, Object? Function(Chart chart)> _extras = {
+  'pointAngles': _pointAngles,
+};
+
+/// The probe `pointAngles` of the generator: for each dataset, the `angle`
+/// of each point.
+Object? _pointAngles(Chart chart) => [
+  for (var i = 0; i < _datasetCount(chart); i++)
+    [
+      for (final element in chart.getDatasetMeta(i.toDouble()).data)
+        (element as types.ElementPropertyRead)['angle'],
+    ],
+];
+
+/// `chart.data.datasets.length`.
+int _datasetCount(Chart chart) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>).length;
+
+/// The config of a radar chart with the labels [labels] and one dataset
+/// with [data] and the keys of [extra].
+AnyObject _radar(
+  List<Object?> data, {
+  List<Object?> labels = const ['a', 'b', 'c'],
+  AnyObject extra = const {},
+  AnyObject? options,
+}) => <String, Object?>{
+  'type': 'radar',
+  'data': <String, Object?>{
+    'labels': <Object?>[...labels],
+    'datasets': <Object?>[
+      <String, Object?>{
+        'data': <Object?>[...data],
+        ...extra,
+      },
+    ],
+  },
+  'options': ?options,
+};
+
+/// The data List of the dataset 0 of [chart].
+List<Object?> _data0(Chart chart) =>
+    jsGet(jsGetIndex(jsGet(chart.data, 'datasets'), 0), 'data')!
+        as List<Object?>;
+
+/// Expects `line.points` of the dataset 0 of [chart] to hold the elements
+/// of `meta.data` in the same order (Chart.js ADR 0028, section 3).
+void _expectLinePoints(Chart chart, int length) {
+  final meta = chart.getDatasetMeta(0);
+  final line = meta.dataset! as LineElement;
+  expect(meta.data.length, length);
+  expect(line.points.length, meta.data.length);
+  for (var i = 0; i < meta.data.length; i++) {
+    expect(identical(line.points[i], meta.data[i]), isTrue, reason: '$i');
+  }
+}
+
+void main() {
+  testReferenceOrigin(
+    node: controllerRadarReferenceNode,
+    arch: controllerRadarReferenceArch,
+    dist: controllerRadarReferenceDist,
+    commit: controllerRadarReferenceCommit,
+  );
+  testReferenceWidths(controllerRadarReferenceWidths);
+
+  test('the reference has the 8 cases of Chart.js ADR 0030 first', () {
+    final names = [for (final c in controllerRadarReference) c.name];
+    bool prefixed(String n) =>
+        n.startsWith('parsed:') || n.startsWith('interfaces:');
+    expect(names.first, 'default');
+    expect(names.length, greaterThan(8));
+    expect(names.take(8).where(prefixed), isEmpty);
+    expect(names.skip(8).where((n) => !prefixed(n)), isEmpty);
+  });
+
+  testControllerChartCases(controllerRadarReference, extras: _extras);
+
+  group('theming.md §8 test 3: the light preset', () {
+    testControllerChartCases(
+      controllerRadarReference,
+      extras: _extras,
+      theme: compileChartTheme(ChartThemes.light),
+    );
+
+    testWidgets('the light preset leaves no stale scale key', (tester) async {
+      final snapshot =
+          jsonDecode(
+                File(
+                  'test/port/theme/light_snapshot.json',
+                ).readAsStringSync(),
+              )
+              as Map<String, Object?>;
+      final config =
+          copyReference(controllerRadarReference.first.config)! as AnyObject;
+      config[themeConfigKey] = compileChartTheme(ChartThemes.light);
+      expectNoStaleScaleKeys(acquireChart(config), snapshot);
+    });
+  });
+
+  // The pin tests of the parsed-data spec, section 7.3. The generated cases
+  // `parsed: ...` give the upstream values of the same configs.
+  group('parsed data', () {
+    testWidgets('parsing false with numbers gives NaN points that skip', (
+      tester,
+    ) async {
+      final chart = acquireChart(
+        _radar(
+          const [5.0, 3.0, 1.0],
+          extra: const <String, Object?>{'parsing': false},
+        ),
+      );
+      final meta = chart.getDatasetMeta(0);
+      expect(meta.data, hasLength(3));
+      for (final point in meta.data) {
+        final read = point as types.ElementPropertyRead;
+        expect(point.x, isNaN);
+        expect(point.y, isNaN);
+        expect(read['skip'], isTrue);
+      }
+    });
+
+    testWidgets('parsing false with a null item throws a TypeError', (
+      tester,
+    ) async {
+      expect(
+        () => acquireChart(
+          _radar(
+            const [
+              <String, Object?>{'r': 5.0},
+              null,
+              <String, Object?>{'r': 1.0},
+            ],
+            extra: const <String, Object?>{'parsing': false},
+          ),
+        ),
+        throwsA(isA<TypeError>()),
+      );
+    });
+
+    testWidgets('a label index past the end gives the label undefined', (
+      tester,
+    ) async {
+      final chart = acquireChart(
+        _radar(const [1.0, 2.0], labels: const ['a']),
+      );
+      final controller = chart.getDatasetMeta(0).controller!;
+      expect(controller.getLabelAndValue(0).label, 'a');
+      expect(identical(controller.getLabelAndValue(1).label, undefined), true);
+      expect(controller.getLabelAndValue(1).value, '2');
+    });
+  });
+
+  // The pin tests of the interfaces spec, section 7.3.
+  group('interfaces', () {
+    group('line.points', () {
+      testWidgets('after chart.update()', (tester) async {
+        final chart = acquireChart(_radar(const [10.0, 20.0, 5.0]))..update();
+        _expectLinePoints(chart, 3);
+      });
+
+      testWidgets('after a push and chart.update()', (tester) async {
+        final chart = acquireChart(_radar(const [10.0, 20.0, 5.0]));
+        final data = _data0(chart)..add(8.0);
+        notifyArrayListeners(data, 'push', [8.0]);
+        chart.update();
+        _expectLinePoints(chart, 4);
+      });
+
+      testWidgets('after a splice and chart.update()', (tester) async {
+        final chart = acquireChart(_radar(const [10.0, 20.0, 5.0, 8.0]));
+        final data = _data0(chart);
+        jsSplice(data, 1, 2, [7.0]);
+        notifyArrayListeners(data, 'splice', [1.0, 2.0, 7.0]);
+        chart.update();
+        _expectLinePoints(chart, 3);
+        final meta = chart.getDatasetMeta(0);
+        expect(meta.parsed, [
+          {'r': 10.0},
+          {'r': 7.0},
+          {'r': 8.0},
+        ]);
+      });
+    });
+
+    testWidgets('getLabelAndValue gives the raw label', (tester) async {
+      final lines = <Object?>['line 1', 'line 2'];
+      final chart = acquireChart(
+        _radar(
+          const [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+          labels: [lines, 5.0, 0.0, null, 'e'],
+        ),
+      );
+      final controller = chart.getDatasetMeta(0).controller!;
+      final labels = [
+        for (var i = 0; i < 6; i++)
+          controller.getLabelAndValue(i.toDouble()).label,
+      ];
+      expect(identical(labels[0], lines), isTrue);
+      expect(labels[1], 5.0);
+      expect(labels[2], 0.0);
+      expect(labels[3], isNull);
+      expect(labels[4], 'e');
+      expect(identical(labels[5], undefined), isTrue);
+    });
+
+    testWidgets('an r scale that is not radial and no data: update does not '
+        'throw', (tester) async {
+      final chart = acquireChart(
+        _radar(
+          const [],
+          labels: const [],
+          options: <String, Object?>{
+            'scales': <String, Object?>{
+              'r': <String, Object?>{'type': 'linear'},
+            },
+          },
+        ),
+      );
+      expect(chart.update, returnsNormally);
+    });
+
+    testWidgets('an r scale that is not radial with data: update throws a '
+        'TypeError', (tester) async {
+      expect(
+        () => acquireChart(
+          _radar(
+            const [1.0, 2.0],
+            labels: const ['a', 'b'],
+            options: <String, Object?>{
+              'scales': <String, Object?>{
+                'r': <String, Object?>{'type': 'linear'},
+              },
+            },
+          ),
+        ),
+        throwsA(isA<TypeError>()),
+      );
+    });
+  });
+}

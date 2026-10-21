@@ -417,4 +417,60 @@ void main() {
       );
     });
   });
+
+  // `area` undefined: the chart area of a chart whose plugin cancels the
+  // first layout (controller.line.js:140). `_isPointInArea` gives true
+  // for each point (`!area`, helpers.canvas.ts:324), and the first
+  // `capControlPoint` reads `area.left` (helpers.curve.ts:173, :177).
+  group('_updateBezierControlPoints without an area', () {
+    test('capBezierPoints with two points throws a TypeError', () {
+      expect(
+        () => updateBezierControlPoints(
+          _points(),
+          {'tension': 0.4, 'capBezierPoints': true},
+          null,
+          false,
+          'x',
+        ),
+        throwsA(isA<TypeError>()),
+      );
+    });
+
+    test('capBezierPoints with one point does not read the area', () {
+      final points = [_P(10, 20)];
+      updateBezierControlPoints(
+        points,
+        {'tension': 0.4, 'capBezierPoints': true},
+        null,
+        false,
+        'x',
+      );
+      expect(points, _hasControlPoints([(10, 20, 10, 20)]));
+    });
+
+    test('without capBezierPoints, the area is not read', () {
+      final capped = _points();
+      updateBezierControlPoints(
+        capped,
+        {'tension': 0.4},
+        _area,
+        false,
+        'x',
+      );
+      final points = _points();
+      updateBezierControlPoints(
+        points,
+        {'tension': 0.4},
+        null,
+        false,
+        'x',
+      );
+      for (var i = 0; i < points.length; i++) {
+        expect(
+          [points[i].cp1x, points[i].cp1y, points[i].cp2x, points[i].cp2y],
+          [capped[i].cp1x, capped[i].cp1y, capped[i].cp2x, capped[i].cp2y],
+        );
+      }
+    });
+  });
 }

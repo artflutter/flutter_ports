@@ -1975,6 +1975,12 @@ count of processes below 0.
 - The 2-read form is the one-read rule of the line and scatter loops (ADR 0027 §8): 22 to 24 ns
   (AOT) and 33 to 36 ns (wasm) less for each point, about 0.47 ms (AOT) and 0.7 ms (wasm) for each
   update of 20000 points. This is a calculation from the microbenchmark, not a frame figure.
+- Wave 2 result: `controller.line.dart` has the 3-read form, 15 to 17 ns (AOT) and 23 to 24 ns
+  (wasm) less for each point than the 5-read form. It keeps `vValue` and `iValue` in a loop pass,
+  and it reads `prevParsed[iAxis]` at each pass. The local of the 2-read form crossed the
+  scriptable options of the user (`resolveDataElementOptions` and the animated `updateElement`),
+  which can write the parsed item: the review U-line-R2 showed another `stop` value with such an
+  option. The 2-read form waits for ADR 0027 Open 4 (section 13.7 item 6). No new measurement.
 
 The read `array[i]` with a number index, in ns for each read:
 
@@ -2081,6 +2087,12 @@ for each update of a dataset, against 1.1 ns and 0.6 ns for typed setters. The r
 `ChartMeta.total` costs 0.7 ns. A read by name through the extras Map of `ChartMeta` costs
 11.2-11.7 ns (AOT) and 18.1-18.7 ns (wasm).
 
+### 13.3 The fixture runner (Chart.js ADR 0029)
+
+- The `refresh` field of the animator (unit A1, `harness-method-fields`) is one field call for each
+  frame: AOT 0.82-0.89 ns for the field call against 0.82-0.85 ns for the method call, dart2wasm
+  0.337 ns against 0.336 ns (ADR 0029 Evidence E6). No frame effect. A1 took no new measurement.
+
 ### 13.4 The writable `DatasetController.ctx` (Chart.js ADR 0030)
 
 - The cost of a writable field (ADR 0030 Evidence E3): AOT, 1.835 ns for each element draw with
@@ -2090,6 +2102,11 @@ for each update of a dataset, against 1.1 ns and 0.6 ns for typed setters. The r
   7.3 % (8,455,931 to 9,069,771 bytes). The hit items of a controller observation are one JSON line
   for each point: a probe of 3 bar cases took 1,521,132 bytes with the items as a Dart literal and
   495,325 bytes as JSON lines. `controller_bar_reference.dart` has 50 cases in 1,786,242 bytes.
+  Wave 2: `controller_line_reference.dart` 32 cases in 1,576,533 bytes,
+  `controller_bubble_reference.dart` 18 cases in 1,148,668 bytes,
+  `controller_doughnut_reference.dart` 27 cases in 1,137,577 bytes,
+  `controller_polar_area_reference.dart` 44 cases in 1,600,128 bytes and
+  `controller_radar_reference.dart` 16 cases in 1,029,531 bytes. Each file is below 2.5 MB.
 - The bar `draw` reads `ctx` for each bar, as `controller.bar.js:677`. A read before the loop is
   0.36 ns faster for each bar on AOT and 0.25 ns slower on wasm (ADR 0030 Open 3, section 13.7).
 
@@ -2120,3 +2137,14 @@ for each update of a dataset, against 1.1 ns and 0.6 ns for typed setters. The r
    on the Pixel 8a that shows the read in the loop.
 5. **The write path of `stacksOf`** (section 13.1): only if the maintainer wants it measured again,
    for example on the Pixel 8a in step 7.
+6. **The 2-read form of the line loop** (ADR 0027 Open 4, section 13.1). A form with the local of
+   the previous pass only on the paths where no user code runs between the reads (a direct update
+   with shared options) gives the upstream result and keeps the 2-read gain there. It needs a
+   microbenchmark (ADR 0027 §8 condition 3). The scatter loop (`controller.scatter.js:124-148`) has
+   the same item.
+7. **Wave 2 forms of the step 7 list** (item 1): the writes by name into the point of a direct
+   update (`_setProperty` of `controller.line.dart`), the option copy for each bubble item
+   (`controller.bubble.js:46-78`, `:151-168`), the cast of the scale `r` for each radar point
+   (`controller.radar.dart`, IV §4.6), and the `jsCall` of `parseObjectDataRadialScale` with 5
+   arguments in the radar and polar area `parseObjectData` (`Function.apply` on the VM, once for
+   each parse call). No unit measured them.

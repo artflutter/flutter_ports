@@ -20,7 +20,9 @@ Current step of the Method: 3 (Port workflow), wave 1.
 | Scout: type members and dependencies of each controller | done | `phase7/members-cartesian.md`, `phase7/members-radial.md` | 2026-10-21 |
 | Design panels: ADRs 0027-0031 | done | `phase7/design/<topic>/`, `phase7/design/work-plan.md`, `phase7/design/consistency.md`, `adr/0027`-`0031` | 2026-10-21: consistency critic |
 | Wave 1: S1, S2, S3, U0, U-bar, W1-int (`phase7/design/work-plan.md` §1) | done | `phase7/review/wave1/W1-int-report.md` lists the files | 2026-10-21: full gate, reuse lint, `gallery:build:web`, `gallery:build:android`. `controller.bar` spec 51/55 pass, 0 fail. Lift check: 62 of 122 wave 1 records pass, the other 60 are the L1 list |
-| Wave 2: U-line, U-bubble, U-doughnut, U-polarArea, U-radar, L1, A1, W2-int (work plan §2) | not started | see the work plan | — |
+| Wave 2: U-line, U-bubble, U-doughnut, U-polarArea, U-radar, L1, A1, W2-int (work plan §2) | done | `phase7/review/wave2/W2-int-report.md` lists the files | 2026-10-21: full gate, reuse lint, both gallery builds. `test:cases` 572 passed, 0 failed. Lift check wave 1: 122/122 |
+| Wave 3: U-scatter, U-pie, L2, X-fix (D11), W3-int (work plan §3) | not started | see the work plan | — |
+| Push of `4eda459`, `c802f9b`, `436663f` | done 2026-10-21. CI run 39534455808 of `436663f`: success | — | pre-push: dart2js and dart2wasm in the VS Code integrated browser (flutter_chartjs 3479 pass, chartjs_test_utils 49 pass), gallery wasm loads, diagnostics clean |
 
 ## Decisions
 
@@ -32,6 +34,9 @@ Current step of the Method: 3 (Port workflow), wave 1.
 - D7 (2026-10-21): `jsToString` gives the `Date.prototype.toString` text without the zone name. `lib/src/js/` is port-only, so no `differences.md` row (Chart.js ADR 0009: display text only). Record: ADR 0027.
 - D8 (2026-10-21): the hit items of the controller reference data are JSON text lines, not Dart literals: 23 bar cases need about 3.8 MB as text and about 11.7 MB as literals. The items compare exactly. Record: ADR 0030 §3 item 6.
 - D9 (2026-10-21): U0 result of TS §1.2 item 5: the 8 phase 6 generators with `registerPhase7` give byte-identical data, so they keep `registerPhase6`.
+- D10 (2026-10-21), replaces D6: line and scatter keep the parsed values only inside one pass of `updateElements` (the 3-read form). The U-line review proved that a scriptable option can write `ctx.parsed` between two passes, so the cross-pass local changes the segments. Record: ADR 0027 §8 and Open 4 (W3-int aligns the text).
+- D11 (2026-10-21): a fix unit X-fix in wave 3 corrects the NaN reset position of a new radar or polar area point (upstream `undefined`), the `TypeError` of a string `data` in `_dataCheck`, and the legend `onClick` key after an insert (a fix, or a `DIVERGES` row with a phase 8 re-check). Each with a probe.
+- D12 (2026-10-21): U-pie takes the axis-id rule of the doughnut tests. W3-int removes the pie skip of `controller.doughnut.tests.js:4`, moves the IV §7.1 test to a polar area chart and aligns the proposed ADRs 0027-0031 and the specs with the code.
 - D2 (2026-10-21): the Design step has five panels, one ADR (proposed) each: 0027 parsed data of the controllers, 0028 controller interfaces and values, 0029 fixture smoke runner, 0030 test strategy, 0031 gallery. Reason: the open choices of `members-*.md` and of the prompt group into these five topics.
 
 ## Inputs
@@ -64,4 +69,4 @@ Run a generator with
 
 ## Next action
 
-Run wave 2 of `phase7/design/work-plan.md` §2 (U-line, U-bubble, U-doughnut, U-polarArea, U-radar, L1 and A1 in parallel, then W2-int). A panel whose `phase7/design/<topic>/spec.md` exists is done.
+Run wave 3 of `phase7/design/work-plan.md` §3 (U-scatter, U-pie, L2 and X-fix in parallel, then W3-int), with the decisions D10-D12. A panel whose `phase7/design/<topic>/spec.md` exists is done.

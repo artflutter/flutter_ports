@@ -1838,10 +1838,22 @@ class DatasetController
     final end = start + count;
     double i;
 
-    // `arr.length += count` and the move of the items from `start` to
-    // `end`. The items in `start..end` are replaced next.
+    // `arr.length += count` and the loop of :1001-1003: the items from
+    // `start` move to `end`, and the indexes in `start..end` keep their old
+    // items. An index in `start..end` at or past the old length is a hole,
+    // [filler]. The new elements replace the items of `data` next. `parse`
+    // reads the old parsed item of an index below the old length through
+    // the context of an option, as upstream does.
     void move<T>(List<T> arr, T filler) {
-      arr.insertAll(start.toInt(), List<T>.filled(count.toInt(), filler));
+      final from = start.toInt();
+      final oldLength = arr.length;
+      arr.insertAll(
+        from,
+        List<T>.generate(
+          count.toInt(),
+          (k) => from + k < oldLength ? arr[from + k] : filler,
+        ),
+      );
     }
 
     move<types.Element>(data, _hole);

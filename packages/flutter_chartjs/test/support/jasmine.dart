@@ -541,7 +541,7 @@ final class _LineSpy extends LineElement {
   }
 
   @override
-  void updateControlPoints(ChartArea chartArea, [String? indexAxis]) {
+  void updateControlPoints(ChartArea? chartArea, [String? indexAxis]) {
     updates.add([chartArea, indexAxis], object: this);
     if (callThrough) super.updateControlPoints(chartArea, indexAxis);
   }

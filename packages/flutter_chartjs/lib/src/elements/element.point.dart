@@ -56,8 +56,10 @@ bool _inRange(
   final options = el.options;
   final value = jsToNumber(el.getProps([axis], useFinalPosition)[axis]);
 
+  // `options.radius + options.hitRadius` is the JS `+`: a string option
+  // joins (`'07' + 1` is `'071'`). The `<` applies `ToNumber` to the sum.
   return ((pos ?? 0) - value).abs() <
-      jsToNumber(_radius(options)) + jsToNumber(_hitRadius(options));
+      jsToNumber(jsAdd(_radius(options), _hitRadius(options)));
 }
 
 /// The option `radius` of [options]: [PointOptions.radiusValue] for typed
@@ -346,10 +348,11 @@ class PointElement extends Element
     final props = getProps(const ['x', 'y'], useFinalPosition);
     final x = jsToNumber(props['x']);
     final y = jsToNumber(props['y']);
+    // `options.hitRadius + options.radius` is the JS `+`: a string option
+    // joins (`1 + '07'` is `'107'`). `Math.pow` applies `ToNumber` to the
+    // sum.
     return (jsSquare((mouseX ?? 0) - x) + jsSquare((mouseY ?? 0) - y)) <
-        jsSquare(
-          jsToNumber(_hitRadius(options)) + jsToNumber(_radius(options)),
-        );
+        jsSquare(jsToNumber(jsAdd(_hitRadius(options), _radius(options))));
   }
 
   /// element.point.ts:68 `inXRange(mouseX, useFinalPosition?)`.
@@ -390,7 +393,8 @@ class PointElement extends Element
   /// no argument. A Map is always truthy. The option functions give JS
   /// `undefined` for an absent key, and [jsOrZero] applies the `|| 0` and
   /// the `ToNumber` of the arithmetic. `|| 0` gives 0 for JS `undefined` and
-  /// for JS `null` (Chart.js ADR 0017, section 8).
+  /// for JS `null` (Chart.js ADR 0017, section 8). A string `borderWidth`
+  /// joins in the JS `+` of element.point.ts:86.
   @override
   double size([AnyObject? options]) {
     // Upstream reassigns its parameter.
@@ -401,10 +405,18 @@ class PointElement extends Element
       radius,
       jsTruthy(radius) ? jsOrZero(_hoverRadius(options)) : 0,
     );
-    final borderWidth = jsTruthy(radius)
-        ? jsOrZero(_borderWidth(options))
-        : 0.0;
-    return (radius + borderWidth) * 2;
+    // `radius && options.borderWidth || 0` keeps the raw option value, and
+    // `(radius + borderWidth) * 2` is the JS `+` ([jsAdd]): a string
+    // `borderWidth` joins (`3 + '1'` is `'31'`), and the `*` applies
+    // `ToNumber`.
+    final Object? borderWidth;
+    if (jsTruthy(radius)) {
+      final value = _borderWidth(options);
+      borderWidth = jsTruthy(value) ? value : 0.0;
+    } else {
+      borderWidth = 0.0;
+    }
+    return jsToNumber(jsAdd(radius, borderWidth)) * 2;
   }
 
   /// element.point.ts:89 `draw(ctx, area)`.
@@ -448,11 +460,14 @@ class PointElement extends Element
   /// Upstream takes no argument. `core.interaction.js:54` calls it with the
   /// axis. [axis] has no effect, as JavaScript ignores an extra argument
   /// (Chart.js ADR 0017, section 1).
+  ///
+  /// The result is the JS `+` of the two options ([jsAdd]): a `double`, or a
+  /// `String` when an option is a string (`'07' + 1` is `'071'`).
   @override
-  double getRange([String? axis]) {
+  Object getRange([String? axis]) {
     final options = this.options ?? const <String, Object?>{};
     // @ts-expect-error Fallbacks should never be hit in practice
-    return jsToNumber(_radius(options)) + jsToNumber(_hitRadius(options));
+    return jsAdd(_radius(options), _hitRadius(options));
   }
 
   /// The [DrawPointOptions] of [options]: [options] itself for a

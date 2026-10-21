@@ -11,6 +11,8 @@ import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/jasmine.dart';
+
 // The spec reads Chart.registry and Chart.defaults, the static members
 // `Chart.registry` and `Chart.defaults` of core.controller.dart. The
 // harness registers the built-in scales before `main()`
@@ -26,10 +28,10 @@ import 'package:flutter_test/flutter_test.dart';
 // legend of phase 8: the legend changes the top of the chart area. The
 // other cases give the same values without the legend.
 //
-// Two skipped cases keep their bodies (Chart.js ADR 0025): they give a
-// label string to `getPixelForValue` (scale.category.tests.js:247 and
-// :534). When phase 7 removes their skips, each one becomes a
-// `testWidgets` case with the same body.
+// Two cases give a label string to `getPixelForValue` (Chart.js ADR 0025,
+// scale.category.tests.js:247 and :534). The case of :534 is a
+// `testWidgets` case. The case of :247 keeps its body in a skipped `test`
+// until its controller comes.
 //
 // The spec forms:
 // - `chart.scales.x` is `chart.scales['x']!`.
@@ -40,6 +42,8 @@ import 'package:flutter_test/flutter_test.dart';
 // - `toEqual` of an object compares the keys and values. Jasmine compares
 //   functions by identity. A `JsFunction` has the identity equality of
 //   Dart.
+// - `toEqual` of a number is `jasmineEquals`: Jasmine `eq` makes `0` and
+//   `-0` different, and Dart `==` makes them equal.
 // - `toBeLessThan` and `toBeGreaterThan` are `lessThan` and `greaterThan`.
 //
 // The helper `getLabels(scale)` (scale.category.tests.js:1-3) comes with the
@@ -186,10 +190,40 @@ void main() {
       skip: 'blocked: plugin.legend',
     );
 
-    test(
+    testWidgets(
       'Should get the correct pixel for an object value in a bar chart',
-      () {},
-      skip: 'blocked: controller.bar',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'bar',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'xAxisID': 'x',
+                'yAxisID': 'y',
+                'data': <Object?>[
+                  <String, Object?>{'x': 0, 'y': 10},
+                  <String, Object?>{'x': 1, 'y': 5},
+                  <String, Object?>{'x': 2, 'y': 0},
+                  <String, Object?>{'x': 3, 'y': 25},
+                  <String, Object?>{'x': 0, 'y': 78},
+                ],
+              },
+            ],
+            'labels': <Object?>[0, 1, 2, 3],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+              'y': <String, Object?>{'type': 'linear'},
+            },
+          },
+        });
+
+        final xScale = chart.scales['x']!;
+        expect(xScale.getPixelForValue(0), toBeCloseToPixel(89));
+        expect(xScale.getPixelForValue(3), toBeCloseToPixel(451));
+        expect(xScale.getPixelForValue(4), toBeCloseToPixel(572));
+      },
     );
 
     test(
@@ -199,10 +233,9 @@ void main() {
       skip: 'blocked: plugin.legend',
     );
 
-    // Phase 7 makes this case a `testWidgets` case with the same body.
-    test(
+    testWidgets(
       'Should be consistent on pixels and values with autoSkipped ticks',
-      () {
+      (tester) async {
         final labels = <Object?>[];
         for (var i = 0; i < 50; i++) {
           labels.add('very long label $i');
@@ -226,13 +259,12 @@ void main() {
         for (var i = 0; i < 50; i++) {
           final x2 = scale.getPixelForValue(labels[i]);
           final x3 = scale.getPixelForValue(i);
-          expect(x2, x3);
+          expect(x2, jasmineEquals(x3));
           expect(x2, greaterThan(x));
           expect(scale.getValueForPixel(x2), i);
           x = x2;
         }
       },
-      skip: 'blocked: controller.bar',
     );
 
     test(

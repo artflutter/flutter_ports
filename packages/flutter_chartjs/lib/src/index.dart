@@ -25,6 +25,11 @@
 library;
 
 import 'package:flutter_chartjs/src/controllers/controller.bar.dart';
+import 'package:flutter_chartjs/src/controllers/controller.bubble.dart';
+import 'package:flutter_chartjs/src/controllers/controller.doughnut.dart';
+import 'package:flutter_chartjs/src/controllers/controller.line.dart';
+import 'package:flutter_chartjs/src/controllers/controller.polarArea.dart';
+import 'package:flutter_chartjs/src/controllers/controller.radar.dart';
 import 'package:flutter_chartjs/src/elements/element.arc.dart';
 import 'package:flutter_chartjs/src/elements/element.bar.dart';
 import 'package:flutter_chartjs/src/elements/element.line.dart';
@@ -51,9 +56,17 @@ export 'package:flutter_chartjs/src/scales/index.dart';
 /// keys are in code unit order, as in the bundle (Chart.js ADR 0020,
 /// section 6). The controllers come in the three waves of phase 7. Thus the
 /// Map has the entries of the ported controllers only: `BarController` of
-/// wave 1.
+/// wave 1, and `BubbleController`, `DoughnutController`, `LineController`,
+/// `PolarAreaController` and `RadarController` of wave 2.
 final AnyObject controllers = Map<String, Object?>.unmodifiable(
-  <String, Object?>{'BarController': BarController.jsClass},
+  <String, Object?>{
+    'BarController': BarController.jsClass,
+    'BubbleController': BubbleController.jsClass,
+    'DoughnutController': DoughnutController.jsClass,
+    'LineController': LineController.jsClass,
+    'PolarAreaController': PolarAreaController.jsClass,
+    'RadarController': RadarController.jsClass,
+  },
 );
 
 /// index.ts:9 `import * as elements from './elements/index.js'`.

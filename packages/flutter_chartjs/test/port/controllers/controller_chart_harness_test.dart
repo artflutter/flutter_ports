@@ -544,7 +544,7 @@ void main() {
       chart.draw();
       expect(spy.draw.count(), 1);
       expect(spy.draw.mostRecent().args.first, same(chart.ctx));
-      (meta.dataset! as LineElement).updateControlPoints(chart.chartArea!);
+      (meta.dataset! as LineElement).updateControlPoints(chart.chartArea);
       expect(spy.updateControlPoints.count(), 1);
     });
 

@@ -851,13 +851,16 @@ export function jsonValue(v, ids = new Map()) {
 }
 
 /**
- * The canvas methods whose parameters are all numbers (`unrestricted
- * double`). The DOM applies `ToNumber` to each argument. The port passes a
- * `double`, NaN for `undefined`.
+ * The canvas and Path2D methods whose parameters are all numbers
+ * (`unrestricted double`). The DOM applies `ToNumber` to each argument. The
+ * port passes a `double`, NaN for `undefined`. A radar line with a tension
+ * and no filler gives `undefined` control points to `bezierCurveTo`.
  */
 const NUMBER_METHODS = new Set([
   'moveTo',
   'lineTo',
+  'bezierCurveTo',
+  'quadraticCurveTo',
   'translate',
   'rotate',
   'rect',
@@ -871,9 +874,11 @@ const NUMBER_METHODS = new Set([
  * arguments `args` of the method `name`: the WebIDL conversions of the
  * canvas interface. The text of `measureText`, `fillText` and `strokeText`
  * is a `DOMString`: `ToString`. Their `x` and `y` are numbers. An absent
- * optional argument (`undefined`) is `null`. The Dart `arc` records an
- * absent `counterclockwise` as its default, false: a point draws
- * `arc(x, y, r, 0, TAU)` with 5 arguments (helpers.canvas.ts).
+ * optional argument (`undefined`) is `null`. The first five arguments of
+ * `arc` are numbers: `ToNumber`, as the DOM converts them. A bubble with a
+ * string radius gives the string to `arc` (controller.bubble.js:165). The
+ * Dart `arc` records an absent `counterclockwise` as its default, false: a
+ * point draws `arc(x, y, r, 0, TAU)` with 5 arguments (helpers.canvas.ts).
  */
 function dartArgs(name, args) {
   if (NUMBER_METHODS.has(name)) return args.map(Number);
@@ -887,7 +892,7 @@ function dartArgs(name, args) {
     ];
   }
   if (name === 'arc') {
-    const list = args.map((a) => (a === undefined ? null : a));
+    const list = args.map((a, i) => (i < 5 ? Number(a) : a === undefined ? null : a));
     while (list.length < 6) list.push(null);
     if (list[5] === null) list[5] = false;
     return list;

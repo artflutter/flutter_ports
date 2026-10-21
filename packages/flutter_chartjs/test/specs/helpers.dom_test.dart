@@ -4,9 +4,13 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
+import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.dom.dart' as helpers;
 import 'package:flutter_chartjs/src/js/js_math.dart';
+import 'package:flutter_chartjs/src/types/geometric.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../support/jasmine.dart';
 
 // The spec reads the functions from Chart.helpers. Here `helpers` is
 // helpers.dom.dart, which lib/src/helpers/index.dart exports.
@@ -21,6 +25,13 @@ import 'package:flutter_test/flutter_test.dart';
 // The cases that call `acquireChart` are `testWidgets` cases (Chart.js ADR
 // 0022, sections 1 and 2). Thus the file runs on the VM only, although
 // helpers.dom.dart is a pure-layer root. `Math.round` is `jsRound`.
+//
+// The two `getRelativePosition` cases with a bar chart: the `onHover`
+// option is a Dart function of the chart event. `getRelativePosition`
+// returns a [Point], not the object of the event: `toEqual({x, y})` of
+// the result compares the record `{x, y}` of the point (`_point`).
+// `not.toEqual(NaN)` is `isNot(jasmineEquals(double.nan))`: Jasmine `eq`
+// makes NaN equal to NaN.
 
 /// A test container: the parent node of a canvas, with the content box
 /// [contentWidth] x [contentHeight].
@@ -54,6 +65,12 @@ final class _Canvas implements HTMLCanvasElement, CanvasNode {
 /// inner node as a canvas whose parent node has that size.
 _Canvas _nodeIn(double width, double height) =>
     _Canvas(_Container(width, height));
+
+/// The object `{x, y}` of [point], for `toEqual`.
+Map<String, Object?> _point(Point point) => <String, Object?>{
+  'x': point.x,
+  'y': point.y,
+};
 
 /// `jasmine.objectContaining({width, height})` for the record of
 /// `getMaximumSize`.
@@ -206,16 +223,87 @@ void main() {
         skip: 'n/a: Flutter has no shadow DOM',
       );
 
-      test(
-        'Should not return NaN with a custom event',
-        () {},
-        skip: 'blocked: controller.bar',
-      );
+      testWidgets('Should not return NaN with a custom event', (
+        tester,
+      ) async {
+        Object? dataX;
+        Object? dataY;
+        late final Chart chart;
+        chart = acquireChart(<String, Object?>{
+          'type': 'bar',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 'first', 'y': 10},
+                  <String, Object?>{'x': 'second', 'y': 5},
+                  <String, Object?>{'x': 'third', 'y': 15},
+                ],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'onHover': (Object e) {
+              final canvasPosition = helpers.getRelativePosition(e, chart);
 
-      test(
+              dataX = canvasPosition.x;
+              dataY = canvasPosition.y;
+            },
+          },
+        });
+
+        final point = chart.getDatasetMeta(0).data[1];
+        await triggerMouseEvent(chart, 'mousemove', point);
+
+        expect(dataX, isNot(jasmineEquals(double.nan)));
+        expect(dataY, isNot(jasmineEquals(double.nan)));
+      });
+
+      testWidgets(
         'Should give consistent results for native and chart events',
-        () {},
-        skip: 'blocked: controller.bar',
+        (tester) async {
+          Point? chartPosition;
+          late final Chart chart;
+          chart = acquireChart(<String, Object?>{
+            'type': 'bar',
+            'data': <String, Object?>{
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[
+                    <String, Object?>{'x': 'first', 'y': 10},
+                    <String, Object?>{'x': 'second', 'y': 5},
+                    <String, Object?>{'x': 'third', 'y': 15},
+                  ],
+                },
+              ],
+            },
+            'options': <String, Object?>{
+              'onHover': (Object chartEvent) {
+                chartPosition = helpers.getRelativePosition(chartEvent, chart);
+              },
+            },
+          });
+
+          final point = chart.getDatasetMeta(0).data[1];
+          final nativeEvent = await triggerMouseEvent(
+            chart,
+            'mousemove',
+            point,
+          );
+          final nativePosition = helpers.getRelativePosition(
+            nativeEvent,
+            chart,
+          );
+
+          expect(chartPosition, isNotNull);
+          expect(
+            _point(nativePosition),
+            jasmineEquals(<String, Object?>{
+              'x': chartPosition!.x,
+              'y': chartPosition!.y,
+            }),
+          );
+        },
       );
     });
 

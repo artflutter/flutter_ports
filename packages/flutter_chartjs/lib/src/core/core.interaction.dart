@@ -232,9 +232,16 @@ Object? _parsedValue(Object? point, String key) =>
         _ => false,
       };
       if (jsTruthy(range)) {
-        final delta = range as double;
-        final start = lookupMethod(data, key, (value ?? 0) - delta);
-        final end = lookupMethod(data, key, (value ?? 0) + delta);
+        // `value - range` applies `ToNumber` to a string range. `value +
+        // range` is the JS `+` ([jsAdd]): a string range joins. The lookup
+        // compares the joined text with a number through `<` or `>=`, which
+        // apply `ToNumber` to it.
+        final start = lookupMethod(
+          data,
+          key,
+          (value ?? 0) - jsToNumber(range),
+        );
+        final end = lookupMethod(data, key, jsToNumber(jsAdd(value, range)));
         return (lo: start.lo, hi: end.hi);
       }
     }

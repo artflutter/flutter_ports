@@ -252,7 +252,11 @@ double _capControlPoint(double pt, double min, double max) {
 /// An unset control point is `double.nan`, which stands for JS `undefined`
 /// (row `adapt-spline-control-point-nan`). `Math.min` makes `undefined` NaN.
 /// Thus the result is the same.
-void _capBezierPoints(List<SplinePoint> points, ChartArea area) {
+///
+/// Dart `null` for [area] is JS `undefined`: [isPointInArea] gives `true`
+/// for each point, and the first cap of a control point throws a
+/// [TypeError] at the read of `area.left`, as upstream does.
+void _capBezierPoints(List<SplinePoint> points, ChartArea? area) {
   var inArea = false;
   // `points[0]` of an empty array is undefined.
   var inAreaNext = isPointInArea(points.isEmpty ? null : points[0], area);
@@ -267,13 +271,13 @@ void _capBezierPoints(List<SplinePoint> points, ChartArea area) {
     if (inAreaPrev) {
       // DIVERGES(chartjs): adapt-spline-control-point-nan, NaN is undefined.
       point
-        ..cp1x = _capControlPoint(point.cp1x, area.left, area.right)
+        ..cp1x = _capControlPoint(point.cp1x, area!.left, area.right)
         ..cp1y = _capControlPoint(point.cp1y, area.top, area.bottom);
     }
     if (inAreaNext) {
       // DIVERGES(chartjs): adapt-spline-control-point-nan, NaN is undefined.
       point
-        ..cp2x = _capControlPoint(point.cp2x, area.left, area.right)
+        ..cp2x = _capControlPoint(point.cp2x, area!.left, area.right)
         ..cp2y = _capControlPoint(point.cp2y, area.top, area.bottom);
     }
   }
@@ -286,10 +290,11 @@ void _capBezierPoints(List<SplinePoint> points, ChartArea area) {
 /// [options] is an option object (Chart.js ADR 0006). `options.tension`
 /// goes to the parameter `t` of [splineCurve] through `ToNumber`, as the
 /// upstream `t * s01` does: undefined gives NaN, and JS `null` gives 0.
+/// Dart `null` for [area] is JS `undefined` (see [_capBezierPoints]).
 void updateBezierControlPoints(
   List<SplinePoint> points,
   Map<String, Object?> options,
-  ChartArea area,
+  ChartArea? area,
   // The upstream signature.
   // ignore: avoid_positional_boolean_parameters
   bool loop,

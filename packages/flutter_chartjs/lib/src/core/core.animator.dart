@@ -10,7 +10,7 @@
 ///   promise chains that it starts finish at the end of the callback, as
 ///   after a `requestAnimationFrame` callback of a browser
 ///   (`platform-animation-promise-checkpoint`).
-/// - `_update` walks the charts with [jsMapForEach], the ECMAScript
+/// - [Animator.update] walks the charts with [jsMapForEach], the ECMAScript
 ///   `Map.prototype.forEach`. A listener can destroy a chart or start a new
 ///   chart.
 /// - A chart under `TickerMode(enabled: false)` is muted with
@@ -18,6 +18,11 @@
 ///   `platform-animator-mute` and `platform-animator-skip-muted`). The chart
 ///   host reports the ticker state through `ChartHost.onTickerModeChanged`,
 ///   and the owner of the chart makes the calls.
+/// - `_getAnims` and `_update` are [Animator.getAnims] and [Animator.update],
+///   and `_Anims` is [Anims]: the fixtures of Chart.js read them (Chart.js ADR
+///   0029, section 6, and Chart.js ADR 0012). `_refresh` is the field
+///   [Animator.refresh], because a fixture replaces it on the singleton
+///   (`harness-method-fields`).
 ///
 /// This file imports `helpers.extras.dart`. Thus it is not a pure layer.
 library;
@@ -31,6 +36,7 @@ import 'package:flutter_chartjs/src/js/js_math.dart';
 import 'package:flutter_chartjs/src/js/js_promise.dart';
 import 'package:flutter_chartjs/src/types/animation.dart' as types;
 import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:meta/meta.dart';
 
 /// core.animator.js:132-133 the type of the `cb` of [Animator.listen]: a
 /// function of an [AnimationEvent].
@@ -68,7 +74,11 @@ final class AnimationEvent implements types.AnimationEvent {
 /// core.animator.js:116-124 the record of one chart: the object literal
 /// `{running, initial, items, listeners}` of `_getAnims`, with the `start`
 /// and the `duration` that `start` writes (:169-170).
-final class _Anims {
+///
+/// It is not private, because [Animator.getAnims] returns it to the fixtures
+/// (Chart.js ADR 0029, section 6).
+@internal
+final class Anims {
   /// core.animator.js:117 `running: false`.
   bool running = false;
 
@@ -110,7 +120,7 @@ class Animator {
   /// core.animator.js:15 `_charts`, a JS `Map` from each chart to its
   /// record. A Dart `Map` keeps the insertion order. A `types.Chart` does
   /// not override `==`, so the keys compare by identity, as in a JS `Map`.
-  final Map<types.Chart, _Anims> _charts = {};
+  final Map<types.Chart, Anims> _charts = {};
 
   /// core.animator.js:16 `_running`.
   bool _running = false;
@@ -131,7 +141,7 @@ class Animator {
   ///
   /// It walks the listeners by index up to their length at the start, as
   /// `Array.prototype.forEach` does.
-  void _notify(types.Chart chart, _Anims anims, double date, String type) {
+  void _notify(types.Chart chart, Anims anims, double date, String type) {
     final callbacks = anims.listeners[type]!;
     final numSteps = anims.duration;
 
@@ -154,11 +164,22 @@ class Animator {
 
   /// core.animator.js:38 `_refresh()`: registers one frame callback.
   ///
+  /// A field that holds a function: a fixture replaces it on the singleton
+  /// (`doughnut-animation.js:59-60`), and each call reads the field, as
+  /// `this._refresh()` reads the property upstream (:49, :171). [unmute]
+  /// calls the field too. The initializer gives the tear-off of a private
+  /// method with the upstream body (Chart.js ADR 0029, section 6).
+  // DIVERGES(chartjs): harness-method-fields, a fixture replaces it.
+  @internal
+  late void Function() refresh = _refreshMethod;
+
+  /// The upstream body of `_refresh` (core.animator.js:38-52).
+  ///
   /// The callback runs inside [jsRunWithMicrotaskCheckpoint]: the promise
   /// jobs that it queues run at its end (Chart.js ADR 0019, section 7).
   /// `requestAnimFrame.call(window, …)` is a plain call (Chart.js ADR 0016,
   /// decision 1).
-  void _refresh() {
+  void _refreshMethod() {
     if (_request != null) {
       return;
     }
@@ -167,11 +188,11 @@ class Animator {
     _request = requestAnimFrame(() {
       // DIVERGES(chartjs): platform-animation-promise-checkpoint, a checkpoint.
       jsRunWithMicrotaskCheckpoint(() {
-        _update();
+        update();
         _request = null;
 
         if (_running) {
-          _refresh();
+          refresh();
         }
       });
     });
@@ -182,8 +203,10 @@ class Animator {
   ///
   /// Dart `null` for [date] stands for the omitted argument. A muted chart
   /// waits (Chart.js ADR 0016, decision 7). It does not count in
-  /// `remaining`.
-  void _update([double? date]) {
+  /// `remaining`. It drops the underscore, because a fixture calls it
+  /// (Chart.js ADR 0029, section 6).
+  @internal
+  void update([double? date]) {
     date ??= jsDateNow();
     var remaining = 0;
 
@@ -242,11 +265,15 @@ class Animator {
 
   /// core.animator.js:112 `_getAnims(chart)`: the record of [chart]. It
   /// creates the record at the first call.
-  _Anims _getAnims(types.Chart chart) {
+  ///
+  /// It drops the underscore, because a fixture reads it (Chart.js ADR 0029,
+  /// section 6).
+  @internal
+  Anims getAnims(types.Chart chart) {
     final charts = _charts;
     var anims = charts[chart];
     if (anims == null) {
-      anims = _Anims();
+      anims = Anims();
       charts[chart] = anims;
     }
     return anims;
@@ -261,7 +288,7 @@ class Animator {
   /// An [event] other than `'complete'` and `'progress'` throws a
   /// [TypeError], as the `undefined.push` of JavaScript does.
   void listen(types.Chart chart, String event, AnimationListener cb) {
-    _getAnims(chart).listeners[event]!.add(cb);
+    getAnims(chart).listeners[event]!.add(cb);
   }
 
   /// core.animator.js:144 `add(chart, items)`: Add animations
@@ -275,7 +302,7 @@ class Animator {
     if (items == null || items.isEmpty) {
       return;
     }
-    _getAnims(chart).items.addAll(items);
+    getAnims(chart).items.addAll(items);
   }
 
   /// core.animator.js:155 `has(chart)`: Counts number of active animations
@@ -283,9 +310,9 @@ class Animator {
   ///
   /// @param {Chart} chart
   ///
-  /// It creates the record of [chart], as `_getAnims` does.
+  /// It creates the record of [chart], as [getAnims] does.
   bool has(types.Chart chart) {
-    return _getAnims(chart).items.isNotEmpty;
+    return getAnims(chart).items.isNotEmpty;
   }
 
   /// core.animator.js:163 `start(chart)`: Start animating (all charts)
@@ -303,7 +330,7 @@ class Animator {
         0,
         (acc, cur) => jsMax(acc, cur.duration),
       );
-    _refresh();
+    refresh();
   }
 
   /// core.animator.js:174 `running(chart)`.
@@ -322,7 +349,7 @@ class Animator {
   ///
   /// @param {Chart} chart
   ///
-  /// It gives the chart a new empty list (:200). A running `_update` keeps
+  /// It gives the chart a new empty list (:200). A running [update] keeps
   /// the old list.
   void stop(types.Chart chart) {
     final anims = _charts[chart];
@@ -349,7 +376,7 @@ class Animator {
     return _charts.remove(chart) != null;
   }
 
-  /// Mutes [chart]: `_update` skips it until [unmute] (Chart.js ADR 0016,
+  /// Mutes [chart]: [update] skips it until [unmute] (Chart.js ADR 0016,
   /// decision 7).
   ///
   /// The owner of the chart calls it when its chart host reports that
@@ -371,7 +398,7 @@ class Animator {
   /// `Ticker` lets the time pass.
   ///
   /// The test reads the record without [has], because [has] creates a
-  /// record, as `_getAnims` does. Thus the unmute of a destroyed chart,
+  /// record, as [getAnims] does. Thus the unmute of a destroyed chart,
   /// whose record `remove` deleted, creates no record, and [_charts] keeps
   /// no destroyed chart alive.
   // DIVERGES(chartjs): platform-animator-mute, the TickerMode mute.
@@ -379,7 +406,7 @@ class Animator {
     _muted[chart] = null;
     final anims = _charts[chart];
     if (anims != null && anims.items.isNotEmpty) {
-      _refresh();
+      refresh();
     }
   }
 }
