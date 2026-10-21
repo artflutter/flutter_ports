@@ -7,7 +7,7 @@ this file and the folder `doc/phase7/`.
 
 ## State
 
-Current step of the Method: 2 (Design).
+Current step of the Method: 3 (Port workflow), wave 1.
 
 | Unit | Status | Files | Last green check |
 |---|---|---|---|
@@ -16,13 +16,18 @@ Current step of the Method: 2 (Design).
 | Environment (x64 Node.js, Chart.js at the pin, moment packages) | done | `phase7/env-setup.sh` | 2026-10-20: `scale_chart_harness_reference.mjs` gives byte-identical data |
 | Scout: probe harness | done | `phase7/probe/` | 2026-10-21: self-test, 62 of 62 Dart-run cases pass or are `unsupported` in the mode `all` |
 | Scout: classification of the cases | done | `phase7/classification/` | 2026-10-21: 536 records, coverage check of the critic |
-| Performance: before figures at `0e0ab93` (Pixel 8a, iPhone if wired) | in progress (background agent) | `phase7/perf/before.md`, `phase7/perf/before/` | — |
+| Performance: before figures at `0e0ab93` (Pixel 8a, iPhone if wired) | in progress again (background agent, restarted 2026-10-21) | `phase7/perf/before.md`, `phase7/perf/before/` | — |
 | Scout: type members and dependencies of each controller | done | `phase7/members-cartesian.md`, `phase7/members-radial.md` | 2026-10-21 |
-| Design panels: ADRs 0027-0031 | in progress (workflow `phase7-design`) | `phase7/design/<topic>/`, `adr/0027`-`0031` | — |
+| Design panels: ADRs 0027-0031 | done | `phase7/design/<topic>/`, `phase7/design/work-plan.md`, `phase7/design/consistency.md`, `adr/0027`-`0031` | 2026-10-21: consistency critic |
+| Wave 1: S1, S2, S3, U0, U-bar, W1-int (`phase7/design/work-plan.md` §1) | not started | see the work plan | — |
 
 ## Decisions
 
 - D1 (2026-10-21): `controller.bar.tests.js:1426`, `:1442` and `:1538` get `phase7`, not `blocked: plugin.legend`. They pass in the probe mode `none`, as the 49 other cases with a non-empty `changedBy`. Record: `phase7/classification/summary.md` §8.
+- D3 (2026-10-21): the gallery controls are full-width Material segmented buttons, and the chart of each page is in view at load (a rule of the user). Commit `4eda459` changed the stress tab. The gallery panel (ADR 0031) applies the rule to the new pages.
+- D4 (2026-10-21): the CI job `fixtures` keeps the submodule checkout and `FIXTURES_REQUIRED=1` of the phase scope and `porting-flow.md` §3. The runner compares the SHA-256 of each upstream fixture file with the manifest. Record: Chart.js ADR 0029 §3 item 5, §11.
+- D5 (2026-10-21): `stacksOf` (ADR 0027, unit S3) lands in any case, because it removes a throw that upstream does not have. S3 records its figures in `performance.md` §13.1.
+- D6 (2026-10-21): the one-read rule of line and scatter (ADR 0027 Open 4) lands. It keeps each upstream statement and gains 22-24 ns (AOT) and 33-36 ns (wasm) for each point.
 - D2 (2026-10-21): the Design step has five panels, one ADR (proposed) each: 0027 parsed data of the controllers, 0028 controller interfaces and values, 0029 fixture smoke runner, 0030 test strategy, 0031 gallery. Reason: the open choices of `members-*.md` and of the prompt group into these five topics.
 
 ## Inputs
@@ -32,6 +37,7 @@ Current step of the Method: 2 (Design).
 - `phase7/probe/`: the probe harness (`run_spec.mjs`, `compare.mjs`, `README.md`, `selftest.md`). It runs an upstream spec file in the x64 Node.js with and without the plugins.
 - `phase7/classification/<group>.json`, `all.json` and `summary.md`: the classification of the cases. The raw probe outputs (`classification/raw/**/*.json`, 9.1 MB) are not committed. `probe/compare.mjs` makes them again (see `probe/README.md`). The two variant spec files in `classification/raw/` are committed evidence.
 - `phase7/perf/before.md`: the figures of the modes `chart` and `axes` and of the frameless benchmark before phase 7 changes the gallery. A resume that finds it missing records it again from a worktree of `0e0ab93`.
+- `phase7/design/work-plan.md`: the units of steps 3-7, their files, specs, tests and gates. `phase7/design/<topic>/spec.md`: the implementation specs. `phase7/design/consistency.md`: the cross-topic findings.
 - `phase7/members-cartesian.md` and `phase7/members-radial.md`: the dependency inventory of the controllers.
 
 ## Environment
@@ -53,4 +59,4 @@ Run a generator with
 
 ## Next action
 
-Run the five design panels (Method step 2). A panel whose `phase7/design/<topic>/spec.md` exists is done.
+Run wave 1 of `phase7/design/work-plan.md` §1 (units S1, S2, then S3, U0 and U-bar, then W1-int). The before figures run in the background. A panel whose `phase7/design/<topic>/spec.md` exists is done.
