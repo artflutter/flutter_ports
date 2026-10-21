@@ -290,4 +290,27 @@ void main() {
       expect(ints, [1, 2]);
     });
   });
+
+  group('JsStringList', () {
+    test('reads the UTF-16 code units of the string', () {
+      // const s = 'a\u{1F600}'; s.length is 3, s[0] is 'a', and s[1] and
+      // s[2] are the two surrogates.
+      final list = JsStringList('a\u{1F600}');
+      expect(list.string, 'a\u{1F600}');
+      expect(list, hasLength(3));
+      expect(list, ['a', '\uD83D', '\uDE00']);
+      expect(JsStringList(''), isEmpty);
+    });
+
+    test('throws a TypeError for each write', () {
+      // 'use strict'; const s = 'abc'; s[0] = 'x', s[5] = 'x' and
+      // s.length = 1 throw a TypeError.
+      final list = JsStringList('abc');
+      expect(() => list[0] = 'x', throwsA(isA<TypeError>()));
+      expect(() => jsSetIndex(list, 3, 'x'), throwsA(isA<TypeError>()));
+      expect(() => list.length = 1, throwsA(isA<TypeError>()));
+      expect(() => list.add('x'), throwsA(isA<TypeError>()));
+      expect(list, ['a', 'b', 'c']);
+    });
+  });
 }

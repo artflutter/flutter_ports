@@ -2,16 +2,23 @@
 @TestOn('vm')
 library;
 
+import 'dart:math' as math;
+
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.defaults.dart';
 import 'package:flutter_chartjs/src/core/core.scale.dart';
 import 'package:flutter_chartjs/src/js/js_class.dart';
+import 'package:flutter_chartjs/src/js/js_math.dart';
+import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
+
+import '../support/jasmine.dart';
 
 // The spec reads Chart.defaults, which is `defaults` of core.defaults.dart.
 // Its chart cases call `acquireChart`. Thus they are `testWidgets` cases, and
@@ -34,6 +41,16 @@ import 'package:flutter_test/flutter_test.dart';
 // classes of this file. `chart.scales.x` is `chart.scales['x']!`, and
 // `scale._layers()` is `scale.layers!()` (Chart.js ADR 0012, Underscore
 // members). `new Error(m)` is a StateError with the message m.
+//
+// The other spec forms:
+// - `xScale.ctx = window.createMockContext()` is
+//   `xScale.ctx = createMockContext()` of
+//   package:chartjs_test_utils/pure.dart. A call of `getCalls()` is a Map
+//   with the keys `name` and `args`.
+// - `toEqual` is `jasmineEquals`. `toBeCloseTo` is `_toBeCloseTo`.
+// - `new Array(300).fill(value)` is `List.filled(300, value)`.
+// - `parseFloat(value.toFixed(2))` is
+//   `jsParseFloat(value.toStringAsFixed(2))`.
 
 /// The member read `object.key` of the option object [object].
 Object? _member(Object? object, String key) =>
@@ -84,16 +101,85 @@ final class _CustomScale2 extends Scale {
 /// The eight items of `gridLineTests` (core.scale.tests.js:110-150). The
 /// last four repeat the flags of the first four with one label. Their test
 /// names get ` #2` (porting-flow.md section 1, step 5).
-const List<({bool offsetGridLines, bool offset})> _gridLineTests = [
-  (offsetGridLines: false, offset: false),
-  (offsetGridLines: false, offset: true),
-  (offsetGridLines: true, offset: false),
-  (offsetGridLines: true, offset: true),
-  (offsetGridLines: false, offset: false),
-  (offsetGridLines: false, offset: true),
-  (offsetGridLines: true, offset: false),
-  (offsetGridLines: true, offset: true),
+const List<
+  ({
+    List<Object?> labels,
+    bool offsetGridLines,
+    bool offset,
+    List<Object?> expected,
+  })
+>
+_gridLineTests = [
+  (
+    labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
+    offsetGridLines: false,
+    offset: false,
+    expected: [0.5, 128.5, 256.5, 384.5, 512.5],
+  ),
+  (
+    labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
+    offsetGridLines: false,
+    offset: true,
+    expected: [51.5, 153.5, 256.5, 358.5, 460.5],
+  ),
+  (
+    labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
+    offsetGridLines: true,
+    offset: false,
+    expected: [64.5, 192.5, 320.5, 448.5],
+  ),
+  (
+    labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
+    offsetGridLines: true,
+    offset: true,
+    expected: [0.5, 102.5, 204.5, 307.5, 409.5, 512.5],
+  ),
+  (
+    labels: ['tick1'],
+    offsetGridLines: false,
+    offset: false,
+    expected: [0.5],
+  ),
+  (
+    labels: ['tick1'],
+    offsetGridLines: false,
+    offset: true,
+    expected: [256.5],
+  ),
+  (
+    labels: ['tick1'],
+    offsetGridLines: true,
+    offset: false,
+    expected: [512.5],
+  ),
+  (
+    labels: ['tick1'],
+    offsetGridLines: true,
+    offset: true,
+    expected: [0.5, 512.5],
+  ),
 ];
+
+/// `x.args[index]` of a call of the mock context.
+Object? _arg(ContextCall call, int index) =>
+    (call['args']! as List<Object?>)[index];
+
+/// Jasmine `toBeCloseTo(expected, precision)` of jasmine-core 3.99.1:
+/// `Math.round(delta * 10^(precision + 1)) <= 10^-precision / 2 *
+/// 10^(precision + 1)`, with `delta = |expected - actual|`.
+Matcher _toBeCloseTo(num expected, [int precision = 2]) {
+  // js-ok: the exponents are ints, as in Jasmine's Math.pow.
+  final pow = math.pow(10.0, precision + 1);
+  // js-ok: the exponent is an int, as in Jasmine's Math.pow.
+  final maxDelta = math.pow(10.0, -precision) / 2;
+  return predicate<Object?>(
+    (actual) =>
+        actual is num &&
+        jsRound(((expected - actual).abs() * pow).toDouble()) <= maxDelta * pow,
+    'a number close to ${jsToString(expected)} (Jasmine toBeCloseTo, '
+    'precision ${jsToString(precision)})',
+  );
+}
 
 /// The names of the cases that `gridLineTests.forEach` makes from [prefix],
 /// with ` #2` for a repeated name.
@@ -127,79 +213,386 @@ void main() {
     });
 
     group('displaying xAxis ticks with autoSkip=true', () {
-      test(
+      Chart getChart(Map<String, Object?> data) {
+        return acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': data,
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'ticks': <String, Object?>{'autoSkip': true},
+              },
+            },
+          },
+        });
+      }
+
+      Chart getChartBigData(int maxTicksLimit) {
+        return acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': List<Object?>.filled(300, 'red'),
+            'datasets': <Object?>[
+              <String, Object?>{'data': List<Object?>.filled(300, 5)},
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'ticks': <String, Object?>{
+                  'autoSkip': true,
+                  'maxTicksLimit': maxTicksLimit,
+                },
+              },
+            },
+          },
+        });
+      }
+
+      Tick lastTick(Chart chart) {
+        final xAxis = chart.scales['x']!;
+        final ticks = xAxis.getTicks()!;
+        return ticks[ticks.length - 1];
+      }
+
+      testWidgets(
         'should use autoSkip amount of ticks when maxTicksLimit is set to a '
         'larger number as autoSkip calculation',
-        () {},
-        skip: 'blocked: controller.line',
+        (tester) async {
+          final chart = getChartBigData(300);
+          expect(chart.scales['x']!.ticks!.length, jasmineEquals(20));
+        },
       );
 
-      test(
+      testWidgets(
         'should use maxTicksLimit amount of ticks when maxTicksLimit is set '
         'to a smaller number as autoSkip calculation',
-        () {},
-        skip: 'blocked: controller.line',
+        (tester) async {
+          final chart = getChartBigData(3);
+          expect(chart.scales['x']!.ticks!.length, jasmineEquals(3));
+        },
       );
 
-      test(
+      testWidgets(
         'should display the last tick if it fits evenly with other ticks',
-        () {},
-        skip: 'blocked: controller.line',
+        (tester) async {
+          final chart = getChart(<String, Object?>{
+            'labels': <Object?>[
+              'January 2018', 'February 2018', 'March 2018', 'April 2018', //
+              'May 2018', 'June 2018', 'July 2018', 'August 2018',
+              'September 2018',
+            ],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[12, 19, 3, 5, 2, 3, 7, 8, 9],
+              },
+            ],
+          });
+
+          expect(lastTick(chart).label, jasmineEquals('September 2018'));
+        },
       );
 
-      test(
+      testWidgets(
         'should not display the last tick if it does not fit evenly',
-        () {},
-        skip: 'blocked: controller.line',
+        (tester) async {
+          final chart = getChart(<String, Object?>{
+            'labels': <Object?>[
+              'January 2018', 'February 2018', 'March 2018', 'April 2018', //
+              'May 2018', 'June 2018', 'July 2018', 'August 2018',
+              'September 2018', 'October 2018', 'November 2018',
+              'December 2018',
+              'January 2019', 'February 2019', 'March 2019', 'April 2019',
+              'May 2019', 'June 2019', 'July 2019', 'August 2019',
+              'September 2019', 'October 2019', 'November 2019',
+              'December 2019',
+              'January 2020', 'February 2020', 'March 2020', 'April 2020',
+            ],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[
+                  1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, //
+                  6, 6, 6, 6, 7, 7, 7, 7,
+                ],
+              },
+            ],
+          });
+
+          expect(lastTick(chart).label, jasmineEquals('March 2020'));
+        },
       );
     });
 
-    for (final name in _gridLineNames(
+    final horizontalNames = _gridLineNames(
       'should get the correct pixels for gridLine(s) for the horizontal scale',
-    )) {
-      test(name, () {}, skip: 'blocked: controller.line');
-    }
-
-    for (final name in _gridLineNames(
-      'should get the correct pixels for gridLine(s) for the vertical scale',
-    )) {
-      test(name, () {}, skip: 'blocked: controller.line');
-    }
-
-    test(
-      'should add the correct padding for long tick labels',
-      () {},
-      skip: 'blocked: controller.line',
     );
+    for (var t = 0; t < _gridLineTests.length; t++) {
+      final test = _gridLineTests[t];
+      testWidgets(horizontalNames[t], (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'data': <Object?>[]},
+            ],
+            'labels': test.labels,
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'grid': <String, Object?>{
+                  'offset': test.offsetGridLines,
+                  'drawTicks': false,
+                },
+                'ticks': <String, Object?>{'display': false},
+                'offset': test.offset,
+              },
+              'y': <String, Object?>{'display': false},
+            },
+            'plugins': <String, Object?>{'legend': false},
+          },
+        });
+
+        final xScale = chart.scales['x']!;
+        final ctx = createMockContext();
+        xScale.ctx = ctx;
+        chart.draw();
+
+        expect(
+          ctx
+              .getCalls()
+              .where((x) => x['name'] == 'moveTo' && _arg(x, 1) == 0)
+              .map((x) => _arg(x, 0))
+              .toList(),
+          jasmineEquals(test.expected),
+        );
+      });
+    }
+
+    final verticalNames = _gridLineNames(
+      'should get the correct pixels for gridLine(s) for the vertical scale',
+    );
+    for (var t = 0; t < _gridLineTests.length; t++) {
+      final test = _gridLineTests[t];
+      testWidgets(verticalNames[t], (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'data': <Object?>[]},
+            ],
+            'labels': test.labels,
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'display': false},
+              'y': <String, Object?>{
+                'type': 'category',
+                'grid': <String, Object?>{
+                  'offset': test.offsetGridLines,
+                  'drawTicks': false,
+                },
+                'ticks': <String, Object?>{'display': false},
+                'offset': test.offset,
+              },
+            },
+            'plugins': <String, Object?>{'legend': false},
+          },
+        });
+
+        final yScale = chart.scales['y']!;
+        final ctx = createMockContext();
+        yScale.ctx = ctx;
+        chart.draw();
+
+        expect(
+          ctx
+              .getCalls()
+              .where((x) => x['name'] == 'moveTo' && _arg(x, 0) == 1)
+              .map((x) => _arg(x, 1))
+              .toList(),
+          jasmineEquals(test.expected),
+        );
+      });
+    }
+
+    testWidgets('should add the correct padding for long tick labels', (
+      tester,
+    ) async {
+      final chart = acquireChart(
+        <String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>[
+              'This is a very long label',
+              'This is a very long label',
+            ],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[0, 1],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'y': <String, Object?>{'display': false},
+            },
+            'plugins': <String, Object?>{'legend': false},
+          },
+        },
+        <String, Object?>{
+          'canvas': <String, Object?>{'height': 100, 'width': 200},
+        },
+      );
+
+      final scale = chart.scales['x']!;
+      expect(scale.left, greaterThan(100));
+      expect(scale.right, greaterThan(190));
+    });
 
     group('given the axes display option is set to auto', () {
       group('for the x axes', () {
-        test(
+        testWidgets(
           'should draw the axes if at least one associated dataset is '
           'visible',
-          () {},
-          skip: 'blocked: controller.line',
+          (tester) async {
+            final chart = acquireChart(<String, Object?>{
+              'type': 'line',
+              'data': <String, Object?>{
+                'datasets': <Object?>[
+                  <String, Object?>{
+                    'data': <Object?>[100, 200, 100, 50],
+                    'xAxisId': 'foo',
+                    'hidden': true,
+                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
+                  },
+                  <String, Object?>{
+                    'data': <Object?>[100, 200, 100, 50],
+                    'xAxisId': 'foo',
+                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
+                  },
+                ],
+              },
+              'options': <String, Object?>{
+                'scales': <String, Object?>{
+                  'x': <String, Object?>{'display': 'auto'},
+                  'y': <String, Object?>{'type': 'category'},
+                },
+              },
+            });
+
+            final scale = chart.scales['x']!;
+            final ctx = createMockContext();
+            scale.ctx = ctx;
+            chart.draw();
+
+            expect(ctx.getCalls().length, greaterThan(0));
+            expect(scale.height, greaterThan(0));
+          },
         );
 
-        test(
+        testWidgets(
           'should not draw the axes if no associated datasets are visible',
-          () {},
-          skip: 'blocked: controller.line',
+          (tester) async {
+            final chart = acquireChart(<String, Object?>{
+              'type': 'line',
+              'data': <String, Object?>{
+                'datasets': <Object?>[
+                  <String, Object?>{
+                    'data': <Object?>[100, 200, 100, 50],
+                    'xAxisId': 'foo',
+                    'hidden': true,
+                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
+                  },
+                ],
+              },
+              'options': <String, Object?>{
+                'scales': <String, Object?>{
+                  'x': <String, Object?>{'display': 'auto'},
+                },
+              },
+            });
+
+            final scale = chart.scales['x']!;
+            final ctx = createMockContext();
+            scale.ctx = ctx;
+            chart.draw();
+
+            expect(ctx.getCalls().length, 0);
+            expect(scale.height, 0);
+          },
         );
       });
 
       group('for the y axes', () {
-        test(
+        testWidgets(
           'should draw the axes if at least one associated dataset is '
           'visible',
-          () {},
-          skip: 'blocked: controller.line',
+          (tester) async {
+            final chart = acquireChart(<String, Object?>{
+              'type': 'line',
+              'data': <String, Object?>{
+                'datasets': <Object?>[
+                  <String, Object?>{
+                    'data': <Object?>[100, 200, 100, 50],
+                    'yAxisId': 'foo',
+                    'hidden': true,
+                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
+                  },
+                  <String, Object?>{
+                    'data': <Object?>[100, 200, 100, 50],
+                    'yAxisId': 'foo',
+                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
+                  },
+                ],
+              },
+              'options': <String, Object?>{
+                'scales': <String, Object?>{
+                  'y': <String, Object?>{'display': 'auto'},
+                },
+              },
+            });
+
+            final scale = chart.scales['y']!;
+            final ctx = createMockContext();
+            scale.ctx = ctx;
+            chart.draw();
+
+            expect(ctx.getCalls().length, greaterThan(0));
+            expect(scale.width, greaterThan(0));
+          },
         );
 
-        test(
+        testWidgets(
           'should not draw the axes if no associated datasets are visible',
-          () {},
-          skip: 'blocked: controller.line',
+          (tester) async {
+            final chart = acquireChart(<String, Object?>{
+              'type': 'line',
+              'data': <String, Object?>{
+                'datasets': <Object?>[
+                  <String, Object?>{
+                    'data': <Object?>[100, 200, 100, 50],
+                    'yAxisId': 'foo',
+                    'hidden': true,
+                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
+                  },
+                ],
+              },
+              'options': <String, Object?>{
+                'scales': <String, Object?>{
+                  'y': <String, Object?>{'display': 'auto'},
+                },
+              },
+            });
+
+            final scale = chart.scales['y']!;
+            final ctx = createMockContext();
+            scale.ctx = ctx;
+            chart.draw();
+
+            expect(ctx.getCalls().length, 0);
+            expect(scale.width, 0);
+          },
         );
       });
     });
@@ -517,11 +910,47 @@ void main() {
         skip: 'blocked: controller.scatter',
       );
 
-      test(
-        'should center labels when rotated in x axis',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should center labels when rotated in x axis', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>[
+              'Red',
+              'Blue',
+              'Yellow',
+              'Green',
+              'Purple',
+              'Orange',
+            ],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'label': '# of Votes',
+                'data': <Object?>[12, 19, 3, 5, 2, 3],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'ticks': <String, Object?>{'minRotation': 90},
+              },
+            },
+          },
+        });
+        // `parseFloat(value.toFixed(2))`.
+        double mapper(types.LabelItem item) =>
+            jsParseFloat(item.options.translation!.$1.toStringAsFixed(2));
+        const expected = <double>[20.15, 113.6, 207.05, 300.5, 393.95, 487.4];
+        final actual = chart.scales['x']!.getLabelItems().map(mapper).toList();
+        final len = expected.length;
+        for (var i = 0; i < len; ++i) {
+          final actualValue = actual[i];
+          final expectedValue = expected[i];
+          expect(actualValue, _toBeCloseTo(expectedValue, 1));
+        }
+      });
     });
 
     // :820-899. The charts have no datasets. Thus they need the linear

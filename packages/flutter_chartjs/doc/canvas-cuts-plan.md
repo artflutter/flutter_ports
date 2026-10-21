@@ -217,6 +217,20 @@ Changes to the cited files:
   the lift of wave 1 (L1). This plan cites no line of `element.arc.dart`, and the cuts do not
   remove its code. Thus the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
   estimates do not change. No trigger occurred.
+- 2026-10-21, the integration of wave 3 of phase 7. `apps/chartjs_gallery/lib/demo/demo_chart.dart`,
+  which §3.1 cites, gets the signature `toggleDataVisibility(Object? index)` (decision D11 item c).
+  `DemoChart` keeps its default `UiCanvasElement()`, so §3.1 does not change.
+  `lib/src/core/core.controller.dart` changes only `toggleDataVisibility`, not `_resize`. The lift
+  of wave 2 (L2) gave the two `platform.dom` cases of §3.6 their bodies: "default chart aspect
+  ratio" (the doughnut controller) and "event handling" (the line controller) pass now.
+  `test/port/core/core.controller_test.dart` gets one test in the group `getDataVisibility`. The
+  group "the platform.dom spec cases" does not change. porting-flow.md gets text in §2.14, §2.19,
+  §2.21, §3 and §5. The text of §2.2, of §2.7 and of the cited rows of the harness table of §3 does
+  not change. §2.2 stays at line 220 and §2.7 at line 307. The cited rows of the harness table are
+  now at lines 697-698. The new rows of `parity.md` (pie, scatter and the scatter spec) are in the
+  upper tables and the port-only table. The `parity.md` rows that this plan cites do not change. Thus
+  the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change.
+  No trigger occurred.
 
 ## 1. Why
 

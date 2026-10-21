@@ -230,6 +230,14 @@ no concrete module that its upstream file does not import. A controller casts on
    (`controller.doughnut.js:193-195`). `controller.pie.dart` imports `controller.doughnut.dart`,
    as `controller.pie.js:1` does.
 
+Three other kinds of casts stay. They are not casts of a module type: a `List` cast of a value
+that upstream reads as an array (the `labels` of the legend functions, the data of the doughnut
+`parse` with `parsing: false`, the result of `parseObjectDataRadialScale` in the polar area and
+radar `parseObjectData`), the `String` cast of a parsing key
+([Chart.js ADR 0027](0027-parsed-data.md) §4), and the `AnyObject` cast of an options object or a
+stack object that the controller made. The `List` and `AnyObject` casts cannot throw where
+upstream does not throw. The review checklist of each wave accepts these three kinds.
+
 A cast throws a `TypeError` in the same method call as the upstream throw, at the upstream read
 of the first member that only the subtype has, or earlier when every path from the cast reaches
 that read. Between the two sites lie only reads and option resolutions, which no protected
@@ -281,13 +289,24 @@ phase 8):
 
 | Dart member | Upstream | First reader |
 |---|---|---|
-| `double get xCenter` | `index.d.ts:3677` | `controller.polarArea.js:167`; `controller.radar.js:90` |
-| `double get yCenter` | `index.d.ts:3678` | `controller.polarArea.js:168`; `controller.radar.js:91` |
+| `double? get xCenter` | `index.d.ts:3677` | `controller.polarArea.js:167`; `controller.radar.js:90` |
+| `double? get yCenter` | `index.d.ts:3678` | `controller.polarArea.js:168`; `controller.radar.js:91` |
 | `double getIndexAngle(double index)` | `index.d.ts:3681` | `controller.polarArea.js:169` |
 | `double getDistanceFromCenterForValue(Object? value)` | `index.d.ts:3682` | `controller.polarArea.js:182` |
 | `({double x, double y, double angle}) getPointPositionForValue(double index, Object? value)` | `index.d.ts:3685` | `controller.radar.js:88` |
 
 The record stays (Chart.js ADR 0003; Chart.js ADR 0025 Open 5).
+
+`xCenter` and `yCenter` are `double?` (decision D11 item a): Dart `null` is the `undefined` start
+value before the first layout (`scale.radialLinear.js:416-418`), and NaN is the NaN center after
+a layout (for example `position: 'left'`). The reset of a new radar or polar area point before the
+first layout of its scale writes `undefined` into the element, and the animation then starts at
+its target (`core.animation.js:31-32`). With `double` and NaN for both values, a controller cannot
+tell them apart, and the drawn element and the hit element change. The scale reads
+`xCenter ?? double.nan` in arithmetic and canvas calls. Accepted Chart.js ADR 0025 §5 gives
+`double get xCenter` and `double get yCenter`. An accepted ADR does not change. The maintainer
+decides the record of this difference (a new ADR that supersedes Chart.js ADR 0025, or another
+record).
 
 `types.Chart`:
 
@@ -295,7 +314,7 @@ The record stays (Chart.js ADR 0003; Chart.js ADR 0025 Open 5).
 |---|---|---|
 | `bool isDatasetVisible(double datasetIndex)` | `index.d.ts:569`, cc.js:863 | `controller.doughnut.js:192` |
 | `double getVisibleDatasetCount()` | `index.d.ts:568`, cc.js:859 | `controller.polarArea.js:155` |
-| `void toggleDataVisibility(double index)` | `index.d.ts:571`, cc.js:881 | `controller.doughnut.js:126` |
+| `void toggleDataVisibility(Object? index)` | `index.d.ts:571`, cc.js:881 | `controller.doughnut.js:126` |
 | `void update([Object? mode])` | `index.d.ts:559`, cc.js:475 | `controller.doughnut.js:127` |
 | `LegendElement? get legend` | `index.d.ts:543` | `controller.doughnut.js:97`; `controller.polarArea.js:41` (new field, section 6) |
 
@@ -447,10 +466,13 @@ gets the new members:
   `undefined` keeps the sentinel, for example `lineJoin`.
 - `useBorderRadius && (borderRadius || style.borderRadius)` keeps the operand values:
   `jsTruthy(u) ? (jsTruthy(b) ? b : jsGet(style, 'borderRadius')) : u`.
-- `toggleDataVisibility(jsToNumber(jsGet(legendItem, 'index')))`: an absent index gives the key
-  `'NaN'`, where upstream gives `'undefined'`. The only key readers are `getDataVisibility`,
-  `toggleDataVisibility` and `moveNumericKeys`. For both keys, `+key` is NaN, and no data index
-  matches. Thus no reader sees the difference. No marker.
+- `toggleDataVisibility(jsGet(legendItem, 'index'))`: `types.Chart.toggleDataVisibility` takes
+  the raw JS value (`Object?`, the form of Chart.js ADR 0025 §1) and writes the key
+  `ToString(index)` (`jsToString`), as upstream (cc.js:881-883). An absent index gives the key
+  `'undefined'`. After a data insert or remove, `moveNumericKeys` (cc.js:72-84) moves a key such
+  as `''` or `'01'` as upstream (decision D11 item c). A number gives the key of
+  `jsNumberToString`, as before. `getDataVisibility(double index)` does not change. No marker and
+  no `differences.md` row.
 - The doughnut descriptors are `'_scriptable': (String name) => ...` and
   `'_indexable': (String name) => ...`, as `core.defaults.dart:462-463`.
 

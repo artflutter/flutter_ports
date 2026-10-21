@@ -194,11 +194,9 @@ Map<String, Object?> _displayFormats(Object? options) {
 }
 
 /// A twin of a spec case that makes a chart of the type `line` with a
-/// dataset: it needs the line controller of phase 7. Until then the twin
-/// skips with the reason of its module, and [body] does not run. Phase 7
-/// makes it `testWidgets(name, (tester) async => body())`.
+/// dataset: a `testWidgets` case with the line controller of phase 7.
 void _lineTwin(String name, void Function() body) =>
-    test(name, () {}, skip: 'blocked: controller.line');
+    testWidgets(name, (tester) async => body());
 
 void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
@@ -664,9 +662,9 @@ void main() {
   // chart is a local function that each twin calls first (Chart.js ADR
   // 0022, section 2).
   //
-  // Each twin with a dataset needs the line controller: it skips with
-  // 'blocked: controller.line' (_lineTwin). The two twins of 'Deprecations'
-  // have no dataset and run.
+  // Each twin with a dataset needs the line controller: it is a
+  // `testWidgets` case of _lineTwin. The two twins of 'Deprecations' have no
+  // dataset.
   group('adapt-date-moment-format', () {
     _lineTwin('should get the correct label for a data value by format', () {
       final chart = acquireChart(<String, Object?>{

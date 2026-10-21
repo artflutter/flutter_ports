@@ -7,12 +7,15 @@ import 'dart:io';
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs/src/controllers/controller.polarArea.dart';
+import 'package:flutter_chartjs/src/core/core.animation.dart' as animation;
 import 'package:flutter_chartjs/src/core/core.config.dart' show themeConfigKey;
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.datasetController.dart'
     show controllerArgs;
 import 'package:flutter_chartjs/src/core/core.defaults.dart' show overrides;
 import 'package:flutter_chartjs/src/core/core.element.dart';
+import 'package:flutter_chartjs/src/helpers/helpers.collection.dart'
+    show notifyArrayListeners;
 import 'package:flutter_chartjs/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_function.dart'
@@ -418,5 +421,138 @@ void main() {
         );
       });
     }
+
+    // The key after a data insert (decision D11 item c). `_updateHiddenIndices`
+    // moves the key '01' to '2' (core.controller.js:72-84). The x64 Node.js
+    // probe of the unit X-fix on the build at the pin gives the visibility
+    // 1101 and the outer radii 248, 27.555556, 0 and 82.666667 (rounded).
+    testWidgets("onClick with the index '01', then unshift, hides the data "
+        'index 2', (tester) async {
+      final chart = acquireChart(
+        _one(<Object?>['a', 'b', 'c'], <Object?>[1.0, 2.0, 3.0]),
+      );
+      jsCall(jsGet(_legendFunctions(), 'onClick'), [
+        <String, Object?>{},
+        <String, Object?>{'index': '01'},
+        _TestLegend(chart, <String, Object?>{}),
+      ]);
+      final data =
+          jsGet(jsGetIndex(jsGet(chart.data, 'datasets'), 0), 'data')!
+                as List<Object?>
+            ..insert(0, 9.0);
+      notifyArrayListeners(data, 'unshift', const [9.0]);
+      chart.update();
+      expect(
+        [
+          for (var i = 0; i < 4; i++)
+            chart.getDataVisibility(i.toDouble()) ? '1' : '0',
+        ].join(),
+        '1101',
+      );
+      expect(
+        [
+          for (final arc in chart.getDatasetMeta(0).data)
+            (arc as Element)['outerRadius'],
+        ],
+        [
+          closeTo(248, 1e-6),
+          closeTo(27.555556, 1e-6),
+          0,
+          closeTo(82.666667, 1e-6),
+        ],
+      );
+    });
+  });
+
+  // The reset of a new arc on a new radial scale (decision D11 item a).
+  // `_insertElements` resets the new arc before the first layout of the new
+  // scale. Upstream then reads `xCenter` and `yCenter` as `undefined`
+  // (scale.radialLinear.js:416-418). The x64 Node.js probe of the unit X-fix
+  // on the build at the pin gives: before the layout, `x` and `y` are
+  // `undefined`; after the update, the animations `x` and `y` go from 256 to
+  // 256.
+  group('the reset on a new radial scale', () {
+    testWidgets('writes x and y undefined, and the animations start at the '
+        'target', (tester) async {
+      Map<String, Object?>? beforeLayout;
+      final config = _one(
+        <Object?>['a', 'b', 'c', 'd'],
+        <Object?>[1.0, 2.0, 3.0],
+      );
+      config['options'] = <String, Object?>{
+        'animation': <String, Object?>{},
+      };
+      config['plugins'] = <Object?>[
+        <String, Object?>{
+          'id': 'probeLayout',
+          'beforeLayout': (Object? chart, Object? args, Object? options) {
+            final data = (chart! as Chart).getDatasetMeta(0).data;
+            if (data.length > 3 && beforeLayout == null) {
+              final arc = data[3] as types.ElementPropertyRead;
+              beforeLayout = {'x': arc['x'], 'y': arc['y']};
+            }
+          },
+        },
+      ];
+      final chart = acquireChart(config);
+      final meta = chart.getDatasetMeta(0);
+      final dataset =
+          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject;
+      dataset['rAxisID'] = 'r2';
+      (dataset['data']! as List<Object?>).add(4.0);
+      chart.update();
+
+      expect(meta.rScale!.id, 'r2');
+      expect(identical(beforeLayout!['x'], undefined), isTrue);
+      expect(identical(beforeLayout!['y'], undefined), isTrue);
+      final arc = meta.data[3] as Element;
+      final x = arc.$animations!['x']! as animation.Animation;
+      final y = arc.$animations!['y']! as animation.Animation;
+      expect([x.from, x.to], [256.0, 256.0]);
+      expect([y.from, y.to], [256.0, 256.0]);
+      await tester.pump(const Duration(milliseconds: 1100));
+      expect([arc.x, arc.y], [256.0, 256.0]);
+    });
+
+    // A center that is NaN after a layout is not `undefined` (finding F1 of
+    // the X-fix review). A new radial scale with `position: 'left'` gets
+    // the center NaN in its layout. The animation of `x` then goes to NaN.
+    // An `undefined` target would keep the old value (core.animation.js:31,
+    // `resolve` skips `undefined`), and the arc would stay drawn. Thus
+    // `xCenter` needs two values: Dart `null` and NaN. The x64 Node.js probe
+    // of the X-fix fixer on the build at the pin
+    // (`wave3/X-fix-fix/probe_f1c.mjs`, case `newAxisId`) gives the
+    // animation of `x` from 256 to NaN.
+    testWidgets('a NaN center after a layout animates x to NaN', (
+      tester,
+    ) async {
+      final config = _one(
+        <Object?>['January', 'February', 'March', 'April', 'May'],
+        <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
+      );
+      config['options'] = <String, Object?>{
+        'animation': <String, Object?>{},
+      };
+      final chart = acquireChart(config);
+      await tester.pump(const Duration(milliseconds: 1100));
+      final meta = chart.getDatasetMeta(0);
+      final arc = meta.data[1] as Element;
+      expect([arc.x, arc.y], [256.0, 256.0]);
+
+      (chart.options['scales']! as AnyObject)['r2'] = <String, Object?>{
+        'type': 'radialLinear',
+        'position': 'left',
+      };
+      (jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject)['rAxisID'] =
+          'r2';
+      chart.update();
+
+      expect(meta.rScale!.id, 'r2');
+      final radial = meta.rScale! as types.RadialLinearScale;
+      expect(radial.xCenter, isNaN);
+      final x = arc.$animations!['x']! as animation.Animation;
+      expect(x.from, 256.0);
+      expect(x.to, isNaN);
+    });
   });
 }

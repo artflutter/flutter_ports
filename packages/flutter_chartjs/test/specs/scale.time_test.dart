@@ -2,6 +2,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:math' as math;
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show toBeCloseToPixel;
 // The spec builds charts of flutter_chartjs, which does not export lib/src
@@ -11,10 +13,15 @@ import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.scale.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.core.dart'
     show clone, mergeIf;
-import 'package:flutter_chartjs/src/js/js_number.dart' show jsTruthy;
+import 'package:flutter_chartjs/src/js/js_date.dart';
+import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
+import 'package:flutter_chartjs/src/scales/scale.time.dart';
+import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import '../support/jasmine.dart';
 
 // The spec reads Chart.registry and Chart.defaults, the static members
 // `Chart.registry` and `Chart.defaults` of core.controller.dart.
@@ -31,13 +38,12 @@ import 'package:flutter_test/flutter_test.dart';
 // (test/index.js:23).
 //
 // The chart cases call `acquireChart`. Thus they are `testWidgets` cases,
-// and the file runs on the VM (Chart.js ADR 0022, sections 1 and 2). The
-// cases that run in phase 6 make a chart of the type `line` with no
-// dataset. Thus they need no controller. A case that needs a module of a
-// later phase skips with the missing module of the latest phase. The cases
-// at :305, :390 and :490 assert the lower-case day period of moment, which
-// the default adapter gives (Chart.js ADR 0024, decision 6). They wait only
-// for `controller.line`.
+// and the file runs on the VM (Chart.js ADR 0022, sections 1 and 2). A
+// case with a dataset needs the line controller of phase 7. A case that
+// needs a module of a later phase skips with the missing module of the
+// latest phase. The cases at :305, :390 and :490 assert the lower-case day
+// period of moment, which the default adapter gives (Chart.js ADR 0024,
+// decision 6).
 //
 // A case that asserts moment-token text or the moment `FORMATS`, or that
 // asserts a value from a parse or a format with a moment format string,
@@ -45,8 +51,7 @@ import 'package:flutter_test/flutter_test.dart';
 // with ICU patterns. Its port-only twin with ICU patterns is in
 // test/port/scales/scale.time_test.dart, group `adapt-date-moment-format`.
 // The cases at :639, :650 and :744 also parse their labels with 'YYYY', but
-// they assert no value of that parse. Thus they wait only for
-// `controller.line`.
+// they assert no value of that parse. Thus they have bodies.
 //
 // The spec forms:
 // - `chart.scales.x` is `chart.scales['x']!`.
@@ -61,8 +66,21 @@ import 'package:flutter_test/flutter_test.dart';
 //   is `isNot(same(undefined))`.
 // - A `beforeEach` of a `describe` that writes no chart is a `setUp`.
 //
-// The matcher `toBeCloseToTime` (scale.time.tests.js:31-48) comes with the
-// bodies of the blocked cases that use it.
+// - `moment(value)` is `_moment(value)`, the parse of the default adapter.
+//   `moment()` is `jsDateNow()`. `startOf`, `endOf` and `add` of a moment
+//   are the members of the default adapter (`_startOf`, `_endOf`, `_add`).
+// - `scale._unit` is the field `unit` of `TimeScale`.
+// - `controller.getParsed(0)[xScale.id]` is
+//   `jsGet(controller.getParsed(0), xScale.id)`.
+// - `toBeTruthy()` is `jsTruthy(value)`.
+// - A `beforeEach` of a `describe` that acquires a chart is a local function
+//   that each case calls first. `this.chart` is a `late` variable of the
+//   group.
+// - The case of :84 parses 'Jan 01 1990' with the ICU pattern
+//   'MMM dd yyyy' in place of the moment format 'MMM DD YYYY'. It asserts
+//   only the unit. `Math.random()` is `math.Random().nextDouble()`.
+// - The case of :548 gives timestamps to `ticks.min` and `ticks.max` in
+//   place of moment objects. The time scale of v4 does not read them.
 
 /// scale.time.tests.js:5-25 `createScale(data, options, dimensions)`.
 Scale _createScale(
@@ -97,6 +115,55 @@ Scale _createScale(
 List<Object?> _getLabels(Scale scale) => [
   for (final t in scale.ticks!) t.label,
 ];
+
+/// The default date adapter, the `moment` of the spec (Chart.js ADR 0024).
+final DateAdapterBase _adapter = DateAdapterBase();
+
+/// `moment(value).valueOf()` and `+moment(value, format)`: the parse of the
+/// default adapter. A [format] is an ICU pattern in place of the moment
+/// format (Chart.js ADR 0024).
+double _moment(Object? value, [String? format]) =>
+    jsToNumber(_adapter.parse(value, format ?? undefined));
+
+/// `moment(time).startOf(unit)` of the default adapter, as a number.
+double _startOf(Object? time, String unit) =>
+    jsToNumber(_adapter.startOf(time, unit));
+
+/// `moment(time).endOf(unit)` of the default adapter, as a number.
+double _endOf(Object? time, String unit) =>
+    jsToNumber(_adapter.endOf(time, unit));
+
+/// `moment(time).add(amount, unit)` of the default adapter, as a number.
+double _add(Object? time, num amount, String unit) =>
+    jsToNumber(_adapter.add(time, amount, unit));
+
+/// `+new Date(value)`: the time value of the JS Date of [value].
+double _dateValue(String value) =>
+    DateTime.parse(value).millisecondsSinceEpoch.toDouble();
+
+/// `Math.random()`.
+final math.Random _random = math.Random();
+
+/// `chart.data.labels`.
+List<Object?> _labels(Chart chart) =>
+    jsGet(chart.data, 'labels')! as List<Object?>;
+
+/// `chart.options.scales.x`: a resolver of the chart options. A write goes
+/// through it.
+AnyObject _scaleOptionsX(Chart chart) =>
+    jsGet(jsGet(chart.options, 'scales'), 'x')! as AnyObject;
+
+/// scale.time.tests.js:31-48 the matcher `toBeCloseToTime`:
+/// `Math.abs(moment(time).diff(value, unit, true)) < 0.01`. The precise
+/// moment diff of the unit `hour` is the difference in ms over 3600000.
+/// The cases use only that unit.
+Matcher _toBeCloseToTime(double value, String unit) {
+  if (unit != 'hour') throw ArgumentError.value(unit, 'unit');
+  return predicate<Object?>(
+    (time) => ((jsToNumber(time) - value) / 3600000).abs() < 0.01,
+    'a time close to ${jsToString(value)} (unit $unit)',
+  );
+}
 
 /// `Chart.helpers.clone(Chart.defaults.scales.time)` (scale.time.tests.js:
 /// 125): a deep copy of the defaults of the time scale.
@@ -154,11 +221,35 @@ void main() {
       );
     });
 
-    test(
-      'should correctly determine the unit',
-      () {},
-      skip: 'blocked: controller.line',
-    );
+    testWidgets('should correctly determine the unit', (tester) async {
+      var date = _moment('Jan 01 1990', 'MMM dd yyyy');
+      final data = <Object?>[];
+      for (var i = 0; i < 60; i++) {
+        data.add(<String, Object?>{'x': date, 'y': _random.nextDouble()});
+        date = _add(date, 1, 'month');
+      }
+
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'xAxisID': 'x', 'data': data},
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{
+              'type': 'time',
+              'ticks': <String, Object?>{'source': 'data', 'autoSkip': true},
+            },
+          },
+        },
+      });
+
+      final scale = chart.scales['x']! as TimeScale;
+
+      expect(scale.unit, jasmineEquals('month'));
+    });
 
     group('when specifying limits', () {
       final mockData = <String, Object?>{
@@ -247,17 +338,95 @@ void main() {
     });
 
     group('when rendering several days', () {
-      test(
-        'should be bounded by the nearest week beginnings',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      late Chart chart;
+      late Scale scale;
 
-      test(
-        'should convert between screen coordinates and times',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      // The beforeEach acquires a chart: a local function that each case
+      // calls first in its body.
+      void beforeEach() {
+        chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'xAxisID': 'x', 'data': <Object?>[]},
+            ],
+            'labels': <Object?>[
+              '2015-01-01T20:00:00',
+              '2015-01-02T21:00:00',
+              '2015-01-03T22:00:00',
+              '2015-01-05T23:00:00',
+              '2015-01-07T03:00',
+              '2015-01-08T10:00',
+              '2015-01-10T12:00',
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'time', 'position': 'bottom'},
+            },
+          },
+        });
+
+        scale = chart.scales['x']!;
+      }
+
+      testWidgets('should be bounded by the nearest week beginnings', (
+        tester,
+      ) async {
+        beforeEach();
+        final labels = _labels(chart);
+        expect(
+          scale.getValueForPixel(scale.left),
+          greaterThan(_startOf(_moment(labels[0]), 'week')),
+        );
+        expect(
+          scale.getValueForPixel(scale.right),
+          lessThan(
+            _endOf(
+              _add(_moment(labels[labels.length - 1]), 1, 'week'),
+              'week',
+            ),
+          ),
+        );
+      });
+
+      testWidgets('should convert between screen coordinates and times', (
+        tester,
+      ) async {
+        beforeEach();
+        final timeRange = scale.max - scale.min;
+        final msPerPix = timeRange / scale.width;
+        final labels = _labels(chart);
+        final configLabels =
+            jsGet(chart.config.data, 'labels')! as List<Object?>;
+        final firstPointOffsetMs = _moment(configLabels[0]) - scale.min;
+        final firstPointPixel = scale.left + firstPointOffsetMs / msPerPix;
+        final lastPointOffsetMs =
+            _moment(configLabels[configLabels.length - 1]) - scale.min;
+        final lastPointPixel = scale.left + lastPointOffsetMs / msPerPix;
+
+        expect(
+          scale.getPixelForValue(_moment('2015-01-01T20:00:00')),
+          toBeCloseToPixel(firstPointPixel),
+        );
+        expect(
+          scale.getPixelForValue(_moment(labels[0])),
+          toBeCloseToPixel(firstPointPixel),
+        );
+        expect(
+          scale.getValueForPixel(firstPointPixel),
+          _toBeCloseToTime(_moment(labels[0]), 'hour'),
+        );
+
+        expect(
+          scale.getPixelForValue(_moment('2015-01-10T12:00')),
+          toBeCloseToPixel(lastPointPixel),
+        );
+        expect(
+          scale.getValueForPixel(lastPointPixel),
+          _toBeCloseToTime(_moment(labels[6]), 'hour'),
+        );
+      });
     });
 
     group('when rendering several years', () {
@@ -282,30 +451,146 @@ void main() {
       );
     });
 
-    test(
-      'should get the correct label for a data value',
-      () {},
-      skip: 'blocked: controller.line',
-    );
+    testWidgets('should get the correct label for a data value', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'xAxisID': 'x',
+              'data': <Object?>[null, 10, 3],
+            },
+          ],
+          'labels': <Object?>[
+            '2015-01-01T20:00:00',
+            '2015-01-02T21:00:00',
+            '2015-01-03T22:00:00',
+            '2015-01-05T23:00:00',
+            '2015-01-07T03:00',
+            '2015-01-08T10:00',
+            '2015-01-10T12:00',
+          ], // days
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{
+              'type': 'time',
+              'position': 'bottom',
+              'ticks': <String, Object?>{'source': 'labels', 'autoSkip': false},
+            },
+          },
+        },
+      });
 
-    group('when ticks.callback is specified', () {
-      test(
-        'should get the correct labels for ticks',
-        () {},
-        skip: 'blocked: controller.line',
+      final xScale = chart.scales['x']!;
+      final controller = chart.getDatasetMeta(0).controller!;
+      expect(
+        jsTruthy(
+          xScale.getLabelForValue(jsGet(controller.getParsed(0), xScale.id)),
+        ),
+        isTrue,
       );
-
-      test(
-        'should update ticks.callback correctly',
-        () {},
-        skip: 'blocked: controller.line',
+      expect(
+        xScale.getLabelForValue(jsGet(controller.getParsed(0), xScale.id)),
+        'Jan 1, 2015, 8:00:00 pm',
+      );
+      expect(
+        xScale.getLabelForValue(
+          xScale.getValueForPixel(xScale.getPixelForTick(6)!),
+        ),
+        'Jan 10, 2015, 12:00:00 pm',
       );
     });
 
-    test(
+    group('when ticks.callback is specified', () {
+      late Chart chart;
+      late Scale scale;
+
+      // The beforeEach acquires a chart: a local function that each case
+      // calls first in its body.
+      void beforeEach() {
+        chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'xAxisID': 'x',
+                'data': <Object?>[0, 0],
+              },
+            ],
+            'labels': <Object?>['2015-01-01T20:00:00', '2015-01-01T20:01:00'],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'time',
+                'time': <String, Object?>{
+                  'displayFormats': <String, Object?>{'second': 'h:mm:ss'},
+                },
+                'ticks': <String, Object?>{
+                  'callback': (Object? _, Object? i) => '<${jsToString(i)}>',
+                },
+              },
+            },
+          },
+        });
+        scale = chart.scales['x']!;
+      }
+
+      testWidgets('should get the correct labels for ticks', (tester) async {
+        beforeEach();
+        final labels = _getLabels(scale);
+
+        expect(labels.length, jasmineEquals(21));
+        expect(labels[0], jasmineEquals('<0>'));
+        expect(labels[labels.length - 1], jasmineEquals('<60>'));
+      });
+
+      testWidgets('should update ticks.callback correctly', (tester) async {
+        beforeEach();
+        String callback(Object? _, Object? i) => '{${jsToString(i)}}';
+        (jsGet(_scaleOptionsX(chart), 'ticks')! as AnyObject)['callback'] =
+            callback;
+        chart.update();
+
+        final labels = _getLabels(scale);
+        expect(labels.length, jasmineEquals(21));
+        expect(labels[0], jasmineEquals('{0}'));
+        expect(labels[labels.length - 1], jasmineEquals('{60}'));
+      });
+    });
+
+    testWidgets(
       'should get the correct label when time is specified as a string',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'xAxisID': 'x',
+                'data': <Object?>[
+                  <String, Object?>{'x': '2015-01-01T20:00:00', 'y': 10},
+                  <String, Object?>{'x': '2015-01-02T21:00:00', 'y': 3},
+                ],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'time', 'position': 'bottom'},
+            },
+          },
+        });
+
+        final xScale = chart.scales['x']!;
+        final controller = chart.getDatasetMeta(0).controller!;
+        final value = jsGet(controller.getParsed(0), xScale.id);
+        expect(jsTruthy(xScale.getLabelForValue(value)), isTrue);
+        expect(xScale.getLabelForValue(value), 'Jan 1, 2015, 8:00:00 pm');
+      },
     );
 
     test(
@@ -320,26 +605,142 @@ void main() {
       skip: 'diverges: adapt-date-moment-format',
     );
 
-    test(
-      'should get the correct label for a timestamp',
-      () {},
-      skip: 'blocked: controller.line',
-    );
+    testWidgets('should get the correct label for a timestamp', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'xAxisID': 'x',
+              'data': <Object?>[
+                // Normally (at least with the moment.js adapter), times would
+                // be in the user's local time zone.  To allow for more stable
+                // tests, our tests/index.js sets moment.js to use UTC; use `Z`
+                // here to match.
+                <String, Object?>{
+                  't': _dateValue('2018-01-08 05:14:23.234Z'),
+                  'y': 10,
+                },
+                <String, Object?>{
+                  't': _dateValue('2018-01-09 06:17:43.426Z'),
+                  'y': 3,
+                },
+              ],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'parsing': <String, Object?>{'xAxisKey': 't'},
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'type': 'time', 'position': 'bottom'},
+          },
+        },
+      });
 
-    test(
+      final xScale = chart.scales['x']!;
+      final controller = chart.getDatasetMeta(0).controller!;
+      final label = xScale.getLabelForValue(
+        jsGet(controller.getParsed(0), xScale.id),
+      );
+      expect(label, jasmineEquals('Jan 8, 2018, 5:14:23 am'));
+    });
+
+    testWidgets(
       'should get the correct pixel for only one data in the dataset',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>['2016-05-27'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'xAxisID': 'x',
+                'data': <Object?>[5],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'display': true, 'type': 'time'},
+            },
+          },
+        });
+
+        final xScale = chart.scales['x']!;
+        final pixel = xScale.getPixelForValue(_moment('2016-05-27'));
+
+        expect(
+          xScale.getValueForPixel(pixel),
+          jasmineEquals(_moment(_labels(chart)[0])),
+        );
+      },
     );
 
-    test(
-      'does not create a negative width chart when hidden',
-      () {},
-      skip: 'blocked: controller.line',
-    );
+    testWidgets('does not create a negative width chart when hidden', (
+      tester,
+    ) async {
+      final chart = acquireChart(
+        <String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'data': <Object?>[]},
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'time',
+                'ticks': <String, Object?>{
+                  'min': _add(jsDateNow(), -1, 'months'),
+                  'max': jsDateNow(),
+                },
+              },
+            },
+            'responsive': true,
+          },
+        },
+        <String, Object?>{
+          'wrapper': <String, Object?>{'style': 'display: none'},
+        },
+      );
+      expect(chart.scales['y']!.width, jasmineEquals(0));
+      expect(chart.scales['y']!.maxWidth, jasmineEquals(0));
+      expect(chart.width, jasmineEquals(0));
+    });
 
     group('when ticks.source', () {
       group('is "labels"', () {
+        late Chart chart;
+
+        // The beforeEach acquires a chart: a local function that each case
+        // with a body calls first. `parser: 'YYYY'` is the moment format of
+        // upstream. The cases with a body assert no value of that parse.
+        void beforeEach() {
+          chart = acquireChart(<String, Object?>{
+            'type': 'line',
+            'data': <String, Object?>{
+              'labels': <Object?>['2017', '2019', '2020', '2025', '2042'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[0, 1, 2, 3, 4, 5],
+                },
+              ],
+            },
+            'options': <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'time',
+                  'time': <String, Object?>{'parser': 'YYYY'},
+                  'ticks': <String, Object?>{'source': 'labels'},
+                },
+              },
+            },
+          });
+        }
+
         test(
           'should generate ticks from "data.labels"',
           () {},
@@ -361,21 +762,87 @@ void main() {
 
         // The assertions read only `Date.now()` and an empty label list.
         // No asserted value comes from the parse with 'YYYY'.
-        test(
+        testWidgets(
           'should correctly handle empty `data.labels` using "day" if '
           '`time.unit` is undefined`',
-          () {},
-          skip: 'blocked: controller.line',
+          (tester) async {
+            beforeEach();
+            final scale = chart.scales['x']!;
+
+            chart.data['labels'] = <Object?>[];
+            chart.update();
+
+            expect(
+              scale.min,
+              jasmineEquals(_startOf(jsDateNow(), 'day')),
+            );
+            expect(
+              scale.max,
+              jasmineEquals(_endOf(jsDateNow(), 'day') + 1),
+            );
+            expect(_getLabels(scale), jasmineEquals(<Object?>[]));
+          },
         );
 
-        test(
+        testWidgets(
           'should correctly handle empty `data.labels` using `time.unit`',
-          () {},
-          skip: 'blocked: controller.line',
+          (tester) async {
+            beforeEach();
+            final scale = chart.scales['x']!;
+            final options = _scaleOptionsX(chart);
+
+            (jsGet(options, 'time')! as AnyObject)['unit'] = 'year';
+            chart.data['labels'] = <Object?>[];
+            chart.update();
+
+            expect(
+              scale.min,
+              jasmineEquals(_startOf(jsDateNow(), 'year')),
+            );
+            expect(
+              scale.max,
+              jasmineEquals(_endOf(jsDateNow(), 'year') + 1),
+            );
+            expect(_getLabels(scale), jasmineEquals(<Object?>[]));
+          },
         );
       });
 
       group('is "data"', () {
+        late Chart chart;
+
+        // The beforeEach acquires a chart: a local function that the case
+        // with a body calls first.
+        void beforeEach() {
+          chart = acquireChart(<String, Object?>{
+            'type': 'line',
+            'data': <String, Object?>{
+              'labels': <Object?>['2017', '2019', '2020', '2025', '2042'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[0, 1, 2, 3, 4, 5],
+                },
+                <String, Object?>{
+                  'data': <Object?>[
+                    <String, Object?>{'x': '2018', 'y': 6},
+                    <String, Object?>{'x': '2020', 'y': 7},
+                    <String, Object?>{'x': '2043', 'y': 8},
+                  ],
+                },
+              ],
+            },
+            'options': <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'time',
+                  'time': <String, Object?>{'parser': 'YYYY'},
+                  'ticks': <String, Object?>{'source': 'data'},
+                },
+              },
+            },
+          });
+        }
+
         test(
           'should generate ticks from "datasets.data"',
           () {},
@@ -402,11 +869,29 @@ void main() {
           skip: 'diverges: adapt-date-moment-format',
         );
 
-        test(
+        testWidgets(
           'should correctly handle empty `data.labels` and hidden datasets '
           'using `time.unit`',
-          () {},
-          skip: 'blocked: controller.line',
+          (tester) async {
+            beforeEach();
+            final scale = chart.scales['x']!;
+            final options = _scaleOptionsX(chart);
+
+            (jsGet(options, 'time')! as AnyObject)['unit'] = 'year';
+            chart.data['labels'] = <Object?>[];
+            chart.getDatasetMeta(1).hidden = true;
+            chart.update();
+
+            expect(
+              scale.min,
+              jasmineEquals(_startOf(jsDateNow(), 'year')),
+            );
+            expect(
+              scale.max,
+              jasmineEquals(_endOf(jsDateNow(), 'year') + 1),
+            );
+            expect(_getLabels(scale), jasmineEquals(<Object?>[]));
+          },
         );
       });
     });
@@ -709,10 +1194,35 @@ void main() {
       );
     });
 
-    test(
-      'should pass timestamp to ticks callback',
-      () {},
-      skip: 'blocked: controller.line',
-    );
+    testWidgets('should pass timestamp to ticks callback', (tester) async {
+      Object? callbackValue = undefined;
+      acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'xAxisID': 'x',
+              'data': <Object?>[0, 0],
+            },
+          ],
+          'labels': <Object?>['2015-01-01T20:00:00', '2015-01-01T20:01:00'],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{
+              'type': 'time',
+              'ticks': <String, Object?>{
+                'callback': (Object? value) {
+                  callbackValue = value;
+                  return value;
+                },
+              },
+            },
+          },
+        },
+      });
+
+      expect(jsTypeof(callbackValue), 'number');
+    });
   });
 }

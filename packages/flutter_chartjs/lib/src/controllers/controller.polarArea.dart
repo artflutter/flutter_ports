@@ -47,6 +47,7 @@ import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
+import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/basic.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 
@@ -108,33 +109,12 @@ Map<String, Object?> _item(
 /// controller.polarArea.js:65 `onClick(e, legendItem, legend)` of
 /// `overrides.plugins.legend` (Chart.js ADR 0028, section 6).
 ///
-/// `toggleDataVisibility(legendItem.index)`. Upstream writes the property
-/// key `ToString(index)` (core.controller.js:881-883). `toggleDataVisibility`
-/// of `types.Chart` takes a `double` and writes the key of that number. Thus
-/// [_legendIndex] gives the number of the upstream key.
+/// `toggleDataVisibility(legendItem.index)` gives the raw item index to
+/// `types.Chart.toggleDataVisibility`, which writes the property key
+/// `ToString(index)` (core.controller.js:881-883), as upstream.
 void _onClick(Object? e, Object? legendItem, types.LegendElement legend) {
-  legend.chart.toggleDataVisibility(
-    _legendIndex(jsGet(legendItem, 'index')),
-  );
+  legend.chart.toggleDataVisibility(jsGet(legendItem, 'index'));
   legend.chart.update();
-}
-
-/// The number whose key is the property key `ToString(index)` of upstream.
-///
-/// When the key is the text of a number (`'1'`, `1`, `[2]`), this function
-/// gives that number, and the port writes the same key as upstream. Any
-/// other key (`'null'`, `'true'`, `''`, `'01'`, `'undefined'`) is not the
-/// key of a data index. For it, this function gives NaN, the key `'NaN'`,
-/// which also matches no data index. Thus `null` and `''` do not toggle data
-/// index 0, and `true` and `'01'` do not toggle data index 1, as upstream.
-/// A residual stays: `moveNumericKeys` (core.controller.js:72) moves a key
-/// whose `+key` is a number, for example `''` and `'01'`, after a data
-/// insert or remove. The port moves no `'NaN'` key. A key that is not the
-/// text of a number needs a key parameter in `types.Chart`.
-double _legendIndex(Object? index) {
-  final key = jsToString(index);
-  final number = jsToNumber(key);
-  return jsNumberToString(number) == key ? number : double.nan;
 }
 
 /// controller.polarArea.js:4 `PolarAreaController extends
@@ -371,6 +351,12 @@ class PolarAreaController extends DatasetController {
   ///
   /// `opts.animation` is the raw option: `false` of the harness gives
   /// `undefined` for `animateScale` and `animateRotate`, as in JavaScript.
+  ///
+  /// Before the first layout of the scale, `xCenter` and `yCenter` are Dart
+  /// `null`, the JS `undefined` (scale.radialLinear.js:416-418). The reset
+  /// of a new arc then writes `undefined` into `x` and `y`, and the next
+  /// animation of `x` and `y` starts at the target, as upstream
+  /// (core.animation.js:32).
   @override
   void updateElements(
     List<types.Element> arcs,
@@ -414,8 +400,8 @@ class PolarAreaController extends DatasetController {
       }
 
       final properties = <String, Object?>{
-        'x': centerX,
-        'y': centerY,
+        'x': centerX ?? undefined,
+        'y': centerY ?? undefined,
         'innerRadius': 0.0,
         'outerRadius': outerRadius,
         'startAngle': startAngle,

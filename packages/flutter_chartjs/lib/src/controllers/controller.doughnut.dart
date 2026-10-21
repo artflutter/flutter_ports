@@ -44,7 +44,8 @@ import 'package:flutter_chartjs/src/helpers/helpers.intl.dart'
     show formatNumber;
 import 'package:flutter_chartjs/src/helpers/helpers.math.dart'
     show angleBetween, halfPi, pi, tau, toRadians;
-import 'package:flutter_chartjs/src/js/js_array.dart' show jsSetIndex;
+import 'package:flutter_chartjs/src/js/js_array.dart'
+    show JsStringList, jsSetIndex;
 import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs/src/js/js_number.dart';
@@ -244,17 +245,17 @@ class DoughnutController extends DatasetController {
   ///
   /// Override data parsing, since we are not using scales
   ///
-  /// `data` is a List after `_dataCheck` of the port: a falsy `data` is `[]`
-  /// (core.datasetController.js:367), and object data throws at
-  /// `meta.iScale!` of `_convertObjectDataToArray` in
+  /// `data` is a List or a String after `_dataCheck` of the port: a falsy
+  /// `data` is `[]` (core.datasetController.js:367), and object data throws
+  /// at `meta.iScale!` of `_convertObjectDataToArray` in
   /// core.datasetController.dart, as upstream throws at
-  /// core.datasetController.js:104. Any other truthy `data` that is not a
-  /// List throws the [TypeError] of the cast in `_dataCheck`. Thus the cast
-  /// here cannot fail in the port (Chart.js ADR 0027, section 5 item 4).
-  /// Upstream is different for a string `data`: `_dataCheck` keeps it
-  /// (`Object.isExtensible` is false, core.datasetController.js:386), and
-  /// this function parses its characters. That difference is in
-  /// `_dataCheck`, not in this file (U-doughnut review, finding R4).
+  /// core.datasetController.js:104. `_dataCheck` keeps a string `data`
+  /// (core.datasetController.js:386), and this function reads its
+  /// characters with [jsGetIndex]. Any other truthy `data` throws the
+  /// [TypeError] of the cast in `_dataCheck`. Thus the cast here cannot fail
+  /// in the port (Chart.js ADR 0027, section 5 item 4). With parsing
+  /// `false`, `meta._parsed = data` gives a string the [JsStringList] of its
+  /// characters: the parsed items are a List in the port.
   ///
   /// The default `key = 'value'` of the destructuring is [valueOrDefault]:
   /// only `undefined` gives it. The key goes to `resolveObjectKey` with the
@@ -262,12 +263,15 @@ class DoughnutController extends DatasetController {
   /// string throws a [TypeError] at the first item.
   @override
   void parse(double start, double count) {
-    final data = jsGet(getDataset(), 'data')! as List<Object?>;
+    final data = jsGet(getDataset(), 'data');
     final meta = cachedMeta;
 
     if (parsing == false) {
-      // The same List: `meta._parsed === dataset.data`.
-      meta.parsed = data;
+      // The same List: `meta._parsed === dataset.data`. A string gives the
+      // List of its characters.
+      meta.parsed = data is String
+          ? JsStringList(data)
+          : data! as List<Object?>;
     } else {
       var getter = (double i) => jsToNumber(jsGetIndex(data, i));
 
@@ -711,30 +715,10 @@ Map<String, Object?> _labelItem(
 /// controller.doughnut.js:125 `onClick(e, legendItem, legend)` of
 /// `overrides.plugins.legend` (Chart.js ADR 0028, section 6).
 ///
-/// `toggleDataVisibility(legendItem.index)`. Upstream writes the property
-/// key `ToString(index)` (core.controller.js:881-883). `toggleDataVisibility`
-/// of `types.Chart` takes a `double` and writes the key of that number. Thus
-/// [_legendIndex] gives the number of the upstream key.
+/// `toggleDataVisibility(legendItem.index)` gives the raw item index to
+/// `types.Chart.toggleDataVisibility`, which writes the property key
+/// `ToString(index)` (core.controller.js:881-883), as upstream.
 void _onClick(Object? e, Object? legendItem, types.LegendElement legend) {
-  legend.chart.toggleDataVisibility(_legendIndex(jsGet(legendItem, 'index')));
+  legend.chart.toggleDataVisibility(jsGet(legendItem, 'index'));
   legend.chart.update();
-}
-
-/// The number whose key is the property key `ToString(index)` of upstream.
-///
-/// When the key is the text of a number (`'1'`, `1`, `[2]`), this function
-/// gives that number, and the port writes the same key as upstream. Any
-/// other key (`'null'`, `'true'`, `''`, `'01'`, `' 1'`, `'undefined'`) is not
-/// the key of a data index. For it, this function gives NaN, the key
-/// `'NaN'`, which also matches no data index. Thus `null` and `''` do not
-/// toggle data index 0, and `true` and `'01'` do not toggle data index 1, as
-/// upstream. A residual stays: `moveNumericKeys` (core.controller.js:72)
-/// moves a key whose `+key` is a number, for example `''` and `'01'`, after
-/// a data insert or remove. The port moves no `'NaN'` key. A key that is not
-/// the text of a number needs a key parameter in `types.Chart`. The same
-/// helper is in controller.polarArea.dart.
-double _legendIndex(Object? index) {
-  final key = jsToString(index);
-  final number = jsToNumber(key);
-  return jsNumberToString(number) == key ? number : double.nan;
 }

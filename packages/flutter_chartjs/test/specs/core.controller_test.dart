@@ -9,12 +9,15 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.defaults.dart';
+import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.core.dart' as helpers;
+import 'package:flutter_chartjs/src/js/js_array.dart';
 import 'package:flutter_chartjs/src/js/js_function.dart';
 import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/js/js_object.dart';
 import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/platform/platform.basic.dart';
+import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
@@ -56,8 +59,43 @@ import '../support/jasmine.dart';
 // append to the harness body attaches it at the mutation checkpoint
 // (Chart.js ADR 0022, sections 3 and 4).
 //
-// :3 `const overrides = Chart.overrides` comes with the bodies that read
-// it.
+// :3 `const overrides = Chart.overrides` is `Chart.overrides`; the cases
+// read `overrides.line` (`_line`).
+//
+// The other spec forms of the chart cases:
+// - `chart.getActiveElements()` in `toEqual` is `_activeElements(chart)`:
+//   the object `{element, datasetIndex, index}` of each active element.
+// - `chart._metasets`, `chart._sortedMetasets` and `meta._dataset` are
+//   `chart.metasets`, `chart.sortedMetasets` and `meta.dataset_` (Chart.js
+//   ADR 0012 and ADR 0023). A hole of the metasets is Dart null.
+// - `chart.data.datasets.splice(...)` is `jsSplice`: no listener watches
+//   the datasets array.
+// - `[].concat(hooks.a, hooks.b)` is a list literal with spreads.
+// - `'before-' + args.index` is `jsToString` of the index.
+// - A `beforeEach` or an `afterEach` that reads a chart is a local function
+//   that each case calls first or last.
+
+/// :3 `const overrides = Chart.overrides`: `overrides.line`.
+Map<String, Object?> get _line =>
+    jsGet(Chart.overrides, 'line')! as Map<String, Object?>;
+
+/// `chart.data.datasets`.
+List<Object?> _datasets(Chart chart) =>
+    jsGet(chart.data, 'datasets')! as List<Object?>;
+
+/// `chart.getActiveElements()` as Jasmine `toEqual` reads it: each active
+/// element is the object `{element, datasetIndex, index}`.
+List<Object?> _activeElements(Chart chart) => [
+  for (final active in chart.getActiveElements())
+    <String, Object?>{
+      'element': active.element,
+      'datasetIndex': active.datasetIndex,
+      'index': active.index,
+    },
+];
+
+/// `point.y` of a data element.
+double _y(types.Element point) => (point as Element).y;
 
 void main() {
   group('Chart', () {
@@ -74,11 +112,46 @@ void main() {
       expect(chart, isA<Chart>());
     });
 
-    test(
-      'should throw an error if the canvas is already in use',
-      () {},
-      skip: 'blocked: controller.line',
-    );
+    testWidgets('should throw an error if the canvas is already in use', (
+      tester,
+    ) async {
+      final config = <String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[1, 2, 3, 4],
+            },
+          ],
+          'labels': <Object?>['A', 'B', 'C', 'D'],
+        },
+      };
+      final chart = acquireChart(config);
+      final canvas = chart.canvas;
+
+      Chart createChart() {
+        return Chart(canvas, config);
+      }
+
+      // `chart.canvas.id` is the reflection of the attribute `id`: '' for a
+      // canvas without it.
+      expect(
+        createChart,
+        throwsA(
+          isA<StateError>().having(
+            (error) => error.message,
+            'message',
+            'Canvas is already in use. '
+                "Chart with ID '${jsToString(chart.id)}'"
+                ' must be destroyed before the canvas with ID '
+                "'${chart.canvas!.getAttribute('id') ?? ''}' can be reused.",
+          ),
+        ),
+      );
+
+      chart.destroy();
+      expect(createChart, returnsNormally);
+    });
 
     group('config initialization', () {
       testWidgets('should create missing config.data properties', (
@@ -94,11 +167,36 @@ void main() {
         expect(jsGet(data['datasets'], 'length'), 0);
       });
 
-      test(
-        'should not alter config.data references',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should not alter config.data references', (tester) async {
+        final ds0 = <String, Object?>{
+          'data': <Object?>[10, 11, 12, 13],
+        };
+        final ds1 = <String, Object?>{
+          'data': <Object?>[20, 21, 22, 23],
+        };
+        final datasets = <Object?>[ds0, ds1];
+        final labels = <Object?>[0, 1, 2, 3];
+        final data = <String, Object?>{'labels': labels, 'datasets': datasets};
+
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': data,
+        });
+
+        expect(chart.data, same(data));
+        expect(chart.data['labels'], same(labels));
+        expect(chart.data['datasets'], same(datasets));
+        expect(jsGet(chart.data['datasets'], 0), same(ds0));
+        expect(jsGet(chart.data['datasets'], 1), same(ds1));
+        expect(
+          jsGet(jsGet(chart.data['datasets'], 0), 'data'),
+          same(ds0['data']),
+        );
+        expect(
+          jsGet(jsGet(chart.data['datasets'], 1), 'data'),
+          same(ds1['data']),
+        );
+      });
 
       testWidgets('should define chart.data as an alias for config.data', (
         tester,
@@ -146,23 +244,86 @@ void main() {
         );
       });
 
-      test(
-        'should initialize config with default interaction options',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should initialize config with default interaction options', (
+        tester,
+      ) async {
+        void callback() {}
+        final defaults = Chart.defaults;
 
-      test(
-        'should initialize config with default hover options',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+        defaults['onHover'] = callback;
+        _line['interaction'] = <String, Object?>{'mode': 'test'};
 
-      test(
-        'should override default options',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+        final chart = acquireChart(<String, Object?>{'type': 'line'});
+
+        final options = chart.options;
+        expect(
+          jsGet(options['font'], 'size'),
+          jsGet(defaults['font'], 'size'),
+        );
+        expect(options['onHover'], same(callback));
+        expect(jsGet(options['hover'], 'mode'), 'test');
+
+        defaults['onHover'] = null;
+        _line.remove('interaction');
+      });
+
+      testWidgets('should initialize config with default hover options', (
+        tester,
+      ) async {
+        void callback() {}
+        final defaults = Chart.defaults;
+
+        defaults['onHover'] = callback;
+        _line['hover'] = <String, Object?>{'mode': 'test'};
+
+        final chart = acquireChart(<String, Object?>{'type': 'line'});
+
+        final options = chart.options;
+        expect(
+          jsGet(options['font'], 'size'),
+          jsGet(defaults['font'], 'size'),
+        );
+        expect(options['onHover'], same(callback));
+        expect(jsGet(options['hover'], 'mode'), 'test');
+
+        defaults['onHover'] = null;
+        _line.remove('hover');
+      });
+
+      testWidgets('should override default options', (tester) async {
+        void callback() {}
+        final defaults = Chart.defaults;
+        final lineDefaults =
+            jsGet(defaults['datasets'], 'line')! as Map<String, Object?>;
+        final defaultSpanGaps = jsGet(lineDefaults, 'spanGaps');
+
+        defaults['onHover'] = callback;
+        _line['hover'] = <String, Object?>{'mode': 'x-axis'};
+        lineDefaults['spanGaps'] = true;
+
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'options': <String, Object?>{
+            'spanGaps': false,
+            'hover': <String, Object?>{'mode': 'dataset'},
+            'plugins': <String, Object?>{
+              'title': <String, Object?>{'position': 'bottom'},
+            },
+          },
+        });
+
+        final options = chart.options;
+        expect(options['spanGaps'], false);
+        expect(jsGet(options['hover'], 'mode'), 'dataset');
+        expect(
+          jsGet(jsGet(options['plugins'], 'title'), 'position'),
+          'bottom',
+        );
+
+        defaults['onHover'] = null;
+        _line.remove('hover');
+        lineDefaults['spanGaps'] = defaultSpanGaps;
+      });
 
       test(
         'should initialize config with default dataset options',
@@ -288,30 +449,142 @@ void main() {
         );
       });
 
-      test(
-        'should activate element on hover',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should activate element on hover', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>['A', 'B', 'C', 'D'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 20, 30, 100],
+              },
+            ],
+          },
+        });
 
-      test(
-        'should handle changing the events at runtime',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+        final point = chart.getDatasetMeta(0).data[1];
 
-      test(
+        await triggerMouseEvent(chart, 'mousemove', point);
+        expect(
+          _activeElements(chart),
+          jasmineEquals(<Object?>[
+            <String, Object?>{'datasetIndex': 0, 'index': 1, 'element': point},
+          ]),
+        );
+      });
+
+      testWidgets('should handle changing the events at runtime', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>['A', 'B', 'C', 'D'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 20, 30, 100],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'events': <Object?>['click'],
+          },
+        });
+
+        final point1 = chart.getDatasetMeta(0).data[1];
+        final point2 = chart.getDatasetMeta(0).data[2];
+
+        await triggerMouseEvent(chart, 'click', point1);
+        expect(
+          _activeElements(chart),
+          jasmineEquals(<Object?>[
+            <String, Object?>{
+              'datasetIndex': 0,
+              'index': 1,
+              'element': point1,
+            },
+          ]),
+        );
+
+        chart.options['events'] = <Object?>['mousemove'];
+        chart.update();
+
+        await triggerMouseEvent(chart, 'mousemove', point2);
+        expect(
+          _activeElements(chart),
+          jasmineEquals(<Object?>[
+            <String, Object?>{
+              'datasetIndex': 0,
+              'index': 2,
+              'element': point2,
+            },
+          ]),
+        );
+      });
+
+      testWidgets(
         'should activate element on hover when minPadding pixels outside '
         'chart area',
-        () {},
-        skip: 'blocked: controller.line',
+        (tester) async {
+          final chart = acquireChart(<String, Object?>{
+            'type': 'line',
+            'data': <String, Object?>{
+              'labels': <Object?>['A', 'B', 'C', 'D'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[10, 20, 30, 100],
+                  'hoverRadius': 0,
+                },
+              ],
+            },
+            'options': <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'display': false},
+                'y': <String, Object?>{'display': false},
+              },
+            },
+          });
+
+          final point = chart.getDatasetMeta(0).data[0];
+
+          await triggerMouseEvent(chart, 'mousemove', <String, Object?>{
+            'x': 1,
+            'y': _y(point),
+          });
+          expect(
+            _activeElements(chart),
+            jasmineEquals(<Object?>[
+              <String, Object?>{
+                'datasetIndex': 0,
+                'index': 0,
+                'element': point,
+              },
+            ]),
+          );
+        },
       );
 
-      test(
-        'should not activate elements when hover is disabled',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should not activate elements when hover is disabled', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>['A', 'B', 'C', 'D'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 20, 30, 100],
+              },
+            ],
+          },
+          'options': <String, Object?>{'hover': false},
+        });
+
+        final point = chart.getDatasetMeta(0).data[1];
+
+        await triggerMouseEvent(chart, 'mousemove', point);
+        expect(_activeElements(chart), jasmineEquals(<Object?>[]));
+      });
 
       test(
         'should not change the active elements when outside chartArea, except '
@@ -457,11 +730,41 @@ void main() {
         );
       });
 
-      test(
-        'should not alter defaults when merging config',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should not alter defaults when merging config', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'options': <String, Object?>{
+            '_jasmineCheck': 42,
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'linear', '_jasmineCheck': 42},
+              'y': <String, Object?>{'type': 'category', '_jasmineCheck': 42},
+            },
+          },
+        });
+
+        expect(chart.options['_jasmineCheck'], isNot(same(undefined)));
+        expect(
+          chart.scales['x']!.options['_jasmineCheck'],
+          isNot(same(undefined)),
+        );
+        expect(
+          chart.scales['y']!.options['_jasmineCheck'],
+          isNot(same(undefined)),
+        );
+
+        expect(jsGet(_line, '_jasmineCheck'), same(undefined));
+        expect(jsGet(defaults, '_jasmineCheck'), same(undefined));
+        expect(
+          jsGet(jsGet(defaults['scales'], 'linear'), '_jasmineCheck'),
+          same(undefined),
+        );
+        expect(
+          jsGet(jsGet(defaults['scales'], 'category'), '_jasmineCheck'),
+          same(undefined),
+        );
+      });
 
       // :536 and :566 give `data: []`. An array data gives a new Map (row
       // adapt-config-objects), and no Chart.js code reads the items of the
@@ -1628,25 +1931,117 @@ void main() {
     });
 
     group('config update', () {
-      test('should update options', () {}, skip: 'blocked: controller.line');
+      testWidgets('should update options', (tester) async {
+        final chart =
+            acquireChart(<String, Object?>{
+                'type': 'line',
+                'data': <String, Object?>{
+                  'labels': <Object?>['A', 'B', 'C', 'D'],
+                  'datasets': <Object?>[
+                    <String, Object?>{
+                      'data': <Object?>[10, 20, 30, 100],
+                    },
+                  ],
+                },
+                'options': <String, Object?>{'responsive': true},
+              })
+              ..options = <String, Object?>{
+                'responsive': false,
+                'scales': <String, Object?>{
+                  'y': <String, Object?>{'min': 0, 'max': 10},
+                },
+              }
+              ..update();
 
-      test(
-        'should update scales options',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+        final yScale = chart.scales['y']!;
+        expect(yScale.options['min'], 0);
+        expect(yScale.options['max'], 10);
+      });
 
-      test(
-        'should update scales options from new object',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should update scales options', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>['A', 'B', 'C', 'D'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 20, 30, 100],
+              },
+            ],
+          },
+          'options': <String, Object?>{'responsive': true},
+        });
 
-      test(
-        'should remove discarded scale',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+        final y = jsGet(chart.options['scales'], 'y')! as Map<String, Object?>;
+        y['min'] = 0;
+        y['max'] = 10;
+        chart.update();
+
+        final yScale = chart.scales['y']!;
+        expect(yScale.options['min'], 0);
+        expect(yScale.options['max'], 10);
+      });
+
+      testWidgets('should update scales options from new object', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>['A', 'B', 'C', 'D'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 20, 30, 100],
+              },
+            ],
+          },
+          'options': <String, Object?>{'responsive': true},
+        });
+
+        final newScalesConfig = <String, Object?>{
+          'y': <String, Object?>{'min': 0, 'max': 10},
+        };
+        chart.options['scales'] = newScalesConfig;
+
+        chart.update();
+
+        final yScale = chart.scales['y']!;
+        expect(yScale.options['min'], 0);
+        expect(yScale.options['max'], 10);
+      });
+
+      testWidgets('should remove discarded scale', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>['A', 'B', 'C', 'D'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 20, 30, 100],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'responsive': true,
+            'scales': <String, Object?>{
+              'yAxis0': <String, Object?>{'min': 0, 'max': 10},
+            },
+          },
+        });
+
+        final newScalesConfig = <String, Object?>{
+          'y': <String, Object?>{'min': 0, 'max': 10},
+        };
+        chart.options['scales'] = newScalesConfig;
+
+        chart.update();
+
+        final yScale = chart.scales['yAxis0'];
+        expect(yScale, isNull);
+        final newyScale = chart.scales['y']!;
+        expect(newyScale.options['min'], 0);
+        expect(newyScale.options['max'], 10);
+      });
 
       test(
         'should update tooltip options',
@@ -1660,100 +2055,460 @@ void main() {
         skip: 'blocked: plugin.tooltip',
       );
 
-      test(
-        'should update the metadata',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should update the metadata', (tester) async {
+        final cfg = <String, Object?>{
+          'data': <String, Object?>{
+            'labels': <Object?>['A', 'B', 'C', 'D'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'type': 'line',
+                'data': <Object?>[10, 20, 30, 0],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'responsive': true,
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'category'},
+              'y': <String, Object?>{
+                'type': 'linear',
+                'title': <String, Object?>{'display': true, 'text': 'Value'},
+              },
+            },
+          },
+        };
+        final chart = acquireChart(cfg);
+        var meta = chart.getDatasetMeta(0);
+        expect(meta.type, 'line');
+
+        // change the dataset to bar and check that meta was updated
+        (jsGet(jsGet(chart.config.data, 'datasets'), 0)!
+                as Map<String, Object?>)['type'] =
+            'bar';
+        chart.update();
+        meta = chart.getDatasetMeta(0);
+        expect(meta.type, 'bar');
+      });
     });
 
     group('plugin.extensions', () {
-      test(
-        'should notify plugin in correct order',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      final hooks = <String, List<String>>{
+        'install': ['install'],
+        'uninstall': ['uninstall'],
+        'init': ['beforeInit', 'resize', 'afterInit'],
+        'start': ['start'],
+        'stop': ['stop'],
+        'update': [
+          'beforeUpdate',
+          'beforeLayout',
+          'beforeDataLimits', // y-axis fit
+          'afterDataLimits',
+          'beforeBuildTicks',
+          'afterBuildTicks',
+          'beforeDataLimits', // x-axis fit
+          'afterDataLimits',
+          'beforeBuildTicks',
+          'afterBuildTicks',
+          // 'beforeBuildTicks', // y-axis re-fit
+          // 'afterBuildTicks',
+          'afterLayout',
+          'beforeDatasetsUpdate',
+          'beforeDatasetUpdate',
+          'afterDatasetUpdate',
+          'afterDatasetsUpdate',
+          'afterUpdate',
+        ],
+        'render': [
+          'beforeRender',
+          'beforeDraw',
+          'beforeDatasetsDraw',
+          'beforeDatasetDraw',
+          'afterDatasetDraw',
+          'afterDatasetsDraw',
+          // 'beforeTooltipDraw',
+          // 'afterTooltipDraw',
+          'afterDraw',
+          'afterRender',
+        ],
+        'resize': ['resize'],
+        'destroy': ['beforeDestroy', 'afterDestroy'],
+      };
 
-      test(
-        'should notify initially disabled plugin in correct order',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should notify plugin in correct order', (tester) async {
+        await waitForDone((done) {
+          final plugin = <String, Object?>{};
+          final sequence = <Object?>[];
 
-      test(
+          for (final group in jsObjectKeys(hooks)) {
+            for (final name in hooks[group]!) {
+              plugin[name] = () {
+                sequence.add(name);
+              };
+            }
+          }
+
+          final chart = acquireChart(
+            <String, Object?>{
+              'type': 'line',
+              'data': <String, Object?>{
+                'datasets': <Object?>[<String, Object?>{}],
+              },
+              'plugins': <Object?>[plugin],
+              'options': <String, Object?>{'responsive': true},
+            },
+            <String, Object?>{
+              'wrapper': <String, Object?>{'style': 'width: 300px'},
+            },
+          );
+
+          waitForResize(chart, () {
+            chart.destroy();
+
+            expect(
+              sequence,
+              jasmineEquals(<Object?>[
+                ...hooks['install']!,
+                ...hooks['start']!,
+                ...hooks['init']!,
+                ...hooks['update']!,
+                ...hooks['render']!,
+                ...hooks['resize']!,
+                ...hooks['update']!,
+                ...hooks['render']!,
+                ...hooks['destroy']!,
+                ...hooks['stop']!,
+                ...hooks['uninstall']!,
+              ]),
+            );
+
+            done();
+          });
+          chart.canvas!.parentElement!.style.width = '400px';
+          chart.canvas!.parentElement!.style.height = '400px';
+        });
+      });
+
+      testWidgets('should notify initially disabled plugin in correct order', (
+        tester,
+      ) async {
+        final plugin = <String, Object?>{'id': 'plugin'};
+        var sequence = <Object?>[];
+
+        for (final group in jsObjectKeys(hooks)) {
+          for (final name in hooks[group]!) {
+            plugin[name] = () {
+              sequence.add(name);
+            };
+          }
+        }
+
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[<String, Object?>{}],
+          },
+          'plugins': <Object?>[plugin],
+          'options': <String, Object?>{
+            'plugins': <String, Object?>{'plugin': false},
+          },
+        });
+
+        expect(sequence, jasmineEquals(<Object?>[...hooks['install']!]));
+
+        sequence = [];
+        (chart.options['plugins']! as Map<String, Object?>)['plugin'] = true;
+        chart.update();
+
+        expect(
+          sequence,
+          jasmineEquals(<Object?>[
+            ...hooks['start']!,
+            ...hooks['update']!,
+            ...hooks['render']!,
+          ]),
+        );
+
+        sequence = [];
+        (chart.options['plugins']! as Map<String, Object?>)['plugin'] = false;
+        chart.update();
+
+        expect(sequence, jasmineEquals(hooks['stop']));
+
+        sequence = [];
+        chart.destroy();
+
+        expect(sequence, jasmineEquals(hooks['uninstall']));
+      });
+
+      testWidgets(
         'should not notify before/afterDatasetDraw if dataset is hidden',
-        () {},
-        skip: 'blocked: controller.line',
+        (tester) async {
+          final sequence = <Object?>[];
+          final plugin = <String, Object?>{
+            'beforeDatasetDraw': (Object? chart, Object? args) {
+              sequence.add('before-${jsToString(jsGet(args, 'index'))}');
+            },
+            'afterDatasetDraw': (Object? chart, Object? args) {
+              sequence.add('after-${jsToString(jsGet(args, 'index'))}');
+            },
+          };
+
+          acquireChart(<String, Object?>{
+            'type': 'line',
+            'data': <String, Object?>{
+              'datasets': <Object?>[
+                <String, Object?>{},
+                <String, Object?>{'hidden': true},
+                <String, Object?>{},
+              ],
+            },
+            'plugins': <Object?>[plugin],
+          });
+
+          expect(
+            sequence,
+            jasmineEquals(<Object?>[
+              'before-2',
+              'after-2',
+              'before-0',
+              'after-0',
+            ]),
+          );
+        },
       );
 
-      test(
+      // `chart._plugins._init` is `chart.plugins.cache`. `PluginService._init`
+      // of core.plugins.dart is private, and `cache` (core.plugins.js:94
+      // `_cache`) is public. For this chart both lists hold one descriptor
+      // with the same plugin and an options resolver without keys, in the
+      // port and upstream: the chart disables no plugin
+      // (core.plugins.js:101-107). `Object.getPrototypeOf(plugin.options)` is
+      // null: the options are a resolver of helpers.config, a Map, and a Map
+      // has no prototype (the trap table of helpers.config.dart,
+      // differences.md row js-semantics-resolver-objects).
+      testWidgets(
         'should not crash when accessing options of a blank inline plugin',
-        () {},
-        skip: 'blocked: controller.line',
+        (tester) async {
+          final chart = acquireChart(<String, Object?>{
+            'type': 'line',
+            'data': <String, Object?>{
+              'datasets': <Object?>[<String, Object?>{}],
+            },
+            'plugins': <Object?>[<String, Object?>{}],
+          });
+
+          void iterateOptions() {
+            for (final plugin in chart.plugins.cache!) {
+              // triggering bug https://github.com/chartjs/Chart.js/issues/9368
+              expect(plugin.options, isA<Map<String, Object?>>());
+            }
+          }
+
+          expect(iterateOptions, returnsNormally);
+        },
       );
     });
 
     group('metasets', () {
-      // :1955-1975 the beforeEach acquires a chart, and the afterEach reads
-      // it. They come with the bodies as local functions (Chart.js ADR 0022,
+      late Chart chart;
+
+      // The beforeEach acquires a chart, and the afterEach reads it: local
+      // functions that each case calls first and last (Chart.js ADR 0022,
       // section 2).
+      void beforeEach() {
+        chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'label': '1', 'order': 2},
+              <String, Object?>{'label': '2', 'order': 1},
+              <String, Object?>{'label': '3', 'order': 4},
+              <String, Object?>{'label': '4', 'order': 3},
+            ],
+          },
+        });
+      }
 
-      test(
-        'should build metasets array in order',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      void afterEach() {
+        final metasets = chart.metasets;
+        expect(metasets.length, jasmineEquals(_datasets(chart).length));
+        for (var i = 0; i < metasets.length; i++) {
+          expect(metasets[i]!.index, jasmineEquals(i));
+          expect(metasets[i]!.dataset_, jasmineEquals(_datasets(chart)[i]));
+        }
+      }
 
-      test(
-        'should build sorted metasets array in correct order',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should build metasets array in order', (tester) async {
+        beforeEach();
+        final metasets = chart.metasets;
+        expect(metasets[0]!.order, jasmineEquals(2));
+        expect(metasets[1]!.order, jasmineEquals(1));
+        expect(metasets[2]!.order, jasmineEquals(4));
+        expect(metasets[3]!.order, jasmineEquals(3));
+        afterEach();
+      });
 
-      test(
-        'should be moved when datasets are removed from beginning',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should build sorted metasets array in correct order', (
+        tester,
+      ) async {
+        beforeEach();
+        final metasets = chart.sortedMetasets;
+        expect(metasets[0]!.order, jasmineEquals(1));
+        expect(metasets[1]!.order, jasmineEquals(2));
+        expect(metasets[2]!.order, jasmineEquals(3));
+        expect(metasets[3]!.order, jasmineEquals(4));
+        afterEach();
+      });
 
-      test(
-        'should be moved when datasets are removed from middle',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should be moved when datasets are removed from beginning', (
+        tester,
+      ) async {
+        beforeEach();
+        jsSplice(_datasets(chart), 0, 2);
+        chart.update();
+        final metasets = chart.metasets;
+        expect(metasets[0]!.order, jasmineEquals(4));
+        expect(metasets[1]!.order, jasmineEquals(3));
+        afterEach();
+      });
 
-      test(
-        'should be moved when datasets are inserted',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should be moved when datasets are removed from middle', (
+        tester,
+      ) async {
+        beforeEach();
+        jsSplice(_datasets(chart), 1, 2);
+        chart.update();
+        final metasets = chart.metasets;
+        expect(metasets[0]!.order, jasmineEquals(2));
+        expect(metasets[1]!.order, jasmineEquals(3));
+        afterEach();
+      });
 
-      test(
-        'should be replaced when dataset is replaced',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should be moved when datasets are inserted', (tester) async {
+        beforeEach();
+        jsSplice(_datasets(chart), 1, 0, [
+          <String, Object?>{'label': '1.5', 'order': 5},
+        ]);
+        chart.update();
+        final metasets = chart.metasets;
+        expect(metasets[0]!.order, jasmineEquals(2));
+        expect(metasets[1]!.order, jasmineEquals(5));
+        expect(metasets[2]!.order, jasmineEquals(1));
+        expect(metasets[3]!.order, jasmineEquals(4));
+        expect(metasets[4]!.order, jasmineEquals(3));
+        afterEach();
+      });
 
-      test(
-        'should update properly when dataset locations are swapped',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should be replaced when dataset is replaced', (
+        tester,
+      ) async {
+        beforeEach();
+        jsSplice(_datasets(chart), 1, 1, [
+          <String, Object?>{'label': '1.5', 'order': 5},
+        ]);
+        chart.update();
+        final metasets = chart.metasets;
+        expect(metasets[0]!.order, jasmineEquals(2));
+        expect(metasets[1]!.order, jasmineEquals(5));
+        expect(metasets[2]!.order, jasmineEquals(4));
+        expect(metasets[3]!.order, jasmineEquals(3));
+        afterEach();
+      });
+
+      testWidgets('should update properly when dataset locations are swapped', (
+        tester,
+      ) async {
+        beforeEach();
+        final orig = _datasets(chart);
+        chart.data['datasets'] = <Object?>[orig[0], orig[2], orig[1], orig[3]];
+        chart.update();
+        var metasets = chart.metasets;
+        expect(metasets[0]!.label, jasmineEquals('1'));
+        expect(metasets[1]!.label, jasmineEquals('3'));
+        expect(metasets[2]!.label, jasmineEquals('2'));
+        expect(metasets[3]!.label, jasmineEquals('4'));
+
+        chart.data['datasets'] = <Object?>[
+          <String, Object?>{'label': 'new', 'order': 10},
+          orig[3],
+          orig[2],
+          orig[1],
+          orig[0],
+        ];
+        chart.update();
+        metasets = chart.metasets;
+        expect(metasets[0]!.label, jasmineEquals('new'));
+        expect(metasets[1]!.label, jasmineEquals('4'));
+        expect(metasets[2]!.label, jasmineEquals('3'));
+        expect(metasets[3]!.label, jasmineEquals('2'));
+        expect(metasets[4]!.label, jasmineEquals('1'));
+
+        chart.data['datasets'] = <Object?>[
+          orig[3],
+          orig[2],
+          orig[1],
+          <String, Object?>{'label': 'new', 'order': 10},
+        ];
+        chart.update();
+        metasets = chart.metasets;
+        expect(metasets[0]!.label, jasmineEquals('4'));
+        expect(metasets[1]!.label, jasmineEquals('3'));
+        expect(metasets[2]!.label, jasmineEquals('2'));
+        expect(metasets[3]!.label, jasmineEquals('new'));
+        afterEach();
+      });
     });
 
     group('_destroyDatasetMeta', () {
-      // :2053-2065 the beforeEach acquires a chart. It comes with the body as
-      // a local function (Chart.js ADR 0022, section 2).
+      late Chart chart;
 
-      test(
-        'cleans up metasets when the chart is destroyed',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      // The beforeEach acquires a chart: a local function that the case
+      // calls first (Chart.js ADR 0022, section 2).
+      void beforeEach() {
+        chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'label': '1', 'order': 2},
+              <String, Object?>{'label': '2', 'order': 1},
+              <String, Object?>{'label': '3', 'order': 4},
+              <String, Object?>{'label': '4', 'order': 3},
+            ],
+          },
+        });
+      }
+
+      testWidgets('cleans up metasets when the chart is destroyed', (
+        tester,
+      ) async {
+        beforeEach();
+        chart.destroy();
+        // `delete this._metasets[i]` leaves a hole, which reads as
+        // `undefined`. Dart null stands for the hole (core.controller.dart).
+        expect(
+          chart.metasets,
+          jasmineEquals(<Object?>[null, null, null, null]),
+        );
+      });
     });
 
     group('data visibility', () {
-      test('should hide a dataset', () {}, skip: 'blocked: controller.line');
+      testWidgets('should hide a dataset', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[0, 1, 2],
+              },
+            ],
+            'labels': <Object?>['a', 'b', 'c'],
+          },
+        })..setDatasetVisibility(0, false);
+
+        final meta = chart.getDatasetMeta(0);
+        expect(meta.hidden, true);
+      });
 
       test(
         'should toggle data visibility by index',
@@ -1776,11 +2531,23 @@ void main() {
     });
 
     group('isDatasetVisible', () {
-      test(
-        'should return false if index is out of bounds',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should return false if index is out of bounds', (
+        tester,
+      ) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[0, 1, 2],
+              },
+            ],
+            'labels': <Object?>['a', 'b', 'c'],
+          },
+        });
+
+        expect(chart.isDatasetVisible(1), false);
+      });
     });
 
     group('getChart', () {
@@ -1819,10 +2586,77 @@ void main() {
       );
     });
 
-    test(
+    testWidgets(
       'should not replace the user set active elements by event replay',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>[1, 2, 3],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[1, 2, 3],
+                'borderColor': 'red',
+                'hoverBorderColor': 'blue',
+              },
+            ],
+          },
+        });
+
+        final meta = chart.getDatasetMeta(0);
+        final point0 = meta.data[0] as Element;
+        final point1 = meta.data[1] as Element;
+
+        final props = point0.getProps(const ['borderColor']);
+        expect(jsGet(props['options'], 'borderColor'), jasmineEquals('red'));
+
+        await triggerMouseEvent(chart, 'mousemove', <String, Object?>{
+          'x': point0.x,
+          'y': point0.y,
+        });
+        expect(
+          _activeElements(chart),
+          jasmineEquals(<Object?>[
+            <String, Object?>{
+              'datasetIndex': 0,
+              'index': 0,
+              'element': point0,
+            },
+          ]),
+        );
+        expect(point0.options!['borderColor'], jasmineEquals('blue'));
+        expect(point1.options!['borderColor'], jasmineEquals('red'));
+
+        chart.setActiveElements(<Object?>[
+          <String, Object?>{'datasetIndex': 0, 'index': 1},
+        ]);
+        expect(
+          _activeElements(chart),
+          jasmineEquals(<Object?>[
+            <String, Object?>{
+              'datasetIndex': 0,
+              'index': 1,
+              'element': point1,
+            },
+          ]),
+        );
+        expect(point0.options!['borderColor'], jasmineEquals('red'));
+        expect(point1.options!['borderColor'], jasmineEquals('blue'));
+
+        chart.update();
+        expect(
+          _activeElements(chart),
+          jasmineEquals(<Object?>[
+            <String, Object?>{
+              'datasetIndex': 0,
+              'index': 1,
+              'element': point1,
+            },
+          ]),
+        );
+        expect(point0.options!['borderColor'], jasmineEquals('red'));
+        expect(point1.options!['borderColor'], jasmineEquals('blue'));
+      },
     );
 
     group('platform', () {

@@ -369,10 +369,13 @@ void jsSetIndex<T>(List<T> list, int index, T value) {
      function.
    - The readers: DC:351, :428, :1224, :1245, `bar.js:405` and `bar.js:615`.
    - The change lands after the measurement of Open 1.
-4. The doughnut keeps one cast: `jsGet(getDataset(), 'data')! as List<Object?>`
-   (`doughnut.js:149`, `:153`). It cannot fail: `_dataCheck` replaces a falsy `data` with `[]`
-   (dc.js:367), and throws for object data at `meta.iScale!` (DC:234), as upstream throws at
-   dc.js:104.
+4. The doughnut reads `dataset.data` raw (`doughnut.js:149`, `:153`), with `jsGetIndex` for an
+   item. `_dataCheck` replaces a falsy `data` with `[]` (dc.js:367), and throws for object data at
+   `meta.iScale!` (DC:234), as upstream throws at dc.js:104. `_dataCheck` keeps a string `data` as
+   a `JsStringList` of `lib/src/js/js_array.dart` (decision D11 item b): the reads `s[i]` and
+   `s.length`, a `TypeError` for each write and no array listener (dc.js:386). With
+   `parsing: false`, `meta.parsed` is the data List (`data! as List<Object?>`, a cast that cannot
+   fail after `_dataCheck`) or the `JsStringList` of a string `data`.
 5. With `parsing: false`, `meta.parsed = data` keeps the identity of the user List, as
    `meta._parsed === dataset.data` upstream.
 6. A residual that does not change: a typed user List, for example `List<double>`, with
@@ -511,23 +514,26 @@ the figures before and after (porting-flow.md §1.1).
 - The first read goes into a `final` local at the place of the first upstream read. A later
   upstream read of the same key of the same item uses the local.
 - The rule holds only when no statement between the two reads writes that key of that item.
-- The read `prevParsed[iAxis]` uses the local of the previous pass. At the first pass that is
-  not skipped, no local exists. Then the port reads `jsGetKey(prevParsed, iAxis)` inside the
-  `i > 0 &&` operand, with the `prevParsed` of `line.js:87` (`getParsed(start - 1)` or `false`).
-  Thus the read order and the throw of a `null` item stay as upstream.
+- A local lives only inside one pass. The read `prevParsed[iAxis]` stays a read at each pass:
+  `jsGetKey(prevParsed, iAxis)` inside the `i > 0 &&` operand, with the `prevParsed` of
+  `line.js:87` (`getParsed(start - 1)` or `false`). A scriptable option of the previous pass can
+  write `ctx.parsed` (the parsed item) after its reads, so a local of the previous pass can hold
+  an old value (decision D10, the U-line review R2). Thus the read order and the throw of a `null`
+  item stay as upstream.
 - No local crosses a method. A read through another method (`getParsed` in
   `_calculateBarValuePixels`, `bar.js:566`) is not merged.
 - The reviewer of each unit checks each local against this rule.
 
-In `line.js:89-119` and `scatter.js:124-148`, no statement writes the parsed item:
-`applyStack` reads only (dc.js:593-605), and the writes go to the point or to `properties`. Thus
-the five reads of `line.js:99-104` and `scatter.js:128-133` become two. Gain: 22 to 24 ns (AOT)
-and 33 to 36 ns (wasm) for each point, about 0.47 ms (AOT) and 0.7 ms (wasm) for each update of
-20000 points (a calculation from the microbenchmark, not a frame figure).
+In one pass of `line.js:89-119` and `scatter.js:124-148`, no statement between two reads of a key
+writes the parsed item: `applyStack` reads only (dc.js:593-605), and the writes go to the point or
+to `properties`. Thus the five reads of `line.js:99-104` and `scatter.js:128-133` become three
+(the 3-read form): `vValue` and `iValue` of the current item, and `prevParsed[iAxis]`. Gain: 15 to
+17 ns (AOT) and 23 to 24 ns (wasm) for each point (a calculation from the microbenchmark, not a
+frame figure).
 
 Adopted in the port step: `jsGetKey`, `jsGetIndex`, `jsSetIndex`, `jsLessThan` (a move of a body,
-no new cost), the T reads of DC (section 2) and the one-read rule in `line.js:98-104` and
-`scatter.js:127-133`.
+no new cost), the T reads of DC (section 2) and the one-read rule (the 3-read form) in
+`line.js:98-104` and `scatter.js:127-133`.
 
 Ported literally, for step 7:
 - the bar memo of `_getAxis`, `getFirstScaleIdForIndexAxis` and `_getStacks` for each bar
@@ -621,11 +627,13 @@ base of this ADR. S won question 1 and P won question 5.
 
 **Question 5.**
 - Only the reads of questions 1 and 2 now (S), or one Dart call for each upstream operation (F).
-  Both reject a measured gain of 22 to 36 ns for each point of a form that keeps every statement.
+  Both reject a measured gain of 15 to 24 ns (the 3-read form) for each point of a form that keeps
+  every statement.
   Performance comes before structure.
-- The 3-read form: one local for each key of the current item, and the read `prevParsed[iAxis]`
-  stays. It saves 15 to 17 ns (AOT) and 23 to 24 ns (wasm) for each point. It is the fallback of
-  Open 4.
+- The 2-read form: the read `prevParsed[iAxis]` uses the `iValue` local of the previous pass. It
+  saves 22 to 24 ns (AOT) and 33 to 36 ns (wasm) for each point. The U-line review (wave 2, R2)
+  proved that a scriptable option can write `ctx.parsed` between two passes. Then the local holds
+  an old value and the segments change. Decision D10 keeps the 3-read form (section 8, Open 4).
 - The bar memo now. A structure change with no frame figure yet (Chart.js ADR 0020 §13).
 
 ## Consequences
@@ -638,8 +646,8 @@ base of this ADR. S won question 1 and P won question 5.
   `_getIndex` goes too. `_lessThan` and `_toPrimitive` of DC move into `jsLessThan`.
 - The sorted test of DC `parse` (DC:1048) compares two `DateTime` values by their time values.
 - DC gets `stacksOf` and one `Expando`, about 25 lines, after Open 1.
-- `getMinMax` gets 0.5 to 2.9 ns faster for each item. The line and scatter updates get 22 to
-  36 ns faster for each point.
+- `getMinMax` gets 0.5 to 2.9 ns faster for each item. The line and scatter updates get 15 to
+  24 ns faster for each point.
 - `bar.inflateAmount` by name gives a number for a raw value outside `number | 'auto'`
   (`index.d.ts:2171`).
 - A reviewer checks the one-read rule for each loop that uses it. A bump that adds a write between
@@ -665,9 +673,9 @@ base of this ADR. S won question 1 and P won question 5.
    `_getStacks` and `_getAxis` in an upstream bar update (Evidence E2, F-P3). The empty-Map path
    of `getDataVisibility` (17 to 22 ns for each call, Evidence E3, P-B7) is not in the list:
    Chart.js ADR 0028 §4 adopts it.
-4. **The `prevIValue` local.** Owner: the maintainer. Trigger: the review of the first line or
-   scatter unit. If the maintainer reads the local that crosses the passes as a structure change,
-   the 3-read form replaces it.
+4. **The `prevIValue` local.** Closed by decision D10 (2026-10-21): the 3-read form replaces it
+   in the line and scatter loops (section 8). A 2-read form only on the paths without user code
+   needs a microbenchmark first (performance.md §13.7 item 6).
 5. **`prefer-inline` on `jsGetKey`.** P measured no gain for the pragma in the line loop. Owner:
    step 7. Trigger: Chart.js ADR 0025 Open 3 (the same question for `jsToNumber`).
 

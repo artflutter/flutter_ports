@@ -49,9 +49,7 @@ import '../support/jasmine.dart';
 //   `beforeEach` of the group `Interactions` acquires a chart. Thus it is a
 //   local function `beforeEach()`, and each test calls it first.
 //
-// One case needs the pie controller of wave 3 (:4). It has its body and the
-// skip reason 'blocked: controller.pie'. One case needs the tooltip plugin
-// of phase 8 (:418).
+// One case needs the tooltip plugin of phase 8 (:418).
 
 /// Jasmine `toBeCloseTo(expected, precision)`: within half a unit in the
 /// `precision`-th decimal place. Jasmine's default precision is 2.
@@ -87,19 +85,15 @@ void main() {
     // describe('auto', jasmine.fixture.specs('controller.doughnut')): a
     // fixture group of phase 7 (Chart.js ADR 0029), not a case.
 
-    // :4 The case also reads `Chart.controllers.pie`: the pie controller of
-    // wave 3 registers it.
-    test(
-      'should be registered as dataset controller',
-      () {
-        expect(
-          jsTypeof(Chart.registry.controllers.items['doughnut']),
-          'function',
-        );
-        expect(jsTypeof(Chart.registry.controllers.items['pie']), 'function');
-      },
-      skip: 'blocked: controller.pie',
-    );
+    // :4 The case also reads `Chart.controllers.pie`. flutter_test_config.dart
+    // registers the pie controller with the built-in components.
+    test('should be registered as dataset controller', () {
+      expect(
+        jsTypeof(Chart.registry.controllers.items['doughnut']),
+        'function',
+      );
+      expect(jsTypeof(Chart.registry.controllers.items['pie']), 'function');
+    });
 
     testWidgets('should be constructed', (tester) async {
       final chart = acquireChart(<String, Object?>{

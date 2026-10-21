@@ -29,8 +29,7 @@ import '../support/jasmine.dart';
 // The chart cases call `acquireChart`. Thus they are `testWidgets` cases,
 // and the file runs on the VM (Chart.js ADR 0022, sections 1 and 2). A case
 // that needs a module of a later phase skips with the missing module of the
-// latest phase. A case that needs the bar and the line controllers skips
-// with `controller.line`: phase 7 ports it after `controller.bar`.
+// latest phase.
 //
 // The spec forms:
 // - `not.toBe(undefined)` is `isNot(same(undefined))`.
@@ -138,17 +137,52 @@ void main() {
       },
     );
 
-    test(
-      'Should handle when only a min value is provided',
-      () {},
-      skip: 'blocked: controller.line',
-    );
+    testWidgets('Should handle when only a min value is provided', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'yAxisID': 'y',
+              'data': <Object?>[200],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'y': <String, Object?>{'type': 'linear', 'min': 250},
+          },
+        },
+      });
 
-    test(
-      'Should handle when only a max value is provided',
-      () {},
-      skip: 'blocked: controller.line',
-    );
+      expect(chart.scales['y']!.min, 250);
+    });
+
+    testWidgets('Should handle when only a max value is provided', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'yAxisID': 'y',
+              'data': <Object?>[200],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'y': <String, Object?>{'type': 'linear', 'max': 150},
+          },
+        },
+      });
+
+      expect(chart.scales['y'], isNotNull); // must construct
+      expect(chart.scales['y']!.max, 150);
+    });
 
     testWidgets(
       'Should correctly determine the max & min of string data values',
@@ -352,29 +386,143 @@ void main() {
       },
     );
 
-    test(
+    testWidgets(
       'Should correctly determine the max & min for scatter data',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'xAxisID': 'x',
+                'yAxisID': 'y',
+                'data': <Object?>[
+                  <String, Object?>{'x': 10, 'y': 100},
+                  <String, Object?>{'x': -10, 'y': 0},
+                  <String, Object?>{'x': 0, 'y': 0},
+                  <String, Object?>{'x': 99, 'y': 7},
+                ],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+              'y': <String, Object?>{'type': 'linear'},
+            },
+          },
+        })..update();
+
+        expect(chart.scales['x']!.min, -20);
+        expect(chart.scales['x']!.max, 100);
+        expect(chart.scales['y']!.min, 0);
+        expect(chart.scales['y']!.max, 100);
+      },
     );
 
-    test(
-      'Should correctly get the label for the given index',
-      () {},
-      skip: 'blocked: controller.line',
-    );
+    testWidgets('Should correctly get the label for the given index', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'xAxisID': 'x',
+              'yAxisID': 'y',
+              'data': <Object?>[
+                <String, Object?>{'x': 10, 'y': 100},
+                <String, Object?>{'x': -10, 'y': 0},
+                <String, Object?>{'x': 0, 'y': 0},
+                <String, Object?>{'x': 99, 'y': 7},
+              ],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+            'y': <String, Object?>{'type': 'linear'},
+          },
+        },
+      })..update();
 
-    test(
+      expect(chart.scales['y']!.getLabelForValue(7), '7');
+    });
+
+    testWidgets(
       'Should correctly use the locale setting when getting a label',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'xAxisID': 'x',
+                'yAxisID': 'y',
+                'data': <Object?>[
+                  <String, Object?>{'x': 10, 'y': 100},
+                  <String, Object?>{'x': -10, 'y': 0},
+                  <String, Object?>{'x': 0, 'y': 0},
+                  <String, Object?>{'x': 99, 'y': 7},
+                ],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'locale': 'de-DE',
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+              'y': <String, Object?>{'type': 'linear'},
+            },
+          },
+        })..update();
+
+        expect(chart.scales['y']!.getLabelForValue(7.07), '7,07');
+      },
     );
 
-    test(
+    testWidgets(
       'Should correctly determine the min and max data values when stacked '
       'mode is turned on',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'yAxisID': 'y',
+                'data': <Object?>[10, 5, 0, -5, 78, -100],
+                'type': 'bar',
+              },
+              <String, Object?>{
+                'yAxisID': 'y2',
+                'data': <Object?>[-1000, 1000],
+              },
+              <String, Object?>{
+                'yAxisID': 'y',
+                'data': <Object?>[150, 0, 0, -100, -10, 9],
+                'type': 'bar',
+              },
+              <String, Object?>{
+                'yAxisID': 'y',
+                'data': <Object?>[10, 10, 10, 10, 10, 10],
+                'type': 'line',
+              },
+            ],
+            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'y': <String, Object?>{'type': 'linear', 'stacked': true},
+              'y2': <String, Object?>{'position': 'right', 'type': 'linear'},
+            },
+          },
+        })..update();
+
+        expect(chart.scales['y']!.min, -150);
+        expect(chart.scales['y']!.max, 200);
+      },
     );
 
     testWidgets(
@@ -418,11 +566,41 @@ void main() {
       },
     );
 
-    test(
+    testWidgets(
       'Should correctly determine the min and max data values when stacked '
       'mode is turned on there are multiple types of datasets',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'bar',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'yAxisID': 'y',
+                'type': 'bar',
+                'data': <Object?>[10, 5, 0, -5, 78, -100],
+              },
+              <String, Object?>{
+                'type': 'line',
+                'data': <Object?>[10, 10, 10, 10, 10, 10],
+              },
+              <String, Object?>{
+                'type': 'bar',
+                'data': <Object?>[150, 0, 0, -100, -10, 9],
+              },
+            ],
+            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'y': <String, Object?>{'type': 'linear', 'stacked': true},
+            },
+          },
+        });
+
+        chart.scales['y']!.determineDataLimits();
+        expect(chart.scales['y']!.min, -105);
+        expect(chart.scales['y']!.max, 160);
+      },
     );
 
     testWidgets(
@@ -447,18 +625,62 @@ void main() {
       },
     );
 
-    test(
+    testWidgets(
       'Should ensure that the scale has a max and min that are not equal - '
       'large positive numbers',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        // https://github.com/chartjs/Chart.js/issues/9377
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                // Value larger than Number.MAX_SAFE_INTEGER
+                'data': <Object?>[10000000000000000],
+              },
+            ],
+            'labels': <Object?>['a'],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'y': <String, Object?>{'type': 'linear'},
+            },
+          },
+        });
+
+        expect(chart.scales['y'], isNotNull); // must construct
+        expect(chart.scales['y']!.min, 10000000000000000 * 0.95);
+        expect(chart.scales['y']!.max, 10000000000000000 * 1.05);
+      },
     );
 
-    test(
+    testWidgets(
       'Should ensure that the scale has a max and min that are not equal - '
       'large negative numbers',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        // https://github.com/chartjs/Chart.js/issues/9377
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                // Value larger than Number.MAX_SAFE_INTEGER
+                'data': <Object?>[-10000000000000000],
+              },
+            ],
+            'labels': <Object?>['a'],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'y': <String, Object?>{'type': 'linear'},
+            },
+          },
+        });
+
+        expect(chart.scales['y'], isNotNull); // must construct
+        expect(chart.scales['y']!.max, -10000000000000000 * 0.95);
+        expect(chart.scales['y']!.min, -10000000000000000 * 1.05);
+      },
     );
 
     testWidgets(
@@ -981,7 +1203,27 @@ void main() {
       },
     );
 
-    test('Should bound to data', () {}, skip: 'blocked: controller.line');
+    testWidgets('Should bound to data', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'labels': <Object?>['a', 'b'],
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[1, 99],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'y': <String, Object?>{'bounds': 'data'},
+          },
+        },
+      });
+
+      expect(chart.scales['y']!.min, jasmineEquals(1));
+      expect(chart.scales['y']!.max, jasmineEquals(99));
+    });
 
     testWidgets(
       'Should build labels using the user supplied callback',
@@ -1026,11 +1268,42 @@ void main() {
 
     test('should fit correctly', () {}, skip: 'blocked: plugin.legend');
 
-    test(
-      'should fit correctly when display is turned off',
-      () {},
-      skip: 'blocked: controller.line',
-    );
+    testWidgets('should fit correctly when display is turned off', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'xAxisID': 'x',
+              'yAxisID': 'y',
+              'data': <Object?>[
+                <String, Object?>{'x': 10, 'y': 100},
+                <String, Object?>{'x': -10, 'y': 0},
+                <String, Object?>{'x': 0, 'y': 0},
+                <String, Object?>{'x': 99, 'y': 7},
+              ],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+            'y': <String, Object?>{
+              'type': 'linear',
+              'grid': <String, Object?>{'drawTicks': false},
+              'border': <String, Object?>{'display': false},
+              'title': <String, Object?>{'display': false, 'lineHeight': 1.2},
+              'ticks': <String, Object?>{'display': false, 'padding': 0},
+            },
+          },
+        },
+      });
+
+      final yScale = chart.scales['y']!;
+      expect(yScale.width, toBeCloseToPixel(0));
+    });
 
     testWidgets(
       'max and min value should be valid and finite when charts datasets are '

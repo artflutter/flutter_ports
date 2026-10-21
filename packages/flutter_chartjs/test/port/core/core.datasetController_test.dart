@@ -1234,6 +1234,69 @@ void main() {
     });
   });
 
+  // A string `data` (decision D11 item b). `_dataCheck` keeps the string:
+  // `Object.isExtensible` is false for a string, so it gets no listener
+  // (core.datasetController.js:386). `parse` reads its characters, and
+  // `_data !== data` compares two strings by value (:377). The x64 Node.js
+  // probe of the unit X-fix on the build at the pin gives the same results on
+  // a line chart: the parsed values 1, 2 and 3; the same `_parsed` and the
+  // same elements after a write of an equal string; 4 elements after
+  // '4321'; and a listener on the next array.
+  group('string data', () {
+    test('parses the characters, compares by value and adds no listener', () {
+      final run = _runTo('parsePrimitiveData with labels', 1);
+      run._dataset(0)['data'] = '123';
+      run.step(<Object?>['elements', false]);
+      final meta = run.meta(0);
+      expect(run._dataset(0)['data'], '123');
+      expect(meta.data, hasLength(3));
+      expect([for (final item in meta.parsed) jsGet(item, 'x')], [0, 1, 2]);
+      expect([for (final item in meta.parsed) jsGet(item, 'y')], [1, 2, 3]);
+
+      // An equal string that is not the same object.
+      final parsed = meta.parsed;
+      final element = meta.data[0];
+      final equal = String.fromCharCodes('123'.codeUnits);
+      run._dataset(0)['data'] = equal;
+      run.step(<Object?>['elements', false]);
+      expect(identical(meta.parsed, parsed), isTrue);
+      expect(identical(meta.data[0], element), isTrue);
+
+      run._dataset(0)['data'] = '4321';
+      run.step(<Object?>['elements', false]);
+      expect(meta.data, hasLength(4));
+      expect([for (final item in meta.parsed) jsGet(item, 'y')], [4, 3, 2, 1]);
+      expect(run.chart.dataChanges, isEmpty);
+
+      final data = <Object?>[5.0, 6.0];
+      run._dataset(0)['data'] = data;
+      run.step(<Object?>['elements', false]);
+      data.add(7.0);
+      notifyArrayListeners(data, 'push', const [7.0]);
+      expect(run.chart.dataChanges, [
+        [0.0, '_insertElements', 2.0, 1.0],
+      ]);
+    });
+
+    test('with parsing false, the parsed items are the characters', () {
+      final run = _runTo('parsing false and the array listener', 1);
+      run._dataset(0)['data'] = '12';
+      run.step(<Object?>['elements', false]);
+      final meta = run.meta(0);
+      expect(meta.data, hasLength(2));
+      expect(meta.parsed, ['1', '2']);
+      // A write into a string throws a TypeError in strict mode code.
+      expect(() => meta.parsed[0] = '3', throwsA(isA<TypeError>()));
+      // With parsing false, `meta.parsed` is the `_data` of `_dataCheck`.
+      // A notify on it reaches a listener if `_dataCheck` added one. The
+      // string has no listener (core.datasetController.js:386), thus the
+      // notify changes nothing (finding F3 of the X-fix review).
+      expect(run.chart.dataChanges, isEmpty);
+      notifyArrayListeners(meta.parsed, 'push', const ['3']);
+      expect(run.chart.dataChanges, isEmpty);
+    });
+  });
+
   group('js-semantics-resolver-objects', () {
     // With parsing false and a stacked scale, updateStacks writes
     // `item._stacks = {}` into each data item (core.datasetController.js:165).

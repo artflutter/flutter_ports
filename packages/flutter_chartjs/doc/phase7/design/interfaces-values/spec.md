@@ -100,8 +100,9 @@ abstract interface class Chart {
   bool isDatasetVisible(double datasetIndex);
 
   /// index.d.ts:571 `toggleDataVisibility(index)`.
-  /// controller.doughnut.js:126 calls it.
-  void toggleDataVisibility(double index);
+  /// controller.doughnut.js:126 calls it. The index is any JS value: the
+  /// key is `ToString(index)` (cc.js:881-883; decision D11 item c).
+  void toggleDataVisibility(Object? index);
 }
 
 abstract interface class DatasetController {
@@ -159,9 +160,11 @@ abstract interface class Scale implements Element, LayoutItem {
 /// (filler.target.js:50).
 abstract interface class RadialLinearScale implements Scale {
   /// index.d.ts:3677 `xCenter`. controller.polarArea.js:167 reads it.
-  double get xCenter;
+  /// Dart `null` is the `undefined` start value before the first layout
+  /// (scale.radialLinear.js:416-418; decision D11 item a).
+  double? get xCenter;
   /// index.d.ts:3678 `yCenter`. controller.polarArea.js:168 reads it.
-  double get yCenter;
+  double? get yCenter;
   /// index.d.ts:3681. controller.polarArea.js:169 calls it.
   double getIndexAngle(double index);
   /// index.d.ts:3682. The value is any JS value (Chart.js ADR 0025 §1).
@@ -200,7 +203,9 @@ abstract interface class LineElement implements Element {
 
   /// index.d.ts:2025 `updateControlPoints(chartArea, indexAxis)`.
   /// controller.line.js:140 calls it.
-  void updateControlPoints(ChartArea chartArea, [String? indexAxis]);
+  /// The area is Dart `null` when a plugin cancels the first layout
+  /// (wave 2, W2-int F5).
+  void updateControlPoints(ChartArea? chartArea, [String? indexAxis]);
 }
 
 /// index.d.ts:2414 `LegendElement`, with the members that the option
@@ -506,18 +511,19 @@ Each class gets the new members with `@override`. A fake member that no test cal
     final meta = cachedMeta;
     // The cast stands at the upstream read of updateControlPoints (Chart.js
     // ADR 0028, section 1).
-    (meta.dataset as types.LineElement).updateControlPoints(
-      chart.chartArea!,
+    (meta.dataset! as types.LineElement).updateControlPoints(
+      chart.chartArea,
       meta.iScale!.axis,
     );
     super.draw();
   }
 ```
 
-- `chart.chartArea!`: the chart draw reads `chartArea!` already (cc:1542). The reviewer of the
-  line wave checks a chart whose plugin returns `false` to `beforeLayout` at the first update.
-  Upstream then passes `undefined` and throws only with a tension and `capBezierPoints`. Report a
-  difference to the integration agent.
+- `chart.chartArea` without `!`: `types.LineElement.updateControlPoints` takes a `ChartArea?`.
+  A chart whose plugin returns `false` to `beforeLayout` at the first update has no chart area.
+  Upstream then passes `undefined` and throws only with a tension and `capBezierPoints`
+  (`helpers.curve.ts:173`, `:177`). The port reads `area!.left` at the first cap, so it throws at
+  the same site (wave 2, W2-int F5).
 - `getMaxOverflow` (`line.js:127-135`): `(data[0] as types.PointElement).size(
   resolveDataElementOptions(0))` and the same for the last item. Bubble `:88` and scatter
   `:158-163` have the same form.
@@ -576,7 +582,7 @@ Each class gets the new members with `@override`. A fake member that no test cal
 ```dart
     // `const scale = this._cachedMeta.rScale;` The cast stands for the reads
     // of :167-169 (Chart.js ADR 0028, section 1).
-    final scale = cachedMeta.rScale as types.RadialLinearScale;
+    final scale = cachedMeta.rScale! as types.RadialLinearScale;
     final centerX = scale.xCenter;
     final centerY = scale.yCenter;
     final datasetStartAngle = scale.getIndexAngle(0) - 0.5 * pi;
@@ -586,8 +592,9 @@ Each class gets the new members with `@override`. A fake member that no test cal
 
 ```dart
       final properties = <String, Object?>{
-        'x': centerX,
-        'y': centerY,
+        // Dart null is undefined (decision D11 item a).
+        'x': centerX ?? undefined,
+        'y': centerY ?? undefined,
         'innerRadius': 0.0,
         'outerRadius': outerRadius,
         'startAngle': startAngle,
@@ -643,8 +650,11 @@ Each class gets the new members with `@override`. A fake member that no test cal
         i.toDouble(),
         /* this.getParsed(i).r, Chart.js ADR 0027 */,
       );
+      // Dart null is undefined (decision D11 item a).
       final x = reset ? radial.xCenter : pointPosition.x;
       final y = reset ? radial.yCenter : pointPosition.y;
+      // ... 'x': x ?? undefined, 'y': y ?? undefined,
+      // 'skip': x == null || x.isNaN || y == null || y.isNaN
 ```
 
   Place the cast after the `resolveDataElementOptions` of `:86`, as upstream reads the member
@@ -719,7 +729,7 @@ Map<String, Object?> _item(types.Chart chart, Object? label, double i, ...) {
 
 /// controller.doughnut.js:125 `onClick(e, legendItem, legend)`.
 void _onClick(Object? e, Object? legendItem, types.LegendElement legend) {
-  legend.chart.toggleDataVisibility(jsToNumber(jsGet(legendItem, 'index')));
+  legend.chart.toggleDataVisibility(jsGet(legendItem, 'index'));
   legend.chart.update();
 }
 ```
@@ -752,7 +762,10 @@ The doughnut descriptors (`:80-83`), as `core.defaults.dart:462-463`:
 - [ ] No import of `core.controller.dart`, `core.scale.dart`, `core.element.dart` or
   `elements/*.dart` in `lib/src/controllers/` (`grep -n "^import" lib/src/controllers/*.dart`).
 - [ ] Each `as` names a `types.` interface or `DoughnutController`
-  (`grep -n " as " lib/src/controllers/*.dart`). A cast of a parsed item follows Chart.js ADR 0027.
+  (`grep -n " as " lib/src/controllers/*.dart`), or is one of the three other kinds of Chart.js
+  ADR 0028 §1: a `List` cast of a value that upstream reads as an array, the `String` cast of a
+  parsing key, or the `AnyObject` cast of an object that the controller made. A cast of a parsed
+  item follows Chart.js ADR 0027.
 - [ ] No cast in `update` for a member that upstream reads only in `draw`.
 - [ ] No `(chart as Chart)`, no `.cast<`, no `List.of(` of `meta.data`.
 - [ ] Each `getLabelAndValue` returns `({Object? label, String value})`; no `jsToString` on the

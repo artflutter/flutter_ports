@@ -1,12 +1,34 @@
 // Ported from Chart.js v4.5.1+7169e651 test/specs/core.ticks.tests.js (MIT, Chart.js Contributors).
-import 'package:chartjs_test_utils/pure.dart';
+@TestOn('vm')
+library;
+
+import 'package:chartjs_test_utils/flutter.dart';
+// The spec builds charts of flutter_chartjs, which does not export lib/src
+// yet.
+import 'package:flutter_chartjs/src/core/core.scale.dart' as core;
 import 'package:flutter_chartjs/src/core/core.ticks.dart' show ticks;
 import 'package:flutter_chartjs/src/js/js_function.dart';
+import 'package:flutter_chartjs/src/js/js_number.dart';
 import 'package:flutter_chartjs/src/types/index.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+import '../support/jasmine.dart';
 
 // The spec reads `Chart.Ticks`, which src/index.umd.ts:43 sets. Here it is
-// `ticks` of core.ticks.dart.
+// `ticks` of core.ticks.dart. The two tick generator cases acquire a line
+// chart. A chart case is a `testWidgets` case, and the file runs on the VM
+// (Chart.js ADR 0030, section 12 item 5). It does not call `setUpSpecs()`:
+// its charts need the built-in components.
+//
+// The spec forms:
+// - `value.toString()` of a tick callback is the tear-off `jsToString`.
+// - `chart.scales.x` is `chart.scales['x']!`.
+// - `toEqual` of an array is `jasmineEquals`.
+
+/// core.ticks.tests.js:1-3 `getLabels(scale)`.
+List<Object?> _getLabels(core.Scale scale) => [
+  for (final t in scale.ticks!) t.label,
+];
 
 /// The `chart` of the JavaScript object literal
 /// `{chart: {options: {locale}}, ...}`, passed as a [Chart]. The formatters
@@ -53,7 +75,6 @@ Object? _member(Object? object, String key) =>
     (object! as Map<String, Object?>)[key];
 
 void main() {
-  setUpSpecs();
   group('Test tick generators', () {
     // formatters are used as default config values so users want to be able
     // to reference them
@@ -68,16 +89,102 @@ void main() {
       expect(jsIsFunction(_member(formatters, 'numeric')), isTrue);
     });
 
-    test(
-      'Should generate linear spaced ticks with correct precision',
-      () {},
-      skip: 'blocked: controller.line',
-    );
+    testWidgets('Should generate linear spaced ticks with correct precision', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{'data': <Object?>[]},
+          ],
+        },
+        'options': <String, Object?>{
+          'plugins': <String, Object?>{'legend': false},
+          'scales': <String, Object?>{
+            'x': <String, Object?>{
+              'type': 'linear',
+              'position': 'bottom',
+              'ticks': <String, Object?>{
+                'callback': jsToString,
+              },
+            },
+            'y': <String, Object?>{
+              'type': 'linear',
+              'ticks': <String, Object?>{
+                'callback': jsToString,
+              },
+            },
+          },
+        },
+      });
 
-    test(
+      final xLabels = _getLabels(chart.scales['x']!);
+      final yLabels = _getLabels(chart.scales['y']!);
+
+      expect(
+        xLabels,
+        jasmineEquals(<Object?>[
+          '0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', //
+          '1',
+        ]),
+      );
+      expect(
+        yLabels,
+        jasmineEquals(<Object?>[
+          '0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', //
+          '1',
+        ]),
+      );
+    });
+
+    testWidgets(
       'Should generate logarithmic spaced ticks with correct precision',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'data': <Object?>[]},
+            ],
+          },
+          'options': <String, Object?>{
+            'plugins': <String, Object?>{'legend': false},
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'logarithmic',
+                'position': 'bottom',
+                'min': 0.1,
+                'max': 1,
+                'ticks': <String, Object?>{
+                  'autoSkip': false,
+                  'callback': jsToString,
+                },
+              },
+              'y': <String, Object?>{
+                'type': 'logarithmic',
+                'min': 0.1,
+                'max': 1,
+                'ticks': <String, Object?>{
+                  'autoSkip': false,
+                  'callback': jsToString,
+                },
+              },
+            },
+          },
+        });
+
+        final xLabels = _getLabels(chart.scales['x']!);
+        final yLabels = _getLabels(chart.scales['y']!);
+
+        const expected = <Object?>[
+          '0.1', '0.11', '0.12', '0.13', '0.14', '0.15', '0.16', '0.17', //
+          '0.18', '0.19', '0.2', '0.25', '0.3', '0.4', '0.5', '0.6', '0.7', //
+          '0.8', '0.9', '1',
+        ];
+        expect(xLabels, jasmineEquals(expected));
+        expect(yLabels, jasmineEquals(expected));
+      },
     );
 
     group('formatters.numeric', () {

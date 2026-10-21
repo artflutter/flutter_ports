@@ -85,7 +85,7 @@ double getVisibleDatasetCount() => 0;
 
 /// The demo chart has no data.
 @override
-void toggleDataVisibility(double index) {}
+void toggleDataVisibility(Object? index) {}
 
 /// core.controller.js:536: an update ends with a render. The demo chart
 /// has only the render.

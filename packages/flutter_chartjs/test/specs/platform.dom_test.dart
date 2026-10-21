@@ -8,7 +8,11 @@ import 'package:chartjs_test_utils/pure.dart';
 // yet.
 import 'package:flutter_chartjs/src/canvas/canvas.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
+import 'package:flutter_chartjs/src/js/js_object.dart';
+import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/platform/platform.flutter.dart';
+import 'package:flutter_chartjs/src/types/basic.dart';
+import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 // platform.flutter.dart replaces platform.dom.js (Chart.js ADR 0014). Each
@@ -140,10 +144,30 @@ void main() {
         },
       );
 
-      test(
+      testWidgets(
         'should use default "chart" aspect ratio for render and display sizes',
-        () {},
-        skip: 'blocked: controller.doughnut',
+        (tester) async {
+          final doughnut = jsGet(Chart.overrides, 'doughnut')! as AnyObject;
+          final ratio = jsGet(doughnut, 'aspectRatio');
+          doughnut['aspectRatio'] = 1;
+
+          final chart = acquireChart(
+            <String, Object?>{
+              'type': 'doughnut',
+              'options': <String, Object?>{'responsive': false},
+            },
+            <String, Object?>{
+              'canvas': <String, Object?>{'style': 'width: 425px'},
+            },
+          );
+
+          doughnut['aspectRatio'] = ratio;
+
+          expect(
+            chart,
+            toBeChartOfSize({'dw': 425, 'dh': 425, 'rw': 425, 'rh': 425}),
+          );
+        },
       );
 
       testWidgets(
@@ -385,11 +409,42 @@ void main() {
     });
 
     group('event handling', () {
-      test(
-        'should notify plugins about events',
-        () {},
-        skip: 'blocked: controller.line',
-      );
+      testWidgets('should notify plugins about events', (tester) async {
+        Object? notifiedEvent = undefined;
+        final plugin = <String, Object?>{
+          'afterEvent': (Object? chart, Object? args) {
+            notifiedEvent = jsGet(args, 'event');
+          },
+        };
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>['A', 'B', 'C', 'D'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 20, 30, 100],
+              },
+            ],
+          },
+          'options': <String, Object?>{'responsive': true},
+          'plugins': <Object?>[plugin],
+        });
+
+        await triggerMouseEvent(chart, 'click', <String, Object?>{
+          'x': chart.width / 2,
+          'y': chart.height / 2,
+        });
+        // Check that notifiedEvent is correct
+        expect(notifiedEvent, isNot(same(undefined)));
+
+        // Is type correctly translated
+        final event = notifiedEvent! as types.ChartEvent;
+        expect(event.type, 'click');
+
+        // Relative Position
+        expect(event.x, toBeCloseToPixel(chart.width / 2));
+        expect(event.y, toBeCloseToPixel(chart.height / 2));
+      });
     });
 
     group('isAttached', () {

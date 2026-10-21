@@ -325,7 +325,8 @@ test expects the `TypeError`.
    with an index in range: the Dart read (`ruler.pixels[index]`, `bar.js:79`, `:91-93`).
 3. Each read of a resolver or an option object: `jsGet` (Chart.js ADR 0017 §8).
 4. No cast of a data item, a parsed item or a data value. One cast only:
-   `jsGet(getDataset(), 'data')! as List<Object?>` in the doughnut `parse`.
+   `data! as List<Object?>` in the doughnut `parse` with `parsing: false`, for a `data` that is
+   not a string (decision D11 item b, section 5.5).
 5. No call of `_parsedValue`. No new copy of it.
 6. A destructuring default: `valueOrDefault(jsGet(parsing, '<key>'), '<default>')`, and the cast
    `! as String` at the `resolveObjectKey` call inside the loop. A known difference (ADR 0027 §4):
@@ -566,15 +567,12 @@ if (jsGetKey(getParsed(i.toDouble()), vScale.axis) != null && !rects[i].hidden) 
 
 ### 5.3 `controller.line.dart` and `controller.scatter.dart`
 
-`updateElements` (`line.js:76-120`, `scatter.js:111-151`) with the one-read rule:
+`updateElements` (`line.js:76-120`, `scatter.js:111-151`) with the one-read rule (the 3-read
+form, decision D10):
 
 ```dart
 // controller.line.js:87 `let prevParsed = start > 0 && this.getParsed(start - 1);`
 Object? prevParsed = start > 0 ? getParsed(start - 1) : false;
-// One-read rule (Chart.js ADR 0027, section 8): the iAxis value of the
-// previous pass.
-Object? prevIValue;
-var hasPrevIValue = false;
 
 for (var i = 0; i < pointsCount; ++i) {
   // ... :90-96 (the skip of the points outside start..end): no read.
@@ -593,13 +591,10 @@ for (var i = 0; i < pointsCount; ++i) {
         );
   // ... the writes of iPixel and vPixel into properties: as Chart.js ADR 0028.
   final skip = iPixel.isNaN || vPixel.isNaN || nullData;
-  // :104 `i > 0 && Math.abs(parsed[iAxis] - prevParsed[iAxis]) > maxGapLength`
+  // :104 `i > 0 && Math.abs(parsed[iAxis] - prevParsed[iAxis]) > maxGapLength`.
+  // `prevParsed[iAxis]` is a read at each pass (decision D10).
   final stop = i > 0 &&
-      (jsToNumber(iValue) -
-                  jsToNumber(
-                    hasPrevIValue ? prevIValue : jsGetKey(prevParsed, iAxis),
-                  ))
-              .abs() >
+      (jsToNumber(iValue) - jsToNumber(jsGetKey(prevParsed, iAxis))).abs() >
           maxGapLength;
   if (jsTruthy(segment)) {
     properties['parsed'] = parsed; // :106
@@ -607,8 +602,6 @@ for (var i = 0; i < pointsCount; ++i) {
   }
   // ... :110-116
   prevParsed = parsed; // :118
-  prevIValue = iValue;
-  hasPrevIValue = true;
 }
 ```
 
@@ -616,8 +609,9 @@ for (var i = 0; i < pointsCount; ++i) {
 - `prevParsed` keeps its upstream statements, also where the rule makes its read rare.
 - Check the rule for each local: between :99 and :104, no statement writes `parsed`
   (`applyStack` reads only, dc.js:593-605; the writes go to `properties` or the point).
-- Fallback of ADR 0027 Open 4 (the 3-read form): remove `prevIValue` and `hasPrevIValue`, and
-  read `jsGetKey(prevParsed, iAxis)` at each pass.
+- No local carries a value across passes (decision D10, ADR 0027 Open 4 closed): a scriptable
+  option of the previous pass can write `ctx.parsed` after its reads (the U-line review R2).
+  `controller.scatter.dart` has the same form (wave 3, U-scatter).
 - `getMaxOverflow` (`line.js:125-136`, `scatter.js:168-178`; the scatter branch without
   `showLine` at `:160-166` returns `max > 0 && max`, a `false` or a number):
   `final Object? border = jsTruthy(dsOptions) && jsTruthy(jsGet(dsOptions, 'borderWidth')) ? jsGet(dsOptions, 'borderWidth') : 0.0;`
@@ -673,12 +667,15 @@ parsed[i]['_custom'] = valueOrDefault(
 // controller.doughnut.js:148-167 `parse(start, count)`.
 @override
 void parse(double start, double count) {
-  // A List after _dataCheck: a falsy `data` is [] (dc.js:367), and object
-  // data throws at meta.iScale! (DC:234), as upstream throws at dc.js:104.
-  final data = jsGet(getDataset(), 'data')! as List<Object?>;
+  // A List or a string after _dataCheck: a falsy `data` is [] (dc.js:367),
+  // and object data throws at meta.iScale! (DC:234), as upstream throws at
+  // dc.js:104. jsGetIndex reads a String (decision D11 item b).
+  final data = jsGet(getDataset(), 'data');
   final meta = cachedMeta;
   if (parsing == false) {
-    meta.parsed = data; // the same List: meta._parsed === dataset.data
+    // The same List: meta._parsed === dataset.data. A string gives the
+    // JsStringList of its characters.
+    meta.parsed = data is String ? JsStringList(data) : data! as List<Object?>;
   } else {
     var getter = (double i) => jsToNumber(jsGetIndex(data, i));
     if (isObject(jsGetIndex(data, start))) {

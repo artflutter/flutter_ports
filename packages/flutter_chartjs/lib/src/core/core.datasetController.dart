@@ -52,7 +52,7 @@ import 'package:flutter_chartjs/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs/src/helpers/helpers.options.dart'
     show createContext;
 import 'package:flutter_chartjs/src/js/js_array.dart'
-    show jsObjectKeys, jsSetIndex, jsSplice;
+    show JsStringList, jsObjectKeys, jsSetIndex, jsSplice;
 import 'package:flutter_chartjs/src/js/js_class.dart';
 import 'package:flutter_chartjs/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs/src/js/js_math.dart' show jsMax, jsMin;
@@ -911,8 +911,12 @@ class DatasetController
   /// core.datasetController.js:365 `_dataCheck()`.
   /// @private
   ///
-  /// A truthy `data` that is neither a Map nor a `List` is outside the
-  /// upstream type contract: the cast throws a [TypeError].
+  /// A string `data` becomes a [JsStringList], the reads `data[i]` and
+  /// `data.length` of the string. A string is not extensible, so it gets no
+  /// listener (:386). `_data !== data` compares two strings by value: an
+  /// equal string keeps [_data], the parsed items and the stacks. Any other
+  /// truthy `data` that is neither a Map nor a `List` is outside the upstream
+  /// type contract: the cast throws a [TypeError].
   void _dataCheck() {
     final dataset = getDataset();
     var data = jsGet(dataset, 'data');
@@ -928,7 +932,9 @@ class DatasetController
     if (isObject(data)) {
       final meta = cachedMeta;
       _data = _convertObjectDataToArray(data! as AnyObject, meta);
-    } else if (!identical(oldData, data)) {
+    } else if (oldData is JsStringList
+        ? oldData.string != data
+        : !identical(oldData, data)) {
       if (oldData != null) {
         // This case happens when the user replaced the data array instance.
         unlistenArrayEvents(oldData, this);
@@ -937,11 +943,17 @@ class DatasetController
         _clearStacks(meta);
         meta.parsed = <Object?>[];
       }
-      final array = data! as List<Object?>;
-      // A Dart List has no extensibility state: `Object.isExtensible(data)`
-      // is true for each data List.
-      // DIVERGES(chartjs): platform-array-events, each List is extensible.
-      listenArrayEvents(array, this);
+      final List<Object?> array;
+      if (data is String) {
+        // `Object.isExtensible(data)` is false for a string.
+        array = JsStringList(data);
+      } else {
+        array = data! as List<Object?>;
+        // A Dart List has no extensibility state: `Object.isExtensible(data)`
+        // is true for each data List.
+        // DIVERGES(chartjs): platform-array-events, each List is extensible.
+        listenArrayEvents(array, this);
+      }
       _syncList = [];
       _data = array;
     }

@@ -12,8 +12,6 @@ import 'package:flutter_chartjs/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
-import '../scales/scale_chart_harness.dart';
-
 // The members that Chart.js ADR 0028 (section 1) adds to the interfaces of
 // lib/src/types/index.dart. Each case reads the new members through a
 // variable of the interface type and compares the result with the concrete
@@ -21,13 +19,13 @@ import '../scales/scale_chart_harness.dart';
 // `@override` of the concrete classes fails when the interface and the
 // concrete member differ.
 //
-// The bar and polar area controllers are not ported yet. Thus the charts use
-// the test controllers of scale_chart_harness.dart: `scaleTest` (category on
-// the index axis, linear on the value axis) and `radialTest` (radialLinear on
-// the axis r). test/flutter_test_config.dart registers the scales and the
-// elements of lib/src/index.dart before main().
+// The charts are real charts of IV section 7.1: a bar chart (category on
+// the index axis, linear on the value axis) and a polar area chart
+// (radialLinear on the axis r). test/flutter_test_config.dart registers the
+// controllers, the scales and the elements of lib/src/index.dart before
+// main().
 
-/// A chart of the test controller [type] with the labels [labels] and one
+/// A chart of the controller [type] with the labels [labels] and one
 /// dataset of [data].
 Chart _chart(String type, List<Object?> labels, List<Object?> data) =>
     acquireChart(<String, Object?>{
@@ -57,19 +55,9 @@ bool _sameOptions(Map<String, Object?> a, Map<String, Object?> b) {
 }
 
 void main() {
-  // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
-  // 8). The restore does not reset the items of the registry.
-  Chart.register([
-    scaleTestController,
-    radialLinearTestController(
-      (scale, index, value) => (scale as types.RadialLinearScale)
-          .getPointPositionForValue(index, value),
-    ),
-  ]);
-
   group('types.Chart', () {
     testWidgets('the visibility members, legend and update', (tester) async {
-      final chart = _chart('scaleTest', ['a', 'b', 'c'], [1.0, 2.0, 3.0]);
+      final chart = _chart('bar', ['a', 'b', 'c'], [1.0, 2.0, 3.0]);
       final types.Chart t = chart;
       expect(t.isDatasetVisible(0), isTrue);
       expect(t.isDatasetVisible(0), chart.isDatasetVisible(0));
@@ -98,7 +86,7 @@ void main() {
 
   group('types.ChartMeta', () {
     testWidgets('dataset_ and total', (tester) async {
-      final chart = _chart('scaleTest', ['a', 'b'], [1.0, 2.0]);
+      final chart = _chart('bar', ['a', 'b'], [1.0, 2.0]);
       final meta = chart.getDatasetMeta(0);
       final types.ChartMeta t = meta;
       final dataset = jsGet(chart.data['datasets'], 0.0);
@@ -117,7 +105,7 @@ void main() {
     testWidgets('options, getParsed, getStyle and resolveDataElementOptions', (
       tester,
     ) async {
-      final chart = _chart('scaleTest', ['a', 'b'], [1.0, 2.0]);
+      final chart = _chart('bar', ['a', 'b'], [1.0, 2.0]);
       final controller = chart.getDatasetMeta(0).controller!;
       final types.DatasetController t = controller;
       expect(identical(t.options, controller.options), isTrue);
@@ -148,7 +136,7 @@ void main() {
 
   group('types.Element', () {
     testWidgets('active and hidden', (tester) async {
-      final chart = _chart('scaleTest', ['a', 'b'], [1.0, 2.0]);
+      final chart = _chart('bar', ['a', 'b'], [1.0, 2.0]);
       final element = chart.getDatasetMeta(0).data[0] as Element;
       final types.Element t = element;
       expect(t.active, isFalse);
@@ -164,7 +152,7 @@ void main() {
 
   group('types.Scale', () {
     testWidgets('the 9 members of Chart.js ADR 0028', (tester) async {
-      final chart = _chart('scaleTest', ['a', 'b', 'c'], [1.0, 5.0, 3.0]);
+      final chart = _chart('bar', ['a', 'b', 'c'], [1.0, 5.0, 3.0]);
       for (final id in ['x', 'y']) {
         final scale = chart.scales[id]!;
         final types.Scale t = scale;
@@ -200,14 +188,20 @@ void main() {
 
   group('types.RadialLinearScale', () {
     testWidgets('the 5 members and the type test', (tester) async {
-      final chart = _chart('radialTest', ['a', 'b', 'c'], [1.0, 5.0, 3.0]);
+      final chart = _chart('polarArea', ['a', 'b', 'c'], [1.0, 5.0, 3.0]);
       expect(chart.scales['r'] is types.RadialLinearScale, isTrue);
       expect(chart.scales['x'], isNull);
       final scale = chart.scales['r']! as RadialLinearScale;
       final t = chart.scales['r']! as types.RadialLinearScale;
+      // Dart null is the undefined start value before the first layout
+      // (scale.radialLinear.js:416-418). Thus the laid-out center is a
+      // number: the center of the 512 x 512 canvas of acquireChart.
+      expect(t.xCenter, isNotNull);
+      expect(t.yCenter, isNotNull);
       expect(t.xCenter, scale.xCenter);
-      expect(t.xCenter, isNot(isNaN));
       expect(t.yCenter, scale.yCenter);
+      expect(t.xCenter, 256.0);
+      expect(t.yCenter, 256.0);
       expect(t.getIndexAngle(1), scale.getIndexAngle(1));
       expect(
         t.getDistanceFromCenterForValue(4.0),
@@ -223,7 +217,7 @@ void main() {
     testWidgets('a cartesian scale is not a types.RadialLinearScale', (
       tester,
     ) async {
-      final chart = _chart('scaleTest', ['a'], [1.0]);
+      final chart = _chart('bar', ['a'], [1.0]);
       expect(chart.scales['x'] is types.RadialLinearScale, isFalse);
       expect(chart.scales['y'] is types.RadialLinearScale, isFalse);
     });
@@ -231,7 +225,7 @@ void main() {
 
   group('DatasetController.updateElement', () {
     testWidgets('takes a types.Element', (tester) async {
-      final chart = _chart('scaleTest', ['a'], [1.0]);
+      final chart = _chart('bar', ['a'], [1.0]);
       final controller = chart.getDatasetMeta(0).controller!;
       final element = chart.getDatasetMeta(0).data[0];
       controller.updateElement(element, 0, {'x': 7.0, 'y': 8.0}, 'none');
@@ -242,7 +236,7 @@ void main() {
 
   group('DatasetController.getLabelAndValue', () {
     testWidgets('gives an Object? label and a String value', (tester) async {
-      final chart = _chart('scaleTest', ['a', 'b'], [1.0, 2.0]);
+      final chart = _chart('bar', ['a', 'b'], [1.0, 2.0]);
       final controller = chart.getDatasetMeta(0).controller!;
       final result = controller.getLabelAndValue(1);
       // The record type of Chart.js ADR 0028, section 2. The runtime type of

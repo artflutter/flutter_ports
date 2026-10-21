@@ -21,7 +21,9 @@ Current step of the Method: 3 (Port workflow), wave 1.
 | Design panels: ADRs 0027-0031 | done | `phase7/design/<topic>/`, `phase7/design/work-plan.md`, `phase7/design/consistency.md`, `adr/0027`-`0031` | 2026-10-21: consistency critic |
 | Wave 1: S1, S2, S3, U0, U-bar, W1-int (`phase7/design/work-plan.md` §1) | done | `phase7/review/wave1/W1-int-report.md` lists the files | 2026-10-21: full gate, reuse lint, `gallery:build:web`, `gallery:build:android`. `controller.bar` spec 51/55 pass, 0 fail. Lift check: 62 of 122 wave 1 records pass, the other 60 are the L1 list |
 | Wave 2: U-line, U-bubble, U-doughnut, U-polarArea, U-radar, L1, A1, W2-int (work plan §2) | done | `phase7/review/wave2/W2-int-report.md` lists the files | 2026-10-21: full gate, reuse lint, both gallery builds. `test:cases` 572 passed, 0 failed. Lift check wave 1: 122/122 |
-| Wave 3: U-scatter, U-pie, L2, X-fix (D11), W3-int (work plan §3) | not started | see the work plan | — |
+| Wave 3: U-scatter, U-pie, L2, X-fix (D11), W3-int (work plan §3) | done, committed locally, not pushed (CI on Windows is red since `7674512`) | `phase7/review/wave3/W3-int-report.md` lists the files | 2026-10-21: full gate, reuse lint, both gallery builds. `test:cases` 813 passed, 0 failed. Lift check waves 1-2: 508/508. 16 records left for L3 |
+| Design panels: ADR 0032 (fdlibm `sin`/`cos` at the behavior sites) and ADR 0033 (radial centers `double?`) | not started | `phase7/design/trig/`, `phase7/design/radial-center/` | — |
+| Push of `7674512` | done 2026-10-21. CI run 39544591156: failure on test (windows-latest): one hit of the doughnut case `parsed: object items with the default key` (point 2, query 4 on the border of two symmetric arcs). Fix: D13, unit H-fix after wave 3 | — | pre-push: dart2js and dart2wasm in the VS Code integrated browser (flutter_chartjs 3525 pass, chartjs_test_utils 49 pass), gallery wasm loads, diagnostics clean |
 | Push of `4eda459`, `c802f9b`, `436663f` | done 2026-10-21. CI run 39534455808 of `436663f`: success | — | pre-push: dart2js and dart2wasm in the VS Code integrated browser (flutter_chartjs 3479 pass, chartjs_test_utils 49 pass), gallery wasm loads, diagnostics clean |
 
 ## Decisions
@@ -37,6 +39,8 @@ Current step of the Method: 3 (Port workflow), wave 1.
 - D10 (2026-10-21), replaces D6: line and scatter keep the parsed values only inside one pass of `updateElements` (the 3-read form). The U-line review proved that a scriptable option can write `ctx.parsed` between two passes, so the cross-pass local changes the segments. Record: ADR 0027 §8 and Open 4 (W3-int aligns the text).
 - D11 (2026-10-21): a fix unit X-fix in wave 3 corrects the NaN reset position of a new radar or polar area point (upstream `undefined`), the `TypeError` of a string `data` in `_dataCheck`, and the legend `onClick` key after an insert (a fix, or a `DIVERGES` row with a phase 8 re-check). Each with a probe.
 - D12 (2026-10-21): U-pie takes the axis-id rule of the doughnut tests. W3-int removes the pie skip of `controller.doughnut.tests.js:4`, moves the IV §7.1 test to a polar area chart and aligns the proposed ADRs 0027-0031 and the specs with the code.
+- D13 (2026-10-21): the controller generators drop each ill-conditioned hit query: a query whose hit list in Node.js changes when the point moves by ±1e-6 px in x or y. Reason: CI on Windows found another arc on a border of two symmetric arcs (last-bit `sin`/`cos`). Unit H-fix runs after wave 3 and before its commit: `controller_chart_common.mjs`, all controller data files, ADR 0030 §5.
+- D14 (2026-10-21): two design panels before the push of wave 3: ADR 0032 (an fdlibm port of `sin` and `cos` at the sites that change a protected result; it changes the rule of accepted Chart.js ADR 0010 for `sin`/`cos`) and ADR 0033 (`double? xCenter`/`yCenter` of `types.RadialLinearScale`; it supersedes accepted Chart.js ADR 0025 §5 on acceptance). Reason: the U-pie review proved a hit difference from a 1-ulp `sin`, and X-fix changed the center type. D13 waits for ADR 0032: if the fdlibm `sin`/`cos` remove the Windows difference, the border queries stay.
 - D2 (2026-10-21): the Design step has five panels, one ADR (proposed) each: 0027 parsed data of the controllers, 0028 controller interfaces and values, 0029 fixture smoke runner, 0030 test strategy, 0031 gallery. Reason: the open choices of `members-*.md` and of the prompt group into these five topics.
 
 ## Inputs
@@ -69,4 +73,4 @@ Run a generator with
 
 ## Next action
 
-Run wave 3 of `phase7/design/work-plan.md` §3 (U-scatter, U-pie, L2 and X-fix in parallel, then W3-int), with the decisions D10-D12. A panel whose `phase7/design/<topic>/spec.md` exists is done.
+Run the design panels of D14 (ADRs 0032 and 0033), implement them, push wave 3 when CI on Windows can pass, then step 4 (work plan §4). A panel whose `phase7/design/<topic>/spec.md` exists is done.

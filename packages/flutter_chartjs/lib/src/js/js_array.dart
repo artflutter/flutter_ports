@@ -2,12 +2,15 @@
 
 /// `Array.prototype.sort` and the key order of `Object.keys` for ported code
 /// (Chart.js ADR 0010, "Sort"), `Object.getOwnPropertyNames` (Chart.js
-/// ADR 0019, section 1), `Array.prototype.splice` ([jsSplice]) and the write
-/// `list[index] = value` ([jsSetIndex], Chart.js ADR 0027).
+/// ADR 0019, section 1), `Array.prototype.splice` ([jsSplice]), the write
+/// `list[index] = value` ([jsSetIndex], Chart.js ADR 0027) and a string as
+/// an array-like value ([JsStringList]).
 ///
 /// A JavaScript array is a `List<Object?>` and a plain object is a
 /// `Map<String, Object?>` (Chart.js ADR 0006).
 library;
+
+import 'dart:collection' show ListBase;
 
 import 'package:collection/collection.dart' show mergeSort;
 
@@ -202,3 +205,41 @@ List<T> jsSplice<T>(
 /// an infinity gives itself, and another value truncates toward zero.
 double _toIntegerOrInfinity(double value) =>
     value.isNaN ? 0 : value.truncateToDouble();
+
+/// A JavaScript string as an array-like value: the reads `string[i]` and
+/// `string.length`.
+///
+/// `_dataCheck` of the dataset controller keeps a string `data`: a string
+/// is not extensible, so it gets no array listener
+/// (core.datasetController.js:386). `parse` then reads `data[i]` and
+/// `data.length`, and a parsing `false` makes the string the parsed items.
+/// This List gives the same reads: the item at index `i` is the UTF-16 code
+/// unit `i` of [string] as a String of length 1, and [length] is the count
+/// of code units.
+///
+/// A write throws a [TypeError], as a write into a string in strict mode
+/// code does: an index write, a change of the length and each List method
+/// that changes the List.
+///
+/// It stays a `List` for the other checks: `isArray` is true and `typeof` is
+/// `'object'`, where JavaScript gives false and `'string'`. No ported reader
+/// of `_data` or of the parsed items makes these checks on the List itself.
+final class JsStringList extends ListBase<Object?> {
+  /// The array-like view of [string].
+  JsStringList(this.string);
+
+  /// The JavaScript string.
+  final String string;
+
+  @override
+  int get length => string.length;
+
+  @override
+  set length(int newLength) => throw TypeError();
+
+  @override
+  Object? operator [](int index) => string[index];
+
+  @override
+  void operator []=(int index, Object? value) => throw TypeError();
+}

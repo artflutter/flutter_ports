@@ -1981,6 +1981,9 @@ count of processes below 0.
   scriptable options of the user (`resolveDataElementOptions` and the animated `updateElement`),
   which can write the parsed item: the review U-line-R2 showed another `stop` value with such an
   option. The 2-read form waits for ADR 0027 Open 4 (section 13.7 item 6). No new measurement.
+- Decision D10 (2026-10-21) keeps the 3-read form in the line and the scatter loops, and closes
+  ADR 0027 Open 4. Wave 3: `controller.scatter.dart` has the 3-read form
+  (`controller.scatter.js:127-133`). No new measurement.
 
 The read `array[i]` with a number index, in ns for each read:
 
@@ -2106,7 +2109,9 @@ for each update of a dataset, against 1.1 ns and 0.6 ns for typed setters. The r
   `controller_bubble_reference.dart` 18 cases in 1,148,668 bytes,
   `controller_doughnut_reference.dart` 27 cases in 1,137,577 bytes,
   `controller_polar_area_reference.dart` 44 cases in 1,600,128 bytes and
-  `controller_radar_reference.dart` 16 cases in 1,029,531 bytes. Each file is below 2.5 MB.
+  `controller_radar_reference.dart` 16 cases in 1,029,531 bytes. Wave 3:
+  `controller_scatter_reference.dart` 17 cases in 1,324,744 bytes and
+  `controller_pie_reference.dart` 8 cases in 511,303 bytes. Each file is below 2.5 MB.
 - The bar `draw` reads `ctx` for each bar, as `controller.bar.js:677`. A read before the loop is
   0.36 ns faster for each bar on AOT and 0.25 ns slower on wasm (ADR 0030 Open 3, section 13.7).
 
@@ -2141,10 +2146,15 @@ for each update of a dataset, against 1.1 ns and 0.6 ns for typed setters. The r
    the previous pass only on the paths where no user code runs between the reads (a direct update
    with shared options) gives the upstream result and keeps the 2-read gain there. It needs a
    microbenchmark (ADR 0027 §8 condition 3). The scatter loop (`controller.scatter.js:124-148`) has
-   the same item.
+   the same item. Decision D10 keeps the 3-read form in both loops until such a measurement.
 7. **Wave 2 forms of the step 7 list** (item 1): the writes by name into the point of a direct
    update (`_setProperty` of `controller.line.dart`), the option copy for each bubble item
    (`controller.bubble.js:46-78`, `:151-168`), the cast of the scale `r` for each radar point
    (`controller.radar.dart`, IV §4.6), and the `jsCall` of `parseObjectDataRadialScale` with 5
    arguments in the radar and polar area `parseObjectData` (`Function.apply` on the VM, once for
    each parse call). No unit measured them.
+8. **Wave 3 forms.** The scatter loop has the writes by name of `_setProperty`, as the line loop
+   (item 7). D11 adds a null check of `xCenter` and `yCenter` in `getPointPosition` and in the
+   polar area `updateElements`, and `jsToString` in place of `jsNumberToString` in
+   `toggleDataVisibility` (not a hot path). Each form is the only form with the upstream behavior.
+   No unit measured them.

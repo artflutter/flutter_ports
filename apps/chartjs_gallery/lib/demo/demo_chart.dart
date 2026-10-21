@@ -188,10 +188,10 @@ final class DemoChart implements types.Chart {
   @override
   double getVisibleDatasetCount() => 0;
 
-  /// core.controller.js:881 `toggleDataVisibility(index)`. The demo chart
-  /// has no data.
+  /// core.controller.js:881 `toggleDataVisibility(index)`. [index] is any
+  /// JS value. The demo chart has no data.
   @override
-  void toggleDataVisibility(double index) {}
+  void toggleDataVisibility(Object? index) {}
 
   /// core.controller.js:475 `update(mode)`. core.controller.js:536: an
   /// update ends with a render. The demo chart has only the render.

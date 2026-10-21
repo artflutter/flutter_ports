@@ -449,8 +449,12 @@ abstract interface class Chart {
   bool isDatasetVisible(double datasetIndex);
 
   /// index.d.ts:571 `toggleDataVisibility(index)`.
-  /// controller.doughnut.js:126 calls it.
-  void toggleDataVisibility(double index);
+  /// controller.doughnut.js:126 and controller.polarArea.js:66 call it.
+  ///
+  /// [index] is any JS value (the form of Chart.js ADR 0025, section 1):
+  /// the legend item index of a user `generateLabels` can be a value that is
+  /// not a number. The key is `ToString(index)` (core.controller.js:882).
+  void toggleDataVisibility(Object? index);
 }
 
 /// index.d.ts:622 `DatasetController`.
@@ -673,11 +677,19 @@ abstract interface class Scale implements Element, LayoutItem {
 /// `scale is RadialLinearScale` for `if (scale.getPointPositionForValue)`
 /// (filler.target.js:50).
 abstract interface class RadialLinearScale implements Scale {
-  /// index.d.ts:3677 `xCenter`. controller.polarArea.js:167 reads it.
-  double get xCenter;
+  /// index.d.ts:3677 `xCenter`. controller.polarArea.js:167 and
+  /// controller.radar.js:90 read it.
+  ///
+  /// Dart `null` stands for JS `undefined`, the value before the first
+  /// layout of the scale (scale.radialLinear.js:416). The radar and polar
+  /// area controllers write it into a new element as `undefined` when they
+  /// reset the element before that layout.
+  double? get xCenter;
 
-  /// index.d.ts:3678 `yCenter`. controller.polarArea.js:168 reads it.
-  double get yCenter;
+  /// index.d.ts:3678 `yCenter`. controller.polarArea.js:168 and
+  /// controller.radar.js:91 read it. Dart `null` stands for JS `undefined`,
+  /// as for [xCenter].
+  double? get yCenter;
 
   /// index.d.ts:3681. controller.polarArea.js:169 calls it.
   double getIndexAngle(double index);

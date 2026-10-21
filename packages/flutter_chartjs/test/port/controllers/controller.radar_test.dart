@@ -6,8 +6,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs/src/core/core.animation.dart' as animation;
 import 'package:flutter_chartjs/src/core/core.config.dart' show themeConfigKey;
 import 'package:flutter_chartjs/src/core/core.controller.dart';
+import 'package:flutter_chartjs/src/core/core.element.dart';
 import 'package:flutter_chartjs/src/elements/element.line.dart';
 import 'package:flutter_chartjs/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
@@ -282,6 +284,62 @@ void main() {
         ),
         throwsA(isA<TypeError>()),
       );
+    });
+  });
+
+  // The reset of a new point on a new radial scale (decision D11 item a, the
+  // finding F2 of the U-radar review). `_insertElements` resets the new
+  // point before the first layout of the new scale. Upstream then reads
+  // `xCenter` and `yCenter` as `undefined` (scale.radialLinear.js:416-418).
+  // The x64 Node.js probe of the unit X-fix on the build at the pin gives:
+  // before the layout, `x` and `y` are `undefined` and `skip` is true; after
+  // the update, the animation `x` goes from 25 to 25 and the animation `y`
+  // from 256 to 256.
+  group('the reset on a new radial scale', () {
+    testWidgets('writes x and y undefined, and the animations start at the '
+        'target', (tester) async {
+      Map<String, Object?>? beforeLayout;
+      final config =
+          _radar(
+              const [1.0, 2.0, 3.0],
+              labels: const ['a', 'b', 'c', 'd'],
+              options: <String, Object?>{'animation': <String, Object?>{}},
+            )
+            ..['plugins'] = <Object?>[
+              <String, Object?>{
+                'id': 'probeLayout',
+                'beforeLayout': (Object? chart, Object? args, Object? options) {
+                  final data = (chart! as Chart).getDatasetMeta(0).data;
+                  if (data.length > 3 && beforeLayout == null) {
+                    final point = data[3] as types.ElementPropertyRead;
+                    beforeLayout = {
+                      'x': point['x'],
+                      'y': point['y'],
+                      'skip': point['skip'],
+                    };
+                  }
+                },
+              },
+            ];
+      final chart = acquireChart(config);
+      final meta = chart.getDatasetMeta(0);
+      final dataset =
+          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject;
+      dataset['rAxisID'] = 'r2';
+      _data0(chart).add(4.0);
+      chart.update();
+
+      expect(meta.rScale!.id, 'r2');
+      expect(identical(beforeLayout!['x'], undefined), isTrue);
+      expect(identical(beforeLayout!['y'], undefined), isTrue);
+      expect(beforeLayout!['skip'], isTrue);
+      final point = meta.data[3] as Element;
+      final x = point.$animations!['x']! as animation.Animation;
+      final y = point.$animations!['y']! as animation.Animation;
+      expect([x.from, x.to], [25.0, 25.0]);
+      expect([y.from, y.to], [256.0, 256.0]);
+      await tester.pump(const Duration(milliseconds: 1100));
+      expect([point.x, point.y], [25.0, 256.0]);
     });
   });
 }

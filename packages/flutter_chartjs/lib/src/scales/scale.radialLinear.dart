@@ -610,7 +610,13 @@ void _pathRadiusLine(
   final ctx = scale.ctx!;
   if (jsTruthy(circular)) {
     // Draw circular arcs between the points
-    ctx.arc(scale.xCenter, scale.yCenter, radius, 0, tau);
+    ctx.arc(
+      scale.xCenter ?? double.nan,
+      scale.yCenter ?? double.nan,
+      radius,
+      0,
+      tau,
+    );
   } else {
     // Draw straight lines connecting each index
     var pointPosition = scale.getPointPosition(0, radius);
@@ -826,15 +832,20 @@ class RadialLinearScale extends LinearScaleBase
     construct: (newTarget, args) => RadialLinearScale(scaleCfgArg(args)),
   );
 
-  /// scale.radialLinear.js:416 `xCenter`, the x of the center. NaN stands
-  /// for JS `undefined`, the start value.
+  /// scale.radialLinear.js:416 `xCenter`, the x of the center.
+  ///
+  /// Dart `null` stands for JS `undefined`, the start value. A controller
+  /// reads it before the first layout and writes `undefined` into a new
+  /// element (`types.RadialLinearScale.xCenter`). Thus the start value is
+  /// not NaN, as [drawingArea] is. In arithmetic and in a canvas call, this
+  /// file reads `xCenter ?? double.nan`: `undefined` gives NaN there.
   @override
-  double xCenter = double.nan;
+  double? xCenter;
 
-  /// scale.radialLinear.js:418 `yCenter`, the y of the center. NaN stands
-  /// for JS `undefined`.
+  /// scale.radialLinear.js:418 `yCenter`, the y of the center. Dart `null`
+  /// stands for JS `undefined`, as for [xCenter].
   @override
-  double yCenter = double.nan;
+  double? yCenter;
 
   /// scale.radialLinear.js:420 `drawingArea`, the radius of the value
   /// range. NaN stands for JS `undefined`.
@@ -944,8 +955,12 @@ class RadialLinearScale extends LinearScaleBase
     double topMovement,
     double bottomMovement,
   ) {
-    xCenter += ((leftMovement - rightMovement) / 2).floorToDouble();
-    yCenter += ((topMovement - bottomMovement) / 2).floorToDouble();
+    xCenter =
+        (xCenter ?? double.nan) +
+        ((leftMovement - rightMovement) / 2).floorToDouble();
+    yCenter =
+        (yCenter ?? double.nan) +
+        ((topMovement - bottomMovement) / 2).floorToDouble();
     drawingArea -= jsMin(
       drawingArea / 2,
       jsMax(
@@ -1026,8 +1041,8 @@ class RadialLinearScale extends LinearScaleBase
   ]) {
     final angle = getIndexAngle(index) - halfPi + additionalAngle;
     return (
-      x: math.cos(angle) * distanceFromCenter + xCenter,
-      y: math.sin(angle) * distanceFromCenter + yCenter,
+      x: math.cos(angle) * distanceFromCenter + (xCenter ?? double.nan),
+      y: math.sin(angle) * distanceFromCenter + (yCenter ?? double.nan),
       angle: angle,
     );
   }
@@ -1155,7 +1170,7 @@ class RadialLinearScale extends LinearScaleBase
         final position = getPointPosition(i.toDouble(), offset);
         ctx
           ..beginPath()
-          ..moveTo(xCenter, yCenter)
+          ..moveTo(xCenter ?? double.nan, yCenter ?? double.nan)
           ..lineTo(position.x, position.y)
           ..stroke();
       }
@@ -1193,7 +1208,7 @@ class RadialLinearScale extends LinearScaleBase
 
     ctx!
       ..save()
-      ..translate(xCenter, yCenter)
+      ..translate(xCenter ?? double.nan, yCenter ?? double.nan)
       ..rotate(startAngle)
       ..textAlign = 'center'
       ..textBaseline = 'middle';

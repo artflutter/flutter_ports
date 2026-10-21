@@ -58,9 +58,9 @@ import '../support/jasmine.dart';
 // - `ctx.resetTransform = function() {}` is a subclass of MockContext with a
 //   `resetTransform` that does nothing.
 //
-// Three cases need the line controller of wave 2 (:70, :310, :671). They
-// are placeholders with the skip reason 'blocked: controller.line'. One case
-// needs the tooltip plugin of phase 8 (:1808).
+// Three cases need the line controller of wave 2 (:70, :310, :671). The
+// lift of wave 2 gave them their bodies (test-strategy spec, section 4.2).
+// One case needs the tooltip plugin of phase 8 (:1808).
 
 /// `chart.data.datasets[index]`.
 AnyObject _dataset(Chart chart, int index) =>
@@ -155,13 +155,28 @@ void main() {
       },
     );
 
-    // :70 The chart has a dataset of the type `line`: it needs the line
-    // controller of wave 2 (test-strategy spec, section 4.2).
-    test(
+    // :70
+    testWidgets(
       'should correctly count the number of stacks ignoring datasets of '
       'other types and hidden datasets',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'bar',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'data': <Object?>[], 'type': 'line'},
+              <String, Object?>{'data': <Object?>[], 'hidden': true},
+              <String, Object?>{'data': <Object?>[]},
+              <String, Object?>{'data': <Object?>[]},
+            ],
+            'labels': <Object?>[],
+          },
+        });
+
+        final meta = chart.getDatasetMeta(1);
+        final controller = meta.controller! as BarController;
+        expect(controller.getStackCount(), 2);
+      },
     );
 
     // :88
@@ -416,13 +431,29 @@ void main() {
       },
     );
 
-    // :310 The chart has a dataset of the type `line`: it needs the line
-    // controller of wave 2 (test-strategy spec, section 4.2).
-    test(
+    // :310
+    testWidgets(
       'should correctly get the stack index accounting for datasets of '
       'other types and hidden datasets',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'bar',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{'data': <Object?>[]},
+              <String, Object?>{'data': <Object?>[], 'hidden': true},
+              <String, Object?>{'data': <Object?>[], 'type': 'line'},
+              <String, Object?>{'data': <Object?>[]},
+            ],
+            'labels': <Object?>[],
+          },
+        });
+
+        final meta = chart.getDatasetMeta(1);
+        final controller = meta.controller! as BarController;
+        expect(controller.getStackIndex(0), 0);
+        expect(controller.getStackIndex(3), 1);
+      },
     );
 
     // :329
@@ -804,13 +835,55 @@ void main() {
       expect(meta.data.length, 3); // should add a new meta data item
     });
 
-    // :671 The chart has a dataset of the type `line`: it needs the line
-    // controller of wave 2 (test-strategy spec, section 4.2).
-    test(
+    // :671
+    testWidgets(
       'should get the correct bar points when datasets of different types '
       'exist',
-      () {},
-      skip: 'blocked: controller.line',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'bar',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[1, 2],
+                'label': 'dataset1',
+              },
+              <String, Object?>{
+                'type': 'line',
+                'data': <Object?>[4, 6],
+                'label': 'dataset2',
+              },
+              <String, Object?>{
+                'data': <Object?>[8, 10],
+                'label': 'dataset3',
+              },
+            ],
+            'labels': <Object?>['label1', 'label2'],
+          },
+          'options': <String, Object?>{
+            'plugins': <String, Object?>{'legend': false, 'title': false},
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'category', 'display': false},
+              'y': <String, Object?>{
+                'type': 'linear',
+                'display': false,
+                'beginAtZero': false,
+              },
+            },
+          },
+        });
+
+        final meta = chart.getDatasetMeta(2);
+        expect(meta.data.length, 2);
+
+        final bar1 = _bar(meta, 0);
+        final bar2 = _bar(meta, 1);
+
+        expect(bar1.x, toBeCloseToPixel(179));
+        expect(bar1.y, toBeCloseToPixel(117));
+        expect(bar2.x, toBeCloseToPixel(431));
+        expect(bar2.y, toBeCloseToPixel(4));
+      },
     );
 
     testWidgets('should get the bar points for hidden dataset', (tester) async {

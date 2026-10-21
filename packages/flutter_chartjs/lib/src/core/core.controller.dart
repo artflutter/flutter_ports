@@ -1761,9 +1761,15 @@ class Chart implements types.Chart {
   }
 
   /// core.controller.js:881 `toggleDataVisibility(index)`.
+  ///
+  /// [index] is any JS value: `_hiddenIndices[index]` uses the property key
+  /// `ToString(index)` ([jsToString]). Thus the legend item index `'01'`
+  /// writes the key `'01'`, and the item index `null` writes `'null'`. No
+  /// data index has these keys, but `_updateHiddenIndices` moves the key
+  /// `'01'` after a data insert or remove, as upstream (core.controller.js:72).
   @override
-  void toggleDataVisibility(double index) {
-    final key = jsNumberToString(index);
+  void toggleDataVisibility(Object? index) {
+    final key = jsToString(index);
     _hiddenIndices[key] = !jsTruthy(_hiddenIndices[key]);
   }
 

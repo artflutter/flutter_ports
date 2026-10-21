@@ -176,6 +176,12 @@ class RadarController extends DatasetController {
   /// an absent key gives [undefined], and the scale gives NaN for it
   /// (Chart.js ADR 0025, section 1). A JS `null` item throws a [TypeError],
   /// as the JS property read of `null` does.
+  ///
+  /// In the mode `reset`, `x` and `y` are `xCenter` and `yCenter` of the
+  /// scale. Before the first layout of the scale, both are Dart `null`, the
+  /// JS `undefined` (scale.radialLinear.js:416-418). The element then gets
+  /// `undefined`, and `isNaN(undefined)` is true. Thus the next animation of
+  /// `x` and `y` starts at the target, as upstream (core.animation.js:32).
   @override
   void updateElements(
     List<types.Element> points,
@@ -202,10 +208,10 @@ class RadarController extends DatasetController {
       final y = reset ? radial.yCenter : pointPosition.y;
 
       final properties = <String, Object?>{
-        'x': x,
-        'y': y,
+        'x': x ?? undefined,
+        'y': y ?? undefined,
         'angle': pointPosition.angle,
-        'skip': x.isNaN || y.isNaN,
+        'skip': x == null || x.isNaN || y == null || y.isNaN,
         'options': options,
       };
 

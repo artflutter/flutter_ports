@@ -6,6 +6,8 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs/src/controllers/controller.doughnut.dart';
 import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/core/core.defaults.dart' show overrides;
+import 'package:flutter_chartjs/src/helpers/helpers.collection.dart'
+    show notifyArrayListeners;
 import 'package:flutter_chartjs/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs/src/js/js_object.dart';
@@ -262,6 +264,70 @@ void main() {
   // generated value. The generated cases `parsed: ...` give the upstream
   // values.
   group('parsed data', () {
+    // A string `data` (decision D11 item b, the finding R4 of the U-doughnut
+    // review). `_dataCheck` keeps the string (core.datasetController.js:386),
+    // and `parse` reads its characters. The values come from the x64 Node.js
+    // probe of the unit X-fix on the build at the pin.
+    AnyObject stringData(AnyObject extra, String data) {
+      final config = _one(extra, const []);
+      final datasets = jsGet(config['data'], 'datasets')! as List<Object?>;
+      (datasets[0]! as AnyObject)['data'] = data;
+      return config;
+    }
+
+    testWidgets("the string data 'abc' gives 3 arcs with the parsed values "
+        'NaN', (tester) async {
+      final chart = acquireChart(stringData(const {}, 'abc'));
+      final meta = chart.getDatasetMeta(0);
+      expect(_dataset(chart, 0)['data'], 'abc');
+      expect(meta.data, hasLength(3));
+      expect(meta.parsed, [isNaN, isNaN, isNaN]);
+      expect(meta.total, 0);
+      expect(
+        [
+          for (final arc in meta.data)
+            (arc as types.ElementPropertyRead)['circumference'],
+        ],
+        [0, 0, 0],
+      );
+    });
+
+    testWidgets("the string data '123' with parsing false gives the arcs of "
+        '[1, 2, 3]', (tester) async {
+      final chart = acquireChart(
+        stringData(<String, Object?>{'parsing': false}, '123'),
+      );
+      final meta = chart.getDatasetMeta(0);
+      expect(meta.data, hasLength(3));
+      expect(meta.parsed, ['1', '2', '3']);
+      expect(meta.total, 6);
+      expect(
+        [
+          for (final arc in meta.data)
+            (arc as types.ElementPropertyRead)['circumference'],
+        ],
+        [1.0471975511965976, 2.0943951023931953, 3.141592653589793],
+      );
+      expect(meta.controller!.getContext(1)['raw'], '2');
+      expect(
+        _arcs(chart),
+        referenceMatcher(
+          _arcs(
+            acquireChart(
+              _one(
+                <String, Object?>{'parsing': false},
+                <Object?>[
+                  1.0,
+                  2.0,
+                  3.0,
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    });
+
     testWidgets("parsing false with [1, '2', null] gives the arcs of "
         '[1, 2, null] and keeps the data List', (tester) async {
       final chart = acquireChart(
@@ -428,6 +494,65 @@ void main() {
           visible,
         );
       });
+    }
+
+    // The key after a data insert or remove (decision D11 item c, the
+    // finding R1 of the U-doughnut review). `_updateHiddenIndices` moves
+    // each key whose `+key` is a number at or after the start
+    // (core.controller.js:72-84). Thus the key '01' moves, and the key 'null'
+    // does not. The visibility of each data index after onClick on the data
+    // [1, 2, 3, 4], the change and `chart.update()`, from the x64 Node.js
+    // probe of the unit X-fix on the build at the pin.
+    for (final (name, index, unshift, shift, push)
+        in <(String, Object?, String, String, String)>[
+          ("'01'", '01', '11011', '011', '11111'),
+          ("''", '', '10111', '111', '11111'),
+          ('null', null, '11111', '111', '11111'),
+          ('true', true, '11111', '111', '11111'),
+          ("' 1'", ' 1', '11011', '011', '11111'),
+          ("'1.0'", '1.0', '11011', '011', '11111'),
+          ('1', 1.0, '11011', '011', '10111'),
+          ("'1'", '1', '11011', '011', '10111'),
+        ]) {
+      for (final (change, visible) in [
+        ('unshift', unshift),
+        ('shift', shift),
+        ('push', push),
+      ]) {
+        testWidgets('onClick with the index $name, then $change, moves the '
+            'upstream key', (tester) async {
+          final chart = acquireChart(
+            _one(const {}, <Object?>[1.0, 2.0, 3.0, 4.0]),
+          );
+          final legend = _TestLegend(chart, _legendOptions());
+          chart.legend = legend;
+          jsCall(jsGet(_legendOverrides(), 'onClick'), [
+            <String, Object?>{},
+            <String, Object?>{'index': index},
+            legend,
+          ]);
+          final data = _dataset(chart, 0)['data']! as List<Object?>;
+          switch (change) {
+            case 'unshift':
+              data.insert(0, 9.0);
+              notifyArrayListeners(data, 'unshift', const [9.0]);
+            case 'shift':
+              data.removeAt(0);
+              notifyArrayListeners(data, 'shift', const <Object?>[]);
+            case 'push':
+              data.add(9.0);
+              notifyArrayListeners(data, 'push', const [9.0]);
+          }
+          chart.update();
+          expect(
+            [
+              for (var i = 0; i < data.length; i++)
+                chart.getDataVisibility(i.toDouble()) ? '1' : '0',
+            ].join(),
+            visible,
+          );
+        });
+      }
     }
 
     test('the legend functions are the same function in each read', () {

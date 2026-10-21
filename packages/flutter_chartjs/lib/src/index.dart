@@ -13,10 +13,9 @@
 ///   bundle, a namespace is a frozen object with the export names as its
 ///   keys, in code unit order (Chart.js ADR 0020, probe 2). Thus each
 ///   namespace is an unmodifiable Map from the export name to the class
-///   value of the class, or to the Map of the plugin. [elements] and
-///   [scales] have all their entries. [controllers] gets the entries of the
-///   controllers of each wave of phase 7, and [plugins] gets its entries in
-///   phase 8.
+///   value of the class, or to the Map of the plugin. [controllers],
+///   [elements] and [scales] have all their entries. [plugins] gets its
+///   entries in phase 8.
 /// - index.ts:13-18 exports the four namespaces by name.
 ///
 /// `lib/flutter_chartjs.dart` does not export this library yet: the public
@@ -28,8 +27,10 @@ import 'package:flutter_chartjs/src/controllers/controller.bar.dart';
 import 'package:flutter_chartjs/src/controllers/controller.bubble.dart';
 import 'package:flutter_chartjs/src/controllers/controller.doughnut.dart';
 import 'package:flutter_chartjs/src/controllers/controller.line.dart';
+import 'package:flutter_chartjs/src/controllers/controller.pie.dart';
 import 'package:flutter_chartjs/src/controllers/controller.polarArea.dart';
 import 'package:flutter_chartjs/src/controllers/controller.radar.dart';
+import 'package:flutter_chartjs/src/controllers/controller.scatter.dart';
 import 'package:flutter_chartjs/src/elements/element.arc.dart';
 import 'package:flutter_chartjs/src/elements/element.bar.dart';
 import 'package:flutter_chartjs/src/elements/element.line.dart';
@@ -50,22 +51,22 @@ export 'package:flutter_chartjs/src/scales/index.dart';
 
 /// index.ts:8 `import * as controllers from './controllers/index.js'`.
 ///
-/// The bundle keys are `BarController`, `BubbleController`,
-/// `DoughnutController`, `LineController`, `PieController`,
-/// `PolarAreaController`, `RadarController` and `ScatterController`. The
-/// keys are in code unit order, as in the bundle (Chart.js ADR 0020,
-/// section 6). The controllers come in the three waves of phase 7. Thus the
-/// Map has the entries of the ported controllers only: `BarController` of
-/// wave 1, and `BubbleController`, `DoughnutController`, `LineController`,
-/// `PolarAreaController` and `RadarController` of wave 2.
+/// The keys are the eight controllers of phase 7, in code unit order, as in
+/// the bundle (Chart.js ADR 0020, section 6). That order puts
+/// `PieController` before `PolarAreaController`, where `controllers/index.js`
+/// lists `PolarAreaController` first (:5-6). `TypedRegistry.register`
+/// registers the parent class of `PieController` first in any case
+/// (core.typedRegistry.js:28-31).
 final AnyObject controllers = Map<String, Object?>.unmodifiable(
   <String, Object?>{
     'BarController': BarController.jsClass,
     'BubbleController': BubbleController.jsClass,
     'DoughnutController': DoughnutController.jsClass,
     'LineController': LineController.jsClass,
+    'PieController': PieController.jsClass,
     'PolarAreaController': PolarAreaController.jsClass,
     'RadarController': RadarController.jsClass,
+    'ScatterController': ScatterController.jsClass,
   },
 );
 

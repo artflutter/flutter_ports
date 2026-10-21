@@ -562,7 +562,17 @@ void main() {
   `controller_<snake>_reference_2.dart` from one case list, and the test file calls
   `testControllerChartCases` for both.
 - A failed reference case is a defect of the port. Fix it in `lib/`. Never change the generator to
-  match the port.
+  match the port. One exception: a hit query at a point on the axis of symmetry of two arc centers
+  can tie at the last bit of `Math.sin` or `Math.cos`, which differ by 1 ulp between V8 and
+  `dart:math` (porting-flow.md §3). The generator then changes the data to remove the symmetry and
+  records the reason in its doc (wave 3: the pie case `two datasets` has `[5, 15, 12, 20]`).
+- The doughnut and pie test files map an expected JS `null` of `xAxisID` and `yAxisID` to
+  `undefined` (`_undefinedAxisIds`, decision D12). Their empty `linkScales` keeps the JS `null`,
+  and the Dart field `ChartMeta.xAxisID` is a `String?`.
+- The generators have no step that writes an option. A pin test of an option change takes its
+  expected values from a probe on the pinned build. The unit report records the probe source and
+  its output, and the test comment names the report (wave 3: the group `showLine` of
+  `controller.scatter_test.dart`).
 
 The status text of the controller row in `doc/status.yaml` names the test file and the count:
 "`test/port/controllers/controller.<name>_test.dart` compares N charts with upstream, and N more

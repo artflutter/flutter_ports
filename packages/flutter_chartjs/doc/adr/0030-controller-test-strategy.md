@@ -188,6 +188,12 @@ numbers below refer to Chart.js `v4.5.1+7169e651`, read in `third_party/Chart.js
    `controller_<name>_reference_2.dart`, from one case list.
 7. Each reference case is one `testWidgets` case. A batch saves about 4 ms for each case and hides
    the name of the failed case.
+8. The JS charts get the `BasicPlatform` of Node.js, whose `updateConfig` writes
+   `animation: false` (`platform.basic.js:20-22`). The Dart harness gives the platform of
+   `platform.flutter.dart`, which keeps the option. A generator with a case that needs the
+   animation options (the `reset` cases of `controller_doughnut_reference.mjs` and
+   `controller_polar_area_reference.mjs`) puts the no-op `updateConfig` of `BasePlatform`
+   (`platform.base.js:80`) on `BasicPlatform` before its cases.
 
 ### 4. The observations of a reference case
 

@@ -256,6 +256,42 @@ void main() {
   // generated value. The generated cases `parsed: ...` give the upstream
   // values of the same configs.
   group('parsed data', () {
+    // A string `data` (decision D11 item b): `_dataCheck` keeps the string,
+    // and `parse` reads its characters (core.datasetController.js:386). The
+    // x64 Node.js probe of the unit X-fix on the build at the pin gives the
+    // same points for the data '123' and [1, 2, 3], the raw value '3' of the
+    // context of index 2 and the label and value of index 1 'b' and '2'.
+    testWidgets("the string data '123' gives the points of [1, 2, 3]", (
+      tester,
+    ) async {
+      final chart = acquireChart(
+        _lines(<Object?>[
+          <String, Object?>{'data': '123'},
+        ]),
+      );
+      final meta = chart.getDatasetMeta(0);
+      expect(meta.data, hasLength(3));
+      expect([for (final item in meta.parsed) jsGet(item, 'y')], [1, 2, 3]);
+      final controller = meta.controller!;
+      expect(controller.getContext(2)['raw'], '3');
+      final (:label, :value) = controller.getLabelAndValue(1);
+      expect([label, value], ['b', '2']);
+      expect(
+        _points(chart),
+        referenceMatcher(
+          _points(
+            acquireChart(
+              _lines(<Object?>[
+                <String, Object?>{
+                  'data': <Object?>[1.0, 2.0, 3.0],
+                },
+              ]),
+            ),
+          ),
+        ),
+      );
+    });
+
     testWidgets('stacked List items with parsing false take a stack object '
         'with the key of the value axis', (tester) async {
       final chart = acquireChart(<String, Object?>{

@@ -1234,6 +1234,32 @@ void main() {
       }
     });
 
+    // core.controller.js:881-883 with an index that is not a number
+    // (decision D11 item c). The key is `ToString(index)`.
+    // `_updateHiddenIndices` moves each key whose `+key` is a number
+    // (core.controller.js:72-84): '01' and '' move, 'null' and 'true' do
+    // not. The x64 Node.js probe of the unit X-fix on the build at the pin,
+    // a line chart with 4 items and the toggles '01', null, true and '':
+    // the visibility 1111; after an unshift 10011; after a shift 0011.
+    testWidgets('toggleDataVisibility takes the key ToString(index), and an '
+        'insert or a remove moves the numeric keys', (tester) async {
+      final chart = acquireChart(_testConfig([_points('a')]));
+      <Object?>['01', null, true, ''].forEach(chart.toggleDataVisibility);
+      String visibilities(int count) => [
+        for (var i = 0; i < count; i++)
+          chart.getDataVisibility(i.toDouble()) ? '1' : '0',
+      ].join();
+      expect(visibilities(4), '1111');
+      chart
+        ..dataChanges.add([0.0, '_insertElements', 0.0, 1.0])
+        ..update();
+      expect(visibilities(5), '10011');
+      chart
+        ..dataChanges.add([0.0, '_removeElements', 0.0, 1.0])
+        ..update();
+      expect(visibilities(4), '0011');
+    });
+
     testWidgets('a fraction and NaN are keys of their own', (tester) async {
       final chart = acquireChart(_testConfig([_points('a')]))
         ..toggleDataVisibility(1.5);

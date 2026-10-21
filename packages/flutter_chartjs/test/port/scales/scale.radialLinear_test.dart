@@ -278,9 +278,11 @@ void main() {
       expect(scale, isA<RadialLinearScale>());
       final s = scale as RadialLinearScale;
       expect(s.id, 'z');
-      // scale.radialLinear.js:415-423: the start values.
-      expect(s.xCenter, isNaN);
-      expect(s.yCenter, isNaN);
+      // scale.radialLinear.js:415-423: the start values. Dart null stands
+      // for the `undefined` of `xCenter` and `yCenter`, NaN for the
+      // `undefined` of `drawingArea`.
+      expect(s.xCenter, isNull);
+      expect(s.yCenter, isNull);
       expect(s.drawingArea, isNaN);
       expect(s.pointLabels, isEmpty);
       expect(s.pointLabelItems, isEmpty);

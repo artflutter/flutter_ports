@@ -1,16 +1,25 @@
 // Ported from Chart.js v4.5.1+7169e651 test/specs/element.line.tests.js (MIT, Chart.js Contributors).
-import 'package:chartjs_test_utils/pure.dart';
+@TestOn('vm')
+library;
+
+import 'package:chartjs_test_utils/flutter.dart';
+// The spec builds charts of flutter_chartjs, which does not export lib/src
+// yet.
+import 'package:flutter_chartjs/src/core/core.controller.dart';
 import 'package:flutter_chartjs/src/elements/element.line.dart';
 import 'package:flutter_chartjs/src/elements/element.point.dart';
+import 'package:flutter_chartjs/src/js/js_undefined.dart';
 import 'package:flutter_chartjs/src/types/index.dart' as types;
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 // The spec constructs Chart.elements.LineElement. Here it is the LineElement
-// of element.line.dart (Chart.js ADR 0017).
+// of element.line.dart (Chart.js ADR 0017). The case of :14 acquires a line
+// chart with a Jasmine `done` callback. It is a `testWidgets` case with
+// `waitForDone` (Chart.js ADR 0022, section 7), and the file runs on the VM
+// (Chart.js ADR 0030, section 12 item 5). It does not call `setUpSpecs()`:
+// its charts need the built-in components.
 
 void main() {
-  setUpSpecs();
-
   // Tests for the line element
   group('Chart.elements.LineElement', () {
     // describe('auto', jasmine.fixture.specs('element.line')): a fixture
@@ -28,35 +37,36 @@ void main() {
       expect(line.points, equals([points[0], points[1], points[2], points[3]]));
     });
 
-    test(
-      'should not cache path when animations are enabled',
-      () {
-        // var chart = window.acquireChart({
-        //   type: 'line',
-        //   data: {
-        //     datasets: [{
-        //       data: [0, -1, 0],
-        //       label: 'dataset1',
-        //     }],
-        //     labels: ['label1', 'label2', 'label3']
-        //   },
-        //   options: {
-        //     animation: {
-        //       duration: 50,
-        //       onComplete: () => {
-        //         expect(chart.getDatasetMeta(0).dataset._path)
-        //             .toBeUndefined();
-        //         done();
-        //       }
-        //     }
-        //   }
-        // });
-        //
-        // The dataset element reads `_path` by name:
-        // `chart.getDatasetMeta(0).dataset['_path']`, which gives the
-        // `undefined` sentinel.
-      },
-      skip: 'blocked: controller.line',
-    );
+    testWidgets('should not cache path when animations are enabled', (
+      tester,
+    ) async {
+      await waitForDone((done) {
+        late final Chart chart;
+        chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[0, -1, 0],
+                'label': 'dataset1',
+              },
+            ],
+            'labels': <Object?>['label1', 'label2', 'label3'],
+          },
+          'options': <String, Object?>{
+            'animation': <String, Object?>{
+              'duration': 50,
+              'onComplete': () {
+                // The dataset element reads `_path` by name, which gives
+                // the `undefined` sentinel.
+                final line = chart.getDatasetMeta(0).dataset! as LineElement;
+                expect(line['_path'], same(undefined));
+                done();
+              },
+            },
+          },
+        });
+      });
+    });
   });
 }
