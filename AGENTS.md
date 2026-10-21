@@ -3,7 +3,9 @@
 Dart pub workspace + Melos 8 monorepo of native Dart/Flutter ports of JavaScript chart
 libraries. First port: Chart.js v4.5.1+7169e651 (a commit pin after v4.5.1) →
 `packages/flutter_chartjs`. Second port: D3 v7.9.0 →
-`packages/flutter_d3_port`, in phase 0 (scaffold and design, no ported code).
+`packages/flutter_d3_port`, in phase 0 (scaffold and design, no ported code). Third port: Apache
+ECharts 6.1.0 with its renderer zrender 6.1.0 → `packages/flutter_echarts_port`, in phase 0
+(scaffold and design, no ported code).
 
 ## Commands
 
@@ -77,7 +79,8 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   `parity.md` status. It also fails when an import does not resolve. `check:port` and the CI job
   `port-checks` run it.
 - `dart run melos run upstream`: check out the pinned reference sources (every `third_party/`
-  submodule, at depth 1). These are the three Chart.js submodules and the 34 D3 submodules.
+  submodule, at depth 1). These are the three Chart.js submodules, the 34 D3 submodules and the
+  two ECharts submodules.
 - `dart run melos run upstream:manifest`: tool 4. It writes
   `packages/flutter_chartjs/doc/upstream/` from `third_party/Chart.js`. It needs Node.js 22.18 or
   later. The CI job `upstream-manifest` fails when the committed files differ.
@@ -85,10 +88,12 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   tag named by `chartJsVersion`. For a commit pin (`<last version>+<sha8>`), the gitlink must
   start with `<sha8>`, and the tag `v<last version>` must exist. CI runs it too. It also fails
   unless `third_party/d3` is at the tag `v<d3Version>`. Each other D3 gitlink must be the commit
-  of its `ref` and equal its `commit` in `packages/flutter_d3_port/tool/port_sources.yaml`. The
-  script reads the gitlinks from the index and the tags with `git ls-remote`. It needs no
+  of its `ref` and equal its `commit` in `packages/flutter_d3_port/tool/port_sources.yaml`. It
+  also fails unless `third_party/echarts` and `third_party/zrender` are at the tags
+  `<echartsVersion>` and `<zrenderVersion>` (no `v` prefix) and equal their `commit` in
+  `packages/flutter_echarts_port/tool/port_sources.yaml`. The script reads the gitlinks from the index and the tags with `git ls-remote`. It needs no
   submodule checkout. It also fails on a submodule of `.gitmodules` that no entry of a
-  `tool/port_sources.yaml` pins.
+  `packages/*/tool/port_sources.yaml` pins.
 - `dart run melos run gallery` (Chrome) / `gallery:macos` / `gallery:device` (Android/iOS):
   run the gallery.
 - `dart run melos run gallery:build:web` / `gallery:build:android` / `gallery:build:ios`: build the
@@ -300,7 +305,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       2026-10-21). It accepts an ADR when the decision is implemented and its gates are green. A
       changed decision still gets a new ADR that supersedes the old one.
       The other ADRs are accepted. Docs name them "Chart.js ADR NNNN". "ADR NNNN" alone is a
-      `docs/adr/` file. "D3 ADR NNNN" is a file of `packages/flutter_d3_port/doc/adr/`. An
+      `docs/adr/` file. "D3 ADR NNNN" is a file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a
+      file of `packages/flutter_echarts_port/doc/adr/`. An
       accepted ADR does not change. A changed decision gets a new ADR that states the complete
       decision and supersedes the old ADR.
     - `doc/differences.md`: one row for each `DIVERGES` difference.
@@ -409,6 +415,37 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       gate 1 for the pure interface and gate 4 for the `dart:ui` builder.
   - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
     yet. `test --no-select` runs its tests. In D3 phase 1, ADR 0008 adds the package to tools 1-3.
+- `packages/flutter_echarts_port`: the Apache ECharts port (library, `publish_to: none` until
+  0.1.0, Apache-2.0). Phase 0 has no ported code. `doc/README.md` has the plan and the roadmap of
+  phases 0-10.
+  - `lib/flutter_echarts_port.dart`: the public library. `lib/src/upstream.dart` has
+    `echartsVersion` and `zrenderVersion` (both `6.1.0`). Both files are port-only.
+  - `test/upstream_test.dart` (`@TestOn('vm')`) compares `echartsVersion` with
+    `third_party/echarts/package.json`, and `zrenderVersion` with the zrender dependency of that
+    file and with `third_party/zrender/package.json`. It also compares each gitlink with its
+    `commit`. It fails on a submodule of `.gitmodules` that no `packages/*/tool/port_sources.yaml`
+    pins. The D3 test reads the same files.
+  - `tool/port_sources.yaml`: the two pins, Apache ECharts and zrender, in the schema of the
+    Chart.js file (ECharts ADR 0001). The `language` of both is `js`.
+  - Paths (ECharts ADR 0002): `third_party/echarts/src/<path>.ts` becomes
+    `lib/src/echarts/<path>.dart`, and `third_party/zrender/src/<path>.ts` becomes
+    `lib/src/zrender/<path>.dart`. A spec `test/ut/spec/<path>.test.ts` becomes
+    `test/specs/echarts/<path>_test.dart` or `test/specs/zrender/<path>_test.dart`. Port-only
+    tests go in `test/port/echarts/` and `test/port/zrender/`. The harness is in `test/support/`.
+    The name `echarts_test_utils` is reserved. `apps/echarts_gallery` comes in ECharts phase 6.
+  - `NOTICE`: the port line and the unchanged notice of Apache ECharts (Apache-2.0 section 4(d)).
+  - `doc/`: all ECharts port docs: `README.md` (overview, roadmap, decisions), `porting-flow.md`
+    (proposed), `parity.md`, `differences.md`, `upstream-ledger.md` (one section for each
+    repository) and the prior-art survey `prior-art/`.
+    - `doc/adr/`: ECharts ADRs 0001-0009, all proposed. ECharts ADR 0001 (upstream sources) has
+      gate 0. ECharts ADRs 0002 (file naming and layout), 0003 (numbers and JS semantics), 0004
+      (JS values, classes and options) and 0005 (spec harness and reference tests) have gate 1.
+      ECharts ADR 0006 (renderer and canvas layer) has gate 3. ECharts ADR 0007 (environment,
+      host and input events) has gates 1, 3 and 5. ECharts ADR 0008 (dates, locales and
+      formatting) has gate 4. ECharts ADR 0009 (DOM-bound features, app hooks and theming) has
+      gate 6 and later gates.
+  - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
+    yet. `test --no-select` runs its tests.
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
   - Shallow git submodules: `Chart.js` at the commit pin `7169e651` after `v4.5.1`
@@ -417,6 +454,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - The 34 D3 submodules, also shallow at release tags (D3 ADR 0001): `d3` (`v7.9.0`), the 30
     `d3-*` modules, `internmap`, `delaunator` (`v5.1.0`) and `robust-predicates` (`v3.0.3`).
     `packages/flutter_d3_port/tool/port_sources.yaml` gives the tag and the commit of each.
+  - The 2 ECharts submodules, also shallow at release tags (ECharts ADR 0001): `echarts`
+    (`6.1.0`) and `zrender` (`6.1.0`, the exact version that the ECharts `package.json` requires).
+    The tags have no `v` prefix. `packages/flutter_echarts_port/tool/port_sources.yaml` gives the
+    tag and the commit of each.
   - `fdlibm/`: unchanged netlib fdlibm 5.3 files (`e_log.c`, `e_log10.c`, `e_atan2.c`, `s_atan.c`,
     `s_sin.c`, `s_cos.c`, `k_sin.c`, `k_cos.c`, `e_rem_pio2.c`, `k_rem_pio2.c`, `s_scalbn.c`) for
     `fdlibm_log.dart`, `fdlibm_atan.dart` and `fdlibm_trig.dart`. fdlibm has no git repository.
@@ -587,6 +628,31 @@ are relative to `packages/flutter_d3_port/doc/`.
 - No port depends on another port (ADR 0008). Thus D3 code never imports
   `package:flutter_chartjs`. In D3 phase 1, ADR 0008 copies the generic runtime of `lib/src/js/`
   into the shared package `js_semantics`.
+
+The ECharts port applies the rules above with these changes. The ECharts ADRs are proposed. The
+doc paths are relative to `packages/flutter_echarts_port/doc/`.
+
+- Rule 1: read the upstream file in `third_party/echarts` or `third_party/zrender`. Never port
+  from a Dart ECharts package or from another port of ECharts (`prior-art/README.md`).
+- Rule 2: the header names the project and its tag, for example
+  `// Ported from Apache ECharts 6.1.0 src/util/number.ts (Apache-2.0, The Apache Software Foundation).`
+  or `// Ported from zrender 6.1.0 src/core/matrix.ts (BSD-3-Clause, Baidu Inc.).` The port-only
+  marker is `// Original code, not ported from Apache ECharts: <reason>.` A ported file keeps the
+  upstream license comment block verbatim after its header lines (ECharts ADR 0001 item 11). A
+  file whose name fails the `file_names` lint has `// ignore_for_file: file_names` after its
+  header lines (ECharts ADR 0002).
+- Rules 3 and 4: port the specs by ECharts ADR 0005. Update the row of the module in `parity.md`
+  in the same change.
+- Rule 6: an ECharts bump also moves zrender when the new ECharts `package.json` requires another
+  zrender version. It changes the submodules, `echartsVersion`, `zrenderVersion`, the entries in
+  `tool/port_sources.yaml` and the headers (ECharts ADR 0001 item 9). `upstream:check` and
+  `packages/flutter_echarts_port/test/upstream_test.dart` fail on a mismatch.
+- `upstream-ledger.md` has one section for each repository. A difference carries
+  `// DIVERGES(echarts): <row id>, <reason>`, also in a zrender file, and a row in
+  `differences.md`.
+- Numbers and JS values follow ECharts ADRs 0003 and 0004 with the rules of Chart.js ADRs 0032
+  and 0034. No port depends on another port (ADR 0008). Thus ECharts code never imports
+  `package:flutter_chartjs` or `package:flutter_d3_port`.
 
 ## Tests
 
@@ -767,6 +833,9 @@ are relative to `packages/flutter_d3_port/doc/`.
   line (D3 ADR 0002 section 2). From phase 1, each D3 spec calls `setUpSpecs()` of
   `test/support/spec_setup.dart` first in `main()`. The D3 package has no
   `flutter_test_config.dart`.
+- The ECharts tests use `package:test` (ECharts ADR 0005). In phase 0, `test/upstream_test.dart`
+  is the only ECharts test. It has `@TestOn('vm')`. Thus `test:web` does not run the ECharts
+  package yet. The first pure ECharts test adds the package to `test:web`.
 
 ## Licensing
 
@@ -779,6 +848,14 @@ are relative to `packages/flutter_d3_port/doc/`.
   holder strings. Examples are d3-ease (BSD-3-Clause), ColorBrewer in d3-scale-chromatic
   (Apache-2.0), delaunator (`Mapbox`) and robust-predicates (Unlicense). The change that ports
   the first file of a component adds that component by the three steps below.
+- Apache ECharts is Apache-2.0. The code of the ECharts port is Apache-2.0 too.
+  `packages/flutter_echarts_port/LICENSE` is the plain Apache-2.0 text, and
+  `packages/flutter_echarts_port/NOTICE` keeps the notice of Apache ECharts unchanged.
+  `LICENSES/Apache-2.0.txt` has the license text. The `packages/flutter_echarts_port/**` table of
+  `REUSE.toml` comes after the D3 table. ECharts ADR 0001 item 12 gives the other components:
+  zrender (BSD-3-Clause, `Baidu Inc.`), the d3 code in five ECharts files (BSD-3-Clause), and
+  node-timsort, jsdiff and tween.js in zrender files. The change that ports the first file of a
+  component adds that component by the three steps below.
 - Code taken from any other project needs three things in the same change:
   1. its notice in the `LICENSE` of the package that contains the code;
   2. a `REUSE.toml` annotation for the files, placed last because the last matching table wins
@@ -805,7 +882,7 @@ are relative to `packages/flutter_d3_port/doc/`.
   settings, so run Dart tools after `flutter pub get`). Public APIs are documented.
 - Commits: Conventional Commits, signed off (`git commit -s`, DCO), for example
   `feat(flutter_chartjs): port helpers.math`. The scope of the D3 port is `flutter_d3_port`.
-  Checks:
+  The scope of the ECharts port is `flutter_echarts_port`. Checks:
   - lefthook ≥ 1.0 `commit-msg` hook (`lefthook install`): `commitlint_cli` checks the type, and
     the scope when one is given, against the list in `commitlint.yaml`; a second command requires a
     `Signed-off-by` trailer;

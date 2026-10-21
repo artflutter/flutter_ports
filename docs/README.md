@@ -116,3 +116,25 @@ package.
     [D3 ADR 0006: Generators, accessors and JS values](../packages/flutter_d3_port/doc/adr/0006-generators-accessors-and-js-values.md).
   - Prior art: [overview](../packages/flutter_d3_port/doc/prior-art/README.md),
     [D3 packages](../packages/flutter_d3_port/doc/prior-art/d3-packages.md).
+- Apache ECharts: [`packages/flutter_echarts_port/doc/`](../packages/flutter_echarts_port/doc/README.md)
+  - [Overview and roadmap](../packages/flutter_echarts_port/doc/README.md)
+  - [Parity tracker](../packages/flutter_echarts_port/doc/parity.md): one row for each module of
+    Apache ECharts 6.1.0 and zrender 6.1.0. All rows are "not started" in phase 0.
+  - [Differences](../packages/flutter_echarts_port/doc/differences.md): one row for each
+    `DIVERGES` hunk. It has no rows in phase 0.
+  - [Porting flow](../packages/flutter_echarts_port/doc/porting-flow.md) (proposed): the life cycle
+    of one module, the decisions and their gates, the test harness, the tools and the phases.
+  - [Upstream ledger](../packages/flutter_echarts_port/doc/upstream-ledger.md): the upstream
+    commits after each pinned tag, with their triage. It has one section for each repository.
+  - Proposed decisions:
+    [ECharts ADR 0001: Upstream sources](../packages/flutter_echarts_port/doc/adr/0001-upstream-sources.md),
+    [ECharts ADR 0002: File naming and package layout](../packages/flutter_echarts_port/doc/adr/0002-file-naming-and-layout.md),
+    [ECharts ADR 0003: Numbers, number strings and JS semantics](../packages/flutter_echarts_port/doc/adr/0003-numbers-and-js-semantics.md),
+    [ECharts ADR 0004: JS values, classes and options](../packages/flutter_echarts_port/doc/adr/0004-js-values-classes-and-options.md),
+    [ECharts ADR 0005: Spec harness, reference tests and the visual pages](../packages/flutter_echarts_port/doc/adr/0005-spec-harness-and-reference-tests.md),
+    [ECharts ADR 0006: Renderer: the zrender canvas painter on a Canvas 2D layer](../packages/flutter_echarts_port/doc/adr/0006-renderer-and-canvas-layer.md),
+    [ECharts ADR 0007: Runtime environment, chart host and input events](../packages/flutter_echarts_port/doc/adr/0007-environment-host-and-input-events.md),
+    [ECharts ADR 0008: Dates, time zones, locales and formatting](../packages/flutter_echarts_port/doc/adr/0008-dates-locales-and-formatting.md),
+    [ECharts ADR 0009: DOM-bound features, app hooks and theming](../packages/flutter_echarts_port/doc/adr/0009-dom-features-app-hooks-and-theming.md).
+  - Prior art: [overview](../packages/flutter_echarts_port/doc/prior-art/README.md),
+    [ECharts packages](../packages/flutter_echarts_port/doc/prior-art/echarts-packages.md).

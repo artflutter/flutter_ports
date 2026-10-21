@@ -21,6 +21,12 @@ Approaches: **WebView** (the JS library runs in a platform WebView), **HTML view
 
 No native ECharts or zrender port was found. `flutter_echart` is a native pie chart that only borrows the name.
 
+The [ECharts prior-art survey](../../packages/flutter_echarts_port/doc/prior-art/README.md) of
+2026-10-20 examines these packages and more in depth. It confirmed that no Dart package or
+repository translates ECharts or zrender modules. The nearest Dart work is `e_chart` and
+`e_chart_ext` (2023), an own Flutter implementation of the ECharts option model. The survey also
+found ports in other languages: Swift, MoonBit and Pascal. zrender is BSD-3-Clause, not MIT.
+
 ### Highcharts
 
 | Package | Approach | Status |
