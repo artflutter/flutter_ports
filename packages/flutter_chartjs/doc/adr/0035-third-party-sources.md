@@ -1,8 +1,8 @@
 # Chart.js ADR 0035: Third-party sources
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-21
-- Supersedes: [Chart.js ADR 0011](0011-third-party-sources.md) (on acceptance)
+- Supersedes: [Chart.js ADR 0011](0011-third-party-sources.md)
 - Related: [ADR 0005](../../../../docs/adr/0005-pin-upstream-sources.md) (the pin of each
   upstream), [ADR 0006](../../../../docs/adr/0006-follow-upstream-between-releases.md) (the
   commit pin), [Chart.js ADR 0032](0032-js-numeric-semantics.md) (the fdlibm ports, the reference
@@ -31,9 +31,9 @@ Chart.js ADR 0008 removed the ICU code. Since then, three facts changed:
   moved from the tag `v4.5.1` to the commit pin `7169e651`. This commit was the newest `master`
   commit with green upstream CI ([upstream-tracking.md](../upstream-tracking.md) §2.4). The tag
   `v4.5.1` is commit `9c5cf9f`.
-- Chart.js ADR 0032 (proposed) ports `Math.sin` and `Math.cos` from fdlibm 5.3. It adds seven
-  netlib files and `fdlibm_trig.dart`. The fdlibm entry of `port_sources.yaml`, the `REUSE.toml`
-  table of the fdlibm Dart ports and the fdlibm component of the package `LICENSE` list them.
+- Chart.js ADR 0032 ports `Math.sin` and `Math.cos` from fdlibm 5.3. It adds seven netlib files
+  and `fdlibm_trig.dart`. The fdlibm entry of `port_sources.yaml`, the `REUSE.toml` table of the
+  fdlibm Dart ports and the fdlibm component of the package `LICENSE` list them.
 - The harness has a test font, Liberation Sans 2.1.5 (SIL OFL 1.1, Chart.js ADR 0015). The font
   files are unchanged, so they are not ported code.
 

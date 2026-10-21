@@ -1,6 +1,7 @@
 # Chart.js ADR 0009: No display-only JS exactness
 
 - Status: accepted (2026-10-18)
+- Superseded by: [Chart.js ADR 0034](0034-no-display-only-js-exactness.md) (2026-10-21)
 - Date: 2026-10-18
 - Related: [Chart.js ADR 0010](0010-js-numeric-semantics.md) (the JS numeric rules),
   [Chart.js ADR 0011](0011-third-party-sources.md) (the third-party sources, without pixelmatch),

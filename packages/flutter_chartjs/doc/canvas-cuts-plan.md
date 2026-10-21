@@ -2,7 +2,7 @@
 
 - Status: proposed, deferred
 - Date: 2026-10-19
-- Related: [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (proposed),
+- Related: [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (accepted),
   [Chart.js ADR 0013](adr/0013-canvas-model.md), [Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md),
   [Chart.js ADR 0015](adr/0015-text.md), [Chart.js ADR 0016](adr/0016-frame-scheduling.md) (all
   accepted), [performance.md](performance.md), [porting-flow.md](porting-flow.md) §2.2
@@ -273,6 +273,14 @@ Changes to the cited files:
   Their text does not change. §2.7 and §3.7 of this plan tell the owner to edit Chart.js ADRs 0013
   and 0014 in place. These ADRs are accepted now. Thus the owner of each of these work packages
   writes a new ADR that supersedes the changed decision, and does not edit the accepted ADR. The
+  references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No
+  trigger occurred.
+- 2026-10-21, the acceptance of Chart.js ADRs 0032, 0034 and 0035. The Windows leg of CI run
+  39569626698 passes the hit cases of Chart.js ADR 0032, Open 1. The porting lead accepted the
+  three ADRs. The Related line of this plan gives Chart.js ADR 0034 as accepted. porting-flow.md
+  gets text in §2 (the paragraph and the table), §2.3, §2.13, §3, §4 and §6. This change does not
+  edit the text of §2.2, of §2.7 and of the cited rows of the harness table of §3. No line of
+  porting-flow.md moves. The `parity.md` rows that this plan cites do not change. Thus the
   references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No
   trigger occurred.
 

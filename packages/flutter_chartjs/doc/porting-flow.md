@@ -182,22 +182,22 @@ types) changes no rule of this flow. Thus it has no subsection. Chart.js ADRs 00
 and 0031 are accepted (2026-10-21). Chart.js ADR 0029 is accepted too (2026-10-21). Phase 7 also
 wrote Chart.js ADR 0033 (2026-10-21): the `undefined` centers of a radial scale before the first
 layout. It is accepted, and it supersedes the `xCenter` and `yCenter` bullet of Chart.js ADR 0025
-§5. Its subsection is 2.19. Phase 7 also wrote the proposed Chart.js ADRs 0032, 0034 and 0035
-(2026-10-21). Chart.js ADR 0032 states the complete numeric rules, with `jsSin` and `jsCos`, and
-supersedes Chart.js ADR 0010 on acceptance. Chart.js ADR 0034 supersedes Chart.js ADR 0009, and
-Chart.js ADR 0035 supersedes Chart.js ADR 0011, both on acceptance. Their subsections are 2.3
+§5. Its subsection is 2.19. Phase 7 also wrote Chart.js ADRs 0032, 0034 and 0035 (2026-10-21).
+Chart.js ADR 0032 states the complete numeric rules, with `jsSin` and `jsCos`, and supersedes
+Chart.js ADR 0010. Chart.js ADR 0034 supersedes Chart.js ADR 0009, and Chart.js ADR 0035
+supersedes Chart.js ADR 0011. The three are accepted (2026-10-21). Their subsections are 2.3
 (Chart.js ADR 0032), 2.2, 2.3, 2.6 and 2.10 (Chart.js ADR 0034) and 2.13 (Chart.js ADR 0035). The
 other subsections stay proposals in this document until their ADR files exist.
 
 | Subsection | ADR | Gate |
 |---|---|---|
 | 2.1 | [Chart.js ADR 0006: Options representation and resolver](adr/0006-options-representation-and-resolver.md) | 2 |
-| 2.3 | [Chart.js ADR 0032: JS numeric semantics](adr/0032-js-numeric-semantics.md), which supersedes Chart.js ADR 0010 on acceptance | 1 |
+| 2.3 | [Chart.js ADR 0032: JS numeric semantics](adr/0032-js-numeric-semantics.md), which supersedes Chart.js ADR 0010 | 1 |
 | 2.4 | [Chart.js ADR 0003: Type-only dependencies](adr/0003-type-only-dependencies.md) | 1 |
 | 2.5 | [Chart.js ADR 0012: Dart file naming](adr/0012-dart-file-naming.md), which supersedes Chart.js ADR 0004 | 1 |
-| 2.13 | [Chart.js ADR 0035: Third-party sources](adr/0035-third-party-sources.md), which supersedes Chart.js ADR 0011 on acceptance | 1 |
+| 2.13 | [Chart.js ADR 0035: Third-party sources](adr/0035-third-party-sources.md), which supersedes Chart.js ADR 0011 | 1 |
 | 2.3, number formatting | [Chart.js ADR 0026: Number formatting on package:intl](adr/0026-number-formatting-on-package-intl.md), which supersedes Chart.js ADR 0008 | 2 |
-| 2.2, 2.3, 2.6, 2.10 | [Chart.js ADR 0034: No display-only JS exactness](adr/0034-no-display-only-js-exactness.md), which supersedes Chart.js ADR 0009 on acceptance | 2 |
+| 2.2, 2.3, 2.6, 2.10 | [Chart.js ADR 0034: No display-only JS exactness](adr/0034-no-display-only-js-exactness.md), which supersedes Chart.js ADR 0009 | 2 |
 | 2.2 | [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md) | 3 |
 | 2.7 | [Chart.js ADR 0014: Input events and the chart host](adr/0014-input-events-and-chart-host.md) | 3 |
 | 2.8 | [Chart.js ADR 0015: Text](adr/0015-text.md) | 3 |
@@ -251,8 +251,8 @@ short:
 ### 2.3 Chart.js ADR 0032: JS numeric semantics (gate 1)
 
 [Chart.js ADR 0032](adr/0032-js-numeric-semantics.md) holds the complete decision, the
-translation rules and the evidence. It supersedes Chart.js ADR 0010 on acceptance. Chart.js ADR
-0010 superseded Chart.js ADR 0002.
+translation rules and the evidence. It supersedes Chart.js ADR 0010. Chart.js ADR 0010
+superseded Chart.js ADR 0002.
 [Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md) holds the number formatting
 decision, with six guards against package:intl failures. It supersedes
 [Chart.js ADR 0008](adr/0008-number-formatting-on-package-intl.md).
@@ -481,8 +481,8 @@ resolve. On the 3.50 beta, `flutter/material.dart` is deprecated. `dart run melo
 ### 2.13 Chart.js ADR 0035: Third-party sources (gate 1)
 
 [Chart.js ADR 0035](adr/0035-third-party-sources.md) holds the complete decision and its
-evidence. It supersedes Chart.js ADR 0011 on acceptance. Chart.js ADR 0011 superseded Chart.js ADR
-0005. In short:
+evidence. It supersedes Chart.js ADR 0011. Chart.js ADR 0011 superseded Chart.js ADR 0005. In
+short:
 - `third_party/kurkle-color` (`v0.3.2`) and `third_party/chartjs-test-utils` (`v0.4.0`) are
   reference-only shallow submodules. The phase 2 cleanup removed `third_party/pixelmatch`
   ([Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md)).
@@ -864,8 +864,8 @@ controllers follow [Chart.js ADR 0030](adr/0030-controller-test-strategy.md) §1
   it. The doughnut and pie test files compare an expected `null` of the two axis ids as
   `undefined`.
 - A hit query between two symmetric arcs can tie at the last bit. `jsSin` and `jsCos` give the V8
-  bits on every target ([Chart.js ADR 0032](adr/0032-js-numeric-semantics.md), proposed),
-  so the tie keeps the V8 item. The pie generator uses the data `[5, 15, 10, 20]`, which has the
+  bits on every target ([Chart.js ADR 0032](adr/0032-js-numeric-semantics.md)), so the tie keeps
+  the V8 item. The pie generator uses the data `[5, 15, 10, 20]`, which has the
   tie of `Math.sin(3.665191429188092)` at step 2 of `the step toggleDataVisibility`. The doughnut
   case `parsed: object items with the default key` has the tie of
   `Math.sin(-0.7853981633974483)` (CI run 39544591156). The generators keep the border queries.
@@ -1007,7 +1007,7 @@ package. It flags these forms:
   operands carries `// js-ok`.
 - the `dart:math` functions `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `atan2`, `exp` and
   `log`. A display-only `sin` or `cos` carries `// js-ok: display only (Chart.js ADR 0032)`
-  ([Chart.js ADR 0032](adr/0032-js-numeric-semantics.md), proposed).
+  ([Chart.js ADR 0032](adr/0032-js-numeric-semantics.md)).
 - the interpolation of a value with the static type `double` or `num`
 - the calls and tear-offs of `dart:math` `max` and `min` with the type argument `double` or `num`.
   Use `jsMax` and `jsMin` ([Chart.js ADR 0032](adr/0032-js-numeric-semantics.md)).
@@ -1213,7 +1213,7 @@ Keep each deferred plan current while the phases go on:
   [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md) supersedes ADR 0004. It
   states the backport rules without the status `verified`.
 - Chart.js ADR 0010 superseded Chart.js ADR 0002, and Chart.js ADR 0011 superseded Chart.js ADR
-  0005. On acceptance, [Chart.js ADR 0032](adr/0032-js-numeric-semantics.md) (2.3) supersedes
+  0005. [Chart.js ADR 0032](adr/0032-js-numeric-semantics.md) (2.3) supersedes
   Chart.js ADR 0010, [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (2.2, 2.3,
   2.6, 2.10) supersedes Chart.js ADR 0009, and
   [Chart.js ADR 0035](adr/0035-third-party-sources.md) (2.13) supersedes Chart.js ADR 0011.

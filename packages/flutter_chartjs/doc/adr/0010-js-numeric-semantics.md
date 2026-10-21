@@ -1,6 +1,7 @@
 # Chart.js ADR 0010: JS numeric semantics
 
 - Status: accepted (2026-10-19)
+- Superseded by: [Chart.js ADR 0032](0032-js-numeric-semantics.md) (2026-10-21)
 - Date: 2026-10-19
 - Supersedes: [Chart.js ADR 0002](0002-js-numeric-semantics.md)
 - Related: [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (the JS values in

@@ -1,6 +1,7 @@
 # Chart.js ADR 0011: Third-party sources
 
 - Status: accepted (2026-10-19)
+- Superseded by: [Chart.js ADR 0035](0035-third-party-sources.md) (2026-10-21)
 - Date: 2026-10-19
 - Supersedes: [Chart.js ADR 0005](0005-third-party-sources.md)
 - Related: [ADR 0005](../../../../docs/adr/0005-pin-upstream-sources.md) (the pin of each

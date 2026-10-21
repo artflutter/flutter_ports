@@ -1,8 +1,8 @@
 # Chart.js ADR 0032: JS numeric semantics
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-21
-- Supersedes: [Chart.js ADR 0010](0010-js-numeric-semantics.md) (on acceptance)
+- Supersedes: [Chart.js ADR 0010](0010-js-numeric-semantics.md)
 - Related: [Chart.js ADR 0002](0002-js-numeric-semantics.md) (the first numeric rules),
   [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (the JS values in Dart, the
   `undefined` sentinel),
@@ -524,8 +524,10 @@ known differences from V8 (see Related).
 
 ## Open
 
-1. **No Windows run.** The UCRT value `-0.7071067811865476` is an inference. The Windows leg of CI
-   after the change confirms it.
+1. **The Windows run.** Resolved (2026-10-21): the Windows leg of CI run 39569626698 passes the
+   doughnut case `parsed: object items with the default key` and the pie and doughnut cases
+   `the step toggleDataVisibility`. Thus the inferred UCRT value `-0.7071067811865476` no longer
+   matters.
 2. **No frame figure.** The claim "no frame figure moves" rests on the call counts. The phase
    lead runs the gallery bench after the change, and [performance.md](../performance.md) §13.8
    records it.

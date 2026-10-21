@@ -286,15 +286,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0035. Five of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0035. Eight of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR
       0012 supersedes Chart.js ADR 0004, and Chart.js ADR 0026 supersedes Chart.js ADR 0008.
       Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0033 supersedes Chart.js
       ADR 0025 §5 for `xCenter` and `yCenter` (2026-10-21).
       Chart.js ADR 0032 (JS numeric semantics) supersedes Chart.js ADR 0010. Chart.js ADR 0034
       (no display-only JS exactness) supersedes Chart.js ADR 0009. Chart.js ADR 0035
-      (third-party sources) supersedes Chart.js ADR 0011. Chart.js ADRs 0032, 0034 and 0035 are
-      proposed until the porting lead accepts them. Docs and code cite them for the current rules.
+      (third-party sources) supersedes Chart.js ADR 0011. The porting lead accepted Chart.js ADRs
+      0032, 0034 and 0035 on 2026-10-21. Docs and code cite them for the current rules.
       Chart.js ADR 0001 is accepted for its four theming invariants only.
       The porting lead (the agent that runs the phase) owns the ADR statuses (the maintainer,
       2026-10-21). It accepts an ADR when the decision is implemented and its gates are green. A
@@ -503,9 +503,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   on raw values: two strings compare by their code units, a `DateTime` by its time value)
   (Chart.js ADR 0027, proposed), `jsSin` and `jsCos` (`Math.sin` and `Math.cos` at a protected site:
   a site that reaches a layout, a scale, an element property, a hit test, a public return value
-  or a discrete decision; a display-only site keeps `dart:math` with `js-ok`, Chart.js ADR 0032,
-  proposed) and the `undefined` sentinel (Chart.js
-  ADR 0006). `JsStringList`
+  or a discrete decision; a display-only site keeps `dart:math` with `js-ok`, Chart.js ADR 0032)
+  and the `undefined` sentinel (Chart.js ADR 0006). `JsStringList`
   of `js_array.dart` is a string as an array-like value: the reads `s[i]` and `s.length`, and a
   `TypeError` for each write. `_dataCheck` keeps a string `data` in it. `jsToString` of
   a `DateTime` gives the `Date.prototype.toString` text in the platform zone, without the zone

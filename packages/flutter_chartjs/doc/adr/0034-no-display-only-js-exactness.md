@@ -1,8 +1,8 @@
 # Chart.js ADR 0034: No display-only JS exactness
 
-- Status: proposed
+- Status: accepted (2026-10-21)
 - Date: 2026-10-21
-- Supersedes: [Chart.js ADR 0009](0009-no-display-only-js-exactness.md) (on acceptance)
+- Supersedes: [Chart.js ADR 0009](0009-no-display-only-js-exactness.md)
 - Related: [Chart.js ADR 0032](0032-js-numeric-semantics.md) (the JS numeric rules, `jsSin` and
   `jsCos`), [Chart.js ADR 0013](0013-canvas-model.md) (the canvas model, the bitmap space),
   [Chart.js ADR 0024](0024-dates.md) (the default date adapter),

@@ -41,7 +41,7 @@ package.
     port follows Chart.js fixes and improvements after the pinned tag.
   - [Upstream ledger](../packages/flutter_chartjs/doc/upstream-ledger.md): the upstream commits
     after the pinned tag, with their triage.
-  - Decisions (accepted, Chart.js ADR 0001 for its four invariants only):
+  - Decisions (all accepted, Chart.js ADR 0001 for its four invariants only):
     [Chart.js ADR 0001: Theming](../packages/flutter_chartjs/doc/adr/0001-theming.md),
     [Chart.js ADR 0002: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0002-js-numeric-semantics.md)
     (superseded by Chart.js ADR 0010),
@@ -51,26 +51,23 @@ package.
     [Chart.js ADR 0005: Third-party sources](../packages/flutter_chartjs/doc/adr/0005-third-party-sources.md)
     (superseded by Chart.js ADR 0011),
     [Chart.js ADR 0006: Options representation and resolver](../packages/flutter_chartjs/doc/adr/0006-options-representation-and-resolver.md),
-    [Chart.js ADR 0007: Frame scheduling](../packages/flutter_chartjs/doc/adr/0007-frame-scheduling.md),
+    [Chart.js ADR 0007: Frame scheduling](../packages/flutter_chartjs/doc/adr/0007-frame-scheduling.md)
+    (superseded by Chart.js ADR 0016),
     [Chart.js ADR 0008: Number formatting on package:intl](../packages/flutter_chartjs/doc/adr/0008-number-formatting-on-package-intl.md)
     (superseded by Chart.js ADR 0026),
     [Chart.js ADR 0009: No display-only JS exactness](../packages/flutter_chartjs/doc/adr/0009-no-display-only-js-exactness.md)
-    (superseded by Chart.js ADR 0034 on acceptance),
+    (superseded by Chart.js ADR 0034),
     [Chart.js ADR 0010: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0010-js-numeric-semantics.md)
-    (superseded by Chart.js ADR 0032 on acceptance),
+    (superseded by Chart.js ADR 0032),
     [Chart.js ADR 0011: Third-party sources](../packages/flutter_chartjs/doc/adr/0011-third-party-sources.md)
-    (superseded by Chart.js ADR 0035 on acceptance),
-    [Chart.js ADR 0012: Dart file naming](../packages/flutter_chartjs/doc/adr/0012-dart-file-naming.md),
-    [Chart.js ADR 0024: Dates](../packages/flutter_chartjs/doc/adr/0024-dates.md),
-    [Chart.js ADR 0025: Scale value parameters](../packages/flutter_chartjs/doc/adr/0025-scale-value-parameters.md),
-    [Chart.js ADR 0026: Number formatting on package:intl](../packages/flutter_chartjs/doc/adr/0026-number-formatting-on-package-intl.md)
-    (it supersedes Chart.js ADR 0008).
-  - Proposed decisions:
+    (superseded by Chart.js ADR 0035),
+    [Chart.js ADR 0012: Dart file naming](../packages/flutter_chartjs/doc/adr/0012-dart-file-naming.md)
+    (it supersedes Chart.js ADR 0004),
     [Chart.js ADR 0013: Canvas model](../packages/flutter_chartjs/doc/adr/0013-canvas-model.md),
     [Chart.js ADR 0014: Input events and the chart host](../packages/flutter_chartjs/doc/adr/0014-input-events-and-chart-host.md),
     [Chart.js ADR 0015: Text](../packages/flutter_chartjs/doc/adr/0015-text.md),
     [Chart.js ADR 0016: Frame scheduling](../packages/flutter_chartjs/doc/adr/0016-frame-scheduling.md)
-    (it supersedes Chart.js ADR 0007 on acceptance),
+    (it supersedes Chart.js ADR 0007),
     [Chart.js ADR 0017: Element properties](../packages/flutter_chartjs/doc/adr/0017-element-properties.md),
     [Chart.js ADR 0018: Typed element options](../packages/flutter_chartjs/doc/adr/0018-typed-element-options.md),
     [Chart.js ADR 0019: Animation](../packages/flutter_chartjs/doc/adr/0019-animation.md),
@@ -78,12 +75,24 @@ package.
     [Chart.js ADR 0021: Typed options in the resolver](../packages/flutter_chartjs/doc/adr/0021-typed-options-in-the-resolver.md),
     [Chart.js ADR 0022: Chart test harness on Flutter](../packages/flutter_chartjs/doc/adr/0022-chart-test-harness.md),
     [Chart.js ADR 0023: Underscore members with a colliding name](../packages/flutter_chartjs/doc/adr/0023-underscore-member-collisions.md),
+    [Chart.js ADR 0024: Dates](../packages/flutter_chartjs/doc/adr/0024-dates.md),
+    [Chart.js ADR 0025: Scale value parameters](../packages/flutter_chartjs/doc/adr/0025-scale-value-parameters.md)
+    (superseded in part by Chart.js ADR 0033),
+    [Chart.js ADR 0026: Number formatting on package:intl](../packages/flutter_chartjs/doc/adr/0026-number-formatting-on-package-intl.md)
+    (it supersedes Chart.js ADR 0008),
+    [Chart.js ADR 0027: Parsed data in the controllers](../packages/flutter_chartjs/doc/adr/0027-parsed-data.md),
+    [Chart.js ADR 0028: Controller interfaces and values](../packages/flutter_chartjs/doc/adr/0028-controller-interfaces.md),
+    [Chart.js ADR 0029: Fixture smoke runner](../packages/flutter_chartjs/doc/adr/0029-fixture-smoke-runner.md),
+    [Chart.js ADR 0030: Controller test strategy](../packages/flutter_chartjs/doc/adr/0030-controller-test-strategy.md),
+    [Chart.js ADR 0031: Gallery chart types and the stress controller](../packages/flutter_chartjs/doc/adr/0031-gallery-chart-types.md),
     [Chart.js ADR 0032: JS numeric semantics](../packages/flutter_chartjs/doc/adr/0032-js-numeric-semantics.md)
-    (it supersedes Chart.js ADR 0010 on acceptance),
+    (it supersedes Chart.js ADR 0010),
+    [Chart.js ADR 0033: Radial scale centers before the first layout](../packages/flutter_chartjs/doc/adr/0033-radial-scale-centers.md)
+    (it supersedes the `xCenter` and `yCenter` bullet of Chart.js ADR 0025 §5),
     [Chart.js ADR 0034: No display-only JS exactness](../packages/flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)
-    (it supersedes Chart.js ADR 0009 on acceptance),
+    (it supersedes Chart.js ADR 0009),
     [Chart.js ADR 0035: Third-party sources](../packages/flutter_chartjs/doc/adr/0035-third-party-sources.md)
-    (it supersedes Chart.js ADR 0011 on acceptance).
+    (it supersedes Chart.js ADR 0011).
   - Prior art: [overview](../packages/flutter_chartjs/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs/doc/prior-art/js-runtimes.md),
