@@ -40,7 +40,7 @@ import 'controller_chart_harness.dart';
 //
 // The 23 cases of Chart.js ADR 0030, section 7 run two times: unthemed, and
 // with the light preset (theming.md section 8 test 3). The cases whose names
-// start with `parsed:` (Chart.js ADR 0027, section 9) or `interfaces:`
+// start with `parsed:` (Chart.js ADR 0036, section 9) or `interfaces:`
 // (Chart.js ADR 0028, section 8) run unthemed only. The groups `parsed
 // data` and `interfaces` hold the pin tests that need no generated value:
 // relations between two charts of the port.
@@ -243,6 +243,51 @@ void main() {
       // throw (category.js addIfString): the labels hold it.
       expect(data['labels'], ['q']);
     });
+
+    // controller.bar.js:334-335: the index key and then the value key throw
+    // at their `resolveObjectKey` reads (helpers.core.ts:379), so a bad value
+    // key throws after the category index scale added the label of item 0,
+    // and a bad index key throws before it. The pinned build in x64 Node.js
+    // v24.12.0 gives the labels ['b', 'a'], ['b', 'a'] and ['b'] (a probe
+    // of these three configs on the pinned build). A parse of no item reads
+    // no key and does not throw.
+    for (final (name, indexAxis, parsing, labels) in [
+      ('a yAxisKey null', 'x', {'yAxisKey': null}, ['b', 'a']),
+      ('an xAxisKey 5 with indexAxis y', 'y', {'xAxisKey': 5.0}, ['b', 'a']),
+      ('a yAxisKey 5 with indexAxis y', 'y', {'yAxisKey': 5.0}, ['b']),
+    ]) {
+      testWidgets('$name throws in the order of the key reads', (
+        tester,
+      ) async {
+        final valueAxis = indexAxis == 'x' ? 'y' : 'x';
+        final chartLabels = <Object?>['b'];
+        expect(
+          () => acquireChart(<String, Object?>{
+            'type': 'bar',
+            'data': <String, Object?>{
+              'labels': chartLabels,
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[
+                    <String, Object?>{indexAxis: 'a', valueAxis: 1.0},
+                  ],
+                },
+              ],
+            },
+            'options': <String, Object?>{
+              'indexAxis': indexAxis,
+              'parsing': <String, Object?>{...parsing},
+              'scales': <String, Object?>{
+                indexAxis: <String, Object?>{'type': 'category'},
+                valueAxis: <String, Object?>{'type': 'linear'},
+              },
+            },
+          }),
+          throwsA(isA<TypeError>()),
+        );
+        expect(chartLabels, labels);
+      });
+    }
 
     testWidgets('stacked List items with parsing false take a stack object '
         'with the key of the value axis', (tester) async {

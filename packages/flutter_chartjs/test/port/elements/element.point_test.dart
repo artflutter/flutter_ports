@@ -582,8 +582,8 @@ void main() {
   // A string `radius` or `hitRadius` joins in the JS `+` of
   // element.point.ts:15, :65 and :105. A bubble makes a string radius from
   // a string `r` (controller.bubble.js:165). The expected values come from
-  // the pinned build in Node.js v24.12.0 on x64 (probe point_radius.mjs of
-  // .handover/phase7/review/wave2/W2-int-report.md).
+  // the pinned build in Node.js v24.12.0 on x64 (a probe of
+  // `getRange`, `inRange` and `inXRange` with string options).
   group('string options join in the JS +', () {
     // (options, getRange, the distances of inRange(d, 0) that hit, the
     // distances of inXRange(d) that hit), for the distances 5, 9, 50, 100,
@@ -623,7 +623,7 @@ void main() {
 
     // `size` (element.point.ts:84-86): `radius && options.borderWidth || 0`
     // keeps a string `borderWidth`, and `radius + borderWidth` joins.
-    // Probe point_size.mjs of .handover/phase7/review/wave2/W2-int-report.md.
+    // The expected values come from a probe of `size` on the pinned build.
     final sizes = <(Map<String, Object?>, double)>[
       ({'radius': 3, 'borderWidth': '1'}, 62),
       ({'radius': '3', 'borderWidth': 1}, 8),
@@ -707,6 +707,39 @@ void main() {
       final ctx = _Context();
       point.draw(ctx);
       expect(_arcRadii(ctx), [9]);
+    });
+  });
+
+  group('size with a truthy radius whose number is 0', () {
+    // element.point.ts:83-84: `radius && options.hoverRadius` tests the raw
+    // option value. The pinned build in x64 Node.js v24.12.0 gives 10 for
+    // the radius '0', ' ' and [] with hoverRadius 4 and borderWidth 1, and 0
+    // for the radius '0' with hoverRadius 0 (a probe of these configs).
+    for (final radius in <Object?>['0', ' ', <Object?>[]]) {
+      test('radius ${radius is String ? "'$radius'" : '[]'} adds the hover '
+          'radius and the border', () {
+        final point = PointElement();
+        expect(
+          point.size(<String, Object?>{
+            'radius': radius,
+            'hoverRadius': 4.0,
+            'borderWidth': 1.0,
+          }),
+          10,
+        );
+      });
+    }
+
+    test("radius '0' with hoverRadius 0 gives 0", () {
+      final point = PointElement();
+      expect(
+        point.size(<String, Object?>{
+          'radius': '0',
+          'hoverRadius': 0.0,
+          'borderWidth': 1.0,
+        }),
+        0,
+      );
     });
   });
 }

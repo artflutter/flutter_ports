@@ -43,7 +43,7 @@ import 'controller_line_reference.dart';
 //
 // The 17 cases of Chart.js ADR 0030, section 7 run two times: unthemed, and
 // with the light preset (theming.md section 8 test 3). The cases whose names
-// start with `parsed:` (Chart.js ADR 0027, section 9) or `interfaces:`
+// start with `parsed:` (Chart.js ADR 0036, section 9) or `interfaces:`
 // (Chart.js ADR 0028, section 8) run unthemed only. The case `interfaces: a
 // dataset element of another class` runs in its own group: the group
 // registers the element class `otherLine` of the generator and names it in
@@ -256,9 +256,10 @@ void main() {
   // generated value. The generated cases `parsed: ...` give the upstream
   // values of the same configs.
   group('parsed data', () {
-    // A string `data` (decision D11 item b): `_dataCheck` keeps the string,
-    // and `parse` reads its characters (core.datasetController.js:386). The
-    // x64 Node.js probe of the unit X-fix on the build at the pin gives the
+    // A string `data` (Chart.js ADR 0036 §5 item 4): `_dataCheck` keeps the
+    // string, and `parse` reads its characters
+    // (core.datasetController.js:386). A probe of the build at the pin in
+    // x64 Node.js v24.12.0 gives the
     // same points for the data '123' and [1, 2, 3], the raw value '3' of the
     // context of index 2 and the label and value of index 1 'b' and '2'.
     testWidgets("the string data '123' gives the points of [1, 2, 3]", (
@@ -441,13 +442,13 @@ void main() {
       });
     });
 
-    // U-line-R1 of the wave 2 review: a plugin that returns false from
-    // `beforeLayout` leaves `chart.chartArea` unset, and the draw of the
-    // line (:140) gives it to `updateControlPoints`. The expected results
-    // come from the pinned build in Node.js v24.12.0 on x64 (a probe of the
-    // fix of U-line-R1, recorded in .handover/phase7/review/wave2/U-line-report.md):
-    // only `capBezierPoints` with two points or more throws. The generator
-    // cannot give these cases: its observation reads `chartArea.left`.
+    // A plugin that returns false from `beforeLayout` leaves
+    // `chart.chartArea` unset, and the draw of the line (:140) gives it to
+    // `updateControlPoints`. The expected results come from the pinned build
+    // in Node.js v24.12.0 on x64 (a probe of a plugin whose `beforeLayout`
+    // returns false, at each point count): only `capBezierPoints` with two
+    // points or more throws. The generator cannot give these cases: its
+    // observation reads `chartArea.left`.
     group('a plugin cancels the first layout', () {
       AnyObject config(Map<String, Object?> dataset) => <String, Object?>{
         'type': 'line',
@@ -475,8 +476,9 @@ void main() {
         );
       });
 
-      // Open item 1 of U-line-report.md: W2-int changed the shared layer
-      // (`ChartArea?` in `updateControlPoints`), and these cases run.
+      // `updateControlPoints` takes a `ChartArea?` (Dart `null` is the
+      // `undefined` chart area of a chart without a layout), thus these
+      // cases run.
       group('the draw does not throw', () {
         for (final (name, dataset) in <(String, Map<String, Object?>)>[
           ('no tension', {}),

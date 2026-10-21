@@ -270,7 +270,7 @@ void main() {
     });
   });
 
-  group('the upstream files (decision D4)', () {
+  group('the upstream files (Chart.js ADR 0029 §3 item 5)', () {
     test('another SHA-256 than the manifest fails', () {
       _expectFail(
         'upstream upstream/changed.json',

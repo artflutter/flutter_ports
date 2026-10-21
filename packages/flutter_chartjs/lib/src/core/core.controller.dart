@@ -313,11 +313,11 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
 
   /// core.controller.js:841 `xAxisID: null`.
   @override
-  String? xAxisID;
+  Object? xAxisID;
 
   /// core.controller.js:842 `yAxisID: null`.
   @override
-  String? yAxisID;
+  Object? yAxisID;
 
   /// core.controller.js:843 `order: dataset && dataset.order || 0`.
   double order;
@@ -371,15 +371,15 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
 
   /// core.datasetController.js:308 `rAxisID`.
   @override
-  String? rAxisID;
+  Object? rAxisID;
 
   /// core.datasetController.js:310 `iAxisID`.
   @override
-  String? iAxisID;
+  Object? iAxisID;
 
   /// core.datasetController.js:311 `vAxisID`.
   @override
-  String? vAxisID;
+  Object? vAxisID;
 
   /// core.datasetController.js:312 `xScale`.
   @override
@@ -510,15 +510,15 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
       case 'hidden':
         hidden = value is Undefined ? null : value as bool?;
       case 'xAxisID':
-        xAxisID = value is Undefined ? null : value as String?;
+        xAxisID = value is Undefined ? null : value;
       case 'yAxisID':
-        yAxisID = value is Undefined ? null : value as String?;
+        yAxisID = value is Undefined ? null : value;
       case 'rAxisID':
-        rAxisID = value is Undefined ? null : value as String?;
+        rAxisID = value is Undefined ? null : value;
       case 'iAxisID':
-        iAxisID = value is Undefined ? null : value as String?;
+        iAxisID = value is Undefined ? null : value;
       case 'vAxisID':
-        vAxisID = value is Undefined ? null : value as String?;
+        vAxisID = value is Undefined ? null : value;
       case 'order':
         order = jsToNumber(value);
       case 'index':

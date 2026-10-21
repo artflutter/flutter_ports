@@ -3,7 +3,7 @@
 /// The JavaScript coercions `ToNumber`, `ToBoolean` and `ToString`, the
 /// globals `parseFloat`, `isNaN` and `isFinite`, `Number::toString`, the
 /// form `value || 0`, the operator `+` and the relational comparison `a < b`
-/// ([jsLessThan], Chart.js ADR 0027) over the Dart values that stand for
+/// ([jsLessThan], Chart.js ADR 0036) over the Dart values that stand for
 /// JavaScript values (Chart.js ADR 0032).
 ///
 /// The value mapping: `null` is JS `null`, [undefined] is JS `undefined`
@@ -100,7 +100,7 @@ bool _isNumberPrimitive(Object? value) =>
 /// The JavaScript relational comparison `a < b` (ECMAScript IsLessThan):
 /// two numbers compare as numbers, two strings by their code units, and
 /// other values by the `ToNumber` of their `ToPrimitive` with the hint
-/// `number`. `a > b` is `jsLessThan(b, a)` (Chart.js ADR 0027).
+/// `number`. `a > b` is `jsLessThan(b, a)` (Chart.js ADR 0036).
 bool jsLessThan(Object? a, Object? b) {
   if (a is num && b is num) return a < b;
   final pa = _toPrimitiveNumber(a);
@@ -126,9 +126,9 @@ Object? _toPrimitiveNumber(Object? value) => switch (value) {
 /// with `,`, where `null` and [undefined] are empty. A cyclic array recurses
 /// without end: chart data has no such array. A `Map` gives
 /// `'[object Object]'`. A `DateTime` (a JS `Date`, Chart.js ADR 0024) gives
-/// the text of `Date.prototype.toString` without the zone name
-/// ([_dateToString]). Any other object gives its `toString()`, which is
-/// `'undefined'` for [undefined]. A function value (a Dart closure or a
+/// the text of `Date.prototype.toString` ([_dateToString]). Any other object
+/// gives its `toString()`, which is `'undefined'` for [undefined]. A
+/// function value (a Dart closure or a
 /// `JsFunction`) and a Dart object that stands for a JS object, for example
 /// an element, give their Dart text, where JavaScript gives the source of
 /// the function or `'[object Object]'` (differences.md row
@@ -175,19 +175,20 @@ const List<String> _monthNames = [
 
 /// `Date.prototype.toString` (ECMAScript 21.4.4.41, `ToDateString`): the
 /// local time of [date] in the zone of the platform, as the engine uses its
-/// local zone, for example `'Thu Jan 01 1970 00:00:00 GMT+0000'`.
+/// local zone, for example
+/// `'Thu Jan 01 1970 00:00:00 GMT+0000 (Coordinated Universal Time)'`.
 ///
 /// The text is `DateString`, `TimeString` and `TimeZoneString`: the weekday,
 /// the month, the day, the year with 4 digits or more (`'-0001'` for the
-/// year -1, `'10000'`), the time, and the offset as `GMT` with a sign and
-/// the hours and minutes. The seconds of an offset fall away, as in V8.
+/// year -1, `'10000'`), the time, the offset as `GMT` with a sign and the
+/// hours and minutes, and the zone name ([_zoneName]). The seconds of an
+/// offset fall away, as in V8.
 ///
-/// ECMAScript lets the implementation give an empty zone name. V8 adds the
-/// long ICU name, for example `' (Coordinated Universal Time)'`. No Dart
-/// platform gives that name, so the text ends after the offset. The name
-/// changes only the text, not the order of two texts with the same time
-/// and offset (Chart.js ADR 0034). The offsets of the platform follow the
-/// differences.md row `platform-date-local-offset`.
+/// The zone name changes the width of the text. A `Date` label of a
+/// category scale is measured through this text (`_computeLabelSizes`,
+/// core.scale.js), so the name reaches the label sizes, the label rotation,
+/// the scale size and the chart area (Chart.js ADR 0034). The offsets of
+/// the platform follow the differences.md row `platform-date-local-offset`.
 String _dateToString(DateTime date) {
   final local = date.toLocal();
   String two(int value) => value.toString().padLeft(2, '0');
@@ -198,9 +199,36 @@ String _dateToString(DateTime date) {
   final offsetText =
       '${offset < 0 ? '-' : '+'}${two(offset.abs() ~/ 60)}'
       '${two(offset.abs() % 60)}';
+  final name = _zoneName(local);
   return '${_weekdayNames[local.weekday - 1]} ${_monthNames[local.month - 1]} '
       '${two(local.day)} $yearText ${two(local.hour)}:${two(local.minute)}:'
-      '${two(local.second)} GMT$offsetText';
+      '${two(local.second)} GMT$offsetText${name == null ? '' : ' ($name)'}';
+}
+
+/// Whether the code runs compiled with dart2js or dart2wasm.
+const bool _onWeb = bool.fromEnvironment('dart.library.js_interop');
+
+/// The zone name of `TimeZoneString` for the local time [local], as V8 gives
+/// it: the long ICU name, for example `'Coordinated Universal Time'`, or
+/// `null` for no name.
+///
+/// dart2js and dart2wasm give the name in the parentheses of the
+/// `Date.prototype.toString` of the engine as [DateTime.timeZoneName]. On
+/// the VM, the name is the abbreviation of the operating system, for
+/// example `'UTC'`, `'GMT'` or `'CET'`, or on Windows the name of the
+/// Windows zone, `'Coordinated Universal Time'` for UTC. An abbreviation of
+/// another zone does not give the ICU name: `'GMT'` in Europe/London is
+/// `'Greenwich Mean Time'` in 2024 and `'British Summer Time'` in 1906 in
+/// V8. Thus on the VM, only UTC gives the name. Other zones give no name
+/// (differences.md row `platform-date-zone-name`).
+String? _zoneName(DateTime local) {
+  final name = local.timeZoneName;
+  if (_onWeb) return name.isEmpty ? null : name;
+  // DIVERGES(chartjs): platform-date-zone-name, no ICU name on the VM.
+  final utc =
+      local.timeZoneOffset == Duration.zero &&
+      (name == 'UTC' || name == 'Coordinated Universal Time');
+  return utc ? 'Coordinated Universal Time' : null;
 }
 
 /// ECMAScript `Number::toString(x, 10)`, the string of `String(x)` and

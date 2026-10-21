@@ -8,13 +8,13 @@
 /// `updateElement`. The radius of each arc comes from the radial linear
 /// scale `r`.
 ///
-/// - A parsed item and a data item are any value (Chart.js ADR 0027). A read
+/// - A parsed item and a data item are any value (Chart.js ADR 0036). A read
 ///   with a `String` key is [jsGetKey], and a read with a number index is
 ///   [jsGetIndex]. A read of a resolver or of an option object is [jsGet]
 ///   (Chart.js ADR 0017, section 8).
 /// - `getMinMax` keeps the raw parsed values of the range and compares them
 ///   with [jsLessThan], as upstream compares with `<` and `>` (Chart.js ADR
-///   0027, section 7). Two string values compare as strings.
+///   0036, section 7). Two string values compare as strings.
 /// - The controller reads the members of other modules through
 ///   `lib/src/types/` and imports no concrete scale, element or chart
 ///   module (Chart.js ADR 0028, section 1). `updateElements` casts the scale
@@ -279,7 +279,7 @@ class PolarAreaController extends DatasetController {
   /// `range = {min: +Infinity, max: -Infinity}` keeps the raw parsed values,
   /// as upstream stores `parsed` unchanged. `parsed < range.min` and
   /// `parsed > range.max` are [jsLessThan]. Thus `[{r: '10'}, {r: '9'},
-  /// {r: '30'}]` gives the range `'10'..'9'` (Chart.js ADR 0027, section 7).
+  /// {r: '30'}]` gives the range `'10'..'9'` (Chart.js ADR 0036, section 7).
   /// The record holds the `ToNumber` of each end: the only caller,
   /// core.scale.js:315 and :318, applies `Math.min` and `Math.max` to them.
   @override

@@ -488,8 +488,8 @@ void main() {
 
     // `rAdjust` of element.arc.ts:439 is the JS `+` of `spacing` and
     // `borderWidth`: a string option joins. The expected values come from
-    // the pinned build in Node.js v24.12.0 on x64 (probe arc_inrange.mjs of
-    // .handover/phase7/review/wave2/W2-int-report.md): the hit distances on the
+    // the pinned build in Node.js v24.12.0 on x64 (a probe of `inRange`
+    // with string `spacing` and `borderWidth`): the hit distances on the
     // diagonal of a quarter arc with the radii 10 and 40.
     group('string options join in the JS +', () {
       const distances = [5, 12, 30, 41, 44, 60, 66, 70];
@@ -576,9 +576,9 @@ void main() {
 
     // A string `spacing` or `offset` joins in the JS `+` of
     // element.arc.ts:459. The expected values come from the pinned build in
-    // Node.js v24.12.0 on x64 (probe arc_center.mjs of
-    // .handover/phase7/review/wave2/W2-int-report.md). The center moves: it is the
-    // point of the `nearest` and `index` hit modes.
+    // Node.js v24.12.0 on x64 (a probe of `getCenterPoint` with a string
+    // `spacing` or `offset`). The center moves: it is the point of the
+    // `nearest` and `index` hit modes.
     group('string options join in the JS +', () {
       final cases = <(Map<String, Object?>, double, double)>[
         ({'spacing': '5', 'offset': 0}, 122.27085146437294, 62.166621605928164),

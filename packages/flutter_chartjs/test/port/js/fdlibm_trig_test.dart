@@ -69,7 +69,7 @@ void main() {
       expect(jsSin(2.356194490192345), 0.7071067811865476);
       expect(_toHex(jsCos(2.356194490192345)), 'bfe6a09e667f3bcc');
       expect(jsCos(2.356194490192345), -0.7071067811865475);
-      // U-pie review F2: the macOS libm gives -0.4999999999999998.
+      // The macOS libm gives -0.4999999999999998.
       expect(_toHex(jsSin(3.665191429188092)), 'bfdffffffffffffb');
       expect(jsSin(3.665191429188092), -0.4999999999999997);
       expect(_toHex(jsCos(3.665191429188092)), 'bfebb67ae8584cac');

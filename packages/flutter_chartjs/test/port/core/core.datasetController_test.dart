@@ -458,19 +458,19 @@ final class _Meta implements types.ChartMeta {
   bool? hidden;
 
   @override
-  String? xAxisID;
+  Object? xAxisID;
 
   @override
-  String? yAxisID;
+  Object? yAxisID;
 
   @override
-  String? rAxisID;
+  Object? rAxisID;
 
   @override
-  String? iAxisID;
+  Object? iAxisID;
 
   @override
-  String? vAxisID;
+  Object? vAxisID;
 
   double order;
 
@@ -1234,11 +1234,12 @@ void main() {
     });
   });
 
-  // A string `data` (decision D11 item b). `_dataCheck` keeps the string:
+  // A string `data` (Chart.js ADR 0036 §5 item 4). `_dataCheck` keeps the
+  // string:
   // `Object.isExtensible` is false for a string, so it gets no listener
   // (core.datasetController.js:386). `parse` reads its characters, and
-  // `_data !== data` compares two strings by value (:377). The x64 Node.js
-  // probe of the unit X-fix on the build at the pin gives the same results on
+  // `_data !== data` compares two strings by value (:377). An x64 Node.js
+  // probe on the build at the pin gives the same results on
   // a line chart: the parsed values 1, 2 and 3; the same `_parsed` and the
   // same elements after a write of an equal string; 4 elements after
   // '4321'; and a listener on the next array.
@@ -1346,7 +1347,7 @@ void main() {
       );
     });
 
-    // stacksOf is the read `item._stacks` (Chart.js ADR 0027). For a value
+    // stacksOf is the read `item._stacks` (Chart.js ADR 0036). For a value
     // that is not a List, it gives the value of the Map read for a Map and
     // of jsGet for another value, as the earlier form of the readers.
     test('stacksOf reads the _stacks of a Map, a number and null', () {
@@ -1721,13 +1722,37 @@ void main() {
       );
     });
 
-    test('an axis id that is not a string throws an ArgumentError', () {
+    // core.datasetController.js:306 keeps the raw id, and
+    // core.datasetController.js:332 reads `chart.scales[5]`, the key '5'.
+    test('a number axis id stays a number and finds its scale', () {
+      final base = _spec('linkScales');
+      final run = _Run({
+        ...base,
+        'scales': <Object?>[
+          ...base['scales']! as List<Object?>,
+          <String, Object?>{'id': '5', 'axis': 'x', 'kind': 'linear'},
+        ],
+      });
+      final steps = run.spec['steps']! as List<Object?>;
+      run
+        ..step(steps.first! as List<Object?>)
+        ..step(<Object?>['setDataset', 0.0, 'xAxisID', 5.0])
+        ..step(<Object?>['linkScales', 0.0]);
+      final meta = run.meta(0.0);
+      expect(meta.xAxisID, 5.0);
+      expect(meta.iAxisID, 5.0);
+      expect(meta.xScale?.id, '5');
+      expect(meta.iScale?.id, '5');
+      expect(meta.yAxisID, 'y1');
+    });
+
+    test('an axis id of no scale gives no scale', () {
       final run = _runTo('linkScales', 1)
-        ..step(<Object?>['setDataset', 0.0, 'xAxisID', 5.0]);
-      expect(
-        () => run.step(<Object?>['linkScales', 0.0]),
-        throwsA(isA<ArgumentError>()),
-      );
+        ..step(<Object?>['setDataset', 0.0, 'xAxisID', 5.0])
+        ..step(<Object?>['linkScales', 0.0]);
+      final meta = run.meta(0.0);
+      expect(meta.xAxisID, 5.0);
+      expect(meta.xScale, isNull);
     });
   });
 }

@@ -280,10 +280,10 @@ void main() {
   final items = {for (final item in source.items) item.path: item};
 
   // Each twin is a hand entry of the runner. Thus it has the checks of
-  // decision D4 of the phase 7 lead (Chart.js ADR 0029, section 3 item 5
-  // and section 11): the SHA-256 of the upstream file, the skip without
-  // the checkout, and the failure with FIXTURES_REQUIRED=1. The runner
-  // throws a StateError for a path that is not a fixture of the manifest.
+  // Chart.js ADR 0029, section 3 item 5 and section 11: the SHA-256 of the
+  // upstream file, the skip without the checkout, and the failure with
+  // FIXTURES_REQUIRED=1. The runner throws a StateError for a path that is
+  // not a fixture of the manifest.
   // The run hook of each twin examines the parsed values and the ticks of
   // its time scales (_examine).
   group(

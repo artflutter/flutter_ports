@@ -10,7 +10,7 @@
 // - The 8 cases of Chart.js ADR 0030, section 7 (the row `radar`). The first
 //   case is `default`, with the options of the scales. The test file runs
 //   them again with the light preset (theming.md section 8 test 3).
-// - The pin cases of Chart.js ADR 0027, section 9 (names that start with
+// - The pin cases of Chart.js ADR 0036, section 9 (names that start with
 //   `parsed:`, the radar rows of the parsed-data spec, section 7.3) and of
 //   Chart.js ADR 0028, section 8 (names that start with `interfaces:`, the
 //   radar rows of the interfaces spec, section 7.3). The themed run does not
@@ -198,7 +198,7 @@ const cases = [
 if (cases.length !== 8) throw new Error(`${cases.length} cases; ADR 0030 gives 8.`);
 
 // ---------------------------------------------------------------------------
-// The pin cases of Chart.js ADR 0027 (parsed-data spec, section 7.3).
+// The pin cases of Chart.js ADR 0036 (parsed-data spec, section 7.3).
 
 cases.push(
   runControllerCase('parsed: parsing false with numbers', {

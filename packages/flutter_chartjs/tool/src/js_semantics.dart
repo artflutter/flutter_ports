@@ -11,8 +11,9 @@
 ///
 /// The lexical rules read code with comments and string contents removed.
 /// They do not know types. Thus they flag every `.toString()` call: add
-/// `js-ok` when the receiver is not a number. Only the interpolation rule and
-/// the `max`/`min` rule resolve types, with `package:analyzer`.
+/// `js-ok` when the receiver is not a number. Only the interpolation rule,
+/// the tear-off rule of the `dart:math` functions and the `max`/`min` rule
+/// resolve types, with `package:analyzer`.
 library;
 
 import 'dart:io';
@@ -46,7 +47,7 @@ final class JsSemanticsRule {
 }
 
 /// The lexical rules of the check. [mathFunctionSites] and [resolvedSites]
-/// add three more rules.
+/// add four more rules.
 const List<JsSemanticsRule> jsSemanticsRules = [
   JsSemanticsRule(
     '.round()',
@@ -250,7 +251,7 @@ List<JsSite> lexicalSites(DartSource source) => [
 /// The calls of the [transcendentalFunctions] of `dart:math` in [source].
 ///
 /// The rule reads the prefix of each `dart:math` import. Without a prefix,
-/// it flags the bare function names.
+/// it flags the bare function names. [resolvedSites] flags the tear-offs.
 List<JsSite> mathFunctionSites(DartSource source) {
   final names = transcendentalFunctions.join('|');
   final sites = <JsSite>[];
@@ -269,24 +270,29 @@ List<JsSite> mathFunctionSites(DartSource source) {
         JsSite(
           source.lineOf(match.start),
           '${prefix == null ? '' : '$prefix.'}$function(',
-          _trigFunctions.contains(function)
-              ? 'dart:math $function calls the host C library on the VM and '
-                    'the browser on the web. JS Math.$function gives the '
-                    'fdlibm bits of the reference engine (Chart.js ADR 0032). '
-                    'Call js${function[0].toUpperCase()}'
-                    '${function.substring(1)}, or add js-ok when the result '
-                    'reaches only the canvas or an easing value.'
-              : 'dart:math $function calls the host C library on the VM and '
-                    'the browser on the web. JS Math.$function gives the '
-                    'fdlibm bits of the reference engine (Chart.js ADR 0032). '
-                    'Call the lib/src/js port of the function, or add js-ok '
-                    'with the reason.',
+          _mathFunctionMessage(function),
         ),
       );
     }
   }
   return sites;
 }
+
+/// The message of a site of the `dart:math` [function], one of the
+/// [transcendentalFunctions].
+String _mathFunctionMessage(String function) =>
+    _trigFunctions.contains(
+      function,
+    )
+    ? 'dart:math $function calls the host C library on the VM and the '
+          'browser on the web. JS Math.$function gives the fdlibm bits of the '
+          'reference engine (Chart.js ADR 0032). Call '
+          'js${function[0].toUpperCase()}${function.substring(1)}, or add '
+          'js-ok when the result reaches only the canvas or an easing value.'
+    : 'dart:math $function calls the host C library on the VM and the '
+          'browser on the web. JS Math.$function gives the fdlibm bits of the '
+          'reference engine (Chart.js ADR 0032). Call the lib/src/js port of '
+          'the function, or add js-ok with the reason.';
 
 /// Adds a finding for each site in [sites] of the file [path] that has no
 /// js-ok comment in [source], and a warning for each unused js-ok comment.
@@ -397,6 +403,10 @@ String _normalized(String path) {
 /// template literals give `"12"`. An `int` value is not flagged: ported code
 /// uses an `int` only as a list index, and its text is the JS text.
 ///
+/// The tear-off rule flags each tear-off of the [transcendentalFunctions] of
+/// `dart:math`, with or without the import prefix, for example `math.sin` or
+/// `list.map(cos)`. [mathFunctionSites] flags the calls.
+///
 /// The `max`/`min` rule flags the calls and tear-offs of `dart:math` `max`
 /// and `min` whose type argument is `double` or `num`. Ported code calls
 /// `jsMax` and `jsMin` for them (Chart.js ADR 0032): on dart2wasm, the
@@ -459,6 +469,7 @@ final class _ResolvedSitesVisitor extends RecursiveAstVisitor<void> {
   @override
   void visitSimpleIdentifier(SimpleIdentifier node) {
     final element = node.element;
+    _addMathTearOff(node, element);
     if (element is TopLevelFunctionElement &&
         element.library.uri.toString() == 'dart:math' &&
         (element.name == 'max' || element.name == 'min')) {
@@ -495,6 +506,34 @@ final class _ResolvedSitesVisitor extends RecursiveAstVisitor<void> {
       }
     }
     super.visitSimpleIdentifier(node);
+  }
+
+  /// Adds a site when [node] tears off one of the [transcendentalFunctions]
+  /// of `dart:math`. A call is a site of [mathFunctionSites]. The name in a
+  /// `show` or `hide` combinator and a doc comment reference are no sites.
+  void _addMathTearOff(SimpleIdentifier node, Element? element) {
+    if (element is! TopLevelFunctionElement ||
+        element.library.uri.toString() != 'dart:math' ||
+        !transcendentalFunctions.contains(element.name)) {
+      return;
+    }
+    final parent = node.parent;
+    if ((parent is MethodInvocation && parent.methodName == node) ||
+        parent is Combinator ||
+        node.thisOrAncestorOfType<CommentReference>() != null) {
+      return;
+    }
+    final prefix = parent is PrefixedIdentifier && parent.identifier == node
+        ? '${parent.prefix.name}.'
+        : '';
+    final function = element.name!;
+    sites.add(
+      JsSite(
+        unit.lineInfo.getLocation(node.offset).lineNumber,
+        '$prefix$function',
+        'The tear-off of ${_mathFunctionMessage(function)}',
+      ),
+    );
   }
 }
 

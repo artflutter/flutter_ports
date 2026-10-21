@@ -42,11 +42,11 @@ import 'controller_scatter_reference.dart';
 //
 // The 6 cases of Chart.js ADR 0030, section 7 run two times: unthemed, and
 // with the light preset (theming.md section 8 test 3). The cases whose names
-// start with `parsed:` (Chart.js ADR 0027, section 9) or `interfaces:`
+// start with `parsed:` (Chart.js ADR 0036, section 9) or `interfaces:`
 // (Chart.js ADR 0028, section 8) run unthemed only. The groups `parsed
 // data` and `interfaces` hold the pin tests that need no generated value:
 // relations between two charts of the port, the reads of one chart, and the
-// results of the probe `probe_showline.mjs` (see the group `showLine`).
+// results of a probe on the pinned build (see the group `showLine`).
 //
 // flutter_test_config.dart registers the scatter controller with the
 // built-in components before main() (Chart.js ADR 0030, section 3 item 4).
@@ -330,11 +330,18 @@ void main() {
     });
 
     // The switch of controller.scatter.js:71-95 (Chart.js issue #11333).
-    // The expected results come from the pinned build in Node.js v24.12.0
-    // on x64: the probe `probe_showline.mjs`. Its source and its output
-    // `probe_showline.out` are in .handover/phase7/review/wave3/U-scatter-report.md,
-    // section "Fixes", finding U-scatter-R2. The generator cannot give these
-    // cases: it has no step that writes an option.
+    // The expected results come from a probe on the pinned build in Node.js
+    // v24.12.0 on x64 (controller_chart_common.mjs, makeChart): a dataset
+    // `showLine` switched on, off and on (with `borderWidth: 4`), the root
+    // option `showLine` switched on, and `showLine` at creation, then off.
+    // After each update it logged `meta.dataset instanceof LineElement`,
+    // `'dataset' in meta`, `datasetElementType`, the points and
+    // `getMaxOverflow()`. Its output: the dataset element is a `LineElement`
+    // exactly while `showLine` is truthy, a new element after each switch on,
+    // no `dataset` key after a switch off, and `getMaxOverflow()` 8 (with
+    // `borderWidth: 4`) and 5 (the defaults).
+    // The generator cannot give these cases: it has no step that writes an
+    // option.
     group('showLine', () {
       AnyObject config(AnyObject extra) => _scatter(<Object?>[
         <String, Object?>{

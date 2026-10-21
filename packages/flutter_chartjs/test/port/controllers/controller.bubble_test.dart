@@ -34,7 +34,7 @@ import 'controller_chart_harness.dart';
 //
 // The 7 cases of Chart.js ADR 0030, section 7 run two times: unthemed, and
 // with the light preset (theming.md section 8 test 3). The cases whose names
-// start with `parsed:` (Chart.js ADR 0027, section 9) or `interfaces:`
+// start with `parsed:` (Chart.js ADR 0036, section 9) or `interfaces:`
 // (Chart.js ADR 0028, section 8) run unthemed only. The groups `parsed
 // data` and `interfaces` hold the pin tests that need no generated value.
 //

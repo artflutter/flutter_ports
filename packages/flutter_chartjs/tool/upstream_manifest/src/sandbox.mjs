@@ -15,6 +15,29 @@ const STUB_LABEL = Symbol('stub label');
 export class StubRegistry {
   constructor() {
     this.stubs = new WeakSet();
+    // The strings that the conversions of a stub gave: `valueOf`, `toString`
+    // and `Symbol.toPrimitive` (see `text`).
+    this.texts = new Set();
+  }
+
+  /**
+   * The string `[stub <label>]` that a stub converts to. The registry records
+   * it, so that `isStubText` finds a string made from a stub, for example
+   * `moment(...).valueOf()` of a fixture config.
+   */
+  text(label) {
+    const text = `[stub ${label}]`;
+    this.texts.add(text);
+    return text;
+  }
+
+  /** Whether the string `value` holds a string that a stub converted to. */
+  isStubText(value) {
+    if (typeof value !== 'string' || !value.includes('[stub ')) return false;
+    for (const text of this.texts) {
+      if (value.includes(text)) return true;
+    }
+    return false;
   }
 
   /** Whether `value` is a stub of this registry. */
@@ -35,10 +58,10 @@ export class StubRegistry {
       get(_, prop) {
         if (prop === STUB_LABEL) return label;
         if (Object.hasOwn(fields, prop)) return fields[prop];
-        if (prop === Symbol.toPrimitive) return () => `[stub ${label}]`;
+        if (prop === Symbol.toPrimitive) return () => registry.text(label);
         if (prop === 'then' || typeof prop === 'symbol') return undefined;
         if (prop === 'toString' || prop === 'valueOf') {
-          return () => `[stub ${label}]`;
+          return () => registry.text(label);
         }
         if (!children.has(prop)) {
           children.set(prop, registry.make(`${label}.${prop}`));

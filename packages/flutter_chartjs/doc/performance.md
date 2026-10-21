@@ -549,9 +549,8 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   `chart.a`, `chart.b` (sharing on and off) and `chart.c` on the Pixel 8a:
   - A: a worktree of commit `0e0ab93` (the phase 5 config, the fraction path of
     `StressPointController`).
-  - A': the same worktree with the bridge patch of
-    [phase7/design/gallery/spec.md](../../../.handover/phase7/design/gallery/spec.md) §6. The patch
-    changes only `apps/chartjs_gallery/lib/demo/stress_chart_config.dart`: the hidden unit scales,
+  - A': the same worktree with the bridge patch of Chart.js ADR 0031 §8. The patch changes only
+    `apps/chartjs_gallery/lib/demo/stress_chart_config.dart`: the hidden unit scales,
     `layout.autoPadding: false` and `clip: false`, on the scale path of `StressPointController`.
     Check it with `git apply --check`. Before the first run, a test in the worktree confirms that
     the pixels equal `getPixelForValue`.
@@ -559,7 +558,8 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   - A to A' is the cost of the hidden scales. A' to B is the cost of the ported controllers. Report
     each pair apart, with the part `elements` of B. Each pair uses fresh processes in ABBA order,
     the gates on the temperature and the core frequency, and a bootstrap interval. The before
-    figures are in [phase7/perf/before.md](../../../.handover/phase7/perf/before.md).
+    figures of commit `0e0ab93` are a working file of phase 7, not committed. Step 7 gives them in
+    section 13.6.
 - **Baselines.** Section 4.5 describes the plain Flutter and the Chrome canvas baselines.
 
 ## 7. Open
@@ -2019,10 +2019,10 @@ benchmark outside the repository, medians in ns for each call:
 
 ## 13. Controllers (phase 7)
 
-The figures of the decisions of phase 7. Chart.js ADRs 0027, 0028, 0030 and 0031 (proposed) give
-the evidence files. The step 7 figures on the phones come in section 13.6.
+The figures of the decisions of phase 7. Chart.js ADRs 0027, 0028, 0030 and 0031 give the
+evidence files. The step 7 figures on the phones come in section 13.6.
 
-### 13.1 The parsed read (Chart.js ADR 0027)
+### 13.1 The parsed read (Chart.js ADR 0036)
 
 Bed: Apple M3 Max, macOS 26.5.1, Dart 3.12.2. AOT is `dart compile exe`. wasm is
 `dart compile wasm -O2`, run in the arm64 Node.js v24.12.0 (times only). The judge benchmark
@@ -2042,17 +2042,19 @@ count of processes below 0.
 
 - "T" is `jsGetKey` for the read of the other axis and of the range, and `_parsedValue` for the
   `isFinite` read. DC has this form from phase 7.
-- The 2-read form is the one-read rule of the line and scatter loops (ADR 0027 §8): 22 to 24 ns
-  (AOT) and 33 to 36 ns (wasm) less for each point, about 0.47 ms (AOT) and 0.7 ms (wasm) for each
-  update of 20000 points. This is a calculation from the microbenchmark, not a frame figure.
+- The 2-read form is the one-read rule of the line and scatter loops (Chart.js ADR 0036 §8): 22
+  to 24 ns (AOT) and 33 to 36 ns (wasm) less for each point, about 0.47 ms (AOT) and 0.7 ms (wasm)
+  for each update of 20000 points. This is a calculation from the microbenchmark, not a frame
+  figure.
 - Wave 2 result: `controller.line.dart` has the 3-read form, 15 to 17 ns (AOT) and 23 to 24 ns
   (wasm) less for each point than the 5-read form. It keeps `vValue` and `iValue` in a loop pass,
   and it reads `prevParsed[iAxis]` at each pass. The local of the 2-read form crossed the
   scriptable options of the user (`resolveDataElementOptions` and the animated `updateElement`),
-  which can write the parsed item: the review U-line-R2 showed another `stop` value with such an
-  option. The 2-read form waits for ADR 0027 Open 4 (section 13.7 item 6). No new measurement.
-- Decision D10 (2026-10-21) keeps the 3-read form in the line and the scatter loops, and closes
-  ADR 0027 Open 4. Wave 3: `controller.scatter.dart` has the 3-read form
+  which can write the parsed item: a probe of the pinned build showed another `stop` value with
+  such an option. The 2-read form needs a microbenchmark first (Chart.js ADR 0036 §8, section 13.7
+  item 6). No new measurement.
+- Chart.js ADR 0036 §8 keeps the 3-read form in the line and the scatter loops. Open 4 of Chart.js
+  ADR 0027 is closed (2026-10-21). Wave 3: `controller.scatter.dart` has the 3-read form
   (`controller.scatter.js:127-133`). No new measurement.
 
 The read `array[i]` with a number index, in ns for each read:
@@ -2069,7 +2071,7 @@ and 4.8 ns and 2.0 ns slower for each List or String read (P-B4). `lib/src/` had
 calls on 2026-10-21, most of them option reads through resolvers. Thus `jsGet` does not change, and
 the Map case comes first only in `jsGetKey`.
 
-**`stacksOf`** (ADR 0027 Open 1, unit S3 of wave 1). The bed of the judge benchmark: 20000
+**`stacksOf`** (Chart.js ADR 0027 Open 1, unit S3 of wave 1). The bed of the judge benchmark: 20000
 `Map<String, Object?>` items with `_stacks`, the DC code of 2026-10-21 and the real runtime,
 virtual scale calls over two live classes. 3 runs of 6 rounds of 4 processes, alternate order, 21
 samples of 10 passes for each case. Other agents ran in parallel (load average 4 to 7). The cells
@@ -2094,8 +2096,8 @@ ns for each item, and the count of processes above +0.5 ns:
 - The medians of run 3, in ns for each item: AOT `updateRangeFromParsed` 52.8-55.2, the body of
   `_updateStacks` 196-215, the write path 292-304; wasm 72.9-76.7, 349-397 and 417-440.
 - The two loops of the ADR have no platform and mode with a paired loss above 0.5 ns in each of
-  the 6 processes, in each run. The threshold of ADR 0027 Open 1 is not crossed. Decision D5 of the
-  phase lead lands `stacksOf` in all cases.
+  the 6 processes, in each run. The threshold of Chart.js ADR 0027 Open 1 is not crossed. Thus
+  `stacksOf` lands in all cases (Chart.js ADR 0036 §5.3).
 - The write path is not in the ADR. Run 1 had an AOT loss of +1.1 to +12.9 ns in each process.
   Run 2 and run 3, with a binary that has one more function, did not repeat it: a code layout
   effect within the noise of a loop of 300 ns. The write runs once for each item, at the first
@@ -2232,15 +2234,15 @@ gives the commands and the files. The phone figures of step 7 come in section 13
   these types has no `radius` (the doughnut option `radius` is `'100%'`,
   `controller.doughnut.js:229`). Measure them only on a tree with this fix (review G-U2, F1).
 - The before figures of the cases `chart.a`, `chart.b`, `chart.c` and `axes.*` and of the stress
-  modes `chart` and `axes` are in
-  [phase7/perf/before.md](../../../.handover/phase7/perf/before.md) (commit `0e0ab93`). Step 7
-  (G-U6) measures the sides A, A' and B of section 6 and writes section 13.6.
+  modes `chart` and `axes` (commit `0e0ab93`) are a working file of phase 7, not committed. Step 7
+  (G-U6) measures the sides A, A' and B of section 6 and writes them with the before figures in
+  section 13.6.
 
 ### 13.7 Open: the controllers
 
-1. **The step 7 list of Chart.js ADR 0027 §8** (ADR 0027 Open 3). Each form gets an A/B with the
-   frame figures (the frameless benchmark and the Pixel 8a, section 6). Each one is ported
-   literally now:
+1. **The step 7 list of Chart.js ADR 0036 §8** (Chart.js ADR 0036 Open 1). Each form gets an A/B
+   with the frame figures (the frameless benchmark and the Pixel 8a, section 6). Each one is
+   ported literally now:
    - the bar memo of `_getAxis`, `getFirstScaleIdForIndexAxis` and `_getStacks` for each bar
      (`controller.bar.js:434-508`, `:636-650`). Prior evidence: the memo removes 34 to 43 % of the
      bar `updateElements` time in V8, 6 % with `skipNull` (P-P2); the shares of
@@ -2251,8 +2253,8 @@ gives the commands and the files. The phone figures of step 7 come in section 13
    - the option copy for each bubble item, the double option resolution of polar area, the
      resolution for each radar point, and the typed setters in place of the writes by name of the
      line and scatter loops (waves 2 and 3).
-2. **`prefer-inline` on `jsGetKey`** (ADR 0027 Open 5): no gain was measured in the line loop. The
-   trigger is Chart.js ADR 0025 Open 3, the same question for `jsToNumber`.
+2. **`prefer-inline` on `jsGetKey`** (Chart.js ADR 0036 Open 2): no gain was measured in the line
+   loop. The trigger is Chart.js ADR 0025 Open 3, the same question for `jsToNumber`.
 3. **Form T and the frame figures** (ADR 0028 Open 1). The stress mode `chart` with
    `LineController` and 20000 points, `CALL=update` and `CALL=draw`, form K against form T, on the
    Pixel 8a and in Chrome with dart2wasm. A gain of 0.1 ms or more for each frame goes to a new ADR.
@@ -2263,11 +2265,12 @@ gives the commands and the files. The phone figures of step 7 come in section 13
    on the Pixel 8a that shows the read in the loop.
 5. **The write path of `stacksOf`** (section 13.1): only if the maintainer wants it measured again,
    for example on the Pixel 8a in step 7.
-6. **The 2-read form of the line loop** (ADR 0027 Open 4, section 13.1). A form with the local of
-   the previous pass only on the paths where no user code runs between the reads (a direct update
-   with shared options) gives the upstream result and keeps the 2-read gain there. It needs a
-   microbenchmark (ADR 0027 §8 condition 3). The scatter loop (`controller.scatter.js:124-148`) has
-   the same item. Decision D10 keeps the 3-read form in both loops until such a measurement.
+6. **The 2-read form of the line loop** (Chart.js ADR 0036 §8, section 13.1). A form with the
+   local of the previous pass only on the paths where no user code runs between the reads (a
+   direct update with shared options) gives the upstream result and keeps the 2-read gain there.
+   It needs a microbenchmark (Chart.js ADR 0036 §8 condition 3). The scatter loop
+   (`controller.scatter.js:124-148`) has the same item. Chart.js ADR 0036 §8 keeps the 3-read form
+   in both loops until such a measurement.
 7. **Wave 2 forms of the step 7 list** (item 1): the writes by name into the point of a direct
    update (`_setProperty` of `controller.line.dart`), the option copy for each bubble item
    (`controller.bubble.js:46-78`, `:151-168`), the cast of the scale `r` for each radar point
@@ -2275,10 +2278,10 @@ gives the commands and the files. The phone figures of step 7 come in section 13
    arguments in the radar and polar area `parseObjectData` (`Function.apply` on the VM, once for
    each parse call). No unit measured them.
 8. **Wave 3 forms.** The scatter loop has the writes by name of `_setProperty`, as the line loop
-   (item 7). D11 adds a null check of `xCenter` and `yCenter` in `getPointPosition` and in the
-   polar area `updateElements`, and `jsToString` in place of `jsNumberToString` in
-   `toggleDataVisibility` (not a hot path). Each form is the only form with the upstream behavior.
-   Section 13.9 measures the null check of the centers: 0.5-0.9 ns for each
+   (item 7). Chart.js ADR 0033 adds a null check of `xCenter` and `yCenter` in
+   `getPointPosition` and in the polar area `updateElements`, and `jsToString` in place of
+   `jsNumberToString` in `toggleDataVisibility` (not a hot path). Each form is the only form with
+   the upstream behavior. Section 13.9 measures the null check of the centers: 0.5-0.9 ns for each
    `getPointPositionForValue` call on AOT, +0.2 to +10 ns on dart2wasm by kernel, and 3-5 ns less
    for each radar item on dart2wasm. No unit measured `jsToString` in `toggleDataVisibility` (not
    a hot path). `getPointPosition` calls `jsSin` and `jsCos` in each radial draw (Chart.js ADR
@@ -2322,16 +2325,14 @@ is `[-π/2, 3π/2)`. dart2wasm and dart2js run in Node.js v24.12.0 arm64.
 - Cost: one hit query over 1000 arcs, about 12 µs on AOT M3 and 27 µs on the Pixel 8a (form C);
   one radial scale draw, at most 4.4 µs, 0.03 % of a 16.7 ms frame.
 - No frame figure yet (Chart.js ADR 0032, Open 2). The frame figures move to step 7 of phase 7,
-  the performance step. They are an item of that step, next to unit G-U6 of the phase 7 work plan
-  ([phase7/design/work-plan.md](../../../.handover/phase7/design/work-plan.md) §6). Decision D19
-  of [phase7-progress.md](../../../.handover/phase7-progress.md) adds the item to step 7. The start
-  of step 7 is the trigger. Then the gallery bench of §6 measures the radar, polar area and arc hit
-  cases on the Pixel 8a and in Chrome with dart2wasm, and this section records the frame, draw
-  and raster figures.
+  the performance step. They are an item of that step (Chart.js ADR 0032 Open 2), next to the A/B
+  of section 6. The start of step 7 is the trigger. Then the gallery bench of §6 measures the
+  radar, polar area and arc hit cases on the Pixel 8a and in Chrome with dart2wasm, and this
+  section records the frame, draw and raster figures.
 
 ### 13.9 The radial centers (Chart.js ADR 0033)
 
-`xCenter` and `yCenter` stay `double?` (decision D11 item a). The reads are
+`xCenter` and `yCenter` stay `double?` (Chart.js ADR 0033). The reads are
 `xCenter ?? double.nan` in arithmetic and canvas calls.
 
 Microbenchmark of the forms (ADR 0033 Alternatives; Apple M3 Max, Dart 3.12.2; ns for each call or

@@ -10,7 +10,7 @@
 // - The 23 cases of Chart.js ADR 0030, section 7 (the row `bar`). The first
 //   case is `default`, with the options of the scales. The test file runs
 //   them again with the light preset (theming.md section 8 test 3).
-// - The pin cases of Chart.js ADR 0027, section 9 (names that start with
+// - The pin cases of Chart.js ADR 0036, section 9 (names that start with
 //   `parsed:`, the bar rows of the parsed-data spec, section 7.3) and of
 //   Chart.js ADR 0028, section 8 (names that start with `interfaces:`, the
 //   bar rows of the interfaces spec, section 7.3). The themed run does not
@@ -58,7 +58,7 @@ const T0 = Date.UTC(2021, 0, 4);
  * The probe `barEdges`: for each dataset, `[enableBorderRadius,
  * borderSkipped, Number(inflateAmount)]` of each bar. The observations of
  * Chart.js ADR 0030 have no such key. The port converts a raw
- * `inflateAmount` to a number at the write (Chart.js ADR 0027, section 6),
+ * `inflateAmount` to a number at the write (Chart.js ADR 0036, section 6),
  * and its only reader applies `ToNumber`. Thus the probe compares the
  * number on both sides.
  */
@@ -428,7 +428,7 @@ const cases = [
 if (cases.length !== 23) throw new Error(`${cases.length} cases; ADR 0030 gives 23.`);
 
 // ---------------------------------------------------------------------------
-// The pin cases of Chart.js ADR 0027 (parsed-data spec, section 7.3).
+// The pin cases of Chart.js ADR 0036 (parsed-data spec, section 7.3).
 
 cases.push(
   runControllerCase('parsed: parsing false, an absent value key and a null value', {

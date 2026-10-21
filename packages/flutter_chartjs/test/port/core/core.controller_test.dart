@@ -1193,6 +1193,109 @@ void main() {
     });
   });
 
+  group('a number axis id', () {
+    // A probe of the pinned build in x64 Node.js v24.12.0 with the axis id
+    // 1: `meta.xAxisID` stays the number 1, and
+    // `getScaleForId(1)` reads `chart.scales['1']`
+    // (core.datasetController.js:306, 331-333). The `===` of
+    // core.scale.js:1688 leaves dataset 0 out of the metas of the scale, and
+    // `indexOf(1)` of controller.bar.js:649 gives -1.
+    testWidgets('keeps the number and gives the upstream bars', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': <String, Object?>{
+          'labels': <Object?>['a', 'b', 'c', 'd'],
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[1.0, 2.0, 3.0, 4.0],
+              'xAxisID': 1.0,
+            },
+            <String, Object?>{
+              'data': <Object?>[2.0, 3.0, 1.0, 2.0],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            '1': <String, Object?>{
+              'type': 'category',
+              'axis': 'x',
+              'position': 'top',
+            },
+          },
+        },
+      });
+      expect(jsObjectKeys(chart.scales), ['1', 'y', 'x']);
+      final meta0 = chart.getDatasetMeta(0);
+      final meta1 = chart.getDatasetMeta(1);
+      expect(meta0.xAxisID, 1.0);
+      expect(meta0['xAxisID'], 1.0);
+      expect(meta0.xScale?.id, '1');
+      expect(meta1.xAxisID, '1');
+      expect(meta1.xScale?.id, '1');
+      List<double> xs(types.ChartMeta meta) => [
+        for (final e in meta.data) e.x,
+      ];
+      expect(
+        xs(meta0),
+        [
+          for (final x in [-5.417, 114.912, 235.242, 355.572]) closeTo(x, 1e-3),
+        ],
+      );
+      expect(
+        xs(meta1),
+        [
+          for (final x in [90.846, 211.176, 331.506, 451.835]) closeTo(x, 1e-3),
+        ],
+      );
+      expect(
+        jsToNumber((meta0.data.first as Element)['width']),
+        closeTo(86.637, 1e-3),
+      );
+    });
+  });
+
+  group('the parsing keys of parseObjectData', () {
+    // core.datasetController.js:559-573: a key that is not a string throws
+    // at its `resolveObjectKey` read (helpers.core.ts:379), after the
+    // category x scale added the label of item 0. The pinned build in x64
+    // Node.js v24.12.0 gives the labels ['b', 'a'] (a probe of these two
+    // configs on the pinned build).
+    for (final (name, key) in [('5', 5.0 as Object?), ('null', null)]) {
+      testWidgets('a yAxisKey $name throws after the parse of x', (
+        tester,
+      ) async {
+        final labels = <Object?>['b'];
+        expect(
+          () => acquireChart(<String, Object?>{
+            'type': 'line',
+            'data': <String, Object?>{
+              'labels': labels,
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[
+                    <String, Object?>{'x': 'a', 'y': 1.0},
+                  ],
+                },
+              ],
+            },
+            'options': <String, Object?>{
+              'parsing': <String, Object?>{'yAxisKey': key},
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'type': 'category'},
+                'y': <String, Object?>{'type': 'linear'},
+              },
+            },
+          }),
+          throwsA(isA<TypeError>()),
+        );
+        expect(labels, ['b', 'a']);
+      });
+    }
+  });
+
   group('getDataVisibility', () {
     // core.controller.js:885 `!this._hiddenIndices[index]`, with the
     // port-only early return for an empty `_hiddenIndices` (Chart.js ADR
@@ -1235,10 +1338,10 @@ void main() {
     });
 
     // core.controller.js:881-883 with an index that is not a number
-    // (decision D11 item c). The key is `ToString(index)`.
+    // (Chart.js ADR 0028 §6). The key is `ToString(index)`.
     // `_updateHiddenIndices` moves each key whose `+key` is a number
     // (core.controller.js:72-84): '01' and '' move, 'null' and 'true' do
-    // not. The x64 Node.js probe of the unit X-fix on the build at the pin,
+    // not. An x64 Node.js probe on the build at the pin,
     // a line chart with 4 items and the toggles '01', null, true and '':
     // the visibility 1111; after an unshift 10011; after a shift 0011.
     testWidgets('toggleDataVisibility takes the key ToString(index), and an '

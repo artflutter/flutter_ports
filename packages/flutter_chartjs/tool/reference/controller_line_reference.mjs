@@ -10,7 +10,7 @@
 // - The 17 cases of Chart.js ADR 0030, section 7 (the row `line`). The
 //   first case is `default`, with the options of the scales. The test file
 //   runs them again with the light preset (theming.md section 8 test 3).
-// - The pin cases of Chart.js ADR 0027, section 9 (names that start with
+// - The pin cases of Chart.js ADR 0036, section 9 (names that start with
 //   `parsed:`, the line rows of the parsed-data spec, section 7.3) and of
 //   Chart.js ADR 0028, section 8 (names that start with `interfaces:`, the
 //   line rows of the interfaces spec, section 7.3). The themed run does not
@@ -78,7 +78,7 @@ const pointParsed = named('pointParsed', (chart) =>
 /**
  * The scriptable option `pointRadius` of the case `parsed: a scriptable
  * option writes ctx.parsed`: it writes the key `x` of the parsed item 1
- * (U-line-R2 of the wave 2 review).
+ * (a probe of the pinned build: upstream reads the written value).
  */
 const radiusWrite = named('radiusWrite', (ctx) => {
   if (ctx.dataIndex === 1) ctx.parsed.x = 10;
@@ -262,7 +262,7 @@ const cases = [
 if (cases.length !== 17) throw new Error(`${cases.length} cases; ADR 0030 gives 17.`);
 
 // ---------------------------------------------------------------------------
-// The pin cases of Chart.js ADR 0027 (parsed-data spec, section 7.3).
+// The pin cases of Chart.js ADR 0036 (parsed-data spec, section 7.3).
 
 /** The data of the cases with a `null` item and `parsing: false`. */
 const nullItem = () => [{x: 0, y: 1}, null, {x: 2, y: 3}];

@@ -325,7 +325,7 @@ double? _getLastIndexInStack(
 /// A parsed item is any value (`unknown[]`, index.d.ts:503). With `parsing:
 /// false`, the items are the data items. `item._stacks = {}` writes into the
 /// item. A List item takes its `_stacks` through [stacksOf], as upstream
-/// adds the property to the array (Chart.js ADR 0027). A class value takes
+/// adds the property to the array (Chart.js ADR 0036). A class value takes
 /// an own static property, as upstream adds the property to the function
 /// (Chart.js ADR 0020). Each other object, for example a [DateTime] (a JS
 /// `Date`, Chart.js ADR 0024) or a function, takes it through [stacksOf]
@@ -577,7 +577,7 @@ bool _isPrimitive(Object? item) =>
 /// primitive give [jsGet]: the static property through the superclass chain
 /// for a class value, [undefined] for a number, a [TypeError] for `null`.
 /// Each other value, for example a List or a [DateTime], gives the entry
-/// that `_updateStacks` wrote for it, or Dart `null` (Chart.js ADR 0027).
+/// that `_updateStacks` wrote for it, or Dart `null` (Chart.js ADR 0036).
 @internal
 Object? stacksOf(Object? item) {
   if (item is Map<dynamic, dynamic>) return item['_stacks'];
@@ -805,15 +805,16 @@ class DatasetController
 
   /// core.datasetController.js:299 `linkScales()`.
   ///
-  /// An axis id is a string (index.d.ts:489-493). An id of another type is
-  /// outside the upstream type contract: the write throws an
-  /// [ArgumentError].
+  /// The meta keeps the raw axis id of the dataset, as upstream does: a
+  /// number id stays a number (index.d.ts:489-493 types it as a string, but
+  /// the code reads any value). Dart `null` stands for JS `undefined` and
+  /// `null`.
   void linkScales() {
     final chart = this.chart;
     final meta = cachedMeta;
     final dataset = getDataset();
 
-    String? chooseId(String? axis, String? x, String? y, String? r) =>
+    Object? chooseId(String? axis, Object? x, Object? y, Object? r) =>
         axis == 'x'
         ? x
         : axis == 'r'
@@ -849,13 +850,9 @@ class DatasetController
       ..vScale = getScaleForId(vid);
   }
 
-  /// The axis id [value] of [linkScales] as the `String?` of the meta: Dart
-  /// `null` for JS `undefined` and `null`.
-  String? _axisId(Object? value) => switch (value) {
-    null || Undefined() => null,
-    final String id => id,
-    _ => throw ArgumentError.value(value, 'axisID', 'Not a string'),
-  };
+  /// The axis id [value] of [linkScales] as the value of the meta: Dart
+  /// `null` for JS `undefined` and `null`, else the raw value.
+  Object? _axisId(Object? value) => value is Undefined ? null : value;
 
   /// core.datasetController.js:319 `getDataset()`.
   ///
@@ -876,9 +873,10 @@ class DatasetController
   /// @return {Scale}
   ///
   /// Dart `null` for [scaleID] and for the result stands for JS
-  /// `undefined`.
-  types.Scale? getScaleForId(String? scaleID) {
-    return chart.scales[scaleID];
+  /// `undefined`. Another id reads the property key `ToString(scaleID)`, as
+  /// JavaScript does: the number `1` finds the scale `'1'`.
+  types.Scale? getScaleForId(Object? scaleID) {
+    return scaleID == null ? null : chart.scales[jsToString(scaleID)];
   }
 
   /// core.datasetController.js:338 `_getOtherScale(scale)`.
@@ -1175,7 +1173,10 @@ class DatasetController
   /// @protected
   ///
   /// The keys `xAxisKey` and `yAxisKey` of [parsing] default to `'x'` and
-  /// `'y'`. A key that is not a string throws a [TypeError].
+  /// `'y'` for [undefined]. A key that is not a string throws a [TypeError]
+  /// at its `resolveObjectKey` read in the loop, as upstream does: the
+  /// `xScale.parse` of the first item runs before a bad `yAxisKey` throws,
+  /// and no item reads a key of an empty range.
   List<AnyObject> parseObjectData(
     types.ChartMeta meta,
     List<Object?> data,
@@ -1184,8 +1185,8 @@ class DatasetController
   ) {
     final xScale = meta.xScale!;
     final yScale = meta.yScale!;
-    final xAxisKey = _keyOr(jsGet(parsing, 'xAxisKey'), 'x');
-    final yAxisKey = _keyOr(jsGet(parsing, 'yAxisKey'), 'y');
+    final xAxisKey = valueOrDefault(jsGet(parsing, 'xAxisKey'), 'x');
+    final yAxisKey = valueOrDefault(jsGet(parsing, 'yAxisKey'), 'y');
     final parsed = <AnyObject>[];
     double index;
     Object? item;
@@ -1194,17 +1195,12 @@ class DatasetController
       index = i + start;
       item = jsGetIndex(data, index);
       parsed.add(<String, Object?>{
-        'x': xScale.parse(resolveObjectKey(item, xAxisKey), index),
-        'y': yScale.parse(resolveObjectKey(item, yAxisKey), index),
+        'x': xScale.parse(resolveObjectKey(item, xAxisKey! as String), index),
+        'y': yScale.parse(resolveObjectKey(item, yAxisKey! as String), index),
       });
     }
     return parsed;
   }
-
-  /// The parsing key [value] of the destructuring `{xAxisKey = 'x'}`:
-  /// [fallback] for [undefined].
-  String _keyOr(Object? value, String fallback) =>
-      identical(value, undefined) ? fallback : value! as String;
 
   /// core.datasetController.js:579 `getParsed(index)`.
   /// @protected

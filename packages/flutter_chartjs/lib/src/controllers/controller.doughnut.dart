@@ -7,16 +7,16 @@
 /// visible datasets in the chart area, and writes the properties of each
 /// `ArcElement` through `updateElement`. `controller.pie.js` extends it.
 ///
-/// - A parsed item and a data item are any value (Chart.js ADR 0027). A read
+/// - A parsed item and a data item are any value (Chart.js ADR 0036). A read
 ///   with a number index is [jsGetIndex], and the write `meta._parsed[i] =`
 ///   is [jsSetIndex]. A read of a resolver or of an option object is [jsGet]
 ///   (Chart.js ADR 0017, section 8). The one cast of a data value is the
-///   `data` List of [DoughnutController.parse] (Chart.js ADR 0027, section 5
+///   `data` List of [DoughnutController.parse] (Chart.js ADR 0036, section 5
 ///   item 4).
 /// - A raw option value stays `Object?` until its upstream operator. Then
 ///   the port applies the runtime form of that operator: [jsToNumber],
 ///   [jsTruthy], [jsOrZero] before `Math.max`, or [jsAdd] (Chart.js ADR
-///   0027, section 7).
+///   0036, section 7).
 /// - The controller reads the members of other modules through
 ///   `lib/src/types/` and imports no concrete scale, element or chart
 ///   module. The one cast to a class is `controller as DoughnutController`
@@ -28,7 +28,7 @@
 ///   `id`, `defaults`, `descriptors` and `overrides` (Chart.js ADR 0020,
 ///   section 3).
 /// - `getDataVisibility` stays an upstream call for each arc (Chart.js ADR
-///   0027, section 8).
+///   0036, section 8).
 ///
 /// This library imports `core.datasetController.dart`, which imports
 /// `core.animations.dart`. Thus it is not a pure layer.
@@ -252,13 +252,13 @@ class DoughnutController extends DatasetController {
   /// (core.datasetController.js:386), and this function reads its
   /// characters with [jsGetIndex]. Any other truthy `data` throws the
   /// [TypeError] of the cast in `_dataCheck`. Thus the cast here cannot fail
-  /// in the port (Chart.js ADR 0027, section 5 item 4). With parsing
+  /// in the port (Chart.js ADR 0036, section 5 item 4). With parsing
   /// `false`, `meta._parsed = data` gives a string the [JsStringList] of its
   /// characters: the parsed items are a List in the port.
   ///
   /// The default `key = 'value'` of the destructuring is [valueOrDefault]:
   /// only `undefined` gives it. The key goes to `resolveObjectKey` with the
-  /// cast `as String` (Chart.js ADR 0027, section 4): a key that is not a
+  /// cast `as String` (Chart.js ADR 0036, section 4): a key that is not a
   /// string throws a [TypeError] at the first item.
   @override
   void parse(double start, double count) {

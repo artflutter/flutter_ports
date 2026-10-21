@@ -451,7 +451,7 @@ void main() {
     // With `parsing: false` and a stacked value scale, updateStacks writes
     // `item._stacks = {}` into each data item
     // (core.datasetController.js:165). A List item keeps the property
-    // through stacksOf (Chart.js ADR 0027). Each test registers its own test
+    // through stacksOf (Chart.js ADR 0036). Each test registers its own test
     // controller and removes it at its end (Chart.js ADR 0022, section 8).
 
     /// Registers the test controller `stacksPoint` (point data elements, no

@@ -43,6 +43,7 @@ to people as much as to agents.
   - `dart run melos run test:cases` (the upstream spec cases, tool 5)
   - `dart run melos run test:fixtures` (the upstream fixture smoke tests, tool 7; it needs the
     submodule `third_party/Chart.js`: `dart run melos run upstream`)
-  - `dart run melos run check:port` (the import guard, the header check and the JS-semantics check)
+  - `dart run melos run check:port` (the import guard, the header check, the JS-semantics check
+    and the check modes of tools 6 and 8; it needs the submodules: `dart run melos run upstream`)
 
   CI runs the same checks.

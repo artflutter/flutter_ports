@@ -137,26 +137,31 @@ abstract interface class ChartMeta {
   /// a dataset can give `null`. The readers compare it with a scale id, which
   /// neither value equals. `linkScales` assigns it
   /// (core.datasetController.js:306).
-  abstract String? xAxisID;
+  ///
+  /// The type is `Object?`: `linkScales` keeps the raw `dataset.xAxisID`,
+  /// as upstream does. A number id stays a number. It finds the scale of the
+  /// property key `ToString(id)`, but it equals no scale id, as the `===` of
+  /// core.scale.js:1688.
+  abstract Object? xAxisID;
 
   /// index.d.ts:490 `yAxisID?: string`, the id of the y scale. Dart `null`
   /// stands for JS `undefined` and `null`, as for [xAxisID]
   /// (core.controller.js:842).
-  abstract String? yAxisID;
+  abstract Object? yAxisID;
 
   /// index.d.ts:491 `rAxisID?: string`, the id of the radial scale. Dart
   /// `null` stands for JS `undefined`, as for [xAxisID].
-  abstract String? rAxisID;
+  abstract Object? rAxisID;
 
   /// index.d.ts:492 `iAxisID: string`, the id of the index scale.
   /// `linkScales` assigns it (core.datasetController.js:310). Dart `null`
   /// stands for JS `undefined`, as for [xAxisID].
-  abstract String? iAxisID;
+  abstract Object? iAxisID;
 
   /// index.d.ts:493 `vAxisID: string`, the id of the value scale.
   /// `linkScales` assigns it (core.datasetController.js:311). Dart `null`
   /// stands for JS `undefined`, as for [xAxisID].
-  abstract String? vAxisID;
+  abstract Object? vAxisID;
 
   /// index.d.ts:495 `xScale?: Scale`. Dart `null` stands for JS
   /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.

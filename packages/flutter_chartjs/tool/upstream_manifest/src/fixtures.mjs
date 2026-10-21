@@ -12,7 +12,8 @@
 // value is a tree of plain objects, arrays, strings, finite numbers other
 // than -0, booleans and null. Else the manifest lists the reasons: function,
 // undefined, non-finite, negative-zero, hole, object (any other object),
-// accessor, global (a value made from a stub) or cycle.
+// accessor, global (a value made from a stub, or a string that holds the
+// conversion of a stub to a primitive) or cycle.
 
 import {createHash} from 'node:crypto';
 import {readdirSync, readFileSync} from 'node:fs';
@@ -144,6 +145,9 @@ export function impurities(value, registry) {
     }
     switch (typeof v) {
       case 'string':
+        // A string that a stub converted to, as `moment(...).valueOf()`.
+        if (registry?.isStubText(v)) reasons.add('global');
+        return;
       case 'boolean':
         return;
       case 'number':

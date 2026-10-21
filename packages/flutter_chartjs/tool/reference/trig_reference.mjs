@@ -122,7 +122,7 @@ group('special', 25, [
 ]);
 
 // ties: CI run 39544591156 (Windows), the second arc of the same case, and
-// U-pie review F2.
+// sin(7π/6), where the macOS libm gives another last bit.
 group('ties', 3, [-0.7853981633974483, 2.356194490192345, 3.665191429188092]);
 
 // bounds: D(H) for each high-word constant H of the tests, -4 to +4 ulp.

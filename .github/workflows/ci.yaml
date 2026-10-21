@@ -64,7 +64,7 @@ jobs:
 
   fixtures:
     # Tool 7 of packages/flutter_chartjs/doc/porting-flow.md section 4
-    # (Chart.js ADR 0029, decision D4 of phase 7). The runner reads the
+    # (Chart.js ADR 0029, section 3 item 5 and section 11). The runner reads the
     # configs from committed files: doc/upstream/manifest.json,
     # doc/upstream/fixtures.json and test/fixtures/. It compares the SHA-256
     # of each upstream fixture file with the manifest. Thus the job makes a

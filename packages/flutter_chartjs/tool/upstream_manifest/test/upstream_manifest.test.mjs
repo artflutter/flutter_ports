@@ -91,6 +91,15 @@ test('impurities lists why a value is not JSON data', () => {
   );
 });
 
+test('impurities finds a string that a stub converted to', () => {
+  const registry = new StubRegistry();
+  const moment = registry.make('moment');
+  // scale.time/autoskip-major.js: `{x: date.valueOf(), y: i}`.
+  assert.deepEqual(impurities({x: moment('2000').valueOf(), y: 1}, registry), ['global']);
+  assert.deepEqual(impurities({x: `a ${moment()}`}, registry), ['global']);
+  assert.deepEqual(impurities({x: '[stub moment()]'}, new StubRegistry()), []);
+});
+
 test('karmaPattern matches the prefix as a regular expression, as specsFromFixtures does', () => {
   const pattern = karmaPattern('scale.time');
   assert.equal(pattern.test('/base/test/fixtures/scale.time/a.js'), true);

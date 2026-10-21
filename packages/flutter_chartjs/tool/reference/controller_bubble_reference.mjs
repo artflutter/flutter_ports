@@ -11,7 +11,7 @@
 //   first case is `default` (`r` from the data), with the options of the
 //   scales. The test file runs them again with the light preset (theming.md
 //   section 8 test 3).
-// - The pin cases of Chart.js ADR 0027, section 9 (names that start with
+// - The pin cases of Chart.js ADR 0036, section 9 (names that start with
 //   `parsed:`, the bubble rows of the parsed-data spec, section 7.3, and the
 //   `&&` chain and the `+=` of controller.bubble.js:75 and :165) and of
 //   Chart.js ADR 0028, section 8 (names that start with `interfaces:`, the
@@ -296,7 +296,7 @@ const cases = [
 if (cases.length !== 7) throw new Error(`${cases.length} cases; ADR 0030 gives 7.`);
 
 // ---------------------------------------------------------------------------
-// The pin cases of Chart.js ADR 0027 (parsed-data spec, section 7.3) and of
+// The pin cases of Chart.js ADR 0036 (parsed-data spec, section 7.3) and of
 // the `&&` chain and the `+=` of controller.bubble.js:75 and :165.
 
 cases.push(

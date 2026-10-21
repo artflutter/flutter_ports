@@ -400,10 +400,14 @@ class PointElement extends Element
     // Upstream reassigns its parameter.
     // ignore: parameter_assignments
     options = options ?? this.options ?? const <String, Object?>{};
-    var radius = jsOrZero(_radius(options));
-    radius = jsMax(
-      radius,
-      jsTruthy(radius) ? jsOrZero(_hoverRadius(options)) : 0,
+    // `options.radius || 0` keeps the raw option value, and `radius &&`
+    // tests it before the `ToNumber` of `Math.max`: a truthy value whose
+    // number is 0, such as '0', still adds the hover radius.
+    final rawRadius = _radius(options);
+    final rawTruthy = jsTruthy(rawRadius);
+    final radius = jsMax(
+      rawTruthy ? jsToNumber(rawRadius) : 0,
+      rawTruthy ? jsOrZero(_hoverRadius(options)) : 0,
     );
     // `radius && options.borderWidth || 0` keeps the raw option value, and
     // `(radius + borderWidth) * 2` is the JS `+` ([jsAdd]): a string

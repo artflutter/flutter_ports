@@ -37,7 +37,7 @@ import 'controller_doughnut_reference.dart';
 // The 15 cases of Chart.js ADR 0030, section 7 run two times: unthemed, and
 // with the light preset (theming.md section 8 test 3). A doughnut chart has
 // no scale. Thus the themed group has no check of the stale scale keys. The
-// cases whose names start with `parsed:` (Chart.js ADR 0027, section 9) or
+// cases whose names start with `parsed:` (Chart.js ADR 0036, section 9) or
 // `interfaces:` (Chart.js ADR 0028, section 8) run unthemed only. The groups
 // `parsed data` and `interfaces` hold the pin tests that need no generated
 // value: relations between two charts of the port, and the identity of
@@ -141,7 +141,7 @@ Object? _legendItems(Chart chart) {
 /// [cases] with `undefined` for each expected `xAxisID` and `yAxisID` of
 /// JS `null`.
 ///
-/// The Dart field `ChartMeta.xAxisID` is a `String?`: Dart `null` stands for
+/// The Dart field `ChartMeta.xAxisID` is an `Object?`: Dart `null` stands for
 /// the JS `null` of the start value (core.controller.js:841-842) and for the
 /// JS `undefined` that `linkScales` of the dataset controller writes for an
 /// absent scale (core.datasetController.js:306-307). The harness reads
@@ -264,10 +264,10 @@ void main() {
   // generated value. The generated cases `parsed: ...` give the upstream
   // values.
   group('parsed data', () {
-    // A string `data` (decision D11 item b, the finding R4 of the U-doughnut
-    // review). `_dataCheck` keeps the string (core.datasetController.js:386),
-    // and `parse` reads its characters. The values come from the x64 Node.js
-    // probe of the unit X-fix on the build at the pin.
+    // A string `data` (Chart.js ADR 0036 §5 item 4). `_dataCheck` keeps the
+    // string (core.datasetController.js:386), and `parse` reads its
+    // characters. The values come from a probe of the build at the pin in
+    // x64 Node.js v24.12.0.
     AnyObject stringData(AnyObject extra, String data) {
       final config = _one(extra, const []);
       final datasets = jsGet(config['data'], 'datasets')! as List<Object?>;
@@ -453,8 +453,8 @@ void main() {
       );
     });
 
-    // The key `ToString(index)` of core.controller.js:882 (the finding R1 of
-    // the U-doughnut review). The visibility of the data indices 0, 1 and 2
+    // The key `ToString(index)` of core.controller.js:882 (Chart.js ADR 0028
+    // §6). The visibility of the data indices 0, 1 and 2
     // after one onClick, from an x64 Node.js probe on the build at the pin.
     for (final (name, index, visible) in <(String, Object?, String)>[
       ('null', null, '111'),
@@ -496,13 +496,13 @@ void main() {
       });
     }
 
-    // The key after a data insert or remove (decision D11 item c, the
-    // finding R1 of the U-doughnut review). `_updateHiddenIndices` moves
+    // The key after a data insert or remove (Chart.js ADR 0028 §6).
+    // `_updateHiddenIndices` moves
     // each key whose `+key` is a number at or after the start
     // (core.controller.js:72-84). Thus the key '01' moves, and the key 'null'
     // does not. The visibility of each data index after onClick on the data
-    // [1, 2, 3, 4], the change and `chart.update()`, from the x64 Node.js
-    // probe of the unit X-fix on the build at the pin.
+    // [1, 2, 3, 4], the change and `chart.update()`, from an x64 Node.js
+    // probe on the build at the pin.
     for (final (name, index, unshift, shift, push)
         in <(String, Object?, String, String, String)>[
           ("'01'", '01', '11011', '011', '11111'),

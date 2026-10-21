@@ -23,6 +23,12 @@ Matcher _isSameNumber(double expected) => predicate<double>(
 const double _nan = double.nan;
 const double _inf = double.infinity;
 
+/// The zone name of V8 in UTC, at the end of `String(new Date(t))`.
+const String _zone = ' (Coordinated Universal Time)';
+
+/// Whether the test runs compiled with dart2js or dart2wasm.
+const bool _onWeb = bool.fromEnvironment('dart.library.js_interop');
+
 /// JavaScript `StrWhiteSpaceChar` characters, with both ends of U+2000-U+200A.
 final String _whiteSpace = String.fromCharCodes(const [
   0x09, 0x0B, 0x0C, 0x20, 0xA0, 0xFEFF, 0x1680, 0x2000, 0x200A, 0x202F, //
@@ -420,18 +426,19 @@ void main() {
     });
 
     group('a DateTime', () {
-      // String(new Date(t)) in Node.js v24.12.0 on x64 with TZ=UTC, without
-      // the zone name ' (Coordinated Universal Time)'.
+      // String(new Date(t)) in Node.js v24.12.0 on x64 with TZ=UTC. Each
+      // text ends with the zone name ' (Coordinated Universal Time)'
+      // (_zone below).
       const utcTexts = {
-        0: 'Thu Jan 01 1970 00:00:00 GMT+0000',
-        -1: 'Wed Dec 31 1969 23:59:59 GMT+0000',
-        1000000000000: 'Sun Sep 09 2001 01:46:40 GMT+0000',
-        1704085629000: 'Mon Jan 01 2024 05:07:09 GMT+0000',
-        -62185708800000: 'Tue Jun 01 -0001 00:00:00 GMT+0000',
-        253402300799000: 'Fri Dec 31 9999 23:59:59 GMT+0000',
-        253402300800000: 'Sat Jan 01 10000 00:00:00 GMT+0000',
-        8640000000000000: 'Sat Sep 13 275760 00:00:00 GMT+0000',
-        -8640000000000000: 'Tue Apr 20 -271821 00:00:00 GMT+0000',
+        0: 'Thu Jan 01 1970 00:00:00 GMT+0000$_zone',
+        -1: 'Wed Dec 31 1969 23:59:59 GMT+0000$_zone',
+        1000000000000: 'Sun Sep 09 2001 01:46:40 GMT+0000$_zone',
+        1704085629000: 'Mon Jan 01 2024 05:07:09 GMT+0000$_zone',
+        -62185708800000: 'Tue Jun 01 -0001 00:00:00 GMT+0000$_zone',
+        253402300799000: 'Fri Dec 31 9999 23:59:59 GMT+0000$_zone',
+        253402300800000: 'Sat Jan 01 10000 00:00:00 GMT+0000$_zone',
+        8640000000000000: 'Sat Sep 13 275760 00:00:00 GMT+0000$_zone',
+        -8640000000000000: 'Tue Apr 20 -271821 00:00:00 GMT+0000$_zone',
       };
       DateTime at(int ms) => DateTime.fromMillisecondsSinceEpoch(ms);
       // The engine prints the local time of the platform zone. The exact
@@ -460,7 +467,8 @@ void main() {
         final shape = RegExp(
           '^(Mon|Tue|Wed|Thu|Fri|Sat|Sun) '
           r'(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) (\d\d) '
-          r'(-?\d{4,}) (\d\d):(\d\d):(\d\d) GMT([+-])(\d\d)(\d\d)$',
+          r'(-?\d{4,}) (\d\d):(\d\d):(\d\d) GMT([+-])(\d\d)(\d\d)'
+          r'(?: \(([^()]+)\))?$',
         );
         for (final ms in [...utcTexts.keys, 1718000000000, 1711848600000]) {
           final date = DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
@@ -484,6 +492,24 @@ void main() {
               if (offset < 0) '-' else '+',
             ],
             reason: '$ms',
+          );
+          // The web engines give their zone name. On the VM, only UTC has
+          // the V8 name (differences.md row platform-date-zone-name). The VM
+          // on Windows names UTC 'Coordinated Universal Time'.
+          final utc =
+              offset == 0 &&
+              const {
+                'UTC',
+                'Coordinated Universal Time',
+              }.contains(local.timeZoneName);
+          expect(
+            match[11],
+            _onWeb
+                ? local.timeZoneName
+                : utc
+                ? _zone.substring(2, _zone.length - 1)
+                : null,
+            reason: '$ms ${local.timeZoneName}',
           );
         }
       });

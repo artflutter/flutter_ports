@@ -8,14 +8,14 @@
 /// properties of each `PointElement` through `updateElement`.
 ///
 /// - A parsed item, a data item and `_custom` are any value (Chart.js ADR
-///   0027). A read with a `String` key is [jsGetKey], a read with a number
+///   0036). A read with a `String` key is [jsGetKey], a read with a number
 ///   index is [jsGetIndex], and the read `item[2]` of a data item is
-///   [jsGet] with the key `'2'` (Chart.js ADR 0027, section 5). A read of a
+///   [jsGet] with the key `'2'` (Chart.js ADR 0036, section 5). A read of a
 ///   resolver or of an option object is [jsGet] (Chart.js ADR 0017, section
 ///   8).
 /// - A raw option value stays `Object?` until its upstream operator. Then
 ///   the port applies the runtime form of that operator: [jsAdd] for `+=`
-///   (Chart.js ADR 0027, section 7).
+///   (Chart.js ADR 0036, section 7).
 /// - The controller reads the members of other modules through
 ///   `lib/src/types/` and imports no concrete scale, element or chart
 ///   module (Chart.js ADR 0028, section 1). `getMaxOverflow` casts each data
@@ -25,7 +25,7 @@
 ///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
 /// - The option copy for each item (the option resolution of each parse
 ///   and the copy of the shared options) is ported literally (Chart.js ADR
-///   0027, section 8: the step 7 list).
+///   0036, section 8: the step 7 list).
 ///
 /// This library imports `core.datasetController.dart`, which imports
 /// `core.animations.dart`. Thus it is not a pure layer.
@@ -128,7 +128,7 @@ class BubbleController extends DatasetController {
   /// @protected
   ///
   /// `item[2]` is [jsGet] with the key `'2'`: the item is a List or another
-  /// value (Chart.js ADR 0027, section 5).
+  /// value (Chart.js ADR 0036, section 5).
   @override
   List<AnyObject> parseArrayData(
     types.ChartMeta meta,
@@ -153,7 +153,7 @@ class BubbleController extends DatasetController {
   /// @protected
   ///
   /// `item && item.r && +item.r` is the value of the `&&` chain: a falsy
-  /// item, else a falsy `r`, else the `ToNumber` of `r` (Chart.js ADR 0027,
+  /// item, else a falsy `r`, else the `ToNumber` of `r` (Chart.js ADR 0036,
   /// section 7).
   @override
   List<AnyObject> parseObjectData(
@@ -300,7 +300,7 @@ class BubbleController extends DatasetController {
   /// values, {$shared: false})` is `copyOptions(values)..[r'$shared'] =
   /// false`: the copy keeps the class of the options (Chart.js ADR 0021,
   /// section 3). `parsed && parsed._custom` is the value of `&&`, and `+=`
-  /// is [jsAdd] (Chart.js ADR 0027, section 7).
+  /// is [jsAdd] (Chart.js ADR 0036, section 7).
   @override
   AnyObject resolveDataElementOptions(double index, [String? mode]) {
     final parsed = getParsed(index);

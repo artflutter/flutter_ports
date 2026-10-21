@@ -402,6 +402,58 @@ void main() {
     );
   });
 
+  test('flags the tear-offs of the dart:math functions', () async {
+    final tree = FileTree()
+      ..write('lib/a.dart', [
+        _ported,
+        "import 'dart:math' as math;",
+        "import 'dart:math' show cos, log, sin;",
+        'final f = math.sin;',
+        'final g = [1.0].map(math.cos).toList();',
+        'final h = math.sin(1.0) + sin(1.0);',
+        'final k = math.asin;',
+        'final double Function(num) m = sin;',
+        '/// Not [sin], not [math.cos].',
+        'double n(double log) => log + 1;',
+        'double p(List<double> l) => l.map(log).first;',
+      ]);
+    final sites = await resolvedSites([tree.path('lib/a.dart')]);
+    expect(
+      [
+        for (final site in sites[tree.path('lib/a.dart')]!)
+          '${site.line} ${site.name}',
+      ],
+      ['4 math.sin', '5 math.cos', '7 math.asin', '8 sin', '11 log'],
+    );
+    final message = sites.values.first.first.message;
+    expect(message, startsWith('The tear-off of dart:math sin'));
+    expect(message, contains('Call jsSin'));
+    expect(sites.values.first[2].message, contains('Call the lib/src/js port'));
+  });
+
+  test('accepts a tear-off of dart:math with js-ok', () async {
+    const lines = [
+      _ported,
+      "import 'dart:math' as math;",
+      'final f = math.sin; // js-ok: display only (Chart.js ADR 0032)',
+      'final g = math.cos;',
+    ];
+    final tree = FileTree()..write('lib/a.dart', lines);
+    final path = tree.path('lib/a.dart');
+    final sites = await resolvedSites([path]);
+    final findings = <Finding>[];
+    checkJsSemanticsText(
+      lines.join('\n'),
+      'a.dart',
+      findings,
+      languages: _languages,
+      typedSites: sites[path]!,
+    );
+    expect(describeFindings(findings), [
+      startsWith('error: a.dart:4: math.cos: The tear-off of dart:math cos'),
+    ]);
+  });
+
   test('examines lib/ and test/ of a package', () async {
     final tree = FileTree()
       ..write('pubspec.yaml', ['name: flutter_chartjs'])

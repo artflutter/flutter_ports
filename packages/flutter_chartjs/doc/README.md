@@ -31,12 +31,13 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
   ADRs are in [adr/](adr/). All Chart.js ADRs are accepted. Chart.js ADR 0001 is accepted for its
-  four invariants only. Eight of them are superseded: Chart.js ADR 0010 supersedes Chart.js ADR
+  four invariants only. Nine of them are superseded: Chart.js ADR 0010 supersedes Chart.js ADR
   0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR
   0004, Chart.js ADR 0016 supersedes Chart.js ADR 0007, Chart.js ADR 0026 supersedes Chart.js ADR
   0008, Chart.js ADR 0032 supersedes Chart.js ADR 0010, Chart.js ADR 0034 supersedes Chart.js ADR
-  0009, and Chart.js ADR 0035 supersedes Chart.js ADR 0011. Chart.js ADR 0033 supersedes the
-  `xCenter` and `yCenter` bullet of Chart.js ADR 0025 §5. The list:
+  0009, Chart.js ADR 0035 supersedes Chart.js ADR 0011, and Chart.js ADR 0036 supersedes Chart.js
+  ADR 0027. Chart.js ADR 0033 supersedes the `xCenter` and `yCenter` bullet of Chart.js ADR 0025
+  §5. The list:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md)
   - [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md) (superseded by
     Chart.js ADR 0010)
@@ -75,7 +76,8 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
     part by Chart.js ADR 0033)
   - [Chart.js ADR 0026: Number formatting on package:intl](adr/0026-number-formatting-on-package-intl.md)
     (it supersedes Chart.js ADR 0008)
-  - [Chart.js ADR 0027: Parsed data in the controllers](adr/0027-parsed-data.md)
+  - [Chart.js ADR 0027: Parsed data in the controllers](adr/0027-parsed-data.md) (superseded by
+    Chart.js ADR 0036)
   - [Chart.js ADR 0028: Controller interfaces and values](adr/0028-controller-interfaces.md)
   - [Chart.js ADR 0029: Fixture smoke runner](adr/0029-fixture-smoke-runner.md)
   - [Chart.js ADR 0030: Controller test strategy](adr/0030-controller-test-strategy.md)
@@ -88,6 +90,8 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
     supersedes Chart.js ADR 0009)
   - [Chart.js ADR 0035: Third-party sources](adr/0035-third-party-sources.md) (it supersedes
     Chart.js ADR 0011)
+  - [Chart.js ADR 0036: Parsed data in the controllers](adr/0036-parsed-data.md) (it supersedes
+    Chart.js ADR 0027)
 
 ## What gets ported
 
@@ -174,22 +178,21 @@ before phase 2. [Chart.js ADR 0001](adr/0001-theming.md) proposes the theming de
 and gate 2 decisions. All of them are accepted. An example is the options representation
 ([Chart.js ADR 0006](adr/0006-options-representation-and-resolver.md)).
 
-- **Canvas model.** Proposed in [Chart.js ADR 0013](adr/0013-canvas-model.md): a Canvas
+- **Canvas model.** Decided in [Chart.js ADR 0013](adr/0013-canvas-model.md): a Canvas
   2D-compatible layer over `dart:ui`, with a retained bitmap of pictures in device pixels. The
   upstream drawing code stays close to line for line.
 - **Options.** Upstream resolves options through `Proxy`-based scopes (defaults, overrides,
   scriptable and indexable options). Dart has no `Proxy`, so the resolver needs its own design,
   and a decision on a typed Dart options API versus accepting raw Chart.js JSON configs (or both).
-- **Text.** Proposed in [Chart.js ADR 0015](adr/0015-text.md): a parser for the CSS font
+- **Text.** Decided in [Chart.js ADR 0015](adr/0015-text.md): a parser for the CSS font
   shorthand, `ui.Paragraph` with LRU caches, and Liberation Sans as the test font.
-- **Input events.** Proposed in [Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md): DOM
+- **Input events.** Decided in [Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md): DOM
   event names from Flutter pointer events, an internal chart host that sizes the chart before the
   first paint, and one tap recognizer in the gesture arena.
 - **Animation.** `requestAnimationFrame` maps onto `SchedulerBinding.scheduleFrameCallback`.
   `core.animator.js` stays one module-level animator on `requestAnimFrame`
-  ([Chart.js ADR 0016](adr/0016-frame-scheduling.md)). ADR: Animation (gate 5,
-  [porting-flow.md](porting-flow.md) §2.9) decides reduced motion, the theme-change modes and the
-  `core.animator` tests.
+  ([Chart.js ADR 0016](adr/0016-frame-scheduling.md)). [Chart.js ADR 0019](adr/0019-animation.md)
+  decides reduced motion, the theme-change modes and the `core.animator` tests.
 - **Dates.** Time scales need a date adapter, and upstream ships none. Decided in
   [Chart.js ADR 0024](adr/0024-dates.md): a default adapter with the rules of
   chartjs-adapter-moment 1.0.1 on moment 2.29.4. Its calendar works on wall milliseconds with

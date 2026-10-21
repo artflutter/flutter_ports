@@ -139,8 +139,8 @@ Object? _legendItems(Chart chart) {
 /// [cases] with `undefined` for each expected `xAxisID` and `yAxisID` of
 /// JS `null`.
 ///
-/// The rule of controller.doughnut_test.dart (decision D12 of the phase
-/// lead). The Dart field `ChartMeta.xAxisID` is a `String?`: Dart `null`
+/// The rule of controller.doughnut_test.dart. The Dart field
+/// `ChartMeta.xAxisID` is an `Object?`: Dart `null`
 /// stands for the JS `null` of the start value (core.controller.js:841-842)
 /// and for the JS `undefined` that `linkScales` of the dataset controller
 /// writes for an absent scale (core.datasetController.js:306-307). The

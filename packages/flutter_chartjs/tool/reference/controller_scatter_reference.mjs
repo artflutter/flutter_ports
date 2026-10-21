@@ -11,10 +11,10 @@
 //   first case is `default` (no dataset element), with the options of the
 //   scales. The test file runs them again with the light preset (theming.md
 //   section 8 test 3).
-// - The pin cases of Chart.js ADR 0027, section 9 (names that start with
+// - The pin cases of Chart.js ADR 0036, section 9 (names that start with
 //   `parsed:`, the scatter rows of the parsed-data spec, section 7.3, and
-//   the 3-read form of controller.scatter.js:128-133, decision D10 of
-//   .handover/phase7-progress.md) and of Chart.js ADR 0028, section 8 (names
+//   the 3-read form of controller.scatter.js:128-133, Chart.js ADR 0036,
+//   section 8) and of Chart.js ADR 0028, section 8 (names
 //   that start with `interfaces:`, the scatter rows of the interfaces spec,
 //   section 7.3, and the override `interaction.mode: 'point'` of
 //   controller.scatter.js:25-27). The themed run does not run them.
@@ -63,7 +63,7 @@ const segment = () => ({borderColor: segColor, borderWidth: segWidth});
 /**
  * The scriptable option `pointRadius` of the case `parsed: a scriptable
  * option writes ctx.parsed`: it writes the key `x` of the parsed item 1
- * (decision D10, U-line-R2 of the wave 2 review).
+ * (Chart.js ADR 0036 §8: upstream reads the written value).
  */
 const radiusWrite = named('radiusWrite', (ctx) => {
   if (ctx.dataIndex === 1) ctx.parsed.x = 10;
@@ -263,7 +263,7 @@ const cases = [
 if (cases.length !== 6) throw new Error(`${cases.length} cases; ADR 0030 gives 6.`);
 
 // ---------------------------------------------------------------------------
-// The pin cases of Chart.js ADR 0027 (parsed-data spec, section 7.3).
+// The pin cases of Chart.js ADR 0036 (parsed-data spec, section 7.3).
 
 cases.push(
   runControllerCase(
@@ -327,7 +327,7 @@ cases.push(
   // The read `prevParsed[iAxis]` of :133 comes after the scriptable
   // options of the previous pass (:140): upstream reads the x 10 that the
   // option wrote, thus the point 2 gets `stop` and the line breaks there
-  // (decision D10).
+  // (Chart.js ADR 0036 §8).
   runControllerCase(
     'parsed: a scriptable option writes ctx.parsed',
     scatter([

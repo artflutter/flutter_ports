@@ -3,7 +3,7 @@
 /// `Array.prototype.sort` and the key order of `Object.keys` for ported code
 /// (Chart.js ADR 0032, "Sort"), `Object.getOwnPropertyNames` (Chart.js
 /// ADR 0019, section 1), `Array.prototype.splice` ([jsSplice]), the write
-/// `list[index] = value` ([jsSetIndex], Chart.js ADR 0027) and a string as
+/// `list[index] = value` ([jsSetIndex], Chart.js ADR 0036) and a string as
 /// an array-like value ([JsStringList]).
 ///
 /// A JavaScript array is a `List<Object?>` and a plain object is a
@@ -62,7 +62,7 @@ abstract interface class JsProxyObject implements Map<String, Object?> {
   List<String> objectKeys();
 }
 
-/// The JS write `list[index] = value` (Chart.js ADR 0027): a write at the
+/// The JS write `list[index] = value` (Chart.js ADR 0036): a write at the
 /// length appends.
 ///
 /// JavaScript leaves a hole for an index past the length, and a negative

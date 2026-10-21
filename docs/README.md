@@ -80,7 +80,8 @@ package.
     (superseded in part by Chart.js ADR 0033),
     [Chart.js ADR 0026: Number formatting on package:intl](../packages/flutter_chartjs/doc/adr/0026-number-formatting-on-package-intl.md)
     (it supersedes Chart.js ADR 0008),
-    [Chart.js ADR 0027: Parsed data in the controllers](../packages/flutter_chartjs/doc/adr/0027-parsed-data.md),
+    [Chart.js ADR 0027: Parsed data in the controllers](../packages/flutter_chartjs/doc/adr/0027-parsed-data.md)
+    (superseded by Chart.js ADR 0036),
     [Chart.js ADR 0028: Controller interfaces and values](../packages/flutter_chartjs/doc/adr/0028-controller-interfaces.md),
     [Chart.js ADR 0029: Fixture smoke runner](../packages/flutter_chartjs/doc/adr/0029-fixture-smoke-runner.md),
     [Chart.js ADR 0030: Controller test strategy](../packages/flutter_chartjs/doc/adr/0030-controller-test-strategy.md),
@@ -92,7 +93,9 @@ package.
     [Chart.js ADR 0034: No display-only JS exactness](../packages/flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)
     (it supersedes Chart.js ADR 0009),
     [Chart.js ADR 0035: Third-party sources](../packages/flutter_chartjs/doc/adr/0035-third-party-sources.md)
-    (it supersedes Chart.js ADR 0011).
+    (it supersedes Chart.js ADR 0011),
+    [Chart.js ADR 0036: Parsed data in the controllers](../packages/flutter_chartjs/doc/adr/0036-parsed-data.md)
+    (it supersedes Chart.js ADR 0027).
   - Prior art: [overview](../packages/flutter_chartjs/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs/doc/prior-art/js-runtimes.md),

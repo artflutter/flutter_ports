@@ -39,7 +39,7 @@ import 'controller_radar_reference.dart';
 //
 // The 8 cases of Chart.js ADR 0030, section 7 run two times: unthemed, and
 // with the light preset (theming.md section 8 test 3). The cases whose names
-// start with `parsed:` (Chart.js ADR 0027, section 9) or `interfaces:`
+// start with `parsed:` (Chart.js ADR 0036, section 9) or `interfaces:`
 // (Chart.js ADR 0028, section 8) run unthemed only. The groups `parsed
 // data` and `interfaces` hold the pin tests that need no generated value.
 //
@@ -305,11 +305,11 @@ void main() {
     });
   });
 
-  // The reset of a new point on a new radial scale (decision D11 item a, the
-  // finding F2 of the U-radar review). `_insertElements` resets the new
+  // The reset of a new point on a new radial scale (Chart.js ADR 0033).
+  // `_insertElements` resets the new
   // point before the first layout of the new scale. Upstream then reads
   // `xCenter` and `yCenter` as `undefined` (scale.radialLinear.js:416-418).
-  // The x64 Node.js probe of the unit X-fix on the build at the pin gives:
+  // An x64 Node.js probe on the build at the pin gives:
   // before the layout, `x` and `y` are `undefined` and `skip` is true; after
   // the update, the animation `x` goes from 25 to 25 and the animation `y`
   // from 256 to 256.

@@ -35,6 +35,7 @@ Map<String, Object?> fixture() => <String, Object?>{
     'spriteText': true,
     'run': (Chart chart) {
       // Avoid browser-specific interpolation of the overlapping text sprites.
+      // DIVERGES(chartjs): harness-fixture-sources, no imageSmoothingEnabled.
       // `chart.ctx.imageSmoothingEnabled = false`: the canvas layer has no
       // `imageSmoothingEnabled`. The port draws no text sprite
       // (`spriteText` is n/a, Chart.js ADR 0022 section 4 item 5) and

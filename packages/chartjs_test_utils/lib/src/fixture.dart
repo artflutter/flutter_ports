@@ -20,8 +20,8 @@
 ///   It matches the prefix against the paths of the manifest, as the
 ///   regular expression of fixture.js:74 matches the Karma files.
 ///
-/// Port-only parts (Chart.js ADR 0029, sections 3, 5, 9 and 11; decision D4
-/// of the phase 7 lead):
+/// Port-only parts (Chart.js ADR 0029, sections 3, 5, 9 and 11; section 3
+/// item 5 adds the checks of the upstream files):
 /// - A hand port whose 12 hex digits differ from the `sha256` of the
 ///   manifest fails as stale. An impure fixture without a hand port and
 ///   without a skip fails. A key of `hand` or of `skips` that is not a
@@ -282,10 +282,10 @@ void _declare(
 }
 
 /// [load] after the check of the upstream file of [item]: its SHA-256 must
-/// be the `sha256` of the manifest (decision D4, Chart.js ADR 0029, section
-/// 3 item 5). The SHA-256 of the bytes with each CRLF changed to LF is also
-/// correct: tool 4 hashes an LF checkout, and `core.autocrlf=true` writes
-/// CRLF line ends.
+/// be the `sha256` of the manifest (Chart.js ADR 0029, section 3 item 5).
+/// The SHA-256 of the bytes with each CRLF changed to LF is also correct:
+/// tool 4 hashes an LF checkout, and `core.autocrlf=true` writes CRLF line
+/// ends.
 FixtureLoad _checked(FixtureItem item, FixtureSource source, FixtureLoad load) {
   return () {
     final file = File('${source.upstream}/${item.path}');

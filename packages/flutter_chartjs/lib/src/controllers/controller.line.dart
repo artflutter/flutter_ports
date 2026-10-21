@@ -7,15 +7,15 @@
 /// each data item. The pixels of a point come from the index scale and the
 /// value scale.
 ///
-/// - A parsed item and a data item are any value (Chart.js ADR 0027). A
+/// - A parsed item and a data item are any value (Chart.js ADR 0036). A
 ///   read with a `String` key is [jsGetKey], a read with a number index is
 ///   [jsGetIndex]. A read of a resolver or of an option object is [jsGet]
 ///   (Chart.js ADR 0017, section 8).
 /// - A pass of the loop of [LineController.updateElements] reads each key
-///   of its parsed item once (the one-read rule of Chart.js ADR 0027,
+///   of its parsed item once (the one-read rule of Chart.js ADR 0036,
 ///   section 8). Each local of a parsed read names the upstream lines that
 ///   it serves. The read of the previous item at :104 stays a read at each
-///   pass (the 3-read form of Chart.js ADR 0027, Open 4).
+///   pass (the 3-read form of Chart.js ADR 0036, section 8).
 /// - The controller reads the members of other modules through
 ///   `lib/src/types/` and imports no concrete scale, element or chart
 ///   module (Chart.js ADR 0028, section 1). The four writes into the line
@@ -26,7 +26,7 @@
 /// - [LineController.jsClass] is the class as a value with the statics
 ///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
 /// - The writes by name into the point of a direct update stay writes by
-///   name (Chart.js ADR 0027, section 8: the step 7 list).
+///   name (Chart.js ADR 0036, section 8: the step 7 list).
 ///
 /// This library imports `core.datasetController.dart`, which imports
 /// `core.animations.dart`. Thus it is not a pure layer.
@@ -176,14 +176,14 @@ class LineController extends DatasetController {
   /// - `start > 0 && this.getParsed(start - 1)` is `false` or the parsed
   ///   item. `parsed[iAxis] - prevParsed[iAxis]` applies `ToNumber` to both
   ///   reads. `false[iAxis]` is `undefined`, as [jsGetKey] gives.
-  /// - The one-read rule (Chart.js ADR 0027, section 8): `vValue` serves
+  /// - The one-read rule (Chart.js ADR 0036, section 8): `vValue` serves
   ///   the reads of `parsed[vAxis]` at :99 and :101, and `iValue` the reads
   ///   of `parsed[iAxis]` at :100 and :104. Between :99 and :104 no
   ///   statement writes the parsed item: `applyStack` only reads it
   ///   (core.datasetController.js:593-605), and the writes go to
   ///   `properties`.
   /// - The read `prevParsed[iAxis]` of :104 stays a read at each pass (the
-  ///   3-read form of Chart.js ADR 0027, Open 4). A local of the previous
+  ///   3-read form of Chart.js ADR 0036, section 8). A local of the previous
   ///   pass does not obey the one-read rule here: between the two reads,
   ///   `resolveDataElementOptions` (:111) and the animated `updateElement`
   ///   (:115) run the scriptable options of the user. Their context holds

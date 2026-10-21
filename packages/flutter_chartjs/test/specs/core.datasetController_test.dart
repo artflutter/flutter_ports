@@ -1207,9 +1207,14 @@ void main() {
     //   (core.datasetController.js:378-380): a `push` on data0 and an update
     //   keep `meta.data[2]`. A stale listener calls `_onDataPush`, which
     //   inserts a new element at index 2 of data1.
-    // The checks of data1 before the change and after `destroy`
-    // (core.datasetController.js:355) have no Dart form: data1 is not the
-    // data of a chart, and a destroyed chart does not update.
+    // - "data1 has no listener" before the change and after `destroy`
+    //   (core.datasetController.js:355): a change of data1 adds no entry to
+    //   `chart.dataChanges`. The last update empties it, and a listener of
+    //   the controller adds an entry at each notification (`_sync`,
+    //   core.datasetController.js:1041). A destroyed chart does not update,
+    //   so the check reads `dataChanges` and not the elements. Before the
+    //   change, the check removes the pushed item again, so data1 keeps its
+    //   upstream items.
     testWidgets(
       'should cleanup attached properties when the reference changes or when '
       'the chart is destroyed',
@@ -1232,6 +1237,11 @@ void main() {
         expect(chart.getDatasetMeta(0).data[0], isNot(same(a0)));
         expect(chart.getDatasetMeta(0).data[1], same(a0));
 
+        // expect(data1._chartjs).not.toBeDefined(), the hooks of data1.
+        _push(data1, [9]);
+        expect(chart.dataChanges, isEmpty);
+        data1.removeLast();
+
         _dataset(chart, 0)['data'] = data1;
         chart.update();
 
@@ -1249,6 +1259,10 @@ void main() {
         expect(chart.getDatasetMeta(0).data[1], same(b0));
 
         chart.destroy();
+
+        // expect(data1._chartjs).not.toBeDefined(), the hooks of data1.
+        _unshift(data1, [4]);
+        expect(chart.dataChanges, isEmpty);
       },
     );
 

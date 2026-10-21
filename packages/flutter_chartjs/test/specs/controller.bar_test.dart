@@ -1540,7 +1540,7 @@ void main() {
       });
     });
 
-    // The two cases of this group belong to decision D1 of the phase lead:
+    // The two cases of this group get bodies (Chart.js ADR 0030 §12 item 6):
     // the default legend changes the asserted heights, but the assertion is
     // relative to the scale height and passes without the legend.
     group('Bar height (horizontal type)', () {

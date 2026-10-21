@@ -8,13 +8,13 @@
 /// `BarElement` through `updateElement`.
 ///
 /// - A parsed item, a data item, a `_custom` object and a stack object are
-///   any value (Chart.js ADR 0027). A read with a `String` key is
+///   any value (Chart.js ADR 0036). A read with a `String` key is
 ///   [jsGetKey], a read with a number index is [jsGetIndex], and the read
 ///   `parsed._stacks` is [stacksOf]. A read of a resolver or of an option
 ///   object is [jsGet] (Chart.js ADR 0017, section 8).
 /// - A raw option value stays `Object?` until its upstream operator. Then
 ///   the port applies the runtime form of that operator: [jsToNumber],
-///   [jsTruthy], [jsAdd] or the Dart `==` for `===` (Chart.js ADR 0027,
+///   [jsTruthy], [jsAdd] or the Dart `==` for `===` (Chart.js ADR 0036,
 ///   section 7). Where both operands of `===` can be a `Date`, the port
 ///   compares with `_strictEquals`: Dart `==` compares two `DateTime`
 ///   values by their time, `===` by identity.
@@ -26,7 +26,7 @@
 ///   `defaults` and `overrides` (Chart.js ADR 0020, section 3).
 /// - The memo of `_getAxis`, `getFirstScaleIdForIndexAxis` and `_getStacks`
 ///   for each bar, the `skipNull` find and the empty object of
-///   `(parsed._stacks || {})` are ported literally (Chart.js ADR 0027,
+///   `(parsed._stacks || {})` are ported literally (Chart.js ADR 0036,
 ///   section 8: the step 7 list).
 ///
 /// This library imports `core.datasetController.dart`, which imports
@@ -55,7 +55,7 @@ import 'package:meta/meta.dart';
 /// controller.bar.js:546-556 the object of `_getRuler` (Chart.js ADR 0003).
 ///
 /// - `min` is `barThickness || computeMinSampleSize(meta)`: the raw option
-///   value or a number (Chart.js ADR 0027, section 7).
+///   value or a number (Chart.js ADR 0036, section 7).
 /// - `grouped` is the raw `grouped` option.
 typedef _Ruler = ({
   Object? min,
@@ -570,7 +570,7 @@ class BarController extends DatasetController {
   ///
   /// The destructuring defaults `{xAxisKey = 'x', yAxisKey = 'y'}` are
   /// [valueOrDefault]. A key that is not a string throws a [TypeError] at
-  /// the cast inside the loop (Chart.js ADR 0027, section 4). A parse of no
+  /// the cast inside the loop (Chart.js ADR 0036, section 4). A parse of no
   /// item does not throw.
   ///
   /// Upstream throws at that call only when its resolver cache has no
@@ -579,7 +579,7 @@ class BarController extends DatasetController {
   /// call. Thus the key `[]` (the string `''`) and the key `[['y']]` (the
   /// option resolver gives `['y']`, the string `'y'`) do not throw upstream,
   /// but throw here. The cache of `resolveObjectKey` is private to
-  /// `helpers.core.dart`, and the cast is the form of Chart.js ADR 0027,
+  /// `helpers.core.dart`, and the cast is the form of Chart.js ADR 0036,
   /// section 4.
   @override
   List<AnyObject> parseObjectData(
@@ -717,7 +717,7 @@ class BarController extends DatasetController {
           : _calculateBarValuePixels(i);
       final ipixels = _calculateBarIndexPixels(i, ruler);
       final itemStacks = stacksOf(parsed);
-      // `(parsed._stacks || {})[vScale.axis]`: literal (Chart.js ADR 0027,
+      // `(parsed._stacks || {})[vScale.axis]`: literal (Chart.js ADR 0036,
       // section 8).
       final stack = jsGetKey(
         jsTruthy(itemStacks) ? itemStacks : <String, Object?>{},
@@ -972,7 +972,7 @@ class BarController extends DatasetController {
   /// @private
   ///
   /// The `base` option, the parsed value and the float bar values stay raw
-  /// values until their operators (Chart.js ADR 0027, section 7):
+  /// values until their operators (Chart.js ADR 0036, section 7):
   /// - `baseValue || 0` keeps a truthy option value: `'0' || 0` is `'0'`.
   /// - `start + length` is [jsAdd]. `length - value` applies `ToNumber`.
   /// - `value === actualBase` is [_strictEquals]: `5 === '5'` is false, and

@@ -164,7 +164,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `types.Element`, and `getLabelAndValue` gives `({Object? label, String value})` (Chart.js
       ADR 0028). The reads of parsed items and stack objects use `jsGetKey`, and the index reads
       use `jsGetIndex` and `jsSetIndex`. `stacksOf` (`@internal`) reads `item._stacks` of a
-      parsed item, also of a List item, through an `Expando` (Chart.js ADR 0027).
+      parsed item, also of a List item, through an `Expando` (Chart.js ADR 0036).
       `_insertElements` keeps the old parsed item at each new index below the old length, as the
       upstream `move` does. `_dataCheck` keeps a string `data` as a `JsStringList`, with no array
       listener (`core.datasetController.js:386`).
@@ -179,8 +179,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `ChartMeta`. Its `_dataset` is `dataset_` (Chart.js ADR 0023). `getDataVisibility` returns
       `true` at once for an empty `_hiddenIndices`. `toggleDataVisibility` takes any JS value
       (`Object?`) and writes the key `ToString(index)`, as upstream. `ChartMeta.total` is a typed
-      field (Chart.js ADR 0028). `Chart.legend` is a field that the legend plugin of phase 8 writes. It is not a
-      pure layer: it imports the platform layer.
+      field (Chart.js ADR 0028). The axis ids of `ChartMeta` (`xAxisID`, `yAxisID`, `rAxisID`,
+      `iAxisID` and `vAxisID`) are `Object?`: `linkScales` keeps the raw id of the dataset, and
+      `getScaleForId` reads `chart.scales[ToString(id)]`. `Chart.legend` is a field that the
+      legend plugin of phase 8 writes. It is not a pure layer: it imports the platform layer.
     - `index.dart` has the exports of `src/core/index.ts`. `lib/src/index.dart` is the partial
       port of `src/index.ts`, with the four namespaces and `registerables`. The namespace
       `controllers` has the eight controllers of phase 7 in code unit order. Thus
@@ -190,19 +192,20 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     controller class and its class value `<Name>Controller.jsClass` (statics `id`, `defaults`,
     `overrides`; the doughnut also `descriptors`). A controller reads parsed items with
     `jsGetKey`, `jsGetIndex` and `stacksOf`, and a raw option value stays `Object?` until its
-    upstream operator (Chart.js ADR 0027). It reads the members of other modules through
+    upstream operator (Chart.js ADR 0036). It reads the members of other modules through
     `lib/src/types/` (Chart.js ADR 0028). It casts only to a `types` interface or to a class of
     its own library, at the upstream read. Three other kinds of casts stay: a `List` cast of a
     value that upstream reads as an array, the `String` cast of a parsing key and the `AnyObject`
-    cast of an object that the controller made. `getLabelAndValue` gives `({Object? label, String value})`. The files are not pure
-    layers: each imports `core.datasetController`.
+    cast of an object that the controller made. `getLabelAndValue` gives
+    `({Object? label, String value})`. The files are not pure layers: each imports
+    `core.datasetController`.
     - `controller.bar.dart`: `getStackCount` and `getStackIndex` are the `_getStackCount` and
       `_getStackIndex` of upstream with `@internal`, because the spec reads them (Chart.js ADR
       0012).
     - `controller.line.dart`: `updateElements` reads each key of a parsed item once in a loop
       pass (`vValue`, `iValue`), and it reads `prevParsed[iAxis]` at each pass, because the
       scriptable options of the user run between two passes (the 3-read form of Chart.js ADR
-      0027). `update` writes `_chart`, `_datasetIndex`, `_decimated` and `points` into the line
+      0036). `update` writes `_chart`, `_datasetIndex`, `_decimated` and `points` into the line
       by name (`types.PropertyAccess`), and `draw` casts the line to `types.LineElement`.
     - `controller.bubble.dart`: the parsed radius goes to `_custom`. `resolveDataElementOptions`
       copies the options with `copyOptions(values)..[r'$shared'] = false` (Chart.js ADR 0021 §3)
@@ -271,7 +274,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     libraries. `test/tool/`: tests of the port tools.
   - `test/fixtures/` (Chart.js ADR 0029): `index.dart` is the registry of the fixture runner, not
     a test file. It has `specs` (`jasmine.fixture.specs` of `test/index.js:15-17`),
-    `handFixtures` (117 hand ports, each with the first 12 hex digits of its manifest `sha256`)
+    `handFixtures` (119 hand ports, each with the first 12 hex digits of its manifest `sha256`)
     and `fixtureSkips` (72 skips). `hand/<path>.dart` is the hand port of the impure config
     `test/fixtures/<path>.js` of the pin, with the function `fixture()`.
     `test/port/fixtures/index_test.dart` checks the registry against the manifest, the files of
@@ -291,15 +294,18 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0035. Eight of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0036. Nine of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR
       0012 supersedes Chart.js ADR 0004, and Chart.js ADR 0026 supersedes Chart.js ADR 0008.
       Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0033 supersedes Chart.js
       ADR 0025 §5 for `xCenter` and `yCenter` (2026-10-21).
       Chart.js ADR 0032 (JS numeric semantics) supersedes Chart.js ADR 0010. Chart.js ADR 0034
       (no display-only JS exactness) supersedes Chart.js ADR 0009. Chart.js ADR 0035
-      (third-party sources) supersedes Chart.js ADR 0011. The porting lead accepted Chart.js ADRs
-      0032, 0034 and 0035 on 2026-10-21. Docs and code cite them for the current rules.
+      (third-party sources) supersedes Chart.js ADR 0011. Chart.js ADR 0036 states the complete
+      decision of Chart.js ADR 0027 (parsed data) with the V8 zone name of `jsToString` and the
+      cast of each parsing key inside the loop of `parseObjectData`, and supersedes it. The
+      porting lead accepted Chart.js ADRs 0032, 0034, 0035 and 0036 on 2026-10-21.
+      Docs and code cite them for the current rules.
       Chart.js ADR 0001 is accepted for its four theming invariants only.
       The porting lead (the agent that runs the phase) owns the ADR statuses (the maintainer,
       2026-10-21). It accepts an ADR when the decision is implemented and its gates are green. A
@@ -388,7 +394,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `datasetsDraw`. `lib/main_stress.dart` is the profiling entry. `lib/main_bench.dart` with
     `lib/bench/chart_bench.dart` is the frameless benchmark of the same cases
     (`packages/flutter_chartjs/doc/performance.md` §6).
-  - The layout rule (Chart.js ADR 0031 §10): each parameter is a full-width `SegmentChoice` or
+  - The layout rule (Chart.js ADR 0031 §10) applies to the nine type pages and to the Stress,
+    Core and Axes tabs: each parameter is a full-width `SegmentChoice` or
     `SegmentToggles` line of `lib/demo/demo_controls.dart`, with short text or icons. A
     `SegmentChoice` item with an `icon` shows the icon only, else its short text. No chip, slider,
     popup menu, dropdown or horizontal scroll. The chart host is fully in view after the first frame
@@ -535,34 +542,35 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
 - The JS runtime in `lib/src/js/`: `jsObjectKeys` (`Object.keys` order), `jsSort` (the stable
   `Array.prototype.sort`), `jsCall` (a call of a JS function value with JS arity), `jsGet` (the
   property read `object[key]`), `jsOrZero` (`value || 0` before arithmetic, Chart.js ADR 0017
-  §8, proposed), `jsAdd` (the operator `a + b` on a raw option value: a string operand joins,
+  §8), `jsAdd` (the operator `a + b` on a raw option value: a string operand joins,
   else the numbers add), `jsGetKey` (the read `object[key]` of a parsed item, a data item or a
   stack object, with the `jsGet` result; a read of a resolver stays `jsGet`), `jsGetIndex` (the
   read `object[index]` with a number index: a List gives the item at a whole index in range, else
   `undefined`), `jsSetIndex` (the write `list[index] = value`: a write at the length appends, a
   write past it or at a negative index throws a `RangeError`), `jsLessThan` (the operator `a < b`
   on raw values: two strings compare by their code units, a `DateTime` by its time value)
-  (Chart.js ADR 0027, proposed), `jsSin` and `jsCos` (`Math.sin` and `Math.cos` at a protected site:
+  (Chart.js ADR 0036), `jsSin` and `jsCos` (`Math.sin` and `Math.cos` at a protected site:
   a site that reaches a layout, a scale, an element property, a hit test, a public return value
   or a discrete decision; a display-only site keeps `dart:math` with `js-ok`, Chart.js ADR 0032)
   and the `undefined` sentinel (Chart.js ADR 0006). `JsStringList`
   of `js_array.dart` is a string as an array-like value: the reads `s[i]` and `s.length`, and a
   `TypeError` for each write. `_dataCheck` keeps a string `data` in it. `jsToString` of
-  a `DateTime` gives the `Date.prototype.toString` text in the platform zone, without the zone
-  name. The conversions of
+  a `DateTime` gives the `Date.prototype.toString` text in the platform zone, with the V8 zone
+  name on the web and in UTC on the VM (Chart.js ADR 0036, differences.md row
+  `platform-date-zone-name`). The conversions of
   `js_webidl.dart` (`canvasStyle`, `canvasNumber`, `canvasKeyword` and `canvasLineDash`) apply the
   WebIDL conversion of a Canvas 2D setter or of `setLineDash` to an option value (Chart.js ADR
-  0017 §8, proposed). Ported code calls them where upstream uses the JS builtin or gives an option
+  0017 §8). Ported code calls them where upstream uses the JS builtin or gives an option
   value to the canvas. A typed Map read stays `map[key]`. Use `jsGet` when the receiver can be a
   value that is not a Map, or when an absent key must give `undefined` and not `null`. Ported code
   tests for the sentinel with `identical(value, undefined)`. The runtime also has these parts:
-  - `JsClass` of `js_class.dart`: a JS class as a value (Chart.js ADR 0020, proposed). A read of a
+  - `JsClass` of `js_class.dart`: a JS class as a value (Chart.js ADR 0020). A read of a
     static property follows the superclass chain. `jsConstruct` is `new target(...args)`.
     `jsAssign` is `Object.assign` on a class value or a Map.
   - `jsIsFunction` (`typeof value === 'function'`) is true for a class value. `jsCall` throws an
     `ArgumentError` for a class value. `jsTypeof` is `typeof`.
   - `jsObjectFreeze` and `jsObjectIsFrozen` are `Object.freeze` and `Object.isFrozen` (Chart.js
-    ADR 0021 §5, proposed). Only a `JsFreezable` freezes. A write into frozen options throws a
+    ADR 0021 §5). Only a `JsFreezable` freezes. A write into frozen options throws a
     `TypeError`.
   - `jsOwnPropertyNames` is `Object.getOwnPropertyNames`. For a resolver, it gives the keys of the
     `ownKeys` trap. `jsMapForEach` is `Map.prototype.forEach` while the callback changes the Map.
@@ -571,7 +579,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   - `jsDateNow` of `js_date.dart` is `Date.now()` on `clock.now()` (Chart.js ADR 0032 §6). Ported
     code never calls `DateTime.now()`. A `DateTime` is a JS `Date`: `jsToNumber` gives its time
     value (Chart.js ADR 0024).
-  - `js_promise.dart` has the promise jobs of Chart.js ADR 0019 §7 (proposed):
+  - `js_promise.dart` has the promise jobs of Chart.js ADR 0019 §7:
     `jsEnqueuePromiseJob`, `jsRunWithMicrotaskCheckpoint` (the checkpoint after an animator frame
     callback) and `jsPromiseAll` (`Promise.all`).
 - File names in the upstream spelling and the `_` rules: Chart.js ADR 0012.
@@ -741,10 +749,10 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   cases) puts the no-op `updateConfig` of `BasePlatform` on `BasicPlatform` first.
 - The doughnut and pie test files map the expected JS `null` of `xAxisID` and `yAxisID` to
   `undefined` (`_undefinedAxisIds`): their empty `linkScales` keeps the JS `null`, and the Dart
-  field `ChartMeta.xAxisID` is a `String?`.
+  field `ChartMeta.xAxisID` (an `Object?`, the raw id) has Dart `null` for both.
 - The controller generators have no step that writes an option. A pin test of an option change
-  takes its expected values from a probe on the pinned build, and the test comment names the
-  report that records the probe (`controller.scatter_test.dart`, group `showLine`).
+  takes its expected values from a probe on the pinned build, and the test comment gives the
+  probe and its output (`controller.scatter_test.dart`, group `showLine`).
 - A spec that changes a data array of a chart (`push`, `pop`, `shift`, `splice`, `unshift`)
   changes the `List` and then calls `notifyArrayListeners`, the body of the hooked method
   (differences.md row `platform-array-events`; the helpers `_push` to `_unshift` of

@@ -47,7 +47,7 @@ import 'controller_polar_area_reference.dart';
 //
 // The 9 cases of Chart.js ADR 0030, section 7 run two times: unthemed, and
 // with the light preset (theming.md section 8 test 3). The cases whose names
-// start with `parsed:` (Chart.js ADR 0027, section 9) or `interfaces:`
+// start with `parsed:` (Chart.js ADR 0036, section 9) or `interfaces:`
 // (Chart.js ADR 0028, section 8) run unthemed only. The cases
 // `interfaces: sharing, ...` run in a group that registers the test
 // subclass with option sharing before each case and unregisters it after
@@ -440,9 +440,10 @@ void main() {
       });
     }
 
-    // The key after a data insert (decision D11 item c). `_updateHiddenIndices`
-    // moves the key '01' to '2' (core.controller.js:72-84). The x64 Node.js
-    // probe of the unit X-fix on the build at the pin gives the visibility
+    // The key after a data insert (Chart.js ADR 0028 §6).
+    // `_updateHiddenIndices` moves the key '01' to '2'
+    // (core.controller.js:72-84). A probe of the build at the pin in x64
+    // Node.js v24.12.0 gives the visibility
     // 1101 and the outer radii 248, 27.555556, 0 and 82.666667 (rounded).
     testWidgets("onClick with the index '01', then unshift, hides the data "
         'index 2', (tester) async {
@@ -482,11 +483,11 @@ void main() {
     });
   });
 
-  // The reset of a new arc on a new radial scale (decision D11 item a).
+  // The reset of a new arc on a new radial scale (Chart.js ADR 0033).
   // `_insertElements` resets the new arc before the first layout of the new
   // scale. Upstream then reads `xCenter` and `yCenter` as `undefined`
-  // (scale.radialLinear.js:416-418). The x64 Node.js probe of the unit X-fix
-  // on the build at the pin gives: before the layout, `x` and `y` are
+  // (scale.radialLinear.js:416-418). An x64 Node.js probe on the build at
+  // the pin gives: before the layout, `x` and `y` are
   // `undefined`; after the update, the animations `x` and `y` go from 256 to
   // 256.
   group('the reset on a new radial scale', () {

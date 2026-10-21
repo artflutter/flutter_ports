@@ -222,12 +222,15 @@ import 'hand/scale.radialLinear/pointLabels/scriptable-color-small.dart'
     as scale_radiallinear_pointlabels_scriptable_color_small;
 import 'hand/scale.radialLinear/ticks-below-zero.dart'
     as scale_radiallinear_ticks_below_zero;
+import 'hand/scale.time/autoskip-major.dart' as scale_time_autoskip_major;
 import 'hand/scale.time/bar-large-gap-between-data.dart'
     as scale_time_bar_large_gap_between_data;
 import 'hand/scale.time/custom-parser.dart' as scale_time_custom_parser;
 import 'hand/scale.time/data-ty.dart' as scale_time_data_ty;
 import 'hand/scale.time/data-xy.dart' as scale_time_data_xy;
 import 'hand/scale.time/labels-date.dart' as scale_time_labels_date;
+import 'hand/scale.time/offset-with-no-ticks.dart'
+    as scale_time_offset_with_no_ticks;
 import 'hand/scale.timeseries/financial-daily.dart'
     as scale_timeseries_financial_daily;
 
@@ -686,6 +689,10 @@ final Map<String, HandFixture> handFixtures = {
     load: scale_radiallinear_ticks_below_zero.fixture,
     sha256: 'c255b6ba2824',
   ),
+  'scale.time/autoskip-major.js': (
+    load: scale_time_autoskip_major.fixture,
+    sha256: 'b0621b5b41ca',
+  ),
   'scale.time/bar-large-gap-between-data.js': (
     load: scale_time_bar_large_gap_between_data.fixture,
     sha256: '64deb58590c8',
@@ -705,6 +712,10 @@ final Map<String, HandFixture> handFixtures = {
   'scale.time/labels-date.js': (
     load: scale_time_labels_date.fixture,
     sha256: '7c9efdf5f808',
+  ),
+  'scale.time/offset-with-no-ticks.js': (
+    load: scale_time_offset_with_no_ticks.fixture,
+    sha256: '8b06d8cab19e',
   ),
   'scale.timeseries/financial-daily.js': (
     load: scale_timeseries_financial_daily.fixture,

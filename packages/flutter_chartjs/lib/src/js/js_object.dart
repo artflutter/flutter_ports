@@ -2,7 +2,7 @@
 
 /// The JavaScript property read `object[key]` (`[[Get]]`) over the Dart
 /// values that stand for JavaScript values (Chart.js ADR 0006), its forms
-/// for a property name and a number index (Chart.js ADR 0027), the frozen
+/// for a property name and a number index (Chart.js ADR 0036), the frozen
 /// state of `Object.freeze` (Chart.js ADR 0021, section 5), and the `typeof`
 /// operator (Chart.js ADR 0019, section 1).
 library;
@@ -70,7 +70,7 @@ int? _index(String key, int length) {
 }
 
 /// `object[key]` for a property name [key]: the result of [jsGet] for every
-/// value (Chart.js ADR 0027).
+/// value (Chart.js ADR 0036).
 ///
 /// A Map that is not a [JsProxyObject] is read inline: the value of [key],
 /// or [undefined] for a key that the Map does not contain. Every other value
@@ -88,7 +88,7 @@ Object? jsGetKey(Object? object, String key) {
   return jsGet(object, key);
 }
 
-/// `object[index]` for a number [index] (Chart.js ADR 0027): for a List,
+/// `object[index]` for a number [index] (Chart.js ADR 0036): for a List,
 /// the item at a whole [index] below the length, else [undefined]; for
 /// another value, [jsGet].
 ///

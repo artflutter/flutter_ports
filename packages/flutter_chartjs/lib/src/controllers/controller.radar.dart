@@ -7,7 +7,7 @@
 /// position of its value on the radial linear scale, and closes the
 /// `LineElement` of the dataset through the points.
 ///
-/// - A parsed item is any value (Chart.js ADR 0027). The reads
+/// - A parsed item is any value (Chart.js ADR 0036). The reads
 ///   `parsed[vScale.axis]` and `this.getParsed(i).r` are [jsGetKey], and the
 ///   label read `vScale.getLabels()[index]` is [jsGetIndex]. A read of a
 ///   resolver is [jsGet] (Chart.js ADR 0017, section 8).
@@ -21,7 +21,7 @@
 ///   (Chart.js ADR 0028, section 2).
 /// - [RadarController.jsClass] is the class as a value with the statics
 ///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
-/// - The option resolution for each point stays literal (Chart.js ADR 0027,
+/// - The option resolution for each point stays literal (Chart.js ADR 0036,
 ///   section 8: the step 7 list).
 ///
 /// This library imports `core.datasetController.dart`, which imports

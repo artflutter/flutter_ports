@@ -218,7 +218,8 @@ Changes to the cited files:
   remove its code. Thus the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
   estimates do not change. No trigger occurred.
 - 2026-10-21, the integration of wave 3 of phase 7. `apps/chartjs_gallery/lib/demo/demo_chart.dart`,
-  which §3.1 cites, gets the signature `toggleDataVisibility(Object? index)` (decision D11 item c).
+  which §3.1 cites, gets the signature `toggleDataVisibility(Object? index)` (Chart.js ADR 0028
+  §6).
   `DemoChart` keeps its default `UiCanvasElement()`, so §3.1 does not change.
   `lib/src/core/core.controller.dart` changes only `toggleDataVisibility`, not `_resize`. The lift
   of wave 2 (L2) gave the two `platform.dom` cases of §3.6 their bodies: "default chart aspect
