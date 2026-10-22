@@ -15,7 +15,7 @@ Exception: the maintainer decided on 2026-10-20 that phase 6 ports from the v4.5
 
 The commit pin of 2026-10-20 ends that exception. The section `v4.5.1 → v4.5.1+7169e651` closes the rows of the range.
 
-Signals: #12302 (milestone 4.6.0, core.ticks). #12286 (milestone 4.6.0, helpers.core). #12268 (fix for the security report #12265). #12205 (theming.md §9, legend crash after a font change). #11910 (theming.md §9, scale color defaults do not update). #12151 (report of the #12097 regression). #12269 (report of the #12097 regression). #7738 (touch tooltips never hide, ADR: Input events and interaction state).
+Signals: #12302 (milestone 4.6.0, core.ticks). #12286 (milestone 4.6.0, helpers.core). #12268 (fix for the security report #12265). #12205 (theming.md §9, legend crash after a font change). #11910 (theming.md §9, scale color defaults do not update). #12151 (report of the #12097 regression). #12269 (report of the #12097 regression). #7738 (touch tooltips never hide. Chart.js ADR 0037 keeps the Chrome result).
 
 ## After v4.5.1+7169e651
 

@@ -257,11 +257,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `canvas_ui_batch.dart`, the circle batch) are the `dart:ui` implementation. No helper imports
     them. `canvas_ui.dart` reflects the `style` attribute of the canvas. Other attributes keep their
     values as strings (Chart.js ADR 0022).
-  - `lib/src/platform/` (Chart.js ADR 0014): the ports of `index.js`, `platform.base.js` and
+  - `lib/src/platform/` (Chart.js ADR 0037): the ports of `index.js`, `platform.base.js` and
     `platform.basic.js`, and three port-only files. `platform.flutter.dart` replaces
     `platform.dom.js`. `chart_host.dart` is the internal chart host (`ChartHost`,
-    `RenderChartHost`). A resize observer gets its first notification at the next layout of the
-    host. `flushCanvasMutations` is the mutation checkpoint of the harness (Chart.js ADR 0022).
+    `RenderChartHost`). A touch tap gives the compatibility mouse events. A tap outside gives
+    `mouseout` to the chart of the last tap (Chart.js ADR 0037). A resize observer gets its first
+    notification at the next layout of the host. `flushCanvasMutations` is the mutation checkpoint of the harness (Chart.js ADR 0022).
     `native_event.dart` is the stand-in for the DOM event, a pure layer.
   - `lib/src/theme/` (Chart.js ADR 0001, port-only): `compile.dart` has `compileChartTheme` over
     raw Map themes, the emission guard and the deep freeze. `presets.dart` has the internal

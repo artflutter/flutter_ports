@@ -1,6 +1,8 @@
 # flutter_chartjs_port theming design
 
-- Status: proposed ([Chart.js ADR 0001](adr/0001-theming.md))
+- Status: proposed ([Chart.js ADR 0042](adr/0042-theming.md), proposed, restates
+  [Chart.js ADR 0001](adr/0001-theming.md) with the palette change and supersedes it on
+  acceptance)
 - Date: 2026-10-16
 - Related: [forui theming survey](prior-art/forui-theming.md), [porting flow](porting-flow.md),
   [upstream tracking](upstream-tracking.md),
@@ -12,7 +14,7 @@ section 3. Section 5 is an API sketch for phase 9.
 Upstream paths are relative to `third_party/Chart.js` (v4.5.1, `9c5cf9f`). forui citations use
 the form `forui/0.27.6:<path>:<line>` of the [survey](prior-art/forui-theming.md).
 
-**Decision (Chart.js ADR 0001)**
+**Decision (Chart.js ADR 0042, which restates Chart.js ADR 0001)**
 
 - A theme compiles to one frozen map with the key shape of `Chart.defaults`. The ported resolver
   reads it as one option scope between `overrides[type]` and `defaults`.
@@ -29,7 +31,8 @@ the form `forui/0.27.6:<path>:<line>` of the [survey](prior-art/forui-theming.md
 Goals:
 
 1. **No theme means upstream:** unthemed specs and fixtures behave like v4.5.1.
-2. **A small, replayable diff:** only the two palette getter bodies change upstream lines.
+2. **A small, replayable diff:** the hunks only add lines. No hunk changes an upstream line
+   (Chart.js ADR 0042).
 3. **Familiar to forui users:** an inherited theme, value equality, `copyWith`, `lerp`, presets.
 4. **No writes to `Chart.defaults`:** themes stay per subtree. The colors-plugin check
    (`plugin.colors.ts:90-92`) sees upstream values.
@@ -70,14 +73,14 @@ signature change.
 
 | # | Upstream site | Kind | Change |
 |---|---|---|---|
-| H0 | `core.config.js`, before `class Config` (:158) | added | `themeConfigKey` and a private `_themeOf(config)` |
+| H0 | `core.config.js`, before `class Config` (:158) | added | `themeConfigKey`, the private `_themeOf` and the public `chartThemeOf` |
 | H1 | `core.config.js:106-110` (`mergeScaleConfig`) | added | a separate `mergeIf(scale, [theme.scales[type], theme.scale])` before the upstream line |
 | H2 | `core.config.js:312-313` (`getOptionScopes`) | added | theme scopes between `overrides[type]` and `defaults` |
 | H3 | `core.config.js:336-337` (`chartOptionScopes`) | added | `?_themeOf(_config)` after `overrides[type]` |
 | H4a | `plugin.colors.ts`, after :25 | added | the palette keys and two library variables |
-| H4b | `plugin.colors.ts:28` (`getBorderColor`) | changed | the body reads the theme palette first |
-| H4c | `plugin.colors.ts:32` (`getBackgroundColor`) | changed | the body reads the theme palette first |
-| H5 | `plugin.colors.ts:123` (`beforeLayout`) | added | sets the two variables from the plugin options |
+| H4b | `plugin.colors.ts:28` (`getBorderColor`) | added | a theme branch before the unchanged line |
+| H4c | `plugin.colors.ts:32` (`getBackgroundColor`) | added | a theme branch before the unchanged line |
+| H5 | `plugin.colors.ts:123` (`beforeLayout`) | added | sets the two variables from the theme map of the chart (`chartThemeOf`) |
 
 Each hunk has one `// DIVERGES(chartjs): <row id>, <reason>` line and one `differences.md` row.
 The row ids are `theme-H0` to `theme-H5`. The header check (porting-flow.md, tool 2) uses
@@ -157,12 +160,15 @@ Fonts become `FontSpec` maps of the non-null fields.
 Emitted:
 
 - root `color` and the token keys of section 4
-- `plugins.colors.$borderColors` and `plugins.colors.$backgroundColors`
+- `plugins.colors.$borderColors` and `plugins.colors.$backgroundColors`, from the `palette` field
+  `{colors, backgroundAlpha}`: the colors at their alpha, and the colors at `backgroundAlpha` (0.5
+  when absent)
 - the `raw` keys that pass the guard
 - `transitions.theme.animation.{duration,easing}` and `transitions.themeFrame.animation.duration: 0`
 
 In phase 5, the tokens emit only the root `color`, the `scale` keys and the element keys. Phase 6
-adds the `scales.radialLinear` keys. Phase 8 adds the plugin keys and the palette keys.
+adds the `scales.radialLinear` keys. Phase 8 adds the plugin keys and the palette keys. Wave 1
+adds `plugins.title.color`, `plugins.title.font` and the palette keys.
 
 Never emitted. A debug assert and the emission test enforce this list.
 
@@ -183,6 +189,13 @@ Never emitted. A debug assert and the emission test enforce this list.
   resolves them from `plugins.tooltip`, then from `interaction` (`core.config.js:267-275`). The
   theme scope of `plugins.tooltip` comes before `defaults.interaction` (H2). Thus a theme key
   changes the tooltip elements (`plugin.tooltip.js:1200`).
+- The plugin behavior paths of `themePluginBehaviorPaths` (Chart.js ADR 0042):
+  `plugins.decimation.algorithm`, `.samples` and `.threshold` (`plugin.decimation.js:12, 242,
+  269`), `plugins.filler.propagate` (`plugin.filler/index.js:47`), `plugins.legend.reverse`
+  (`plugin.legend.js:116-117`), `plugins.tooltip.position` (`plugin.tooltip.js:651, 1012,
+  1218`), and the content keys `plugins.title.text` and `plugins.subtitle.text`
+  (`plugin.title.js:43, 97`) and `plugins.legend.title.text` (`plugin.legend.js:487`). The guard
+  compares paths, not names: `position` is also a layout key of a box, and it passes.
 - `plugins.<id>: bool`. Only user options can use it (`core.plugins.js:101-107, 146-154`).
 - `scales.<id>` other than a scale type. These keys are dead. H1 reads only
   `scales[<scale type>]`. Chart-level lookups find every defaulted key in the scale copy-in first.
@@ -193,6 +206,8 @@ Never emitted. A debug assert and the emission test enforce this list.
   scale type fails the guard.
 - `_`-prefixed keys, read as descriptors (`helpers.config.ts:200-212`), and `$` keys other than
   the palette.
+- A palette key with a value that is not a List with at least one item. An empty List gives
+  `i % 0` in hunk H4b, a throw in Dart.
 - Functions, nulls and the `undefined` sentinel. A JS null is a value. A stored `undefined` blocks
   the scale defaults in the merge of H1.
 
@@ -216,22 +231,46 @@ Fonts merge per key across scopes. CSS family lists belong to ADR: Text.
 
 The plugin colorizes the datasets only when they have no user colors and the singleton defaults
 are unchanged (`plugin.colors.ts:90-92, 113-121`). Neither check sees the theme. The palette thus
-runs under a theme. It writes into the datasets, above the theme. Plugin options resolve with
-`indexable: false` (`core.plugins.js:182-186`). Lists thus stay intact.
+runs under a theme. It writes into the datasets, above the theme.
+
+Chart.js ADR 0042 decides the palette form (form B). H4a adds the two palette keys of a theme map,
+two library variables and their reader after `BACKGROUND_COLORS` (`plugin.colors.ts:25`). The
+reader gives the List under `plugins.colors` of the theme map, or `null` for a missing key, a value
+that is not a List and an empty List (the guard of §3.3 rule 9 also rejects these values). H4b and
+H4c add a theme branch before the unchanged upstream line:
 
 ```dart
-/// plugin.colors.ts:27-29.
-String getBorderColor(int i) {
-  // DIVERGES(chartjs): theme-H4b, theme palette first.
-  final colors = _themeBorderColors ?? borderColors;
-  return colors[i.remainder(colors.length)];
+/// plugin.colors.ts:27 `getBorderColor(i)`. The TypeScript source declares
+/// no return type. A theme palette holds any static JS value.
+Object? _getBorderColor(int i) {
+  // DIVERGES(chartjs): theme-H4b, the theme palette comes first.
+  final themeColors = _themeBorderColors;
+  // js-ok: i is an int and never negative, so Dart % equals JS %.
+  if (themeColors != null) return themeColors[i % themeColors.length];
+  // js-ok: i is an int and never negative, so Dart % equals JS %.
+  return _borderColors[i % _borderColors.length];
 }
 ```
 
-Whenever `beforeLayout` reaches the colorizer, H5 sets both variables from the plugin options,
-null included. The colorizer runs synchronously right after H5. A test interleaves two charts with
-different palettes. An argument instead of the variables changes six upstream signatures:
-`getColorizer`, the three `colorize*` functions and both getters.
+Whenever `beforeLayout` reaches the colorizer, H5 sets both variables from the theme map of the
+chart (`chartThemeOf` of `core.config.dart`, the public H0 reader), Dart `null` included:
+
+```dart
+    // DIVERGES(chartjs): theme-H5, the palette of the chart theme for this run.
+    final theme = chartThemeOf(config);
+    _themeBorderColors = _themePalette(theme, themeBorderColorsKey);
+    _themeBackgroundColors = _themePalette(theme, themeBackgroundColorsKey);
+
+    final colorizer = _getColorizer(chart);
+```
+
+The reset at each run keeps the palette of one chart out of the next chart, also out of an
+unthemed chart. H5 comes after the returns of `:103` and `:119`. Thus it runs only when the
+colorizer runs. The colorizer runs synchronously right after H5. A test interleaves two charts with
+different palettes. H5 reads the theme map, not the plugin options. Thus a `$borderColors` key in
+the user options, `overrides[type]` or `defaults` has no effect, as upstream. An argument instead
+of the variables changes six upstream signatures: `getColorizer`, the three `colorize*` functions
+and both getters.
 
 ### 3.6 Scale copy-in and option caches
 
@@ -308,7 +347,7 @@ A null token themes nothing. A partial theme thus restates nothing.
 | `colors.surface` | `'#fff'` (`element.arc.ts:306`), `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`) | `elements.arc.borderColor`, `scale.ticks.backdropColor` at alpha 0.75 |
 | `colors.inverseSurface` | `'rgba(0,0,0,0.8)'` (`plugin.tooltip.js:1279`) | `plugins.tooltip.backgroundColor` |
 | `colors.onInverseSurface` | `'#fff'` (`plugin.tooltip.js:1280, 1287, 1292, 1305`) | `plugins.tooltip.{titleColor,bodyColor,footerColor,multiKeyBackground}` |
-| `palette` | `BORDER_COLORS`, `BACKGROUND_COLORS` (`plugin.colors.ts:14-25`) | `plugins.colors.$borderColors`, `plugins.colors.$backgroundColors` |
+| `palette` (`{colors, backgroundAlpha}`) | `BORDER_COLORS`, `BACKGROUND_COLORS` (`plugin.colors.ts:14-25`) | `plugins.colors.$borderColors` (the colors at their alpha), `plugins.colors.$backgroundColors` (the colors at `backgroundAlpha`, 0.5 when absent) |
 | `typography.font` | `Defaults.font` (`core.defaults.js:54-60`) | `scale.ticks.font`, `scale.title.font`, `plugins.legend.labels.font`, `plugins.legend.title.font`, `plugins.tooltip.bodyFont`. Without weight: `plugins.title.font`, `plugins.subtitle.font`, `plugins.tooltip.titleFont`, `plugins.tooltip.footerFont` |
 | `typography.pointLabels` | point-label size 10 (`scale.radialLinear.js:383-385`) | `scales.radialLinear.pointLabels.font`: the base font without size, then this font |
 
@@ -451,7 +490,7 @@ specs such as `controller.line.tests.js:784-799` thus run unthemed. Theme tests 
   (porting-flow.md, tool 6) lists them in its port-only section. They get no `differences.md` rows.
 - Each hunk has one row in `packages/flutter_chartjs_port/doc/differences.md`, in the column set of porting-flow.md. A
   theme row has the category `theme`. It names its section 8 test. The H4b and H4c rows say
-  "changed lines".
+  "added lines".
 - The import guard (porting-flow.md, tool 1) must reject an import of `src/theme/` in a ported
   file. It keeps `lib/` free of `material`, `cupertino`, `material_ui` and `forui`. The forui
   adapter is its own package. The Material snippet lives in the gallery.
@@ -469,12 +508,15 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    `ChartThemes.none` compiles to null, no dependence on `TargetPlatform`.
 2. **Precedence** (H1, H2, H3, H5). A sentinel table has one row per level of section 3.2, for
    elements, scales, plugins and chart level. The palette beats the theme element colors. User
-   colors disable the palette. In phase 5, the palette rows are skipped placeholders in
-   `test/port/theme/precedence_test.dart`. Phase 8 gives them `testWidgets` bodies.
+   colors disable the palette. The group `palette` of `test/port/theme/precedence_test.dart` has
+   the palette rows (phase 8, wave 1). The expected lines come from a JavaScript prototype of the
+   hunks H4a-H5 on the pinned `plugin.colors.ts`.
 3. **The light preset equals upstream** (H4a, H4b, H4c, H5). The test resolves 8 chart types with
    the colors plugin on and off. It compares element options (default and active) and the scale,
    legend, tooltip, title and subtitle keys, with colors parsed. The JS prototype matched 16 of 16
-   cases with the explicit palette.
+   cases with the explicit palette. The group `test 3: the light palette` of
+   `precedence_test.dart` has the part with the colors plugin on (phase 8, wave 1). The plugin
+   keys come with their plugins.
 4. **Coverage snapshot.** A committed JSON snapshot holds `compileChartTheme(ChartThemes.light)`.
    The test compares it with the defaults inventory of the upstream manifest (porting-flow.md,
    tool 4) and a `notThemed` list with a reason per key. It reports:
@@ -647,8 +689,6 @@ theming work in each phase.
   without the theme paints other pixels, and the 8 themed charts leave `defaults` unchanged.
 
 These parts wait:
-- The palette rows of test 2 and the pins of H4a-H4c and H5 come with `plugin.colors` in phase 8.
-  `precedence_test.dart` lists them as skipped tests with the reason `'blocked: plugin.colors'`.
 - The plugin tokens and the palette come in phase 8. A new color token also goes into
   `_blueTheme` of `blue_screen_test.dart`, or the blue screen can show a leak of the plugins.
 - The blue screen with an active element waits for `IdentityChartHover` (§8 item 6).

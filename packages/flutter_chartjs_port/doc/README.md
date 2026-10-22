@@ -30,8 +30,8 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). All Chart.js ADRs are accepted. Chart.js ADR 0001 is accepted for its
-  four invariants only. Nine of them are superseded: Chart.js ADR 0010 supersedes Chart.js ADR
+  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0036 are accepted. Chart.js ADR 0001 is accepted
+  for its four invariants only. Chart.js ADRs 0037-0042 of phase 8 are proposed. Nine of them are superseded: Chart.js ADR 0010 supersedes Chart.js ADR
   0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR
   0004, Chart.js ADR 0016 supersedes Chart.js ADR 0007, Chart.js ADR 0026 supersedes Chart.js ADR
   0008, Chart.js ADR 0032 supersedes Chart.js ADR 0010, Chart.js ADR 0034 supersedes Chart.js ADR
@@ -61,6 +61,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
     0004)
   - [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md)
   - [Chart.js ADR 0014: Input events and the chart host](adr/0014-input-events-and-chart-host.md)
+    (Chart.js ADR 0037 supersedes it on acceptance)
   - [Chart.js ADR 0015: Text](adr/0015-text.md)
   - [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (it supersedes Chart.js ADR
     0007)
@@ -92,6 +93,17 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
     Chart.js ADR 0011)
   - [Chart.js ADR 0036: Parsed data in the controllers](adr/0036-parsed-data.md) (it supersedes
     Chart.js ADR 0027)
+  - [Chart.js ADR 0037: Legend and tooltip input path](adr/0037-legend-and-tooltip-input-path.md)
+    (proposed; it supersedes Chart.js ADR 0014 on acceptance)
+  - [Chart.js ADR 0038: Plugin modules, class values and interfaces](adr/0038-plugin-modules-class-values-and-interfaces.md)
+    (proposed)
+  - [Chart.js ADR 0039: Tooltip model and animation](adr/0039-tooltip-model-and-animation.md)
+    (proposed)
+  - [Chart.js ADR 0040: Filler targets and plain points](adr/0040-filler-targets-and-plain-points.md)
+    (proposed)
+  - [Chart.js ADR 0041: Plugin test strategy](adr/0041-plugin-test-strategy.md) (proposed)
+  - [Chart.js ADR 0042: Theming](adr/0042-theming.md) (proposed; it supersedes Chart.js ADR 0001
+    on acceptance)
 
 ## What gets ported
 
@@ -193,9 +205,11 @@ and gate 2 decisions. All of them are accepted. An example is the options repres
   and a decision on a typed Dart options API versus accepting raw Chart.js JSON configs (or both).
 - **Text.** Decided in [Chart.js ADR 0015](adr/0015-text.md): a parser for the CSS font
   shorthand, `ui.Paragraph` with LRU caches, and Liberation Sans as the test font.
-- **Input events.** Decided in [Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md): DOM
-  event names from Flutter pointer events, an internal chart host that sizes the chart before the
-  first paint, and one tap recognizer in the gesture arena.
+- **Input events.** Decided in [Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md)
+  (proposed; it supersedes [Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md) on
+  acceptance): the DOM event names of Chrome from Flutter pointer events, an internal chart host
+  that sizes the chart before the first paint, no claim in the gesture arena, and the compatibility
+  mouse events of a touch tap.
 - **Animation.** `requestAnimationFrame` maps onto `SchedulerBinding.scheduleFrameCallback`.
   `core.animator.js` stays one module-level animator on `requestAnimFrame`
   ([Chart.js ADR 0016](adr/0016-frame-scheduling.md)). [Chart.js ADR 0019](adr/0019-animation.md)
