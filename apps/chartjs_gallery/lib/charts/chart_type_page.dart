@@ -24,7 +24,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// The chart is a `Chart` of `core.controller` with the config of a docs
 /// block. The host has no height: it gets an unbounded height in the
 /// scroll view, and the platform gives the height from the width and the
-/// aspect ratio of the type (Chart.js ADR 0014). Thus the chart has the
+/// aspect ratio of the type (Chart.js ADR 0037). Thus the chart has the
 /// aspect of the docs: 2, or 1 for doughnut, pie, polar area and radar.
 class ChartTypePage extends StatefulWidget {
   /// Creates the page of [entry].
