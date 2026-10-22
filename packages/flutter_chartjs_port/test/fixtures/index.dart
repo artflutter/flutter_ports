@@ -215,6 +215,24 @@ import 'hand/plugin.colors/dynamic-datasets-default.dart'
     as plugin_colors_dynamic_datasets_default;
 import 'hand/plugin.colors/dynamic-datasets-force-override.dart'
     as plugin_colors_dynamic_datasets_force_override;
+import 'hand/plugin.filler/line/dataset/interpolated.dart'
+    as plugin_filler_line_dataset_interpolated;
+import 'hand/plugin.filler/line/points-outside-canvas-update.dart'
+    as plugin_filler_line_points_outside_canvas_update;
+import 'hand/plugin.filler/line/segments/alignToPixels.dart'
+    as plugin_filler_line_segments_aligntopixels;
+import 'hand/plugin.filler/line/segments/gap.dart'
+    as plugin_filler_line_segments_gap;
+import 'hand/plugin.filler/line/segments/slope.dart'
+    as plugin_filler_line_segments_slope;
+import 'hand/plugin.legend/borderRadius/legend-border-radius.dart'
+    as plugin_legend_borderradius_legend_border_radius;
+import 'hand/plugin.legend/horizontal-rtl-hitbox.dart'
+    as plugin_legend_horizontal_rtl_hitbox;
+import 'hand/plugin.legend/maxWidth/infinity.dart'
+    as plugin_legend_maxwidth_infinity;
+import 'hand/plugin.legend/padding/add-column.dart'
+    as plugin_legend_padding_add_column;
 import 'hand/plugin.title/scriptable-options.dart'
     as plugin_title_scriptable_options;
 import 'hand/scale.category/invalid-data.dart' as scale_category_invalid_data;
@@ -678,6 +696,42 @@ final Map<String, HandFixture> handFixtures = {
   'plugin.colors/dynamic-datasets-force-override.js': (
     load: plugin_colors_dynamic_datasets_force_override.fixture,
     sha256: 'f3ad48682a29',
+  ),
+  'plugin.filler/line/dataset/interpolated.js': (
+    load: plugin_filler_line_dataset_interpolated.fixture,
+    sha256: '6b037bf196dd',
+  ),
+  'plugin.filler/line/points-outside-canvas-update.js': (
+    load: plugin_filler_line_points_outside_canvas_update.fixture,
+    sha256: 'cff53652abd9',
+  ),
+  'plugin.filler/line/segments/alignToPixels.js': (
+    load: plugin_filler_line_segments_aligntopixels.fixture,
+    sha256: '7bafe2061cdb',
+  ),
+  'plugin.filler/line/segments/gap.js': (
+    load: plugin_filler_line_segments_gap.fixture,
+    sha256: '7c65b2aa556b',
+  ),
+  'plugin.filler/line/segments/slope.js': (
+    load: plugin_filler_line_segments_slope.fixture,
+    sha256: '2c5be7cc3c3d',
+  ),
+  'plugin.legend/borderRadius/legend-border-radius.js': (
+    load: plugin_legend_borderradius_legend_border_radius.fixture,
+    sha256: '819fb07d37b6',
+  ),
+  'plugin.legend/horizontal-rtl-hitbox.js': (
+    load: plugin_legend_horizontal_rtl_hitbox.fixture,
+    sha256: '9936ce127cee',
+  ),
+  'plugin.legend/maxWidth/infinity.js': (
+    load: plugin_legend_maxwidth_infinity.fixture,
+    sha256: '66c879c203c1',
+  ),
+  'plugin.legend/padding/add-column.js': (
+    load: plugin_legend_padding_add_column.fixture,
+    sha256: 'bd23e530172e',
   ),
   'plugin.title/scriptable-options.js': (
     load: plugin_title_scriptable_options.fixture,

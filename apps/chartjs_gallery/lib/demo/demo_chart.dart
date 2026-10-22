@@ -196,14 +196,25 @@ final class DemoChart implements types.Chart {
   @override
   void toggleDataVisibility(Object? index) {}
 
+  /// core.controller.js:908 `hide(datasetIndex, dataIndex)`. The demo chart
+  /// has no datasets.
+  @override
+  void hide(double datasetIndex, [double? dataIndex]) {}
+
+  /// core.controller.js:912 `show(datasetIndex, dataIndex)`. The demo chart
+  /// has no datasets.
+  @override
+  void show(double datasetIndex, [double? dataIndex]) {}
+
   /// core.controller.js:475 `update(mode)`. core.controller.js:536: an
   /// update ends with a render. The demo chart has only the render.
   @override
   void update([Object? mode]) => render();
 
-  /// index.d.ts:543 `legend`. The demo chart has no legend.
+  /// index.d.ts:543 `legend`. The demo chart has no legend plugin, so it
+  /// stays `null`.
   @override
-  types.LegendElement? get legend => null;
+  types.LegendElement? legend;
 
   /// plugin.title.js:117 `titleBlock`. The demo chart has no title plugin,
   /// so it stays `null`.

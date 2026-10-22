@@ -1273,6 +1273,14 @@ const compiledTheme = {
   },
   plugins: {
     title: {color: 'rgba(51, 102, 153, 1)', font: {family: 'Arial', size: 14}},
+    subtitle: {
+      color: 'rgba(51, 102, 153, 1)',
+      font: {family: 'Arial', size: 14},
+    },
+    legend: {
+      labels: {font: {family: 'Arial', size: 14}},
+      title: {font: {family: 'Arial', size: 14}},
+    },
   },
   elements: {
     point: {
@@ -1410,6 +1418,33 @@ const compiledLight = {
         lineHeight: 1.2,
       },
     },
+    subtitle: {
+      color: 'rgba(102, 102, 102, 1)',
+      font: {
+        family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+        size: 12,
+        style: 'normal',
+        lineHeight: 1.2,
+      },
+    },
+    legend: {
+      labels: {
+        font: {
+          family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+          size: 12,
+          style: 'normal',
+          lineHeight: 1.2,
+        },
+      },
+      title: {
+        font: {
+          family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+          size: 12,
+          style: 'normal',
+          lineHeight: 1.2,
+        },
+      },
+    },
     colors: {
       $borderColors: [
         'rgba(54, 162, 235, 1)',
@@ -1467,7 +1502,14 @@ const compiledFont = {
     title: {font: {family: 'serif', size: 14}},
   },
   scales: {radialLinear: {pointLabels: {font: {family: 'serif'}}}},
-  plugins: {title: {font: {family: 'serif', size: 14}}},
+  plugins: {
+    title: {font: {family: 'serif', size: 14}},
+    subtitle: {font: {family: 'serif', size: 14}},
+    legend: {
+      labels: {font: {family: 'serif', size: 14}},
+      title: {font: {family: 'serif', size: 14}},
+    },
+  },
   transitions: {
     theme: {animation: {duration: 200, easing: 'linear'}},
     themeFrame: {animation: {duration: 0}},
@@ -1623,7 +1665,10 @@ const compiledHover = {
       angleLines: {color: 'rgba(0, 128, 0, 0.5)'},
     },
   },
-  plugins: {title: {color: 'rgba(51, 102, 153, 1)'}},
+  plugins: {
+    title: {color: 'rgba(51, 102, 153, 1)'},
+    subtitle: {color: 'rgba(51, 102, 153, 1)'},
+  },
   elements: {
     point: {
       borderColor: 'rgba(0, 128, 0, 0.5)',

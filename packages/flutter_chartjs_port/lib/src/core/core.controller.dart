@@ -362,6 +362,7 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
   /// (core.animations.defaults.js:64-68). The readers apply ToBoolean
   /// (core.controller.js:744). The [undefined] sentinel is the value before
   /// `buildOrUpdateControllers`.
+  @override
   Object? visible = undefined;
 
   /// core.datasetController.js:420 `stack`. See `types.ChartMeta.stack`.
@@ -1832,6 +1833,7 @@ class Chart implements types.Chart {
   /// core.controller.js:908 `hide(datasetIndex, dataIndex)`.
   ///
   /// Dart `null` for [dataIndex] stands for an absent argument.
+  @override
   void hide(double datasetIndex, [double? dataIndex]) {
     _updateVisibility(datasetIndex, dataIndex, false);
   }
@@ -1839,6 +1841,7 @@ class Chart implements types.Chart {
   /// core.controller.js:912 `show(datasetIndex, dataIndex)`.
   ///
   /// Dart `null` for [dataIndex] stands for an absent argument.
+  @override
   void show(double datasetIndex, [double? dataIndex]) {
     _updateVisibility(datasetIndex, dataIndex, true);
   }

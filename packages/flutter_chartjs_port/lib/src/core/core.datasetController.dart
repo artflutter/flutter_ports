@@ -760,6 +760,7 @@ class DatasetController
   bool enableOptionSharing = false;
 
   /// core.datasetController.js:271 `supportsDecimation`.
+  @override
   bool supportsDecimation = false;
 
   /// core.datasetController.js:272 `$context`, the dataset context of

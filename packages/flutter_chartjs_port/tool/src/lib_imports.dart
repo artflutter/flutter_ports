@@ -116,6 +116,14 @@ const Map<String, String> forbiddenInLib = {
 /// roots (Chart.js ADR 0001, theming.md §7). Their port-only tests run on
 /// the VM, dart2js and dart2wasm. The theme widget of phase 9 uses the
 /// Flutter framework, so the directory is not a root as a whole.
+///
+/// `plugin.decimation` and the files of `plugin.filler/` are roots (Chart.js
+/// ADR 0038, section 9). Their upstream imports are helpers other than
+/// `helpers.extras`, the elements and their own files. Their port-only tests
+/// of the pure parts run on the VM, dart2js and dart2wasm. The other plugin
+/// files are not roots: `plugin.title`, `plugin.legend` and
+/// `plugin.subtitle` reach `helpers.extras`, `plugin.tooltip` imports
+/// `core.animations`, and `plugin.colors` imports the controllers.
 const List<String> pureRoots = [
   'lib/src/js/**',
   'lib/src/types/**',
@@ -132,6 +140,8 @@ const List<String> pureRoots = [
   'lib/src/core/animation_spec.dart',
   'lib/src/core/core.typedRegistry.dart',
   'lib/src/elements/**',
+  'lib/src/plugins/plugin.decimation.dart',
+  'lib/src/plugins/plugin.filler/**',
   'lib/src/platform/platform.base.dart',
   'lib/src/platform/platform.basic.dart',
   'lib/src/platform/native_event.dart',

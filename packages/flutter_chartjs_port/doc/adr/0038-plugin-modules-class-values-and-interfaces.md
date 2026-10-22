@@ -23,7 +23,8 @@
   [Chart.js ADR 0041](0041-plugin-test-strategy.md) (the plugin test strategy, proposed),
   [porting-flow.md](../porting-flow.md) §1.1 (the performance rule),
   [performance.md](../performance.md) §6 (how to measure),
-  [differences.md](../differences.md) rows `adapt-decimation-data-accessor` (new) and
+  [differences.md](../differences.md) rows `adapt-decimation-data-accessor` (new),
+  `js-semantics-decimation-data` (new), `js-semantics-narrow-datasets` (changed) and
   `adapt-component-class-role` (changed)
 
 ## Context
@@ -396,25 +397,57 @@ member goes onto the `types` interface with its first reader.
 
 ### 8. The decimation data accessor
 
-`data` stays a plain Map entry that holds the value of the upstream getter. An `Expando<bool>`
-marks each dataset that has the accessor. A sync turns a user write of `data` into the setter
-write. The row `adapt-decimation-data-accessor` records the difference.
+`data` stays a plain Map entry that holds the value of the upstream getter. An `Expando` marks
+each dataset that has the accessor, and it holds the last value that the plugin wrote into `data`.
+A sync turns a user write of `data` into the setter write. The row
+`adapt-decimation-data-accessor` records the difference.
 
 ```dart
-/// The accessor state of plugin.decimation.js:255-264: true while `data` of
-/// the dataset is the accessor property.
-final Expando<bool> _dataAccessor = Expando<bool>('decimation data accessor');
+/// The accessor of plugin.decimation.js:255-264 on one dataset: [written] is
+/// the last value that the plugin wrote into the plain entry `data`.
+final class _DataAccessor {
+  _DataAccessor(this.written);
+
+  /// The last getter value that the plugin wrote into `data`.
+  Object? written;
+}
+
+/// The accessor state of plugin.decimation.js:255-264: present while `data`
+/// of the dataset is the accessor property.
+final Expando<_DataAccessor> _dataAccessor = Expando<_DataAccessor>(
+  'decimation data accessor',
+);
 
 // DIVERGES(chartjs): adapt-decimation-data-accessor, a Map has no accessor.
-/// The setter of plugin.decimation.js:261-263, applied before each use.
-void _syncDataAccessor(AnyObject dataset) {
-  if (_dataAccessor[dataset] != true) return;
-  final getterValue = jsGet(dataset, '_decimated'); // the getter, :258-260
+/// The setter of plugin.decimation.js:261-263, applied before each use of
+/// the dataset.
+///
+/// A `data` value that is not identical to the last value that the plugin
+/// wrote is a user write since the last hook: it goes to `_data`. Then
+/// `data` gets the getter value (`_decimated`, :258-260). Thus a user write
+/// or delete of `_decimated` changes `data` and not `_data`, as the getter
+/// does. The getter value comes from [jsGet], so an absent `_decimated`
+/// gives [undefined]. A `delete dataset.data` of the user removes the
+/// accessor upstream: an absent key `data` clears the mark. A dataset that
+/// is not a Map never has the accessor.
+void _syncDataAccessor(Object? dataset) {
+  if (dataset is! AnyObject) return;
+  final accessor = _dataAccessor[dataset];
+  if (accessor == null) return;
+  if (!dataset.containsKey('data')) {
+    _dataAccessor[dataset] = null;
+    return;
+  }
   final data = dataset['data'];
+  if (!identical(data, accessor.written)) {
+    // DIVERGES(chartjs): js-semantics-narrow-datasets, a narrow or fixed Map.
+    dataset['_data'] = data;
+  }
+  final getterValue = jsGet(dataset, '_decimated');
   if (!identical(data, getterValue)) {
-    dataset['_data'] = data; // the setter, :261-263
     dataset['data'] = getterValue;
   }
+  accessor.written = getterValue;
 }
 ```
 
@@ -423,19 +456,27 @@ void _syncDataAccessor(AnyObject dataset) {
   as upstream does.
 - `cleanDecimatedDataset` calls it first, before `:157`. Thus the disabled path (`:206-209`) and
   the threshold path (`:243-246`) see the setter write.
+- The sync compares `data` with the last value that the plugin wrote, not with the current
+  `_decimated`. Thus a user write or delete of `_decimated` changes `data` and not `_data`, as
+  the upstream getter does.
+- An absent key `data` clears the mark: a `delete dataset.data` of the user removes the accessor
+  upstream. Then `_data` is set, `:249` sees no first time, and `_dataCheck` writes a new empty
+  array into a plain `data`, as upstream.
 - The first time (`:249-265`): `dataset['_data'] = data`, `dataset.remove('data')`,
-  `dataset['data'] = jsGet(dataset, '_decimated')`, `_dataAccessor[dataset] = true`. The key
-  `data` moves to the end, as `delete` and `defineProperty` move it.
-- `:280`: `dataset['_decimated'] = decimated` and `dataset['data'] = decimated`.
-- The clean (`:156-168`): it removes `_decimated` and `_data`, writes `data` and sets the marker
-  to `false`. The key `data` keeps its position, as `defineProperty` on an own key keeps it.
-- The getter value comes from `jsGet`, not from a Map read. After an unknown algorithm (`:277`),
-  `data` holds the `undefined` sentinel and `_decimated` is absent. A Map read gives Dart `null`
-  there. The sync then sees a user write, and the next update throws a null check `TypeError` in
-  place of the upstream `Error` of `:277`.
+  `dataset['data'] = jsGet(dataset, '_decimated')`, and the `Expando` gets a `_DataAccessor`
+  with that value. The key `data` moves to the end, as `delete` and `defineProperty` move it.
+- `:280`: `dataset['_decimated'] = decimated`. Only for a marked dataset, the port also writes
+  `dataset['data'] = decimated` and records it in the `Expando`. A dataset with its own `_data`
+  key before the first decimation gets no accessor (`:249`), and its `data` stays the raw data.
+- The clean (`:156-168`): it removes `_decimated` and `_data`, writes `data` and clears the mark.
+  The key `data` keeps its position, as `defineProperty` on an own key keeps it.
+- The getter value comes from `jsGet`, not from a Map read: an absent `_decimated` gives the
+  `undefined` sentinel, as the upstream getter does. After an unknown algorithm (`:277`), `data`
+  holds `undefined` and `_decimated` is absent, also at the second update in a row.
 - A theme leaves `data`, `_data` and `_decimated` unchanged (theming.md §10, the phase 8 row).
-- Cost: one sync for each dataset and each update, 15.9 ns on AOT and 29.9 ns on dart2wasm. No
-  draw cost.
+- Cost: one sync for each dataset and each update, 15.9 ns on AOT and 29.9 ns on dart2wasm for
+  the form with an `Expando<bool>`. The form above does the same reads and one more field write.
+  No draw cost.
 
 ### 9. Pure layers
 
@@ -514,20 +555,24 @@ Expected result (a calculation, not a decision): 51 ns for each notify on the M3
   charts with one subtitle each, and the group `adapt-component-class-role`.
 - `test/port/plugins/plugin.decimation_test.dart`, group `adapt-decimation-data-accessor`: the
   cases of the Evidence (the first decimation, the user write and the update, the identical
-  write, the threshold, `enabled: false`, `plugins.decimation: false`, the early returns, the
-  unknown algorithm twice, the key position). Each difference of the row pins the Dart result,
+  write, the threshold, `enabled: false`, `plugins.decimation: false`, the three early returns,
+  a write and a delete of `_decimated`, a delete and a new write of `data`, a user `_data` key,
+  the unknown algorithm twice, the key position). Each difference of the row pins the Dart result,
   with the upstream value in a comment.
 - `test/port/core/core.layouts_test.dart`: `removeBox(chart, null)` removes nothing.
 - `test/tool/check_lib_imports_test.dart`: a decimation or filler file that imports
   `helpers.extras` fails the check.
 - The analyzer of the package and of `apps/chartjs_gallery` proves each interface member and its
   implementers.
-- `differences.md`: one new row, `adapt-decimation-data-accessor`, with three `DIVERGES` markers in
-  `plugin.decimation.dart` (the sync, the first-time block and the `_decimated` write). The row
-  `adapt-component-class-role` gets the three `construct` closures. No other row: the plugin
-  Maps, the namespace, the hooks, the class values, the interface members, the casts, the start
-  values, `titleBlock`, the subtitle `Expando`, the pure roots and the dispatch give the upstream
-  result for each input that a chart gives.
+- `differences.md`: two new rows. `adapt-decimation-data-accessor` has four `DIVERGES` markers in
+  `plugin.decimation.dart` (the sync, the sync call in the hook, the first-time block and the
+  `data` write after `:280`). `js-semantics-decimation-data` has one marker (the cast of the data
+  to a `List` in `getStartAndCountOfVisiblePointsSimplified`). The row
+  `js-semantics-narrow-datasets` gets four markers in `plugin.decimation.dart` (the writes into
+  the dataset Map). The row `adapt-component-class-role` gets the three `construct` closures. No
+  other row: the plugin Maps, the namespace, the hooks, the class values, the interface members,
+  the casts, the start values, `titleBlock`, the subtitle `Expando`, the pure roots and the
+  dispatch give the upstream result for each input that a chart gives.
 - `performance.md` gets the figures of section 10.
 
 ## Alternatives considered
@@ -582,8 +627,11 @@ protected behavior).
 - The sync without the restore of `data`. After a user write, an early return of `:220-238`
   leaves the user array in `data`. Upstream keeps the old decimated array (34 items against 200
   in the judge probe). The elements, the scale and the hit elements change.
-- The sync with a plain Map read of `_decimated`. It turns the throw of `:277` into a null check
-  `TypeError` at the second update (section 8).
+- A sync that compares `data` with a plain Map read of `_decimated`. After an unknown algorithm
+  (`:277`), `_decimated` is absent and `data` holds the `undefined` sentinel. The Map read gives
+  Dart `null`, which is not identical to `undefined`. Thus the sync sees a user write, and it
+  writes `undefined` into `_data` and `null` into `data`. The next update throws a null check
+  `TypeError` in place of the upstream `Error` of `:277` (E4).
 - A Map class with an accessor for `data`, in place of the user dataset. It breaks the identity
   of the dataset: `getDatasetMeta` finds the meta by identity (`core.controller.js:829-832`), and
   later user writes go to the old Map.
@@ -617,11 +665,16 @@ upstream imports.
 - A read by name of a box field of `Title` or `Legend` (`title['top']`) gives the extra property,
   `undefined`, also after the layout. No ported module and no spec makes such a read. A later read
   by name gets an `operator []` case for its field in the same change.
-- The decimation plugin keeps the upstream state after each hook. Three results differ between
-  hooks (the row).
+- The decimation plugin keeps the upstream state after each hook. Four results differ between
+  hooks (the row `adapt-decimation-data-accessor`).
 - Two plugin parts run in the web legs.
-- No `DIVERGES` marker outside `plugin.decimation.dart`. One new row and one changed row.
-  Chart.js ADRs 0017, 0020 and 0028 do not change. This ADR closes Chart.js ADR 0028 Open 2.
+- Two new rows (`adapt-decimation-data-accessor`, `js-semantics-decimation-data`) and two changed
+  rows (`js-semantics-narrow-datasets`, `adapt-component-class-role`), as section 11 gives. This
+  ADR puts `DIVERGES` markers in `plugin.decimation.dart` (the three decimation rows) and in
+  `plugin.title.dart` and `plugin.legend.dart` (the row `adapt-component-class-role`, at the
+  config reader of each `construct` closure). `plugin.tooltip.dart` gets the third
+  `construct` marker when the tooltip unit ports it. Chart.js ADRs 0017, 0020 and 0028 do not
+  change. This ADR closes Chart.js ADR 0028 Open 2.
 
 ## Open
 
@@ -735,9 +788,12 @@ the absolute figures are high, and the ratios between the forms are stable over 
     (`indexAxis: 'y'`, `supportsDecimation` false, `parsing: true`).
   - An unknown algorithm throws `Error: Unsupported decimation algorithm 'nope'` at each update.
     The keys stay `_data`, `data`, and `data` reads `undefined`.
-- **E4, the Dart forms of the sync.** The sync of section 8, with the control flow of
+- **E4, the Dart forms of the sync.** The first form of the sync (an `Expando<bool>` and a compare
+  of `data` with `jsGet` of `_decimated`), with the control flow of
   `plugin.decimation.js:205-282`, gives the upstream keys, lengths and identities for the early
-  returns after a user write, for the unknown algorithm twice and for the key position. The sync
+  returns after a user write, for the unknown algorithm twice and for the key position. The group
+  `adapt-decimation-data-accessor` of `plugin.decimation_test.dart` pins the form of section 8
+  on these cases and on a write and a delete of `_decimated`. The sync
   with a Map read of `_decimated` throws a null check `TypeError` at the second update of the
   unknown algorithm. The sync without the restore of `data` gives 200 items in place of 34 after
   an early return. Each form differs from upstream when no hook runs.
@@ -772,5 +828,5 @@ the absolute figures are high, and the ratios between the forms are stable over 
   registry in `jsGet` adds 13 to 14 ns and 18 to 23 ns to each `jsGet` of a Map.
 - **E8, the census.** 71 classes implement an interface of section 6. 23 of them have no
   `noSuchMethod`. Section 6 changes 14 of these 23 classes (the Consequences list).
-- **E9, the rows:** [differences.md](../differences.md) rows `adapt-decimation-data-accessor` and
-  `adapt-component-class-role`.
+- **E9, the rows:** [differences.md](../differences.md) rows `adapt-decimation-data-accessor`,
+  `js-semantics-decimation-data`, `js-semantics-narrow-datasets` and `adapt-component-class-role`.

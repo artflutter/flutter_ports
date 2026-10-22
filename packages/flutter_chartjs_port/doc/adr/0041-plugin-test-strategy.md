@@ -245,7 +245,7 @@ The change of wave 4 also does these checks:
    | Step | JavaScript | Dart |
    | --- | --- | --- |
    | `['click', x, y]` | `chart._eventHandler({type: 'click', chart, native: {type: 'click'}, x, y})` | `await triggerMouseEvent(chart, 'click', point)` |
-   | `['clickLegend', i]`, `['hoverLegend', i]` | The step `click` or `hover` at the rounded center of `chart.legend.legendHitBoxes[i]` | The same, from the Dart hit box |
+   | `['clickLegend', i]`, `['hoverLegend', i]` | The step `click` or `hover` at the rounded center of `chart.legend.legendHitBoxes[i]` | The generator writes the step `click` or `hover` with the point. The Dart test runs the same point. The observation `plugins.legend` compares the hit boxes. |
    | `['setTooltip', [[d, i], ...], x, y]` | `chart.tooltip.setActiveElements(items, {x, y})`, then `chart.update()` | The same |
    | `['setOption', path, value]` | The write `chart.options.<path> = value` (the `set` trap of the resolver), then `chart.update()` | `operator []=` of the resolver, then `chart.update()` |
 

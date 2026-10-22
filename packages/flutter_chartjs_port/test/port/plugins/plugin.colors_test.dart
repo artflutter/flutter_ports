@@ -296,10 +296,13 @@ void main() {
 
   // differences.md row js-semantics-narrow-datasets: the colorizers write
   // into the dataset Map of the user (plugin.colors.ts:36-37, 43, 49).
-  // Upstream sets the properties of each of these datasets: the bar dataset
-  // gets ["rgb(54, 162, 235)", "rgba(54, 162, 235, 0.5)"], the doughnut
-  // dataset gets a backgroundColor array (x64 Node.js v24.12.0 at the pin,
-  // .handover/phase8/units/W1-colors/probes/review-reruns.js.out, case 2).
+  // Upstream sets the properties of each of these datasets. A probe on the
+  // pinned build in Node.js v24.12.0 on x64 made a bar chart and a doughnut
+  // chart with `plugins.colors.enabled: true` and no dataset colors, and
+  // logged the borderColor and backgroundColor of each dataset: the bar
+  // dataset gets ["rgb(54, 162, 235)", "rgba(54, 162, 235, 0.5)"], and the
+  // doughnut dataset gets [null, ["rgb(54, 162, 235)", "rgb(255, 99, 132)",
+  // "rgb(255, 159, 64)"]] (no borderColor, a backgroundColor array).
   group('js-semantics-narrow-datasets', () {
     testWidgets('a narrow dataset Map works when the plugin is off', (
       tester,

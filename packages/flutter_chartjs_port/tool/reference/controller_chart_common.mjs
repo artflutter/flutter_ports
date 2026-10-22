@@ -449,8 +449,15 @@ export async function loadChartJs() {
 
 /**
  * Applies the step [step] to [chart]. [state] keeps the last point of a
- * `hover` step: the step `['mouseout']` gets that point, and the function
- * returns the step as the Dart test runs it.
+ * `hover`, `click`, `clickLegend` or `hoverLegend` step: the step
+ * `['mouseout']` gets that point, and the function returns the step as the
+ * Dart test runs it.
+ *
+ * `clickLegend` and `hoverLegend` take the index of a legend hit box
+ * (`chart.legend.legendHitBoxes`). They send a `click` or a `mousemove` at
+ * the rounded center of the box and return `['click', x, y]` or
+ * `['hover', x, y]`. Thus the Dart test runs the same point and reads no
+ * hit box for the step (Chart.js ADR 0041, section 3 item 6).
  */
 export function applyStep(chart, step, state = {}) {
   const [action, ...args] = step;
@@ -493,6 +500,22 @@ export function applyStep(chart, step, state = {}) {
       const [x, y] = state.last;
       chart._eventHandler({type: 'mouseout', chart, native: {type: 'mouseout'}, x, y});
       return ['mouseout', x, y];
+    }
+    case 'click': {
+      const [x, y] = args;
+      state.last = [x, y];
+      chart._eventHandler({type: 'click', chart, native: {type: 'click'}, x, y});
+      return step;
+    }
+    case 'clickLegend':
+    case 'hoverLegend': {
+      const box = chart.legend.legendHitBoxes[args[0]];
+      const x = Math.round(box.left + box.width / 2);
+      const y = Math.round(box.top + box.height / 2);
+      const type = action === 'clickLegend' ? 'click' : 'mousemove';
+      state.last = [x, y];
+      chart._eventHandler({type, chart, native: {type}, x, y});
+      return [action === 'clickLegend' ? 'click' : 'hover', x, y];
     }
     case 'setOption': {
       // ['setOption', path, value]: the write `chart.options.<path> = value`

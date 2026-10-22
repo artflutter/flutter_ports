@@ -366,6 +366,23 @@ Changes to the cited files:
   only three comments in place (the citation of Chart.js ADR 0037), so no line of it moves. The
   references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change.
   No trigger occurred.
+- 2026-10-22, the prelude of wave 2 of phase 8 (Chart.js ADR 0038 §6 and Chart.js ADR 0040 §4,
+  both proposed). `apps/chartjs_gallery/lib/demo/demo_chart.dart`, which §3.1 cites, gets the
+  field `legend` (it was a getter that gave `null`) and the no-op methods `hide` and `show` of
+  `types.Chart`. `DemoChart` keeps its default `UiCanvasElement()`, so §3.1 does not change.
+  `lib/src/core/core.controller.dart` gets only `@override` lines (`ChartMeta.visible`, `hide`,
+  `show`), not a change of `_resize`. `lib/src/types/index.dart`, `lib/src/core/core.scale.dart`,
+  `lib/src/core/core.datasetController.dart` and `lib/src/elements/element.line.dart` get new
+  interface members or `@override` lines. This plan cites no line of these files (filler spec
+  risk R8). Thus the references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
+  estimates do not change. No trigger occurred.
+- 2026-10-22, the end of wave 2 of phase 8. `doc/performance.md` gets section 14 (the filler
+  figures of Chart.js ADR 0040) at its end and one sentence more in its scope list. Thus its lines
+  after line 14 move by +1. This plan cites sections of `doc/performance.md`, not its lines, and
+  no cited section number changes. `doc/parity.md` gets the rows of the plugins of wave 2: the
+  rows of the upstream tables change in place, and the new port-only rows come after line 533.
+  The `parity.md` rows that this plan cites do not move. The references, the inventory (§1.1),
+  the tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

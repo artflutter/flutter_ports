@@ -17,8 +17,8 @@ import 'package:test/test.dart';
 // The theme compiler has no upstream counterpart (Chart.js ADR 0001). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
 // the emission guard, the rgba() form, the deep freeze and the memo), §3.4
-// and §4 (the token keys, the point-label font, the title keys and the
-// palette of Chart.js ADR 0042), §8
+// and §4 (the token keys, the point-label font, the title, subtitle and
+// legend keys and the palette of Chart.js ADR 0042), §8
 // test 1 (no theme equals upstream: ChartThemes.none, no extra scope, the
 // scope position of a compiled theme, no dependence on the platform) and
 // the parts of §8 test 5 that need no chart. The expected scope lists follow
@@ -272,6 +272,19 @@ void main() {
         'plugins.title.font.size': 12.0,
         'plugins.title.font.style': 'normal',
         'plugins.title.font.lineHeight': 1.2,
+        'plugins.subtitle.color': gray,
+        'plugins.subtitle.font.family': font,
+        'plugins.subtitle.font.size': 12.0,
+        'plugins.subtitle.font.style': 'normal',
+        'plugins.subtitle.font.lineHeight': 1.2,
+        'plugins.legend.labels.font.family': font,
+        'plugins.legend.labels.font.size': 12.0,
+        'plugins.legend.labels.font.style': 'normal',
+        'plugins.legend.labels.font.lineHeight': 1.2,
+        'plugins.legend.title.font.family': font,
+        'plugins.legend.title.font.size': 12.0,
+        'plugins.legend.title.font.style': 'normal',
+        'plugins.legend.title.font.lineHeight': 1.2,
         r'plugins.colors.$borderColors': [
           'rgba(54, 162, 235, 1)',
           'rgba(255, 99, 132, 1)',
@@ -318,6 +331,19 @@ void main() {
         'plugins.title.font.size',
         'plugins.title.font.style',
         'plugins.title.font.lineHeight',
+        'plugins.subtitle.color',
+        'plugins.subtitle.font.family',
+        'plugins.subtitle.font.size',
+        'plugins.subtitle.font.style',
+        'plugins.subtitle.font.lineHeight',
+        'plugins.legend.labels.font.family',
+        'plugins.legend.labels.font.size',
+        'plugins.legend.labels.font.style',
+        'plugins.legend.labels.font.lineHeight',
+        'plugins.legend.title.font.family',
+        'plugins.legend.title.font.size',
+        'plugins.legend.title.font.style',
+        'plugins.legend.title.font.lineHeight',
         r'plugins.colors.$borderColors',
         r'plugins.colors.$backgroundColors',
         'elements.point.borderColor',
@@ -340,8 +366,10 @@ void main() {
           'scale.ticks.color': red,
           'scale.title.color': red,
           'scales.radialLinear.pointLabels.color': red,
-          // The route of the title color (plugin.title.js:158-160).
+          // The routes of the title color (plugin.title.js:158-160) and of
+          // the subtitle color (plugin.subtitle.js:45-47).
           'plugins.title.color': red,
+          'plugins.subtitle.color': red,
         },
         'borderColor': {
           'scale.grid.color': red,
@@ -409,9 +437,20 @@ void main() {
         'scales.radialLinear.pointLabels.font.style': 'italic',
         'scales.radialLinear.pointLabels.font.weight': 'bold',
         // No weight: the title keeps its local 'bold'
-        // (plugin.title.js:148-150, theming.md §3.4).
+        // (plugin.title.js:148-150) and the subtitle its local 'normal'
+        // (plugin.subtitle.js:35-37, theming.md §3.4).
         'plugins.title.font.family': 'serif',
         'plugins.title.font.style': 'italic',
+        'plugins.subtitle.font.family': 'serif',
+        'plugins.subtitle.font.style': 'italic',
+        // The legend has no font defaults (plugin.legend.js:636-712): the
+        // whole font, with the weight.
+        'plugins.legend.labels.font.family': 'serif',
+        'plugins.legend.labels.font.style': 'italic',
+        'plugins.legend.labels.font.weight': 'bold',
+        'plugins.legend.title.font.family': 'serif',
+        'plugins.legend.title.font.style': 'italic',
+        'plugins.legend.title.font.weight': 'bold',
         ..._transitionLeaves,
       });
       // No root font (theming.md §3.4), and one Map for each slot.
@@ -544,8 +583,15 @@ void main() {
         'scales.radialLinear.pointLabels.color': 'rgba(200, 0, 0, 1)',
         'scales.radialLinear.pointLabels.font.family': 'serif',
         'plugins.title.color': 'rgba(200, 0, 0, 1)',
+        'plugins.subtitle.color': 'rgba(200, 0, 0, 1)',
         'plugins.title.font.family': 'serif',
         'plugins.title.font.size': 14.0,
+        'plugins.subtitle.font.family': 'serif',
+        'plugins.subtitle.font.size': 14.0,
+        'plugins.legend.labels.font.family': 'serif',
+        'plugins.legend.labels.font.size': 14.0,
+        'plugins.legend.title.font.family': 'serif',
+        'plugins.legend.title.font.size': 14.0,
         ..._transitionLeaves,
       });
     });
@@ -760,8 +806,8 @@ void main() {
         'rgba(200, 0, 0, 1)',
         'rgba(0, 0, 255, 0.8)',
       ]);
-      // With the other tokens, the palette comes after the title keys of
-      // plugins.
+      // With the other tokens, the palette comes after the title, subtitle
+      // and legend keys of plugins.
       final light = compileChartTheme(ChartThemes.light)!;
       expect(light.keys, [
         'color',
@@ -773,6 +819,8 @@ void main() {
       ]);
       expect((light['plugins']! as Map<String, Object?>).keys, [
         'title',
+        'subtitle',
+        'legend',
         'colors',
       ]);
     });
@@ -959,14 +1007,18 @@ void main() {
       expect(font.keys, ['family', 'size']);
       // One Map for each slot.
       expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
-      // A font with a weight only gives no title font.
+      // A font with a weight only gives no title font. The legend fonts
+      // keep the weight (the group `the subtitle and legend keys`).
       final weightOnly = compileChartTheme({
         'typography': <String, Object?>{
           'font': <String, Object?>{'weight': 'bold'},
         },
       });
       expect(_at(weightOnly, 'scale.ticks.font.weight'), 'bold');
-      expect(_at(weightOnly, 'plugins'), same(undefined));
+      expect(_at(weightOnly, 'plugins.title'), same(undefined));
+      expect((_at(weightOnly, 'plugins')! as Map<String, Object?>).keys, [
+        'legend',
+      ]);
     });
 
     test('the title color is the color token', () {
@@ -979,6 +1031,10 @@ void main() {
       );
       // The legend reads the root color (plugin.legend.js:661, 707).
       expect(_at(compiled, 'plugins.legend'), same(undefined));
+      expect((_at(compiled, 'plugins')! as Map<String, Object?>).keys, [
+        'title',
+        'subtitle',
+      ]);
     });
 
     test('a raw title text fails the guard, a raw title color passes', () {
@@ -1004,6 +1060,200 @@ void main() {
       });
       expect(_at(compiled, 'plugins.title.color'), 'blue');
       expect(_at(compiled, 'plugins.title.position'), 'bottom');
+    });
+  });
+
+  group('the subtitle and legend keys', () {
+    // theming.md §4 (Chart.js ADR 0042): the subtitle takes the color token
+    // and the font token without weight, as the title. The legend takes the
+    // whole font token into its two fonts and no color key.
+    final serifBold = <String, Object?>{
+      'typography': <String, Object?>{
+        'font': <String, Object?>{
+          'family': 'serif',
+          'weight': 'bold',
+          'size': 14.0,
+          'lineHeight': 1.5,
+        },
+      },
+    };
+
+    test('the subtitle color is the color token', () {
+      // The route of the subtitle color (plugin.subtitle.js:45-47).
+      final compiled = compileChartTheme(_colorTheme('color', _blue));
+      expect(_at(compiled, 'plugins.subtitle.color'), 'rgba(0, 0, 255, 0.8)');
+      expect(
+        (_at(compiled, 'plugins.subtitle')! as Map<String, Object?>).keys,
+        ['color'],
+      );
+      // The other color tokens give no subtitle key.
+      for (final token in ['borderColor', 'backgroundColor', 'surface']) {
+        expect(
+          _at(compileChartTheme(_colorTheme(token, _blue)), 'plugins'),
+          same(undefined),
+          reason: token,
+        );
+      }
+    });
+
+    test('the subtitle font has no weight', () {
+      // theming.md §3.4: the subtitle keeps its local weight 'normal'
+      // (plugin.subtitle.js:35-37).
+      final compiled = compileChartTheme(serifBold);
+      final font =
+          _at(compiled, 'plugins.subtitle.font')! as Map<String, Object?>;
+      expect(font, <String, Object?>{
+        'family': 'serif',
+        'size': 14.0,
+        'lineHeight': 1.5,
+      });
+      expect(font.keys, ['family', 'size', 'lineHeight']);
+      // One Map for each slot.
+      expect(font, isNot(same(_at(compiled, 'plugins.title.font'))));
+      // A font with a weight only gives no subtitle font.
+      final weightOnly = compileChartTheme({
+        'typography': <String, Object?>{
+          'font': <String, Object?>{'weight': 'bold'},
+        },
+      });
+      expect(_at(weightOnly, 'plugins.subtitle'), same(undefined));
+    });
+
+    test('the two legend fonts are the whole font token', () {
+      // The legend has no font defaults (plugin.legend.js:636-712). toFont
+      // fills an absent field from defaults.font (helpers.options.ts:115-117)
+      // for the label font (plugin.legend.js:136, 288) and the title font
+      // (:446, 495).
+      final compiled = compileChartTheme(serifBold);
+      const whole = <String, Object?>{
+        'family': 'serif',
+        'weight': 'bold',
+        'size': 14.0,
+        'lineHeight': 1.5,
+      };
+      final labels =
+          _at(compiled, 'plugins.legend.labels.font')! as Map<String, Object?>;
+      final title =
+          _at(compiled, 'plugins.legend.title.font')! as Map<String, Object?>;
+      expect(labels, whole);
+      expect(title, whole);
+      expect(labels.keys, ['family', 'weight', 'size', 'lineHeight']);
+      expect(title.keys, ['family', 'weight', 'size', 'lineHeight']);
+      // The legend gets no other key: no color (plugin.legend.js:661, 707
+      // read the root color) and no point-label size rule.
+      expect(_leaves(_at(compiled, 'plugins.legend')).keys, [
+        'labels.font.family',
+        'labels.font.weight',
+        'labels.font.size',
+        'labels.font.lineHeight',
+        'title.font.family',
+        'title.font.weight',
+        'title.font.size',
+        'title.font.lineHeight',
+      ]);
+      // One Map for each slot.
+      expect(labels, isNot(same(title)));
+      expect(labels, isNot(same(_at(compiled, 'scale.ticks.font'))));
+      // The legend fonts are frozen with the rest.
+      expect(jsObjectIsFrozen(labels), isTrue);
+      expect(jsObjectIsFrozen(title), isTrue);
+    });
+
+    test('the plugins keys come after scales, in one order', () {
+      // A font-only theme also puts the root key plugins after scales.
+      final font = compileChartTheme(serifBold)!;
+      expect(font.keys, ['scale', 'scales', 'plugins', 'transitions']);
+      expect((font['plugins']! as Map<String, Object?>).keys, [
+        'title',
+        'subtitle',
+        'legend',
+      ]);
+      final both = compileChartTheme({
+        'colors': <String, Object?>{'color': _red},
+        ...serifBold,
+      })!;
+      expect(both.keys, ['color', 'scale', 'scales', 'plugins', 'transitions']);
+      expect((both['plugins']! as Map<String, Object?>).keys, [
+        'title',
+        'subtitle',
+        'legend',
+      ]);
+      expect((_at(both, 'plugins.subtitle')! as Map<String, Object?>).keys, [
+        'color',
+        'font',
+      ]);
+    });
+
+    test('the raw keys beat the subtitle and legend token keys', () {
+      final compiled = compileChartTheme({
+        'colors': <String, Object?>{'color': _red},
+        ...serifBold,
+        'raw': <String, Object?>{
+          'plugins': <String, Object?>{
+            'subtitle': <String, Object?>{
+              'color': 'raw-subtitle',
+              'font': <String, Object?>{'weight': 'lighter'},
+            },
+            'legend': <String, Object?>{
+              'labels': <String, Object?>{
+                'font': <String, Object?>{'size': 10.0},
+                'color': 'raw-labels',
+              },
+              'title': <String, Object?>{'color': 'raw-legend-title'},
+            },
+          },
+        },
+      });
+      expect(_leaves(_at(compiled, 'plugins.subtitle')), {
+        'color': 'raw-subtitle',
+        'font.family': 'serif',
+        'font.size': 14.0,
+        'font.lineHeight': 1.5,
+        'font.weight': 'lighter',
+      });
+      expect(_leaves(_at(compiled, 'plugins.legend')), {
+        'labels.font.family': 'serif',
+        'labels.font.weight': 'bold',
+        'labels.font.size': 10.0,
+        'labels.font.lineHeight': 1.5,
+        'labels.color': 'raw-labels',
+        'title.font.family': 'serif',
+        'title.font.weight': 'bold',
+        'title.font.size': 14.0,
+        'title.font.lineHeight': 1.5,
+        'title.color': 'raw-legend-title',
+      });
+    });
+
+    test('a raw subtitle text fails the guard, the token keys pass', () {
+      // Rule 2b (plugin.title.js:43, 97 for the Title of the subtitle).
+      expect(
+        themeNeverEmittedReason(_path('plugins.subtitle.text'), 'Subtitle'),
+        'plugins.subtitle.text is a behavior key',
+      );
+      for (final path in [
+        'plugins.subtitle.color',
+        'plugins.subtitle.font',
+        'plugins.legend.labels.font',
+        'plugins.legend.title.font',
+      ]) {
+        expect(
+          themeNeverEmittedReason(_path(path), <String, Object?>{}),
+          isNull,
+          reason: path,
+        );
+      }
+      // Each emitted key of the light preset passes the guard.
+      final light = compileChartTheme(ChartThemes.light);
+      for (final MapEntry(key: path, :value) in _leaves(
+        _at(light, 'plugins'),
+      ).entries) {
+        expect(
+          themeNeverEmittedReason(_path('plugins.$path'), value),
+          isNull,
+          reason: path,
+        );
+      }
     });
   });
 

@@ -25,10 +25,10 @@
 ///
 /// The compiler knows the tokens of these parts: `core.defaults`, the
 /// elements, `core.scale.defaults`, the `scales.radialLinear` keys of
-/// `scale.radialLinear`, the `color` and `font` of `plugins.title` and the
-/// palette of `plugins.colors` (theming.md §4). The keys of
-/// `plugins.subtitle`, `plugins.legend` and `plugins.tooltip` come with the
-/// ports of these plugins. A debug assert rejects a field or a token that
+/// `scale.radialLinear`, the `color` and `font` of `plugins.title` and
+/// `plugins.subtitle`, the two fonts of `plugins.legend` and the palette of
+/// `plugins.colors` (theming.md §4). The keys of `plugins.tooltip` come with
+/// the port of that plugin. A debug assert rejects a field or a token that
 /// the compiler does not know.
 ///
 /// Ported files never import this file (Chart.js ADR 0001, invariant 4).
@@ -263,8 +263,9 @@ bool _isPaletteKey(List<String> path, int i) =>
 ///
 /// - `color` replaces `Defaults.color` (`core.defaults.js:43`). The scale
 ///   routes (`core.scale.defaults.js:86, 89`), the route of the point
-///   labels (`scale.radialLinear.js:400-404`) and the route of the title
-///   color (`plugin.title.js:158-160`) read it. The legend reads the root
+///   labels (`scale.radialLinear.js:400-404`) and the routes of the title
+///   color (`plugin.title.js:158-160`) and of the subtitle color
+///   (`plugin.subtitle.js:45-47`) read it. The legend reads the root
 ///   `color` (`plugin.legend.js:661, 707`) and gets no key.
 /// - `borderColor` replaces `Defaults.borderColor` (`core.defaults.js:42`).
 ///   The scale routes (`core.scale.defaults.js:87-88`), the route of the
@@ -294,6 +295,7 @@ const Map<String, List<String>> _colorTokenKeys = {
     'scale.title.color',
     'scales.radialLinear.pointLabels.color',
     'plugins.title.color',
+    'plugins.subtitle.color',
   ],
   'borderColor': [
     'scale.grid.color',
@@ -329,8 +331,28 @@ const List<String> _fontTokenKeys = ['scale.ticks.font', 'scale.title.font'];
 /// The keys of the font token `typography.font` without its `weight`
 /// (theming.md §3.4 and §4): the slots where upstream sets the weight
 /// locally. `plugins.title.font` has the weight `'bold'`
-/// (`plugin.title.js:148-150`). A font without other fields is not emitted.
-const List<String> _fontTokenKeysWithoutWeight = ['plugins.title.font'];
+/// (`plugin.title.js:148-150`), and `plugins.subtitle.font` has the weight
+/// `'normal'` (`plugin.subtitle.js:35-37`). A font without other fields is
+/// not emitted.
+const List<String> _fontTokenKeysWithoutWeight = [
+  'plugins.title.font',
+  'plugins.subtitle.font',
+];
+
+/// The plugin keys of the whole font token `typography.font` (theming.md
+/// §4): the legend label font (`plugin.legend.js:136, 288`) and the legend
+/// title font (`:446, 495`). The legend has no font defaults
+/// (`plugin.legend.js:636-712`). Thus `toFont` fills an absent field from
+/// the global `defaults.font` (`helpers.options.ts:115-117`), as for the
+/// scale slots of [_fontTokenKeys].
+///
+/// The compiler emits them after the plugin keys of
+/// [_fontTokenKeysWithoutWeight], not with [_fontTokenKeys]. Thus the root
+/// key `plugins` comes after `scales` in each compiled theme.
+const List<String> _pluginFontTokenKeys = [
+  'plugins.legend.labels.font',
+  'plugins.legend.title.font',
+];
 
 /// The key of the font token `typography.pointLabels` (theming.md §4, the
 /// last row): the font of the point labels of the radial linear scale.
@@ -394,8 +416,9 @@ const Object _noTheme = Object();
 ///   `transitions` keys also gives `null`, for example `ChartThemes.none`.
 /// - Each color token emits its keys of theming.md §4 as [themeColorToRgba]
 ///   strings. The font token `font` emits a Map of its fields that are not
-///   `null` into each scale slot, and the same Map without `weight` into
-///   `plugins.title.font`. The point-label font is the `font` Map without
+///   `null` into each scale slot and into the two legend fonts, and the same
+///   Map without `weight` into `plugins.title.font` and
+///   `plugins.subtitle.font`. The point-label font is the `font` Map without
 ///   `size`, then the fields of `pointLabels` over it (theming.md §3.4).
 /// - The `palette` emits the two palette keys of `plugins.colors` as Lists
 ///   of [themeColorToRgba] strings (Chart.js ADR 0042, theming.md §4).
@@ -489,6 +512,11 @@ AnyObject? _compile(AnyObject theme) {
   if (fontWithoutWeight.isNotEmpty) {
     for (final path in _fontTokenKeysWithoutWeight) {
       _put(keys, path, Map<String, Object?>.of(fontWithoutWeight));
+    }
+  }
+  if (font.isNotEmpty) {
+    for (final path in _pluginFontTokenKeys) {
+      _put(keys, path, Map<String, Object?>.of(font));
     }
   }
 

@@ -515,6 +515,7 @@ final class _Meta implements types.ChartMeta {
 
   String label = '';
 
+  @override
   bool visible = false;
 }
 

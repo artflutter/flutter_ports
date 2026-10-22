@@ -27,9 +27,12 @@
 /// - The Dart side records the calls of one `chart.draw()` after the layout
 ///   with a [RecordingContext] in place of `chart.ctx`, of each `scale.ctx`,
 ///   of the writable `ctx` of each dataset controller ([drawCalls],
-///   Chart.js ADR 0030) and of the `ctx` of each `Title` box. Thus the calls
-///   have the element draws, on both sides. A `Path2D` argument records as
-///   `{path, calls}` (`test/port/canvas/path2d_record.dart`).
+///   Chart.js ADR 0030), of the `ctx` of each `Title` box and of the `ctx`
+///   of the `Legend` box. Thus the calls have the element draws, on both
+///   sides. A `Path2D` argument records as `{path, calls}`
+///   (`test/port/canvas/path2d_record.dart`). `measureText` of the recording
+///   context gives the width of the canvas and the fixed text box of the
+///   mock context (4, 8, 15, 25), as the generators do.
 ///
 /// The parts:
 ///
@@ -68,6 +71,7 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -303,7 +307,7 @@ final class RecordingContext extends MockContext {
   @override
   TextMetrics measureText(String text) {
     record('measureText', [text]);
-    return target.measureText(text);
+    return _MockBoxMetrics(target.measureText(text).width, empty: text.isEmpty);
   }
 
   @override
@@ -323,9 +327,11 @@ final class RecordingContext extends MockContext {
 /// The function puts a [RecordingContext] over `chart.ctx` in place of
 /// `chart.ctx`, of the `ctx` of each scale (core.controller.js:357-362), of
 /// the `ctx` of each dataset controller whose context is the context of the
-/// chart (core.datasetController.js:257 `_ctx`), and of the `ctx` of each
+/// chart (core.datasetController.js:257 `_ctx`), of the `ctx` of each
 /// `Title` box whose context is the context of the chart (plugin.title.js:16,
-/// :110). Then it draws once and puts back the old contexts. The layout is
+/// :110), and of the `ctx` of the `Legend` box whose context is the context
+/// of the chart (plugin.legend.js:56). Then it draws once and puts back the
+/// old contexts. The layout is
 /// done already: the label widths come from the caches of the scales. Each
 /// `Path2D` argument becomes `{path, calls}` (path2d_record.dart).
 List<Object?> drawCalls(Chart chart) {
@@ -346,6 +352,13 @@ List<Object?> drawCalls(Chart chart) {
     for (final box in chart.boxes)
       if (box case final Title title when identical(title.ctx, target)) title,
   ];
+  // The legend box keeps the context of the chart in its own `ctx`
+  // (plugin.legend.js:56).
+  final legends = <Legend>[
+    for (final box in chart.boxes)
+      if (box case final Legend legend when identical(legend.ctx, target))
+        legend,
+  ];
   chart.ctx = recording;
   for (final scale in scales) {
     scale.ctx = recording;
@@ -355,6 +368,9 @@ List<Object?> drawCalls(Chart chart) {
   }
   for (final title in titles) {
     title.ctx = recording;
+  }
+  for (final legend in legends) {
+    legend.ctx = recording;
   }
   try {
     chart.draw();
@@ -368,6 +384,9 @@ List<Object?> drawCalls(Chart chart) {
     }
     for (final title in titles) {
       title.ctx = target;
+    }
+    for (final legend in legends) {
+      legend.ctx = target;
     }
   }
   return recordedCalls(recording.getCalls());
@@ -833,4 +852,31 @@ void testReferenceWidths(List<ScaleChartWidth> widths) {
       }
     });
   }
+}
+
+/// The metrics of [RecordingContext.measureText]: the width of the target
+/// and the bounding box of the mock context of the generators
+/// (`LiberationContext` of scale_chart_common.mjs, `context.js:150` of
+/// chartjs-test-utils): 4, 8, 15, 25 for a text that is not empty, else 0.
+final class _MockBoxMetrics implements TextMetrics {
+  _MockBoxMetrics(this.width, {required bool empty})
+    : actualBoundingBoxAscent = empty ? 0 : 4,
+      actualBoundingBoxDescent = empty ? 0 : 8,
+      actualBoundingBoxLeft = empty ? 0 : 15,
+      actualBoundingBoxRight = empty ? 0 : 25;
+
+  @override
+  final double width;
+
+  @override
+  final double actualBoundingBoxAscent;
+
+  @override
+  final double actualBoundingBoxDescent;
+
+  @override
+  final double actualBoundingBoxLeft;
+
+  @override
+  final double actualBoundingBoxRight;
 }

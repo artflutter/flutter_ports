@@ -874,6 +874,7 @@ class LineElement extends Element
   /// Upstream returns `segments.length && points[…]`: the number 0 for a line
   /// without segments, which `index.d.ts:2028` declares as `false`. Dart
   /// `null` stands for that falsy value.
+  @override
   types.PointElement? first() {
     final segments = this.segments;
     final points = this.points;
@@ -912,6 +913,7 @@ class LineElement extends Element
   /// point[property]` (element.line.js:374) sets the member `x` or `y` of the
   /// [InterpolatedPoint]. It has no member for another name, and the readers
   /// of the result read only `x` and `y` (filler.drawing.js:203).
+  @override
   Object? interpolate(Point point, String property) {
     final options = this.options;
     final value = _pointValue(point, property);
@@ -973,6 +975,7 @@ class LineElement extends Element
   /// [ctx] is a context or a [Path2D]. [params] is the plain object `{move,
   /// reverse, start, end}`. Dart `null` stands for JS `undefined`, for
   /// [params] and for the result.
+  @override
   bool? pathSegment(
     CanvasPath ctx,
     types.Segment segment, [

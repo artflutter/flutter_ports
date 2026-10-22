@@ -432,6 +432,41 @@ void main() {
     ]);
   });
 
+  test('treats plugin.decimation and plugin.filler/ as roots, not '
+      'plugin.title', () {
+    const decimation = 'lib/src/plugins/plugin.decimation.dart';
+    const filler = 'lib/src/plugins/plugin.filler/filler.drawing.dart';
+    const extras =
+        "import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';";
+    const saved = {
+      decimation: [_ported, "import '../helpers/helpers.math.dart';"],
+      filler: [_ported, "import '../../helpers/helpers.math.dart';"],
+    };
+    tree
+      ..write('lib/src/helpers/helpers.extras.dart', [
+        _portOnly,
+        "import 'package:flutter/scheduler.dart';",
+      ])
+      ..write('lib/src/plugins/plugin.title.dart', [_ported, extras]);
+    for (final MapEntry(:key, :value) in saved.entries) {
+      tree.write(key, value);
+    }
+    expect(run(), isEmpty);
+
+    for (final MapEntry(key: path, :value) in saved.entries) {
+      tree.write(path, [_ported, extras]);
+      expect(run(), [
+        contains(
+          'lib/src/helpers/helpers.extras.dart:2: imports '
+          'package:flutter/scheduler.dart, but the file is in the pure layer '
+          '(reached from $path)',
+        ),
+      ], reason: path);
+      tree.write(path, value);
+    }
+    expect(run(), isEmpty);
+  });
+
   test('treats helpers.dom as a root', () {
     tree.write('lib/src/helpers/helpers.dom.dart', [
       _portOnly,

@@ -683,6 +683,7 @@ class Scale extends _ScalePrototype
   final String id;
 
   /// core.scale.js:177 `type`.
+  @override
   final String type;
 
   /// core.scale.js:181 `ctx`. The specs replace it with a mock context
@@ -1950,6 +1951,7 @@ class Scale extends _ScalePrototype
   /// core.scale.js:950 `getBaseValue()`.
   ///
   /// @return {number}
+  @override
   double getBaseValue() {
     final min = this.min;
     final max = this.max;

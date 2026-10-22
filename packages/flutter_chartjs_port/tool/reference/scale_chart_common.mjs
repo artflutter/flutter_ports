@@ -1032,10 +1032,10 @@ export function dartCalls(calls) {
 /**
  * The calls of one `chart.draw()`, after the layout, with the element
  * draws: the context of the chart is also the context of each scale, of
- * each dataset controller (core.datasetController.js:257) and of each
- * title box (plugin.title.js:16). The Dart test (drawCalls of
- * scale_chart_harness.dart) puts its recording context in the same four
- * places.
+ * each dataset controller (core.datasetController.js:257), of each title
+ * box (plugin.title.js:16) and of the legend box (plugin.legend.js:56). The
+ * Dart test (drawCalls of scale_chart_harness.dart) puts its recording
+ * context in the same five places.
  */
 export function drawCalls(chart) {
   const ctx = chart.ctx;

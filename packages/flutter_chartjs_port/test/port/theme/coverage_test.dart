@@ -97,8 +97,6 @@ const Map<String, String> _notThemed = {
   'plugins.legend.title.color':
       'a function that reads chart.options.color (plugin.legend.js:707), '
       'which the token color emits',
-  'plugins.subtitle.color':
-      'phase 8: the token color emits it with plugin.subtitle',
   'plugins.subtitle.font.weight':
       "the local weight 'normal' (plugin.subtitle.js:35-37); the token font "
       'has no weight there (theming.md §3.4)',

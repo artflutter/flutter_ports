@@ -12,7 +12,8 @@
   ([Chart.js ADR 0025](adr/0025-scale-value-parameters.md)), `jsAdd` and the number formatting
   guards ([Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md)). Section 12 has the
   date figures of phase 6 ([Chart.js ADR 0024](adr/0024-dates.md)). Section 13 has the controller
-  figures of phase 7, and section 13.6 the figures of step 7 on the phones.
+  figures of phase 7, and section 13.6 the figures of step 7 on the phones. Section 14 has the
+  plugin figures of phase 8 ([Chart.js ADR 0040](adr/0040-filler-targets-and-plain-points.md)).
 - Date: 2026-10-22
 - Related: [Chart.js ADR 0016](adr/0016-frame-scheduling.md) (frame scheduling),
   [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (no display-only JS exactness).
@@ -3061,3 +3062,51 @@ Chrome):
   in `trig/radial-center-judge/`.
 - No frame figure. The form keeps the structure, so the microbenchmark is sufficient (Chart.js ADR
   0020 §13).
+
+## 14. Plugins (phase 8)
+
+The figures of the decisions of phase 8.
+
+### 14.1 The filler points and targets (Chart.js ADR 0040)
+
+Bed: Apple M3 Max, Dart 3.13.5. AOT is `dart compile exe`. wasm is `dart compile wasm -O2`, run
+in the x64 Node.js v24.12.0 under Rosetta. Other sessions loaded the Mac (load average 6.4 to
+11.8). The decisions use differences of 5 times or more, or a confirmed series of three runs.
+The scripts and outputs are working files of the filler design of phase 8 (the fidelity bench,
+the performance bench and the judge re-runs), not committed.
+
+A second implementer of the point interfaces. C1 is the hot path of every line chart, 1000
+points, µs for each operation. A is the form of the ADR: `PointElement` is the only class that
+implements `types.PointElement`. L puts a port-only `FillerPoint` class into the filler lines. P
+allocates one `FillerPoint` in `main` that never enters a line.
+
+| C1 case | A, AOT | P, AOT | L, AOT | A, wasm | P, wasm | L, wasm |
+|---|---:|---:|---:|---:|---:|---:|
+| `segments` and `path`, fast path | 18.4-19.3 | 22.5-23.3 | 21.6-22.5 | 30.4-38.0 | 48.0-61.8 | 44.4-49.0 |
+| `updateControlPoints` and `path`, bezier | 53.6-54.2 | 88.3-88.7 | 87.6-91.6 | 110.0-135.8 | 235.7-270.2 | 238.9-285.9 |
+| `boundSegments` | 16.7-17.5 | 18.0-18.2 | 18.1-19.0 | 37.6-44.0 | 70.3-90.6 | 45.0-49.2 |
+
+- P gives the full slowdown of L: the cause is static. The whole-program type analysis of AOT
+  and dart2wasm stops the devirtualization of the reads of `skip`, `x`, `y` and the control
+  points. One allocated copy of a gallery class that implements `SplinePoint` gives the same
+  effect on the bezier case: 81.3-82.1 µs on AOT and 216.4-226.2 µs on dart2wasm against
+  53.9-54.3 µs and 107.5-112.9 µs. The guard `test/port/plugins/plugin.filler/point_implementers_test.dart`
+  keeps one implementer in `lib/` (ADR section 11).
+- The wrap of one point, ns: `PointElement()` with the setters 2.2-2.3 (AOT) and 4.1-6.7
+  (dart2wasm). `PointElement({'x': .., 'y': ..})` with a cfg Map 143.7-148.8 and 174.3-199.0. A
+  record or a plain class 2.2 and 0.3. V8 upstream: `new PointElement()` with 2 writes 21.1,
+  `{x, y}` 5.3. The port uses the cascade.
+- The filler lines, ns for each line: the cfg Map `LineElement({'points': .., 'options': ..,
+  '_loop': .., '_fullLoop': ..})` 280.8-289.9 (AOT) and 394.5-396.3 (dart2wasm). The cascade
+  42.5-44.6 and 38.8-44.2. The port keeps the upstream cfg Map: the gain is 0.24-0.36 µs for each
+  target in each frame, below the 0.1 ms rule of Chart.js ADR 0020 §13.
+- `interpolate` on a line of 1000 points: 14.4-15.5 µs (AOT), 27.7-29.4 µs (dart2wasm), 13.6 µs
+  (V8). The stack target of one dataset over 2 lines of 1000 points: 15.8 ms (AOT), 29.7-34.3 ms
+  (dart2wasm). The `stack` fill is quadratic, as upstream: the median of `chart.draw()` with 3
+  datasets in V8 is 2402 µs for a 100-point stack fill and 128163 µs for a 1000-point stack fill.
+- The read of `meta.$filler`, ns for each read: the access by name 10.6-15.0 (AOT) and
+  18.4-28.4 (dart2wasm). A typed field 0.6-4.3 and 0.3-4.3. An `Expando` 10.8-11.2 and
+  24.2-25.0. The filler reads the slot about twice for each visible dataset and draw. The port
+  keeps the access by name: the gain of a field reaches 0.1 ms only at about 1700 datasets.
+- No frame figure yet. Step 8 adds the fill cases to the frameless benchmark (ADR Open 2: a line
+  with gaps and `above` and `below`, a `stack` fill of 1000 points, and a radar fill).

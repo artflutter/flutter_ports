@@ -49,9 +49,25 @@ import 'plugin_title_reference.dart';
 //
 // The groups `class value`, `start state`, `stop` and
 // `adapt-component-class-role` hold the pin tests of Chart.js ADR 0038,
-// section 11, with the upstream results of the probe
-// .handover/phase8/units/W1-title/probes/title_class_probe.mjs (its output
-// is title_class_probe.out).
+// section 11. The expected results come from a probe on the pinned build in
+// Node.js v24.12.0 on x64 (controller_chart_common.mjs: loadChartJs,
+// registerBuiltins, makeChart). The probe read `registry.getPlugin('title')`
+// and its `_element` (the class `Title`), called the constructor with bad
+// arguments, read the start values, and called `draw`, `update`, `stop` and
+// `beforeUpdate` on a line chart with all plugins off. It logged:
+// - `keys`: id, _element, start, stop, beforeUpdate, defaults,
+//   defaultRoutes, descriptors. `superIsElement` true, `staticKeys` [].
+// - `newNoArg`, `newUndefined` and `newNull`: each throws a TypeError.
+//   `newChart5` 5, `newOptions5` 5 and `newCtxString` 'x': the constructor
+//   stores the value.
+// - `start`: top, bottom, left, right, width, height, position, weight,
+//   fullSize and _padding are all undefined.
+// - `drawBeforeUpdate`, `updateNullOptions` and `isHorizontalNoOptions`:
+//   each throws a TypeError.
+// - `updateWithMargins` [0, 0, 300, 100, 300, 34.4]: `update(300, 100,
+//   margins)` ignores the margins.
+// - `noTitle` [true, 0] (no titleBlock, no box), `stopWithoutBlock` 0 (no
+//   throw), `beforeUpdateWithoutBlock` throws a TypeError.
 
 /// The named functions of the configs of the generator, with the same
 /// bodies.

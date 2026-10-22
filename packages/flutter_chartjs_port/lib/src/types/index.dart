@@ -35,8 +35,9 @@ library;
 // index.d.ts names without an import. Both are pure, port-only interface
 // libraries (Chart.js ADR 0013, Chart.js ADR 0037).
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CanvasRenderingContext2D, HTMLCanvasElement;
+    show CanvasPath, CanvasRenderingContext2D, HTMLCanvasElement;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -92,6 +93,16 @@ abstract interface class ChartMeta {
   /// index.d.ts:477 `index: number`, the dataset index. The interaction
   /// items copy it as `datasetIndex` (core.interaction.js:78, :289).
   double get index;
+
+  /// index.d.ts:478 `visible: boolean`, the result of
+  /// `isDatasetVisible` (core.controller.js:436). plugin.legend.js:687
+  /// reads it.
+  ///
+  /// The `hide` animation writes the numbers 1 and 0
+  /// (core.animations.defaults.js:64-68), and the readers apply ToBoolean.
+  /// The `undefined` sentinel of `lib/src/js/js_undefined.dart` is the
+  /// value before `buildOrUpdateControllers`.
+  Object? get visible;
 
   /// index.d.ts:480 `stack: number`, the `stack` option of the dataset
   /// that `buildOrUpdateElements` copies (core.datasetController.js:420).
@@ -437,10 +448,9 @@ abstract interface class Chart {
   Map<String, Object?> getContext();
 
   /// index.d.ts:543 `readonly legend?: LegendElement`. Dart `null` stands
-  /// for JS `undefined`. The legend plugin (phase 8) writes it
-  /// (plugin.legend.js:602) and deletes it (:609). controller.doughnut.js:97
-  /// reads it.
-  LegendElement? get legend;
+  /// for JS `undefined`. The legend plugin writes it (plugin.legend.js:602)
+  /// and deletes it (:609). controller.doughnut.js:97 reads it.
+  abstract LegendElement? legend;
 
   /// plugin.title.js:117 `chart.titleBlock`. index.d.ts does not declare it.
   /// Dart null stands for JS `undefined` and for the `delete` of :136.
@@ -464,6 +474,14 @@ abstract interface class Chart {
   /// the legend item index of a user `generateLabels` can be a value that is
   /// not a number. The key is `ToString(index)` (core.controller.js:882).
   void toggleDataVisibility(Object? index);
+
+  /// index.d.ts:573 `hide(datasetIndex, dataIndex?)`. plugin.legend.js:649
+  /// calls it. Dart `null` for [dataIndex] stands for an absent argument.
+  void hide(double datasetIndex, [double? dataIndex]);
+
+  /// index.d.ts:574 `show(datasetIndex, dataIndex?)`. plugin.legend.js:652
+  /// calls it. Dart `null` for [dataIndex] stands for an absent argument.
+  void show(double datasetIndex, [double? dataIndex]);
 }
 
 /// index.d.ts:622 `DatasetController`.
@@ -476,6 +494,11 @@ abstract interface class DatasetController {
   /// dataset (core.datasetController.js:260). `core.interaction.js:24` and
   /// `:32` read it.
   ChartMeta get cachedMeta;
+
+  /// index.d.ts:637 `supportsDecimation: boolean`. The constructor sets
+  /// `false` (core.datasetController.js:271). plugin.decimation.js:225
+  /// reads it.
+  bool get supportsDecimation;
 
   /// core.datasetController.js:267 `_sharedOptions`, the options that all
   /// data elements share. `index.d.ts` does not declare it.
@@ -580,6 +603,10 @@ abstract interface class Scale implements Element, LayoutItem {
   /// (core.datasetController.js:125).
   String get id;
 
+  /// index.d.ts:1305 `readonly type: string`, the scale type.
+  /// plugin.decimation.js:231 reads it.
+  String get type;
+
   /// index.d.ts:1307 `readonly chart: Chart`.
   Chart get chart;
 
@@ -660,6 +687,10 @@ abstract interface class Scale implements Element, LayoutItem {
 
   /// index.d.ts:1346. controller.bar.js:48 calls it.
   double? getPixelForTick(int index);
+
+  /// index.d.ts:1376 `getBaseValue(): number`. filler.options.js:112 calls
+  /// it.
+  double getBaseValue();
 
   /// index.d.ts:1382. controller.bar.js:396 calls it.
   double getBasePixel();
@@ -985,8 +1016,10 @@ abstract interface class LineElement implements Element {
   /// index.d.ts:2026 `points: Point[]`. The port narrows it to point
   /// elements: `helpers.segment.js` reads their `skip` and `stop`, and
   /// `helpers.curve` writes their control points, which the line reads.
-  /// Upstream also stores plain points (filler.helper.js:28-33). See the
-  /// difference `adapt-line-points-elements` and Chart.js ADR 0017, Open.
+  /// Upstream also stores plain points (filler.helper.js:28-33,
+  /// filler.target.js:91, filler.segment.js:74-79). The filler wraps each
+  /// plain point in a point element (Chart.js ADR 0040, section 1). See the
+  /// difference `adapt-line-points-elements`.
   // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
   List<PointElement> get points;
 
@@ -1034,15 +1067,74 @@ abstract interface class LineElement implements Element {
   /// chart whose plugin cancels the first layout (`beforeLayout` returns
   /// `false`).
   void updateControlPoints(ChartArea? chartArea, [String? indexAxis]);
+
+  /// index.d.ts:2028 `first()`: the first point that is not skipped.
+  /// filler.drawing.js:93 and :123 call it.
+  ///
+  /// Dart `null` stands for the upstream `0` of a line without segments
+  /// (element.line.js:327-331), which `index.d.ts` declares as `false`.
+  PointElement? first();
+
+  /// index.d.ts:2030 `interpolate(point, property)`. filler.drawing.js:201
+  /// calls it.
+  ///
+  /// The result is Dart `null` for JS `undefined` (no segment in the
+  /// bounds), one [Point] for one segment, or a `List<Point>`.
+  Object? interpolate(Point point, String property);
+
+  /// index.d.ts:2031 `pathSegment(ctx, segment, params)`.
+  /// filler.drawing.js:85, :115, :143 and :153 call it.
+  ///
+  /// [ctx] is a context or a `Path2D`. [params] is the plain object `{move,
+  /// reverse, start, end}`. Dart `null` stands for JS `undefined`, for
+  /// [params] and for the result.
+  bool? pathSegment(
+    CanvasPath ctx,
+    Segment segment, [
+    Map<String, Object?>? params,
+  ]);
+}
+
+/// simpleArc.js:4 `simpleArc`: the members that filler.drawing.js calls by
+/// name on a fill target (:153, :201). It is not a declaration of
+/// `index.d.ts`. The class `SimpleArc` of `plugin.filler/simpleArc.dart`
+/// implements it (Chart.js ADR 0040, sections 4 and 5).
+///
+/// It does not implement [LineElement]. Thus `_segments`
+/// (filler.segment.js:15) takes the `simpleArc` branch for each target that
+/// is not a [LineElement].
+// DIVERGES(chartjs): adapt-filler-target-classes, a port-only target interface.
+abstract interface class SimpleArc {
+  /// simpleArc.js:11 `pathSegment(ctx, bounds, opts)`. Dart `null` for
+  /// [bounds] is JS `undefined`.
+  bool pathSegment(
+    CanvasPath ctx,
+    ({String property, double start, double end})? bounds,
+    AnyObject opts,
+  );
+
+  /// simpleArc.js:18 `interpolate(point)`. The reader reads only `x` and
+  /// `y` of the result (filler.drawing.js:203).
+  Point interpolate(PointElement point);
 }
 
 /// index.d.ts:2414 `LegendElement`, with the members that the option
-/// functions of the controllers read (controller.doughnut.js:97, :126).
-/// The `Legend` class of phase 8 implements it and adds `Element` and
-/// `LayoutItem`.
+/// functions of the controllers (controller.doughnut.js:97, :126) and the
+/// legend specs (global.defaults.tests.js:46) read.
+///
+/// `index.d.ts` declares it with `extends Element, LayoutItem`. No ported
+/// module reads a member of these interfaces through this interface. Thus
+/// it does not implement them. The `Legend` class of `plugin.legend.dart`
+/// extends the `Element` of `core.element.dart` and implements
+/// [LayoutItem] itself (Chart.js ADR 0038, section 6).
 abstract interface class LegendElement {
   /// index.d.ts:2415 `chart`.
   Chart get chart;
+
+  /// index.d.ts:2417 `legendItems?: LegendItem[]`. Dart `null` stands for
+  /// JS `undefined`, the value before the first `buildLabels`
+  /// (plugin.legend.js:65).
+  List<Object?>? get legendItems;
 
   /// index.d.ts:2418 `options`, the resolver of the legend options.
   Map<String, Object?> get options;

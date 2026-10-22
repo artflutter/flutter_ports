@@ -724,9 +724,12 @@ void _expectKeyOrder(Object? observed, Object? expected, String reason) {
 ///
 /// `push` and `splice` change the data List first and then call
 /// [notifyArrayListeners], as the hooked array methods do (differences.md
-/// `platform-array-events`). `hover` and `mouseout` dispatch a native
-/// event through [triggerMouseEvent] (Chart.js ADR 0022, section 6). The
-/// generator gives `mouseout` the point of the last `hover`. `setOption`
+/// `platform-array-events`). `hover`, `mouseout` and `click` dispatch a
+/// native event through [triggerMouseEvent] (Chart.js ADR 0022, section 6).
+/// The generator gives `mouseout` the point of the last `hover` or `click`.
+/// It writes the steps `clickLegend` and `hoverLegend` as `click` and
+/// `hover` at the rounded center of the legend hit box. Thus they never
+/// reach this function (Chart.js ADR 0041, section 3 item 6). `setOption`
 /// writes the value at the path (`plugins.title.display`) through
 /// `operator []=` of the option resolver, the `set` trap of upstream, and
 /// then updates the chart (Chart.js ADR 0041, section 3 item 6).
@@ -779,6 +782,11 @@ Future<void> runStep(
       });
     case ['mouseout', final num x, final num y]:
       await triggerMouseEvent(chart, 'mouseout', <String, Object?>{
+        'x': x,
+        'y': y,
+      });
+    case ['click', final num x, final num y]:
+      await triggerMouseEvent(chart, 'click', <String, Object?>{
         'x': x,
         'y': y,
       });

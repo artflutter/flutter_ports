@@ -79,6 +79,10 @@ final class _TestLegend implements types.LegendElement {
   @override
   final types.Chart chart;
 
+  /// index.d.ts:2417 `legendItems`. The legend functions do not read it.
+  @override
+  List<Object?>? get legendItems => null;
+
   @override
   final Map<String, Object?> options;
 }
