@@ -3,9 +3,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter_chartjs_port/src/elements/element.point.dart'
+    as elements;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
@@ -42,6 +45,19 @@ final class _Event implements ChartEvent {
 /// An instance of a Dart class: a leaf for clone and merge.
 final class _Instance {
   const _Instance();
+}
+
+/// An object with the access by name of [PropertyAccess] that is not an
+/// element: a store of named values, with [undefined] for an absent name.
+final class _ByName implements PropertyAccess {
+  final Map<String, Object?> values = {};
+
+  @override
+  Object? operator [](String prop) =>
+      values.containsKey(prop) ? values[prop] : undefined;
+
+  @override
+  void operator []=(String prop, Object? value) => values[prop] = value;
 }
 
 /// The object `{b: 1, 10: 2, a: 3, 2: 4}`, whose `Object.keys` order is
@@ -383,6 +399,219 @@ void main() {
               )!
               as Map<String, Object?>;
       expect(output.keys, ['ok']);
+    });
+  });
+
+  // The row adapt-merge-element-target (Chart.js ADR 0039, section 10).
+  // The upstream values come from the probe
+  // .handover/phase8/units/W3-merge/probes/merge_element.mjs: the pinned
+  // Chart.js build in Node.js v24.12.0 on x64.
+  group('adapt-merge-element-target', () {
+    /// The two `merge` calls of the probe into [target]. It gives the
+    /// `options` object after the first call.
+    Object? mergeTwice(PropertyAccess target) {
+      final view1 = <String, Object?>{
+        'x': 100,
+        'options': <String, Object?>{
+          'a': 1,
+          'nested': <String, Object?>{'b': 2},
+        },
+        'title': <Object?>['t1'],
+      };
+      expect(helpers.merge(target, view1), same(target));
+      expect(target['x'], 100.0);
+      expect(target['options'], isNot(same(view1['options'])));
+      expect(target['options'], {
+        'a': 1,
+        'nested': {'b': 2},
+      });
+      expect(target['title'], isNot(same(view1['title'])));
+      expect(target['title'], ['t1']);
+      final options1 = target['options'];
+
+      final view2 = <String, Object?>{
+        'options': <String, Object?>{
+          'nested': <String, Object?>{'c': 3},
+          'd': 4,
+        },
+        'title': <Object?>['t2'],
+      };
+      expect(helpers.merge(target, view2), same(target));
+      expect(target['options'], same(options1));
+      expect(target['options'], {
+        'a': 1,
+        'nested': {'b': 2, 'c': 3},
+        'd': 4,
+      });
+      expect(target['title'], isNot(same(view2['title'])));
+      expect(target['title'], ['t2']);
+      return options1;
+    }
+
+    test('merges into an element target, as upstream', () {
+      final element = elements.PointElement({'x': 1, 'y': 2});
+      mergeTwice(element);
+      expect(element.x, 100.0);
+      expect(element.y, 2.0);
+      expect(element.options, isA<Map<String, Object?>>());
+    });
+
+    test('merges into another PropertyAccess target', () {
+      final target = _ByName();
+      mergeTwice(target);
+      expect(target.values.keys, ['x', 'options', 'title']);
+    });
+
+    test('the default merger enters a PropertyAccess value', () {
+      final element = elements.PointElement({'x': 1});
+      final host = <String, Object?>{'el': element};
+      final output =
+          helpers.merge(host, <String, Object?>{
+                'el': <String, Object?>{
+                  'x': 5,
+                  'options': <String, Object?>{'r': 1},
+                },
+              })!
+              as Map<String, Object?>;
+      expect(output['el'], same(element));
+      expect(element.x, 5.0);
+      expect(element.options, {'r': 1});
+
+      // A leaf source value replaces the element.
+      helpers.merge(host, <String, Object?>{'el': 3});
+      expect(host['el'], 3);
+    });
+
+    test('a target that is not an object is the result', () {
+      expect(helpers.merge(5, <String, Object?>{'a': 1}), 5);
+      const instance = _Instance();
+      expect(
+        helpers.merge(instance, <String, Object?>{'a': 1}),
+        same(instance),
+      );
+    });
+
+    test('clone keeps an element as a reference, unlike upstream', () {
+      // Port difference: upstream clone(element) gives a new object without
+      // a prototype, with the own keys of the element.
+      final element = elements.PointElement({'x': 1});
+      expect(helpers.clone(element), same(element));
+      final list = helpers.clone(<Object?>[element])! as List;
+      expect(list.single, same(element));
+    });
+
+    test('mergeIf writes nothing into an element, unlike upstream', () {
+      // Port difference: upstream mergeIf(element, {x: 5, z: 7}) keeps x 1
+      // and adds z 7.
+      final element = elements.PointElement({'x': 1});
+      expect(
+        helpers.mergeIf(element, <String, Object?>{'x': 5, 'z': 7}),
+        same(element),
+      );
+      expect(element.x, 1.0);
+      expect(element['z'], same(undefined));
+    });
+
+    // The upstream values of the next two tests come from the probe
+    // .handover/phase8/units/W3-merge/probes/review-merge-edges.mjs.
+    test('merge skips an element source, unlike upstream', () {
+      // Port difference: upstream merge({}, element) copies the 8 own keys
+      // x, y, active, options, $animations, parsed, skip and stop.
+      final element = elements.PointElement({'x': 1, 'y': 2});
+      final output =
+          helpers.merge(<String, Object?>{}, element)! as Map<String, Object?>;
+      expect(jsObjectKeys(output), isEmpty);
+    });
+
+    test('an element source value replaces an element target value, '
+        'unlike upstream', () {
+      // Port difference: upstream merge({el: t}, {el: s}) keeps t in el,
+      // writes x 9 into t (the own key of s) and writes y undefined into t.
+      final t = elements.PointElement({'x': 1, 'y': 2});
+      final s = elements.PointElement({'x': 9});
+      final host = <String, Object?>{'el': t};
+      helpers.merge(host, <String, Object?>{'el': s});
+      expect(host['el'], same(s));
+      expect(t.x, 1.0);
+      expect(t.y, 2.0);
+    });
+
+    test('a custom merger that lists the target keys throws', () {
+      // Upstream gives the own keys of the element. The view has no keys.
+      final element = elements.PointElement({'x': 1});
+      void keysMerger(
+        String key,
+        Map<String, Object?> target,
+        Map<String, Object?> source,
+        helpers.MergeOptions options,
+      ) {
+        target.keys.toList();
+      }
+
+      expect(
+        () => helpers.merge(
+          element,
+          <String, Object?>{'q': 1},
+          helpers.MergeOptions(merger: keysMerger),
+        ),
+        throwsUnsupportedError,
+      );
+      expect(
+        () => helpers.merge(
+          element,
+          <String, Object?>{'q': 1},
+          const helpers.MergeOptions(merger: helpers.mergerIf),
+        ),
+        throwsUnsupportedError,
+      );
+    });
+
+    test('a custom merger that reads and writes by name works', () {
+      final element = elements.PointElement({'x': 1});
+      helpers.merge(
+        element,
+        <String, Object?>{'x': 2},
+        helpers.MergeOptions(
+          merger: (key, target, source, options) {
+            target[key] = jsToNumber(target[key]) + jsToNumber(source[key]);
+          },
+        ),
+      );
+      expect(element.x, 3.0);
+    });
+
+    test('the Map path gives the upstream config merge', () {
+      final output = helpers.merge(
+        <String, Object?>{
+          'a': <String, Object?>{
+            'b': 1,
+            'c': <Object?>[
+              1,
+              <String, Object?>{'d': 2},
+            ],
+          },
+          'e': 3,
+        },
+        <Object?>[
+          <String, Object?>{
+            'a': <String, Object?>{
+              'c': <Object?>[9],
+              'f': <String, Object?>{'g': 1},
+            },
+          },
+          <String, Object?>{
+            'e': <String, Object?>{'h': 1},
+          },
+        ],
+      );
+      expect(output, {
+        'a': {
+          'b': 1,
+          'c': [9],
+          'f': {'g': 1},
+        },
+        'e': {'h': 1},
+      });
     });
   });
 

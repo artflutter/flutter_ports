@@ -11,11 +11,16 @@
 /// A Map has no prototype. Thus [isObject] is true only for a
 /// `Map<String, Object?>`. In JavaScript it is also true for an instance of a
 /// class (helpers.core.ts:53-55). Here a class instance in an options tree is
-/// a leaf: [clone] and [merge] copy its reference and do not enter it.
+/// a leaf: [clone] and [mergeIf] copy its reference and do not enter it.
+/// [merge] skips a class instance as a source, and it copies the reference of
+/// a class instance as a source value, also over an element target value.
+/// [merge] writes into a `types.PropertyAccess` target, for example an
+/// element, through the access by name (Chart.js ADR 0039, section 10).
 ///
 /// @namespace Chart.helpers
 library;
 
+import 'dart:collection';
 import 'dart:typed_data';
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
@@ -81,7 +86,9 @@ bool isArray(Object? value) {
 /// from JavaScript:
 /// - An instance of a Dart class is not an object, although
 ///   `Object.prototype.toString` gives `'[object Object]'` for an instance of
-///   a JavaScript class. [clone], [merge] and [mergeIf] treat it as a leaf.
+///   a JavaScript class. [clone] and [mergeIf] treat it as a leaf. [merge]
+///   and [merger] treat a `types.PropertyAccess` target as an object (the
+///   row `adapt-merge-element-target`).
 /// - A Map with other key types, for example the `Map<dynamic, dynamic>` of
 ///   an untyped `{}` literal, is not an object. Give a Map literal the type
 ///   `<String, Object?>`.
@@ -295,6 +302,15 @@ bool _isValidKey(String key) {
 /// option.
 /// Note(SB): also used by mergeConfig and mergeScaleConfig as fallback.
 /// @private
+///
+/// Upstream `isObject` is true for an instance of a class. Thus `_merger`
+/// also merges an object into an element value (helpers.core.ts:228-230).
+/// Here a [PropertyAccess] value of [target] is an object target too: [merge]
+/// writes into it by name (the row `adapt-merge-element-target`). The test
+/// of the source value comes first, so a leaf source value costs no
+/// interface test. A class instance as a source value is not an object here.
+/// Thus its reference replaces the target value, also an element, where
+/// upstream merges its own keys into an element target value.
 void merger(
   String key,
   AnyObject target,
@@ -309,6 +325,9 @@ void merger(
   final sval = source[key];
 
   if (isObject(tval) && isObject(sval)) {
+    merge(tval, sval, options);
+  } else if (isObject(sval) && tval is PropertyAccess) {
+    // DIVERGES(chartjs): adapt-merge-element-target, a by-name target.
     merge(tval, sval, options);
   } else {
     target[key] = clone(sval);
@@ -346,6 +365,18 @@ final class MergeOptions {
 /// @param `[options.merger]` - The merge method (key, target, source,
 /// options)
 /// @returns The `target` object.
+///
+/// Upstream `isObject` is true for an instance of a class, also for an
+/// element (helpers.core.ts:53-55, :264). Thus upstream merges into an
+/// element target, for example `Chart.helpers.merge(tooltip, view)`
+/// (`plugin.tooltip.tests.js:1501`). Here a [PropertyAccess] target is an
+/// object target too: the merger reads and writes it through a Map view with
+/// the read and the write by name ([PropertyAccess.operator []] and
+/// [PropertyAccess.operator []=]). The result is the target, not the view
+/// (the row `adapt-merge-element-target`, Chart.js ADR 0039, section 10).
+/// The view has no keys. Thus a custom merger that lists the keys of its
+/// target, or tests a key with `containsKey`, throws an
+/// [UnsupportedError]. The default [merger] does neither.
 Object? merge(
   Object? target, [
   Object? source = undefined,
@@ -354,10 +385,15 @@ Object? merge(
   final sources = isArray(source) ? source! as List : [source];
   final ilen = sources.length;
 
-  if (!isObject(target)) {
+  final AnyObject object;
+  if (isObject(target)) {
+    object = target! as AnyObject;
+  } else if (target is PropertyAccess) {
+    // DIVERGES(chartjs): adapt-merge-element-target, a by-name target.
+    object = _PropertyAccessView(target);
+  } else {
     return target;
   }
-  final object = target! as AnyObject;
 
   final mergeOptions = options ?? const MergeOptions();
   // Upstream names it `merger`, the Dart name of `_merger`.
@@ -389,7 +425,18 @@ Object? merge(
 /// @param target - The target object in which all sources are merged into.
 /// @param source - Object(s) to merge into `target`.
 /// @returns The `target` object.
+///
+/// Upstream also merges into an element target, because its `isObject` is
+/// true for an instance of a class. Here [mergeIf] keeps an element target
+/// as it is: [mergerIf] tests the own keys of its target, and an element has
+/// no list of own keys (the row `adapt-merge-element-target`). The test
+/// gives the result of [merge] for every other target, because [merge]
+/// returns a target that is not an object at once.
 Object? mergeIf(Object? target, [Object? source = undefined]) {
+  // DIVERGES(chartjs): adapt-merge-element-target, no by-name target.
+  if (!isObject(target)) {
+    return target;
+  }
   return merge(target, source, const MergeOptions(merger: mergerIf));
 }
 
@@ -423,6 +470,41 @@ void mergerIf(
   } else if (!target.containsKey(key)) {
     target[key] = clone(sval);
   }
+}
+
+/// The Map view of a [PropertyAccess] target of [merge] (the row
+/// `adapt-merge-element-target`).
+///
+/// [operator []] is the read by name of the target: the [undefined] sentinel
+/// for an absent name. [operator []=] is the write by name. An element has no
+/// list of its own keys. Thus [keys], [remove] and [clear] throw an
+/// [UnsupportedError], and so do the other Map members that use them, for
+/// example `containsKey` and `length`.
+final class _PropertyAccessView extends MapBase<String, Object?> {
+  _PropertyAccessView(this._target);
+
+  final PropertyAccess _target;
+
+  @override
+  Object? operator [](Object? key) => _target[key! as String];
+
+  @override
+  void operator []=(String key, Object? value) => _target[key] = value;
+
+  @override
+  Iterable<String> get keys => throw UnsupportedError(
+    'The keys of a merge target that is not a Map',
+  );
+
+  @override
+  Object? remove(Object? key) => throw UnsupportedError(
+    'A remove from a merge target that is not a Map',
+  );
+
+  @override
+  void clear() => throw UnsupportedError(
+    'A clear of a merge target that is not a Map',
+  );
 }
 
 /// helpers.core.ts:328 `_deprecated`.
