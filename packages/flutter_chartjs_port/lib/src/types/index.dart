@@ -33,7 +33,7 @@ library;
 
 // The canvas interface and the native event stand in for lib.dom.d.ts, which
 // index.d.ts names without an import. Both are pure, port-only interface
-// libraries (Chart.js ADR 0013, Chart.js ADR 0014).
+// libraries (Chart.js ADR 0013, Chart.js ADR 0037).
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasRenderingContext2D, HTMLCanvasElement;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
@@ -442,6 +442,10 @@ abstract interface class Chart {
   /// reads it.
   LegendElement? get legend;
 
+  /// plugin.title.js:117 `chart.titleBlock`. index.d.ts does not declare it.
+  /// Dart null stands for JS `undefined` and for the `delete` of :136.
+  abstract LayoutItem? titleBlock;
+
   /// index.d.ts:559 `update(mode?)`. controller.doughnut.js:127 calls it.
   void update([Object? mode]);
 
@@ -809,7 +813,7 @@ abstract interface class ChartEvent implements Point {
   String get type;
 
   /// index.d.ts:1588 `native: Event | null`. The port-only [NativeEvent]
-  /// stands for the DOM event (Chart.js ADR 0014). Dart `null` stands for
+  /// stands for the DOM event (Chart.js ADR 0037). Dart `null` stands for
   /// JS `null`, for example the `native` of a synthetic event.
   NativeEvent? get native;
 
@@ -1108,6 +1112,9 @@ abstract interface class ChartConfiguration {
   /// index.d.ts:3921 `options?: ChartOptions<TType>`. A Map
   /// (Chart.js ADR 0006).
   Map<String, Object?> get options;
+
+  /// core.config.js:177 `get data()`. plugin.colors.ts:107-110 reads it.
+  Map<String, Object?> get data;
 }
 
 /// core.element.ts:6 `Element`, which index.d.ts:10 imports.

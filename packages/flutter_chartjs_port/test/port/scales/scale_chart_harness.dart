@@ -25,11 +25,11 @@
 ///   integer px sizes, the regular and bold faces and the families of the
 ///   harness. Outside them, the generator stops with an error.
 /// - The Dart side records the calls of one `chart.draw()` after the layout
-///   with a [RecordingContext] in place of `chart.ctx`, of each `scale.ctx`
-///   and of the writable `ctx` of each dataset controller ([drawCalls],
-///   Chart.js ADR 0030). Thus the calls have the element draws, on both
-///   sides. A `Path2D` argument records as `{path, calls}`
-///   (`test/port/canvas/path2d_record.dart`).
+///   with a [RecordingContext] in place of `chart.ctx`, of each `scale.ctx`,
+///   of the writable `ctx` of each dataset controller ([drawCalls],
+///   Chart.js ADR 0030) and of the `ctx` of each `Title` box. Thus the calls
+///   have the element draws, on both sides. A `Path2D` argument records as
+///   `{path, calls}` (`test/port/canvas/path2d_record.dart`).
 ///
 /// The parts:
 ///
@@ -68,6 +68,7 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/upstream.dart' show chartJsVersion;
@@ -320,12 +321,13 @@ final class RecordingContext extends MockContext {
 /// with the element draws.
 ///
 /// The function puts a [RecordingContext] over `chart.ctx` in place of
-/// `chart.ctx`, of the `ctx` of each scale (core.controller.js:357-362) and
-/// of the `ctx` of each dataset controller whose context is the context of
-/// the chart (core.datasetController.js:257 `_ctx`). Then it draws once and
-/// puts back the old contexts. The layout is done already: the label widths
-/// come from the caches of the scales. Each `Path2D` argument becomes
-/// `{path, calls}` (path2d_record.dart).
+/// `chart.ctx`, of the `ctx` of each scale (core.controller.js:357-362), of
+/// the `ctx` of each dataset controller whose context is the context of the
+/// chart (core.datasetController.js:257 `_ctx`), and of the `ctx` of each
+/// `Title` box whose context is the context of the chart (plugin.title.js:16,
+/// :110). Then it draws once and puts back the old contexts. The layout is
+/// done already: the label widths come from the caches of the scales. Each
+/// `Path2D` argument becomes `{path, calls}` (path2d_record.dart).
 List<Object?> drawCalls(Chart chart) {
   final target = chart.ctx!;
   final recording = RecordingContext(target);
@@ -338,12 +340,21 @@ List<Object?> drawCalls(Chart chart) {
           case final DatasetController c when identical(c.ctx, target))
         c,
   ];
+  // The title boxes keep the context of the chart in their own `ctx`
+  // (plugin.title.js:16, :110).
+  final titles = <Title>[
+    for (final box in chart.boxes)
+      if (box case final Title title when identical(title.ctx, target)) title,
+  ];
   chart.ctx = recording;
   for (final scale in scales) {
     scale.ctx = recording;
   }
   for (final controller in controllers) {
     controller.ctx = recording;
+  }
+  for (final title in titles) {
+    title.ctx = recording;
   }
   try {
     chart.draw();
@@ -354,6 +365,9 @@ List<Object?> drawCalls(Chart chart) {
     }
     for (final controller in controllers) {
       controller.ctx = target;
+    }
+    for (final title in titles) {
+      title.ctx = target;
     }
   }
   return recordedCalls(recording.getCalls());

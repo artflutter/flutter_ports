@@ -472,6 +472,350 @@ void main() {
     });
   });
 
+  group('stale blocked skips', () {
+    // Chart.js ADR 0041, section 8.
+    String row(String path, String status) =>
+        '| [`$path`](x) | 1 | | $status |';
+    const inProgress =
+        'in progress: ported, registered in wave 4 (Chart.js ADR 0041 §8)';
+    const fillerFiles = [
+      'index.js',
+      'filler.drawing.js',
+      'filler.helper.js',
+      'filler.options.js',
+      'filler.segment.js',
+      'filler.target.js',
+      'filler.target.stack.js',
+      'simpleArc.js',
+    ];
+    Map<String, String> parity({String fillerSimpleArc = inProgress}) =>
+        parseParityStatuses(
+          [
+            row('src/plugins/plugin.title.js', 'ported'),
+            row('src/plugins/plugin.colors.ts', 'ported'),
+            row('src/plugins/plugin.legend.js', inProgress),
+            for (final file in fillerFiles)
+              row(
+                'src/plugins/plugin.filler/$file',
+                file == 'simpleArc.js' ? fillerSimpleArc : 'ported',
+              ),
+            row('src/index.umd.ts', 'not started'),
+            row('test/specs/plugin.title.tests.js', 'not started'),
+          ].join('\n'),
+        );
+    String stale(String module) =>
+        "stale skip 'blocked: $module': each src/ row of $module is ported "
+        '(Chart.js ADR 0041 §8)';
+    final title = stale('plugin.title');
+    String unknown(String module) =>
+        "unknown module in 'blocked: $module': no src/ row in parity.md";
+    String error(String at, String message) => 'error: $at: $message';
+
+    test('(1) a module with each src/ row ported: a finding with the line', () {
+      final findings = staleBlockedSkips(parity(), {
+        'test/specs/plugin.title_test.dart': [
+          "import 'package:test/test.dart';",
+          'void main() {',
+          "  test('a', () {}, skip: 'blocked: plugin.title');",
+          '  test("b", () {}, skip: "blocked: plugin.title");',
+          "  test('c', () {}, skip: r'blocked: plugin.title');",
+          '}',
+        ].join('\n'),
+        'test/fixtures/index.dart': [
+          'const fixtureSkips = {',
+          "  'plugin.colors/a.js': 'blocked: plugin.colors',",
+          '};',
+        ].join('\r\n'),
+      }, displayPrefix: 'pkg/');
+      expect(describeFindings(findings), [
+        for (final line in [3, 4, 5])
+          error('pkg/test/specs/plugin.title_test.dart:$line', title),
+        error('pkg/test/fixtures/index.dart:2', stale('plugin.colors')),
+      ]);
+    });
+
+    test('(2) a module in progress: no finding', () {
+      expect(
+        staleBlockedSkips(parity(), {
+          'test/specs/plugin.legend_test.dart':
+              "test('a', () {}, skip: 'blocked: plugin.legend');",
+        }),
+        isEmpty,
+      );
+    });
+
+    test('(3) a folder module with one row in progress: no finding', () {
+      const sources = {
+        'test/specs/plugin.filler_test.dart':
+            "test('a', () {}, skip: 'blocked: plugin.filler');",
+      };
+      expect(moduleRows('plugin.filler', parity()), [
+        for (final file in fillerFiles) 'src/plugins/plugin.filler/$file',
+      ]);
+      expect(staleBlockedSkips(parity(), sources), isEmpty);
+      // When the last row is ported, the skip is stale.
+      expect(
+        describeFindings(
+          staleBlockedSkips(parity(fillerSimpleArc: 'ported'), sources),
+        ),
+        [
+          error(
+            'test/specs/plugin.filler_test.dart:1',
+            stale('plugin.filler'),
+          ),
+        ],
+      );
+    });
+
+    test('(4) blocked: index.umd with the row not started: no finding', () {
+      expect(moduleRows('index.umd', parity()), ['src/index.umd.ts']);
+      expect(
+        staleBlockedSkips(parity(), {
+          'test/specs/global.namespace_test.dart':
+              "test('a', () {}, skip: 'blocked: index.umd');",
+        }),
+        isEmpty,
+      );
+    });
+
+    test('(5) an unknown module: a finding', () {
+      expect(moduleRows('plugin.legnd', parity()), isEmpty);
+      expect(
+        describeFindings(
+          staleBlockedSkips(parity(), {
+            'test/port/a_test.dart': [
+              '',
+              "const skip = 'blocked: plugin.legnd';",
+            ].join('\n'),
+          }),
+        ),
+        [
+          error('test/port/a_test.dart:2', unknown('plugin.legnd')),
+        ],
+      );
+    });
+
+    test('(6) comments and interpolations do not count', () {
+      expect(
+        staleBlockedSkips(parity(), {
+          'test/specs/plugin.title_test.dart': [
+            "/// A skipped case has `skip: 'blocked: plugin.title'`.",
+            "// skip: 'blocked: plugin.title'",
+            "/* skip: 'blocked: plugin.title' */",
+            "/** 'blocked: plugin.unknown' */",
+            r"final a = 'blocked: $module';",
+            r"final b = 'blocked: ${module}';",
+            r"final c = '${'blocked: plugin.title'}';",
+            "final d = 'n/a: blocked: plugin.title';",
+            r"final e = 'blocked: $module and more';",
+          ].join('\n'),
+        }),
+        isEmpty,
+      );
+      // An escaped `$` is not an interpolation.
+      expect(
+        describeFindings(
+          staleBlockedSkips(parity(), {
+            'test/a_test.dart': r"final a = 'blocked: plugin.\$x';",
+          }),
+        ),
+        [
+          error('test/a_test.dart:1', unknown(r'plugin.\$x')),
+        ],
+      );
+    });
+
+    test('(6b) a blocked: literal in another form: a finding', () {
+      // Review finding R1: tool 5 accepts only `blocked: <module>`
+      // (isValidSkipReason), so each other form is an error. Else a stale
+      // skip in that form stays.
+      String form(String content) =>
+          "skip reason '$content' is not 'blocked: <module>' "
+          '(Chart.js ADR 0041 §8)';
+      final findings = staleBlockedSkips(parity(), {
+        'test/specs/plugin.title_test.dart': [
+          "test('a', () {}, skip: 'blocked: ' 'plugin.title');",
+          "test('b', () {}, skip: 'blocked: plugin.title (wave 4)');",
+          "test('c', () {}, skip: 'blocked: plugin.title ');",
+          "test('d', () {}, skip: 'blocked:plugin.title');",
+          "test('e', () {}, skip: r'blocked: plugin.legend and more');",
+          "test('f', () {}, skip: 'blocked: plugin.legend');",
+        ].join('\n'),
+      });
+      expect(describeFindings(findings), [
+        error('test/specs/plugin.title_test.dart:1', form('blocked: ')),
+        error(
+          'test/specs/plugin.title_test.dart:2',
+          form('blocked: plugin.title (wave 4)'),
+        ),
+        error(
+          'test/specs/plugin.title_test.dart:3',
+          form('blocked: plugin.title '),
+        ),
+        error(
+          'test/specs/plugin.title_test.dart:4',
+          form('blocked:plugin.title'),
+        ),
+        error(
+          'test/specs/plugin.title_test.dart:5',
+          form('blocked: plugin.legend and more'),
+        ),
+      ]);
+    });
+
+    test('(7) a literal in test/tool/ is not read', () {
+      const literal = "const skip = 'blocked: plugin.title';";
+      final tree = FileTree()
+        ..write('test/tool/spec_cases_test.dart', [literal])
+        ..write('test/specs/plugin.title_test.dart', [literal])
+        ..write('test/build/a_test.dart', [literal])
+        ..write('test/.hidden/a_test.dart', [literal])
+        ..write('test/specs/notes.txt', [literal])
+        ..write('tool/a.dart', [literal]);
+      final sources = readStaleScanSources(tree.root);
+      expect(sources.keys, ['test/specs/plugin.title_test.dart']);
+      expect(isStaleScanPath('test/tool/spec_cases_test.dart'), isFalse);
+      expect(
+        describeFindings(staleBlockedSkips(parity(), sources)),
+        [error('test/specs/plugin.title_test.dart:1', title)],
+      );
+    });
+
+    test('(8) a generated *_reference*.dart file is not read', () {
+      const literal = "const skip = 'blocked: plugin.title';";
+      final tree = FileTree()
+        ..write('test/port/plugins/plugin_title_reference.dart', [literal])
+        ..write('test/port/scales/scale_time_reference_2.dart', [literal])
+        ..write('test/port/reference/a_test.dart', [literal]);
+      final sources = readStaleScanSources(tree.root);
+      expect(sources.keys, ['test/port/reference/a_test.dart']);
+      expect(
+        isStaleScanPath('test/port/plugins/plugin_title_reference.dart'),
+        isFalse,
+      );
+      expect(isStaleScanPath('test/port/plugins/plugin_harness.dart'), isTrue);
+    });
+
+    test('(9) requiredBy gives the same results as before', () {
+      // The form of requiredBy before moduleRows.
+      ({String? status, bool required}) before(
+        String spec,
+        Map<String, String> parity,
+      ) {
+        final done = RegExp(r'^ported\b');
+        final base = spec.substring(0, spec.length - '.tests.js'.length);
+        final specStatus = parity['test/specs/$spec'];
+        if (specStatus != null && done.hasMatch(specStatus)) {
+          return (status: specStatus, required: true);
+        }
+        final modules = [
+          for (final MapEntry(:key, :value) in parity.entries)
+            if (key.startsWith('src/') &&
+                (key.contains('/$base/') ||
+                    key.split('/').last.replaceFirst(RegExp(r'\.[^.]+$'), '') ==
+                        base))
+              value,
+        ];
+        if (modules.isNotEmpty && modules.every(done.hasMatch)) {
+          return (status: modules.first, required: true);
+        }
+        return (
+          status: specStatus ?? (modules.isEmpty ? null : modules.first),
+          required: false,
+        );
+      }
+
+      for (final statuses in [
+        parity(),
+        parity(fillerSimpleArc: 'ported'),
+        parseParityStatuses(
+          [
+            row('src/helpers/helpers.math.ts', 'ported'),
+            row('src/helpers/helpers.core.ts', 'partial: `isFinite`'),
+            row('src/core/core.ticks.js', 'not started'),
+            row('test/specs/core.ticks.tests.js', 'ported (4/4 cases)'),
+            row('src/plugins/plugin.decimation/minmax.js', 'partial'),
+            row('src/plugins/plugin.decimation/index.js', 'ported'),
+          ].join('\n'),
+        ),
+      ]) {
+        for (final spec in [
+          'plugin.title.tests.js',
+          'plugin.colors.tests.js',
+          'plugin.legend.tests.js',
+          'plugin.filler.tests.js',
+          'plugin.decimation.tests.js',
+          'helpers.math.tests.js',
+          'helpers.core.tests.js',
+          'core.ticks.tests.js',
+          'index.umd.tests.js',
+          'mixed.tests.js',
+        ]) {
+          expect(
+            requiredBy(spec, statuses),
+            before(spec, statuses),
+            reason: spec,
+          );
+        }
+      }
+    });
+
+    test('both modes of the command fail on a stale skip', () async {
+      final tree = FileTree()
+        ..writeText('doc/upstream/manifest.json', jsonEncode(_manifestJson()))
+        ..writeText(
+          'fixtures.json',
+          jsonEncode(_fixtureManifestJson()),
+        )
+        ..write('doc/parity.md', [row('src/plugins/plugin.title.js', 'ported')])
+        ..write('test/port/a_test.dart', [
+          '// A port-only test.',
+          "const skip = 'blocked: plugin.title';",
+        ])
+        ..writeText('results.json', '');
+      final out = StringBuffer();
+      final caseArgs = ['--results', tree.path('results.json'), tree.root];
+      final fixtureArgs = [
+        '--fixtures',
+        '--manifest',
+        tree.path('fixtures.json'),
+        ...caseArgs,
+      ];
+      for (final (args, name) in [
+        (caseArgs, 'test:cases'),
+        (fixtureArgs, 'test:fixtures'),
+      ]) {
+        out.clear();
+        expect(await command.run(args, out: out), 1, reason: '$out');
+        expect(
+          out.toString(),
+          contains('$name: the stale-block check read 1 Dart files of test/'),
+        );
+        expect(
+          out.toString(),
+          contains('/test/port/a_test.dart:2: ${stale('plugin.title')}'),
+        );
+        expect(out.toString(), contains('$name: failed'));
+      }
+
+      tree.write('doc/parity.md', [
+        row('src/plugins/plugin.title.js', inProgress),
+      ]);
+      for (final args in [caseArgs, fixtureArgs]) {
+        out.clear();
+        expect(await command.run(args, out: out), 0, reason: '$out');
+      }
+
+      // Both modes need parity.md.
+      tree.delete('doc/parity.md');
+      for (final args in [caseArgs, fixtureArgs]) {
+        out.clear();
+        expect(await command.run(args, out: out), 2, reason: '$out');
+        expect(out.toString(), contains('parity.md does not exist.'));
+      }
+    });
+  });
+
   test('skip reasons follow porting-flow.md section 1 step 5', () {
     expect(isValidSkipReason('blocked: core.controller'), isTrue);
     expect(
@@ -481,6 +825,9 @@ void main() {
     expect(isValidSkipReason('diverges: theme-H1'), isTrue);
     expect(isValidSkipReason('diverges: H1'), isFalse);
     expect(isValidSkipReason('blocked:'), isFalse);
+    // Only the form `blocked: <module>` (review finding R1).
+    expect(isValidSkipReason('blocked: plugin.title (wave 4)'), isFalse);
+    expect(isValidSkipReason('blocked: plugin.title '), isFalse);
     expect(isValidSkipReason('todo'), isFalse);
     expect(isValidSkipReason(null), isFalse);
   });
@@ -887,8 +1234,14 @@ void main() {
           'doc/upstream/manifest.json',
           jsonEncode(_fixtureManifestJson()),
         )
+        ..write('doc/parity.md', [
+          '| [`src/plugins/plugin.title.js`](x) | 1 | | not started |',
+        ])
         ..write('test/specs/a_test.dart', ['//'])
-        ..write('test/port/fixtures/index_test.dart', ['//']);
+        ..write('test/port/fixtures/index_test.dart', [
+          '//',
+          "const skip = 'blocked: plugin.title';",
+        ]);
       suiteA();
       r
         ..test('A auto a/one.json', [aRoot, aGroup, aAuto])

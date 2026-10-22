@@ -11,10 +11,11 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The theme presets (theming.md §5.1).
 abstract final class ChartThemes {
-  /// The theme with every token of phase 6 at its Chart.js v4.5.1 value
+  /// The theme with the tokens of this list at their Chart.js v4.5.1 values
   /// (theming.md §4). It restates these values (theming.md §9):
   ///
-  /// - `colors.color`: `Defaults.color` `'#666'` (`core.defaults.js:43`).
+  /// - `colors.color`: `Defaults.color` `'#666'` (`core.defaults.js:43`),
+  ///   also the value of the title color route (`plugin.title.js:158-160`).
   /// - `colors.borderColor`: `Defaults.borderColor` `'rgba(0,0,0,0.1)'`
   ///   (`core.defaults.js:42`). The alpha is 0.1 exactly, not the 8-bit
   ///   alpha of `Color(0x1A000000)`.
@@ -24,12 +25,20 @@ abstract final class ChartThemes {
   ///   (`element.arc.ts:379`) and the tick backdrop
   ///   `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`).
   /// - `typography.font`: `Defaults.font` (`core.defaults.js:54-60`). Its
-  ///   `weight` is `null`, which themes nothing.
+  ///   `weight` is `null`, which themes nothing. The title font has no
+  ///   weight in the theme: the title keeps its local `'bold'`
+  ///   (`plugin.title.js:148-150`).
   /// - `typography.pointLabels`: the point-label size 10
   ///   (`scale.radialLinear.js:383-385`).
+  /// - `palette`: the 7 colors of `BORDER_COLORS` at alpha 1
+  ///   (`plugin.colors.ts:14-22`) and the alpha 0.5 of `BACKGROUND_COLORS`
+  ///   (`plugin.colors.ts:25`), Chart.js ADR 0042. The compiled border
+  ///   strings are `rgba(54, 162, 235, 1)`, which parse to the upstream
+  ///   `rgb(54, 162, 235)`. The compiled background strings equal the
+  ///   upstream strings, for example `rgba(54, 162, 235, 0.5)`.
   ///
-  /// The tokens of the plugins (`colors.inverseSurface`,
-  /// `colors.onInverseSurface` and the palette) come in phase 8.
+  /// The tooltip tokens `colors.inverseSurface` and
+  /// `colors.onInverseSurface` come with the port of `plugin.tooltip`.
   static const AnyObject light = <String, Object?>{
     'colors': <String, Object?>{
       'color': (alpha: 1.0, red: 102 / 255, green: 102 / 255, blue: 102 / 255),
@@ -45,6 +54,18 @@ abstract final class ChartThemes {
         'lineHeight': 1.2,
       },
       'pointLabels': <String, Object?>{'size': 10.0},
+    },
+    'palette': <String, Object?>{
+      'colors': <Object?>[
+        (alpha: 1.0, red: 54 / 255, green: 162 / 255, blue: 235 / 255),
+        (alpha: 1.0, red: 255 / 255, green: 99 / 255, blue: 132 / 255),
+        (alpha: 1.0, red: 255 / 255, green: 159 / 255, blue: 64 / 255),
+        (alpha: 1.0, red: 255 / 255, green: 205 / 255, blue: 86 / 255),
+        (alpha: 1.0, red: 75 / 255, green: 192 / 255, blue: 192 / 255),
+        (alpha: 1.0, red: 153 / 255, green: 102 / 255, blue: 255 / 255),
+        (alpha: 1.0, red: 201 / 255, green: 203 / 255, blue: 207 / 255),
+      ],
+      'backgroundAlpha': 0.5,
     },
   };
 

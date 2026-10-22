@@ -5,6 +5,7 @@ library;
 import 'dart:convert';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart' show createMockContext;
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
@@ -23,6 +24,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' as kurkle;
+import 'package:flutter_chartjs_port/src/plugins/plugin.colors.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
@@ -78,10 +80,23 @@ import 'precedence_reference.dart';
 // case without a theme must give the upstream result. A case with a theme
 // must give the result of the prototype.
 //
-// These rows wait for plugin.colors (phase 8), with the hunks H4a-H4c and H5
-// (the group 'waits for phase 8'): the palette beats the theme element
-// colors, user colors disable the palette, a theme without a palette keeps
-// the upstream palette, and two interleaved charts keep their own palettes.
+// Phase 8 adds the palette of plugin.colors (Chart.js ADR 0042, the hunks
+// H4a, H4b, H4c and H5). The group 'palette' of test 2 has the palette rows:
+// the palette beats the theme element colors, user colors disable the
+// palette, a theme without a palette keeps the upstream palette, two
+// interleaved charts keep their own palettes, a palette key outside the
+// theme has no effect, an empty or non-List theme palette keeps the upstream
+// palette, the palette keys equal the keys of the compiler, and a removed
+// theme gives the upstream palette. The group 'test 3: the light palette'
+// compares the 8 chart types with the light preset and without a theme
+// (theming.md §8 test 3). For these scenarios, the generator also runs the
+// pinned src/plugins/plugin.colors.ts, with a JavaScript prototype of the
+// hunks H4a-H5 in the prototype run.
+//
+// Until wave 4 of phase 8 adds the plugins to registerables, main() registers
+// the colors plugin and then sets `defaults.plugins.colors.enabled = false`,
+// as test/index.js:25-28 does (Chart.js ADR 0041, section 7). Each palette
+// chart sets `plugins.colors.enabled: true`.
 
 // ---------------------------------------------------------------------------
 // The registered components.
@@ -818,6 +833,213 @@ Future<List<String>> _hover(String type) async {
   return lines;
 }
 
+// ---------------------------------------------------------------------------
+// The palette of plugin.colors (Chart.js ADR 0042).
+
+/// The type of `observe` of a scenario: one line `<label>: <value>`.
+typedef _Observe = void Function(String label, Object? value);
+
+/// The theme palette P1 of the generator: three border and three background
+/// sentinels.
+AnyObject _paletteP1() => <String, Object?>{
+  themeBorderColorsKey: <Object?>['P1-b0', 'P1-b1', 'P1-b2'],
+  themeBackgroundColorsKey: <Object?>['P1-g0', 'P1-g1', 'P1-g2'],
+};
+
+/// The theme palette P2 of the generator: two border and two background
+/// sentinels.
+AnyObject _paletteP2() => <String, Object?>{
+  themeBorderColorsKey: <Object?>['P2-b0', 'P2-b1'],
+  themeBackgroundColorsKey: <Object?>['P2-g0', 'P2-g1'],
+};
+
+/// A raw theme Map with the element colors of the generator (if [elements])
+/// and the palette [palette] under `plugins.colors` (no key for Dart
+/// `null`).
+AnyObject _paletteTheme({bool elements = false, AnyObject? palette}) =>
+    <String, Object?>{
+      if (elements)
+        'elements': <String, Object?>{
+          for (final element in ['bar', 'arc'])
+            element: <String, Object?>{
+              'backgroundColor': 'T-bg',
+              'borderColor': 'T-bc',
+            },
+        },
+      if (palette != null) 'plugins': <String, Object?>{'colors': palette},
+    };
+
+/// The data of a palette chart of the type [type] in the generator: [count]
+/// datasets with three values each, or three points for bubble and scatter.
+AnyObject _paletteData(String type, int count) {
+  const values = [
+    [3, 5, 2],
+    [4, 1, 6],
+  ];
+  final points = type == 'bubble' || type == 'scatter';
+  return <String, Object?>{
+    if (!points) 'labels': <Object?>['a', 'b', 'c'],
+    'datasets': <Object?>[
+      for (var d = 0; d < count; d++)
+        <String, Object?>{
+          'data': <Object?>[
+            for (final (i, y) in values[d % 2].indexed)
+              if (points)
+                <String, Object?>{
+                  'x': i * 4 + 1,
+                  'y': y,
+                  if (type == 'bubble') 'r': 5,
+                }
+              else
+                y,
+          ],
+        },
+    ],
+  };
+}
+
+/// A palette chart of the generator: the type [type], [count] datasets, the
+/// colors plugin on with the plugin options [colorOptions], the other user
+/// options [options], the dataset values [datasets] (merged into the first
+/// datasets) and the theme [theme] (no key for Dart `null`). It returns the
+/// raw configuration too: a test removes its theme.
+(Chart, AnyObject) _paletteChart(
+  String type, {
+  int count = 2,
+  Object? theme,
+  AnyObject? options,
+  AnyObject? colorOptions,
+  List<AnyObject> datasets = const [],
+}) {
+  final data = _paletteData(type, count);
+  final dataDatasets = data['datasets']! as List<Object?>;
+  for (final (d, values) in datasets.indexed) {
+    (dataDatasets[d]! as AnyObject).addAll(values);
+  }
+  final config = <String, Object?>{
+    'type': type,
+    'data': data,
+    'options': <String, Object?>{
+      ...?options,
+      'plugins': <String, Object?>{
+        'colors': <String, Object?>{'enabled': true, ...?colorOptions},
+      },
+    },
+    themeConfigKey: ?theme,
+  };
+  return (acquireChart(config), config);
+}
+
+/// The colors `[borderColor, backgroundColor]` of the options [options].
+List<Object?> _colorPair(Object? options) => [
+  jsGet(options, 'borderColor'),
+  jsGet(options, 'backgroundColor'),
+];
+
+/// The raw datasets of [chart].
+List<Object?> _datasets(Chart chart) =>
+    jsGet(chart.data, 'datasets')! as List<Object?>;
+
+/// `observePalette` of the generator: for each dataset of [chart], its raw
+/// colors and the colors of the options of its data elements 0 and 1, with
+/// the label prefix [prefix].
+void _observePalette(_Observe observe, String prefix, Chart chart) {
+  for (final (d, dataset) in _datasets(chart).indexed) {
+    observe('${prefix}dataset $d', _colorPair(dataset));
+    final meta = chart.getDatasetMeta(d.toDouble());
+    for (final i in [0, 1]) {
+      observe(
+        '${prefix}element $d.$i',
+        _colorPair((meta.data[i] as Element).options),
+      );
+    }
+  }
+}
+
+/// The observations of the palette scenario [body] as one text.
+String _palette(void Function(_Observe observe) body) {
+  final lines = <String>[];
+  body((label, value) => lines.add('$label: ${_text(value)}'));
+  return lines.join('\n');
+}
+
+/// `styleSetters` of the generator: the style setters `fillStyle` and
+/// `strokeStyle` of one draw of each dataset controller of [chart], in the
+/// dataset order, as `[name, value]`. The draw goes to a mock context in
+/// place of the context of the controller (Chart.js ADR 0030), as the
+/// generator draws into the mock context of its chart.
+List<Object?> _styleSetters(Chart chart) {
+  final setters = <Object?>[];
+  for (var d = 0; d < _datasets(chart).length; d++) {
+    final controller = chart.getDatasetMeta(d.toDouble()).controller!;
+    final target = controller.ctx;
+    final mock = createMockContext();
+    controller.ctx = mock;
+    try {
+      controller.draw();
+    } finally {
+      controller.ctx = target;
+    }
+    for (final call in mock.getCalls()) {
+      final name = call['name'];
+      if (name == 'setFillStyle' || name == 'setStrokeStyle') {
+        setters.add([name, (call['args']! as List<Object?>).first]);
+      }
+    }
+  }
+  return setters;
+}
+
+/// The lines of the scenario `light palette <type>` of the generator: a
+/// chart of the type [type] with two datasets, the colors plugin on, no user
+/// color and the theme [theme] (no key for Dart `null`). For each dataset:
+/// the raw colors, the colors of the dataset element (line and radar), and
+/// the colors of the data elements 0 and 1 in the modes `default` and
+/// `active`. Then the style setters of one draw of the datasets.
+List<String> _lightPalette(String type, Object? theme) {
+  final lines = <String>[];
+  void observe(String label, Object? value) =>
+      lines.add('$label: ${_text(value)}');
+
+  final (chart, _) = _paletteChart(type, theme: theme);
+  for (final (d, dataset) in _datasets(chart).indexed) {
+    observe('dataset $d', _colorPair(dataset));
+    final meta = chart.getDatasetMeta(d.toDouble());
+    if (meta.dataset case final Element line) {
+      observe('dataset $d line', _colorPair(line.options));
+    }
+    for (final i in [0, 1]) {
+      observe('element $d.$i', _colorPair((meta.data[i] as Element).options));
+      observe(
+        'element $d.$i active',
+        _colorPair(
+          meta.controller!.resolveDataElementOptions(i.toDouble(), 'active'),
+        ),
+      );
+    }
+  }
+  observe('draw', _styleSetters(chart));
+  return lines;
+}
+
+/// [value] with each color string in its parsed form (`rgbString` of
+/// @kurkle/color), in Lists too. Another value stays.
+Object? _parsedColors(Object? value) => switch (value) {
+  final String s when kurkle.Color(s).valid => kurkle.Color(s).rgbString(),
+  final List<Object?> list => [for (final item in list) _parsedColors(item)],
+  _ => value,
+};
+
+/// The lines [lines] as `[label, value]`, with the colors of each value in
+/// their parsed form.
+List<Object?> _parsedLines(Iterable<String> lines) => [
+  for (final line in lines)
+    [
+      line.substring(0, line.indexOf(': ')),
+      _parsedColors(jsonDecode(line.substring(line.indexOf(': ') + 2))),
+    ],
+];
+
 void main() {
   Chart.register([
     _themeController('themeTest'),
@@ -835,6 +1057,13 @@ void main() {
     _themeController('themeReal2', 'category', 'linear'),
     _radialThemeController,
   ]);
+  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
+  // registerables, this file registers the plugins that its cases need.
+  Chart.register([colors]);
+  // index.js:25-28
+  // Disable colors plugin for tests.
+  ((defaults['plugins']! as AnyObject)['colors']! as AnyObject)['enabled'] =
+      false;
 
   test('the reference comes from Node.js v24.12.0 on x64', () {
     expect(themePrecedenceReferenceNode, 'v24.12.0');
@@ -1577,18 +1806,265 @@ void main() {
       );
     });
 
-    group('waits for phase 8', () {
+    group('palette', () {
       // The palette rows of theming.md §8 test 2 and the pins of the hunks
-      // H4a-H4c and H5 need the port of plugin.colors.
-      for (final name in [
-        'the theme palette beats the theme element colors',
-        'user colors disable the theme palette',
-        'a theme without a palette keeps the upstream palette',
-        'two interleaved charts keep their own palettes',
-      ]) {
-        test(name, () {}, skip: 'blocked: plugin.colors');
-      }
+      // H4a-H4c and H5 (Chart.js ADR 0042). The expected lines come from the
+      // prototype run of the generator. A row without a theme also equals
+      // the upstream run.
+      testWidgets('the theme palette beats the theme element colors', (
+        tester,
+      ) async {
+        final observed = _palette((observe) {
+          for (final (type, count) in [
+            ('bar', 4),
+            ('doughnut', 2),
+            ('polarArea', 2),
+          ]) {
+            final theme = _paletteTheme(elements: true, palette: _paletteP1());
+            final (chart, _) = _paletteChart(type, count: count, theme: theme);
+            _observePalette(observe, '$type ', chart);
+          }
+        });
+        expect(observed, themePrecedencePrototype['palette 1']);
+      });
+
+      testWidgets('user colors disable the theme palette', (tester) async {
+        // A dataset color, a root option color and an `elements` color.
+        // Then the dataset color with `forceOverride: true`: the theme
+        // palette writes over it.
+        AnyObject theme() =>
+            _paletteTheme(elements: true, palette: _paletteP1());
+        final observed = _palette((observe) {
+          _observePalette(
+            observe,
+            'dataset color ',
+            _paletteChart(
+              'bar',
+              theme: theme(),
+              datasets: [
+                <String, Object?>{'borderColor': 'U'},
+              ],
+            ).$1,
+          );
+          _observePalette(
+            observe,
+            'root color ',
+            _paletteChart(
+              'bar',
+              theme: theme(),
+              options: <String, Object?>{'backgroundColor': 'U'},
+            ).$1,
+          );
+          _observePalette(
+            observe,
+            'elements color ',
+            _paletteChart(
+              'bar',
+              theme: theme(),
+              options: <String, Object?>{
+                'elements': <String, Object?>{
+                  'bar': <String, Object?>{'borderColor': 'U'},
+                },
+              },
+            ).$1,
+          );
+          _observePalette(
+            observe,
+            'forceOverride ',
+            _paletteChart(
+              'bar',
+              theme: theme(),
+              datasets: [
+                <String, Object?>{'borderColor': 'U'},
+              ],
+              colorOptions: <String, Object?>{'forceOverride': true},
+            ).$1,
+          );
+        });
+        expect(observed, themePrecedencePrototype['palette 2']);
+      });
+
+      testWidgets('a theme without a palette keeps the upstream palette', (
+        tester,
+      ) async {
+        // The bar chart has 8 datasets: the palette of 7 colors wraps.
+        final observed = _palette((observe) {
+          _observePalette(
+            observe,
+            'bar ',
+            _paletteChart(
+              'bar',
+              count: 8,
+              theme: _paletteTheme(elements: true),
+            ).$1,
+          );
+          _observePalette(
+            observe,
+            'doughnut ',
+            _paletteChart('doughnut', theme: _paletteTheme(elements: true)).$1,
+          );
+        });
+        expect(observed, themePrecedencePrototype['palette 3']);
+        // The dataset colors are the upstream colors. The element options
+        // of the doughnut keep the theme border color.
+        Iterable<String> datasetLines(String text) =>
+            text.split('\n').where((line) => line.contains(' dataset '));
+        expect(
+          datasetLines(observed),
+          datasetLines(themePrecedenceUpstream['palette 3']!),
+        );
+      });
+
+      testWidgets('two interleaved charts keep their own palettes', (
+        tester,
+      ) async {
+        // Charts A (palette P1), B (palette P2) and C (no theme), all with
+        // `forceOverride: true`: each update colorizes again.
+        const force = <String, Object?>{'forceOverride': true};
+        final observed = _palette((observe) {
+          final (a, _) = _paletteChart(
+            'bar',
+            theme: _paletteTheme(palette: _paletteP1()),
+            colorOptions: force,
+          );
+          final (b, _) = _paletteChart(
+            'bar',
+            theme: _paletteTheme(palette: _paletteP2()),
+            colorOptions: force,
+          );
+          final (c, _) = _paletteChart('bar', colorOptions: force);
+          _observePalette(observe, 'A ', a);
+          _observePalette(observe, 'B ', b);
+          _observePalette(observe, 'C ', c);
+          a.update();
+          _observePalette(observe, 'A after A.update ', a);
+          c.update();
+          _observePalette(observe, 'C after C.update ', c);
+          b.update();
+          _observePalette(observe, 'B after B.update ', b);
+        });
+        expect(observed, themePrecedencePrototype['palette 4']);
+      });
+
+      testWidgets('no theme: a user or defaults palette key has no effect', (
+        tester,
+      ) async {
+        // A palette key in the user options, in `defaults` and in
+        // `overrides.bar`. Upstream ignores the keys. The restore of the
+        // harness removes the writes into `defaults` and `overrides` after
+        // the test (`harness-defaults-restore`).
+        final observed = _palette((observe) {
+          _observePalette(
+            observe,
+            'user ',
+            _paletteChart('bar', colorOptions: _paletteP2()).$1,
+          );
+          _put(defaults, 'plugins.colors.$themeBorderColorsKey', <Object?>[
+            'D-b0',
+          ]);
+          _put(defaults, 'plugins.colors.$themeBackgroundColorsKey', <Object?>[
+            'D-g0',
+          ]);
+          _observePalette(observe, 'defaults ', _paletteChart('bar').$1);
+          _put(overrides, 'bar.plugins.colors.$themeBorderColorsKey', <Object?>[
+            'O-b0',
+          ]);
+          _put(
+            overrides,
+            'bar.plugins.colors.$themeBackgroundColorsKey',
+            <Object?>['O-g0'],
+          );
+          _observePalette(observe, 'overrides ', _paletteChart('bar').$1);
+        });
+        expect(observed, themePrecedencePrototype['palette 5']);
+        expect(observed, themePrecedenceUpstream['palette 5']);
+      });
+
+      testWidgets(
+        'an empty or non-List theme palette keeps the upstream palette',
+        (tester) async {
+          // A raw theme Map, not a theme of the compiler: its guard rejects
+          // these values (rule 9).
+          final observed = _palette((observe) {
+            for (final (name, value) in <(String, Object?)>[
+              ('empty', <Object?>[]),
+              ('string', 'red'),
+              ('map', <String, Object?>{'a': 'P1-b0'}),
+            ]) {
+              final theme = _paletteTheme(
+                palette: <String, Object?>{
+                  themeBorderColorsKey: value,
+                  themeBackgroundColorsKey: value,
+                },
+              );
+              _observePalette(
+                observe,
+                '$name ',
+                _paletteChart('bar', theme: theme).$1,
+              );
+            }
+          });
+          expect(observed, themePrecedencePrototype['palette 6']);
+          expect(observed, themePrecedenceUpstream['palette 6']);
+        },
+      );
+
+      test(
+        'the palette keys of plugin.colors equal the keys of the compiler',
+        () {
+          final compiled = compileChartTheme(ChartThemes.light);
+          final colorsOptions = _at(compiled, 'plugins.colors')! as AnyObject;
+          expect(
+            jsObjectKeys(colorsOptions).where((key) => key.startsWith(r'$')),
+            [themeBorderColorsKey, themeBackgroundColorsKey],
+          );
+        },
+      );
+
+      testWidgets(
+        'a removed theme gives the upstream palette at the next colorize',
+        (tester) async {
+          // Hunk H5 sets both variables at each run, Dart null included.
+          final observed = _palette((observe) {
+            final (chart, config) = _paletteChart(
+              'bar',
+              theme: _paletteTheme(palette: _paletteP1()),
+              colorOptions: const <String, Object?>{'forceOverride': true},
+            );
+            _observePalette(observe, 'themed ', chart);
+            // The raw configuration is the configuration of the chart
+            // (core.config.js:129-136 `initConfig` returns it).
+            config.remove(themeConfigKey);
+            chart.update();
+            _observePalette(observe, 'theme removed ', chart);
+          });
+          expect(observed, themePrecedencePrototype['palette 8']);
+        },
+      );
     });
+  });
+
+  group('test 3: the light palette', () {
+    // theming.md §8 test 3 with the colors plugin on and no user colors:
+    // with the light preset, the lines equal the prototype lines. Without a
+    // theme, they equal the upstream lines. Across the two runs, the colors
+    // are equal after the parse. The run with the colors plugin off is in
+    // the controller test files (Chart.js ADR 0030, section 8).
+    for (final type in _chartTypes) {
+      testWidgets('$type: the light palette equals the upstream palette', (
+        tester,
+      ) async {
+        final name = 'light palette $type';
+        final themed = _lightPalette(
+          type,
+          compileChartTheme(ChartThemes.light),
+        );
+        expect(themed.join('\n'), themePrecedencePrototype[name]);
+        final unthemed = _lightPalette(type, null);
+        expect(unthemed.join('\n'), themePrecedenceUpstream[name]);
+        expect(_parsedLines(themed), _parsedLines(unthemed));
+      });
+    }
   });
 
   group('a compiled theme on a radial chart', () {

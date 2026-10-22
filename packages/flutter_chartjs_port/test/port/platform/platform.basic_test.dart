@@ -34,6 +34,9 @@ final class _Context implements CanvasRenderingContext2D {
 final class _Config implements types.ChartConfiguration {
   @override
   final Map<String, Object?> options = {'animation': <String, Object?>{}};
+
+  @override
+  final Map<String, Object?> data = {};
 }
 
 void main() {

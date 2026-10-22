@@ -15,7 +15,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
-// platform.flutter.dart replaces platform.dom.js (Chart.js ADR 0014). Each
+// platform.flutter.dart replaces platform.dom.js (Chart.js ADR 0037). Each
 // case that creates a chart is a testWidgets case with the harness of
 // Chart.js ADR 0022. The spec runs on the VM: a chart reaches the chart host
 // and dart:ui.

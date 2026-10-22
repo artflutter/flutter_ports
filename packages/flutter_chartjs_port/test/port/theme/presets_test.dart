@@ -30,9 +30,10 @@ import 'light_reference.dart';
 // (core.typedRegistry.js:24-53, Chart.js ADR 0022, section 8), before the
 // snapshot of the restore. The scales are not pure layers. Thus the radial
 // linear scale case is in presets_radial_test.dart, which runs on the VM
-// only. The keys of the plugins (tooltip, legend, title, subtitle and the
-// colors palette) come in phase 8. The resolution of 8 chart types with
-// controllers comes in phase 7.
+// only. The title color and font and the palette of the light preset are in
+// compile_test.dart and coverage_test.dart. The keys of the subtitle, the
+// legend and the tooltip come with their plugins. The 8 chart types with
+// their controllers are in precedence_test.dart (test 3: the light palette).
 
 /// The parsed form of the CSS color [value]: the `rgbString` of the ported
 /// @kurkle/color, as the canvas layer parses a color.
@@ -169,13 +170,18 @@ void main() {
           expect(_parsed(value), isNotNull, reason: path);
         }
       }
-      // The preset emits these keys and no other key of phase 6.
+      // The preset emits these keys and no other key of phases 5 and 6. The
+      // plugin keys have their own tests: compile_test.dart (the groups
+      // `the palette` and `the title keys`) and coverage_test.dart.
       final leafPaths = _leaves(compiled).keys
-          .where((path) => !path.startsWith('transitions'))
+          .where(
+            (path) =>
+                !path.startsWith('transitions') && !path.startsWith('plugins.'),
+          )
           .map((path) => path.replaceFirst(RegExp(r'\.font\..*$'), '.font'))
           .toSet();
       expect(leafPaths, keys);
-      expect(emitted, {'color', 'scale', 'scales', 'elements'});
+      expect(emitted, {'color', 'scale', 'scales', 'plugins', 'elements'});
     });
 
     test('the element options equal upstream in both modes', () {

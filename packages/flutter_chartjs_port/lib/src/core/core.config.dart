@@ -18,8 +18,9 @@
 /// gives a new Map.
 ///
 /// Four hunks add the compiled theme of Chart.js ADR 0001 as an option scope
-/// (theming.md §3.1): H0 ([themeConfigKey] and the private `_themeOf`), H1
-/// (`mergeScaleConfig`), H2 ([Config.getOptionScopes]) and H3
+/// (theming.md §3.1): H0 ([themeConfigKey], the private `_themeOf` and the
+/// public [chartThemeOf] of Chart.js ADR 0042), H1 (`mergeScaleConfig`), H2
+/// ([Config.getOptionScopes]) and H3
 /// ([Config.chartOptionScopes]). The chart widget puts the theme into the raw
 /// configuration under [themeConfigKey]. Without a theme, the hunks add no
 /// scope and no key, and the results are the upstream results.
@@ -358,8 +359,8 @@ void _addIfFound(Set<Object?> set, Object? obj, String key) {
 ///
 /// The chart widget puts the compiled theme map under this key. The theme is
 /// a frozen map with the key shape of `Chart.defaults`. [Config] reads it
-/// with `_themeOf`.
-// DIVERGES(chartjs): theme-H0, the theme key and its reader.
+/// with `_themeOf`. The colors plugin reads it with [chartThemeOf].
+// DIVERGES(chartjs): theme-H0, the theme key and its readers.
 const String themeConfigKey = r'$theme';
 
 /// The theme map of the raw configuration [config]: the value under
@@ -368,6 +369,14 @@ AnyObject? _themeOf(AnyObject config) {
   final theme = config[themeConfigKey];
   return theme is AnyObject ? theme : null;
 }
+
+/// The theme map of the chart configuration [config]: the value under
+/// [themeConfigKey] of its raw configuration when it is a Map, else Dart
+/// `null` (hunk H0, Chart.js ADR 0042). Hunk H5 of `plugin.colors` reads
+/// the palette from it. A configuration that is not a [Config] has no
+/// theme.
+AnyObject? chartThemeOf(types.ChartConfiguration config) =>
+    config is Config ? _themeOf(config._config) : null;
 
 /// core.config.js:158 `class Config`, the default export.
 ///
@@ -413,6 +422,7 @@ class Config implements types.ChartConfiguration {
   /// `initData` makes it a Map. Only a write into the raw configuration
   /// gives it another value. Then the getter throws a [TypeError] (row
   /// `adapt-config-objects`). Upstream returns the value.
+  @override
   AnyObject get data {
     // DIVERGES(chartjs): adapt-config-objects, the data object is a Map.
     return _config['data']! as AnyObject;

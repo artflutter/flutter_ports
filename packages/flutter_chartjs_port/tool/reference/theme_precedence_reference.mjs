@@ -9,7 +9,9 @@
 // (theming.md section 9), a radial chart without a theme that has the values
 // that the tokens replace in `defaults` (theming.md section 4), and the
 // hover steps on the 8 chart types of phase 7 (Chart.js ADR 0030, section
-// 10). The file has the Node.js version,
+// 10). Phase 8 adds the palette rows of test 2 and test 3 with the colors
+// plugin (Chart.js ADR 0042, theming.md section 8): the scenarios
+// `palette <row>` and `light palette <type>`. The file has the Node.js version,
 // V8 version and architecture in its header. The cases are fixed, so a rerun on the same
 // Node.js writes the same file. Nothing in lib/ or test/ runs this script
 // (porting-flow.md section 4).
@@ -18,13 +20,15 @@
 // Node.js:
 //
 // - `upstream`: the pinned src/core/core.controller.js and its imports, with
-//   the upstream src/core/core.config.js. Upstream has no theme: it ignores
-//   the `$theme` key of the configuration.
+//   the upstream src/core/core.config.js and src/plugins/plugin.colors.ts.
+//   Upstream has no theme: it ignores the `$theme` key of the configuration.
 // - `prototype`: the same sources, with a JavaScript prototype of the hunks
 //   H0-H3 of Chart.js ADR 0001 (theming.md section 3.1) in
-//   src/core/core.config.js. A load hook adds the hunks to the source text in
-//   memory, at the lines of the Dart hunks of lib/src/core/core.config.dart.
-//   The file on disk does not change.
+//   src/core/core.config.js, and of the hunks H4a, H4b, H4c and H5 of
+//   Chart.js ADR 0042 in src/plugins/plugin.colors.ts. A load hook adds the hunks to the source
+//   text in memory, at the lines of the Dart hunks of
+//   lib/src/core/core.config.dart and lib/src/plugins/plugin.colors.dart.
+//   The files on disk do not change.
 //
 // Both runs use the type stripping of Node.js. A resolve hook maps the
 // upstream `./x.js` imports to the `.ts` files, and `@kurkle/color` to
@@ -46,6 +50,12 @@
 // on real charts and for the hover steps, it also registers the pinned
 // src/controllers/controller.{bar,bubble,doughnut,line,pie,polarArea,radar,
 // scatter}.js, as the Dart harness registers them (flutter_test_config.dart).
+// For the palette, it registers the pinned src/plugins/plugin.colors.ts and
+// then sets `defaults.plugins.colors.enabled = false`, as test/index.js:25-28
+// does. Each palette scenario sets `plugins.colors.enabled: true` in the
+// options of its charts (Chart.js ADR 0041, section 7). The plugin module
+// imports `../index.js` (plugin.colors.ts:1), so the run loads all of
+// src/index.ts. The script registers no other plugin.
 // A chart is
 // made as `_acquireChart` of chartjs-test-utils makes it
 // (src/utils.js:36-105): a 512 x 512 canvas, and `animation: false`,
@@ -209,6 +219,7 @@ const DEFAULTS = new URL('core/core.defaults.js', SRC);
 const ELEMENTS = new URL('elements/index.js', SRC);
 const HELPERS_CORE = new URL('helpers/helpers.core.ts', SRC);
 const HELPERS_OPTIONS = new URL('helpers/helpers.options.ts', SRC);
+const COLORS = new URL('plugins/plugin.colors.ts', SRC);
 const PACKAGE = new URL('Chart.js/package.json', THIRD_PARTY);
 const CONTEXT = new URL('chartjs-test-utils/src/context.js', THIRD_PARTY);
 const KURKLE = new URL('kurkle-color/src/index.esm.js', THIRD_PARTY);
@@ -226,6 +237,7 @@ for (const url of [
   ELEMENTS,
   HELPERS_CORE,
   HELPERS_OPTIONS,
+  COLORS,
   PACKAGE,
   CONTEXT,
   KURKLE,
@@ -303,6 +315,62 @@ export default class Config {`,
   return source;
 }
 
+/**
+ * The JavaScript prototype of the hunks H4a, H4b, H4c and H5 (Chart.js ADR
+ * 0042, theming.md section 3.5) on the source of plugin.colors.ts. Each hunk
+ * has the form of its Dart hunk in lib/src/plugins/plugin.colors.dart: the
+ * upstream lines stay, and the hunks add lines only.
+ */
+function withColorsHunks(source) {
+  // H4a, after BACKGROUND_COLORS (plugin.colors.ts:25): the palette keys,
+  // the two variables and their reader `_themePalette`.
+  source = patch(
+    source,
+    "color.replace('rgb(', 'rgba(').replace(')', ', 0.5)'));\n",
+    `color.replace('rgb(', 'rgba(').replace(')', ', 0.5)'));
+
+// DIVERGES(chartjs): theme-H4a, the theme palette keys, variables and reader.
+const themeBorderColorsKey = '$borderColors';
+const themeBackgroundColorsKey = '$backgroundColors';
+let themeBorderColors = null;
+let themeBackgroundColors = null;
+function themePalette(chart, key) {
+  const value = chart.config._config.$theme?.plugins?.colors?.[key];
+  return Array.isArray(value) && value.length > 0 ? value : null;
+}
+`,
+  );
+  // H4b, getBorderColor (plugin.colors.ts:27-29): the theme branch before
+  // the unchanged upstream line.
+  source = patch(
+    source,
+    '  return BORDER_COLORS[i % BORDER_COLORS.length];',
+    `  // DIVERGES(chartjs): theme-H4b, the theme palette comes first.
+  if (themeBorderColors !== null) return themeBorderColors[i % themeBorderColors.length];
+  return BORDER_COLORS[i % BORDER_COLORS.length];`,
+  );
+  // H4c, getBackgroundColor (plugin.colors.ts:31-33).
+  source = patch(
+    source,
+    '  return BACKGROUND_COLORS[i % BACKGROUND_COLORS.length];',
+    `  // DIVERGES(chartjs): theme-H4c, the theme palette comes first.
+  if (themeBackgroundColors !== null) return themeBackgroundColors[i % themeBackgroundColors.length];
+  return BACKGROUND_COLORS[i % BACKGROUND_COLORS.length];`,
+  );
+  // H5, beforeLayout directly before the colorizer (plugin.colors.ts:123):
+  // both variables at each run, null included.
+  source = patch(
+    source,
+    '    const colorizer = getColorizer(chart);',
+    `    // DIVERGES(chartjs): theme-H5, the palette of the chart theme for this run.
+    themeBorderColors = themePalette(chart, themeBorderColorsKey);
+    themeBackgroundColors = themePalette(chart, themeBackgroundColorsKey);
+
+    const colorizer = getColorizer(chart);`,
+  );
+  return source;
+}
+
 registerHooks({
   resolve(specifier, context, nextResolve) {
     if (
@@ -351,6 +419,13 @@ registerHooks({
         shortCircuit: true,
       };
     }
+    if (MODE === 'prototype' && url === COLORS.href) {
+      return {
+        format: 'module-typescript',
+        source: withColorsHunks(readFileSync(new URL(url), 'utf8')),
+        shortCircuit: true,
+      };
+    }
     return nextLoad(url, context);
   },
 });
@@ -372,6 +447,7 @@ const controllerClasses = [];
 for (const url of CONTROLLERS) {
   controllerClasses.push((await import(url.href)).default);
 }
+const {default: colors} = await import(COLORS.href);
 
 // ---------------------------------------------------------------------------
 // The observations.
@@ -568,6 +644,10 @@ Chart.register(
   RadialController,
 );
 Chart.register(...controllerClasses);
+// The colors plugin, then the line of test/index.js:25-28, as
+// precedence_test.dart does in main() (Chart.js ADR 0041, section 7).
+Chart.register(colors);
+defaults.plugins.colors.enabled = false;
 
 const charts = [];
 
@@ -1191,6 +1271,9 @@ const compiledTheme = {
       angleLines: {color: 'rgba(0, 128, 0, 0.5)'},
     },
   },
+  plugins: {
+    title: {color: 'rgba(51, 102, 153, 1)', font: {family: 'Arial', size: 14}},
+  },
   elements: {
     point: {
       borderColor: 'rgba(0, 128, 0, 0.5)',
@@ -1317,6 +1400,37 @@ const compiledLight = {
       angleLines: {color: 'rgba(0, 0, 0, 0.1)'},
     },
   },
+  plugins: {
+    title: {
+      color: 'rgba(102, 102, 102, 1)',
+      font: {
+        family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+        size: 12,
+        style: 'normal',
+        lineHeight: 1.2,
+      },
+    },
+    colors: {
+      $borderColors: [
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 99, 132, 1)',
+        'rgba(255, 159, 64, 1)',
+        'rgba(255, 205, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(201, 203, 207, 1)',
+      ],
+      $backgroundColors: [
+        'rgba(54, 162, 235, 0.5)',
+        'rgba(255, 99, 132, 0.5)',
+        'rgba(255, 159, 64, 0.5)',
+        'rgba(255, 205, 86, 0.5)',
+        'rgba(75, 192, 192, 0.5)',
+        'rgba(153, 102, 255, 0.5)',
+        'rgba(201, 203, 207, 0.5)',
+      ],
+    },
+  },
   elements: {
     point: {
       borderColor: 'rgba(0, 0, 0, 0.1)',
@@ -1353,6 +1467,7 @@ const compiledFont = {
     title: {font: {family: 'serif', size: 14}},
   },
   scales: {radialLinear: {pointLabels: {font: {family: 'serif'}}}},
+  plugins: {title: {font: {family: 'serif', size: 14}}},
   transitions: {
     theme: {animation: {duration: 200, easing: 'linear'}},
     themeFrame: {animation: {duration: 0}},
@@ -1508,6 +1623,7 @@ const compiledHover = {
       angleLines: {color: 'rgba(0, 128, 0, 0.5)'},
     },
   },
+  plugins: {title: {color: 'rgba(51, 102, 153, 1)'}},
   elements: {
     point: {
       borderColor: 'rgba(0, 128, 0, 0.5)',
@@ -1759,6 +1875,303 @@ scopes('scopes with a null theme', null);
 scopes('scopes with a string theme', 'not a map');
 scopes('scopes with a theme', 'theme');
 
+// ---------------------------------------------------------------------------
+// The palette of plugin.colors (Chart.js ADR 0042; theming.md section 8,
+// the palette rows of test 2 and test 3).
+
+/** The theme palette P1: three border and three background sentinels. */
+const paletteP1 = {
+  $borderColors: ['P1-b0', 'P1-b1', 'P1-b2'],
+  $backgroundColors: ['P1-g0', 'P1-g1', 'P1-g2'],
+};
+
+/** The theme palette P2: two border and two background sentinels. */
+const paletteP2 = {
+  $borderColors: ['P2-b0', 'P2-b1'],
+  $backgroundColors: ['P2-g0', 'P2-g1'],
+};
+
+/** The theme element colors of the bar and arc elements. */
+function elementColors() {
+  return {
+    bar: {backgroundColor: 'T-bg', borderColor: 'T-bc'},
+    arc: {backgroundColor: 'T-bg', borderColor: 'T-bc'},
+  };
+}
+
+/**
+ * The data of a palette chart of the type [type]: [count] datasets with
+ * three values each, or three points for bubble and scatter.
+ */
+function paletteData(type, count) {
+  const values = [
+    [3, 5, 2],
+    [4, 1, 6],
+  ];
+  const data = (d) => {
+    const v = values[d % 2];
+    if (type === 'bubble') return v.map((y, i) => ({x: i * 4 + 1, y, r: 5}));
+    if (type === 'scatter') return v.map((y, i) => ({x: i * 4 + 1, y}));
+    return [...v];
+  };
+  const datasets = Array.from({length: count}, (_, d) => ({data: data(d)}));
+  return type === 'bubble' || type === 'scatter'
+    ? {datasets}
+    : {labels: ['a', 'b', 'c'], datasets};
+}
+
+/**
+ * A palette chart of the type [type] with [count] datasets, the colors
+ * plugin on, the user [options] (merged into the plugin options for
+ * `plugins.colors`), the dataset values [datasets] and the theme [theme]
+ * (no key for null).
+ */
+function paletteChart(
+  type,
+  {count = 2, theme = null, options = {}, datasets = []} = {},
+) {
+  const data = paletteData(type, count);
+  datasets.forEach((values, d) => Object.assign(data.datasets[d], values));
+  const {plugins = {}, ...rest} = options;
+  const {colors: colorOptions = {}, ...otherPlugins} = plugins;
+  const config = {
+    type,
+    data,
+    options: {
+      ...rest,
+      plugins: {...otherPlugins, colors: {enabled: true, ...colorOptions}},
+    },
+  };
+  if (theme !== null) config.$theme = theme;
+  return acquireChart(config);
+}
+
+/** The colors `[borderColor, backgroundColor]` of the options [o]. */
+function colorPair(o) {
+  return [o.borderColor, o.backgroundColor];
+}
+
+/**
+ * The palette observations of [chart] with the label prefix [prefix]: for
+ * each dataset, its raw colors and the colors of the options of its data
+ * elements 0 and 1.
+ */
+function observePalette(observe, prefix, chart) {
+  chart.data.datasets.forEach((dataset, d) => {
+    observe(`${prefix}dataset ${d}`, colorPair(dataset));
+    const meta = chart.getDatasetMeta(d);
+    for (const i of [0, 1]) {
+      observe(`${prefix}element ${d}.${i}`, colorPair(meta.data[i].options));
+    }
+  });
+}
+
+scenario('palette 1', (observe) => {
+  // Row 1: the theme palette beats the theme element colors.
+  for (const [type, count] of [
+    ['bar', 4],
+    ['doughnut', 2],
+    ['polarArea', 2],
+  ]) {
+    const theme = {elements: elementColors(), plugins: {colors: paletteP1}};
+    observePalette(observe, `${type} `, paletteChart(type, {count, theme}));
+  }
+});
+
+scenario('palette 2', (observe) => {
+  // Row 2: user colors disable the theme palette. With forceOverride, the
+  // theme palette writes over the dataset color.
+  const theme = () => ({
+    elements: elementColors(),
+    plugins: {colors: paletteP1},
+  });
+  observePalette(
+    observe,
+    'dataset color ',
+    paletteChart('bar', {theme: theme(), datasets: [{borderColor: 'U'}]}),
+  );
+  observePalette(
+    observe,
+    'root color ',
+    paletteChart('bar', {theme: theme(), options: {backgroundColor: 'U'}}),
+  );
+  observePalette(
+    observe,
+    'elements color ',
+    paletteChart('bar', {
+      theme: theme(),
+      options: {elements: {bar: {borderColor: 'U'}}},
+    }),
+  );
+  observePalette(
+    observe,
+    'forceOverride ',
+    paletteChart('bar', {
+      theme: theme(),
+      datasets: [{borderColor: 'U'}],
+      options: {plugins: {colors: {forceOverride: true}}},
+    }),
+  );
+});
+
+scenario('palette 3', (observe) => {
+  // Row 3: a theme without a palette keeps the upstream palette. The bar
+  // chart has 8 datasets: the palette of 7 colors wraps.
+  const theme = () => ({elements: elementColors()});
+  observePalette(
+    observe,
+    'bar ',
+    paletteChart('bar', {count: 8, theme: theme()}),
+  );
+  observePalette(
+    observe,
+    'doughnut ',
+    paletteChart('doughnut', {theme: theme()}),
+  );
+});
+
+scenario('palette 4', (observe) => {
+  // Row 4: two interleaved charts keep their own palettes. The charts A
+  // (palette P1), B (palette P2) and C (no theme) colorize at each update
+  // (forceOverride).
+  const options = {plugins: {colors: {forceOverride: true}}};
+  const a = paletteChart('bar', {theme: {plugins: {colors: paletteP1}}, options});
+  const b = paletteChart('bar', {theme: {plugins: {colors: paletteP2}}, options});
+  const c = paletteChart('bar', {options});
+  observePalette(observe, 'A ', a);
+  observePalette(observe, 'B ', b);
+  observePalette(observe, 'C ', c);
+  a.update();
+  observePalette(observe, 'A after A.update ', a);
+  c.update();
+  observePalette(observe, 'C after C.update ', c);
+  b.update();
+  observePalette(observe, 'B after B.update ', b);
+});
+
+scenario('palette 5', (observe) => {
+  // No theme: a palette key in the user options, in `defaults` or in
+  // `overrides[type]` has no effect, as upstream.
+  observePalette(
+    observe,
+    'user ',
+    row(() =>
+      paletteChart('bar', {
+        options: {plugins: {colors: {...paletteP2}}},
+      }),
+    ),
+  );
+  observePalette(
+    observe,
+    'defaults ',
+    row(() => {
+      put(defaults, 'plugins.colors.$borderColors', ['D-b0']);
+      put(defaults, 'plugins.colors.$backgroundColors', ['D-g0']);
+      return paletteChart('bar');
+    }),
+  );
+  observePalette(
+    observe,
+    'overrides ',
+    row(() => {
+      put(overrides, 'bar.plugins.colors.$borderColors', ['O-b0']);
+      put(overrides, 'bar.plugins.colors.$backgroundColors', ['O-g0']);
+      return paletteChart('bar');
+    }),
+  );
+});
+
+scenario('palette 6', (observe) => {
+  // A raw theme with an empty or non-List palette keeps the upstream
+  // palette.
+  for (const [name, value] of [
+    ['empty', []],
+    ['string', 'red'],
+    ['map', {a: 'P1-b0'}],
+  ]) {
+    const theme = {
+      plugins: {colors: {$borderColors: value, $backgroundColors: value}},
+    };
+    observePalette(observe, `${name} `, paletteChart('bar', {theme}));
+  }
+});
+
+scenario('palette 8', (observe) => {
+  // A removed theme gives the upstream palette at the next colorize: hunk
+  // H5 sets both variables at each run.
+  const chart = paletteChart('bar', {
+    theme: {plugins: {colors: paletteP1}},
+    options: {plugins: {colors: {forceOverride: true}}},
+  });
+  observePalette(observe, 'themed ', chart);
+  delete chart.config._config.$theme;
+  chart.update();
+  observePalette(observe, 'theme removed ', chart);
+});
+
+/**
+ * The style setters `fillStyle` and `strokeStyle` of one draw of each
+ * dataset controller of [chart], in the dataset order, as `[name, value]`.
+ */
+function styleSetters(chart) {
+  const ctx = chart.ctx;
+  const setters = [];
+  chart.data.datasets.forEach((_, d) => {
+    ctx.resetCalls();
+    chart.getDatasetMeta(d).controller.draw();
+    for (const {name, args} of ctx.getCalls()) {
+      if (name === 'setFillStyle' || name === 'setStrokeStyle') {
+        setters.push([name, args[0]]);
+      }
+    }
+  });
+  ctx.resetCalls();
+  return setters;
+}
+
+/**
+ * The scenario `light palette <type>` of test 3: a chart of the type [type]
+ * with two datasets, the colors plugin on, no user color and the compiled
+ * light preset. The upstream run ignores the theme: its lines are the lines
+ * of the chart without a theme. For each dataset: the raw colors, the colors
+ * of the dataset element (line and radar), and the colors of the data
+ * elements 0 and 1 in the modes `default` and `active`. Then the style
+ * setters of one draw of the datasets.
+ */
+function lightPalette(type) {
+  scenario(`light palette ${type}`, (observe) => {
+    const chart = paletteChart(type, {theme: compiledLight});
+    chart.data.datasets.forEach((dataset, d) => {
+      observe(`dataset ${d}`, colorPair(dataset));
+      const meta = chart.getDatasetMeta(d);
+      if (meta.dataset) {
+        observe(`dataset ${d} line`, colorPair(meta.dataset.options));
+      }
+      for (const i of [0, 1]) {
+        observe(`element ${d}.${i}`, colorPair(meta.data[i].options));
+        observe(
+          `element ${d}.${i} active`,
+          colorPair(meta.controller.resolveDataElementOptions(i, 'active')),
+        );
+      }
+    });
+    observe('draw', styleSetters(chart));
+  });
+}
+
+for (const type of [
+  'bar',
+  'bubble',
+  'doughnut',
+  'line',
+  'pie',
+  'polarArea',
+  'radar',
+  'scatter',
+]) {
+  lightPalette(type);
+}
+
 for (const chart of charts) chart.destroy();
 
 process.stdout.write(
@@ -1803,8 +2216,13 @@ function writeDart(upstream, prototype) {
   // replaced values (Chart.js ADR 0030, section 10).
   const lines = (run, name) =>
     run.scenarios.find((s) => s.name === name).lines.join('\n');
+  // The palette rows 5 and 6: a palette key outside the theme, and a theme
+  // palette that is not a List with at least one item, keep the upstream
+  // palette (Chart.js ADR 0042).
   for (const {name} of upstream.scenarios) {
-    if (!name.startsWith('hover ')) continue;
+    if (!name.startsWith('hover ') && name !== 'palette 5' && name !== 'palette 6') {
+      continue;
+    }
     if (lines(upstream, name) !== lines(prototype, name)) {
       throw new Error(`The two runs differ in the scenario ${name}.`);
     }
@@ -1818,8 +2236,9 @@ function writeDart(upstream, prototype) {
 // Generated by tool/reference/theme_precedence_reference.mjs. Do not edit.
 // Node.js ${node} (${platform}-${arch}), V8 ${v8}:
 // src/core/core.controller.js, the category, linear and radial linear
-// scales and the 8 controllers at the pinned Chart.js, with the upstream
-// src/core/core.config.js and with a JavaScript prototype of the hunks H0-H3.
+// scales, the 8 controllers and the colors plugin at the pinned Chart.js,
+// with the upstream src/core/core.config.js and src/plugins/plugin.colors.ts,
+// and with a JavaScript prototype of the hunks H0-H3 and H4a-H5.
 // ${upstream.scenarios.length} scenarios.
 
 /// The Node.js version that generated the data.
@@ -1832,12 +2251,14 @@ const String themePrecedenceReferenceV8 = '${v8}';
 const String themePrecedenceReferenceArch = '${arch}';
 
 /// The observations of each scenario with the upstream
-/// src/core/core.config.js, by name, one on each line: \`<label>: <value>\`.
+/// src/core/core.config.js and src/plugins/plugin.colors.ts, by name, one on
+/// each line: \`<label>: <value>\`.
 const Map<String, String> themePrecedenceUpstream = {
 ${dartMap(upstream.scenarios)}};
 
 /// The observations of each scenario with the JavaScript prototype of the
-/// hunks H0-H3 in src/core/core.config.js, by name, one on each line:
+/// hunks H0-H3 in src/core/core.config.js and H4a-H5 in
+/// src/plugins/plugin.colors.ts, by name, one on each line:
 /// \`<label>: <value>\`.
 const Map<String, String> themePrecedencePrototype = {
 ${dartMap(prototype.scenarios)}};

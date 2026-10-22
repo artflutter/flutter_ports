@@ -4,7 +4,7 @@
 ///
 /// Upstream reads the DOM: the computed CSS of the canvas and of its parent
 /// node, the parent node itself and the position of a DOM event. Flutter has
-/// no DOM and no CSS (Chart.js ADR 0014, porting-flow.md 2.7):
+/// no DOM and no CSS (Chart.js ADR 0037, porting-flow.md 2.7):
 /// - The canvas and its container have no margin, padding, border,
 ///   `max-width`, `max-height` or `box-sizing`. The Flutter layout above the
 ///   chart host (`Padding`, `ConstrainedBox`, `SizedBox`) applies them before
@@ -39,7 +39,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart';
 /// DOM, so the result is `false`. Two upstream callers read it:
 /// [supportsEventListenerOptions] runs no DOM test, and
 /// `core.controller.js:52` looks up no element by id. `detectPlatform`
-/// (platform/index.js:7) tests for a chart host instead (Chart.js ADR 0014).
+/// (platform/index.js:7) tests for a chart host instead (Chart.js ADR 0037).
 bool isDomSupported() {
   // DIVERGES(chartjs): platform-dom-supported, Flutter has no DOM.
   return false;

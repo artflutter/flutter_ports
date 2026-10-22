@@ -357,6 +357,24 @@ void main() {
 
       expect(chart.boxes, [a]);
     });
+
+    // Dart null stands for JS undefined: the stop hooks of the title and
+    // the subtitle pass `chart.titleBlock` and `map.get(chart)`, which can
+    // be undefined (plugin.title.js:134-135, plugin.subtitle.js:22).
+    // `indexOf(undefined)` gives -1 (core.layouts.js:319).
+    test('ignores null (JS undefined)', () {
+      final chart = _Chart(0);
+      final a = _box(spec, []);
+      final b = _box(spec, []);
+      layouts
+        ..addBox(chart, a)
+        ..addBox(chart, b)
+        ..removeBox(chart, null);
+
+      expect(chart.boxes, hasLength(2));
+      expect(chart.boxes[0], same(a));
+      expect(chart.boxes[1], same(b));
+    });
   });
 
   group('configure', () {

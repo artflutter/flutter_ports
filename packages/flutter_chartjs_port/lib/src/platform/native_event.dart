@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the stand-in for the DOM Event.
 
-/// The native event of the Flutter platform (Chart.js ADR 0014): the
+/// The native event of the Flutter platform (Chart.js ADR 0037): the
 /// stand-in for the DOM `Event`, `MouseEvent`, `PointerEvent`, `TouchEvent`
 /// and `WheelEvent` that `platform.dom.js` reads.
 ///
@@ -24,17 +24,22 @@ typedef NativeTouch = ({int identifier, double x, double y});
 
 /// The DOM event that `platform.dom.js` passes to `fromNativeEvent`.
 ///
-/// - [type] is the DOM event name: `mousemove`, `mousedown`, `mouseup`,
-///   `click`, `mouseout`, `mouseenter`, `pointerdown`, `touchstart`,
-///   `touchmove`, `touchend` or `wheel`. `fromNativeEvent` maps it with
+/// - [type] is the DOM event name that Chrome fires (Chart.js ADR 0037,
+///   section 6): a `pointer*` name (`pointerover`, `pointerenter`,
+///   `pointerdown`, `pointermove`, `pointerup`, `pointercancel`,
+///   `pointerout`, `pointerleave`), a `touch*` name (`touchstart`,
+///   `touchmove`, `touchend`, `touchcancel`), a `mouse*` name (`mouseover`,
+///   `mouseenter`, `mousemove`, `mousedown`, `mouseup`, `mouseout`,
+///   `mouseleave`), `click` or `wheel`. `fromNativeEvent` maps it with
 ///   `EVENT_TYPES`.
 /// - [offsetX] and [offsetY] are the DOM `offsetX` and `offsetY`: the
 ///   position in the logical pixels of the chart, from its top left corner.
-///   A `touchend` after the last finger lifts has NaN for both, as the
-///   upstream `TouchEvent` has no offset (`helpers.dom.ts:81-93`).
+///   A `touch*` event has NaN for both, as the upstream `TouchEvent` has no
+///   offset. Its position comes from [touches]. Thus a `touchend` after the
+///   last finger lifts has NaN coordinates (`helpers.dom.ts:81-93`).
 /// - [touches] is the DOM `TouchEvent.touches`: the pointers of the touch
-///   device that are down on the chart, sorted by pointer id. Other events
-///   have an empty list.
+///   device that are down on the chart, sorted by pointer id, for a `touch*`
+///   event. Other events have an empty list.
 /// - [target] is the DOM `event.target`: the canvas element.
 /// - [source] is the Flutter `PointerEvent` (or `null` in tests).
 final class NativeEvent {
@@ -51,12 +56,10 @@ final class NativeEvent {
   /// The DOM event name, for example `'mousemove'`.
   final String type;
 
-  /// The DOM `offsetX`, in logical pixels. NaN for a `touchend` without
-  /// touches.
+  /// The DOM `offsetX`, in logical pixels. NaN for a `touch*` event.
   final double offsetX;
 
-  /// The DOM `offsetY`, in logical pixels. NaN for a `touchend` without
-  /// touches.
+  /// The DOM `offsetY`, in logical pixels. NaN for a `touch*` event.
   final double offsetY;
 
   /// The DOM `TouchEvent.touches`, sorted by pointer id. Empty for an event

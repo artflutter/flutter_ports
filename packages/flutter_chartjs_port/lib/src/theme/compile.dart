@@ -17,15 +17,19 @@
 /// - `typography`: a Map with the font tokens `font` and `pointLabels`. Each
 ///   value is a Map of the `FontSpec` fields `family`, `size`, `style`,
 ///   `weight` and `lineHeight`, or Dart `null`.
+/// - `palette`: a Map with the fields `colors`, a List of [RawThemeColor]
+///   values, and `backgroundAlpha`, a number (Chart.js ADR 0042, theming.md
+///   §3.5). It replaces the palette of the colors plugin.
 /// - `raw`: a Map of Chart.js keys without a token. Its keys beat the token
 ///   keys.
 ///
-/// The compiler knows the tokens of the parts that exist in phase 6:
-/// `core.defaults`, the elements, `core.scale.defaults` and the
-/// `scales.radialLinear` keys of `scale.radialLinear` (theming.md §10). The
-/// tooltip, legend, title, subtitle and colors plugin keys come with the
-/// plugins in phase 8. A debug assert rejects a field or a token that the
-/// compiler does not know.
+/// The compiler knows the tokens of these parts: `core.defaults`, the
+/// elements, `core.scale.defaults`, the `scales.radialLinear` keys of
+/// `scale.radialLinear`, the `color` and `font` of `plugins.title` and the
+/// palette of `plugins.colors` (theming.md §4). The keys of
+/// `plugins.subtitle`, `plugins.legend` and `plugins.tooltip` come with the
+/// ports of these plugins. A debug assert rejects a field or a token that
+/// the compiler does not know.
 ///
 /// Ported files never import this file (Chart.js ADR 0001, invariant 4).
 library;
@@ -132,6 +136,22 @@ const Set<String> themeTooltipInteractionKeys = {
   'includeInvisible',
 };
 
+/// The plugin keys that change data, item order, a position or a discrete
+/// decision, and the content keys (Chart.js ADR 0042). The compiler never
+/// emits them. The set holds paths, because a flat name is wrong at other
+/// paths (`position` is also a layout key of a box).
+const Set<String> themePluginBehaviorPaths = {
+  'plugins.decimation.algorithm', // plugin.decimation.js:269
+  'plugins.decimation.samples', // plugin.decimation.js:12
+  'plugins.decimation.threshold', // plugin.decimation.js:242
+  'plugins.filler.propagate', // plugin.filler/index.js:47
+  'plugins.legend.reverse', // plugin.legend.js:116-117
+  'plugins.tooltip.position', // plugin.tooltip.js:651, 1012, 1218
+  'plugins.title.text', // plugin.title.js:43, 97
+  'plugins.subtitle.text', // plugin.title.js:43, 97 (the Title of subtitle)
+  'plugins.legend.title.text', // plugin.legend.js:487
+};
+
 /// The root keys that the compiler never emits (theming.md §3.3). The `''`
 /// scope key resolves to the theme root (`helpers.core.ts:338`), ahead of
 /// `defaults.elements.<type>`. These keys then beat the `'#fff'` of the arc
@@ -152,6 +172,9 @@ const Set<String> _paletteKeys = {r'$borderColors', r'$backgroundColors'};
 /// 1. The root keys `backgroundColor`, `borderColor` and `font`.
 /// 2. A behavior key of [themeBehaviorKeys] on the path, or an interaction
 ///    key of [themeTooltipInteractionKeys] under `plugins.tooltip`.
+///
+///    2b. A prefix of the path in [themePluginBehaviorPaths] (Chart.js ADR
+///    0042).
 /// 3. A static hover color on the path: a key that contains `hover` in any
 ///    case and ends with `Color`.
 /// 4. A `_` key on the path, which the resolver reads as a descriptor
@@ -163,6 +186,11 @@ const Set<String> _paletteKeys = {r'$borderColors', r'$backgroundColors'};
 /// 7. `scales.<id>`, where the id is not a scale type of [themeScaleTypes].
 ///    These keys are dead.
 /// 8. A function, Dart `null` (a JS `null` is a value) and [undefined].
+/// 9. A palette key `plugins.colors.$borderColors` or
+///    `plugins.colors.$backgroundColors` with a value that is not a List
+///    with at least one item (Chart.js ADR 0042). Hunk H5 of
+///    `plugin.colors` ignores such a value, and an empty List would give
+///    `i % 0`.
 ///
 /// The compiler adds its own `transitions` keys after the guard (theming.md
 /// §3.8). Thus they pass, although `animation` is a behavior key.
@@ -180,6 +208,12 @@ String? themeNeverEmittedReason(List<String> path, Object? value) {
         path[1] == 'tooltip' &&
         themeTooltipInteractionKeys.contains(key)) {
       return 'plugins.tooltip.$key is a behavior key';
+    }
+    if (i >= 2 && path[0] == 'plugins') {
+      final prefix = path.take(i + 1).join('.');
+      if (themePluginBehaviorPaths.contains(prefix)) {
+        return '$prefix is a behavior key';
+      }
     }
     if (key.toLowerCase().contains('hover') && key.endsWith('Color')) {
       return '$key is a static hover color';
@@ -208,6 +242,11 @@ String? themeNeverEmittedReason(List<String> path, Object? value) {
   if (jsIsFunction(value)) {
     return 'a function is no static value';
   }
+  if (path.length == 3 &&
+      _isPaletteKey(path, 2) &&
+      !(value is List && value.isNotEmpty)) {
+    return 'a palette is a List with at least one item';
+  }
   return null;
 }
 
@@ -219,12 +258,14 @@ bool _isPaletteKey(List<String> path, int i) =>
     path[1] == 'colors' &&
     _paletteKeys.contains(path[i]);
 
-/// The color tokens of phase 6 and the keys that each token emits
-/// (theming.md §4), in the order of that table.
+/// The color tokens and the keys that each token emits (theming.md §4), in
+/// the order of that table.
 ///
 /// - `color` replaces `Defaults.color` (`core.defaults.js:43`). The scale
-///   routes (`core.scale.defaults.js:86, 89`) and the route of the point
-///   labels (`scale.radialLinear.js:400-404`) read it.
+///   routes (`core.scale.defaults.js:86, 89`), the route of the point
+///   labels (`scale.radialLinear.js:400-404`) and the route of the title
+///   color (`plugin.title.js:158-160`) read it. The legend reads the root
+///   `color` (`plugin.legend.js:661, 707`) and gets no key.
 /// - `borderColor` replaces `Defaults.borderColor` (`core.defaults.js:42`).
 ///   The scale routes (`core.scale.defaults.js:87-88`), the route of the
 ///   angle lines (`scale.radialLinear.js:400-404`) and the element routes
@@ -246,14 +287,13 @@ bool _isPaletteKey(List<String> path, int i) =>
 /// `angleLines.color`.
 /// `scales.radialLinear.ticks.color` needs no key: H1 fills it from
 /// `scale.ticks.color` first.
-///
-/// The keys of the plugins come with their modules in phase 8.
 const Map<String, List<String>> _colorTokenKeys = {
   'color': [
     'color',
     'scale.ticks.color',
     'scale.title.color',
     'scales.radialLinear.pointLabels.color',
+    'plugins.title.color',
   ],
   'borderColor': [
     'scale.grid.color',
@@ -280,11 +320,17 @@ const String _backdropKey = 'scale.ticks.backdropColor';
 /// The alpha of [_backdropKey].
 const double _backdropAlpha = 0.75;
 
-/// The keys of the font token `typography.font` in phase 6 (theming.md §4):
-/// the scale slots. `toFont` fills an absent field from the global
-/// `defaults.font` (`helpers.options.ts:115-117`). Thus the compiler writes
-/// a font into every slot and no root `font` (theming.md §3.4).
+/// The keys of the font token `typography.font` (theming.md §4): the scale
+/// slots. `toFont` fills an absent field from the global `defaults.font`
+/// (`helpers.options.ts:115-117`). Thus the compiler writes a font into
+/// every slot and no root `font` (theming.md §3.4).
 const List<String> _fontTokenKeys = ['scale.ticks.font', 'scale.title.font'];
+
+/// The keys of the font token `typography.font` without its `weight`
+/// (theming.md §3.4 and §4): the slots where upstream sets the weight
+/// locally. `plugins.title.font` has the weight `'bold'`
+/// (`plugin.title.js:148-150`). A font without other fields is not emitted.
+const List<String> _fontTokenKeysWithoutWeight = ['plugins.title.font'];
 
 /// The key of the font token `typography.pointLabels` (theming.md §4, the
 /// last row): the font of the point labels of the radial linear scale.
@@ -309,11 +355,19 @@ const Set<String> _fontFields = {
   'lineHeight',
 };
 
-/// The fields of a raw Map theme in phase 6.
-const Set<String> _themeFields = {'colors', 'typography', 'raw'};
+/// The fields of a raw Map theme.
+const Set<String> _themeFields = {'colors', 'typography', 'palette', 'raw'};
 
-/// The typography tokens of phase 6.
+/// The typography tokens.
 const Set<String> _typographyTokens = {'font', 'pointLabels'};
+
+/// The fields of the `palette` field of a raw Map theme (Chart.js ADR 0042,
+/// theming.md §4).
+const Set<String> _paletteFields = {'colors', 'backgroundAlpha'};
+
+/// The background alpha of the palette when the theme gives none: the 0.5
+/// of `BACKGROUND_COLORS` (`plugin.colors.ts:25`).
+const double _paletteBackgroundAlpha = 0.5;
 
 /// The theme transitions of theming.md §3.8: `'theme'` animates for 200 ms
 /// with `'linear'`, the values of the `FThemeMotion` of forui.
@@ -340,9 +394,11 @@ const Object _noTheme = Object();
 ///   `transitions` keys also gives `null`, for example `ChartThemes.none`.
 /// - Each color token emits its keys of theming.md §4 as [themeColorToRgba]
 ///   strings. The font token `font` emits a Map of its fields that are not
-///   `null` into each scale slot. The point-label font is the `font` Map
-///   without `size`, then the fields of `pointLabels` over it (theming.md
-///   §3.4).
+///   `null` into each scale slot, and the same Map without `weight` into
+///   `plugins.title.font`. The point-label font is the `font` Map without
+///   `size`, then the fields of `pointLabels` over it (theming.md §3.4).
+/// - The `palette` emits the two palette keys of `plugins.colors` as Lists
+///   of [themeColorToRgba] strings (Chart.js ADR 0042, theming.md §4).
 /// - The `raw` keys beat the token keys, key by key. Maps merge, and a Map
 ///   that holds no key after the guard is left out.
 /// - A key that [themeNeverEmittedReason] rejects is never emitted. In debug
@@ -425,6 +481,18 @@ AnyObject? _compile(AnyObject theme) {
   if (pointLabelsFont.isNotEmpty) {
     _put(keys, _pointLabelsFontKey, pointLabelsFont);
   }
+  // The base font without weight (theming.md §3.4).
+  final fontWithoutWeight = <String, Object?>{
+    for (final MapEntry(:key, :value) in font.entries)
+      if (key != 'weight') key: value,
+  };
+  if (fontWithoutWeight.isNotEmpty) {
+    for (final path in _fontTokenKeysWithoutWeight) {
+      _put(keys, path, Map<String, Object?>.of(fontWithoutWeight));
+    }
+  }
+
+  _palette(keys, _field(theme, 'palette'));
 
   _mergeRaw(keys, _field(theme, 'raw'), const []);
 
@@ -460,6 +528,57 @@ RawThemeColor? _color(AnyObject colors, String token) {
     'The color token $token is not a RawThemeColor: $value.',
   );
   return value is RawThemeColor ? value : null;
+}
+
+/// Writes the palette keys of the `palette` field [palette] into [keys]
+/// (Chart.js ADR 0042, theming.md §4).
+///
+/// `plugins.colors.$borderColors` gets the colors at their alpha.
+/// `plugins.colors.$backgroundColors` gets the same colors with the alpha
+/// replaced by `backgroundAlpha`, as `plugin.colors.ts:25` derives
+/// `BACKGROUND_COLORS` from `BORDER_COLORS`. An absent `backgroundAlpha` is
+/// 0.5. An absent or empty `colors` List emits nothing. In debug mode, an
+/// unknown field, a value of another type and an item that is not a
+/// [RawThemeColor] fail an assert. In release mode, the compiler leaves
+/// out such an item.
+void _palette(AnyObject keys, AnyObject palette) {
+  assert(
+    palette.keys.every(_paletteFields.contains),
+    'Unknown palette fields: '
+    '${palette.keys.where((k) => !_paletteFields.contains(k)).join(', ')}.',
+  );
+  final colors = palette['colors'];
+  final backgroundAlpha = palette['backgroundAlpha'];
+  assert(
+    colors == null || colors is List,
+    'The palette colors are not a List: $colors.',
+  );
+  assert(
+    backgroundAlpha == null || backgroundAlpha is num,
+    'The palette backgroundAlpha is not a number: $backgroundAlpha.',
+  );
+  if (colors is! List) return;
+  assert(
+    colors.every((color) => color is RawThemeColor),
+    'A palette color is not a RawThemeColor: $colors.',
+  );
+  final list = colors.whereType<RawThemeColor>().toList();
+  if (list.isEmpty) return;
+  final alpha = backgroundAlpha is num
+      ? backgroundAlpha.toDouble()
+      : _paletteBackgroundAlpha;
+  _put(keys, r'plugins.colors.$borderColors', [
+    for (final color in list) themeColorToRgba(color),
+  ]);
+  _put(keys, r'plugins.colors.$backgroundColors', [
+    for (final color in list)
+      themeColorToRgba((
+        alpha: alpha,
+        red: color.red,
+        green: color.green,
+        blue: color.blue,
+      )),
+  ]);
 }
 
 /// The `FontSpec` Map of the font token [value]: its fields that are not

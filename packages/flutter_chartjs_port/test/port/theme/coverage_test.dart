@@ -35,12 +35,14 @@ import 'package:test/test.dart';
 //      and that [_notThemed] does not list. A visual leaf has a last key
 //      `color`, a last key that ends with `Color`, `Colors` or
 //      `Background`, or a key `font` or a key that ends with `Font`.
-//    - REMOVED: an emitted path that the manifest does not have.
+//    - REMOVED: an emitted path that the manifest does not have and that
+//      [_moduleConstants] does not list.
 //    - CHANGED: an emitted value that differs from the upstream value, with
 //      the new literal. Colors compare after the parse of the ported
 //      @kurkle/color, as the canvas layer parses them.
 //    - STALE: a [_notThemed] key that the manifest does not have, or that
-//      the preset emits.
+//      the preset emits. A [_moduleConstants] key that the manifest has, or
+//      that the preset does not emit.
 //    - DOLLAR: a `$` key in the inventory. It can collide with the theme
 //      key `$theme` and the palette keys (theming.md §11).
 //
@@ -100,7 +102,6 @@ const Map<String, String> _notThemed = {
   'plugins.subtitle.font.weight':
       "the local weight 'normal' (plugin.subtitle.js:35-37); the token font "
       'has no weight there (theming.md §3.4)',
-  'plugins.title.color': 'phase 8: the token color emits it with plugin.title',
   'plugins.title.font.weight':
       "the local weight 'bold' (plugin.title.js:148-150); the token font has "
       'no weight there (theming.md §3.4)',
@@ -132,6 +133,18 @@ const Map<String, String> _notThemed = {
       'phase 8: the token onInverseSurface emits it with plugin.tooltip',
   'plugins.tooltip.titleFont':
       'phase 8: the token font emits it without weight with plugin.tooltip',
+};
+
+/// The emitted paths that restate a module constant, not a default, each
+/// with the reason (Chart.js ADR 0042, Consequences). The manifest does not
+/// have them. Test 3 compares their values.
+const Map<String, String> _moduleConstants = {
+  r'plugins.colors.$borderColors':
+      'a module constant of plugin.colors.ts:14-25, not a default. Test 3 '
+      'compares its values',
+  r'plugins.colors.$backgroundColors':
+      'a module constant of plugin.colors.ts:14-25, not a default. Test 3 '
+      'compares its values',
 };
 
 /// The environment variable that makes the test write the snapshot.
@@ -205,12 +218,14 @@ bool _same(String path, Object? value, Object? upstream) {
 }
 
 /// The report lists of theming.md §8 test 4 for the emitted [emitted], the
-/// manifest leaves [manifest] and the keys [notThemed] that the preset does
-/// not emit, by list name. A list without entries is left out.
+/// manifest leaves [manifest], the keys [notThemed] that the preset does not
+/// emit and the emitted module constants [moduleConstants], by list name. A
+/// list without entries is left out.
 Map<String, List<String>> _report(
   Map<String, Object?> emitted,
   Map<String, Object?> manifest, [
   Map<String, String> notThemed = _notThemed,
+  Map<String, String> moduleConstants = _moduleConstants,
 ]) {
   final added = <String>[];
   final removed = <String>[];
@@ -224,6 +239,7 @@ Map<String, List<String>> _report(
       emitted.keys.any((p) => p.startsWith('$path.'));
 
   for (final MapEntry(key: path, :value) in emitted.entries) {
+    if (moduleConstants.containsKey(path)) continue;
     final Object? upstream;
     final font = RegExp(r'^(.+)\.font\.([^.]+)$').firstMatch(path);
     if (manifest.containsKey(path)) {
@@ -253,6 +269,13 @@ Map<String, List<String>> _report(
       stale.add('$path: not in the manifest');
     } else if (isEmitted(path)) {
       stale.add('$path: the preset emits it');
+    }
+  }
+  for (final path in moduleConstants.keys) {
+    if (manifest.containsKey(path)) {
+      stale.add('$path: a module constant in the manifest');
+    } else if (!emitted.containsKey(path)) {
+      stale.add('$path: the preset does not emit it');
     }
   }
   return {
@@ -349,7 +372,7 @@ void main() {
     Map<String, List<String>> report(
       Map<String, Object?> emitted,
       Map<String, Object?> manifest,
-    ) => _report(emitted, manifest, notThemed);
+    ) => _report(emitted, manifest, notThemed, const {});
 
     test('an equal inventory gives no entry', () {
       expect(report(emitted, manifest), isEmpty);
@@ -437,13 +460,16 @@ void main() {
       'a notThemed key that upstream removed or the preset emits is STALE',
       () {
         expect(
-          _report(emitted, manifest, {...notThemed, 'gone.color': 'test'}),
+          _report(emitted, manifest, {
+            ...notThemed,
+            'gone.color': 'test',
+          }, const {}),
           {
             'STALE': ['gone.color: not in the manifest'],
           },
         );
         expect(
-          _report(emitted, manifest, {...notThemed, 'color': 'test'}),
+          _report(emitted, manifest, {...notThemed, 'color': 'test'}, const {}),
           {
             'STALE': ['color: the preset emits it'],
           },
@@ -451,10 +477,50 @@ void main() {
       },
     );
 
+    test('a module constant is not REMOVED', () {
+      // plugin.colors.ts:14-25: the palette is a module constant, not a
+      // default. The manifest does not have it (Chart.js ADR 0042).
+      const palette = r'plugins.colors.$borderColors';
+      final withPalette = <String, Object?>{
+        ...emitted,
+        palette: ['rgba(54, 162, 235, 1)'],
+      };
+      expect(report(withPalette, manifest), {
+        'REMOVED': [palette],
+      });
+      const constants = {palette: 'test'};
+      expect(_report(withPalette, manifest, notThemed, constants), isEmpty);
+      // A module constant that the manifest has, or that the preset does
+      // not emit, is STALE.
+      expect(
+        _report(
+          withPalette,
+          {
+            ...manifest,
+            palette: <Object?>['rgb(54, 162, 235)'],
+          },
+          notThemed,
+          constants,
+        ),
+        {
+          'STALE': ['$palette: a module constant in the manifest'],
+          'DOLLAR': [palette],
+        },
+      );
+      expect(_report(emitted, manifest, notThemed, constants), {
+        'STALE': ['$palette: the preset does not emit it'],
+      });
+    });
+
     test('each notThemed key has a reason', () {
       for (final MapEntry(key: path, value: reason) in _notThemed.entries) {
         expect(reason, isNotEmpty, reason: path);
         expect(_isVisual(path), isTrue, reason: path);
+      }
+      for (final MapEntry(key: path, value: reason)
+          in _moduleConstants.entries) {
+        expect(reason, isNotEmpty, reason: path);
+        expect(_notThemed.containsKey(path), isFalse, reason: path);
       }
     });
   });

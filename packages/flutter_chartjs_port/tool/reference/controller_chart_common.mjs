@@ -36,7 +36,9 @@
 //
 // How to write a generator: import this file first, then call loadChartJs(),
 // registerPhase7(C), runControllerCase() for each case, and
-// writeControllerReference().
+// writeControllerReference(). A plugin generator of phase 8 calls
+// registerBuiltins(C) (re-exported from scale_chart_common.mjs) and the
+// functions of tool/reference/plugin_chart_common.mjs (Chart.js ADR 0041).
 //
 // The recording Path2D
 // --------------------
@@ -58,10 +60,11 @@ import {
   makeChart,
   named,
   observe,
+  registerBuiltins,
   writeReference,
 } from './scale_chart_common.mjs';
 
-export {CallsText, drawCalls, jsonValue, makeChart, named, writeReference};
+export {CallsText, drawCalls, jsonValue, makeChart, named, registerBuiltins, writeReference};
 
 /**
  * The Path2D of a browser, as a recorder of its path commands
@@ -400,8 +403,16 @@ function observeDataset(C, chart, i) {
  * are the keys of `observe` of scale_chart_common.mjs. With [scaleOptions],
  * each scale also has `options` (scaleOptionsOf). `stacks` is the plain
  * copy of `chart._stacks`.
+ *
+ * Two options of the plugin reference tests (Chart.js ADR 0041, section 3
+ * item 3): [observeExtra] is a function `(chart) => object` whose keys go
+ * into the observation after `datasets`, and `hits: false` leaves out the
+ * hit matrix. Without them, the observation is as before.
  */
-export function observeControllers(chart, {scaleOptions = false} = {}) {
+export function observeControllers(
+  chart,
+  {scaleOptions = false, hits: withHits = true, observeExtra} = {},
+) {
   const C = chartModule;
   const {chartArea, scales} = observe(
     chart,
@@ -414,8 +425,9 @@ export function observeControllers(chart, {scaleOptions = false} = {}) {
       stacks: chart._stacks === undefined ? undefined : plain(chart._stacks),
       datasets: chart.data.datasets.map((_, i) => observeDataset(C, chart, i)),
     }),
+    ...(observeExtra ? jsonValue(observeExtra(chart)) : {}),
     // After jsonValue: `items` is a CallsText.
-    hits: hits(chart),
+    ...(withHits ? {hits: hits(chart)} : {}),
   };
 }
 
@@ -482,6 +494,18 @@ export function applyStep(chart, step, state = {}) {
       chart._eventHandler({type: 'mouseout', chart, native: {type: 'mouseout'}, x, y});
       return ['mouseout', x, y];
     }
+    case 'setOption': {
+      // ['setOption', path, value]: the write `chart.options.<path> = value`
+      // through the `set` trap of the resolver, then chart.update()
+      // (Chart.js ADR 0041, section 3 item 6). path: 'plugins.title.display'.
+      const [path, value] = args;
+      const keys = path.split('.');
+      let target = chart.options;
+      for (const k of keys.slice(0, -1)) target = target[k];
+      target[keys.at(-1)] = value;
+      chart.update();
+      return step;
+    }
     default:
       throw new Error(`Not a reference step: ${JSON.stringify(step)}`);
   }
@@ -519,12 +543,16 @@ function copy(v) {
  * [extras] maps a probe name to a function `(chart) => value`. `probes`
  * has the source text of each probe: writeControllerReference writes it in
  * a comment of the data file.
+ *
+ * [hits] and [observeExtra] go to each observeControllers call (Chart.js
+ * ADR 0041, section 3 item 3).
  */
 export function runControllerCase(
   name,
   config,
-  {options = {}, steps = [], scaleOptions = false, extras = {}} = {},
+  {options = {}, steps = [], scaleOptions = false, extras = {}, hits = true, observeExtra} = {},
 ) {
+  const observeOptions = {scaleOptions, hits, observeExtra};
   if (!chartModule) throw new Error('Call loadChartJs() first.');
   const literal = copy(config);
   const optionsLiteral = copy(options);
@@ -538,7 +566,7 @@ export function runControllerCase(
       expected.error = {at: 'initial', name: errorName(e)};
       return {name, config: literal, options: optionsLiteral, expected, probes};
     }
-    expected.initial = observeControllers(chart, {scaleOptions});
+    expected.initial = observeControllers(chart, observeOptions);
     expected.steps = [];
     const state = {};
     for (let k = 0; k < steps.length; k++) {
@@ -551,7 +579,7 @@ export function runControllerCase(
         expected.error = {at: `step ${k}`, name: errorName(e)};
         return {name, config: literal, options: optionsLiteral, expected, probes};
       }
-      expected.steps.push({do: done, observations: observeControllers(chart, {scaleOptions})});
+      expected.steps.push({do: done, observations: observeControllers(chart, observeOptions)});
     }
     try {
       expected.drawCalls = drawCalls(chart);

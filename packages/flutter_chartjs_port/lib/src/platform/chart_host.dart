@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the internal chart host.
 
-/// The internal chart host (Chart.js ADR 0014, porting-flow.md 2.7): the
+/// The internal chart host (Chart.js ADR 0037, porting-flow.md 2.7): the
 /// render object that shows a canvas element of the canvas layer, and the
 /// DOM parts of `platform.dom.js` that the host stands in for.
 ///
@@ -18,7 +18,7 @@
 ///   [ContainerResizeObserver] for the `ResizeObserver` of
 ///   `createResizeObserver` and the window `resize` listener.
 ///
-/// Sizing (Chart.js ADR 0014):
+/// Sizing (Chart.js ADR 0037, sections 2 to 5):
 /// - The first layout of the host reports the attach at once. Thus the
 ///   chart takes its size from the container before the first paint, as
 ///   upstream sizes a chart at construction (`core.controller.tests.js:651`).
@@ -50,13 +50,33 @@
 /// the old host. Thus the chart stays attached and follows the new
 /// container. An old host that no longer shows the canvas reports nothing.
 ///
-/// Input (Chart.js ADR 0014): `hitTestSelf` is true. [RenderChartHost]
-/// reads raw pointer events in `handleEvent`, without a claim in the gesture
-/// arena, and maps them to DOM event names by `PointerDeviceKind`. Only a
-/// `click` listener adds a [TapGestureRecognizer] to the arena. Thus parent
-/// scrollables keep their drags. But a chart with a `click` listener wins
-/// the tap against a tappable ancestor (`GestureDetector.onTap`, `InkWell`,
-/// `ListTile.onTap`), which a DOM click would also reach by bubbling.
+/// Input (Chart.js ADR 0037, sections 6 to 11): `hitTestSelf` is true.
+/// [RenderChartHost] reads raw pointer events in `handleEvent` and maps them
+/// to the DOM event names of Chrome by `PointerDeviceKind`. It claims
+/// nothing in the gesture arena. Thus parent scrollables keep their drags,
+/// and tappable ancestors (`GestureDetector.onTap`, `InkWell`,
+/// `ListTile.onTap`) keep their taps, as a DOM click also reaches them by
+/// bubbling.
+/// - The click rule (section 7): a mouse-like down with the primary button
+///   on the host, then the up of that pointer inside the box, gives `click`
+///   after `mouseup`. The distance between the down and the up has no limit.
+/// - The tap rule (section 8): one touch pointer on the host, no move
+///   farther than the touch slop of `MediaQuery.gestureSettings`, no cancel,
+///   and the up before `kLongPressTimeout`. A touch gives the boundary
+///   events `pointerover`, `pointerenter`, `pointerout` and `pointerleave`
+///   around its down and its up. A tap then gives the compatibility mouse
+///   events `mouseover` and `mouseenter` (only when the compatibility mouse
+///   is not over the host), `mousemove`, `mousedown`, `mouseup` and `click`,
+///   at the up position. A touch held past `kLongPressTimeout` within the
+///   slop gives `mouseover`, `mouseenter` and `mousemove` while the finger
+///   is down. Its lift gives no compatibility event and no `click`.
+/// - The compatibility mouse (section 9): one for each isolate, as a browser
+///   has one. A tap or a long press on a host makes that host the owner.
+///   While an owner exists, one global pointer route watches the touch
+///   pointers of the app. A tap or a long press that does not hit a host
+///   gives the owner `mouseout` and `mouseleave`. Then the owner ends, and
+///   the route goes. The detach or the dispose of the owner ends it without
+///   an event.
 ///
 /// A mouse has no implicit capture: a mouse move, up or cancel outside the
 /// box gives no event. `MouseTracker` reports enter and exit only for the
@@ -257,11 +277,12 @@ final class ContainerResizeObserver {
 
 // The host.
 
-/// The internal chart host widget (Chart.js ADR 0014): it shows [canvas]
+/// The internal chart host widget (Chart.js ADR 0037): it shows [canvas]
 /// and sends the input on it to the listeners of the canvas.
 ///
-/// It reads the device pixel ratio with `MediaQuery.devicePixelRatioOf` and
-/// the ticker state with `TickerMode.valuesOf` in [createRenderObject] and
+/// It reads the device pixel ratio with `MediaQuery.devicePixelRatioOf`, the
+/// ticker state with `TickerMode.valuesOf` and the gesture settings with
+/// `MediaQuery.maybeGestureSettingsOf` in [createRenderObject] and
 /// [updateRenderObject]. `View.of` does not rebuild on a change of the
 /// device pixel ratio.
 class ChartHost extends LeafRenderObjectWidget {
@@ -291,6 +312,7 @@ class ChartHost extends LeafRenderObjectWidget {
       canvas: canvas,
       devicePixelRatio: _devicePixelRatio(context),
       tickerEnabled: TickerMode.valuesOf(context).enabled,
+      gestureSettings: MediaQuery.maybeGestureSettingsOf(context),
       onTickerModeChanged: onTickerModeChanged,
     );
   }
@@ -301,7 +323,8 @@ class ChartHost extends LeafRenderObjectWidget {
       ..canvas = canvas
       ..onTickerModeChanged = onTickerModeChanged
       ..devicePixelRatio = _devicePixelRatio(context)
-      ..tickerEnabled = TickerMode.valuesOf(context).enabled;
+      ..tickerEnabled = TickerMode.valuesOf(context).enabled
+      ..gestureSettings = MediaQuery.maybeGestureSettingsOf(context);
   }
 }
 
@@ -315,6 +338,7 @@ class RenderChartHost extends RenderBox
     required UiCanvasElement canvas,
     required double devicePixelRatio,
     bool tickerEnabled = true,
+    this.gestureSettings,
     this.onTickerModeChanged,
   }) : _canvas = canvas,
        // The field has a setter with side effects.
@@ -323,11 +347,8 @@ class RenderChartHost extends RenderBox
        // The field has a setter with side effects.
        // ignore: prefer_initializing_formals
        _tickerEnabled = tickerEnabled {
-    _tap = TapGestureRecognizer(debugOwner: this)..onTapUp = _handleTapUp;
     _show(canvas);
   }
-
-  late final TapGestureRecognizer _tap;
 
   /// The canvas element that the host shows.
   UiCanvasElement get canvas => _canvas;
@@ -346,7 +367,7 @@ class RenderChartHost extends RenderBox
     _canvas = value;
     _show(value);
     _laidOut = false;
-    _touches.clear();
+    _endInput();
     _clearHoverPointers();
     markNeedsLayout();
   }
@@ -722,7 +743,7 @@ class RenderChartHost extends RenderBox
   void detach() {
     _validForMouseTracker = false;
     super.detach();
-    _touches.clear();
+    _endInput();
     _clearHoverPointers();
     if (_reportedConnected) {
       _scheduleConnectionCheck();
@@ -732,8 +753,8 @@ class RenderChartHost extends RenderBox
   @override
   void dispose() {
     _disposed = true;
+    _endInput();
     _clearHoverPointers();
-    _tap.dispose();
     _clipLayer.layer = null;
     _resizeObservers.clear();
     _pendingFirstResize.clear();
@@ -746,6 +767,10 @@ class RenderChartHost extends RenderBox
   @override
   bool hitTestSelf(Offset position) => true;
 
+  /// The gesture settings of the view: the touch slop of the tap rule
+  /// (Chart.js ADR 0037, section 8). Null gives `kTouchSlop`.
+  DeviceGestureSettings? gestureSettings;
+
   /// The touch pointers that are down on the host, by pointer id: the DOM
   /// `TouchEvent.touches` of the canvas.
   final SplayTreeMap<int, Offset> _touches = SplayTreeMap();
@@ -754,6 +779,13 @@ class RenderChartHost extends RenderBox
     for (final MapEntry(:key, :value) in _touches.entries)
       (identifier: key, x: value.dx, y: value.dy),
   ];
+
+  /// The pointer of a mouse-like down with the primary button on the host,
+  /// or null: the DOM click rule (Chart.js ADR 0037, section 7).
+  int? _clickPointer;
+
+  /// The tap candidate of the host, or null (Chart.js ADR 0037, section 8).
+  _TouchTap? _tap;
 
   bool _has(String type) => hasCanvasEventListener(_canvas, type);
 
@@ -787,9 +819,6 @@ class RenderChartHost extends RenderBox
 
   @override
   void handleEvent(PointerEvent event, BoxHitTestEntry entry) {
-    if (event is PointerDownEvent && _has('click')) {
-      _tap.addPointer(event);
-    }
     final position = event.localPosition;
     final touch = event.kind == PointerDeviceKind.touch;
     switch (event) {
@@ -800,19 +829,21 @@ class RenderChartHost extends RenderBox
         _emit(const ['pointermove', 'mousemove'], position, event);
       case PointerDownEvent():
         if (touch) {
-          _touches[event.pointer] = position;
-          _emit(
-            const ['pointerdown', 'touchstart'],
-            position,
-            event,
-            touch: true,
-          );
+          _handleTouchDown(event);
         } else {
+          // The DOM click rule: only the primary button gives a click.
+          _clickPointer = event.buttons == kPrimaryButton
+              ? event.pointer
+              : null;
           _emit(const ['pointerdown', 'mousedown'], position, event);
         }
       case PointerMoveEvent():
         if (touch) {
           _touches[event.pointer] = position;
+          final tap = _tap;
+          if (tap != null && tap.pointer == event.pointer && !tap.move(event)) {
+            _endTap();
+          }
           _emit(
             const ['pointermove', 'touchmove'],
             position,
@@ -826,24 +857,44 @@ class RenderChartHost extends RenderBox
         }
       case PointerUpEvent():
         if (touch) {
-          _touches.remove(event.pointer);
-          _emit(const ['pointerup', 'touchend'], position, event, touch: true);
-        } else if (size.contains(position)) {
-          // The up goes to the hit path of the down, but a mouse has no
-          // implicit capture: the canvas gets no up outside its box.
-          _emit(const ['pointerup', 'mouseup'], position, event);
+          _handleTouchUp(event);
+        } else {
+          final click = _clickPointer == event.pointer;
+          _clickPointer = null;
+          if (size.contains(position)) {
+            // The up goes to the hit path of the down, but a mouse has no
+            // implicit capture: the canvas gets no up outside its box. An up
+            // outside the box gives no click, because the DOM sends the
+            // click to the common ancestor.
+            _emit(const ['pointerup', 'mouseup'], position, event);
+            if (click) {
+              _emit(const ['click'], position, event);
+            }
+          }
         }
       case PointerCancelEvent():
         if (touch) {
           _touches.remove(event.pointer);
+          if (_tap?.pointer == event.pointer) {
+            _endTap();
+          }
+          _hostPointers.remove(event.pointer);
           _emit(
-            const ['pointercancel', 'touchcancel'],
+            const [
+              'pointercancel',
+              'pointerout',
+              'pointerleave',
+              'touchcancel',
+            ],
             position,
             event,
             touch: true,
           );
-        } else if (size.contains(position)) {
-          _emit(const ['pointercancel'], position, event);
+        } else {
+          _clickPointer = null;
+          if (size.contains(position)) {
+            _emit(const ['pointercancel'], position, event);
+          }
         }
       case PointerScrollEvent():
         _emit(const ['wheel'], position, event);
@@ -852,11 +903,222 @@ class RenderChartHost extends RenderBox
     }
   }
 
-  void _handleTapUp(TapUpDetails details) {
-    if (!attached) {
+  void _handleTouchDown(PointerDownEvent event) {
+    _touches[event.pointer] = event.localPosition;
+    _hostPointers.add(event.pointer);
+    // A second touch pointer on the host ends the candidate: it stands for
+    // the primary pointer of Pointer Events 3, section 4.1.2.
+    _endTap();
+    // A touch down on a host is a second touch pointer for the route too: it
+    // ends the candidate of a finger that is down outside (Chart.js ADR 0037,
+    // sections 8 and 9).
+    for (final tap in _outsideTaps.values) {
+      tap.dispose();
+    }
+    _outsideTaps.clear();
+    if (_touches.length == 1) {
+      _tap = _TouchTap(
+        event,
+        slop: computeHitSlop(PointerDeviceKind.touch, gestureSettings),
+        onLongPress: _handleLongPress,
+      );
+    }
+    _emit(
+      const ['pointerover', 'pointerenter', 'pointerdown', 'touchstart'],
+      event.localPosition,
+      event,
+      touch: true,
+    );
+  }
+
+  void _handleTouchUp(PointerUpEvent event) {
+    final position = event.localPosition;
+    _touches.remove(event.pointer);
+    _emit(
+      const ['pointerup', 'pointerout', 'pointerleave', 'touchend'],
+      position,
+      event,
+      touch: true,
+    );
+    final tap = _tap;
+    if (tap != null && tap.pointer == event.pointer) {
+      _endTap();
+      if (!tap.longPressed && attached) {
+        // A tap: the compatibility mouse events and the click, at the up
+        // position (Touch Events, "Interaction with Mouse Events and click").
+        _takeMouse(event);
+        _emit(
+          const ['mousemove', 'mousedown', 'mouseup', 'click'],
+          position,
+          event,
+        );
+      }
+    }
+    // The route has no candidate for this pointer: the pointer was in
+    // _hostPointers when the route saw its down.
+    _hostPointers.remove(event.pointer);
+  }
+
+  /// The long press of the host candidate [tap]: the compatibility mouse
+  /// comes over the host while the finger is down.
+  void _handleLongPress(_TouchTap tap) {
+    if (!identical(tap, _tap) || !attached) {
       return;
     }
-    _emit(const ['click'], details.localPosition, details);
+    final last = tap.last;
+    _takeMouse(last);
+    _emit(const ['mousemove'], last.localPosition, last);
+  }
+
+  void _endTap() {
+    _tap?.dispose();
+    _tap = null;
+  }
+
+  /// Ends the input state of the host at a detach, a dispose or a canvas
+  /// swap. An owner of the compatibility mouse ends without an event, as a
+  /// DOM element that leaves the document gets no `mouseout`.
+  void _endInput() {
+    _endTap();
+    _clickPointer = null;
+    _hostPointers.removeAll(_touches.keys);
+    _touches.clear();
+    if (identical(_mouseOwner, this)) {
+      _releaseMouse(null, emit: false);
+    }
+  }
+
+  // The compatibility mouse (Chart.js ADR 0037, section 9).
+
+  /// The host that the compatibility mouse is over, or null.
+  static RenderChartHost? _mouseOwner;
+
+  /// The pointer of the tap or the long press that made the owner. The
+  /// route sees the up of that tap, because it starts in the dispatch of
+  /// that up (`PointerRouter.route` copies the global routes after the hit
+  /// path ran). It ignores the pointer.
+  static int? _ownerPointer;
+
+  /// The touch pointers that are down on a host. `GestureBinding` calls the
+  /// hit path before the route, so the host adds a pointer at its down
+  /// before the route sees it.
+  static final Set<int> _hostPointers = {};
+
+  /// The touch pointers outside the hosts that the route saw go down.
+  static final Set<int> _outsidePointers = {};
+
+  /// The tap candidates of the route, by pointer: at most one.
+  static final Map<int, _TouchTap> _outsideTaps = {};
+
+  static bool _routeAdded = false;
+
+  /// The host that the compatibility mouse is over, or null.
+  @visibleForTesting
+  static RenderChartHost? get debugCompatibilityMouseOwner => _mouseOwner;
+
+  /// Makes this host the owner of the compatibility mouse at the tap or the
+  /// long press [source]. The old owner first gets `mouseout` and
+  /// `mouseleave`. This host gets `mouseover` and `mouseenter` when the
+  /// compatibility mouse is not over it.
+  void _takeMouse(PointerEvent source) {
+    if (!identical(_mouseOwner, this)) {
+      if (_mouseOwner != null) {
+        _releaseMouse(source, emit: true);
+      }
+      _mouseOwner = this;
+      if (!_routeAdded) {
+        _routeAdded = true;
+        GestureBinding.instance.pointerRouter.addGlobalRoute(_route);
+      }
+      _emit(const ['mouseover', 'mouseenter'], source.localPosition, source);
+    }
+    _ownerPointer = source.pointer;
+  }
+
+  /// Ends the owner of the compatibility mouse and removes the route. With
+  /// [emit], an attached old owner gets `mouseout` and `mouseleave` at the
+  /// position of [source], in its own coordinates.
+  static void _releaseMouse(PointerEvent? source, {required bool emit}) {
+    final owner = _mouseOwner;
+    _mouseOwner = null;
+    _ownerPointer = null;
+    for (final tap in _outsideTaps.values) {
+      tap.dispose();
+    }
+    _outsideTaps.clear();
+    _outsidePointers.clear();
+    if (_routeAdded) {
+      _routeAdded = false;
+      GestureBinding.instance.pointerRouter.removeGlobalRoute(_route);
+    }
+    if (emit && source != null && owner != null && owner.attached) {
+      owner._emit(
+        const ['mouseout', 'mouseleave'],
+        owner.globalToLocal(source.position),
+        source,
+      );
+    }
+  }
+
+  /// The global pointer route while an owner exists: it applies the tap
+  /// rule to the touch pointers that do not go down on a host. A tap or a
+  /// long press of such a pointer moves the compatibility mouse off the
+  /// owner. A drag or a scroll gives nothing.
+  static void _route(PointerEvent event) {
+    final pointer = event.pointer;
+    // A real mouse keeps the MouseTracker path.
+    if (event.kind != PointerDeviceKind.touch ||
+        pointer == _ownerPointer ||
+        _hostPointers.contains(pointer)) {
+      return;
+    }
+    switch (event) {
+      case PointerDownEvent():
+        if (_outsidePointers.isEmpty && _hostPointers.isEmpty) {
+          _outsideTaps[pointer] = _TouchTap(
+            event,
+            slop: computeHitSlop(
+              PointerDeviceKind.touch,
+              _mouseOwner?.gestureSettings,
+            ),
+            onLongPress: _handleOutsideLongPress,
+          );
+        } else {
+          // A second touch pointer is not the primary pointer, and it ends
+          // the candidate of the first one.
+          for (final tap in _outsideTaps.values) {
+            tap.dispose();
+          }
+          _outsideTaps.clear();
+        }
+        _outsidePointers.add(pointer);
+      case PointerMoveEvent():
+        final tap = _outsideTaps[pointer];
+        if (tap != null && !tap.move(event)) {
+          _outsideTaps.remove(pointer);
+          tap.dispose();
+        }
+      case PointerUpEvent():
+        _outsidePointers.remove(pointer);
+        final tap = _outsideTaps.remove(pointer);
+        if (tap != null) {
+          tap.dispose();
+          if (!tap.longPressed) {
+            _releaseMouse(event, emit: true);
+          }
+        }
+      case PointerCancelEvent():
+        _outsidePointers.remove(pointer);
+        _outsideTaps.remove(pointer)?.dispose();
+      default:
+        break;
+    }
+  }
+
+  static void _handleOutsideLongPress(_TouchTap tap) {
+    if (identical(_outsideTaps[tap.pointer], tap)) {
+      _releaseMouse(tap.last, emit: true);
+    }
   }
 
   // The hovering pointers that MouseTracker does not track.
@@ -964,4 +1226,51 @@ class RenderChartHost extends RenderBox
       ..add(FlagProperty('connected', value: isConnected, ifTrue: 'connected'))
       ..add(DiagnosticsProperty<Size>('displaySize', displaySize));
   }
+}
+
+/// One touch pointer that can still end as a tap (Chart.js ADR 0037,
+/// section 8). The host and the route of the compatibility mouse use the
+/// same rule: a move farther than [slop] from the down ends the candidate,
+/// and a timer of `kLongPressTimeout` makes it a long press.
+final class _TouchTap {
+  _TouchTap(
+    PointerDownEvent down, {
+    required this.slop,
+    required void Function(_TouchTap tap) onLongPress,
+  }) : pointer = down.pointer,
+       _downPosition = down.position,
+       last = down {
+    _timer = Timer(kLongPressTimeout, () {
+      longPressed = true;
+      onLongPress(this);
+    });
+  }
+
+  /// The pointer id.
+  final int pointer;
+
+  /// The global position of the down.
+  final Offset _downPosition;
+
+  /// The touch slop, in logical pixels.
+  final double slop;
+
+  /// The last event of the pointer: the down or a move.
+  PointerEvent last;
+
+  /// Whether the pointer was held for `kLongPressTimeout`.
+  bool longPressed = false;
+
+  late final Timer _timer;
+
+  /// Records the move [event]. False when the move ends the candidate: the
+  /// pointer is farther than [slop] from its down, the rule of
+  /// `PrimaryPointerGestureRecognizer`.
+  bool move(PointerEvent event) {
+    last = event;
+    return (event.position - _downPosition).distance <= slop;
+  }
+
+  /// Cancels the long-press timer.
+  void dispose() => _timer.cancel();
 }

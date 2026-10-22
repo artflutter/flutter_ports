@@ -92,9 +92,12 @@ final class DemoChart implements types.Chart {
   @override
   Map<String, Object?>? platformProxies = {};
 
-  /// The configuration `{options}` of the chart.
+  /// The configuration `{options, data}` of the chart.
   @override
-  late final types.ChartConfiguration config = _DemoConfiguration(options);
+  late final types.ChartConfiguration config = _DemoConfiguration(
+    options,
+    data,
+  );
 
   /// No stacks: the demo has no datasets.
   @override
@@ -201,6 +204,11 @@ final class DemoChart implements types.Chart {
   /// index.d.ts:543 `legend`. The demo chart has no legend.
   @override
   types.LegendElement? get legend => null;
+
+  /// plugin.title.js:117 `titleBlock`. The demo chart has no title plugin,
+  /// so it stays `null`.
+  @override
+  types.LayoutItem? titleBlock;
 
   double? _aspectRatio;
 
@@ -360,12 +368,15 @@ final class DemoChart implements types.Chart {
   }
 }
 
-/// The `config` of a [DemoChart]: only its `options`.
+/// The `config` of a [DemoChart]: its `options` and its `data`.
 final class _DemoConfiguration implements types.ChartConfiguration {
-  _DemoConfiguration(this.options);
+  _DemoConfiguration(this.options, this.data);
 
   @override
   final Map<String, Object?> options;
+
+  @override
+  final Map<String, Object?> data;
 }
 
 /// A [ChartHost] that shows a [DemoChart].

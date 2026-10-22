@@ -15,7 +15,7 @@ import '../support/jasmine.dart';
 // The spec reads the functions from Chart.helpers. Here `helpers` is
 // helpers.dom.dart, which lib/src/helpers/index.dart exports.
 //
-// Flutter has no DOM and no CSS (Chart.js ADR 0014). The parent node of a
+// Flutter has no DOM and no CSS (Chart.js ADR 0037). The parent node of a
 // canvas is the box that a chart host lays the canvas out in: a
 // [CanvasContainer] with the content-box size of the host constraints. The
 // cases that build a fixed-size div and measure an element inside it use a

@@ -86,7 +86,7 @@ const Map<String, String> forbiddenInLib = {
 /// `core.defaults` closure is pure because `core.defaults` is a root.
 ///
 /// `helpers.dom` is a root: it reads the canvas interface and the port-only
-/// `NativeEvent`, not `dart:ui` (Chart.js ADR 0014). Of `lib/src/platform/`,
+/// `NativeEvent`, not `dart:ui` (Chart.js ADR 0037). Of `lib/src/platform/`,
 /// only `platform.base`, `platform.basic` and `native_event` are roots.
 /// `platform.flutter`, `chart_host` and the platform `index` use the Flutter
 /// framework.

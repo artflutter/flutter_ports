@@ -36,10 +36,13 @@ final class _Context implements CanvasRenderingContext2D {
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-/// A config object `{options}`.
+/// A config object `{options, data}`.
 final class _Config implements types.ChartConfiguration {
   @override
   final Map<String, Object?> options = {'animation': true};
+
+  @override
+  final Map<String, Object?> data = {};
 }
 
 void main() {

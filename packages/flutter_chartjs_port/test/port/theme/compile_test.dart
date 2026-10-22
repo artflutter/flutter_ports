@@ -9,6 +9,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' show Color;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
@@ -16,7 +17,8 @@ import 'package:test/test.dart';
 // The theme compiler has no upstream counterpart (Chart.js ADR 0001). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
 // the emission guard, the rgba() form, the deep freeze and the memo), §3.4
-// and §4 (the token keys of phase 6 and the point-label font), §8
+// and §4 (the token keys, the point-label font, the title keys and the
+// palette of Chart.js ADR 0042), §8
 // test 1 (no theme equals upstream: ChartThemes.none, no extra scope, the
 // scope position of a compiled theme, no dependence on the platform) and
 // the parts of §8 test 5 that need no chart. The expected scope lists follow
@@ -93,6 +95,27 @@ Map<String, Object?> _colorTheme(String token, RawThemeColor color) => {
 /// The color `rgb(200, 0, 0)` of the hover test of theming.md §3.2.
 const RawThemeColor _red = (alpha: 1.0, red: 200 / 255, green: 0.0, blue: 0.0);
 
+/// The color `rgba(0, 0, 255, 0.8)`, a second palette color.
+const RawThemeColor _blue = (alpha: 0.8, red: 0.0, green: 0.0, blue: 1.0);
+
+/// `BORDER_COLORS` (`plugin.colors.ts:14-22`).
+const List<String> _upstreamBorderColors = [
+  'rgb(54, 162, 235)',
+  'rgb(255, 99, 132)',
+  'rgb(255, 159, 64)',
+  'rgb(255, 205, 86)',
+  'rgb(75, 192, 192)',
+  'rgb(153, 102, 255)',
+  'rgb(201, 203, 207)',
+];
+
+/// `BACKGROUND_COLORS` (`plugin.colors.ts:25`): each border color with
+/// `replace('rgb(', 'rgba(')` and then `replace(')', ', 0.5)')`.
+final List<String> _upstreamBackgroundColors = [
+  for (final color in _upstreamBorderColors)
+    color.replaceFirst('rgb(', 'rgba(').replaceFirst(')', ', 0.5)'),
+];
+
 /// The labels of the scope objects of a scope list: the name of a known
 /// object, `{}#n` for the n-th other empty object, or `?<json>` for another
 /// value.
@@ -140,6 +163,12 @@ final Map<String, Map<String, Object?>> _testThemes = {
   'typography.font': {
     'typography': <String, Object?>{
       'font': <String, Object?>{'family': 'serif', 'size': 14.0},
+    },
+  },
+  'palette': {
+    'palette': <String, Object?>{
+      'colors': <Object?>[_red, _blue],
+      'backgroundAlpha': 0.25,
     },
   },
   'typography.pointLabels': {
@@ -238,6 +267,21 @@ void main() {
         'scales.radialLinear.pointLabels.font.lineHeight': 1.2,
         'scales.radialLinear.pointLabels.font.size': 10.0,
         'scales.radialLinear.angleLines.color': tenth,
+        'plugins.title.color': gray,
+        'plugins.title.font.family': font,
+        'plugins.title.font.size': 12.0,
+        'plugins.title.font.style': 'normal',
+        'plugins.title.font.lineHeight': 1.2,
+        r'plugins.colors.$borderColors': [
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 205, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(201, 203, 207, 1)',
+        ],
+        r'plugins.colors.$backgroundColors': _upstreamBackgroundColors,
         'elements.point.borderColor': tenth,
         'elements.point.backgroundColor': tenth,
         'elements.line.borderColor': tenth,
@@ -269,6 +313,13 @@ void main() {
         'scales.radialLinear.pointLabels.font.lineHeight',
         'scales.radialLinear.pointLabels.font.size',
         'scales.radialLinear.angleLines.color',
+        'plugins.title.color',
+        'plugins.title.font.family',
+        'plugins.title.font.size',
+        'plugins.title.font.style',
+        'plugins.title.font.lineHeight',
+        r'plugins.colors.$borderColors',
+        r'plugins.colors.$backgroundColors',
         'elements.point.borderColor',
         'elements.point.backgroundColor',
         'elements.line.borderColor',
@@ -289,6 +340,8 @@ void main() {
           'scale.ticks.color': red,
           'scale.title.color': red,
           'scales.radialLinear.pointLabels.color': red,
+          // The route of the title color (plugin.title.js:158-160).
+          'plugins.title.color': red,
         },
         'borderColor': {
           'scale.grid.color': red,
@@ -355,6 +408,10 @@ void main() {
         'scales.radialLinear.pointLabels.font.family': 'serif',
         'scales.radialLinear.pointLabels.font.style': 'italic',
         'scales.radialLinear.pointLabels.font.weight': 'bold',
+        // No weight: the title keeps its local 'bold'
+        // (plugin.title.js:148-150, theming.md §3.4).
+        'plugins.title.font.family': 'serif',
+        'plugins.title.font.style': 'italic',
         ..._transitionLeaves,
       });
       // No root font (theming.md §3.4), and one Map for each slot.
@@ -486,6 +543,9 @@ void main() {
         'scale.title': 'raw-title',
         'scales.radialLinear.pointLabels.color': 'rgba(200, 0, 0, 1)',
         'scales.radialLinear.pointLabels.font.family': 'serif',
+        'plugins.title.color': 'rgba(200, 0, 0, 1)',
+        'plugins.title.font.family': 'serif',
+        'plugins.title.font.size': 14.0,
         ..._transitionLeaves,
       });
     });
@@ -631,6 +691,322 @@ void main() {
     });
   });
 
+  group('the palette', () {
+    // Chart.js ADR 0042 and theming.md §4: the palette token emits the two
+    // palette keys of plugins.colors. Hunk H5 of plugin.colors reads them
+    // from the theme map of the chart.
+    const border = r'plugins.colors.$borderColors';
+    const background = r'plugins.colors.$backgroundColors';
+
+    /// The theme with the palette field [palette] only.
+    Map<String, Object?> paletteTheme(Map<String, Object?> palette) => {
+      'palette': palette,
+    };
+
+    test('the border colors keep their alpha, the background alpha is 0.5', () {
+      final compiled = compileChartTheme(
+        paletteTheme(<String, Object?>{
+          'colors': <Object?>[_red, _blue],
+        }),
+      );
+      expect(_at(compiled, border), [
+        'rgba(200, 0, 0, 1)',
+        'rgba(0, 0, 255, 0.8)',
+      ]);
+      // The alpha 0.5 of BACKGROUND_COLORS (plugin.colors.ts:25) replaces
+      // the alpha of each color.
+      expect(_at(compiled, background), [
+        'rgba(200, 0, 0, 0.5)',
+        'rgba(0, 0, 255, 0.5)',
+      ]);
+    });
+
+    test('backgroundAlpha replaces the alpha of the background colors', () {
+      Object? backgroundAt(num alpha) => _at(
+        compileChartTheme(
+          paletteTheme(<String, Object?>{
+            'colors': <Object?>[_red, _blue],
+            'backgroundAlpha': alpha,
+          }),
+        ),
+        background,
+      );
+      // The blue screen of theming.md §8 test 6 needs alpha 1 without a
+      // raw key.
+      expect(backgroundAt(1.0), ['rgba(200, 0, 0, 1)', 'rgba(0, 0, 255, 1)']);
+      expect(backgroundAt(0.25), [
+        'rgba(200, 0, 0, 0.25)',
+        'rgba(0, 0, 255, 0.25)',
+      ]);
+      // An int is a number too, and the alpha clamps.
+      expect(backgroundAt(0), ['rgba(200, 0, 0, 0)', 'rgba(0, 0, 255, 0)']);
+      expect(backgroundAt(2.0), ['rgba(200, 0, 0, 1)', 'rgba(0, 0, 255, 1)']);
+    });
+
+    test('the key order and the item order', () {
+      final compiled = compileChartTheme(
+        paletteTheme(<String, Object?>{
+          'backgroundAlpha': 0.5,
+          'colors': <Object?>[_blue, _red, _blue],
+        }),
+      )!;
+      expect(compiled.keys, ['plugins', 'transitions']);
+      expect((_at(compiled, 'plugins.colors')! as Map<String, Object?>).keys, [
+        r'$borderColors',
+        r'$backgroundColors',
+      ]);
+      expect(_at(compiled, border), [
+        'rgba(0, 0, 255, 0.8)',
+        'rgba(200, 0, 0, 1)',
+        'rgba(0, 0, 255, 0.8)',
+      ]);
+      // With the other tokens, the palette comes after the title keys of
+      // plugins.
+      final light = compileChartTheme(ChartThemes.light)!;
+      expect(light.keys, [
+        'color',
+        'scale',
+        'scales',
+        'plugins',
+        'elements',
+        'transitions',
+      ]);
+      expect((light['plugins']! as Map<String, Object?>).keys, [
+        'title',
+        'colors',
+      ]);
+    });
+
+    test('the palette Lists are frozen', () {
+      final compiled = compileChartTheme(ChartThemes.light);
+      for (final path in [border, background]) {
+        final list = _at(compiled, path)! as List<Object?>;
+        expect(list, isA<JsFreezable>(), reason: path);
+        expect(jsObjectIsFrozen(list), isTrue, reason: path);
+        expect(() => list[0] = 'red', throwsA(isA<TypeError>()));
+        expect(() => list.add('red'), throwsA(isA<TypeError>()));
+        expect(() => list.length = 0, throwsA(isA<TypeError>()));
+        expect(list, hasLength(7), reason: path);
+      }
+      expect(
+        _at(compiled, 'plugins.colors'),
+        isA<JsFreezable>().having(jsObjectIsFrozen, 'frozen', isTrue),
+      );
+    });
+
+    test('an empty or absent colors List emits nothing', () {
+      for (final palette in <Map<String, Object?>?>[
+        null,
+        {},
+        {'colors': null},
+        {'colors': <Object?>[]},
+        {'backgroundAlpha': 0.3},
+        {'colors': <Object?>[], 'backgroundAlpha': 1.0},
+      ]) {
+        expect(
+          compileChartTheme(<String, Object?>{'palette': palette}),
+          isNull,
+          reason: _json(palette),
+        );
+        // Beside another token, no plugins.colors key.
+        final compiled = compileChartTheme(<String, Object?>{
+          'colors': <String, Object?>{'surface': _red},
+          'palette': palette,
+        });
+        expect(_at(compiled, 'plugins'), same(undefined));
+      }
+    });
+
+    test('a palette alone also emits the transitions', () {
+      final leaves = _leaves(
+        compileChartTheme(
+          paletteTheme(<String, Object?>{
+            'colors': <Object?>[_red],
+          }),
+        ),
+      );
+      expect(leaves, {
+        border: ['rgba(200, 0, 0, 1)'],
+        background: ['rgba(200, 0, 0, 0.5)'],
+        ..._transitionLeaves,
+      });
+    });
+
+    test('the raw palette keys beat the token', () {
+      final compiled = compileChartTheme({
+        'palette': <String, Object?>{
+          'colors': <Object?>[_red, _blue],
+        },
+        'raw': <String, Object?>{
+          'plugins': <String, Object?>{
+            'colors': <String, Object?>{
+              r'$borderColors': <Object?>['red'],
+            },
+          },
+        },
+      });
+      // The raw List replaces the token List as a whole.
+      expect(_at(compiled, border), ['red']);
+      expect(_at(compiled, background), [
+        'rgba(200, 0, 0, 0.5)',
+        'rgba(0, 0, 255, 0.5)',
+      ]);
+      expect((_at(compiled, 'plugins.colors')! as Map<String, Object?>).keys, [
+        r'$borderColors',
+        r'$backgroundColors',
+      ]);
+    });
+
+    test('the light palette restates BORDER_COLORS and BACKGROUND_COLORS', () {
+      // plugin.colors.ts:14-25. The border strings parse to the upstream
+      // strings. The background strings are equal.
+      final compiled = compileChartTheme(ChartThemes.light);
+      final borders = _at(compiled, border)! as List<Object?>;
+      expect(borders, hasLength(_upstreamBorderColors.length));
+      for (var i = 0; i < borders.length; i++) {
+        expect(
+          Color(borders[i]).rgbString(),
+          Color(_upstreamBorderColors[i]).rgbString(),
+          reason: '$i',
+        );
+        expect(
+          Color(borders[i]).rgbString(),
+          _upstreamBorderColors[i],
+          reason: '$i',
+        );
+      }
+      expect(_at(compiled, background), _upstreamBackgroundColors);
+      expect(_upstreamBackgroundColors.first, 'rgba(54, 162, 235, 0.5)');
+    });
+
+    test(
+      'an unknown palette field or a bad value fails an assert',
+      () {
+        final palettes = <Object?>[
+          <String, Object?>{
+            'colors': <Object?>[_red],
+            'borders': <Object?>[_red],
+          },
+          <String, Object?>{
+            'colors': <Object?>[_red, 'red'],
+          },
+          <String, Object?>{
+            'colors': <String, Object?>{'0': _red},
+          },
+          <String, Object?>{'colors': _red},
+          <String, Object?>{
+            'colors': <Object?>[_red],
+            'backgroundAlpha': '0.5',
+          },
+          <Object?>[_red],
+        ];
+        for (final palette in palettes) {
+          expect(
+            () => compileChartTheme(<String, Object?>{'palette': palette}),
+            throwsA(isA<AssertionError>()),
+            reason: _json(palette),
+          );
+        }
+      },
+      skip: _asserts ? false : 'n/a: the asserts do not run',
+    );
+
+    test(
+      'without asserts, an item that is not a RawThemeColor is left out',
+      () {
+        final compiled = compileChartTheme({
+          'palette': <String, Object?>{
+            'colors': <Object?>[_red, 'red', _blue],
+            'backgroundAlpha': '1',
+          },
+        });
+        expect(_at(compiled, border), [
+          'rgba(200, 0, 0, 1)',
+          'rgba(0, 0, 255, 0.8)',
+        ]);
+        expect(_at(compiled, background), [
+          'rgba(200, 0, 0, 0.5)',
+          'rgba(0, 0, 255, 0.5)',
+        ]);
+        expect(
+          compileChartTheme({
+            'palette': <String, Object?>{
+              'colors': <Object?>['red'],
+            },
+          }),
+          isNull,
+        );
+      },
+      skip: _asserts ? 'n/a: the asserts run' : false,
+    );
+  });
+
+  group('the title keys', () {
+    test('the title font has no weight', () {
+      // theming.md §3.4: the title keeps its local weight 'bold'
+      // (plugin.title.js:148-150).
+      final compiled = compileChartTheme({
+        'typography': <String, Object?>{
+          'font': <String, Object?>{
+            'weight': 'bold',
+            'family': 'serif',
+            'size': 14.0,
+          },
+        },
+      });
+      expect(_at(compiled, 'scale.ticks.font.weight'), 'bold');
+      final font = _at(compiled, 'plugins.title.font')! as Map<String, Object?>;
+      expect(font.keys, ['family', 'size']);
+      // One Map for each slot.
+      expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
+      // A font with a weight only gives no title font.
+      final weightOnly = compileChartTheme({
+        'typography': <String, Object?>{
+          'font': <String, Object?>{'weight': 'bold'},
+        },
+      });
+      expect(_at(weightOnly, 'scale.ticks.font.weight'), 'bold');
+      expect(_at(weightOnly, 'plugins'), same(undefined));
+    });
+
+    test('the title color is the color token', () {
+      // The route of the title color (plugin.title.js:158-160).
+      final compiled = compileChartTheme(_colorTheme('color', _blue));
+      expect(_at(compiled, 'plugins.title.color'), 'rgba(0, 0, 255, 0.8)');
+      expect(
+        (_at(compiled, 'plugins.title')! as Map<String, Object?>).keys,
+        ['color'],
+      );
+      // The legend reads the root color (plugin.legend.js:661, 707).
+      expect(_at(compiled, 'plugins.legend'), same(undefined));
+    });
+
+    test('a raw title text fails the guard, a raw title color passes', () {
+      final theme = <String, Object?>{
+        'raw': <String, Object?>{
+          'plugins': <String, Object?>{
+            'title': <String, Object?>{'text': 'Title'},
+          },
+        },
+      };
+      if (_asserts) {
+        expect(() => compileChartTheme(theme), throwsA(isA<AssertionError>()));
+      } else {
+        expect(compileChartTheme(theme), isNull);
+      }
+      final compiled = compileChartTheme({
+        'colors': <String, Object?>{'color': _red},
+        'raw': <String, Object?>{
+          'plugins': <String, Object?>{
+            'title': <String, Object?>{'color': 'blue', 'position': 'bottom'},
+          },
+        },
+      });
+      expect(_at(compiled, 'plugins.title.color'), 'blue');
+      expect(_at(compiled, 'plugins.title.position'), 'bottom');
+    });
+  });
+
   group('themeColorToRgba', () {
     test('8-bit channels and the alpha of jsNumberToString', () {
       expect(
@@ -729,6 +1105,26 @@ void main() {
         ('elements.bar.backgroundColor', null, 'null is a JS value'),
         ('color', undefined, 'undefined is no value'),
         ('scale.ticks.callback', (Object? v) => v, 'a function'),
+        // Rule 2b: the plugin behavior paths and the paths below them
+        // (Chart.js ADR 0042).
+        for (final path in themePluginBehaviorPaths)
+          (path, 1.0, '$path is a behavior key'),
+        ('plugins.title.text.0', 'a line', 'title.text is a behavior key'),
+        (
+          'plugins.legend.title.text',
+          'x',
+          'plugins.legend.title.text is a behavior key',
+        ),
+        // Rule 9: a palette is a List with at least one item.
+        (r'plugins.colors.$borderColors', <Object?>[], 'a palette is a List'),
+        (r'plugins.colors.$backgroundColors', <Object?>[], 'a palette'),
+        (r'plugins.colors.$borderColors', 'red', 'a palette is a List'),
+        (
+          r'plugins.colors.$backgroundColors',
+          <String, Object?>{'0': 'red'},
+          'a palette is a List with at least one item',
+        ),
+        (r'plugins.colors.$borderColors', 1.0, 'a palette is a List'),
       ];
       for (final (path, value, reason) in rejected) {
         expect(
@@ -758,6 +1154,24 @@ void main() {
         (r'plugins.colors.$borderColors', <Object?>['red']),
         (r'plugins.colors.$backgroundColors', <Object?>['red']),
         (r'plugins.colors.$backgroundColors.0', 'red'),
+        // Rule 2b holds paths, not flat names: the layout keys of a plugin
+        // box, its colors and fonts, and the draw order of the filler pass
+        // (Chart.js ADR 0042, Open 1 and 2).
+        ('plugins.title', <String, Object?>{}),
+        ('plugins.title.color', 'red'),
+        ('plugins.title.font', <String, Object?>{}),
+        ('plugins.title.position', 'bottom'),
+        ('plugins.title.align', 'start'),
+        ('plugins.legend.position', 'left'),
+        ('plugins.legend.title', <String, Object?>{}),
+        ('plugins.legend.title.color', 'red'),
+        ('plugins.legend.labels.color', 'red'),
+        ('plugins.decimation', <String, Object?>{}),
+        ('plugins.filler.drawTime', 'beforeDraw'),
+        ('plugins.tooltip.backgroundColor', 'red'),
+        ('position', 'x'),
+        ('elements.text', 'x'),
+        ('scale.title.text', 'x'),
         for (final type in themeScaleTypes) ('scales.$type.grid.color', 'red'),
         ('scales.radialLinear.pointLabels.color', 'red'),
         ('scales.radialLinear.angleLines.color', 'red'),
@@ -858,11 +1272,107 @@ void main() {
       }
     });
 
+    test('the plugin behavior paths of Chart.js ADR 0042', () {
+      expect(themePluginBehaviorPaths, {
+        'plugins.decimation.algorithm',
+        'plugins.decimation.samples',
+        'plugins.decimation.threshold',
+        'plugins.filler.propagate',
+        'plugins.legend.reverse',
+        'plugins.tooltip.position',
+        'plugins.title.text',
+        'plugins.subtitle.text',
+        'plugins.legend.title.text',
+      });
+    });
+
+    test('a raw plugin behavior path fails an assert', () {
+      // Rule 2b. Each path, also inside its plugin Map. A sibling key of
+      // the same plugin stays.
+      for (final path in themePluginBehaviorPaths) {
+        final parts = path.split('.');
+        Object? value = 1.0;
+        for (final key in parts.reversed) {
+          value = <String, Object?>{key: value};
+        }
+        final theme = <String, Object?>{'raw': value};
+        if (_asserts) {
+          expect(
+            () => compileChartTheme(theme),
+            throwsA(isA<AssertionError>()),
+            reason: path,
+          );
+        } else {
+          expect(compileChartTheme(theme), isNull, reason: path);
+        }
+      }
+      // The layout keys of the boxes pass (Chart.js ADR 0042, Open 1).
+      final compiled = compileChartTheme({
+        'raw': <String, Object?>{
+          'plugins': <String, Object?>{
+            'legend': <String, Object?>{
+              'position': 'left',
+              'title': <String, Object?>{'color': 'red'},
+            },
+            'tooltip': <String, Object?>{'borderColor': 'red'},
+          },
+        },
+      });
+      expect(_at(compiled, 'plugins.legend.position'), 'left');
+      expect(_at(compiled, 'plugins.legend.title.color'), 'red');
+      expect(_at(compiled, 'plugins.tooltip.borderColor'), 'red');
+    });
+
+    test('a raw palette that is not a List with items fails an assert', () {
+      // Rule 9: an empty List would give i % 0 in hunk H4b, a throw in
+      // Dart, and a string one character for each dataset in JavaScript.
+      for (final value in <Object?>[
+        <Object?>[],
+        'red',
+        <String, Object?>{'0': 'red'},
+        1.0,
+      ]) {
+        for (final key in [r'$borderColors', r'$backgroundColors']) {
+          final theme = <String, Object?>{
+            'raw': <String, Object?>{
+              'plugins': <String, Object?>{
+                'colors': <String, Object?>{key: value},
+              },
+            },
+          };
+          if (_asserts) {
+            expect(
+              () => compileChartTheme(theme),
+              throwsA(isA<AssertionError>()),
+              reason: '$key ${_json(value)}',
+            );
+          } else {
+            expect(compileChartTheme(theme), isNull, reason: _json(value));
+          }
+        }
+      }
+      // A List with a rejected item is left out as a whole.
+      final theme = <String, Object?>{
+        'raw': <String, Object?>{
+          'plugins': <String, Object?>{
+            'colors': <String, Object?>{
+              r'$borderColors': <Object?>['red', null],
+            },
+          },
+        },
+      };
+      if (_asserts) {
+        expect(() => compileChartTheme(theme), throwsA(isA<AssertionError>()));
+      } else {
+        expect(compileChartTheme(theme), isNull);
+      }
+    });
+
     test(
       'an unknown field or token fails an assert',
       () {
         final themes = <Map<String, Object?>>[
-          {'palette': <String, Object?>{}},
+          {'palette2': <String, Object?>{}},
           {
             'colors': <String, Object?>{'inverseSurface': _red},
           },

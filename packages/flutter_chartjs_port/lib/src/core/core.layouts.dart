@@ -801,8 +801,12 @@ void _addBox(types.Chart chart, LayoutItem item) {
 ///
 /// `chart.boxes` is always an array (see [_addBox]). `indexOf` compares
 /// with `==`, which is identity for a box, as `===` is.
-void _removeBox(types.Chart chart, LayoutItem layoutItem) {
-  final index = chart.boxes.indexOf(layoutItem);
+///
+/// Dart null stands for JS `undefined`: `indexOf` gives -1, and nothing
+/// changes (core.layouts.js:318-323). A `List<LayoutItem>` does not take
+/// null, so the index of null is -1 without the call.
+void _removeBox(types.Chart chart, LayoutItem? layoutItem) {
+  final index = layoutItem == null ? -1 : chart.boxes.indexOf(layoutItem);
   if (index != -1) {
     chart.boxes.removeAt(index);
   }
@@ -1006,7 +1010,7 @@ void _update(
 /// `layouts.addBox(chart, item)` calls a function as upstream does.
 const ({
   void Function(types.Chart chart, LayoutItem item) addBox,
-  void Function(types.Chart chart, LayoutItem layoutItem) removeBox,
+  void Function(types.Chart chart, LayoutItem? layoutItem) removeBox,
   void Function(
     types.Chart chart,
     LayoutItem item,

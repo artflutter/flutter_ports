@@ -344,6 +344,23 @@ export function registerPhase6(C, ...extra) {
   C.Chart.register(C.scales, C.elements, ...extra);
 }
 
+/**
+ * Registers the built-in components as test/flutter_test_config.dart does
+ * (harness-register-builtins): src/index.umd.ts:28, then the line of
+ * test/index.js:25-28. Then [extra]. Chart.js ADR 0041, section 1.
+ *
+ * The dist `C.plugins` is a plain object, so `register` walks it. The
+ * plugin generators of phase 8 call it (Chart.js ADR 0041, section 3). In
+ * wave 4 of phase 8 it takes the place of registerPhase6 and
+ * registerPhase7 in the other generators.
+ */
+export function registerBuiltins(C, ...extra) {
+  C.Chart.register(C.controllers, C.scales, C.elements, C.plugins);
+  // Disable colors plugin for tests (test/index.js:25-28).
+  C.Chart.defaults.plugins.colors.enabled = false;
+  if (extra.length) C.Chart.register(...extra);
+}
+
 // ---------------------------------------------------------------------------
 // The test controllers. test/port/scales/scale_chart_harness.dart has the
 // same classes in Dart.
@@ -1014,10 +1031,11 @@ export function dartCalls(calls) {
 
 /**
  * The calls of one `chart.draw()`, after the layout, with the element
- * draws: the context of the chart is also the context of each scale and
- * of each dataset controller (core.datasetController.js:257). The Dart
- * test (drawCalls of scale_chart_harness.dart) puts its recording context
- * in the same three places.
+ * draws: the context of the chart is also the context of each scale, of
+ * each dataset controller (core.datasetController.js:257) and of each
+ * title box (plugin.title.js:16). The Dart test (drawCalls of
+ * scale_chart_harness.dart) puts its recording context in the same four
+ * places.
  */
 export function drawCalls(chart) {
   const ctx = chart.ctx;

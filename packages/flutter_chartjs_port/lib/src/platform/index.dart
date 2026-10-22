@@ -2,7 +2,7 @@
 
 /// Port of `src/platform/index.js`.
 ///
-/// `platform.flutter.dart` replaces `platform.dom.js` (Chart.js ADR 0014).
+/// `platform.flutter.dart` replaces `platform.dom.js` (Chart.js ADR 0037).
 /// Thus [FlutterPlatform] takes the place of the `DomPlatform` export.
 ///
 /// The export `_detectPlatform` drops its underscore (Chart.js ADR 0012):

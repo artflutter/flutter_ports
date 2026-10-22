@@ -592,7 +592,7 @@ class Chart implements types.Chart {
   /// `new Error(message)` is a [StateError] with the upstream message, as in
   /// `core.registry.dart`. `config.platform` is a class value
   /// ([jsConstruct]). `new (_detectPlatform(initialCanvas))()` calls the
-  /// constructor tear-off of [detectPlatform] (Chart.js ADR 0014,
+  /// constructor tear-off of [detectPlatform] (Chart.js ADR 0037,
   /// section 1).
   ///
   /// `console.error` is a `print` of the message.
@@ -859,6 +859,12 @@ class Chart implements types.Chart {
   /// (plugin.legend.js:602) and deletes it (:609).
   @override
   types.LegendElement? legend;
+
+  /// plugin.title.js:117 `titleBlock`: the layout box of the title plugin.
+  /// Dart `null` stands for JS `undefined`, the start value, and for the
+  /// `delete` of plugin.title.js:136. `index.d.ts` does not declare it.
+  @override
+  LayoutItem? titleBlock;
 
   /// core.controller.js:197 `get aspectRatio()`.
   ///
@@ -1924,7 +1930,7 @@ class Chart implements types.Chart {
   /// @private
   ///
   /// The event listener of a platform takes the chart event alone (Chart.js
-  /// ADR 0014, section 8). Thus `(e, x, y)` and the writes `e.offsetX = x`
+  /// ADR 0037, section 11). Thus `(e, x, y)` and the writes `e.offsetX = x`
   /// and `e.offsetY = y` (:985-987) have no Dart form. The platforms of
   /// upstream also pass one argument (platform.dom.js:247-249). Thus `x` and
   /// `y` are `undefined` there, and a read of `e.offsetX` gives
@@ -1950,7 +1956,7 @@ class Chart implements types.Chart {
   /// core.controller.js:997 `bindResponsiveEvents()`.
   /// @private
   ///
-  /// The listeners have the shapes of Chart.js ADR 0014, section 8:
+  /// The listeners have the shapes of Chart.js ADR 0037, section 11:
   /// `void Function([double? width, double? height])` for `'resize'`, and
   /// `void Function()` for `'attach'` and `'detach'`.
   void bindResponsiveEvents() {

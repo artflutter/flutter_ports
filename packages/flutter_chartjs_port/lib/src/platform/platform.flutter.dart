@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: it replaces platform.dom.js.
 
-/// The Flutter platform (Chart.js ADR 0014, porting-flow.md 2.7). It
+/// The Flutter platform (Chart.js ADR 0037, porting-flow.md 2.7). It
 /// replaces `src/platform/platform.dom.js`: `parity.md` gives that file the
 /// status `replaced`.
 ///
@@ -410,7 +410,7 @@ void Function(NativeEvent) createProxyAndListen(
 
 /// platform.dom.js:260 `DomPlatform`, as the Flutter platform.
 ///
-/// Platform class for charts that a chart host shows (Chart.js ADR 0014).
+/// Platform class for charts that a chart host shows (Chart.js ADR 0037).
 /// `detectPlatform` gives it for a canvas whose parent node is a host.
 class FlutterPlatform extends BasePlatform {
   /// platform.dom.js:260 the implicit constructor.
@@ -561,11 +561,11 @@ class FlutterPlatform extends BasePlatform {
   /// aspectRatio)`.
   ///
   /// The size of `getMaximumSize` of `helpers.dom.dart`, with the rule of
-  /// Chart.js ADR 0014 for unbounded constraints. The container of an
-  /// unbounded side is `double.infinity`, which gives an infinite size. Then
-  /// an unbounded side takes the size of the HTML canvas default, 300 x 150
-  /// logical pixels, unless the other side is bounded and [aspectRatio] is
-  /// truthy: then the bounded side and the aspect ratio give it.
+  /// Chart.js ADR 0037, section 5, for unbounded constraints. The container
+  /// of an unbounded side is `double.infinity`, which gives an infinite size.
+  /// Then an unbounded side takes the size of the HTML canvas default, 300 x
+  /// 150 logical pixels, unless the other side is bounded and [aspectRatio]
+  /// is truthy: then the bounded side and the aspect ratio give it.
   @override
   ({double width, double height}) getMaximumSize(
     HTMLCanvasElement canvas, [

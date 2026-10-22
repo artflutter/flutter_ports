@@ -8,7 +8,9 @@
 /// on `test/specs`. The mode `--fixtures` (`test:fixtures`, Chart.js ADR
 /// 0029, section 10) runs `flutter test --tags fixtures` on the spec files
 /// with a fixture group and on `test/port/fixtures/`, and reports each
-/// fixture as passed, failed, skipped or missing.
+/// fixture as passed, failed, skipped or missing. Both modes also run the
+/// stale-block check of Chart.js ADR 0041, section 8, on the Dart files of
+/// `test/`.
 library;
 
 import 'dart:io';
@@ -29,6 +31,13 @@ doc/upstream/manifest.json. Prints the status of the cases of each upstream
 spec file. Exits with 1 on an unknown test name, a failed case, a bad skip
 reason, or a missing case of a spec file that parity.md marks ported.
 
+Both modes also read the string literals of the Dart files in test/
+(without test/tool/ and the generated *_reference*.dart files). They exit
+with 1 on a skip literal 'blocked: <module>' when each src/ row of <module>
+in parity.md is ported (a stale skip), when <module> has no src/ row, or
+on a literal that starts with 'blocked:' and is not of the whole form
+'blocked: <module>' (Chart.js ADR 0041, section 8).
+
 With --fixtures, runs `flutter test --tags fixtures --reporter json` on the
 Dart spec files whose upstream spec file has a fixture group with fixtures,
 and on test/port/fixtures when it exists (tool 7, Chart.js ADR 0029).
@@ -43,8 +52,7 @@ Options:
   --results <file>   Read the JSON reporter output from <file> ("-" for
                      stdin) instead of running flutter test.
   --manifest <file>  The manifest (default: doc/upstream/manifest.json).
-  --parity <file>    The parity tracker (default: doc/parity.md). The
-                     mode --fixtures does not read it.
+  --parity <file>    The parity tracker (default: doc/parity.md).
   --verbose          Also print the status of each case.
   --help             Print this text.''';
 
@@ -102,7 +110,7 @@ Future<int> run(List<String> args, {required StringSink out}) async {
   final name = fixtures ? _fixturesName : _name;
   manifestPath ??= '$package/doc/upstream/manifest.json';
   parityPath ??= '$package/doc/parity.md';
-  for (final path in [manifestPath, if (!fixtures) parityPath]) {
+  for (final path in [manifestPath, parityPath]) {
     if (!File(path).existsSync()) {
       out.writeln('$name: $path does not exist.');
       return 2;
@@ -116,11 +124,22 @@ Future<int> run(List<String> args, {required StringSink out}) async {
     out.writeln('$name: $manifestPath: ${e.message}');
     return 2;
   }
+  final parity = parseParityStatuses(File(parityPath).readAsStringSync());
+  final prefix = relativePath(Directory.current.path, package);
+  final displayPrefix = prefix.isEmpty ? '' : '$prefix/';
+  final stale = _staleBlockCheck(name, package, parity, displayPrefix, out);
   if (fixtures) {
-    return _runFixtureMode(package, manifest, results, out);
+    return _runFixtureMode(
+      package,
+      manifest,
+      results,
+      out,
+      stale,
+      displayPrefix,
+    );
   }
 
-  final findings = <Finding>[];
+  final findings = <Finding>[...stale];
   final String output;
   if (results == '-') {
     output = await stdin.transform(systemEncoding.decoder).join();
@@ -138,13 +157,12 @@ Future<int> run(List<String> args, {required StringSink out}) async {
     findings.addAll(run.findings);
   }
 
-  final prefix = relativePath(Directory.current.path, package);
   final parsed = parseReporterOutput(output);
   final result = compareCases(
     manifest,
     parsed,
-    parseParityStatuses(File(parityPath).readAsStringSync()),
-    displayPrefix: prefix.isEmpty ? '' : '$prefix/',
+    parity,
+    displayPrefix: displayPrefix,
   );
   findings.addAll(result.findings);
   out
@@ -161,13 +179,35 @@ Future<int> run(List<String> args, {required StringSink out}) async {
   );
 }
 
+/// The findings of the stale-block check (Chart.js ADR 0041, section 8) on
+/// the Dart files of `test/` in [package]. Prints the number of files that
+/// the check read.
+List<Finding> _staleBlockCheck(
+  String name,
+  String package,
+  Map<String, String> parity,
+  String displayPrefix,
+  StringSink out,
+) {
+  final sources = readStaleScanSources(package);
+  out.writeln(
+    '$name: the stale-block check read ${sources.length} Dart files of '
+    'test/ (Chart.js ADR 0041, section 8).',
+  );
+  return staleBlockedSkips(parity, sources, displayPrefix: displayPrefix);
+}
+
 /// The mode `--fixtures`: runs the fixture tests of [package] (or reads
-/// [results]) and reports each fixture of [manifest].
+/// [results]) and reports each fixture of [manifest]. The [stale] findings
+/// of the stale-block check also fail the mode. Paths in findings start
+/// with [displayPrefix].
 Future<int> _runFixtureMode(
   String package,
   Manifest manifest,
   String? results,
   StringSink out,
+  List<Finding> stale,
+  String displayPrefix,
 ) async {
   final selection = selectFixtureFiles(
     manifest,
@@ -175,7 +215,7 @@ Future<int> _runFixtureMode(
         FileSystemEntity.typeSync('$package/$path') !=
         FileSystemEntityType.notFound,
   );
-  final findings = <Finding>[];
+  final findings = <Finding>[...stale];
   final String output;
   if (results == '-') {
     output = await stdin.transform(systemEncoding.decoder).join();
@@ -193,13 +233,12 @@ Future<int> _runFixtureMode(
     findings.addAll(run.findings);
   }
 
-  final prefix = relativePath(Directory.current.path, package);
   final parsed = parseReporterOutput(output);
   final result = compareFixtures(
     manifest,
     parsed,
     selection.specs,
-    displayPrefix: prefix.isEmpty ? '' : '$prefix/',
+    displayPrefix: displayPrefix,
   );
   findings.addAll(result.findings);
   out.writeln(

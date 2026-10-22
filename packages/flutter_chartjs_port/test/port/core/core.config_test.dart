@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
 // Upstream has no spec for src/core/core.config.js (AGENTS.md rule 3). The
@@ -199,6 +200,17 @@ void _setUpScopeTypes() {
         'tbar': <String, Object?>{'x': 1.0},
       },
     });
+}
+
+/// A [types.ChartConfiguration] that is not a [Config], for `chartThemeOf`.
+final class _OtherConfiguration implements types.ChartConfiguration {
+  @override
+  final Map<String, Object?> options = {
+    themeConfigKey: <String, Object?>{'color': 'T'},
+  };
+
+  @override
+  final Map<String, Object?> data = {};
 }
 
 void main() {
@@ -2089,6 +2101,23 @@ void main() {
       Config(raw);
       expect(raw[themeConfigKey], same(theme));
       expect(jsObjectKeys(raw), [r'$theme', 'data', 'options']);
+    });
+
+    // The public reader of Chart.js ADR 0042 for hunk H5 of plugin.colors.
+    test('chartThemeOf gives the theme map of a Config', () {
+      final theme = <String, Object?>{'color': 'T'};
+      final config = Config(<String, Object?>{themeConfigKey: theme});
+      expect(chartThemeOf(config), same(theme));
+    });
+
+    test('chartThemeOf gives null for no theme, a theme that is not a Map '
+        'and a configuration that is not a Config', () {
+      expect(chartThemeOf(Config(<String, Object?>{})), isNull);
+      for (final theme in [null, 'not a map', 5.0, undefined, <Object?>[]]) {
+        final config = Config(<String, Object?>{themeConfigKey: theme});
+        expect(chartThemeOf(config), isNull, reason: '$theme');
+      }
+      expect(chartThemeOf(_OtherConfiguration()), isNull);
     });
   });
 

@@ -211,6 +211,12 @@ import 'hand/element.line/skip/middle.dart' as element_line_skip_middle;
 import 'hand/element.point/point-style-image.dart'
     as element_point_point_style_image;
 import 'hand/element.point/rotation.dart' as element_point_rotation;
+import 'hand/plugin.colors/dynamic-datasets-default.dart'
+    as plugin_colors_dynamic_datasets_default;
+import 'hand/plugin.colors/dynamic-datasets-force-override.dart'
+    as plugin_colors_dynamic_datasets_force_override;
+import 'hand/plugin.title/scriptable-options.dart'
+    as plugin_title_scriptable_options;
 import 'hand/scale.category/invalid-data.dart' as scale_category_invalid_data;
 import 'hand/scale.linear/tick-count-data-limits.dart'
     as scale_linear_tick_count_data_limits;
@@ -664,6 +670,18 @@ final Map<String, HandFixture> handFixtures = {
   'element.point/rotation.js': (
     load: element_point_rotation.fixture,
     sha256: 'ba75d266affa',
+  ),
+  'plugin.colors/dynamic-datasets-default.js': (
+    load: plugin_colors_dynamic_datasets_default.fixture,
+    sha256: 'f855a092e685',
+  ),
+  'plugin.colors/dynamic-datasets-force-override.js': (
+    load: plugin_colors_dynamic_datasets_force_override.fixture,
+    sha256: 'f3ad48682a29',
+  ),
+  'plugin.title/scriptable-options.js': (
+    load: plugin_title_scriptable_options.fixture,
+    sha256: '2a67dd8b043d',
   ),
   'scale.category/invalid-data.js': (
     load: scale_category_invalid_data.fixture,

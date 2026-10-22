@@ -46,11 +46,19 @@
 /// - a repeated full name;
 /// - a bad skip reason;
 /// - a failed port-only test of `test/port/fixtures/`.
+///
+/// Both modes also run the stale-block check of Chart.js ADR 0041, section 8
+/// ([staleBlockedSkips]): a skip literal `'blocked: <module>'` in `test/` is
+/// an error when each `src/` row of `<module>` in `parity.md` is `ported`, or
+/// when `<module>` has no `src/` row. A literal that starts with `blocked:`
+/// and is not of the whole form `blocked: <module>` is an error too.
 library;
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'check_support.dart';
+import 'dart_source.dart';
 
 /// The upstream spec file of the Dart spec file [dartPath]
 /// (`test/specs/<base>_test.dart` to `<base>.tests.js`), or null.
@@ -597,12 +605,24 @@ Map<String, String> parseParityStatuses(String markdown) {
 
 final RegExp _done = RegExp(r'^ported\b');
 
+final RegExp _extension = RegExp(r'\.[^.]+$');
+
+/// The `src/` rows of [module] in [parity], by the rule of [requiredBy]:
+/// the file name without its extension is [module], or the row is in a
+/// `<module>/` folder (`plugin.filler`).
+List<String> moduleRows(String module, Map<String, String> parity) => [
+  for (final key in parity.keys)
+    if (key.startsWith('src/') &&
+        (key.contains('/$module/') ||
+            key.split('/').last.replaceFirst(_extension, '') == module))
+      key,
+];
+
 /// The `parity.md` status that makes the cases of [spec] required, or the
 /// status of its spec row, and whether it is required.
 ///
-/// The spec row is `test/specs/<spec>`. The module rows are the `src/` rows
-/// whose file name without its extension is `<base>`, or that are in a
-/// `<base>/` directory (`plugin.filler`).
+/// The spec row is `test/specs/<spec>`. The module rows are the
+/// [moduleRows] of `<base>`.
 ({String? status, bool required}) requiredBy(
   String spec,
   Map<String, String> parity,
@@ -612,14 +632,7 @@ final RegExp _done = RegExp(r'^ported\b');
   if (specStatus != null && _done.hasMatch(specStatus)) {
     return (status: specStatus, required: true);
   }
-  final modules = [
-    for (final MapEntry(:key, :value) in parity.entries)
-      if (key.startsWith('src/') &&
-          (key.contains('/$base/') ||
-              key.split('/').last.replaceFirst(RegExp(r'\.[^.]+$'), '') ==
-                  base))
-        value,
-  ];
+  final modules = [for (final row in moduleRows(base, parity)) parity[row]!];
   if (modules.isNotEmpty && modules.every(_done.hasMatch)) {
     return (status: modules.first, required: true);
   }
@@ -629,12 +642,130 @@ final RegExp _done = RegExp(r'^ported\b');
   );
 }
 
+// The stale-block check (Chart.js ADR 0041, section 8).
+
+/// The skip reason `blocked: <module>` as the whole content of a literal.
+final RegExp _blockedReason = RegExp(r'^blocked: (\S+)$');
+
+/// The start of a literal that the stale-block check examines.
+const String _blockedPrefix = 'blocked:';
+
+/// The generated reference data files (`*_reference*.dart`).
+final RegExp _referenceData = RegExp(r'_reference[^/]*\.dart$');
+
+/// Whether the stale-block check reads the Dart file at [path] (relative to
+/// the package, with `/` separators). It reads the files of `test/`, but not
+/// those of `test/tool/`, whose literals are test input of the port tools,
+/// and not the generated `*_reference*.dart` files (Chart.js ADR 0041,
+/// section 8 item 2).
+bool isStaleScanPath(String path) =>
+    path.startsWith('test/') &&
+    path.endsWith('.dart') &&
+    !path.startsWith('test/tool/') &&
+    !_referenceData.hasMatch(path);
+
+/// The texts of the Dart files of `test/` in [package] that
+/// [isStaleScanPath] accepts, by path relative to [package]. Folders whose
+/// name starts with `.` and `build` folders are left out
+/// ([dartFilesUnder]).
+Map<String, String> readStaleScanSources(String package) {
+  final root = posixPath(Directory(package).absolute.path);
+  return {
+    for (final file in dartFilesUnder('$root/test'))
+      if (relativePath(root, file) case final path when isStaleScanPath(path))
+        path: File(file).readAsStringSync(),
+  };
+}
+
+/// Whether the content [text] of a literal that is not raw has an
+/// interpolation: a `$` that a `\` does not escape.
+bool _interpolates(String text) {
+  for (var i = 0; i < text.length; i++) {
+    final c = text.codeUnitAt(i);
+    if (c == 0x5C) {
+      i++;
+    } else if (c == 0x24) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/// Chart.js ADR 0041 section 8: the stale `'blocked: <module>'` literals of
+/// [sources] (path to text, test/ without test/tool/ and without the
+/// generated `*_reference*.dart` files). A literal is stale when each `src/`
+/// row of `<module>` in [parity] is `ported`. A module without a row is an
+/// error too.
+///
+/// A literal that starts with `blocked:` and is not of the whole form
+/// `blocked: <module>` is an error: tool 5 accepts only that form
+/// ([isValidSkipReason]), and a stale skip in another form would else stay.
+/// Thus the first part `'blocked: '` of the adjacent strings
+/// `'blocked: ' 'plugin.title'` is an error, and so are a reason with more
+/// words and a reason with a space at the end.
+///
+/// The check reads the string literals with [DartSource], so a reason in a
+/// comment does not count. A literal inside an interpolation and a literal
+/// with an interpolation do not count: their text is not the skip reason.
+/// Paths in findings start with [displayPrefix].
+List<Finding> staleBlockedSkips(
+  Map<String, String> parity,
+  Map<String, String> sources, {
+  String displayPrefix = '',
+}) {
+  final findings = <Finding>[];
+  final stale = <String, bool?>{};
+  for (final MapEntry(key: path, value: text) in sources.entries) {
+    if (!text.contains(_blockedPrefix)) continue;
+    final source = DartSource(text);
+    for (final literal in source.strings) {
+      if (literal.nested) continue;
+      final content = source.contentOf(literal);
+      if (!content.startsWith(_blockedPrefix)) continue;
+      final raw = const {0x52, 0x72}.contains(text.codeUnitAt(literal.start));
+      if (!raw && _interpolates(content)) continue;
+      final module = _blockedReason.firstMatch(content)?[1];
+      if (module == null) {
+        findings.add(
+          Finding(
+            '$displayPrefix$path',
+            source.lineOf(literal.start),
+            "skip reason '$content' is not 'blocked: <module>' "
+                '(Chart.js ADR 0041 §8)',
+          ),
+        );
+        continue;
+      }
+      final state = stale.putIfAbsent(module, () {
+        final rows = moduleRows(module, parity);
+        if (rows.isEmpty) return null;
+        return rows.every((row) => _done.hasMatch(parity[row]!));
+      });
+      if (state == false) continue;
+      findings.add(
+        Finding(
+          '$displayPrefix$path',
+          source.lineOf(literal.start),
+          state == null
+              ? "unknown module in 'blocked: $module': no src/ row in "
+                    'parity.md'
+              : "stale skip 'blocked: $module': each src/ row of $module is "
+                    'ported (Chart.js ADR 0041 §8)',
+        ),
+      );
+    }
+  }
+  return findings;
+}
+
 final RegExp _skipReason = RegExp(
-  r'^(blocked: \S.*|n/a: \S.*|'
+  r'^(blocked: \S+|n/a: \S.*|'
   r'diverges: (adapt|platform|theme|js-semantics|harness|not-followed)-\S+)$',
 );
 
-/// Whether [reason] is a skip reason of porting-flow.md section 1 step 5.
+/// Whether [reason] is a skip reason of porting-flow.md section 1 step 5:
+/// `blocked: <module>` (one word after `blocked: `), `n/a: <reason>` or
+/// `diverges: <row id>`.
 bool isValidSkipReason(String? reason) =>
     reason != null && _skipReason.hasMatch(reason);
 

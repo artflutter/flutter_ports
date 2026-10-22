@@ -17,7 +17,10 @@
 ///   `expectCalls` of `scale_chart_harness.dart`, with the element draws).
 ///
 /// One observation has the keys `chartArea`, `scales`, `stacks`,
-/// `datasets` and `hits` (Chart.js ADR 0030, section 4). The compare rules:
+/// `datasets` and `hits` (Chart.js ADR 0030, section 4). The plugin
+/// reference tests (Chart.js ADR 0041, section 3 item 3) leave out `hits`
+/// (`hits: false`) and add the keys of `observeExtra`
+/// (`test/port/plugins/plugin_chart_harness.dart`). The compare rules:
 ///
 /// - The check reads exactly the keys of the expected Map. An expected key
 ///   that no check reads fails.
@@ -137,13 +140,13 @@ Map<String, Object?> observeHits(Chart chart, Map<String, Object?> expected) {
 // ---------------------------------------------------------------------------
 // The observations (Chart.js ADR 0030, section 4).
 
-/// The keys of one observation.
+/// The keys of one observation before the keys of `observeExtra` and
+/// `hits`.
 const List<String> _observationKeys = [
   'chartArea',
   'scales',
   'stacks',
   'datasets',
-  'hits',
 ];
 
 /// The keys of `controller.options` that `datasetOptions` copies, by the
@@ -363,11 +366,14 @@ Map<String, Object?> _observeDataset(Chart chart, int index) {
 /// The observation of [chart] with the keys of `observeControllers` of
 /// controller_chart_common.mjs. [scaleOptions] adds `scales.<id>.options`.
 /// [expectedHits] gives the points and the queries of `hits`
-/// ([observeHits]).
+/// ([observeHits]). Dart `null` for [expectedHits] leaves out `hits` (the
+/// option `hits: false` of the generator). [observeExtra] adds its keys
+/// after `datasets`, as plain copies ([plainValue]).
 Map<String, Object?> observeControllers(
   Chart chart, {
-  required Map<String, Object?> expectedHits,
+  required Map<String, Object?>? expectedHits,
   bool scaleOptions = false,
+  Map<String, Object?> Function(Chart chart)? observeExtra,
 }) {
   final base = observeChart(
     chart,
@@ -384,7 +390,10 @@ Map<String, Object?> observeControllers(
     'datasets': [
       for (var i = 0; i < datasets.length; i++) _observeDataset(chart, i),
     ],
-    'hits': observeHits(chart, expectedHits),
+    if (observeExtra != null)
+      for (final MapEntry(:key, :value) in observeExtra(chart).entries)
+        key: plainValue(value),
+    if (expectedHits != null) 'hits': observeHits(chart, expectedHits),
   };
 }
 
@@ -581,29 +590,53 @@ String _parseCallTextColors(String text) => [
 /// options Map compares only the keys of the expected Map
 /// ([_themedOptions]). Without [parseColors], each Map must have exactly
 /// the keys of the expected Map.
+///
+/// [hits] and [observeExtra] are the options of the plugin reference tests
+/// (Chart.js ADR 0041, section 3 item 3). Without [hits], the observation
+/// has no `hits`. Each key of [observeExtra] compares with
+/// [referenceMatcher]. With [parseColors], the colors of a key of
+/// [observeExtra] compare parsed, and its Maps compare only the keys of the
+/// expected Map, as the options do.
 void expectControllerObservations(
   Chart chart,
   Object? expected,
   String label, {
   bool parseColors = false,
+  bool hits = true,
+  Map<String, Object?> Function(Chart chart)? observeExtra,
 }) {
   var expectedMap = expected! as Map<String, Object?>;
-  expect(
-    expectedMap.keys,
-    unorderedEquals(_observationKeys),
-    reason: '$label: the keys of the observation',
-  );
   final scaleOptions = (expectedMap['scales']! as Map<String, Object?>).values
       .any((scale) => (scale! as Map<String, Object?>).containsKey('options'));
   var observed = observeControllers(
     chart,
-    expectedHits: expectedMap['hits']! as Map<String, Object?>,
+    expectedHits: hits ? expectedMap['hits']! as Map<String, Object?> : null,
     scaleOptions: scaleOptions,
+    observeExtra: observeExtra,
+  );
+  final extraKeys = [
+    for (final key in observed.keys)
+      if (!_observationKeys.contains(key) && key != 'hits') key,
+  ];
+  expect(
+    expectedMap.keys,
+    unorderedEquals([..._observationKeys, ...extraKeys, if (hits) 'hits']),
+    reason: '$label: the keys of the observation',
   );
   if (parseColors) {
     observed = _parseObservationColors(observed);
     expectedMap = _parseObservationColors(expectedMap);
     observed = _themedOptions(observed, expectedMap);
+    for (final key in extraKeys) {
+      expectedMap = {...expectedMap, key: _parseOptionColors(expectedMap[key])};
+      observed = {
+        ...observed,
+        key: _expectedKeysOnly(
+          _parseOptionColors(observed[key]),
+          expectedMap[key],
+        ),
+      };
+    }
   }
 
   expectScaleObservations(
@@ -643,7 +676,18 @@ void expectControllerObservations(
     }
   }
 
-  final hits = observed['hits']! as Map<String, Object?>;
+  for (final key in extraKeys) {
+    expect(
+      observed[key],
+      referenceMatcher(expectedMap[key]),
+      reason: '$label: $key',
+    );
+  }
+
+  if (!hits) {
+    return;
+  }
+  final observedHits = observed['hits']! as Map<String, Object?>;
   final expectedHits = expectedMap['hits']! as Map<String, Object?>;
   expect(
     expectedHits.keys,
@@ -651,7 +695,7 @@ void expectControllerObservations(
     reason: '$label: the keys of hits',
   );
   expect(
-    hits['items'],
+    observedHits['items'],
     equals(hitItems(expectedHits['items'])),
     reason:
         '$label: hits (items[point][query], see hits.points and '
@@ -682,7 +726,10 @@ void _expectKeyOrder(Object? observed, Object? expected, String reason) {
 /// [notifyArrayListeners], as the hooked array methods do (differences.md
 /// `platform-array-events`). `hover` and `mouseout` dispatch a native
 /// event through [triggerMouseEvent] (Chart.js ADR 0022, section 6). The
-/// generator gives `mouseout` the point of the last `hover`.
+/// generator gives `mouseout` the point of the last `hover`. `setOption`
+/// writes the value at the path (`plugins.title.display`) through
+/// `operator []=` of the option resolver, the `set` trap of upstream, and
+/// then updates the chart (Chart.js ADR 0041, section 3 item 6).
 Future<void> runStep(
   WidgetTester tester,
   Chart chart,
@@ -735,6 +782,14 @@ Future<void> runStep(
         'x': x,
         'y': y,
       });
+    case ['setOption', final String path, final Object? value]:
+      final keys = path.split('.');
+      Object? target = chart.options;
+      for (final key in keys.take(keys.length - 1)) {
+        target = jsGet(target, key);
+      }
+      (target! as Map<String, Object?>)[keys.last] = copyReference(value);
+      chart.update();
     default:
       throw ArgumentError.value(step, 'step', 'Not a reference step');
   }
@@ -807,7 +862,10 @@ Object? _snapshot(Object? value, [int depth = 0]) {
 /// `themeConfigKey: theme`, the colors compare parsed, `defaults` must be
 /// the same after the case, and the cases whose names start with
 /// `parsed:` or `interfaces:` do not run. With [now], each case runs in
-/// `atNow(now, ...)`.
+/// `atNow(now, ...)`. [hits] and [observeExtra] go to each
+/// [expectControllerObservations] call (Chart.js ADR 0041, section 3 item
+/// 3): `testPluginChartCases` of `test/port/plugins/plugin_chart_harness.dart`
+/// sets them.
 ///
 /// A step that throws stands in `steps` with its `do` and without
 /// `observations`, and the `error` of the case has its `at`.
@@ -818,6 +876,8 @@ void testControllerChartCases(
   AnyObject? theme,
   double? now,
   Map<String, Matcher> errorTypes = const {},
+  bool hits = true,
+  Map<String, Object?> Function(Chart chart)? observeExtra,
 }) {
   for (final c in cases) {
     if (theme != null &&
@@ -832,6 +892,8 @@ void testControllerChartCases(
         extras: extras,
         theme: theme,
         errorTypes: errorTypes,
+        hits: hits,
+        observeExtra: observeExtra,
       );
       if (now == null) {
         await body();
@@ -853,6 +915,8 @@ Future<void> _runControllerCase(
   required Map<String, Object? Function(Chart chart)> extras,
   required AnyObject? theme,
   required Map<String, Matcher> errorTypes,
+  required bool hits,
+  required Map<String, Object?> Function(Chart chart)? observeExtra,
 }) async {
   final defaultsBefore = theme == null ? null : _snapshot(defaults);
   await _runCaseSteps(
@@ -862,6 +926,8 @@ Future<void> _runControllerCase(
     extras: extras,
     theme: theme,
     errorTypes: errorTypes,
+    hits: hits,
+    observeExtra: observeExtra,
   );
   if (defaultsBefore != null) {
     expect(
@@ -882,6 +948,8 @@ Future<void> _runCaseSteps(
   required Map<String, Object? Function(Chart chart)> extras,
   required AnyObject? theme,
   required Map<String, Matcher> errorTypes,
+  required bool hits,
+  required Map<String, Object?> Function(Chart chart)? observeExtra,
 }) async {
   final expected = c.expected;
   expect(
@@ -912,6 +980,8 @@ Future<void> _runCaseSteps(
     expected['initial'],
     'initial',
     parseColors: parseColors,
+    hits: hits,
+    observeExtra: observeExtra,
   );
 
   final steps = expected['steps']! as List<Object?>;
@@ -943,6 +1013,8 @@ Future<void> _runCaseSteps(
       step['observations'],
       'step $k',
       parseColors: parseColors,
+      hits: hits,
+      observeExtra: observeExtra,
     );
   }
 
