@@ -2242,9 +2242,8 @@ gives the commands and the files. Section 13.6 has the phone figures of step 7.
 ### 13.6 The figures of step 7
 
 Step 7 of phase 7 measured the chart path on the phones from 2026-10-21 to 2026-10-22. The
-protocols, the raw data, the scripts and the recomputes are working files of phase 7
-(`.handover/phase7/perf/step7/`), not committed. This section gives the figures and the
-decisions.
+protocols, the raw data, the scripts and the recomputes are working files of phase 7, not
+committed. This section gives the figures and the decisions.
 
 **Method.**
 
@@ -2285,6 +2284,10 @@ decisions.
   The keyguard was off before and after each run. iPhone 17 Pro (iOS 26.6.2) on the cable,
   `passcodeRequired: false` before and after each run (2026-10-21, 19:16-21:00 CEST). `devicectl`
   gives no temperature of the iPhone.
+- Web. From 2026-10-22 08:10 CEST, a web run of step 7 runs only in the VS Code integrated
+  browser (Chromium 148.0.7778.280 in Electron 42.8.1, VS Code 1.134.0) with dart2wasm, a rule of
+  the maintainer. No Google Chrome run after that time counts. The Chrome 155 figures of this
+  section and of section 13.8 come from runs before that time.
 - Order of the units (CEST): G-U6 on the Pixel 8a from 2026-10-21 23:13 to 2026-10-22 02:39, the
   before/after series 02:45-05:55, the profile 06:05-07:09, the A/B series of the candidates
   08:02-13:40.
@@ -2425,7 +2428,8 @@ Flutter 3.47.7.
   `axes.*` draw is 0.97-1.09 times A.
 - The toolchain step: A on Flutter 3.47.7 is within about -8 % to +9 % of before. The largest steps
   are the `axes.time` update at 20000 (-8 %) and the `axes.category` draw at 20000 (+9 %). The
-  before figures of the time update (before.md §4) ran at 2.36-2.69 GHz.
+  before figures of the time update (commit `0e0ab93` on Flutter 3.44.9, a working file of phase
+  7, section 13.5) ran at 2.36-2.69 GHz.
 
 The type cases of Chart.js ADR 0031 §7 on the Pixel 8a, side B (median of the run medians in ms;
 the counts of the type). The column "windows" gives the valid windows of 3. Bubble draw at 5000
@@ -2519,8 +2523,9 @@ The type cases on the iPhone, side B (median of 3 run medians in ms):
 the means of the `STRESS` line in ms. A 7-s run with FPS 0.00 gave no frame in its window. Its
 60-s row is the figure. The UI-core column is the median in the run: the governor keeps it low
 under a light load, so the stress runs have no frequency exclusion. Each gate passed (battery
-32.5-33.0 °C, `cpu8` at 2.91 GHz). "before" is before.md §5 (`0e0ab93`, Flutter 3.44.9). The
-maximum build and raster times are in the working files.
+32.5-33.0 °C, `cpu8` at 2.91 GHz). "before" is the stress record of commit `0e0ab93` on Flutter
+3.44.9 (a working file of phase 7, section 13.5). The maximum build and raster times are in the
+working files.
 
 | Mode / type | Call | N | s | FPS | updateMs | drawMs | buildMs | rasterMs | UI core (GHz) | before: FPS / buildMs / drawMs / rasterMs |
 |---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
@@ -2583,11 +2588,12 @@ maximum build and raster times are in the working files.
 
 - Seven scenarios gave no frame in 7 s and ran again with `SECONDS=60`: bar update, doughnut draw
   and update, pie draw and update, and polar area draw and update, each at 20000.
-- The 14 scenarios of before.md §5 agree with before within about ±2 FPS (11 of 14 within 1.5 FPS).
+- The 14 scenarios with a before figure agree with before within about ±2 FPS (11 of 14 within 1.5
+  FPS).
   The exceptions are the line draw at 20000 (50.91 against 56.86 FPS) and the line update at
   20000 (30.45 against 39.52 FPS, `updateMs` 6.56 against 2.44 ms). The update is the S2 cost of
-  G-U6. The axes scenarios keep the ticks and the rotation of before.md §5 (6 / 0, 11 / 50, 14 / 50
-  and 14 / 50).
+  G-U6. The axes scenarios keep the ticks and the rotation of before (6 / 0, 11 / 50, 14 / 50 and
+  14 / 50).
 
 The stress entry of side B on the iPhone 17 Pro (mode `chart`, `SECONDS=7`, one process each, a
 120 Hz display; no scenario was below 4.5 FPS):
@@ -2756,15 +2762,18 @@ The hot spots of the port (the rolled self time, in estimated ms for each call, 
 **The A/B series of the candidates.** Five candidates of the plan, each with its own protocol, on
 the Pixel 8a, 12 pairs each (both stages), 24 or 48 fresh processes. The gate was met before each
 run. A is `c0a6576`, B is `c0a6576` with the patch. The decision follows the rule above. The
-macOS column is the macOS series of another unit (a record).
+macOS and web columns are the series of another unit (a record): the macOS AOT profile app and
+the VS Code integrated browser with dart2wasm, 6 ABBA pairs each (the web series of
+`resolve-cache-key-memo`: 2 valid pairs), with the same rule and an independent recompute that
+agrees.
 
-| Candidate | Change | Main cells, B - A | Control cells entirely above 0 | Decision | macOS series |
-|---|---|---|---|---|---|
-| `bar-index-memo` | `BarController.updateElements` computes the axis count, the axis number and the stack index of `_calculateBarIndexPixels` once for each call | `chart.bar` update -1.881 / -15.037 / -51.692 ms (-36.9 / -43.3 / -34.5 %) at 1000 / 5000 / 20000 | update call, draw: +1.459 ms (+8.1 %) at 5000, +6.675 ms (+10.3 %) at 20000; draw call, end: +0.052 ms at 1000, +0.652 ms at 5000 | reject | the draw after the update was +7.2 % and +4.6 % |
-| `bar-ring-zero-inner` | `fill` of a shape pair with a shape of no area draws the other shape with `drawRect` or `drawRRect` | `chart.bar` draw -0.543 / -3.246 / -15.021 ms (-20.9 / -23.6 / -26.2 %) | none | **accept** | draw about -15 % |
-| `element-assign-no-key-list` | `Element.assign` writes with `Map.forEach` when the source is a plain Map with no array-index key | bar update -0.064 (unresolved) / -1.943 ms (-5.7 %); doughnut -0.162 ms (-10.2 %) / -0.404 (unresolved); radar -0.045 / +0.231 (both unresolved) at 1000 / 5000 | doughnut draw and draw + end in all 8 cells (+1.1 to +2.3 %); radar update at 1000, end +0.045 ms (+56.5 %) | reject | reject (slower control cells) |
-| `resolve-cache-key-memo` | `_resolveElementOptions` keeps the last cache key `elementType-mode` | scatter update -0.311 / -1.522 / -7.890 ms (-26.6 / -33.8 / -36.4 %); bubble update -0.480 / -1.918 ms (-17.7 / -15.0 %) | 1 of 41: bubble update at 1000, draw +0.054 ms (+3.4 %) | reject | the line control was +1.0 to +2.4 % |
-| `circle-batch-instance-colors` | a run of several colors draws white sprites, and the atlas gives each instance its color (`BlendMode.modulate`) | `chart.c` draw -1.256 / -6.463 / -24.832 ms (-76.4 / -74.4 / -73.1 %); end -91.5 / -89.1 / -80.0 % | `chart.a` draw at 20000 +1.5 %, end at 5000 +2.1 %, end at 20000 +2.1 %, draw + end at 20000 +1.6 % | reject | reject (`chart.a` +1.9 to +5.3 %) |
+| Candidate | Change | Main cells, B - A | Control cells entirely above 0 | Decision | macOS series | Web series |
+|---|---|---|---|---|---|---|
+| `bar-index-memo` | `BarController.updateElements` computes the axis count, the axis number and the stack index of `_calculateBarIndexPixels` once for each call | `chart.bar` update -1.881 / -15.037 / -51.692 ms (-36.9 / -43.3 / -34.5 %) at 1000 / 5000 / 20000 | update call, draw: +1.459 ms (+8.1 %) at 5000, +6.675 ms (+10.3 %) at 20000; draw call, end: +0.052 ms at 1000, +0.652 ms at 5000 | reject | accept (update -34.5 / -37.1 / -32.9 %; draw in the update call +6.2 / +4.8 %) | accept (update -31.5 / -32.5 / -30.9 %) |
+| `bar-ring-zero-inner` | `fill` of a shape pair with a shape of no area draws the other shape with `drawRect` or `drawRRect` | `chart.bar` draw -0.543 / -3.246 / -15.021 ms (-20.9 / -23.6 / -26.2 %) | none | **accept** | accept (draw -13.2 / -14.0 / -13.5 %) | accept (draw -28.4 / -28.1 / -30.7 %) |
+| `element-assign-no-key-list` | `Element.assign` writes with `Map.forEach` when the source is a plain Map with no array-index key | bar update -0.064 (unresolved) / -1.943 ms (-5.7 %); doughnut -0.162 ms (-10.2 %) / -0.404 (unresolved); radar -0.045 / +0.231 (both unresolved) at 1000 / 5000 | doughnut draw and draw + end in all 8 cells (+1.1 to +2.3 %); radar update at 1000, end +0.045 ms (+56.5 %) | reject | reject (slower control cells) | reject (bar draw of the draw call at 1000 +0.5 %) |
+| `resolve-cache-key-memo` | `_resolveElementOptions` keeps the last cache key `elementType-mode` | scatter update -0.311 / -1.522 / -7.890 ms (-26.6 / -33.8 / -36.4 %); bubble update -0.480 / -1.918 ms (-17.7 / -15.0 %) | 1 of 41: bubble update at 1000, draw +0.054 ms (+3.4 %) | reject | the line control was +1.0 to +2.4 % | inconclusive (2 valid pairs: the tab of the browser was hidden) |
+| `circle-batch-instance-colors` | a run of several colors draws white sprites, and the atlas gives each instance its color (`BlendMode.modulate`) | `chart.c` draw -1.256 / -6.463 / -24.832 ms (-76.4 / -74.4 / -73.1 %); end -91.5 / -89.1 / -80.0 % | `chart.a` draw at 20000 +1.5 %, end at 5000 +2.1 %, end at 20000 +2.1 %, draw + end at 20000 +1.6 % | reject | reject (`chart.a` +1.9 to +5.3 %) | reject (`chart.c` end 0.061 / 0.290 / 1.120 ms against 0.003 / 0.007 / 0.015 ms) |
 
 - The frame (update + draw + end) is faster in each rejected series: `bar-index-memo` -14.8 /
   -21.4 / -13.6 %; `resolve-cache-key-memo` -26.5 % (scatter at 20000);
@@ -2833,8 +2842,9 @@ for each side and N; a record, no interval):
   of 0. Before the change, such a ring took the path of the two subpaths. A subpath with no area
   adds no coverage, so the pixels equal those of `fillRect` (a test pins it). On the Pixel 8a, the
   bar draw is -20.9 / -23.6 / -26.2 % at 1000 / 5000 / 20000, and the raster time of the stress
-  record falls from 37.13 to 20.62 ms and from 131.15 to 57.72 ms. On macOS AOT, the `chart.bar`
-  draw is about -15 % at N 1000, 5000 and 20000 (-0.17, -0.86 and -3.42 ms). The end of the
+  record falls from 37.13 to 20.62 ms and from 131.15 to 57.72 ms. On macOS AOT, the 5 pairs of
+  the variant step give a `chart.bar` draw of about -15 % at N 1000, 5000 and 20000 (-0.17, -0.86
+  and -3.42 ms), and the ABBA series of the A/B table gives -13.2 / -14.0 / -13.5 %. The end of the
   recording and the update do not change significantly. The change is in the port-only canvas
   layer (Chart.js ADR 0013). The canvas calls of `element.bar` do not change, so the change has no
   `DIVERGES` marker. The row `adapt-rounded-rect-path` of [differences.md](differences.md) names

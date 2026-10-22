@@ -24,8 +24,8 @@
   [performance.md](../performance.md) §10.7 and §11.3,
   [differences.md](../differences.md) rows `adapt-line-points-elements`,
   `adapt-component-class-role` and `adapt-chart-registry-getter`,
-  [phase7/design/interfaces-values/judge.md](../../../../.handover/phase7/design/interfaces-values/judge.md) (the
-  panel result)
+  `design/interfaces-values/judge.md` (the panel result, a working file of phase 7, not
+  committed)
 
 ## Context
 
@@ -503,9 +503,9 @@ gets the new members:
   copy and the shared elements of the line, scatter and radar controllers (section 3), the states
   of `getDataVisibility` (section 4), the rows of the hunk with the hover row and the frozen throw
   (section 5), the option functions against the probe items (section 6), and the namespace and
-  the registry (section 7). The implementation spec
-  (`.handover/phase7/design/interfaces-values/spec.md`) gives the cases. The test files follow Chart.js
-  ADR 0030 §3.
+  the registry (section 7). The implementation spec (`design/interfaces-values/spec.md`, a
+  working file of phase 7, not committed) gives the cases. The test files follow Chart.js ADR
+  0030 §3.
 - `performance.md` records the figures of the Measurements section.
 
 ### 9. The questions of the panel
@@ -672,10 +672,8 @@ All files are in the session scratchpad folder
   - `core/core.typedRegistry.js:24-44`
   - `types/index.d.ts:373-375`, `:543`, `:559`, `:568-571`, `:641`, `:656`, `:658`, `:674`,
     `:688`, `:2022-2026`, `:2414-2418`, `:3676-3685`
-- **E1, the panel:** [judge.md](../../../../.handover/phase7/design/interfaces-values/judge.md),
-  [draft-fidelity.md](../../../../.handover/phase7/design/interfaces-values/draft-fidelity.md),
-  [draft-performance.md](../../../../.handover/phase7/design/interfaces-values/draft-performance.md),
-  [draft-simplicity.md](../../../../.handover/phase7/design/interfaces-values/draft-simplicity.md).
+- **E1, the panel:** `judge.md`, `draft-fidelity.md`, `draft-performance.md`,
+  `draft-simplicity.md` of `design/interfaces-values/` (working files of phase 7, not committed).
 - **E2, judge runs:** `<design>/interfaces-values-judge/`: `bin/points_judge.dart` (question 3),
   `run.sh`, `out/points_aot.out`, `out/points_wasm.out`; `lintprobe/analyze.out` (question 7);
   `out/probe_spacing_simplicity.rerun` (the rerun of the S probe, byte-identical).

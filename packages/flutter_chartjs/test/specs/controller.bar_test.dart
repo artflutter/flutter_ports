@@ -1715,7 +1715,7 @@ void main() {
       }
     });
 
-    // Decision D1 of the phase lead: the default legend changes the y
+    // Chart.js ADR 0030 §12 item 6: the default legend changes the y
     // positions of the bars, but the assertion is relative to `base` and
     // passes without the legend.
     testWidgets('minBarLength settings should be used on Y axis on bar chart', (

@@ -21,8 +21,8 @@
   [Chart.js ADR 0030](0030-controller-test-strategy.md) (the controller tests),
   [porting-flow.md](../porting-flow.md) §1.1 (the performance rule),
   [performance.md](../performance.md) §13,
-  [phase7/design/radial-center/judge.md](../../../../.handover/phase7/design/radial-center/judge.md) (the panel
-  result), decisions D11, D13 and D14 of [phase7-progress.md](../../../../.handover/phase7-progress.md)
+  `design/radial-center/judge.md` (the panel result), decisions D11, D13 and D14 of the phase 7
+  progress file (working files of phase 7, not committed)
 
 ## Context
 
@@ -185,8 +185,8 @@ New pins:
    gives `[[0, 1]]`.
 4. The static type of `t.xCenter` and `t.yCenter` through `types.RadialLinearScale` is `double?`.
 
-The implementation spec is
-[phase7/design/radial-center/spec.md](../../../../.handover/phase7/design/radial-center/spec.md).
+The implementation spec is `design/radial-center/spec.md`, a working file of phase 7, not
+committed.
 
 ### 9. Relation to the `sin` and `cos` decision
 
@@ -345,7 +345,8 @@ with `flutter test <file>` from `packages/flutter_chartjs`.
   `aot_replica.out`, `wasm_replica.out` and `aot_pos.out`; `jit_bench.out`; the judge re-runs
   `<sp>/trig/radial-center-judge/aot_perf.out`, `wasm_perf.out`, `aot_replica*.out`,
   `wasm_replica.out` and `aot_pos.out`.
-- **E6, the panel:** `.handover/phase7/design/radial-center/draft-fidelity.md`,
+- **E6, the panel:** `design/radial-center/draft-fidelity.md`,
   `draft-performance.md`, `draft-simplicity.md` and `judge.md`;
-  `.handover/phase7/review/wave3/X-fix-report.md` and `X-fix-review.md` (finding F1);
-  `.handover/phase7/review/wave3/W3-int-report.md` (open item 1).
+  `review/wave3/X-fix-report.md` and `X-fix-review.md` (finding F1);
+  `review/wave3/W3-int-report.md` (open item 1). These are working files of phase 7, not
+  committed.

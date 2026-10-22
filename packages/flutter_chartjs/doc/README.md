@@ -126,7 +126,7 @@ Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the lockfile of the pin), whic
 The new ADRs and design documents use the revised phase numbers of porting-flow.md §5 (4 =
 Elements, 5 = Core), not the numbers of the table below.
 
-**Status (2026-10-19).** Phases 0 to 4 of porting-flow.md §5 are done. Phase 2 ported the
+**Status (2026-10-22).** Phases 0 to 7 of porting-flow.md §5 are done. Phase 2 ported the
 rest of the JS runtime, 14 helper files, the `core.defaults` closure and `@kurkle/color` 0.3.2
 ([parity.md](parity.md)). Phase 3 added the canvas layer over `dart:ui`
 ([Chart.js ADR 0013](adr/0013-canvas-model.md)), the internal chart host and `src/platform`
@@ -138,7 +138,14 @@ equal to Chrome ([text-metrics.md](text-metrics.md)). Phase 4 ported `core.eleme
 line, bar and arc elements and `src/elements/index.js`
 ([Chart.js ADR 0017](adr/0017-element-properties.md)). These files are pure layers. The
 `core.element` spec case and 20 of the 21 element spec cases pass. The other element case needs
-the chart controller and skips as `blocked: core.controller`. Phase 5 (core) is next.
+a chart. It passes since phase 7. Phase 5 ported the 21 core modules
+and the chart harness of chartjs-test-utils. Phase 6 ported the seven scales and the default date
+adapter ([Chart.js ADR 0024](adr/0024-dates.md)). Phase 7 ported the eight dataset controllers,
+the fixture smoke runner ([Chart.js ADR 0029](adr/0029-fixture-smoke-runner.md)) and the gallery
+pages of the nine chart types ([Chart.js ADR 0031](adr/0031-gallery-chart-types.md)). At its end,
+831 spec cases pass, 0 fail and 111 skip in the 45 ported spec files, and 457 of the 529 upstream
+fixtures pass. The rows of porting-flow.md §5 give the results of each phase. Phase 8 (plugins)
+is next.
 
 The order follows upstream's own layering:
 - `helpers` depend only on `core.defaults` (and a type-only import of the chart controller).
@@ -162,10 +169,10 @@ elements and scales lands (phases 5-7).
 | 1. Decisions | ADRs for the open questions below | ADRs accepted |
 | 2. Helpers | done; `src/helpers/*` except `helpers.canvas` and `helpers.dom`, plus `core.defaults` with the defaults it pulls in (`core.animations.defaults`, `core.layouts.defaults`, `core.scale.defaults`, `core.ticks`) and a Dart port of `@kurkle/color` 0.3.2 | non-chart helper spec cases pass |
 | 3. Platform and canvas | done; Canvas 2D semantics over `dart:ui`, text measurement, device pixel ratio, resize, pointer events (`src/platform`, `helpers.canvas`, `helpers.dom`) | non-chart canvas and DOM helper cases pass |
-| 4. Core | element (done in phase 4 of porting-flow.md §5), config and option resolution, registry, plugin service, layouts, scale base, autoskip, dataset controller, animations, interaction, adapters, chart controller | core spec cases with ported dependencies pass |
+| 4. Core | done (phase 5 of porting-flow.md §5); element (done in phase 4 of porting-flow.md §5), config and option resolution, registry, plugin service, layouts, scale base, autoskip, dataset controller, animations, interaction, adapters, chart controller | core spec cases with ported dependencies pass |
 | 5. Elements | done (phase 4 of porting-flow.md §5); point, line, bar, arc | element spec cases pass |
-| 6. Scales | linear base, linear, category, logarithmic, time, timeseries, radial linear | scale spec cases pass |
-| 7. Controllers | line, scatter, bar, bubble, doughnut, pie, polar area, radar | controller specs and the remaining chart-level cases pass; gallery shows every type |
+| 6. Scales | done (phase 6 of porting-flow.md §5); linear base, linear, category, logarithmic, time, timeseries, radial linear | scale spec cases pass |
+| 7. Controllers | done (phase 7 of porting-flow.md §5); line, scatter, bar, bubble, doughnut, pie, polar area, radar | controller specs and the remaining chart-level cases pass; gallery shows every type |
 | 8. Plugins | title, subtitle, legend, tooltip, filler, decimation, colors | plugin specs pass |
 | 9. Flutter API and release | public widget, semantics, docs, pana, first publish | `flutter_chartjs` 0.1.0 on pub.dev |
 

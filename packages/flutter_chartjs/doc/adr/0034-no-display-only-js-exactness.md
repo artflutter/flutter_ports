@@ -198,6 +198,6 @@ assertions.
 
 ## Evidence
 
-- The `sin` and `cos` probe: [judge.md](../../../../.handover/phase7/design/trig/judge.md),
-  [spec.md](../../../../.handover/phase7/design/trig/spec.md).
+- The `sin` and `cos` probe: `design/trig/judge.md`, `design/trig/spec.md` (working files of
+  phase 7, not committed).
 - The figures of `jsSin` and `jsCos`: [performance.md](../performance.md) §13.8.

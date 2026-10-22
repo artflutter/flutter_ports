@@ -315,6 +315,18 @@ Changes to the cited files:
   the context grows from 72 to 109 lines. `test/port/canvas/canvas_ui_round_rect_test.dart` gets
   two tests. The cuts do not remove the new code, so the estimates do not change. No trigger
   occurred.
+- 2026-10-22, the end of phase 7 (step 8). porting-flow.md gets text only in the §5 rows of
+  phases 5, 6 and 7. No line of porting-flow.md moves, and the text of §2.2, of §2.7 and of the
+  cited rows of the harness table of §3 does not change. `doc/performance.md` §13.6 loses the
+  path of the working files in its first paragraph and gets the bullet "Web" in its method list.
+  The A/B table gets the column "Web series". Its intro, its macOS column and the item
+  `bar-ring-zero-inner` below it get the figures of the ABBA series. The before figures get a description in place of the name of a working
+  file. The lines after line 2245 move by -1, and the lines after line 2287 move by +3 to +10
+  (the file has 10 lines more). No cited section number changes. The `parity.md` rows that this
+  plan cites do not change, and no row of `parity.md` moves. §2.7 and §3.7 of this plan no longer
+  call Chart.js ADRs 0013 and 0014 proposed (see the entry of the ADR numbers and statuses
+  above). The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do
+  not change. No trigger occurred.
 
 ## 1. Why
 
@@ -592,7 +604,8 @@ gallery integration test.
 
 ### 2.7 ADR and doc changes
 
-Chart.js ADR 0013 is proposed, so the owner edits it in place. Do not change its status line.
+Chart.js ADR 0013 is accepted (2026-10-21), so the owner does not edit its text. A new ADR states
+the complete decision with the changes below and supersedes Chart.js ADR 0013.
 - §6 (lines 150-165): replace "An arc uses `ui.Path.arcTo` when ... cubic Béziers of 90 degrees
   or less" with the direct path and the matrix path of §2.4. State that each `extendWithPath` call
   and each `Path.transform` call gets its own `ui.Path` and `Float64List`, because the web
@@ -955,8 +968,9 @@ new `differences.md` row. No skip reason changes now, because every affected cas
 
 ### 3.7 ADR and doc changes
 
-Chart.js ADR 0013 and Chart.js ADR 0014 are proposed, so the owner edits them in place. Do not
-change their status lines. Chart.js ADR 0034 and Chart.js ADR 0016 do not change.
+Chart.js ADR 0013 and Chart.js ADR 0014 were proposed in phase 5, so work package C2 edited them
+in place. The porting lead accepted them on 2026-10-21. Thus a later change of these decisions
+gets a new ADR that supersedes the old ADR. Chart.js ADR 0034 and Chart.js ADR 0016 do not change.
 
 Work package C2 made these changes in phase 5, except the `performance.md` figures. These figures
 are for work package P. The line numbers below are the lines after C2. The porting-flow.md line

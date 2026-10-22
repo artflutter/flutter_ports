@@ -545,9 +545,8 @@ known differences from V8 (see Related).
 
 ## Evidence
 
-- The panel: [drafts and judge](../../../../.handover/phase7/design/trig/judge.md), the
-  [implementation spec](../../../../.handover/phase7/design/trig/spec.md).
-- The cases: [U-pie-review.md](../../../../.handover/phase7/review/wave3/U-pie-review.md) (F2),
-  [W3-int-report.md](../../../../.handover/phase7/review/wave3/W3-int-report.md),
-  [phase7-progress.md](../../../../.handover/phase7-progress.md) (D13, D14).
+- The panel: the drafts and the judge (`design/trig/judge.md`), the implementation spec
+  (`design/trig/spec.md`). These are working files of phase 7, not committed.
+- The cases: `review/wave3/U-pie-review.md` (F2), `review/wave3/W3-int-report.md`, and the phase
+  7 progress file (D13, D14). These are working files of phase 7, not committed.
 - The figures: [performance.md](../performance.md) §13.8.

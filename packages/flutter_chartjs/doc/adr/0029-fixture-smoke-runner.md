@@ -28,12 +28,13 @@
 ## Context
 
 Phase 7 adds tool 7, the fixture smoke runner (`porting-flow.md` §4 item 7). The kickstart prompt
-of phase 7 (`.handover/phase7/kickstart-prompt.md:143-148`) names its parts: the port of `src/fixture.js`
-of chartjs-test-utils 0.4.0 without the image comparison, the tag `fixtures`, the melos script
-`test:fixtures`, the CI job `fixtures`, and the hand ports of the configs with functions in
-`test/fixtures/hand/`. The exit criterion (`:178`) is: "The fixture smoke tests pass for the
-ported chart types, also in the CI job `fixtures`." Chart.js ADR 0034 §4 fixes the
-test: "A smoke test builds the chart and renders one frame. It passes when no exception occurs."
+of phase 7 (`kickstart-prompt.md:143-148`, a working file of phase 7, not committed) names its
+parts: the port of `src/fixture.js` of chartjs-test-utils 0.4.0 without the image comparison,
+the tag `fixtures`, the melos script `test:fixtures`, the CI job `fixtures`, and the hand ports of
+the configs with functions in `test/fixtures/hand/`. The exit criterion (`:178`) is: "The fixture
+smoke tests pass for the ported chart types, also in the CI job `fixtures`." Chart.js ADR 0034 §4
+fixes the test: "A smoke test builds the chart and renders one frame. It passes when no exception
+occurs."
 
 Three questions stay open in other ADRs. Chart.js ADR 0019 (Open) leaves two forms for the six
 fixtures that drive the animator. Chart.js ADR 0022 (Open, "The fixtures of phase 7") fixes only
@@ -483,10 +484,10 @@ CI job `fixtures` and reports fixtures that need a phase 8 plugin as passed.
 
 All files are in the session scratchpad folder
 `/private/tmp/claude-501/-Users-vasilich-IdeaProjects-flutter-ports/7a9baa8a-bd9d-417b-a53e-11aebf47f21e/scratchpad/design/`
-(below: `<design>`). The drafts are `.handover/phase7/design/fixture-runner/draft-*.md`, and the judgment
-is `judge.md` in the same folder. The Node.js probes ran on an x64 build of Node.js v24.12.0 under
-Rosetta, against the Chart.js build at `7169e651` (Chart.js ADR 0032). The Dart figures come from
-an Apple M3 Max, Flutter 3.44.9 and Dart 3.12.2.
+(below: `<design>`). The drafts are `design/fixture-runner/draft-*.md`, and the judgment is
+`judge.md` in the same folder (working files of phase 7, not committed). The Node.js probes ran
+on an x64 build of Node.js v24.12.0 under Rosetta, against the Chart.js build at `7169e651`
+(Chart.js ADR 0032). The Dart figures come from an Apple M3 Max, Flutter 3.44.9 and Dart 3.12.2.
 
 - **E1, upstream source.** chartjs-test-utils v0.4.0 `src/fixture.js:1-93`, `src/index.js:5`,
   `src/utils.js:36-115`, `src/matchers.js:176-218`. Chart.js `7169e651` `test/index.js:1-36`,
