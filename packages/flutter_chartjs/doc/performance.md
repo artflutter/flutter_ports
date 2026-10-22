@@ -11,8 +11,9 @@
   declared `$context`, which the port does not take. Section 11 has the scale figures of phase 6
   ([Chart.js ADR 0025](adr/0025-scale-value-parameters.md)), `jsAdd` and the number formatting
   guards ([Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md)). Section 12 has the
-  date figures of phase 6 ([Chart.js ADR 0024](adr/0024-dates.md)).
-- Date: 2026-10-20
+  date figures of phase 6 ([Chart.js ADR 0024](adr/0024-dates.md)). Section 13 has the controller
+  figures of phase 7, and section 13.6 the figures of step 7 on the phones.
+- Date: 2026-10-22
 - Related: [Chart.js ADR 0016](adr/0016-frame-scheduling.md) (frame scheduling),
   [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (no display-only JS exactness).
 
@@ -2020,7 +2021,7 @@ benchmark outside the repository, medians in ns for each call:
 ## 13. Controllers (phase 7)
 
 The figures of the decisions of phase 7. Chart.js ADRs 0027, 0028, 0030 and 0031 give the
-evidence files. The step 7 figures on the phones come in section 13.6.
+evidence files. Section 13.6 has the figures of step 7.
 
 ### 13.1 The parsed read (Chart.js ADR 0036)
 
@@ -2209,7 +2210,7 @@ for each update of a dataset, against 1.1 ns and 0.6 ns for typed setters. The r
 The figures of the decision for the config of the stress mode `chart` (section 6). The Dart
 figures come from `flutter test` (JIT) or from dart2wasm, the Node.js figures from the x64 Node.js
 v24.12.0 and the Chart.js build at the pin. The Node.js times are relative only. The ADR Evidence
-gives the commands and the files. The phone figures of step 7 come in section 13.6.
+gives the commands and the files. Section 13.6 has the phone figures of step 7.
 
 | Id | Probe | Result |
 |---|---|---|
@@ -2235,57 +2236,728 @@ gives the commands and the files. The phone figures of step 7 come in section 13
   `controller.doughnut.js:229`). Measure them only on a tree with this fix (review G-U2, F1).
 - The before figures of the cases `chart.a`, `chart.b`, `chart.c` and `axes.*` and of the stress
   modes `chart` and `axes` (commit `0e0ab93`) are a working file of phase 7, not committed. Step 7
-  (G-U6) measures the sides A, A' and B of section 6 and writes them with the before figures in
-  section 13.6.
+  (G-U6) measured the sides A, A' and B of section 6. Section 13.6 has these figures with the
+  before figures.
+
+### 13.6 The figures of step 7
+
+Step 7 of phase 7 measured the chart path on the phones from 2026-10-21 to 2026-10-22. The
+protocols, the raw data, the scripts and the recomputes are working files of phase 7
+(`.handover/phase7/perf/step7/`), not committed. This section gives the figures and the
+decisions.
+
+**Method.**
+
+- Sides. A is a detached worktree of `0e0ab93` (the phase 5 and 6 tree). A' is A with the bridge
+  patch of section 6. B is `c0a6576` (the phase 7 tree). In the A/B series of the candidates, A
+  is `c0a6576` and B is `c0a6576` with the patch. Each patch passed `git apply --check`, and the
+  SHA-256 of `git diff` of the B worktree equals the SHA-256 of the patch.
+- Toolchain. Each side was built with Flutter 3.47.7 (Dart 3.13.5). The before figures of commit
+  `0e0ab93` (a working file of phase 7, section 13.5) came from Flutter 3.44.9. Step 7 measured A
+  again on Flutter 3.47.7. The two toolchains differ by about -8 % to +9 %, and most cells differ
+  by less than 4 %.
+- Builds. Profile builds, one at a time, in worktrees outside the main checkout. An Android build
+  took 3-20 s with warm caches (the before/after series: 72 APKs in 867 s). Other sessions shared
+  the Mac. Its 1-minute load was 1.3-5.5 during the builds. The Mac load does not change the
+  timings on the phone.
+- Runs. Each run is a fresh process (`am force-stop`, then `am start`). The app stays in front,
+  and nobody touches the screen. After each run, no busy loop and no sampler stays on the phone.
+- Gate of the Pixel 8a. Before each run or pair: the battery at 33.0 °C or less, and `cpu8` at
+  2.8 GHz or more in a busy loop of 3 s that stops by itself. The gate waits at most 10 minutes. A
+  sampler records the frequency of the core of the UI thread about two times a second. A case
+  window is excluded when more than 10 % of its samples are below 2.5 GHz. A run is excluded when
+  the phone got user input (`mLastUserActivityTime`), when the app was not in front at the end,
+  when the run gave no `BENCH done`, or on a crash.
+- The A/B series (G-U6 and the candidates). Each protocol was written before its first run.
+  Pair i runs A then B when i is odd, and B then A when i is even. Stage 1 has 6 pairs. Stage 2
+  adds 6 pairs when a main interval includes 0, when a main cell has fewer than 6 valid pairs, or
+  when a control interval lies entirely above 0. A cell gives the mean of the pair differences of
+  the run medians, with a 95 % percentile bootstrap interval (20000 resamples, a fixed seed). The
+  decision rule of a candidate: accept B when the upper end of each main interval is below 0 and
+  no control interval lies entirely above 0; reject B when a main or a control interval lies
+  entirely above 0; else the result is inconclusive. A second agent recomputed each candidate
+  series from the raw files with its own script. Each recompute gives the same figures (interval
+  ends within 0.007 ms) and the same decision. The recomputes found text errors in the unit
+  reports only, for example the count of excluded cells. This section uses the recomputed counts.
+- The before/after series run 3 processes of each side in the order A B A B A B. They give the
+  ratio of the medians, with no interval.
+- Device state. Pixel 8a `4B071JEKB17363`, Android 17 (`CP3A.260905.009`), on AC power at 100 %.
+  The keyguard was off before and after each run. iPhone 17 Pro (iOS 26.6.2) on the cable,
+  `passcodeRequired: false` before and after each run (2026-10-21, 19:16-21:00 CEST). `devicectl`
+  gives no temperature of the iPhone.
+- Order of the units (CEST): G-U6 on the Pixel 8a from 2026-10-21 23:13 to 2026-10-22 02:39, the
+  before/after series 02:45-05:55, the profile 06:05-07:09, the A/B series of the candidates
+  08:02-13:40.
+
+**G-U6: the A/B of section 6 on the Pixel 8a.** 48 runs: 12 pairs of S1 (A against A') and 12
+pairs of S2 (A' against B). Both series needed stage 2. Each run gave `BENCH done`. One run (S1
+p2 A') started after 10 minutes of gate wait at 33.1 °C (`pass=0`) and stays in. No run was
+excluded as a whole. S2 p1 B had 8 of 12 cells below 2.5 GHz. About 30 other cells had 1 or 2 of
+their 6-10 samples on a mid core at 2.37 GHz or lower. Thus a primary cell has 6-12 valid pairs.
+Cells: the median of the run medians (minimum-maximum), in ms.
+
+S1, the cost of the hidden scales (difference A' - A):
+
+| Case | N | Metric | Pairs | A | A' | Mean diff | 95 % interval | Rel. | Result |
+|---|---:|---|---:|---|---|---:|---|---:|---|
+| chart.a | 1000 | draw | 8 | 0.332 (0.322-0.338) | 0.332 (0.322-0.374) | +0.004 | -0.006 .. +0.017 | +1.2 % | unresolved |
+| chart.a | 5000 | draw | 10 | 1.651 (1.634-1.714) | 1.675 (1.632-1.730) | +0.013 | -0.024 .. +0.049 | +0.8 % | unresolved |
+| chart.a | 20000 | draw | 11 | 6.702 (6.656-6.963) | 6.870 (6.698-6.963) | +0.070 | -0.038 .. +0.172 | +1.0 % | unresolved |
+| chart.b sharing | 1000 | update | 12 | 0.166 (0.160-0.180) | 0.400 (0.395-0.409) | +0.234 | +0.232 .. +0.237 | +140.1 % | slower |
+| chart.b sharing | 5000 | update | 10 | 0.538 (0.530-0.550) | 0.879 (0.854-0.888) | +0.336 | +0.324 .. +0.346 | +62.3 % | slower |
+| chart.b sharing | 20000 | update | 12 | 2.103 (2.076-2.149) | 2.833 (2.793-2.906) | +0.734 | +0.708 .. +0.759 | +34.9 % | slower |
+| chart.b no-sharing | 1000 | update | 10 | 0.340 (0.331-0.349) | 0.583 (0.559-0.607) | +0.244 | +0.235 .. +0.252 | +71.9 % | slower |
+| chart.b no-sharing | 5000 | update | 12 | 1.401 (1.363-1.477) | 1.794 (1.766-1.837) | +0.390 | +0.363 .. +0.413 | +27.7 % | slower |
+| chart.b no-sharing | 20000 | update | 12 | 5.600 (5.304-6.233) | 5.956 (5.845-6.932) | +0.464 | +0.307 .. +0.662 | +8.3 % | slower |
+| chart.c | 1000 | update | 12 | 6.411 (6.303-6.907) | 6.655 (6.575-6.763) | +0.214 | +0.093 .. +0.307 | +3.3 % | slower |
+| chart.c | 5000 | update | 10 | 33.349 (32.496-34.096) | 34.091 (33.458-35.893) | +1.141 | +0.476 .. +1.814 | +3.4 % | slower |
+| chart.c | 20000 | update | 11 | 146.909 (135.795-152.229) | 148.246 (145.312-151.980) | +1.112 | -1.507 .. +4.293 | +0.8 % | unresolved |
+
+S2, the cost of the ported controllers (difference B - A'):
+
+| Case | N | Metric | Pairs | A' | B | Mean diff | 95 % interval | Rel. | Result |
+|---|---:|---|---:|---|---|---:|---|---:|---|
+| chart.a | 1000 | draw | 6 | 0.330 (0.322-0.336) | 0.337 (0.326-0.367) | +0.009 | -0.001 .. +0.020 | +2.9 % | unresolved |
+| chart.a | 5000 | draw | 7 | 1.713 (1.638-1.734) | 1.666 (1.629-1.834) | -0.003 | -0.057 .. +0.058 | -0.2 % | unresolved |
+| chart.a | 20000 | draw | 12 | 6.823 (6.652-6.965) | 6.848 (6.716-7.383) | +0.065 | -0.047 .. +0.184 | +1.0 % | unresolved |
+| chart.b sharing | 1000 | update | 12 | 0.404 (0.399-0.416) | 0.601 (0.588-0.640) | +0.197 | +0.191 .. +0.206 | +48.8 % | slower |
+| chart.b sharing | 5000 | update | 11 | 0.875 (0.855-0.889) | 1.674 (1.641-1.694) | +0.795 | +0.779 .. +0.811 | +91.1 % | slower |
+| chart.b sharing | 20000 | update | 10 | 2.832 (2.792-2.868) | 5.921 (5.765-6.016) | +3.076 | +3.014 .. +3.135 | +108.5 % | slower |
+| chart.b no-sharing | 1000 | update | 10 | 0.581 (0.567-0.595) | 1.155 (1.132-1.184) | +0.574 | +0.561 .. +0.586 | +98.7 % | slower |
+| chart.b no-sharing | 5000 | update | 11 | 1.801 (1.785-1.842) | 4.549 (4.451-4.612) | +2.739 | +2.706 .. +2.770 | +152.0 % | slower |
+| chart.b no-sharing | 20000 | update | 11 | 5.939 (5.801-6.945) | 21.043 (20.012-22.548) | +15.093 | +14.606 .. +15.613 | +247.4 % | slower |
+| chart.c | 1000 | update | 11 | 6.664 (6.536-6.788) | 6.941 (6.845-7.192) | +0.298 | +0.210 .. +0.394 | +4.5 % | slower |
+| chart.c | 5000 | update | 9 | 34.122 (33.430-35.382) | 35.859 (34.565-37.520) | +1.686 | +0.784 .. +2.594 | +4.9 % | slower |
+| chart.c | 20000 | update | 10 | 150.757 (135.651-152.208) | 150.485 (147.166-159.517) | +2.881 | -1.864 .. +8.582 | +1.9 % | unresolved |
+
+The parts of B (median of the run medians, minimum-maximum, ms):
+
+| Case | N | Runs | elements | layout | datasetsUpdate | datasetsDraw |
+|---|---:|---:|---|---|---|---|
+| chart.a | 1000 | 6 | 0.000 | 0.000 | 0.000 | 0.335 (0.324-0.364) |
+| chart.a | 5000 | 7 | 0.000 | 0.000 | 0.000 | 1.661 (1.625-1.829) |
+| chart.a | 20000 | 12 | 0.000 | 0.000 | 0.000 | 6.707 (6.551-7.210) |
+| chart.b sharing | 1000 | 12 | 0.007 (0.006-0.007) | 0.151 (0.147-0.163) | 0.316 (0.309-0.336) | 0.362 (0.351-0.394) |
+| chart.b sharing | 5000 | 11 | 0.008 (0.008-0.009) | 0.162 (0.154-0.167) | 1.350 (1.315-1.366) | 1.836 (1.814-1.872) |
+| chart.b sharing | 20000 | 10 | 0.016 (0.015-0.017) | 0.228 (0.221-0.233) | 5.399 (5.244-5.464) | 8.230 (8.144-8.371) |
+| chart.b no-sharing | 1000 | 10 | 0.213 (0.203-0.218) | 0.160 (0.154-0.170) | 0.657 (0.640-0.667) | 0.366 (0.354-0.378) |
+| chart.b no-sharing | 5000 | 11 | 1.031 (1.011-1.052) | 0.189 (0.183-0.197) | 3.164 (3.095-3.200) | 1.829 (1.783-1.877) |
+| chart.b no-sharing | 20000 | 11 | 4.786 (4.520-5.055) | 0.259 (0.248-0.264) | 15.566 (14.638-16.830) | 10.507 (9.722-11.101) |
+| chart.c | 1000 | 11 | 0.042 (0.041-0.044) | 0.167 (0.165-0.179) | 6.560 (6.446-6.821) | 1.632 (1.561-1.675) |
+| chart.c | 5000 | 9 | 0.069 (0.065-0.076) | 0.253 (0.242-0.282) | 35.251 (33.796-36.544) | 8.455 (8.306-8.886) |
+| chart.c | 20000 | 10 | 0.084 (0.083-0.101) | 0.267 (0.261-0.304) | 149.812 (146.411-158.635) | 33.869 (31.372-37.051) |
+
+- S1 agrees with Chart.js ADR 0031 G3 (+0.14 to +0.6 ms). The `chart.b` update with sharing at
+  20000 (+0.734 ms) is a little above that range. The `chart.a` draw shows no resolved difference.
+- S2: the `chart.b` update is slower in each cell, by 49-109 % with sharing and by 99-247 %
+  without sharing. Without sharing, the part `elements` of B (the scatter `getMaxOverflow` loop,
+  upstream work) is 0.213 / 1.031 / 4.786 ms, close to G5 (0.20 / 0.93 / 4.69 ms). The rest of the
+  cost is in `datasetsUpdate`: 15.6 ms at 20000, against an A' update of 5.9 ms. The `chart.a`
+  draw has no resolved difference at each count.
+- Secondary S2 cells with a resolved cost: the `chart.b` draw without sharing at 20000 (+1.125 ms,
+  +0.838 .. +1.445), the `chart.b` draw with sharing at 20000 (+0.131 ms), and the `chart.c` draw
+  at 1000 and 5000 (+0.080 and +0.267 ms).
+- By the protocol, a primary S2 cell with a cost of 0.1 ms or more for each frame is a candidate
+  item of section 13.7: the six `chart.b` update cells and the `chart.c` update at 1000 and 5000
+  (section 13.7 item 9).
+- Builds (`--dart-define=CASES=chart.a,chart.b,chart.c --dart-define=N=1000,5000,20000`): A 20 s,
+  A' 16 s and B 3 s, at a Mac load of 3.65-4.59.
+- macOS (a record, not a decision of this step). Another unit ran G-U6 on macOS: pairs 1-4 on
+  2026-10-21 from 18:52 to 21:15 CEST, then pairs 5-12 from 23:59 to 00:43. S1 has 9 and S2 has 11
+  valid pairs. S2 on macOS: `chart.a` draw -1.6 to -2.4 %; `chart.b` update +0.13 / +0.51 /
+  +1.96 ms with sharing and +0.33 / +1.62 / +7.39 ms without sharing; `chart.c` update +0.12 /
+  +0.44 / +2.27 ms. Many runs were not in front, and the user gave input on the Mac during them.
+  The protocol kept these runs.
+
+**Before and after: the frameless benchmark on the Pixel 8a.** 90 runs from 02:45 to 05:55 CEST.
+Each run passed the gate (battery 32.5-33.0 °C, `cpu8` at 2.91 GHz, waits of 3-366 s). No run was
+excluded. A full-case process of B (72 cells, 300 s) throttles the UI core after about 97 s: 45
+of the 72 windows of each B run ran below 2.5 GHz. Thus `chart.a`, `chart.b` and `chart.c` come
+from the full-case processes (3 A, 3 B), and the other cells come from short groups that run alone:
+`axes.linear` and `axes.logarithmic`, `axes.category` and `axes.time` (A and B, A B A B A B), and
+three groups of the type cases (B, 3 runs each). Each value is the median of the run medians in
+ms. "before" is commit `0e0ab93` on Flutter 3.44.9. A is `0e0ab93` and B is `c0a6576`, both on
+Flutter 3.47.7.
+
+| Case | N | update: before | update: A | update: B | update B / A | draw: before | draw: A | draw: B | draw B / A | end: A | end: B |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| chart.a | 1000 | - | - | - | - | 0.329 | 0.323 | 0.331 | 1.02 | 0.069 | 0.069 |
+| chart.a | 5000 | - | - | - | - | 1.679 | 1.642 | 1.649 | 1.00 | 0.330 | 0.323 |
+| chart.a | 20000 | - | - | - | - | 6.812 | 6.737 | 6.684 | 0.99 | 1.930 | 1.952 |
+| chart.b sharing | 1000 | 0.162 | 0.168 | 0.593 | 3.53 | 0.353 | 0.365 | 0.367 | 1.01 | 0.076 | 0.082 |
+| chart.b sharing | 5000 | 0.533 | 0.535 | 1.654 | 3.09 | 1.769 | 1.779 | 1.860 | 1.05 | 0.341 | 0.346 |
+| chart.b sharing | 20000 | 2.059 | 2.086 | 5.769 | 2.77 | 8.152 | 8.184 | 8.319 | 1.02 | 2.053 | 2.109 |
+| chart.b no-sharing | 1000 | 0.336 | 0.358 | 1.153 | 3.22 | 0.367 | 0.386 | 0.373 | 0.97 | 0.080 | 0.087 |
+| chart.b no-sharing | 5000 | 1.395 | 1.402 | 4.519 | 3.22 | 1.820 | 1.829 | 1.832 | 1.00 | 0.354 | 0.379 |
+| chart.b no-sharing | 20000 | 5.181 | 5.382 | 21.484 | 3.99 | 9.246 | 9.137 | 10.904 | 1.19 | 2.060 | 2.212 |
+| chart.c | 1000 | 6.333 | 6.354 | 6.844 | 1.08 | 1.503 | 1.560 | 1.635 | 1.05 | 1.356 | 1.349 |
+| chart.c | 5000 | 32.658 | 34.068 | 36.389 | 1.07 | 8.272 | 8.388 | 8.670 | 1.03 | 5.131 | 5.139 |
+| chart.c | 20000 | 144.485 | 145.068 | 146.328 | 1.01 | 33.094 | 33.828 | 34.648 | 1.02 | 12.671 | 12.543 |
+| axes.linear draw | 1000 | - | - | - | - | 0.464 | 0.472 | 0.473 | 1.00 | 0.099 | 0.103 |
+| axes.linear draw | 5000 | - | - | - | - | 1.833 | 1.859 | 1.814 | 0.98 | 0.392 | 0.387 |
+| axes.linear draw | 20000 | - | - | - | - | 6.997 | 7.127 | 7.002 | 0.98 | 2.101 | 2.104 |
+| axes.linear update | 1000 | 0.705 | 0.720 | 0.904 | 1.26 | 0.697 | 0.728 | 0.751 | 1.03 | 0.113 | 0.114 |
+| axes.linear update | 5000 | 1.501 | 1.521 | 2.229 | 1.47 | 2.148 | 2.223 | 2.242 | 1.01 | 0.412 | 0.407 |
+| axes.linear update | 20000 | 4.598 | 4.606 | 7.452 | 1.62 | 8.708 | 8.756 | 9.031 | 1.03 | 2.203 | 2.282 |
+| axes.logarithmic draw | 1000 | - | - | - | - | 0.540 | 0.553 | 0.542 | 0.98 | 0.119 | 0.118 |
+| axes.logarithmic draw | 5000 | - | - | - | - | 1.937 | 1.958 | 1.915 | 0.98 | 0.415 | 0.408 |
+| axes.logarithmic draw | 20000 | - | - | - | - | 7.177 | 7.262 | 7.138 | 0.98 | 2.105 | 2.101 |
+| axes.logarithmic update | 1000 | 0.987 | 1.015 | 1.201 | 1.18 | 0.891 | 0.921 | 0.912 | 0.99 | 0.135 | 0.136 |
+| axes.logarithmic update | 5000 | 2.044 | 2.064 | 2.825 | 1.37 | 2.373 | 2.456 | 2.402 | 0.98 | 0.444 | 0.438 |
+| axes.logarithmic update | 20000 | 6.108 | 6.328 | 9.223 | 1.46 | 9.045 | 9.500 | 9.261 | 0.97 | 2.325 | 2.338 |
+| axes.category draw | 1000 | - | - | - | - | 0.634 | 0.605 | 0.625 | 1.03 | 0.108 | 0.111 |
+| axes.category draw | 5000 | - | - | - | - | 2.043 | 1.970 | 2.051 | 1.04 | 0.388 | 0.405 |
+| axes.category draw | 20000 | - | - | - | - | 7.520 | 7.222 | 7.448 | 1.03 | 2.015 | 2.083 |
+| axes.category update | 1000 | 4.084 | 4.144 | 4.382 | 1.06 | 1.106 | 1.114 | 1.115 | 1.00 | 0.131 | 0.135 |
+| axes.category update | 5000 | 20.378 | 20.543 | 21.830 | 1.06 | 2.722 | 2.809 | 2.831 | 1.01 | 0.481 | 0.496 |
+| axes.category update | 20000 | 97.440 | 96.511 | 101.441 | 1.05 | 10.696 | 11.638 | 11.994 | 1.03 | 2.194 | 2.252 |
+| axes.time draw | 1000 | - | - | - | - | 0.632 | 0.619 | 0.633 | 1.02 | 0.116 | 0.121 |
+| axes.time draw | 5000 | - | - | - | - | 1.934 | 1.884 | 1.938 | 1.03 | 0.386 | 0.398 |
+| axes.time draw | 20000 | - | - | - | - | 7.437 | 7.313 | 7.369 | 1.01 | 2.071 | 2.101 |
+| axes.time update | 1000 | 1.076 | 1.033 | 1.253 | 1.21 | 1.074 | 1.035 | 1.068 | 1.03 | 0.131 | 0.137 |
+| axes.time update | 5000 | 1.743 | 1.645 | 2.511 | 1.53 | 2.366 | 2.247 | 2.377 | 1.06 | 0.406 | 0.430 |
+| axes.time update | 20000 | 5.597 | 5.155 | 8.569 | 1.66 | 9.614 | 9.031 | 9.823 | 1.09 | 2.201 | 2.452 |
+
+- The `chart.b` update of B is 2.8-4.0 times A. The `chart.c` update is 1.01-1.08 times A. The draw
+  is 0.97-1.05 times A, except `chart.b` without sharing at 20000 (1.19).
+- The `axes.*` update of B is 1.18-1.66 times A for the linear, logarithmic and time axes. It grows
+  with N: this is the controller path of S2. The category update is 1.05-1.06 times A. The
+  `axes.*` draw is 0.97-1.09 times A.
+- The toolchain step: A on Flutter 3.47.7 is within about -8 % to +9 % of before. The largest steps
+  are the `axes.time` update at 20000 (-8 %) and the `axes.category` draw at 20000 (+9 %). The
+  before figures of the time update (before.md §4) ran at 2.36-2.69 GHz.
+
+The type cases of Chart.js ADR 0031 §7 on the Pixel 8a, side B (median of the run medians in ms;
+the counts of the type). The column "windows" gives the valid windows of 3. Bubble draw at 5000
+and 20000 ran at 2.69-2.91 GHz. The other windows ran at 2.91 GHz.
+
+| Type | N | draw case: draw | draw case: end | update case: update | update case: draw | update case: elements | update case: datasetsUpdate | windows (update case) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| bar | 1000 | 2.561 | 5.295 | 4.966 | 2.985 | 0.312 | 4.064 | 3 |
+| bar | 5000 | 13.326 | 9.303 | 34.784 | 17.680 | 1.556 | 30.662 | 3 |
+| bar | 20000 | 56.044 | 116.594 | 141.112 | 68.247 | 6.542 | 126.974 | 3 |
+| bubble | 1000 | 1.492 | 1.217 | 2.685 | 1.612 | 1.059 | 1.299 | 2 |
+| bubble | 5000 | 7.431 | 4.169 | 12.340 | 8.127 | 5.268 | 6.458 | 2 |
+| bubble | 20000 | 30.742 | 12.370 | 68.588 | 34.884 | 27.139 | 40.754 | 2 |
+| doughnut | 100 | 0.612 | 0.070 | 0.238 | 0.623 | 0.007 | 0.184 | 2 |
+| doughnut | 1000 | 6.081 | 0.649 | 1.557 | 6.219 | 0.029 | 1.464 | 2 |
+| doughnut | 5000 | 32.591 | 5.952 | 10.576 | 35.631 | 0.124 | 9.372 | 2 |
+| pie | 100 | 0.517 | 0.047 | 0.236 | 0.535 | 0.007 | 0.182 | 3 |
+| pie | 1000 | 5.270 | 1.037 | 1.568 | 5.395 | 0.028 | 1.474 | 3 |
+| pie | 5000 | 28.632 | 17.595 | 10.502 | 29.814 | 0.126 | 9.945 | 3 |
+| polarArea | 100 | 0.507 | 0.032 | 0.358 | 0.546 | 0.021 | 0.161 | 3 |
+| polarArea | 1000 | 5.008 | 0.701 | 1.853 | 5.381 | 0.146 | 1.355 | 3 |
+| polarArea | 5000 | 27.912 | 15.005 | 13.012 | 31.043 | 0.636 | 9.828 | 3 |
+| radar | 100 | 0.052 | 0.016 | 0.350 | 0.065 | 0.019 | 0.155 | 3 |
+| radar | 1000 | 0.423 | 0.076 | 1.748 | 0.596 | 0.253 | 1.165 | 3 |
+| radar | 5000 | 2.082 | 0.350 | 8.206 | 2.880 | 1.290 | 5.746 | 3 |
+
+**The iPhone 17 Pro.** 3 A and 3 B processes in the order A B A B A B, the default cases and
+counts. The phone got slower from run to run: the run medians rose by about 15-25 % from run 1 to
+run 3 on both sides. In this order, each B run follows its A run. Thus the plain ratio B / A of the
+medians below is biased upward. The working files also give a bracketed ratio (each B run against
+the mean of the A runs before and after it): there, the draw and the end are within -6 % to +5 %,
+except the draw of `chart.b` without sharing at 20000 (1.09-1.10).
+
+| Case | N | update B / A | draw B / A | end B / A |
+|---|---:|---|---|---|
+| chart.a | 1000 | - | 0.170 / 0.167 = 1.02 | 0.041 / 0.040 = 1.02 |
+| chart.a | 5000 | - | 0.961 / 0.856 = 1.12 | 0.218 / 0.190 = 1.15 |
+| chart.a | 20000 | - | 3.871 / 3.489 = 1.11 | 0.872 / 0.762 = 1.14 |
+| chart.b sharing | 1000 | 0.354 / 0.080 = 4.42 | 0.196 / 0.173 = 1.13 | 0.048 / 0.043 = 1.12 |
+| chart.b sharing | 5000 | 0.986 / 0.258 = 3.82 | 0.993 / 0.898 = 1.11 | 0.222 / 0.204 = 1.09 |
+| chart.b sharing | 20000 | 3.480 / 0.927 = 3.75 | 4.346 / 3.972 = 1.09 | 0.897 / 0.809 = 1.11 |
+| chart.b no-sharing | 1000 | 0.649 / 0.172 = 3.77 | 0.197 / 0.177 = 1.11 | 0.048 / 0.044 = 1.09 |
+| chart.b no-sharing | 5000 | 2.592 / 0.734 = 3.53 | 1.024 / 0.931 = 1.10 | 0.226 / 0.207 = 1.09 |
+| chart.b no-sharing | 20000 | 12.680 / 3.755 = 3.38 | 5.480 / 4.483 = 1.22 | 0.974 / 0.849 = 1.15 |
+| chart.c | 1000 | 3.863 / 3.312 = 1.17 | 0.624 / 0.563 = 1.11 | 0.533 / 0.489 = 1.09 |
+| chart.c | 5000 | 19.792 / 18.272 = 1.08 | 3.245 / 3.204 = 1.01 | 2.298 / 2.191 = 1.05 |
+| chart.c | 20000 | 80.452 / 77.171 = 1.04 | 12.759 / 12.548 = 1.02 | 8.935 / 8.907 = 1.00 |
+| axes.linear draw | 1000 | - | 0.250 / 0.245 = 1.02 | 0.063 / 0.063 = 1.00 |
+| axes.linear draw | 5000 | - | 1.044 / 1.034 = 1.01 | 0.265 / 0.259 = 1.02 |
+| axes.linear draw | 20000 | - | 4.055 / 4.104 = 0.99 | 0.987 / 0.979 = 1.01 |
+| axes.linear update | 1000 | 0.553 / 0.412 = 1.34 | 0.372 / 0.358 = 1.04 | 0.067 / 0.066 = 1.02 |
+| axes.linear update | 5000 | 1.313 / 0.822 = 1.60 | 1.175 / 1.200 = 0.98 | 0.269 / 0.271 = 0.99 |
+| axes.linear update | 20000 | 4.376 / 2.379 = 1.84 | 4.651 / 4.683 = 0.99 | 1.038 / 1.028 = 1.01 |
+| axes.logarithmic draw | 1000 | - | 0.282 / 0.279 = 1.01 | 0.068 / 0.066 = 1.03 |
+| axes.logarithmic draw | 5000 | - | 1.094 / 1.080 = 1.01 | 0.272 / 0.268 = 1.01 |
+| axes.logarithmic draw | 20000 | - | 4.162 / 4.143 = 1.00 | 1.018 / 0.996 = 1.02 |
+| axes.logarithmic update | 1000 | 0.732 / 0.578 = 1.27 | 0.461 / 0.446 = 1.03 | 0.069 / 0.067 = 1.03 |
+| axes.logarithmic update | 5000 | 1.757 / 1.152 = 1.53 | 1.299 / 1.270 = 1.02 | 0.277 / 0.271 = 1.02 |
+| axes.logarithmic update | 20000 | 5.743 / 3.342 = 1.72 | 4.777 / 4.723 = 1.01 | 1.050 / 1.033 = 1.02 |
+| axes.category draw | 1000 | - | 0.315 / 0.306 = 1.03 | 0.068 / 0.066 = 1.03 |
+| axes.category draw | 5000 | - | 1.138 / 1.118 = 1.02 | 0.276 / 0.267 = 1.03 |
+| axes.category draw | 20000 | - | 4.273 / 4.182 = 1.02 | 1.038 / 0.997 = 1.04 |
+| axes.category update | 1000 | 2.609 / 2.382 = 1.10 | 0.542 / 0.524 = 1.03 | 0.070 / 0.067 = 1.04 |
+| axes.category update | 5000 | 13.240 / 12.270 = 1.08 | 1.502 / 1.461 = 1.03 | 0.298 / 0.286 = 1.04 |
+| axes.category update | 20000 | 62.154 / 55.427 = 1.12 | 6.344 / 6.030 = 1.05 | 1.228 / 1.123 = 1.09 |
+| axes.time draw | 1000 | - | 0.319 / 0.301 = 1.06 | 0.070 / 0.065 = 1.08 |
+| axes.time draw | 5000 | - | 1.093 / 1.080 = 1.01 | 0.274 / 0.265 = 1.03 |
+| axes.time draw | 20000 | - | 4.244 / 4.257 = 1.00 | 1.044 / 0.995 = 1.05 |
+| axes.time update | 1000 | 0.728 / 0.576 = 1.26 | 0.533 / 0.510 = 1.05 | 0.069 / 0.066 = 1.05 |
+| axes.time update | 5000 | 1.441 / 0.891 = 1.62 | 1.257 / 1.222 = 1.03 | 0.282 / 0.273 = 1.03 |
+| axes.time update | 20000 | 4.827 / 2.689 = 1.80 | 4.911 / 4.823 = 1.02 | 1.090 / 1.053 = 1.04 |
+
+The type cases on the iPhone, side B (median of 3 run medians in ms):
+
+| Type | N | draw case: draw | update case: update | update case: draw |
+|---|---:|---:|---:|---:|
+| bar | 1000 / 5000 / 20000 | 1.173 / 5.728 / 24.815 | 3.008 / 18.776 / 78.128 | 1.169 / 7.042 / 27.399 |
+| bubble | 1000 / 5000 / 20000 | 0.649 / 3.150 / 12.506 | 1.691 / 8.243 / 43.036 | 0.648 / 3.245 / 15.035 |
+| doughnut | 100 / 1000 / 5000 | 0.252 / 2.460 / 12.167 | 0.159 / 1.032 / 5.118 | 0.251 / 2.447 / 12.685 |
+| pie | 100 / 1000 / 5000 | 0.212 / 2.028 / 10.405 | 0.158 / 1.028 / 5.212 | 0.212 / 2.057 / 10.956 |
+| polarArea | 100 / 1000 / 5000 | 0.208 / 1.998 / 10.203 | 0.238 / 1.151 / 6.042 | 0.209 / 2.029 / 12.031 |
+| radar | 100 / 1000 / 5000 | 0.030 / 0.252 / 1.240 | 0.225 / 0.958 / 4.504 | 0.032 / 0.272 / 1.388 |
+
+- The iPhone gives the same picture as the Pixel 8a: the `chart.b` update of B is 3.4-4.4 times
+  A, and the `axes.*` update of the linear, logarithmic and time axes grows with N (1.26-1.84).
+- macOS and Chrome (a record of another unit, 2026-10-22 01:00-02:20 CEST, 3 + 3 processes each):
+  the bracketed `chart.b` update B / A is 3.1-4.1 on macOS and 2.6-3.3 in Chrome 155 with
+  dart2wasm. The `chart.c` update is 1.01-1.06 and 0.99-1.03. The `chart.a` draw is 0.99-1.00.
+
+**The stress entry (frame figures).** Side B on the Pixel 8a: one fresh process for each scenario,
+the means of the `STRESS` line in ms. A 7-s run with FPS 0.00 gave no frame in its window. Its
+60-s row is the figure. The UI-core column is the median in the run: the governor keeps it low
+under a light load, so the stress runs have no frequency exclusion. Each gate passed (battery
+32.5-33.0 °C, `cpu8` at 2.91 GHz). "before" is before.md §5 (`0e0ab93`, Flutter 3.44.9). The
+maximum build and raster times are in the working files.
+
+| Mode / type | Call | N | s | FPS | updateMs | drawMs | buildMs | rasterMs | UI core (GHz) | before: FPS / buildMs / drawMs / rasterMs |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| chart / line | draw | 1000 | 7 | 58.34 | 0.01 | 5.72 | 6.51 | 5.78 | 0.61 | 58.02 / 6.17 / 5.53 / 5.23 |
+| chart / line | draw | 5000 | 7 | 57.51 | 0.00 | 7.61 | 8.39 | 4.89 | 0.71 | 59.00 / 7.87 / 7.38 / 4.83 |
+| chart / line | draw | 20000 | 7 | 50.91 | 0.00 | 11.73 | 12.36 | 7.68 | 2.77 | 56.86 / 12.75 / 12.03 / 7.72 |
+| chart / line | update | 1000 | 7 | 58.00 | 3.22 | 2.99 | 7.11 | 4.86 | 0.91 | 59.01 / 6.12 / 3.85 / 4.66 |
+| chart / line | update | 5000 | 7 | 57.17 | 4.02 | 4.71 | 10.03 | 5.02 | 1.42 | 57.67 / 9.12 / 6.27 / 5.04 |
+| chart / line | update | 20000 | 7 | 30.45 | 6.56 | 11.65 | 21.21 | 9.90 | 2.91 | 39.52 / 16.90 / 12.14 / 9.15 |
+| chart / scatter | draw | 1000 | 7 | 58.50 | 0.01 | 5.52 | 6.18 | 5.53 | 0.58 | - |
+| chart / scatter | draw | 5000 | 7 | 58.01 | 0.01 | 7.53 | 8.22 | 5.04 | 0.91 | - |
+| chart / scatter | draw | 20000 | 7 | 50.46 | 0.00 | 11.73 | 12.53 | 7.72 | 2.31 | - |
+| chart / scatter | update | 1000 | 7 | 58.34 | 4.57 | 2.62 | 8.06 | 4.45 | 0.80 | - |
+| chart / scatter | update | 5000 | 7 | 48.26 | 6.40 | 4.56 | 12.02 | 5.98 | 1.84 | - |
+| chart / scatter | update | 20000 | 7 | 20.35 | 24.43 | 14.32 | 40.56 | 8.70 | 2.91 | - |
+| chart / bar | draw | 1000 | 7 | 42.94 | 0.00 | 4.60 | 15.50 | 13.32 | 2.77 | - |
+| chart / bar | draw | 5000 | 7 | 21.84 | 0.00 | 16.98 | 32.56 | 36.30 | 2.91 | - |
+| chart / bar | draw | 20000 | 7 | 5.24 | 0.00 | 74.73 | 170.48 | 120.22 | 2.37 | - |
+| chart / bar | update | 1000 | 7 | 27.72 | 7.88 | 4.96 | 23.81 | 15.68 | 2.62 | - |
+| chart / bar | update | 5000 | 7 | 12.36 | 34.92 | 18.66 | 67.03 | 43.49 | 2.91 | - |
+| chart / bar | update | 20000 | 60 | 3.17 | 150.63 | 63.97 | 301.48 | 163.08 | 2.91 | - |
+| chart / bubble | draw | 1000 | 7 | 57.84 | 0.00 | 4.93 | 10.22 | 11.69 | 1.33 | - |
+| chart / bubble | draw | 5000 | 7 | 30.90 | 0.00 | 15.14 | 18.49 | 26.52 | 1.57 | - |
+| chart / bubble | draw | 20000 | 7 | 11.71 | 0.00 | 48.53 | 72.64 | 85.48 | 2.37 | - |
+| chart / bubble | update | 1000 | 7 | 53.20 | 4.83 | 3.17 | 11.67 | 11.13 | 1.56 | - |
+| chart / bubble | update | 5000 | 7 | 24.49 | 14.60 | 9.24 | 27.08 | 34.41 | 2.91 | - |
+| chart / bubble | update | 20000 | 7 | 6.40 | 84.40 | 33.81 | 140.97 | 99.12 | 2.37 | - |
+| chart / doughnut | draw | 1000 | 7 | 48.81 | 0.00 | 10.90 | 12.05 | 14.98 | 2.25 | - |
+| chart / doughnut | draw | 5000 | 7 | 16.01 | 0.00 | 40.73 | 47.37 | 50.82 | 2.37 | - |
+| chart / doughnut | draw | 20000 | 60 | 3.42 | 0.00 | 160.21 | 251.47 | 192.13 | 2.91 | - |
+| chart / doughnut | update | 1000 | 7 | 41.27 | 2.89 | 9.90 | 13.85 | 16.08 | 2.61 | - |
+| chart / doughnut | update | 5000 | 7 | 12.77 | 11.88 | 38.78 | 57.54 | 61.84 | 2.37 | - |
+| chart / doughnut | update | 20000 | 60 | 3.07 | 50.94 | 153.05 | 290.47 | 201.73 | 2.91 | - |
+| chart / pie | draw | 1000 | 7 | 53.88 | 0.00 | 9.55 | 11.79 | 13.70 | 1.95 | - |
+| chart / pie | draw | 5000 | 7 | 13.52 | 0.00 | 34.01 | 54.45 | 60.03 | 2.37 | - |
+| chart / pie | draw | 20000 | 60 | 2.73 | 0.00 | 130.82 | 314.54 | 293.29 | 2.91 | - |
+| chart / pie | update | 1000 | 7 | 44.30 | 2.74 | 8.67 | 13.38 | 15.48 | 2.00 | - |
+| chart / pie | update | 5000 | 7 | 12.46 | 11.02 | 31.16 | 61.20 | 62.00 | 2.91 | - |
+| chart / pie | update | 20000 | 60 | 2.20 | 52.86 | 128.70 | 409.37 | 310.66 | 2.91 | - |
+| chart / polarArea | draw | 1000 | 7 | 53.02 | 0.00 | 9.75 | 11.40 | 14.12 | 2.37 | - |
+| chart / polarArea | draw | 5000 | 7 | 15.72 | 0.00 | 36.46 | 50.10 | 45.12 | 2.37 | - |
+| chart / polarArea | draw | 20000 | 60 | 2.53 | 0.00 | 133.03 | 360.44 | 271.56 | 2.91 | - |
+| chart / polarArea | update | 1000 | 7 | 44.71 | 3.37 | 8.50 | 13.18 | 15.35 | 2.04 | - |
+| chart / polarArea | update | 5000 | 7 | 12.02 | 13.74 | 31.93 | 61.88 | 58.46 | 2.91 | - |
+| chart / polarArea | update | 20000 | 60 | 2.22 | 67.75 | 120.46 | 408.24 | 272.05 | 2.91 | - |
+| chart / radar | draw | 1000 | 7 | 58.17 | 0.01 | 5.64 | 6.41 | 5.61 | 0.70 | - |
+| chart / radar | draw | 5000 | 7 | 57.51 | 0.01 | 8.42 | 9.13 | 6.06 | 0.91 | - |
+| chart / radar | draw | 20000 | 7 | 57.19 | 0.00 | 11.51 | 12.50 | 11.13 | 2.85 | - |
+| chart / radar | update | 1000 | 7 | 57.84 | 5.20 | 2.82 | 8.62 | 4.28 | 0.91 | - |
+| chart / radar | update | 5000 | 7 | 46.16 | 9.19 | 4.46 | 14.29 | 8.00 | 2.85 | - |
+| chart / radar | update | 20000 | 7 | 14.04 | 39.44 | 20.50 | 57.50 | 11.69 | 2.91 | - |
+| axes / linear | draw | 5000 | 7 | 57.68 | 0.01 | 8.12 | 8.93 | 5.06 | 0.91 | 57.69 / 8.54 / 7.80 / 4.73 |
+| axes / linear | update | 5000 | 7 | 56.51 | 4.57 | 5.09 | 10.65 | 5.64 | 1.57 | 56.52 / 10.04 / 5.82 / 5.28 |
+| axes / logarithmic | draw | 5000 | 7 | 57.66 | 0.01 | 8.29 | 9.11 | 5.07 | 0.91 | 57.82 / 8.72 / 7.90 / 4.45 |
+| axes / logarithmic | update | 5000 | 7 | 56.52 | 5.11 | 4.83 | 10.96 | 5.62 | 1.84 | 54.23 / 10.63 / 5.75 / 5.39 |
+| axes / category | draw | 5000 | 7 | 58.17 | 0.01 | 8.13 | 8.92 | 5.22 | 0.91 | 58.35 / 8.40 / 7.69 / 4.76 |
+| axes / category | update | 5000 | 7 | 27.91 | 22.90 | 3.49 | 27.46 | 7.50 | 2.91 | 28.43 / 26.02 / 3.28 / 6.51 |
+| axes / time | draw | 5000 | 7 | 58.32 | 0.00 | 8.20 | 9.05 | 5.25 | 0.91 | 58.03 / 8.70 / 7.92 / 4.56 |
+| axes / time | update | 5000 | 7 | 53.87 | 4.84 | 5.35 | 11.06 | 5.81 | 1.70 | 54.23 / 10.13 / 6.03 / 5.26 |
+
+- Seven scenarios gave no frame in 7 s and ran again with `SECONDS=60`: bar update, doughnut draw
+  and update, pie draw and update, and polar area draw and update, each at 20000.
+- The 14 scenarios of before.md §5 agree with before within about ±2 FPS (11 of 14 within 1.5 FPS).
+  The exceptions are the line draw at 20000 (50.91 against 56.86 FPS) and the line update at
+  20000 (30.45 against 39.52 FPS, `updateMs` 6.56 against 2.44 ms). The update is the S2 cost of
+  G-U6. The axes scenarios keep the ticks and the rotation of before.md §5 (6 / 0, 11 / 50, 14 / 50
+  and 14 / 50).
+
+The stress entry of side B on the iPhone 17 Pro (mode `chart`, `SECONDS=7`, one process each, a
+120 Hz display; no scenario was below 4.5 FPS):
+
+| Type | draw FPS at 1000 / 5000 / 20000 | update FPS at 1000 / 5000 / 20000 | update at 20000: updateMs / drawMs / buildMs / rasterMs |
+|---|---|---|---|
+| line | 118.32 / 119.68 / 119.83 | 119.95 / 119.85 / 116.75 | 2.77 / 4.17 / 7.39 / 0.60 |
+| scatter | 119.67 / 119.53 / 119.83 | 119.61 / 119.83 / 58.43 | 9.70 / 4.85 / 15.17 / 0.61 |
+| bar | 119.89 / 63.08 / 13.47 | 119.84 / 34.85 / 7.36 | 61.06 / 21.56 / 129.60 / 18.54 |
+| bubble | 118.93 / 119.55 / 34.89 | 120.01 / 67.00 / 16.16 | 35.52 / 10.88 / 57.15 / 22.17 |
+| doughnut | 120.01 / 59.66 / 11.01 | 119.99 / 41.62 / 8.94 | 19.66 / 40.20 / 105.71 / 29.61 |
+| pie | 119.63 / 48.01 / 5.93 | 119.95 / 40.43 / 5.29 | 20.83 / 35.73 / 177.60 / 26.19 |
+| polarArea | 120.04 / 56.77 / 5.88 | 120.00 / 40.11 / 4.93 | 28.90 / 33.57 / 190.03 / 25.30 |
+| radar | 119.91 / 119.88 / 116.61 | 120.02 / 119.83 / 36.32 | 19.77 / 4.77 / 24.41 / 1.00 |
+
+- The arc types are limited by the UI thread: the build time is much larger than `drawMs`. For
+  example, the pie draw at 20000 has a build of 160 ms, a `datasetsDraw` of 34.6 ms and a raster
+  of 26 ms.
+- These figures answer Chart.js ADR 0032 Open 2 (section 13.8).
+
+**The profile: the port against upstream.** 06:05-07:09 CEST. Nothing failed, and no run was
+excluded.
+
+- The port. 9 profile APKs of `c0a6576` (11-17 s each, Mac load 2.0-2.7), 18 fresh processes (2
+  for each selector, `CASES=chart.<name>`, `BATCHES=30`) at 5000 points or 1000 arcs.
+  `getCpuSamples` over the VM service, with a sample period of 1 ms.
+- Upstream. The Chart.js ESM build of the pin (no plugin) in a page that Chrome 155 on the Pixel
+  8a opened (through `adb reverse`). 15 timing runs of 12 cells each, and 4 runs with V8 CPU
+  profiles. The data of the page equals the Dart data bit for bit, and the chart areas and the
+  element counts are the same. 31 of 180 upstream windows are excluded (the core of the renderer
+  main thread fell to 2.05-2.36 GHz). Each cell keeps 2-4 valid windows.
+- The port figures of the ratios come from the before/after series of side B, not from the profile
+  runs: the profiler adds load.
+
+Port / upstream (median of the run medians, minimum-maximum, ms):
+
+| Case | N | port update | upstream update | update ratio | port draw | upstream draw | draw ratio | (port draw + end) / upstream draw |
+|---|---:|---|---|---:|---|---|---:|---:|
+| chart.a | 1000 | - | - | - | 0.331 (0.326-0.338) | 0.298 (0.287-0.318) | 1.11 | 1.34 |
+| chart.a | 5000 | - | - | - | 1.649 (1.626-1.651) | 1.482 (1.447-1.566) | 1.11 | 1.33 |
+| chart.a | 20000 | - | - | - | 6.684 (6.631-6.725) | 54.843 (53.366-63.574) | 0.12* | 0.16* |
+| chart.b sharing | 1000 | 0.593 (0.592-0.615) | 0.274 (0.265-0.289) | 2.17 | 0.367 (0.363-0.372) | 0.317 (0.310-0.334) | 1.16 | 1.42 |
+| chart.b sharing | 5000 | 1.654 (1.639-1.655) | 0.457 (0.454-0.472) | 3.62 | 1.860 (1.826-1.900) | 1.521 (1.510-1.530) | 1.22 | 1.45 |
+| chart.b sharing | 20000 | 5.769 (5.759-5.807) | 1.769 (1.574-1.811) | 3.26 | 8.319 (8.222-8.393) | 55.298 (52.857-65.195) | 0.15* | 0.19* |
+| chart.b no-sharing | 1000 | 1.153 (1.150-1.186) | 0.638 (0.636-0.647) | 1.81 | 0.373 (0.370-0.394) | 0.321 (0.320-0.324) | 1.16 | 1.43 |
+| chart.b no-sharing | 5000 | 4.519 (4.482-4.543) | 2.728 (2.702-2.882) | 1.66 | 1.832 (1.814-1.854) | 1.542 (1.541-1.543) | 1.19 | 1.43 |
+| chart.b no-sharing | 20000 | 21.484 (21.303-21.664) | 19.622 (18.306-22.017) | 1.09 | 10.904 (10.810-11.170) | 15.378 (14.505-66.014) | 0.71* | 0.85* |
+| chart.c | 1000 | 6.844 (6.839-6.889) | 4.693 (4.603-4.704) | 1.46 | 1.635 (1.613-1.639) | 0.372 (0.369-0.377) | 4.40 | 8.02 |
+| chart.c | 5000 | 36.389 (35.778-38.912) | 26.079 (24.928-26.686) | 1.40 | 8.670 (8.508-8.721) | 1.844 (1.819-1.848) | 4.70 | 7.49 |
+| chart.c | 20000 | 146.328 (138.869-150.939) | 98.835 (95.830-99.328) | 1.48 | 34.648 (32.987-34.883) | 9.707 (9.025-10.015) | 3.57 | 4.86 |
+| chart.bar draw | 1000 | - | - | - | 2.561 (2.531-2.634) | 2.524 (2.373-2.610) | 1.01 | 3.11 |
+| chart.bar draw | 5000 | - | - | - | 13.326 (13.313-14.228) | 14.087 (13.678-14.621) | 0.95 | 1.61 |
+| chart.bar draw | 20000 | - | - | - | 56.044 (54.754-59.397) | 70.767 (65.935-76.575) | 0.79 | 2.44 |
+| chart.bar update | 1000 | 4.966 (4.796-5.024) | 3.350 (3.255-3.474) | 1.48 | 2.985 (2.857-3.048) | 2.792 (2.673-2.867) | 1.07 | 3.18 |
+| chart.bar update | 5000 | 34.784 (32.934-36.781) | 16.484 (16.477-16.491) | 2.11 | 17.680 (16.718-17.898) | 16.800 (16.680-16.921) | 1.05 | 1.67 |
+| chart.bar update | 20000 | 141.112 (137.968-156.754) | 68.172 (67.580-68.765) | 2.07 | 68.247 (63.770-69.306) | 78.485 (78.095-78.875) | 0.87 | 2.03 |
+| chart.bubble draw | 1000 | - | - | - | 1.492 (1.488-1.561) | 0.308 (0.308-0.308) | 4.84 | 8.80 |
+| chart.bubble draw | 5000 | - | - | - | 7.431 (7.386-7.925) | 1.520 (1.505-1.535) | 4.89 | 7.63 |
+| chart.bubble draw | 20000 | - | - | - | 30.742 (30.577-33.126) | 68.691 (68.640-68.741) | 0.45* | 0.63* |
+| chart.bubble update | 1000 | 2.685 (2.661-2.709) | 1.886 (1.872-1.900) | 1.42 | 1.612 (1.600-1.624) | 0.337 (0.334-0.339) | 4.79 | 8.70 |
+| chart.bubble update | 5000 | 12.340 (12.305-12.375) | 9.098 (9.049-9.148) | 1.36 | 8.127 (8.104-8.151) | 1.623 (1.615-1.630) | 5.01 | 8.36 |
+| chart.bubble update | 20000 | 68.588 (68.501-68.675) | 39.971 (38.315-41.628) | 1.72 | 34.884 (34.481-35.287) | 8.942 (8.825-9.060) | 3.90 | 5.31 |
+| chart.doughnut draw | 100 | - | - | - | 0.612 (0.612-0.612) | 0.279 (0.272-0.307) | 2.19 | 2.44 |
+| chart.doughnut draw | 1000 | - | - | - | 6.081 (6.071-6.091) | 2.939 (2.875-3.186) | 2.07 | 2.29 |
+| chart.doughnut draw | 5000 | - | - | - | 32.591 (32.559-32.624) | 15.429 (15.192-16.364) | 2.11 | 2.50 |
+| chart.doughnut update | 100 | 0.238 (0.238-0.239) | 0.142 (0.137-0.157) | 1.68 | 0.623 (0.622-0.625) | 0.309 (0.305-0.327) | 2.01 | 2.29 |
+| chart.doughnut update | 1000 | 1.557 (1.545-1.569) | 0.575 (0.547-0.579) | 2.71 | 6.219 (6.213-6.225) | 3.015 (2.963-3.202) | 2.06 | 2.29 |
+| chart.doughnut update | 5000 | 10.576 (10.078-11.075) | 2.718 (2.434-2.976) | 3.89 | 35.631 (35.592-35.670) | 15.727 (15.546-16.376) | 2.27 | 2.65 |
+| chart.pie draw | 100 | - | - | - | 0.517 (0.515-0.521) | 0.261 (0.258-0.263) | 1.98 | 2.16 |
+| chart.pie draw | 1000 | - | - | - | 5.270 (5.109-5.494) | 2.560 (2.559-2.561) | 2.06 | 2.46 |
+| chart.pie draw | 5000 | - | - | - | 28.632 (26.591-29.147) | 13.560 (13.410-13.816) | 2.11 | 3.41 |
+| chart.pie update | 100 | 0.236 (0.235-0.237) | 0.150 (0.142-0.152) | 1.57 | 0.535 (0.530-0.541) | 0.275 (0.272-0.282) | 1.95 | 2.15 |
+| chart.pie update | 1000 | 1.568 (1.515-1.593) | 0.546 (0.527-0.578) | 2.87 | 5.395 (5.229-5.542) | 2.690 (2.639-2.713) | 2.01 | 2.41 |
+| chart.pie update | 5000 | 10.502 (9.502-10.935) | 2.733 (2.660-2.772) | 3.84 | 29.814 (28.613-29.846) | 14.433 (14.306-14.478) | 2.07 | 3.33 |
+| chart.polarArea draw | 100 | - | - | - | 0.507 (0.496-0.514) | 0.237 (0.235-0.247) | 2.14 | 2.27 |
+| chart.polarArea draw | 1000 | - | - | - | 5.008 (4.979-5.184) | 2.507 (2.490-2.575) | 2.00 | 2.28 |
+| chart.polarArea draw | 5000 | - | - | - | 27.912 (27.666-28.867) | 13.407 (13.358-13.826) | 2.08 | 3.20 |
+| chart.polarArea update | 100 | 0.358 (0.355-0.359) | 0.302 (0.299-0.315) | 1.19 | 0.546 (0.540-0.548) | 0.272 (0.270-0.277) | 2.01 | 2.17 |
+| chart.polarArea update | 1000 | 1.853 (1.823-1.925) | 1.143 (1.128-1.160) | 1.62 | 5.381 (5.285-5.428) | 2.633 (2.627-2.660) | 2.04 | 2.34 |
+| chart.polarArea update | 5000 | 13.012 (12.486-14.743) | 5.342 (5.128-5.358) | 2.44 | 31.043 (30.563-32.124) | 14.296 (13.952-14.463) | 2.17 | 3.35 |
+| chart.radar draw | 100 | - | - | - | 0.052 (0.052-0.053) | 0.044 (0.044-0.045) | 1.18 | 1.55 |
+| chart.radar draw | 1000 | - | - | - | 0.423 (0.421-0.427) | 0.374 (0.373-0.375) | 1.13 | 1.33 |
+| chart.radar draw | 5000 | - | - | - | 2.082 (2.066-2.101) | 1.775 (1.750-1.808) | 1.17 | 1.37 |
+| chart.radar update | 100 | 0.350 (0.348-0.356) | 0.266 (0.263-0.272) | 1.32 | 0.065 (0.062-0.070) | 0.056 (0.055-0.057) | 1.16 | 1.52 |
+| chart.radar update | 1000 | 1.748 (1.702-1.869) | 0.745 (0.745-0.868) | 2.35 | 0.596 (0.579-0.601) | 0.400 (0.380-0.401) | 1.49 | 1.71 |
+| chart.radar update | 5000 | 8.206 (7.451-9.220) | 3.622 (3.502-3.627) | 2.27 | 2.880 (2.661-3.244) | 1.836 (1.831-1.854) | 1.57 | 1.80 |
+
+\* At 20000 circles, Chrome rasterizes the canvas inside `draw()`, so there the upstream draw is
+not a recording only. These ratios do not show a faster port. The upstream draw is the
+main-thread recording of the canvas calls: Chrome rasterizes later in the GPU process. The port
+end (the picture end and the circle batch) has no upstream main-thread counterpart. Thus the last
+column is an upper bound.
+
+- Update: the port takes 1.1-3.9 times the upstream time. Draw: 0.95-1.22 times for line,
+  scatter, bar and radar, 2.0-2.3 times for doughnut, pie and polar area, and 4.4-5.0 times for
+  `chart.c` and bubble at 1000 and 5000.
+
+The time above the upstream cost at the profile count (ms for each call; a group is the port
+share times the port median, minus the upstream V8 share times the upstream median). V8 gives a
+native canvas call a node of its own only in some profiles. Thus the draw groups put the ported
+code and the canvas together. The garbage collection is outside the scopes on both sides.
+
+| Case | Call | N | port | upstream | excess | ported code (+ canvas in a draw) | option resolution | JS runtime + typed options (port only) |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| chart.a | draw | 5000 | 1.649 | 1.482 | 0.167 | -0.07 | -0.00 | 0.24 |
+| chart.b sharing | update | 5000 | 1.654 | 0.457 | 1.197 | 0.71 | 0.02 | 0.47 |
+| chart.b sharing | draw | 5000 | 1.860 | 1.521 | 0.339 | 0.09 | -0.00 | 0.25 |
+| chart.b no-sharing | update | 5000 | 4.519 | 2.728 | 1.791 | 0.68 | -0.02 | 1.15 |
+| chart.b no-sharing | draw | 5000 | 1.832 | 1.542 | 0.290 | 0.03 | 0.00 | 0.27 |
+| chart.c | update | 5000 | 36.389 | 26.079 | 10.310 | -1.94 | 2.38 | 9.93 |
+| chart.c | draw | 5000 | 8.670 | 1.844 | 6.826 | 6.48 | 0.00 | 0.35 |
+| chart.bar draw | draw | 5000 | 13.326 | 14.087 | -0.761 | -2.20 | 0.00 | 1.46 |
+| chart.bar update | update | 5000 | 34.784 | 16.484 | 18.300 | 6.12 | 1.33 | 10.88 |
+| chart.bar update | draw | 5000 | 17.680 | 16.800 | 0.880 | -0.82 | -0.01 | 1.75 |
+| chart.bubble draw | draw | 5000 | 7.431 | 1.520 | 5.911 | 5.65 | 0.00 | 0.26 |
+| chart.bubble update | update | 5000 | 12.340 | 9.098 | 3.242 | -2.25 | -0.26 | 5.76 |
+| chart.bubble update | draw | 5000 | 8.127 | 1.623 | 6.505 | 6.25 | -0.00 | 0.26 |
+| chart.doughnut draw | draw | 1000 | 6.081 | 2.939 | 3.141 | 3.00 | -0.00 | 0.14 |
+| chart.doughnut update | update | 1000 | 1.557 | 0.575 | 0.982 | 0.44 | -0.01 | 0.55 |
+| chart.doughnut update | draw | 1000 | 6.219 | 3.015 | 3.203 | 3.05 | 0.00 | 0.15 |
+| chart.pie draw | draw | 1000 | 5.270 | 2.560 | 2.710 | 2.57 | 0.00 | 0.14 |
+| chart.pie update | update | 1000 | 1.568 | 0.546 | 1.022 | 0.44 | 0.01 | 0.57 |
+| chart.pie update | draw | 1000 | 5.395 | 2.690 | 2.705 | 2.56 | 0.00 | 0.15 |
+| chart.polarArea draw | draw | 1000 | 5.008 | 2.507 | 2.501 | 2.36 | -0.00 | 0.15 |
+| chart.polarArea update | update | 1000 | 1.853 | 1.143 | 0.710 | 0.23 | -0.03 | 0.51 |
+| chart.polarArea update | draw | 1000 | 5.381 | 2.633 | 2.748 | 2.58 | -0.00 | 0.17 |
+| chart.radar draw | draw | 1000 | 0.423 | 0.374 | 0.049 | 0.00 | -0.00 | 0.05 |
+| chart.radar update | update | 1000 | 1.748 | 0.745 | 1.003 | 0.47 | 0.08 | 0.46 |
+| chart.radar update | draw | 1000 | 0.596 | 0.400 | 0.196 | 0.13 | -0.00 | 0.07 |
+
+The hot spots of the port (the rolled self time, in estimated ms for each call, summed over the
+16 profiled case calls at 5000 points or 1000 arcs):
+
+| # | Function | Group | Sum ms | Largest cases (ms) |
+|---:|---|---|---:|---|
+| 1 | `UiCanvasContext.fill` | canvas layer | 19.20 | bar update (draw) 6.57, bar draw 5.57 |
+| 2 | `CircleBatch._drawDirect` | canvas layer | 17.31 | chart.c (draw) 6.07, bubble update (draw) 5.81, bubble draw 5.43 |
+| 3 | `jsGet` | JS runtime | 9.58 | chart.c update 4.86, bar update 1.27 |
+| 4 | `jsObjectKeys` | JS runtime | 7.26 | bar update 4.82, chart.c update 1.16 |
+| 5 | `UiCanvasContext._strokeMapped` | canvas layer | 6.80 | pie, doughnut draws 1.16 each |
+| 6 | `UiPathBuilder._nativeArc` | canvas layer | 6.80 | doughnut draw 1.61 |
+| 7 | `DatasetController._resolveElementOptions` | ported | 5.64 | bubble update 2.27, scatter update 1.69 |
+| 8 | `UiCanvasContext._dropPictures` | canvas layer | 4.98 | bar update (draw) 2.08 |
+| 9 | `_cached` | option resolution | 4.90 | chart.c update 4.68 |
+| 10 | `ContextResolver.[]` | option resolution | 4.65 | bar update 3.31, chart.c update 1.05 |
+| 11 | `attachContext` | option resolution | 4.40 | chart.c update 4.36 |
+| 12 | `_getResolver` | option resolution | 3.50 | chart.c update 3.29 |
+| 13 | `jsGetKey` | JS runtime | 3.49 | bar update 1.19, bubble update 0.90 |
+| 14 | `BarController.updateElements` | ported | 3.31 | bar update 3.31 |
+| 15 | `Element.assign` | ported | 2.93 | bar update 1.56, bubble update 0.66 |
+| 16 | `_setBorderSkipped` | ported | 2.27 | bar update 2.27 |
+| 17 | `BarController.getFirstScaleIdForIndexAxis` (+ closure 0.60) | ported | 1.71 | bar update |
+| 18 | `BarController._getAxis` | ported | 1.58 | bar update |
+| 19 | `BarController._getStacks` | ported | 1.05 | bar update |
+
+- The largest time above the upstream cost is the JS runtime and the typed options, which upstream
+  does not have: 10.9 of 18.3 ms in the bar update, 9.9 of 10.3 ms in the `chart.c` update, and
+  5.8 ms in the bubble update.
+- In a draw, it is the canvas layer: the circles that the circle batch does not take (bubble has a
+  radius for each item, and `chart.c` alternates two colors), and the path fill and stroke of arcs
+  and bars.
+- The option resolution adds only 2.4 ms to `chart.c`: V8 also spends 70 % of that update there.
+- `jsSin` and `jsCos` have 0.8 % of the radar samples. The read of `ctx` for each bar has no frame
+  of its own.
+
+**The A/B series of the candidates.** Five candidates of the plan, each with its own protocol, on
+the Pixel 8a, 12 pairs each (both stages), 24 or 48 fresh processes. The gate was met before each
+run. A is `c0a6576`, B is `c0a6576` with the patch. The decision follows the rule above. The
+macOS column is the macOS series of another unit (a record).
+
+| Candidate | Change | Main cells, B - A | Control cells entirely above 0 | Decision | macOS series |
+|---|---|---|---|---|---|
+| `bar-index-memo` | `BarController.updateElements` computes the axis count, the axis number and the stack index of `_calculateBarIndexPixels` once for each call | `chart.bar` update -1.881 / -15.037 / -51.692 ms (-36.9 / -43.3 / -34.5 %) at 1000 / 5000 / 20000 | update call, draw: +1.459 ms (+8.1 %) at 5000, +6.675 ms (+10.3 %) at 20000; draw call, end: +0.052 ms at 1000, +0.652 ms at 5000 | reject | the draw after the update was +7.2 % and +4.6 % |
+| `bar-ring-zero-inner` | `fill` of a shape pair with a shape of no area draws the other shape with `drawRect` or `drawRRect` | `chart.bar` draw -0.543 / -3.246 / -15.021 ms (-20.9 / -23.6 / -26.2 %) | none | **accept** | draw about -15 % |
+| `element-assign-no-key-list` | `Element.assign` writes with `Map.forEach` when the source is a plain Map with no array-index key | bar update -0.064 (unresolved) / -1.943 ms (-5.7 %); doughnut -0.162 ms (-10.2 %) / -0.404 (unresolved); radar -0.045 / +0.231 (both unresolved) at 1000 / 5000 | doughnut draw and draw + end in all 8 cells (+1.1 to +2.3 %); radar update at 1000, end +0.045 ms (+56.5 %) | reject | reject (slower control cells) |
+| `resolve-cache-key-memo` | `_resolveElementOptions` keeps the last cache key `elementType-mode` | scatter update -0.311 / -1.522 / -7.890 ms (-26.6 / -33.8 / -36.4 %); bubble update -0.480 / -1.918 ms (-17.7 / -15.0 %) | 1 of 41: bubble update at 1000, draw +0.054 ms (+3.4 %) | reject | the line control was +1.0 to +2.4 % |
+| `circle-batch-instance-colors` | a run of several colors draws white sprites, and the atlas gives each instance its color (`BlendMode.modulate`) | `chart.c` draw -1.256 / -6.463 / -24.832 ms (-76.4 / -74.4 / -73.1 %); end -91.5 / -89.1 / -80.0 % | `chart.a` draw at 20000 +1.5 %, end at 5000 +2.1 %, end at 20000 +2.1 %, draw + end at 20000 +1.6 % | reject | reject (`chart.a` +1.9 to +5.3 %) |
+
+- The frame (update + draw + end) is faster in each rejected series: `bar-index-memo` -14.8 /
+  -21.4 / -13.6 %; `resolve-cache-key-memo` -26.5 % (scatter at 20000);
+  `circle-batch-instance-colors` -25.0 / -23.3 / -17.5 % (`chart.c`);
+  `element-assign-no-key-list` -3.9 % (bar at 5000). The rule does not weigh the cells. Section
+  13.7 item 10 has the open decision.
+- `bar-index-memo`: a diagnostic series (6 pairs, written before its runs, not part of the rule)
+  started the draw call after one `update('none')`. The draw of the bars of the memo path was then
+  not slower at 5000 and 20000 (+0.073 ms, -0.185 .. +0.375; +0.371 ms, -0.844 .. +1.534). At
+  1000 it was +0.035 ms (+0.003 .. +0.073). Thus work probably moves from the update into the draw
+  that follows it in the same call, for example the garbage collection of the new bar values.
+- `bar-index-memo`, the frame series (2026-10-22 13:49-14:10, a new protocol written before its
+  first run, 6 ABBA pairs, an independent recompute agrees). The primary metric is the frame sum
+  update + draw + end of the update call: -2.393 ms (-2.614 .. -2.144, -16.8 %) at 1000, -15.855
+  ms (-17.612 .. -14.458, -24.9 %) at 5000 and -42.767 ms (-47.781 .. -36.611, -14.3 %) at 20000.
+  The guard is the draw + end of the draw call: -1.1 % and +1.3 % (both intervals include 0) at
+  1000 and 5000, and +8.925 ms (+1.478 .. +17.681, +6.0 %) at 20000. Thus the rule gives reject.
+  The guard cost at 20000 is in `end`, not in `draw` (draw -1.195 ms, -2.476 .. -0.014). Two
+  pairs give most of it (+18.7 and +26.6 ms), and in both the B run followed a gate wait of 386 s
+  and 447 s. The draw call does not run the memo path. This is an observation: the rule stays.
+- `resolve-cache-key-memo`: the patch does not change the draw. With 41 control cells at 95 %,
+  about 2 cells lie above 0 by chance alone, and 1 does. The line update with sharing (a control)
+  is unchanged or faster on the Pixel 8a (-0.2 / -0.8 / -1.5 %).
+- `element-assign-no-key-list`: the patch does not change the draw path, but the doughnut draw
+  slowdown repeats in each doughnut cell. A code layout effect of the AOT build is possible.
+- `circle-batch-instance-colors`: the one-color path of `chart.a` also runs through the changed
+  batch code.
+
+The accepted change `bar-ring-zero-inner` on the Pixel 8a (12 pairs; difference B - A; the
+pair counts show the excluded cells):
+
+| Call | N | Metric | Role | Pairs | A | B | Mean B - A | 95 % interval | Relative | Result |
+|---|---:|---|---|---:|---|---|---:|---|---:|---|
+| draw | 1000 | **draw** | main | 12 | 2.618 (2.502-2.654) | 2.070 (1.963-2.154) | -0.543 | -0.577 .. -0.511 | -20.9 % | faster |
+| draw | 1000 | end | control | 12 | 5.450 (5.246-5.545) | 5.434 (5.254-5.704) | +0.020 | -0.065 .. +0.104 | +0.4 % | unresolved |
+| draw | 1000 | draw + end | control | 12 | 8.075 (7.748-8.177) | 7.512 (7.245-7.858) | -0.524 | -0.638 .. -0.410 | -6.5 % | faster |
+| draw | 5000 | **draw** | main | 10 | 13.852 (13.315-14.158) | 10.544 (10.038-11.292) | -3.246 | -3.475 .. -3.036 | -23.6 % | faster |
+| draw | 5000 | end | control | 10 | 9.474 (9.110-11.482) | 9.359 (9.085-9.941) | -0.312 | -0.855 .. +0.086 | -3.2 % | unresolved |
+| draw | 5000 | draw + end | control | 10 | 23.431 (22.545-25.292) | 19.894 (19.140-21.233) | -3.558 | -4.265 .. -2.984 | -15.2 % | faster |
+| draw | 20000 | **draw** | main | 11 | 58.054 (54.980-58.618) | 42.248 (40.346-44.944) | -15.021 | -15.966 .. -14.156 | -26.2 % | faster |
+| draw | 20000 | end | control | 11 | 87.546 (73.134-116.419) | 80.244 (72.690-85.802) | -12.779 | -21.333 .. -4.584 | -13.8 % | faster |
+| draw | 20000 | draw + end | control | 11 | 145.800 (131.752-172.115) | 122.900 (114.208-126.395) | -27.800 | -35.618 .. -20.422 | -18.5 % | faster |
+| update | 1000 | update | control | 12 | 5.069 (4.823-5.359) | 5.127 (4.832-5.757) | +0.155 | -0.047 .. +0.366 | +3.1 % | unresolved |
+| update | 1000 | draw | control | 12 | 2.917 (2.832-3.189) | 2.319 (2.177-2.565) | -0.580 | -0.686 .. -0.479 | -19.6 % | faster |
+| update | 1000 | update + draw + end | control | 12 | 14.133 (13.558-14.452) | 13.494 (12.926-14.430) | -0.362 | -0.715 .. -0.010 | -2.6 % | faster |
+| update | 5000 | update | control | 11 | 35.015 (32.559-35.797) | 34.058 (30.981-36.429) | -0.794 | -1.946 .. +0.406 | -2.3 % | unresolved |
+| update | 5000 | draw | control | 11 | 17.862 (16.693-19.481) | 13.716 (12.667-14.568) | -4.242 | -4.913 .. -3.640 | -23.6 % | faster |
+| update | 5000 | update + draw + end | control | 11 | 62.970 (60.954-65.254) | 58.305 (54.324-60.991) | -4.918 | -6.535 .. -3.309 | -7.8 % | faster |
+| update | 20000 | update | control | 11 | 148.989 (137.892-157.301) | 141.753 (125.181-149.033) | -8.814 | -15.307 .. -2.851 | -5.9 % | faster |
+| update | 20000 | draw | control | 11 | 65.183 (62.442-69.925) | 52.812 (47.742-58.740) | -12.743 | -15.019 .. -10.315 | -19.4 % | faster |
+| update | 20000 | update + draw + end | control | 11 | 297.646 (282.743-314.297) | 273.460 (249.725-290.868) | -24.932 | -32.999 .. -17.042 | -8.4 % | faster |
+
+The stress frame record of the same change (mode `chart`, type `bar`, `CALL=draw`, one fresh run
+for each side and N; a record, no interval):
+
+| N | Side | FPS | drawMs | datasetsDrawMs | buildMs | rasterMs |
+|---:|---|---:|---:|---:|---:|---:|
+| 5000 | A | 21.90 | 16.19 | 15.70 | 30.76 | 37.13 |
+| 5000 | B | 27.99 | 12.13 | 11.42 | 26.65 | 20.62 |
+| 20000 | A | 4.82 | 73.24 | 72.70 | 170.52 | 131.15 |
+| 20000 | B | 7.34 | 47.92 | 47.30 | 128.16 | 57.72 |
+
+- `bar-ring-zero-inner`: `fill` of a shape pair with a shape of no area draws the other shape with
+  `drawRect` or `drawRRect`. A bar of the bench is narrower than its two borders of 1 px.
+  `parseBorderWidth` clamps the borders, and the inner rectangle of the border ring has a width
+  of 0. Before the change, such a ring took the path of the two subpaths. A subpath with no area
+  adds no coverage, so the pixels equal those of `fillRect` (a test pins it). On the Pixel 8a, the
+  bar draw is -20.9 / -23.6 / -26.2 % at 1000 / 5000 / 20000, and the raster time of the stress
+  record falls from 37.13 to 20.62 ms and from 131.15 to 57.72 ms. On macOS AOT, the `chart.bar`
+  draw is about -15 % at N 1000, 5000 and 20000 (-0.17, -0.86 and -3.42 ms). The end of the
+  recording and the update do not change significantly. The change is in the port-only canvas
+  layer (Chart.js ADR 0013). The canvas calls of `element.bar` do not change, so the change has no
+  `DIVERGES` marker. The row `adapt-rounded-rect-path` of [differences.md](differences.md) names
+  the new fill.
+- Builds of the candidate series: 11-15 s each, at a Mac load of 2.07-4.8.
 
 ### 13.7 Open: the controllers
 
-1. **The step 7 list of Chart.js ADR 0036 §8** (Chart.js ADR 0036 Open 1). Each form gets an A/B
-   with the frame figures (the frameless benchmark and the Pixel 8a, section 6). Each one is
-   ported literally now:
-   - the bar memo of `_getAxis`, `getFirstScaleIdForIndexAxis` and `_getStacks` for each bar
-     (`controller.bar.js:434-508`, `:636-650`). Prior evidence: the memo removes 34 to 43 % of the
-     bar `updateElements` time in V8, 6 % with `skipNull` (P-P2); the shares of
-     `_calculateBarIndexPixels`, `_getStacks` and `_getAxis` in an upstream bar update (F-P3);
-   - the `skipNull` find (`controller.bar.js:443-450`), O(bars x datasets x points) upstream too;
-   - `(parsed._stacks || {})` with a new empty Map for each bar without stacks
-     (`controller.bar.js:405`);
-   - the option copy for each bubble item, the double option resolution of polar area, the
-     resolution for each radar point, and the typed setters in place of the writes by name of the
-     line and scatter loops (waves 2 and 3).
-2. **`prefer-inline` on `jsGetKey`** (Chart.js ADR 0036 Open 2): no gain was measured in the line
-   loop. The trigger is Chart.js ADR 0025 Open 3, the same question for `jsToNumber`.
-3. **Form T and the frame figures** (ADR 0028 Open 1). The stress mode `chart` with
-   `LineController` and 20000 points, `CALL=update` and `CALL=draw`, form K against form T, on the
-   Pixel 8a and in Chrome with dart2wasm. A gain of 0.1 ms or more for each frame goes to a new ADR.
-   The same session records the stress mode `axes` with `BarController` and 20000 bars,
-   `CALL=update`, with and without the early return of `getDataVisibility` (a record, not a
-   decision).
-4. **The read of `ctx` for each bar** (ADR 0030 Open 3). The trigger is a profile of the bar draw
-   on the Pixel 8a that shows the read in the loop.
-5. **The write path of `stacksOf`** (section 13.1): only if the maintainer wants it measured again,
-   for example on the Pixel 8a in step 7.
-6. **The 2-read form of the line loop** (Chart.js ADR 0036 §8, section 13.1). A form with the
-   local of the previous pass only on the paths where no user code runs between the reads (a
-   direct update with shared options) gives the upstream result and keeps the 2-read gain there.
-   It needs a microbenchmark (Chart.js ADR 0036 §8 condition 3). The scatter loop
-   (`controller.scatter.js:124-148`) has the same item. Chart.js ADR 0036 §8 keeps the 3-read form
-   in both loops until such a measurement.
-7. **Wave 2 forms of the step 7 list** (item 1): the writes by name into the point of a direct
-   update (`_setProperty` of `controller.line.dart`), the option copy for each bubble item
-   (`controller.bubble.js:46-78`, `:151-168`), the cast of the scale `r` for each radar point
-   (`controller.radar.dart`, IV §4.6), and the `jsCall` of `parseObjectDataRadialScale` with 5
-   arguments in the radar and polar area `parseObjectData` (`Function.apply` on the VM, once for
-   each parse call). No unit measured them.
-8. **Wave 3 forms.** The scatter loop has the writes by name of `_setProperty`, as the line loop
-   (item 7). Chart.js ADR 0033 adds a null check of `xCenter` and `yCenter` in
-   `getPointPosition` and in the polar area `updateElements`, and `jsToString` in place of
-   `jsNumberToString` in `toggleDataVisibility` (not a hot path). Each form is the only form with
-   the upstream behavior. Section 13.9 measures the null check of the centers: 0.5-0.9 ns for each
-   `getPointPositionForValue` call on AOT, +0.2 to +10 ns on dart2wasm by kernel, and 3-5 ns less
-   for each radar item on dart2wasm. No unit measured `jsToString` in `toggleDataVisibility` (not
-   a hot path). `getPointPosition` calls `jsSin` and `jsCos` in each radial draw (Chart.js ADR
-   0032, figures in section 13.8).
+Step 7 (section 13.6) measured or decided each item. Each item has a status: **measured** (a
+figure of step 7 exists), **decided** (the rule of a protocol or the profile gave the result) or
+**open** (a later unit measures it, or the porting lead decides it). The shares are of the step 7
+profile on the Pixel 8a at 5000 points or 1000 arcs.
+
+1. **The step 7 list of Chart.js ADR 0036 §8** (Chart.js ADR 0036 Open 1). Each form stays ported
+   literally.
+   - The bar memo of `_getAxis`, `getFirstScaleIdForIndexAxis` and `_getStacks` for each bar
+     (`controller.bar.js:434-508`, `:636-650`): **measured** (`bar-index-memo`). The bar update is
+     -36.9 / -43.3 / -34.5 % at 1000 / 5000 / 20000. The draw in the same update call is +8.1 %
+     and +10.3 % at 5000 and 20000, so the rule rejects it. The frame is -14.8 / -21.4 / -13.6 %.
+     **Open**: the porting lead decides on a new protocol (item 10). The form needs a `DIVERGES`
+     marker and the row `adapt-bar-index-memo`.
+   - The `skipNull` find (`controller.bar.js:443-450`): **decided**, not measured. No bench case
+     sets `skipNull`, and its closure has 0 samples in the bar update. The `_getStacks` work
+     without `skipNull` (6.3 % of the bar update) is in the bar memo.
+   - `(parsed._stacks || {})` (`controller.bar.js:405`): **decided**, not measured. `stacksOf`
+     has 0.4 % of the bar update, and the empty literal has no frame of its own. This is below the
+     share of 3 % of the plan.
+   - The option copy for each bubble item (`controller.bubble.js:151-168`): **open**. After the
+     cache key part, the copy is about 15 % of the bubble update (about 1.8 ms): `copyOptions`
+     1.8 %, `PointOptions.clone` 1.7 %, the writes of `ElementOptions` and `PointOptions._store`
+     about 6.6 %, and `ElementOptions.[]` 3.3 %. Upstream also copies each item (`Object.assign`).
+     Measure it on top of `resolve-cache-key-memo`: both share the frame of
+     `BubbleController.resolveDataElementOptions` (55.1 % total).
+   - The double option resolution of polar area: **decided**. The second resolution is upstream
+     (`_computeAngle`, 12.0 % of the polar area update at 1000; `resolveDataElementOptions`
+     9.2 %). Its cache key part is in `resolve-cache-key-memo`. The rest is below 3 %.
+   - The resolution for each radar point: **decided**. `resolveDataElementOptions` is 11.4 % of the
+     radar update at 1000 (0.2 ms). Its cache key part (7.4 %) is in `resolve-cache-key-memo`. The
+     rest is below 3 %.
+   - The typed setters in place of the writes by name of the line and scatter loops: item 7.
+2. **`prefer-inline` on `jsGetKey`** (Chart.js ADR 0036 Open 2): **open**. The self time of
+   `jsGetKey` is 5.9 % of the `chart.b` update with sharing (0.098 ms) and 2.5 % without sharing.
+   Its total (16.2 %) is mostly the Map read, which inlining does not remove. An earlier A/B in the
+   line loop gave no gain. The trigger stays Chart.js ADR 0025 Open 3.
+3. **Form T and the frame figures** (ADR 0028 Open 1): **decided** for the Pixel 8a, with no A/B.
+   `_pointElements.<closure>` has 1.2 % of the `chart.b` update with sharing (0.019 ms self) and
+   0.3 % of the radar update. `LineElement.[]=` has 1.5 % total. The expected gain is below 0.1
+   ms for each frame, the threshold of the ADR. Thus no new ADR. **Open**: Chrome with dart2wasm
+   has no profile of form T. The record of the early return of `getDataVisibility` (the stress
+   mode `axes` with `BarController` and 20000 bars, `CALL=update`) was not made.
+4. **The read of `ctx` for each bar** (ADR 0030 Open 3): **measured**. The bar draw profiles on the
+   Pixel 8a show no frame for the read (`BarController.draw` self about 0.6 %). The trigger is not
+   met. The item stays a trigger.
+5. **The write path of `stacksOf`** (section 13.1): **open**, only if the maintainer wants it
+   measured. `stacksOf` has 0.4 % of the bar update. The write path (`minBarLength`,
+   `controller.bar.js:615`) does not run in the bench.
+6. **The 2-read form of the line loop** (Chart.js ADR 0036 §8, section 13.1): **open**. The read
+   `prevParsed[iAxis]` is one of the three `jsGetKey` reads of a pass: about 5 % of the `chart.b`
+   update with sharing (about 0.09 ms). It needs the microbenchmark of Chart.js ADR 0036 §8
+   condition 3 first. Chart.js ADR 0036 §8 keeps the 3-read form in the line and scatter loops.
+7. **Wave 2 forms of the step 7 list** (item 1):
+   - The writes by name into the point of a direct update (`_setProperty` of
+     `controller.line.dart`, and the scatter loop): **measured** by the profile, **open**. It is
+     32.2 % of the `chart.b` update with sharing (0.53 ms of 1.654 ms: `_OneByteString.==` 7.1 %,
+     `Element.[]=` 6.7 %, `Element.toBoolProp` 6.2 %) and 12.1 % of the `chart.b` update without
+     sharing (0.55 ms of 4.519 ms). The expected gain is about 0.3 ms for each case at 5000 and
+     1-2 ms at 20000. It is the next candidate, for the S2 cost of item 9 (+0.795 ms at 5000 with
+     sharing).
+   - The option copy for each bubble item: item 1.
+   - The cast of the scale `r` for each radar point (`controller.radar.dart`, IV §4.6):
+     **decided**. The cast has no frame. `RadialLinearScale.getPointPositionForValue` has 7.5 % of
+     the radar update, which is the arithmetic.
+   - The `jsCall` of `parseObjectDataRadialScale` in the radar and polar area `parseObjectData`:
+     **decided** for the bench. `parseObjectData` has 0 samples in the radar and polar area
+     updates, because the bench data is numbers.
+8. **Wave 3 forms**: **decided**. The null check of `xCenter` and `yCenter` (Chart.js ADR 0033) has
+   no frame in the profiles (0.5-0.9 ns for each call, section 13.9). `jsToString` in
+   `toggleDataVisibility` does not run in the bench (not a hot path). `jsSin` and `jsCos` (Chart.js
+   ADR 0032) have 0.9 % and 1.5 % of the radar update, below 3 % (section 13.8).
+9. **The cost of the ported controllers** (G-U6 S2, section 13.6): **open**. The protocol makes
+   these primary cells candidates (a cost of 0.1 ms or more for each frame): the six `chart.b`
+   update cells (+0.197 to +15.093 ms) and the `chart.c` update at 1000 (+0.298 ms) and 5000
+   (+1.686 ms). The porting lead decides. The known parts: the scatter `getMaxOverflow` loop
+   (upstream work, 4.79 ms at 20000, about one third of +15.1 ms), `_setProperty` (item 7), and
+   the option resolution for each item without sharing (`_resolveElementOptions` 5.64 ms and
+   `Element.assign` 2.93 ms summed over the profiled cases). `resolve-cache-key-memo` removes
+   26.6-36.4 % of the scatter update, but the rule rejected it (item 10). The `axes.*` update B / A
+   of 1.18-1.66 (linear, logarithmic, time) is the same controller path. The step 7 profile has no
+   `axes.*` case.
+10. **The candidates that the rule rejected** (section 13.6): **open**. `bar-index-memo`,
+    `element-assign-no-key-list`, `resolve-cache-key-memo` and `circle-batch-instance-colors` have
+    real main gains, and each series has a control cell entirely above 0. The rule does not weigh
+    the cells, and with 18-42 control cells about 1-2 cells lie above 0 by chance alone. The
+    porting lead decides on a new protocol (for example a rule on the frame sum, or a correction
+    for the count of control cells) and a new series for each candidate. The patches stay out of
+    the tree until then. `bar-index-memo` had such a second series with the frame sum as the
+    primary metric (section 13.6). It also gives reject, on its guard at 20000. A third series
+    needs a guard that runs the memo path, or more guard pairs. The circle batch can keep its
+    present path for a run of one color and use the instance colors only for several colors. A change of a form of Chart.js ADR 0036 §8 (the bar memo) needs a
+    `DIVERGES` marker and an `adapt` row.
+11. **Hot spots with no candidate** (the step 7 profile): **decided**.
+    - The arc draws (`UiCanvasContext._strokeMapped` 6.80 ms and `UiPathBuilder._nativeArc`
+      6.80 ms summed; in the doughnut draw at 1000, the `drawPath` FFI 36.8 % and
+      `_NativePath._arcTo` 24.2 %): the arc path on `dart:ui` is the work of cut 1 of the deferred
+      plan [canvas-cuts-plan.md](canvas-cuts-plan.md). Do not do it in this phase.
+    - The bubble draw (`CircleBatch._drawDirect` 5.43 ms): the radius changes for each item, so no
+      sprite form takes it. `circle-batch-instance-colors` does not help it.
+    - The option resolution of `chart.c` (`_cached` 4.68 ms, `attachContext` 4.36 ms,
+      `_getResolver` 3.29 ms): upstream V8 spends 70 % of its `chart.c` update there too. The
+      excess of the resolution group is 2.38 ms, and no single form was found.
+    - `_setBorderSkipped` (8.2 % of the bar update, `_Map.[]=` 5.9 %) and the properties literal
+      of each bar (`Map._fromLiteral` 7.1 %): upstream makes the same objects
+      (`controller.bar.js:407-421`). A typed form changes the type of the element properties.
+    - `_getRuler` and `_computeMinSampleSize` (7.5 % of the bar update): upstream work, once for
+      each update.
+12. **The scale path** (Chart.js ADR 0025 Open 1 and Open 2, section 11.8 items 1 and 3):
+    **open**. The step 7 profile has no `axes.*` case, so it confirms no hot spot. The tick font
+    for each tick (section 11.8 item 1) needs a profile of `axes.category` on `c0a6576`. Its form
+    (b) needs a `DIVERGES` row. The `axes.category` update B / A is 1.05-1.06, so phase 7 did not
+    change it. `jsLog10` for each point (section 11.8 item 3) is on the logarithmic axis only.
+13. **The stress line draw at 20000 points**: **open**. On the Pixel 8a, B gives 50.91 FPS against
+    56.86 FPS of before (one process each), with a lower build time (12.36 against 12.75 ms). The
+    frameless `chart.a` draw of B equals A (0.99). The cause is not known.
 
 ### 13.8 Sine and cosine (Chart.js ADR 0032)
 
@@ -2324,11 +2996,24 @@ is `[-π/2, 3π/2)`. dart2wasm and dart2js run in Node.js v24.12.0 arm64.
   1000 arcs) keep `dart:math`.
 - Cost: one hit query over 1000 arcs, about 12 µs on AOT M3 and 27 µs on the Pixel 8a (form C);
   one radial scale draw, at most 4.4 µs, 0.03 % of a 16.7 ms frame.
-- No frame figure yet (Chart.js ADR 0032, Open 2). The frame figures move to step 7 of phase 7,
-  the performance step. They are an item of that step (Chart.js ADR 0032 Open 2), next to the A/B
-  of section 6. The start of step 7 is the trigger. Then the gallery bench of §6 measures the
-  radar, polar area and arc hit cases on the Pixel 8a and in Chrome with dart2wasm, and this
-  section records the frame, draw and raster figures.
+- The frame figures of step 7 (section 13.6) answer Chart.js ADR 0032 Open 2. The ADR text does
+  not change.
+  - The stress entry on the Pixel 8a, side B: the radar draw gives 58.17 / 57.51 / 57.19 FPS at
+    1000 / 5000 / 20000 points, and the radar update 57.84 / 46.16 / 14.04 FPS. The polar area
+    draw gives 53.02 / 15.72 / 2.53 FPS, and the polar area update 44.71 / 12.02 / 2.22 FPS (the
+    raster time at 1000 is 14.12 and 15.35 ms). The iPhone 17 Pro gives 116.61-120.02 FPS for the
+    radar at each count, except the update at 20000 (36.32 FPS).
+  - The frameless benchmark on the Pixel 8a, side B: the radar update is 0.350 / 1.748 / 8.206 ms
+    at 100 / 1000 / 5000 points and the radar draw 0.052 / 0.423 / 2.082 ms. Chrome 155 with
+    dart2wasm on macOS (a record of another unit): the radar update is 0.181 / 0.771 / 3.431 ms,
+    the radar draw 0.025 / 0.231 / 1.163 ms, the polar area update 0.191 / 0.963 / 4.531 ms and
+    the polar area draw 0.220 / 2.134 / 10.684 ms.
+  - The CPU profile of the radar case on the Pixel 8a: `jsSin` and `jsCos` have 0.8 % of the
+    samples of the process (0.9 % and 1.5 % of the radar update). The protected calls do not limit
+    a frame.
+  - The arc hit case was not measured: the bench and the stress charts listen to no event
+    (`events: []`). The calculation above stays its figure (one hit query over 1000 arcs, about 27
+    µs on the Pixel 8a).
 
 ### 13.9 The radial centers (Chart.js ADR 0033)
 
