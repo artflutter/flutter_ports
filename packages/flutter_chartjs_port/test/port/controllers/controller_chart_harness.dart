@@ -733,6 +733,11 @@ void _expectKeyOrder(Object? observed, Object? expected, String reason) {
 /// writes the value at the path (`plugins.title.display`) through
 /// `operator []=` of the option resolver, the `set` trap of upstream, and
 /// then updates the chart (Chart.js ADR 0041, section 3 item 6).
+/// `setTooltip` calls `setActiveElements` of `chart.tooltip` through
+/// `types.TooltipModel` with the Maps `{datasetIndex, index}` and the event
+/// position `{x, y}`, and then updates the chart (Chart.js ADR 0039,
+/// section 14). Without the tooltip plugin, `chart.tooltip` is `null`, and
+/// the null check throws a [TypeError], as the JS read of `undefined` does.
 Future<void> runStep(
   WidgetTester tester,
   Chart chart,
@@ -790,6 +795,15 @@ Future<void> runStep(
         'x': x,
         'y': y,
       });
+    case ['setTooltip', final List<Object?> items, final num x, final num y]:
+      chart.tooltip!.setActiveElements(
+        [
+          for (final [d, i] in items.cast<List<Object?>>())
+            <String, Object?>{'datasetIndex': d, 'index': i},
+        ],
+        <String, Object?>{'x': x, 'y': y},
+      );
+      chart.update();
     case ['setOption', final String path, final Object? value]:
       final keys = path.split('.');
       Object? target = chart.options;

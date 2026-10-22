@@ -867,6 +867,13 @@ class Chart implements types.Chart {
   @override
   LayoutItem? titleBlock;
 
+  /// index.d.ts:544 `tooltip`: the tooltip model. Dart `null` stands for JS
+  /// `undefined`, the start value. The tooltip plugin writes it
+  /// (plugin.tooltip.js:1230). This file does not import the plugin, as
+  /// core.controller.js does not (Chart.js ADR 0039, section 1).
+  @override
+  types.TooltipModel? tooltip;
+
   /// core.controller.js:197 `get aspectRatio()`.
   ///
   /// The `aspectRatio` option gives its `ToNumber`: the readers divide by
@@ -1685,12 +1692,11 @@ class Chart implements types.Chart {
   /// `Interaction.modes[mode]` reads the key `ToString(mode)`. A mode
   /// function needs the options as a Map: another value throws a
   /// [TypeError].
+  @override
   List<InteractionItem> getElementsAtEventForMode(
     Object e,
     Object? mode,
     Object? options, [
-    // The upstream signature has a positional `useFinalPosition`.
-    // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
   ]) {
     final method = Interaction.modes[mode is String ? mode : jsToString(mode)];
@@ -2095,6 +2101,7 @@ class Chart implements types.Chart {
         datasetIndex = item.datasetIndex;
         index = item.index;
       } else {
+        // DIVERGES(chartjs): adapt-active-elements-number-index, a number.
         datasetIndex = jsToNumber(jsGet(item, 'datasetIndex'));
         index = jsToNumber(jsGet(item, 'index'));
       }

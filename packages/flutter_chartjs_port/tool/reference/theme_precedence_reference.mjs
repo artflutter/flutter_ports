@@ -1281,6 +1281,11 @@ const compiledTheme = {
       labels: {font: {family: 'Arial', size: 14}},
       title: {font: {family: 'Arial', size: 14}},
     },
+    tooltip: {
+      titleFont: {family: 'Arial', size: 14},
+      bodyFont: {family: 'Arial', size: 14},
+      footerFont: {family: 'Arial', size: 14},
+    },
   },
   elements: {
     point: {
@@ -1445,6 +1450,31 @@ const compiledLight = {
         },
       },
     },
+    tooltip: {
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      titleColor: 'rgba(255, 255, 255, 1)',
+      bodyColor: 'rgba(255, 255, 255, 1)',
+      footerColor: 'rgba(255, 255, 255, 1)',
+      multiKeyBackground: 'rgba(255, 255, 255, 1)',
+      titleFont: {
+        family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+        size: 12,
+        style: 'normal',
+        lineHeight: 1.2,
+      },
+      bodyFont: {
+        family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+        size: 12,
+        style: 'normal',
+        lineHeight: 1.2,
+      },
+      footerFont: {
+        family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+        size: 12,
+        style: 'normal',
+        lineHeight: 1.2,
+      },
+    },
     colors: {
       $borderColors: [
         'rgba(54, 162, 235, 1)',
@@ -1508,6 +1538,11 @@ const compiledFont = {
     legend: {
       labels: {font: {family: 'serif', size: 14}},
       title: {font: {family: 'serif', size: 14}},
+    },
+    tooltip: {
+      titleFont: {family: 'serif', size: 14},
+      bodyFont: {family: 'serif', size: 14},
+      footerFont: {family: 'serif', size: 14},
     },
   },
   transitions: {

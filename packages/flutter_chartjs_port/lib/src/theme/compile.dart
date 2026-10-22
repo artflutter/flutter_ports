@@ -26,10 +26,10 @@
 /// The compiler knows the tokens of these parts: `core.defaults`, the
 /// elements, `core.scale.defaults`, the `scales.radialLinear` keys of
 /// `scale.radialLinear`, the `color` and `font` of `plugins.title` and
-/// `plugins.subtitle`, the two fonts of `plugins.legend` and the palette of
-/// `plugins.colors` (theming.md §4). The keys of `plugins.tooltip` come with
-/// the port of that plugin. A debug assert rejects a field or a token that
-/// the compiler does not know.
+/// `plugins.subtitle`, the two fonts of `plugins.legend`, the colors and the
+/// three fonts of `plugins.tooltip` and the palette of `plugins.colors`
+/// (theming.md §4). A debug assert rejects a field or a token that the
+/// compiler does not know.
 ///
 /// Ported files never import this file (Chart.js ADR 0001, invariant 4).
 library;
@@ -259,7 +259,8 @@ bool _isPaletteKey(List<String> path, int i) =>
     _paletteKeys.contains(path[i]);
 
 /// The color tokens and the keys that each token emits (theming.md §4), in
-/// the order of that table.
+/// the order of that table. The tooltip tokens are in
+/// [_tooltipColorTokenKeys].
 ///
 /// - `color` replaces `Defaults.color` (`core.defaults.js:43`). The scale
 ///   routes (`core.scale.defaults.js:86, 89`), the route of the point
@@ -314,6 +315,28 @@ const Map<String, List<String>> _colorTokenKeys = {
   'surface': ['elements.arc.borderColor'],
 };
 
+/// The tooltip color tokens and the keys that each token emits (theming.md
+/// §4), in the order of that table.
+///
+/// - `inverseSurface` replaces the tooltip `backgroundColor`
+///   `'rgba(0,0,0,0.8)'` (`plugin.tooltip.js:1279`).
+/// - `onInverseSurface` replaces the `'#fff'` of the tooltip `titleColor`,
+///   `bodyColor`, `footerColor` and `multiKeyBackground`
+///   (`plugin.tooltip.js:1280, 1287, 1292, 1305`).
+///
+/// The compiler emits them after the legend fonts, not with
+/// [_colorTokenKeys]. Thus the `plugins` Map has the order `title`,
+/// `subtitle`, `legend`, `tooltip`, `colors` in each compiled theme.
+const Map<String, List<String>> _tooltipColorTokenKeys = {
+  'inverseSurface': ['plugins.tooltip.backgroundColor'],
+  'onInverseSurface': [
+    'plugins.tooltip.titleColor',
+    'plugins.tooltip.bodyColor',
+    'plugins.tooltip.footerColor',
+    'plugins.tooltip.multiKeyBackground',
+  ],
+};
+
 /// The key of the `surface` token at alpha 0.75: the scale tick backdrop
 /// `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`). "At alpha"
 /// replaces the alpha, as the palette replaces it (`plugin.colors.ts:25`).
@@ -352,6 +375,23 @@ const List<String> _fontTokenKeysWithoutWeight = [
 const List<String> _pluginFontTokenKeys = [
   'plugins.legend.labels.font',
   'plugins.legend.title.font',
+];
+
+/// The three tooltip fonts (theming.md §3.4 and §4), in the order of the
+/// tooltip defaults (`plugin.tooltip.js:1281-1297`), each with a flag that
+/// is `true` for the whole font token `typography.font`.
+///
+/// The three fonts route to the global `font` (`plugin.tooltip.js:1327-1331`).
+/// `titleFont` and `footerFont` set the weight `'bold'` locally
+/// (`plugin.tooltip.js:1281-1283, 1295-1297`). Thus they get the font token
+/// without its `weight`, as `plugins.title.font`. `bodyFont` sets nothing
+/// locally (`plugin.tooltip.js:1289-1290`) and gets the whole font token.
+/// The compiler emits them after the tooltip colors of
+/// [_tooltipColorTokenKeys].
+const List<(String, bool)> _tooltipFontTokenKeys = [
+  ('plugins.tooltip.titleFont', false),
+  ('plugins.tooltip.bodyFont', true),
+  ('plugins.tooltip.footerFont', false),
 ];
 
 /// The key of the font token `typography.pointLabels` (theming.md §4, the
@@ -416,10 +456,12 @@ const Object _noTheme = Object();
 ///   `transitions` keys also gives `null`, for example `ChartThemes.none`.
 /// - Each color token emits its keys of theming.md §4 as [themeColorToRgba]
 ///   strings. The font token `font` emits a Map of its fields that are not
-///   `null` into each scale slot and into the two legend fonts, and the same
-///   Map without `weight` into `plugins.title.font` and
-///   `plugins.subtitle.font`. The point-label font is the `font` Map without
-///   `size`, then the fields of `pointLabels` over it (theming.md §3.4).
+///   `null` into each scale slot, into the two legend fonts and into
+///   `plugins.tooltip.bodyFont`, and the same Map without `weight` into
+///   `plugins.title.font`, `plugins.subtitle.font`,
+///   `plugins.tooltip.titleFont` and `plugins.tooltip.footerFont`. The
+///   point-label font is the `font` Map without `size`, then the fields of
+///   `pointLabels` over it (theming.md §3.4).
 /// - The `palette` emits the two palette keys of `plugins.colors` as Lists
 ///   of [themeColorToRgba] strings (Chart.js ADR 0042, theming.md §4).
 /// - The `raw` keys beat the token keys, key by key. Maps merge, and a Map
@@ -457,10 +499,13 @@ AnyObject? _compile(AnyObject theme) {
   final keys = <String, Object?>{};
 
   final colors = _field(theme, 'colors');
+  bool isColorToken(String token) =>
+      _colorTokenKeys.containsKey(token) ||
+      _tooltipColorTokenKeys.containsKey(token);
   assert(
-    colors.keys.every(_colorTokenKeys.containsKey),
+    colors.keys.every(isColorToken),
     'Unknown color tokens: '
-    '${colors.keys.where((k) => !_colorTokenKeys.containsKey(k)).join(', ')}.',
+    '${colors.keys.where((k) => !isColorToken(k)).join(', ')}.',
   );
   for (final MapEntry(key: token, value: paths) in _colorTokenKeys.entries) {
     final color = _color(colors, token);
@@ -518,6 +563,21 @@ AnyObject? _compile(AnyObject theme) {
     for (final path in _pluginFontTokenKeys) {
       _put(keys, path, Map<String, Object?>.of(font));
     }
+  }
+
+  // The tooltip keys come after the legend keys (theming.md §4).
+  for (final MapEntry(key: token, value: paths)
+      in _tooltipColorTokenKeys.entries) {
+    final color = _color(colors, token);
+    if (color == null) continue;
+    final rgba = themeColorToRgba(color);
+    for (final path in paths) {
+      _put(keys, path, rgba);
+    }
+  }
+  for (final (path, withWeight) in _tooltipFontTokenKeys) {
+    final value = withWeight ? font : fontWithoutWeight;
+    if (value.isNotEmpty) _put(keys, path, Map<String, Object?>.of(value));
   }
 
   _palette(keys, _field(theme, 'palette'));

@@ -406,6 +406,24 @@ abstract interface class Chart {
   /// index.d.ts:563 `isPointInArea(point: Point): boolean`.
   bool isPointInArea(Point point);
 
+  /// index.d.ts:564 `getElementsAtEventForMode(e, mode, options,
+  /// useFinalPosition)`. plugin.tooltip.js:1200 calls it.
+  ///
+  /// [e] is a [ChartEvent] or a `NativeEvent`, as the interaction modes
+  /// take it. The concrete result is a `List<InteractionItem>` of
+  /// `core.interaction.dart`, a valid covariant override (Chart.js ADR 0038,
+  /// section 6). Thus a reader never adds an item to the result: it copies
+  /// the list or reorders it in place. Dart `null` for [useFinalPosition]
+  /// stands for JS `undefined`.
+  List<ActiveElement> getElementsAtEventForMode(
+    Object e,
+    Object? mode,
+    Object? options, [
+    // The upstream signature has a positional `useFinalPosition`.
+    // ignore: avoid_positional_boolean_parameters
+    bool? useFinalPosition,
+  ]);
+
   /// index.d.ts:566 `getSortedVisibleDatasetMetas(): ChartMeta[]`.
   List<ChartMeta> getSortedVisibleDatasetMetas();
 
@@ -451,6 +469,11 @@ abstract interface class Chart {
   /// for JS `undefined`. The legend plugin writes it (plugin.legend.js:602)
   /// and deletes it (:609). controller.doughnut.js:97 reads it.
   abstract LegendElement? legend;
+
+  /// index.d.ts:544 `readonly tooltip?: TooltipModel`. Dart `null` stands
+  /// for JS `undefined`, the start value. The tooltip plugin writes it
+  /// (plugin.tooltip.js:1230). No hook deletes it, so the value stays.
+  abstract TooltipModel? tooltip;
 
   /// plugin.title.js:117 `chart.titleBlock`. index.d.ts does not declare it.
   /// Dart null stands for JS `undefined` and for the `delete` of :136.
@@ -517,6 +540,21 @@ abstract interface class DatasetController {
   /// index.d.ts:640 `getAllParsedValues(scale: Scale): number[]`. The time
   /// scale calls it (scale.time.js:638, :642).
   List<double> getAllParsedValues(Scale scale);
+
+  /// index.d.ts:641 `getLabelAndValue(index)`. plugin.tooltip.js:130 calls
+  /// it.
+  ///
+  /// The result is a record of the object `{label, value}`. index.d.ts
+  /// declares a string label, but the controllers return the raw label:
+  /// any JS value, Dart `null` for JS `null` or the `undefined` sentinel
+  /// (Chart.js ADR 0028, section 2). The tooltip item keeps it.
+  ({Object? label, String value}) getLabelAndValue(double index);
+
+  /// index.d.ts:648 `getDataset()`. plugin.tooltip.js:138 calls it.
+  ///
+  /// The dataset `chart.data.datasets[index]`: a Map, or the `undefined`
+  /// sentinel for an index that names no dataset.
+  Object? getDataset();
 
   /// index.d.ts:696 `getMinMax(scale: Scale, canStack?: boolean): { min:
   /// number; max: number }`. `Scale.getMinMax` reads the range of each
@@ -1138,6 +1176,80 @@ abstract interface class LegendElement {
 
   /// index.d.ts:2418 `options`, the resolver of the legend options.
   Map<String, Object?> get options;
+}
+
+/// index.d.ts:2648 `TooltipModel`, with the members of Chart.js ADR 0039,
+/// section 14. The `Tooltip` class of `plugin.tooltip.dart` implements it.
+///
+/// [x], [y] and [options] come from [Element]. A line of text can be any JS
+/// value, so each list is a `List<Object?>`. The items of [dataPoints] and
+/// [body] are plain objects (Maps). The constructor sets `undefined` for
+/// these members, and `0` for [opacity] (plugin.tooltip.js:467-494). Dart
+/// `null` for a list or an alignment stands for JS `undefined`. A number
+/// getter gives NaN for JS `undefined` (Chart.js ADR 0039, section 2).
+abstract interface class TooltipModel implements Element {
+  /// index.d.ts:2649 `readonly chart`.
+  Chart get chart;
+
+  /// index.d.ts:2652 `dataPoints`: the tooltip items, plain objects.
+  List<Object?>? get dataPoints;
+
+  /// index.d.ts:2655 `xAlign`.
+  String? get xAlign;
+
+  /// index.d.ts:2656 `yAlign`.
+  String? get yAlign;
+
+  /// index.d.ts:2661 `width`.
+  double get width;
+
+  /// index.d.ts:2662 `height`.
+  double get height;
+
+  /// index.d.ts:2664 `caretX`.
+  double get caretX;
+
+  /// index.d.ts:2665 `caretY`.
+  double get caretY;
+
+  /// index.d.ts:2673 `body`: the plain objects `{before, lines, after}`.
+  List<Object?>? get body;
+
+  /// index.d.ts:2675 `beforeBody`.
+  List<Object?>? get beforeBody;
+
+  /// index.d.ts:2677 `afterBody`.
+  List<Object?>? get afterBody;
+
+  /// index.d.ts:2681 `title`.
+  List<Object?>? get title;
+
+  /// index.d.ts:2685 `footer`.
+  List<Object?>? get footer;
+
+  /// index.d.ts:2688 `labelColors`.
+  List<Object?>? get labelColors;
+
+  /// index.d.ts:2689 `labelTextColors`.
+  List<Object?>? get labelTextColors;
+
+  /// index.d.ts:2690 `labelPointStyles`.
+  List<Object?>? get labelPointStyles;
+
+  /// index.d.ts:2693 `opacity`. 0 is a hidden tooltip.
+  double get opacity;
+
+  /// index.d.ts:2698 `getActiveElements()`.
+  List<ActiveElement> getActiveElements();
+
+  /// index.d.ts:2699 `setActiveElements(active, eventPosition)`.
+  ///
+  /// Each item of [activeElements] is an [ActiveDataPoint] or a Map with
+  /// the keys `datasetIndex` and `index`, as for `Chart.setActiveElements`.
+  /// [eventPosition] is any JS value: the tooltip stores it
+  /// (plugin.tooltip.js:1126). The `Tooltip` class gives an absent
+  /// argument the `undefined` sentinel (Chart.js ADR 0039, section 12).
+  void setActiveElements(List<Object?> activeElements, [Object? eventPosition]);
 }
 
 /// index.d.ts:2212 `BasePlatform`.

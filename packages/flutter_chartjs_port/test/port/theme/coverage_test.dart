@@ -26,10 +26,16 @@ import 'package:test/test.dart';
 //      THEME_SNAPSHOT_UPDATE=1 flutter test test/port/theme/coverage_test.dart
 //
 // 2. The upstream value of each emitted path: the same path in the
-//    manifest, with the value of a route (`{"route": v}` gives v). A font
-//    field `<slot>.font.<field>` that the manifest does not have restates
-//    `font.<field>`, the global font that `toFont` reads for an absent field
-//    (helpers.options.ts:115-117), if the manifest has the slot.
+//    manifest, with the value of a route (`{"route": v}` gives v). A
+//    manifest route leaf `<slot>.<key>` with a Map value is not a leaf of
+//    the report. Each field of its Map is a leaf `<slot>.<key>.<field>` with
+//    the route of that field: the tooltip fonts route to the global font
+//    (plugin.tooltip.js:1327-1331), and tool 4 records the merged route
+//    value. An emitted field that the route Map does not have compares with
+//    null. A font field `<slot>.font.<field>` that the manifest does not
+//    have restates `font.<field>`, the global font that `toFont` reads for
+//    an absent field (helpers.options.ts:115-117), if the manifest has the
+//    slot.
 // 3. The report. The test fails on each entry of these lists:
 //    - ADDED: a visual leaf of the manifest that the preset does not emit
 //      and that [_notThemed] does not list. A visual leaf has a last key
@@ -40,9 +46,10 @@ import 'package:test/test.dart';
 //    - CHANGED: an emitted value that differs from the upstream value, with
 //      the new literal. Colors compare after the parse of the ported
 //      @kurkle/color, as the canvas layer parses them.
-//    - STALE: a [_notThemed] key that the manifest does not have, or that
-//      the preset emits. A [_moduleConstants] key that the manifest has, or
-//      that the preset does not emit.
+//    - STALE: a [_notThemed] key that the manifest does not have, that
+//      the preset emits, or whose upstream value differs from its value in
+//      [_notThemedValues]. A [_moduleConstants] key that the manifest has,
+//      or that the preset does not emit.
 //    - DOLLAR: a `$` key in the inventory. It can collide with the theme
 //      key `$theme` and the palette keys (theming.md §11).
 //
@@ -103,12 +110,9 @@ const Map<String, String> _notThemed = {
   'plugins.title.font.weight':
       "the local weight 'bold' (plugin.title.js:148-150); the token font has "
       'no weight there (theming.md §3.4)',
-  'plugins.tooltip.backgroundColor':
-      'phase 8: the token inverseSurface emits it with plugin.tooltip',
-  'plugins.tooltip.bodyColor':
-      'phase 8: the token onInverseSurface emits it with plugin.tooltip',
-  'plugins.tooltip.bodyFont':
-      'phase 8: the token font emits it with plugin.tooltip',
+  'plugins.tooltip.bodyFont.weight':
+      'no local weight (plugin.tooltip.js:1289-1290): the route gives the '
+      'global font.weight; the light preset has no weight',
   'plugins.tooltip.borderColor':
       "'rgba(0,0,0,0)': no tooltip border by default "
       '(plugin.tooltip.js:1308); an app sets it through raw '
@@ -121,16 +125,26 @@ const Map<String, String> _notThemed = {
   'plugins.tooltip.displayColors':
       'a bool that shows the color boxes, not a color '
       '(plugin.tooltip.js:1306)',
-  'plugins.tooltip.footerColor':
-      'phase 8: the token onInverseSurface emits it with plugin.tooltip',
-  'plugins.tooltip.footerFont':
-      'phase 8: the token font emits it without weight with plugin.tooltip',
-  'plugins.tooltip.multiKeyBackground':
-      'phase 8: the token onInverseSurface emits it with plugin.tooltip',
-  'plugins.tooltip.titleColor':
-      'phase 8: the token onInverseSurface emits it with plugin.tooltip',
-  'plugins.tooltip.titleFont':
-      'phase 8: the token font emits it without weight with plugin.tooltip',
+  'plugins.tooltip.footerFont.weight':
+      "the local weight 'bold' (plugin.tooltip.js:1295-1297); the token font "
+      'has no weight there (theming.md §3.4)',
+  'plugins.tooltip.titleFont.weight':
+      "the local weight 'bold' (plugin.tooltip.js:1281-1283); the token font "
+      'has no weight there (theming.md §3.4)',
+};
+
+/// The upstream values that the reasons of some [_notThemed] keys use, by
+/// path. The compiler leaves a weight out of a font slot with a local
+/// weight, and it puts the whole token font into a slot without one
+/// (theming.md §3.4). A bump that changes, removes or adds a local weight
+/// changes the value here, and the report gives STALE.
+const Map<String, Object?> _notThemedValues = {
+  'font.weight': null,
+  'plugins.subtitle.font.weight': 'normal',
+  'plugins.title.font.weight': 'bold',
+  'plugins.tooltip.bodyFont.weight': null,
+  'plugins.tooltip.footerFont.weight': 'bold',
+  'plugins.tooltip.titleFont.weight': 'bold',
 };
 
 /// The emitted paths that restate a module constant, not a default, each
@@ -204,6 +218,51 @@ Object? _unwrap(Object? leaf) =>
     ? leaf['route']
     : leaf;
 
+/// Whether [leaf] is a manifest route leaf with a Map value.
+bool _isRouteMap(Object? leaf) =>
+    leaf is Map<String, Object?> &&
+    leaf.length == 1 &&
+    leaf.containsKey('route') &&
+    leaf['route'] is Map<String, Object?>;
+
+/// The leaves of [manifest] for the report, in manifest order. A route leaf
+/// `<slot>.<key>` with a Map value gives one leaf `<slot>.<key>.<field>` for
+/// each field of its Map, with the route of that field as its value
+/// (`{"route": v}`).
+Map<String, Object?> _reportLeaves(Map<String, Object?> manifest) => {
+  for (final MapEntry(key: path, :value) in manifest.entries)
+    if (_isRouteMap(value))
+      for (final MapEntry(key: field, value: route)
+          in ((value! as Map<String, Object?>)['route']!
+                  as Map<String, Object?>)
+              .entries)
+        '$path.$field': <String, Object?>{'route': route}
+    else
+      path: value,
+};
+
+/// The upstream value of the field [path] `<slot>.<key>.<field>` whose
+/// parent `<slot>.<key>` is a manifest route leaf with a Map value, as a
+/// record, else Dart `null`. An absent field gives the record of Dart
+/// `null`.
+///
+/// For example, `plugins.tooltip.bodyFont.family` takes the `family` of the
+/// manifest leaf `plugins.tooltip.bodyFont`, `{"route": {"family": ...}}`.
+(Object?,)? _routeField(String path, Map<String, Object?> manifest) {
+  final dot = path.lastIndexOf('.');
+  if (dot < 0) return null;
+  final parent = manifest[path.substring(0, dot)];
+  if (parent is! Map<String, Object?> ||
+      parent.length != 1 ||
+      !parent.containsKey('route')) {
+    return null;
+  }
+  final route = parent['route'];
+  return route is Map<String, Object?>
+      ? (route[path.substring(dot + 1)],)
+      : null;
+}
+
 /// Whether the emitted [value] at [path] equals the upstream [upstream].
 bool _same(String path, Object? value, Object? upstream) {
   if (_isColorKey(path) && value is String && upstream is String) {
@@ -217,13 +276,15 @@ bool _same(String path, Object? value, Object? upstream) {
 
 /// The report lists of theming.md §8 test 4 for the emitted [emitted], the
 /// manifest leaves [manifest], the keys [notThemed] that the preset does not
-/// emit and the emitted module constants [moduleConstants], by list name. A
-/// list without entries is left out.
+/// emit, the emitted module constants [moduleConstants] and the upstream
+/// values [notThemedValues] of some [notThemed] keys, by list name. A list
+/// without entries is left out.
 Map<String, List<String>> _report(
   Map<String, Object?> emitted,
   Map<String, Object?> manifest, [
   Map<String, String> notThemed = _notThemed,
   Map<String, String> moduleConstants = _moduleConstants,
+  Map<String, Object?> notThemedValues = _notThemedValues,
 ]) {
   final added = <String>[];
   final removed = <String>[];
@@ -231,6 +292,7 @@ Map<String, List<String>> _report(
   final stale = <String>[];
   final dollar = <String>[];
 
+  final leaves = _reportLeaves(manifest);
   bool hasSlot(String slot) => manifest.keys.any((p) => p.startsWith('$slot.'));
   bool isEmitted(String path) =>
       emitted.containsKey(path) ||
@@ -240,8 +302,11 @@ Map<String, List<String>> _report(
     if (moduleConstants.containsKey(path)) continue;
     final Object? upstream;
     final font = RegExp(r'^(.+)\.font\.([^.]+)$').firstMatch(path);
-    if (manifest.containsKey(path)) {
-      upstream = _unwrap(manifest[path]);
+    final route = _routeField(path, manifest);
+    if (leaves.containsKey(path)) {
+      upstream = _unwrap(leaves[path]);
+    } else if (route != null) {
+      upstream = route.$1;
     } else if (font != null &&
         hasSlot(font[1]!) &&
         manifest.containsKey('font.${font[2]}')) {
@@ -258,15 +323,26 @@ Map<String, List<String>> _report(
   }
   for (final path in manifest.keys) {
     if (path.split('.').any((key) => key.startsWith(r'$'))) dollar.add(path);
+  }
+  for (final MapEntry(key: path, :value) in leaves.entries) {
     if (_isVisual(path) && !isEmitted(path) && !notThemed.containsKey(path)) {
-      added.add('$path: ${jsonEncode(manifest[path])}');
+      added.add('$path: ${jsonEncode(value)}');
     }
   }
   for (final path in notThemed.keys) {
-    if (!manifest.containsKey(path)) {
+    if (!leaves.containsKey(path)) {
       stale.add('$path: not in the manifest');
     } else if (isEmitted(path)) {
       stale.add('$path: the preset emits it');
+    } else if (notThemedValues.containsKey(path)) {
+      final upstream = _unwrap(leaves[path]);
+      final recorded = notThemedValues[path];
+      if (!_same(path, recorded, upstream)) {
+        stale.add(
+          '$path: upstream ${jsonEncode(upstream)}, '
+          'recorded ${jsonEncode(recorded)}',
+        );
+      }
     }
   }
   for (final path in moduleConstants.keys) {
@@ -475,6 +551,154 @@ void main() {
       },
     );
 
+    test('a field of a route Map takes the field of the route value', () {
+      // plugin.tooltip.js:1327-1331: the tooltip fonts route to the global
+      // font. Tool 4 records the route leaf with the merged Map.
+      const title = 'plugins.tooltip.titleFont';
+      const fontRoute = <String, Object?>{
+        'route': <String, Object?>{
+          'family': 'serif',
+          'size': 12,
+          'weight': 'bold',
+        },
+      };
+      final withRoute = <String, Object?>{
+        ...manifest,
+        title: fontRoute,
+      };
+      expect(
+        report({
+          ...emitted,
+          '$title.family': 'serif',
+          '$title.size': 12.0,
+          '$title.weight': 'bold',
+        }, withRoute),
+        isEmpty,
+      );
+      // A changed field is CHANGED, and a field that the route Map does not
+      // have compares with null.
+      expect(
+        report({
+          ...emitted,
+          '$title.family': 'mono',
+          '$title.size': 12.0,
+          '$title.style': 'italic',
+          '$title.weight': 'bold',
+        }, withRoute),
+        {
+          'CHANGED': [
+            '$title.family: emitted "mono", upstream "serif"',
+            '$title.style: emitted "italic", upstream null',
+          ],
+        },
+      );
+      // Each field of the route Map is a leaf. Without its emitted
+      // fields, each visual field is ADDED.
+      expect(report(emitted, withRoute), {
+        'ADDED': [
+          '$title.family: {"route":"serif"}',
+          '$title.size: {"route":12}',
+          '$title.weight: {"route":"bold"}',
+        ],
+      });
+      // A route leaf with a value that is not a Map gives no field. The
+      // emitted path is REMOVED.
+      expect(
+        report(
+          {...emitted, 'plugins.title.color.alpha': 1.0},
+          {
+            ...manifest,
+            'plugins.title.color': {'route': '#666'},
+          },
+        ),
+        {
+          'REMOVED': ['plugins.title.color.alpha'],
+        },
+      );
+    });
+
+    test('a changed local weight of a route font is STALE', () {
+      // plugin.tooltip.js:1281-1283, 1289-1290 and 1295-1297: the title and
+      // footer fonts have the local weight 'bold', the body font has none.
+      // The compiler leaves the weight out of the title and footer fonts,
+      // and it puts the whole token font into the body font (theming.md
+      // §3.4). The route Map records the merged weight.
+      const title = 'plugins.tooltip.titleFont';
+      const body = 'plugins.tooltip.bodyFont';
+      Map<String, Object?> fonts(Object? titleWeight, Object? bodyWeight) => {
+        ...manifest,
+        title: <String, Object?>{
+          'route': <String, Object?>{'family': 'serif', 'weight': titleWeight},
+        },
+        body: <String, Object?>{
+          'route': <String, Object?>{'family': 'serif', 'weight': bodyWeight},
+        },
+      };
+      final fontsEmitted = <String, Object?>{
+        ...emitted,
+        '$title.family': 'serif',
+        '$body.family': 'serif',
+      };
+      final weights = {
+        ...notThemed,
+        '$title.weight': 'test',
+        '$body.weight': 'test',
+      };
+      const values = <String, Object?>{
+        '$title.weight': 'bold',
+        '$body.weight': null,
+      };
+      Map<String, List<String>> weightReport(Map<String, Object?> manifest) =>
+          _report(fontsEmitted, manifest, weights, const {}, values);
+
+      expect(weightReport(fonts('bold', null)), isEmpty);
+      // Upstream removes the local title weight: the route gives the
+      // global weight null. Upstream adds a local body weight.
+      expect(weightReport(fonts(null, 'normal')), {
+        'STALE': [
+          '$title.weight: upstream null, recorded "bold"',
+          '$body.weight: upstream "normal", recorded null',
+        ],
+      });
+      // A route Map without the field is not in the manifest.
+      expect(
+        weightReport({
+          ...fonts('bold', null),
+          body: <String, Object?>{
+            'route': <String, Object?>{'family': 'serif'},
+          },
+        }),
+        {
+          'STALE': ['$body.weight: not in the manifest'],
+        },
+      );
+      // Without the notThemed keys, the route fields are ADDED.
+      expect(
+        _report(fontsEmitted, fonts('bold', null), notThemed, const {}),
+        {
+          'ADDED': [
+            '$title.weight: {"route":"bold"}',
+            '$body.weight: {"route":null}',
+          ],
+        },
+      );
+      // A leaf that is not a route field compares its value too.
+      expect(
+        _report(
+          emitted,
+          {...manifest, 'plugins.title.font.weight': 'normal'},
+          {...notThemed, 'plugins.title.font.weight': 'test'},
+          const {},
+          const {'plugins.title.font.weight': 'bold'},
+        ),
+        {
+          'STALE': [
+            'plugins.title.font.weight: upstream "normal", recorded "bold"',
+          ],
+        },
+      );
+    });
+
     test('a module constant is not REMOVED', () {
       // plugin.colors.ts:14-25: the palette is a module constant, not a
       // default. The manifest does not have it (Chart.js ADR 0042).
@@ -519,6 +743,9 @@ void main() {
           in _moduleConstants.entries) {
         expect(reason, isNotEmpty, reason: path);
         expect(_notThemed.containsKey(path), isFalse, reason: path);
+      }
+      for (final path in _notThemedValues.keys) {
+        expect(_notThemed.containsKey(path), isTrue, reason: path);
       }
     });
   });

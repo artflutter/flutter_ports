@@ -1,28 +1,38 @@
 // Original code, not ported from Chart.js: light theme reference generator.
 //
 // It writes test/port/theme/light_reference.dart, the data of
-// test/port/theme/presets_test.dart and presets_radial_test.dart: the
-// upstream values that the light preset of phase 6 restates (theming.md
-// sections 4 and 9), and the options that the upstream resolver gives
-// without a theme for the four elements, a scale, the radial linear scale
-// and the chart level, with the Node.js version, V8 version and architecture
-// in the header. The cases are fixed, so a rerun on
+// test/port/theme/presets_test.dart, presets_radial_test.dart and
+// presets_plugins_test.dart: the upstream values that the light preset
+// restates (theming.md sections 4 and 9), and the options that the upstream
+// resolver gives without a theme for the four elements, a scale, the radial
+// linear scale, the chart level and the title, subtitle, legend and tooltip
+// plugins, with the Node.js version, V8 version and architecture in the
+// header. The cases are fixed, so a rerun on
 // the same Node.js writes the same file. Nothing in lib/ or test/ runs this
 // script (porting-flow.md section 4).
 //
 // The script runs the pinned upstream sources with the type stripping of
 // Node.js: src/core/core.defaults.js (with core.scale.defaults.js),
 // src/core/core.registry.js, src/elements/index.js,
-// src/scales/scale.radialLinear.js, src/core/core.config.js and
-// src/helpers/helpers.options.ts. A resolve hook maps the upstream
-// `./x.js` imports to the `.ts` files, and `@kurkle/color` to
-// third_party/kurkle-color/src/index.esm.js. `registry.addElements` registers
+// src/scales/scale.radialLinear.js, src/core/core.config.js,
+// src/helpers/helpers.options.ts and the plugins plugin.title.js,
+// plugin.subtitle.js, plugin.legend.js, plugin.tooltip.js and
+// plugin.colors.ts. A resolve hook maps the upstream `./x.js` imports to the
+// `.ts` files, and `@kurkle/color` to
+// third_party/kurkle-color/src/index.esm.js. plugin.colors.ts imports
+// src/index.ts, and core.controller.js imports `version` from package.json:
+// a load hook gives the version of third_party/Chart.js/package.json as a
+// module. `registry.addElements` registers
 // the four element classes, as the chart registers them: their defaults go to
 // `defaults.elements.<id>`, with the routes of `defaultRoutes`
 // (core.typedRegistry.js:84-113). `registry.addScales` registers the radial
 // linear scale in the same way: its defaults go to
 // `defaults.scales.radialLinear`, with the routes of
-// scale.radialLinear.js:400-404 and the descriptors of :406-410. Check out the submodules first
+// scale.radialLinear.js:400-404 and the descriptors of :406-410.
+// `registry.addPlugins` registers the five plugins: their defaults go to
+// `defaults.plugins.<id>`, with the routes of `defaultRoutes` (for example
+// the tooltip fonts of plugin.tooltip.js:1327-1331), and their descriptors
+// to `defaults.descriptors.plugins.<id>`. Check out the submodules first
 // (`dart run melos run upstream`).
 //
 // The element cases resolve the options of an element of a dataset as
@@ -37,6 +47,23 @@
 // the scale `r` of the type `radialLinear` in the same way. Its point-label
 // font is the `toFont` result of `fitWithPointLabels`
 // (scale.radialLinear.js:96).
+//
+// The plugin cases resolve the options of the title, subtitle, legend and
+// tooltip plugins of a chart of the type `bar` as `pluginOpts` does
+// (core.plugins.js:175-188): the scopes of `pluginScopeKeys` and
+// `getOptionScopes`, and `createResolver` with the prefix '' and the
+// descriptor defaults of core.plugins.js:182-186. The context is the chart
+// context `{chart, type: 'chart'}`, where `chart.options` is the chart
+// options resolver: the legend colors read `ctx.chart.options.color`
+// (plugin.legend.js:661, 707). A font is the `toFont` result, as the
+// plugins read it (plugin.title.js:92, plugin.legend.js:136, 446,
+// plugin.tooltip.js:152-154). The 19 keys are those of the theme spec of
+// phase 8 (Chart.js ADR 0042).
+//
+// The palette that the light preset restates is BORDER_COLORS and
+// BACKGROUND_COLORS (plugin.colors.ts:14-25), module constants. The script
+// reads them through `beforeLayout` of the colors plugin on a stand-in chart
+// with 7 datasets (plugin.colors.ts:102-126).
 //
 // Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js v24.12.0
 // (on Apple silicon, the darwin-x64 build runs under Rosetta) and with the
@@ -135,6 +162,12 @@ const ELEMENTS = new URL('elements/index.js', SRC);
 const RADIAL_LINEAR = new URL('scales/scale.radialLinear.js', SRC);
 const CONFIG = new URL('core/core.config.js', SRC);
 const OPTIONS = new URL('helpers/helpers.options.ts', SRC);
+const TITLE = new URL('plugins/plugin.title.js', SRC);
+const SUBTITLE = new URL('plugins/plugin.subtitle.js', SRC);
+const LEGEND = new URL('plugins/plugin.legend.js', SRC);
+const TOOLTIP = new URL('plugins/plugin.tooltip.js', SRC);
+const COLORS = new URL('plugins/plugin.colors.ts', SRC);
+const PACKAGE = new URL('Chart.js/package.json', THIRD_PARTY);
 const KURKLE = new URL('kurkle-color/src/index.esm.js', THIRD_PARTY);
 const OUT = fileURLToPath(
   new URL('../../test/port/theme/light_reference.dart', import.meta.url),
@@ -147,6 +180,12 @@ for (const url of [
   RADIAL_LINEAR,
   CONFIG,
   OPTIONS,
+  TITLE,
+  SUBTITLE,
+  LEGEND,
+  TOOLTIP,
+  COLORS,
+  PACKAGE,
   KURKLE,
 ]) {
   if (!existsSync(fileURLToPath(url))) {
@@ -182,6 +221,19 @@ registerHooks({
     }
     return nextResolve(specifier, context);
   },
+  // core.controller.js:12 imports `version` from package.json without an
+  // import attribute. The hook gives the version as a module.
+  load(url, context, nextLoad) {
+    if (url === PACKAGE.href) {
+      const {version} = JSON.parse(readFileSync(PACKAGE, 'utf8'));
+      return {
+        format: 'module',
+        source: `export const version = ${JSON.stringify(version)};`,
+        shortCircuit: true,
+      };
+    }
+    return nextLoad(url, context);
+  },
 });
 
 const {default: defaults} = await import(DEFAULTS.href);
@@ -190,18 +242,24 @@ const elements = await import(ELEMENTS.href);
 const {default: RadialLinearScale} = await import(RADIAL_LINEAR.href);
 const {default: Config} = await import(CONFIG.href);
 const {toFont} = await import(OPTIONS.href);
+const {default: title} = await import(TITLE.href);
+const {default: subtitle} = await import(SUBTITLE.href);
+const {default: legend} = await import(LEGEND.href);
+const {default: tooltip} = await import(TOOLTIP.href);
+const {default: colors} = await import(COLORS.href);
 
 // The module namespace object has no prototype, so registry.addElements
 // cannot take it as one object.
 registry.addElements(...Object.values(elements));
 registry.addScales(RadialLinearScale);
+registry.addPlugins(title, subtitle, legend, tooltip, colors);
 
 /** The value of the dot path [path] in [root]. */
 const at = (root, path) =>
   path.split('.').reduce((node, key) => node[key], root);
 
-// The keys that the light preset of phase 6 emits (theming.md section 4),
-// each with the upstream key that it restates. A font restates the global
+// The keys that the light preset emits (theming.md section 4), each with
+// the upstream key that it restates. The palette keys follow below. A font restates the global
 // defaults.font: toFont reads it for an absent font
 // (helpers.options.ts:115-117). The point-label font restates the global
 // defaults.font with the local size of scale.radialLinear.js:383-385.
@@ -231,6 +289,28 @@ const RESTATED = [
   ['elements.bar.backgroundColor', 'elements.bar.backgroundColor'],
   ['elements.arc.backgroundColor', 'elements.arc.backgroundColor'],
   ['elements.arc.borderColor', 'elements.arc.borderColor'],
+  // The plugin keys of phase 8. A color restates the default of the plugin
+  // (the title and subtitle colors are routes to the global color,
+  // plugin.title.js:158-160, plugin.subtitle.js:45-47). A font restates the
+  // global defaults.font: the plugins read it through toFont or the font
+  // routes (plugin.tooltip.js:1327-1331).
+  ['plugins.title.color', 'plugins.title.color'],
+  ['plugins.title.font', 'font'],
+  ['plugins.subtitle.color', 'plugins.subtitle.color'],
+  ['plugins.subtitle.font', 'font'],
+  ['plugins.legend.labels.font', 'font'],
+  ['plugins.legend.title.font', 'font'],
+  ['plugins.tooltip.backgroundColor', 'plugins.tooltip.backgroundColor'],
+  ['plugins.tooltip.titleColor', 'plugins.tooltip.titleColor'],
+  ['plugins.tooltip.bodyColor', 'plugins.tooltip.bodyColor'],
+  ['plugins.tooltip.footerColor', 'plugins.tooltip.footerColor'],
+  [
+    'plugins.tooltip.multiKeyBackground',
+    'plugins.tooltip.multiKeyBackground',
+  ],
+  ['plugins.tooltip.titleFont', 'font'],
+  ['plugins.tooltip.bodyFont', 'font'],
+  ['plugins.tooltip.footerFont', 'font'],
 ];
 const restated = Object.fromEntries(
   RESTATED.map(([path, source]) => [path, structuredClone(at(defaults, source))]),
@@ -238,6 +318,27 @@ const restated = Object.fromEntries(
 Object.assign(
   restated['scales.radialLinear.pointLabels.font'],
   defaults.scales.radialLinear.pointLabels.font,
+);
+
+// BORDER_COLORS and BACKGROUND_COLORS (plugin.colors.ts:14-25): the colors
+// that beforeLayout gives to 7 datasets of a chart with a controller that
+// is not a doughnut or polar area controller (plugin.colors.ts:35-40,
+// 54-68). The chart has no colors, and defaults has its own colors
+// (plugin.colors.ts:113-121).
+const paletteDatasets = Array.from({length: 7}, () => ({data: []}));
+colors.beforeLayout(
+  {
+    config: {data: {datasets: paletteDatasets}, options: {}},
+    getDatasetMeta: () => ({controller: {}}),
+  },
+  {},
+  {enabled: true, forceOverride: false},
+);
+restated['plugins.colors.$borderColors'] = paletteDatasets.map(
+  (d) => d.borderColor,
+);
+restated['plugins.colors.$backgroundColors'] = paletteDatasets.map(
+  (d) => d.backgroundColor,
 );
 
 // The element options, as _resolveElementOptions resolves them.
@@ -323,6 +424,72 @@ const radial = {
   'ticks.font': fontFields(toFont(r.ticks.font)),
 };
 
+// The options of the title, subtitle, legend and tooltip plugins of a chart
+// of the type `bar`, as pluginOpts resolves them (core.plugins.js:175-188).
+const pluginConfig = new Config({
+  type: 'bar',
+  data: {datasets: [{data: []}]},
+  options: {},
+});
+const pluginContext = {
+  chart: {
+    options: pluginConfig.createResolver(pluginConfig.chartOptionScopes(), {
+      chart: {},
+    }),
+  },
+  type: 'chart',
+};
+/** The options of [plugin], as pluginOpts gives them. */
+function pluginOptions(plugin) {
+  // core.plugins.js:146-154: no `plugins.<id>` user options give undefined.
+  const opts = pluginConfig.options.plugins[plugin.id];
+  const scopes = pluginConfig.getOptionScopes(
+    opts,
+    pluginConfig.pluginScopeKeys(plugin),
+  );
+  return pluginConfig.createResolver(scopes, pluginContext, [''], {
+    scriptable: false,
+    indexable: false,
+    allKeys: true,
+  });
+}
+const pluginResolvers = {
+  title: pluginOptions(title),
+  subtitle: pluginOptions(subtitle),
+  legend: pluginOptions(legend),
+  tooltip: pluginOptions(tooltip),
+};
+// The 19 keys: the plugin id and the path in its options, and the form of
+// the value: a color as resolved, a font as its toFont fields, a value as
+// resolved.
+const PLUGIN_KEYS = [
+  ['title.color', 'color'],
+  ['title.font', 'font'],
+  ['subtitle.color', 'color'],
+  ['subtitle.font', 'font'],
+  ['legend.labels.color', 'color'],
+  ['legend.labels.font', 'font'],
+  ['legend.title.color', 'color'],
+  ['legend.title.font', 'font'],
+  ['tooltip.backgroundColor', 'color'],
+  ['tooltip.titleColor', 'color'],
+  ['tooltip.bodyColor', 'color'],
+  ['tooltip.footerColor', 'color'],
+  ['tooltip.multiKeyBackground', 'color'],
+  ['tooltip.borderColor', 'color'],
+  ['tooltip.titleFont', 'font'],
+  ['tooltip.bodyFont', 'font'],
+  ['tooltip.footerFont', 'font'],
+  ['tooltip.boxWidth', 'value'],
+  ['tooltip.boxHeight', 'value'],
+];
+const plugins = {};
+for (const [path, kind] of PLUGIN_KEYS) {
+  const [id, ...rest] = path.split('.');
+  const value = at(pluginResolvers[id], rest.join('.'));
+  plugins[path] = kind === 'font' ? fontFields(toFont(value)) : value;
+}
+
 function num(v) {
   if (Number.isNaN(v)) return 'double.nan';
   if (v === Infinity) return 'double.infinity';
@@ -365,7 +532,9 @@ const elementBody = elementCases
   )
   .join('');
 
-const data = `${dart(restated)}${elementBody}${dart(scale)}${dart(radial)}`;
+const data =
+  `${dart(restated)}${elementBody}${dart(scale)}${dart(radial)}` +
+  dart(plugins);
 const usesUndefined = /\bundefined\b/.test(data);
 
 const out = `// Original code, not ported from Chart.js: light theme reference data.
@@ -373,8 +542,8 @@ const out = `// Original code, not ported from Chart.js: light theme reference d
 // Generated by tool/reference/theme_light_reference.mjs. Do not edit.
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // src/core/core.defaults.js, src/core/core.config.js, the four elements and
-// src/scales/scale.radialLinear.js at the pinned Chart.js, with the elements
-// and the radial linear scale registered.
+// src/scales/scale.radialLinear.js and five plugins at the pinned Chart.js,
+// with the elements, the radial linear scale and the plugins registered.
 // ${elementCases.length} element cases.
 ${usesUndefined ? "\nimport 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
 /// The Node.js version that generated the data.
@@ -386,10 +555,11 @@ const String themeLightReferenceV8 = '${process.versions.v8}';
 /// The architecture of the Node.js build that generated the data.
 const String themeLightReferenceArch = '${process.arch}';
 
-/// The upstream value of each key that the light preset of phase 6 emits
-/// (theming.md section 4), by the dot path of the key. A font key restates
-/// the global \`defaults.font\`. The point-label font has the local size
-/// of scale.radialLinear.js:383-385.
+/// The upstream value of each key that the light preset emits (theming.md
+/// section 4), by the dot path of the key. A font key restates the global
+/// \`defaults.font\`. The point-label font has the local size of
+/// scale.radialLinear.js:383-385. The palette keys restate BORDER_COLORS and
+/// BACKGROUND_COLORS (plugin.colors.ts:14-25).
 const Map<String, Object?> themeLightRestated = ${dart(restated)};
 
 /// One element case: the options that the upstream resolver gives without a
@@ -418,6 +588,12 @@ const Map<String, Object?> themeLightRadial = ${dart(radial)};
 
 /// The chart-level \`color\` without a theme.
 const ${typeof chartColor === 'string' ? 'String' : 'Object?'} themeLightChartColor = ${dart(chartColor)};
+
+/// The options of the title, subtitle, legend and tooltip plugins of a chart
+/// of the type \`bar\` without a theme, as pluginOpts resolves them
+/// (core.plugins.js:175-188), by the plugin id and the dot path of the key.
+/// A font is the \`toFont\` result.
+const Map<String, Object?> themeLightPlugins = ${dart(plugins)};
 `;
 
 writeFileSync(OUT, out);

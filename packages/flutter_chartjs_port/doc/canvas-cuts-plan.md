@@ -383,6 +383,22 @@ Changes to the cited files:
   rows of the upstream tables change in place, and the new port-only rows come after line 533.
   The `parity.md` rows that this plan cites do not move. The references, the inventory (§1.1),
   the tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-22, the prelude of wave 3 of phase 8 (Chart.js ADR 0038 §6 and Chart.js ADR 0039 §14,
+  both proposed). `apps/chartjs_gallery/lib/demo/demo_chart.dart`, which §3.1 cites, gets the
+  field `tooltip` and the method `getElementsAtEventForMode` (it gives an empty list) of
+  `types.Chart`. `DemoChart` keeps its default `UiCanvasElement()`, so §3.1 does not change.
+  `lib/src/core/core.controller.dart` gets only the field `tooltip` and an `@override` line on
+  `getElementsAtEventForMode`, not a change of `_resize`. `lib/src/types/index.dart` and
+  `lib/src/core/core.datasetController.dart` get new interface members or `@override` lines. This
+  plan cites no line of these files. Thus the references, the inventory (§1.1), the tests of
+  §2.6 and §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-23, the end of wave 3 of phase 8 (Chart.js ADR 0039, proposed).
+  `lib/src/core/core.controller.dart` gets one `DIVERGES` marker line in `setActiveElements`, not
+  a change of `_resize`. `doc/parity.md` gets the rows of the tooltip plugin: the rows of the
+  upstream tables change in place, and the new rows come after line 445. The `parity.md` rows
+  that this plan cites (lines 378-422) do not move. `lib/src/helpers/helpers.core.dart` changes
+  `merge`, `merger` and `mergeIf`, not `isNullOrUndef`. The references, the inventory (§1.1), the
+  tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

@@ -235,6 +235,17 @@ import 'hand/plugin.legend/padding/add-column.dart'
     as plugin_legend_padding_add_column;
 import 'hand/plugin.title/scriptable-options.dart'
     as plugin_title_scriptable_options;
+import 'hand/plugin.tooltip/box-padding.dart' as plugin_tooltip_box_padding;
+import 'hand/plugin.tooltip/caret-position.dart'
+    as plugin_tooltip_caret_position;
+import 'hand/plugin.tooltip/color-box-border-dash.dart'
+    as plugin_tooltip_color_box_border_dash;
+import 'hand/plugin.tooltip/color-box-border-radius.dart'
+    as plugin_tooltip_color_box_border_radius;
+import 'hand/plugin.tooltip/corner-radius.dart' as plugin_tooltip_corner_radius;
+import 'hand/plugin.tooltip/opacity.dart' as plugin_tooltip_opacity;
+import 'hand/plugin.tooltip/point-style.dart' as plugin_tooltip_point_style;
+import 'hand/plugin.tooltip/positioning.dart' as plugin_tooltip_positioning;
 import 'hand/scale.category/invalid-data.dart' as scale_category_invalid_data;
 import 'hand/scale.linear/tick-count-data-limits.dart'
     as scale_linear_tick_count_data_limits;
@@ -736,6 +747,38 @@ final Map<String, HandFixture> handFixtures = {
   'plugin.title/scriptable-options.js': (
     load: plugin_title_scriptable_options.fixture,
     sha256: '2a67dd8b043d',
+  ),
+  'plugin.tooltip/box-padding.js': (
+    load: plugin_tooltip_box_padding.fixture,
+    sha256: 'f1046694a16a',
+  ),
+  'plugin.tooltip/caret-position.js': (
+    load: plugin_tooltip_caret_position.fixture,
+    sha256: '204d3723a843',
+  ),
+  'plugin.tooltip/color-box-border-dash.js': (
+    load: plugin_tooltip_color_box_border_dash.fixture,
+    sha256: 'a13adb1b6eef',
+  ),
+  'plugin.tooltip/color-box-border-radius.js': (
+    load: plugin_tooltip_color_box_border_radius.fixture,
+    sha256: '98d9572c8437',
+  ),
+  'plugin.tooltip/corner-radius.js': (
+    load: plugin_tooltip_corner_radius.fixture,
+    sha256: '6806969b8ac2',
+  ),
+  'plugin.tooltip/opacity.js': (
+    load: plugin_tooltip_opacity.fixture,
+    sha256: '82f95f0a2fd0',
+  ),
+  'plugin.tooltip/point-style.js': (
+    load: plugin_tooltip_point_style.fixture,
+    sha256: '4d3b800e358b',
+  ),
+  'plugin.tooltip/positioning.js': (
+    load: plugin_tooltip_positioning.fixture,
+    sha256: '9644a47dcf84',
   ),
   'scale.category/invalid-data.js': (
     load: scale_category_invalid_data.fixture,

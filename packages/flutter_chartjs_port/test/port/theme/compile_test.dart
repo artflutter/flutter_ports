@@ -17,8 +17,8 @@ import 'package:test/test.dart';
 // The theme compiler has no upstream counterpart (Chart.js ADR 0001). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
 // the emission guard, the rgba() form, the deep freeze and the memo), §3.4
-// and §4 (the token keys, the point-label font, the title, subtitle and
-// legend keys and the palette of Chart.js ADR 0042), §8
+// and §4 (the token keys, the point-label font, the title, subtitle, legend
+// and tooltip keys and the palette of Chart.js ADR 0042), §8
 // test 1 (no theme equals upstream: ChartThemes.none, no extra scope, the
 // scope position of a compiled theme, no dependence on the platform) and
 // the parts of §8 test 5 that need no chart. The expected scope lists follow
@@ -158,7 +158,14 @@ bool get _asserts {
 /// allowed paths.
 final Map<String, Map<String, Object?>> _testThemes = {
   'light': ChartThemes.light,
-  for (final token in ['color', 'borderColor', 'backgroundColor', 'surface'])
+  for (final token in [
+    'color',
+    'borderColor',
+    'backgroundColor',
+    'surface',
+    'inverseSurface',
+    'onInverseSurface',
+  ])
     'colors.$token': _colorTheme(token, _red),
   'typography.font': {
     'typography': <String, Object?>{
@@ -245,6 +252,7 @@ void main() {
       const font = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
       const gray = 'rgba(102, 102, 102, 1)';
       const tenth = 'rgba(0, 0, 0, 0.1)';
+      const white = 'rgba(255, 255, 255, 1)';
       final leaves = _leaves(compileChartTheme(ChartThemes.light));
       expect(leaves, {
         'color': gray,
@@ -285,6 +293,23 @@ void main() {
         'plugins.legend.title.font.size': 12.0,
         'plugins.legend.title.font.style': 'normal',
         'plugins.legend.title.font.lineHeight': 1.2,
+        'plugins.tooltip.backgroundColor': 'rgba(0, 0, 0, 0.8)',
+        'plugins.tooltip.titleColor': white,
+        'plugins.tooltip.bodyColor': white,
+        'plugins.tooltip.footerColor': white,
+        'plugins.tooltip.multiKeyBackground': white,
+        'plugins.tooltip.titleFont.family': font,
+        'plugins.tooltip.titleFont.size': 12.0,
+        'plugins.tooltip.titleFont.style': 'normal',
+        'plugins.tooltip.titleFont.lineHeight': 1.2,
+        'plugins.tooltip.bodyFont.family': font,
+        'plugins.tooltip.bodyFont.size': 12.0,
+        'plugins.tooltip.bodyFont.style': 'normal',
+        'plugins.tooltip.bodyFont.lineHeight': 1.2,
+        'plugins.tooltip.footerFont.family': font,
+        'plugins.tooltip.footerFont.size': 12.0,
+        'plugins.tooltip.footerFont.style': 'normal',
+        'plugins.tooltip.footerFont.lineHeight': 1.2,
         r'plugins.colors.$borderColors': [
           'rgba(54, 162, 235, 1)',
           'rgba(255, 99, 132, 1)',
@@ -344,6 +369,23 @@ void main() {
         'plugins.legend.title.font.size',
         'plugins.legend.title.font.style',
         'plugins.legend.title.font.lineHeight',
+        'plugins.tooltip.backgroundColor',
+        'plugins.tooltip.titleColor',
+        'plugins.tooltip.bodyColor',
+        'plugins.tooltip.footerColor',
+        'plugins.tooltip.multiKeyBackground',
+        'plugins.tooltip.titleFont.family',
+        'plugins.tooltip.titleFont.size',
+        'plugins.tooltip.titleFont.style',
+        'plugins.tooltip.titleFont.lineHeight',
+        'plugins.tooltip.bodyFont.family',
+        'plugins.tooltip.bodyFont.size',
+        'plugins.tooltip.bodyFont.style',
+        'plugins.tooltip.bodyFont.lineHeight',
+        'plugins.tooltip.footerFont.family',
+        'plugins.tooltip.footerFont.size',
+        'plugins.tooltip.footerFont.style',
+        'plugins.tooltip.footerFont.lineHeight',
         r'plugins.colors.$borderColors',
         r'plugins.colors.$backgroundColors',
         'elements.point.borderColor',
@@ -388,6 +430,15 @@ void main() {
         'surface': {
           'elements.arc.borderColor': red,
           'scale.ticks.backdropColor': 'rgba(200, 0, 0, 0.75)',
+        },
+        // The tooltip colors (plugin.tooltip.js:1279, 1280, 1287, 1292,
+        // 1305).
+        'inverseSurface': {'plugins.tooltip.backgroundColor': red},
+        'onInverseSurface': {
+          'plugins.tooltip.titleColor': red,
+          'plugins.tooltip.bodyColor': red,
+          'plugins.tooltip.footerColor': red,
+          'plugins.tooltip.multiKeyBackground': red,
         },
       };
       for (final MapEntry(key: token, value: keys) in expected.entries) {
@@ -451,6 +502,16 @@ void main() {
         'plugins.legend.title.font.family': 'serif',
         'plugins.legend.title.font.style': 'italic',
         'plugins.legend.title.font.weight': 'bold',
+        // The tooltip title and footer keep their local 'bold'
+        // (plugin.tooltip.js:1281-1283, 1295-1297). The body font is the
+        // whole font.
+        'plugins.tooltip.titleFont.family': 'serif',
+        'plugins.tooltip.titleFont.style': 'italic',
+        'plugins.tooltip.bodyFont.family': 'serif',
+        'plugins.tooltip.bodyFont.style': 'italic',
+        'plugins.tooltip.bodyFont.weight': 'bold',
+        'plugins.tooltip.footerFont.family': 'serif',
+        'plugins.tooltip.footerFont.style': 'italic',
         ..._transitionLeaves,
       });
       // No root font (theming.md §3.4), and one Map for each slot.
@@ -592,6 +653,12 @@ void main() {
         'plugins.legend.labels.font.size': 14.0,
         'plugins.legend.title.font.family': 'serif',
         'plugins.legend.title.font.size': 14.0,
+        'plugins.tooltip.titleFont.family': 'serif',
+        'plugins.tooltip.titleFont.size': 14.0,
+        'plugins.tooltip.bodyFont.family': 'serif',
+        'plugins.tooltip.bodyFont.size': 14.0,
+        'plugins.tooltip.footerFont.family': 'serif',
+        'plugins.tooltip.footerFont.size': 14.0,
         ..._transitionLeaves,
       });
     });
@@ -806,8 +873,8 @@ void main() {
         'rgba(200, 0, 0, 1)',
         'rgba(0, 0, 255, 0.8)',
       ]);
-      // With the other tokens, the palette comes after the title, subtitle
-      // and legend keys of plugins.
+      // With the other tokens, the palette comes after the title, subtitle,
+      // legend and tooltip keys of plugins.
       final light = compileChartTheme(ChartThemes.light)!;
       expect(light.keys, [
         'color',
@@ -821,6 +888,7 @@ void main() {
         'title',
         'subtitle',
         'legend',
+        'tooltip',
         'colors',
       ]);
     });
@@ -1007,8 +1075,9 @@ void main() {
       expect(font.keys, ['family', 'size']);
       // One Map for each slot.
       expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
-      // A font with a weight only gives no title font. The legend fonts
-      // keep the weight (the group `the subtitle and legend keys`).
+      // A font with a weight only gives no title font. The legend fonts and
+      // the tooltip body font keep the weight (the groups `the subtitle and
+      // legend keys` and `the tooltip keys`).
       final weightOnly = compileChartTheme({
         'typography': <String, Object?>{
           'font': <String, Object?>{'weight': 'bold'},
@@ -1018,6 +1087,7 @@ void main() {
       expect(_at(weightOnly, 'plugins.title'), same(undefined));
       expect((_at(weightOnly, 'plugins')! as Map<String, Object?>).keys, [
         'legend',
+        'tooltip',
       ]);
     });
 
@@ -1167,6 +1237,7 @@ void main() {
         'title',
         'subtitle',
         'legend',
+        'tooltip',
       ]);
       final both = compileChartTheme({
         'colors': <String, Object?>{'color': _red},
@@ -1177,6 +1248,7 @@ void main() {
         'title',
         'subtitle',
         'legend',
+        'tooltip',
       ]);
       expect((_at(both, 'plugins.subtitle')! as Map<String, Object?>).keys, [
         'color',
@@ -1254,6 +1326,248 @@ void main() {
           reason: path,
         );
       }
+    });
+  });
+
+  group('the tooltip keys', () {
+    // theming.md §4 (Chart.js ADR 0042): the token inverseSurface gives the
+    // tooltip background, the token onInverseSurface the four tooltip text
+    // and key colors. The tooltip body font is the whole font token. The
+    // title and footer fonts are the font token without weight.
+    const tooltipColors = [
+      'backgroundColor',
+      'titleColor',
+      'bodyColor',
+      'footerColor',
+      'multiKeyBackground',
+    ];
+    final serifBold = <String, Object?>{
+      'typography': <String, Object?>{
+        'font': <String, Object?>{
+          'family': 'serif',
+          'weight': 'bold',
+          'size': 14.0,
+          'lineHeight': 1.5,
+        },
+      },
+    };
+
+    test('inverseSurface is the tooltip background', () {
+      // plugin.tooltip.js:1279.
+      final compiled = compileChartTheme(_colorTheme('inverseSurface', _blue));
+      expect(_leaves(compiled), {
+        'plugins.tooltip.backgroundColor': 'rgba(0, 0, 255, 0.8)',
+        ..._transitionLeaves,
+      });
+      expect(compiled!.keys, ['plugins', 'transitions']);
+    });
+
+    test('onInverseSurface is the tooltip text and key color', () {
+      // plugin.tooltip.js:1280, 1287, 1292, 1305.
+      final compiled = compileChartTheme(
+        _colorTheme('onInverseSurface', _blue),
+      );
+      expect(_leaves(compiled), {
+        'plugins.tooltip.titleColor': 'rgba(0, 0, 255, 0.8)',
+        'plugins.tooltip.bodyColor': 'rgba(0, 0, 255, 0.8)',
+        'plugins.tooltip.footerColor': 'rgba(0, 0, 255, 0.8)',
+        'plugins.tooltip.multiKeyBackground': 'rgba(0, 0, 255, 0.8)',
+        ..._transitionLeaves,
+      });
+      // The other color tokens give no tooltip key. The tooltip border
+      // color 'rgba(0,0,0,0)' (plugin.tooltip.js:1308) has no token.
+      for (final token in [
+        'color',
+        'borderColor',
+        'backgroundColor',
+        'surface',
+      ]) {
+        expect(
+          _leaves(
+            compileChartTheme(_colorTheme(token, _blue)),
+          ).keys.where((path) => path.startsWith('plugins.tooltip.')),
+          isEmpty,
+          reason: token,
+        );
+      }
+    });
+
+    test('the light preset gives the upstream tooltip colors', () {
+      // 'rgba(0,0,0,0.8)' and '#fff' (plugin.tooltip.js:1279, 1280, 1287,
+      // 1292, 1305) after the parse of the ported @kurkle/color.
+      final compiled = compileChartTheme(ChartThemes.light);
+      expect(
+        _at(compiled, 'plugins.tooltip.backgroundColor'),
+        'rgba(0, 0, 0, 0.8)',
+      );
+      expect(
+        Color(_at(compiled, 'plugins.tooltip.backgroundColor')).rgbString(),
+        Color('rgba(0,0,0,0.8)').rgbString(),
+      );
+      for (final key in tooltipColors.skip(1)) {
+        expect(
+          Color(_at(compiled, 'plugins.tooltip.$key')).rgbString(),
+          Color('#fff').rgbString(),
+          reason: key,
+        );
+      }
+      expect(_at(compiled, 'plugins.tooltip.borderColor'), same(undefined));
+    });
+
+    test('the body font is the whole font token', () {
+      // plugin.tooltip.js:1289-1290: no local field.
+      final compiled = compileChartTheme(serifBold);
+      final font =
+          _at(compiled, 'plugins.tooltip.bodyFont')! as Map<String, Object?>;
+      expect(font, <String, Object?>{
+        'family': 'serif',
+        'weight': 'bold',
+        'size': 14.0,
+        'lineHeight': 1.5,
+      });
+      expect(font.keys, ['family', 'weight', 'size', 'lineHeight']);
+      expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
+      expect(jsObjectIsFrozen(font), isTrue);
+    });
+
+    test('the title and footer fonts have no weight', () {
+      // theming.md §3.4: the tooltip title and footer keep their local
+      // weight 'bold' (plugin.tooltip.js:1281-1283, 1295-1297).
+      final compiled = compileChartTheme(serifBold);
+      for (final key in ['titleFont', 'footerFont']) {
+        final font =
+            _at(compiled, 'plugins.tooltip.$key')! as Map<String, Object?>;
+        expect(font, <String, Object?>{
+          'family': 'serif',
+          'size': 14.0,
+          'lineHeight': 1.5,
+        }, reason: key);
+        expect(font.keys, ['family', 'size', 'lineHeight'], reason: key);
+        expect(jsObjectIsFrozen(font), isTrue, reason: key);
+      }
+      // One Map for each slot.
+      expect(
+        _at(compiled, 'plugins.tooltip.titleFont'),
+        isNot(same(_at(compiled, 'plugins.tooltip.footerFont'))),
+      );
+      expect(
+        _at(compiled, 'plugins.tooltip.titleFont'),
+        isNot(same(_at(compiled, 'plugins.title.font'))),
+      );
+      // A font with a weight only gives the body font only.
+      final weightOnly = compileChartTheme({
+        'typography': <String, Object?>{
+          'font': <String, Object?>{'weight': 'bold'},
+        },
+      });
+      expect(_leaves(_at(weightOnly, 'plugins.tooltip')), {
+        'bodyFont.weight': 'bold',
+      });
+    });
+
+    test('the tooltip keys come after the legend keys, in one order', () {
+      // The colors and then the fonts, in each theme.
+      final compiled = compileChartTheme({
+        'colors': <String, Object?>{
+          'onInverseSurface': _red,
+          'color': _red,
+          'inverseSurface': _blue,
+        },
+        ...serifBold,
+        'palette': <String, Object?>{
+          'colors': <Object?>[_red],
+        },
+      })!;
+      expect((compiled['plugins']! as Map<String, Object?>).keys, [
+        'title',
+        'subtitle',
+        'legend',
+        'tooltip',
+        'colors',
+      ]);
+      expect((_at(compiled, 'plugins.tooltip')! as Map<String, Object?>).keys, [
+        ...tooltipColors,
+        'titleFont',
+        'bodyFont',
+        'footerFont',
+      ]);
+      // The same order without the other tokens.
+      final tooltipOnly = compileChartTheme({
+        'colors': <String, Object?>{'onInverseSurface': _red},
+        ...serifBold,
+      })!;
+      expect((tooltipOnly['plugins']! as Map<String, Object?>).keys, [
+        'title',
+        'subtitle',
+        'legend',
+        'tooltip',
+      ]);
+      expect(
+        (_at(tooltipOnly, 'plugins.tooltip')! as Map<String, Object?>).keys,
+        [...tooltipColors.skip(1), 'titleFont', 'bodyFont', 'footerFont'],
+      );
+    });
+
+    test('the raw keys beat the tooltip token keys', () {
+      final compiled = compileChartTheme({
+        'colors': <String, Object?>{
+          'inverseSurface': _blue,
+          'onInverseSurface': _red,
+        },
+        ...serifBold,
+        'raw': <String, Object?>{
+          'plugins': <String, Object?>{
+            'tooltip': <String, Object?>{
+              'backgroundColor': 'raw-background',
+              'titleFont': <String, Object?>{'weight': 'lighter'},
+              'bodyFont': <String, Object?>{'size': 10.0},
+              'borderColor': 'raw-border',
+            },
+          },
+        },
+      });
+      expect(_leaves(_at(compiled, 'plugins.tooltip')), {
+        'backgroundColor': 'raw-background',
+        'titleColor': 'rgba(200, 0, 0, 1)',
+        'bodyColor': 'rgba(200, 0, 0, 1)',
+        'footerColor': 'rgba(200, 0, 0, 1)',
+        'multiKeyBackground': 'rgba(200, 0, 0, 1)',
+        'titleFont.family': 'serif',
+        'titleFont.size': 14.0,
+        'titleFont.lineHeight': 1.5,
+        'titleFont.weight': 'lighter',
+        'bodyFont.family': 'serif',
+        'bodyFont.weight': 'bold',
+        'bodyFont.size': 10.0,
+        'bodyFont.lineHeight': 1.5,
+        'footerFont.family': 'serif',
+        'footerFont.size': 14.0,
+        'footerFont.lineHeight': 1.5,
+        'borderColor': 'raw-border',
+      });
+    });
+
+    test('the tooltip token keys pass the guard, the position fails', () {
+      for (final key in [...tooltipColors, 'titleFont', 'bodyFont']) {
+        expect(
+          themeNeverEmittedReason(_path('plugins.tooltip.$key'), 'x'),
+          isNull,
+          reason: key,
+        );
+      }
+      expect(
+        themeNeverEmittedReason(_path('plugins.tooltip.footerFont.size'), 9.0),
+        isNull,
+      );
+      // Rule 2b (plugin.tooltip.js:651, 1012, 1218) and rule 2.
+      expect(
+        themeNeverEmittedReason(_path('plugins.tooltip.position'), 'nearest'),
+        'plugins.tooltip.position is a behavior key',
+      );
+      expect(
+        themeNeverEmittedReason(_path('plugins.tooltip.mode'), 'index'),
+        'plugins.tooltip.mode is a behavior key',
+      );
     });
   });
 
@@ -1624,7 +1938,7 @@ void main() {
         final themes = <Map<String, Object?>>[
           {'palette2': <String, Object?>{}},
           {
-            'colors': <String, Object?>{'inverseSurface': _red},
+            'colors': <String, Object?>{'outline': _red},
           },
           {
             'colors': <String, Object?>{'color': 'red'},

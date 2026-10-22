@@ -15,7 +15,8 @@ abstract final class ChartThemes {
   /// (theming.md §4). It restates these values (theming.md §9):
   ///
   /// - `colors.color`: `Defaults.color` `'#666'` (`core.defaults.js:43`),
-  ///   also the value of the title color route (`plugin.title.js:158-160`).
+  ///   also the value of the title and subtitle color routes
+  ///   (`plugin.title.js:158-160`, `plugin.subtitle.js:45-47`).
   /// - `colors.borderColor`: `Defaults.borderColor` `'rgba(0,0,0,0.1)'`
   ///   (`core.defaults.js:42`). The alpha is 0.1 exactly, not the 8-bit
   ///   alpha of `Color(0x1A000000)`.
@@ -24,10 +25,18 @@ abstract final class ChartThemes {
   /// - `colors.surface`: the arc `borderColor` `'#fff'`
   ///   (`element.arc.ts:379`) and the tick backdrop
   ///   `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`).
+  /// - `colors.inverseSurface`: the tooltip `backgroundColor`
+  ///   `'rgba(0,0,0,0.8)'` (`plugin.tooltip.js:1279`). It compiles to
+  ///   `'rgba(0, 0, 0, 0.8)'`.
+  /// - `colors.onInverseSurface`: the `'#fff'` of the tooltip `titleColor`,
+  ///   `bodyColor`, `footerColor` and `multiKeyBackground`
+  ///   (`plugin.tooltip.js:1280, 1287, 1292, 1305`).
   /// - `typography.font`: `Defaults.font` (`core.defaults.js:54-60`). Its
-  ///   `weight` is `null`, which themes nothing. The title font has no
-  ///   weight in the theme: the title keeps its local `'bold'`
-  ///   (`plugin.title.js:148-150`).
+  ///   `weight` is `null`, which themes nothing. The title, subtitle,
+  ///   tooltip title and tooltip footer fonts have no weight in the theme:
+  ///   they keep their local `'bold'` (`plugin.title.js:148-150`,
+  ///   `plugin.tooltip.js:1281-1283, 1295-1297`) and `'normal'`
+  ///   (`plugin.subtitle.js:35-37`).
   /// - `typography.pointLabels`: the point-label size 10
   ///   (`scale.radialLinear.js:383-385`).
   /// - `palette`: the 7 colors of `BORDER_COLORS` at alpha 1
@@ -36,15 +45,14 @@ abstract final class ChartThemes {
   ///   strings are `rgba(54, 162, 235, 1)`, which parse to the upstream
   ///   `rgb(54, 162, 235)`. The compiled background strings equal the
   ///   upstream strings, for example `rgba(54, 162, 235, 0.5)`.
-  ///
-  /// The tooltip tokens `colors.inverseSurface` and
-  /// `colors.onInverseSurface` come with the port of `plugin.tooltip`.
   static const AnyObject light = <String, Object?>{
     'colors': <String, Object?>{
       'color': (alpha: 1.0, red: 102 / 255, green: 102 / 255, blue: 102 / 255),
       'borderColor': (alpha: 0.1, red: 0.0, green: 0.0, blue: 0.0),
       'backgroundColor': (alpha: 0.1, red: 0.0, green: 0.0, blue: 0.0),
       'surface': (alpha: 1.0, red: 1.0, green: 1.0, blue: 1.0),
+      'inverseSurface': (alpha: 0.8, red: 0.0, green: 0.0, blue: 0.0),
+      'onInverseSurface': (alpha: 1.0, red: 1.0, green: 1.0, blue: 1.0),
     },
     'typography': <String, Object?>{
       'font': <String, Object?>{

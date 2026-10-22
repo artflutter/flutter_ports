@@ -152,6 +152,17 @@ final class DemoChart implements types.Chart {
   @override
   bool isPointInArea(Point point) => helpers.isPointInArea(point, chartArea);
 
+  /// core.controller.js:820 `getElementsAtEventForMode`. The demo chart has
+  /// no datasets, so no mode finds an item. The result is a new list, as the
+  /// `[]` of core.controller.js:826: a reader can reorder it in place.
+  @override
+  List<types.ActiveElement> getElementsAtEventForMode(
+    Object e,
+    Object? mode,
+    Object? options, [
+    bool? useFinalPosition,
+  ]) => [];
+
   /// No datasets.
   @override
   List<types.ChartMeta> getSortedVisibleDatasetMetas() => const [];
@@ -220,6 +231,11 @@ final class DemoChart implements types.Chart {
   /// so it stays `null`.
   @override
   types.LayoutItem? titleBlock;
+
+  /// index.d.ts:544 `tooltip`. The demo chart has no tooltip plugin, so it
+  /// stays `null`.
+  @override
+  types.TooltipModel? tooltip;
 
   double? _aspectRatio;
 

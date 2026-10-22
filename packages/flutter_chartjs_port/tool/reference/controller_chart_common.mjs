@@ -458,6 +458,12 @@ export async function loadChartJs() {
  * the rounded center of the box and return `['click', x, y]` or
  * `['hover', x, y]`. Thus the Dart test runs the same point and reads no
  * hit box for the step (Chart.js ADR 0041, section 3 item 6).
+ *
+ * `['setTooltip', [[d, i], ...], x, y]` calls
+ * `chart.tooltip.setActiveElements` with the items `{datasetIndex, index}`
+ * and the event position `{x, y}`, then `chart.update()` (Chart.js ADR 0041,
+ * section 3 item 6). It needs the tooltip plugin: without it,
+ * `chart.tooltip` is undefined and the step throws a TypeError.
  */
 export function applyStep(chart, step, state = {}) {
   const [action, ...args] = step;
@@ -516,6 +522,15 @@ export function applyStep(chart, step, state = {}) {
       state.last = [x, y];
       chart._eventHandler({type, chart, native: {type}, x, y});
       return [action === 'clickLegend' ? 'click' : 'hover', x, y];
+    }
+    case 'setTooltip': {
+      const [items, x, y] = args;
+      chart.tooltip.setActiveElements(
+        items.map(([datasetIndex, index]) => ({datasetIndex, index})),
+        {x, y},
+      );
+      chart.update();
+      return step;
     }
     case 'setOption': {
       // ['setOption', path, value]: the write `chart.options.<path> = value`

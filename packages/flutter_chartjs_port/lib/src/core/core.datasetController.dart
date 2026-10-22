@@ -860,6 +860,7 @@ class DatasetController
   ///
   /// The dataset `chart.data.datasets[index]`: a Map, or [undefined] for an
   /// index that names no dataset.
+  @override
   Object? getDataset() {
     return jsGetIndex(jsGet(chart.data, 'datasets'), index);
   }
@@ -1364,6 +1365,7 @@ class DatasetController
   /// can be any value: Dart `null` for JS `null`, or the [undefined]
   /// sentinel (Chart.js ADR 0028, section 2). The `value` is always a
   /// string.
+  @override
   ({Object? label, String value}) getLabelAndValue(double index) {
     final meta = cachedMeta;
     final iScale = meta.iScale;

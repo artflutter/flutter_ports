@@ -19,26 +19,32 @@ import 'package:test/test.dart';
 
 import 'light_reference.dart';
 
-// theming.md §8 test 3, the parts of phases 5 and 6: the light preset
-// equals upstream for core.defaults, the four elements, core.scale.defaults
-// and the keys of scales.radialLinear. The expected values are in
+// theming.md §8 test 3, the parts of phases 5 and 6, and the values that
+// the light preset restates: the light preset equals upstream for
+// core.defaults, the four elements, core.scale.defaults and the keys of
+// scales.radialLinear, and each emitted key restates its upstream value,
+// also the plugin keys and the palette of phase 8. The expected values are in
 // light_reference.dart. The generator tool/reference/theme_light_reference.mjs
 // runs the pinned upstream sources in Node.js v24.12.0 on x64, with the four
-// elements and the radial linear scale registered, and without a theme.
+// elements, the radial linear scale and five plugins registered, and without
+// a theme.
 //
 // main() registers the four element classes through a new TypedRegistry
 // (core.typedRegistry.js:24-53, Chart.js ADR 0022, section 8), before the
-// snapshot of the restore. The scales are not pure layers. Thus the radial
-// linear scale case is in presets_radial_test.dart, which runs on the VM
-// only. The title and subtitle colors and fonts, the two legend fonts and
-// the palette of the light preset are in compile_test.dart and
-// coverage_test.dart. The tooltip keys come with plugin.tooltip. The 8 chart
-// types with their controllers are in precedence_test.dart (test 3: the
-// light palette).
+// snapshot of the restore. The scales and the plugins are not pure layers.
+// Thus the radial linear scale case is in presets_radial_test.dart, and the
+// resolved options of the title, subtitle, legend and tooltip plugins are in
+// presets_plugins_test.dart. Both run on the VM only. The 8 chart types with
+// their controllers and the light palette are in precedence_test.dart (test
+// 3: the light palette).
 
 /// The parsed form of the CSS color [value]: the `rgbString` of the ported
 /// @kurkle/color, as the canvas layer parses a color.
 String? _parsed(Object? value) => Color(value).rgbString();
+
+/// A field of a font: `.font.<field>` or `.<name>Font.<field>` at the end of
+/// a dot path, with the font key as group 1.
+final RegExp _fontField = RegExp(r'\.(font|[a-z]+Font)\.[^.]+$');
 
 /// Whether [key] names a color option.
 bool _isColorKey(String key) => key.endsWith('Color');
@@ -166,20 +172,29 @@ void main() {
                 in upstream.entries)
               field: ?fieldValue,
           }, reason: path);
+        } else if (upstream is List<Object?>) {
+          // A palette: the colors after the parse (plugin.colors.ts:14-25).
+          expect(value, isA<List<Object?>>(), reason: path);
+          expect(
+            [for (final color in value! as List<Object?>) _parsed(color)],
+            [for (final color in upstream) _parsed(color)],
+            reason: path,
+          );
+          expect(upstream.map(_parsed), everyElement(isNotNull));
         } else {
           expect(_parsed(value), _parsed(upstream), reason: path);
           expect(_parsed(value), isNotNull, reason: path);
         }
       }
-      // The preset emits these keys and no other key of phases 5 and 6. The
-      // plugin keys have their own tests: compile_test.dart (the groups
-      // `the palette` and `the title keys`) and coverage_test.dart.
+      // The preset emits these keys and no other key. A font field counts
+      // as its font, for example plugins.tooltip.bodyFont.size as
+      // plugins.tooltip.bodyFont.
       final leafPaths = _leaves(compiled).keys
-          .where(
+          .where((path) => !path.startsWith('transitions'))
+          .map(
             (path) =>
-                !path.startsWith('transitions') && !path.startsWith('plugins.'),
+                path.replaceFirstMapped(_fontField, (match) => '.${match[1]}'),
           )
-          .map((path) => path.replaceFirst(RegExp(r'\.font\..*$'), '.font'))
           .toSet();
       expect(leafPaths, keys);
       expect(emitted, {'color', 'scale', 'scales', 'plugins', 'elements'});
