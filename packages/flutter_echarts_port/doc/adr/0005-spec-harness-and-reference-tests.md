@@ -11,17 +11,17 @@
   the name of a harness package),
   [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (item 8: tools 4 and
   5, the config value of the harness package),
-  [Chart.js ADR 0022](../../../flutter_chartjs/doc/adr/0022-chart-test-harness.md) (the chart
+  [Chart.js ADR 0022](../../../flutter_chartjs_port/doc/adr/0022-chart-test-harness.md) (the chart
   harness of the Chart.js port),
-  [Chart.js ADR 0023](../../../flutter_chartjs/doc/adr/0023-underscore-member-collisions.md) (the
+  [Chart.js ADR 0023](../../../flutter_chartjs_port/doc/adr/0023-underscore-member-collisions.md) (the
   underscore members),
-  [Chart.js ADR 0029](../../../flutter_chartjs/doc/adr/0029-fixture-smoke-runner.md) (the fixture
+  [Chart.js ADR 0029](../../../flutter_chartjs_port/doc/adr/0029-fixture-smoke-runner.md) (the fixture
   smoke runner),
-  [Chart.js ADR 0030](../../../flutter_chartjs/doc/adr/0030-controller-test-strategy.md) (the
+  [Chart.js ADR 0030](../../../flutter_chartjs_port/doc/adr/0030-controller-test-strategy.md) (the
   reference tests, the tolerance, the size of a data file),
-  [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (accepted
+  [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) (accepted
   2026-10-21: §2, the reference engine),
-  [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)
+  [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md)
   (accepted 2026-10-21: §4, no image comparison),
   [D3 ADR 0004](../../../flutter_d3_port/doc/adr/0004-spec-harness.md) (the stand-in form, the
   names, the skips, the test legs, no harness package),
@@ -254,18 +254,18 @@ handler proxy, no animation loop). `TooltipView.ts:165`, `:184`, `:298` and `:10
 `env.node` is true or `getDom()` is null.
 
 **Precedents.**
-- [Chart.js ADR 0022](../../../flutter_chartjs/doc/adr/0022-chart-test-harness.md): a chart spec
+- [Chart.js ADR 0022](../../../flutter_chartjs_port/doc/adr/0022-chart-test-harness.md): a chart spec
   of Chart.js is a `testWidgets` test with `@TestOn('vm')`. The harness package
   `chartjs_test_utils` has a DOM stand-in, frames of 16 ms and `waitForDone`.
-- [Chart.js ADR 0029](../../../flutter_chartjs/doc/adr/0029-fixture-smoke-runner.md): the fixture
+- [Chart.js ADR 0029](../../../flutter_chartjs_port/doc/adr/0029-fixture-smoke-runner.md): the fixture
   smoke runner. Tool 4 writes `fixtures.json`. Hand ports go in `test/fixtures/hand/`. The tag is
   `fixtures`, the script `test:fixtures`, the CI job `fixtures`, the switch `FIXTURES_REQUIRED=1`.
-- [Chart.js ADR 0030](../../../flutter_chartjs/doc/adr/0030-controller-test-strategy.md): Node.js
+- [Chart.js ADR 0030](../../../flutter_chartjs_port/doc/adr/0030-controller-test-strategy.md): Node.js
   generators run the pinned dist. Numbers compare at 1e-9 absolute or 1e-12 relative above 1e3.
   A data file has at most 2.5 MB.
-- [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) §2
+- [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) §2
   (accepted 2026-10-21): reference values come only from an x64 build of Node.js v24.12.0.
-- [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md) §4
+- [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md) §4
   (accepted 2026-10-21): no image comparison with upstream. A smoke test passes when no step throws.
 - [D3 ADR 0004](../../../flutter_d3_port/doc/adr/0004-spec-harness.md): a stand-in keeps the
   upstream assertions line by line. The names follow the ` #2` rule. Loops stay loops. The harness

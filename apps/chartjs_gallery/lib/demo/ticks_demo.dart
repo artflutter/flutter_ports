@@ -6,10 +6,10 @@ import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/core/core.ticks.dart' show ticks;
-import 'package:flutter_chartjs/src/js/js_function.dart';
-import 'package:flutter_chartjs/src/js/js_number.dart';
-import 'package:flutter_chartjs/src/types/index.dart';
+import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show ticks;
+import 'package:flutter_chartjs_port/src/js/js_function.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// The locales of the locale menu.
 const List<String> tickLocales = ['en-US', 'de-DE', 'fr-FR', 'ru-RU', 'ja-JP'];

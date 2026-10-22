@@ -8,9 +8,9 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:chartjs_gallery/demo/gallery_components.dart';
-import 'package:flutter_chartjs/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The duration of the looping animation of the call `animate` of the
 /// stress mode chart, in ms.

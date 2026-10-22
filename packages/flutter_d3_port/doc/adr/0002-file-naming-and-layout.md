@@ -3,9 +3,9 @@
 - Status: proposed
 - Date: 2026-10-20
 - Gate: D3 phase 1. The first ported file of the pilot needs a Dart path.
-- Related: [Chart.js ADR 0012](../../../flutter_chartjs/doc/adr/0012-dart-file-naming.md) (the
+- Related: [Chart.js ADR 0012](../../../flutter_chartjs_port/doc/adr/0012-dart-file-naming.md) (the
   precedent: upstream spelling and underscore names),
-  [Chart.js ADR 0023](../../../flutter_chartjs/doc/adr/0023-underscore-member-collisions.md)
+  [Chart.js ADR 0023](../../../flutter_chartjs_port/doc/adr/0023-underscore-member-collisions.md)
   (proposed: underscore members whose names collide),
   [ADR 0007](../../../../docs/adr/0007-package-names.md) (the package name),
   [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (tool 2 for both
@@ -19,7 +19,7 @@
 The port translates D3 file by file (AGENTS.md rules 1 and 2). Tool 2, the bump review and the
 header restamp map an upstream path to a Dart path. A mechanical map keeps these tools simple.
 
-[Chart.js ADR 0012](../../../flutter_chartjs/doc/adr/0012-dart-file-naming.md) gives that map for
+[Chart.js ADR 0012](../../../flutter_chartjs_port/doc/adr/0012-dart-file-naming.md) gives that map for
 the Chart.js port. It keeps the upstream file names with their dots and their case. A Chart.js ADR
 binds only the Chart.js port. Thus this ADR states the complete D3 rule.
 

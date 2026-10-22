@@ -3,12 +3,12 @@
 import 'package:chartjs_gallery/demo/chart_canvas.dart';
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs/src/controllers/index.dart';
-import 'package:flutter_chartjs/src/core/core.animator.dart';
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/core/core.registry.dart';
-import 'package:flutter_chartjs/src/elements/index.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/controllers/index.dart';
+import 'package:flutter_chartjs_port/src/core/core.animator.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.registry.dart';
+import 'package:flutter_chartjs_port/src/elements/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Pumps [count] frames of 16 ms, the frame interval of a browser.

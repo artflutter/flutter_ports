@@ -6,15 +6,15 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/controllers/index.dart';
-import 'package:flutter_chartjs/src/core/core.animator.dart';
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/elements/element_options.dart';
-import 'package:flutter_chartjs/src/elements/index.dart';
-import 'package:flutter_chartjs/src/js/js_object.dart'
+import 'package:flutter_chartjs_port/src/controllers/index.dart';
+import 'package:flutter_chartjs_port/src/core/core.animator.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsObjectIsFrozen;
-import 'package:flutter_chartjs/src/platform/chart_host.dart';
-import 'package:flutter_chartjs/src/platform/platform.flutter.dart';
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A tall desktop window: the whole Core tab is in view.

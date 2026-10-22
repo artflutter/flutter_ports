@@ -4,10 +4,10 @@
 // phase 9. The gallery imports the ported files directly.
 // ignore_for_file: implementation_imports
 
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/js/js_number.dart' show jsAdd;
-import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsAdd;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The area chart of `docs/samples/area/line-boundaries.md:3-120`, at the
 /// fill `'origin'`.

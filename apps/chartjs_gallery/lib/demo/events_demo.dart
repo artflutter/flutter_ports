@@ -8,17 +8,17 @@ import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/canvas/canvas.dart';
-import 'package:flutter_chartjs/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs/src/helpers/index.dart'
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
+import 'package:flutter_chartjs_port/src/helpers/index.dart'
     show drawPoint, getParentNode, getRelativePosition, renderText, toFont;
-import 'package:flutter_chartjs/src/js/js_number.dart';
-import 'package:flutter_chartjs/src/platform/chart_host.dart'
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show addCanvasEventListener, removeCanvasEventListener;
-import 'package:flutter_chartjs/src/platform/index.dart'
+import 'package:flutter_chartjs_port/src/platform/index.dart'
     show BasicPlatform, FlutterPlatform;
-import 'package:flutter_chartjs/src/platform/native_event.dart';
-import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The event types of the demo chart: the Chart.js default `events` option
 /// (`core.defaults`), plus `mousedown`, `mouseup`, `touchend` and `wheel`.

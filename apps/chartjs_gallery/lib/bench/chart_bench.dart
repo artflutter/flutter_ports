@@ -26,7 +26,7 @@
 /// layout, the dataset update and the dataset draw with the hooks of an
 /// inline plugin (`StressChartTiming`, Chart.js ADR 0031, section 6).
 ///
-/// The timing loop follows `packages/flutter_chartjs/tool/bench/src/
+/// The timing loop follows `packages/flutter_chartjs_port/tool/bench/src/
 /// harness.dart`: a warm-up, a calibration, and timed batches. A batch runs
 /// a fixed count of iterations, about one batch time long. Its figure is
 /// the mean of its iterations. Thus a batch includes its part of the
@@ -45,9 +45,9 @@ import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The width of the bitmap of the benchmark canvas, in device pixels.
 const int chartBenchWidth = 800;

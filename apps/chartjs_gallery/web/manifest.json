@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Gallery of Chart.js charts rendered natively by flutter_chartjs.",
+    "description": "Gallery of Chart.js charts rendered natively by flutter_chartjs_port.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

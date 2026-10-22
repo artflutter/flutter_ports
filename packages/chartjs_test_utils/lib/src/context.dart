@@ -3,13 +3,13 @@
 /// Port of `src/context.js`: the mock canvas context that records calls.
 ///
 /// This library is a pure layer. It implements the canvas interface of
-/// `flutter_chartjs` (`lib/src/canvas/canvas.dart`), which has no `dart:ui`.
+/// `flutter_chartjs_port` (`lib/src/canvas/canvas.dart`), which has no `dart:ui`.
 library;
 
-// The harness implements the canvas interface. flutter_chartjs does not
+// The harness implements the canvas interface. flutter_chartjs_port does not
 // export lib/src.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 
 /// context.js:157 the object that `record` pushes: `{name, args}`.
 ///
@@ -303,9 +303,9 @@ class MockContext implements CanvasRenderingContext2D {
   /// absent argument), and examines no argument.
   ///
   /// `addRoundedRectPath` calls it in place of the upstream arcs and lines
-  /// (differences.md `adapt-rounded-rect-path` of `flutter_chartjs`). A test
-  /// that compares the calls with an upstream run translates the call back
-  /// into those arcs and lines.
+  /// (differences.md `adapt-rounded-rect-path` of `flutter_chartjs_port`).
+  /// A test that compares the calls with an upstream run translates the call
+  /// back into those arcs and lines.
   @override
   void roundRect(double x, double y, double w, double h, [Object? radii]) {
     record('roundRect', [x, y, w, h, radii]);

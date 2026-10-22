@@ -7,7 +7,7 @@
 ///   runs no JavaScript. Thus [FixtureSource] reads the list of the
 ///   fixtures from the manifest of tool 4 (`doc/upstream/manifest.json`)
 ///   and each pure data config from `doc/upstream/fixtures.json`. An impure
-///   config is a hand port of `test/fixtures/hand/` in flutter_chartjs, a
+///   config is a hand port of `test/fixtures/hand/` in flutter_chartjs_port, a
 ///   [HandFixture] (Chart.js ADR 0029, sections 3 to 5).
 /// - [specFromFixture] (fixture.js:36): one `testWidgets` test for each
 ///   fixture, with the tag [fixturesTag]. It loads the config, applies the
@@ -50,22 +50,22 @@ import 'dart:typed_data';
 
 import 'package:chartjs_test_utils/src/dom.dart' show pumpFrame, pumpFrames;
 import 'package:chartjs_test_utils/src/utils.dart' as utils;
-// The harness keeps the charts of flutter_chartjs, which does not export
+// The harness keeps the charts of flutter_chartjs_port, which does not export
 // lib/src.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 // typeof run === 'function' and the call of the hook,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/js/js_function.dart';
+import 'package:flutter_chartjs_port/src/js/js_function.dart';
 // ToBoolean,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 // the JS property read,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart';
 // and the undefined sentinel.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The tag of each fixture test (Chart.js ADR 0029, section 10).

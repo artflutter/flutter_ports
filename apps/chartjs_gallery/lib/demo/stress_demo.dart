@@ -16,20 +16,21 @@ import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_chartjs/src/canvas/canvas.dart';
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart' show UiCanvasElement;
-import 'package:flutter_chartjs/src/core/core.animator.dart' show animator;
-import 'package:flutter_chartjs/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
+    show UiCanvasElement;
+import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 // The typed options of Chart.js ADR 0018. The prefix keeps them apart from
 // the PointOptions of demo_chart.dart, which the primitives mode uses.
-import 'package:flutter_chartjs/src/elements/element_options.dart'
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     as element_options;
-import 'package:flutter_chartjs/src/elements/index.dart';
-import 'package:flutter_chartjs/src/helpers/index.dart'
+import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/src/helpers/index.dart'
     show ParsedFont, drawPoint, renderText, requestAnimFrame, toFont;
-import 'package:flutter_chartjs/src/types/basic.dart';
-import 'package:flutter_chartjs/src/types/geometric.dart' show ChartArea;
-import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/geometric.dart' show ChartArea;
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 export 'package:chartjs_gallery/demo/stress_chart_config.dart'
     show StressChartType, stressAnimateMs, stressArcCounts, stressPointCounts;
@@ -44,7 +45,7 @@ const List<int> stressLabelCounts = [0, 50, 200];
 enum StressMode {
   /// N points with `drawPoint` and a polyline through N points, with the
   /// canvas calls of `helpers.canvas`. This is the scene of
-  /// `packages/flutter_chartjs/doc/performance.md`.
+  /// `packages/flutter_chartjs_port/doc/performance.md`.
   primitives(stressPointCounts, 'points'),
 
   /// The scene of [primitives], drawn by the phase 4 elements: N

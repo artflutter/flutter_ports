@@ -6,15 +6,15 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/core/core.scale.dart';
-import 'package:flutter_chartjs/src/elements/index.dart';
-import 'package:flutter_chartjs/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs/src/js/js_undefined.dart';
-import 'package:flutter_chartjs/src/platform/chart_host.dart';
-import 'package:flutter_chartjs/src/platform/platform.flutter.dart';
-import 'package:flutter_chartjs/src/scales/index.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
+import 'package:flutter_chartjs_port/src/scales/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A tall desktop window.

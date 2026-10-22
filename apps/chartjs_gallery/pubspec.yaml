@@ -1,5 +1,5 @@
 name: chartjs_gallery
-description: Gallery and visual test bed for the flutter_chartjs port.
+description: Gallery and visual test bed for the flutter_chartjs_port port.
 publish_to: none
 version: 0.1.0+1
 
@@ -12,7 +12,7 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  flutter_chartjs: ^0.0.1
+  flutter_chartjs_port: ^0.0.1
 
 dev_dependencies:
   flutter_test:

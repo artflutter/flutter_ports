@@ -4,10 +4,10 @@ import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/elements_demo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/elements/element_options.dart';
-import 'package:flutter_chartjs/src/elements/index.dart';
-import 'package:flutter_chartjs/src/js/js_undefined.dart';
-import 'package:flutter_chartjs/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A Pixel 8a: 412 x 915 logical pixels at DPR 2.625, as in

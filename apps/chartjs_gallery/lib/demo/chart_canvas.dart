@@ -5,10 +5,10 @@
 // ignore_for_file: implementation_imports
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs/src/core/core.animator.dart';
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/core.animator.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 
 /// Makes the chart of a [ChartCanvas] on its [canvas]: `new Chart(canvas,
 /// config)`.

@@ -1,15 +1,15 @@
 // Original code, not ported from Chart.js: tests of the built-in set-up.
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs/src/core/core.defaults.dart';
-import 'package:flutter_chartjs/src/core/core.element.dart';
-import 'package:flutter_chartjs/src/core/core.typedRegistry.dart';
-import 'package:flutter_chartjs/src/elements/element.arc.dart';
-import 'package:flutter_chartjs/src/elements/element.point.dart';
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.typedRegistry.dart';
+import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
+import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:test/test.dart';
 
 // setUpBuiltins and removeBuiltins of pure.dart (Chart.js ADR 0022, section
 // 8, `harness-register-builtins`). flutter_test_config.dart of
-// flutter_chartjs registers the built-in components with them before
+// flutter_chartjs_port registers the built-in components with them before
 // main(). This package has no such config: each test calls them itself, and
 // the restore of setUpSpecs puts back the scopes after it. The file is a
 // pure layer: it runs on the VM, dart2js and dart2wasm.

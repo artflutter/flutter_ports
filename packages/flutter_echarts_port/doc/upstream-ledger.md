@@ -15,8 +15,8 @@ not put a pipe in a cell, because a status script will parse a strict grammar.
 
 ## Columns and values
 
-The columns are the columns of the [Chart.js ledger](../../flutter_chartjs/doc/upstream-ledger.md).
-[The Chart.js upstream tracking](../../flutter_chartjs/doc/upstream-tracking.md) §3 defines the
+The columns are the columns of the [Chart.js ledger](../../flutter_chartjs_port/doc/upstream-ledger.md).
+[The Chart.js upstream tracking](../../flutter_chartjs_port/doc/upstream-tracking.md) §3 defines the
 kinds, the actions and the statuses. The ECharts port has no tracking document of its own yet.
 Until it has one, these path classes apply to apache/echarts:
 

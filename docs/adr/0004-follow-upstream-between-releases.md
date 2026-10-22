@@ -20,7 +20,7 @@ bump. That rule costs much when an upstream releases rarely:
   branch.
 
 The first port shows all of these problems. Its evidence (2026-10-16) is in
-[the Chart.js upstream tracking](../../packages/flutter_chartjs/doc/upstream-tracking.md) §1.
+[the Chart.js upstream tracking](../../packages/flutter_chartjs_port/doc/upstream-tracking.md) §1.
 
 ## Decision
 

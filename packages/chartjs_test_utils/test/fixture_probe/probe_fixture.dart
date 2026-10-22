@@ -18,14 +18,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs/src/controllers/controller.bar.dart';
-import 'package:flutter_chartjs/src/controllers/controller.line.dart';
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/elements/element.bar.dart';
-import 'package:flutter_chartjs/src/elements/element.line.dart';
-import 'package:flutter_chartjs/src/elements/element.point.dart';
-import 'package:flutter_chartjs/src/scales/scale.category.dart';
-import 'package:flutter_chartjs/src/scales/scale.linear.dart';
+import 'package:flutter_chartjs_port/src/controllers/controller.bar.dart';
+import 'package:flutter_chartjs_port/src/controllers/controller.line.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
+import 'package:flutter_chartjs_port/src/elements/element.line.dart';
+import 'package:flutter_chartjs_port/src/elements/element.point.dart';
+import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
+import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const String _folder = 'test/fixture_probe';

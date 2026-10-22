@@ -21,7 +21,7 @@ SPDX-License-Identifier = "MIT"
 # The Chart.js port, and the gallery code where ported Chart.js samples live:
 # derived from Chart.js (MIT), so the upstream notice is kept alongside ours.
 [[annotations]]
-path = ["packages/flutter_chartjs/**", "apps/chartjs_gallery/lib/**", "apps/chartjs_gallery/test/**"]
+path = ["packages/flutter_chartjs_port/**", "apps/chartjs_gallery/lib/**", "apps/chartjs_gallery/test/**"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = ["2014-2024 Chart.js Contributors", "2026 Vasiliy Ditsyak"]
 SPDX-License-Identifier = "MIT"
@@ -84,9 +84,9 @@ SPDX-License-Identifier = "SunPro"
 # replaces the package table above for these files.
 [[annotations]]
 path = [
-  "packages/flutter_chartjs/lib/src/js/fdlibm_log.dart",
-  "packages/flutter_chartjs/lib/src/js/fdlibm_atan.dart",
-  "packages/flutter_chartjs/lib/src/js/fdlibm_trig.dart",
+  "packages/flutter_chartjs_port/lib/src/js/fdlibm_log.dart",
+  "packages/flutter_chartjs_port/lib/src/js/fdlibm_atan.dart",
+  "packages/flutter_chartjs_port/lib/src/js/fdlibm_trig.dart",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = ["1993 Sun Microsystems, Inc.", "2026 Vasiliy Ditsyak"]
@@ -97,8 +97,8 @@ SPDX-License-Identifier = "SunPro AND MIT"
 # above for these files.
 [[annotations]]
 path = [
-  "packages/flutter_chartjs/lib/src/kurkle_color/**",
-  "packages/flutter_chartjs/test/kurkle_color/**",
+  "packages/flutter_chartjs_port/lib/src/kurkle_color/**",
+  "packages/flutter_chartjs_port/test/kurkle_color/**",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = ["2018-2021 Jukka Kurkela", "2026 Vasiliy Ditsyak"]

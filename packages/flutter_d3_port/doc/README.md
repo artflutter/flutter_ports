@@ -5,7 +5,7 @@ the D3 modules to Dart: arrays, scales, shapes, layouts, geography, formats and 
 draws the results with its own canvas. The port has no WebView and runs no JavaScript. The reasons
 for this approach, and the packages that already exist, are in the [prior art](prior-art/README.md)
 and in [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
-[ADR 0007](../../../docs/adr/0007-package-names.md) (proposed) records the package name.
+[ADR 0007](../../../docs/adr/0007-package-names.md) (accepted 2026-10-22) records the package name.
 
 - **Upstream:** d3 **v7.9.0** (2024-03-12), ISC, with its 30 modules and three more repositories:
   internmap, delaunator and robust-predicates. Each of the 34 repositories is a shallow git
@@ -77,7 +77,7 @@ cases are static counts of the `it(` and `test(` calls. Loops make more cases at
 
 | Phase | Scope | Exit criteria |
 |---|---|---|
-| 0. Scaffold and design | Package, 34 submodules, `port_sources.yaml`, `d3Version`, `upstream_test.dart`, pin checks, `LICENSE`, `REUSE.toml`, docs, prior art, ADR 0007, ADR 0008 and D3 ADRs 0001-0006 (proposed), commit scope, melos and CI entries. No change in `flutter_chartjs` | CI green; `upstream:check` passes for Chart.js and D3 |
+| 0. Scaffold and design | Package, 34 submodules, `port_sources.yaml`, `d3Version`, `upstream_test.dart`, pin checks, `LICENSE`, `REUSE.toml`, docs, prior art, ADR 0007, ADR 0008 and D3 ADRs 0001-0006 (proposed), commit scope, melos and CI entries. No change in `flutter_chartjs_port` | CI green; `upstream:check` passes for Chart.js and D3 |
 | 1. Decisions, tooling, pilot | Gate 1 ADRs accepted; the shared JS runtime (staged, ADR 0008); tools 1-3 for both ports; the Node `assert` stand-in; the pure path context; pilot by hand: d3-array `ticks.js`, `nice.js`, `range.js`, d3-path, d3-format | The pilot cases pass on the VM, dart2js and dart2wasm; number strings match x64 Node.js reference strings; tools 1-3 green for both ports with the Chart.js outputs unchanged |
 | 2. Pure data | internmap, the rest of d3-array, d3-color, d3-interpolate without `transform/`, d3-ease, d3-random, d3-scale-chromatic, d3-dispatch, d3-polygon, d3-quadtree, d3-hierarchy; tools 4-6 | All cases of these modules pass or skip with a valid reason on the three legs; `test:cases` reports none missing |
 | 3. Time, DSV and scales | the JS `Date` runtime and time zones, d3-time, d3-time-format, d3-dsv, d3-scale | The time and scale cases pass with `America/Los_Angeles` installed on all legs |
@@ -104,8 +104,8 @@ Cross-port ADRs that apply to this port:
 - [ADR 0005: Pin upstream sources](../../../docs/adr/0005-pin-upstream-sources.md) (accepted)
 - [ADR 0006: Follow upstream between releases](../../../docs/adr/0006-follow-upstream-between-releases.md)
   (accepted)
-- [ADR 0007: Package names](../../../docs/adr/0007-package-names.md) (proposed. It supersedes
-  ADR 0003 on acceptance)
+- [ADR 0007: Package names](../../../docs/adr/0007-package-names.md) (accepted 2026-10-22. It
+  supersedes ADR 0003)
 - [ADR 0008: Shared JS runtime and port tools](../../../docs/adr/0008-shared-js-runtime-and-port-tools.md)
   (proposed)
 

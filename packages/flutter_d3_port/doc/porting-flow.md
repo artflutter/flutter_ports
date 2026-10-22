@@ -7,7 +7,7 @@
   [ADR 0007](../../../docs/adr/0007-package-names.md),
   [ADR 0008](../../../docs/adr/0008-shared-js-runtime-and-port-tools.md),
   [D3 ADR 0001](adr/0001-upstream-sources.md),
-  [the Chart.js porting flow](../../flutter_chartjs/doc/porting-flow.md)
+  [the Chart.js porting flow](../../flutter_chartjs_port/doc/porting-flow.md)
 
 This document defines how one upstream D3 file becomes Dart code in `packages/flutter_d3_port`.
 It contains the steps, the decisions, the test harness, the tools and the phase plan. It follows
@@ -18,7 +18,7 @@ D3 decisions, the status values of the D3 port and the D3 `differences.md` schem
 
 Terms:
 - "ADR NNNN" is a file in `docs/adr/`. "Chart.js ADR NNNN" is a file in
-  `packages/flutter_chartjs/doc/adr/`. "D3 ADR NNNN" is a file in
+  `packages/flutter_chartjs_port/doc/adr/`. "D3 ADR NNNN" is a file in
   `packages/flutter_d3_port/doc/adr/`.
 - A "repository" is one of the 34 pinned git repositories of
   [D3 ADR 0001](adr/0001-upstream-sources.md).
@@ -159,16 +159,16 @@ number, at its gate or before it. If a later port needs the same decision, the d
 
 The D3 ADRs take rules from three Chart.js ADRs. A Chart.js ADR binds only the Chart.js port.
 Thus each D3 ADR states the rules that it takes:
-- [Chart.js ADR 0034](../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md): no
+- [Chart.js ADR 0034](../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md): no
   display-only JS exactness. D3 ADR 0003 names the D3 results that are not display-only.
-- [Chart.js ADR 0032](../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md): the JS
+- [Chart.js ADR 0032](../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md): the JS
   numeric rules and the reference engine. D3 ADR 0003 and D3 ADR 0004 take them.
-- [Chart.js ADR 0012](../../flutter_chartjs/doc/adr/0012-dart-file-naming.md): the upstream
+- [Chart.js ADR 0012](../../flutter_chartjs_port/doc/adr/0012-dart-file-naming.md): the upstream
   spelling of file names. D3 ADR 0002 adapts it.
 
 | Subsection | Decision | Gate | Status |
 |---|---|---|---|
-| 2.1 | [ADR 0007: Package names](../../../docs/adr/0007-package-names.md) | 0 | proposed. It supersedes ADR 0003 on acceptance |
+| 2.1 | [ADR 0007: Package names](../../../docs/adr/0007-package-names.md) | 0 | accepted 2026-10-22. It supersedes ADR 0003 |
 | 2.2 | [ADR 0008: Shared JS runtime and port tools](../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) | 1 | proposed |
 | 2.3 | [D3 ADR 0001: Upstream sources](adr/0001-upstream-sources.md) | 0 | proposed |
 | 2.4 | [D3 ADR 0002: File naming and package layout](adr/0002-file-naming-and-layout.md) | 1 | proposed |
@@ -192,16 +192,15 @@ Subsections 2.9 to 2.17 give the question, the facts and the proposal of the res
 
 ### 2.1 ADR 0007: Package names (gate 0)
 
-[ADR 0007](../../../docs/adr/0007-package-names.md) (proposed) states the complete naming rule of
-the workspace. It supersedes ADR 0003 on acceptance. In short:
-- The library package of a port is `flutter_<library>` or `flutter_<library>_port`. The
-  maintainer selects the form.
+[ADR 0007](../../../docs/adr/0007-package-names.md) (accepted 2026-10-22) states the complete naming
+rule of the workspace. It supersedes ADR 0003. In short:
+- The library package of a port is `flutter_<library>_port`.
 - The maintainer selected `flutter_d3_port` on 2026-10-20. On that day, `flutter_d3` was free on
-  pub.dev. Thus the D3 name deviates from the rule of ADR 0003. ADR 0007 makes the form
-  `flutter_<library>_port` a part of the rule.
-- It also gives the names `flutter_chartjs`, `chartjs_test_utils`, `chartjs_gallery`, the adapter
-  rule `flutter_chartjs_<system>`, the gallery `d3_gallery` and the shared packages `js_semantics`
-  and `port_tools` of ADR 0008. The Chart.js porting flow §6 asks for the record of
+  pub.dev. Thus the D3 name deviates from the rule of ADR 0003. On 2026-10-22, the maintainer
+  selected the suffix `_port` for all ports. Thus `flutter_chartjs` became `flutter_chartjs_port`.
+- It also gives the names `chartjs_test_utils`, `chartjs_gallery`, the adapter rule
+  `flutter_chartjs_port_<system>`, the gallery `d3_gallery` and the shared packages
+  `js_semantics` and `port_tools` of ADR 0008. The Chart.js porting flow §6 asks for the record of
   `chartjs_test_utils`.
 - A port-only harness package of D3 has the name `d3_test_utils`.
 - Each package and app of the workspace has a scope in `commitlint.yaml`. The ADR also gives the
@@ -212,12 +211,12 @@ the workspace. It supersedes ADR 0003 on acceptance. In short:
 [ADR 0008](../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (proposed) holds the
 decision. It changes no file before D3 phase 1. In short:
 - The pure Dart workspace package `js_semantics` holds the JS runtime that two or more ports use.
-  It starts with the import closure of the generic runtime files of `flutter_chartjs`: 11 files.
+  It starts with the import closure of the generic runtime files of `flutter_chartjs_port`: 11 files.
   The closure contains `js_class.dart`, because `js_function.dart:85` and `js_object.dart:10`
   import it.
 - **Stage 1 (D3 phase 1)** copies these files and their tests into `js_semantics`.
   `flutter_d3_port` depends on it. The drift check `check:js-runtime-drift` fails when a shared
-  file and its Chart.js copy differ. Stage 1 changes no file of `flutter_chartjs`.
+  file and its Chart.js copy differ. Stage 1 changes no file of `flutter_chartjs_port`.
 - **Stage 2** is the Chart.js migration, one change of the Chart.js port. The Chart.js work
   selects its time. It also writes a new ADR that supersedes Chart.js ADR 0032.
 - A port-only file of `js_semantics` starts with
@@ -309,7 +308,7 @@ decision. It changes no file before D3 phase 1. In short:
 - A pure port-only interface declares these methods. The d3-path `Path` implements it (phase 1).
 - A port-only `dart:ui` builder implements it in phase 4. Then a Flutter painter can draw a D3
   generator.
-- The Chart.js canvas layer stays in `flutter_chartjs` (section 5.1).
+- The Chart.js canvas layer stays in `flutter_chartjs_port` (section 5.1).
 
 ### 2.8 D3 ADR 0006: Generators, accessors and JS values (gate 1)
 
@@ -410,7 +409,7 @@ row.
   (`test/snapshots.js:28`).
 - d3-axis has 2 HTML snapshots. d3-contour has 2 SVG snapshots. jsdom makes them.
 - The Chart.js port compares no images
-  ([Chart.js ADR 0034](../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)).
+  ([Chart.js ADR 0034](../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md)).
 
 **Proposal.** The image snapshot cases skip with an `n/a` reason. A port-only smoke test draws
 the same projections through the `dart:ui` builder. Path-string goldens from a pinned world-atlas
@@ -427,7 +426,7 @@ item 14). Section 5.1 keeps them as a deferred plan.
 - `sleep` uses `setTimeout`, `setInterval` and frames (`src/timer.js:99-110`).
 - The upstream tests run in Node, in real time, with tolerances.
 - d3-force and d3-transition import d3-timer.
-- [Chart.js ADR 0016](../../flutter_chartjs/doc/adr/0016-frame-scheduling.md) (proposed) puts the
+- [Chart.js ADR 0016](../../flutter_chartjs_port/doc/adr/0016-frame-scheduling.md) (proposed) puts the
   frames of the Chart.js port on `SchedulerBinding.scheduleFrameCallback`.
 
 **Proposal.** d3-timer stays a pure layer. `performance.now()` reads `package:clock`. A port-only
@@ -524,8 +523,8 @@ restores it after each test, as `setUpDefaultsRestore()` of the Chart.js harness
 
 ## 4. Tooling
 
-The Chart.js port has eight per-module tools in `packages/flutter_chartjs/tool/`
-([the Chart.js porting flow](../../flutter_chartjs/doc/porting-flow.md) §4). They know only the
+The Chart.js port has eight per-module tools in `packages/flutter_chartjs_port/tool/`
+([the Chart.js porting flow](../../flutter_chartjs_port/doc/porting-flow.md) §4). They know only the
 Chart.js port:
 - The port-only marker and the backport line are Chart.js patterns
   (`tool/src/headers.dart:15`, `:20`).
@@ -545,7 +544,7 @@ of tools serve both ports, in the dev package `port_tools`. In short:
 4. The backport line takes `<owner>/<repo>` from the `url` of the `port_sources.yaml` entry.
 5. Tools 5, 6 and 8 move to `port_tools` by the same method when the D3 port needs them (D3 phase
    2). Tool 4 is a Node.js tool. Each port keeps its own tool 4.
-6. Stage 2 (the Chart.js migration) deletes tools 1-3 from `packages/flutter_chartjs/tool/`. The
+6. Stage 2 (the Chart.js migration) deletes tools 1-3 from `packages/flutter_chartjs_port/tool/`. The
    melos scripts then run `port_tools` for each port.
 
 The roadmap gives tools 1-3 for both ports to phase 1, and tools 4-6 to phase 2 (section 5).
@@ -600,7 +599,7 @@ porter and in the CI job `upstream-manifest`. A dev-time Node tool is not runtim
 
 | Phase | Scope | Exit criteria |
 |---|---|---|
-| 0. Scaffold and design | Package, 34 submodules, `port_sources.yaml`, `d3Version`, `upstream_test.dart`, pin checks, `LICENSE`, `REUSE.toml`, docs, prior art, ADR 0007, ADR 0008 and D3 ADRs 0001-0006 (proposed), commit scope, melos and CI entries. No change in `flutter_chartjs` | CI green; `upstream:check` passes for Chart.js and D3 |
+| 0. Scaffold and design | Package, 34 submodules, `port_sources.yaml`, `d3Version`, `upstream_test.dart`, pin checks, `LICENSE`, `REUSE.toml`, docs, prior art, ADR 0007, ADR 0008 and D3 ADRs 0001-0006 (proposed), commit scope, melos and CI entries. No change in `flutter_chartjs_port` | CI green; `upstream:check` passes for Chart.js and D3 |
 | 1. Decisions, tooling, pilot | Gate 1 ADRs accepted; the shared JS runtime (staged, ADR 0008); tools 1-3 for both ports; the Node `assert` stand-in; the pure path context; pilot by hand: d3-array `ticks.js`, `nice.js`, `range.js`, d3-path, d3-format | The pilot cases pass on the VM, dart2js and dart2wasm; number strings match x64 Node.js reference strings; tools 1-3 green for both ports with the Chart.js outputs unchanged |
 | 2. Pure data | internmap, the rest of d3-array, d3-color, d3-interpolate without `transform/`, d3-ease, d3-random, d3-scale-chromatic, d3-dispatch, d3-polygon, d3-quadtree, d3-hierarchy; tools 4-6 | All cases of these modules pass or skip with a valid reason on the three legs; `test:cases` reports none missing |
 | 3. Time, DSV and scales | the JS `Date` runtime and time zones, d3-time, d3-time-format, d3-dsv, d3-scale | The time and scale cases pass with `America/Los_Angeles` installed on all legs |
@@ -642,13 +641,13 @@ row gets its own plan file at its revisit point, or when a trigger occurs.
 
 | Plan | Revisit point | Triggers |
 |---|---|---|
-| Stage 2 of ADR 0008: the migration of `flutter_chartjs` onto `js_semantics` and `port_tools`. The Chart.js work selects its time | The first phase boundary of the Chart.js port after stage 1 | A runtime fix that both ports need. A failure of the drift check that blocks a Chart.js change |
-| The release model of `js_semantics`: a release with a semver contract, or a copy in each released port. A new ADR decides it (ADR 0008, Consequences) | D3 phase 8, or the first release of `flutter_chartjs` before it | A release plan of either port |
+| Stage 2 of ADR 0008: the migration of `flutter_chartjs_port` onto `js_semantics` and `port_tools`. The Chart.js work selects its time | The first phase boundary of the Chart.js port after stage 1 | A runtime fix that both ports need. A failure of the drift check that blocks a Chart.js change |
+| The release model of `js_semantics`: a release with a semver contract, or a copy in each released port. A new ADR decides it (ADR 0008, Consequences) | D3 phase 8, or the first release of `flutter_chartjs_port` before it | A release plan of either port |
 | A shared canvas layer: the Chart.js canvas layer as a package that both ports use | Phase 7 | A D3 caller that needs styles, text or transforms on a context, for example the DOM layer |
 | Path-string goldens of d3-geo from a pinned world-atlas (2.13) | After phase 5 | None yet |
 
 The Chart.js port has the deferred plan
-[`canvas-cuts-plan.md`](../../flutter_chartjs/doc/canvas-cuts-plan.md). It cites the root
+[`canvas-cuts-plan.md`](../../flutter_chartjs_port/doc/canvas-cuts-plan.md). It cites the root
 `pubspec.lock`. Section 6 gives the rule for a D3 change that changes that file.
 
 ## 6. Changes to other files
@@ -668,7 +667,7 @@ The Chart.js port has the deferred plan
 - the root `README.md`, `docs/README.md` and `CONTRIBUTING.md`, where they list the ports, the
   scopes or the ADRs
 
-Phase 0 changes nothing in `packages/flutter_chartjs/`, `packages/chartjs_test_utils/` or
+Phase 0 changes nothing in `packages/flutter_chartjs_port/`, `packages/chartjs_test_utils/` or
 `apps/chartjs_gallery/`. Phase 0 adds no dependency. Thus the root `pubspec.lock` does not
 change.
 
@@ -701,7 +700,7 @@ a new ADR that supersedes Chart.js ADR 0032 (ADR 0008 item 7).
 The numbers of the risks do not change, because other documents can cite them. A risk that no
 longer applies stays in the list as closed.
 1. **Shared work with the Chart.js session.** Stage 1 of ADR 0008 changes no Chart.js file. Stage
-   2 changes the runtime imports and the tools of `flutter_chartjs`. Until stage 2, a fix of a
+   2 changes the runtime imports and the tools of `flutter_chartjs_port`. Until stage 2, a fix of a
    copied runtime file needs the agreement of the Chart.js work (ADR 0008 item 6).
 2. **Accepted Chart.js ADRs.** Stage 2 needs a new ADR that supersedes Chart.js ADR 0032
    (section 6).
@@ -745,8 +744,8 @@ longer applies stays in the list as closed.
 - The d3-format pilot of phase 1 has cases that read `locale/*.json` (2.10). The Locale data
   decision has gate 2. Do these cases pass on the VM with the files of the pin in phase 1, or skip
   until phase 2?
-- The gate 0 ADRs (ADR 0007, D3 ADR 0001) are proposed. Phase 0 applies them (section 2). Does
-  the maintainer accept them before the phase 0 commit?
+- The gate 0 ADR D3 ADR 0001 is proposed. Phase 0 applies it (section 2). The other gate 0 ADR,
+  ADR 0007, is accepted (2026-10-22).
 - Does the D3 port need its own `upstream-tracking.md`, or do ADR 0006 and the ledger suffice?
 - The release model of `js_semantics`: a release with a semver contract, or a copy in each
   released port (5.1)? A new ADR decides it.

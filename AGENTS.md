@@ -2,7 +2,7 @@
 
 Dart pub workspace + Melos 8 monorepo of native Dart/Flutter ports of JavaScript chart
 libraries. First port: Chart.js v4.5.1+7169e651 (a commit pin after v4.5.1) →
-`packages/flutter_chartjs`. Second port: D3 v7.9.0 →
+`packages/flutter_chartjs_port`. Second port: D3 v7.9.0 →
 `packages/flutter_d3_port`, in phase 0 (scaffold and design, no ported code). Third port: Apache
 ECharts 6.1.0 with its renderer zrender 6.1.0 → `packages/flutter_echarts_port`, in phase 0
 (scaffold and design, no ported code).
@@ -26,13 +26,13 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   them. Delete these folders before `format:check`. package:test puts a part of the tests of each
   file in each shard, in the order of the file ([Tests](#tests)). A shard with no tests fails. On
   ubuntu, CI also fetches the three Chart.js submodules, `third_party/d3` and the two ECharts
-  submodules by path in each shard, for the `test/upstream_test.dart` of `flutter_chartjs`,
+  submodules by path in each shard, for the `test/upstream_test.dart` of `flutter_chartjs_port`,
   `flutter_d3_port` and `flutter_echarts_port`.
-- `dart run melos run test:web`: the `flutter_chartjs` and `chartjs_test_utils` tests without
+- `dart run melos run test:web`: the `flutter_chartjs_port` and `chartjs_test_utils` tests without
   `@TestOn('vm')`, in Chrome, compiled with dart2js and with dart2wasm. It needs a local Google
   Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the port checks of
-  `packages/flutter_chartjs/doc/porting-flow.md` §4 (tools 1-3 and the checks of tools 6 and 8),
+  `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1-3 and the checks of tools 6 and 8),
   as melos steps. The CI job `port-checks` runs the five checks with a shallow checkout of the
   three Chart.js submodules.
   Each check can also run alone:
@@ -40,8 +40,8 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
     the web legs compile. It also fails when a ported file imports `lib/src/theme/`. It keeps the
     `lib/pure.dart` closure of `packages/chartjs_test_utils` a pure layer.
   - `check:headers`: the line-1 header of each Dart file in `lib/`, `test/` and `tool/` of
-    `flutter_chartjs` and `chartjs_test_utils`. It compares the project, license and holder with
-    `packages/flutter_chartjs/tool/port_sources.yaml`, the `LICENSE` of the package that contains
+    `flutter_chartjs_port` and `chartjs_test_utils`. It compares the project, license and holder with
+    `packages/flutter_chartjs_port/tool/port_sources.yaml`, the `LICENSE` of the package that contains
     the file and `REUSE.toml`. It also fails on a source path that is not at the pin, or on a Dart
     path that is not the mapped path. A port-only file at the mapped path of a pinned source also
     fails. It compares each submodule gitlink with its `commit` in `port_sources.yaml`.
@@ -56,7 +56,7 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   `doc/upstream/manifest.json` as passed, failed, skipped or missing. It fails on an unknown test
   name, a bad skip reason and a missing case of a `ported` module. CI runs it in the ubuntu `test`
   leg of shard 0. It passes `--exclude-tags fixtures`, as tool 6 does.
-- `dart run melos run test:fixtures`: tool 7, the fixture smoke tests of `flutter_chartjs`
+- `dart run melos run test:fixtures`: tool 7, the fixture smoke tests of `flutter_chartjs_port`
   (Chart.js ADR 0029). It is tool 5 with `--fixtures`: it runs the tests with the tag `fixtures`
   of the spec files with a fixture group and of `test/port/fixtures/`. It reports each upstream
   fixture as passed, failed, skipped or missing, and prints the 10 slowest tests. It fails on a
@@ -66,7 +66,7 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   fixture skips with `'n/a: the submodule third_party/Chart.js is not checked out'`. With
   `FIXTURES_REQUIRED=1`, it fails. The CI job `fixtures` makes a shallow checkout of
   `third_party/Chart.js` and sets `FIXTURES_REQUIRED=1`.
-- `dart run melos run parity`: tool 6. It writes `packages/flutter_chartjs/doc/parity.md` from
+- `dart run melos run parity`: tool 6. It writes `packages/flutter_chartjs_port/doc/parity.md` from
   `doc/status.yaml`, the files of the pinned `third_party/` copies, the rule-2 headers, the spec
   case results of tool 5 and `doc/differences.md`. It runs the spec tests and needs the
   submodules (`upstream`). Do not edit `parity.md`. Edit `doc/status.yaml`. Placeholders in its
@@ -79,7 +79,7 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   from the output, or on an error in `doc/status.yaml`. `check:port` and the CI job `port-checks`
   run it.
 - `dart run melos run port:next`: tool 8. It lists the modules of `third_party/Chart.js/src` that
-  are ready to port, in the phase order of `packages/flutter_chartjs/doc/porting-flow.md` §5. Each
+  are ready to port, in the phase order of `packages/flutter_chartjs_port/doc/porting-flow.md` §5. Each
   ready module comes with its line count and the interfaces that its type-only imports need. The
   list also gives the modules in progress, and the blocked modules with their missing imports. The
   port state comes from the rule-2 headers of the Dart files in `lib/` and from the status column
@@ -92,7 +92,7 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   submodule, at depth 1). These are the three Chart.js submodules, the 34 D3 submodules and the
   two ECharts submodules.
 - `dart run melos run upstream:manifest`: tool 4. It writes
-  `packages/flutter_chartjs/doc/upstream/` from `third_party/Chart.js`. It needs Node.js 22.18 or
+  `packages/flutter_chartjs_port/doc/upstream/` from `third_party/Chart.js`. It needs Node.js 22.18 or
   later. The CI job `upstream-manifest` fails when the committed files differ.
 - `dart run melos run upstream:check`: fail unless `third_party/Chart.js` is pinned to the release
   tag named by `chartJsVersion`. For a commit pin (`<last version>+<sha8>`), the gitlink must
@@ -114,7 +114,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 
 ## Layout
 
-- `packages/flutter_chartjs`: the Chart.js port (library, `publish_to: none` until 0.1.0).
+- `packages/flutter_chartjs_port`: the Chart.js port (library, `publish_to: none` until 0.1.0).
   - `lib/src/`: ported modules at their upstream paths (`core/`, `elements/`, `helpers/`,
     `platform/`, `scales/`, `types/`), `kurkle_color/` (the `@kurkle/color` 0.3.2 port), and
     `js/`, the JS runtime: port-only `js_*.dart` files and the fdlibm ports `fdlibm_log.dart`,
@@ -299,7 +299,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `tool/`: the port checks (`check_*.dart`), tool 5 (`spec_cases.dart`, also tool 7 with
     `--fixtures`), tool 6 (`parity.dart`), tool 8 (`port_order.dart`), shared code in `tool/src/`,
     `port_sources.yaml` (one entry for each project that the package ports code from, with its pin;
-    the Chart.js entry maps `test/fixtures/` to `packages/flutter_chartjs/test/fixtures/hand/`),
+    the Chart.js entry maps `test/fixtures/` to `packages/flutter_chartjs_port/test/fixtures/hand/`),
     `upstream_manifest/` (tool 4, Node.js) and `reference/` (the Node.js generators of reference
     data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
@@ -337,7 +337,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     - `doc/upstream-ledger.md`: the upstream commits after the pin, with their triage.
     - `doc/text-metrics.md`: the text-metric probe, the canvas layer against the Chrome canvas.
 - `packages/chartjs_test_utils`: the test harness, a port of chartjs-test-utils 0.4.0
-  (`publish_to: none`, a dev_dependency of `flutter_chartjs`). The ported files are in `lib/src/`.
+  (`publish_to: none`, a dev_dependency of `flutter_chartjs_port`). The ported files are in `lib/src/`.
   `flutter_test` and `clock` are regular dependencies of the package, for `lib/src/dom.dart`.
   - `lib/pure.dart`: the pure part. It has `setUpSpecs()`, the spec set-up for `dart test`,
     `setUpDefaultsRestore()`, `createMockContext`, `MockContext` and the matchers
@@ -403,7 +403,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `StressChartTiming`, with the parts `elements`, `layout`, `datasetsUpdate` and
     `datasetsDraw`. `lib/main_stress.dart` is the profiling entry. `lib/main_bench.dart` with
     `lib/bench/chart_bench.dart` is the frameless benchmark of the same cases
-    (`packages/flutter_chartjs/doc/performance.md` §6).
+    (`packages/flutter_chartjs_port/doc/performance.md` §6).
   - The layout rule (Chart.js ADR 0031 §10) applies to the nine type pages and to the Stress,
     Core and Axes tabs: each parameter is a full-width `SegmentChoice` or
     `SegmentToggles` line of `lib/demo/demo_controls.dart`, with short text or icons. A
@@ -466,7 +466,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
   - Shallow git submodules: `Chart.js` at the commit pin `7169e651` after `v4.5.1`
-    (`packages/flutter_chartjs/doc/upstream-tracking.md` §2.4), and `kurkle-color` (`v0.3.2`) and
+    (`packages/flutter_chartjs_port/doc/upstream-tracking.md` §2.4), and `kurkle-color` (`v0.3.2`) and
     `chartjs-test-utils` (`v0.4.0`) at release tags. The last two come from Chart.js ADR 0035.
   - The 34 D3 submodules, also shallow at release tags (D3 ADR 0001): `d3` (`v7.9.0`), the 30
     `d3-*` modules, `internmap`, `delaunator` (`v5.1.0`) and `robust-predicates` (`v3.0.3`).
@@ -482,8 +482,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 - `tool/`: repository scripts (`check_upstream_pin.sh`).
 - `docs/`: docs for all ports only. `docs/adr/`: decisions for all ports. `docs/prior-art/`: prior
   art for future ports. Docs for one port go in the `doc/` folder of its package.
-  - ADR 0007 (package names) and ADR 0008 (shared JS runtime and port tools) are proposed. ADR
-    0007 supersedes ADR 0003 when it is accepted. The gate of ADR 0008 is D3 phase 1.
+  - ADR 0007 (package names) is accepted (2026-10-22). It supersedes ADR 0003. ADR 0008 (shared
+    JS runtime and port tools) is proposed. The gate of ADR 0008 is D3 phase 1.
 
 ## Porting rules
 
@@ -500,7 +500,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 3. **Port the specs.** Upstream `test/specs/<module>.tests.js` becomes a test file in `test/specs/`
    (see below). Behaviour without an upstream spec still needs tests.
 4. **Track parity.** Update the status text of the module in
-   `packages/flutter_chartjs/doc/status.yaml` in the same change. Then run
+   `packages/flutter_chartjs_port/doc/status.yaml` in the same change. Then run
    `dart run melos run parity`. Tool 6 writes `doc/parity.md`. Do not edit it by hand.
 5. **No JavaScript at runtime.** No WebView, no JS engine, no `dart:js_interop` in library code
    (ADR 0001). Library code must compile for every Flutter platform and for web WebAssembly.
@@ -510,21 +510,21 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
    `git -C third_party/Chart.js fetch --depth 1 origin tag <old-tag> tag <new-tag>`,
    `git -C third_party/Chart.js checkout <new-tag>`, review
    `git -C third_party/Chart.js diff <old-tag> <new-tag> -- src test/specs test/fixtures`, and the
-   bump report once it exists. A commit pin (`packages/flutter_chartjs/doc/upstream-tracking.md`
+   bump report once it exists. A commit pin (`packages/flutter_chartjs_port/doc/upstream-tracking.md`
    §2.4) fetches the full commit in place of `<new-tag>`: then `chartJsVersion` is
    `<last version>+<sha8>`, and the Chart.js `ref` and `commit` are the full commit. Then run
    `git add third_party/Chart.js` and update `chartJsVersion` and the Chart.js `version`, `ref`
-   and `commit` in `packages/flutter_chartjs/tool/port_sources.yaml`. Run `upstream:manifest`.
+   and `commit` in `packages/flutter_chartjs_port/tool/port_sources.yaml`. Run `upstream:manifest`.
    Port the diff for every started module. Close the ledger rows of the range. Move the Chart.js
    citations of `doc/differences.md` to the new pin (`upstream-tracking.md` §4.9). Restamp the
-   headers (`packages/flutter_chartjs/doc/upstream-tracking.md` §4.8). Update the status texts in
+   headers (`packages/flutter_chartjs_port/doc/upstream-tracking.md` §4.8). Update the status texts in
    `doc/status.yaml` and run `dart run melos run parity`. Backports follow ADR 0006. They never
-   move the submodule. `upstream:check` and `packages/flutter_chartjs/test/upstream_test.dart`
+   move the submodule. `upstream:check` and `packages/flutter_chartjs_port/test/upstream_test.dart`
    fail on a mismatch.
 
 The rules below come from the accepted ADRs and from two plans. The plans, `porting-flow.md` and
 `upstream-tracking.md`, are still proposed. The doc paths are relative to
-`packages/flutter_chartjs/doc/`.
+`packages/flutter_chartjs_port/doc/`.
 
 - Backports from upstream `master`: ADR 0006 and `upstream-tracking.md` §2.2 (proposed).
 - The backport header line `// Upstream backport: chartjs/Chart.js@<sha8> (#<PR>).`:
@@ -540,7 +540,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   emulate JavaScript for exact digits or pixels only. `check:js-semantics` already fails on the
   flagged forms. A kept form carries `// js-ok: <reason>`.
 - Deferred plans (`porting-flow.md` §5.1), for example
-  `packages/flutter_chartjs/doc/canvas-cuts-plan.md`: do not do their work in a phase. A change
+  `packages/flutter_chartjs_port/doc/canvas-cuts-plan.md`: do not do their work in a phase. A change
   that edits a file that a deferred plan cites updates the plan in the same commit (the
   references, the inventory, the pinning tests, the estimates). A trigger of §5.1 brings the plan
   forward.
@@ -601,18 +601,18 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   is gone.
 - The spec paths and the test folders: Chart.js ADR 0012 and `porting-flow.md` §1 step 5
   (proposed). Upstream `test/specs/<base>.tests.js` becomes
-  `packages/flutter_chartjs/test/specs/<base>_test.dart`. A pure-layer spec imports `package:test`,
+  `packages/flutter_chartjs_port/test/specs/<base>_test.dart`. A pure-layer spec imports `package:test`,
   not `flutter_test` ([Tests](#tests)). It calls `setUpSpecs()` of
   `package:chartjs_test_utils/pure.dart` first in `main()`. Tests of behavior without an upstream
   spec go in `test/port/`. `check:headers` already compares each spec path with the mapped path.
-- The source list `packages/flutter_chartjs/tool/port_sources.yaml`: Chart.js ADR 0035. It has
+- The source list `packages/flutter_chartjs_port/tool/port_sources.yaml`: Chart.js ADR 0035. It has
   one entry for each project that the package ports code from: Chart.js, fdlibm, `@kurkle/color`
   and chartjs-test-utils. Code from another project also needs an entry, with the license and
   holder of the header. A Chart.js bump (rule 6) also updates the Chart.js `version`, `ref` and
   `commit` in the entry. `check:headers` already fails on a
   mismatch.
 - The notice of chartjs-test-utils goes in the `LICENSE` of
-  `packages/chartjs_test_utils`, not in `packages/flutter_chartjs/LICENSE` (Licensing item 1):
+  `packages/chartjs_test_utils`, not in `packages/flutter_chartjs_port/LICENSE` (Licensing item 1):
   Chart.js ADR 0035. `check:headers` reads the `LICENSE` of the package that contains
   the file.
 - The reference engine: Chart.js ADR 0032. Take JavaScript reference values only from
@@ -644,7 +644,7 @@ are relative to `packages/flutter_d3_port/doc/`.
   behavior. Examples are d3-format, d3-path, d3-color and d3-time-format. The rules of Chart.js
   ADR 0032 apply to them.
 - No port depends on another port (ADR 0008). Thus D3 code never imports
-  `package:flutter_chartjs`. In D3 phase 1, ADR 0008 copies the generic runtime of `lib/src/js/`
+  `package:flutter_chartjs_port`. In D3 phase 1, ADR 0008 copies the generic runtime of `lib/src/js/`
   into the shared package `js_semantics`.
 
 The ECharts port applies the rules above with these changes. The ECharts ADRs are proposed. The
@@ -670,7 +670,7 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   `differences.md`.
 - Numbers and JS values follow ECharts ADRs 0003 and 0004 with the rules of Chart.js ADRs 0032
   and 0034. No port depends on another port (ADR 0008). Thus ECharts code never imports
-  `package:flutter_chartjs` or `package:flutter_d3_port`.
+  `package:flutter_chartjs_port` or `package:flutter_d3_port`.
 
 ## Tests
 
@@ -678,12 +678,12 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   continuous part of the tests of each test file in each shard. Thus a test must not need the result
   of an earlier test of its file. A test that uses the state of an earlier test makes that state
   again, or checks it only when that test ran in the same shard. Examples are the group
-  `harness-register-builtins` of `packages/flutter_chartjs/test/port/flutter_test_config_test.dart`,
-  `packages/flutter_chartjs/test/port/core/date_format_locale_test.dart` and the group
+  `harness-register-builtins` of `packages/flutter_chartjs_port/test/port/flutter_test_config_test.dart`,
+  `packages/flutter_chartjs_port/test/port/core/date_format_locale_test.dart` and the group
   `harness-release-at-unmount` of `packages/chartjs_test_utils/test/index_test.dart`.
 - A pure-layer file reaches neither `dart:ui` nor `package:flutter` through its direct or indirect
   imports. `check:lib-imports` computes the pure layers from the roots in
-  `packages/flutter_chartjs/tool/src/lib_imports.dart`. The roots include `lib/src/js/`,
+  `packages/flutter_chartjs_port/tool/src/lib_imports.dart`. The roots include `lib/src/js/`,
   `lib/src/types/`, `lib/src/kurkle_color/`, the helpers except `helpers.extras`, the files of
   `lib/src/elements/`, and `platform.base`, `platform.basic` and `native_event` of
   `lib/src/platform/`. Of `lib/src/core/`, the roots are `core.defaults`, `core.element`,
@@ -698,8 +698,8 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   on a test file without `@TestOn('vm')` that imports more than pure layers, `package:test` and
   `package:chartjs_test_utils/pure.dart`. It does not examine the tests of `chartjs_test_utils`.
   Keep the same rule there by hand.
-- `flutter test` runs `packages/flutter_chartjs/test/flutter_test_config.dart` around each test
-  file of `flutter_chartjs`. It sets the test view to DPR 1 and 800 x 600 before each test, also
+- `flutter test` runs `packages/flutter_chartjs_port/test/flutter_test_config.dart` around each test
+  file of `flutter_chartjs_port`. It sets the test view to DPR 1 and 800 x 600 before each test, also
   after a test calls `tester.view.reset()`. It restores `defaults`, `overrides` and `descriptors`
   after each test (`setUpDefaultsRestore()`, the row `harness-defaults-restore`). Thus a test that
   changes them does not change the next test.
@@ -817,7 +817,7 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   objects. A canvas as an image source is `toImageSource()` of `UiCanvasElement`. A `moment(...)`
   value is a `DateTime.utc(...)` of the same time value, with the marker of the row
   `harness-fixture-sources`.
-- The Node.js generators in `packages/flutter_chartjs/tool/reference/` write
+- The Node.js generators in `packages/flutter_chartjs_port/tool/reference/` write
   `test/port/js/*_reference.dart`, `test/port/helpers/draw_point_reference.dart`,
   `test/port/elements/*_reference.dart` (point, line, bar and arc),
   `test/port/core/*_reference.dart` (animation, interaction, layouts, scale, scale autoskip,
@@ -864,7 +864,7 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
 
 ## Licensing
 
-- Chart.js is MIT. `packages/flutter_chartjs/LICENSE` lists both copyright holders and
+- Chart.js is MIT. `packages/flutter_chartjs_port/LICENSE` lists both copyright holders and
   `REUSE.toml` annotates the paths. CI runs `reuse lint`.
 - D3 is ISC. `packages/flutter_d3_port/LICENSE` is the ISC text with
   `Copyright 2010-2026 Mike Bostock` and `Copyright 2026 Vasiliy Ditsyak`. `LICENSES/ISC.txt` has
@@ -899,14 +899,21 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   their `LICENSE` stay unchanged.
 - Never copy code from GPL or otherwise incompatible projects, even for "small" helpers.
   `flutter_web_chartjs` is GPL-3.0; current WebF is GPL-3.0 with an enterprise exception. Ideas
-  only. See `packages/flutter_chartjs/doc/prior-art/`.
+  only. See `packages/flutter_chartjs_port/doc/prior-art/`.
 
 ## Conventions
 
+- Package names: ADR 0007. The library package of a port has the name `flutter_<library>_port`,
+  with the suffix `_port`: `flutter_chartjs_port`, `flutter_d3_port` and `flutter_echarts_port`.
+  A later port uses the same form. A harness package is `<library>_test_utils`, or the npm name
+  of the upstream harness in snake case (`chartjs_test_utils`). A gallery app is
+  `apps/<library>_gallery`. A design-system adapter is `<library package>_<system>`, for example
+  `flutter_chartjs_port_forui`. The directory and the commit scope of a package are its name.
+  Before a change adds a name, examine `https://pub.dev/api/packages/<name>`: it must give 404.
 - Lints: `very_good_analysis` (root `analysis_options.yaml`, which also carries its formatter
   settings, so run Dart tools after `flutter pub get`). Public APIs are documented.
 - Commits: Conventional Commits, signed off (`git commit -s`, DCO), for example
-  `feat(flutter_chartjs): port helpers.math`. The scope of the D3 port is `flutter_d3_port`.
+  `feat(flutter_chartjs_port): port helpers.math`. The scope of the D3 port is `flutter_d3_port`.
   The scope of the ECharts port is `flutter_echarts_port`. Checks:
   - lefthook ≥ 1.0 `commit-msg` hook (`lefthook install`): `commitlint_cli` checks the type, and
     the scope when one is given, against the list in `commitlint.yaml`; a second command requires a
@@ -917,4 +924,4 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   `gallery-ios`, `upstream-pin`, `reuse` and `dco`.
 - Toolchain: Flutter 3.47.7 (Dart 3.13.5), pinned in `.fvmrc`; CI reads the same file. All
   packages and the gallery have the floor `sdk: ^3.13.0` and `flutter: ">=3.47.0"`
-  (`packages/flutter_chartjs/doc/porting-flow.md` §2.12).
+  (`packages/flutter_chartjs_port/doc/porting-flow.md` §2.12).

@@ -10,17 +10,17 @@ import 'package:chartjs_gallery/demo/demo_chart.dart' hide PointOptions;
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/canvas/canvas.dart';
-import 'package:flutter_chartjs/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs/src/core/core.element.dart' as core;
-import 'package:flutter_chartjs/src/elements/element_options.dart'
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
+import 'package:flutter_chartjs_port/src/core/core.element.dart' as core;
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ArcOptions, BarOptions, LineOptions, PointOptions;
-import 'package:flutter_chartjs/src/elements/index.dart';
-import 'package:flutter_chartjs/src/helpers/index.dart' show getHoverColor;
-import 'package:flutter_chartjs/src/js/js_number.dart' show jsOrZero;
-import 'package:flutter_chartjs/src/js/js_undefined.dart';
-import 'package:flutter_chartjs/src/types/geometric.dart' show ChartArea;
-import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/src/helpers/index.dart' show getHoverColor;
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsOrZero;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/geometric.dart' show ChartArea;
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The event types of the elements chart: the Chart.js default `events`
 /// option (`core.defaults`): `mousemove`, `mouseout`, `click`, `touchstart`

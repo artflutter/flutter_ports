@@ -9,13 +9,13 @@
   `EChartsContainer`, `EChartsHost` and `init(dom)`, because phase 5 ports `core/echarts.ts`.
 - Related: [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (new generic
   runtime goes into `js_semantics`, no dependency on another port),
-  [Chart.js ADR 0014](../../../flutter_chartjs/doc/adr/0014-input-events-and-chart-host.md) (the
+  [Chart.js ADR 0014](../../../flutter_chartjs_port/doc/adr/0014-input-events-and-chart-host.md) (the
   chart host, the event table and the arena rule of the Chart.js port),
-  [Chart.js ADR 0016](../../../flutter_chartjs/doc/adr/0016-frame-scheduling.md) (the `Timer`
+  [Chart.js ADR 0016](../../../flutter_chartjs_port/doc/adr/0016-frame-scheduling.md) (the `Timer`
   rule and the `TickerMode` mute),
-  [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (accepted
+  [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) (accepted
   2026-10-21: §6, `jsDateNow`),
-  [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)
+  [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md)
   (accepted 2026-10-21: behavior that a port must keep),
   [ECharts ADR 0002](0002-file-naming-and-layout.md) (port-only folders, the pure layers),
   [ECharts ADR 0003](0003-numbers-and-js-semantics.md) (`jsRound`, `jsToInt32`, the runtime

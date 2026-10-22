@@ -1,7 +1,7 @@
 import 'package:chartjs_gallery/charts/chart_types.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/flutter_chartjs.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The stems of the docs files, in the order of the docs.

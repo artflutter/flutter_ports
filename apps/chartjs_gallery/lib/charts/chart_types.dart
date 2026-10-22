@@ -13,7 +13,7 @@ import 'package:chartjs_gallery/docs/charts/polar.dart';
 import 'package:chartjs_gallery/docs/charts/radar.dart';
 import 'package:chartjs_gallery/docs/charts/scatter.dart';
 import 'package:chartjs_gallery/docs/samples/area/line_boundaries.dart';
-import 'package:flutter_chartjs/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// One variant of a chart type page: a `chart-editor` block of the docs.
 ///

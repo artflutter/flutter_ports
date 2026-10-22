@@ -5,8 +5,8 @@ import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'stress_controls.dart';

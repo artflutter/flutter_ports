@@ -9,19 +9,19 @@
   item 5 and the TS types of item 18 also have gate 2. Phase 2 ports `core/Transformable.ts` and
   `core/Eventful.ts`.
 - Related:
-  [Chart.js ADR 0006](../../../flutter_chartjs/doc/adr/0006-options-representation-and-resolver.md)
+  [Chart.js ADR 0006](../../../flutter_chartjs_port/doc/adr/0006-options-representation-and-resolver.md)
   (raw option Maps, the `undefined` sentinel, the three states),
-  [Chart.js ADR 0020](../../../flutter_chartjs/doc/adr/0020-registry-and-component-classes.md)
+  [Chart.js ADR 0020](../../../flutter_chartjs_port/doc/adr/0020-registry-and-component-classes.md)
   (`JsClass`, class values),
-  [Chart.js ADR 0021](../../../flutter_chartjs/doc/adr/0021-typed-options-in-the-resolver.md)
+  [Chart.js ADR 0021](../../../flutter_chartjs_port/doc/adr/0021-typed-options-in-the-resolver.md)
   (typed options, kept for later),
-  [Chart.js ADR 0022](../../../flutter_chartjs/doc/adr/0022-chart-test-harness.md) (section 5:
+  [Chart.js ADR 0022](../../../flutter_chartjs_port/doc/adr/0022-chart-test-harness.md) (section 5:
   fields that hold a function),
-  [Chart.js ADR 0023](../../../flutter_chartjs/doc/adr/0023-underscore-member-collisions.md)
+  [Chart.js ADR 0023](../../../flutter_chartjs_port/doc/adr/0023-underscore-member-collisions.md)
   (underscore members),
-  [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (accepted
+  [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) (accepted
   2026-10-21: the runtime, `jsCall`, the reference engine),
-  [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)
+  [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md)
   (accepted 2026-10-21: the protected behavior),
   [D3 ADR 0006](../../../flutter_d3_port/doc/adr/0006-generators-accessors-and-js-values.md)
   (`jsInvoke`, `absent`, `jsArgs`, `JsError`, the D3 form of `null` and `undefined`),

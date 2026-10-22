@@ -4,13 +4,13 @@
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/core/core.defaults.dart';
-import 'package:flutter_chartjs/src/helpers/helpers.canvas.dart'
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show toFontString;
-import 'package:flutter_chartjs/src/helpers/helpers.config.dart';
-import 'package:flutter_chartjs/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs/src/js/js_number.dart';
-import 'package:flutter_chartjs/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// One dataset scope of the three-state table.
 typedef _Scope = ({String label, Map<String, Object?> scope});

@@ -40,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       # On ubuntu only, this step checks out shallow submodules by path.
-      # packages/flutter_chartjs/test/upstream_test.dart compares the part of
+      # packages/flutter_chartjs_port/test/upstream_test.dart compares the part of
       # chartJsVersion before "+" with third_party/Chart.js/package.json.
       # packages/flutter_d3_port/test/upstream_test.dart compares d3Version
       # with third_party/d3/package.json. CI does not clone the 33 other D3
@@ -66,7 +66,7 @@ jobs:
         run: dart run melos run test:cases
 
   test-web:
-    # The flutter_chartjs and chartjs_test_utils tests that are not
+    # The flutter_chartjs_port and chartjs_test_utils tests that are not
     # @TestOn('vm'), compiled with dart2js and dart2wasm, in the Chrome of the
     # runner image.
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
       - run: dart run melos run test:web
 
   fixtures:
-    # Tool 7 of packages/flutter_chartjs/doc/porting-flow.md section 4
+    # Tool 7 of packages/flutter_chartjs_port/doc/porting-flow.md section 4
     # (Chart.js ADR 0029, section 3 item 5 and section 11). The runner reads the
     # configs from committed files: doc/upstream/manifest.json,
     # doc/upstream/fixtures.json and test/fixtures/. It compares the SHA-256
@@ -95,8 +95,8 @@ jobs:
 
   port-checks:
     # Tools 1-3 and the checks of tools 6 and 8 of
-    # packages/flutter_chartjs/doc/porting-flow.md section 4. parity:check
-    # runs the spec tests of flutter_chartjs for the case counts.
+    # packages/flutter_chartjs_port/doc/porting-flow.md section 4. parity:check
+    # runs the spec tests of flutter_chartjs_port for the case counts.
     # Shallow submodules, so that the header check compares each header path
     # and each "files" entry of tool/port_sources.yaml with the pinned tree.
     # The job checks out only the Chart.js submodules, by path.
@@ -113,7 +113,7 @@ jobs:
       - run: dart run melos run parity:check
 
   upstream-manifest:
-    # Tool 4 of packages/flutter_chartjs/doc/porting-flow.md section 4. The
+    # Tool 4 of packages/flutter_chartjs_port/doc/porting-flow.md section 4. The
     # committed doc/upstream files equal the output for the pinned
     # third_party/Chart.js. This is the only CI job that runs Node.js.
     # The tool reads only third_party/Chart.js. Thus the job checks out only that
@@ -127,15 +127,15 @@ jobs:
         with:
           node-version: 24.12.0
       - name: Test the manifest generator
-        working-directory: packages/flutter_chartjs
+        working-directory: packages/flutter_chartjs_port
         run: node --test tool/upstream_manifest/test/*.test.mjs
       - name: Regenerate the upstream manifest
-        working-directory: packages/flutter_chartjs
+        working-directory: packages/flutter_chartjs_port
         run: node tool/upstream_manifest/upstream_manifest.mjs --src ../../third_party/Chart.js --out doc/upstream/manifest.json
       - name: Fail when the committed manifest differs
         run: |
-          git diff --exit-code -- packages/flutter_chartjs/doc/upstream
-          untracked=$(git status --porcelain --untracked-files=all -- packages/flutter_chartjs/doc/upstream)
+          git diff --exit-code -- packages/flutter_chartjs_port/doc/upstream
+          untracked=$(git status --porcelain --untracked-files=all -- packages/flutter_chartjs_port/doc/upstream)
           if [ -n "$untracked" ]; then
             echo "::error::uncommitted files: $untracked (run dart run melos run upstream:manifest)"
             exit 1

@@ -1,6 +1,6 @@
 # chartjs_gallery
 
-Gallery and visual test bed for [`flutter_chartjs`](../../packages/flutter_chartjs), on Android,
+Gallery and visual test bed for [`flutter_chartjs_port`](../../packages/flutter_chartjs_port), on Android,
 iOS, web and macOS. It shows every Chart.js chart type with the charts of the
 [Chart.js docs](https://www.chartjs.org/docs/latest/charts/) and runs each one through the ported
 controllers. The Area page draws only its line until the filler plugin is ported. The page

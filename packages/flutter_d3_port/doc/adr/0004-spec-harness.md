@@ -8,11 +8,11 @@
 - Related: [ADR 0005](../../../../docs/adr/0005-pin-upstream-sources.md) (item 2: dev-time tools
   can evaluate reference sources),
   [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (tools 4 and 5),
-  [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md) (no
+  [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md) (no
   image comparison),
-  [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (§2, the
+  [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) (§2, the
   reference engine),
-  [Chart.js ADR 0022](../../../flutter_chartjs/doc/adr/0022-chart-test-harness.md) (proposed: the
+  [Chart.js ADR 0022](../../../flutter_chartjs_port/doc/adr/0022-chart-test-harness.md) (proposed: the
   chart harness of the Chart.js port), [D3 ADR 0001](0001-upstream-sources.md) (items 14, 15 and
   17), [D3 ADR 0002](0002-file-naming-and-layout.md) (the paths),
   [D3 ADR 0003](0003-number-to-string.md) (the number strings),
@@ -125,8 +125,8 @@ The port runs no `npm install`. No tool writes into `third_party/`
 `setUpSpecs()` of `package:chartjs_test_utils/pure.dart` first. That set-up restores `defaults`
 after each test. The skip reasons are `'blocked: <module>'`, `'n/a: <reason>'` and
 `'diverges: <row id>'`. The Chart.js tool 4 evaluates the specs in Node with module hooks
-(`packages/flutter_chartjs/tool/upstream_manifest/src/chart_loader.mjs:20`). Tool 5 tracks the
-state of each upstream case ([the Chart.js porting flow](../../../flutter_chartjs/doc/porting-flow.md)
+(`packages/flutter_chartjs_port/tool/upstream_manifest/src/chart_loader.mjs:20`). Tool 5 tracks the
+state of each upstream case ([the Chart.js porting flow](../../../flutter_chartjs_port/doc/porting-flow.md)
 §3 and §4).
 
 **Reference engine.** Chart.js ADR 0032 §2 takes reference values only from an x64 build of Node.js
@@ -268,7 +268,7 @@ These rules apply to the special cases:
   (gate 7) gives each such case its final state.
 - **Image snapshots.** The port compares no pixels with the PNG files of node-canvas. Pixels are
   display values (the principle of
-  [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)).
+  [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md)).
   The gate 5 decision "Image snapshots" gives the state of the 16 d3-geo cases
   ([porting-flow.md](../porting-flow.md) §2.13).
 - **Time zones.** The time cases of phase 3 follow the gate 3 decision "Dates and time zones"

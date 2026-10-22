@@ -3,17 +3,17 @@
 // ignore_for_file: implementation_imports
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs/src/canvas/canvas.dart';
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs/src/helpers/helpers.canvas.dart'
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     as helpers
     show isPointInArea;
-import 'package:flutter_chartjs/src/helpers/index.dart'
+import 'package:flutter_chartjs_port/src/helpers/index.dart'
     show DrawPointOptions, clearCanvas, retinaScale;
-import 'package:flutter_chartjs/src/platform/chart_host.dart';
-import 'package:flutter_chartjs/src/platform/index.dart';
-import 'package:flutter_chartjs/src/types/geometric.dart';
-import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/src/platform/index.dart';
+import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// Draws one frame of a [DemoChart] on its context. The transform is the
 /// one of `retinaScale`, so the units are logical pixels, and the canvas is

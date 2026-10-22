@@ -29,16 +29,16 @@
 library;
 
 import 'package:chartjs_test_utils/src/utils.dart' as utils;
-// The harness keeps the charts of flutter_chartjs, which does not export
+// The harness keeps the charts of flutter_chartjs_port, which does not export
 // lib/src.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 // The JS property read and ToBoolean of `(chart.$test || {}).persistent`.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 // The JS property read.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart';
 
 export 'fixture.dart';
 export 'utils.dart' show afterEvent, triggerMouseEvent, waitForResize;

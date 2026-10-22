@@ -5,11 +5,11 @@
 - Gate: ECharts phase 1. The first ported file needs its Dart path and its header block. The
   forward-type rule of section 9 has gate 2. Phase 2 is the first phase with type references to
   classes of later phases.
-- Related: [Chart.js ADR 0012](../../../flutter_chartjs/doc/adr/0012-dart-file-naming.md) (the
+- Related: [Chart.js ADR 0012](../../../flutter_chartjs_port/doc/adr/0012-dart-file-naming.md) (the
   precedent: upstream spelling, Dart-cased identifiers, underscore members),
-  [Chart.js ADR 0023](../../../flutter_chartjs/doc/adr/0023-underscore-member-collisions.md)
+  [Chart.js ADR 0023](../../../flutter_chartjs_port/doc/adr/0023-underscore-member-collisions.md)
   (underscore members whose names collide),
-  [Chart.js ADR 0028](../../../flutter_chartjs/doc/adr/0028-controller-interfaces.md) (the
+  [Chart.js ADR 0028](../../../flutter_chartjs_port/doc/adr/0028-controller-interfaces.md) (the
   port-only types folder that this ADR does not take),
   [D3 ADR 0002](../../../flutter_d3_port/doc/adr/0002-file-naming-and-layout.md) (the
   `file_names` ignore line and the module index forms),

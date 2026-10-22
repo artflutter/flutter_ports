@@ -30,40 +30,40 @@ library;
 // ignore_for_file: invalid_use_of_internal_member
 
 import 'package:chartjs_test_utils/src/dom.dart';
-// flutter_chartjs does not export lib/src. The harness reads the canvas
+// flutter_chartjs_port does not export lib/src. The harness reads the canvas
 // interface,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 // the canvas element of the canvas layer,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 // the chart,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 // the line element, which has no upstream getCenterPoint,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/elements/element.line.dart';
+import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 // Object.keys,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_array.dart';
 // ToBoolean, ToNumber and ToString,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 // the JS property read,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart';
 // the undefined sentinel,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 // the EventTarget of the canvas,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 // the native event,
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 // and the interfaces of the elements and points.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 // utils.js:1 imports spritingOn and spritingOff: n/a. The port compares no

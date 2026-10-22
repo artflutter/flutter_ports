@@ -12,14 +12,15 @@ import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs/src/controllers/index.dart';
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/elements/element_options.dart';
-import 'package:flutter_chartjs/src/elements/index.dart';
-import 'package:flutter_chartjs/src/js/js_object.dart' show jsObjectIsFrozen;
-import 'package:flutter_chartjs/src/platform/platform.flutter.dart';
-import 'package:flutter_chartjs/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/controllers/index.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/elements/element_options.dart';
+import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show jsObjectIsFrozen;
+import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
+import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'stress_controls.dart';

@@ -1,0 +1,1230 @@
+// Original code, not ported from Chart.js: tests of the theme compiler.
+import 'dart:convert';
+
+import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/core/core.config.dart';
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_function.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:test/test.dart';
+
+// The theme compiler has no upstream counterpart (Chart.js ADR 0001). These
+// tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
+// the emission guard, the rgba() form, the deep freeze and the memo), §3.4
+// and §4 (the token keys of phase 6 and the point-label font), §8
+// test 1 (no theme equals upstream: ChartThemes.none, no extra scope, the
+// scope position of a compiled theme, no dependence on the platform) and
+// the parts of §8 test 5 that need no chart. The expected scope lists follow
+// the hunks H0-H3 of core.config.dart and their tests in
+// test/port/core/core.config_test.dart.
+//
+// The tests run on the VM, dart2js and dart2wasm. The snapshot of the light
+// preset is the same literal on each of them: the compiler reads no
+// platform. test/port/theme/target_platform_test.dart checks the same
+// snapshot under each TargetPlatform of Flutter.
+
+/// The JSON form of [value]: a Map gives its keys in the `Object.keys`
+/// order, a number gives [jsNumberToString], `undefined` gives
+/// `"<undefined>"`, a function gives `"<fn>"` and a [RawThemeColor] gives
+/// its rgba() string in angle brackets. The form is the same on every
+/// platform.
+String _json(Object? value) => switch (value) {
+  null => 'null',
+  Undefined() => '"<undefined>"',
+  final bool b => b ? 'true' : 'false',
+  final num n => jsNumberToString(n),
+  final String s => jsonEncode(s),
+  _ when jsIsFunction(value) => '"<fn>"',
+  final RawThemeColor color => '"<${themeColorToRgba(color)}>"',
+  final List<Object?> list => '[${list.map(_json).join(',')}]',
+  final Map<String, Object?> map =>
+    '{${jsObjectKeys(map).map((k) => _entry(map, k)).join(',')}}',
+  _ => throw ArgumentError.value(value, 'value', 'has no JSON form'),
+};
+
+/// The JSON member `"key":value` of [key] in [map].
+String _entry(Map<String, Object?> map, String key) =>
+    '${jsonEncode(key)}:${_json(map[key])}';
+
+/// The leaves of [value] by dot path, in key order. A List is a leaf.
+Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
+  if (value is! Map<String, Object?>) return {prefix: value};
+  return {
+    for (final key in value.keys)
+      ..._leaves(value[key], prefix.isEmpty ? key : '$prefix.$key'),
+  };
+}
+
+/// Every Map and List node of [value] with its dot path, the root first.
+Iterable<(String, Object)> _nodes(Object? value, [String path = '']) sync* {
+  if (value is Map<String, Object?>) {
+    yield (path, value);
+    for (final key in value.keys) {
+      yield* _nodes(value[key], path.isEmpty ? key : '$path.$key');
+    }
+  } else if (value is List<Object?>) {
+    yield (path, value);
+    for (var i = 0; i < value.length; i++) {
+      yield* _nodes(value[i], '$path.$i');
+    }
+  }
+}
+
+/// The dot path of a node or a leaf as the key list of the guard.
+List<String> _path(String dotPath) => dotPath.split('.');
+
+/// The three `transitions` leaves that the compiler adds (theming.md §3.8).
+const Map<String, Object?> _transitionLeaves = {
+  'transitions.theme.animation.duration': 200.0,
+  'transitions.theme.animation.easing': 'linear',
+  'transitions.themeFrame.animation.duration': 0.0,
+};
+
+/// A raw theme with the color token [token] only.
+Map<String, Object?> _colorTheme(String token, RawThemeColor color) => {
+  'colors': <String, Object?>{token: color},
+};
+
+/// The color `rgb(200, 0, 0)` of the hover test of theming.md §3.2.
+const RawThemeColor _red = (alpha: 1.0, red: 200 / 255, green: 0.0, blue: 0.0);
+
+/// The labels of the scope objects of a scope list: the name of a known
+/// object, `{}#n` for the n-th other empty object, or `?<json>` for another
+/// value.
+String Function(Object?) _labeller(List<(Object?, String)> named) {
+  final names = Map<Object?, String>.identity();
+  for (final (scope, name) in named) {
+    names[scope] = name;
+  }
+  final seen = Map<Object?, String>.identity();
+  var fresh = 0;
+  return (scope) {
+    final name = names[scope] ?? seen[scope];
+    if (name != null) return name;
+    final label = scope is Map<String, Object?> && scope.isEmpty
+        ? '{}#${fresh++}'
+        : '?${_json(scope)}';
+    seen[scope] = label;
+    return label;
+  };
+}
+
+/// The value of the dot path [path] in [root].
+Object? _at(Object? root, String path) {
+  var node = root;
+  for (final key in path.split('.')) {
+    node = jsGet(node, key);
+  }
+  return node;
+}
+
+/// Whether asserts run: `dart test` and `flutter test` enable them on each
+/// platform.
+bool get _asserts {
+  var enabled = false;
+  assert(enabled = true, 'asserts run');
+  return enabled;
+}
+
+/// The test themes of theming.md §8 test 5: each one compiles only to
+/// allowed paths.
+final Map<String, Map<String, Object?>> _testThemes = {
+  'light': ChartThemes.light,
+  for (final token in ['color', 'borderColor', 'backgroundColor', 'surface'])
+    'colors.$token': _colorTheme(token, _red),
+  'typography.font': {
+    'typography': <String, Object?>{
+      'font': <String, Object?>{'family': 'serif', 'size': 14.0},
+    },
+  },
+  'typography.pointLabels': {
+    'typography': <String, Object?>{
+      'font': <String, Object?>{'family': 'serif', 'size': 14.0},
+      'pointLabels': <String, Object?>{'size': 9.0, 'weight': 'bold'},
+    },
+  },
+  'raw': {
+    'raw': <String, Object?>{
+      'scale': <String, Object?>{
+        'ticks': <String, Object?>{'textStrokeColor': 'blue'},
+      },
+      'plugins': <String, Object?>{
+        'tooltip': <String, Object?>{'borderColor': 'red'},
+        'colors': <String, Object?>{
+          r'$borderColors': <Object?>['red', 'blue'],
+          r'$backgroundColors': <Object?>['pink', 'cyan'],
+        },
+      },
+      'scales': <String, Object?>{
+        'radialLinear': <String, Object?>{
+          'pointLabels': <String, Object?>{'color': 'green'},
+        },
+        'linear': <String, Object?>{
+          'grid': <String, Object?>{'color': _red},
+        },
+      },
+      'elements': <String, Object?>{
+        'line': <String, Object?>{
+          'borderDash': <Object?>[4.0, 2.0],
+        },
+      },
+    },
+  },
+};
+
+void main() {
+  setUpSpecs();
+
+  group('compileChartTheme', () {
+    test('a theme without keys compiles to null', () {
+      expect(compileChartTheme(null), isNull);
+      for (final theme in <Map<String, Object?>>[
+        ChartThemes.none,
+        {},
+        {'colors': <String, Object?>{}},
+        {
+          'colors': <String, Object?>{'color': null, 'surface': null},
+        },
+        {'colors': null, 'typography': null, 'raw': null},
+        {
+          'typography': <String, Object?>{'font': <String, Object?>{}},
+        },
+        {
+          'typography': <String, Object?>{
+            'font': <String, Object?>{'weight': null, 'size': undefined},
+          },
+        },
+        {'raw': <String, Object?>{}},
+        {
+          'raw': <String, Object?>{
+            'elements': <String, Object?>{'bar': <String, Object?>{}},
+            'scale': <String, Object?>{},
+          },
+        },
+      ]) {
+        expect(compileChartTheme(theme), isNull, reason: _json(theme));
+      }
+    });
+
+    test('the light preset', () {
+      // The same leaves, in the same order, on the VM, dart2js and dart2wasm.
+      const font = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+      const gray = 'rgba(102, 102, 102, 1)';
+      const tenth = 'rgba(0, 0, 0, 0.1)';
+      final leaves = _leaves(compileChartTheme(ChartThemes.light));
+      expect(leaves, {
+        'color': gray,
+        'scale.ticks.color': gray,
+        'scale.ticks.backdropColor': 'rgba(255, 255, 255, 0.75)',
+        'scale.ticks.font.family': font,
+        'scale.ticks.font.size': 12.0,
+        'scale.ticks.font.style': 'normal',
+        'scale.ticks.font.lineHeight': 1.2,
+        'scale.title.color': gray,
+        'scale.title.font.family': font,
+        'scale.title.font.size': 12.0,
+        'scale.title.font.style': 'normal',
+        'scale.title.font.lineHeight': 1.2,
+        'scale.grid.color': tenth,
+        'scale.border.color': tenth,
+        'scales.radialLinear.pointLabels.color': gray,
+        'scales.radialLinear.pointLabels.font.family': font,
+        'scales.radialLinear.pointLabels.font.style': 'normal',
+        'scales.radialLinear.pointLabels.font.lineHeight': 1.2,
+        'scales.radialLinear.pointLabels.font.size': 10.0,
+        'scales.radialLinear.angleLines.color': tenth,
+        'elements.point.borderColor': tenth,
+        'elements.point.backgroundColor': tenth,
+        'elements.line.borderColor': tenth,
+        'elements.line.backgroundColor': tenth,
+        'elements.bar.borderColor': tenth,
+        'elements.bar.backgroundColor': tenth,
+        'elements.arc.backgroundColor': tenth,
+        'elements.arc.borderColor': 'rgba(255, 255, 255, 1)',
+        ..._transitionLeaves,
+      });
+      expect(leaves.keys, [
+        'color',
+        'scale.ticks.color',
+        'scale.ticks.backdropColor',
+        'scale.ticks.font.family',
+        'scale.ticks.font.size',
+        'scale.ticks.font.style',
+        'scale.ticks.font.lineHeight',
+        'scale.title.color',
+        'scale.title.font.family',
+        'scale.title.font.size',
+        'scale.title.font.style',
+        'scale.title.font.lineHeight',
+        'scale.grid.color',
+        'scale.border.color',
+        'scales.radialLinear.pointLabels.color',
+        'scales.radialLinear.pointLabels.font.family',
+        'scales.radialLinear.pointLabels.font.style',
+        'scales.radialLinear.pointLabels.font.lineHeight',
+        'scales.radialLinear.pointLabels.font.size',
+        'scales.radialLinear.angleLines.color',
+        'elements.point.borderColor',
+        'elements.point.backgroundColor',
+        'elements.line.borderColor',
+        'elements.line.backgroundColor',
+        'elements.bar.borderColor',
+        'elements.bar.backgroundColor',
+        'elements.arc.backgroundColor',
+        'elements.arc.borderColor',
+        ..._transitionLeaves.keys,
+      ]);
+    });
+
+    test('each color token emits its keys of theming.md §4', () {
+      const red = 'rgba(200, 0, 0, 1)';
+      final expected = <String, Map<String, Object?>>{
+        'color': {
+          'color': red,
+          'scale.ticks.color': red,
+          'scale.title.color': red,
+          'scales.radialLinear.pointLabels.color': red,
+        },
+        'borderColor': {
+          'scale.grid.color': red,
+          'scale.border.color': red,
+          'scales.radialLinear.angleLines.color': red,
+          'elements.point.borderColor': red,
+          'elements.line.borderColor': red,
+          'elements.bar.borderColor': red,
+        },
+        'backgroundColor': {
+          'elements.point.backgroundColor': red,
+          'elements.line.backgroundColor': red,
+          'elements.bar.backgroundColor': red,
+          'elements.arc.backgroundColor': red,
+        },
+        'surface': {
+          'elements.arc.borderColor': red,
+          'scale.ticks.backdropColor': 'rgba(200, 0, 0, 0.75)',
+        },
+      };
+      for (final MapEntry(key: token, value: keys) in expected.entries) {
+        expect(
+          _leaves(compileChartTheme(_colorTheme(token, _red))),
+          {...keys, ..._transitionLeaves},
+          reason: token,
+        );
+      }
+    });
+
+    test('the backdrop replaces the alpha of the surface with 0.75', () {
+      final leaves = _leaves(
+        compileChartTheme(
+          _colorTheme('surface', (
+            alpha: 0.5,
+            red: 0.0,
+            green: 0.0,
+            blue: 1.0,
+          )),
+        ),
+      );
+      expect(leaves['elements.arc.borderColor'], 'rgba(0, 0, 255, 0.5)');
+      expect(leaves['scale.ticks.backdropColor'], 'rgba(0, 0, 255, 0.75)');
+    });
+
+    test('a font emits its fields that are not null into each slot', () {
+      final compiled = compileChartTheme({
+        'typography': <String, Object?>{
+          'font': <String, Object?>{
+            'family': 'serif',
+            'size': null,
+            'style': 'italic',
+            'weight': 'bold',
+            'lineHeight': undefined,
+          },
+        },
+      });
+      expect(_leaves(compiled), {
+        'scale.ticks.font.family': 'serif',
+        'scale.ticks.font.style': 'italic',
+        'scale.ticks.font.weight': 'bold',
+        'scale.title.font.family': 'serif',
+        'scale.title.font.style': 'italic',
+        'scale.title.font.weight': 'bold',
+        'scales.radialLinear.pointLabels.font.family': 'serif',
+        'scales.radialLinear.pointLabels.font.style': 'italic',
+        'scales.radialLinear.pointLabels.font.weight': 'bold',
+        ..._transitionLeaves,
+      });
+      // No root font (theming.md §3.4), and one Map for each slot.
+      expect(compiled!.containsKey('font'), isFalse);
+      expect(
+        _at(compiled, 'scale.ticks.font'),
+        isNot(same(_at(compiled, 'scale.title.font'))),
+      );
+    });
+
+    test('the point-label font is the base font without size, then its '
+        'token', () {
+      // theming.md §3.4 and §4, the last row: upstream sets the point-label
+      // size 10 locally (scale.radialLinear.js:383-385).
+      Object? pointLabels(Map<String, Object?> typography) => _at(
+        compileChartTheme({'typography': typography}),
+        'scales.radialLinear.pointLabels.font',
+      );
+
+      // The token wins field by field. The base size never reaches it.
+      expect(
+        pointLabels(<String, Object?>{
+          'font': <String, Object?>{
+            'family': 'serif',
+            'size': 14.0,
+            'style': 'italic',
+          },
+          'pointLabels': <String, Object?>{'style': 'normal', 'size': 9.0},
+        }),
+        <String, Object?>{'family': 'serif', 'style': 'normal', 'size': 9.0},
+      );
+      // The base font without the token: its fields without size. The size
+      // 10 of defaults.scales.radialLinear then stays.
+      expect(
+        pointLabels(<String, Object?>{
+          'font': <String, Object?>{'family': 'serif', 'size': 14.0},
+        }),
+        <String, Object?>{'family': 'serif'},
+      );
+      // The token without the base font.
+      expect(
+        pointLabels(<String, Object?>{
+          'pointLabels': <String, Object?>{'size': 9.0},
+        }),
+        <String, Object?>{'size': 9.0},
+      );
+      // A null token field themes nothing, also over a base field.
+      expect(
+        pointLabels(<String, Object?>{
+          'font': <String, Object?>{'family': 'serif', 'weight': 'bold'},
+          'pointLabels': <String, Object?>{
+            'family': null,
+            'weight': undefined,
+            'lineHeight': 1.5,
+          },
+        }),
+        <String, Object?>{
+          'family': 'serif',
+          'weight': 'bold',
+          'lineHeight': 1.5,
+        },
+      );
+      // A base font with a size only gives no point-label font.
+      final sizeOnly = compileChartTheme({
+        'typography': <String, Object?>{
+          'font': <String, Object?>{'size': 14.0},
+        },
+      });
+      expect(_at(sizeOnly, 'scales'), same(undefined));
+      expect(_at(sizeOnly, 'scale.ticks.font.size'), 14.0);
+      // A token without fields themes nothing.
+      expect(
+        compileChartTheme({
+          'typography': <String, Object?>{
+            'pointLabels': <String, Object?>{'size': null},
+          },
+        }),
+        isNull,
+      );
+    });
+
+    test('the point-label font keeps the field order', () {
+      // The base fields in their order without size, then the new token
+      // fields in their order. A token field over a base field keeps the
+      // position of the base field.
+      final compiled = compileChartTheme({
+        'typography': <String, Object?>{
+          'font': <String, Object?>{
+            'lineHeight': 1.2,
+            'size': 14.0,
+            'family': 'serif',
+          },
+          'pointLabels': <String, Object?>{'weight': 'bold', 'family': 'mono'},
+        },
+      });
+      final font =
+          _at(compiled, 'scales.radialLinear.pointLabels.font')!
+              as Map<String, Object?>;
+      expect(font.keys, ['lineHeight', 'family', 'weight']);
+      expect(font['family'], 'mono');
+      // One Map for each slot.
+      expect(font, isNot(same(_at(compiled, 'scale.ticks.font'))));
+    });
+
+    test('the raw keys beat the token keys, key by key', () {
+      final compiled = compileChartTheme({
+        'colors': <String, Object?>{'color': _red},
+        'typography': <String, Object?>{
+          'font': <String, Object?>{'family': 'serif', 'size': 14.0},
+        },
+        'raw': <String, Object?>{
+          'color': 'raw-color',
+          'scale': <String, Object?>{
+            'ticks': <String, Object?>{
+              'color': 'raw-ticks',
+              'textStrokeColor': 'raw-stroke',
+              'font': <String, Object?>{'size': 10.0},
+            },
+            'title': 'raw-title',
+          },
+        },
+      });
+      expect(_leaves(compiled), {
+        'color': 'raw-color',
+        'scale.ticks.color': 'raw-ticks',
+        'scale.ticks.font.family': 'serif',
+        'scale.ticks.font.size': 10.0,
+        'scale.ticks.textStrokeColor': 'raw-stroke',
+        'scale.title': 'raw-title',
+        'scales.radialLinear.pointLabels.color': 'rgba(200, 0, 0, 1)',
+        'scales.radialLinear.pointLabels.font.family': 'serif',
+        ..._transitionLeaves,
+      });
+    });
+
+    test('the raw radial keys beat the radial token keys', () {
+      final compiled = compileChartTheme({
+        'colors': <String, Object?>{'color': _red, 'borderColor': _red},
+        'typography': <String, Object?>{
+          'pointLabels': <String, Object?>{'size': 9.0, 'style': 'italic'},
+        },
+        'raw': <String, Object?>{
+          'scales': <String, Object?>{
+            'radialLinear': <String, Object?>{
+              'pointLabels': <String, Object?>{
+                'color': 'raw-point-labels',
+                'font': <String, Object?>{'size': 11.0},
+              },
+              'angleLines': <String, Object?>{'lineWidth': 2.0},
+            },
+          },
+        },
+      });
+      expect(_leaves(_at(compiled, 'scales')), {
+        'radialLinear.pointLabels.color': 'raw-point-labels',
+        'radialLinear.pointLabels.font.size': 11.0,
+        'radialLinear.pointLabels.font.style': 'italic',
+        'radialLinear.angleLines.color': 'rgba(200, 0, 0, 1)',
+        'radialLinear.angleLines.lineWidth': 2.0,
+      });
+    });
+
+    test('a raw color token is an rgba() string at any depth', () {
+      final compiled = compileChartTheme({
+        'raw': <String, Object?>{
+          'scale': <String, Object?>{
+            'ticks': <String, Object?>{'textStrokeColor': _red},
+          },
+          'plugins': <String, Object?>{
+            'colors': <String, Object?>{
+              r'$borderColors': <Object?>[_red, 'blue'],
+            },
+          },
+        },
+      });
+      expect(
+        _at(compiled, 'scale.ticks.textStrokeColor'),
+        'rgba(200, 0, 0, 1)',
+      );
+      expect(_at(compiled, r'plugins.colors.$borderColors'), [
+        'rgba(200, 0, 0, 1)',
+        'blue',
+      ]);
+    });
+
+    test('the raw keys come in the Object.keys order', () {
+      final compiled = compileChartTheme({
+        'raw': <String, Object?>{
+          'elements': <String, Object?>{
+            'b': <String, Object?>{'x': 1.0},
+            '2': <String, Object?>{'x': 1.0},
+            'a': <String, Object?>{'x': 1.0},
+            '1': <String, Object?>{'x': 1.0},
+          },
+        },
+      });
+      expect((compiled!['elements']! as Map<String, Object?>).keys, [
+        '1',
+        '2',
+        'b',
+        'a',
+      ]);
+      expect(compiled.keys, ['elements', 'transitions']);
+    });
+
+    test('the transitions come only beside other keys', () {
+      // theming.md §3.3: the transitions keys alone are no theme.
+      expect(compileChartTheme({'raw': <String, Object?>{}}), isNull);
+      expect(
+        compileChartTheme({
+          'raw': <String, Object?>{
+            'transitions': <String, Object?>{
+              'theme': <String, Object?>{'note': 'raw'},
+            },
+          },
+        }),
+        isNull,
+      );
+      final compiled = compileChartTheme({
+        'raw': <String, Object?>{
+          'color': 'c',
+          'transitions': <String, Object?>{
+            'theme': <String, Object?>{'note': 'raw'},
+          },
+        },
+      });
+      expect(_leaves(compiled), {
+        'color': 'c',
+        'transitions.theme.note': 'raw',
+        ..._transitionLeaves,
+      });
+    });
+
+    test('the compiler does not change the theme', () {
+      final raw = <String, Object?>{
+        'scale': <String, Object?>{
+          'ticks': <String, Object?>{'color': 'raw'},
+        },
+        'elements': <String, Object?>{'bar': <String, Object?>{}},
+      };
+      final theme = <String, Object?>{
+        'colors': <String, Object?>{'color': _red},
+        'raw': raw,
+      };
+      final before = _json(theme);
+      final compiled = compileChartTheme(theme)!;
+      expect(_json(theme), before);
+      expect(jsObjectIsFrozen(theme), isFalse);
+      expect(jsObjectIsFrozen(raw), isFalse);
+      expect(compiled['scale'], isNot(same(raw['scale'])));
+    });
+
+    test('the compiler does not change defaults', () {
+      // theming.md §6: the theme never writes Chart.defaults.
+      final before = _json(defaults);
+      final overridesBefore = _json(overrides);
+      for (final theme in _testThemes.values) {
+        final compiled = compileChartTheme(theme);
+        Config(<String, Object?>{
+          'type': 'tthm',
+          'data': <String, Object?>{
+            'datasets': [<String, Object?>{}],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'linear'},
+            },
+          },
+          themeConfigKey: compiled,
+        });
+      }
+      expect(_json(defaults), before);
+      expect(_json(overrides), overridesBefore);
+    });
+  });
+
+  group('themeColorToRgba', () {
+    test('8-bit channels and the alpha of jsNumberToString', () {
+      expect(
+        themeColorToRgba((alpha: 0.1, red: 0.0, green: 0.0, blue: 0.0)),
+        'rgba(0, 0, 0, 0.1)',
+      );
+      // The alpha of Color(0x1A000000) (theming.md §4).
+      expect(
+        themeColorToRgba((alpha: 26 / 255, red: 0.0, green: 0.0, blue: 0.0)),
+        'rgba(0, 0, 0, 0.10196078431372549)',
+      );
+      expect(
+        themeColorToRgba((
+          alpha: 1.0,
+          red: 102 / 255,
+          green: 102 / 255,
+          blue: 102 / 255,
+        )),
+        'rgba(102, 102, 102, 1)',
+      );
+      expect(
+        themeColorToRgba((alpha: 0.0, red: 1.0, green: 1.0, blue: 1.0)),
+        'rgba(255, 255, 255, 0)',
+      );
+    });
+
+    test('a channel rounds half up, as Color._floatToInt8', () {
+      // (x * 255.0).round(): 0.5 / 255 * 255 rounds to 1.
+      expect(
+        themeColorToRgba((
+          alpha: 1.0,
+          red: 0.5 / 255,
+          green: 1.49 / 255,
+          blue: 254.5 / 255,
+        )),
+        'rgba(1, 1, 255, 1)',
+      );
+    });
+
+    test('extended sRGB components clamp', () {
+      expect(
+        themeColorToRgba((alpha: 1.5, red: -0.2, green: 1.2, blue: 0.5)),
+        'rgba(0, 255, 128, 1)',
+      );
+      expect(
+        themeColorToRgba((alpha: -0.5, red: 0.0, green: 0.0, blue: 0.0)),
+        'rgba(0, 0, 0, 0)',
+      );
+    });
+  });
+
+  group('the emission guard', () {
+    test('each rule of the never-emitted list of theming.md §3.3', () {
+      final rejected = <(String, Object?, String)>[
+        ('backgroundColor', 'red', 'a root backgroundColor'),
+        ('borderColor', 'red', 'a root borderColor'),
+        ('font', <String, Object?>{}, 'a root font'),
+        ('elements.bar.hoverBackgroundColor', 'red', 'static hover color'),
+        ('elements.point.hoverBorderColor', 'red', 'static hover color'),
+        ('hoverColor', 'red', 'static hover color'),
+        ('elements.line.pointHoverBackgroundColor', 'red', 'hover color'),
+        ('barHoverBorderColor', 'red', 'static hover color'),
+        for (final key in themeBehaviorKeys) (key, 1.0, 'behavior key'),
+        // The hover scopes resolve before every interaction scope.
+        ('hover', <String, Object?>{}, 'hover is a behavior key'),
+        ('hover.mode', 'dataset', 'hover is a behavior key'),
+        ('hover.intersect', false, 'hover is a behavior key'),
+        // The tooltip resolves the interaction keys from plugins.tooltip
+        // first.
+        ('plugins.tooltip.mode', 'dataset', 'tooltip.mode is a behavior key'),
+        for (final key in themeTooltipInteractionKeys)
+          ('plugins.tooltip.$key', 1.0, 'tooltip.$key is a behavior key'),
+        ('plugins.tooltip.interaction', <String, Object?>{}, 'behavior'),
+        ('plugins.tooltip.enabled', false, 'enabled is a behavior key'),
+        ('plugins.colors.forceOverride', true, 'behavior key'),
+        ('scale.grid.display', false, 'display is a behavior key'),
+        ('transitions.theme.animation.duration', 1.0, 'behavior key'),
+        ('datasets.bar.backgroundColor', 'red', 'behavior key'),
+        ('layout.padding', 4.0, 'layout is a behavior key'),
+        ('plugins.legend', false, 'plugins.legend: bool'),
+        ('plugins.legend', true, 'plugins.legend: bool'),
+        ('scales.x', <String, Object?>{}, 'scales.x is not a scale type'),
+        ('scales.y.grid.color', 'red', 'scales.y is not a scale type'),
+        ('scales.myScale', <String, Object?>{}, 'not a scale type'),
+        // A scale id, not a scale type: the radial scale of a radar chart.
+        ('scales.r.pointLabels.color', 'red', 'scales.r is not a scale type'),
+        ('scales.radial.angleLines.color', 'red', 'not a scale type'),
+        ('scales.radialLinear.pointLabels.hoverColor', 'red', 'hover color'),
+        ('scales.radialLinear.angleLines._fallback', 'grid', 'descriptor'),
+        ('elements.bar._fallback', 'x', 'read as a descriptor'),
+        ('_scriptable', false, 'read as a descriptor'),
+        (r'$theme', <String, Object?>{}, r'a $ key other than the palette'),
+        (r'plugins.colors.$palette', <Object?>[], r'a $ key'),
+        (r'plugins.legend.$borderColors', <Object?>[], r'a $ key'),
+        (r'elements.bar.$shared', true, r'a $ key'),
+        ('elements.bar.backgroundColor', null, 'null is a JS value'),
+        ('color', undefined, 'undefined is no value'),
+        ('scale.ticks.callback', (Object? v) => v, 'a function'),
+      ];
+      for (final (path, value, reason) in rejected) {
+        expect(
+          themeNeverEmittedReason(_path(path), value),
+          contains(reason),
+          reason: path,
+        );
+      }
+    });
+
+    test('the keys that the guard accepts', () {
+      final accepted = <(String, Object?)>[
+        ('color', 'red'),
+        ('elements.arc.borderColor', 'red'),
+        ('elements.bar.borderWidth', 2.0),
+        ('elements.bar', <String, Object?>{}),
+        ('scale.ticks.backdropColor', 'red'),
+        ('scale.ticks.textStrokeColor', 'red'),
+        ('plugins.tooltip.borderColor', 'red'),
+        ('plugins.tooltip', <String, Object?>{}),
+        // Only a key `hover` is a behavior key, not a key with a hover
+        // prefix. Only plugins.tooltip resolves the interaction scopes.
+        ('elements.point.hoverRadius', 4.0),
+        ('elements.bar.hoverBorderWidth', 2.0),
+        ('plugins.legend.labels.mode', 'x'),
+        ('plugins.legend.labels.font', <String, Object?>{}),
+        (r'plugins.colors.$borderColors', <Object?>['red']),
+        (r'plugins.colors.$backgroundColors', <Object?>['red']),
+        (r'plugins.colors.$backgroundColors.0', 'red'),
+        for (final type in themeScaleTypes) ('scales.$type.grid.color', 'red'),
+        ('scales.radialLinear.pointLabels.color', 'red'),
+        ('scales.radialLinear.angleLines.color', 'red'),
+        ('scales.radialLinear.pointLabels.font', <String, Object?>{}),
+        ('scales.radialLinear.pointLabels.font.size', 10.0),
+        ('scales', <String, Object?>{}),
+        ('elements.line.borderDash', <Object?>[4.0, 2.0]),
+        ('elements.line.borderDash.0', 4.0),
+        ('transitions.theme.note', 'x'),
+      ];
+      for (final (path, value) in accepted) {
+        expect(
+          themeNeverEmittedReason(_path(path), value),
+          isNull,
+          reason: path,
+        );
+      }
+    });
+
+    test('the scale types are those of v4.5.1', () {
+      expect(themeScaleTypes, {
+        'category',
+        'linear',
+        'logarithmic',
+        'radialLinear',
+        'time',
+        'timeseries',
+      });
+    });
+
+    test('a raw key that breaks the guard fails an assert', () {
+      final themes = <Map<String, Object?>>[
+        {
+          'raw': <String, Object?>{'backgroundColor': 'red'},
+        },
+        {
+          'raw': <String, Object?>{
+            'elements': <String, Object?>{
+              'bar': <String, Object?>{'hoverBackgroundColor': 'red'},
+            },
+          },
+        },
+        {
+          'raw': <String, Object?>{
+            'interaction': <String, Object?>{'mode': 'index'},
+          },
+        },
+        {
+          'raw': <String, Object?>{
+            'hover': <String, Object?>{'mode': 'dataset', 'intersect': false},
+          },
+        },
+        {
+          'raw': <String, Object?>{
+            'plugins': <String, Object?>{
+              'tooltip': <String, Object?>{'mode': 'dataset'},
+            },
+          },
+        },
+        {
+          'raw': <String, Object?>{
+            'plugins': <String, Object?>{'legend': false},
+          },
+        },
+        {
+          'raw': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'grid': <String, Object?>{'color': 'red'},
+              },
+            },
+          },
+        },
+        {
+          'raw': <String, Object?>{
+            'elements': <String, Object?>{
+              'line': <String, Object?>{
+                'borderDash': <Object?>[4.0, null],
+              },
+            },
+          },
+        },
+        {
+          'raw': <String, Object?>{'color': null},
+        },
+      ];
+      for (final theme in themes) {
+        if (_asserts) {
+          expect(
+            () => compileChartTheme(theme),
+            throwsA(isA<AssertionError>()),
+            reason: _json(theme),
+          );
+        } else {
+          // Without asserts, the key is left out and nothing remains.
+          expect(compileChartTheme(theme), isNull, reason: _json(theme));
+        }
+      }
+    });
+
+    test(
+      'an unknown field or token fails an assert',
+      () {
+        final themes = <Map<String, Object?>>[
+          {'palette': <String, Object?>{}},
+          {
+            'colors': <String, Object?>{'inverseSurface': _red},
+          },
+          {
+            'colors': <String, Object?>{'color': 'red'},
+          },
+          {
+            'typography': <String, Object?>{'title': <String, Object?>{}},
+          },
+          {
+            'typography': <String, Object?>{
+              'pointLabels': <String, Object?>{'variant': 'small-caps'},
+            },
+          },
+          {
+            'typography': <String, Object?>{'pointLabels': 10.0},
+          },
+          {
+            'typography': <String, Object?>{
+              'font': <String, Object?>{'variant': 'small-caps'},
+            },
+          },
+          {'raw': 'not a map'},
+        ];
+        for (final theme in themes) {
+          if (_asserts) {
+            expect(
+              () => compileChartTheme(theme),
+              throwsA(isA<AssertionError>()),
+              reason: _json(theme),
+            );
+          }
+        }
+      },
+      skip: _asserts ? false : 'n/a: the asserts do not run',
+    );
+  });
+
+  group('the deep freeze', () {
+    test('each Map and List of the result is frozen', () {
+      final compiled = compileChartTheme(_testThemes['raw'])!;
+      final nodes = _nodes(compiled).toList();
+      expect(nodes.length, greaterThan(10));
+      for (final (path, node) in nodes) {
+        expect(node, isA<JsFreezable>(), reason: path);
+        expect(jsObjectIsFrozen(node), isTrue, reason: path);
+      }
+    });
+
+    test('a write throws a TypeError', () {
+      final compiled = compileChartTheme(ChartThemes.light)!;
+      final ticks = _at(compiled, 'scale.ticks')! as Map<String, Object?>;
+      expect(() => compiled['color'] = 'x', throwsA(isA<TypeError>()));
+      expect(() => compiled['other'] = 'x', throwsA(isA<TypeError>()));
+      expect(() => ticks['color'] = 'x', throwsA(isA<TypeError>()));
+      expect(() => ticks.remove('color'), throwsA(isA<TypeError>()));
+      expect(ticks.remove('absent'), isNull);
+      expect(ticks.clear, throwsA(isA<TypeError>()));
+      expect(
+        () => ticks.addAll(<String, Object?>{'a': 1.0}),
+        throwsA(isA<TypeError>()),
+      );
+      expect(ticks.putIfAbsent('color', () => 'x'), 'rgba(102, 102, 102, 1)');
+      expect(_at(compiled, 'scale.ticks.color'), 'rgba(102, 102, 102, 1)');
+
+      final dash =
+          _at(
+                compileChartTheme(_testThemes['raw']),
+                'elements.line.borderDash',
+              )!
+              as List<Object?>;
+      expect(() => dash[0] = 1.0, throwsA(isA<TypeError>()));
+      expect(() => dash.add(1.0), throwsA(isA<TypeError>()));
+      expect(() => dash.length = 0, throwsA(isA<TypeError>()));
+      expect(dash, [4.0, 2.0]);
+    });
+
+    test('a resolver write into a theme scope throws', () {
+      // theming.md §3.3: without plugins.<id> in the options and the
+      // overrides, the theme map is scopes[0], the target of the set trap.
+      final compiled = compileChartTheme(_testThemes['raw']);
+      final config = Config(<String, Object?>{
+        'type': 'tthm',
+        'options': <String, Object?>{},
+        themeConfigKey: compiled,
+      });
+      final scopes = config.getOptionScopes(
+        undefined,
+        config.pluginScopeKeys(<String, Object?>{'id': 'tooltip'}),
+      );
+      expect(scopes.first, same(_at(compiled, 'plugins.tooltip')));
+      final resolver = config.createResolver(scopes, <String, Object?>{});
+      expect(resolver['borderColor'], 'red');
+      expect(() => resolver['borderColor'] = 'x', throwsA(isA<TypeError>()));
+    });
+  });
+
+  group('the memo', () {
+    test('the same theme gives the same result', () {
+      final theme = <String, Object?>{
+        'colors': <String, Object?>{'color': _red},
+      };
+      final first = compileChartTheme(theme);
+      expect(compileChartTheme(theme), same(first));
+      expect(
+        compileChartTheme(ChartThemes.light),
+        same(compileChartTheme(ChartThemes.light)),
+      );
+    });
+
+    test('an equal theme compiles again', () {
+      Map<String, Object?> theme() => {
+        'colors': <String, Object?>{'color': _red},
+      };
+      final a = compileChartTheme(theme());
+      final b = compileChartTheme(theme());
+      expect(b, isNot(same(a)));
+      expect(_json(b), _json(a));
+    });
+
+    test('a theme that compiles to null stays null', () {
+      final theme = <String, Object?>{'colors': <String, Object?>{}};
+      expect(compileChartTheme(theme), isNull);
+      expect(compileChartTheme(theme), isNull);
+    });
+  });
+
+  group('theming.md §8 test 1', () {
+    late Map<String, Object?> dataset;
+    late Map<String, Object?> options;
+
+    setUp(() {
+      defaults.override('tthm', <String, Object?>{
+        'elements': <String, Object?>{
+          'point': <String, Object?>{'o': 1.0},
+        },
+      });
+      dataset = <String, Object?>{'data': <Object?>[]};
+      options = <String, Object?>{};
+    });
+
+    Config config(Object? theme) => Config(<String, Object?>{
+      'type': 'tthm',
+      'data': <String, Object?>{
+        'datasets': [dataset],
+      },
+      'options': options,
+      themeConfigKey: theme,
+    });
+
+    String Function(Object?) labels(Config c, Object? theme) => _labeller([
+      (dataset, 'dataset'),
+      (options, 'options'),
+      (overrides['tthm'], 'overrides.tthm'),
+      (_at(overrides, 'tthm.elements.point'), 'overrides.tthm.elements.point'),
+      (theme, 'theme'),
+      if (theme != null) ...[
+        (_at(theme, 'elements.point'), 'theme.elements.point'),
+        (_at(theme, 'transitions.theme'), 'theme.transitions.theme'),
+        (_at(theme, 'transitions.themeFrame'), 'theme.transitions.themeFrame'),
+      ],
+      (defaults, 'defaults'),
+      (_at(defaults, 'transitions'), 'defaults.transitions'),
+      (descriptors, 'descriptors'),
+    ]);
+
+    test('ChartThemes.none compiles to null', () {
+      expect(compileChartTheme(ChartThemes.none), isNull);
+    });
+
+    test('ChartThemes.none adds no scope', () {
+      final c = config(compileChartTheme(ChartThemes.none));
+      final label = labels(c, null);
+      expect(
+        c
+            .getOptionScopes(
+              dataset,
+              c.datasetElementScopeKeys('tthm', 'point'),
+            )
+            .map(label),
+        [
+          'dataset',
+          'options',
+          'overrides.tthm.elements.point',
+          'overrides.tthm',
+          'defaults',
+          'descriptors',
+        ],
+      );
+      expect(c.chartOptionScopes().map(label), [
+        'options',
+        'overrides.tthm',
+        '{}#0',
+        '?{"type":"tthm"}',
+        'defaults',
+        'descriptors',
+      ]);
+    });
+
+    test('a compiled theme comes between the overrides and the defaults', () {
+      final theme = compileChartTheme(ChartThemes.light);
+      final c = config(theme);
+      final label = labels(c, theme);
+      expect(
+        c
+            .getOptionScopes(
+              dataset,
+              c.datasetElementScopeKeys('tthm', 'point'),
+            )
+            .map(label),
+        [
+          'dataset',
+          'options',
+          'overrides.tthm.elements.point',
+          'overrides.tthm',
+          'theme.elements.point',
+          'theme',
+          'defaults',
+          'descriptors',
+        ],
+      );
+      expect(c.chartOptionScopes().map(label), [
+        'options',
+        'overrides.tthm',
+        'theme',
+        '{}#0',
+        '?{"type":"tthm"}',
+        'defaults',
+        'descriptors',
+      ]);
+      expect(
+        c
+            .getOptionScopes(
+              dataset,
+              c.datasetAnimationScopeKeys('tthm', 'theme'),
+            )
+            .map(label),
+        [
+          'dataset',
+          'theme.transitions.theme',
+          'options',
+          'overrides.tthm',
+          'theme',
+          'defaults',
+          'descriptors',
+        ],
+      );
+    });
+
+    test('the theme transitions reach the animation options', () {
+      // theming.md §3.8 and Chart.js ADR 0019 §10: the resolver reads
+      // transitions.theme through datasetAnimationScopeKeys.
+      Object? animation(Object? theme, String mode, String key) {
+        final c = config(theme);
+        final scopes = c.getOptionScopes(
+          dataset,
+          c.datasetAnimationScopeKeys('tthm', mode),
+        );
+        return _at(c.createResolver(scopes, <String, Object?>{}), key);
+      }
+
+      final theme = compileChartTheme(ChartThemes.light);
+      expect(animation(theme, 'theme', 'animation.duration'), 200.0);
+      expect(animation(theme, 'theme', 'animation.easing'), 'linear');
+      expect(animation(theme, 'themeFrame', 'animation.duration'), 0.0);
+      expect(
+        animation(theme, 'themeFrame', 'animation.easing'),
+        'easeOutQuart',
+      );
+      // The other modes keep the upstream values.
+      expect(animation(theme, 'active', 'animation.duration'), 400.0);
+      expect(animation(theme, 'default', 'animation.duration'), 1000.0);
+      // No theme: the upstream defaults (core.animations.defaults.js:4-5).
+      expect(animation(null, 'theme', 'animation.duration'), 1000.0);
+      expect(animation(null, 'theme', 'animation.easing'), 'easeOutQuart');
+    });
+  });
+
+  group('theming.md §8 test 5, without a chart', () {
+    test('the presets and the test themes compile only to allowed paths', () {
+      for (final name in _testThemes.keys) {
+        final compiled = compileChartTheme(_testThemes[name])!;
+        final leaves = _leaves(compiled);
+        for (final MapEntry(key: path, :value) in leaves.entries) {
+          if (_transitionLeaves.containsKey(path)) {
+            expect(value, _transitionLeaves[path], reason: '$name: $path');
+            continue;
+          }
+          expect(
+            themeNeverEmittedReason(_path(path), value),
+            isNull,
+            reason: '$name: $path',
+          );
+        }
+        for (final (path, node) in _nodes(compiled)) {
+          if (path.isEmpty || path.startsWith('transitions')) continue;
+          expect(
+            themeNeverEmittedReason(_path(path), node),
+            isNull,
+            reason: '$name: $path',
+          );
+        }
+        expect(
+          leaves.keys.where((path) => path.startsWith('transitions')),
+          _transitionLeaves.keys,
+          reason: name,
+        );
+      }
+    });
+
+    test('a themed scales.<id> fails the emission guard', () {
+      expect(
+        themeNeverEmittedReason(['scales', 'x'], <String, Object?>{}),
+        'scales.x is not a scale type',
+      );
+      final theme = <String, Object?>{
+        'raw': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{
+              'ticks': <String, Object?>{'color': 'red'},
+            },
+          },
+        },
+      };
+      if (_asserts) {
+        expect(() => compileChartTheme(theme), throwsA(isA<AssertionError>()));
+      } else {
+        expect(compileChartTheme(theme), isNull);
+      }
+    });
+
+    test('a themed scales.radialLinear creates no axis', () {
+      // On a chart type with an index and a value scale, as a bar chart,
+      // and on a chart type without scales, as a doughnut chart.
+      defaults
+        ..override('tbar', <String, Object?>{
+          'scales': <String, Object?>{
+            '_index_': <String, Object?>{'type': 'tcat'},
+            '_value_': <String, Object?>{'type': 'tlin'},
+          },
+        })
+        ..override('tdough', <String, Object?>{});
+      final theme = compileChartTheme({
+        'raw': <String, Object?>{
+          'scales': <String, Object?>{
+            'radialLinear': <String, Object?>{
+              'pointLabels': <String, Object?>{'color': 'red'},
+            },
+          },
+        },
+      });
+      Object? scales(String type) => Config(<String, Object?>{
+        'type': type,
+        'data': <String, Object?>{
+          'datasets': [<String, Object?>{}],
+        },
+        'options': <String, Object?>{},
+        themeConfigKey: theme,
+      }).options['scales'];
+
+      expect(jsObjectKeys(scales('tbar')! as Map<String, Object?>), ['x', 'y']);
+      expect(scales('tdough'), <String, Object?>{});
+    });
+  });
+}

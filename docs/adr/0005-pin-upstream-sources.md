@@ -4,7 +4,7 @@
 - Date: 2026-10-19
 - Supersedes: [ADR 0002](0002-pin-upstream-sources.md)
 - Related: [ADR 0006](0006-follow-upstream-between-releases.md) (ledger, backports and commit
-  pins), [Chart.js ADR 0011](../../packages/flutter_chartjs/doc/adr/0011-third-party-sources.md)
+  pins), [Chart.js ADR 0011](../../packages/flutter_chartjs_port/doc/adr/0011-third-party-sources.md)
   (the other projects that the Chart.js port takes code from)
 
 ## Context
@@ -44,7 +44,7 @@ This ADR restates the complete decision in one place. It supersedes ADR 0002.
 3. **Checkout.** `melos run upstream` checks out every submodule
    (`git submodule update --init --depth 1`). A plain `git clone` downloads none of them.
 4. **Version in code.** The tracked version also lives in code (`chartJsVersion` in
-   `flutter_chartjs`). Two checks keep the two in step:
+   `flutter_chartjs_port`). Two checks keep the two in step:
    - `tool/check_upstream_pin.sh` (`melos run upstream:check`, and the CI `upstream-pin` job)
      fails unless the recorded gitlink is exactly the commit of tag `v<chartJsVersion>`. It looks
      up the tag with `git ls-remote`. It needs no submodule checkout.
@@ -89,4 +89,4 @@ This ADR restates the complete decision in one place. It supersedes ADR 0002.
 - A tool that needs a built upstream, for example for a commit pin, builds it in a throwaway clone
   outside the repository, never in `third_party/`.
 - Each port lists the other projects that it takes code from in its own ADR, for example
-  [Chart.js ADR 0011](../../packages/flutter_chartjs/doc/adr/0011-third-party-sources.md).
+  [Chart.js ADR 0011](../../packages/flutter_chartjs_port/doc/adr/0011-third-party-sources.md).

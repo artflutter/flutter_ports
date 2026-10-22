@@ -3,13 +3,13 @@ import 'package:chartjs_gallery/charts/chart_type_page.dart';
 import 'package:chartjs_gallery/charts/chart_types.dart';
 import 'package:chartjs_gallery/helpers_demo.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/flutter_chartjs.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 void main() {
   runApp(const GalleryApp());
 }
 
-/// Gallery of Chart.js samples rendered by `flutter_chartjs`.
+/// Gallery of Chart.js samples rendered by `flutter_chartjs_port`.
 ///
 /// The list has each chart type of the Chart.js docs (`galleryChartTypes`).
 /// Each tile opens a page with the charts of the docs blocks of its type

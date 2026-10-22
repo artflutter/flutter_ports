@@ -62,7 +62,7 @@ The survey also found these. None is a formal or complete D3 port:
 - [D3 packages](d3-packages.md): each package above, from the Dart API to the output. The page
   gives the source of the D3 code, what each package ports, the tests, the limitations and the
   evidence. Its re-check marks name the claims that a second reader confirmed.
-- [Chart.js prior art](../../../flutter_chartjs/doc/prior-art/README.md): the survey of the first
+- [Chart.js prior art](../../../flutter_chartjs_port/doc/prior-art/README.md): the survey of the first
   port, with the same method.
 - [Other JavaScript chart libraries](../../../../docs/prior-art/other-chart-libraries.md): the
   survey of 2026-10-16 for all ports. Its D3 rows were the start of this survey.

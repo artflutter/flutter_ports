@@ -283,7 +283,7 @@ and `d3-path@3.1.0 src/path.js`.
   with the d3-path method names, a `dart:ui` builder and a string recorder for the tests.
 - Commit the reference generator. Record the reference engine. This port takes reference values
   only from an x64 Node.js v24.12.0
-  ([Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md),
+  ([Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md),
   [D3 ADR 0004](../adr/0004-spec-harness.md)).
 - The three number traps of its test README must have cases in the phase 1 pilot (d3-array
   `ticks.js`). [D3 ADR 0003](../adr/0003-number-to-string.md) and

@@ -6,7 +6,7 @@ import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/helpers/helpers.easing.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart';
 
 /// The lowest value that the curve plots show. `easeInElastic` and
 /// `easeInBack` dip below 0.

@@ -4,7 +4,7 @@
 // phase 9. The gallery imports the ported files directly.
 // ignore_for_file: implementation_imports
 
-import 'package:flutter_chartjs/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The radar chart of `docs/charts/radar.md:7-61`, with each key and value
 /// of the docs block.

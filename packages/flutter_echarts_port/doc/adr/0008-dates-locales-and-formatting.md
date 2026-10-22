@@ -8,13 +8,13 @@
   `core/util` makes a `new Date()` (`zrender@6.1.0 test/ut/spec/core/util.test.ts:74`).
 - Related: [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (the shared
   runtime `js_semantics`, item 6),
-  [Chart.js ADR 0024](../../../flutter_chartjs/doc/adr/0024-dates.md) (`DateTime` as a JS `Date`,
+  [Chart.js ADR 0024](../../../flutter_chartjs_port/doc/adr/0024-dates.md) (`DateTime` as a JS `Date`,
   `DateZone`, `LocalZone`, the table zone),
-  [Chart.js ADR 0026](../../../flutter_chartjs/doc/adr/0026-number-formatting-on-package-intl.md)
+  [Chart.js ADR 0026](../../../flutter_chartjs_port/doc/adr/0026-number-formatting-on-package-intl.md)
   (package:intl, not used here),
-  [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (accepted
+  [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) (accepted
   2026-10-21: §6 `jsDateNow`, the reference engine),
-  [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)
+  [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md)
   (accepted 2026-10-21: the protected behavior),
   [D3 porting-flow.md](../../../flutter_d3_port/doc/porting-flow.md) §2.11 (the D3 dates and
   zones), [ECharts ADR 0002](0002-file-naming-and-layout.md) (paths and file names),
@@ -159,7 +159,7 @@ ECharts needs a mutable `Date` with the ECMAScript field algorithms.
   dates before the first zone rule (D3 porting-flow.md §7, risk 4).
 - **ADR 0008 item 6.** New runtime code goes into new files of `js_semantics`. A file with a
   Chart.js copy changes in both copies in one commit. `LocalZone` lives in
-  `packages/flutter_chartjs/lib/src/core/date_zone.dart`. It is not in the 11 files of stage 1.
+  `packages/flutter_chartjs_port/lib/src/core/date_zone.dart`. It is not in the 11 files of stage 1.
 
 ## Decision
 

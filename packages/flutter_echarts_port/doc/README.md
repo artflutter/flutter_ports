@@ -8,7 +8,7 @@ animation, the hit tests and the canvas painter. Flutter draws the zrender layer
 canvas. The port has no WebView and runs no JavaScript. The reasons for this approach, and the
 packages that already exist, are in the [prior art](prior-art/README.md) and in
 [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
-[ADR 0007](../../../docs/adr/0007-package-names.md) (proposed) gives the name form
+[ADR 0007](../../../docs/adr/0007-package-names.md) (accepted 2026-10-22) gives the name form
 `flutter_<library>_port`. The name `flutter_echarts` is taken on pub.dev by a WebView wrapper.
 [ECharts ADR 0001](adr/0001-upstream-sources.md) records the name (ADR 0007 item 9).
 
@@ -156,8 +156,8 @@ Cross-port ADRs that apply to this port:
 - [ADR 0005: Pin upstream sources](../../../docs/adr/0005-pin-upstream-sources.md) (accepted)
 - [ADR 0006: Follow upstream between releases](../../../docs/adr/0006-follow-upstream-between-releases.md)
   (accepted)
-- [ADR 0007: Package names](../../../docs/adr/0007-package-names.md) (proposed. It supersedes
-  ADR 0003 on acceptance)
+- [ADR 0007: Package names](../../../docs/adr/0007-package-names.md) (accepted 2026-10-22. It
+  supersedes ADR 0003)
 - [ADR 0008: Shared JS runtime and port tools](../../../docs/adr/0008-shared-js-runtime-and-port-tools.md)
   (proposed)
 

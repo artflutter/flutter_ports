@@ -1,11 +1,11 @@
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/elements/element_options.dart'
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     as element_options;
-import 'package:flutter_chartjs/src/elements/index.dart';
-import 'package:flutter_chartjs/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'stress_controls.dart';

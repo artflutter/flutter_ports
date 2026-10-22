@@ -4,7 +4,7 @@
 // phase 9. The gallery imports the ported files directly.
 // ignore_for_file: implementation_imports
 
-import 'package:flutter_chartjs/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The mixed chart of `docs/charts/mixed.md:27-70`: a `scatter` chart with
 /// a `bar` and a `line` dataset, with each key and value of the docs block.

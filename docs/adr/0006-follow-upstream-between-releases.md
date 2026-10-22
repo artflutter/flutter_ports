@@ -4,7 +4,7 @@
 - Date: 2026-10-19
 - Supersedes: [ADR 0004](0004-follow-upstream-between-releases.md)
 - Related: [ADR 0005](0005-pin-upstream-sources.md) (the pin and the bump steps),
-  [Chart.js ADR 0009](../../packages/flutter_chartjs/doc/adr/0009-no-display-only-js-exactness.md)
+  [Chart.js ADR 0009](../../packages/flutter_chartjs_port/doc/adr/0009-no-display-only-js-exactness.md)
   (the module statuses of the Chart.js port)
 
 ## Context
@@ -23,10 +23,10 @@ when an upstream releases rarely:
   branch. It still sees tags only.
 
 The first port shows all of these problems. Its evidence (2026-10-16) is in
-[the Chart.js upstream tracking](../../packages/flutter_chartjs/doc/upstream-tracking.md) §1.
+[the Chart.js upstream tracking](../../packages/flutter_chartjs_port/doc/upstream-tracking.md) §1.
 
 ADR 0004 (accepted 2026-10-18) decided the rules below. Since then, two changes occurred:
-- [Chart.js ADR 0009](../../packages/flutter_chartjs/doc/adr/0009-no-display-only-js-exactness.md)
+- [Chart.js ADR 0009](../../packages/flutter_chartjs_port/doc/adr/0009-no-display-only-js-exactness.md)
   (accepted 2026-10-18) removed the module status `verified`. ADR 0004 names that status in its
   backport conditions.
 - [ADR 0005](0005-pin-upstream-sources.md) states the complete pin and bump rules. ADR 0004

@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: tests of the mock context.
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:chartjs_test_utils/src/context.dart' as context;
-import 'package:flutter_chartjs/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:test/test.dart';
 
 // The recordings follow chartjs-test-utils 0.4.0 src/context.js. Where Dart
@@ -287,7 +287,7 @@ void main() {
 
     group('roundRect (port-only)', () {
       // src/context.js has no roundRect. addRoundedRectPath of
-      // flutter_chartjs calls it (adapt-rounded-rect-path), so the mock
+      // flutter_chartjs_port calls it (adapt-rounded-rect-path), so the mock
       // records it as the other path methods.
       test('records the arguments and the radii as passed', () {
         final radii = <double>[1, 2, 3, 4];

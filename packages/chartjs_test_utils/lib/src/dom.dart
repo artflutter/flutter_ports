@@ -36,15 +36,15 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 // The harness shows the canvas elements of the canvas layer in chart hosts.
-// flutter_chartjs does not export lib/src.
+// flutter_chartjs_port does not export lib/src.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 // The canvas element and its style of the canvas layer.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 // The chart host and the mutation checkpoint of Chart.js ADR 0022.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The globals.

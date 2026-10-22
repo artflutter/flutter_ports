@@ -8,9 +8,9 @@ import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/canvas/canvas.dart';
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs/src/helpers/index.dart'
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/helpers/index.dart'
     show
         addRoundedRectPath,
         bezierCurveTo,

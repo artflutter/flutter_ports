@@ -4,9 +4,9 @@
 - Date: 2026-10-20
 - Gate: D3 phase 1 for the pure interface, because the d3-path pilot implements it. D3 phase 4
   for the `dart:ui` builder, because d3-shape and the gallery draw with it.
-- Related: [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)
+- Related: [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md)
   (no Chromium geometry),
-  [Chart.js ADR 0013](../../../flutter_chartjs/doc/adr/0013-canvas-model.md) (proposed: the
+  [Chart.js ADR 0013](../../../flutter_chartjs_port/doc/adr/0013-canvas-model.md) (proposed: the
   canvas layer of the Chart.js port), [D3 ADR 0002](0002-file-naming-and-layout.md) (port-only
   paths), [D3 ADR 0003](0003-number-to-string.md) (the path strings),
   [D3 ADR 0006](0006-generators-accessors-and-js-values.md) (the `context` accessor and the JS
@@ -61,7 +61,7 @@ of them. WebIDL converts the `optional boolean counterclockwise = false` of `arc
 
 **`dart:ui`.** `ui.Path` has `moveTo`, `lineTo`, `quadraticBezierTo`, `cubicTo`, `arcTo`,
 `arcToPoint`, `addRect` and `close`. It does not have these Canvas 2D path rules
-([Chart.js ADR 0013](../../../flutter_chartjs/doc/adr/0013-canvas-model.md), Context):
+([Chart.js ADR 0013](../../../flutter_chartjs_port/doc/adr/0013-canvas-model.md), Context):
 - `arc` draws a line from the current point to the start of the arc.
 - A sweep of 2π or more draws a full circle. `ui.Path.arcTo` draws nothing for a sweep that is a
   multiple of 2π.
@@ -70,11 +70,11 @@ of them. WebIDL converts the `optional boolean counterclockwise = false` of `arc
 - A path method with a non-finite argument does nothing.
 - `lineTo` and the curves on an empty path start a subpath at their first point.
 
-**The Chart.js canvas layer.** `packages/flutter_chartjs/lib/src/canvas/` has 6 files with 4,981
+**The Chart.js canvas layer.** `packages/flutter_chartjs_port/lib/src/canvas/` has 6 files with 4,981
 lines. It has a retained bitmap, the device pixel ratio, styles, text and a circle batch (Chart.js
 ADR 0013). `canvas.dart` declares a `CanvasPath`. It also imports a Chart.js type library
 (`canvas.dart:26`). `canvas_ui_path.dart` (1,073 lines) builds the `ui.Path` in bitmap space, with
-the transform at the time of each point. `REUSE.toml` gives `packages/flutter_chartjs/**` the MIT
+the transform at the time of each point. `REUSE.toml` gives `packages/flutter_chartjs_port/**` the MIT
 notice of Chart.js Contributors.
 
 **Prior art.** No `d4` package has a `dart:ui` adapter. A user writes a `Path` over `dart:ui` or
@@ -165,7 +165,7 @@ needs styles, text or transforms on a context, for example the DOM layer of phas
   arc code. But it moves 4,981 lines of the other port during its phases. Most of the layer
   (styles, text, the bitmap and the device pixel ratio) has no D3 caller. The deferred plan of
   section 4 keeps the option.
-- **Import `canvas.dart` of `flutter_chartjs`.** Rejected. The `implementation_imports` lint flags
+- **Import `canvas.dart` of `flutter_chartjs_port`.** Rejected. The `implementation_imports` lint flags
   the import. `canvas.dart` imports a Chart.js type library. Each D3 user then gets the Chart.js
   port.
 - **Copy `canvas_ui_path.dart`.** Rejected. The file applies the transform when it adds a point.
@@ -202,5 +202,5 @@ needs styles, text or transforms on a context, for example the DOM layer of phas
   of section 1. It also declared a class with fewer methods and a `noSuchMethod` override.
   `dart analyze --fatal-infos` gave no issue for the parameter `[Object? ccw = false]` or for the
   class.
-- The size of the Chart.js canvas layer: `wc -l packages/flutter_chartjs/lib/src/canvas/*.dart`
+- The size of the Chart.js canvas layer: `wc -l packages/flutter_chartjs_port/lib/src/canvas/*.dart`
   at commit `75178b5`.

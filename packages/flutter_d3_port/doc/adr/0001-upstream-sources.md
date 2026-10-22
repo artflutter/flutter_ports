@@ -7,7 +7,7 @@
   steps), [ADR 0006](../../../../docs/adr/0006-follow-upstream-between-releases.md) (ledger,
   backports and commit pins), [ADR 0007](../../../../docs/adr/0007-package-names.md) (the package
   name), [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (the shared
-  port tools), [Chart.js ADR 0035](../../../flutter_chartjs/doc/adr/0035-third-party-sources.md)
+  port tools), [Chart.js ADR 0035](../../../flutter_chartjs_port/doc/adr/0035-third-party-sources.md)
   (the precedent for other projects), [D3 ADR 0002](0002-file-naming-and-layout.md) (the Dart
   paths), [D3 ADR 0004](0004-spec-harness.md) (the spec harness)
 
@@ -19,7 +19,7 @@ version also lives in code. Two checks compare that version with the pin. Each p
 other projects that it takes code from in its own ADR.
 [ADR 0006](../../../../docs/adr/0006-follow-upstream-between-releases.md) adds the upstream ledger,
 the backports and the commit pins.
-[Chart.js ADR 0035](../../../flutter_chartjs/doc/adr/0035-third-party-sources.md) applies these
+[Chart.js ADR 0035](../../../flutter_chartjs_port/doc/adr/0035-third-party-sources.md) applies these
 rules to the Chart.js port.
 
 **One port, 34 repositories.** D3 has no single code repository. The `d3` repository holds the
@@ -77,7 +77,7 @@ The banner of the published bundle (`dist/d3.js:1`) names only Mike Bostock.
 **Holder strings.** Tool 2 of the Chart.js port compares the holder of each `// Ported from` line
 with `port_sources.yaml`. The package `LICENSE` must contain the same string. The copyright list of
 the last `REUSE.toml` table that matches the file must also contain it
-(`packages/flutter_chartjs/tool/src/port_headers.dart:820-841`). Thus each project needs one exact
+(`packages/flutter_chartjs_port/tool/src/port_headers.dart:820-841`). Thus each project needs one exact
 holder string. The research for this ADR gave different strings for d3-ease, d3-delaunay and
 robust-predicates.
 
@@ -247,7 +247,7 @@ the design. The ADR stays `proposed` until the maintainer accepts it.
    - `// Ported from robust-predicates v3.0.3 src/orient2d.js (Unlicense, Vladimir Agafonkin).`
 
    The header pattern reads the license up to the first comma
-   (`packages/flutter_chartjs/tool/src/headers.dart:9-11`). Thus `Observable, Inc.` is a valid
+   (`packages/flutter_chartjs_port/tool/src/headers.dart:9-11`). Thus `Observable, Inc.` is a valid
    holder. The package `LICENSE` and the `REUSE.toml` table of the files also get the other
    copyright lines of a repository `LICENSE`. Examples are Robert Penner in d3-ease and Mapbox in
    d3-delaunay.
@@ -371,7 +371,7 @@ the design. The ADR stays `proposed` until the maintainer accepts it.
 13. **Doc comments from the d3 docs.** A doc comment can adapt text of `third_party/d3/docs/` at the
     pin. Take the text from the pinned files, not from the live d3js.org site (AGENTS.md rule 1).
     - The adapted text gets no second `// Ported from` line. Each such line maps one source file
-      to one Dart path (`packages/flutter_chartjs/tool/src/port_headers.dart:868-877`). One docs
+      to one Dart path (`packages/flutter_chartjs_port/tool/src/port_headers.dart:868-877`). One docs
       page covers many source files.
     - The adapted text needs no extra notice. The d3 `LICENSE` (ISC, `Copyright 2010-2023 Mike
       Bostock`) covers the whole repository. `docs/` has no license file of its own. The package

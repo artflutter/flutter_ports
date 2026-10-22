@@ -8,7 +8,7 @@
   [ADR 0008](../../../docs/adr/0008-shared-js-runtime-and-port-tools.md),
   [ECharts ADR 0001](adr/0001-upstream-sources.md),
   [the D3 porting flow](../../flutter_d3_port/doc/porting-flow.md),
-  [the Chart.js porting flow](../../flutter_chartjs/doc/porting-flow.md)
+  [the Chart.js porting flow](../../flutter_chartjs_port/doc/porting-flow.md)
 
 This document defines how one upstream source file of Apache ECharts or zrender becomes Dart code
 in `packages/flutter_echarts_port`. It contains the steps, the decisions, the test harness, the
@@ -20,7 +20,7 @@ lists the upstream commits after the pins
 
 Terms:
 - "ADR NNNN" is a file in `docs/adr/`. "Chart.js ADR NNNN" is a file in
-  `packages/flutter_chartjs/doc/adr/`. "D3 ADR NNNN" is a file in
+  `packages/flutter_chartjs_port/doc/adr/`. "D3 ADR NNNN" is a file in
   `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file in
   `packages/flutter_echarts_port/doc/adr/`.
 - A "repository" is one of the two pinned git repositories of
@@ -215,18 +215,18 @@ the components (question 6).
 [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md),
 [ADR 0005](../../../docs/adr/0005-pin-upstream-sources.md) and
 [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md) are accepted and common to
-all ports. ADR 0007 and ADR 0008 are proposed cross-port decisions. The other decisions are for
+all ports. ADR 0007 (accepted 2026-10-22) and ADR 0008 (proposed) are cross-port decisions. The other decisions are for
 ECharts only. Each ECharts-only decision becomes a file in [`adr/`](adr/) with the next free
 number, at its gate or before it. If a later port needs the same decision, the decision moves to
 `docs/adr/` as a new ADR. This is the rule of the Chart.js porting flow §2.
 
 A Chart.js ADR binds only the Chart.js port. A D3 ADR binds only the D3 port. Thus each ECharts ADR
 states the rules that it takes. The ECharts ADRs cite the current Chart.js numbers:
-- [Chart.js ADR 0032](../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md): the JS numeric
+- [Chart.js ADR 0032](../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md): the JS numeric
   rules and the reference engine. It supersedes Chart.js ADR 0010.
-- [Chart.js ADR 0034](../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md): no
+- [Chart.js ADR 0034](../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md): no
   display-only JS exactness. It supersedes Chart.js ADR 0009.
-- [Chart.js ADR 0035](../../flutter_chartjs/doc/adr/0035-third-party-sources.md): the third-party
+- [Chart.js ADR 0035](../../flutter_chartjs_port/doc/adr/0035-third-party-sources.md): the third-party
   sources. It supersedes Chart.js ADR 0011.
 - Chart.js ADRs 0012 and 0023: the file names and the underscore members (ECharts ADR 0002).
 - Chart.js ADRs 0006, 0020 and 0021: the option values, the class values and the typed options
@@ -245,7 +245,7 @@ The ECharts ADRs also take rules from D3 ADRs 0002 to 0006. All D3 ADRs are prop
 
 | Subsection | Decision | Gate | Status |
 |---|---|---|---|
-| 2.1 | [ADR 0007: Package names](../../../docs/adr/0007-package-names.md) | 0 | proposed. It supersedes ADR 0003 on acceptance |
+| 2.1 | [ADR 0007: Package names](../../../docs/adr/0007-package-names.md) | 0 | accepted 2026-10-22. It supersedes ADR 0003 |
 | 2.2 | [ADR 0008: Shared JS runtime and port tools](../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) | 1 | proposed |
 | 2.3 | [ECharts ADR 0001: Upstream sources](adr/0001-upstream-sources.md) | 0 | proposed |
 | 2.4 | [ECharts ADR 0002: File naming and package layout](adr/0002-file-naming-and-layout.md) | 1, forward types 2 | proposed |
@@ -267,10 +267,9 @@ Subsections 2.12 to 2.15 give the question, the facts and the proposal of the re
 
 ### 2.1 ADR 0007: Package names (gate 0)
 
-[ADR 0007](../../../docs/adr/0007-package-names.md) (proposed) states the naming rule of the
-workspace. In short:
-- The library package of a port is `flutter_<library>` or `flutter_<library>_port`. The
-  maintainer selects the form (item 1).
+[ADR 0007](../../../docs/adr/0007-package-names.md) (accepted 2026-10-22) states the naming rule of
+the workspace. In short:
+- The library package of a port is `flutter_<library>_port` (item 1).
 - `flutter_echarts` is taken on pub.dev by a WebView wrapper of ECharts. Thus the port takes the
   form `flutter_echarts_port`.
 - The examination of item 7 ran at 2026-10-21T07:51Z. `https://pub.dev/api/packages/<name>` gave
@@ -286,12 +285,12 @@ workspace. In short:
 [ADR 0008](../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (proposed) holds the
 decision. Its gate is D3 phase 1. In short:
 - The pure Dart package `js_semantics` holds the JS runtime that two or more ports use. Stage 1
-  copies 11 files with 1,881 lines from `packages/flutter_chartjs/lib/src/js/`. A drift check
+  copies 11 files with 1,881 lines from `packages/flutter_chartjs_port/lib/src/js/`. A drift check
   compares the copies.
 - The dev package `port_tools` gives tools 1-3 one implementation for all ports, with a config
   file for each port. Section 4 gives the ECharts config.
 - No port depends on another port (item 1). Thus ECharts code never imports
-  `package:flutter_chartjs` or `package:flutter_d3_port`.
+  `package:flutter_chartjs_port` or `package:flutter_d3_port`.
 - New runtime code goes into new files of `js_semantics` (item 6). ECharts ADR 0003 and ECharts ADR
   0008 name the new ECharts runtime symbols.
 - ECharts phase 1 needs stage 1. If D3 phase 1 does not come first, the order is open
@@ -549,12 +548,12 @@ In short:
 **Facts.**
 - The zrender canvas painter needs the full Canvas 2D surface: styles, text, transforms, clips,
   images, a retained bitmap and the device pixel ratio.
-- The Chart.js port has this layer in `packages/flutter_chartjs/lib/src/canvas/` (Chart.js ADRs
+- The Chart.js port has this layer in `packages/flutter_chartjs_port/lib/src/canvas/` (Chart.js ADRs
   0013 and 0015). ADR 0008 item 1 forbids an import of it.
 - The D3 porting flow §5.1 keeps the deferred plan "A shared canvas layer". Its trigger is a caller
   that needs styles, text or transforms on a context. zrender is such a caller.
 - The Chart.js layer parses colors with its `@kurkle/color` port. `js_webidl` stays in
-  `flutter_chartjs` until a second port needs it (ADR 0008 item 3).
+  `flutter_chartjs_port` until a second port needs it (ADR 0008 item 3).
 
 **Proposal.** A new root ADR with the next free number, proposed before phase 3, by the method of
 ADR 0008:
@@ -691,8 +690,8 @@ Thus the port compares no screenshots (Chart.js ADR 0034 §4). A smoke runner bu
 
 ## 4. Tooling
 
-The Chart.js port has eight per-module tools in `packages/flutter_chartjs/tool/`
-([the Chart.js porting flow](../../flutter_chartjs/doc/porting-flow.md) §4). They know only the
+The Chart.js port has eight per-module tools in `packages/flutter_chartjs_port/tool/`
+([the Chart.js porting flow](../../flutter_chartjs_port/doc/porting-flow.md) §4). They know only the
 Chart.js port. At commit `4d50cd8`:
 - The header pattern reads the project as `(\S+)` (`tool/src/headers.dart:13-16`). Thus it cannot
   read `Apache ECharts`.
@@ -862,7 +861,7 @@ yet. A row gets its own plan file at its revisit point, or when a trigger occurs
 | The root `theme/*.js` themes and `extension-src/dataTool` | After phase 10 | A user request |
 
 The Chart.js port has the deferred plan
-[`canvas-cuts-plan.md`](../../flutter_chartjs/doc/canvas-cuts-plan.md). It cites the root
+[`canvas-cuts-plan.md`](../../flutter_chartjs_port/doc/canvas-cuts-plan.md). It cites the root
 `pubspec.lock`. Section 6 gives the rule for an ECharts change that changes that file.
 
 ## 6. Changes to other files
@@ -893,7 +892,7 @@ Another session works on the main checkout. It has newer versions of `AGENTS.md`
 `CONTRIBUTING.md`, `docs/README.md` and ADRs 0007 and 0008. Thus the ECharts changes of these
 files are small insertions on the newer main versions.
 
-Phase 0 changes nothing in `packages/flutter_chartjs/`, `packages/chartjs_test_utils/` or
+Phase 0 changes nothing in `packages/flutter_chartjs_port/`, `packages/chartjs_test_utils/` or
 `apps/chartjs_gallery/`. Phase 0 adds no dependency. Thus the root `pubspec.lock` does not
 change.
 

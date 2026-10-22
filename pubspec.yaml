@@ -6,7 +6,7 @@ environment:
   sdk: ^3.13.0
 
 workspace:
-  - packages/flutter_chartjs
+  - packages/flutter_chartjs_port
   - packages/chartjs_test_utils
   - packages/flutter_d3_port
   - packages/flutter_echarts_port
@@ -37,21 +37,21 @@ melos:
       packageFilters:
         dirExists: test
     test:web:
-      run: cd packages/flutter_chartjs && dart test -p chrome -c dart2js -c dart2wasm && cd ../chartjs_test_utils && dart test -p chrome -c dart2js -c dart2wasm
-      description: Run the flutter_chartjs and chartjs_test_utils tests that are not @TestOn('vm') in Chrome, compiled with dart2js and with dart2wasm.
+      run: cd packages/flutter_chartjs_port && dart test -p chrome -c dart2js -c dart2wasm && cd ../chartjs_test_utils && dart test -p chrome -c dart2js -c dart2wasm
+      description: Run the flutter_chartjs_port and chartjs_test_utils tests that are not @TestOn('vm') in Chrome, compiled with dart2js and with dart2wasm.
 
-    # The per-module tools of packages/flutter_chartjs/doc/porting-flow.md section 4.
+    # The per-module tools of packages/flutter_chartjs_port/doc/porting-flow.md section 4.
     check:lib-imports:
-      run: dart run packages/flutter_chartjs/tool/check_lib_imports.dart
-      description: Fail on flutter_chartjs imports outside the allowlists (lib/, pure layers, web tests, theme) and on chartjs_test_utils pure.dart imports outside the pure layer.
+      run: dart run packages/flutter_chartjs_port/tool/check_lib_imports.dart
+      description: Fail on flutter_chartjs_port imports outside the allowlists (lib/, pure layers, web tests, theme) and on chartjs_test_utils pure.dart imports outside the pure layer.
     check:headers:
-      run: dart run packages/flutter_chartjs/tool/check_port_headers.dart
-      description: Fail on flutter_chartjs and chartjs_test_utils file headers, DIVERGES markers or port_sources.yaml entries that break the rules.
+      run: dart run packages/flutter_chartjs_port/tool/check_port_headers.dart
+      description: Fail on flutter_chartjs_port and chartjs_test_utils file headers, DIVERGES markers or port_sources.yaml entries that break the rules.
     check:js-semantics:
-      run: dart run packages/flutter_chartjs/tool/check_js_semantics.dart
-      description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs and chartjs_test_utils files.
+      run: dart run packages/flutter_chartjs_port/tool/check_js_semantics.dart
+      description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs_port and chartjs_test_utils files.
     port:next:check:
-      run: dart run packages/flutter_chartjs/tool/port_order.dart --check
+      run: dart run packages/flutter_chartjs_port/tool/port_order.dart --check
       description: Fail when tool 8 cannot read a module of third_party/Chart.js/src, a header line of lib/ or a parity.md status, or when an import does not resolve.
     check:port:
       steps:
@@ -62,20 +62,20 @@ melos:
         - parity:check
       description: Run check:lib-imports, check:headers, check:js-semantics, port:next:check and parity:check.
     test:fixtures:
-      run: dart run packages/flutter_chartjs/tool/spec_cases.dart --fixtures
-      description: Run the fixture smoke tests of flutter_chartjs (tool 7) and report each fixture as passed, failed, skipped or missing. Fail on a failed, missing or unknown fixture and on a bad skip reason. Without the submodule third_party/Chart.js, each fixture skips; with FIXTURES_REQUIRED=1, it fails.
+      run: dart run packages/flutter_chartjs_port/tool/spec_cases.dart --fixtures
+      description: Run the fixture smoke tests of flutter_chartjs_port (tool 7) and report each fixture as passed, failed, skipped or missing. Fail on a failed, missing or unknown fixture and on a bad skip reason. Without the submodule third_party/Chart.js, each fixture skips; with FIXTURES_REQUIRED=1, it fails.
     test:cases:
-      run: dart run packages/flutter_chartjs/tool/spec_cases.dart
-      description: Run the flutter_chartjs spec tests and report each upstream case as passed, failed, skipped or missing (tool 5). Fail on unknown test names and on missing cases of ported modules.
+      run: dart run packages/flutter_chartjs_port/tool/spec_cases.dart
+      description: Run the flutter_chartjs_port spec tests and report each upstream case as passed, failed, skipped or missing (tool 5). Fail on unknown test names and on missing cases of ported modules.
     port:next:
-      run: dart run packages/flutter_chartjs/tool/port_order.dart
+      run: dart run packages/flutter_chartjs_port/tool/port_order.dart
       description: List the Chart.js modules that are ready to port, with their line counts and the interfaces that they need, and the blocked modules with their missing imports, in phase order (tool 8). Needs the submodule (melos run upstream). Options go after "--", for example "dart run melos run port:next -- --check" (fail when a module, a header or a parity.md status does not parse) or "-- --json".
     parity:
-      run: dart run packages/flutter_chartjs/tool/parity.dart
-      description: Write packages/flutter_chartjs/doc/parity.md from doc/status.yaml, the pinned upstream files, the Dart headers, the spec case results of tool 5 and doc/differences.md (tool 6). It runs the spec tests and needs the submodules (melos run upstream). Options go after "--", for example "dart run melos run parity -- --dry-run" (print the output) or "-- --import" (read the cells of parity.md into status.yaml).
+      run: dart run packages/flutter_chartjs_port/tool/parity.dart
+      description: Write packages/flutter_chartjs_port/doc/parity.md from doc/status.yaml, the pinned upstream files, the Dart headers, the spec case results of tool 5 and doc/differences.md (tool 6). It runs the spec tests and needs the submodules (melos run upstream). Options go after "--", for example "dart run melos run parity -- --dry-run" (print the output) or "-- --import" (read the cells of parity.md into status.yaml).
     parity:check:
-      run: dart run packages/flutter_chartjs/tool/parity.dart --check
-      description: Fail when packages/flutter_chartjs/doc/parity.md differs from the output of tool 6, or when doc/status.yaml has an error.
+      run: dart run packages/flutter_chartjs_port/tool/parity.dart --check
+      description: Fail when packages/flutter_chartjs_port/doc/parity.md differs from the output of tool 6, or when doc/status.yaml has an error.
 
     upstream:
       run: git submodule update --init --depth 1
@@ -84,8 +84,8 @@ melos:
       run: bash tool/check_upstream_pin.sh
       description: Fail unless third_party/Chart.js is pinned to the release tag named by chartJsVersion (for a commit pin <last version>+<sha8>, to a commit that starts with <sha8>), third_party/d3 to the release tag named by d3Version, each other D3 submodule to the commit of its tag in packages/flutter_d3_port/tool/port_sources.yaml, and third_party/echarts and third_party/zrender to the release tags named by echartsVersion and zrenderVersion.
     upstream:manifest:
-      run: cd packages/flutter_chartjs && node tool/upstream_manifest/upstream_manifest.mjs --src ../../third_party/Chart.js --out doc/upstream/manifest.json
-      description: Write packages/flutter_chartjs/doc/upstream/manifest.json and fixtures.json from third_party/Chart.js (tool 4). Needs Node.js 22.18 or later (CI uses 24.12.0) and the submodule (melos run upstream).
+      run: cd packages/flutter_chartjs_port && node tool/upstream_manifest/upstream_manifest.mjs --src ../../third_party/Chart.js --out doc/upstream/manifest.json
+      description: Write packages/flutter_chartjs_port/doc/upstream/manifest.json and fixtures.json from third_party/Chart.js (tool 4). Needs Node.js 22.18 or later (CI uses 24.12.0) and the submodule (melos run upstream).
 
     gallery:
       run: cd apps/chartjs_gallery && flutter run -d chrome

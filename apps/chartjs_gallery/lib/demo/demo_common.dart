@@ -3,9 +3,9 @@
 // ignore_for_file: implementation_imports
 
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/js/js_number.dart';
-import 'package:flutter_chartjs/src/js/js_undefined.dart';
-import 'package:flutter_chartjs/src/kurkle_color/index.esm.dart' as kc;
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kc;
 
 /// The JavaScript source form of an option value, for display: `undefined`,
 /// `null`, a quoted string, a JS number string, or `{…}` and `[…]`.

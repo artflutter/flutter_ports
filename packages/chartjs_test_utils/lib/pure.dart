@@ -5,7 +5,7 @@
 ///
 /// - [setUpSpecs]: the spec set-up of the pure-layer specs ("`test/index.js`
 ///   equivalent"). `dart test` does not read
-///   `packages/flutter_chartjs/test/flutter_test_config.dart`, the
+///   `packages/flutter_chartjs_port/test/flutter_test_config.dart`, the
 ///   `flutter test` port of Chart.js `test/index.js`. Thus each pure-layer
 ///   spec file calls [setUpSpecs] first in its `main()`, and runs the same
 ///   restore on the VM, dart2js and dart2wasm. Under `flutter test`, the
@@ -27,18 +27,18 @@
 /// `package:chartjs_test_utils/flutter.dart`.
 ///
 /// This library is a pure layer: it imports only `package:test` and the pure
-/// layers of `flutter_chartjs` (porting-flow.md section 3).
+/// layers of `flutter_chartjs_port` (porting-flow.md section 3).
 library;
 
 import 'dart:collection';
 
-// The harness reads the global scopes of core.defaults. flutter_chartjs does
-// not export lib/src.
+// The harness reads the global scopes of core.defaults.
+// flutter_chartjs_port does not export lib/src.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 // The harness sets the zone of the default date adapter.
 // ignore: implementation_imports
-import 'package:flutter_chartjs/src/core/date_adapter.dart'
+import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
     show setDefaultDateZone;
 import 'package:test/test.dart';
 
@@ -85,7 +85,7 @@ void Function()? _builtinsRemoval;
 /// Registers the built-in components of the specs, before `main()` of each
 /// test file (Chart.js ADR 0022, section 8, `harness-register-builtins`).
 ///
-/// `packages/flutter_chartjs/test/flutter_test_config.dart` calls it before
+/// `packages/flutter_chartjs_port/test/flutter_test_config.dart` calls it before
 /// [setUpDefaultsRestore]: [register] calls `Chart.register` with the four
 /// namespaces of `src/index.ts`, as the UMD entry `src/index.umd.ts:28`
 /// does. [unregister] calls `Chart.unregister` with the same namespaces.

@@ -11,14 +11,14 @@
 # "ref" (git ls-remote). Both also fail on a submodule of .gitmodules that no
 # entry of a packages/*/tool/port_sources.yaml file pins.
 #
-# Keys of an entry, as in packages/flutter_chartjs/tool/port_sources.yaml:
+# Keys of an entry, as in packages/flutter_chartjs_port/tool/port_sources.yaml:
 # - header: the project name in the header.
 # - version: the header version. It is equal to the pin ref. The ECharts and
 #   zrender release tags have no "v" prefix.
 # - version_source: where the version comes from.
 # - url: the project repository.
 # - language: the language of the source. "js" is JavaScript or TypeScript,
-#   as in packages/flutter_chartjs/tool/port_sources.yaml.
+#   as in packages/flutter_chartjs_port/tool/port_sources.yaml.
 # - spdx: the SPDX license identifier of the repository LICENSE.
 # - holder: the copyright holder, as the header, the package LICENSE or
 #   NOTICE and REUSE.toml write it. The ECharts LICENSE has no copyright

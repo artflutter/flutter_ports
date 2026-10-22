@@ -7,12 +7,12 @@ import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/main_bench.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/controllers/index.dart';
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/elements/index.dart';
-import 'package:flutter_chartjs/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs/src/platform/platform.basic.dart';
-import 'package:flutter_chartjs/src/scales/index.dart';
+import 'package:flutter_chartjs_port/src/controllers/index.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
+import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
+import 'package:flutter_chartjs_port/src/scales/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The timing of these tests: one short batch after a short warm-up.

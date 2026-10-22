@@ -4,9 +4,9 @@
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/helpers/helpers.color.dart'
+import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     show getHoverColor;
-import 'package:flutter_chartjs/src/kurkle_color/index.esm.dart' as kc;
+import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kc;
 
 /// The CSS colors that the tab parses: names, hex, functional notations.
 const List<String> sampleColors = [

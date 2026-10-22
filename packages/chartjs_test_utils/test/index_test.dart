@@ -6,7 +6,7 @@ import 'dart:ui' show Size;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/src/index.dart' show charts;
-import 'package:flutter_chartjs/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // acquireChart, releaseChart and releaseCharts of chartjs-test-utils 0.4.0

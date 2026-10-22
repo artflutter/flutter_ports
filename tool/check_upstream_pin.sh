@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Fails unless the third_party/Chart.js gitlink is the commit of the upstream
-# release tag named by chartJsVersion (packages/flutter_chartjs/lib/src/upstream.dart).
-# A commit pin (ADR 0006 item 5, packages/flutter_chartjs/doc/upstream-tracking.md
+# release tag named by chartJsVersion (packages/flutter_chartjs_port/lib/src/upstream.dart).
+# A commit pin (ADR 0006 item 5, packages/flutter_chartjs_port/doc/upstream-tracking.md
 # section 2.4) has the version "<last version>+<sha8>". Then the gitlink must
 # start with <sha8>, and the tag "v<last version>" must exist.
 # Also fails unless the D3 gitlinks are the commits of their tags (ADR 0005 item 4,
@@ -28,9 +28,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 version=$(sed -n "s/^const String chartJsVersion = '\(.*\)';\$/\1/p" \
-  packages/flutter_chartjs/lib/src/upstream.dart)
+  packages/flutter_chartjs_port/lib/src/upstream.dart)
 if [ -z "$version" ]; then
-  echo "chartJsVersion not found in packages/flutter_chartjs/lib/src/upstream.dart" >&2
+  echo "chartJsVersion not found in packages/flutter_chartjs_port/lib/src/upstream.dart" >&2
   exit 1
 fi
 # A commit pin: the release before "+" and the abbreviated commit after it.

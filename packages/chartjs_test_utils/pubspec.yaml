@@ -1,6 +1,6 @@
 name: chartjs_test_utils
 description: >-
-  The test harness of flutter_chartjs: a Dart port of chartjs-test-utils
+  The test harness of flutter_chartjs_port: a Dart port of chartjs-test-utils
   0.4.0, the test utilities of Chart.js. For the tests of this repository only.
 version: 0.0.1
 # The harness, its notices and the test font stay outside the published
@@ -17,20 +17,20 @@ resolution: workspace
 dependencies:
   # The harness tasks of lib/src/dom.dart are due at clock.now(), the fake
   # clock of testWidgets (Chart.js ADR 0022). The constraint is the clock
-  # constraint of flutter_chartjs (Chart.js ADR 0032).
+  # constraint of flutter_chartjs_port (Chart.js ADR 0032).
   clock: ^1.1.2
   # lib/flutter.dart, the flutter test part of the harness, installs the test
   # font with FontLoader (Chart.js ADR 0015). pure.dart does not import it.
   flutter:
     sdk: flutter
-  # flutter_chartjs has a dev_dependency on this package. The workspace
+  # flutter_chartjs_port has a dev_dependency on this package. The workspace
   # resolves the cycle (porting-flow.md section 3).
-  flutter_chartjs: ^0.0.1
+  flutter_chartjs_port: ^0.0.1
   # lib/src/dom.dart, the DOM stand-in, attaches its body with the test
   # binding and pumps frames (Chart.js ADR 0022). pure.dart does not import
   # it.
   flutter_test:
     sdk: flutter
   # pure.dart runs with `dart test` on the VM, dart2js and dart2wasm. The
-  # constraint is the test constraint of flutter_chartjs.
+  # constraint is the test constraint of flutter_chartjs_port.
   test: ^1.31.1

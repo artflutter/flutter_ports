@@ -1,11 +1,11 @@
 # chartjs_test_utils
 
-This package is the test harness of [flutter_chartjs](../flutter_chartjs). It ports
+This package is the test harness of [flutter_chartjs_port](../flutter_chartjs_port). It ports
 [chartjs-test-utils](https://github.com/chartjs/chartjs-test-utils) 0.4.0 module by module. Chart.js
 uses chartjs-test-utils in its own specs.
 
-The package is not published. It is a dev_dependency of `flutter_chartjs` only.
-[porting-flow.md](../flutter_chartjs/doc/porting-flow.md) section 3 gives the module plan and the
+The package is not published. It is a dev_dependency of `flutter_chartjs_port` only.
+[porting-flow.md](../flutter_chartjs_port/doc/porting-flow.md) section 3 gives the module plan and the
 phase of each module.
 
 ## Libraries
@@ -16,7 +16,7 @@ phase of each module.
     `flutter_test_config.dart`. Thus each pure-layer spec file calls `setUpSpecs()` first in
     `main()`. It calls `removeBuiltins()` and `setUpDefaultsRestore()`. `setUpDefaultsRestore()`
     takes a snapshot of `defaults`, `overrides` and `descriptors` of `core.defaults` once for each
-    file and restores the snapshot after each test. `flutter_chartjs/test/flutter_test_config.dart`
+    file and restores the snapshot after each test. `flutter_chartjs_port/test/flutter_test_config.dart`
     calls `setUpDefaultsRestore()` too.
   - `setUpBuiltins()` and `removeBuiltins()`: `flutter_test_config.dart` registers the built-in
     components before `main()` of each test file, as the UMD entry of the Chart.js specs does.

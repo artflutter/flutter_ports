@@ -52,7 +52,7 @@ upstream version that the package bundles, loads or ports.
   to its output. The page gives the ECharts version, the platforms, the license, the limitations,
   the takeaways and the evidence of each one. Its re-check marks name the claims that a second
   reader confirmed.
-- [Chart.js prior art](../../../flutter_chartjs/doc/prior-art/README.md) and
+- [Chart.js prior art](../../../flutter_chartjs_port/doc/prior-art/README.md) and
   [D3 prior art](../../../flutter_d3_port/doc/prior-art/README.md): the surveys of the first two
   ports, with the same method. The D3 survey also covers the d3 code of
   [`e_chart_ext`](../../../flutter_d3_port/doc/prior-art/d3-packages.md#pkg-e_chart_ext).

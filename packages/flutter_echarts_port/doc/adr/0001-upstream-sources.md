@@ -8,7 +8,7 @@
   steps), [ADR 0006](../../../../docs/adr/0006-follow-upstream-between-releases.md) (ledger,
   backports and commit pins), [ADR 0007](../../../../docs/adr/0007-package-names.md) (the package
   name), [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (the shared
-  port tools), [Chart.js ADR 0035](../../../flutter_chartjs/doc/adr/0035-third-party-sources.md)
+  port tools), [Chart.js ADR 0035](../../../flutter_chartjs_port/doc/adr/0035-third-party-sources.md)
   (the precedent for other projects, accepted 2026-10-21),
   [D3 ADR 0001](../../../flutter_d3_port/doc/adr/0001-upstream-sources.md) (the template: holder
   rule, components table, `notices` key), [ECharts ADR 0002](0002-file-naming-and-layout.md) (the
@@ -27,7 +27,7 @@ version also lives in code. Two checks compare that version with the pin. Each p
 other projects that it takes code from in its own ADR.
 [ADR 0006](../../../../docs/adr/0006-follow-upstream-between-releases.md) adds the upstream ledger,
 the backports and the commit pins.
-[Chart.js ADR 0035](../../../flutter_chartjs/doc/adr/0035-third-party-sources.md) applies these
+[Chart.js ADR 0035](../../../flutter_chartjs_port/doc/adr/0035-third-party-sources.md) applies these
 rules to the Chart.js port. The porting lead accepted it on 2026-10-21. It supersedes Chart.js ADR
 0011.
 [D3 ADR 0001](../../../flutter_d3_port/doc/adr/0001-upstream-sources.md) applies them to the D3
@@ -35,7 +35,7 @@ port. A Chart.js ADR or a D3 ADR binds only its own port. Thus this ADR states e
 takes.
 
 In this ADR, a path `echarts/<path>` or `zrender/<path>` is relative to `third_party/`, at the pin.
-A path `packages/flutter_chartjs/tool/<path>` names its lines at commit `4d50cd8` of `main`.
+A path `packages/flutter_chartjs_port/tool/<path>` names its lines at commit `4d50cd8` of `main`.
 
 **Two repositories.** Apache ECharts lives in `apache/echarts`. Its renderer zrender lives in
 `ecomfe/zrender`. ECharts imports zrender by the bare specifier `zrender/src/<path>`, for example
@@ -80,7 +80,7 @@ A path `packages/flutter_chartjs/tool/<path>` names its lines at commit `4d50cd8
 **Holder strings.** Tool 2 of the Chart.js port compares the holder of each `// Ported from` line
 with `port_sources.yaml`. The package `LICENSE` must contain the same string. The last
 `REUSE.toml` table of the file must list it
-(`packages/flutter_chartjs/tool/src/port_headers.dart:947-967`). D3 ADR 0001 item 8 takes the
+(`packages/flutter_chartjs_port/tool/src/port_headers.dart:947-967`). D3 ADR 0001 item 8 takes the
 holder from the first copyright line of the repository `LICENSE`. The ECharts `LICENSE` has no
 such line. Apache-2.0 puts the attribution in `NOTICE`.
 
@@ -90,7 +90,7 @@ The scaffold `packages/flutter_echarts_port/LICENSE` has 202 lines. It is the sa
 with this `LICENSE` alone.
 
 **Header grammar.** The Chart.js pattern of a `// Ported from` line reads the project as `(\S+)`
-(`packages/flutter_chartjs/tool/src/headers.dart:13-16`). The project name `Apache ECharts` has a
+(`packages/flutter_chartjs_port/tool/src/headers.dart:13-16`). The project name `Apache ECharts` has a
 space. Thus the pattern does not match an ECharts header. The pattern reads the license up to the
 first comma and the holder up to `).`. Thus `The Apache Software Foundation` and `Baidu Inc.` are
 valid holders. The port-only marker (`headers.dart:19-21`) and the backport line (`:24-26`) name
@@ -99,10 +99,10 @@ these constants into a config of each port in stage 1.
 
 **Language value.** The scaffold `tool/port_sources.yaml` gives `language: ts` for both entries
 (`:52`, `:69`). Its comment at `:20` reads `"ts" is TypeScript`. The Chart.js tools accept only
-`js` and `c` (`packages/flutter_chartjs/tool/src/port_headers.dart:89`). Tool 3 examines a file
-only when its project has the language `js` (`packages/flutter_chartjs/tool/src/js_semantics.dart:236-240`).
+`js` and `c` (`packages/flutter_chartjs_port/tool/src/port_headers.dart:89`). Tool 3 examines a file
+only when its project has the language `js` (`packages/flutter_chartjs_port/tool/src/js_semantics.dart:236-240`).
 The Chart.js file defines `js` as "JavaScript or TypeScript"
-(`packages/flutter_chartjs/tool/port_sources.yaml:13`). Chart.js itself has TypeScript sources,
+(`packages/flutter_chartjs_port/tool/port_sources.yaml:13`). Chart.js itself has TypeScript sources,
 for example `src/helpers/helpers.math.ts`.
 
 **Code from other projects.** Item 12 gives the scan and its results. The ECharts `LICENSE` names

@@ -11,11 +11,11 @@ ignores:
 
 rules:
   # A scope is optional; when present it names a workspace package or app, or a
-  # repo-wide area. Add new ports here, e.g. `feat(flutter_chartjs): port helpers.math`.
+  # repo-wide area. Add new ports here, e.g. `feat(flutter_chartjs_port): port helpers.math`.
   scope-enum:
     - 2
     - always
-    - - flutter_chartjs
+    - - flutter_chartjs_port
       - chartjs_test_utils
       - chartjs_gallery
       - flutter_d3_port

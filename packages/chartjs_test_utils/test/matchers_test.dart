@@ -1,10 +1,10 @@
 // Original code, not ported from Chart.js: tests of the harness matchers.
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs/src/canvas/canvas.dart';
-import 'package:flutter_chartjs/src/helpers/helpers.config.dart';
-import 'package:flutter_chartjs/src/js/js_undefined.dart';
-import 'package:flutter_chartjs/src/types/geometric.dart';
-import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
 // The pass and fail results follow chartjs-test-utils 0.4.0

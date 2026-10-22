@@ -10,12 +10,13 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/flutter_chartjs.dart' show chartJsVersion;
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs/src/types/basic.dart';
-import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show chartJsVersion;
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The page of one chart type: the variant line, the chart, the readout
 /// and the help text (Chart.js ADR 0031 sections 1 and 10).

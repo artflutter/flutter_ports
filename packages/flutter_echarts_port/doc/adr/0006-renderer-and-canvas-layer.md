@@ -7,15 +7,15 @@
 - Related: [ADR 0007](../../../../docs/adr/0007-package-names.md) (the names of shared packages),
   [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (the method of a
   shared package, no dependency on another port),
-  [Chart.js ADR 0013](../../../flutter_chartjs/doc/adr/0013-canvas-model.md) (the canvas layer),
-  [Chart.js ADR 0014](../../../flutter_chartjs/doc/adr/0014-input-events-and-chart-host.md) (the
-  chart host), [Chart.js ADR 0015](../../../flutter_chartjs/doc/adr/0015-text.md) (text),
-  [Chart.js ADR 0016](../../../flutter_chartjs/doc/adr/0016-frame-scheduling.md) (frames and
-  `TickerMode`), [Chart.js ADR 0019](../../../flutter_chartjs/doc/adr/0019-animation.md) (the
+  [Chart.js ADR 0013](../../../flutter_chartjs_port/doc/adr/0013-canvas-model.md) (the canvas layer),
+  [Chart.js ADR 0014](../../../flutter_chartjs_port/doc/adr/0014-input-events-and-chart-host.md) (the
+  chart host), [Chart.js ADR 0015](../../../flutter_chartjs_port/doc/adr/0015-text.md) (text),
+  [Chart.js ADR 0016](../../../flutter_chartjs_port/doc/adr/0016-frame-scheduling.md) (frames and
+  `TickerMode`), [Chart.js ADR 0019](../../../flutter_chartjs_port/doc/adr/0019-animation.md) (the
   animation clock),
-  [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (the JS
+  [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) (the JS
   numeric rules and the reference engine),
-  [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md) (no
+  [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md) (no
   display-only JS exactness),
   [D3 ADR 0003](../../../flutter_d3_port/doc/adr/0003-number-to-string.md) (number strings),
   [D3 ADR 0005](../../../flutter_d3_port/doc/adr/0005-path-context.md) (the path context),
@@ -210,7 +210,7 @@ connected export.
   `svg/helper.ts`. `graphic/Pattern.ts:2` imports the type `SVGVNode` from `svg/core.ts`.
 - `svg-legacy/` writes the DOM directly. Nothing in `echarts.all.ts` reaches it.
 
-**The Chart.js canvas layer.** `packages/flutter_chartjs/lib/src/canvas/` has 6 files with 5,066
+**The Chart.js canvas layer.** `packages/flutter_chartjs_port/lib/src/canvas/` has 6 files with 5,066
 lines. Chart.js ADR 0013 states its model:
 - a pure interface (`canvas.dart`) and a `dart:ui` implementation (`UiCanvasElement`,
   `UiCanvasContext`)
@@ -242,7 +242,7 @@ keeps this file in the Chart.js port. A file that another port needs moves by th
 **ADR 0008 and the deferred plan.** ADR 0008 item 1 says that no port depends on another port.
 D3 ADR 0005 §4 kept a shared canvas layer as a deferred plan. Its trigger is "A D3 caller that
 needs styles, text or transforms on a context" (D3 `porting-flow.md` §5.1). zrender needs all of
-these. `packages/flutter_chartjs/doc/canvas-cuts-plan.md` cites `lib/src/canvas/` 23 times.
+these. `packages/flutter_chartjs_port/doc/canvas-cuts-plan.md` cites `lib/src/canvas/` 23 times.
 
 ## Decision
 
@@ -277,7 +277,7 @@ takes the method of ADR 0008:
 - **End state.** A shared pure interface and a shared `dart:ui` implementation. ADR 0007 item 6
   gives the name rules: the pure part has no `flutter_` prefix. The implementation has it. The
   root ADR selects the names and records the pub.dev examination of ADR 0007 item 7.
-- **Stage 1 (gate: ECharts phase 3).** Copy `packages/flutter_chartjs/lib/src/canvas/` at one
+- **Stage 1 (gate: ECharts phase 3).** Copy `packages/flutter_chartjs_port/lib/src/canvas/` at one
   commit. Record the commit. Add the gaps of item 5. Add a drift check of the shared files against
   the Chart.js copies. Change no file of the Chart.js packages and app.
 - **Stage 2.** The Chart.js port moves onto the shared layer at a Chart.js phase boundary. That
@@ -285,7 +285,7 @@ takes the method of ADR 0008:
 - **The canvas cuts.** The root ADR states how the work of `canvas-cuts-plan.md` and the drift
   check interact. A cut of a copied file changes both copies, as ADR 0008 item 6 asks.
 - **License.** The canvas files are port-only code of the Chart.js port. `REUSE.toml` gives
-  them the MIT notice of `packages/flutter_chartjs/**`. The shared package keeps that notice.
+  them the MIT notice of `packages/flutter_chartjs_port/**`. The shared package keeps that notice.
 - **Dependencies.** The layer parses CSS colors with the `@kurkle/color` port. It takes
   `CanvasGradient` and `CanvasPattern` from a Chart.js type library. The root ADR moves both into
   the shared layer, with the MIT notice of Jukka Kurkela. Or it gives the layer a color parser
@@ -409,7 +409,7 @@ them (item 14).
   `'国'`. The CJK fallback font thus sets the wrap and the truncation of all non-ASCII text, not
   only the line height.
 - Phase 3 runs the text-metric probe of the Chart.js port
-  (`packages/flutter_chartjs/tool/reference/text_metrics/`, headless Chrome) on the zrender font
+  (`packages/flutter_chartjs_port/tool/reference/text_metrics/`, headless Chrome) on the zrender font
   strings: `12px sans-serif`, a bold 14px font, CJK, Cyrillic and emoji. It writes
   `doc/text-metrics.md`. A difference of label overlap or of the axis label interval between
   Flutter and Chrome is display only when the probe shows width differences below 0.5 px.
@@ -520,7 +520,7 @@ asynchronously (`ui.Image.toByteData`).
 - **A live SVG renderer** (the zrender SVG painter on a Dart SVG widget). Rejected. Flutter has no
   DOM. It parses again what the canvas painter can draw directly.
 - **Import the Chart.js canvas layer.** Rejected. ADR 0008 item 1 forbids a dependency on another
-  port. The `implementation_imports` lint also flags `package:flutter_chartjs/src/`.
+  port. The `implementation_imports` lint also flags `package:flutter_chartjs_port/src/`.
 - **Explicit snapshots with a `DIVERGES` hunk at each canvas source site.** Rejected as the first
   choice. It adds hunks in `Painter.ts`, `Layer.ts`, `decal.ts` and `echarts.ts`. The root ADR can
   select it if the implicit snapshot fails.
@@ -546,5 +546,5 @@ asynchronously (`ui.Image.toByteData`).
 - The 82 call sites: `grep -nE '\b(ctx|ctxBack|_ctx)\.[A-Za-z]+'` over `canvas/graphic.ts`,
   `Layer.ts`, `Painter.ts` and `helper.ts`, without the comment lines.
 - No `isPointInPath`: `grep -rn isPointInPath` over both `src/` trees gives 0 lines.
-- The Chart.js layer: `wc -l packages/flutter_chartjs/lib/src/canvas/*.dart` at `4d50cd8` gives
+- The Chart.js layer: `wc -l packages/flutter_chartjs_port/lib/src/canvas/*.dart` at `4d50cd8` gives
   5,066 lines. `grep -ci shadow` gives 0 for each file.

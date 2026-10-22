@@ -10,9 +10,9 @@ import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/canvas/canvas.dart';
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs/src/helpers/index.dart'
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/helpers/index.dart'
     show
         LongestTextCache,
         ParsedFont,
@@ -26,7 +26,7 @@ import 'package:flutter_chartjs/src/helpers/index.dart'
         restoreTextDirection,
         toFont,
         unclipArea;
-import 'package:flutter_chartjs/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 
 /// The `textAlign` values of the canvas.
 const List<String> textAligns = ['left', 'center', 'right', 'start', 'end'];

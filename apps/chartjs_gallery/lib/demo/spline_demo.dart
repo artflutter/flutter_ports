@@ -5,9 +5,9 @@
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs/src/js/js_number.dart';
-import 'package:flutter_chartjs/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/types/geometric.dart';
 
 /// A point `{x, y}` whose control points the curve helpers write, as the
 /// port tests of `helpers.curve` pass it.

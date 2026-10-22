@@ -3,7 +3,7 @@
 /// The part of the harness that needs the Flutter engine: it runs in
 /// `flutter test` only (porting-flow.md section 3).
 ///
-/// - The test font: `packages/flutter_chartjs/test/flutter_test_config.dart`
+/// - The test font: `packages/flutter_chartjs_port/test/flutter_test_config.dart`
 ///   calls `installTestFont` before each test file.
 /// - The DOM stand-in of `src/dom.dart` (Chart.js ADR 0022): `document`,
 ///   `window`, `setTimeout`, `afterEachChart`, `pumpFrames`, `pumpFrame`,

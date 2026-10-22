@@ -5,13 +5,13 @@
 - Gate: ECharts phase 1. The pilot `util/number.ts` formats numbers with `toFixed`, reads the
   precision from number strings and takes logarithms. The zrender files `core/vector.ts` and
   `core/matrix.ts` of the pilot compute coordinates.
-- Related: [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md)
+- Related: [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md)
   (the JS numeric rules, the runtime, fdlibm and the reference engine),
-  [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md) (no
+  [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md) (no
   display-only JS exactness, the protected behavior),
-  [Chart.js ADR 0035](../../../flutter_chartjs/doc/adr/0035-third-party-sources.md) (the fdlibm
+  [Chart.js ADR 0035](../../../flutter_chartjs_port/doc/adr/0035-third-party-sources.md) (the fdlibm
   copy and its notice),
-  [Chart.js ADR 0026](../../../flutter_chartjs/doc/adr/0026-number-formatting-on-package-intl.md)
+  [Chart.js ADR 0026](../../../flutter_chartjs_port/doc/adr/0026-number-formatting-on-package-intl.md)
   (the number text of Chart.js on package:intl, not applied here),
   [D3 ADR 0003](../../../flutter_d3_port/doc/adr/0003-number-to-string.md) (number strings are
   behavior), [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (the
@@ -35,10 +35,10 @@ expect the numbers and the strings of a JavaScript engine. Dart number operation
 results in many places. Some Dart results also differ between the VM, dart2js and dart2wasm.
 
 Three earlier decisions give the rules:
-- [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) gives the
+- [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) gives the
   JS runtime, the fdlibm ports, the reference engine, the sort, the clock, the translation table
   and tool 3.
-- [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)
+- [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md)
   gives the principle. The port emulates JavaScript only where the result changes protected
   behavior.
 - [D3 ADR 0003](../../../flutter_d3_port/doc/adr/0003-number-to-string.md) (proposed) makes a
@@ -215,7 +215,7 @@ the builtin as `mathRandom`. `getRandomIdBase` calls that alias (`:795`).
 
 [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (proposed) puts the JS
 runtime of two or more ports into the pure package `js_semantics`. Stage 1 copies the closure of
-the generic files of `packages/flutter_chartjs/lib/src/js/` (item 5). At `75178b5`, the closure had
+the generic files of `packages/flutter_chartjs_port/lib/src/js/` (item 5). At `75178b5`, the closure had
 11 files. Now `js_math.dart:30-32` also imports `fdlibm_trig.dart`, the source of `jsSin` and
 `jsCos` (Chart.js ADR 0032 §3). ADR 0008 names only the D3 and Chart.js ports. Its item 6 rule
 "New runtime code for D3 goes into new files of `js_semantics`" does not name ECharts.
@@ -492,7 +492,7 @@ package:intl dependency and no copy of `js_intl.dart`.
 - The ECharts config of tool 3 (ADR 0008 item 8) has two `js` projects: `Apache ECharts` and
   `zrender`. [ECharts ADR 0001](0001-upstream-sources.md) sets `language: js` for both entries.
   Tool 3 examines only the files of a `js` project
-  (`packages/flutter_chartjs/tool/src/js_semantics.dart:236-240` at commit `4d50cd8`). Thus it
+  (`packages/flutter_chartjs_port/tool/src/js_semantics.dart:236-240` at commit `4d50cd8`). Thus it
   examines the ported files of both trees and the ported specs.
 - Tool 3 flags the forms of Chart.js ADR 0032 §8 and the number methods of D3 ADR 0003 section 4.
   Its messages name ECharts ADR 0003 (item 8, value 7).

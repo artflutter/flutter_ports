@@ -5,7 +5,7 @@ translated to Dart and drawn with Flutter's own canvas, so the charts are ordina
 widgets. There's no WebView and no JavaScript at runtime, and the same code runs on every
 Flutter platform, including web builds compiled to WebAssembly.
 
-Why ports instead of wrappers, and what already exists on pub.dev: [docs/prior-art](packages/flutter_chartjs/doc/prior-art/README.md).
+Why ports instead of wrappers, and what already exists on pub.dev: [docs/prior-art](packages/flutter_chartjs_port/doc/prior-art/README.md).
 For the D3 packages, see the [D3 prior-art survey](packages/flutter_d3_port/doc/prior-art/README.md).
 For the ECharts packages, see the [ECharts prior-art survey](packages/flutter_echarts_port/doc/prior-art/README.md).
 
@@ -20,14 +20,14 @@ For the ECharts packages, see the [ECharts prior-art survey](packages/flutter_ec
 
 | Port | Upstream | Package | Progress |
 |---|---|---|---|
-| Chart.js | [chartjs/Chart.js](https://github.com/chartjs/Chart.js) v4.5.1+7169e651, a commit pin after v4.5.1 (MIT) | [`flutter_chartjs`](packages/flutter_chartjs) | [parity tracker](packages/flutter_chartjs/doc/parity.md) |
+| Chart.js | [chartjs/Chart.js](https://github.com/chartjs/Chart.js) v4.5.1+7169e651, a commit pin after v4.5.1 (MIT) | [`flutter_chartjs_port`](packages/flutter_chartjs_port) | [parity tracker](packages/flutter_chartjs_port/doc/parity.md) |
 | D3 | [d3/d3](https://github.com/d3/d3) v7.9.0 with its 30 modules, internmap, delaunator and robust-predicates (ISC, with d3-ease BSD-3-Clause and robust-predicates Unlicense) | [`flutter_d3_port`](packages/flutter_d3_port) | [parity tracker](packages/flutter_d3_port/doc/parity.md) |
 | Apache ECharts | [apache/echarts](https://github.com/apache/echarts) 6.1.0 (Apache-2.0) with its renderer [ecomfe/zrender](https://github.com/ecomfe/zrender) 6.1.0 (BSD-3-Clause) | [`flutter_echarts_port`](packages/flutter_echarts_port) | [parity tracker](packages/flutter_echarts_port/doc/parity.md) |
 
 ## Layout
 
 ```
-packages/flutter_chartjs   the Chart.js port (library)
+packages/flutter_chartjs_port   the Chart.js port (library)
 packages/flutter_d3_port   the D3 port (library, phase 0: no ported code yet)
 packages/flutter_echarts_port
                            the Apache ECharts port (library, phase 0: no ported code yet)
@@ -66,7 +66,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md).
 ## License
 
 MIT. Ported code also carries the upstream project's notice: see
-[packages/flutter_chartjs/LICENSE](packages/flutter_chartjs/LICENSE) and [REUSE.toml](REUSE.toml).
+[packages/flutter_chartjs_port/LICENSE](packages/flutter_chartjs_port/LICENSE) and [REUSE.toml](REUSE.toml).
 This project is not affiliated with or endorsed by the Chart.js project.
 
 The D3 port is ISC, the license of D3. Its

@@ -11,18 +11,19 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs/src/core/core.animator.dart';
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/core/core.interaction.dart';
-import 'package:flutter_chartjs/src/elements/element_options.dart'
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/core.animator.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show PointOptions;
-import 'package:flutter_chartjs/src/elements/index.dart';
-import 'package:flutter_chartjs/src/helpers/helpers.collection.dart'
+import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
-import 'package:flutter_chartjs/src/js/js_object.dart' show jsObjectIsFrozen;
-import 'package:flutter_chartjs/src/types/basic.dart';
-import 'package:flutter_chartjs/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show jsObjectIsFrozen;
+import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The interaction modes of the selector: the keys of `Interaction.modes`
 /// (core.interaction.js:257), in their order.

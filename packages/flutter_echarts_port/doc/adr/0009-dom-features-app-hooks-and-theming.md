@@ -17,10 +17,10 @@
   [ECharts ADR 0007](0007-environment-host-and-input-events.md) (`env.domSupported`, the platform
   API, `EChartsContainer`, `EChartsHost`), [ECharts ADR 0008](0008-dates-locales-and-formatting.md)
   (locales of the toolbox texts),
-  [Chart.js ADR 0001](../../../flutter_chartjs/doc/adr/0001-theming.md) (the four theme
-  invariants), [Chart.js ADR 0031](../../../flutter_chartjs/doc/adr/0031-gallery-chart-types.md)
+  [Chart.js ADR 0001](../../../flutter_chartjs_port/doc/adr/0001-theming.md) (the four theme
+  invariants), [Chart.js ADR 0031](../../../flutter_chartjs_port/doc/adr/0031-gallery-chart-types.md)
   (the gallery layout rule),
-  [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md)
+  [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md)
   (accepted 2026-10-21: no display-only JS exactness),
   [ADR 0007](../../../../docs/adr/0007-package-names.md) (adapter names),
   [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (no port depends on
@@ -328,7 +328,7 @@ frame at 412 x 915. The type pages are also in view at 360 x 640. A widget test 
      node interface with the 6 members that `parseSVG.ts` reads, and `nodeType`, `nodeName` and
      `nextSibling` for `parseXML.ts`.
    - `package:xml` (MIT). This is a new dependency. It changes the root `pubspec.lock`.
-     `packages/flutter_chartjs/doc/canvas-cuts-plan.md` cites that file (work package I). Thus the
+     `packages/flutter_chartjs_port/doc/canvas-cuts-plan.md` cites that file (work package I). Thus the
      change updates that deferred plan in the same commit
      ([porting-flow.md](../porting-flow.md) §5.1).
 4. The criteria of the selection: the XML features of the SVG maps of the visual pages, the error

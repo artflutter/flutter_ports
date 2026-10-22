@@ -4,11 +4,11 @@
 - Date: 2026-10-20
 - Gate: D3 phase 1. The pilot ports d3-path and d3-format. d3-array `ticks.js` of the pilot calls
   `Math.log10`.
-- Related: [Chart.js ADR 0026](../../../flutter_chartjs/doc/adr/0026-number-formatting-on-package-intl.md)
+- Related: [Chart.js ADR 0026](../../../flutter_chartjs_port/doc/adr/0026-number-formatting-on-package-intl.md)
   (number formatting as display text),
-  [Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md) (no
+  [Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md) (no
   display-only JS exactness),
-  [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (the JS
+  [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) (the JS
   numeric rules and the reference engine),
   [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (the shared runtime
   `js_semantics`), [D3 ADR 0004](0004-spec-harness.md) (reference values and specs),
@@ -17,12 +17,12 @@
 
 ## Context
 
-[Chart.js ADR 0034](../../../flutter_chartjs/doc/adr/0034-no-display-only-js-exactness.md) gives
+[Chart.js ADR 0034](../../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md) gives
 this principle: the port emulates JavaScript only where the result changes behavior. For the
 Chart.js port, the behavior is the ticks, the hit element, the item order, the resolved option, a
 throw, and a value that reaches a layout, a scale, an element property, a hit test, a discrete
 decision or a public return value. Number strings are display text there. Thus
-[Chart.js ADR 0026](../../../flutter_chartjs/doc/adr/0026-number-formatting-on-package-intl.md)
+[Chart.js ADR 0026](../../../flutter_chartjs_port/doc/adr/0026-number-formatting-on-package-intl.md)
 formats numbers with package:intl. A Chart.js ADR binds only the Chart.js port. This ADR states
 how D3 applies these rules.
 

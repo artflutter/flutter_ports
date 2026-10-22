@@ -2,6 +2,7 @@
 
 - Status: accepted
 - Date: 2026-10-16
+- Superseded by: [ADR 0007](0007-package-names.md) (2026-10-22)
 
 ## Context
 

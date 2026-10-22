@@ -6,9 +6,9 @@
 - Related: [ADR 0001](0001-native-ports-not-wrappers.md) (no JavaScript at runtime),
   [ADR 0006](0006-follow-upstream-between-releases.md) (the backport line),
   [ADR 0007](0007-package-names.md) (the names `js_semantics` and `port_tools`),
-  [Chart.js ADR 0032](../../packages/flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (the JS
+  [Chart.js ADR 0032](../../packages/flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) (the JS
   runtime of the Chart.js port),
-  [Chart.js ADR 0035](../../packages/flutter_chartjs/doc/adr/0035-third-party-sources.md) (the
+  [Chart.js ADR 0035](../../packages/flutter_chartjs_port/doc/adr/0035-third-party-sources.md) (the
   fdlibm copy), [D3 ADR 0003](../../packages/flutter_d3_port/doc/adr/0003-number-to-string.md)
   (number strings in D3),
   [D3 ADR 0006](../../packages/flutter_d3_port/doc/adr/0006-generators-accessors-and-js-values.md)
@@ -17,11 +17,11 @@
 ## Context
 
 **The runtime of the Chart.js port.** Chart.js ADR 0032 §1 puts the JS runtime in "an unexported
-library in `packages/flutter_chartjs/lib/src/js/`". Ported files call it "where upstream calls a
+library in `packages/flutter_chartjs_port/lib/src/js/`". Ported files call it "where upstream calls a
 builtin or relies on an implicit JS conversion". At commit `75178b5`
 (2026-10-20), the folder has 14 files with 2,313 lines (`wc -l lib/src/js/*.dart`). 169 Dart
-files import it (`git grep -l 'package:flutter_chartjs/src/js/' -- '*.dart'`):
-- 149 files of `flutter_chartjs`: 56 in `lib/` (7 of them in `lib/src/js/`), 89 in `test/` and 4
+files import it (`git grep -l 'package:flutter_chartjs_port/src/js/' -- '*.dart'`):
+- 149 files of `flutter_chartjs_port`: 56 in `lib/` (7 of them in `lib/src/js/`), 89 in `test/` and 4
   in `tool/bench/`
 - 6 files of `chartjs_test_utils`
 - 14 files of `apps/chartjs_gallery`
@@ -30,7 +30,7 @@ files import it (`git grep -l 'package:flutter_chartjs/src/js/' -- '*.dart'`):
 (`d3-array@v3.2.4 src/ticks.js:7`), `Math.round` (`d3-path@v3.1.0 src/path.js:21`) and
 `Array.prototype.sort` with a comparator (`d3-array@v3.2.4 src/sort.js:12`). The runtime gives
 these builtins as `jsLog10`, `jsRound` and `jsSort`. D3 also needs new builtins, for example the
-number strings of D3 ADR 0003. D3 cannot import the runtime from `flutter_chartjs`. The
+number strings of D3 ADR 0003. D3 cannot import the runtime from `flutter_chartjs_port`. The
 `implementation_imports` lint of `very_good_analysis` 10.3.0 (`analysis_options.10.3.0.yaml:90`)
 flags an import of the `src/` of another package.
 
@@ -68,7 +68,7 @@ flags an import of the `src/` of another package.
 **Headers and markers.** 12 of the 14 files start with the Chart.js port-only marker
 `// Original code, not ported from Chart.js: <reason>.`. The two fdlibm ports start with two
 `// Ported from fdlibm 5.3` lines each. The closure carries five `DIVERGES(chartjs)` markers for
-four rows of `packages/flutter_chartjs/doc/differences.md`:
+four rows of `packages/flutter_chartjs_port/doc/differences.md`:
 
 | Marker | Row | Other Dart files of the row |
 |---|---|---|
@@ -80,14 +80,14 @@ four rows of `packages/flutter_chartjs/doc/differences.md`:
 A sixth marker, `js_promise.dart:60`, is outside the closure
 (`platform-animation-promise-checkpoint`).
 
-**Tests.** 10 test files in `packages/flutter_chartjs/test/port/js/` test the closure. They have
+**Tests.** 10 test files in `packages/flutter_chartjs_port/test/port/js/` test the closure. They have
 2,325 lines. Three generated files with 18,971 lines hold their reference data:
 `log10_reference.dart`, `atan2_reference.dart` and `number_to_string_reference.dart`. The x64
 generators of Chart.js ADR 0032 §2 write them. Two tests import more than the runtime.
 `js_array_test.dart:2-3` imports `createResolver` of `helpers.config`. `js_date_test.dart` uses
 `flutter_test` with `@TestOn('vm')`.
 
-**The tools.** The port checks are in `packages/flutter_chartjs/tool/`, with 8,609 lines in
+**The tools.** The port checks are in `packages/flutter_chartjs_port/tool/`, with 8,609 lines in
 `tool/*.dart` and `tool/src/*.dart`. Tools 1-3 (`check:lib-imports`, `check:headers`,
 `check:js-semantics`) and their support code are 11 files with 3,423 lines. Their tests in
 `test/tool/` are 7 files with 2,636 lines. The tools hard-code the Chart.js port:
@@ -105,10 +105,10 @@ generators of Chart.js ADR 0032 §2 write them. Two tests import more than the r
 - Tool 1 follows only the imports of the examined package (`lib_imports.dart:424-435`). An import
   of another workspace package must be in an allowlist.
 
-**The Chart.js work.** Another session works on `flutter_chartjs` now. Commit `0baaec2`
+**The Chart.js work.** Another session works on `flutter_chartjs_port` now. Commit `0baaec2`
 (2026-10-20) changed `lib/src/js/`. A move of the runtime edits 169 files of that work. It also
 changes Chart.js ADR 0032 §1. A changed decision needs a new ADR. The deferred plan
-`packages/flutter_chartjs/doc/canvas-cuts-plan.md` cites 8 of the 169 files.
+`packages/flutter_chartjs_port/doc/canvas-cuts-plan.md` cites 8 of the 169 files.
 
 ## Decision
 
@@ -118,16 +118,16 @@ changes Chart.js ADR 0032 §1. A changed decision needs a new ADR. The deferred 
    that port.
 2. **Package form.**
    - `packages/js_semantics` has no Flutter dependency. Its dependencies are `collection` and
-     `clock`, with the constraints of `flutter_chartjs`. Its dev dependency is `test`. Thus the
+     `clock`, with the constraints of `flutter_chartjs_port`. Its dev dependency is `test`. Thus the
      package is a pure layer by construction. `dart test` runs its tests on the VM, with dart2js
      and with dart2wasm.
    - Each runtime file is a public library in `lib/`, for example
      `package:js_semantics/js_math.dart`. Thus a port moves an import from
-     `package:flutter_chartjs/src/js/` to `package:js_semantics/` with a prefix replacement.
+     `package:flutter_chartjs_port/src/js/` to `package:js_semantics/` with a prefix replacement.
    - The package stays `publish_to: none`. The release model is open (see Consequences).
    - The package `LICENSE` keeps the notices that the copied files have now:
      - the MIT text with `2014-2024 Chart.js Contributors` and `2026 Vasiliy Ditsyak` (the
-       `packages/flutter_chartjs/**` table of `REUSE.toml`)
+       `packages/flutter_chartjs_port/**` table of `REUSE.toml`)
      - the SunPro component of the two fdlibm ports
 
      `REUSE.toml` gets a table for the package. The fdlibm table gets the two new paths.
@@ -136,7 +136,7 @@ changes Chart.js ADR 0032 §1. A changed decision needs a new ADR. The deferred 
    - `js_class.dart` is a part of the closure, because `js_function.dart` and `js_object.dart`
      import it.
    - `JsProxyObject` stays in `js_array.dart`. It models a JS `Proxy`, not a Chart.js type.
-   - `js_intl`, `js_promise` and `js_webidl` stay in `flutter_chartjs`. If a D3 caller needs one
+   - `js_intl`, `js_promise` and `js_webidl` stay in `flutter_chartjs_port`. If a D3 caller needs one
      of them, that file moves by the method of item 5.
 4. **Headers, markers and rows.**
    - The port-only marker of the shared package is
@@ -152,7 +152,7 @@ changes Chart.js ADR 0032 §1. A changed decision needs a new ADR. The deferred 
      rows with no new ids.
    - A row of a port that depends on a runtime difference links the shared row.
 5. **Stage 1 (D3 phase 1).** Do these steps in one change:
-   1. Copy the 11 files from `packages/flutter_chartjs/lib/src/js/` at one commit. Record that
+   1. Copy the 11 files from `packages/flutter_chartjs_port/lib/src/js/` at one commit. Record that
       commit in `packages/js_semantics/README.md`.
    2. Copy the 10 tests of these files and the generators `log10_reference.mjs`,
       `atan2_reference.mjs` and `number_to_string_reference.mjs`. Run the copied generators to
@@ -166,13 +166,13 @@ changes Chart.js ADR 0032 §1. A changed decision needs a new ADR. The deferred 
       `port-checks`. It fails when a shared file and its Chart.js copy differ. It ignores the
       header lines, the `///` doc comments, the `DIVERGES` lines and the prefix of the runtime
       imports. It also compares the three reference files below their header lines.
-   7. Change no file in `packages/flutter_chartjs/`, `packages/chartjs_test_utils/` or
+   7. Change no file in `packages/flutter_chartjs_port/`, `packages/chartjs_test_utils/` or
       `apps/chartjs_gallery/`.
 6. **Rules during stage 1.**
    - New runtime code for D3 goes into new files of `js_semantics`.
    - A change to a file that has a Chart.js copy changes both copies in one commit. Before that
      commit, the maintainer or the Chart.js work agrees to the edit of
-     `packages/flutter_chartjs/lib/src/js/`.
+     `packages/flutter_chartjs_port/lib/src/js/`.
    - This ADR decides where the runtime is. It does not change what a runtime function does. The
      rules of Chart.js ADR 0032 apply to the copies. D3 ADR 0003 states how D3 applies these
      rules.
@@ -187,19 +187,19 @@ changes Chart.js ADR 0032 §1. A changed decision needs a new ADR. The deferred 
       `75178b5`, 169 files import the runtime. `canvas-cuts-plan.md` cites 8 of them. Thus the
       change also updates that deferred plan.
    2. Delete the 11 copies, their 10 tests, the three generators and the three reference files
-      from `flutter_chartjs`.
+      from `flutter_chartjs_port`.
    3. Move the rows `js-semantics-class-source`, `js-semantics-function-source` and
       `js-semantics-object-freeze` to the shared `differences.md`. All their Dart files are
       runtime files.
    4. Keep the row `js-semantics-resolver-objects` with its Chart.js files. Link the shared row
       from it.
-   5. Remove the fdlibm targets of `flutter_chartjs` from its `tool/port_sources.yaml`. Remove
+   5. Remove the fdlibm targets of `flutter_chartjs_port` from its `tool/port_sources.yaml`. Remove
       the two old paths from the fdlibm table of `REUSE.toml`. Remove the fdlibm component from
-      `packages/flutter_chartjs/LICENSE`.
+      `packages/flutter_chartjs_port/LICENSE`.
    6. Write a new ADR that supersedes Chart.js ADR 0032. It restates that ADR with the new
       runtime location of §1.
    7. Update the other citations. These are AGENTS.md (Layout and the JS runtime rule), the tool
-      1 allowlist of `packages/flutter_chartjs/doc/porting-flow.md` §4 and the tool messages that
+      1 allowlist of `packages/flutter_chartjs_port/doc/porting-flow.md` §4 and the tool messages that
       name `lib/src/js`.
    8. Remove the drift check.
 8. **Port tools.** Tools 1-3 get one implementation for all ports, in the dev package
@@ -233,26 +233,26 @@ changes Chart.js ADR 0032 §1. A changed decision needs a new ADR. The deferred 
      Its allowlist is the pure `dart:` libraries, `collection` with `show mergeSort`, and
      `clock`.
    - **Stage 2.** The Chart.js migration, or its own Chart.js change, deletes tools 1-3 from
-     `packages/flutter_chartjs/tool/`. The Chart.js config moves to that folder. The melos
+     `packages/flutter_chartjs_port/tool/`. The Chart.js config moves to that folder. The melos
      scripts `check:lib-imports`, `check:headers` and `check:js-semantics` then run `port_tools`
      for each port.
    - Tools 5, 6 and 8 (`test:cases`, `parity`, `port:next`) move to `port_tools` by the same
      method when the D3 port needs them (D3 phase 2). Tool 4 is a Node.js tool. It reads the
      specs in the format of the upstream test runner. Each port keeps its own tool 4.
 9. **Gate.** "Gate" is the first D3 phase whose code depends on this ADR (the meaning of
-   `packages/flutter_chartjs/doc/porting-flow.md:138`). The gate is D3 phase 1. The first D3 file
+   `packages/flutter_chartjs_port/doc/porting-flow.md:138`). The gate is D3 phase 1. The first D3 file
    that calls a runtime symbol needs stage 1 of the runtime. The first ported D3 file needs stage
    1 of tools 1-3.
 
-   Before the gate, this ADR changes no file. D3 phase 0 changes no file of `flutter_chartjs`.
+   Before the gate, this ADR changes no file. D3 phase 0 changes no file of `flutter_chartjs_port`.
 
 ## Alternatives considered
 
 - **Copy the runtime into `packages/flutter_d3_port/lib/src/js/`.** Rejected. The two copies
   drift with no check. A fix lands twice, with two test sets. The D3 copy also needs D3 rows for
   the five markers.
-- **Depend on `flutter_chartjs`.** Rejected. The `implementation_imports` lint flags
-  `package:flutter_chartjs/src/`. Each D3 user gets the Chart.js port and its Flutter layers. The
+- **Depend on `flutter_chartjs_port`.** Rejected. The `implementation_imports` lint flags
+  `package:flutter_chartjs_port/src/`. Each D3 user gets the Chart.js port and its Flutter layers. The
   two ports then share one release cycle.
 - **Move the runtime at once, with no stage 1.** Rejected for now. The move edits 169 files while
   another session works on them. It also needs a new ADR that supersedes Chart.js ADR 0032 at

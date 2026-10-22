@@ -21,9 +21,9 @@ library;
 import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
-import 'package:flutter_chartjs/src/core/core.controller.dart';
-import 'package:flutter_chartjs/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
+import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The scale types of the stress mode `axes`.
 ///

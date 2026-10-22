@@ -1,0 +1,180 @@
+// Original code, not ported from Chart.js: V8 Number::toString reference generator.
+//
+// It writes test/port/js/number_to_string_reference.dart, the data of
+// test/port/js/js_number_test.dart: 10,000 inputs, each with String(x), and
+// the Node.js version, V8 version and architecture in the header. The inputs
+// are deterministic, so a rerun on the same Node.js writes the same file.
+// Nothing in lib/ or test/ runs this script (porting-flow.md section 4).
+//
+// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js v24.12.0
+// (on Apple silicon, the darwin-x64 build runs under Rosetta):
+//
+//   node tool/reference/number_to_string_reference.mjs
+//
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
+// on any other architecture. Number::toString is exact, so other engines give
+// the same strings, but Chart.js ADR 0032 takes all reference data from one
+// engine.
+
+import {writeFileSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
+
+if (process.arch !== 'x64') {
+  console.error(
+    `The reference is V8 on x64; this Node.js is ${process.arch}. ` +
+      'Run an x64 build of Node.js.',
+  );
+  process.exit(1);
+}
+
+const TOTAL = 10000;
+const OUT = fileURLToPath(
+  new URL('../../test/port/js/number_to_string_reference.dart', import.meta.url),
+);
+
+const view = new DataView(new ArrayBuffer(8));
+
+/** The double whose IEEE-754 words are `hi` and `lo`. */
+function fromWords(hi, lo) {
+  view.setUint32(0, hi >>> 0);
+  view.setUint32(4, lo >>> 0);
+  return view.getFloat64(0);
+}
+
+/** The 16 hex digits of the bits of `x`. */
+function hex(x) {
+  view.setFloat64(0, x);
+  return (
+    view.getUint32(0).toString(16).padStart(8, '0') +
+    view.getUint32(4).toString(16).padStart(8, '0')
+  );
+}
+
+/** The double `steps` units in the last place away from finite `x` >= 0. */
+function ulpStep(x, steps) {
+  view.setFloat64(0, x);
+  const bits = view.getBigUint64(0) + BigInt(steps);
+  if (bits < 0n) return 0;
+  view.setBigUint64(0, bits);
+  return view.getFloat64(0);
+}
+
+/** Marsaglia's xorshift32, from a fixed seed. */
+let state = 0x6d2b79f5;
+function next32() {
+  state ^= state << 13;
+  state ^= state >>> 17;
+  state ^= state << 5;
+  return state >>> 0;
+}
+
+const inputs = [];
+const seen = new Set();
+function add(x) {
+  const key = hex(x);
+  if (seen.has(key) || inputs.length >= TOTAL) return;
+  seen.add(key);
+  inputs.push(x);
+}
+/** Adds `x` and `-x`. */
+function addSigned(x) {
+  add(x);
+  add(-x);
+}
+
+// Special values.
+[
+  0, -0, Infinity, -Infinity, NaN, 1, -1, 0.1, 0.2, 0.1 + 0.2, 0.3, 1 / 3,
+  2 / 3, Math.PI, Math.E, Math.SQRT2, Number.EPSILON, Number.MAX_VALUE,
+  -Number.MAX_VALUE, Number.MIN_VALUE, -Number.MIN_VALUE,
+  Number.MAX_SAFE_INTEGER, Number.MIN_SAFE_INTEGER, 2 ** 53, 2 ** 53 + 2,
+  2 ** 63, 2 ** 64, 2 ** 31, 2 ** 32, 2 ** 32 - 1, 2 ** -1022,
+  2 ** -1022 - 2 ** -1074, 1.7976931348623157e308, 2.2250738585072014e-308,
+  123456789012345680000, 1.2345678901234568e21, 0.000001, 0.0000001,
+  0.0000012345, 1.2345e-7, 999999999999999900000, 1e21 - 65536, 5e-324,
+  1.5, 2.5, 100, 1000, 0.5, 0.25, 0.125, 12.5, 3.14, 255, 2.55, 1e-10,
+].forEach(add);
+
+// Small integers and their negatives.
+for (let i = 0; i <= 300; i++) addSigned(i);
+
+// Powers of ten and their neighbours within two units in the last place,
+// with both signs. The plain/exponent notation boundaries are 1e-6 and 1e21.
+for (let i = -323; i <= 308; i++) {
+  const x = Number(`1e${i}`);
+  for (const steps of [0, -1, 1, -2, 2]) add(ulpStep(x, steps));
+  add(-x);
+}
+
+// Values with several digits next to the notation boundaries.
+for (let i = -12; i <= -3; i++) {
+  for (const m of [1.5, 9.99, 1.2345678, 9.999999999999999, 5, 2.5]) {
+    addSigned(Number(`${m}e${i}`));
+  }
+}
+for (let i = 17; i <= 25; i++) {
+  for (const m of [1.5, 9.99, 1.2345678, 9.999999999999999, 5, 2.5]) {
+    addSigned(Number(`${m}e${i}`));
+  }
+}
+
+// Every fourth power of two, with both signs.
+for (let k = -1074; k <= 1023; k += 4) addSigned(2 ** k);
+
+// Random integers up to 2**53, with both signs.
+for (let n = 0; n < 300; n++) {
+  const x = (next32() & 0x1fffff) * 2 ** 32 + next32();
+  addSigned(x);
+}
+
+// Decimals as charts compute them: sums and products of short decimals.
+for (let n = 0; n < 600; n++) {
+  const a = (next32() % 100000) / 10 ** (next32() % 6);
+  const b = (next32() % 1000) / 10 ** (next32() % 4);
+  add(n % 2 ? a + b : a * b);
+  add(a - b);
+}
+
+// Tick steps: i * step for a short step, as the linear ticks compute them.
+for (const step of [0.1, 0.2, 0.25, 0.3, 0.5, 0.05, 0.02, 0.001, 1e-7]) {
+  for (let i = -20; i <= 20; i++) add(i * step);
+}
+
+// Random subnormals, with both signs.
+for (let n = 0; n < 150; n++) {
+  addSigned(fromWords(next32() & 0xfffff, next32()) || Number.MIN_VALUE);
+}
+
+// Random bit patterns, with every exponent and both signs.
+while (inputs.length < TOTAL) {
+  const x = fromWords(next32(), next32());
+  if (Number.isFinite(x)) add(x);
+}
+
+const lines = inputs.map((x) => `${hex(x)} ${String(x)}`);
+
+const dart = `// Original code, not ported from Chart.js: V8 Number::toString reference data.
+
+// Generated by tool/reference/number_to_string_reference.mjs. Do not edit.
+// Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
+// String(x) for ${lines.length} inputs.
+
+/// The Node.js version that generated [numberToStringReference].
+const String numberToStringReferenceNode = '${process.version}';
+
+/// The V8 version that generated [numberToStringReference].
+const String numberToStringReferenceV8 = '${process.versions.v8}';
+
+/// The architecture of the Node.js build that generated
+/// [numberToStringReference].
+const String numberToStringReferenceArch = '${process.arch}';
+
+/// \`x\` as an IEEE-754 bit pattern in hex and V8 \`String(x)\`, one pair per
+/// line.
+const String numberToStringReference = '''
+${lines.join('\n')}
+''';
+`;
+
+writeFileSync(OUT, dart);
+console.log(`Wrote ${lines.length} inputs to ${OUT}`);

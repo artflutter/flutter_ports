@@ -5,11 +5,11 @@
 - Gate: D3 phase 1. The pilot needs the callable classes (the formats of d3-format), the
   `arguments.length` overloads (d3-array `range`), `instanceof` (d3-path) and the errors. The
   accessors and the `Function.length` overloads get wide use from phase 2.
-- Related: [Chart.js ADR 0006](../../../flutter_chartjs/doc/adr/0006-options-representation-and-resolver.md)
+- Related: [Chart.js ADR 0006](../../../flutter_chartjs_port/doc/adr/0006-options-representation-and-resolver.md)
   (the `undefined` sentinel and the three states),
-  [Chart.js ADR 0032](../../../flutter_chartjs/doc/adr/0032-js-numeric-semantics.md) (§1: `jsCall`
+  [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) (§1: `jsCall`
   and `JsFunction`),
-  [Chart.js ADR 0020](../../../flutter_chartjs/doc/adr/0020-registry-and-component-classes.md)
+  [Chart.js ADR 0020](../../../flutter_chartjs_port/doc/adr/0020-registry-and-component-classes.md)
   (proposed: class values), [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md)
   (the shared runtime `js_semantics`), [D3 ADR 0002](0002-file-naming-and-layout.md) (names, split
   classes and underscore members), [D3 ADR 0003](0003-number-to-string.md) (numbers),

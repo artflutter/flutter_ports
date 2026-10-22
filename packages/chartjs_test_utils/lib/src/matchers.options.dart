@@ -14,16 +14,16 @@
 /// This library is a pure layer.
 library;
 
-// The harness reads the JS runtime of flutter_chartjs, which does not export
-// lib/src.
+// The harness reads the JS runtime of flutter_chartjs_port, which does not
+// export lib/src.
 // ignore_for_file: implementation_imports
 
 import 'dart:convert';
 
-import 'package:flutter_chartjs/src/js/js_array.dart';
-import 'package:flutter_chartjs/src/js/js_number.dart';
-import 'package:flutter_chartjs/src/js/js_object.dart';
-import 'package:flutter_chartjs/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
 /// matchers.options.js:2 `isObject`: `Object.prototype.toString.call(value)

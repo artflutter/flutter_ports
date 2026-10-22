@@ -177,7 +177,7 @@ bool _flag(String name, String value) => switch (value) {
 
 /// The default scenarios (N, M) of each mode:
 /// - `primitives` and `elements`: the six scenarios of
-///   `packages/flutter_chartjs/doc/performance.md`.
+///   `packages/flutter_chartjs_port/doc/performance.md`.
 /// - `bars`: 1000, 5000 and 20000 bars without labels.
 /// - `arcs`: 100, 1000 and 5000 arcs without labels.
 /// - `chart`: the counts of [type] (default [stressType]) without labels:
