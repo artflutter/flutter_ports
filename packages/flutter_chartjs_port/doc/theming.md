@@ -168,7 +168,9 @@ Emitted:
 
 In phase 5, the tokens emit only the root `color`, the `scale` keys and the element keys. Phase 6
 adds the `scales.radialLinear` keys. Phase 8 adds the plugin keys and the palette keys. Wave 1
-adds `plugins.title.color`, `plugins.title.font` and the palette keys.
+adds `plugins.title.color`, `plugins.title.font` and the palette keys. Wave 2 adds
+`plugins.subtitle.color`, `plugins.subtitle.font` (without `weight`) and the two legend fonts
+`plugins.legend.labels.font` and `plugins.legend.title.font` (the whole font token).
 
 Never emitted. A debug assert and the emission test enforce this list.
 

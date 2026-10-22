@@ -15,7 +15,7 @@ Exception: the maintainer decided on 2026-10-20 that phase 6 ports from the v4.5
 
 The commit pin of 2026-10-20 ends that exception. The section `v4.5.1 → v4.5.1+7169e651` closes the rows of the range.
 
-Signals: #12302 (milestone 4.6.0, core.ticks). #12286 (milestone 4.6.0, helpers.core). #12268 (fix for the security report #12265). #12205 (theming.md §9, legend crash after a font change). #11910 (theming.md §9, scale color defaults do not update). #12151 (report of the #12097 regression). #12269 (report of the #12097 regression). #7738 (touch tooltips never hide. Chart.js ADR 0037 keeps the Chrome result).
+Signals: #12302 (milestone 4.6.0, core.ticks). #12286 (milestone 4.6.0, helpers.core). #12268 (fix for the security report #12265). #12205 (theming.md §9, legend crash after a font change). #11910 (theming.md §9, scale color defaults do not update). #12151 (report of the #12097 regression). #12269 (report of the #12097 regression). #7738 (touch tooltips never hide. Chart.js ADR 0037 keeps the Chrome result). Chart.js ADR 0040 Open 1 (upstream draws no stacked fill above a line with segment styles or with an x that goes back; the port keeps it; reference cases `stack above a line with segment styles` and `stack above a line whose x goes back`).
 
 ## After v4.5.1+7169e651
 
@@ -41,7 +41,7 @@ Signals: #12302 (milestone 4.6.0, core.ticks). #12286 (milestone 4.6.0, helpers.
 | 0fbceb2a | #12206 | Bump rollup from 3.20.2 to 3.30.0 | build | | n/a | skip | not-applicable | | Dev lockfile, Dependabot. Lock versions of @kurkle/color and chartjs-test-utils do not change. Labels: dependencies, javascript |
 | 913fee4f | #12258 | Add a note that axis labels can span lines | docs | | n/a | skip | not-applicable | | Docs only. Label: type: documentation |
 | 0ad783f1 | #12309 | Use node 24 for CI | build | | n/a | skip | not-applicable | | CI workflows. Label: type: chore |
-| b9725745 | #12283 | filler plugin fill extends past line when offset: true + index scale min/max | runtime, fixture | plugin.filler/filler.drawing | fix | replay | absorbed | | Phase 8. +20 lines in `filler.drawing.js`. Fixture-only test. Label: type: bug. Commit pin (2026-10-20): `plugin.filler` is not started (phase 8). |
+| b9725745 | #12283 | filler plugin fill extends past line when offset: true + index scale min/max | runtime, fixture | plugin.filler/filler.drawing | fix | replay | ported | | Phase 8. +20 lines in `filler.drawing.js`: `clipToIndexBounds` in `filler.drawing.dart` (Chart.js ADR 0040 §8). The fixture `plugin.filler/line/offset-scale-minmax.js` passes in `test:fixtures`. Reference case `offset with min and max on a category scale` of `test/port/plugins/plugin.filler/index_test.dart`. Label: type: bug. |
 | d2ddcf9e | #12310 | Specify build script for compressed size | build | | n/a | skip | not-applicable | | CI workflow. Labels: type: chore, github_actions |
 | 0db976ca | #12307 | Bump pnpm/action-setup from 4.2.0 to 6.1.0 | build | | n/a | skip | not-applicable | | CI workflows, Dependabot. Labels: dependencies, github_actions |
 | afb3d647 | #12303 | Bump actions/checkout from 6 to 7 | build | | n/a | skip | not-applicable | | CI workflows, Dependabot. Labels: dependencies, github_actions |
