@@ -30,7 +30,9 @@
   [canvas-cuts-plan.md](../canvas-cuts-plan.md),
   [differences.md](../differences.md) rows `harness-method-fields`, `js-semantics-object-freeze`,
   `adapt-rounded-rect-path`, `adapt-animation-number-path`, `adapt-options-typed-results`,
-  `harness-mock-optional-args` and `harness-fixture-sources`
+  `harness-mock-optional-args`, `harness-fixture-sources`, `adapt-component-class-role`,
+  `adapt-merge-element-target`, `harness-expected-element` and
+  `adapt-active-elements-number-index`
 
 ## Context
 
@@ -194,7 +196,7 @@ Node.js v24.12.0 under Rosetta (Chart.js ADR 0032). Results that this ADR uses:
 | The calls of `update` | `handleEvent` gives `(true, undefined)`, `setActiveElements` gives `(true)`. After `setActiveElements`, the replay of `chart.update()` does not call `update`. |
 | `setActiveElements([{datasetIndex: 0, index: 99}])` on a line chart | throws `TypeError` in `getLabelAndValue`, after `_active` changed |
 | A positioner result `{x, y, xAlign: 'right', yAlign: 'bottom'}` | `xAlign 'right'`, `yAlign 'bottom'`, `caretX 100`, `caretY 100` |
-| A positioner result `{}` | no position change |
+| A positioner result `{}` | `x` and `y` NaN, `caretX` and `caretY` `undefined` |
 | The options `xAlign: 5` and `yAlign: {o: 1}` | both reach the element, and the draw does not throw |
 | A positioner result `{x: '100', y: '50'}` | `y` 465.2 (`alignY` joins `'50' + 7`), `caretX` the string `'100'` |
 | `average` with the x values `[NaN, NaN, 2]`, `[0, -0, 4]`, `[-0]` | x NaN, x 2, x +0 |
@@ -259,8 +261,10 @@ alpha in each frame (the fade of the opacity animation), each line builds a new 
 - The constructor takes the record config of Chart.js ADR 0038:
   `Tooltip(({types.Chart chart, AnyObject? options}) config)`. It sets the start values in the
   upstream order (:464-496). `Tooltip.jsClass` (Chart.js ADR 0020 §3) has
-  `superclass: Element.jsClass` and the static `positioners`. Its `construct` reads the Map
-  argument by name, as `new Tooltip(config)` reads `config.chart` and `config.options`.
+  `superclass: Element.jsClass` and the static `positioners`. Its `construct` reads the
+  argument by name (`_tooltipConfig`), as `new Tooltip(config)` reads `config.chart` and
+  `config.options`. A `chart` that is not a `types.Chart` throws a `TypeError` there. Upstream
+  stores it. The row `adapt-component-class-role` records this.
 - `initialize(AnyObject? options)` is the upstream method (:498-502).
 
 ### 2. Properties and the access by name
@@ -275,17 +279,18 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
 | `xAlign`, `yAlign` | `String?` | `String?` | `toObjectProp<String>` |
 | `title`, `beforeBody`, `body`, `afterBody`, `footer`, `dataPoints`, `labelColors`, `labelPointStyles`, `labelTextColors` | `List<Object?>?` | `List<Object?>?` | `toObjectProp<List<Object?>>` |
 | `chart` | `types.Chart` | `types.Chart` | a `types.Chart` only. Another value, also `undefined`, throws an `ArgumentError`. |
-| `_active` (start `[]`) | `List<types.ActiveElement>` | none | `toObjectProp<List<types.ActiveElement>>`, not `undefined` |
+| `_active` (start `[]`) | `List<types.ActiveElement>` | none | a `List<types.ActiveElement>` only. Another value, also `undefined`, throws an `ArgumentError`. |
 | `_eventPosition` | `Object?` | none | any value |
 | `_size` | `({double width, double height})?` | none | the record type or `undefined` |
 | `_cachedAnimations` | `Animations?` | none | `toObjectProp<Animations>` |
-| `_tooltipItems` (start `[]`) | `List<Object?>` | none | `toObjectProp<List<Object?>>`, not `undefined` |
+| `_tooltipItems` (start `[]`) | `List<Object?>` | none | a `List<Object?>` only. Another value, also `undefined`, throws an `ArgumentError`. |
 | `$context` | `AnyObject?` | none | `toObjectProp<AnyObject>` |
 | `_ignoreReplayEvents` | `bool?` | none | `toBoolProp` |
 
 - The private names keep their upstream spelling, because only `plugin.tooltip.dart` reads them
   in Dart (Chart.js ADR 0017 §3). Other code reads and writes them by name, for example
-  `tooltip['_active']`, as `core.controller.tests.js:1719` does.
+  `tooltip['_active']`, as `core.controller.tests.js:1719` does. The Dart field of `$context` is
+  `_context`, because a Dart name with `$` is public. The access by name keeps `$context`.
 - A line of text can be any value (Context). Thus every list is `List<Object?>`. `clone` gives a
   `List<Object?>`, and so does a spec list literal (Probes). A narrower type throws at the writes
   of the text align cases.
@@ -301,7 +306,7 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
 
 - A tooltip item, a body item, a label color and a label point style are
   `Map<String, Object?>` literals with the upstream keys in the upstream order. The port reads
-  them with `jsGet` and `jsGetKey`, as user code does.
+  them with `jsGet`, as user code does.
 - The item keeps the `Object? label` of `getLabelAndValue` (Chart.js ADR 0028 Open 2). `raw` is
   `jsGetIndex(jsGet(jsGetIndex(jsGet(chart.data, 'datasets'), datasetIndex), 'data'), index)`.
   `element` is the element or `undefined`.
@@ -316,11 +321,11 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
   `nearest`. `Tooltip.positioners`, the static `positioners` of `Tooltip.jsClass` and the key
   `positioners` of the plugin Map are this Map. The methods read the top-level Map, as upstream
   reads the module constant (:651, :1012, :1218).
-- The call is `jsCall(jsGet(_positioners, options['position']), [active, eventPosition],
-  thisArg: this)`. An absent key gives `undefined`, and `jsCall` throws an `ArgumentError` where
-  upstream throws a `TypeError` at `.call` (the rule of `js_function.dart`).
-- `average` and `nearest` are Dart closures without `this`, because the upstream methods do not
-  read `this`.
+- The call is `jsCall(jsGet(_positioners, jsGet(options, 'position')), [active,
+  eventPosition], thisArg: this)`. An absent key gives `undefined`, and `jsCall` throws an
+  `ArgumentError` where upstream throws a `TypeError` at `.call` (the rule of `js_function.dart`).
+- `average` and `nearest` are the private top-level functions `_average` and `_nearest`, without
+  `this`, because the upstream methods do not read `this`.
 - An item is a `types.ActiveElement` or a user value. Its element is `item.element` for a
   `types.ActiveElement`, else `jsGet(item, 'element')`. The plain item of spec :1152 gives
   `undefined` and the result `false`.
@@ -355,7 +360,8 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
   and an `ArgumentError` at the write of `caretX`. This is the rule of Chart.js ADR 0017 §5, not
   a `DIVERGES` hunk.
 - `caretX` and `caretY` take the raw `position.x` and `position.y`, not the record values. Thus
-  `undefined` stays `undefined` (:674-675, :1025-1026).
+  `undefined` stays `undefined` (:674-675, :1025-1026). A JS `null` coordinate throws an
+  `ArgumentError` at the write of `caretX`, by the same rule. Upstream stores `null`.
 - `getTooltipSize` returns `({double width, double height})`. `determineAlignment` returns
   `({Object? xAlign, Object? yAlign})`. `getBackgroundPoint` and `getCaretPosition` return
   records too.
@@ -374,7 +380,12 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
   // DIVERGES(chartjs): harness-method-fields, a spec replaces it per tooltip.
   late void Function([Object? changed, Object? replay]) update = _updateMethod;
 
-  void _updateMethod([Object? changed = undefined, Object? replay = undefined]) {}
+  void _updateMethod([
+    Object? changed = undefined,
+    Object? replay = undefined,
+  ]) {
+    // The upstream body of :638-689.
+  }
   ```
 
 - Both parameters are optional `Object?`, because upstream reads `changed` only with `&&`
@@ -387,14 +398,18 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
 ### 7. `setContext` and the option reads
 
 - `setContext` is `jsCall(jsGet(options, 'setContext'), [getContext()], thisArg: options)` in
-  `update`, `_resolveAnimations` and `draw`. One form serves the resolver of a chart and the
-  plain Map with a closure of the text align cases. A cast to `ContextResolver` throws there.
+  `update`, `_resolveAnimations` and `draw` (the private helper `_resolveOptions`). One form
+  serves the resolver of a chart and the plain Map with a closure of the text align cases. A
+  cast to `ContextResolver` throws there.
 - The draw reads each option of the result with the Map read `options[key]`. Each reader of a
-  key that a plain Map can lack (`rtl`, `textDirection`, `usePointStyle`, `external`, `filter`,
-  `itemSort`, `xAlign`, `yAlign`) applies `ToBoolean` or `||`. Thus Dart `null` and `undefined`
-  give one result (Chart.js ADR 0017 §8). A numeric option in arithmetic goes through
-  `jsToNumber`. A value for the canvas goes through `canvasStyle`, `canvasNumber` or
+  key that a plain Map can lack (`rtl`, `usePointStyle`, `external`, `filter`, `itemSort`,
+  `xAlign`, `yAlign`) applies `ToBoolean` or `||`. Thus Dart `null` and `undefined` give one
+  result (Chart.js ADR 0017 §8). A numeric option in arithmetic goes through `jsToNumber`. A
+  value for the canvas goes through `canvasStyle`, `canvasNumber`, `canvasKeyword` or
   `canvasLineDash` of `js_webidl.dart`.
+- `draw` reads `textDirection` with `jsGet(options, 'textDirection')`. An absent key of a plain
+  Map then gives `undefined`, and `restoreTextDirection` does nothing, as upstream. The Map read
+  gives Dart `null`, and `restoreTextDirection` then throws the `TypeError` of `null[0]`.
 - `handleEvent`, `_getActiveElements` and `_positionChanged` read `this.options` without
   `setContext` (:1145, :1184, :1217), as upstream.
 - A typed snapshot of the draw options is not used. It saves 10-21 µs for each frame, below the
@@ -403,29 +418,38 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
 
 ### 8. Callbacks and their `this`
 
-- `defaultCallbacks` is a top-level `AnyObject` with the 14 upstream keys in the upstream order
-  (:361-436). `title`, `label` and `labelTextColor` read `this`, so they are `JsFunction`
-  values. `labelColor`, `labelPointStyle` and the 9 `noop` entries are Dart functions. The
-  plugin `defaults` holds the same Map under `callbacks` (:1324).
+- `_defaultCallbacks` is a private top-level `AnyObject` with the 14 upstream keys in the
+  upstream order (:361-436). `title`, `label` and `labelTextColor` read `this`, so they are
+  `JsFunction` values. `labelColor`, `labelPointStyle` and the 9 `noop` entries are Dart
+  functions. The plugin `defaults` holds the same Map under `callbacks` (:1324).
 - The defaults read `this.options` with one helper. A falsy `this` gives itself, so
   `this && this.options` short-circuits. A `types.ElementPropertyRead` gives `self['options']`.
   Another value gives `jsGet(self, 'options')`. `labelTextColor` then reads
   `jsGet(..., 'bodyColor')`, which throws a `TypeError` without `this`, as upstream.
 - The `+` of the dataset mode and of the default `label` is `jsAdd`. `labels[item.dataIndex]`
-  is `jsGetIndex`. `item.dataIndex < labelCount` is `jsLessThan` (Chart.js ADR 0036).
-- `invokeCallbackWithFallback` is the upstream helper with one test first:
+  is `jsGetIndex` for a number index, else `jsGet`. `item.dataIndex < labelCount` is
+  `jsLessThan` (Chart.js ADR 0036).
+- `invokeCallbackWithFallback` is the upstream helper with one test first. It drops the
+  underscore and has `@visibleForTesting`, because the port test reads it (Chart.js ADR 0012):
 
   ```dart
-  Object? _invokeCallbackWithFallback(
-      Object? callbacks, String name, Object? ctx, Object? arg) {
+  @visibleForTesting
+  Object? invokeCallbackWithFallback(
+    Object? callbacks,
+    String name,
+    Object? ctx,
+    Object? arg,
+  ) {
     final callback = jsGet(callbacks, name);
-    final fallback = defaultCallbacks[name];
+    final fallback = _defaultCallbacks[name];
     // Both upstream calls call noop: no effect, and the result is undefined.
     if (identical(callback, noop) && identical(fallback, noop)) return undefined;
     final result = jsCall1(callback, arg, thisArg: ctx);
+
     if (identical(result, undefined)) {
       return jsCall1(fallback, arg, thisArg: ctx);
     }
+
     return result;
   }
   ```
@@ -439,9 +463,10 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
 - A Dart closure that must give `undefined` returns the sentinel. A closure that returns Dart
   `null` gives JS `null`, and the default does not run (Probes).
 - `overrideCallbacks` calls `jsCall(jsGet(callbacks, 'override'), [override], thisArg:
-  callbacks)`. `options.filter` is a `jsCall` with 4 arguments (:615). `options.itemSort` goes
-  through `jsSort` (:620) with the `jsToNumber` of the comparator result.
-- `splitNewlines` tests `str is String`. `pushOrConcat` tests `jsTruthy` and `is List`.
+  callbacks)`. `options.filter` is a `jsCall` with 4 arguments and `thisArg: options` (:615, a
+  method call). `options.itemSort` goes through `jsSort` (:620) with the `jsToNumber` of the
+  comparator result, and its `jsCall` has `thisArg: options`.
+- `splitNewlines` tests `str is String`. `pushOrConcat` tests `jsTruthy` and `isArray`.
 
 ### 9. Animations and `Object.freeze`
 
@@ -465,16 +490,29 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
 ### 10. `helpers.merge` with an element target
 
 - `merge` of `helpers.core.dart` treats a `types.PropertyAccess` target as an object target. It
-  writes through a private Map view of the target that has only `operator []` and
-  `operator []=`. `merger` also recurses when `tval` is a `types.PropertyAccess` and `sval` is an
-  object. `merge` returns the original target, not the view.
-- `isObject`, `clone`, `mergeIf` and `mergerIf` do not change. `isObject` runs in each resolver
-  and config path, and `clone` would need the keys of an element.
+  writes through a private Map view of the target (`_PropertyAccessView`) that has only
+  `operator []` and `operator []=`. `merger` also recurses when `tval` is a
+  `types.PropertyAccess` and `sval` is an object. `merge` returns the original target, not the
+  view.
+- `isObject`, `clone` and `mergerIf` do not change. `isObject` runs in each resolver and
+  config path, and `clone` would need the keys of an element. `mergeIf` returns a target that
+  is not an object at once, before its `merge` call. Without this test, `mergeIf` of an
+  element goes into the view, and `mergerIf` calls `containsKey`, which the view cannot
+  answer: it throws an `UnsupportedError`. For every other target the result does not
+  change, because `merge` returns a target that is not an object at once.
 - Each changed hunk carries `// DIVERGES(chartjs): adapt-merge-element-target, ...`. The new row
   `adapt-merge-element-target` records what stays different: `clone` keeps an element as a
   reference where upstream copies its own keys, `mergeIf` does not write into an element target,
-  and a custom `merger` that enumerates the target throws an `UnsupportedError`. No Chart.js
-  merger enumerates its target.
+  `merge` skips an element source where upstream copies its own keys, an element source value
+  replaces an element target value where upstream merges its own keys into it, and a custom
+  `merger` that enumerates the target throws an `UnsupportedError`. No Chart.js merger
+  enumerates its target. The markers are in `merge`, `merger` and `mergeIf`.
+- Chart.js ADR 0006 says that a class instance in an options tree stays a leaf. This stays true
+  for `clone` and `mergeIf`, and for a class instance as a source or as a source value of
+  `merge`. `merge` enters a `types.PropertyAccess` target, and a `types.PropertyAccess` value of
+  a Map target when the source value is an object. This section states that exception.
+  [Chart.js ADR 0043](0043-options-representation-and-resolver.md) restates Chart.js ADR 0006
+  with this exception, and supersedes it on acceptance.
 - Thus the four spec lines stay `merge(tooltip, view)`. `Chart.helpers.merge` is public, and
   upstream writes into any class instance target. The branch closes that difference for each
   element of the port at no cost on the Map path (Benchmarks). The spec result does not depend
@@ -482,29 +520,35 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
 - The change of `helpers.core.dart`, a shared layer, is its own commit.
 - `_isObject` of `packages/chartjs_test_utils/lib/src/matchers.options.dart` is also true for a
   `types.ElementPropertyRead`, and `_compareObject` reads it with `object[key]`. This is the
-  upstream `isObject` of chartjs-test-utils `src/matchers.options.js:1-3`, which is true for a
-  class instance. Thus no row. Spec :1350 (`expect(tooltip).toEqualOptions(...)`) needs it.
+  upstream `isObject` of chartjs-test-utils `src/matchers.options.js:2-4`, which is true for a
+  class instance. Thus no row for an actual element. Spec :1350
+  (`expect(tooltip).toEqualOptions(...)`) needs it. An expected element compares with `===`,
+  because the port has no list of its own keys. Upstream compares its own keys. The marker
+  and the row `harness-expected-element` record it.
 
 ### 11. The canvas literals, the RTL helpers and the lines
 
 - `drawPoint` gets a `PointOptions` Map with the four keys of :800-805
-  (`{'radius': ..., 'pointStyle': ..., 'rotation': ..., 'borderWidth': 1}`).
+  (`{'radius': ..., 'pointStyle': ..., 'rotation': ..., 'borderWidth': 1.0}`).
   `PointOptions` implements `DrawPointOptions` and applies `jsToNumber` in its getters. One object
   for each color box with `usePointStyle`, as upstream.
 - `addRoundedRectPath` gets a private `_RoundedRect implements RoundedRect` with the keys of
-  :835-841 (Chart.js ADR 0017 §8). The row `adapt-rounded-rect-path` already names
-  `plugin.tooltip.js` as a caller. If the legend unit adds a public class for the same literal,
-  the tooltip uses it.
+  :835-841 (Chart.js ADR 0017 §8). The row `adapt-rounded-rect-path` names
+  `Tooltip._drawColorBox` as a caller. The legend keeps its own private `_RoundedRect`
+  (`plugin.legend.dart`). Thus the tooltip has its own copy (Open 4).
 - `Object.values(borderRadius).some(v => v !== 0)` (:832) reads the four members of the
   `TRBLCorners` of `toTRBLCorners` (row `adapt-options-typed-results`).
   `Math.max(...Object.values(labelColor.borderWidth))` (:822) reads the values of a Map
   `borderWidth` in `jsObjectKeys` order with `jsMax` and `jsToNumber`.
-- `pt` of `draw` (:1054-1057) is a private mutable class with `double x` and `double y`.
-  `drawTitle`, `drawBody` and `drawFooter` change it, as upstream changes the literal.
+- `pt` of `draw` (:1054-1057) is the public mutable class `TooltipPoint` with `double x` and
+  `double y`. It is public because `drawTitle` (:756), `drawBody` (:871), `drawFooter` (:935)
+  and `drawBackground` (:961) are public upstream methods and take it (rule 2, Chart.js ADR
+  0012; the lint `library_private_types_in_public_api`). `drawTitle`, `drawBody` and
+  `drawFooter` change it, as upstream changes the literal.
 - The RTL calls are the upstream calls of `helpers.rtl.dart`: `getRtlAdapter(options['rtl'],
-  x, width)`, `overrideTextDirection(ctx, options['textDirection'])` and
-  `restoreTextDirection(ctx, options['textDirection'])`. Upstream gives the option value, not
-  the saved value, to `restoreTextDirection` (:1087). The port keeps it.
+  x, width)`, `overrideTextDirection(ctx, jsGet(options, 'textDirection'))` and
+  `restoreTextDirection(ctx, jsGet(options, 'textDirection'))` (section 7). Upstream gives the
+  option value, not the saved value, to `restoreTextDirection` (:1087). The port keeps it.
 - `measureText` and `fillText` get `jsToString(line)`, the WebIDL `DOMString` of a line that is
   not a string.
 
@@ -514,16 +558,19 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
   `jsTruthy(options)`. No other hook writes `chart.tooltip`. `beforeUpdate` and `reset` call
   `initialize` when `chart.tooltip` is not null.
 - `afterDraw` makes `args = {'tooltip': tooltip}`. It notifies `beforeTooltipDraw` with a new Map
-  `{...args, 'cancelable': true}`, stops for an `identical(..., false)` result, draws, and
+  `{...args, 'cancelable': true}`, stops for the result `false`, draws, and
   notifies `afterTooltipDraw` with `args`. The registry order puts `tooltip` last (Chart.js ADR
   0020 §6). Thus the hook order of the Probes needs no change of `core.plugins.dart`.
 - `afterEvent` calls `handleEvent(args['event'], args['replay'], args['inChartArea'])` and writes
   `args['changed'] = true` for a true result.
 - `handleEvent(types.ChartEvent e, [Object? replay = undefined, Object? inChartArea =
   undefined])` applies the JS default: `undefined` gives `true` for `inChartArea`.
-- `_getActiveElements` calls `chart.getElementsAtEventForMode(e, options['mode'], options,
-  replay)` through `types.Chart` (Chart.js ADR 0038). `active.reverse()` reverses the list in
-  place. The items come from the same list, so the covariant store of the concrete
+- `_getActiveElements` calls `chart.getElementsAtEventForMode(e, jsGet(options, 'mode'),
+  options, useFinalPosition)` through `types.Chart` (Chart.js ADR 0038). The parameter
+  `useFinalPosition` is a `bool?`. Thus a `bool` `replay` stays, another truthy value gives
+  `true`, and another falsy value gives `null`. The built-in modes read it with `ToBoolean`
+  only (`core.element.ts:35`). `active.reverse()` reverses the list in place
+  (`_reverseInPlace`). The items come from the same list, so the covariant store of the concrete
   `List<InteractionItem>` accepts them, and the list keeps its identity, as upstream.
 - `external` is `jsCall(external, [<String, Object?>{'chart': chart, 'tooltip': this, 'replay':
   replay}], thisArg: this)`, with the key order of the Probes.
@@ -589,17 +636,24 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
   result with `xAlign` and `yAlign`, `{}`, NaN, 0, -0 and `[-0]`), the callbacks (`undefined`
   against `null`, the noop test for the 14 names), the animations (the `$animations` keys, the
   empty cache), the number path of Chart.js ADR 0019 §6 on the tooltip, the draw order, the
-  options `false`, `external`, `setActiveElements` (the throw of index 99, the number index) and
-  a write by name of `_active`.
+  options `false`, `external`, `setActiveElements` (the throw of index 99, the number index), a
+  write by name of `_active`, the class value and `adapt-component-class-role`, the `this` of
+  `filter` and `itemSort`, and the calls of the canvas style for `textDirection`.
 - `test/port/helpers/helpers.core_test.dart`, group `adapt-merge-element-target`: the six results
-  of the two `merge` calls of the Probes on an `Element` and on a `Tooltip`, and the `clone` and
-  `mergeIf` differences of the row.
+  of the two `merge` calls of the Probes on an `Element` and on a `Tooltip`, and the `clone`,
+  `mergeIf` and two `merge` differences of the row.
+- `packages/chartjs_test_utils/test/matchers_test.dart`: an element as an actual object of
+  `toEqualOptions`, and the group `harness-expected-element`.
 - A reference test compares the tooltip model and the draw calls with the build at the pin,
   through the harness of Chart.js ADR 0041.
-- Rows: new `adapt-merge-element-target` and `adapt-active-elements-number-index`. Changed
-  `harness-method-fields` (it adds `Tooltip.update`) and `js-semantics-object-freeze` (it adds the
-  `_cacheable` sentence of section 9). No other row: the record of section 5 and the noop test of
-  section 8 give the same result for each input of the contract.
+- Rows: new `adapt-merge-element-target`, `harness-expected-element` and
+  `adapt-active-elements-number-index`. Changed `harness-method-fields` (it adds
+  `Tooltip.update`), `js-semantics-object-freeze` (it adds the `_cacheable` sentence of section
+  9), `adapt-component-class-role` (it adds the constructor of `Tooltip`),
+  `harness-fixture-sources` (it adds the raw `mousemove` of the 8 tooltip fixtures) and
+  `adapt-rounded-rect-path` (it adds the caller `Tooltip._drawColorBox`). No other row: the
+  record of section 5 and the noop test of section 8 give the same result for each input of the
+  contract.
 
 ## Alternatives considered
 
@@ -688,18 +742,24 @@ from P, and the `PointOptions` literal and the `this` helper from S.
   `index.d.ts:2648-2699` with no cast.
 - A spec and a user replace `tooltip.update` on one tooltip. The row `harness-method-fields`
   has four members.
-- `Chart.helpers.merge` writes into an element target, as upstream. `clone` and `mergeIf` keep
-  the leaf rule of `isObject`, and a row records it.
+- `Chart.helpers.merge` writes into an element target, as upstream. `clone`, `mergeIf` and an
+  element source of `merge` keep the leaf rule of `isObject`, and a row records it. In
+  `toEqualOptions`, an expected element compares with `===`, and a row records it.
 - An option `xAlign` or `yAlign` that is not a string, and a positioner coordinate that is a
-  string, throw an `ArgumentError`. Upstream stores them.
+  string or JS `null`, throw an `ArgumentError`. Upstream stores them.
 - A raw index of another type than number becomes a number in `setActiveElements`.
 - The update path is about 0.4-1.6 µs faster for each update with 3 items than the upstream form
   of the callbacks, and the alignment record saves about 0.13-0.19 µs for each update and each
   animated draw.
-- Two new rows and two changed rows. One new `DIVERGES` marker for `update`, the markers of
-  `adapt-merge-element-target` in `helpers.core.dart`, and the markers of
-  `adapt-active-elements-number-index` in `core.controller.dart` and `plugin.tooltip.dart`. No
-  skip reason. Chart.js ADRs 0017, 0019, 0020 and 0028 do not change.
+- Three new rows and five changed rows (section 15). New `DIVERGES` markers: one for `update`
+  (`harness-method-fields`) and one for `_tooltipConfig` (`adapt-component-class-role`) in
+  `plugin.tooltip.dart`, three of `adapt-merge-element-target` in `helpers.core.dart` (`merge`,
+  `merger` and `mergeIf`), one of `harness-expected-element` in
+  `packages/chartjs_test_utils/lib/src/matchers.options.dart` (`_compareOption`), and one of
+  `adapt-active-elements-number-index` in each of `core.controller.dart` and
+  `plugin.tooltip.dart`. No skip reason. Chart.js ADRs 0017, 0019, 0020 and 0028 do not change.
+  [Chart.js ADR 0043](0043-options-representation-and-resolver.md) restates Chart.js ADR 0006
+  with the exception of section 10 for a `merge` target. It keeps the leaf rule for the rest.
 
 ## Open
 
@@ -715,8 +775,9 @@ from P, and the `PointOptions` literal and the `this` helper from S.
 3. **A shared strict equality.** `core.layouts.dart` and `scale.category.dart` have private
    copies of `===`, and the tooltip adds a third. A shared `jsStrictEquals` in `lib/src/js/` is
    outside this ADR. Owner: the shared JS runtime of ADR 0008.
-4. **A public rounded rectangle literal.** Owner: the legend unit. If it adds a public class for
-   `{x, y, w, h, radius}`, the tooltip uses it in place of `_RoundedRect`.
+4. **A public rounded rectangle literal.** `plugin.legend.dart` and `plugin.tooltip.dart` each
+   have a private `_RoundedRect` for `{x, y, w, h, radius}`. A public class can replace both.
+   Owner: the porting lead.
 5. **The touch lift (#7738) and the tooltip fixtures.** Chart.js ADR 0037 decides the input path.
    Chart.js ADR 0041 decides the fixture notes. This ADR keeps the upstream event handling of
    :1139-1220.
@@ -732,11 +793,11 @@ The benchmarks ran on an Apple M3 Max, macOS 26, Dart 3.13.5, at a load average 
     `:1006-1091`, `:1097-1220`, `:1223-1349`
   - `src/types/index.d.ts:515-518`, `:544`, `:577`, `:2648-2699`, `:2702`
   - `src/core/core.controller.js:1093-1112`
-  - `src/helpers/helpers.core.ts:53-55`, `:190`, `:220-233`, `:249-286`, `:310`
+  - `src/helpers/helpers.core.ts:53-55`, `:190`, `:220-233`, `:249-286`, `:301-304`, `:310`
   - `test/specs/plugin.tooltip.tests.js:1-6`, `:26`, `:30`, `:964-968`, `:1027-1039`,
     `:1045-1088`, `:1148-1155`, `:1350`, `:1378-1497`, `:1499-1603`
   - `test/specs/core.controller.tests.js:1718-1724`
-  - chartjs-test-utils `src/matchers.options.js@v0.4.0:1-3`
+  - chartjs-test-utils `src/matchers.options.js@v0.4.0:2-4`, `:94-105`
 - **E1, behavior probes (Node.js):** the Probes table of the Context. They cover the class and
   its keys, `merge` and `Object.assign` with a tooltip target, number lines and labels, the
   default callbacks with and without `this`, `undefined` against `null` results, the noop user
@@ -751,13 +812,17 @@ The benchmarks ran on an Apple M3 Max, macOS 26, Dart 3.13.5, at a load average 
   `flutter_tester`. The figures go to [performance.md](../performance.md) in step 8 with the
   device figures.
 - **E4, the port code read:** `lib/src/helpers/helpers.core.dart` (`isObject`, `merger`,
-  `merge`, `noop`), `lib/src/helpers/helpers.collection.dart` (`arrayUnique`),
-  `lib/src/core/core.element.dart` (`operator []`, `operator []=`, `hasValue`,
+  `merge`, `mergeIf`, `noop`), `packages/chartjs_test_utils/lib/src/matchers.options.dart`
+  (`_isObject`, `_compareObject`, `_compareOption`), `lib/src/helpers/helpers.collection.dart`
+  (`arrayUnique`), `lib/src/core/core.element.dart` (`operator []`, `operator []=`, `hasValue`,
   `tooltipPosition`), `lib/src/core/core.controller.dart` (`setActiveElements`),
   `lib/src/elements/element_options.dart` (`PointOptions`), `lib/src/js/js_function.dart`
   (`JsFunction`, `jsCall`, `jsCall1`), `lib/src/canvas/canvas_ui.dart` (the paragraph key of
   `fillText`), `lib/src/canvas/canvas_ui_text.dart` (the cache sizes).
 - **E5, the rows:** [differences.md](../differences.md) rows `harness-method-fields`,
   `js-semantics-object-freeze`, `adapt-rounded-rect-path`, `adapt-animation-number-path`,
-  `adapt-options-typed-results` and `harness-mock-optional-args`. A search of `differences.md`
-  for `isObject` and `merge` found no row for the leaf rule of `isObject`.
+  `adapt-options-typed-results`, `harness-mock-optional-args`, `harness-fixture-sources` and
+  `adapt-component-class-role`. A search of `differences.md` for `isObject` and `merge` found no
+  row for the leaf rule of `isObject`. Section 15 gives the rows that this decision adds
+  (`adapt-merge-element-target`, `harness-expected-element` and
+  `adapt-active-elements-number-index`) and changes.

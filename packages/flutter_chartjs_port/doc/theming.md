@@ -170,7 +170,11 @@ In phase 5, the tokens emit only the root `color`, the `scale` keys and the elem
 adds the `scales.radialLinear` keys. Phase 8 adds the plugin keys and the palette keys. Wave 1
 adds `plugins.title.color`, `plugins.title.font` and the palette keys. Wave 2 adds
 `plugins.subtitle.color`, `plugins.subtitle.font` (without `weight`) and the two legend fonts
-`plugins.legend.labels.font` and `plugins.legend.title.font` (the whole font token).
+`plugins.legend.labels.font` and `plugins.legend.title.font` (the whole font token). Wave 3 adds
+the tooltip keys: the tokens `inverseSurface` and `onInverseSurface` give
+`plugins.tooltip.backgroundColor`, `titleColor`, `bodyColor`, `footerColor` and
+`multiKeyBackground`. The font token gives `plugins.tooltip.bodyFont` (the whole font token) and
+`titleFont` and `footerFont` (without `weight`). The tooltip keys come after the legend keys.
 
 Never emitted. A debug assert and the emission test enforce this list.
 
@@ -518,13 +522,16 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    legend, tooltip, title and subtitle keys, with colors parsed. The JS prototype matched 16 of 16
    cases with the explicit palette. The group `test 3: the light palette` of
    `precedence_test.dart` has the part with the colors plugin on (phase 8, wave 1). The plugin
-   keys come with their plugins.
+   keys are in `presets_plugins_test.dart` (phase 8, wave 3).
 4. **Coverage snapshot.** A committed JSON snapshot holds `compileChartTheme(ChartThemes.light)`.
    The test compares it with the defaults inventory of the upstream manifest (porting-flow.md,
    tool 4) and a `notThemed` list with a reason per key. It reports:
    - ADDED: a visual leaf that is neither emitted nor listed
    - REMOVED: an emitted path that upstream no longer has
    - CHANGED: an emitted value that differs from upstream, with the new literal
+   - STALE: a `notThemed` key that upstream removed, that the preset emits, or whose upstream
+     value differs from the value that its reason uses (the local font weights of title,
+     subtitle and tooltip)
 5. **Emission rules.** Presets and test themes compile only to allowed paths. A themed
    `scales.<id>` fails the emission guard and creates no axis on a doughnut. A themed
    `scales.radialLinear` creates no axis on a bar chart.
