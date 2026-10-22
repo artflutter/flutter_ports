@@ -305,6 +305,16 @@ Changes to the cited files:
   that review. §3.7 now gives the lines of the current porting-flow.md: §2.2 at lines 248-249,
   §2.7 at lines 341-344 and the harness rows at lines 761-762. The inventory (§1.1), the tests of
   §2.6 and §3.5 and the estimates do not change.
+- 2026-10-22, the sole shape of a shape pair in step 7 of phase 7 ([performance.md](performance.md)
+  §13). `lib/src/canvas/canvas_ui.dart` gets `_soleShape` and `debugSoleShape`. `fill` of a path
+  of two `rect` or `roundRect` commands, one of them with a width or a height of 0, draws the
+  other shape alone with `drawRect` or `drawRRect`, for both fill rules: the border ring of a bar
+  that is narrower than its two borders. `_ring` takes the pair as a parameter. The file has 36
+  lines more (1803 lines). Its lines 544 to 1284 move by +12, its lines 1297 to 1300 by +20 and
+  its lines after line 1319 by +36. §1.1, §2.3, §2.5 and §5 give the new line numbers. The inventory row of the fast paths of
+  the context grows from 72 to 109 lines. `test/port/canvas/canvas_ui_round_rect_test.dart` gets
+  two tests. The cuts do not remove the new code, so the estimates do not change. No trigger
+  occurred.
 
 ## 1. Why
 
@@ -344,9 +354,9 @@ the estimate (§3.9).
 | The shape tracking of the fast paths (`singleRRect`, `shapePair`, `_trackShape`, the fields `_rrect`, `_shape0`, `_shape1`) | `canvas_ui_path.dart:306-311`, `:321-351` | 37 | None. `ui.Path` does not tell its shapes. | **Keep**. A performance addition (porting-flow.md §1.1). |
 | `rrectContains` and `_cornerContains` (the inner rounded rectangle is inside the outer one) | `canvas_ui_path.dart:938-1049` | 112 | None. `RRect.contains` tests one point. | **Keep**. A performance addition (porting-flow.md §1.1): the condition of `drawDRRect`. |
 | `roundRect` of the interface: `CanvasPath.roundRect`, `RoundRectGeometry`, `roundRectGeometry` (the HTML steps 1 to 11), `Path2D.roundRect`, `RoundRectCommand` | `lib/src/canvas/canvas.dart:92-104`, `:107-253`, `:698-713`, `:961-983` | 199 | None. The pure layer has no `dart:ui`. | **Keep**. A performance addition (porting-flow.md §1.1). |
-| The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect` and `drawDRRect` branch of `fill`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing` and `debugClips` | `canvas_ui.dart:378-385`, `:533-556`, `:1226-1228`, `:1284-1296`, `:1301-1319`, `:1361-1365` | 72 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
+| The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill`, `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:378-385`, `:533-569`, `:1239-1241`, `:1296-1316`, `:1321-1355`, `:1397-1401` | 109 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
 | `CircleBatch` | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
-| Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1649-1670` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
+| Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1685-1706` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
 | `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:520-533` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
 | `UiCanvasElement.devicePixelRatio` and `logicalSize` | removed (`canvas_ui.dart:142`, `:175-192` at 69f9d97) | 0 | The host gives the paint scale | **Done** (C2): removed |
 | The paint mapping: display / bitmap for each axis, exactly 1 / DPR within 1e-3 | `chart_host.dart:670-674`, `:697-708` | 17 | `Canvas.scale` in `UiCanvasContext.paint` | **Done** (C2): the one mapping from the bitmap to the display size |
@@ -415,17 +425,17 @@ and its own `Float64List`. Never reuse a scratch path or `_m4` for them.
 
 The same aliasing is a defect today, on the web only. Work package W fixes it before cut 1.
 
-- `canvas_ui.dart:1338`: `stroke()` under a transform that is not a similarity calls
+- `canvas_ui.dart:1374`: `stroke()` under a transform that is not a similarity calls
   `_strokeUser(_path.path.transform(t.writeInverseMatrix4(_m4)))`. `_strokeUser` then writes the
-  forward matrix into `_m4` (`:882`) before `drawPath` builds the lazy path. The probe was
+  forward matrix into `_m4` (`:894`) before `drawPath` builds the lazy path. The probe was
   `transform(1, 0, 0, 3, 0, 0)`, a line at y = 10 and `stroke()`. On the VM, rows 27 to 32 had ink.
   On CanvasKit and on skwasm, nothing was drawn.
-- `canvas_ui.dart:1356`: a `Path2D` clip calls `uiPathOf(path2d).transform(s.transform.writeMatrix4(_m4))`.
+- `canvas_ui.dart:1392`: a `Path2D` clip calls `uiPathOf(path2d).transform(s.transform.writeMatrix4(_m4))`.
   The state keeps the clip and replays it into later recordings. After the frame arena discards
   the built path, the path builds again with the value that `_m4` has then. The probe did not show
   it, because the probe rendered no second frame.
 - `canvas_ui_paint.dart:136` and `:373-377`: `shaderFor` keeps a copy in `_lastMatrix`, but
-  `_build(matrix)` gives the caller's matrix (the shared `_m4`, from `canvas_ui.dart:763`) to
+  `_build(matrix)` gives the caller's matrix (the shared `_m4`, from `canvas_ui.dart:775`) to
   `ui.ImageShader`. CanvasKit keeps that reference (`canvaskit/shader.dart:252`) and builds the
   shader again from it when the filter quality changes. The risk is low.
 
@@ -468,8 +478,8 @@ Do step 0 in work package W. Do steps 1 to 6 in work package C1.
 
 0. **Fix the web aliasing** (work package W, its own commit,
    `fix(flutter_chartjs): copy the matrices that the web paths read late`):
-   - `canvas_ui.dart:1338`: `t.writeInverseMatrix4(Float64List(16))`.
-   - `canvas_ui.dart:1356`: `s.transform.writeMatrix4(Float64List(16))`.
+   - `canvas_ui.dart:1374`: `t.writeInverseMatrix4(Float64List(16))`.
+   - `canvas_ui.dart:1392`: `s.transform.writeMatrix4(Float64List(16))`.
    - `canvas_ui_paint.dart` `shaderFor`: call `_build(_lastMatrix)`, so that the shader keeps the
      copy and not the buffer of the caller.
    - Add a comment at each place: the web renderers read the path and the matrix when they build
@@ -1115,7 +1125,7 @@ commit. The rows differ, so the edits do not overlap. Run the gates of §6.2 bef
 | A2 | Cut 2 tests | `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (row 419) | — | A1, A3, I | The 7 tests of §3.5 that pin the stretch and the display size | Green on the current code. Gates. | 241 test lines, 0.5 day. **Done in phase 5** (2026-10-19, trigger 1) |
 | A3 | Arc scenario and new baselines | `apps/chartjs_gallery/lib/demo/stress_demo.dart`, `apps/chartjs_gallery/lib/main_stress.dart`, `apps/chartjs_gallery/test/canvas_host_demo_test.dart` (if needed), `apps/chartjs_gallery/test/stress_elements_test.dart` (if needed), `doc/performance.md` (new baseline section) | — | A1, A2, I | `--dart-define=POINT_STYLE=<style>` in the stress entry. The baseline of §6.3 on 3 platforms. A scratch micro-benchmark of 5000 wedges (not committed). See the note on A3 below. | Baseline recorded with the commit hash. Old tables marked stale. | ~40 lines, 1 day of runs |
 | I | Renderer probes (optional) | `apps/chartjs_gallery/integration_test/canvas_paths_test.dart` (new), `apps/chartjs_gallery/pubspec.yaml`, root `pubspec.lock` | — | A1, A2, A3 | The web probes of §2.6 as a gallery integration test | Runs on the Pixel 8a, on macOS and in Chrome (dart2js and `--wasm`). Merge alone (lock file). | ~150 lines, 1 day |
-| W | Web matrix aliasing fix | `lib/src/canvas/canvas_ui.dart` (1338, 1356), `lib/src/canvas/canvas_ui_paint.dart` (`shaderFor`), `doc/parity.md` (rows 375, 377) | A1 | A2, A3 | Step 0 of §2.5 | VM pixels unchanged. The stroke probe and the clip probe pass on CanvasKit and on skwasm. | ~6 lines, 0.5 day |
+| W | Web matrix aliasing fix | `lib/src/canvas/canvas_ui.dart` (1374, 1392), `lib/src/canvas/canvas_ui_paint.dart` (`shaderFor`), `doc/parity.md` (rows 375, 377) | A1 | A2, A3 | Step 0 of §2.5 | VM pixels unchanged. The stroke probe and the clip probe pass on CanvasKit and on skwasm. | ~6 lines, 0.5 day |
 | C1 | Cut 1 code | `lib/src/canvas/canvas_ui_path.dart`, `test/port/canvas/canvas_ui_path_test.dart` (thresholds only), `doc/parity.md` (row 376) | A1, W | C2 | Steps 1 to 6 of §2.5 | All tests green. Web probes pass. Perf of §6.3 within the thresholds. | ~-45 net library lines, 1 day |
 | C2 | Cut 2 code (option A) | `lib/src/canvas/canvas.dart`, `lib/src/canvas/canvas_ui.dart`, `lib/src/platform/platform.flutter.dart`, `lib/src/platform/chart_host.dart`, `test/port/canvas/canvas_ui_test.dart`, `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (rows 375, 382, 383, 389, 419) | A2, W | C1 | Steps 1 to 6 of §3.4 and the test changes of §3.5 | All tests green. Gallery unchanged on web, macOS and the Pixel 8a. Perf within the thresholds. | ~-10 net library lines, ~+100 test lines, 1.5 days. **Done in phase 5** (2026-10-19, trigger 1) without W, with steps 1 to 7 of §3.4: net +25 library lines, +223 and -67 test lines (§3.9, §3.10). It also changed `canvas_ui_round_rect_test.dart`, `pixel_compare.dart`, `element.arc_test.dart`, `helpers.canvas_test.dart`, Chart.js ADR 0013, Chart.js ADR 0014, `porting-flow.md` and the `parity.md` rows 380 and 418. Its perf runs are in [performance.md](performance.md) §9 (the C2 acceptance below this table). |
 | D | Docs | `doc/adr/0013-canvas-model.md`, `doc/adr/0014-input-events-and-chart-host.md`, `doc/porting-flow.md` | C1, C2 | P | §2.7 and §3.7 (ADR and porting-flow parts), and a "Removal" bullet in Chart.js ADR 0013 §8.1 (§4.1). C2 did the §3.7 part in phase 5. | Status lines unchanged. Links resolve. | ~60 changed lines, 0.5 day |

@@ -537,10 +537,22 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
   UiPathBuilder get debugPath => _path;
 
   /// The outer and the inner shape that `fill('evenodd')` of the current
-  /// path draws with `drawDRRect`, or `null` when it draws the path, for
-  /// tests.
+  /// path draws with `drawDRRect`, or `null` when it draws another shape or
+  /// the path, for tests.
   @visibleForTesting
-  ({ui.RRect outer, ui.RRect inner})? get debugRing => _ring();
+  ({ui.RRect outer, ui.RRect inner})? get debugRing {
+    final pair = _path.shapePair;
+    return pair == null || _soleShape(pair) != null ? null : _ring(pair);
+  }
+
+  /// The shape that [fill] of the current path draws alone with `drawRect`
+  /// or `drawRRect`, because the other shape of the path has no area, or
+  /// `null`, for tests.
+  @visibleForTesting
+  ui.RRect? get debugSoleShape {
+    final pair = _path.shapePair;
+    return pair == null ? null : _soleShape(pair);
+  }
 
   /// The clips of the current state, for tests: a `ui.Rect` for
   /// `clipRect`, a `ui.RRect` for `clipRRect` and a `ui.Path` for
@@ -1283,11 +1295,19 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
         );
       } else {
         final rrect = _path.singleRRect;
-        final ring = rrect == null && fillType == ui.PathFillType.evenOdd
-            ? _ring()
+        final pair = rrect == null ? _path.shapePair : null;
+        final sole = pair == null ? null : _soleShape(pair);
+        final ring = sole == null && fillType == ui.PathFillType.evenOdd
+            ? _ring(pair)
             : null;
         if (rrect != null) {
           _c.drawRRect(rrect, _fillPaint);
+        } else if (sole != null) {
+          if (sole.isRect) {
+            _c.drawRect(sole.outerRect, _fillPaint);
+          } else {
+            _c.drawRRect(sole, _fillPaint);
+          }
         } else if (ring != null) {
           _c.drawDRRect(ring.outer, ring.inner, _fillPaint);
         } else {
@@ -1298,15 +1318,31 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
     _drew();
   }
 
-  /// The two shapes of the current path as an outer and an inner shape, when
-  /// the path is two `rect` or `roundRect` commands ([UiPathBuilder.shapePair])
-  /// and one of them is inside the other ([rrectContains]). Then the
-  /// even-odd fill of the path is `drawDRRect(outer, inner)`: the border
-  /// ring of a bar (`element.bar.js:188-192`). An inner shape with no width
-  /// or no height takes the path: Skia then draws the outer shape, but the
-  /// other engines are not examined.
-  ({ui.RRect outer, ui.RRect inner})? _ring() {
-    final pair = _path.shapePair;
+  /// The shape of [pair] that has an area, when the other shape has no width
+  /// or no height and both shapes are finite. A subpath with no area adds no
+  /// winding and no coverage, for the nonzero and the even-odd rule, so the
+  /// fill of the path is the fill of that shape alone: `drawRect` when its
+  /// radii are 0, else `drawRRect`. It is the border ring of a bar
+  /// (`element.bar.js:188-192`) that is narrower or lower than its two
+  /// borders: `parseBorderWidth` clamps them, and the inner rectangle has a
+  /// width or a height of 0. A shape with a coordinate that is not finite
+  /// takes the path, as before.
+  static ui.RRect? _soleShape(({ui.RRect first, ui.RRect second}) pair) {
+    final (:first, :second) = pair;
+    if (!first.isFinite || !second.isFinite) return null;
+    if (second.width == 0 || second.height == 0) return first;
+    if (first.width == 0 || first.height == 0) return second;
+    return null;
+  }
+
+  /// The two shapes of [pair] as an outer and an inner shape, when one of
+  /// them is inside the other ([rrectContains]). Then the even-odd fill of
+  /// the path is `drawDRRect(outer, inner)`: the border ring of a bar
+  /// (`element.bar.js:188-192`). An inner shape with no width or no height
+  /// gives `null`: [_soleShape] fills the outer shape alone.
+  static ({ui.RRect outer, ui.RRect inner})? _ring(
+    ({ui.RRect first, ui.RRect second})? pair,
+  ) {
     if (pair == null) return null;
     final (:first, :second) = pair;
     if (second.width > 0 && second.height > 0 && rrectContains(first, second)) {

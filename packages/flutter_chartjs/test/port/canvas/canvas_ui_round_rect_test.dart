@@ -648,6 +648,7 @@ void main() {
         ctx.beginPath();
         shapes();
         expect(ctx.debugRing, isNull, reason: reason);
+        expect(ctx.debugSoleShape, isNull, reason: reason);
         expect(ctx.debugPath.singleRRect, isNull, reason: reason);
       }
 
@@ -665,9 +666,10 @@ void main() {
       );
       expectPath(
         () => ctx
-          ..roundRect(0, 0, 50, 50, 5)
-          ..rect(10, 10, 0, 20),
-        'an inner shape with no width',
+          ..rect(0, 0, 50, 50)
+          ..rect(10, 10, 20, 20)
+          ..rect(20, 20, 0, 10),
+        'three shapes, one with no width',
       );
       ctx
         ..save()
@@ -842,6 +844,115 @@ void main() {
             ..fill('evenodd');
         },
       );
+    });
+
+    test('a pair with a shape of no area draws the other shape', () {
+      final ctx = UiCanvasElement().getContext2d();
+      _retina(ctx);
+      // The border ring of a bar narrower than its two borders: the inner
+      // rectangle has a width of 0.
+      ctx
+        ..beginPath()
+        ..rect(10, 10, 0.5, 40)
+        ..rect(10.25, 10.5, 0, 39);
+      expect(ctx.debugRing, isNull);
+      final rect = ctx.debugSoleShape!;
+      expect(rect.isRect, isTrue);
+      expect(rect.left, closeTo((10 + 3.25) * 2.625, 1e-9));
+      expect(rect.width, closeTo(0.5 * 2.625, 1e-9));
+      // A height of 0, the shape with no area first.
+      ctx
+        ..beginPath()
+        ..rect(12, 30, 46, 0)
+        ..roundRect(10, 10, 50, 40, 3);
+      expect(ctx.debugRing, isNull);
+      expect(ctx.debugSoleShape?.tlRadiusX, closeTo(3 * 2.625, 1e-9));
+      // Two shapes with an area: the ring.
+      ctx
+        ..beginPath()
+        ..rect(10, 10, 50, 40)
+        ..rect(12, 12, 46, 36);
+      expect(ctx.debugSoleShape, isNull);
+      expect(ctx.debugRing, isNotNull);
+      ctx.dispose();
+    });
+
+    test('fill of a bar border ring with an inner shape of no area', () async {
+      // The bars at 5000 and 20000 items: each bar is narrower than its two
+      // borders of 1 px, so the inner rectangle has a width of 0. The fill
+      // of the outer rectangle alone (drawRect) against fillRect and against
+      // the path of the two subpaths (drawPath), for both fill rules. The
+      // pixels equal those of fillRect. The path differs on the edge
+      // pixels only: Skia takes up to 26 of the alpha of the pixels on the
+      // line of the subpath with no area (0.05 % of the ink of the bars).
+      // A subpath with no area adds no coverage: the anti-aliasing of
+      // drawPath gives the difference (Chart.js ADR 0034).
+      void bars(UiCanvasContext ctx, void Function(double x, double w) bar) {
+        _retina(ctx);
+        for (var i = 0; i < 60; i++) {
+          bar(10 + i * 1.7, 0.16 + i * 0.013);
+        }
+      }
+
+      for (final rule in ['evenodd', 'nonzero']) {
+        void pair(UiCanvasContext ctx) => bars(ctx, (x, w) {
+          ctx
+            ..beginPath()
+            ..rect(x, 12.7, w, 60.5)
+            ..rect(x + w / 2, 13.7, 0, 58.5);
+          expect(ctx.debugSoleShape, isNotNull);
+          ctx.fill(rule);
+        });
+        await _expectSamePixels(
+          pair,
+          (ctx) => bars(ctx, (x, w) => ctx.fillRect(x, 12.7, w, 60.5)),
+          reason: '$rule fillRect',
+        );
+        await _expectSamePixels(
+          pair,
+          (ctx) => bars(ctx, (x, w) {
+            final xi = x + w / 2;
+            ctx
+              ..beginPath()
+              ..moveTo(x, 12.7)
+              ..lineTo(x + w, 12.7)
+              ..lineTo(x + w, 73.2)
+              ..lineTo(x, 73.2)
+              ..closePath()
+              ..moveTo(xi, 13.7)
+              ..lineTo(xi, 13.7)
+              ..lineTo(xi, 72.2)
+              ..lineTo(xi, 72.2)
+              ..closePath()
+              ..fill(rule);
+          }),
+          edge: 32,
+          reason: '$rule path',
+        );
+      }
+      // A rounded outer shape and an inner shape with a height of 0, against
+      // the arcs of the outer shape alone. With the line of the shape with
+      // no area, the path takes up to 51 of the alpha of the pixels on that
+      // line (0.0002 % of the ink).
+      for (final box in _boxes) {
+        await _expectSamePixels(
+          (ctx) {
+            _retina(ctx);
+            ctx.beginPath();
+            _roundRect(ctx, box);
+            ctx.rect(box.x + 2, box.y + box.h / 2, box.w - 4, 0);
+            expect(ctx.debugSoleShape, isNotNull, reason: '$box');
+            ctx.fill('evenodd');
+          },
+          (ctx) {
+            _retina(ctx);
+            ctx.beginPath();
+            _arcs(ctx, box);
+            ctx.fill('evenodd');
+          },
+          reason: '$box',
+        );
+      }
     });
 
     test('clip of a roundRect (clipRRect)', () async {
