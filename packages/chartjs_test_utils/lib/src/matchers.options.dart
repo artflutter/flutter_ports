@@ -9,7 +9,10 @@
 /// A JS object is a `Map<String, Object?>` and an array is a `List`
 /// (Chart.js ADR 0006). A resolver of `helpers.config` is a Map too. The
 /// property read `actual[key]` is [jsGet]: it runs the `get` trap of a
-/// resolver, and it gives [undefined] for an absent key.
+/// resolver, and it gives [undefined] for an absent key. An actual
+/// `types.ElementPropertyRead`, for example an element or a tooltip, is an
+/// object too: the read is its access by name (Chart.js ADR 0039, section
+/// 10).
 ///
 /// This library is a pure layer.
 library;
@@ -24,16 +27,20 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
-/// matchers.options.js:2 `isObject`: `Object.prototype.toString.call(value)
+/// matchers.options.js:1-3 `isObject`: `Object.prototype.toString.call(value)
 /// === '[object Object]'`.
 ///
-/// A JS object is a `Map<String, Object?>` (Chart.js ADR 0006). A Dart
-/// object of another class has no properties that [jsGet] can read. Thus it
-/// is not an object here.
+/// Upstream it is true for a plain object and for an instance of a class,
+/// for example an element or a tooltip (`plugin.tooltip.tests.js:1350`).
+/// Here a JS object is a `Map<String, Object?>` (Chart.js ADR 0006) or a
+/// [types.ElementPropertyRead], the read by name of a class instance. A Dart
+/// object of another class has no properties that the matcher can read.
+/// Thus it is not an object here.
 bool _isObject(Object? value) {
-  return value is Map<String, Object?>;
+  return value is Map<String, Object?> || value is types.ElementPropertyRead;
 }
 
 /// matchers.options.js:6 `isArray`.
@@ -57,8 +64,9 @@ bool strictEquals(Object? actual, Object? expected) {
 /// array as JSON, any other value as `${val}` ([jsToString]).
 ///
 /// `JSON.stringify` drops a function or an [undefined] member of an object
-/// and writes `null` for one in an array. Here both give `null`. The
-/// message is only a report.
+/// and writes `null` for one in an array. Here both give `null`. An element
+/// has no list of its own keys, so its JSON is `null` too. The message is
+/// only a report.
 String _fmt(Object? val) {
   if (val is String) {
     return '"$val"';
@@ -140,7 +148,10 @@ _Comparison _compareObject(
     if (key.startsWith('_')) {
       continue;
     }
-    final act = jsGet(object, key);
+    // `actual[key]`: the access by name of a class instance, else jsGet.
+    final act = object is types.ElementPropertyRead
+        ? object[key]
+        : jsGet(object, key);
     final exp = expected[key];
     final cmp = _compareOption(act, exp, '$prefix$key');
     if (cmp.message != null) {
@@ -158,13 +169,20 @@ _Comparison _compareObject(
 
 /// matchers.options.js:94 `compareOption`: the [_Comparison] of an object or
 /// an array, or the `===` result of any other value with a null message.
+///
+/// An expected [types.ElementPropertyRead] has no list of its own keys. Thus
+/// it compares with `===` ([strictEquals]), where upstream compares its own
+/// keys (the row `harness-expected-element`). Another element or a plain
+/// object with the same own keys fails here and passes upstream. No ported
+/// spec gives an element as an expected value.
 ({bool pass, String? message}) _compareOption(
   Object? actual,
   Object? expected,
   String path,
 ) {
-  if (_isObject(expected)) {
-    return _compareObject(actual, expected! as Map<String, Object?>, path);
+  // DIVERGES(chartjs): harness-expected-element, === for an element.
+  if (expected is Map<String, Object?>) {
+    return _compareObject(actual, expected, path);
   } else if (_isArray(expected)) {
     return _compareArray(actual, expected! as List<Object?>, path);
   }

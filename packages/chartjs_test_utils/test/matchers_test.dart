@@ -1,6 +1,8 @@
 // Original code, not ported from Chart.js: tests of the harness matchers.
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/elements/element.point.dart'
+    as elements;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -411,6 +413,116 @@ void main() {
         ),
         'a: Expected [1,"x"] to equal 1',
       );
+    });
+
+    // matchers.options.js:1-3: isObject is true for an instance of a class,
+    // so an element is an actual object (Chart.js ADR 0039, section 10). The
+    // results come from the probe
+    // .handover/phase8/units/W3-merge/probes/to_equal_options_element.mjs:
+    // the pinned Chart.js build and matchers.options.js at v0.4.0 in Node.js
+    // v24.12.0 on x64.
+    group('an element', () {
+      elements.PointElement point() => elements.PointElement({
+        'x': 1,
+        'y': 2,
+        'options': <String, Object?>{
+          'radius': 3,
+          'nested': <String, Object?>{'a': 1},
+        },
+      });
+
+      test('passes with the expected keys', () {
+        expect(
+          point(),
+          toEqualOptions({
+            'x': 1,
+            'options': {
+              'radius': 3,
+              'nested': {'a': 1},
+            },
+          }),
+        );
+        expect(
+          {'el': point()},
+          toEqualOptions({
+            'el': {'x': 1},
+          }),
+        );
+      });
+
+      test('fails with a message for a wrong key', () {
+        expect(
+          _mismatch(toEqualOptions({'x': 2}), point()),
+          'x: Expected 1 to equal 2',
+        );
+        expect(
+          _mismatch(
+            toEqualOptions({
+              'options': {
+                'nested': {'a': 2},
+              },
+            }),
+            point(),
+          ),
+          'options.nested.a: Expected 1 to equal 2',
+        );
+      });
+
+      test('an absent name is undefined', () {
+        expect(point(), toEqualOptions({'z': undefined}));
+        expect(
+          _mismatch(toEqualOptions({'z': null}), point()),
+          'z: Expected undefined to equal null',
+        );
+      });
+
+      test('an element has no JSON in a message', () {
+        // Upstream writes the JSON of the own keys of the element. The port
+        // has no list of the keys, so the report gives null. The result of
+        // the match is the same.
+        expect(
+          _mismatch(
+            toEqualOptions({
+              'el': [1],
+            }),
+            {'el': point()},
+          ),
+          [
+            'el: Expected null to be an array',
+            'el.length: Expected undefined to equal 1',
+            'el[0]: Expected undefined to equal 1',
+          ].join('\n'),
+        );
+      });
+
+      // The row harness-expected-element. The upstream results come from the
+      // probe .handover/phase8/units/W3-merge/probes/
+      // review-expected-element.mjs.
+      group('harness-expected-element', () {
+        test('an expected element compares by identity', () {
+          // Port difference: upstream compares the own keys of an expected
+          // element. Thus another element with the same own keys passes,
+          // and a plain object with these keys passes. No ported spec gives
+          // an element as an expected value.
+          final element = point();
+          expect({'el': element}, toEqualOptions({'el': element}));
+          expect({'el': point()}, isNot(toEqualOptions({'el': element})));
+          expect(
+            {
+              'el': <String, Object?>{
+                'x': 1,
+                'y': 2,
+                'active': false,
+                'options': <String, Object?>{
+                  'radius': 3,
+                  'nested': <String, Object?>{'a': 1},
+                },
+              },
+            },
+            isNot(toEqualOptions({'el': element})),
+          );
+        });
+      });
     });
 
     test('a mismatch without a result of matches gives no text', () {
