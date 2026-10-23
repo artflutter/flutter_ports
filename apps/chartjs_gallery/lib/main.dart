@@ -16,8 +16,9 @@ void main() {
 /// (Chart.js ADR 0031). Each page shows the full chart of its docs blocks,
 /// with the plugins of `registerables`. Above the list, two demo pages show
 /// the ported code: the canvas layer and the chart host of phase 3 with the
-/// elements of phase 4, the core of phase 5 and the scales of phase 6, and
-/// the helpers of phase 2.
+/// elements of phase 4, the core of phase 5, the scales of phase 6, the
+/// controllers of phase 7 and the plugins of phase 8, and the helpers of
+/// phase 2.
 class GalleryApp extends StatelessWidget {
   /// Creates the gallery.
   const GalleryApp({super.key});

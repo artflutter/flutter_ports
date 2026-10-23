@@ -95,6 +95,9 @@ void main() {
       );
     }
     expect(find.byIcon(Icons.timelapse), findsNothing);
-    expect(find.textContaining('phase 8'), findsNothing);
+    expect(
+      find.textContaining(RegExp('phase 8', caseSensitive: false)),
+      findsNothing,
+    );
   });
 }

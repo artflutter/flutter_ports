@@ -130,7 +130,7 @@ const Map<String, _Expected> _expected = {
   ),
 };
 
-/// The `fill` warning of core.datasetController.js:285-289.
+/// The `fill` warning of core.datasetController.js:287-289.
 const String _fillWarning = "Tried to use the 'fill' option";
 
 /// The input line of the help text of each type page (Chart.js ADR 0037,
@@ -421,7 +421,7 @@ void main() {
     ]);
     // The gallery registers the plugins of registerables: the filler is
     // enabled, so the controller gives no fill warning
-    // (core.datasetController.js:286-288).
+    // (core.datasetController.js:287-289).
     expect(chart.isPluginEnabled('filler'), isTrue);
     expect(lines.where((l) => l.startsWith(_fillWarning)), isEmpty);
     expect(tester.takeException(), isNull);
@@ -645,7 +645,7 @@ void main() {
       state = await _open(tester, 'radar');
     });
     expect(state.chart!.isPluginEnabled('filler'), isTrue);
-    // core.datasetController.js:286-288 warns only without the filler.
+    // core.datasetController.js:287-289 warns only without the filler.
     expect(lines.where((l) => l.startsWith(_fillWarning)), isEmpty);
     expect(tester.takeException(), isNull);
   });

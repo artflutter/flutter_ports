@@ -40,9 +40,10 @@ canvasHostDemoTabs = [
   (key: 'axes', label: 'Axes', icon: Icons.straighten, build: AxesDemo.new),
 ];
 
-/// A live demo of the phase 3 to 7 ports: the canvas layer, the canvas and
+/// A live demo of the phase 3 to 8 ports: the canvas layer, the canvas and
 /// DOM helpers, the Flutter platform, the internal chart host, the
-/// elements, the core, the scales and the controllers.
+/// elements, the core, the scales, the controllers and the plugins (the
+/// legend and the tooltip of the Core and Axes tabs).
 ///
 /// Each drawing is a chart host (`ChartHost`) that shows a
 /// `UiCanvasElement`. In the first five tabs, a small demo chart makes the

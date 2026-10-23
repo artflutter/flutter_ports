@@ -20,9 +20,11 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// already clear.
 typedef DemoDraw = void Function(DemoChart chart, CanvasRenderingContext2D ctx);
 
-/// A small stand-in for the Chart.js `Chart` (`core.controller` comes in
-/// phase 5): it makes the platform calls of `core.controller.js`, so that
-/// the gallery runs the real phase 3 code.
+/// A small stand-in for the Chart.js `Chart` of `core.controller`: it makes
+/// only the platform calls of `core.controller.js`. The Canvas, Events, Text
+/// and Elements tabs and the modes `primitives`, `elements`, `bars` and
+/// `arcs` of the Stress tab use it, because they draw with the ported
+/// helpers and elements and need no scales, datasets or plugins.
 ///
 /// - The constructor: `detectPlatform`, `acquireContext`, `resize()` and
 ///   `bindEvents()` (core.controller.js:122-196).

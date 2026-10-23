@@ -32,9 +32,11 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// options. Thus each chart has the defaults of the plugins: the legend
 /// shows (plugin.legend.js:637), the tooltip shows on a hover or a tap
 /// (plugin.tooltip.js:1276), and the title does not show
-/// (plugin.title.js:147). The filler fills the datasets with a `fill`
-/// option. A tap on a legend item hides or shows its data, and a tap
-/// outside the chart hides the tooltip (Chart.js ADR 0037, section 15).
+/// (plugin.title.js:147). The filler fills the area of each line dataset
+/// whose `fill` option is not false: the Radar chart and the Area variants
+/// `origin`, `start` and `end`. A tap on a legend item hides or shows its
+/// data, and a tap outside the chart hides the tooltip (Chart.js ADR 0037,
+/// section 15).
 class ChartTypePage extends StatefulWidget {
   /// Creates the page of [entry].
   const ChartTypePage({required this.entry, super.key});

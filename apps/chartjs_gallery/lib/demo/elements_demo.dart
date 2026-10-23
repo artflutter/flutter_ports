@@ -105,7 +105,7 @@ typedef _Options = ({
 /// `ArcElement` objects with their own `draw` methods, on the `dart:ui`
 /// canvas (`UiCanvasContext`) of the internal chart host. A [DemoChart]
 /// stands in for `core.controller`. The demo sets the properties of each
-/// element as the phase 5 controllers will set them:
+/// element as the controllers of phase 7 set them:
 ///
 /// - A bar gets `horizontal`, `base`, `enableBorderRadius`, `x`, `y`,
 ///   `height`, `width`, `borderSkipped` and `inflateAmount`, as
@@ -126,7 +126,7 @@ typedef _Options = ({
 ///   `layout.padding`, so that the active arc stays in the canvas.
 ///
 /// The `options` of each element is a Map like the resolved options that
-/// the phase 5 controllers will make: the class defaults
+/// the controllers of phase 7 make: the class defaults
 /// (`XElement.defaults`), plus the routed colors, plus the control values.
 /// The hover colors are `getHoverColor` of the colors, as `core.defaults`
 /// gives them. The demo dataset also sets the point `hoverBorderWidth` to

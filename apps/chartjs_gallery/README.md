@@ -3,8 +3,10 @@
 Gallery and visual test bed for [`flutter_chartjs_port`](../../packages/flutter_chartjs_port), on Android,
 iOS, web and macOS. It shows every Chart.js chart type with the charts of the
 [Chart.js docs](https://www.chartjs.org/docs/latest/charts/) and runs each one through the ported
-controllers. The Area page draws only its line until the filler plugin is ported. The page
-"Phase 3: canvas and host" has the canvas, element, core and scale demos and the stress tests.
+controllers and plugins. Each chart shows the legend, and the tooltip on a hover or a tap. The
+Area page has the fill actions `origin`, `start`, `end` and `false` of the Area sample as its
+variants. The page "Phase 3: canvas and host" has the canvas, element, core and scale demos and the
+stress tests.
 
 From the repository root:
 
