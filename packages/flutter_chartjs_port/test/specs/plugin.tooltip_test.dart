@@ -150,16 +150,31 @@ AnyObject _bodyItem(String line) => <String, Object?>{
   'after': <Object?>[],
 };
 
+/// The default value of an absent argument of the spy of `update`.
+const Object _absent = Object();
+
 /// `spyOn(tooltip, 'update')`: replaces the field `update` of [tooltip] with
 /// a recording closure. With [callThrough], the closure also calls the old
 /// function with the same arguments. Each record is the list of the
-/// arguments of a call: `(true, undefined)` is `[true, undefined]`.
+/// arguments that the caller passed, as Jasmine records them: the record of
+/// `update(true)` has 1 item, and the record of `update(true, undefined)`
+/// has 2 items. Thus `toHaveBeenCalledWith(true, undefined)` accepts
+/// the call of `handleEvent` (`plugin.tooltip.js:1167`) and not the call of
+/// `setActiveElements` (`plugin.tooltip.js:1128`), as upstream.
 List<List<Object?>> _spyOnUpdate(Tooltip tooltip, {bool callThrough = false}) {
   final calls = <List<Object?>>[];
   final original = tooltip.update;
-  tooltip.update = ([changed = undefined, replay = undefined]) {
-    calls.add([changed, replay]);
-    if (callThrough) original(changed, replay);
+  tooltip.update = ([changed = _absent, replay = _absent]) {
+    calls.add([
+      if (!identical(changed, _absent)) changed,
+      if (!identical(replay, _absent)) replay,
+    ]);
+    if (callThrough) {
+      original(
+        identical(changed, _absent) ? undefined : changed,
+        identical(replay, _absent) ? undefined : replay,
+      );
+    }
   };
   return calls;
 }
@@ -1105,6 +1120,10 @@ void main() {
           expect(fn.calls.first().args[0], isA<List<Object?>>());
           expect(_hasOwnProperty(fn.calls.first().args[1], 'x'), isTrue);
           expect(_hasOwnProperty(fn.calls.first().args[1], 'y'), isTrue);
+          // `instanceof Tooltip` with `Tooltip = tooltipPlugin._element`
+          // (:3): the object is a Dart `Tooltip`, and `_element` is the
+          // class value of `Tooltip`. Thus the case has one assertion more
+          // than upstream.
           expect(fn.calls.first().object, isA<Tooltip>());
           expect(identical(_tooltipClass(), Tooltip.jsClass), isTrue);
         },

@@ -43,13 +43,12 @@ List<Object?> _spyOnUpdate(Chart chart) {
   return calls;
 }
 
-/// `Chart.overrides.<type>.plugins.legend.onClick` (:97, :113, :173, :189).
-Object? _overrideOnClick(String type) => jsGet(
-  jsGet(jsGet(jsGet(Chart.overrides, type), 'plugins'), 'legend'),
-  'onClick',
-);
+/// `config.plugins.legend.onClick` of the override scope [config] of
+/// `Chart.overrides` (:113, :118, :189, :194).
+Object? _onClick(Object? config) =>
+    jsGet(jsGet(jsGet(config, 'plugins'), 'legend'), 'onClick');
 
-/// The config of the doughnut and polar area cases of [type] (:4-15, :97-109,
+/// The config of the doughnut and polar area cases of [type] (:4-15, :98-109,
 /// :125-136, :174-185).
 AnyObject _config(String type) => <String, Object?>{
   'type': type,
@@ -167,17 +166,17 @@ void main() {
       testWidgets('should hide the correct arc when a legend item is clicked', (
         tester,
       ) async {
-        final onClick = _overrideOnClick('doughnut');
+        final config = jsGet(Chart.overrides, 'doughnut');
         final chart = acquireChart(_config('doughnut'));
         final calls = _spyOnUpdate(chart);
 
         final legendItem = chart.legend!.legendItems![0];
-        jsCall(onClick, [null, legendItem, chart.legend]);
+        jsCall(_onClick(config), [null, legendItem, chart.legend]);
 
         expect(chart.getDataVisibility(0), false);
         expect(calls, isNotEmpty);
 
-        jsCall(onClick, [null, legendItem, chart.legend]);
+        jsCall(_onClick(config), [null, legendItem, chart.legend]);
         expect(chart.getDataVisibility(0), true);
       });
     });
@@ -229,17 +228,17 @@ void main() {
       testWidgets('should hide the correct arc when a legend item is clicked', (
         tester,
       ) async {
-        final onClick = _overrideOnClick('polarArea');
+        final config = jsGet(Chart.overrides, 'polarArea');
         final chart = acquireChart(_config('polarArea'));
         final calls = _spyOnUpdate(chart);
 
         final legendItem = chart.legend!.legendItems![0];
-        jsCall(onClick, [null, legendItem, chart.legend]);
+        jsCall(_onClick(config), [null, legendItem, chart.legend]);
 
         expect(chart.getDataVisibility(0), false);
         expect(calls, isNotEmpty);
 
-        jsCall(onClick, [null, legendItem, chart.legend]);
+        jsCall(_onClick(config), [null, legendItem, chart.legend]);
         expect(chart.getDataVisibility(0), true);
       });
     });

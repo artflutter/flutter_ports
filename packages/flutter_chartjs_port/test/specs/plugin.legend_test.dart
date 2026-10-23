@@ -52,13 +52,14 @@ AnyObject _legendOptions(Chart chart) =>
 AnyObject _legendDefaults() =>
     jsGet(jsGet(Chart.defaults, 'plugins'), 'legend')! as AnyObject;
 
-/// The point `{x, y}` at the center of the hit box [hb] (:1089-1092).
+/// The point `{x, y}` at the center of the hit box [hb] (:1094-1097,
+/// :1136-1139, :1176-1179).
 AnyObject _center(AnyObject hb) => <String, Object?>{
   'x': (hb['left']! as double) + ((hb['width']! as double) / 2),
   'y': (hb['top']! as double) + ((hb['height']! as double) / 2),
 };
 
-/// The three datasets of `should update bar chart correctly` (:38-58),
+/// The three datasets of `should update bar chart correctly` (:39-57),
 /// `should filter items` without its extra keys.
 List<Object?> _barDatasets() => <Object?>[
   <String, Object?>{
@@ -84,7 +85,7 @@ List<Object?> _barDatasets() => <Object?>[
   },
 ];
 
-/// The three datasets of the line cases (:117-138, :196-217, :358-379).
+/// The three datasets of the line cases (:117-136, :196-215, :358-377).
 List<Object?> _lineDatasets() => <Object?>[
   <String, Object?>{
     'label': 'dataset1',
@@ -110,7 +111,7 @@ List<Object?> _lineDatasets() => <Object?>[
   },
 ];
 
-/// A legend item with the values of the spec (each key of :61-76).
+/// A legend item with the values of the spec (each key of :62-77).
 AnyObject _item({
   required String text,
   required Object? fillStyle,
@@ -835,10 +836,12 @@ void main() {
           },
         });
 
-        final box = chart.legend! as Legend;
-        expect(box.fullSize, true);
-        expect(box.position, 'top');
-        expect(box.weight, 150);
+        // `chart.legend` as a layout box, read at each assertion, as
+        // upstream does.
+        Legend legend() => chart.legend! as Legend;
+        expect(legend().fullSize, true);
+        expect(legend().position, 'top');
+        expect(legend().weight, 150);
 
         _legendOptions(chart)
           ..['fullSize'] = false
@@ -846,9 +849,9 @@ void main() {
           ..['weight'] = 42;
         chart.update();
 
-        expect(box.fullSize, false);
-        expect(box.position, 'left');
-        expect(box.weight, 42);
+        expect(legend().fullSize, false);
+        expect(legend().position, 'left');
+        expect(legend().weight, 42);
       });
 
       testWidgets('should remove the legend if the new options are false', (
@@ -871,13 +874,13 @@ void main() {
           _pluginOptions(chart)['legend'] = <String, Object?>{};
           chart.update();
           expect(chart.legend, isNotNull);
-          final defaultsCopy = _legendDefaults();
+          final legendDefaults = _legendDefaults();
           expect(
             chart.legend!.options,
             toEqualOptions(<String, Object?>{
               // Object.assign({}, Chart.defaults.plugins.legend, ...)
-              for (final key in jsObjectKeys(defaultsCopy))
-                key: jsGet(defaultsCopy, key),
+              for (final key in jsObjectKeys(legendDefaults))
+                key: jsGet(legendDefaults, key),
               // replace scriptable options with resolved values
               'labels': <String, Object?>{
                 'color': jsGet(Chart.defaults, 'color'),
@@ -999,7 +1002,7 @@ void main() {
   });
 }
 
-/// `ctx.dataset.data[ctx.dataIndex] || 0` (:690, :695, :699).
+/// `ctx.dataset.data[ctx.dataIndex] || 0` (:693, :697, :701).
 num _dataValue(Object? ctx) {
   final value = jsGetIndex(
     jsGet(jsGet(ctx, 'dataset'), 'data'),
@@ -1008,7 +1011,7 @@ num _dataValue(Object? ctx) {
   return jsTruthy(value) ? value! as num : 0;
 }
 
-/// The two datasets of the usePointStyle cases (:733-753, :808-828).
+/// The two datasets of the usePointStyle cases (:733-755, :808-830).
 List<Object?> _pointStyleDatasets() => <Object?>[
   <String, Object?>{
     'label': 'dataset1',
@@ -1037,7 +1040,7 @@ List<Object?> _pointStyleDatasets() => <Object?>[
 ];
 
 /// The items of the usePointStyle cases with the point style [pointStyle]
-/// (:766-801, :841-876).
+/// (:769-801, :845-877).
 List<Object?> _pointStyleItems(String pointStyle) => <Object?>[
   _item(
     text: 'dataset1',
