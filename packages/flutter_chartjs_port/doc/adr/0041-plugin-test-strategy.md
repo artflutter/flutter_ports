@@ -199,8 +199,8 @@ The change of wave 4 also does these checks:
 
 ### 3. The plugin reference tests
 
-1. One generator, one data file and one Dart test file for each upstream plugin file that has
-   behavior to pin:
+1. One generator, one data file (two for the tooltip) and one Dart test file for each upstream
+   plugin file that has behavior to pin:
 
    | Upstream | Generator | Data | Dart test |
    | --- | --- | --- | --- |
@@ -211,7 +211,7 @@ The change of wave 4 also does these checks:
    | `plugin.legend.js` | `plugin_legend_reference.mjs` | `plugin_legend_reference.dart` | `plugin.legend_test.dart` |
    | `plugin.subtitle.js` | `plugin_subtitle_reference.mjs` | `plugin_subtitle_reference.dart` | `plugin.subtitle_test.dart` |
    | `plugin.title.js` | `plugin_title_reference.mjs` | `plugin_title_reference.dart` | `plugin.title_test.dart` |
-   | `plugin.tooltip.js` | `plugin_tooltip_reference.mjs` | `plugin_tooltip_reference.dart` | `plugin.tooltip_test.dart` |
+   | `plugin.tooltip.js` | `plugin_tooltip_reference.mjs` | `plugin_tooltip_reference.dart` and `plugin_tooltip_more_reference.dart` (one file with all the cases is above 2.5 MB, section 4 item 4) | `plugin.tooltip_test.dart` |
 
    A Dart test file at a mapped path also holds the port-only groups that Chart.js ADRs 0038,
    0039 and 0040 give for the same file.
@@ -257,7 +257,7 @@ The change of wave 4 also does these checks:
    | --- | ---: | --- |
    | colors | 10 | `enabled: true` on bar, line, doughnut, pie, polar area, radar and bubble, more datasets than the 7 colors, `forceOverride`, dataset colors given, chart colors given (no change), a string `data` (the `TypeError` of `data.map`) |
    | decimation | 10 | `lttb` with `samples`, `min-max`, `threshold` above the count, a category index axis, `parsing: true`, `indexAxis: 'y'`, a user `min` and `max`, the step `setOption` to `enabled: false`, a write of `dataset.data` after the decimation |
-   | filler | 30 | `fill` `false`, `true`, `'origin'`, `'start'`, `'end'`, a number, `'+1'`, `'-1'`, `'stack'`, `{value}`, `{target, above, below}`, `'shape'`, a radar with `r` `min` and `max`, a radar with `'origin'`, stepped lines, `spanGaps`, `segment`, a hidden target with `propagate` `true` and `false`, each `drawTime`, `clip`, a scatter line with a tension and `fill: false` |
+   | filler | 30 | `fill` `false`, `true`, `'origin'`, `'start'`, `'end'`, a number, `'+1'`, `'-1'`, `'stack'`, `{value}`, `{target, above, below}`, `'shape'`, a radar with `r` `min` and `max`, a radar with `'origin'`, stepped lines, `spanGaps`, `segment`, a hidden target with `propagate` `true` and `false`, each `drawTime`, `clip` (a scatter line with a tension and `fill: false` is the case `showLine true` of `controller_scatter_reference.mjs`) |
    | legend | 24 | each `position`, each `align`, `rtl`, `reverse`, `fullSize: false`, `maxWidth` and `maxHeight`, `usePointStyle`, `pointStyleWidth`, `boxWidth`, `boxHeight`, `padding`, `filter`, `sort`, `textAlign`, the title with `position`, rows that wrap, columns that overflow, a hidden dataset, `onHover` and `onLeave` with `hoverLegend`, `clickLegend`, `display: false` |
    | title | 10 | `display`, each `position`, `align`, `fullSize: false`, `padding` as a number and as an object, a text array, `font` and `color` |
    | subtitle | 6 | alone, with a title (the box order), `position: 'left'`, `display: false`, `padding`, with a legend |
@@ -293,7 +293,7 @@ plugins and at 34.4 with the title only, and 5 boxes against 3.
    decimation with a fill, and tooltip with a title, a filler and a hidden dataset from
    `clickLegend`. The unit agent adds a full case for each other interplay that it finds.
 4. Size: about 116 unit cases and about 15 full cases. At 9 to 26 KB for each case, this is about
-   1.5 to 3.5 MB in 8 data files. A file above 2.5 MB splits (Chart.js ADR 0030 §3 item 6).
+   1.5 to 3.5 MB in 9 data files. A file above 2.5 MB splits (Chart.js ADR 0030 §3 item 6).
 
 ### 5. The legend override cases of doughnut, pie and polar area
 

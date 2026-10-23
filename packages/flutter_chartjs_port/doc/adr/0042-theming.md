@@ -2,10 +2,11 @@
 
 - Status: proposed
 - Date: 2026-10-22
-- Supersedes: [Chart.js ADR 0001](0001-theming.md)
+- Supersedes: [Chart.js ADR 0001](0001-theming.md) on acceptance
 - Related: [theming.md](../theming.md) (the design),
   [Chart.js ADR 0030](0030-controller-test-strategy.md) §8 and §11 (test 3 and the blue screen
-  without plugins), [Chart.js ADR 0034](0034-no-display-only-js-exactness.md) (the protected
+  without plugins) and Open 5 (this ADR closes it, except the active element case),
+  [Chart.js ADR 0034](0034-no-display-only-js-exactness.md) (the protected
   behavior), [Chart.js ADR 0020](0020-registry-and-component-classes.md) §13 (micro gains),
   [ADR 0007](../../../../docs/adr/0007-package-names.md) (package names)
 
@@ -120,14 +121,25 @@ The theme is one more option scope for the ported resolver. The design is in
   plugin is off, as in upstream `test/index.js:25-28`.
 - **Static values only.** The compiler emits colors, fonts, the palette and the theme transitions.
   It never emits behavior keys, root `backgroundColor`, `borderColor` or `font`, static hover
-  colors, scale ids, `_` keys, other `$` keys, functions or nulls. The behavior keys include the
-  plugin keys that change data, item order, a position or a discrete decision:
-  `plugins.decimation.algorithm`, `.samples` and `.threshold` (`plugin.decimation.js:12, 242,
-  269`), `plugins.filler.propagate` (`plugin.filler/index.js:47`), `plugins.legend.reverse`
-  (`plugin.legend.js:116-117`), `plugins.tooltip.position` (`plugin.tooltip.js:651, 1012,
-  1218`), and the content keys `text` of the title, the subtitle and the legend title
-  (`plugin.title.js:43, 97`, `plugin.legend.js:487`). A palette value is a List with at least one
-  item. A debug assert and a test enforce this list.
+  colors, scale ids, `_` keys, other `$` keys, functions or nulls. The behavior keys include
+  the data and decision keys `fill`, `spanGaps`, `showLine`, `stacked`, `reverse`, `min`, `max`,
+  `suggestedMin`, `suggestedMax`, `beginAtZero`, `grace`, `bounds`, `base`, `skipNull` and
+  `grouped` at any depth ([theming.md](../theming.md) §3.3 gives the upstream lines). The `''`
+  scope of the theme comes before `defaults.datasets[type]`. The behavior keys also include the
+  key paths that change data, item order, a position or a discrete decision:
+  `plugins.decimation.algorithm`, `.samples` and `.threshold` (`plugin.decimation.js:269, 12,
+  242`), `plugins.filler.propagate` (`plugin.filler/index.js:47`), `plugins.legend.reverse`
+  (`plugin.legend.js:116-117`), `plugins.legend.rtl` (`plugin.legend.js:235-259`),
+  `plugins.tooltip.position` (`plugin.tooltip.js:651, 1012, 1218`), `plugins.tooltip.xAlign`
+  and `.yAlign` (`plugin.tooltip.js:273, 270`), `scale.labels` (`core.scale.js:360`) and
+  `scale.ticks.stepSize`, `.count`, `.precision` and `.maxTicksLimit`
+  (`scale.linearbase.js:32-104, 216-260`), and the content keys `text` of the title, the
+  subtitle, the legend title and the scale title (`plugin.title.js:43, 97`,
+  `plugin.legend.js:487`, `core.scale.js:102, 613`). A `scale.` path also applies under each
+  `scales.<type>`. A flat `labels` is not a behavior key, because `plugins.legend.labels` holds
+  the legend colors and fonts.
+
+  A palette value is a List with at least one item. A debug assert and a test enforce this list.
 - **The palette token.** A raw Map theme gives the palette as
   `palette: {colors: [...], backgroundAlpha: 0.5}`. The compiler emits the colors at their
   alpha as `$borderColors`. It emits the same colors with the alpha replaced by
@@ -235,13 +247,18 @@ for the keys of the plugins of phase 8. They do not change it.
 
 ## Open
 
-1. The layout keys of the plugin boxes (`position`, `align`, `fullSize`, `weight`, `padding`),
-   the fonts and the scale keys `reverse`, `min`, `max`, `beginAtZero`, `stacked` and
-   `title.text` pass the guard. They move the layout. Phase 8 keeps them allowed. The adversarial
-   review of phase 8 (step 7) checks them. A change of the guard list for them needs a new ADR.
+1. The layout keys of the plugin boxes (`position`, `align`, `fullSize`, `weight`, `padding`) and
+   the fonts pass the guard. They move the layout, as the font token does. The step 7 review of
+   phase 8 moved the scale keys `reverse`, `min`, `max`, `beginAtZero`, `stacked` and
+   `title.text` into the guard, with the other keys of "Static values only".
 2. `plugins.filler.drawTime` passes the guard. It changes only the draw order. It stays allowed
    (Chart.js ADR 0034).
-3. Phase 9 decides the public palette type and whether a `raw` allowlist replaces the guard.
+3. Phase 9 decides the public palette type and whether a `raw` allowlist replaces the guard. At
+   step 7 the deny list needed 24 more keys. An allowlist of the emitted token keys and the style
+   keys is the safer form.
+4. The blue screen with an active element waits for `IdentityChartHover`
+   ([theming.md](../theming.md) §8 item 6). Owner: phase 9. The blue screen and test 3 of this
+   ADR close the rest of [Chart.js ADR 0030](0030-controller-test-strategy.md) Open 5.
 
 ## Evidence
 
@@ -263,3 +280,4 @@ in each run.
 | S1 | `simplicity/s1_palette_forms.mjs` | Without the reset of H5, the last palette leaks into the next chart. Without the guard, an empty List gives `null` colors in JavaScript |
 | S2 | `simplicity/s2_dart_palette.dart` | Without the guard, an empty List throws `IntegerDivisionByZeroException` in Dart |
 | B1, B3 | `bench/bench_getter.dart`, `bench/bench_palette.dart` | The getter and H5 figures of the performance draft |
+| R1 | the step 7 theming probes of phase 8 | Before the change of "Static values only", the guard passed the keys of its new groups. Each one changed a protected value under a theme: the fill target (`fill`), the line segments (`spanGaps`), the dataset element of a scatter chart (`showLine`), the tooltip position (`xAlign`, `yAlign`), the legend hit boxes and item order (`rtl`), the data labels (`labels`), the bar geometry (`base`, `skipNull`, `grouped`), the data range (`stacked`, `min`, `max`, `suggestedMin`, `suggestedMax`, `beginAtZero`, `grace`, `bounds`), the ticks (`reverse`, `ticks.stepSize`, `ticks.count`, `ticks.precision`, `ticks.maxTicksLimit`) or the content (`title.text`). The control `scale.ticks.font` changed only the layout: the same range and ticks |

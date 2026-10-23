@@ -198,7 +198,8 @@ Node.js v24.12.0 under Rosetta (Chart.js ADR 0032). Results that this ADR uses:
 | A positioner result `{x, y, xAlign: 'right', yAlign: 'bottom'}` | `xAlign 'right'`, `yAlign 'bottom'`, `caretX 100`, `caretY 100` |
 | A positioner result `{}` | `x` and `y` NaN, `caretX` and `caretY` `undefined` |
 | The options `xAlign: 5` and `yAlign: {o: 1}` | both reach the element, and the draw does not throw |
-| A positioner result `{x: '100', y: '50'}` | `y` 465.2 (`alignY` joins `'50' + 7`), `caretX` the string `'100'` |
+| A positioner result `{x: '100', y: '50'}` | `y` 26.6 and `yAlign 'center'` on the line chart of 512 x 512; with the option `yAlign: 'top'`, `y` 465.2 (`alignY` joins `'50' + 7`). `caretX` the string `'100'`. No throw. |
+| A positioner result `{x: null, y: null}` | no throw; `caretX` and `caretY` `null` (with an animation, after the first tick), `x` 0, `y` 7, `xAlign 'left'`, `yAlign 'top'` |
 | `average` with the x values `[NaN, NaN, 2]`, `[0, -0, 4]`, `[-0]` | x NaN, x 2, x +0 |
 | `average` with a plain item without `element` | `false` |
 | `Tooltip.positioners === tooltipPlugin.positioners` | `true` |
@@ -356,12 +357,23 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
   `undefined` and a Map without the keys give the values that `Object.assign` gives.
 - The upstream readers apply `ToNumber` to `x` and `y` in each operator (:222-276, :279-328).
   Thus a number, `undefined`, `null` and a boolean give the same results with the record. A
-  string coordinate is outside the contract. It gives other values (Probes: `y` 465.2 upstream)
-  and an `ArgumentError` at the write of `caretX`. This is the rule of Chart.js ADR 0017 §5, not
-  a `DIVERGES` hunk.
+  string coordinate is outside the contract. It gives other values (Probes: `y` 26.6, or 465.2
+  with the option `yAlign: 'top'`) and an `ArgumentError` at a write of `caretX` or `caretY`
+  (next item). This is the rule of Chart.js ADR 0017 §5, not a `DIVERGES` hunk.
 - `caretX` and `caretY` take the raw `position.x` and `position.y`, not the record values. Thus
-  `undefined` stays `undefined` (:674-675, :1025-1026). A JS `null` coordinate throws an
-  `ArgumentError` at the write of `caretX`, by the same rule. Upstream stores `null`.
+  `undefined` stays `undefined` (:674-675, :1025-1026). A JS `null` coordinate is outside the
+  type of `caretX`, by the same rule. Upstream stores `null` (Probes). For a string and for JS
+  `null`, the site of the `ArgumentError` depends on the animation:
+  - Without an animation, `update` writes the properties at once. The write of `caretX` throws
+    after the writes of `opacity`, `x`, `y`, `width` and `height`. Thus `setActiveElements`
+    throws.
+  - With an animation (the default of a chart), `update` does not throw. The next frame of the
+    animator throws in `Animation.tick`. The frame callback then keeps `_request` set
+    (`core.animator.js:38-52`), so the animator stops for each chart. The animation of the
+    tooltip does not end, and `Chart.destroy` throws again in `Animation.cancel`.
+
+  The port test group `positioners` pins both forms for JS `null`. The test of the animated form
+  calls `animator.update` and does not pump a frame.
 - `getTooltipSize` returns `({double width, double height})`. `determineAlignment` returns
   `({Object? xAlign, Object? yAlign})`. `getBackgroundPoint` and `getCaretPosition` return
   records too.
@@ -504,7 +516,8 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
   `adapt-merge-element-target` records what stays different: `clone` keeps an element as a
   reference where upstream copies its own keys, `mergeIf` does not write into an element target,
   `merge` skips an element source where upstream copies its own keys, an element source value
-  replaces an element target value where upstream merges its own keys into it, and a custom
+  replaces the target value, also a Map or an element, where upstream merges its own keys into a
+  Map or an element target value, and a custom
   `merger` that enumerates the target throws an `UnsupportedError`. No Chart.js merger
   enumerates its target. The markers are in `merge`, `merger` and `mergeIf`.
 - Chart.js ADR 0006 says that a class instance in an options tree stays a leaf. This stays true
@@ -534,8 +547,9 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
   for each color box with `usePointStyle`, as upstream.
 - `addRoundedRectPath` gets a private `_RoundedRect implements RoundedRect` with the keys of
   :835-841 (Chart.js ADR 0017 §8). The row `adapt-rounded-rect-path` names
-  `Tooltip._drawColorBox` as a caller. The legend keeps its own private `_RoundedRect`
-  (`plugin.legend.dart`). Thus the tooltip has its own copy (Open 4).
+  `Tooltip._drawColorBox` as a caller. Each `lib/` caller keeps its own private class for the
+  literal: `_Rect` of `element.bar.dart`, and `_RoundedRect` of `scale.radialLinear.dart`,
+  `plugin.legend.dart` and `plugin.tooltip.dart` (Open 4).
 - `Object.values(borderRadius).some(v => v !== 0)` (:832) reads the four members of the
   `TRBLCorners` of `toTRBLCorners` (row `adapt-options-typed-results`).
   `Math.max(...Object.values(labelColor.borderWidth))` (:822) reads the values of a Map
@@ -746,7 +760,9 @@ from P, and the `PointOptions` literal and the `this` helper from S.
   element source of `merge` keep the leaf rule of `isObject`, and a row records it. In
   `toEqualOptions`, an expected element compares with `===`, and a row records it.
 - An option `xAlign` or `yAlign` that is not a string, and a positioner coordinate that is a
-  string or JS `null`, throw an `ArgumentError`. Upstream stores them.
+  string or JS `null`, throw an `ArgumentError`. Upstream stores them. For a coordinate, `update`
+  throws without an animation. With an animation, a later frame of the animator throws, and the
+  animator then stops (section 5).
 - A raw index of another type than number becomes a number in `setActiveElements`.
 - The update path is about 0.4-1.6 µs faster for each update with 3 items than the upstream form
   of the callbacks, and the alignment record saves about 0.13-0.19 µs for each update and each
@@ -772,12 +788,19 @@ from P, and the `PointOptions` literal and the `this` helper from S.
    snapshot of section 7 comes back to a design panel.
 2. **The fade frames.** Owner: step 8. Trigger: the figures of (c). A change of `canvas_ui.dart`
    updates `canvas-cuts-plan.md` in the same commit.
-3. **A shared strict equality.** `core.layouts.dart` and `scale.category.dart` have private
-   copies of `===`, and the tooltip adds a third. A shared `jsStrictEquals` in `lib/src/js/` is
+3. **A shared strict equality.** `core.layouts.dart`, `scale.category.dart`,
+   `controller.bar.dart` and `plugin.legend.dart` have private copies of `===`, and the tooltip
+   adds a fifth. A shared `jsStrictEquals` in `lib/src/js/` is
    outside this ADR. Owner: the shared JS runtime of ADR 0008.
-4. **A public rounded rectangle literal.** `plugin.legend.dart` and `plugin.tooltip.dart` each
-   have a private `_RoundedRect` for `{x, y, w, h, radius}`. A public class can replace both.
-   Owner: the porting lead.
+4. **A public rounded rectangle literal.** Closed in step 7 of phase 8. Four `lib/` files have
+   a private class for the literal `{x, y, w, h, radius}`: `_Rect` of `element.bar.dart`, and
+   `_RoundedRect` of `scale.radialLinear.dart`, `plugin.legend.dart` and `plugin.tooltip.dart`.
+   Each implements the upstream interface `RoundedRect` (`geometric.d.ts:31-37`). Upstream has
+   an object literal at each site (`element.bar.js:81-99`, `:132-138`, `plugin.legend.js:347-353`,
+   `plugin.tooltip.js:835-841`, `:848-854`, `scale.radialLinear.js:247-253`). Decision: the
+   private classes stay. A public class gives the same behavior and no measured gain, and the
+   private classes keep the upstream structure of one literal at each site
+   ([porting-flow.md](../porting-flow.md) §1.1).
 5. **The touch lift (#7738) and the tooltip fixtures.** Chart.js ADR 0037 decides the input path.
    Chart.js ADR 0041 decides the fixture notes. This ADR keeps the upstream event handling of
    :1139-1220.

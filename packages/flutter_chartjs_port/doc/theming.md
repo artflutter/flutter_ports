@@ -185,7 +185,17 @@ Never emitted. A debug assert and the emission test enforce this list.
 - Behavior keys: `events`, `interaction`, `hover`, `onHover`, `onClick`, `animation`,
   `animations`, `responsive`, `maintainAspectRatio`, `aspectRatio`, `indexAxis`, `type`,
   `datasets`, `parsing`, `devicePixelRatio`, `locale`, `layout`, `display`, `enabled`,
-  `forceOverride`. The tooltip also resolves `interaction` (`plugin.tooltip.js:1349`). The
+  `forceOverride`, and (Chart.js ADR 0042) the data and decision keys `fill`
+  (`filler.options.js:12`), `spanGaps` and `showLine` (`controller.line.js:63, 82`,
+  `controller.scatter.js:71, 102, 119`), `stacked` (`core.datasetController.js:120-121`),
+  `reverse` (`core.scale.js:481`), `min`, `max`, `suggestedMin` and `suggestedMax`
+  (`core.scale.js:262-265`), `beginAtZero` and `grace` (`core.scale.js:394, 429`), `bounds`
+  (`scale.linearbase.js:257, 273`), `base` (`controller.bar.js:564`), `grouped`
+  (`controller.bar.js:437`) and `skipNull` (`controller.bar.js:639-650`). They change the fill
+  target, the line segments, the dataset element, the bar geometry, the data range or the ticks.
+  A flat `labels` is not a behavior key, because `plugins.legend.labels` holds the legend colors
+  and fonts. The `''` scope of the theme comes before `defaults.datasets[type]`.
+  The tooltip also resolves `interaction` (`plugin.tooltip.js:1349`). The
   resolver finds the `hover` scopes of every scope before the `interaction` scopes
   (`helpers.config.ts:346-351`, `core.defaults.js:168-170`). Thus a theme `hover` beats the
   `interaction` of the user options and of `overrides[type]`. It then changes the hover elements
@@ -195,13 +205,21 @@ Never emitted. A debug assert and the emission test enforce this list.
   resolves them from `plugins.tooltip`, then from `interaction` (`core.config.js:267-275`). The
   theme scope of `plugins.tooltip` comes before `defaults.interaction` (H2). Thus a theme key
   changes the tooltip elements (`plugin.tooltip.js:1200`).
-- The plugin behavior paths of `themePluginBehaviorPaths` (Chart.js ADR 0042):
-  `plugins.decimation.algorithm`, `.samples` and `.threshold` (`plugin.decimation.js:12, 242,
-  269`), `plugins.filler.propagate` (`plugin.filler/index.js:47`), `plugins.legend.reverse`
-  (`plugin.legend.js:116-117`), `plugins.tooltip.position` (`plugin.tooltip.js:651, 1012,
-  1218`), and the content keys `plugins.title.text` and `plugins.subtitle.text`
-  (`plugin.title.js:43, 97`) and `plugins.legend.title.text` (`plugin.legend.js:487`). The guard
-  compares paths, not names: `position` is also a layout key of a box, and it passes.
+- The behavior paths of `themePluginBehaviorPaths` (Chart.js ADR 0042):
+  `plugins.decimation.algorithm`, `.samples` and `.threshold` (`plugin.decimation.js:269, 12,
+  242`), `plugins.filler.propagate` (`plugin.filler/index.js:47`), `plugins.legend.reverse`
+  (`plugin.legend.js:116-117`), `plugins.legend.rtl` (`plugin.legend.js:235-259`),
+  `plugins.tooltip.position` (`plugin.tooltip.js:651, 1012, 1218`), `plugins.tooltip.xAlign`
+  and `.yAlign` (`plugin.tooltip.js:273, 270`), `scale.labels` (`core.scale.js:360`),
+  `scale.ticks.stepSize`, `.count`, `.precision` and `.maxTicksLimit`
+  (`scale.linearbase.js:32-104, 216-260`), and the content keys `plugins.title.text` and
+  `plugins.subtitle.text` (`plugin.title.js:43, 97`), `plugins.legend.title.text`
+  (`plugin.legend.js:487`) and `scale.title.text` (`core.scale.js:102, 613`). The guard
+  compares paths, not names: `position` is also a layout key of a box, and it passes. It
+  compares each prefix of 2 or more keys of the normalized path, in which a leading
+  `scales.<type>` becomes `scale`: thus `scales.linear.ticks.stepSize` fails as
+  `scale.ticks.stepSize`. The draw-only keys `plugins.tooltip.rtl` and
+  `plugins.tooltip.textDirection`, the fonts and the layout keys of a box pass.
 - `plugins.<id>: bool`. Only user options can use it (`core.plugins.js:101-107, 146-154`).
 - `scales.<id>` other than a scale type. These keys are dead. H1 reads only
   `scales[<scale type>]`. Chart-level lookups find every defaulted key in the scale copy-in first.
@@ -350,7 +368,7 @@ A null token themes nothing. A partial theme thus restates nothing.
 | `colors.color` | `Defaults.color` `'#666'` (`core.defaults.js:43`) | root `color` (the legend reads it through `chart.options.color`, `plugin.legend.js:661, 707`), `scale.ticks.color`, `scale.title.color`, `scales.radialLinear.pointLabels.color`, `plugins.title.color`, `plugins.subtitle.color` |
 | `colors.borderColor` | `Defaults.borderColor` (`:42`) | `scale.grid.color`, `scale.border.color`, `scales.radialLinear.angleLines.color`, `elements.{point,line,bar}.borderColor` |
 | `colors.backgroundColor` | `Defaults.backgroundColor` (`:41`) | `elements.{point,line,bar,arc}.backgroundColor` |
-| `colors.surface` | `'#fff'` (`element.arc.ts:306`), `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`) | `elements.arc.borderColor`, `scale.ticks.backdropColor` at alpha 0.75 |
+| `colors.surface` | `'#fff'` (`element.arc.ts:379`), `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`) | `elements.arc.borderColor`, `scale.ticks.backdropColor` at alpha 0.75 |
 | `colors.inverseSurface` | `'rgba(0,0,0,0.8)'` (`plugin.tooltip.js:1279`) | `plugins.tooltip.backgroundColor` |
 | `colors.onInverseSurface` | `'#fff'` (`plugin.tooltip.js:1280, 1287, 1292, 1305`) | `plugins.tooltip.{titleColor,bodyColor,footerColor,multiKeyBackground}` |
 | `palette` (`{colors, backgroundAlpha}`) | `BORDER_COLORS`, `BACKGROUND_COLORS` (`plugin.colors.ts:14-25`) | `plugins.colors.$borderColors` (the colors at their alpha), `plugins.colors.$backgroundColors` (the colors at `backgroundAlpha`, 0.5 when absent) |
@@ -568,7 +586,7 @@ goldens for each chart type.
 
 Review these items on each bump, and on each backport (ADR 0006) into a hunk host:
 
-- the values that the presets restate: `core.defaults.js:41-64`, `element.arc.ts:304-321`,
+- the values that the presets restate: `core.defaults.js:41-64`, `element.arc.ts:377-395`,
   `element.point.ts:31-50`, `core.scale.defaults.js:28-89`, `scale.radialLinear.js:345-410`,
   `plugin.tooltip.js:1274-1331`, `plugin.title.js:145-160`, `plugin.subtitle.js:32-47`,
   `plugin.legend.js:636-720`, `plugin.colors.ts:14-25, 90-92`, `core.animations.defaults.js:1-72`
@@ -713,7 +731,7 @@ theming work in each phase.
 - `compile.dart` emits the plugin keys of §3.3: the title and subtitle colors and fonts, the two
   legend fonts and the tooltip keys. The `palette` field `{colors, backgroundAlpha}` emits
   `plugins.colors.$borderColors` and `plugins.colors.$backgroundColors`. The guard has rule 2b
-  (the paths of `themePluginBehaviorPaths`) and rule 9 (a palette value that is not a List with
+  (the paths of `themePluginBehaviorPaths`, also under `scales.<type>`) and rule 9 (a palette value that is not a List with
   at least one item). `compile_test.dart` has the emission tests of these keys and rules.
 - `ChartThemes.light` also holds `colors.inverseSurface`, `colors.onInverseSurface` and the
   `palette`: the 7 colors of `BORDER_COLORS` at alpha 1 and `backgroundAlpha` 0.5
@@ -763,8 +781,8 @@ theming work in each phase.
 
 These parts wait:
 - The blue screen with an active element waits for `IdentityChartHover` (§8 item 6).
-- The layout keys of the plugin boxes, the fonts and some scale keys pass the guard. The
-  adversarial review of phase 8 checks them (Chart.js ADR 0042, Open item 1).
+- The layout keys of the plugin boxes and the fonts pass the guard. They move only the layout,
+  as the font token does (Chart.js ADR 0042, Open item 1).
 - Phase 9 decides the public palette type (Chart.js ADR 0042, Open item 3).
 
 Chart.js ADR 0042 (proposed) restates Chart.js ADR 0001 with the palette change of §3.5. The

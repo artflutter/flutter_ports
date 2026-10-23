@@ -290,8 +290,14 @@ abstract interface class TooltipModel implements Element {/* ADR 0039 §14 */}
   (`plugin.title.tests.js:282-355`, `core.layouts.tests.js:412`) and needs no row. Its read costs
   less than 1 ns on AOT and on dart2wasm.
 - The plugins cast `chart.legend`, `chart.tooltip` and `chart.titleBlock` only to their own class
-  (Chart.js ADR 0028 §1 item 2). An absent value throws at the null check, where upstream throws
-  at the first member read in the same hook call.
+  (Chart.js ADR 0028 §1 item 2). An absent value throws a `TypeError` at the null check, in the
+  same hook call as upstream. Upstream throws at the first member read of the value
+  (`afterUpdate` and `afterEvent` of the legend). In `beforeUpdate` of the title, the subtitle
+  and the legend, upstream throws at the write `item.fullSize` of `layouts.configure`
+  (`core.layouts.js:332`), after the read of `options.fullSize`. The port does not do this read.
+  The read has no visible effect, because the plugin options are a resolver that is not
+  scriptable (`core.plugins.js:183-187`). The tooltip hooks test `chart.tooltip` first
+  (`plugin.tooltip.js:1235-1268`) and do not throw.
 - The subtitle `WeakMap` is a file-private `Expando<Title>`. `map.set` is `_map[chart] = title`.
   `map.get` is `_map[chart]`. `map.delete` is `_map[chart] = null`. An `Expando` holds its key
   weakly, as a `WeakMap` does. No row.
@@ -324,11 +330,11 @@ member goes onto the `types` interface with its first reader.
 | `types.LegendElement` | `List<Object?>? get legendItems` | `index.d.ts:2417` | `global.defaults.tests.js:46` and the legend specs |
 
 - The concrete members exist with these signatures. Each gets `@override`:
-  - `core.controller.dart:1681`, `:1829`, `:1836` and `:365`
-  - `core.datasetController.dart:763`, `:862` and `:1366`
-  - `core.scale.dart:686` and `:1953`
-  - `element.line.dart:877`, `:915` and `:976`
-  - `core.config.dart:416`
+  - `Chart.getElementsAtEventForMode`, `Chart.hide`, `Chart.show` and `Chart.visible`
+  - `DatasetController.supportsDecimation`, `getDataset` and `getLabelAndValue`
+  - `Scale.type` and `Scale.getBaseValue`
+  - `LineElement.first`, `interpolate` and `pathSegment`
+  - `Config.data`
 - `getLabelAndValue` gives `({Object? label, String value})`. The tooltip item keeps the raw
   label (Chart.js ADR 0028 Open 2).
 - `getElementsAtEventForMode` keeps its concrete return type `List<InteractionItem>`, a valid
@@ -680,9 +686,9 @@ upstream imports.
 
 1. **CT.** Owner: step 8 of phase 8. Trigger: the frame figures of section 10. A gain that meets
    rule 2 goes to a new ADR that restates Chart.js ADR 0020 with CT.
-2. **The index of `hide` and `show` from the default legend `onClick`.** Owner: the legend unit.
-   Trigger: its port. `generateLabels` of a user can give a string `datasetIndex`. The unit
-   decides the conversion with a probe.
+2. **The index of `hide` and `show` from the default legend `onClick`.** Closed. The legend port
+   gives `hide` and `show` the number of the property key `ToString(index)` (`_datasetIndexKey`).
+   The row `adapt-legend-dataset-index` records the update mode of an index that is not a number.
 3. **The filler target type.** Owner: [Chart.js ADR 0040](0040-filler-targets-and-plain-points.md)
    (the filler, proposed). `_getTarget` gives a `LineElement`, a `simpleArc`
    (`filler.target.js:30-31`), `true` or the `meta.dataset` of another dataset (`:41-44`).
@@ -698,10 +704,8 @@ upstream imports.
    tooltip decision, [Chart.js ADR 0039](0039-tooltip-model-and-animation.md) (proposed).
    `Tooltip` animates, so its fields follow its own rule. Chart.js ADR 0039 §2 and §14 give
    them. They close this item when that ADR is accepted.
-6. **The `_TestLegend` fakes.** Owner: [Chart.js ADR 0041](0041-plugin-test-strategy.md) (the
-   plugin test strategy, proposed). The fakes get the `legendItems` getter with the member of
-   section 6 (wave 2). Chart.js ADR 0041 §5 removes them in wave 4, when the real legend is
-   registered. That closes this item.
+6. **The `_TestLegend` fakes.** Closed. Wave 4 removed the three fakes
+   ([Chart.js ADR 0041](0041-plugin-test-strategy.md) §5).
 
 ## Evidence
 

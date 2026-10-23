@@ -338,9 +338,11 @@ The dispatch in `filler.drawing.dart`:
   `segments!` throws a `TypeError` for `true` and for a `SimpleArc`, after the same calls as
   upstream (`for (const segment of undefined)`, `:74`, `:104`).
 
-A dataset element of a user controller that is not a `LineElement` but has the line API works as
-a target upstream. In the port it throws a `TypeError` at the dispatch. A subclass of
-`LineElement` works. No built-in controller has such an element. The row
+A dataset element of a user controller that is not a `LineElement` but has the line API works
+upstream as the target of an index fill, and as a line below of a `stack` fill
+(`filler.target.stack.js:47`, `:88-95`). In the port it throws a `TypeError` at the dispatch, in
+`clipVertical` and `clipHorizontal` (a fill with `above` and `below`), or at the cast of the line
+below in `findPoint`. A subclass of `LineElement` works. No built-in controller has such an element. The row
 `adapt-filler-target-classes` records this (section 12).
 
 ### 5. `SimpleArc`

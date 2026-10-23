@@ -298,8 +298,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     - `plugin.tooltip.dart` has `Tooltip extends Element implements types.TooltipModel`, the
       positioners Map (`Tooltip.positioners`, the static of `Tooltip.jsClass` and the plugin key
       `positioners` are one Map), the default callbacks and the plugin Map `tooltip` (Chart.js ADR
-      0039). The access by name covers its 24 own names. `update` is a field that holds a function
-      (row `harness-method-fields`). The hooks cast `chart.tooltip` to `Tooltip`.
+      0039). The access by name covers its 28 own names and `_ignoreReplayEvents`: `operator []`
+      and `operator []=` handle the 24 names that `Element` does not handle. `update` is a field
+      that holds a function (row `harness-method-fields`). The hooks cast `chart.tooltip` to
+      `Tooltip`.
   - `lib/src/scales/`: the six scales of `scales/index.dart` and `scale.linearbase.dart`
     (`LinearScaleBase`: not exported, not registered). They are not pure layers: each imports
     `core.scale`. The value methods take any JS value (`Object?`). The category, linear and
@@ -875,7 +877,9 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   `native` null.
 - `toEqualOptions` reads the keys of an expected object with `jsObjectKeys`, as the upstream
   `for...in` with `hasOwnProperty` does. Thus it compares only the keys of the first scope of an
-  expected resolver.
+  expected resolver. An actual element or tooltip (a `types.ElementPropertyRead`) is an object:
+  the matcher reads each expected key by name. An expected element compares with `===` (row
+  `harness-expected-element`).
 - It also installs the test font (Chart.js ADR 0015, the row `harness-test-font`): Liberation Sans
   under `Helvetica Neue`, `Helvetica`, `Arial`, `Liberation Sans` and `sans-serif`. A text style
   with another family, or with no family, measures with the square FlutterTest font. A test file

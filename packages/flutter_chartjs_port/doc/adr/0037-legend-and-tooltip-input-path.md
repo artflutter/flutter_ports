@@ -103,7 +103,7 @@ E3) and the Node.js probes of upstream (E2) give eleven rows. Eight of them diff
 | S5 | A tap outside after S4 | `onLeave` | Nothing |
 | S6 | `events` with `pointerout` or `pointerleave` and without `mousemove` and `click`, touch lift | The tooltip hides | Nothing |
 | S7 | `events` with `pointerup`, tap on a legend item | `onClick` 2 times | Same |
-| S8 | Mouse move and exit in one frame | `mousemove`, then `mouseout` | Same |
+| S8 | Mouse move and exit in one frame | `mousemove`, then `mouseout` with separate DOM events (E2). Chrome coalesces the moves of one frame: an exit to another element gives `mouseout` only (Open 10) | Same |
 | S9 | Mouse exit inside a legend hit box | The hover stays | Same |
 | S10 | Mouse click with a move of 19 px or more | `click` | No `click` |
 | S11 | Chart with `click` inside `GestureDetector.onTap` | Both get the click | Only the chart |
@@ -387,7 +387,8 @@ A browser has one compatibility mouse. The port has one for each isolate: a stat
   `SchedulerBinding` runs the transient frame callbacks in the order of their registration
   (`scheduler/binding.dart:1259-1268`), as HTML runs the animation frame callbacks. Thus a
   `mousemove` and a `mouseout` in one frame reach the legend in the upstream order, also when the
-  last pointer position is inside the chart. The port keeps this order. It does not sort the
+  last pointer position is inside the chart. This is the model of separate DOM events. Chrome
+  coalesces the moves of one frame (Open 10). The port keeps this order. It does not sort the
   events of a frame.
 - `MouseTracker.updateWithEvent` sends the enter and exit callbacks before the dispatch of the
   event to the hit path (`rendering/binding.dart:465-474`). A browser also sends the boundary
@@ -489,8 +490,9 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
 - No `differences.md` row is new. All changes are in the port-only host. "A port-only file is not
   a row" (`differences.md`, introduction). This ADR records the reference browser and the iOS
   result.
-- The rows `platform-detect-host` and `platform-relative-position` cite this ADR in place of
-  Chart.js ADR 0014. The row `harness-trigger-mouse-event` keeps its text.
+- The rows `platform-detect-host`, `platform-relative-position`, `platform-animator-mute` and
+  `platform-dom-supported` cite this ADR in place of Chart.js ADR 0014. The row
+  `harness-trigger-mouse-event` keeps its text.
 - `test/port/platform/chart_host_test.dart` pins sections 6 to 10 with real Flutter gestures.
 - A port-only reference test pins the whole path (host, throttle, `_eventHandler`, legend and
   tooltip) against the pinned build in the x64 Node.js. Its generator feeds the chart events of
@@ -574,17 +576,26 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
   before the lift, as in Chrome.
 - The legend and the tooltip need no input code of their own. Their spec cases run through the
   harness with no change.
+- `getRelativePosition` gives the upstream values for a chart whose canvas has the device size
+  of `retinaScale`. Two `helpers.dom` spec cases skip as `diverges: platform-relative-position`.
+  The DOM-only spec cases (element ids, iframes, the DOM-tree `isAttached` case, shadow DOM, CSS
+  sizes) skip as `n/a`. The rows `platform-dom-container`, `platform-dom-no-css`,
+  `platform-dom-computed-style` and `platform-dom-supported` record the other `helpers.dom`
+  hunks.
 - The live citations of Chart.js ADR 0014 move to this ADR: `AGENTS.md`, `doc/README.md`,
-  `porting-flow.md` §2.7 and §7, `status.yaml` (then `parity.md` through tool 6),
+  `porting-flow.md` §2.7, §2.9 and §7, `status.yaml` (then `parity.md` through tool 6),
   `canvas-cuts-plan.md`, `upstream-ledger.md` (Signal #7738), `differences.md` rows
-  `platform-detect-host` and `platform-relative-position`, and the `///` and `//` lines of
-  `lib/` and `test/`.
+  `platform-detect-host`, `platform-relative-position`, `platform-animator-mute` and
+  `platform-dom-supported`, the comment of `tool/reference/controller_doughnut_reference.mjs`,
+  and the `///` and `//` lines of `lib/` and `test/`.
 
 ## Open
 
 1. **Device check (the gate of this ADR).** A page with the pinned build logs the DOM events of a
    canvas in Chrome on the Pixel 8a (through `adb reverse`, phase 8 step 8). It records a tap, a
-   tap outside, a drag, a long press, a two-finger tap and a stylus tap. It confirms the order of
+   tap outside, a drag, a long press, a two-finger tap and a stylus tap. It also records a mouse
+   move into the canvas and out again within one frame, and a touch down on the canvas with a
+   second finger down outside (the content and the order of `touches`). It confirms the order of
    `pointerup`, `pointerout`, `pointerleave` and `touchend`, the `mouseout` of a tap outside, the
    position of the compatibility events and of `click` (this ADR uses the up position), the touch
    slop and the long-press time on Android. A different result changes section 6 or 8 before the
@@ -601,7 +612,9 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
 6. **The primary pointer.** The tap rule sees only the touch pointers of the host. A finger that is
    down on another widget does not stop a tap on the chart. Chrome then has no primary pointer
    on the canvas and sends no compatibility events. The device check records the two-finger
-   case.
+   case. The route also knows only the touch pointers that went down after the owner started. A
+   finger that was down outside before then does not stop a tap of a second finger outside: the
+   owner gets `mouseout`. Chrome sends no compatibility event for that tap.
 7. **A mouse drag from outside.** A mouse drag that starts outside the chart gives no `mousemove`
    over it, because the host is not in the hit path of that pointer. A fix needs a global route
    for the mouse pointers that are down.
@@ -609,6 +622,21 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
 9. **The hit box form of the legend.** A typed hit box class is 7 to 31 times faster than a Map in
    a microbenchmark (E5). The legend port decides the form by the performance rule. It needs an
    `adapt` row if it is a class.
+10. **Coalesced moves.** Chrome dispatches `mousemove`, `pointermove`, `touchmove` and `wheel`
+    once in each frame, before the animation frame callbacks, and coalesces them
+    (`getCoalescedEvents`). It sends the boundary events of the last position. A discrete event
+    (for example the mouse leaving the window) sends the pending move first. The host sends each
+    Flutter pointer event ([Chart.js ADR 0016](0016-frame-scheduling.md): `GestureBinding` does
+    not coalesce). Thus a mouse that crosses the canvas edge two times between two frames gives
+    `mousemove` and `mouseout` in the port, and only the boundary events of the last position in
+    Chrome. The legend `onHover` and `onLeave` can then run in the port only. In the reference
+    case 'mouse: legend item 2, an exit and legend item 1 in one frame', the port ends with no
+    hover while the mouse is on legend item 1. The reference cases of the mouse pin the model of
+    separate DOM events. Flutter on the web gets the events after the browser coalesced them.
+11. **`touches`.** `NativeEvent.touches` holds only the touch pointers that went down on the host
+    (the DOM `targetTouches`). The DOM `touches` holds every touch point on the screen, and
+    `helpers.dom.ts:81-82` reads `touches[0]`. With a finger down outside the canvas, a `touch*`
+    event can have another position in Chrome, and another hit element.
 
 ## Evidence
 

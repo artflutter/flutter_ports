@@ -197,8 +197,8 @@ The research of 2026-10-16 measured these facts:
   - `mergeIf` gives an element target back and writes nothing. Upstream writes the keys that the
     element does not own.
   - `merge` skips an element source. Upstream copies its own keys.
-  - An element source value replaces an element target value. Upstream merges its own keys into
-    it.
+  - An element source value replaces the target value, also a Map or an element. Upstream
+    merges the own keys of the element into a Map or an element target value.
   - A custom merger that lists the keys of its target or calls `containsKey` throws an
     `UnsupportedError`. No Chart.js merger lists the keys of its target.
 - The branch costs nothing measurable on the Map path: a `merge` of a 3-level config takes
