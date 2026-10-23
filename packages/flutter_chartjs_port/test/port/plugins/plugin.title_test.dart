@@ -39,9 +39,11 @@ import 'plugin_title_reference.dart';
 // tool/reference/plugin_title_reference.mjs: a build of the pinned Chart.js
 // in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with the seven plugins
 // registered and `colors.enabled: false` in the defaults. Each case is a
-// unit case: the other plugins are `false` (Chart.js ADR 0041, section 4).
-// The observation has `boxes` and `plugins.title` (the line count and the
-// resolved options of the title block), and the draw calls.
+// unit case (the other plugins are `false`, Chart.js ADR 0041, section 4),
+// except the full case `full: title with the default legend`, which has the
+// default plugin options (section 4 item 2). The observation has `boxes`
+// and `plugins.title` (the line count and the resolved options of the title
+// block), and the draw calls.
 //
 // The cases run two times: unthemed, and with the light preset (theming.md
 // section 8 test 3). In the themed run, the colors compare in their parsed

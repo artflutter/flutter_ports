@@ -18,7 +18,7 @@
 // then `colors.enabled = false`, test/index.js:25-28), runPluginCase() for
 // each case with the observer of the plugin, and
 // writeControllerReference(). The config of a unit case sets
-// `options.plugins` to unitPlugins(<the plugins of the Dart test file>,
+// `options.plugins` to unitPlugins(<the plugin set of the case>,
 // <the plugin options of the case>) (Chart.js ADR 0041, section 4). A full
 // case (wave 4) has the default plugin options.
 //
@@ -55,8 +55,10 @@ export const PLUGIN_IDS = [
  *
  * `getOpts` gives `null` for the option `false`, and `createDescriptors`
  * then leaves the plugin out (core.plugins.js:146-163). Thus the chart of a
- * unit case is the chart of the Dart test file, which registers only the
- * plugins of [registered].
+ * unit case is the chart with only the plugins of [registered] (Chart.js ADR
+ * 0041, section 4 item 1). In waves 1-3 this was the registration set of the
+ * Dart test file. From wave 4 the Dart test file registers all seven
+ * plugins, and the `false` options keep the same chart.
  *
  * The keys come in the order of PLUGIN_IDS, then the keys of
  * [pluginOptions] that are not plugin ids (the options of an inline

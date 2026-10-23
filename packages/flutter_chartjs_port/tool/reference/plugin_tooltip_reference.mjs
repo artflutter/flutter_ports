@@ -17,15 +17,17 @@
 // `enabled: false`, the steps `hover`, `mouseout`, `setTooltip` and `click`
 // with `events: ['click']`. More cases cover the chart types of Chart.js
 // ADR 0039, section 15 (bar, pie, polar area, scatter), a label color with
-// a border radius, a dash and a border width object, and the tooltip border
-// with a corner radius object. The more cases and the full case are in the
-// second data file. The draw calls come after the last step, so each case
-// ends on the state under test.
+// a border radius, a dash and a border width object, the tooltip border
+// with a corner radius object, and `bodyAlign: 'center'` with the color
+// boxes (plugin.tooltip.js:898-900). The more cases and the full case are
+// in the second data file. The draw calls come after the last step, so each
+// case ends on the state under test.
 //
-// The case `textDirection rtl` writes the `direction` of `canvas.style`
-// (`overrideTextDirection`, helpers.rtl.ts:55-73): the fake canvas has the
-// style of `domStyle` (scale_chart_common.mjs). The draw calls do not show
-// the calls of the style.
+// The cases `rtl` and `textDirection rtl` have the probe `canvasDirection`:
+// the `direction` value and priority of `canvas.style` after the draw
+// (helpers.rtl.ts:55-73). The fake canvas has the style of `domStyle`
+// (scale_chart_common.mjs). The draw calls do not show the calls of the
+// style.
 //
 // The full case `full: title, filler and clickLegend` (Chart.js ADR 0041,
 // section 4 item 3) has the default plugin options with a title, a fill
@@ -259,6 +261,15 @@ function chart(
   };
 }
 
+/**
+ * The probe `canvasDirection`: the `direction` value and priority of the
+ * canvas style after the draw (helpers.rtl.ts:55-73).
+ */
+const canvasDirection = named('canvasDirection', (chart) => [
+  chart.canvas.style.getPropertyValue('direction'),
+  chart.canvas.style.getPropertyPriority('direction'),
+]);
+
 /** runPluginCase with the observer of the tooltip. */
 const tooltipCase = (name, config, opts = {}) =>
   runPluginCase(name, config, {options: canvas(), ...opts, observers: {tooltip: observeTooltip}});
@@ -366,13 +377,21 @@ const cases = [
     1,
     1,
   ),
-  hoverCase('rtl', chart({mode: 'index', intersect: false, rtl: true}), 0, 1, {y: 'top', dy: 10}),
+  hoverCase(
+    'rtl',
+    chart({mode: 'index', intersect: false, rtl: true}),
+    0,
+    1,
+    {y: 'top', dy: 10},
+    {extras: {canvasDirection}},
+  ),
   hoverCase(
     'textDirection rtl',
     chart({mode: 'index', intersect: false, rtl: true, textDirection: 'rtl'}),
     0,
     1,
     {y: 'top', dy: 10},
+    {extras: {canvasDirection}},
   ),
   hoverCase(
     'displayColors false',
@@ -466,6 +485,12 @@ const moreCases = [
       borderColor: 'orange',
     }),
     2,
+    1,
+  ),
+  hoverCase(
+    'bodyAlign center with the color boxes',
+    chart({mode: 'index', intersect: false, bodyAlign: 'center', boxPadding: 3}),
+    0,
     1,
   ),
 ];

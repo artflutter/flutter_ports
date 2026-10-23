@@ -4,7 +4,7 @@
 // Node.js v24.12.0 (darwin-x64), V8 13.6.233.17-node.37:
 // a build of Chart.js v4.5.1+7169e651 at the commit
 // 7169e65147a47f3720957a6f156a33c838ab9f57, with the Liberation Sans mock
-// context of tool/reference/scale_chart_common.mjs. 7 cases, 75 widths.
+// context of tool/reference/scale_chart_common.mjs. 8 cases, 75 widths.
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
@@ -9367,6 +9367,2344 @@ const List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference = [
 ["fillRect",164.45279947916666,208.34285714285716,10,10]
 ["setFillStyle","#fff"]
 ["fillText","Dataset 3: 15",177.45279947916666,213.34285714285716,null]
+["restore"]
+''',
+    },
+  ),
+  (
+    name: 'bodyAlign center with the color boxes',
+    config: <String, Object?>{
+      'type': 'line',
+      'data': <String, Object?>{
+        'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr'],
+        'datasets': <Object?>[
+          <String, Object?>{
+            'label': 'Dataset 1',
+            'data': <Object?>[10.0, 30.0, 20.0, 40.0],
+            'borderColor': 'blue',
+            'backgroundColor': 'red',
+          },
+          <String, Object?>{
+            'label': 'Dataset 2',
+            'data': <Object?>[25.0, 5.0, 35.0, 15.0],
+            'borderColor': 'green',
+            'pointStyle': 'rectRot',
+          },
+          <String, Object?>{
+            'label': 'Dataset 3',
+            'data': <Object?>[5.0, 15.0, 10.0, 30.0],
+            'borderDash': <Object?>[4.0, 2.0],
+            'pointStyle': 'triangle',
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'plugins': <String, Object?>{
+          'colors': false,
+          'decimation': false,
+          'filler': false,
+          'subtitle': false,
+          'title': false,
+          'tooltip': <String, Object?>{
+            'mode': 'index',
+            'intersect': false,
+            'bodyAlign': 'center',
+            'boxPadding': 3.0,
+          },
+        },
+      },
+    },
+    options: <String, Object?>{
+      'canvas': <String, Object?>{'width': 400.0, 'height': 300.0},
+    },
+    expected: <String, Object?>{
+      'initial': <String, Object?>{
+        'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'type': 'category',
+            'axis': 'x',
+            'position': 'bottom',
+            'min': 0.0,
+            'max': 3.0,
+            'ticks': <Object?>[
+              <Object?>[0.0, 'Jan', false],
+              <Object?>[1.0, 'Feb', false],
+              <Object?>[2.0, 'Mar', false],
+              <Object?>[3.0, 'Apr', false],
+            ],
+            'box': <Object?>[27.34765625, 271.6, 387.6630859375, 300.0],
+            'labelRotation': 0.0,
+            'paddings': <Object?>[12.673828125, 0.0, 12.3369140625, 0.0],
+            'tickPixels': <Object?>[
+              27.34765625,
+              147.45279947916666,
+              267.5579427083333,
+              387.6630859375,
+            ],
+            'valuePixels': <Object?>[
+              27.34765625,
+              207.50537109375,
+              387.6630859375,
+            ],
+            'valueForPixel': <Object?>[0.0, 2.0, 3.0],
+            'basePixel': 300.0,
+          },
+          'y': <String, Object?>{
+            'type': 'linear',
+            'axis': 'y',
+            'position': 'left',
+            'min': 5.0,
+            'max': 40.0,
+            'ticks': <Object?>[
+              <Object?>[5.0, '5', false],
+              <Object?>[10.0, '10', false],
+              <Object?>[15.0, '15', false],
+              <Object?>[20.0, '20', false],
+              <Object?>[25.0, '25', false],
+              <Object?>[30.0, '30', false],
+              <Object?>[35.0, '35', false],
+              <Object?>[40.0, '40', false],
+            ],
+            'box': <Object?>[0.0, 32.0, 27.34765625, 271.6],
+            'labelRotation': 0.0,
+            'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
+            'tickPixels': <Object?>[
+              271.6,
+              237.3714285714286,
+              203.14285714285717,
+              168.9142857142857,
+              134.6857142857143,
+              100.45714285714286,
+              66.22857142857144,
+              32.0,
+            ],
+            'valuePixels': <Object?>[271.6, 151.8, 32.0],
+            'valueForPixel': <Object?>[40.0, 22.5, 5.0],
+            'basePixel': 271.6,
+          },
+        },
+        'stacks': undefined,
+        'datasets': <Object?>[
+          <String, Object?>{
+            'type': 'line',
+            'indexAxis': 'x',
+            'xAxisID': 'x',
+            'yAxisID': 'y',
+            'rAxisID': undefined,
+            'stack': undefined,
+            'order': 0.0,
+            'visible': true,
+            'hidden': null,
+            '_clip': <String, Object?>{
+              'top': 5.0,
+              'right': 5.0,
+              'bottom': 5.0,
+              'left': 5.0,
+              'disabled': false,
+            },
+            '_drawStart': 0.0,
+            '_drawCount': 4.0,
+            'maxOverflow': 5.0,
+            'datasetOptions': <String, Object?>{
+              'showLine': true,
+              'spanGaps': false,
+              'drawActiveElementsOnTop': true,
+            },
+            'parsed': <Object?>[
+              <String, Object?>{'x': 0.0, 'y': 10.0},
+              <String, Object?>{'x': 1.0, 'y': 30.0},
+              <String, Object?>{'x': 2.0, 'y': 20.0},
+              <String, Object?>{'x': 3.0, 'y': 40.0},
+            ],
+            'dataset': <String, Object?>{
+              '_loop': undefined,
+              '_fullLoop': undefined,
+              'pointCount': 4.0,
+              'segments': <Object?>[
+                <Object?>[0.0, 3.0, false],
+              ],
+              'options': <String, Object?>{
+                r'$shared': false,
+                'borderCapStyle': 'butt',
+                'borderDash': <Object?>[],
+                'borderDashOffset': 0.0,
+                'borderJoinStyle': 'miter',
+                'borderWidth': 3.0,
+                'capBezierPoints': true,
+                'cubicInterpolationMode': 'default',
+                'fill': false,
+                'spanGaps': false,
+                'stepped': false,
+                'tension': 0.0,
+                'backgroundColor': 'red',
+                'borderColor': 'blue',
+                'segment': undefined,
+              },
+            },
+            'data': <Object?>[
+              <String, Object?>{
+                'x': 27.34765625,
+                'y': 237.3714285714286,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[27.34765625, 237.3714285714286],
+                'tooltipPosition': <Object?>[27.34765625, 237.3714285714286],
+              },
+              <String, Object?>{
+                'x': 147.45279947916666,
+                'y': 100.45714285714286,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[147.45279947916666, 100.45714285714286],
+                'tooltipPosition': <Object?>[
+                  147.45279947916666,
+                  100.45714285714286,
+                ],
+              },
+              <String, Object?>{
+                'x': 267.5579427083333,
+                'y': 168.9142857142857,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[267.5579427083333, 168.9142857142857],
+                'tooltipPosition': <Object?>[
+                  267.5579427083333,
+                  168.9142857142857,
+                ],
+              },
+              <String, Object?>{
+                'x': 387.6630859375,
+                'y': 32.0,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[387.6630859375, 32.0],
+                'tooltipPosition': <Object?>[387.6630859375, 32.0],
+              },
+            ],
+            'options': <Object?>[
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'red',
+                'borderColor': 'blue',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'red',
+                'borderColor': 'blue',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'red',
+                'borderColor': 'blue',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'red',
+                'borderColor': 'blue',
+              },
+            ],
+            'active': <Object?>[
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#E60000',
+                'borderColor': '#0000E6',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#E60000',
+                'borderColor': '#0000E6',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#E60000',
+                'borderColor': '#0000E6',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#E60000',
+                'borderColor': '#0000E6',
+              },
+            ],
+            'labelAndValue': <Object?>[
+              <String, Object?>{'label': 'Jan', 'value': '10'},
+              <String, Object?>{'label': 'Feb', 'value': '30'},
+              <String, Object?>{'label': 'Mar', 'value': '20'},
+              <String, Object?>{'label': 'Apr', 'value': '40'},
+            ],
+          },
+          <String, Object?>{
+            'type': 'line',
+            'indexAxis': 'x',
+            'xAxisID': 'x',
+            'yAxisID': 'y',
+            'rAxisID': undefined,
+            'stack': undefined,
+            'order': 0.0,
+            'visible': true,
+            'hidden': null,
+            '_clip': <String, Object?>{
+              'top': 5.0,
+              'right': 5.0,
+              'bottom': 5.0,
+              'left': 5.0,
+              'disabled': false,
+            },
+            '_drawStart': 0.0,
+            '_drawCount': 4.0,
+            'maxOverflow': 5.0,
+            'datasetOptions': <String, Object?>{
+              'showLine': true,
+              'spanGaps': false,
+              'drawActiveElementsOnTop': true,
+            },
+            'parsed': <Object?>[
+              <String, Object?>{'x': 0.0, 'y': 25.0},
+              <String, Object?>{'x': 1.0, 'y': 5.0},
+              <String, Object?>{'x': 2.0, 'y': 35.0},
+              <String, Object?>{'x': 3.0, 'y': 15.0},
+            ],
+            'dataset': <String, Object?>{
+              '_loop': undefined,
+              '_fullLoop': undefined,
+              'pointCount': 4.0,
+              'segments': <Object?>[
+                <Object?>[0.0, 3.0, false],
+              ],
+              'options': <String, Object?>{
+                r'$shared': false,
+                'borderCapStyle': 'butt',
+                'borderDash': <Object?>[],
+                'borderDashOffset': 0.0,
+                'borderJoinStyle': 'miter',
+                'borderWidth': 3.0,
+                'capBezierPoints': true,
+                'cubicInterpolationMode': 'default',
+                'fill': false,
+                'spanGaps': false,
+                'stepped': false,
+                'tension': 0.0,
+                'backgroundColor': 'rgba(0,0,0,0.1)',
+                'borderColor': 'green',
+                'segment': undefined,
+              },
+            },
+            'data': <Object?>[
+              <String, Object?>{
+                'x': 27.34765625,
+                'y': 134.6857142857143,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[27.34765625, 134.6857142857143],
+                'tooltipPosition': <Object?>[27.34765625, 134.6857142857143],
+              },
+              <String, Object?>{
+                'x': 147.45279947916666,
+                'y': 271.6,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[147.45279947916666, 271.6],
+                'tooltipPosition': <Object?>[147.45279947916666, 271.6],
+              },
+              <String, Object?>{
+                'x': 267.5579427083333,
+                'y': 66.22857142857144,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[267.5579427083333, 66.22857142857144],
+                'tooltipPosition': <Object?>[
+                  267.5579427083333,
+                  66.22857142857144,
+                ],
+              },
+              <String, Object?>{
+                'x': 387.6630859375,
+                'y': 203.14285714285717,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[387.6630859375, 203.14285714285717],
+                'tooltipPosition': <Object?>[
+                  387.6630859375,
+                  203.14285714285717,
+                ],
+              },
+            ],
+            'options': <Object?>[
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'rectRot',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0,0,0,0.1)',
+                'borderColor': 'green',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'rectRot',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0,0,0,0.1)',
+                'borderColor': 'green',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'rectRot',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0,0,0,0.1)',
+                'borderColor': 'green',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'rectRot',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0,0,0,0.1)',
+                'borderColor': 'green',
+              },
+            ],
+            'active': <Object?>[
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'rectRot',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#00000019',
+                'borderColor': '#007300',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'rectRot',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#00000019',
+                'borderColor': '#007300',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'rectRot',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#00000019',
+                'borderColor': '#007300',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'rectRot',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#00000019',
+                'borderColor': '#007300',
+              },
+            ],
+            'labelAndValue': <Object?>[
+              <String, Object?>{'label': 'Jan', 'value': '25'},
+              <String, Object?>{'label': 'Feb', 'value': '5'},
+              <String, Object?>{'label': 'Mar', 'value': '35'},
+              <String, Object?>{'label': 'Apr', 'value': '15'},
+            ],
+          },
+          <String, Object?>{
+            'type': 'line',
+            'indexAxis': 'x',
+            'xAxisID': 'x',
+            'yAxisID': 'y',
+            'rAxisID': undefined,
+            'stack': undefined,
+            'order': 0.0,
+            'visible': true,
+            'hidden': null,
+            '_clip': <String, Object?>{
+              'top': 5.0,
+              'right': 5.0,
+              'bottom': 5.0,
+              'left': 5.0,
+              'disabled': false,
+            },
+            '_drawStart': 0.0,
+            '_drawCount': 4.0,
+            'maxOverflow': 5.0,
+            'datasetOptions': <String, Object?>{
+              'showLine': true,
+              'spanGaps': false,
+              'drawActiveElementsOnTop': true,
+            },
+            'parsed': <Object?>[
+              <String, Object?>{'x': 0.0, 'y': 5.0},
+              <String, Object?>{'x': 1.0, 'y': 15.0},
+              <String, Object?>{'x': 2.0, 'y': 10.0},
+              <String, Object?>{'x': 3.0, 'y': 30.0},
+            ],
+            'dataset': <String, Object?>{
+              '_loop': undefined,
+              '_fullLoop': undefined,
+              'pointCount': 4.0,
+              'segments': <Object?>[
+                <Object?>[0.0, 3.0, false],
+              ],
+              'options': <String, Object?>{
+                r'$shared': false,
+                'borderCapStyle': 'butt',
+                'borderDash': <Object?>[4.0, 2.0],
+                'borderDashOffset': 0.0,
+                'borderJoinStyle': 'miter',
+                'borderWidth': 3.0,
+                'capBezierPoints': true,
+                'cubicInterpolationMode': 'default',
+                'fill': false,
+                'spanGaps': false,
+                'stepped': false,
+                'tension': 0.0,
+                'backgroundColor': 'rgba(0,0,0,0.1)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+                'segment': undefined,
+              },
+            },
+            'data': <Object?>[
+              <String, Object?>{
+                'x': 27.34765625,
+                'y': 271.6,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[27.34765625, 271.6],
+                'tooltipPosition': <Object?>[27.34765625, 271.6],
+              },
+              <String, Object?>{
+                'x': 147.45279947916666,
+                'y': 203.14285714285717,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[147.45279947916666, 203.14285714285717],
+                'tooltipPosition': <Object?>[
+                  147.45279947916666,
+                  203.14285714285717,
+                ],
+              },
+              <String, Object?>{
+                'x': 267.5579427083333,
+                'y': 237.3714285714286,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[267.5579427083333, 237.3714285714286],
+                'tooltipPosition': <Object?>[
+                  267.5579427083333,
+                  237.3714285714286,
+                ],
+              },
+              <String, Object?>{
+                'x': 387.6630859375,
+                'y': 100.45714285714286,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[387.6630859375, 100.45714285714286],
+                'tooltipPosition': <Object?>[
+                  387.6630859375,
+                  100.45714285714286,
+                ],
+              },
+            ],
+            'options': <Object?>[
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'triangle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0,0,0,0.1)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'triangle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0,0,0,0.1)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'triangle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0,0,0,0.1)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'triangle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0,0,0,0.1)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+            ],
+            'active': <Object?>[
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'triangle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#00000019',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'triangle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#00000019',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'triangle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#00000019',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'triangle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#00000019',
+                'borderColor': '#00000019',
+              },
+            ],
+            'labelAndValue': <Object?>[
+              <String, Object?>{'label': 'Jan', 'value': '5'},
+              <String, Object?>{'label': 'Feb', 'value': '15'},
+              <String, Object?>{'label': 'Mar', 'value': '10'},
+              <String, Object?>{'label': 'Apr', 'value': '30'},
+            ],
+          },
+        ],
+        'boxes': <Object?>[
+          <Object?>[
+            'legend',
+            'top',
+            1000.0,
+            true,
+            0.0,
+            0.0,
+            400.0,
+            32.0,
+            400.0,
+            32.0,
+          ],
+          <Object?>[
+            'x',
+            'bottom',
+            0.0,
+            false,
+            27.34765625,
+            271.6,
+            387.6630859375,
+            300.0,
+            360.3154296875,
+            28.4,
+          ],
+          <Object?>[
+            'y',
+            'left',
+            0.0,
+            false,
+            0.0,
+            32.0,
+            27.34765625,
+            271.6,
+            27.34765625,
+            239.6,
+          ],
+        ],
+        'plugins.tooltip': <String, Object?>{
+          'opacity': 0.0,
+          'x': undefined,
+          'y': undefined,
+          'width': undefined,
+          'height': undefined,
+          'caretX': undefined,
+          'caretY': undefined,
+          'xAlign': undefined,
+          'yAlign': undefined,
+          'title': undefined,
+          'beforeBody': undefined,
+          'body': undefined,
+          'afterBody': undefined,
+          'footer': undefined,
+          'labelColors': undefined,
+          'labelPointStyles': undefined,
+          'labelTextColors': undefined,
+          'dataPoints': undefined,
+          'active': <Object?>[],
+          'log': <Object?>[],
+        },
+      },
+      'steps': <Object?>[
+        <String, Object?>{
+          'do': <Object?>['hover', 147.0, 100.0],
+          'observations': <String, Object?>{
+            'chartArea': <Object?>[27.34765625, 32.0, 387.6630859375, 271.6],
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'category',
+                'axis': 'x',
+                'position': 'bottom',
+                'min': 0.0,
+                'max': 3.0,
+                'ticks': <Object?>[
+                  <Object?>[0.0, 'Jan', false],
+                  <Object?>[1.0, 'Feb', false],
+                  <Object?>[2.0, 'Mar', false],
+                  <Object?>[3.0, 'Apr', false],
+                ],
+                'box': <Object?>[27.34765625, 271.6, 387.6630859375, 300.0],
+                'labelRotation': 0.0,
+                'paddings': <Object?>[12.673828125, 0.0, 12.3369140625, 0.0],
+                'tickPixels': <Object?>[
+                  27.34765625,
+                  147.45279947916666,
+                  267.5579427083333,
+                  387.6630859375,
+                ],
+                'valuePixels': <Object?>[
+                  27.34765625,
+                  207.50537109375,
+                  387.6630859375,
+                ],
+                'valueForPixel': <Object?>[0.0, 2.0, 3.0],
+                'basePixel': 300.0,
+              },
+              'y': <String, Object?>{
+                'type': 'linear',
+                'axis': 'y',
+                'position': 'left',
+                'min': 5.0,
+                'max': 40.0,
+                'ticks': <Object?>[
+                  <Object?>[5.0, '5', false],
+                  <Object?>[10.0, '10', false],
+                  <Object?>[15.0, '15', false],
+                  <Object?>[20.0, '20', false],
+                  <Object?>[25.0, '25', false],
+                  <Object?>[30.0, '30', false],
+                  <Object?>[35.0, '35', false],
+                  <Object?>[40.0, '40', false],
+                ],
+                'box': <Object?>[0.0, 32.0, 27.34765625, 271.6],
+                'labelRotation': 0.0,
+                'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
+                'tickPixels': <Object?>[
+                  271.6,
+                  237.3714285714286,
+                  203.14285714285717,
+                  168.9142857142857,
+                  134.6857142857143,
+                  100.45714285714286,
+                  66.22857142857144,
+                  32.0,
+                ],
+                'valuePixels': <Object?>[271.6, 151.8, 32.0],
+                'valueForPixel': <Object?>[40.0, 22.5, 5.0],
+                'basePixel': 271.6,
+              },
+            },
+            'stacks': undefined,
+            'datasets': <Object?>[
+              <String, Object?>{
+                'type': 'line',
+                'indexAxis': 'x',
+                'xAxisID': 'x',
+                'yAxisID': 'y',
+                'rAxisID': undefined,
+                'stack': undefined,
+                'order': 0.0,
+                'visible': true,
+                'hidden': null,
+                '_clip': <String, Object?>{
+                  'top': 5.0,
+                  'right': 5.0,
+                  'bottom': 5.0,
+                  'left': 5.0,
+                  'disabled': false,
+                },
+                '_drawStart': 0.0,
+                '_drawCount': 4.0,
+                'maxOverflow': 5.0,
+                'datasetOptions': <String, Object?>{
+                  'showLine': true,
+                  'spanGaps': false,
+                  'drawActiveElementsOnTop': true,
+                },
+                'parsed': <Object?>[
+                  <String, Object?>{'x': 0.0, 'y': 10.0},
+                  <String, Object?>{'x': 1.0, 'y': 30.0},
+                  <String, Object?>{'x': 2.0, 'y': 20.0},
+                  <String, Object?>{'x': 3.0, 'y': 40.0},
+                ],
+                'dataset': <String, Object?>{
+                  '_loop': undefined,
+                  '_fullLoop': undefined,
+                  'pointCount': 4.0,
+                  'segments': <Object?>[
+                    <Object?>[0.0, 3.0, false],
+                  ],
+                  'options': <String, Object?>{
+                    r'$shared': false,
+                    'borderCapStyle': 'butt',
+                    'borderDash': <Object?>[],
+                    'borderDashOffset': 0.0,
+                    'borderJoinStyle': 'miter',
+                    'borderWidth': 3.0,
+                    'capBezierPoints': true,
+                    'cubicInterpolationMode': 'default',
+                    'fill': false,
+                    'spanGaps': false,
+                    'stepped': false,
+                    'tension': 0.0,
+                    'backgroundColor': 'red',
+                    'borderColor': 'blue',
+                    'segment': undefined,
+                  },
+                },
+                'data': <Object?>[
+                  <String, Object?>{
+                    'x': 27.34765625,
+                    'y': 237.3714285714286,
+                    'skip': false,
+                    'stop': false,
+                    'active': false,
+                    'hidden': undefined,
+                    'center': <Object?>[27.34765625, 237.3714285714286],
+                    'tooltipPosition': <Object?>[
+                      27.34765625,
+                      237.3714285714286,
+                    ],
+                  },
+                  <String, Object?>{
+                    'x': 147.45279947916666,
+                    'y': 100.45714285714286,
+                    'skip': false,
+                    'stop': false,
+                    'active': true,
+                    'hidden': undefined,
+                    'center': <Object?>[147.45279947916666, 100.45714285714286],
+                    'tooltipPosition': <Object?>[
+                      147.45279947916666,
+                      100.45714285714286,
+                    ],
+                  },
+                  <String, Object?>{
+                    'x': 267.5579427083333,
+                    'y': 168.9142857142857,
+                    'skip': false,
+                    'stop': false,
+                    'active': false,
+                    'hidden': undefined,
+                    'center': <Object?>[267.5579427083333, 168.9142857142857],
+                    'tooltipPosition': <Object?>[
+                      267.5579427083333,
+                      168.9142857142857,
+                    ],
+                  },
+                  <String, Object?>{
+                    'x': 387.6630859375,
+                    'y': 32.0,
+                    'skip': false,
+                    'stop': false,
+                    'active': false,
+                    'hidden': undefined,
+                    'center': <Object?>[387.6630859375, 32.0],
+                    'tooltipPosition': <Object?>[387.6630859375, 32.0],
+                  },
+                ],
+                'options': <Object?>[
+                  <String, Object?>{
+                    r'$shared': true,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'circle',
+                    'radius': 3.0,
+                    'rotation': 0.0,
+                    'backgroundColor': 'red',
+                    'borderColor': 'blue',
+                  },
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'circle',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#E60000',
+                    'borderColor': '#0000E6',
+                  },
+                  <String, Object?>{
+                    r'$shared': true,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'circle',
+                    'radius': 3.0,
+                    'rotation': 0.0,
+                    'backgroundColor': 'red',
+                    'borderColor': 'blue',
+                  },
+                  <String, Object?>{
+                    r'$shared': true,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'circle',
+                    'radius': 3.0,
+                    'rotation': 0.0,
+                    'backgroundColor': 'red',
+                    'borderColor': 'blue',
+                  },
+                ],
+                'active': <Object?>[
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'circle',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#E60000',
+                    'borderColor': '#0000E6',
+                  },
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'circle',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#E60000',
+                    'borderColor': '#0000E6',
+                  },
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'circle',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#E60000',
+                    'borderColor': '#0000E6',
+                  },
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'circle',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#E60000',
+                    'borderColor': '#0000E6',
+                  },
+                ],
+                'labelAndValue': <Object?>[
+                  <String, Object?>{'label': 'Jan', 'value': '10'},
+                  <String, Object?>{'label': 'Feb', 'value': '30'},
+                  <String, Object?>{'label': 'Mar', 'value': '20'},
+                  <String, Object?>{'label': 'Apr', 'value': '40'},
+                ],
+              },
+              <String, Object?>{
+                'type': 'line',
+                'indexAxis': 'x',
+                'xAxisID': 'x',
+                'yAxisID': 'y',
+                'rAxisID': undefined,
+                'stack': undefined,
+                'order': 0.0,
+                'visible': true,
+                'hidden': null,
+                '_clip': <String, Object?>{
+                  'top': 5.0,
+                  'right': 5.0,
+                  'bottom': 5.0,
+                  'left': 5.0,
+                  'disabled': false,
+                },
+                '_drawStart': 0.0,
+                '_drawCount': 4.0,
+                'maxOverflow': 5.0,
+                'datasetOptions': <String, Object?>{
+                  'showLine': true,
+                  'spanGaps': false,
+                  'drawActiveElementsOnTop': true,
+                },
+                'parsed': <Object?>[
+                  <String, Object?>{'x': 0.0, 'y': 25.0},
+                  <String, Object?>{'x': 1.0, 'y': 5.0},
+                  <String, Object?>{'x': 2.0, 'y': 35.0},
+                  <String, Object?>{'x': 3.0, 'y': 15.0},
+                ],
+                'dataset': <String, Object?>{
+                  '_loop': undefined,
+                  '_fullLoop': undefined,
+                  'pointCount': 4.0,
+                  'segments': <Object?>[
+                    <Object?>[0.0, 3.0, false],
+                  ],
+                  'options': <String, Object?>{
+                    r'$shared': false,
+                    'borderCapStyle': 'butt',
+                    'borderDash': <Object?>[],
+                    'borderDashOffset': 0.0,
+                    'borderJoinStyle': 'miter',
+                    'borderWidth': 3.0,
+                    'capBezierPoints': true,
+                    'cubicInterpolationMode': 'default',
+                    'fill': false,
+                    'spanGaps': false,
+                    'stepped': false,
+                    'tension': 0.0,
+                    'backgroundColor': 'rgba(0,0,0,0.1)',
+                    'borderColor': 'green',
+                    'segment': undefined,
+                  },
+                },
+                'data': <Object?>[
+                  <String, Object?>{
+                    'x': 27.34765625,
+                    'y': 134.6857142857143,
+                    'skip': false,
+                    'stop': false,
+                    'active': false,
+                    'hidden': undefined,
+                    'center': <Object?>[27.34765625, 134.6857142857143],
+                    'tooltipPosition': <Object?>[
+                      27.34765625,
+                      134.6857142857143,
+                    ],
+                  },
+                  <String, Object?>{
+                    'x': 147.45279947916666,
+                    'y': 271.6,
+                    'skip': false,
+                    'stop': false,
+                    'active': false,
+                    'hidden': undefined,
+                    'center': <Object?>[147.45279947916666, 271.6],
+                    'tooltipPosition': <Object?>[147.45279947916666, 271.6],
+                  },
+                  <String, Object?>{
+                    'x': 267.5579427083333,
+                    'y': 66.22857142857144,
+                    'skip': false,
+                    'stop': false,
+                    'active': false,
+                    'hidden': undefined,
+                    'center': <Object?>[267.5579427083333, 66.22857142857144],
+                    'tooltipPosition': <Object?>[
+                      267.5579427083333,
+                      66.22857142857144,
+                    ],
+                  },
+                  <String, Object?>{
+                    'x': 387.6630859375,
+                    'y': 203.14285714285717,
+                    'skip': false,
+                    'stop': false,
+                    'active': false,
+                    'hidden': undefined,
+                    'center': <Object?>[387.6630859375, 203.14285714285717],
+                    'tooltipPosition': <Object?>[
+                      387.6630859375,
+                      203.14285714285717,
+                    ],
+                  },
+                ],
+                'options': <Object?>[
+                  <String, Object?>{
+                    r'$shared': true,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'rectRot',
+                    'radius': 3.0,
+                    'rotation': 0.0,
+                    'backgroundColor': 'rgba(0,0,0,0.1)',
+                    'borderColor': 'green',
+                  },
+                  <String, Object?>{
+                    r'$shared': true,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'rectRot',
+                    'radius': 3.0,
+                    'rotation': 0.0,
+                    'backgroundColor': 'rgba(0,0,0,0.1)',
+                    'borderColor': 'green',
+                  },
+                  <String, Object?>{
+                    r'$shared': true,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'rectRot',
+                    'radius': 3.0,
+                    'rotation': 0.0,
+                    'backgroundColor': 'rgba(0,0,0,0.1)',
+                    'borderColor': 'green',
+                  },
+                  <String, Object?>{
+                    r'$shared': true,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'rectRot',
+                    'radius': 3.0,
+                    'rotation': 0.0,
+                    'backgroundColor': 'rgba(0,0,0,0.1)',
+                    'borderColor': 'green',
+                  },
+                ],
+                'active': <Object?>[
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'rectRot',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#00000019',
+                    'borderColor': '#007300',
+                  },
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'rectRot',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#00000019',
+                    'borderColor': '#007300',
+                  },
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'rectRot',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#00000019',
+                    'borderColor': '#007300',
+                  },
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'rectRot',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#00000019',
+                    'borderColor': '#007300',
+                  },
+                ],
+                'labelAndValue': <Object?>[
+                  <String, Object?>{'label': 'Jan', 'value': '25'},
+                  <String, Object?>{'label': 'Feb', 'value': '5'},
+                  <String, Object?>{'label': 'Mar', 'value': '35'},
+                  <String, Object?>{'label': 'Apr', 'value': '15'},
+                ],
+              },
+              <String, Object?>{
+                'type': 'line',
+                'indexAxis': 'x',
+                'xAxisID': 'x',
+                'yAxisID': 'y',
+                'rAxisID': undefined,
+                'stack': undefined,
+                'order': 0.0,
+                'visible': true,
+                'hidden': null,
+                '_clip': <String, Object?>{
+                  'top': 5.0,
+                  'right': 5.0,
+                  'bottom': 5.0,
+                  'left': 5.0,
+                  'disabled': false,
+                },
+                '_drawStart': 0.0,
+                '_drawCount': 4.0,
+                'maxOverflow': 5.0,
+                'datasetOptions': <String, Object?>{
+                  'showLine': true,
+                  'spanGaps': false,
+                  'drawActiveElementsOnTop': true,
+                },
+                'parsed': <Object?>[
+                  <String, Object?>{'x': 0.0, 'y': 5.0},
+                  <String, Object?>{'x': 1.0, 'y': 15.0},
+                  <String, Object?>{'x': 2.0, 'y': 10.0},
+                  <String, Object?>{'x': 3.0, 'y': 30.0},
+                ],
+                'dataset': <String, Object?>{
+                  '_loop': undefined,
+                  '_fullLoop': undefined,
+                  'pointCount': 4.0,
+                  'segments': <Object?>[
+                    <Object?>[0.0, 3.0, false],
+                  ],
+                  'options': <String, Object?>{
+                    r'$shared': false,
+                    'borderCapStyle': 'butt',
+                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDashOffset': 0.0,
+                    'borderJoinStyle': 'miter',
+                    'borderWidth': 3.0,
+                    'capBezierPoints': true,
+                    'cubicInterpolationMode': 'default',
+                    'fill': false,
+                    'spanGaps': false,
+                    'stepped': false,
+                    'tension': 0.0,
+                    'backgroundColor': 'rgba(0,0,0,0.1)',
+                    'borderColor': 'rgba(0,0,0,0.1)',
+                    'segment': undefined,
+                  },
+                },
+                'data': <Object?>[
+                  <String, Object?>{
+                    'x': 27.34765625,
+                    'y': 271.6,
+                    'skip': false,
+                    'stop': false,
+                    'active': false,
+                    'hidden': undefined,
+                    'center': <Object?>[27.34765625, 271.6],
+                    'tooltipPosition': <Object?>[27.34765625, 271.6],
+                  },
+                  <String, Object?>{
+                    'x': 147.45279947916666,
+                    'y': 203.14285714285717,
+                    'skip': false,
+                    'stop': false,
+                    'active': false,
+                    'hidden': undefined,
+                    'center': <Object?>[147.45279947916666, 203.14285714285717],
+                    'tooltipPosition': <Object?>[
+                      147.45279947916666,
+                      203.14285714285717,
+                    ],
+                  },
+                  <String, Object?>{
+                    'x': 267.5579427083333,
+                    'y': 237.3714285714286,
+                    'skip': false,
+                    'stop': false,
+                    'active': false,
+                    'hidden': undefined,
+                    'center': <Object?>[267.5579427083333, 237.3714285714286],
+                    'tooltipPosition': <Object?>[
+                      267.5579427083333,
+                      237.3714285714286,
+                    ],
+                  },
+                  <String, Object?>{
+                    'x': 387.6630859375,
+                    'y': 100.45714285714286,
+                    'skip': false,
+                    'stop': false,
+                    'active': false,
+                    'hidden': undefined,
+                    'center': <Object?>[387.6630859375, 100.45714285714286],
+                    'tooltipPosition': <Object?>[
+                      387.6630859375,
+                      100.45714285714286,
+                    ],
+                  },
+                ],
+                'options': <Object?>[
+                  <String, Object?>{
+                    r'$shared': true,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'triangle',
+                    'radius': 3.0,
+                    'rotation': 0.0,
+                    'backgroundColor': 'rgba(0,0,0,0.1)',
+                    'borderColor': 'rgba(0,0,0,0.1)',
+                  },
+                  <String, Object?>{
+                    r'$shared': true,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'triangle',
+                    'radius': 3.0,
+                    'rotation': 0.0,
+                    'backgroundColor': 'rgba(0,0,0,0.1)',
+                    'borderColor': 'rgba(0,0,0,0.1)',
+                  },
+                  <String, Object?>{
+                    r'$shared': true,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'triangle',
+                    'radius': 3.0,
+                    'rotation': 0.0,
+                    'backgroundColor': 'rgba(0,0,0,0.1)',
+                    'borderColor': 'rgba(0,0,0,0.1)',
+                  },
+                  <String, Object?>{
+                    r'$shared': true,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'triangle',
+                    'radius': 3.0,
+                    'rotation': 0.0,
+                    'backgroundColor': 'rgba(0,0,0,0.1)',
+                    'borderColor': 'rgba(0,0,0,0.1)',
+                  },
+                ],
+                'active': <Object?>[
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'triangle',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#00000019',
+                    'borderColor': '#00000019',
+                  },
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'triangle',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#00000019',
+                    'borderColor': '#00000019',
+                  },
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'triangle',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#00000019',
+                    'borderColor': '#00000019',
+                  },
+                  <String, Object?>{
+                    r'$shared': false,
+                    'borderWidth': 1.0,
+                    'hitRadius': 1.0,
+                    'hoverBorderWidth': 1.0,
+                    'hoverRadius': 4.0,
+                    'pointStyle': 'triangle',
+                    'radius': 4.0,
+                    'rotation': 0.0,
+                    'backgroundColor': '#00000019',
+                    'borderColor': '#00000019',
+                  },
+                ],
+                'labelAndValue': <Object?>[
+                  <String, Object?>{'label': 'Jan', 'value': '5'},
+                  <String, Object?>{'label': 'Feb', 'value': '15'},
+                  <String, Object?>{'label': 'Mar', 'value': '10'},
+                  <String, Object?>{'label': 'Apr', 'value': '30'},
+                ],
+              },
+            ],
+            'boxes': <Object?>[
+              <Object?>[
+                'legend',
+                'top',
+                1000.0,
+                true,
+                0.0,
+                0.0,
+                400.0,
+                32.0,
+                400.0,
+                32.0,
+              ],
+              <Object?>[
+                'x',
+                'bottom',
+                0.0,
+                false,
+                27.34765625,
+                271.6,
+                387.6630859375,
+                300.0,
+                360.3154296875,
+                28.4,
+              ],
+              <Object?>[
+                'y',
+                'left',
+                0.0,
+                false,
+                0.0,
+                32.0,
+                27.34765625,
+                271.6,
+                27.34765625,
+                239.6,
+              ],
+            ],
+            'plugins.tooltip': <String, Object?>{
+              'opacity': 1.0,
+              'x': 154.45279947916666,
+              'y': 151.93333333333334,
+              'width': 100.37890625,
+              'height': 79.6,
+              'caretX': 147.45279947916666,
+              'caretY': 191.73333333333335,
+              'xAlign': 'left',
+              'yAlign': 'center',
+              'title': <Object?>['Feb'],
+              'beforeBody': <Object?>[],
+              'body': <Object?>[
+                <String, Object?>{
+                  'before': <Object?>[],
+                  'lines': <Object?>['Dataset 1: 30'],
+                  'after': <Object?>[],
+                },
+                <String, Object?>{
+                  'before': <Object?>[],
+                  'lines': <Object?>['Dataset 2: 5'],
+                  'after': <Object?>[],
+                },
+                <String, Object?>{
+                  'before': <Object?>[],
+                  'lines': <Object?>['Dataset 3: 15'],
+                  'after': <Object?>[],
+                },
+              ],
+              'afterBody': <Object?>[],
+              'footer': <Object?>[],
+              'labelColors': <Object?>[
+                <String, Object?>{
+                  'borderColor': 'blue',
+                  'backgroundColor': 'red',
+                  'borderWidth': 1.0,
+                  'borderDash': undefined,
+                  'borderDashOffset': undefined,
+                  'borderRadius': 0.0,
+                },
+                <String, Object?>{
+                  'borderColor': 'green',
+                  'backgroundColor': 'rgba(0,0,0,0.1)',
+                  'borderWidth': 1.0,
+                  'borderDash': undefined,
+                  'borderDashOffset': undefined,
+                  'borderRadius': 0.0,
+                },
+                <String, Object?>{
+                  'borderColor': 'rgba(0,0,0,0.1)',
+                  'backgroundColor': 'rgba(0,0,0,0.1)',
+                  'borderWidth': 1.0,
+                  'borderDash': undefined,
+                  'borderDashOffset': undefined,
+                  'borderRadius': 0.0,
+                },
+              ],
+              'labelPointStyles': <Object?>[
+                <String, Object?>{'pointStyle': 'circle', 'rotation': 0.0},
+                <String, Object?>{'pointStyle': 'rectRot', 'rotation': 0.0},
+                <String, Object?>{'pointStyle': 'triangle', 'rotation': 0.0},
+              ],
+              'labelTextColors': <Object?>['#fff', '#fff', '#fff'],
+              'dataPoints': <Object?>[
+                <String, Object?>{
+                  'datasetIndex': 0.0,
+                  'dataIndex': 1.0,
+                  'label': 'Feb',
+                  'formattedValue': '30',
+                  'parsed': <String, Object?>{'x': 1.0, 'y': 30.0},
+                  'raw': 30.0,
+                },
+                <String, Object?>{
+                  'datasetIndex': 1.0,
+                  'dataIndex': 1.0,
+                  'label': 'Feb',
+                  'formattedValue': '5',
+                  'parsed': <String, Object?>{'x': 1.0, 'y': 5.0},
+                  'raw': 5.0,
+                },
+                <String, Object?>{
+                  'datasetIndex': 2.0,
+                  'dataIndex': 1.0,
+                  'label': 'Feb',
+                  'formattedValue': '15',
+                  'parsed': <String, Object?>{'x': 1.0, 'y': 15.0},
+                  'raw': 15.0,
+                },
+              ],
+              'active': <Object?>[
+                <Object?>[0.0, 1.0],
+                <Object?>[1.0, 1.0],
+                <Object?>[2.0, 1.0],
+              ],
+              'log': <Object?>[],
+            },
+          },
+        },
+      ],
+      'drawCalls': '''
+["save"]
+["resetTransform"]
+["clearRect",0,0,400,300]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",27.5,32]
+["lineTo",27.5,271]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",27.5,272]
+["lineTo",27.5,279.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",147.5,32]
+["lineTo",147.5,271]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",147.5,272]
+["lineTo",147.5,279.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",267.5,32]
+["lineTo",267.5,271]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",267.5,272]
+["lineTo",267.5,279.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",387.5,32]
+["lineTo",387.5,271]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",387.5,272]
+["lineTo",387.5,279.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,271.5]
+["lineTo",387.6630859375,271.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,271.5]
+["lineTo",27,271.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,237.5]
+["lineTo",387.6630859375,237.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,237.5]
+["lineTo",27,237.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,203.5]
+["lineTo",387.6630859375,203.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,203.5]
+["lineTo",27,203.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,168.5]
+["lineTo",387.6630859375,168.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,168.5]
+["lineTo",27,168.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,134.5]
+["lineTo",387.6630859375,134.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,134.5]
+["lineTo",27,134.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,100.5]
+["lineTo",387.6630859375,100.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,100.5]
+["lineTo",27,100.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,66.5]
+["lineTo",387.6630859375,66.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,66.5]
+["lineTo",27,66.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,32.5]
+["lineTo",387.6630859375,32.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,32.5]
+["lineTo",27,32.5]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,400,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","Dataset 1"]
+["save"]
+["setFillStyle","red"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","blue"]
+["setLineDash",[]]
+["beginPath"]
+["rect",43.955078125,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","Dataset 1",89.955078125,16,null]
+["restore"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","Dataset 2"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","green"]
+["setLineDash",[]]
+["beginPath"]
+["rect",151.318359375,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","Dataset 2",197.318359375,16,null]
+["restore"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","Dataset 3"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[4,2]]
+["beginPath"]
+["rect",258.681640625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","Dataset 3",304.681640625,16,null]
+["restore"]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",27,271.5]
+["lineTo",388,271.5]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,271.6,400,28.399999999999977]
+["clip",null,null]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",27.34765625,282.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","Jan",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",147.45279947916666,282.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","Feb",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",267.5579427083333,282.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","Mar",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",387.6630859375,282.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","Apr",0,7.199999999999999,null]
+["restore"]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",27.5,32]
+["lineTo",27.5,272]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,27.34765625,300]
+["clip",null,null]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,271.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","5",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,237.3714285714286]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","10",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,203.14285714285717]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","15",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,168.9142857142857]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","20",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,134.6857142857143]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","25",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,100.45714285714286]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","30",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,66.22857142857144]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","35",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,32]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","40",0,0,null]
+["restore"]
+["restore"]
+["save"]
+["beginPath"]
+["rect",22.34765625,27,370.3154296875,249.60000000000002]
+["clip",null,null]
+["save"]
+["setLineCap","butt"]
+["setLineDash",[4,2]]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["stroke",{"path":1,"calls":[["moveTo",27.34765625,271.6],["lineTo",147.45279947916666,203.14285714285717],["lineTo",267.5579427083333,237.3714285714286],["lineTo",387.6630859375,100.45714285714286]]}]
+["restore"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",27.34765625,268.6]
+["lineTo",29.945732461353316,273.1]
+["lineTo",24.749580038646684,273.1]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",147.45279947916666,200.14285714285717]
+["lineTo",150.05087569051997,204.64285714285717]
+["lineTo",144.85472326781334,204.64285714285717]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",267.5579427083333,234.3714285714286]
+["lineTo",270.15601891968663,238.8714285714286]
+["lineTo",264.95986649698,238.8714285714286]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",387.6630859375,97.45714285714286]
+["lineTo",390.2611621488533,101.95714285714286]
+["lineTo",385.0650097261467,101.95714285714286]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",22.34765625,27,370.3154296875,249.60000000000002]
+["clip",null,null]
+["save"]
+["setLineCap","butt"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","green"]
+["stroke",{"path":2,"calls":[["moveTo",27.34765625,134.6857142857143],["lineTo",27.34765625,134.6857142857143],["lineTo",147.45279947916666,271.6],["lineTo",267.5579427083333,66.22857142857144],["lineTo",387.6630859375,203.14285714285717]]}]
+["restore"]
+["setStrokeStyle","green"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",24.34765625,134.6857142857143]
+["lineTo",27.34765625,131.6857142857143]
+["lineTo",30.34765625,134.6857142857143]
+["lineTo",27.34765625,137.6857142857143]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","green"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",144.45279947916666,271.6]
+["lineTo",147.45279947916666,268.6]
+["lineTo",150.45279947916666,271.6]
+["lineTo",147.45279947916666,274.6]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","green"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",264.5579427083333,66.22857142857144]
+["lineTo",267.5579427083333,63.22857142857144]
+["lineTo",270.5579427083333,66.22857142857144]
+["lineTo",267.5579427083333,69.22857142857144]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","green"]
+["setLineWidth",1]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",384.6630859375,203.14285714285717]
+["lineTo",387.6630859375,200.14285714285717]
+["lineTo",390.6630859375,203.14285714285717]
+["lineTo",387.6630859375,206.14285714285717]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",22.34765625,27,370.3154296875,249.60000000000002]
+["clip",null,null]
+["save"]
+["setLineCap","butt"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","blue"]
+["stroke",{"path":3,"calls":[["moveTo",27.34765625,237.3714285714286],["lineTo",27.34765625,237.3714285714286],["lineTo",147.45279947916666,100.45714285714286],["lineTo",267.5579427083333,168.9142857142857],["lineTo",387.6630859375,32]]}]
+["restore"]
+["setStrokeStyle","blue"]
+["setLineWidth",1]
+["setFillStyle","red"]
+["beginPath"]
+["arc",27.34765625,237.3714285714286,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","blue"]
+["setLineWidth",1]
+["setFillStyle","red"]
+["beginPath"]
+["arc",267.5579427083333,168.9142857142857,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","blue"]
+["setLineWidth",1]
+["setFillStyle","red"]
+["beginPath"]
+["arc",387.6630859375,32,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","#0000E6"]
+["setLineWidth",1]
+["setFillStyle","#E60000"]
+["beginPath"]
+["arc",147.45279947916666,100.45714285714286,4,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.8)"]
+["setStrokeStyle","rgba(0,0,0,0)"]
+["setLineWidth",0]
+["beginPath"]
+["moveTo",160.45279947916666,151.93333333333334]
+["lineTo",248.83170572916666,151.93333333333334]
+["quadraticCurveTo",254.83170572916666,151.93333333333334,254.83170572916666,157.93333333333334]
+["lineTo",254.83170572916666,225.53333333333333]
+["quadraticCurveTo",254.83170572916666,231.53333333333333,248.83170572916666,231.53333333333333]
+["lineTo",160.45279947916666,231.53333333333333]
+["quadraticCurveTo",154.45279947916666,231.53333333333333,154.45279947916666,225.53333333333333]
+["lineTo",154.45279947916666,196.73333333333335]
+["lineTo",149.45279947916666,191.73333333333335]
+["lineTo",154.45279947916666,186.73333333333335]
+["lineTo",154.45279947916666,157.93333333333334]
+["quadraticCurveTo",154.45279947916666,151.93333333333334,160.45279947916666,151.93333333333334]
+["closePath"]
+["fill",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setFillStyle","#fff"]
+["setFont","normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","Feb",160.45279947916666,165.13333333333333,null]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#fff"]
+["setFillStyle","#fff"]
+["setLineWidth",1]
+["setStrokeStyle","blue"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["setFillStyle","#fff"]
+["fillRect",160.45279947916666,179.53333333333333,12,12]
+["strokeRect",160.45279947916666,179.53333333333333,12,12]
+["setFillStyle","red"]
+["fillRect",161.45279947916666,180.53333333333333,10,10]
+["setFillStyle","#fff"]
+["fillText","Dataset 1: 30",213.64225260416666,185.53333333333333,null]
+["setFillStyle","#fff"]
+["setLineWidth",1]
+["setStrokeStyle","green"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["setFillStyle","#fff"]
+["fillRect",160.45279947916666,195.93333333333334,12,12]
+["strokeRect",160.45279947916666,195.93333333333334,12,12]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["fillRect",161.45279947916666,196.93333333333334,10,10]
+["setFillStyle","#fff"]
+["fillText","Dataset 2: 5",213.64225260416666,201.93333333333334,null]
+["setFillStyle","#fff"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["setFillStyle","#fff"]
+["fillRect",160.45279947916666,212.33333333333334,12,12]
+["strokeRect",160.45279947916666,212.33333333333334,12,12]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["fillRect",161.45279947916666,213.33333333333334,10,10]
+["setFillStyle","#fff"]
+["fillText","Dataset 3: 15",213.64225260416666,218.33333333333334,null]
 ["restore"]
 ''',
     },

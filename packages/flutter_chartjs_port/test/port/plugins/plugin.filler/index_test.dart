@@ -29,13 +29,14 @@ import 'plugin_filler_reference.dart';
 // tool/reference/plugin_filler_reference.mjs: a build of the pinned
 // Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with the seven
 // plugins registered and `colors.enabled: false` in the defaults. Each case
-// is a unit case: the other plugins are `false` (Chart.js ADR 0041, section
-// 4). The observation has `boxes` and `plugins.filler` (`meta.$filler` of
-// each dataset), and the draw calls. The probe `targets` compares the
-// target of `getTarget` of each source after the draw with the target of
-// the pinned `_getTarget`: the five wraps and the bare point of the list
-// result of Chart.js ADR 0040 give the upstream points (the difference
-// `adapt-line-points-elements`).
+// is a unit case (the other plugins are `false`, Chart.js ADR 0041, section
+// 4), except the full cases (the names that start with `full:`), which have
+// the default plugin options (section 4 item 2). The observation has `boxes`
+// and `plugins.filler` (`meta.$filler` of each dataset), and the draw calls.
+// The probe `targets` compares the target of `getTarget` of each source after
+// the draw with the target of the pinned `_getTarget`: the five wraps and the
+// bare point of the list result of Chart.js ADR 0040 give the upstream points
+// (the difference `adapt-line-points-elements`).
 //
 // The cases run two times: unthemed, and with the light preset (theming.md
 // section 8 test 3). In the themed run, the colors compare in their parsed
@@ -191,6 +192,8 @@ void main() {
         'radar fill 1',
         'radar reverse',
         'radar with a negative minimum',
+        'radar with r min and max',
+        'radar with a positive r min',
         'radar circular',
         'radar circular with a gap',
         'throws: shape with two colors',

@@ -35,8 +35,10 @@ import 'plugin_subtitle_reference.dart';
 // tool/reference/plugin_subtitle_reference.mjs: a build of the pinned
 // Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with the seven
 // plugins registered and `colors.enabled: false` in the defaults. Each case
-// is a unit case: the plugins other than `subtitle` and `title` are `false`
-// (Chart.js ADR 0041, section 4). The observation has `boxes`,
+// is a unit case (the plugins other than `subtitle` and `title` are `false`,
+// Chart.js ADR 0041, section 4), except the full case
+// `full: subtitle, title and legend`, which has the default plugin options
+// (section 4 item 2). The observation has `boxes`,
 // `plugins.subtitle` and `plugins.title` (the line count and the resolved
 // options of each box), and the draw calls.
 //

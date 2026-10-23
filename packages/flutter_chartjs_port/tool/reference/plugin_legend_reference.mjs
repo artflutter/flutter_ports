@@ -33,10 +33,12 @@
 // test 3).
 //
 // The full case (names that start with `full:`, Chart.js ADR 0041, section
-// 4 item 2) has the default plugin options: `hoverLegend` on two items with
-// the default tooltip. The tooltip keeps its last active elements for an
-// event outside the chart area (plugin.tooltip.js:1190, `inChartArea` of
-// core.controller.js:1168), so it does not open. Its draw calls show it.
+// 4 item 2) has the default plugin options: a `hover` on the element 1 of
+// the dataset 0 opens the tooltip, then `hoverLegend` on two items. An event
+// outside the chart area keeps the last active items of the tooltip
+// (plugin.tooltip.js:1190-1195) and of the chart
+// (core.controller.js:1254-1256, `inChartArea` of core.controller.js:1168),
+// so the tooltip stays open. Its draw calls show it.
 //
 // Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
 // v24.12.0:
@@ -233,6 +235,7 @@ const cases = [
 cases.push(
   legendCase('full: hoverLegend with the tooltip', {...line(), options: {}}, {
     steps: [
+      ['hover', 148, 100],
       ['hoverLegend', 0],
       ['hoverLegend', 1],
     ],

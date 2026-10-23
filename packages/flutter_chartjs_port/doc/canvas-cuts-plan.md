@@ -411,6 +411,13 @@ Changes to the cited files:
   (the input reference test of the chart host). The `parity.md` rows that this plan cites (lines
   378-422) do not move. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
   estimates do not change. No trigger occurred.
+- 2026-10-23, the review of phase 8 (step 7). `lib/src/platform/chart_host.dart` (line 775) and
+  `lib/src/platform/platform.flutter.dart` (lines 324 and 389) change one comment line each in
+  place: no cited line moves. `apps/chartjs_gallery/lib/demo/demo_chart.dart`, which §3.1 cites,
+  gets a new class doc of `DemoChart` (two lines more after line 22); this plan cites no line of
+  the file. `doc/parity.md` changes rows in place: the rows that this plan cites (lines 378-422)
+  do not move. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates
+  do not change. No trigger occurred.
 
 ## 1. Why
 

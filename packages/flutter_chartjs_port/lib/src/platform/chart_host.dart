@@ -772,7 +772,7 @@ class RenderChartHost extends RenderBox
   DeviceGestureSettings? gestureSettings;
 
   /// The touch pointers that are down on the host, by pointer id: the DOM
-  /// `TouchEvent.touches` of the canvas.
+  /// `targetTouches` of the canvas.
   final SplayTreeMap<int, Offset> _touches = SplayTreeMap();
 
   List<NativeTouch> get _touchList => [

@@ -44,10 +44,11 @@ import 'plugin_legend_reference.dart';
 // tool/reference/plugin_legend_reference.mjs: a build of the pinned
 // Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with the seven
 // plugins registered and `colors.enabled: false` in the defaults. Each case
-// is a unit case: the other plugins are `false` (Chart.js ADR 0041, section
-// 4). The observation has `boxes` and `plugins.legend` (the items, the hit
-// boxes, the line widths, the column sizes, the callback log and the label
-// options), and the draw calls.
+// is a unit case (the other plugins are `false`, Chart.js ADR 0041, section
+// 4), except the full cases (the names that start with `full:`), which have
+// the default plugin options (section 4 item 2). The observation has `boxes`
+// and `plugins.legend` (the items, the hit boxes, the line widths, the column
+// sizes, the callback log and the label options), and the draw calls.
 //
 // The cases run two times: unthemed, and with the light preset (theming.md
 // section 8 test 3). In the themed run, the colors compare in their parsed
@@ -682,6 +683,196 @@ void main() {
       );
       expect(color, 'rgba(0, 128, 0, 1)');
       expect(calls, expected);
+    });
+  });
+
+  // The groups `js-semantics-legend-items`, `adapt-legend-items-list` and
+  // `sort` pin the writes into the legend items and the result of a user
+  // `generateLabels`. Each upstream value in a comment comes from a probe on
+  // the pinned build in Node.js v24.12.0 on x64 (controller_chart_common.mjs:
+  // loadChartJs, registerBuiltins, makeChart) with the chart of [_line], the
+  // other plugins `false` and a canvas of 400 x 300.
+  group('js-semantics-legend-items', () {
+    /// A chart with the legend options [legend] on a canvas of 400 x 300.
+    Chart legendChart(AnyObject legend) =>
+        acquireChart(_line(legend), <String, Object?>{
+          'canvas': <String, Object?>{'width': 400, 'height': 300},
+        });
+
+    testWidgets('a Map<String, String> item throws a TypeError at the first '
+        'draw', (tester) async {
+      // plugin.legend.js:399 writes `textAlign`. The probe: no throw, and the
+      // keys of the item are [text, fillStyle, textAlign]. The port writes
+      // `undefined` into a Map<String, String>.
+      final items = [
+        {'text': 'Apples', 'fillStyle': 'red'},
+      ];
+      expect(
+        () => legendChart(<String, Object?>{
+          'labels': <String, Object?>{
+            'generateLabels': (Object? chart) => items,
+          },
+        }),
+        throwsA(isA<TypeError>()),
+      );
+    });
+
+    testWidgets('a Map<String, Object?> item takes the textAlign write', (
+      tester,
+    ) async {
+      // The probe: the keys [text, fillStyle, textAlign], and textAlign is
+      // undefined.
+      final item = <String, Object?>{'text': 'Apples', 'fillStyle': 'red'};
+      legendChart(<String, Object?>{
+        'labels': <String, Object?>{
+          'generateLabels': (Object? chart) => <Object?>[item],
+        },
+      });
+      expect(jsObjectKeys(item), ['text', 'fillStyle', 'textAlign']);
+      expect(item['textAlign'], same(undefined));
+    });
+
+    testWidgets('the default onClick with a Map<String, String> item hides '
+        'the dataset and then throws a TypeError', (tester) async {
+      // plugin.legend.js:645-655. The probe: no throw, `hidden` true, and
+      // the dataset 0 is hidden. The port hides the dataset, and the write
+      // of `hidden` into the Map<String, String> throws.
+      final chart = legendChart(<String, Object?>{});
+      final onClick = jsGet(chart.legend!.options, 'onClick');
+      final item = {'text': 'Apples', 'datasetIndex': '0'};
+      expect(
+        () => jsCall(onClick, [null, item, chart.legend]),
+        throwsA(isA<TypeError>()),
+      );
+      expect(chart.isDatasetVisible(0), isFalse);
+      expect(item.containsKey('hidden'), isFalse);
+    });
+
+    testWidgets('a const item throws an UnsupportedError at the first draw', (
+      tester,
+    ) async {
+      expect(
+        () => legendChart(<String, Object?>{
+          'labels': <String, Object?>{
+            'generateLabels': (Object? chart) => <Object?>[
+              const <String, Object?>{'text': 'Apples'},
+            ],
+          },
+        }),
+        throwsA(isA<UnsupportedError>()),
+      );
+    });
+  });
+
+  group('adapt-legend-items-list', () {
+    // plugin.legend.js:104-121. The probe with `display: false`: no throw,
+    // and `legendItems` is the value ('abc', {}, 5 or true). With
+    // `display: true`, each value throws `TypeError:
+    // this.legendItems.forEach is not a function`. The port casts the value
+    // to a List and throws a TypeError in both cases.
+    for (final (name, value) in <(String, Object Function())>[
+      ('a string', () => 'abc'),
+      ('an object', () => <String, Object?>{}),
+      ('a number', () => 5),
+      ('true', () => true),
+    ]) {
+      for (final display in [false, true]) {
+        testWidgets('$name with display $display throws a TypeError', (
+          tester,
+        ) async {
+          expect(
+            () => acquireChart(
+              _line(<String, Object?>{
+                'display': display,
+                'labels': <String, Object?>{
+                  'generateLabels': (Object? chart) => value(),
+                },
+              }),
+              <String, Object?>{
+                'canvas': <String, Object?>{'width': 400, 'height': 300},
+              },
+            ),
+            throwsA(isA<TypeError>()),
+          );
+        });
+      }
+    }
+  });
+
+  group('sort', () {
+    // plugin.legend.js:113 and the SortCompare of Array.prototype.sort: an
+    // undefined item goes to the end, and the comparator never gets it.
+    // The probe of [a, undefined, b] with `display: false`: the comparator
+    // `() => 0` gives the texts [a, b, undefined] and gets no undefined;
+    // the comparator `a.text < b.text ? 1 : -1` gives [b, a, undefined]
+    // and gets no undefined. With `display: true`, `() => 0` throws
+    // `TypeError: Cannot read properties of undefined (reading 'text')`.
+    AnyObject item(String text) => <String, Object?>{
+      'text': text,
+      'datasetIndex': 0,
+    };
+
+    /// The legend items and whether the comparator [compare] got an
+    /// `undefined` item, for the `generateLabels` result
+    /// [a, undefined, b] with `display` [display].
+    (List<Object?>, bool) sorted(
+      Object? Function(Object? a, Object? b) compare, {
+      bool display = false,
+    }) {
+      var gotUndefined = false;
+      final chart = acquireChart(
+        _line(<String, Object?>{
+          'display': display,
+          'labels': <String, Object?>{
+            'generateLabels': (Object? chart) => <Object?>[
+              item('a'),
+              undefined,
+              item('b'),
+            ],
+            'sort': (Object? a, Object? b, Object? data) {
+              if (identical(a, undefined) || identical(b, undefined)) {
+                gotUndefined = true;
+              }
+              return compare(a, b);
+            },
+          },
+        }),
+        <String, Object?>{
+          'canvas': <String, Object?>{'width': 400, 'height': 300},
+        },
+      );
+      return (chart.legend!.legendItems!, gotUndefined);
+    }
+
+    /// The texts of [items], with `undefined` for an undefined item.
+    List<Object?> texts(List<Object?> items) => [
+      for (final i in items)
+        if (identical(i, undefined)) undefined else jsGet(i, 'text'),
+    ];
+
+    testWidgets('an undefined item goes to the end', (tester) async {
+      final (items, gotUndefined) = sorted((a, b) => 0);
+      expect(texts(items), ['a', 'b', same(undefined)]);
+      expect(gotUndefined, isFalse);
+    });
+
+    testWidgets('a comparator that reads the text does not throw', (
+      tester,
+    ) async {
+      final (items, gotUndefined) = sorted(
+        (a, b) => jsLessThan(jsGet(a, 'text'), jsGet(b, 'text')) ? 1 : -1,
+      );
+      expect(texts(items), ['b', 'a', same(undefined)]);
+      expect(gotUndefined, isFalse);
+    });
+
+    testWidgets('display true throws a TypeError at the undefined item', (
+      tester,
+    ) async {
+      expect(
+        () => sorted((a, b) => 0, display: true),
+        throwsA(isA<TypeError>()),
+      );
     });
   });
 

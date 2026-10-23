@@ -321,7 +321,7 @@ CanvasMutationObserver createDetachObserver(
 /// [listener] is the resize listener of core.controller.js:1015, a
 /// `void Function([double? width, double? height])`. One `throttled<Size?>`
 /// function takes the size and device pixel ratio changes (Chart.js ADR
-/// 0007, decision 9). A `null` size is a device pixel ratio change, for
+/// 0016, decision 9). A `null` size is a device pixel ratio change, for
 /// which upstream calls `resize()` without arguments (:172).
 ///
 /// The container size is the max size of the incoming constraints of the
@@ -386,7 +386,7 @@ void releaseObserver(types.Chart chart, String type, Object? observer) {
 /// [listener] is the event listener of core.controller.js:985, a
 /// `void Function(ChartEvent)`. The proxy is a throttled function: the
 /// events of one type coalesce to the last one in each frame (Chart.js ADR
-/// 0007, decision 9).
+/// 0016, decision 9).
 void Function(NativeEvent) createProxyAndListen(
   types.Chart chart,
   String type,

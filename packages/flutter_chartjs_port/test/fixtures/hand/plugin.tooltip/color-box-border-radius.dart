@@ -81,6 +81,7 @@ Map<String, Object?> fixture() => <String, Object?>{
           // const canvas = chart.canvas;
           // const rect = canvas.getBoundingClientRect();
           final point = chart.getDatasetMeta(0).data[1];
+          // DIVERGES(chartjs): harness-fixture-sources, the chart event.
           final event = fixtureMouseMove(point);
           (chart as Chart).handleEvent(event);
           (chart.tooltip! as Tooltip)

@@ -56,8 +56,9 @@
 // 8. A line of 120 points with `parsing: false` on a linear `x`. The cases
 //    with the decimation plugin are full cases (below).
 // 9. Radar charts on a polygon grid: `origin`, `start`, `end`, `{value}`, a
-//    gap (the `'angle'` interpolate), `fill: 1` (`evenodd`), `reverse` and
-//    a negative minimum (`getBaseValue`).
+//    gap (the `'angle'` interpolate), `fill: 1` (`evenodd`), `reverse`, a
+//    negative minimum, and `r` `min` and `max` below 0 and above 0 (the
+//    three branches of `getBaseValue`, core.scale.js:950-955).
 // 10. Radar charts on a circular grid, with and without a gap (simpleArc).
 // 11. Throws (TypeError): `shape` with two colors, and a radar fill on a
 //     chart without a layout (an inline plugin whose `beforeLayout` returns
@@ -470,6 +471,14 @@ const cases = [
   fillerCase(
     'radar with a negative minimum',
     radar([ds([-3, 2, -1, 4, 1, -2], {fill: 'origin'})]),
+  ),
+  fillerCase(
+    'radar with r min and max',
+    radar([ds([-4, -2, -3, -2, -4, -3], {fill: 'origin'})], {min: -5, max: -1}),
+  ),
+  fillerCase(
+    'radar with a positive r min',
+    radar([ds([1, 2, 3, 2, 1, 2], {fill: 'origin'})], {min: 1, max: 4}),
   ),
 
   // 10. Radar charts on a circular grid.

@@ -98,6 +98,19 @@ const Set<String> themeScaleTypes = {
 /// `hover` would beat the `interaction` of the user options and of
 /// `overrides[type]`, and change the hover elements
 /// (`core.controller.js:1259-1260`).
+///
+/// The data and decision keys of the controllers, the elements and the
+/// scales are behavior keys too: `fill` (`filler.options.js:12`),
+/// `spanGaps` and `showLine` (`controller.line.js:63, 82`,
+/// `controller.scatter.js:71, 102, 119`), `stacked`
+/// (`core.datasetController.js:120-121`), `reverse` (`core.scale.js:481`),
+/// `min`, `max`, `suggestedMin` and `suggestedMax` (`core.scale.js:262-265`),
+/// `beginAtZero` and `grace` (`core.scale.js:394, 429`), `bounds`
+/// (`scale.linearbase.js:257, 273`), `base` (`controller.bar.js:564`),
+/// `grouped` (`controller.bar.js:437`) and `skipNull`
+/// (`controller.bar.js:639-650`). A flat `labels` is not a behavior key,
+/// because `plugins.legend.labels` holds the legend colors and fonts:
+/// [themePluginBehaviorPaths] has `scale.labels`.
 const Set<String> themeBehaviorKeys = {
   'events',
   'interaction',
@@ -119,6 +132,21 @@ const Set<String> themeBehaviorKeys = {
   'display',
   'enabled',
   'forceOverride',
+  'fill',
+  'spanGaps',
+  'showLine',
+  'stacked',
+  'reverse',
+  'min',
+  'max',
+  'suggestedMin',
+  'suggestedMax',
+  'beginAtZero',
+  'grace',
+  'bounds',
+  'base',
+  'skipNull',
+  'grouped',
 };
 
 /// The interaction keys that the compiler never emits under
@@ -136,10 +164,16 @@ const Set<String> themeTooltipInteractionKeys = {
   'includeInvisible',
 };
 
-/// The plugin keys that change data, item order, a position or a discrete
+/// The key paths that change data, item order, a position or a discrete
 /// decision, and the content keys (Chart.js ADR 0042). The compiler never
 /// emits them. The set holds paths, because a flat name is wrong at other
-/// paths (`position` is also a layout key of a box).
+/// paths (`position` is also a layout key of a box, and `labels` of the
+/// legend holds its colors and fonts).
+///
+/// A `scale.` path also stands for each `scales.<type>.` path of
+/// [themeScaleTypes] ([themeNeverEmittedReason], rule 2b). The draw-only
+/// keys `plugins.tooltip.rtl` and `plugins.tooltip.textDirection`, the
+/// fonts and the layout keys of a box stay allowed.
 const Set<String> themePluginBehaviorPaths = {
   'plugins.decimation.algorithm', // plugin.decimation.js:269
   'plugins.decimation.samples', // plugin.decimation.js:12
@@ -150,6 +184,15 @@ const Set<String> themePluginBehaviorPaths = {
   'plugins.title.text', // plugin.title.js:43, 97
   'plugins.subtitle.text', // plugin.title.js:43, 97 (the Title of subtitle)
   'plugins.legend.title.text', // plugin.legend.js:487
+  'plugins.legend.rtl', // plugin.legend.js:235-259
+  'plugins.tooltip.xAlign', // plugin.tooltip.js:273
+  'plugins.tooltip.yAlign', // plugin.tooltip.js:270
+  'scale.title.text', // core.scale.js:102, 613
+  'scale.labels', // core.scale.js:360
+  'scale.ticks.stepSize', // scale.linearbase.js:216-220
+  'scale.ticks.count', // scale.linearbase.js:32, 79-84
+  'scale.ticks.precision', // scale.linearbase.js:55-57, 260
+  'scale.ticks.maxTicksLimit', // scale.linearbase.js:216-231
 };
 
 /// The root keys that the compiler never emits (theming.md §3.3). The `''`
@@ -173,8 +216,12 @@ const Set<String> _paletteKeys = {r'$borderColors', r'$backgroundColors'};
 /// 2. A behavior key of [themeBehaviorKeys] on the path, or an interaction
 ///    key of [themeTooltipInteractionKeys] under `plugins.tooltip`.
 ///
-///    2b. A prefix of the path in [themePluginBehaviorPaths] (Chart.js ADR
-///    0042).
+///    2b. A prefix of 2 or more keys of the normalized path in
+///    [themePluginBehaviorPaths] (Chart.js ADR 0042). The normalized path
+///    has `scale` in place of a leading `scales.<type>` of
+///    [themeScaleTypes]. Thus `scales.linear.ticks.stepSize` matches
+///    `scale.ticks.stepSize`. Rule 2b comes before rule 2 at each key, so
+///    that the reason names the path.
 /// 3. A static hover color on the path: a key that contains `hover` in any
 ///    case and ends with `Color`.
 /// 4. A `_` key on the path, which the resolver reads as a descriptor
@@ -198,8 +245,24 @@ String? themeNeverEmittedReason(List<String> path, Object? value) {
   if (path.length == 1 && _rootStyleKeys.contains(path[0])) {
     return 'a root ${path[0]} beats the element defaults';
   }
+  // Rule 2b: `scales.<type>.<rest>` compares as `scale.<rest>`. The index
+  // `i` of `path` is the index `i - shift` of `normalized`.
+  final shift =
+      path.length >= 2 &&
+          path[0] == 'scales' &&
+          themeScaleTypes.contains(path[1])
+      ? 1
+      : 0;
+  final normalized = shift == 0 ? path : ['scale', ...path.skip(2)];
   for (var i = 0; i < path.length; i++) {
     final key = path[i];
+    final n = i - shift;
+    if (n >= 1) {
+      final prefix = normalized.take(n + 1).join('.');
+      if (themePluginBehaviorPaths.contains(prefix)) {
+        return '$prefix is a behavior key';
+      }
+    }
     if (themeBehaviorKeys.contains(key)) {
       return '$key is a behavior key';
     }
@@ -208,12 +271,6 @@ String? themeNeverEmittedReason(List<String> path, Object? value) {
         path[1] == 'tooltip' &&
         themeTooltipInteractionKeys.contains(key)) {
       return 'plugins.tooltip.$key is a behavior key';
-    }
-    if (i >= 2 && path[0] == 'plugins') {
-      final prefix = path.take(i + 1).join('.');
-      if (themePluginBehaviorPaths.contains(prefix)) {
-        return '$prefix is a behavior key';
-      }
     }
     if (key.toLowerCase().contains('hover') && key.endsWith('Color')) {
       return '$key is a static hover color';

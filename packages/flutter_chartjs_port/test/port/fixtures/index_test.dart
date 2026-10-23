@@ -80,13 +80,13 @@ void main() {
       'skip', () {
     final groups = _groups();
     final open = <String>[];
-    var matched = 0;
+    final matched = <String, int>{};
     for (final group in groups) {
       if (!_dartSpec(group.spec).existsSync()) continue;
       final regex = _match(group.prefix);
       for (final item in items.values) {
         if (!regex.hasMatch(item.path)) continue;
-        matched++;
+        matched.update(item.path, (count) => count + 1, ifAbsent: () => 1);
         if (item.data) continue;
         if (handFixtures.containsKey(item.path)) continue;
         if (fixtureSkips.containsKey(item.path)) continue;
@@ -94,8 +94,10 @@ void main() {
       }
     }
     expect(open, isEmpty);
-    // The 20 spec files of FR section 6.2 match 529 fixtures at the pin.
-    expect(matched, greaterThan(0));
+    // The 27 spec files with a fixture group match each fixture of the
+    // manifest once.
+    expect(matched.keys.toSet(), items.keys.toSet());
+    expect(matched.values.where((count) => count != 1), isEmpty);
   });
 
   test('each hand port file has an entry, and each entry has its file', () {

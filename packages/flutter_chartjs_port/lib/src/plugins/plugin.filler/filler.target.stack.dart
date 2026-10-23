@@ -134,15 +134,19 @@ void _addPointsBelow(
 /// @returns {{point?: PointElement, first?: boolean, last?: boolean}}
 ///
 /// [line] is cast to `types.LineElement` at the call of `interpolate`: Dart
-/// `null` or another element throws a [TypeError], as `line.interpolate`
-/// of upstream does. Dart `null` for [sourcePoint] throws the [TypeError]
-/// of the read `point[property]` of `undefined` (element.line.js:353). The
-/// upstream `{}` is the record with `false`, `false` and Dart `null`.
+/// `null` or another element throws a [TypeError]. Upstream throws for
+/// `undefined` and for an element without `interpolate`, and reads an
+/// element with the line API by name (the row
+/// `adapt-filler-target-classes`). Dart `null` for [sourcePoint] throws the
+/// [TypeError] of the read `point[property]` of `undefined`
+/// (element.line.js:353). The upstream `{}` is the record with `false`,
+/// `false` and Dart `null`.
 ({bool first, bool last, types.PointElement? point}) _findPoint(
   Object? line,
   types.PointElement? sourcePoint,
   String property,
 ) {
+  // DIVERGES(chartjs): adapt-filler-target-classes, a line below is a cast.
   final target = line! as types.LineElement;
   final point = stackResultPoint(
     target.interpolate(sourcePoint ?? (throw TypeError()), property),

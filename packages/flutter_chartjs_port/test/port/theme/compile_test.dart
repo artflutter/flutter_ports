@@ -1658,6 +1658,52 @@ void main() {
         // A scale id, not a scale type: the radial scale of a radar chart.
         ('scales.r.pointLabels.color', 'red', 'scales.r is not a scale type'),
         ('scales.radial.angleLines.color', 'red', 'not a scale type'),
+        // The fill, line, bar and scale keys change the fill target, the
+        // segments, the dataset element, the bar geometry, the data range or
+        // the ticks (Chart.js ADR 0042).
+        ('elements.line.fill', 'origin', 'fill is a behavior key'),
+        ('fill', 'origin', 'fill is a behavior key'),
+        ('spanGaps', true, 'spanGaps is a behavior key'),
+        ('elements.line.spanGaps', true, 'spanGaps'),
+        ('showLine', true, 'showLine is a behavior key'),
+        ('scale.stacked', true, 'stacked is a behavior key'),
+        ('scales.linear.reverse', true, 'reverse is a behavior key'),
+        ('scale.min', 0.0, 'min is a behavior key'),
+        ('scale.beginAtZero', true, 'beginAtZero is a behavior key'),
+        ('scale.grace', '50%', 'grace is a behavior key'),
+        ('scale.bounds', 'data', 'bounds'),
+        ('base', 2.0, 'base'),
+        ('skipNull', true, 'skipNull'),
+        ('grouped', false, 'grouped'),
+        // The behavior paths of the tooltip, the legend and the scales.
+        (
+          'plugins.tooltip.xAlign',
+          'right',
+          'plugins.tooltip.xAlign is a behavior key',
+        ),
+        (
+          'plugins.tooltip.yAlign',
+          'top',
+          'plugins.tooltip.yAlign is a behavior key',
+        ),
+        ('plugins.legend.rtl', true, 'plugins.legend.rtl is a behavior key'),
+        ('scale.title.text', 'x', 'scale.title.text is a behavior key'),
+        (
+          'scales.category.title.text',
+          'x',
+          'scale.title.text is a behavior key',
+        ),
+        (
+          'scales.category.labels',
+          <Object?>['p'],
+          'scale.labels is a behavior key',
+        ),
+        ('scale.ticks.stepSize', 0.25, 'scale.ticks.stepSize'),
+        (
+          'scales.linear.ticks.maxTicksLimit',
+          3.0,
+          'scale.ticks.maxTicksLimit',
+        ),
         ('scales.radialLinear.pointLabels.hoverColor', 'red', 'hover color'),
         ('scales.radialLinear.angleLines._fallback', 'grid', 'descriptor'),
         ('elements.bar._fallback', 'x', 'read as a descriptor'),
@@ -1718,9 +1764,11 @@ void main() {
         (r'plugins.colors.$borderColors', <Object?>['red']),
         (r'plugins.colors.$backgroundColors', <Object?>['red']),
         (r'plugins.colors.$backgroundColors.0', 'red'),
-        // Rule 2b holds paths, not flat names: the layout keys of a plugin
-        // box, its colors and fonts, and the draw order of the filler pass
-        // (Chart.js ADR 0042, Open 1 and 2).
+        // Rule 2b holds paths, not flat names. The layout keys of a plugin
+        // box, its colors and the fonts move only the layout (Chart.js ADR
+        // 0042, Open 1). The draw order of the filler pass changes only the
+        // draw (Open 2). The labels key of the legend holds its colors and
+        // fonts: `labels` is not a flat behavior key.
         ('plugins.title', <String, Object?>{}),
         ('plugins.title.color', 'red'),
         ('plugins.title.font', <String, Object?>{}),
@@ -1733,9 +1781,14 @@ void main() {
         ('plugins.decimation', <String, Object?>{}),
         ('plugins.filler.drawTime', 'beforeDraw'),
         ('plugins.tooltip.backgroundColor', 'red'),
+        // The text direction of the tooltip changes only the draw
+        // (plugin.tooltip.js:762-776, Chart.js ADR 0034).
+        ('plugins.tooltip.rtl', true),
+        // A scale font moves only the layout: the data range and the ticks
+        // stay.
+        ('scale.ticks.font', <String, Object?>{}),
         ('position', 'x'),
         ('elements.text', 'x'),
-        ('scale.title.text', 'x'),
         for (final type in themeScaleTypes) ('scales.$type.grid.color', 'red'),
         ('scales.radialLinear.pointLabels.color', 'red'),
         ('scales.radialLinear.angleLines.color', 'red'),
@@ -1847,6 +1900,15 @@ void main() {
         'plugins.title.text',
         'plugins.subtitle.text',
         'plugins.legend.title.text',
+        'plugins.tooltip.xAlign',
+        'plugins.tooltip.yAlign',
+        'plugins.legend.rtl',
+        'scale.title.text',
+        'scale.labels',
+        'scale.ticks.stepSize',
+        'scale.ticks.count',
+        'scale.ticks.precision',
+        'scale.ticks.maxTicksLimit',
       });
     });
 
@@ -1870,7 +1932,31 @@ void main() {
           expect(compileChartTheme(theme), isNull, reason: path);
         }
       }
-      // The layout keys of the boxes pass (Chart.js ADR 0042, Open 1).
+      // A scale path also fails under a scale type.
+      final scaleTitle = <String, Object?>{
+        'raw': <String, Object?>{
+          'scales': <String, Object?>{
+            'linear': <String, Object?>{
+              'title': <String, Object?>{'text': 'x'},
+            },
+          },
+        },
+      };
+      if (_asserts) {
+        expect(
+          () => compileChartTheme(scaleTitle),
+          throwsA(isA<AssertionError>()),
+          reason: 'scales.linear.title.text',
+        );
+      } else {
+        expect(
+          compileChartTheme(scaleTitle),
+          isNull,
+          reason: 'scales.linear.title.text',
+        );
+      }
+      // The layout keys and the colors of the boxes pass. They move only the
+      // layout (Chart.js ADR 0042, Open 1).
       final compiled = compileChartTheme({
         'raw': <String, Object?>{
           'plugins': <String, Object?>{

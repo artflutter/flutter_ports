@@ -14,10 +14,10 @@
 // after the last step, and `align` changes only the draw. Thus each `align`
 // case ends on the value under test: `start` and `end` at the top, at the
 // left and at the right (the `align` branch, items 5 and 7). Each unit case
-// sets `options.plugins` with unitPlugins(['title']): the plugin set of the
-// Dart test file in wave 1 (Chart.js ADR 0041, sections 4 and 7). The observation has the key `plugins.title` (the observer
-// `observeTitle` below and in the Dart test file). The test file runs the
-// cases again with the light preset (theming.md section 8 test 3).
+// sets `options.plugins` with unitPlugins(['title']) (Chart.js ADR 0041,
+// sections 4 and 7). The observation has the key `plugins.title` (the
+// observer `observeTitle` below and in the Dart test file). The test file
+// runs the cases again with the light preset (theming.md section 8 test 3).
 //
 // The full case (names that start with `full:`, Chart.js ADR 0041, section
 // 4 item 2) has the default plugin options: the title with the default

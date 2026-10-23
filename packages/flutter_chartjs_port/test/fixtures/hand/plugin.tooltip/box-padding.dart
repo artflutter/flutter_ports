@@ -69,6 +69,7 @@ Map<String, Object?> fixture() {
 
             for (var i = 0; i < data.length; i++) {
               final point = meta.data[i];
+              // DIVERGES(chartjs): harness-fixture-sources, the chart event.
               final event = fixtureMouseMove(point);
               (chart as Chart).handleEvent(event);
               (chart.tooltip! as Tooltip)

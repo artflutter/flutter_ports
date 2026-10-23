@@ -6,6 +6,8 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -26,8 +28,9 @@ import 'plugin_colors_reference.dart';
 // The reference group compares real charts with the charts of
 // tool/reference/plugin_colors_reference.mjs: a build of the pinned Chart.js
 // in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with the seven plugins
-// registered and `colors.enabled: false` in the defaults. Each case is a
-// unit case: the other plugins are `false` (Chart.js ADR 0041, section 4).
+// registered and `colors.enabled: false` in the defaults. Each case except
+// `full: radar` is a unit case: the other plugins are `false` (Chart.js ADR
+// 0041, section 4). The full case has the default plugin options.
 // The observation has `boxes` and `plugins.colors` (the colors of each
 // dataset after `beforeLayout`), and the draw calls.
 //
@@ -346,6 +349,40 @@ void main() {
       );
       expect(_dataset(chart, 0)['borderColor'], 'rgb(54, 162, 235)');
       expect(_dataset(chart, 0)['backgroundColor'], 'rgba(54, 162, 235, 0.5)');
+    });
+  });
+
+  // plugin.colors.ts:90-92 `containsDefaultColorsDefenitions()` and :119.
+  // A probe on the pinned build in Node.js v24.12.0 on x64 set
+  // `defaults.borderColor = 'red'`, made a bar chart with 2 datasets and
+  // `plugins.colors.enabled: true`, and logged the colors of the datasets
+  // and the options of the first bar of dataset 1: [[undefined, undefined],
+  // [undefined, undefined]] and ["red", "rgba(0,0,0,0.1)"]. With
+  // `forceOverride: true`, dataset 1 gets ["rgb(255, 99, 132)",
+  // "rgba(255, 99, 132, 0.5)"].
+  group('containsDefaultColorsDefenitions', () {
+    testWidgets('a changed defaults.borderColor stops the colorize', (
+      tester,
+    ) async {
+      defaults['borderColor'] = 'red';
+      final chart = acquireChart(_config('bar'));
+      expect(jsGet(_dataset(chart, 1), 'borderColor'), same(undefined));
+      expect(jsGet(_dataset(chart, 1), 'backgroundColor'), same(undefined));
+      final options = (chart.getDatasetMeta(1).data[0] as Element).options!;
+      expect(options['borderColor'], 'red');
+      expect(options['backgroundColor'], 'rgba(0,0,0,0.1)');
+    });
+
+    testWidgets('forceOverride colorizes over a changed defaults.borderColor', (
+      tester,
+    ) async {
+      defaults['borderColor'] = 'red';
+      final config = _config('bar');
+      ((config['options']! as AnyObject)['plugins']! as AnyObject)['colors'] =
+          <String, Object?>{'enabled': true, 'forceOverride': true};
+      final chart = acquireChart(config);
+      expect(_dataset(chart, 1)['borderColor'], 'rgb(255, 99, 132)');
+      expect(_dataset(chart, 1)['backgroundColor'], 'rgba(255, 99, 132, 0.5)');
     });
   });
 }

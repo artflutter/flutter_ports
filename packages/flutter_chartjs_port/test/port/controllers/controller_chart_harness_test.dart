@@ -10,6 +10,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
+    show Legend;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -20,10 +22,13 @@ import 'controller_chart_harness.dart';
 
 // The self-test of the controller harness (controller_chart_harness.dart,
 // tool/reference/controller_chart_common.mjs, Chart.js ADR 0030) and of the
-// spies of test/support/jasmine.dart. No controller of phase 7 is
-// registered yet. Thus the charts use the cartesian test controller
-// `scaleTest` of scale_chart_harness.dart: a point for each value, with the
-// category scale on x and the linear scale on y.
+// spies of test/support/jasmine.dart. Most charts use the cartesian test
+// controller `scaleTest` of scale_chart_harness.dart: a point for each
+// value, with the category scale on x and the linear scale on y. The cases
+// of the plugin options (`hits: false`, `observeExtra` and the steps
+// `click`, `setTooltip` and `setOption`, Chart.js ADR 0041, section 3) use a
+// `line` chart with a title: flutter_test_config.dart registers the
+// built-in controllers and plugins.
 //
 // A probe of U0 (wave 1 of phase 7) ran the generator side on the same test
 // controllers in the x64 Node.js and compared each key with this harness:
@@ -47,6 +52,39 @@ Map<String, Object?> _config() => <String, Object?>{
         'data': <Object?>[2, 1, 6, 2],
       },
     ],
+  },
+};
+
+/// The config of a line chart with a title: two datasets of four points.
+Map<String, Object?> _lineConfig() => <String, Object?>{
+  'type': 'line',
+  'data': <String, Object?>{
+    'labels': <Object?>['a', 'b', 'c', 'd'],
+    'datasets': <Object?>[
+      <String, Object?>{
+        'label': 'one',
+        'data': <Object?>[1, 5, 3, 4],
+      },
+      <String, Object?>{
+        'label': 'two',
+        'data': <Object?>[2, 1, 6, 2],
+      },
+    ],
+  },
+  'options': <String, Object?>{
+    'plugins': <String, Object?>{
+      'title': <String, Object?>{'display': true, 'text': 'T'},
+    },
+  },
+};
+
+/// The `observeExtra` of the plugin cases: `plugins.title.display`.
+Map<String, Object?> _titleExtra(Chart chart) => <String, Object?>{
+  'plugins.title': <String, Object?>{
+    'display': jsGet(
+      jsGet(jsGet(chart.options, 'plugins'), 'title'),
+      'display',
+    ),
   },
 };
 
@@ -303,6 +341,55 @@ void main() {
       expect(_active(chart), isEmpty);
     });
 
+    testWidgets('click, setTooltip and setOption', (tester) async {
+      final chart = acquireChart(_lineConfig());
+      final box = (chart.legend! as Legend).legendHitBoxes[1];
+      double at(String key) => (box[key]! as num).toDouble();
+      expect(chart.isDatasetVisible(1), isTrue);
+      // A click on legend item 1 calls the default onClick of the legend.
+      await runStep(tester, chart, [
+        'click',
+        (at('left') + at('width') / 2).roundToDouble(),
+        (at('top') + at('height') / 2).roundToDouble(),
+      ]);
+      expect(chart.isDatasetVisible(1), isFalse);
+      expect(chart.isDatasetVisible(0), isTrue);
+      await runStep(tester, chart, [
+        'setTooltip',
+        <Object?>[
+          <Object?>[0.0, 1.0],
+        ],
+        10.0,
+        10.0,
+      ]);
+      final tooltip = chart.tooltip!;
+      expect(
+        [
+          for (final item in tooltip.getActiveElements())
+            [item.datasetIndex, item.index],
+        ],
+        [
+          [0.0, 1.0],
+        ],
+      );
+      expect(tooltip.opacity, 1.0);
+      final top = chart.chartArea!.top;
+      await runStep(tester, chart, [
+        'setOption',
+        'plugins.title.display',
+        false,
+      ]);
+      expect(
+        jsGet(jsGet(jsGet(chart.options, 'plugins'), 'title'), 'display'),
+        isFalse,
+      );
+      expect(
+        chart.chartArea!.top,
+        lessThan(top),
+        reason: 'the update after the write removes the title box',
+      );
+    });
+
     testWidgets('an unknown step throws', (tester) async {
       final chart = acquireChart(_config());
       expect(
@@ -413,6 +500,64 @@ void main() {
         throwsA(isA<TestFailure>()),
         reason: 'a scale id',
       );
+    });
+
+    testWidgets('hits false and observeExtra', (tester) async {
+      final chart = acquireChart(_lineConfig());
+      final own = observeControllers(
+        chart,
+        expectedHits: null,
+        observeExtra: _titleExtra,
+      );
+      expect(own.keys, [
+        'chartArea',
+        'scales',
+        'stacks',
+        'datasets',
+        'plugins.title',
+      ]);
+      expectControllerObservations(
+        chart,
+        own,
+        'self',
+        hits: false,
+        observeExtra: _titleExtra,
+      );
+      void fails(
+        Map<String, Object?> expected,
+        String reason, {
+        bool extra = true,
+      }) {
+        expect(
+          () => expectControllerObservations(
+            chart,
+            expected,
+            'self',
+            hits: false,
+            observeExtra: extra ? _titleExtra : null,
+          ),
+          throwsA(isA<TestFailure>()),
+          reason: reason,
+        );
+      }
+
+      fails(<String, Object?>{
+        ...own,
+        'plugins.title': <String, Object?>{'display': false},
+      }, 'a changed extra value');
+      fails(
+        <String, Object?>{...own}..remove('plugins.title'),
+        'a missing extra key',
+      );
+      fails(<String, Object?>{
+        ...own,
+        'plugins.legend': null,
+      }, 'an extra expected key');
+      fails(own, 'no observeExtra', extra: false);
+      fails(<String, Object?>{
+        ...own,
+        'hits': <String, Object?>{},
+      }, 'a hits key with hits: false');
     });
 
     testWidgets('a changed value fails', (tester) async {

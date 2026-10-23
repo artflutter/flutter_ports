@@ -13,8 +13,7 @@
 // `defaults.plugins.colors.enabled = false`, test/index.js:25-28). Each case
 // except the full case is a unit case (Chart.js ADR 0041, section 4):
 // `options.plugins` is unitPlugins(['colors'], ...), so each other plugin
-// is `false`, and the case sets `colors.enabled: true`. This is the plugin
-// set of the Dart test file in wave 1.
+// is `false`, and the case sets `colors.enabled: true`.
 //
 // The observation of a case is the controller observation without the hit
 // matrix, `boxes`, and `plugins.colors`: for each dataset of

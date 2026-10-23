@@ -30,11 +30,12 @@ import 'plugin_decimation_reference.dart';
 // tool/reference/plugin_decimation_reference.mjs: a build of the pinned
 // Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with the seven
 // plugins registered and `colors.enabled: false` in the defaults. Each case
-// is a unit case: the other plugins are `false` (Chart.js ADR 0041, section
-// 4). The observation has `boxes` and `plugins.decimation` (the keys, the
-// accessor state and the data of each dataset), and the draw calls. The
-// cases run two times: unthemed, and with the light preset (theming.md
-// section 8 test 3, Chart.js ADR 0042).
+// is a unit case (the other plugins are `false`, Chart.js ADR 0041, section
+// 4), except the full cases (the names that start with `full:`), which have
+// the default plugin options (section 4 item 2). The observation has `boxes`
+// and `plugins.decimation` (the keys, the accessor state and the data of each
+// dataset), and the draw calls. The cases run two times: unthemed, and with the
+// light preset (theming.md section 8 test 3, Chart.js ADR 0042).
 //
 // The group `adapt-decimation-data-accessor` pins the accessor of
 // plugin.decimation.js:249-265 on real charts (Chart.js ADR 0038, section
@@ -653,6 +654,83 @@ void main() {
     ) async {
       final chart = narrowChart(<String, Object?>{'data': narrowData()});
       expect(_length(jsGet(_datasets(chart)[0], 'data')), 10);
+    });
+  });
+
+  // plugin.decimation.js:231: the decimation runs only on a `linear` or a
+  // `time` x scale. A probe on the pinned build in Node.js v24.12.0 on x64
+  // (moment 2.29.4 and chartjs-adapter-moment 1.0.1, TZ=UTC) made the chart
+  // of the group on each scale type and logged the keys of the dataset, the
+  // length of `data`, whether `data` is the input array, the element count
+  // and the hours of the items after 2020-01-01Z:
+  // `time keys [label,_data,data,_decimated] n 8 same input false meta 8
+  // hours [0,3,10,21,33,41,51,59]` and `timeseries keys [label,data] n 60
+  // same input true meta 60`.
+  group('x scale types', () {
+    final t0 = DateTime.utc(2020).millisecondsSinceEpoch;
+
+    /// A line chart of 60 hourly items `{x, y: (i * 37) % 23}` on the x
+    /// scale [type], with `lttb`, `samples: 8` and `threshold: 10`, the
+    /// other plugins off, and a canvas of 30 x 100.
+    ({Chart chart, AnyObject dataset, List<Object?> input}) typeChart(
+      String type,
+    ) {
+      final input = <Object?>[
+        for (var i = 0; i < 60; i++)
+          <String, Object?>{'x': t0 + i * 3600000, 'y': (i * 37) % 23},
+      ];
+      final ds = <String, Object?>{'label': 'd0', 'data': input};
+      final chart = acquireChart(
+        <String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[ds],
+          },
+          'options': <String, Object?>{
+            'parsing': false,
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': type},
+            },
+            'plugins': <String, Object?>{
+              'colors': false,
+              'filler': false,
+              'legend': false,
+              'subtitle': false,
+              'title': false,
+              'tooltip': false,
+              'decimation': <String, Object?>{
+                'enabled': true,
+                'algorithm': 'lttb',
+                'samples': 8,
+                'threshold': 10,
+              },
+            },
+          },
+        },
+        <String, Object?>{
+          'canvas': <String, Object?>{'width': 30, 'height': 100},
+        },
+      );
+      return (chart: chart, dataset: ds, input: input);
+    }
+
+    testWidgets('time: the decimation runs', (tester) async {
+      final (:chart, :dataset, :input) = typeChart('time');
+      expect(jsObjectKeys(dataset), ['label', '_data', 'data', '_decimated']);
+      final data = jsGet(dataset, 'data')! as List<Object?>;
+      expect(identical(data, input), isFalse);
+      expect(
+        [for (final p in data) ((jsGet(p, 'x')! as num) - t0) / 3600000],
+        [0, 3, 10, 21, 33, 41, 51, 59],
+      );
+      expect(_metaCount(chart), 8);
+    });
+
+    testWidgets('timeseries: the decimation does not run', (tester) async {
+      final (:chart, :dataset, :input) = typeChart('timeseries');
+      expect(jsObjectKeys(dataset), ['label', 'data']);
+      expect(identical(jsGet(dataset, 'data'), input), isTrue);
+      expect(_metaCount(chart), 60);
     });
   });
 }

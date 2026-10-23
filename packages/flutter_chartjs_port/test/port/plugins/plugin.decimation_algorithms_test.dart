@@ -390,14 +390,19 @@ void main() {
     });
 
     test('min-max large x wraps in x | 0', () {
+      // The pixel x values are 0, 2^32, 2^33 and 3 x 2^32. `x | 0`
+      // (plugin.decimation.js:97) gives 0 for each, so all the items are in
+      // one interval and only the first item stays. A probe of the pinned
+      // text in the x64 Node.js v24.12.0 gives [{x: 0, y: 1}]. The same text
+      // with Math.trunc(x) in place of `x | 0` gives the four items.
       _expectItems(
         minMaxDecimation(
           [_p(0, 1), _p(1, 2), _p(2, 0), _p(3, 4)],
           0,
           4,
-          3000000000,
+          12884901888,
         ),
-        [_p(0, 1), _p(1, 2), _p(2, 0), _p(3, 4)],
+        [_p(0, 1)],
       );
     });
   });

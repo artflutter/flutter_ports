@@ -5,6 +5,12 @@
 // a build of Chart.js v4.5.1+7169e651 at the commit
 // 7169e65147a47f3720957a6f156a33c838ab9f57, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 27 cases, 75 widths.
+//
+// The probe canvasDirection:
+//   (chart) => [
+//     chart.canvas.style.getPropertyValue('direction'),
+//     chart.canvas.style.getPropertyPriority('direction'),
+//   ]
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
@@ -34600,6 +34606,9 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Dataset 3: 15",160.45279947916666,218.33333333333334,null]
 ["restore"]
 ''',
+      'extra': <String, Object?>{
+        'canvasDirection': <Object?>['', ''],
+      },
     },
   ),
   (
@@ -36938,6 +36947,9 @@ const List<PluginTooltipReferenceCase> pluginTooltipReference = [
 ["fillText","Dataset 3: 15",160.45279947916666,218.33333333333334,null]
 ["restore"]
 ''',
+      'extra': <String, Object?>{
+        'canvasDirection': <Object?>['rtl', 'important'],
+      },
     },
   ),
   (

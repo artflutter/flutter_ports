@@ -119,7 +119,8 @@ bool _itemsEqual(Object? a, Object? b) =>
 
 /// The `padding` label option (`options.labels.padding`, :161, :192, :235,
 /// :289) as a number. index.d.ts types it as a number. A string joins in
-/// the `+` of upstream (:165, :185, :197), and the port adds its `ToNumber`
+/// the `+` of upstream (for example :165, :185 and :209; :197 starts
+/// `totalWidth` with the raw value), and the port adds its `ToNumber`
 /// (differences.md `adapt-legend-number-options`).
 double _labelPadding(Object? labelOpts) =>
     // DIVERGES(chartjs): adapt-legend-number-options, the padding is a number.
@@ -330,17 +331,20 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// plugin.legend.js:104 `buildLabels()`.
   ///
   /// `generateLabels` gives the array of the items. A truthy value that is
-  /// not a `List` throws a [TypeError] at the List cast, the cast of a value
-  /// that upstream reads as an array (Chart.js ADR 0036). `filter` and
-  /// `sort` get the labels options as `this`, as the method calls of :109
-  /// and :113 do. `sort` is the stable sort of `Array.prototype.sort`
-  /// ([jsSort]). `reverse` reverses the List in place.
+  /// not a `List` throws a [TypeError] at the List cast. Upstream stores the
+  /// value and throws only at its first array read (differences.md
+  /// `adapt-legend-items-list`). `filter` and `sort` get the labels options
+  /// as `this`, as the method calls of :109 and :113 do. `sort` is the
+  /// stable sort of `Array.prototype.sort` ([jsSort]). An `undefined` item
+  /// goes to the end and never reaches `sort`, as in
+  /// `Array.prototype.sort`. `reverse` reverses the List in place.
   void buildLabels() {
     final labels = jsGet(options, 'labels');
     final labelOpts = jsTruthy(labels) ? labels : <String, Object?>{};
     final generated = callback(jsGet(labelOpts, 'generateLabels'), [
       chart,
     ], this);
+    // DIVERGES(chartjs): adapt-legend-items-list, the items are a List.
     var legendItems = jsTruthy(generated)
         ? generated! as List<Object?>
         : <Object?>[];
@@ -358,12 +362,16 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 
     final sort = jsGet(labelOpts, 'sort');
     if (jsTruthy(sort)) {
-      legendItems = jsSort(
-        legendItems,
-        (a, b) => jsToNumber(
+      legendItems = jsSort(legendItems, (a, b) {
+        // SortCompare of Array.prototype.sort: an undefined element goes
+        // after each other element, and the comparator never gets it. JS
+        // null reaches the comparator.
+        if (identical(a, undefined)) return identical(b, undefined) ? 0 : 1;
+        if (identical(b, undefined)) return -1;
+        return jsToNumber(
           jsCall(sort, [a, b, chart.data], thisArg: labelOpts),
-        ),
-      );
+        );
+      });
     }
 
     if (jsTruthy(jsGet(options, 'reverse'))) {
@@ -836,7 +844,9 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       if (!jsTruthy(itemAlign)) {
         itemAlign = jsGet(labelOpts, 'textAlign');
         // A write into an item that is not an object throws a TypeError, as
-        // the write of strict mode does.
+        // the write of strict mode does. A narrow or unmodifiable Map throws
+        // too (differences.md `js-semantics-legend-items`).
+        // DIVERGES(chartjs): js-semantics-legend-items, a narrow or fixed Map.
         (legendItem! as Map<String, Object?>)['textAlign'] = itemAlign;
       }
       final textAlign = rtlHelper.textAlign(itemAlign);
@@ -1276,16 +1286,20 @@ Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 ///
 /// `hide` and `show` take a `double`. The raw `legendItem.datasetIndex`
 /// goes through [_datasetIndexKey]: the number of its property key. For a
-/// number index, this is the upstream result.
+/// number index, this is the upstream result. The `hidden` write into a
+/// narrow or unmodifiable Map throws after `hide` or `show` (differences.md
+/// `js-semantics-legend-items`).
 // DIVERGES(chartjs): adapt-legend-dataset-index, the index is a number.
 void _onClick(Object? e, Object? legendItem, types.LegendElement legend) {
   final index = _datasetIndexKey(jsGet(legendItem, 'datasetIndex'));
   final ci = legend.chart;
   if (ci.isDatasetVisible(index)) {
     ci.hide(index);
+    // DIVERGES(chartjs): js-semantics-legend-items, a narrow or fixed Map.
     (legendItem! as Map<String, Object?>)['hidden'] = true;
   } else {
     ci.show(index);
+    // DIVERGES(chartjs): js-semantics-legend-items, a narrow or fixed Map.
     (legendItem! as Map<String, Object?>)['hidden'] = false;
   }
 }

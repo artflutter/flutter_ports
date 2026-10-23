@@ -50,8 +50,10 @@ import 'plugin_tooltip_reference.dart';
 // tool/reference/plugin_tooltip_reference.mjs: a build of the pinned
 // Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with the seven
 // plugins registered and `colors.enabled: false` in the defaults. Each case
-// is a unit case: the plugins other than the legend and the tooltip are
-// `false` (Chart.js ADR 0041, section 4). The observation has `boxes` and
+// is a unit case (the plugins other than the legend and the tooltip are
+// `false`, Chart.js ADR 0041, section 4), except the full case
+// `full: title, filler and clickLegend`, which has the default plugin options
+// (section 4 item 2). The observation has `boxes` and
 // `plugins.tooltip` (the model, the lines, the label styles, the tooltip
 // items, the active items and the log of `external`), and the draw calls.
 // The cases run two times: unthemed, and with the light preset (theming.md
@@ -294,6 +296,15 @@ AnyObject _undefinedAxisIds(AnyObject observation) => <String, Object?>{
 /// [_undefinedAxisIds]. The generator splits the cases into two files,
 /// because one file is above the limit of 2,500,000 bytes (Chart.js ADR
 /// 0041, section 4 item 4).
+/// The probes of the generator: `canvasDirection`, the `direction` value
+/// and priority of the canvas style after the draw (helpers.rtl.ts:55-73).
+final Map<String, Object? Function(Chart chart)> _extras = {
+  'canvasDirection': (chart) => [
+    chart.canvas!.style.getPropertyValue('direction'),
+    chart.canvas!.style.getPropertyPriority('direction'),
+  ],
+};
+
 final List<ScaleChartCase> _reference = _mapObservations(
   [...pluginTooltipReference, ...pluginTooltipMoreReference],
   _undefinedAxisIds,
@@ -627,6 +638,7 @@ void main() {
         'a scatter chart with the positioner nearest',
         'a label color with a border radius',
         'a corner radius object and a border',
+        'bodyAlign center with the color boxes',
         'full: title, filler and clickLegend',
       ],
     );
@@ -636,6 +648,7 @@ void main() {
     _reference,
     observers: {'tooltip': _observeTooltip},
     functions: _functions,
+    extras: _extras,
   );
 
   group('theming.md §8 test 3: the light preset', () {
@@ -645,6 +658,7 @@ void main() {
         'tooltip': (chart) => _parseTextColors(_observeTooltip(chart)),
       },
       functions: _functions,
+      extras: _extras,
       theme: compileChartTheme(ChartThemes.light),
     );
 
@@ -1008,6 +1022,62 @@ void main() {
       expect(() => _activate(chart), throwsA(isA<ArgumentError>()));
     });
 
+    testWidgets('a JS null coordinate throws an ArgumentError', (tester) async {
+      // Upstream stores null. A probe on the pinned build in Node.js
+      // v24.12.0 on x64 with this positioner and `setActiveElements` gave no
+      // throw, caretX null, caretY null, opacity 1, x 0, y 7, xAlign left,
+      // yAlign top, width 66.037109375 and height 46.8. Without an
+      // animation, the write by name of caretX in update throws after the
+      // writes of opacity, x, y, width and height (Chart.js ADR 0039,
+      // section 5).
+      Tooltip.positioners['nulls'] = () => <String, Object?>{
+        'x': null,
+        'y': null,
+      };
+      addTearDown(() => Tooltip.positioners.remove('nulls'));
+      final chart = acquireChart(
+        _probeChart(<String, Object?>{'position': 'nulls'}),
+      );
+      expect(() => _activate(chart), throwsA(isA<ArgumentError>()));
+      final t = _tooltipOf(chart);
+      expect(t.x, 0);
+      expect(t.y, closeTo(7, 1e-9));
+      expect(t.width, closeTo(66.037109375, 1e-9));
+      expect(t.height, closeTo(46.8, 1e-9));
+      expect(t.xAlign, 'left');
+      expect(t.yAlign, 'top');
+      expect(identical(t['caretX'], undefined), isTrue);
+    });
+
+    testWidgets('a JS null coordinate throws in the animator update', (
+      tester,
+    ) async {
+      // With `animation: {duration: 1000}`, the same probe gave the same
+      // values after the first tick, and no throw. The port update does not
+      // throw: the next update of the animator throws at the write of
+      // Animation.tick (Chart.js ADR 0039, section 5). The test calls
+      // animator.update and does not pump a frame: a throw in the frame
+      // callback keeps `_request` set, and the animator then stops for the
+      // later tests of the file. The remove keeps Chart.destroy from the
+      // second throw of Animation.cancel.
+      Tooltip.positioners['nulls'] = () => <String, Object?>{
+        'x': null,
+        'y': null,
+      };
+      addTearDown(() => Tooltip.positioners.remove('nulls'));
+      final chart = acquireChart(
+        _probeChart(
+          <String, Object?>{'position': 'nulls'},
+          <String, Object?>{
+            'animation': <String, Object?>{'duration': 1000},
+          },
+        ),
+      );
+      _activate(chart);
+      expect(animator.update, throwsA(isA<ArgumentError>()));
+      expect(animator.remove(chart), isTrue);
+    });
+
     test('average keeps the semantics of new Set()', () {
       // The probe outputs `averageNaN` {x: NaN, y: 1}, `averageZeros`
       // {x: 2, y: 1} and `averageMinusZero` {x: +0, y: 1}: the add step of
@@ -1149,6 +1219,66 @@ void main() {
         ['1: 10'],
         ['undefined: 20'],
       ]);
+    });
+
+    testWidgets('the callbacks of a dataset override the label callbacks', (
+      tester,
+    ) async {
+      // plugin.tooltip.js:356-359, :564 and :625. A probe on the pinned
+      // build in Node.js v24.12.0 on x64 (this chart, the items [0, 1] and
+      // [1, 1] at {x: 150, y: 100}):
+      // title [B] (the dataset title is not used), body lines
+      // [['one: 20'], ['D1 15']], before [[], ['pre']], labelTextColors
+      // ['#fff', 'red'], width 66.037109375, height 79.6,
+      // x 273.00732421875, y 207.09999999999997.
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'labels': <Object?>['A', 'B', 'C'],
+          'datasets': <Object?>[
+            <String, Object?>{
+              'label': 'one',
+              'data': <Object?>[10, 20, 30],
+            },
+            <String, Object?>{
+              'label': 'two',
+              'data': <Object?>[5, 15, 25],
+              'tooltip': <String, Object?>{
+                'callbacks': <String, Object?>{
+                  'label': (Object? item) =>
+                      jsAdd('D1 ', jsGet(item, 'formattedValue')),
+                  'beforeLabel': () => 'pre',
+                  'labelTextColor': () => 'red',
+                  'title': () => 'not used',
+                },
+              },
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'plugins': <String, Object?>{
+            'legend': false,
+            'tooltip': <String, Object?>{'mode': 'index', 'intersect': false},
+          },
+        },
+      });
+      final t = _tooltipOf(chart)
+        ..setActiveElements([
+          <String, Object?>{'datasetIndex': 0, 'index': 1},
+          <String, Object?>{'datasetIndex': 1, 'index': 1},
+        ], _point(150, 100));
+      expect(t.title, ['B']);
+      expect(_bodyLines(t), [
+        ['one: 20'],
+        ['D1 15'],
+      ]);
+      expect(jsGet(t.body![0], 'before'), isEmpty);
+      expect(jsGet(t.body![1], 'before'), ['pre']);
+      expect(t.labelTextColors, ['#fff', 'red']);
+      expect(t.width, closeTo(66.037109375, 1e-9));
+      expect(t.height, closeTo(79.6, 1e-9));
+      expect(t.x, closeTo(273.00732421875, 1e-9));
+      expect(t.y, closeTo(207.1, 1e-9));
     });
   });
 
@@ -1379,6 +1509,26 @@ void main() {
     });
   });
 
+  group('reset', () {
+    testWidgets('the hook reset calls initialize', (tester) async {
+      // plugin.tooltip.js:1240-1244: chart.reset() gives the plugin options
+      // to initialize (:498-502), which writes options and clears $context.
+      // A probe on the pinned build in Node.js v24.12.0 on x64 called
+      // initialize({}), wrote `$context = {}` and called chart.reset(): the
+      // options were the resolver of the plugin options again, and $context
+      // was undefined.
+      final chart = acquireChart(_probeChart());
+      final t = _tooltipOf(chart);
+      final options = t.options;
+      t
+        ..initialize(<String, Object?>{})
+        ..[r'$context'] = <String, Object?>{};
+      chart.reset();
+      expect(identical(t.options, options), isTrue);
+      expect(identical(t[r'$context'], undefined), isTrue);
+    });
+  });
+
   group('external', () {
     testWidgets('external gets the tooltip as this and replay', (
       tester,
@@ -1579,8 +1729,9 @@ void main() {
 
   group('textDirection', () {
     // plugin.tooltip.js:1074 and :1087 (helpers.rtl.ts:55-73). The
-    // reference case `textDirection rtl` compares one chart with upstream.
-    // This group pins two draws in a row. The expected values come from a
+    // reference cases `rtl` and `textDirection rtl` compare the style after
+    // one draw (the probe `canvasDirection`). This group pins each style
+    // call of two draws in a row. The expected values come from a
     // probe of phase 8 (the pinned Chart.js build in Node.js v24.12.0 on
     // x64): two draws of the probe chart after `setActiveElements`, on a
     // canvas style with the DOM rules of `setProperty`. The restore gives

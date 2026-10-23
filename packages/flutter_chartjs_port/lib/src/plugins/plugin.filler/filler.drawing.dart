@@ -231,6 +231,7 @@ void _doFill(
 /// `(0).x` is `undefined`, and `lineTo(undefined, clipY)` is
 /// `lineTo(NaN, clipY)` (Chart.js ADR 0040, section 7).
 void _clipVertical(CanvasRenderingContext2D ctx, Object target, double clipY) {
+  // DIVERGES(chartjs): adapt-filler-target-classes, the target classes.
   final line = target is types.LineElement ? target : null;
   final segments = line?.segments;
   final points = line?.points;
@@ -274,6 +275,7 @@ void _clipHorizontal(
   Object target,
   double clipX,
 ) {
+  // DIVERGES(chartjs): adapt-filler-target-classes, the target classes.
   final line = target is types.LineElement ? target : null;
   final segments = line?.segments;
   final points = line?.points;

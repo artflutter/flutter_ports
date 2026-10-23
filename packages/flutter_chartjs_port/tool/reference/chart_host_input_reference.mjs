@@ -28,7 +28,10 @@
 // action (Chart.js ADR 0037, sections 6 to 9): the touch boundary events,
 // the compatibility mouse events of a tap and of a long press, the
 // `mouseout` and `mouseleave` of a tap outside, and the boundary events of
-// the mouse. The `BasicPlatform` of Node.js has no event listeners. Thus the
+// the mouse. The model sends one DOM event for each action. Chrome coalesces
+// the moves of one frame (Chart.js ADR 0037, Open 10). Thus the mouse cases
+// with two or more moves in one step pin the model, not a Chrome log. The
+// `BasicPlatform` of Node.js has no event listeners. Thus the
 // generator feeds `chart._eventHandler` itself with the chart events that
 // `fromNativeEvent` makes (platform.dom.js:109-119): for each type that
 // `options.events` lists (core.controller.js:976-990), the last event of

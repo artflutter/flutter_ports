@@ -23,8 +23,11 @@ import 'package:collection/collection.dart' show mergeSort;
 /// comparator such as `(a, b) => a.index - b.index` works unchanged.
 ///
 /// `SortCompare` (ECMAScript 23.1.3.30.2) also moves the `undefined`
-/// elements to the end. No sort of upstream gets an `undefined` element, so
-/// this function gives such an element to [compare] as any other element.
+/// elements to the end. This function gives an `undefined` element and a
+/// hole to [compare] as any other element. A caller whose array can hold
+/// them moves them in its comparator: `_holesLast` of `core.controller.dart`
+/// (the holes, Dart `null`) and the comparator of `Legend.buildLabels` (an
+/// `undefined` item of a user `generateLabels`, `plugin.legend.js:113`).
 ///
 /// The result is the V8 order for a consistent comparator. For an
 /// inconsistent comparator, the order is not the V8 order: ECMAScript leaves

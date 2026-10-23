@@ -113,6 +113,7 @@ Map<String, Object?> fixture() {
             for (var i = 0; i < 3; ++i) {
               for (var j = 0; j < 11; ++j) {
                 final point = chart.getDatasetMeta(i.toDouble()).data[j];
+                // DIVERGES(chartjs): harness-fixture-sources, the chart event.
                 final event = fixtureMouseMove(point);
                 (chart as Chart).handleEvent(event);
                 (chart.tooltip! as Tooltip)
