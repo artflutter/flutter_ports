@@ -7,7 +7,7 @@
 /// JavaScript values (Chart.js ADR 0032).
 ///
 /// The value mapping: `null` is JS `null`, [undefined] is JS `undefined`
-/// (Chart.js ADR 0006), `bool` is a boolean, `num` is a number, `String` is a
+/// (Chart.js ADR 0043), `bool` is a boolean, `num` is a number, `String` is a
 /// string, `List` is an array, `Map` is a plain object, `DateTime` is a
 /// `Date` (Chart.js ADR 0024) and any other object is an object whose
 /// `toString()` is its primitive value.

@@ -7,7 +7,7 @@
 /// draws the point labels, the angle lines and the grid lines around the
 /// center: circles, or polygons through the points of the labels.
 ///
-/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0006). The
+/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
 ///   scale reads an option with `options[key]` or [jsGet], tests it with
 ///   [jsTruthy], and applies [jsToNumber] before arithmetic.
 /// - Numbers are `double` (Chart.js ADR 0032). A property that starts JS

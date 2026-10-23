@@ -1,10 +1,10 @@
 // Original code, not ported from Chart.js: the internal theme presets.
 
-/// The internal theme presets of Chart.js ADR 0001 (theming.md §5.1), as raw
+/// The internal theme presets of Chart.js ADR 0042 (theming.md §5.1), as raw
 /// Map themes of `compile.dart`, a pure layer.
 ///
 /// The public presets come with the theme classes in phase 9. Ported files
-/// never import this file (Chart.js ADR 0001, invariant 4).
+/// never import this file (Chart.js ADR 0042, invariant 4).
 library;
 
 import 'package:flutter_chartjs_port/src/types/basic.dart';

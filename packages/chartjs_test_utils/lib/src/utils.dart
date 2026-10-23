@@ -94,7 +94,7 @@ Object? _or(Object? a, Object? b) => jsTruthy(a) ? a : b;
 ///   - `useShadowDOM`: use shadowDom.
 ///   - `persistent`: If true, the chart will not be released after the spec.
 ///
-/// Both are JS objects: Maps (Chart.js ADR 0006). As upstream, the function
+/// Both are JS objects: Maps (Chart.js ADR 0043). As upstream, the function
 /// writes `canvas` and `wrapper` into [options], and `options` into
 /// [config]. It writes `animation`, `responsive` and `locale` into the
 /// options of [config]. A nested Map literal of a spec thus needs the type

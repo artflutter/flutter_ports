@@ -8,7 +8,7 @@
 /// `date_adapter.dart` (Chart.js ADR 0024). A time is a number of
 /// milliseconds since the epoch.
 ///
-/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0006). The
+/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
 ///   scale reads an option with `options[key]` or [jsGet], tests it with
 ///   [jsTruthy], and applies [jsToNumber] before arithmetic. The adapter
 ///   gets the raw option values, as upstream gives them.

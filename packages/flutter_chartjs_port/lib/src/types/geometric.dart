@@ -21,7 +21,7 @@
 /// `number | Record<string, number>` of `_readValueToProps` (:51).
 ///
 /// The Dart form of each of these unions is `Object?`, as for every option
-/// value (Chart.js ADR 0006). The value is one of these:
+/// value (Chart.js ADR 0043). The value is one of these:
 /// - a `num`, also an `int` from `jsonDecode`;
 /// - a `Map<String, Object?>`: a JS plain object, or an option resolver;
 /// - an empty value: Dart `null` (JS `null`) or the `undefined` sentinel of
@@ -42,7 +42,7 @@
 /// ## Empty values
 ///
 /// Outside option scopes, Dart `null` stands for one JS value (Chart.js ADR
-/// 0006, "Values outside scopes"), and the `///` line of each nullable member
+/// 0043, "Values outside scopes"), and the `///` line of each nullable member
 /// names it. In [Point], `null` is JS `null`. In [SplinePoint], `skip` is
 /// `null` for JS `undefined`.
 ///
@@ -160,7 +160,7 @@ abstract interface class SplinePoint implements Point {
   double get y;
 
   /// geometric.d.ts:44 `skip?: boolean`. Dart `null` stands for JS
-  /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
+  /// `undefined` (Chart.js ADR 0043). JS `null` never reaches it.
   bool? get skip;
 
   /// geometric.d.ts:48 `cp1x?: number`. `helpers.curve.ts` assigns it.

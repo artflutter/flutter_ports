@@ -81,11 +81,11 @@ void main() {
     expect(run(), [
       contains(
         'widget.dart:2: imports package:flutter/material.dart '
-        '(Chart.js ADR 0001',
+        '(Chart.js ADR 0042',
       ),
       contains(
         'widget.dart:3: imports package:forui/forui.dart '
-        '(Chart.js ADR 0001',
+        '(Chart.js ADR 0042',
       ),
       contains('widget.dart:4: imports dart:io (AGENTS.md rule 5'),
       contains('widget.dart:5: imports dart:js_interop (AGENTS.md rule 5'),
@@ -606,7 +606,7 @@ void main() {
       equals(
         'error: lib/src/helpers/helpers.math.dart:2: imports '
         'lib/src/theme/theme.dart, but ported files never import '
-        'lib/src/theme/ (Chart.js ADR 0001).',
+        'lib/src/theme/ (Chart.js ADR 0042).',
       ),
     ]);
   });
@@ -632,12 +632,12 @@ void main() {
       equals(
         'error: lib/src/helpers/helpers.math.dart:2: imports '
         'lib/src/theme/compile.dart, but ported files never import '
-        'lib/src/theme/ (Chart.js ADR 0001).',
+        'lib/src/theme/ (Chart.js ADR 0042).',
       ),
       equals(
         'error: test/specs/helpers.math_test.dart:2: imports '
         'lib/src/theme/compile.dart, but ported files never import '
-        'lib/src/theme/ (Chart.js ADR 0001).',
+        'lib/src/theme/ (Chart.js ADR 0042).',
       ),
     ]);
   });
@@ -654,19 +654,19 @@ void main() {
     expect(run(), [
       contains(
         'chart_theme.dart:3: imports package:flutter/material.dart '
-        '(Chart.js ADR 0001: no Material in lib/).',
+        '(Chart.js ADR 0042: no Material in lib/).',
       ),
       contains(
         'chart_theme.dart:4: imports package:flutter/cupertino.dart '
-        '(Chart.js ADR 0001: no Cupertino in lib/).',
+        '(Chart.js ADR 0042: no Cupertino in lib/).',
       ),
       contains(
         'chart_theme.dart:5: imports package:material_ui/material_ui.dart '
-        '(Chart.js ADR 0001: no Material in lib/).',
+        '(Chart.js ADR 0042: no Material in lib/).',
       ),
       contains(
         'chart_theme.dart:6: imports package:forui/forui.dart '
-        '(Chart.js ADR 0001: no forui in lib/).',
+        '(Chart.js ADR 0042: no forui in lib/).',
       ),
     ]);
   });

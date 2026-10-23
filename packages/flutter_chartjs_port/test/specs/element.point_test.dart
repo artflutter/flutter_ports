@@ -11,7 +11,7 @@ import '../fixtures/index.dart' as fixture;
 
 // The spec constructs Chart.elements.PointElement. Here it is the
 // PointElement of element.point.dart (Chart.js ADR 0017). An object literal
-// is a Map (Chart.js ADR 0006), and an integer becomes a double at the
+// is a Map (Chart.js ADR 0043), and an integer becomes a double at the
 // write. The literal {x, y} of tooltipPosition and getCenterPoint is an
 // ElementPoint, which compares with equals.
 //

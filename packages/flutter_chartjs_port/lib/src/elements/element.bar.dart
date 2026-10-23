@@ -16,7 +16,7 @@
 /// [TRBLCorners].
 ///
 /// The options of a bar are a [BarOptions] or a plain Map (Chart.js ADR
-/// 0006). Each option read goes through one small function for each option,
+/// 0043). Each option read goes through one small function for each option,
 /// for example `_borderWidth`, which gives [BarOptions.borderWidthValue] or
 /// `jsGet(options, 'borderWidth')` (Chart.js ADR 0018, section 4). Both give
 /// JS `undefined` for an absent key, and `jsGet` throws the [TypeError] of a
@@ -434,7 +434,7 @@ class BarElement extends Element implements types.VisualElementRange {
   /// element.bar.js:43 and :59 read: the skipped edges of the border.
   ///
   /// It is a JS plain object, thus a `Map<String, Object?>` (Chart.js ADR
-  /// 0006). Each key that `controller.bar.js` writes has the value true:
+  /// 0043). Each key that `controller.bar.js` writes has the value true:
   /// `'top'`, `'right'`, `'bottom'` or `'left'`, or another edge name of the
   /// `borderSkipped` option, which [draw] ignores. [draw] reads the four
   /// edges with [jsGet] and tests them with `ToBoolean` ([jsTruthy]).

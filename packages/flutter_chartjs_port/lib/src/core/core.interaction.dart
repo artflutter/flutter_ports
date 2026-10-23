@@ -110,7 +110,7 @@ final class InteractionItem implements types.ActiveElement {
 /// [e] is the event: a `types.ChartEvent`, or a `NativeEvent` of
 /// `lib/src/platform/native_event.dart`, as `getRelativePosition` takes
 /// (helpers.dom.ts:105). [options] are the `InteractionOptions` of
-/// core.interaction.js:9, a plain object (Chart.js ADR 0006). Dart `null`
+/// core.interaction.js:9, a plain object (Chart.js ADR 0043). Dart `null`
 /// for [useFinalPosition] stands for an absent argument, JS `undefined`.
 typedef InteractionModeFunction = List<InteractionItem> Function(
   types.Chart chart,

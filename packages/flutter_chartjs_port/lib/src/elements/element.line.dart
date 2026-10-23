@@ -27,7 +27,7 @@
 /// with `toInt()`. Each index comes from a list length or from a segment of
 /// the same points, so it is finite. JS `%` is Dart `remainder`.
 ///
-/// `line.options` is an option object (Chart.js ADR 0006): a [LineOptions]
+/// `line.options` is an option object (Chart.js ADR 0043): a [LineOptions]
 /// or a plain Map. Each read goes through one small function for each
 /// option, for example `_stepped`, which gives [LineOptions.steppedValue] or
 /// `jsGet(options, 'stepped')` (Chart.js ADR 0018, section 4). Both give JS

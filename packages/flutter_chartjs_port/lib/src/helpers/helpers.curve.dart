@@ -287,7 +287,7 @@ void _capBezierPoints(List<SplinePoint> points, ChartArea? area) {
 ///
 /// @private
 ///
-/// [options] is an option object (Chart.js ADR 0006). `options.tension`
+/// [options] is an option object (Chart.js ADR 0043). `options.tension`
 /// goes to the parameter `t` of [splineCurve] through `ToNumber`, as the
 /// upstream `t * s01` does: undefined gives NaN, and JS `null` gives 0.
 /// Dart `null` for [area] is JS `undefined` (see [_capBezierPoints]).

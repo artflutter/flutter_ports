@@ -12,7 +12,7 @@
 /// 150, 200, ...: each power of ten after the first also has a tick at 1.5
 /// times that power. A tick at a power of ten is a major tick.
 ///
-/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0006). The
+/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
 ///   scale reads an option with `options[key]` or [jsGet], and tests it
 ///   with [jsTruthy].
 /// - Numbers are `double` (Chart.js ADR 0032). A property that starts JS

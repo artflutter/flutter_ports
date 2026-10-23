@@ -240,7 +240,7 @@ abstract interface class DrawPointOptions {
   /// `'rectRounded'`, `'rectRot'`, `'star'` and `'triangle'`, of `false`, and
   /// of `HTMLImageElement` and `HTMLCanvasElement`. Dart cannot declare the
   /// union, so the Dart form is `Object?`, as for every option value
-  /// (Chart.js ADR 0006): a `String`, a `bool`, or a [CanvasImageSource].
+  /// (Chart.js ADR 0043): a `String`, a `bool`, or a [CanvasImageSource].
   /// A [CanvasImageSource] draws as an image. An [HTMLCanvasElement] is not
   /// a [CanvasImageSource]: pass its `toImageSource()` snapshot to draw it
   /// as an image. A canvas element itself draws the default circle

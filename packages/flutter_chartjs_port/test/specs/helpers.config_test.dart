@@ -14,7 +14,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
 // A JavaScript object literal is a `Map<String, Object?>` and an array is a
-// `List<Object?>` (Chart.js ADR 0006). The `_createResolver` and
+// `List<Object?>` (Chart.js ADR 0043). The `_createResolver` and
 // `_attachContext` proxies are the `Resolver` and `ContextResolver` Maps.
 // `proxy.key` is `proxy['key']`, `'key' in proxy` is `containsKey`,
 // `Object.getOwnPropertyNames(proxy)` is `keys`, `Object.keys(proxy)` is

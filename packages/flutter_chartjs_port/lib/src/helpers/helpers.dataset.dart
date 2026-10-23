@@ -52,7 +52,7 @@ double _edgeOf(Object item, String field) => switch ((item, field)) {
 
 /// helpers.dataset.ts:3 `getSizeForArea`.
 ///
-/// `scale.options.clip` is an option value (Chart.js ADR 0006), and the
+/// `scale.options.clip` is an option value (Chart.js ADR 0043), and the
 /// test is its ToBoolean. Dart `null` for [chartArea] stands for the JS
 /// `undefined` of a chart before its first layout: the read of its edge
 /// throws a `TypeError`, as in JavaScript.

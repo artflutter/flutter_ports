@@ -3,7 +3,7 @@
 /// Port of `src/core/core.config.js`: the chart configuration and the option
 /// scopes of the resolver.
 ///
-/// The JavaScript values map to Dart values as Chart.js ADR 0006 decides: the
+/// The JavaScript values map to Dart values as Chart.js ADR 0043 decides: the
 /// raw configuration, its `data` and its `options` are
 /// `Map<String, Object?>`, an array is a [List], `undefined` is the
 /// [undefined] sentinel and `null` is Dart `null`. A property read of a value
@@ -17,7 +17,7 @@
 /// properties of these objects into an array or a function. An array `data`
 /// gives a new Map.
 ///
-/// Four hunks add the compiled theme of Chart.js ADR 0001 as an option scope
+/// Four hunks add the compiled theme of Chart.js ADR 0042 as an option scope
 /// (theming.md §3.1): H0 ([themeConfigKey], the private `_themeOf` and the
 /// public [chartThemeOf] of Chart.js ADR 0042), H1 (`mergeScaleConfig`), H2
 /// ([Config.getOptionScopes]) and H3
@@ -355,7 +355,7 @@ void _addIfFound(Set<Object?> set, Object? obj, String key) {
 }
 
 /// The key of the compiled theme in the raw chart configuration: `$theme`
-/// (Chart.js ADR 0001, theming.md §3.1, hunk H0).
+/// (Chart.js ADR 0042, theming.md §3.1, hunk H0).
 ///
 /// The chart widget puts the compiled theme map under this key. The theme is
 /// a frozen map with the key shape of `Chart.defaults`. [Config] reads it

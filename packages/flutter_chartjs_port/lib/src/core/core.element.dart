@@ -210,7 +210,7 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   bool active = false;
 
   /// core.element.ts:14 `options: O`, the resolved options of the element
-  /// (Chart.js ADR 0006, ADR 0017 section 8).
+  /// (Chart.js ADR 0043, ADR 0017 section 8).
   ///
   /// Dart `null` stands for JS `undefined`, the start value. JS `null` never
   /// reaches it.

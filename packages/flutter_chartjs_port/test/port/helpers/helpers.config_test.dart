@@ -17,7 +17,7 @@ import 'package:test/test.dart';
 // difference of the port.
 //
 // The group "null versus undefined" holds the resolver tests of Chart.js ADR
-// 0006 ("Tests"). A key of a scope has three states: absent, the undefined
+// 0043 ("Tests"). A key of a scope has three states: absent, the undefined
 // sentinel and Dart null (JS null). For each resolver path, the resolution
 // reads an absent key and the sentinel alike, and null stops it. mergeIf,
 // _cached and the key enumeration test own-key presence, so they keep the
@@ -438,7 +438,7 @@ void main() {
     });
 
     group('mergeIf', () {
-      // A stored sentinel blocks the merge (Chart.js ADR 0006, "Tests").
+      // A stored sentinel blocks the merge (Chart.js ADR 0043, "Tests").
       final expected = {'absent': 1, 'undefined': undefined, 'null': null};
       for (final state in _states) {
         test(state.name, () {

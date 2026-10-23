@@ -9,7 +9,7 @@
 ///
 /// - Numbers are `double` (Chart.js ADR 0032).
 /// - An entry of the lookup table is a Map `{'time': time, 'pos': pos}`
-///   (Chart.js ADR 0006): [lookupByKey] reads the entries by key. `time` can
+///   (Chart.js ADR 0043): [lookupByKey] reads the entries by key. `time` can
 ///   be Dart `null`, the JS `null` timestamp of a label that the adapter
 ///   cannot parse. The arithmetic reads it with `ToNumber`, as upstream.
 /// - The value methods take any JS value (Chart.js ADR 0025).

@@ -30,7 +30,7 @@ import 'package:test/test.dart';
 // elements. The harness restores both after each test (setUpSpecs).
 //
 // The theme groups `theme-H0` to `theme-H3` pin the hunks of Chart.js ADR
-// 0001 (theming.md §3.1). Their expected values come from a JavaScript
+// 0042 (theming.md §3.1). Their expected values come from a JavaScript
 // prototype of the four hunks on a copy of core.config.js in the same
 // Node.js, beside the upstream file. The tests are theming.md §8 test 1 at
 // the config level (no extra scope without a theme, the §3.2 position of the

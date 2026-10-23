@@ -6,7 +6,7 @@
 /// with four arguments: `_interpolate(p1, p2, t, options.stepped)`
 /// (element.line.js:373). Thus each function takes the fourth argument
 /// `mode`, also where it does not read it. Its type is `Object?`, because
-/// `options.stepped` is an option value (Chart.js ADR 0006).
+/// `options.stepped` is an option value (Chart.js ADR 0043).
 library;
 
 import 'package:flutter_chartjs_port/src/types/geometric.dart';

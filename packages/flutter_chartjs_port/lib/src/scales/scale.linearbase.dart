@@ -8,7 +8,7 @@
 /// it, and it has no `id`. Thus the registry never registers it as a
 /// component.
 ///
-/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0006). The
+/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
 ///   scale reads an option with `options[key]` or [jsGet], tests it with
 ///   [jsTruthy], and applies [jsToNumber] before arithmetic.
 /// - Numbers are `double` (Chart.js ADR 0032). A property that starts JS

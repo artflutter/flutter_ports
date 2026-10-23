@@ -17,7 +17,7 @@
 /// library with the prefix `types`.
 ///
 /// Option objects (`options`, `getContext()`) are `Map<String, Object?>`:
-/// Chart.js ADR 0006 makes a JS plain object a Map, and the option resolvers
+/// Chart.js ADR 0043 makes a JS plain object a Map, and the option resolvers
 /// of `helpers.config` take the place of the upstream `Proxy` objects.
 ///
 /// Upstream `_`-prefixed members that other modules read drop the underscore
@@ -26,7 +26,7 @@
 /// members carry no `@internal`. The concrete classes carry it.
 ///
 /// Outside option scopes, Dart `null` stands for one JS value (Chart.js ADR
-/// 0006, "Values outside scopes"). The `///` line of each nullable member
+/// 0043, "Values outside scopes"). The `///` line of each nullable member
 /// names that value, or says that the readers treat JS `null` and
 /// `undefined` alike.
 library;
@@ -175,25 +175,25 @@ abstract interface class ChartMeta {
   abstract Object? vAxisID;
 
   /// index.d.ts:495 `xScale?: Scale`. Dart `null` stands for JS
-  /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
+  /// `undefined` (Chart.js ADR 0043). JS `null` never reaches it.
   /// `linkScales` assigns it and the other four scales
   /// (core.datasetController.js:312-316).
   abstract Scale? xScale;
 
   /// index.d.ts:496 `yScale?: Scale`. Dart `null` stands for JS
-  /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
+  /// `undefined` (Chart.js ADR 0043). JS `null` never reaches it.
   abstract Scale? yScale;
 
   /// index.d.ts:497 `rScale?: Scale`. Dart `null` stands for JS
-  /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
+  /// `undefined` (Chart.js ADR 0043). JS `null` never reaches it.
   abstract Scale? rScale;
 
   /// index.d.ts:498 `iScale?: Scale`. Dart `null` stands for JS
-  /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
+  /// `undefined` (Chart.js ADR 0043). JS `null` never reaches it.
   abstract Scale? iScale;
 
   /// index.d.ts:499 `vScale?: Scale`. Dart `null` stands for JS
-  /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
+  /// `undefined` (Chart.js ADR 0043). JS `null` never reaches it.
   abstract Scale? vScale;
 
   /// index.d.ts:501 `_sorted: boolean`. `parse` assigns it
@@ -214,7 +214,7 @@ abstract interface class ChartMeta {
   ///
   /// An entry is any value. The `parse*Data` methods give parsed data
   /// objects, which ported code reads by an axis key (helpers.extras.ts:103,
-  /// :111). Chart.js ADR 0006 makes a JS plain object a Map. With `parsing:
+  /// :111). Chart.js ADR 0043 makes a JS plain object a Map. With `parsing:
   /// false`, `parse` assigns the data array itself
   /// (core.datasetController.js:461), and its items can be primitives. The
   /// doughnut controller writes numbers (controller.doughnut.js:153, :164).
@@ -227,7 +227,7 @@ abstract interface class ChartMeta {
 
   /// helpers.extras.ts:145 `_scaleRanges`. `index.d.ts` does not declare
   /// it. `_scaleRangesChanged` reads it and assigns it (:153). Dart `null`
-  /// stands for JS `undefined` (Chart.js ADR 0006). JS `null` never reaches
+  /// stands for JS `undefined` (Chart.js ADR 0043). JS `null` never reaches
   /// it.
   abstract ScaleRanges? scaleRanges;
 
@@ -390,7 +390,7 @@ abstract interface class Chart {
   Map<String, Scale> get scales;
 
   /// index.d.ts:546 `data: ChartData`, the data object of the
-  /// configuration. A Map (Chart.js ADR 0006). `Scale.getLabels` reads its
+  /// configuration. A Map (Chart.js ADR 0043). `Scale.getLabels` reads its
   /// `labels`, `xLabels` and `yLabels` (core.scale.js:359-361).
   Map<String, Object?> get data;
 
@@ -534,7 +534,7 @@ abstract interface class DatasetController {
   /// core.datasetController.js:443 `_parsing`, the `parsing` option.
   /// `index.d.ts` does not declare it. `_parseObjectDataRadialScale`
   /// (helpers.config.ts:444) reads it as `this._parsing`. Its value is
-  /// `false` or an object of the parsing keys (Chart.js ADR 0006).
+  /// `false` or an object of the parsing keys (Chart.js ADR 0043).
   Object? get parsing;
 
   /// index.d.ts:640 `getAllParsedValues(scale: Scale): number[]`. The time
@@ -630,7 +630,7 @@ abstract interface class Tick {
 
   /// scale.logarithmic.js:55 `significand`. `index.d.ts` does not declare
   /// it. `core.ticks.js:75` reads it. Dart `null` stands for JS `undefined`
-  /// (Chart.js ADR 0006): the ticks of other scales do not set it. JS `null`
+  /// (Chart.js ADR 0043): the ticks of other scales do not set it. JS `null`
   /// never reaches it.
   double? get significand;
 }
@@ -1041,7 +1041,7 @@ abstract interface class Segment {
 
   /// helpers.segment.js:8 `style?: any`. `index.d.ts` does not declare it.
   ///
-  /// Dart `null` stands for JS `undefined` (Chart.js ADR 0006): the segments
+  /// Dart `null` stands for JS `undefined` (Chart.js ADR 0043): the segments
   /// of `solidSegments` and of a line without segment styles have no style.
   /// JS `null` never reaches it. A style of `doSplitByStyles` is the
   /// `AnyObject` of `readStyle` (helpers.segment.js:337).
@@ -1314,7 +1314,7 @@ abstract interface class BasePlatform {
 /// (core.config.js:115-120).
 abstract interface class ChartConfiguration {
   /// index.d.ts:3921 `options?: ChartOptions<TType>`. A Map
-  /// (Chart.js ADR 0006).
+  /// (Chart.js ADR 0043).
   Map<String, Object?> get options;
 
   /// core.config.js:177 `get data()`. plugin.colors.ts:107-110 reads it.
@@ -1346,7 +1346,7 @@ abstract interface class Element implements Point {
 
   /// core.element.ts:14 `options: O`. The constructors leave it undefined
   /// (element.point.ts:52), and helpers.extras.ts:96 tests it. Dart `null`
-  /// stands for JS `undefined` (Chart.js ADR 0006). JS `null` never reaches
+  /// stands for JS `undefined` (Chart.js ADR 0043). JS `null` never reaches
   /// it.
   Map<String, Object?>? get options;
 
@@ -1373,12 +1373,12 @@ abstract interface class Element implements Point {
 /// 0017, section 3).
 abstract interface class PointElement implements Element, SplinePoint {
   /// element.point.ts:25 `skip?: boolean`. Dart `null` stands for JS
-  /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
+  /// `undefined` (Chart.js ADR 0043). JS `null` never reaches it.
   @override
   bool? get skip;
 
   /// element.point.ts:26 `stop?: boolean`. Dart `null` stands for JS
-  /// `undefined` (Chart.js ADR 0006). JS `null` never reaches it.
+  /// `undefined` (Chart.js ADR 0043). JS `null` never reaches it.
   bool? get stop;
 
   /// element.point.ts:81 `size(options)`. controller.line.js:133 calls it.

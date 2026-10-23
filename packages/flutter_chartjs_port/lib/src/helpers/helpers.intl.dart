@@ -17,7 +17,7 @@ final Map<String, JsNumberFormat> _intlCache = <String, JsNumberFormat>{};
 
 /// helpers.intl.ts:4 `getNumberFormat`.
 ///
-/// [locale] is a resolved option value (Chart.js ADR 0006): `undefined`,
+/// [locale] is a resolved option value (Chart.js ADR 0043): `undefined`,
 /// JS `null` (Dart `null`), a String or a List of Strings. The cache key is
 /// [_cacheKey], not `locale + JSON.stringify(options)`.
 JsNumberFormat _getNumberFormat(
@@ -53,7 +53,7 @@ String _cacheKey(Object? locale, Map<String, Object?> options) => [
 /// helpers.intl.ts:15 `formatNumber`.
 ///
 /// Upstream names the first parameter `num`, a Dart type name. [locale] is
-/// `chart.options.locale`, a resolved option value (Chart.js ADR 0006). A
+/// `chart.options.locale`, a resolved option value (Chart.js ADR 0043). A
 /// String is a BCP 47 tag, and a List is a list of tags. `undefined` gives
 /// the current locale of package:intl (`Intl.defaultLocale`, `'en_US'` when
 /// the app does not set it). In [options], an absent key and `undefined` are

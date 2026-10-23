@@ -14,7 +14,7 @@ import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
 
-// The theme compiler has no upstream counterpart (Chart.js ADR 0001). These
+// The theme compiler has no upstream counterpart (Chart.js ADR 0042). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
 // the emission guard, the rgba() form, the deep freeze and the memo), §3.4
 // and §4 (the token keys, the point-label font, the title, subtitle, legend

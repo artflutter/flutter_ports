@@ -7,7 +7,7 @@
 /// `expect(actual, toEqualOptions(expected))`.
 ///
 /// A JS object is a `Map<String, Object?>` and an array is a `List`
-/// (Chart.js ADR 0006). A resolver of `helpers.config` is a Map too. The
+/// (Chart.js ADR 0043). A resolver of `helpers.config` is a Map too. The
 /// property read `actual[key]` is [jsGet]: it runs the `get` trap of a
 /// resolver, and it gives [undefined] for an absent key. An actual
 /// `types.ElementPropertyRead`, for example an element or a tooltip, is an
@@ -35,7 +35,7 @@ import 'package:test/test.dart';
 ///
 /// Upstream it is true for a plain object and for an instance of a class,
 /// for example an element or a tooltip (`plugin.tooltip.tests.js:1350`).
-/// Here a JS object is a `Map<String, Object?>` (Chart.js ADR 0006) or a
+/// Here a JS object is a `Map<String, Object?>` (Chart.js ADR 0043) or a
 /// [types.ElementPropertyRead], the read by name of a class instance. A Dart
 /// object of another class has no properties that the matcher can read.
 /// Thus it is not an object here.

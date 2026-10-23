@@ -3,7 +3,7 @@
 /// The declarations of `src/types/basic.d.ts` as Dart types
 /// (Chart.js ADR 0003, porting-flow.md 2.4).
 ///
-/// `AnyObject` is `Record<string, any>`: a JS plain object. Chart.js ADR 0006
+/// `AnyObject` is `Record<string, any>`: a JS plain object. Chart.js ADR 0043
 /// makes a JS plain object a `Map<String, Object?>`, so [AnyObject] is a
 /// typedef of that Map type. Its phase-2 callers are `helpers.core.ts:5`,
 /// `helpers.config.ts:2` and `helpers.config.types.ts:1`. Later callers
@@ -14,5 +14,5 @@
 library;
 
 /// basic.d.ts:2 `AnyObject`, `Record<string, any>`: a JS plain object
-/// (Chart.js ADR 0006).
+/// (Chart.js ADR 0043).
 typedef AnyObject = Map<String, Object?>;

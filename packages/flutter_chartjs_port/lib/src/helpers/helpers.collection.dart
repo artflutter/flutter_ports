@@ -3,7 +3,7 @@
 /// Port of `src/helpers/helpers.collection.ts`.
 ///
 /// A JavaScript array is a [List] and a plain object is a
-/// `Map<String, Object?>` (Chart.js ADR 0006). The `{lo, hi}` results of the
+/// `Map<String, Object?>` (Chart.js ADR 0043). The `{lo, hi}` results of the
 /// binary searches are records of two list indices. Thus they are `int`
 /// values (Chart.js ADR 0032, "Translation rules").
 ///
@@ -66,7 +66,7 @@ import 'package:meta/meta.dart';
 /// The callers search two kinds of tables:
 /// - plain objects: `meta._parsed` (helpers.extras.ts:103, :119), the
 ///   `{time, pos}` table of scale.timeseries.js:18, :24 and the data of
-///   plugin.decimation.js:186, :189. An entry is a [Map] (Chart.js ADR 0006
+///   plugin.decimation.js:186, :189. An entry is a [Map] (Chart.js ADR 0043
 ///   gives `Map<String, Object?>`, and user data can have other type
 ///   arguments). The read gives the value of an own key, else [undefined].
 /// - elements: the point elements of helpers.extras.ts:105, :121, and the
@@ -381,7 +381,7 @@ T _setValue<T>(T value) =>
     value is double && value == 0 && value.isNegative ? 0.0 as T : value;
 
 /// SameValueZero (ECMAScript 7.2.11) for the Dart values of Chart.js ADR
-/// 0006: numbers by value, with NaN equal to NaN and `0` equal to `-0`,
+/// 0043: numbers by value, with NaN equal to NaN and `0` equal to `-0`,
 /// strings by content, and every other value by identity.
 bool _sameValueZero(Object? a, Object? b) {
   if (a is num && b is num) {

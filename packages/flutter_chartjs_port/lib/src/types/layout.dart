@@ -15,7 +15,7 @@
 ///
 /// `LayoutPosition` (layout.d.ts:3) is the union `'left' | 'top' | 'right' |
 /// 'bottom' | 'center' | 'chartArea' | {[scaleId: string]: number}`. Its Dart
-/// form is `Object?`, as for every option value (Chart.js ADR 0006): a
+/// form is `Object?`, as for every option value (Chart.js ADR 0043): a
 /// `String`, or a `Map<String, Object?>` for the object form. `core.layouts`
 /// tests the object form with `isObject` (core.layouts.js:121), and compares
 /// a string with `===` (core.layouts.js:11, :15, :52).
@@ -55,7 +55,7 @@ abstract interface class LayoutItem {
   ///
   /// `layouts.configure` writes the `weight` option as it is
   /// (core.layouts.js:334). Thus the Dart type is `Object?`, as for every
-  /// option value (Chart.js ADR 0006): a number, or another value of the
+  /// option value (Chart.js ADR 0043): a number, or another value of the
   /// option. Dart `null` stands for JS `null`. The `undefined` sentinel
   /// stands for JS `undefined`. `sortByWeight` compares two values with
   /// `===` (core.layouts.js:18-26): `undefined === undefined` is true, and

@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: JS property read and Object.freeze.
 
 /// The JavaScript property read `object[key]` (`[[Get]]`) over the Dart
-/// values that stand for JavaScript values (Chart.js ADR 0006), its forms
+/// values that stand for JavaScript values (Chart.js ADR 0043), its forms
 /// for a property name and a number index (Chart.js ADR 0036), the frozen
 /// state of `Object.freeze` (Chart.js ADR 0021, section 5), and the `typeof`
 /// operator (Chart.js ADR 0019, section 1).

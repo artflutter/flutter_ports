@@ -36,7 +36,7 @@ import '../support/jasmine.dart';
 // `expect(fn).not.toThrow()` is `expect(fn, returnsNormally)`.
 //
 // An option function of the spec, for example `afterBuildTicks`, is a Dart
-// closure. The scale calls it through `jsCall` (Chart.js ADR 0006).
+// closure. The scale calls it through `jsCall` (Chart.js ADR 0043).
 // `scale.ticks.slice(1)` is `scale.ticks!.sublist(1)`. `expect(fn).toThrow()`
 // with no argument is `throwsA(anything)`.
 //

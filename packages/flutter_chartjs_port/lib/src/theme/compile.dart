@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the theme compiler.
 
-/// The theme compiler of Chart.js ADR 0001 (theming.md §3.3), a pure layer.
+/// The theme compiler of Chart.js ADR 0042 (theming.md §3.3), a pure layer.
 ///
 /// [compileChartTheme] turns a raw Map theme into one frozen Map with the key
 /// shape of `Chart.defaults`. The chart puts that Map into the raw
@@ -31,7 +31,7 @@
 /// (theming.md §4). A debug assert rejects a field or a token that the
 /// compiler does not know.
 ///
-/// Ported files never import this file (Chart.js ADR 0001, invariant 4).
+/// Ported files never import this file (Chart.js ADR 0042, invariant 4).
 library;
 
 import 'dart:collection';

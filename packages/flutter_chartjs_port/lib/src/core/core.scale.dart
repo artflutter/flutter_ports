@@ -5,7 +5,7 @@
 /// [Scale] is the base class of the scales. It extends the [Element] of
 /// `core.element.dart` and implements `types.Scale` of `lib/src/types`.
 ///
-/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0006).
+/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043).
 ///   [Scale.options] is the `ContextProxy` that [Scale.init] makes with
 ///   `setContext`. The scale reads an option with the Map read
 ///   `options[key]`, which gives the [undefined] sentinel for an option that
@@ -34,7 +34,7 @@
 /// - The object literals of upstream that another module reads have a type:
 ///   a tick is a [Tick], a label item is a `types.LabelItem`. The object
 ///   literals that only this file reads are private classes. A layer of
-///   [Scale.layers] is a Map `{z, draw}`, as Chart.js ADR 0006 makes a JS
+///   [Scale.layers] is a Map `{z, draw}`, as Chart.js ADR 0043 makes a JS
 ///   plain object a Map: `core.controller.js:637` writes `_idx` into it, and
 ///   `compare2Level` reads its keys by name.
 ///

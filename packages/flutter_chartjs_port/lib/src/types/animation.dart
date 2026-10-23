@@ -39,7 +39,7 @@ abstract interface class Animation {
   /// animation.d.ts:10 `readonly _to: unknown`, the target value of the
   /// property.
   ///
-  /// The value is any JS value (Chart.js ADR 0006): a `double` for a number
+  /// The value is any JS value (Chart.js ADR 0043): a `double` for a number
   /// property, a `String` for a color, a `bool`, Dart `null` for JS `null`,
   /// or the `undefined` sentinel of `lib/src/js/js_undefined.dart`, when no
   /// value resolves (core.animation.js:31).

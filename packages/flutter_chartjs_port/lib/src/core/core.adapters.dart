@@ -7,7 +7,7 @@
 /// @private
 ///
 /// The members of a date adapter take and give JavaScript values (Chart.js
-/// ADR 0006): a date library replaces them with function values
+/// ADR 0043): a date library replaces them with function values
 /// ([DateAdapterBase.override]), and the time scale reads their results with
 /// `+value` (`scale.time.js:76`, `:158`, `:342`). Thus each parameter and
 /// each result is an `Object?`. The `///` line of each member gives the type

@@ -11,7 +11,7 @@
 /// `@kurkle/color`, not this type.
 ///
 /// The proposed Dart form is `Object`, as for every option value (Chart.js
-/// ADR 0006). The value is a CSS color `String`, or a gradient or pattern of
+/// ADR 0043). The value is a CSS color `String`, or a gradient or pattern of
 /// the canvas layer (`lib/src/canvas/`, phase 3).
 /// `isPatternOrGradient` (helpers.color.ts:3) tells the two kinds apart. The
 /// form is not the `Color` of `dart:ui`, and it is not the `Color` of

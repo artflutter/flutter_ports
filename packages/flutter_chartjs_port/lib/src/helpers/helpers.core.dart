@@ -2,7 +2,7 @@
 
 /// Port of `src/helpers/helpers.core.ts`.
 ///
-/// The JavaScript values map to Dart values as Chart.js ADR 0006 decides: a
+/// The JavaScript values map to Dart values as Chart.js ADR 0043 decides: a
 /// plain object is a `Map<String, Object?>` ([AnyObject]), an array is a
 /// [List], `undefined` is the [undefined] sentinel and `null` is Dart `null`.
 /// A function value is a Dart [Function] or a [JsFunction], and ported code
@@ -68,7 +68,7 @@ bool isNullOrUndef(Object? value) {
 /// @param value - The value to test.
 /// @function
 ///
-/// A JavaScript array is a [List] (Chart.js ADR 0006). The typed lists of
+/// A JavaScript array is a [List] (Chart.js ADR 0043). The typed lists of
 /// `dart:typed_data`, which stand for the typed arrays, are lists too. Thus
 /// one type test replaces `Array.isArray` and the `[object ...Array]` test.
 bool isArray(Object? value) {
@@ -81,7 +81,7 @@ bool isArray(Object? value) {
 /// @param value - The value to test.
 /// @since 2.7.0
 ///
-/// A JavaScript plain object is a `Map<String, Object?>` (Chart.js ADR 0006),
+/// A JavaScript plain object is a `Map<String, Object?>` (Chart.js ADR 0043),
 /// so only such a Map is an object here. Each consequence is a difference
 /// from JavaScript:
 /// - An instance of a Dart class is not an object, although
@@ -132,7 +132,7 @@ double finiteOrDefault(Object? value, double defaultValue) {
 ///
 /// Only the [undefined] sentinel is `undefined`. Dart `null` is JavaScript
 /// `null`, a defined value. A read of an absent Map key gives Dart `null`, so
-/// a caller passes [undefined] for an absent key (Chart.js ADR 0006).
+/// a caller passes [undefined] for an absent key (Chart.js ADR 0043).
 T valueOrDefault<T>(T value, T defaultValue) {
   return identical(value, undefined) ? defaultValue : value;
 }
@@ -447,7 +447,7 @@ Object? mergeIf(Object? target, [Object? source = undefined]) {
 ///
 /// "Undefined" here means that [target] does not own [key]
 /// (`hasOwnProperty`). A key that holds the [undefined] sentinel is owned, so
-/// it keeps its value (Chart.js ADR 0006, "Resolver rule").
+/// it keeps its value (Chart.js ADR 0043, "Resolver rule").
 ///
 /// Upstream takes three parameters, and JavaScript drops the fourth argument
 /// of [merge]. The optional [options] parameter makes the function a
@@ -584,7 +584,7 @@ Object? Function(Object? obj) _getKeyResolver(String key) {
 /// finds that member in its resolver cache: `resolveObjectKey({constructor:
 /// 5}, 'constructor')` returns the object, and `resolveObjectKey({toString:
 /// 5}, 'toString')` returns `'[object Undefined]'` in the reference engine. A
-/// Map has no prototype (Chart.js ADR 0006, differences.md
+/// Map has no prototype (Chart.js ADR 0043, differences.md
 /// `js-semantics-resolver-cache`).
 ///
 /// A read of `x` or `y` in `null` or [undefined] throws a [TypeError], as in

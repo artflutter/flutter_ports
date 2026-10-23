@@ -3,7 +3,7 @@
 /// Port of `src/core/core.plugins.js`: the plugin service of a chart
 /// (Chart.js ADR 0020, section 7).
 ///
-/// A plugin is a JavaScript object in the forms of Chart.js ADR 0006: a
+/// A plugin is a JavaScript object in the forms of Chart.js ADR 0043: a
 /// `Map<String, Object?>` (the built-in plugins, the inline plugins of
 /// `config.plugins` and the plugin objects of the specs), or a class value
 /// (`JsClass`) that a program registers as a plugin. A hook is a function

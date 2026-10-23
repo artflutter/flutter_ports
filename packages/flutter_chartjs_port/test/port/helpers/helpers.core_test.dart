@@ -86,7 +86,7 @@ void main() {
 
   group('isObject', () {
     test('is false for a class instance, unlike JavaScript', () {
-      // Port difference (Chart.js ADR 0006): in JavaScript an instance of a
+      // Port difference (Chart.js ADR 0043): in JavaScript an instance of a
       // class gives '[object Object]', so isObject is true.
       expect(helpers.isObject(const _Instance()), isFalse);
     });
@@ -367,7 +367,7 @@ void main() {
 
   group('mergeIf', () {
     test('keeps a key that holds the undefined sentinel', () {
-      // Chart.js ADR 0006: a stored sentinel blocks mergeIf.
+      // Chart.js ADR 0043: a stored sentinel blocks mergeIf.
       final output =
           helpers.mergeIf(
                 <String, Object?>{'a': undefined},
@@ -688,7 +688,7 @@ void main() {
       // Pins a port difference: upstream finds these names in the prototype
       // of its resolver cache. In the reference engine, 'constructor' gives
       // the object, 'toString' gives '[object Undefined]' and the other
-      // names throw a TypeError. A Map has no prototype (Chart.js ADR 0006).
+      // names throw a TypeError. A Map has no prototype (Chart.js ADR 0043).
       for (final key in [
         'constructor',
         'toString',

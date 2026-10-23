@@ -33,7 +33,7 @@
 ///   app does not set it. If the current locale has no intl data, the
 ///   result is `'en_US'`.
 ///
-/// Options, read from the JS options object of Chart.js ADR 0006:
+/// Options, read from the JS options object of Chart.js ADR 0043:
 /// - `style`: `'decimal'`, `'percent'`, and `'currency'` with `currency`.
 ///   The currency style writes the simple symbol of package:intl.
 /// - `notation`: `'standard'`, `'scientific'` and `'compact'`

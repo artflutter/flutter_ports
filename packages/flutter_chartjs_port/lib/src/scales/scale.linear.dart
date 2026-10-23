@@ -7,7 +7,7 @@
 /// [LinearScaleBase]. It adds the data limits, the tick limit of the axis
 /// size and the linear pixel mapping.
 ///
-/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0006). The
+/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
 ///   scale reads an option with `options[key]` or [jsGet], and applies
 ///   [jsToNumber] before arithmetic.
 /// - Numbers are `double` (Chart.js ADR 0032).

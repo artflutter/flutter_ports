@@ -2,7 +2,7 @@
 
 /// The WebIDL conversions that the DOM applies to the argument of a Canvas 2D
 /// setter or method, over the Dart values that stand for JavaScript values
-/// (Chart.js ADR 0006, Chart.js ADR 0017 section 8).
+/// (Chart.js ADR 0043, Chart.js ADR 0017 section 8).
 ///
 /// Upstream assigns an option value to a canvas setter as it is, for example
 /// `ctx.lineWidth = options.borderWidth` (element.point.ts:97). The DOM

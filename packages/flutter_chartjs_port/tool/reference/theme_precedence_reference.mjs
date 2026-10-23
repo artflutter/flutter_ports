@@ -23,7 +23,7 @@
 //   the upstream src/core/core.config.js and src/plugins/plugin.colors.ts.
 //   Upstream has no theme: it ignores the `$theme` key of the configuration.
 // - `prototype`: the same sources, with a JavaScript prototype of the hunks
-//   H0-H3 of Chart.js ADR 0001 (theming.md section 3.1) in
+//   H0-H3 of Chart.js ADR 0042 (theming.md section 3.1) in
 //   src/core/core.config.js, and of the hunks H4a, H4b, H4c and H5 of
 //   Chart.js ADR 0042 in src/plugins/plugin.colors.ts. A load hook adds the hunks to the source
 //   text in memory, at the lines of the Dart hunks of

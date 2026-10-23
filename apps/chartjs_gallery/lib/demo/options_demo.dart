@@ -70,7 +70,7 @@ final List<({String label, Object? value})> _paddings = [
 /// of `helpers.options`.
 ///
 /// The first card shows the three states of an option key (Chart.js ADR
-/// 0006): an absent key and the `undefined` sentinel go on to the next
+/// 0043): an absent key and the `undefined` sentinel go on to the next
 /// scope, and JS `null` is a value.
 class OptionsDemo extends StatelessWidget {
   /// Creates the options tab.

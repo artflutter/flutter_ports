@@ -3,7 +3,7 @@
 /// Port of `src/helpers/helpers.config.ts`: the option resolvers.
 ///
 /// Upstream builds the resolvers as `Proxy` objects over a cache object.
-/// Dart has no `Proxy`. Chart.js ADR 0006 replaces them with the classes
+/// Dart has no `Proxy`. Chart.js ADR 0043 replaces them with the classes
 /// [Resolver] (`_createResolver`) and [ContextResolver] (`_attachContext`).
 /// Both classes are a `Map<String, Object?>`, so that `Element.options`,
 /// `Scale.options` and `Chart.options` can hold them. They map the traps to
@@ -43,7 +43,7 @@
 /// getters ([Resolver.scopes], [ContextResolver.proxy] and the others) read
 /// the same keys through `operator []`.
 ///
-/// The three JS states of an option key stay apart (Chart.js ADR 0006): an
+/// The three JS states of an option key stay apart (Chart.js ADR 0043): an
 /// absent key, the [undefined] sentinel and Dart `null` (JS `null`). The
 /// resolution goes to the next scope on an absent key and on the sentinel.
 /// `null` is a value. A resolver gives the [undefined] sentinel for a key
@@ -125,7 +125,7 @@ Resolver createResolver(
 }
 
 /// The `Proxy` of `_createResolver` (helpers.config.ts:50-107), as a
-/// `Map<String, Object?>` (Chart.js ADR 0006).
+/// `Map<String, Object?>` (Chart.js ADR 0043).
 ///
 /// The library documentation lists the trap of each member. A
 /// [Resolver] gives the [undefined] sentinel for a key that it does not
@@ -316,7 +316,7 @@ ContextResolver attachContext(
 }
 
 /// The `Proxy` of `_attachContext` (helpers.config.ts:137-194), as a
-/// `Map<String, Object?>` (Chart.js ADR 0006).
+/// `Map<String, Object?>` (Chart.js ADR 0043).
 ///
 /// The library documentation lists the trap of each member.
 final class ContextResolver extends MapBase<String, Object?>
@@ -536,7 +536,7 @@ String _readKey(String prefix, String name) =>
 ///
 /// Upstream also requires `Object.getPrototypeOf(value) === null ||
 /// value.constructor === Object`. [isObject] is true only for a Map, and a
-/// Map stands for a plain object (Chart.js ADR 0006). A resolver is a Map
+/// Map stands for a plain object (Chart.js ADR 0043). A resolver is a Map
 /// too: upstream finds `Object` as its constructor through `_cached`.
 bool _needsSubResolver(String prop, Object? value) =>
     isObject(value) && prop != 'adapters';
@@ -926,7 +926,7 @@ List<Map<String, Object?>> _parseObjectDataRadialScale(
 }
 
 // The JavaScript object operations of the traps, for the Dart values of
-// Chart.js ADR 0006. Upstream has no counterpart: the JavaScript engine
+// Chart.js ADR 0043. Upstream has no counterpart: the JavaScript engine
 // does them.
 
 /// The first scope, `scopes[0]`: the [undefined] sentinel for an empty

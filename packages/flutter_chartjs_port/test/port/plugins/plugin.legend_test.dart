@@ -669,7 +669,7 @@ void main() {
     });
 
     testWidgets('a theme color does not reach the box', (tester) async {
-      // Chart.js ADR 0001: a theme does not write `defaults`. A copy of the
+      // Chart.js ADR 0042: a theme does not write `defaults`. A copy of the
       // light preset with a green color gives the chart option `color`, and
       // the box keeps `defaults.color`.
       final (color, calls) = styles(

@@ -5,7 +5,7 @@
 /// @alias Chart.helpers.options
 /// @namespace
 ///
-/// The JavaScript values map to Dart values as Chart.js ADR 0006 decides: a
+/// The JavaScript values map to Dart values as Chart.js ADR 0043 decides: a
 /// plain object is a `Map<String, Object?>` ([AnyObject]), an array is a
 /// [List], `undefined` is the [undefined] sentinel and `null` is Dart `null`.
 /// An option value is an `Object?`, also for the unions of the parameters
@@ -439,7 +439,7 @@ Object? _arrayElement(List<Object?> array, double index) {
 ///
 /// [context] is [undefined] when the caller does not give it. Dart `null`
 /// is JS `null`, a defined context. Dart `null` stands for an [index] that
-/// is `undefined` (Chart.js ADR 0006): JS `null` never reaches it. [info]
+/// is `undefined` (Chart.js ADR 0043): JS `null` never reaches it. [info]
 /// is the plain object `{cacheable: boolean}`, and Dart `null` stands for
 /// `undefined`. A function value is called through [jsCall]. The result is
 /// [undefined] when no input gives a defined value.
@@ -502,7 +502,7 @@ Object? resolve(
 }
 
 /// helpers.options.ts:205 the object `Object.create(parentContext)` of
-/// `createContext` ([createContext]). Chart.js ADR 0006: a JS plain object
+/// `createContext` ([createContext]). Chart.js ADR 0043: a JS plain object
 /// is a `Map<String, Object?>`.
 ///
 /// A Map has no prototype. A [ContextObject] keeps its own properties and

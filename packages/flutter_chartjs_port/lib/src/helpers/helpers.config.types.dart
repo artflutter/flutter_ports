@@ -17,7 +17,7 @@
 /// - The proxy types `ResolverProxy` and `ContextProxy` are `Merge<...>` with
 ///   the cache type. The `Resolver` and `ContextResolver` classes of
 ///   `helpers.config.dart` implement them, and they are
-///   `Map<String, Object?>` (Chart.js ADR 0006).
+///   `Map<String, Object?>` (Chart.js ADR 0043).
 /// - The members of the caches are underscore members that other modules
 ///   read (`_cacheable`, `_scopes`, ...). They drop the underscore and carry
 ///   `@internal` (Chart.js ADR 0012). The concrete classes carry it too.

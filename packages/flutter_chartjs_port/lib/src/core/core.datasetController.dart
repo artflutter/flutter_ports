@@ -10,7 +10,7 @@
 ///   a `types.Scale` (Chart.js ADR 0003). The JSDoc typedefs of :7-10 name
 ///   the concrete classes. `chart.config` is the `Config` of
 ///   `core.config.dart`.
-/// - A JS plain object is a Map (Chart.js ADR 0006): the parsed items, the
+/// - A JS plain object is a Map (Chart.js ADR 0043): the parsed items, the
 ///   stacks and the contexts. The work objects `{keys, values}` of the stacks
 ///   and `{min, max}` of `getMinMax` are classes.
 /// - [DatasetController.jsClass] is the class as a value with the statics

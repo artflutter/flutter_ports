@@ -11,7 +11,7 @@ import 'package:test/test.dart';
 import '../support/jasmine.dart';
 
 // A JavaScript object literal is a `Map<String, Object?>` and an array is a
-// `List<Object?>` (Chart.js ADR 0006). `Chart.defaults` is the `defaults` Map
+// `List<Object?>` (Chart.js ADR 0043). `Chart.defaults` is the `defaults` Map
 // of `core.defaults.dart`. Jasmine `toBe` is `same` for objects and `equals`
 // for primitives, and `toBe(undefined)` is `same(undefined)`.
 //

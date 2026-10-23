@@ -7,7 +7,7 @@
 /// an array-like value ([JsStringList]).
 ///
 /// A JavaScript array is a `List<Object?>` and a plain object is a
-/// `Map<String, Object?>` (Chart.js ADR 0006).
+/// `Map<String, Object?>` (Chart.js ADR 0043).
 library;
 
 import 'dart:collection' show ListBase;
@@ -50,7 +50,7 @@ int _sign(num result) {
 }
 
 /// A JavaScript `Proxy` object as a `Map<String, Object?>`: the resolvers of
-/// `helpers.config` (Chart.js ADR 0006).
+/// `helpers.config` (Chart.js ADR 0043).
 ///
 /// `operator []` is the `get` trap, [Map.containsKey] is the `has` trap and
 /// [Map.keys] is the `ownKeys` trap (`Object.getOwnPropertyNames`). The other

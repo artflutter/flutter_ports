@@ -2,7 +2,7 @@
 
 /// Port of `src/plugins/plugin.filler/filler.options.js`.
 ///
-/// The fill option of a line is any option value (Chart.js ADR 0006):
+/// The fill option of a line is any option value (Chart.js ADR 0043):
 /// `false`, `true`, a number, a String, an option object (`{value}`,
 /// `{target, above, below}`), Dart `null` for JS `null`, or the
 /// `undefined` sentinel. The JS operators keep their JS meaning through the

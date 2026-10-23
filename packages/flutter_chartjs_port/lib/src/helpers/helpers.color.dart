@@ -2,7 +2,7 @@
 
 /// Port of `src/helpers/helpers.color.ts`.
 ///
-/// The color values are option values (Chart.js ADR 0006): a CSS color
+/// The color values are option values (Chart.js ADR 0043): a CSS color
 /// `String`, an RGBA object (`Map`), a `List`, or a [CanvasGradient] or
 /// [CanvasPattern] of the canvas layer.
 library;

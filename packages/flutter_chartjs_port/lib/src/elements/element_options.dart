@@ -3,7 +3,7 @@
 /// The typed resolved options of the four element types (Chart.js ADR 0018).
 ///
 /// The resolved options of an element are a JS plain object, thus a
-/// `Map<String, Object?>` (Chart.js ADR 0006). An element reads about 11 of
+/// `Map<String, Object?>` (Chart.js ADR 0043). An element reads about 11 of
 /// its option values in each draw. A Map read with a `String` key is a hash
 /// lookup (performance.md §8.2). The classes of this file are Maps with one
 /// field for each known key. Thus an element reads an option value with a

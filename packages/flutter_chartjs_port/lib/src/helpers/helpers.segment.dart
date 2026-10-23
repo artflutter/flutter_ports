@@ -17,7 +17,7 @@
 /// the same points, so it is finite. JS `%` is Dart `remainder`.
 ///
 /// `line.options` and `segmentOptions` are option values (Chart.js ADR
-/// 0006). Their reads go through [jsGet], which keeps JS `undefined` apart
+/// 0043). Their reads go through [jsGet], which keeps JS `undefined` apart
 /// from JS `null`.
 library;
 
@@ -296,7 +296,7 @@ List<Segment> boundSegments(
 /// Find start and end index of a line.
 ///
 /// [spanGaps] is the option value `line.options.spanGaps`: a `bool` or a
-/// number (Chart.js ADR 0006).
+/// number (Chart.js ADR 0043).
 ({double start, double end}) _findStartAndEnd(
   List<PointElement> points,
   double count,
@@ -408,7 +408,7 @@ List<Segment> _solidSegments(
 /// @private
 ///
 /// [segmentOptions] is the option value `line.options.segment` (Chart.js ADR
-/// 0006). Its default is the [undefined] sentinel.
+/// 0043). Its default is the [undefined] sentinel.
 List<Segment> computeSegments(
   LineElement line, [
   Object? segmentOptions = undefined,

@@ -8,7 +8,7 @@
 /// - A test without `@TestOn('vm')` compiles for the web legs, so it and its
 ///   test imports use only pure layers, `package:test` and
 ///   `package:chartjs_test_utils/pure.dart`.
-/// - Ported files do not import `lib/src/theme/` (Chart.js ADR 0001).
+/// - Ported files do not import `lib/src/theme/` (Chart.js ADR 0042).
 /// - `lib/` imports `package:collection/collection.dart` only with
 ///   `show mergeSort` (Chart.js ADR 0032, Sort).
 /// - The `lib/pure.dart` closure of the harness package `chartjs_test_utils`
@@ -69,10 +69,10 @@ const Set<String> flutterLibraries = {
 
 /// URI prefixes that `lib/` never imports, with the rule that forbids them.
 const Map<String, String> forbiddenInLib = {
-  'package:flutter/material.dart': 'Chart.js ADR 0001: no Material in lib/',
-  'package:flutter/cupertino.dart': 'Chart.js ADR 0001: no Cupertino in lib/',
-  'package:material_ui/': 'Chart.js ADR 0001: no Material in lib/',
-  'package:forui/': 'Chart.js ADR 0001: no forui in lib/',
+  'package:flutter/material.dart': 'Chart.js ADR 0042: no Material in lib/',
+  'package:flutter/cupertino.dart': 'Chart.js ADR 0042: no Cupertino in lib/',
+  'package:material_ui/': 'Chart.js ADR 0042: no Material in lib/',
+  'package:forui/': 'Chart.js ADR 0042: no forui in lib/',
   'dart:io': 'AGENTS.md rule 5: lib/ compiles for every platform',
   'dart:html': 'AGENTS.md rule 5: no JavaScript at runtime',
   'dart:js_interop': 'AGENTS.md rule 5: no JavaScript at runtime',
@@ -113,7 +113,7 @@ const Map<String, String> forbiddenInLib = {
 /// imports `helpers.extras`.
 ///
 /// The theme compiler and the internal presets of `lib/src/theme/` are
-/// roots (Chart.js ADR 0001, theming.md §7). Their port-only tests run on
+/// roots (Chart.js ADR 0042, theming.md §7). Their port-only tests run on
 /// the VM, dart2js and dart2wasm. The theme widget of phase 9 uses the
 /// Flutter framework, so the directory is not a root as a whole.
 ///
@@ -328,7 +328,7 @@ final class _Edge {
           library,
           edge.line,
           'imports ${edge.target}, but ported files never import '
-          '$themeDirectory (Chart.js ADR 0001).',
+          '$themeDirectory (Chart.js ADR 0042).',
         );
       }
     }

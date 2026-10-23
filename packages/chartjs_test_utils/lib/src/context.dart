@@ -13,7 +13,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 
 /// context.js:157 the object that `record` pushes: `{name, args}`.
 ///
-/// A JS object literal is a `Map<String, Object?>` (Chart.js ADR 0006), with
+/// A JS object literal is a `Map<String, Object?>` (Chart.js ADR 0043), with
 /// the keys `'name'` and `'args'`. The `equals` matcher of `package:test`
 /// compares maps and lists element by element, as `toEqual` does.
 ///

@@ -588,7 +588,7 @@ class Chart implements types.Chart {
   ///
   /// [item] is a canvas element, a context, an object with a `canvas`, or
   /// another value (`getCanvas`, core.controller.js:51). [userConfig] is the
-  /// raw configuration: a Map, or a falsy value (Chart.js ADR 0006).
+  /// raw configuration: a Map, or a falsy value (Chart.js ADR 0043).
   ///
   /// `new Error(message)` is a [StateError] with the upstream message, as in
   /// `core.registry.dart`. `config.platform` is a class value
@@ -2093,7 +2093,7 @@ class Chart implements types.Chart {
   /// @param {array} activeElements New active data points
   ///
   /// An item is a `types.ActiveDataPoint` or an object `{datasetIndex,
-  /// index}`, a Map (Chart.js ADR 0006). The destructuring reads the Map
+  /// index}`, a Map (Chart.js ADR 0043). The destructuring reads the Map
   /// with [jsGet] and gives the `ToNumber` of each value.
   void setActiveElements(List<Object?> activeElements) {
     final lastActive = active;

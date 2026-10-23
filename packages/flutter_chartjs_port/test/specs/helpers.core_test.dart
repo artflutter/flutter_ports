@@ -11,7 +11,7 @@ import 'package:test/test.dart';
 
 // The spec names Chart.helpers `helpers`. A JavaScript object literal is a
 // `Map<String, Object?>` and an array is a `List<Object?>` (Chart.js ADR
-// 0006). Jasmine `toBe` is `same` for objects and `equals` for primitives.
+// 0043). Jasmine `toBe` is `same` for objects and `equals` for primitives.
 // `not.toBeDefined()` and `toBe(undefined)` are `same(undefined)`.
 
 /// A JavaScript object literal `{datasetIndex, index}`, passed as an

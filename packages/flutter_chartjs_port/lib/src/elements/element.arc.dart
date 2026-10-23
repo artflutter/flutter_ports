@@ -872,7 +872,7 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   };
 
   /// element.arc.ts:397 `static descriptors`. The `_indexable` function is
-  /// a Dart closure (Chart.js ADR 0006).
+  /// a Dart closure (Chart.js ADR 0043).
   static final AnyObject descriptors = {
     '_scriptable': true,
     '_indexable': (String name) => name != 'borderDash',

@@ -7,7 +7,7 @@
 /// `operator []` and `operator []=`, and the options as a Map.
 ///
 /// The options Map is the resolved options object of the point (Chart.js
-/// ADR 0006). It is a [PointOptions] or a plain Map. The methods read each
+/// ADR 0043). It is a [PointOptions] or a plain Map. The methods read each
 /// option through one small function, for example `_radius`, which gives
 /// [PointOptions.radiusValue] or `jsGet(options, 'radius')` (Chart.js ADR
 /// 0018, section 4). Both give the upstream value: JS `undefined` for an

@@ -12,7 +12,7 @@ import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
 
-// theming.md §8 test 4, the coverage snapshot (Chart.js ADR 0001,
+// theming.md §8 test 4, the coverage snapshot (Chart.js ADR 0042,
 // Consequences). The test compares the compiled light preset with the
 // defaults inventory that tool 4 records in doc/upstream/manifest.json
 // (`defaults.values.defaults`, porting-flow.md §4).

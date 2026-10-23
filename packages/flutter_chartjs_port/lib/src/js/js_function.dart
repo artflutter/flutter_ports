@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: JS calls of user functions.
 
 /// The JavaScript call of a function value, for ported code that calls a
-/// function from the user or from options (Chart.js ADR 0006: "A scriptable
+/// function from the user or from options (Chart.js ADR 0043: "A scriptable
 /// option is a Dart closure").
 ///
 /// ## The convention

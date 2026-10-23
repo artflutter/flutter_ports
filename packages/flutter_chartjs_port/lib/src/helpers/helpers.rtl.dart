@@ -19,7 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 /// [textAlign] takes and returns an `Object?`, not a String. Upstream declares
 /// `'center' | 'left' | 'right'`, but `plugin.legend.js:370` passes
 /// `legendItem.textAlign`, which can be `undefined`, and `plugin.tooltip.js`
-/// passes resolved option values (Chart.js ADR 0006).
+/// passes resolved option values (Chart.js ADR 0043).
 abstract interface class RTLAdapter {
   /// helpers.rtl.ts:2 `x`.
   double x(double x);
@@ -147,7 +147,7 @@ RTLAdapter getRtlAdapter(Object? rtl, double rectX, double width) {
 ///
 /// Upstream adds the property to the context object. A Dart object has no
 /// such property, so an [Expando] attaches the value. The value is the JS
-/// array `[value, priority]`, a `List<String>` (Chart.js ADR 0006).
+/// array `[value, priority]`, a `List<String>` (Chart.js ADR 0043).
 final Expando<List<String>> _prevTextDirection = Expando<List<String>>(
   'prevTextDirection',
 );

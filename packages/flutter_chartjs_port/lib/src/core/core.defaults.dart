@@ -2,7 +2,7 @@
 
 /// Port of `src/core/core.defaults.js`.
 ///
-/// Chart.js ADR 0006 ("Global scopes") decides the representation:
+/// Chart.js ADR 0043 ("Global scopes") decides the representation:
 /// [defaults], [overrides] and [descriptors] are `Map<String, Object?>`. The
 /// option keys of [Defaults] are Map keys, not Dart fields. A JS plain object
 /// is a `Map<String, Object?>`, `undefined` is the [undefined] sentinel and
@@ -238,7 +238,7 @@ typedef DefaultsRoute = ({
 /// Please use the module's default export which provides a singleton instance
 /// Note: class is exported for typedoc
 ///
-/// The upstream fields are the Map keys of the instance (Chart.js ADR 0006,
+/// The upstream fields are the Map keys of the instance (Chart.js ADR 0043,
 /// "Global scopes"). Read them as Map entries, for example
 /// `defaults['color']`.
 base class Defaults extends RoutedScope implements types.Defaults {

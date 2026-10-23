@@ -228,7 +228,7 @@ final class _SavedRoutedScope implements _Saved {
 
 /// The entries of a plain object (a [LinkedHashMap] with `String` keys), and
 /// the [RoutedScope] that took its place ([RoutedScope.replacementOf]). A
-/// Map with other key types is not an object (Chart.js ADR 0006).
+/// Map with other key types is not an object (Chart.js ADR 0043).
 final class _SavedMap implements _Saved {
   _SavedMap(this.map, this.entries, this.replacement);
 

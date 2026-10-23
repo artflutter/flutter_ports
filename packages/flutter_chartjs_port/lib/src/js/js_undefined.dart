@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the JS undefined value.
 
-/// The JavaScript value `undefined` for ported code (Chart.js ADR 0006, "The
+/// The JavaScript value `undefined` for ported code (Chart.js ADR 0043, "The
 /// sentinel").
 ///
 /// A JavaScript object is a `Map<String, Object?>` in the port. A key of it
@@ -15,7 +15,7 @@
 /// A read of the value treats an absent key and the sentinel alike, as
 /// JavaScript does. `_mergerIf`, `_cached` and `Object.keys` test own-key
 /// presence, so they see the sentinel and not an absent key
-/// (Chart.js ADR 0006, "Resolver rule").
+/// (Chart.js ADR 0043, "Resolver rule").
 ///
 /// Ported code tests for the sentinel with `identical(value, undefined)`.
 library;
