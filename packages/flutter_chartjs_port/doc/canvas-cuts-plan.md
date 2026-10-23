@@ -430,6 +430,26 @@ Changes to the cited files:
   (`POINT_STYLE`, the arc scenario and the baselines of §6.3) does not change. No library file
   that this plan cites changed. The references, the inventory (§1.1), the tests of §2.6 and §3.5
   and the estimates do not change. No trigger occurred.
+- 2026-10-23, step 8 of phase 8, the input fix after the device check of
+  [Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md) (proposed, sections 6 to 10,
+  Evidence E8 and E9). `lib/src/platform/chart_host.dart` gets the Chromium rules of a touch
+  sequence: all kinds but mouse and trackpad are touch-like, a move with no change gives no
+  event, the tap candidate gives no `touchmove` inside its slop limit (the slop, times 1.5 for a
+  stylus, plus 0.05), the pan begin cancels the touch-like pointers at the view origin, and the
+  compatibility events of a tap and of a long press are at the down position. The input code is
+  in the section `// Input.` (from line 765) and at the end of the file (`_slopEpsilon`,
+  `_stylusSlopFactor`, `_slopLimitSquared`, `_HostTouch`, `_TouchTap`). The library doc of the
+  input (lines 53 to 85) changes in place with the same line count. Thus lines 1 to 764 do not
+  move, and the citations of §1.1 and of the inventory stay valid. The file has 1455 lines (179
+  lines more). The new code is input code, not sizing or paint code: the inventory gets no row,
+  and the cuts do not remove it. `test/port/platform/chart_host_test.dart` gets the group 'touch
+  sequence' (27 tests), and the helper `pumpHost` of the group 'compatibility mouse' moves to the
+  top level of the file (`_pumpHost`). The file has 100 tests. The tests of §3.5 do not change.
+  `lib/src/platform/platform.flutter.dart` and `lib/src/helpers/helpers.dom.dart` do not change.
+  `doc/performance.md` gets §14.6 at its end: no cited section number changes. `doc/parity.md`
+  changes the rows of `chart_host.dart` and of its tests in place (tool 6). The rows that this
+  plan cites do not move. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
+  estimates do not change. No trigger occurred.
 
 ## 1. Why
 

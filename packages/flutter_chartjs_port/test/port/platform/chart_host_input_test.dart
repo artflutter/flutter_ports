@@ -29,8 +29,12 @@ import 'chart_host_input_reference.dart';
 // the chart events of each frame to `_eventHandler` in the order of the
 // throttle (section 11). This test makes the same chart with acquireChart
 // and drives each action as a Flutter pointer event through the real
-// ChartHost. A step of a case is one frame: its actions, then one pump. The
-// test compares after each step:
+// ChartHost. The touch rules of the model come from the device check P4 of
+// Chart.js ADR 0037 (sections 6 and 8): no event for a move with no change,
+// no `touchmove` inside the slop limit, the cancel at the pan begin, the
+// compatibility events at the down position, and the stylus as a
+// touch-like kind. A step of a case is one frame: its actions, then one
+// pump. The test compares after each step:
 //
 // - `dom`: the DOM events that the host sent to the canvas, as `[type, x,
 //   y]` with the position of getRelativePosition. A listener of each type
@@ -164,8 +168,10 @@ Map<String, Object?> _observe(Chart chart, _Logs logs) {
   };
 }
 
-/// The pointers of a case: one touch pointer and one mouse pointer at a
-/// time, as in the generator.
+/// The pointers of a case: one touch-like pointer and one mouse pointer at
+/// a time, as in the generator. A `touchDown` action with the fourth item
+/// `stylus` puts down a stylus, which gives the touch rows (Chart.js ADR
+/// 0037, section 6).
 final class _Pointers {
   _Pointers(this.tester, this.origin);
 
@@ -194,7 +200,12 @@ final class _Pointers {
       switch (action[0]) {
         case 'touchDown':
           expect(touch, isNull, reason: 'one touch pointer at a time');
-          touch = await tester.startGesture(_at(action));
+          touch = await tester.startGesture(
+            _at(action),
+            kind: action.length > 3 && action[3] == 'stylus'
+                ? PointerDeviceKind.stylus
+                : PointerDeviceKind.touch,
+          );
         case 'touchMove':
           await touch!.moveTo(_at(action));
         case 'touchUp':
@@ -245,6 +256,9 @@ void main() {
       expect((host.size.width, host.size.height), (512.0, 512.0));
       final routes = tester.binding.pointerRouter.debugGlobalRouteCount;
       expect(RenderChartHost.debugCompatibilityMouseOwner, isNull);
+      // The model puts the cancel events of a pan at the client point
+      // (0, 0), the canvas origin.
+      expect(host.localToGlobal(Offset.zero), Offset.zero);
       final pointers = _Pointers(tester, host.localToGlobal(Offset.zero));
 
       final steps = c.expected['steps']! as List<Object?>;

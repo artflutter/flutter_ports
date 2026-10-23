@@ -3368,3 +3368,29 @@ In each process the tokens add 1.2-2.4 µs to the first reads after each update 
 chart. The cached reads of a frame or an event take the same time. Thus no part of the theme
 palette or of the plugin tokens changes a frame figure: the frame figures of this document are
 in milliseconds.
+
+### 14.6 The touch input path after the device check (Chart.js ADR 0037)
+
+The device check of Chart.js ADR 0037 (Evidence E8) changed the touch-like path of the host
+(`lib/src/platform/chart_host.dart`, section 8 of the ADR): a move with no change gives no
+event, the tap candidate gives only `pointermove` inside its slop limit, and after the pan begin
+a move gives only `touchmove`.
+
+Bed: Apple M3 Max, Flutter 3.47.7, `flutter test` (JIT with asserts). Other sessions loaded the
+Mac (load average about 4 to 5). A temporary test sent `PointerMoveEvent`s of one touch pointer
+through `GestureBinding.handlePointerEvent` to a `ChartHost` with the `FakeChart` of the host
+tests (the platform listeners of the default `events`, no chart work): 20000 events in each
+round, 8 rounds, the median of the rounds. Two runs before the change (the host at `ce340ca`)
+and two runs after it. ns for each event:
+
+| Case | Before (runs 1, 2) | After (runs 1, 2) | DOM events before | DOM events after |
+|---|---:|---:|---|---|
+| a move at the same point | 472, 480 | 298, 331 | `pointermove`, `touchmove` | none |
+| a move of the tap candidate inside the slop | 554, 599 | 401, 419 | `pointermove`, `touchmove` | `pointermove` |
+| a move after the pan begin | 474, 492 | 453, 449 | `pointermove`, `touchmove` | `touchmove` |
+
+The host path costs less in each case. The larger gain is the chart work: with the default
+`events`, the dropped `touchmove` events gave one chart `mousemove` in each frame, with a hover
+hit test and a tooltip hit test (Chart.js ADR 0037, E5: 214 µs at 10000 points on JIT). A finger
+that rests on a chart, or that moves inside the slop, now gives no chart event, as in Chrome. The
+device figures come from the dispatch series on the Pixel 8a when the phone is free.

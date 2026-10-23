@@ -18,7 +18,8 @@ import 'fake_chart.dart';
 // throttles later size and device pixel ratio changes, maps Flutter pointer
 // events to the DOM events of Chrome and claims nothing in the gesture
 // arena. A touch tap gives the compatibility mouse events, and a tap outside
-// gives mouseout to the host of the last tap. The FakeChart makes the
+// gives mouseout to the host of the last tap. The group 'touch sequence'
+// pins the rules of the device check P4 (D1 to D5). The FakeChart makes the
 // platform calls of core.controller.js.
 
 Widget _box(Widget child, {double width = 400, double height = 300}) =>
@@ -84,6 +85,37 @@ int _globalRoutes(WidgetTester tester) =>
 
 /// The owner of the compatibility mouse.
 RenderChartHost? get _owner => RenderChartHost.debugCompatibilityMouseOwner;
+
+/// Shows a host at ([left], 0) and records its events in [log]. Outside the
+/// host, the global point (20, 50) is (-20, 50) in host coordinates. A new
+/// call with the same [canvas] moves the same host.
+Future<UiCanvasElement> _pumpHost(
+  WidgetTester tester,
+  List<NativeEvent> log, {
+  double touchSlop = kTouchSlop,
+  double left = 40,
+  UiCanvasElement? canvas,
+}) async {
+  final shown = canvas ?? UiCanvasElement();
+  if (canvas == null) {
+    _record(shown, log);
+  }
+  await tester.pumpWidget(
+    MediaQuery(
+      data: MediaQueryData(
+        gestureSettings: DeviceGestureSettings(touchSlop: touchSlop),
+      ),
+      child: _box(
+        Padding(
+          padding: EdgeInsets.only(left: left),
+          child: ChartHost(canvas: shown),
+        ),
+      ),
+    ),
+  );
+  expect(_host(tester).size, const Size(300, 150));
+  return shown;
+}
 
 void main() {
   group('first layout', () {
@@ -1356,32 +1388,6 @@ void main() {
     // stays for the next test of the file.
     setUp(() => expect(_owner, isNull));
 
-    /// Shows a host at (40, 0) and records its events in [log]. Outside the
-    /// host, the global point (20, 50) is (-20, 50) in host coordinates.
-    Future<UiCanvasElement> pumpHost(
-      WidgetTester tester,
-      List<NativeEvent> log, {
-      double touchSlop = kTouchSlop,
-    }) async {
-      final canvas = UiCanvasElement();
-      _record(canvas, log);
-      await tester.pumpWidget(
-        MediaQuery(
-          data: MediaQueryData(
-            gestureSettings: DeviceGestureSettings(touchSlop: touchSlop),
-          ),
-          child: _box(
-            Padding(
-              padding: const EdgeInsets.only(left: 40),
-              child: ChartHost(canvas: canvas),
-            ),
-          ),
-        ),
-      );
-      expect(_host(tester).size, const Size(300, 150));
-      return canvas;
-    }
-
     testWidgets('a touch tap gives the touch, boundary and compatibility '
         'events in DOM order', (tester) async {
       final canvas = UiCanvasElement();
@@ -1404,7 +1410,6 @@ void main() {
         'pointerdown',
         'touchstart',
         'pointermove',
-        'touchmove',
         'pointerup',
         'pointerout',
         'pointerleave',
@@ -1418,7 +1423,8 @@ void main() {
       ]);
       // The touch events have no offsets: their position comes from
       // touches. The other events have the position of the touch. The
-      // compatibility events and the click have the up position.
+      // compatibility events and the click have the down position (device
+      // check P4, D4). The move inside the slop gives no touchmove (D1).
       for (final event in chart.events) {
         final native = event.native!;
         if (native.type.startsWith('touch')) {
@@ -1428,6 +1434,12 @@ void main() {
           'pointerover',
           'pointerenter',
           'pointerdown',
+          'mouseover',
+          'mouseenter',
+          'mousemove',
+          'mousedown',
+          'mouseup',
+          'click',
         ].contains(native.type)) {
           expect((native.offsetX, native.offsetY), (100.0, 50.0));
         } else {
@@ -1435,7 +1447,7 @@ void main() {
         }
       }
       expect((chart.events[3].x, chart.events[3].y), (100.0, 50.0));
-      expect(chart.events[9].x, isNaN);
+      expect(chart.events[8].x, isNaN);
       expect(_owner, same(_host(tester)));
       chart.destroy();
     });
@@ -1443,7 +1455,7 @@ void main() {
     testWidgets('a second tap on the same host gives no mouseover and no '
         'mouseenter', (tester) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       await tester.tapAt(const Offset(100, 50));
       expect(_types(log), containsAllInOrder(['mouseover', 'mouseenter']));
       log.clear();
@@ -1469,7 +1481,7 @@ void main() {
       tester,
     ) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       // flutter_test has a global route of its own.
       final routes = _globalRoutes(tester);
       expect(_owner, isNull);
@@ -1480,7 +1492,7 @@ void main() {
       expect(_types(log), ['mouseout', 'mouseleave']);
       for (final event in log) {
         expect((event.offsetX, event.offsetY), (-20.0, 50.0));
-        expect(event.source, isA<PointerUpEvent>());
+        expect(event.source, isA<PointerDownEvent>());
       }
       expect(_owner, isNull);
       expect(_globalRoutes(tester), routes);
@@ -1494,7 +1506,7 @@ void main() {
       tester,
     ) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final routes = _globalRoutes(tester);
       await tester.tapAt(const Offset(100, 50));
       await tester.pump();
@@ -1505,7 +1517,7 @@ void main() {
 
     testWidgets('a drag outside after a tap gives no mouseout', (tester) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final routes = _globalRoutes(tester);
       await tester.tapAt(const Offset(100, 50));
       log.clear();
@@ -1520,7 +1532,7 @@ void main() {
       tester,
     ) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       await tester.tapAt(const Offset(100, 50));
       log.clear();
       await tester.tapAt(const Offset(20, 50), kind: PointerDeviceKind.mouse);
@@ -1532,7 +1544,7 @@ void main() {
     testWidgets('a touch move past the slop on the host gives no '
         'compatibility event and no click', (tester) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final routes = _globalRoutes(tester);
       final gesture = await tester.startGesture(const Offset(100, 50));
       await gesture.moveBy(const Offset(30, 0));
@@ -1546,13 +1558,14 @@ void main() {
         'touchstart',
         'pointermove',
         'touchmove',
-        'pointermove',
-        'touchmove',
-        'pointerup',
+        'pointercancel',
         'pointerout',
         'pointerleave',
+        'touchmove',
         'touchend',
       ]);
+      // The cancel events have the position of the view origin.
+      expect((log[6].offsetX, log[6].offsetY), (-40.0, 0.0));
       expect(_owner, isNull);
       expect(_globalRoutes(tester), routes);
     });
@@ -1560,7 +1573,7 @@ void main() {
     testWidgets('a touch held for kLongPressTimeout gives mouseover, '
         'mouseenter and mousemove before the lift', (tester) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final gesture = await tester.startGesture(const Offset(100, 50));
       await gesture.moveBy(const Offset(4, 3));
       log.clear();
@@ -1568,7 +1581,7 @@ void main() {
       expect(log, isEmpty);
       await tester.pump(const Duration(milliseconds: 1));
       expect(_types(log), ['mouseover', 'mouseenter', 'mousemove']);
-      expect((log.last.offsetX, log.last.offsetY), (64.0, 53.0));
+      expect((log.last.offsetX, log.last.offsetY), (60.0, 50.0));
       expect(_owner, same(_host(tester)));
       log.clear();
       await gesture.up();
@@ -1586,7 +1599,7 @@ void main() {
     testWidgets('a long press outside gives mouseout to the owner at the '
         'long-press time', (tester) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final routes = _globalRoutes(tester);
       await tester.tapAt(const Offset(100, 50));
       log.clear();
@@ -1606,7 +1619,7 @@ void main() {
 
     testWidgets('a second finger gives no tap', (tester) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final first = await tester.startGesture(const Offset(100, 50));
       final second = await tester.startGesture(const Offset(150, 60));
       await first.up();
@@ -1622,7 +1635,7 @@ void main() {
       // The tap rule of the route: only the first touch pointer outside can
       // be a tap.
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       await tester.tapAt(const Offset(100, 50));
       log.clear();
       final first = await tester.startGesture(const Offset(20, 50));
@@ -1642,7 +1655,7 @@ void main() {
       // A touch down on a host ends the candidate of the route too (Chart.js
       // ADR 0037, sections 8 and 9): the finger outside is not a tap.
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final routes = _globalRoutes(tester);
       await tester.tapAt(const Offset(100, 50));
       log.clear();
@@ -1679,7 +1692,7 @@ void main() {
     testWidgets('a touch cancel gives pointercancel, pointerout, pointerleave '
         'and touchcancel only', (tester) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final gesture = await tester.startGesture(const Offset(100, 50));
       log.clear();
       await gesture.cancel();
@@ -1697,7 +1710,7 @@ void main() {
       tester,
     ) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(gesture.removePointer);
       await gesture.down(const Offset(100, 50));
@@ -1723,7 +1736,7 @@ void main() {
 
     testWidgets('a mouse up outside the box gives no click', (tester) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
       addTearDown(gesture.removePointer);
       await gesture.down(const Offset(100, 50));
@@ -1739,7 +1752,7 @@ void main() {
 
     testWidgets('a secondary-button click gives no click', (tester) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final gesture = await tester.createGesture(
         kind: PointerDeviceKind.mouse,
         buttons: kSecondaryMouseButton,
@@ -1805,7 +1818,7 @@ void main() {
     testWidgets('the detach of the owner removes the route and sends '
         'nothing', (tester) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final routes = _globalRoutes(tester);
       await tester.tapAt(const Offset(100, 50));
       expect(_owner, isNotNull);
@@ -1820,7 +1833,7 @@ void main() {
     testWidgets('the detach of a host with a finger down cancels the long '
         'press', (tester) async {
       final log = <NativeEvent>[];
-      await pumpHost(tester, log);
+      await _pumpHost(tester, log);
       final gesture = await tester.startGesture(const Offset(100, 50));
       await tester.pumpWidget(_box(const SizedBox.shrink()));
       log.clear();
@@ -1843,7 +1856,7 @@ void main() {
       testWidgets('the touch slop comes from MediaQuery: a move of $move px '
           'gives ${tap ? 'a' : 'no'} tap', (tester) async {
         final log = <NativeEvent>[];
-        await pumpHost(tester, log, touchSlop: 8);
+        await _pumpHost(tester, log, touchSlop: 8);
         final gesture = await tester.startGesture(const Offset(100, 50));
         await gesture.moveBy(Offset(move, 0));
         await gesture.up();
@@ -1851,6 +1864,539 @@ void main() {
         expect(_types(log).contains('mousemove'), tap);
       });
     }
+  });
+
+  group('touch sequence', () {
+    // Chart.js ADR 0037, sections 6 and 8: the rules of Chrome on Android
+    // that the device check P4 found (D1 to D5) and the Chromium source at
+    // 155.0.8059.84 gives. The host is at (40, 0): the view origin is
+    // (-40, 0) in host coordinates.
+
+    setUp(() => expect(_owner, isNull));
+
+    /// The pointer ids of the sources of [log].
+    List<int> pointers(Iterable<NativeEvent> log) => [
+      for (final event in log) (event.source! as PointerEvent).pointer,
+    ];
+
+    /// The offsets of [event].
+    (double, double) at(NativeEvent event) => (event.offsetX, event.offsetY);
+
+    testWidgets('D1: a move of the tap candidate inside the slop gives '
+        'pointermove and no touchmove', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final gesture = await tester.startGesture(const Offset(100, 50));
+      log.clear();
+      await gesture.moveBy(const Offset(3, 0));
+      await gesture.moveBy(const Offset(2, 1));
+      expect(_types(log), ['pointermove', 'pointermove']);
+      expect(at(log.last), (65.0, 51.0));
+      await gesture.up();
+      expect(_types(log), contains('click'));
+    });
+
+    testWidgets('D1: after a long press, a move inside the slop gives no '
+        'touchmove', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final gesture = await tester.startGesture(const Offset(100, 50));
+      await tester.pump(kLongPressTimeout);
+      log.clear();
+      await gesture.moveBy(const Offset(4, 0));
+      expect(_types(log), ['pointermove']);
+      await gesture.up();
+    });
+
+    testWidgets('D1: a second finger ends the suppression', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final first = await tester.startGesture(const Offset(100, 50));
+      final second = await tester.startGesture(const Offset(150, 60));
+      log.clear();
+      await first.moveBy(const Offset(3, 0));
+      await second.moveBy(const Offset(3, 0));
+      expect(_types(log), [
+        'pointermove',
+        'touchmove',
+        'pointermove',
+        'touchmove',
+      ]);
+      await first.up();
+      log.clear();
+      // The second finger is not the tap candidate.
+      await second.moveBy(const Offset(1, 0));
+      expect(_types(log), ['pointermove', 'touchmove']);
+      await second.up();
+    });
+
+    testWidgets('D2: a move to the same point gives no event', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final gesture = await tester.startGesture(const Offset(100, 50));
+      log.clear();
+      await gesture.moveTo(const Offset(100, 50));
+      await gesture.moveTo(const Offset(100, 50));
+      expect(log, isEmpty);
+      await gesture.moveTo(const Offset(101, 50));
+      await gesture.moveTo(const Offset(101, 50));
+      expect(_types(log), ['pointermove']);
+      await gesture.up();
+    });
+
+    for (final (name, move) in [
+      (
+        'pressure',
+        const PointerMoveEvent(
+          pointer: 901,
+          position: Offset(100, 50),
+          pressure: 0.5,
+        ),
+      ),
+      (
+        'tilt',
+        const PointerMoveEvent(
+          pointer: 901,
+          position: Offset(100, 50),
+          tilt: 0.25,
+        ),
+      ),
+      (
+        'radiusMajor',
+        const PointerMoveEvent(
+          pointer: 901,
+          position: Offset(100, 50),
+          radiusMajor: 2,
+        ),
+      ),
+      (
+        'orientation',
+        const PointerMoveEvent(
+          pointer: 901,
+          position: Offset(100, 50),
+          orientation: 0.5,
+        ),
+      ),
+    ]) {
+      testWidgets('D2: a move with only a new $name gives pointermove', (
+        tester,
+      ) async {
+        final log = <NativeEvent>[];
+        await _pumpHost(tester, log);
+        await tester.sendEventToBinding(
+          const PointerDownEvent(pointer: 901, position: Offset(100, 50)),
+        );
+        log.clear();
+        await tester.sendEventToBinding(move);
+        expect(_types(log), ['pointermove']);
+        // The same values again give no event.
+        await tester.sendEventToBinding(move);
+        expect(_types(log), ['pointermove']);
+        await tester.sendEventToBinding(
+          const PointerUpEvent(pointer: 901, position: Offset(100, 50)),
+        );
+        expect(_types(log), contains('click'));
+      });
+    }
+
+    testWidgets('D3: the pan cancels each finger at the view origin, then '
+        'gives touch events only', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final first = await tester.startGesture(const Offset(100, 50));
+      final second = await tester.startGesture(const Offset(150, 60));
+      log.clear();
+      await first.moveBy(const Offset(30, 0));
+      expect(_types(log), [
+        'pointermove',
+        'touchmove',
+        'pointercancel',
+        'pointerout',
+        'pointerleave',
+        'pointercancel',
+        'pointerout',
+        'pointerleave',
+      ]);
+      final cancels = log.sublist(2);
+      for (final event in cancels) {
+        expect(at(event), (-40.0, 0.0));
+      }
+      final ids = pointers(cancels);
+      expect(ids[0], lessThan(ids[3]));
+      expect(ids.sublist(0, 3).toSet(), hasLength(1));
+      // The touch events have the touches of both fingers.
+      expect(log[1].touches.map((t) => (t.x, t.y)), [
+        (90.0, 50.0),
+        (110.0, 60.0),
+      ]);
+
+      log.clear();
+      await second.moveBy(const Offset(5, 0));
+      expect(_types(log), ['touchmove']);
+      log.clear();
+      final third = await tester.startGesture(const Offset(200, 70));
+      await third.moveBy(const Offset(1, 0));
+      await third.up();
+      expect(_types(log), ['touchstart', 'touchmove', 'touchend']);
+      log.clear();
+      await first.cancel();
+      await second.up();
+      expect(_types(log), ['touchcancel', 'touchend']);
+      expect(_types(log), isNot(contains('click')));
+      expect(_owner, isNull);
+
+      // After all fingers lift, the next down starts a new sequence.
+      log.clear();
+      final next = await tester.startGesture(const Offset(100, 50));
+      expect(_types(log), [
+        'pointerover',
+        'pointerenter',
+        'pointerdown',
+        'touchstart',
+      ]);
+      await next.up();
+      expect(_types(log), contains('click'));
+    });
+
+    testWidgets('D3: each finger is compared with its own down', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final first = await tester.startGesture(const Offset(100, 50));
+      final second = await tester.startGesture(const Offset(200, 60));
+      log.clear();
+      // Each finger stays inside its own slop limit.
+      await first.moveBy(const Offset(10, 0));
+      await second.moveBy(const Offset(-10, 0));
+      expect(_types(log), [
+        'pointermove',
+        'touchmove',
+        'pointermove',
+        'touchmove',
+      ]);
+      log.clear();
+      // The second finger past its own slop limit begins the pan.
+      await second.moveBy(const Offset(-9, 0));
+      expect(_types(log), [
+        'pointermove',
+        'touchmove',
+        'pointercancel',
+        'pointerout',
+        'pointerleave',
+        'pointercancel',
+        'pointerout',
+        'pointerleave',
+      ]);
+      await first.up();
+      await second.up();
+    });
+
+    testWidgets('D3: with 3 fingers in the sequence, the first move with a '
+        'change begins the pan', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final first = await tester.startGesture(const Offset(100, 50));
+      final second = await tester.startGesture(const Offset(150, 60));
+      final third = await tester.startGesture(const Offset(200, 70));
+      await third.up();
+      log.clear();
+      await first.moveBy(const Offset(1, 0));
+      expect(_types(log), [
+        'pointermove',
+        'touchmove',
+        'pointercancel',
+        'pointerout',
+        'pointerleave',
+        'pointercancel',
+        'pointerout',
+        'pointerleave',
+      ]);
+      await first.up();
+      await second.up();
+    });
+
+    testWidgets('D3: a platform cancel before the pan keeps its position', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final gesture = await tester.startGesture(const Offset(100, 50));
+      await gesture.moveBy(const Offset(3, 0));
+      log.clear();
+      await gesture.cancel();
+      expect(_types(log), [
+        'pointercancel',
+        'pointerout',
+        'pointerleave',
+        'touchcancel',
+      ]);
+      for (final event in log.take(3)) {
+        expect(at(event), (63.0, 50.0));
+      }
+    });
+
+    testWidgets('D3: a move past the slop after a long press begins the pan', (
+      tester,
+    ) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final gesture = await tester.startGesture(const Offset(100, 50));
+      await tester.pump(kLongPressTimeout);
+      expect(_owner, same(_host(tester)));
+      log.clear();
+      await gesture.moveBy(const Offset(0, 30));
+      expect(_types(log), [
+        'pointermove',
+        'touchmove',
+        'pointercancel',
+        'pointerout',
+        'pointerleave',
+      ]);
+      log.clear();
+      await gesture.up();
+      expect(_types(log), ['touchend']);
+      expect(_owner, same(_host(tester)));
+    });
+
+    for (final (kind, keep, pan) in const [
+      (PointerDeviceKind.touch, 8.04, 8.06),
+      (PointerDeviceKind.stylus, 12.04, 12.06),
+      (PointerDeviceKind.invertedStylus, 8.04, 8.06),
+    ]) {
+      for (final (move, tap) in [(keep, true), (pan, false)]) {
+        testWidgets('the slop limit at touchSlop 8: a move of $move px of the '
+            'kind ${kind.name} gives ${tap ? 'a' : 'no'} tap', (tester) async {
+          final log = <NativeEvent>[];
+          await _pumpHost(tester, log, touchSlop: 8);
+          final gesture = await tester.startGesture(
+            const Offset(100, 50),
+            kind: kind,
+          );
+          await gesture.moveBy(Offset(move, 0));
+          await gesture.up();
+          expect(_types(log).contains('click'), tap);
+          expect(_types(log).contains('pointercancel'), !tap);
+        });
+      }
+    }
+
+    testWidgets('D4: a tap gives its compatibility events at the down '
+        'position, also after the host moved', (tester) async {
+      final log = <NativeEvent>[];
+      final canvas = await _pumpHost(tester, log);
+      final gesture = await tester.startGesture(const Offset(100, 50));
+      await gesture.moveBy(const Offset(5, 0));
+      await _pumpHost(tester, log, canvas: canvas, left: 60);
+      log.clear();
+      await gesture.up();
+      final compatibility = log.where(
+        (event) => event.type.startsWith('mouse') || event.type == 'click',
+      );
+      expect(_types(compatibility.toList()), [
+        'mouseover',
+        'mouseenter',
+        'mousemove',
+        'mousedown',
+        'mouseup',
+        'click',
+      ]);
+      for (final event in compatibility) {
+        expect(at(event), (40.0, 50.0));
+        expect(event.source, isA<PointerDownEvent>());
+      }
+      // The pointerup has the up position.
+      expect(at(log.first), (65.0, 50.0));
+    });
+
+    testWidgets('D4: a long press gives its mousemove at the down position, '
+        'also after the host moved', (tester) async {
+      final log = <NativeEvent>[];
+      final canvas = await _pumpHost(tester, log);
+      final gesture = await tester.startGesture(const Offset(100, 50));
+      await gesture.moveBy(const Offset(4, 3));
+      await _pumpHost(tester, log, canvas: canvas, left: 60);
+      log.clear();
+      await tester.pump(kLongPressTimeout);
+      expect(_types(log), ['mouseover', 'mouseenter', 'mousemove']);
+      for (final event in log) {
+        expect(at(event), (40.0, 50.0));
+      }
+      await gesture.up();
+    });
+
+    testWidgets('D4: a tap and a long press outside give mouseout at their '
+        'down position', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      await tester.tapAt(const Offset(100, 50));
+      log.clear();
+      final tap = await tester.startGesture(const Offset(20, 50));
+      await tap.moveBy(const Offset(5, 0));
+      await tap.up();
+      expect(_types(log), ['mouseout', 'mouseleave']);
+      expect(at(log.last), (-20.0, 50.0));
+
+      await tester.tapAt(const Offset(100, 50));
+      log.clear();
+      final press = await tester.startGesture(const Offset(20, 60));
+      await press.moveBy(const Offset(5, 0));
+      await tester.pump(kLongPressTimeout);
+      expect(_types(log), ['mouseout', 'mouseleave']);
+      expect(at(log.last), (-20.0, 60.0));
+      await press.up();
+    });
+
+    testWidgets('D5: a stylus tap gives the touch tap list and no '
+        'MouseTracker boundary event', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      await tester.tapAt(
+        const Offset(100, 50),
+        kind: PointerDeviceKind.stylus,
+      );
+      await tester.pump();
+      expect(_types(log), [
+        'pointerover',
+        'pointerenter',
+        'pointerdown',
+        'touchstart',
+        'pointerup',
+        'pointerout',
+        'pointerleave',
+        'touchend',
+        'mouseover',
+        'mouseenter',
+        'mousemove',
+        'mousedown',
+        'mouseup',
+        'click',
+      ]);
+      expect(_owner, same(_host(tester)));
+    });
+
+    testWidgets('D5: a stylus hover gives the enter and exit rows from the '
+        'host', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final gesture = await tester.createGesture(
+        kind: PointerDeviceKind.stylus,
+      );
+      await gesture.addPointer(location: const Offset(10, 10));
+      await gesture.moveTo(const Offset(100, 50));
+      await gesture.moveTo(const Offset(110, 50));
+      await gesture.moveTo(const Offset(20, 50));
+      expect(_types(log), [
+        'pointerover',
+        'pointerenter',
+        'mouseover',
+        'mouseenter',
+        'pointermove',
+        'mousemove',
+        'pointermove',
+        'mousemove',
+        'pointerout',
+        'pointerleave',
+        'mouseout',
+        'mouseleave',
+      ]);
+      expect(at(log.last), (-20.0, 50.0));
+      await gesture.removePointer();
+    });
+
+    for (final kind in const [
+      PointerDeviceKind.stylus,
+      PointerDeviceKind.invertedStylus,
+    ]) {
+      testWidgets('D5: a mouse hover outside does not end the hover of the '
+          'kind ${kind.name} on the host', (tester) async {
+        // The engine gives each hover event the pointer id 0. Thus the
+        // mouse and the stylus share the pointer and differ by device.
+        final log = <NativeEvent>[];
+        await _pumpHost(tester, log);
+        Future<void> send(PointerEvent event) =>
+            tester.sendEventToBinding(event);
+        final stylus = [
+          for (final x in [100.0, 101.0, 102.0, 20.0])
+            PointerHoverEvent(device: 7, kind: kind, position: Offset(x, 50)),
+        ];
+        await send(PointerAddedEvent(device: 7, kind: kind));
+        await send(stylus[0]);
+        await send(const PointerAddedEvent(device: 8));
+        await send(
+          const PointerHoverEvent(device: 8, position: Offset(600, 400)),
+        );
+        await send(stylus[1]);
+        await send(
+          const PointerHoverEvent(device: 8, position: Offset(601, 400)),
+        );
+        await send(stylus[2]);
+        expect(_types(log), [
+          'pointerover',
+          'pointerenter',
+          'mouseover',
+          'mouseenter',
+          'pointermove',
+          'mousemove',
+          'pointermove',
+          'mousemove',
+          'pointermove',
+          'mousemove',
+        ]);
+        // The hover of the stylus that does not hit the host ends it.
+        log.clear();
+        await send(stylus[3]);
+        expect(_types(log), [
+          'pointerout',
+          'pointerleave',
+          'mouseout',
+          'mouseleave',
+        ]);
+        expect(at(log.last), (-20.0, 50.0));
+        log.clear();
+        await send(stylus[0]);
+        await send(const PointerRemovedEvent(device: 8));
+        await send(PointerRemovedEvent(device: 7, kind: kind));
+        expect(_types(log), [
+          'pointerover',
+          'pointerenter',
+          'mouseover',
+          'mouseenter',
+          'pointermove',
+          'mousemove',
+          'pointerout',
+          'pointerleave',
+          'mouseout',
+          'mouseleave',
+        ]);
+        // The route of the pointer id 0 is gone: a later hover gives no
+        // event.
+        log.clear();
+        await send(const PointerAddedEvent(device: 8));
+        await send(
+          const PointerHoverEvent(device: 8, position: Offset(600, 400)),
+        );
+        await send(const PointerRemovedEvent(device: 8));
+        expect(log, isEmpty);
+      });
+    }
+
+    testWidgets('D5: the route sees a stylus tap outside', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final routes = _globalRoutes(tester);
+      await tester.tapAt(const Offset(100, 50));
+      log.clear();
+      await tester.tapAt(
+        const Offset(20, 50),
+        kind: PointerDeviceKind.stylus,
+      );
+      expect(_types(log), ['mouseout', 'mouseleave']);
+      expect(_owner, isNull);
+      expect(_globalRoutes(tester), routes);
+    });
   });
 
   group('canvas event target', () {

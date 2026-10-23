@@ -21,16 +21,38 @@
 //
 // A step of a case is one frame: a list of gesture actions, then the end of
 // the frame. The actions are the Flutter pointer events of the Dart test:
-// `touchDown`, `touchMove` and `touchUp` (one touch pointer at a time),
-// `wait` (the time of the frame, for the long press), and `mouseAdd`,
-// `mouseMove` and `mouseRemove` (one mouse pointer). The class Browser
-// below gives the DOM events that Chrome sends to the canvas for each
-// action (Chart.js ADR 0037, sections 6 to 9): the touch boundary events,
-// the compatibility mouse events of a tap and of a long press, the
-// `mouseout` and `mouseleave` of a tap outside, and the boundary events of
-// the mouse. The model sends one DOM event for each action. Chrome coalesces
-// the moves of one frame (Chart.js ADR 0037, Open 10). Thus the mouse cases
-// with two or more moves in one step pin the model, not a Chrome log. The
+// `touchDown` (with the kind `stylus` as an optional fourth item),
+// `touchMove` and `touchUp` (one touch-like pointer at a time), `wait` (the
+// time of the frame, for the long press), and `mouseAdd`, `mouseMove` and
+// `mouseRemove` (one mouse pointer). The class Browser below gives the DOM
+// events that Chrome sends to the canvas for each action (Chart.js ADR 0037,
+// sections 6 to 9): the touch boundary events, the compatibility mouse
+// events of a tap and of a long press, the `mouseout` and `mouseleave` of a
+// tap outside, and the boundary events of the mouse. The touch rules come
+// from the device check P4 of Chart.js ADR 0037 (Chrome 155.0.8059.84 on a
+// Pixel 8a) and the Chromium source at that tag:
+//
+// - A stylus in contact gives the touch events (P4 row ST1).
+// - A move with no change of the point gives no event (P4 rows T12, T13 and
+//   LP300 to LP700; passthrough_touch_event_queue.cc, HasPointChanged).
+// - The slop limit is the slop plus 0.05, the stylus slop 1.5 times the
+//   touch slop (gesture_detector.cc, kSlopEpsilon;
+//   gesture_configuration_android.cc).
+// - The tap candidate gives only `pointermove` inside its slop limit (P4
+//   rows S04 and S07; touch_event_manager.cc).
+// - The first move past the slop limit begins the pan, also after a long
+//   press: `pointermove`, `touchmove`, then `pointercancel`, `pointerout`
+//   and `pointerleave` at the client point (0, 0), then only `touchmove`
+//   and `touchend` (P4 rows T14, T15 and S10 to S30;
+//   pointer_event_manager.cc, pointer_event_factory.cc).
+// - The compatibility events and `click` of a tap, and the `mousemove` of a
+//   long press, are at the down position, and so is the `mouseout` of a tap
+//   or a long press outside (P4 rows S04 and S07; gesture_provider.cc).
+//
+// The model sends one DOM event for each action that gives events. Chrome
+// coalesces the moves of one frame (Chart.js ADR 0037, Open 10). Thus the
+// mouse cases with two or more moves in one step pin the model, not a
+// Chrome log. The
 // `BasicPlatform` of Node.js has no event listeners. Thus the
 // generator feeds `chart._eventHandler` itself with the chart events that
 // `fromNativeEvent` makes (platform.dom.js:109-119): for each type that
@@ -94,6 +116,23 @@ const SIZE = 512;
  */
 const SLOP = 18;
 
+/** Chromium `kSlopEpsilon` (gesture_detector.cc): the slop limit is the slop plus this. */
+const SLOP_EPSILON = 0.05;
+
+/** The stylus slop is 1.5 times the touch slop (gesture_configuration_android.cc). */
+const STYLUS_SLOP_FACTOR = 1.5;
+
+/** The slop limit of a pointer of [kind]: 18.05 for a touch, 27.05 for a stylus. */
+const limit = (kind) => (kind === 'stylus' ? SLOP * STYLUS_SLOP_FACTOR : SLOP) + SLOP_EPSILON;
+
+/**
+ * The position of the cancel events of a pan in the canvas: Chrome gives
+ * `pointercancel`, `pointerout` and `pointerleave` the client point (0, 0)
+ * (P4 D3), and the canvas of `_acquireChart` is at the origin of the test
+ * view.
+ */
+const ORIGIN = {x: 0, y: 0};
+
 /** `kLongPressTimeout` in ms (Chart.js ADR 0037, section 8). */
 const LONG_PRESS = 500;
 
@@ -115,9 +154,9 @@ const inside = (p) => p.x >= 0 && p.y >= 0 && p.x < SIZE && p.y < SIZE;
 
 /**
  * The DOM events that Chrome sends to the canvas for the gesture actions of
- * the Dart test (Chart.js ADR 0037, sections 6 to 9). One canvas, one touch
- * pointer and one mouse pointer at a time. The model has its own state and
- * does not read the chart.
+ * the Dart test (Chart.js ADR 0037, sections 6 to 9). One canvas, one
+ * touch-like pointer and one mouse pointer at a time. The model has its own
+ * state and does not read the chart.
  */
 class Browser {
   constructor() {
@@ -127,7 +166,7 @@ class Browser {
     this.now = 0;
     /** True while the compatibility mouse is over the canvas (section 9). */
     this.owner = false;
-    /** The touch pointer: `{p, onHost}`, or null. */
+    /** The touch-like pointer: `{p, p0, kind, onHost, panned}`, or null. */
     this.touch = null;
     /** The tap candidate of the touch (section 8): `{p0, down, long}`, or null. */
     this.tap = null;
@@ -144,11 +183,11 @@ class Browser {
     this.dom.push(type === 'touchend' || type === 'touchcancel' ? [type, NaN, NaN] : [type, p.x, p.y]);
   }
 
-  touchDown(x, y) {
+  touchDown(x, y, kind = 'touch') {
     if (this.touch) throw new Error('One touch pointer at a time.');
     const p = {x, y};
     const onHost = inside(p);
-    this.touch = {p, onHost};
+    this.touch = {p, p0: p, kind, onHost, panned: false};
     if (onHost) {
       this.emit(['pointerover', 'pointerenter', 'pointerdown'], p);
       this.emitTouch('touchstart', p);
@@ -162,27 +201,49 @@ class Browser {
 
   touchMove(x, y) {
     const p = {x, y};
-    if (this.touch.onHost) {
-      this.emit(['pointermove'], p);
-      this.emitTouch('touchmove', p);
+    const touch = this.touch;
+    // No event for a move with no change of the point (P4 D2).
+    if (p.x === touch.p.x && p.y === touch.p.y) return;
+    touch.p = p;
+    const beyond = !touch.panned && Math.hypot(p.x - touch.p0.x, p.y - touch.p0.y) > limit(touch.kind);
+    if (touch.onHost) {
+      if (touch.panned) {
+        this.emitTouch('touchmove', p);
+      } else if (beyond) {
+        // The pan begins: Chrome cancels the pointer events (P4 D3), also
+        // after a long press.
+        this.emit(['pointermove'], p);
+        this.emitTouch('touchmove', p);
+        this.emit(['pointercancel', 'pointerout', 'pointerleave'], ORIGIN);
+        touch.panned = true;
+        this.tap = null;
+      } else {
+        // The tap candidate gives no touchmove inside its slop limit (P4 D1).
+        this.emit(['pointermove'], p);
+        if (!this.tap) this.emitTouch('touchmove', p);
+      }
+    } else if (beyond) {
+      this.tap = null;
     }
-    this.touch.p = p;
-    if (this.tap && Math.hypot(p.x - this.tap.p0.x, p.y - this.tap.p0.y) > SLOP) this.tap = null;
   }
 
   touchUp() {
-    const {p, onHost} = this.touch;
+    const {p, onHost, panned} = this.touch;
     const tap = this.tap && !this.tap.long;
-    if (onHost) {
+    if (onHost && panned) {
+      this.emitTouch('touchend', p);
+    } else if (onHost) {
       this.emit(['pointerup', 'pointerout', 'pointerleave'], p);
       this.emitTouch('touchend', p);
       if (tap) {
-        if (!this.owner) this.emit(['mouseover', 'mouseenter'], p);
+        // The compatibility events of a tap have the down position (P4 D4).
+        const q = this.tap.p0;
+        if (!this.owner) this.emit(['mouseover', 'mouseenter'], q);
         this.owner = true;
-        this.emit(['mousemove', 'mousedown', 'mouseup', 'click'], p);
+        this.emit(['mousemove', 'mousedown', 'mouseup', 'click'], q);
       }
     } else if (tap && this.owner) {
-      this.emit(['mouseout', 'mouseleave'], p);
+      this.emit(['mouseout', 'mouseleave'], this.tap.p0);
       this.owner = false;
     }
     this.touch = null;
@@ -193,7 +254,8 @@ class Browser {
     this.now += ms;
     const tap = this.tap;
     if (!tap || tap.long || this.now - tap.down < LONG_PRESS) return;
-    const p = this.touch.p;
+    // The long press is at the down position (P4 D4).
+    const p = tap.p0;
     if (this.touch.onHost) {
       tap.long = true;
       if (!this.owner) this.emit(['mouseover', 'mouseenter'], p);
@@ -469,6 +531,50 @@ const cases = [
       ['mouseMove', L.x, L.y],
     ],
     [['mouseRemove']],
+  ]),
+  runCase('a tap on a point with a move of 10 px inside the slop', [
+    [['touchDown', P.x, P.y]],
+    [['touchMove', P.x + 10, P.y]],
+    [['touchUp']],
+  ]),
+  runCase('a touch held on legend item 1 with a move to the same position', [
+    [['touchDown', L.x, L.y]],
+    [['touchMove', L.x, L.y]],
+    [['touchUp']],
+  ]),
+  runCase(
+    'events with pointerup, pointerout: a drag from E to legend item 1',
+    [
+      [['touchDown', E.x, E.y]],
+      [['touchMove', E.x, E.y - 40]],
+      [['touchMove', L.x, L.y]],
+      [['touchUp']],
+    ],
+    defaultEventsWith('pointerup', 'pointerout'),
+  ),
+  runCase('a stylus tap on a point', [[['touchDown', P.x, P.y, 'stylus']], [['touchUp']]]),
+  runCase(
+    'events mousemove only: a stylus tap on a point',
+    [[['touchDown', P.x, P.y, 'stylus']], [['touchUp']]],
+    ['mousemove'],
+  ),
+  // 20 px is past the touch slop limit (18.05) and inside the stylus slop
+  // limit (27.05).
+  runCase('a stylus drag of 20 px from a point stays a tap', [
+    [['touchDown', P.x, P.y, 'stylus']],
+    [['touchMove', P.x + 20, P.y]],
+    [['touchUp']],
+  ]),
+  runCase('a stylus drag of 30 px from a point cancels', [
+    [['touchDown', P.x, P.y, 'stylus']],
+    [['touchMove', P.x + 30, P.y]],
+    [['touchUp']],
+  ]),
+  runCase('a long press on a point, then a drag past the slop', [
+    [['touchDown', P.x, P.y]],
+    [['wait', LONG_PRESS]],
+    [['touchMove', Q.x, Q.y]],
+    [['touchUp']],
   ]),
   runCase('a touch drag on the chart with the default events', [
     [['touchDown', Q.x, Q.y]],
