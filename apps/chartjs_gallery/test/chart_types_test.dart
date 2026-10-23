@@ -8,9 +8,18 @@ import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show chartJsVersion;
 import 'package:flutter_chartjs_port/src/controllers/index.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
+    show FillerSource;
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
+    show Legend;
+import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart'
+    as title_plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 /// A Pixel 8a: 412 x 915 logical pixels at DPR 2.625.
@@ -30,6 +39,24 @@ typedef _Expected = ({
 /// The expected charts, by `<stem>.<variant key>`.
 const Map<String, _Expected> _expected = {
   'area.origin': (
+    type: 'line',
+    controllers: [LineController],
+    counts: [8],
+    aspectRatio: 2,
+  ),
+  'area.start': (
+    type: 'line',
+    controllers: [LineController],
+    counts: [8],
+    aspectRatio: 2,
+  ),
+  'area.end': (
+    type: 'line',
+    controllers: [LineController],
+    counts: [8],
+    aspectRatio: 2,
+  ),
+  'area.false': (
     type: 'line',
     controllers: [LineController],
     counts: [8],
@@ -106,6 +133,18 @@ const Map<String, _Expected> _expected = {
 /// The `fill` warning of core.datasetController.js:285-289.
 const String _fillWarning = "Tried to use the 'fill' option";
 
+/// The input line of the help text of each type page (Chart.js ADR 0037,
+/// section 15).
+const String _inputHelp =
+    'Hover or tap an element: the tooltip shows its label and value. '
+    'Tap outside the chart: the tooltip hides. '
+    'Tap a legend item: its data hides or shows.';
+
+/// The stems whose legend items are the data of dataset 0, not the
+/// datasets: the legend labels of the doughnut, pie and polar area
+/// overrides (controller.doughnut.js:94-129, controller.polarArea.js:37-69).
+const Set<String> _dataLegendStems = {'doughnut', 'polar'};
+
 /// Sets the test view to [size] logical pixels at [dpr].
 void _setView(WidgetTester tester, Size size, double dpr) {
   tester.view
@@ -128,6 +167,19 @@ Future<ChartTypePageState> _open(WidgetTester tester, String stem) async {
   await tester.pumpAndSettle();
   final state = tester.state<ChartTypePageState>(find.byType(ChartTypePage));
   expect(state.chart, isNotNull, reason: stem);
+  return state;
+}
+
+/// Opens the page of [entry] at its variant [variant].
+Future<ChartTypePageState> _openVariant(
+  WidgetTester tester,
+  ChartTypeEntry entry,
+  ChartTypeVariant variant,
+) async {
+  final state = await _open(tester, entry.stem);
+  if (variant != entry.variants.first) {
+    await _selectVariant(tester, entry.stem, variant.key);
+  }
   return state;
 }
 
@@ -236,6 +288,13 @@ void _expectNoForbiddenControls(String stem) {
     reason: stem,
   );
 }
+
+/// The data of dataset 0, or the item [index] of the data of dataset 0 for
+/// a stem of [_dataLegendStems], is visible.
+bool _legendItemVisible(Chart chart, String stem, int index) =>
+    _dataLegendStems.contains(stem)
+    ? chart.getDataVisibility(index.toDouble())
+    : chart.isDatasetVisible(index.toDouble());
 
 /// The point of element [index] of dataset 0 that a hover hits.
 Offset _elementCenter(Chart chart, int index) {
@@ -365,10 +424,217 @@ void main() {
     // (core.datasetController.js:286-288).
     expect(chart.isPluginEnabled('filler'), isTrue);
     expect(lines.where((l) => l.startsWith(_fillWarning)), isEmpty);
-    final note = galleryChartTypes.first.note!;
-    expect(find.textContaining(note), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('area: each variant has the fill of its action, the title and '
+      'the filler source', (tester) async {
+    _setView(tester, _pixel8a, 2.625);
+    final area = galleryChartTypes.first;
+    expect(area.stem, 'area');
+    // The fill values of the actions of line-boundaries.md:39-74, in the
+    // order of the variants (`origin` first). A probe on the pinned build in
+    // the x64 Node.js (the config of line-boundaries.md:95-113 with each fill
+    // value) gave the title `Fill: <value>` and `meta.$filler.fill` `<value>`
+    // for `origin`, `start`, `end` and `false`.
+    const fills = <String, Object>{
+      'origin': 'origin',
+      'start': 'start',
+      'end': 'end',
+      'false': false,
+    };
+    expect([for (final v in area.variants) v.key], fills.keys.toList());
+    late ChartTypePageState state;
+    final lines = await _printed(() async {
+      state = await _open(tester, 'area');
+      for (final variant in area.variants) {
+        if (variant != area.variants.first) {
+          await _selectVariant(tester, 'area', variant.key);
+        }
+        final fill = fills[variant.key]!;
+        final chart = state.chart!;
+        final dataset =
+            (chart.data['datasets']! as List<Object?>).single!
+                as Map<Object?, Object?>;
+        expect(dataset['fill'], fill, reason: variant.key);
+        // line-boundaries.md:106: `'Fill: ' + ctx.chart.data.datasets[0]
+        // .fill`.
+        final title = chart.titleBlock! as title_plugin.Title;
+        expect(
+          jsGet(title.options, 'text'),
+          'Fill: ${variant.key}',
+          reason: variant.key,
+        );
+        // `_decodeFill` keeps each of these values (filler.options.js:60),
+        // and the filler stores it (plugin.filler/index.js:29).
+        final source = chart.getDatasetMeta(0)[r'$filler']! as FillerSource;
+        expect(source.fill, fill, reason: variant.key);
+        expect(tester.takeException(), isNull, reason: variant.key);
+      }
+    });
+    expect(lines.where((l) => l.startsWith(_fillWarning)), isEmpty);
+  });
+
+  for (final entry in galleryChartTypes) {
+    final stem = entry.stem;
+    testWidgets('$stem: the help text gives the source and the input', (
+      tester,
+    ) async {
+      _setView(tester, _pixel8a, 2.625);
+      await _open(tester, stem);
+      for (final variant in entry.variants) {
+        if (variant != entry.variants.first) {
+          await _selectVariant(tester, stem, variant.key);
+        }
+        final help = tester.widget<Text>(
+          find.byKey(ValueKey('type.$stem.help')),
+        );
+        expect(
+          help.data,
+          'Source: ${variant.source}, Chart.js $chartJsVersion.\n'
+          '$_inputHelp',
+          reason: variant.key,
+        );
+        // No text of the page tells of a later phase.
+        expect(
+          find.textContaining(RegExp('phase', caseSensitive: false)),
+          findsNothing,
+          reason: stem,
+        );
+      }
+    });
+
+    testWidgets('$stem: each control has its ValueKey', (tester) async {
+      _setView(tester, _pixel8a, 2.625);
+      await _open(tester, stem);
+      for (final key in ['host', 'readout', 'help']) {
+        expect(
+          find.byKey(ValueKey('type.$stem.$key')),
+          findsOneWidget,
+          reason: '$stem $key',
+        );
+      }
+      // The buttons of the page body: the segments of the variant line
+      // only. Each has the key of its variant (Chart.js ADR 0031, sections
+      // 2.3 and 10.5).
+      final buttons = find.descendant(
+        of: find.byType(ChartTypePage),
+        matching: find.byWidgetPredicate(
+          (w) => w is ButtonStyleButton,
+          description: 'ButtonStyleButton',
+        ),
+      );
+      final inBody = buttons.evaluate().where(
+        (e) => e.findAncestorWidgetOfExactType<AppBar>() == null,
+      );
+      final variants = entry.variants.length > 1
+          ? entry.variants
+          : const <ChartTypeVariant>[];
+      expect(inBody, hasLength(variants.length), reason: stem);
+      for (final variant in variants) {
+        expect(
+          find.byKey(ValueKey('type.$stem.variant.${variant.key}')),
+          findsOneWidget,
+          reason: '$stem ${variant.key}',
+        );
+      }
+      for (final button in inBody) {
+        final keys = <String>[];
+        void visit(Element e) {
+          final key = e.widget.key;
+          if (key is ValueKey<String>) keys.add(key.value);
+          e.visitChildren(visit);
+        }
+
+        button.visitChildren(visit);
+        expect(
+          keys.where((k) => k.startsWith('type.$stem.variant.')),
+          hasLength(1),
+          reason: '$stem $keys',
+        );
+      }
+    });
+
+    for (final variant in entry.variants) {
+      final id = '$stem.${variant.key}';
+      testWidgets('$id: a tap shows the tooltip, a tap on the help text hides '
+          'it, a legend tap hides and shows item 0', (tester) async {
+        _setView(tester, _pixel8a, 2.625);
+        final state = await _openVariant(tester, entry, variant);
+        final chart = state.chart!;
+        final origin = tester.getTopLeft(_host(stem));
+        final meta = chart.getDatasetMeta(0);
+        final index = meta.data.length > 2 ? 2 : 0;
+        final readout = find.byKey(ValueKey('type.$stem.readout'));
+
+        // A tap on element `index` of dataset 0: the compatibility mouse
+        // gives the chart a `mousemove` (Chart.js ADR 0037, sections 8 and
+        // 9), and the tooltip shows the item (plugin.tooltip.js:127-137).
+        await tester.tapAt(origin + _elementCenter(chart, index));
+        await tester.pumpAndSettle();
+        final tooltip = chart.tooltip!;
+        expect(tooltip.opacity, 1, reason: id);
+        final (:label, :value) = meta.controller!.getLabelAndValue(
+          index.toDouble(),
+        );
+        final text = 'd0#$index $label: $value';
+        expect(state.hoverLabel, text, reason: id);
+        expect(
+          find.descendant(of: readout, matching: find.textContaining(text)),
+          findsOneWidget,
+          reason: id,
+        );
+        final points = tooltip.dataPoints!;
+        expect(points, hasLength(1), reason: id);
+        expect(jsGet(points.single, 'datasetIndex'), 0, reason: id);
+        expect(jsGet(points.single, 'dataIndex'), index, reason: id);
+        // The default label callback (plugin.tooltip.js:388-403).
+        final datasetLabel =
+            jsGet(
+                  (chart.data['datasets']! as List<Object?>).first,
+                  'label',
+                )!
+                as String;
+        expect(
+          jsGet(tooltip.body!.single, 'lines'),
+          ['$datasetLabel: $value'],
+          reason: id,
+        );
+
+        // A tap on the help text, outside the chart: the chart gets a
+        // `mouseout`, and the tooltip hides (plugin.tooltip.js:1186-1188).
+        await tester.tap(find.byKey(ValueKey('type.$stem.help')));
+        await tester.pumpAndSettle();
+        expect(tooltip.opacity, 0, reason: id);
+        expect(tooltip.getActiveElements(), isEmpty, reason: id);
+        expect(state.hoverLabel, 'none', reason: id);
+        expect(
+          find.descendant(of: readout, matching: find.text('hover none')),
+          findsOneWidget,
+          reason: id,
+        );
+
+        // A tap on legend item 0 hides its data, a second tap shows it
+        // (the legend `onClick`, plugin.legend.js:645-655, or the override
+        // of controller.doughnut.js:125-128 and controller.polarArea.js:
+        // 65-68).
+        final legend = chart.legend! as Legend;
+        final box = legend.legendHitBoxes.first;
+        final center = Offset(
+          (box['left']! as double) + (box['width']! as double) / 2,
+          (box['top']! as double) + (box['height']! as double) / 2,
+        );
+        expect(_legendItemVisible(chart, stem, 0), isTrue, reason: id);
+        await tester.tapAt(origin + center);
+        await tester.pumpAndSettle();
+        expect(_legendItemVisible(chart, stem, 0), isFalse, reason: id);
+        await tester.tapAt(origin + center);
+        await tester.pumpAndSettle();
+        expect(_legendItemVisible(chart, stem, 0), isTrue, reason: id);
+        expect(tester.takeException(), isNull, reason: id);
+      });
+    }
+  }
 
   testWidgets('radar: no fill warning with the filler of registerables', (
     tester,

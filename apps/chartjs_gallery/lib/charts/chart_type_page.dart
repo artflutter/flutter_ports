@@ -26,6 +26,15 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// scroll view, and the platform gives the height from the width and the
 /// aspect ratio of the type (Chart.js ADR 0037). Thus the chart has the
 /// aspect of the docs: 2, or 1 for doughnut, pie, polar area and radar.
+///
+/// The gallery registers `registerables`, with the seven plugins, as the
+/// docs do (`docs/scripts/register.js:6`). The docs blocks set no plugin
+/// options. Thus each chart has the defaults of the plugins: the legend
+/// shows (plugin.legend.js:637), the tooltip shows on a hover or a tap
+/// (plugin.tooltip.js:1276), and the title does not show
+/// (plugin.title.js:147). The filler fills the datasets with a `fill`
+/// option. A tap on a legend item hides or shows its data, and a tap
+/// outside the chart hides the tooltip (Chart.js ADR 0037, section 15).
 class ChartTypePage extends StatefulWidget {
   /// Creates the page of [entry].
   const ChartTypePage({required this.entry, super.key});
@@ -39,8 +48,10 @@ class ChartTypePage extends StatefulWidget {
 
 /// The state of a [ChartTypePage]: the selected variant and its chart.
 class ChartTypePageState extends State<ChartTypePage> {
-  static const String _phase8 =
-      'No legend, title, tooltip or fill: these plugins come in phase 8.';
+  static const String _input =
+      'Hover or tap an element: the tooltip shows its label and value. '
+      'Tap outside the chart: the tooltip hides. '
+      'Tap a legend item: its data hides or shows.';
 
   int _variant = 0;
   Chart? _chart;
@@ -84,7 +95,8 @@ class ChartTypePageState extends State<ChartTypePage> {
   static String _hoverItem(Chart chart, double datasetIndex, double index) {
     final controller = chart.getDatasetMeta(datasetIndex).controller!;
     final (:label, :value) = controller.getLabelAndValue(index);
-    // Display text: the text of the tooltip of phase 8.
+    // Display text: the label and the value that the tooltip item gets
+    // (plugin.tooltip.js:127-137).
     return 'd${datasetIndex.toInt()}#${index.toInt()} $label: $value';
   }
 
@@ -103,8 +115,8 @@ class ChartTypePageState extends State<ChartTypePage> {
   /// `mouseout` event. The option `onHover` gets only the events in the
   /// chart area (core.controller.js:1217-1223). A `mouseout` event is not
   /// in the chart area, but it clears the active elements
-  /// (core.controller.js:1250-1252). The tooltip of phase 8 also clears on
-  /// a `mouseout` event, in its hook `afterEvent`
+  /// (core.controller.js:1250-1252). The tooltip also clears on a
+  /// `mouseout` event, in its hook `afterEvent`
   /// (plugin.tooltip.js:1186-1188).
   late final AnyObject _mouseoutPlugin = {
     'id': 'typeReadout',
@@ -180,8 +192,7 @@ class ChartTypePageState extends State<ChartTypePage> {
           Text(
             [
               'Source: ${_current.source}, Chart.js $chartJsVersion.',
-              _phase8,
-              ?entry.note,
+              _input,
             ].join('\n'),
             key: ValueKey('type.$stem.help'),
             style: theme.textTheme.bodySmall?.copyWith(

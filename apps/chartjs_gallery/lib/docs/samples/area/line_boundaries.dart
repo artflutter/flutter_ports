@@ -9,8 +9,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsAdd;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 
-/// The area chart of `docs/samples/area/line-boundaries.md:3-120`, at the
-/// fill `'origin'`.
+/// The area chart of `docs/samples/area/line-boundaries.md:3-120` at the
+/// fill `'origin'`: the action `Fill: origin` of `:48-56`.
 ///
 /// The gallery changes the sample in these items (Chart.js ADR 0031,
 /// section 1.2):
@@ -21,15 +21,35 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 ///   the seed `Date.now()` (`utils.js:7`).
 /// - The colors are the values of `Utils.CHART_COLORS.red` and
 ///   `Utils.transparentize(Utils.CHART_COLORS.red)` (`utils.js:122-135`).
-/// - The first state of the sample is `fill: false` (`:29`). The gallery
-///   shows the state of the action `Fill: origin` (`:48-56`). The page has
-///   no actions.
+/// - The first state of the sample is `fill: false` (`:29`). Each fill
+///   action of `:39-74` is a variant of the page, with its fill value in
+///   the dataset (Chart.js ADR 0031, Open "The Area `fill` control"). The
+///   page has no actions: `Randomize` (`:76-82`) and `Smooth` (`:84-90`)
+///   are not variants.
 ///
-/// The options are those of `:95-113`. Phase 7 registers no plugin: the
-/// chart draws the line, and `initialize` prints the `fill` warning once
-/// (core.datasetController.js:280-289). Phase 8 registers the filler and
-/// the title, and this config then fills the area with no change.
-AnyObject areaOriginConfig() => <String, Object?>{
+/// The options are those of `:95-113`. The gallery registers
+/// `registerables`, with the filler and the title: the chart fills the
+/// area to the origin, and the title is `Fill: origin`.
+AnyObject areaOriginConfig() => _config('origin');
+
+/// The config of the action `Fill: start` (`line-boundaries.md:57-65`):
+/// the chart fills the area to the bottom of the value scale
+/// (`src/plugins/plugin.filler/filler.options.js:82-83`).
+AnyObject areaStartConfig() => _config('start');
+
+/// The config of the action `Fill: end` (`line-boundaries.md:66-74`): the
+/// chart fills the area to the top of the value scale
+/// (`src/plugins/plugin.filler/filler.options.js:84-85`).
+AnyObject areaEndConfig() => _config('end');
+
+/// The config of the action `Fill: false (default)`
+/// (`line-boundaries.md:39-47`), the first state of the sample (`:29`):
+/// the chart draws the line with no fill.
+AnyObject areaFalseConfig() => _config(false);
+
+/// The config of `line-boundaries.md:95-113` with the data of `:20-33`,
+/// where the dataset has the fill value [fill] of an action.
+AnyObject _config(Object fill) => <String, Object?>{
   'type': 'line',
   'data': <String, Object?>{
     'labels': <Object?>[
@@ -57,7 +77,7 @@ AnyObject areaOriginConfig() => <String, Object?>{
         ],
         'borderColor': 'rgb(255, 99, 132)',
         'backgroundColor': 'rgba(255, 99, 132, 0.5)',
-        'fill': 'origin',
+        'fill': fill,
       },
     ],
   },

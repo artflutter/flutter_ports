@@ -9,10 +9,10 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// The radar chart of `docs/charts/radar.md:7-61`, with each key and value
 /// of the docs block.
 ///
-/// The datasets have `fill: true` (`radar.md:22`, `:32`). Without the
-/// filler plugin of phase 8, `initialize` prints the `fill` warning once
-/// for each dataset (core.datasetController.js:280-289), and the chart
-/// draws no area (Chart.js ADR 0031, section 1.7).
+/// The datasets have `fill: true` (`radar.md:22`, `:32`). The gallery
+/// registers the filler plugin of `registerables`. Thus the chart fills the
+/// area of each dataset, and `initialize` prints no `fill` warning
+/// (core.datasetController.js:287-289).
 AnyObject radarConfig() => <String, Object?>{
   'type': 'radar',
   'data': <String, Object?>{

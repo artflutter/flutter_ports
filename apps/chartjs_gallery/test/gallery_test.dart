@@ -37,8 +37,8 @@ void main() {
     expect(find.text('Tracking Chart.js $chartJsVersion'), findsOneWidget);
     expect(
       find.text(
-        'The chart types render through the ported controllers, '
-        'without the plugins of phase 8.',
+        'The chart types render through the ported controllers and '
+        'plugins.',
       ),
       findsOneWidget,
     );
@@ -64,36 +64,37 @@ void main() {
     }
   });
 
-  testWidgets('each tile is enabled; only Area is partial, with its note', (
+  testWidgets('each tile is enabled, with its icon and its docs source', (
     tester,
   ) async {
     _tallView(tester);
     await tester.pumpWidget(const GalleryApp());
 
-    var done = 0;
+    // No type is partial after the filler port: each tile has the icon
+    // `check_circle_outline` and its docs source (Chart.js ADR 0031, section
+    // 2.1).
     for (final entry in galleryChartTypes) {
       final tile = tester.widget<ListTile>(_tile(entry.stem));
       expect(tile.enabled, isTrue, reason: entry.stem);
       expect(tile.onTap, isNotNull, reason: entry.stem);
-      final icon = entry.stem == 'area'
-          ? Icons.timelapse
-          : Icons.check_circle_outline;
       expect(
-        find.descendant(of: _tile(entry.stem), matching: find.byIcon(icon)),
+        find.descendant(
+          of: _tile(entry.stem),
+          matching: find.byIcon(Icons.check_circle_outline),
+        ),
         findsOneWidget,
         reason: entry.stem,
       );
-      final subtitle = entry.stem == 'area'
-          ? 'Line only: the fill needs plugin.filler (phase 8)'
-          : 'docs/charts/${entry.stem}.md';
       expect(
-        find.descendant(of: _tile(entry.stem), matching: find.text(subtitle)),
+        find.descendant(
+          of: _tile(entry.stem),
+          matching: find.text('docs/charts/${entry.stem}.md'),
+        ),
         findsOneWidget,
         reason: entry.stem,
       );
-      if (entry.note == null) done++;
     }
-    expect(done, 8);
-    expect(galleryChartTypes.first.note, isNotNull);
+    expect(find.byIcon(Icons.timelapse), findsNothing);
+    expect(find.textContaining('phase 8'), findsNothing);
   });
 }

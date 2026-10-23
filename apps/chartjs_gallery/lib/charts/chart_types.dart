@@ -30,17 +30,25 @@ typedef ChartTypeVariant = ({
 });
 
 /// One entry of the home list: the page of `docs/charts/<stem>.md`.
-/// `note` tells what the page lacks until a later phase, or is Dart `null`
-/// when the page shows the full chart.
+///
+/// Each page shows the full chart of its docs blocks, with the plugins of
+/// `registerables`. Phase 8 removes the field `note`, the static note of a
+/// partial type (Chart.js ADR 0031, section 2.1).
 typedef ChartTypeEntry = ({
   String stem,
   String title,
   List<ChartTypeVariant> variants,
-  String? note,
 });
 
 /// The chart types of the docs, in the order of the docs (Chart.js ADR
 /// 0031, sections 1 and 2).
+///
+/// The Area page has the fill actions of
+/// `docs/samples/area/line-boundaries.md:39-74` as its variants (Chart.js
+/// ADR 0031, Open "The Area `fill` control"). The first variant is
+/// `origin`, the state of the page of phase 7 (section 1.2): the page opens
+/// with the fill. The other variants follow in the order of the actions,
+/// and `false`, the first state of the sample (`:29`), is last.
 final List<ChartTypeEntry> galleryChartTypes = [
   (
     stem: 'area',
@@ -49,11 +57,28 @@ final List<ChartTypeEntry> galleryChartTypes = [
       (
         key: 'origin',
         text: 'origin',
-        source: 'docs/samples/area/line-boundaries.md:3-120',
+        source: 'docs/samples/area/line-boundaries.md:3-120 and :48-56',
         config: areaOriginConfig,
       ),
+      (
+        key: 'start',
+        text: 'start',
+        source: 'docs/samples/area/line-boundaries.md:3-120 and :57-65',
+        config: areaStartConfig,
+      ),
+      (
+        key: 'end',
+        text: 'end',
+        source: 'docs/samples/area/line-boundaries.md:3-120 and :66-74',
+        config: areaEndConfig,
+      ),
+      (
+        key: 'false',
+        text: 'false',
+        source: 'docs/samples/area/line-boundaries.md:3-120 and :39-47',
+        config: areaFalseConfig,
+      ),
     ],
-    note: 'Line only: the fill needs plugin.filler (phase 8)',
   ),
   (
     stem: 'bar',
@@ -72,7 +97,6 @@ final List<ChartTypeEntry> galleryChartTypes = [
         config: barHorizontalConfig,
       ),
     ],
-    note: null,
   ),
   (
     stem: 'bubble',
@@ -85,7 +109,6 @@ final List<ChartTypeEntry> galleryChartTypes = [
         config: bubbleConfig,
       ),
     ],
-    note: null,
   ),
   (
     stem: 'doughnut',
@@ -104,7 +127,6 @@ final List<ChartTypeEntry> galleryChartTypes = [
         config: pieConfig,
       ),
     ],
-    note: null,
   ),
   (
     stem: 'line',
@@ -123,7 +145,6 @@ final List<ChartTypeEntry> galleryChartTypes = [
         config: lineVerticalConfig,
       ),
     ],
-    note: null,
   ),
   (
     stem: 'mixed',
@@ -136,7 +157,6 @@ final List<ChartTypeEntry> galleryChartTypes = [
         config: mixedConfig,
       ),
     ],
-    note: null,
   ),
   (
     stem: 'polar',
@@ -149,7 +169,6 @@ final List<ChartTypeEntry> galleryChartTypes = [
         config: polarAreaConfig,
       ),
     ],
-    note: null,
   ),
   (
     stem: 'radar',
@@ -162,7 +181,6 @@ final List<ChartTypeEntry> galleryChartTypes = [
         config: radarConfig,
       ),
     ],
-    note: null,
   ),
   (
     stem: 'scatter',
@@ -175,6 +193,5 @@ final List<ChartTypeEntry> galleryChartTypes = [
         config: scatterConfig,
       ),
     ],
-    note: null,
   ),
 ];

@@ -13,10 +13,11 @@ void main() {
 ///
 /// The list has each chart type of the Chart.js docs (`galleryChartTypes`).
 /// Each tile opens a page with the charts of the docs blocks of its type
-/// (Chart.js ADR 0031). A type that lacks a part until a later phase has a
-/// note. Above the list, two demo pages show the ported code: the canvas
-/// layer and the chart host of phase 3 with the elements of phase 4, the
-/// core of phase 5 and the scales of phase 6, and the helpers of phase 2.
+/// (Chart.js ADR 0031). Each page shows the full chart of its docs blocks,
+/// with the plugins of `registerables`. Above the list, two demo pages show
+/// the ported code: the canvas layer and the chart host of phase 3 with the
+/// elements of phase 4, the core of phase 5 and the scales of phase 6, and
+/// the helpers of phase 2.
 class GalleryApp extends StatelessWidget {
   /// Creates the gallery.
   const GalleryApp({super.key});
@@ -45,8 +46,8 @@ class GalleryHome extends StatelessWidget {
           const ListTile(
             title: Text('Tracking Chart.js $chartJsVersion'),
             subtitle: Text(
-              'The chart types render through the ported controllers, '
-              'without the plugins of phase 8.',
+              'The chart types render through the ported controllers and '
+              'plugins.',
             ),
           ),
           _DemoEntry(
@@ -77,13 +78,9 @@ class GalleryHome extends StatelessWidget {
           for (final entry in galleryChartTypes)
             ListTile(
               key: ValueKey('gallery.type.${entry.stem}'),
-              leading: Icon(
-                entry.note == null
-                    ? Icons.check_circle_outline
-                    : Icons.timelapse,
-              ),
+              leading: const Icon(Icons.check_circle_outline),
               title: Text(entry.title),
-              subtitle: Text(entry.note ?? 'docs/charts/${entry.stem}.md'),
+              subtitle: Text('docs/charts/${entry.stem}.md'),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute<void>(

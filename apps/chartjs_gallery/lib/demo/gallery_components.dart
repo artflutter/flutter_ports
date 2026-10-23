@@ -11,8 +11,8 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 bool _registered = false;
 
 /// Registers the built-in components once: `registerables`, as
-/// `src/index.umd.ts:28` does. After phase 7, they include the eight
-/// controllers.
+/// `src/index.umd.ts:28` does. They include the eight controllers and the
+/// seven plugins.
 void registerGalleryComponents() {
   if (_registered) return;
   _registered = true;
