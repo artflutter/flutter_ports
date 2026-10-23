@@ -417,10 +417,8 @@ void main() {
 
     // matchers.options.js:1-3: isObject is true for an instance of a class,
     // so an element is an actual object (Chart.js ADR 0039, section 10). The
-    // results come from the probe
-    // .handover/phase8/units/W3-merge/probes/to_equal_options_element.mjs:
-    // the pinned Chart.js build and matchers.options.js at v0.4.0 in Node.js
-    // v24.12.0 on x64.
+    // results come from a probe of phase 8: the pinned Chart.js build and
+    // matchers.options.js at v0.4.0 in Node.js v24.12.0 on x64.
     group('an element', () {
       elements.PointElement point() => elements.PointElement({
         'x': 1,
@@ -495,9 +493,8 @@ void main() {
         );
       });
 
-      // The row harness-expected-element. The upstream results come from the
-      // probe .handover/phase8/units/W3-merge/probes/
-      // review-expected-element.mjs.
+      // The row harness-expected-element. The upstream results come from a
+      // probe of phase 8 in Node.js v24.12.0 on x64.
       group('harness-expected-element', () {
         test('an expected element compares by identity', () {
           // Port difference: upstream compares the own keys of an expected
