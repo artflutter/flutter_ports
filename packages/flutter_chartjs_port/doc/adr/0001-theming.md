@@ -2,6 +2,7 @@
 
 - Status: accepted (2026-10-18) for the four invariants of the Consequences section only. The rest
   stays proposed until phase 5.
+- Superseded by: [Chart.js ADR 0042](0042-theming.md) (2026-10-23)
 - Date: 2026-10-16
 
 ## Context

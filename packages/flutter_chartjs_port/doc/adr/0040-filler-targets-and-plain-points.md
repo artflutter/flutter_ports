@@ -1,10 +1,10 @@
 # Chart.js ADR 0040: Filler targets and plain points
 
-- Status: proposed
+- Status: accepted (2026-10-23)
 - Date: 2026-10-22
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (type libraries, records for
   inline object types),
-  [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (Dart `null` for
+  [Chart.js ADR 0043](0043-options-representation-and-resolver.md) (Dart `null` for
   `undefined`, the `undefined` sentinel),
   [Chart.js ADR 0012](0012-dart-file-naming.md) (file names and the `_` rule),
   [Chart.js ADR 0017](0017-element-properties.md) §4, §5 and Open (the `undefined` state, the
@@ -19,9 +19,9 @@
   [Chart.js ADR 0033](0033-radial-scale-centers.md) §3 and Open 4 (the `null` center),
   [Chart.js ADR 0034](0034-no-display-only-js-exactness.md) (the protected behavior),
   [Chart.js ADR 0036](0036-parsed-data.md) (the `Expando` precedent of `stacksOf`),
-  [Chart.js ADR 0038](0038-plugin-modules-class-values-and-interfaces.md) (proposed, the plugin
-  modules, the members of `types.LineElement` and the pure roots),
-  [Chart.js ADR 0041](0041-plugin-test-strategy.md) (proposed, the test strategy of phase 8),
+  [Chart.js ADR 0038](0038-plugin-modules-class-values-and-interfaces.md) (the plugin modules,
+  the members of `types.LineElement` and the pure roots),
+  [Chart.js ADR 0041](0041-plugin-test-strategy.md) (the test strategy of phase 8),
   [porting-flow.md](../porting-flow.md) §1.1 (the performance rule),
   [performance.md](../performance.md) (the phase 8 section),
   [upstream-ledger.md](../upstream-ledger.md) row `b9725745` (#12283),

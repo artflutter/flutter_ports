@@ -1,6 +1,7 @@
 # Chart.js ADR 0006: Options representation and resolver
 
 - Status: accepted (2026-10-18)
+- Superseded by: [Chart.js ADR 0043](0043-options-representation-and-resolver.md) (2026-10-23)
 - Date: 2026-10-17
 
 ## Context

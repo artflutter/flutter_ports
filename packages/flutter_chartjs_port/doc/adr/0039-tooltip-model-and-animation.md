@@ -1,9 +1,9 @@
 # Chart.js ADR 0039: Tooltip model and animation
 
-- Status: proposed
+- Status: accepted (2026-10-23)
 - Date: 2026-10-22
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (records for inline object types),
-  [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (plain objects as Maps, the
+  [Chart.js ADR 0043](0043-options-representation-and-resolver.md) (plain objects as Maps, the
   `undefined` sentinel),
   [Chart.js ADR 0012](0012-dart-file-naming.md) (underscore names),
   [Chart.js ADR 0017](0017-element-properties.md) §3, §4, §5, §8 and §9 (typed properties, the
@@ -520,12 +520,12 @@ The rules of Chart.js ADR 0017 §3-§5 apply to each of the 28 own names and to
   Map or an element target value, and a custom
   `merger` that enumerates the target throws an `UnsupportedError`. No Chart.js merger
   enumerates its target. The markers are in `merge`, `merger` and `mergeIf`.
-- Chart.js ADR 0006 says that a class instance in an options tree stays a leaf. This stays true
+- Chart.js ADR 0006 said that a class instance in an options tree stays a leaf. This stays true
   for `clone` and `mergeIf`, and for a class instance as a source or as a source value of
   `merge`. `merge` enters a `types.PropertyAccess` target, and a `types.PropertyAccess` value of
   a Map target when the source value is an object. This section states that exception.
   [Chart.js ADR 0043](0043-options-representation-and-resolver.md) restates Chart.js ADR 0006
-  with this exception, and supersedes it on acceptance.
+  with this exception, and supersedes it.
 - Thus the four spec lines stay `merge(tooltip, view)`. `Chart.helpers.merge` is public, and
   upstream writes into any class instance target. The branch closes that difference for each
   element of the port at no cost on the Map path (Benchmarks). The spec result does not depend

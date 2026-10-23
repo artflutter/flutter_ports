@@ -1,8 +1,8 @@
 # Chart.js ADR 0042: Theming
 
-- Status: proposed
+- Status: accepted (2026-10-23)
 - Date: 2026-10-22
-- Supersedes: [Chart.js ADR 0001](0001-theming.md) on acceptance
+- Supersedes: [Chart.js ADR 0001](0001-theming.md)
 - Related: [theming.md](../theming.md) (the design),
   [Chart.js ADR 0030](0030-controller-test-strategy.md) §8 and §11 (test 3 and the blue screen
   without plugins) and Open 5 (this ADR closes it, except the active element case),

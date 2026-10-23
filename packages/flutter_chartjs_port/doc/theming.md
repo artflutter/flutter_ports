@@ -1,14 +1,13 @@
 # flutter_chartjs_port theming design
 
-- Status: proposed ([Chart.js ADR 0042](adr/0042-theming.md), proposed, restates
-  [Chart.js ADR 0001](adr/0001-theming.md) with the palette change and supersedes it on
-  acceptance)
+- Status: proposed ([Chart.js ADR 0042](adr/0042-theming.md), accepted (2026-10-23), restates
+  [Chart.js ADR 0001](adr/0001-theming.md) with the palette change and supersedes it)
 - Date: 2026-10-16
 - Related: [forui theming survey](prior-art/forui-theming.md), [porting flow](porting-flow.md),
   [upstream tracking](upstream-tracking.md),
   [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md)
 
-This document gives the design behind Chart.js ADR 0001. That ADR decides the mechanism in
+This document gives the design behind Chart.js ADR 0042. That ADR decides the mechanism in
 section 3. Section 5 is an API sketch for phase 9.
 
 Upstream paths are relative to `third_party/Chart.js` (v4.5.1, `9c5cf9f`). forui citations use
@@ -452,7 +451,7 @@ overrides in `raw`. Until then, one internal function derives the keys of sectio
 | `ChartThemeTransition.frames` | one chart update per frame, scales included | a phase 9 benchmark |
 | `ChartThemeExtension<T>` with `toScope` | `plugins.<id>.*` of a third-party plugin, from the tokens | the first ported third-party plugin |
 | Hover strategies | sealed `ChartHover`: `UpstreamChartHover`, `IdentityChartHover`, `LightnessChartHover`. Root `hover*Color` scriptables, one set per value, read only in active mode | a dark preset with lighter hover colors |
-| `touch` flag, `ChartSizes` | hit and hover radius, tooltip and legend padding, font sizes. Never behavior keys | a new ADR that supersedes Chart.js ADR 0001, together with ADR: Input events and interaction state |
+| `touch` flag, `ChartSizes` | hit and hover radius, tooltip and legend padding, font sizes. Never behavior keys | a new ADR that supersedes Chart.js ADR 0042, together with ADR: Input events and interaction state |
 | Material snippet | `onSurfaceVariant`, `outlineVariant`, `primary` at alpha 0.1, `surface`, `inverseSurface`, `onInverseSurface`, `textTheme.bodySmall` of the target `ThemeData`. CI compiles it in the gallery | after 0.1.0 |
 | forui adapter | section 5.3 | after 0.1.0 |
 
@@ -785,9 +784,9 @@ These parts wait:
   as the font token does (Chart.js ADR 0042, Open item 1).
 - Phase 9 decides the public palette type (Chart.js ADR 0042, Open item 3).
 
-Chart.js ADR 0042 (proposed) restates Chart.js ADR 0001 with the palette change of §3.5. The
-porting lead accepts it after the adversarial review of phase 8, when all gates are green. Then
-it supersedes Chart.js ADR 0001.
+Chart.js ADR 0042 restates Chart.js ADR 0001 with the palette change of §3.5. The porting lead
+accepted it after the adversarial review of phase 8, with all gates green (2026-10-23). It
+supersedes Chart.js ADR 0001.
 
 ## 11. Risks, open questions and alternatives
 
@@ -808,14 +807,15 @@ Risks:
 Open questions, to decide in phase 9:
 
 1. Touch values (hit radius 8, hover radius 6, font 14), and whether touch changes `interaction`
-   (proposed: no). A new ADR that supersedes Chart.js ADR 0001 decides them, together with ADR:
+   (proposed: no). A new ADR that supersedes Chart.js ADR 0042 decides them, together with ADR:
    Input events and interaction state. porting-flow.md, decision 2.7, must list this item.
-2. `easing` as a string (proposed) or an enum ([Chart.js ADR 0006](adr/0006-options-representation-and-resolver.md)).
+2. `easing` as a string (proposed) or an enum
+   ([Chart.js ADR 0043](adr/0043-options-representation-and-resolver.md)).
 3. Does `frames` exist at all if its benchmark fails?
 4. Typed component styles: generated option classes, or `raw` only (section 5.1)? ADR: Typed
    options API decides this question after 0.1.0.
 
-Chart.js ADR 0001 closes two questions. The theme sits below `overrides[type]`, because chart-type
+Chart.js ADR 0042 closes two questions. The theme sits below `overrides[type]`, because chart-type
 structure must win. #11910 stays a non-goal, as an upstream-tracking.md signal.
 
 Alternatives considered:

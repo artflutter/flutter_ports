@@ -1,15 +1,15 @@
 # Chart.js ADR 0043: Options representation and resolver
 
-- Status: proposed
+- Status: accepted (2026-10-23)
 - Date: 2026-10-23
-- Supersedes: [Chart.js ADR 0006](0006-options-representation-and-resolver.md) on acceptance
+- Supersedes: [Chart.js ADR 0006](0006-options-representation-and-resolver.md)
 - Related: [Chart.js ADR 0039](0039-tooltip-model-and-animation.md) §10 (`helpers.merge` with an
   element target),
   [differences.md](../differences.md#adapt-merge-element-target) row
   `adapt-merge-element-target`,
   [Chart.js ADR 0017](0017-element-properties.md) §5 (the access by name of `Element`),
   [Chart.js ADR 0032](0032-js-numeric-semantics.md) (JS numeric semantics, `jsToNumber`),
-  [Chart.js ADR 0042](0042-theming.md) (theming, proposed)
+  [Chart.js ADR 0042](0042-theming.md) (theming)
 
 This ADR states the complete decision on the options representation and the resolver. It keeps
 every decision of Chart.js ADR 0006 and changes one item: the leaf rule for a class instance
@@ -154,8 +154,8 @@ The research of 2026-10-16 measured these facts:
    exception.
 3. Current facts: the citation of the JS numeric semantics goes to Chart.js ADR 0032, the current
    successor of Chart.js ADR 0002. The `jsToNumber` and `jsIsNaN` results for the sentinel are
-   in `lib/src/js/js_number.dart`. The theme scope cites Chart.js ADR 0001 and its proposed
-   successor Chart.js ADR 0042, which states the same scope.
+   in `lib/src/js/js_number.dart`. The theme scope cites Chart.js ADR 0042, the successor of
+   Chart.js ADR 0001, which states the same scope.
 
 ## Alternatives considered
 
@@ -206,8 +206,8 @@ The research of 2026-10-16 measured these facts:
   3.02-3.08 µs on dart2wasm (Chart.js ADR 0039, Benchmarks).
 - The doc comment of `js_number.dart` waited for this sentinel. The change that added the
   sentinel gave `jsToNumber` and `jsIsNaN` the JS results for `undefined`: NaN and true.
-- [Chart.js ADR 0001](0001-theming.md) adds the theme as one more Map scope.
-  [Chart.js ADR 0042](0042-theming.md) (proposed) states the same scope.
+- [Chart.js ADR 0042](0042-theming.md) adds the theme as one more Map scope. It supersedes
+  [Chart.js ADR 0001](0001-theming.md), which added the same scope.
 - Upstream fixes to the option machinery replay as small diffs, because the module split stays the
   same.
 - At the acceptance of this ADR, the citations of Chart.js ADR 0006 in docs, code and tests move

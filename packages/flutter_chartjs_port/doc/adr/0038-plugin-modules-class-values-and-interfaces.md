@@ -1,10 +1,10 @@
 # Chart.js ADR 0038: Plugin modules, class values and interfaces
 
-- Status: proposed
+- Status: accepted (2026-10-23)
 - Date: 2026-10-22
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (type libraries, a member with its
   first ported reader, records for inline object types),
-  [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (plain objects as Maps, the
+  [Chart.js ADR 0043](0043-options-representation-and-resolver.md) (plain objects as Maps, the
   `undefined` sentinel),
   [Chart.js ADR 0012](0012-dart-file-naming.md) (names of default exports and of `_` members),
   [Chart.js ADR 0017](0017-element-properties.md) §4 and §5 (the `undefined` state of the element
@@ -18,9 +18,9 @@
   a unit),
   [Chart.js ADR 0034](0034-no-display-only-js-exactness.md) (the protected behavior),
   [Chart.js ADR 0036](0036-parsed-data.md) (the `Expando` precedent of `stacksOf`),
-  [Chart.js ADR 0039](0039-tooltip-model-and-animation.md) (the tooltip model, proposed),
-  [Chart.js ADR 0040](0040-filler-targets-and-plain-points.md) (the filler targets, proposed),
-  [Chart.js ADR 0041](0041-plugin-test-strategy.md) (the plugin test strategy, proposed),
+  [Chart.js ADR 0039](0039-tooltip-model-and-animation.md) (the tooltip model),
+  [Chart.js ADR 0040](0040-filler-targets-and-plain-points.md) (the filler targets),
+  [Chart.js ADR 0041](0041-plugin-test-strategy.md) (the plugin test strategy),
   [porting-flow.md](../porting-flow.md) §1.1 (the performance rule),
   [performance.md](../performance.md) §6 (how to measure),
   [differences.md](../differences.md) rows `adapt-decimation-data-accessor` (new),
@@ -34,7 +34,7 @@ Phase 8 ports the 15 files of `src/plugins/` (3518 lines): `index.js`, `plugin.c
 `plugin.tooltip.js` and the 8 files of `plugin.filler/`.
 
 The accepted ADRs already give these parts:
-- A plugin is a JavaScript object in the forms of Chart.js ADR 0006. A built-in plugin is a
+- A plugin is a JavaScript object in the forms of Chart.js ADR 0043. A built-in plugin is a
   `Map<String, Object?>`. `_notify` reads `plugin[hook]` at each call (Chart.js ADR 0020 §7).
 - A class that upstream keeps as a value gets a static `jsClass` (Chart.js ADR 0020 §3). The
   section names `Title`, `Legend` and `Tooltip`.
@@ -689,21 +689,21 @@ upstream imports.
 2. **The index of `hide` and `show` from the default legend `onClick`.** Closed. The legend port
    gives `hide` and `show` the number of the property key `ToString(index)` (`_datasetIndexKey`).
    The row `adapt-legend-dataset-index` records the update mode of an index that is not a number.
-3. **The filler target type.** Owner: [Chart.js ADR 0040](0040-filler-targets-and-plain-points.md)
-   (the filler, proposed). `_getTarget` gives a `LineElement`, a `simpleArc`
-   (`filler.target.js:30-31`), `true` or the `meta.dataset` of another dataset (`:41-44`).
-   `filler.drawing.js:153` and `:201` call `pathSegment` and `interpolate` on a `simpleArc` too
-   (`simpleArc.js:11-26`). The members of section 6 cover the line only. Chart.js ADR 0040 §4
-   adds the port-only interface `types.SimpleArc` and the dispatch. It closes this item when it
-   is accepted.
-4. **`meta.$filler`.** Owner: [Chart.js ADR 0040](0040-filler-targets-and-plain-points.md). A
-   typed field reads in 0.6 to 0.7 ns, the extras Map of `ChartMeta` in 6 to 19 ns. Chart.js ADR
-   0040 §6 keeps the extra property of `ChartMeta` and the class `FillerSource`. It closes this
-   item when it is accepted.
-5. **The members of `types.TooltipModel` and the access by name of `Tooltip`.** Owner: the
-   tooltip decision, [Chart.js ADR 0039](0039-tooltip-model-and-animation.md) (proposed).
+3. **The filler target type.** Closed. Owner:
+   [Chart.js ADR 0040](0040-filler-targets-and-plain-points.md) (the filler). `_getTarget` gives
+   a `LineElement`, a `simpleArc` (`filler.target.js:30-31`), `true` or the `meta.dataset` of
+   another dataset (`:41-44`). `filler.drawing.js:153` and `:201` call `pathSegment` and
+   `interpolate` on a `simpleArc` too (`simpleArc.js:11-26`). The members of section 6 cover the
+   line only. Chart.js ADR 0040 §4 adds the port-only interface `types.SimpleArc` and the
+   dispatch. It closed this item at its acceptance (2026-10-23).
+4. **`meta.$filler`.** Closed. Owner: [Chart.js ADR 0040](0040-filler-targets-and-plain-points.md).
+   A typed field reads in 0.6 to 0.7 ns, the extras Map of `ChartMeta` in 6 to 19 ns. Chart.js
+   ADR 0040 §6 keeps the extra property of `ChartMeta` and the class `FillerSource`. It closed
+   this item at its acceptance (2026-10-23).
+5. **The members of `types.TooltipModel` and the access by name of `Tooltip`.** Closed. Owner:
+   the tooltip decision, [Chart.js ADR 0039](0039-tooltip-model-and-animation.md).
    `Tooltip` animates, so its fields follow its own rule. Chart.js ADR 0039 §2 and §14 give
-   them. They close this item when that ADR is accepted.
+   them. They closed this item at the acceptance of that ADR (2026-10-23).
 6. **The `_TestLegend` fakes.** Closed. Wave 4 removed the three fakes
    ([Chart.js ADR 0041](0041-plugin-test-strategy.md) §5).
 
