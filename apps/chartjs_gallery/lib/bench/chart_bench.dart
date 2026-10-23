@@ -574,10 +574,10 @@ ChartBenchCase _dispatchCase(
   },
 );
 
-/// Sends a native event of [type] at ([x], [y]) to [chart], as the
-/// listener of the platform does (platform.dom.js:109-118 and
-/// core.controller.js:1163). The benchmark chart has no host, so no
-/// platform listener exists.
+/// Sends a native event of [type] at ([x], [y]) to the event handler of
+/// [chart] at once (core.controller.js:1163). The benchmark chart has no
+/// host, so no platform listener exists: the event skips the throttled
+/// proxy of the platform (platform.dom.js:240-254).
 void _benchEvent(Chart chart, String type, double x, double y) {
   final event = NativeEvent(
     type: type,
@@ -585,7 +585,9 @@ void _benchEvent(Chart chart, String type, double x, double y) {
     offsetY: y,
     target: chart.canvas,
   );
-  // The benchmark sends the event as the listener of a host does.
+  // The benchmark calls the event handler of the chart at once. It skips the
+  // host input path of Chart.js ADR 0037: the pointer conversion of the
+  // chart host and the throttled proxy of the platform listener.
   // ignore: invalid_use_of_internal_member
   chart.eventHandler(fromNativeEvent(event, chart));
 }

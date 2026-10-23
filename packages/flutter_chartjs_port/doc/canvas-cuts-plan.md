@@ -418,6 +418,18 @@ Changes to the cited files:
   the file. `doc/parity.md` changes rows in place: the rows that this plan cites (lines 378-422)
   do not move. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates
   do not change. No trigger occurred.
+- 2026-10-23, step 8 of phase 8, task S0 (the stress mode of the plugin cases). Two gallery
+  files of A3 change. `stress_demo.dart` gets the mode `plugins`: the chart of a plugin case of
+  the frameless benchmark (`lib/bench/chart_bench.dart`) in the real frame loop, the call
+  `frame`, the scenes of `StressPluginScene` and their controls. `StressStats` gets the field
+  `tooltipDrawMs`. `main_stress.dart` gets the defines `SCENE`, `LEGEND`, `TOOLTIP` and
+  `DATASETS`, and `CALL` takes the first call of the mode or the scene when it is not given. The
+  modes `primitives` to `axes`, their defines and their `STRESS` keys do not change, so the
+  baselines of A3 and the figures of phases 4 to 7 stay comparable. The note on A3 names the mode
+  `plugins`. The new test file `test/stress_plugins_test.dart` tests the mode. The work of A3
+  (`POINT_STYLE`, the arc scenario and the baselines of §6.3) does not change. No library file
+  that this plan cites changed. The references, the inventory (§1.1), the tests of §2.6 and §3.5
+  and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 
@@ -1245,10 +1257,11 @@ stays (priority 1, the upstream behavior). The two iPhone 17 Pro smoke pairs pas
 limit on both sides (§9.2 and §9.3 of `performance.md`).
 
 **Note on A3 (phase 4).** Phase 4 added the scene modes of the stress tab (§6.3). The stress
-entry takes `--dart-define=MODE=<primitives|elements|bars|arcs|chart|axes>`, and the default is
-`primitives`. Phase 5 added the mode `chart`: a real chart path with the typed options of the
-resolver. Phase 6 added the mode `axes`: the points of the mode `chart` on the real scales of
-phase 6. For A3, this means:
+entry takes `--dart-define=MODE=<primitives|elements|bars|arcs|chart|axes|plugins>`, and the
+default is `primitives`. Phase 5 added the mode `chart`: a real chart path with the typed options
+of the resolver. Phase 6 added the mode `axes`: the points of the mode `chart` on the real scales
+of phase 6. Phase 8 added the mode `plugins`: the plugin cases of the frameless benchmark in the
+real frame loop. For A3, this means:
 - The `arcs` mode draws `ArcElement` wedges under the retina scale. Thus `MODE=arcs` at 5000 + 0
   can serve the arc micro-benchmark (a) on all three platforms.
 - The micro-benchmark (b), under a skew, still needs the scratch package. No mode draws under a

@@ -418,13 +418,14 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   scenario. For one scenario in a fresh process:
   `flutter run --profile -t lib/main_stress.dart --dart-define=SCENARIO=5000x50`.
   `--dart-define=SECONDS=<n>` changes the time of each scenario.
-  `--dart-define=MODE=<primitives|elements|bars|arcs|chart|axes>` selects the mode (section 1).
-  Without `SCENARIO`, the modes `primitives` and `elements` run the six scenarios of section 2,
-  `bars` runs 1000, 5000 and 20000 bars, and `arcs` runs 100, 1000 and 5000 arcs. The mode
-  `chart` runs the counts of its chart type without labels: 1000, 5000 and 20000 items for
+  `--dart-define=MODE=<primitives|elements|bars|arcs|chart|axes|plugins>` selects the mode
+  (section 1). Without `SCENARIO`, the modes `primitives` and `elements` run the six scenarios of
+  section 2, `bars` runs 1000, 5000 and 20000 bars, and `arcs` runs 100, 1000 and 5000 arcs. The
+  mode `chart` runs the counts of its chart type without labels: 1000, 5000 and 20000 items for
   `line`, `scatter`, `bar` and `bubble`, and 100, 1000 and 5000 items for `doughnut`, `pie`,
   `polarArea` and `radar`. The mode `axes` runs 1000, 5000 and 20000 chart points without labels.
-  Each `STRESS` line starts with the key `mode`.
+  The mode `plugins` runs 100 and 1000 points in each dataset without labels. Each `STRESS` line
+  starts with the key `mode`.
 - **The mode `chart`** ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md) §8,
   [Chart.js ADR 0031](adr/0031-gallery-chart-types.md) §3 and §5) measures a real `Chart` with a
   ported controller. Phases 5 and 6 used the gallery controller `StressPointController`. The
@@ -494,6 +495,60 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
   - The `STRESS` line has the keys `call`, `scale`, `yScale` and `autoSkip`, the tick count
     `ticks` (after the auto skip) and the `rotation` of the x axis at the end, and the means
     `elementsMs`, `layoutMs`, `datasetsUpdateMs` and `datasetsDrawMs` of the timing parts.
+- **The mode `plugins`** (step 8 of phase 8, task S0) runs the chart of a plugin case of the
+  frameless benchmark (below) in the real frame loop. Thus the legend, the title, the tooltip, the
+  filler and the dispatch of their hooks get frame, build and raster figures on each platform.
+  - `--dart-define=SCENE=<legend|title|hover|still|fade|gaps|stack|radar>` selects the scene. The
+    default is `legend`. The stress tab has the same choice in the `scene` line (8 icon segments,
+    keys `stress.plugins.scene.<name>`). A scene takes the config of the benchmark case
+    `legend.line`, `title.line`, `tooltip.hover`, `tooltip.still`, `tooltip.fade`, `fill.gaps`,
+    `fill.stack` or `fill.radar` (`chartBenchCases`, the same data, options and timing plugins).
+    Only the options of the frameless chart change: no `responsive: false`, no fixed
+    `devicePixelRatio`, `maintainAspectRatio: false`, and no `BasicPlatform`. Thus the chart fills
+    its host and gets the `FlutterPlatform`, which keeps the option `animation`. The inline plugin
+    of the labels and the title of the stress tab comes first, as in the mode `chart`.
+  - `--dart-define=LEGEND=0` gives the scene `legend` without the legend (`plugins.legend: false`):
+    the base of the legend and the title. `--dart-define=TOOLTIP=0` gives the scenes `hover` and
+    `still` without the tooltip plugin: the base of the tooltip. `--dart-define=DATASETS=<3|10>`
+    gives the datasets of the scenes `hover`, `still` and `fade`; the default is 10. The stress tab
+    has the toggles `stress.plugins.legend` and `stress.plugins.tooltip` and the line `sets` (keys
+    `stress.plugins.datasets.<3|10>`).
+  - `CALL` is the call of the benchmark case. The scenes `legend`, `title`, `gaps`, `stack` and
+    `radar` take `draw` (the default) or `update` (the change of the data of the case, not timed,
+    then `chart.update('none')`). `still` takes `draw`. `hover` and `fade` take `frame`, their
+    default. Without `CALL`, each mode and scene takes its first call. A call that the mode or the
+    scene does not have throws an `ArgumentError` at the start: `frame` outside the mode
+    `plugins`, `animate` in the mode `axes`, or for example `CALL=draw` with `SCENE=fade`.
+  - `hover` (`animation: false`): each frame sends a `mousemove` over the next point of dataset 0
+    directly to the event handler of the chart (`chart.eventHandler`), as the benchmark does. This
+    goes around the host input path of Chart.js ADR 0037: the pointer conversion of the chart host
+    and the throttled proxy of `createProxyAndListen` (platform.dom.js:240-254). Thus the handler
+    runs in the same frame callback, with no throttle. The event draws the chart at once.
+    `updateMs` is the time of the event handler of the chart only, without its draw.
+  - `fade` (the default animations): the first frame of each 12 frames
+    (`chartBenchFadeFrames`) sends a `mousemove` over the middle point of dataset 0 or a
+    `mouseout`, in turn, directly to the event handler of the chart, around the host input path,
+    as in the scene `hover`. The animator of the chart ticks the fade in its own frame callback,
+    in the real frames: no manual tick. The loop schedules its next frame before the event, so its
+    callback runs before the animator callback in each frame. It marks the time at its end, and
+    `animatorMs` is the tick of the animator before its draw. `updateMs` is the time of the event
+    handler of the chart only. Thus `updateMs + animatorMs` compares with the update of the
+    benchmark cell. At 120 Hz, 12 frames are 100 ms, so each fade stops at its middle.
+  - `still` (the default animations): the preparation of the benchmark case hovers the middle
+    point and ends the animations; each frame calls `chart.draw()`.
+  - The tooltip scenes listen to the default events. A real pointer over the chart host also gives
+    events, through the host input path and the throttled proxy, and these events are not the
+    events of the scene: do not move the mouse over the chart during a run. The figures of the
+    scenes `hover` and `fade` do not include the cost of the host input path.
+  - The `STRESS` line has the keys `animatorMs`, `call`, `scene`, `benchCase` (the id of the
+    benchmark case), the keys of the benchmark case (`datasets`, and `legend` and `title`, or
+    `tooltip`), the means `elementsMs`, `layoutMs`, `datasetsUpdateMs` and `datasetsDrawMs` of the
+    timing parts, and in the tooltip scenes `tooltipDrawMs` (`beforeTooltipDraw` to
+    `afterTooltipDraw`). The parts of this mode add the hooks of the animator frames too.
+  - Example: `flutter run --profile -t lib/main_stress.dart --dart-define=MODE=plugins
+    --dart-define=SCENE=hover --dart-define=TOOLTIP=0 --dart-define=SCENARIO=1000x0`.
+  - The modes `primitives` to `axes`, their defines and the keys of their `STRESS` lines do not
+    change. The `StressStats` value gets the field `tooltipDrawMs`.
 - `--dart-define=LINE=0` turns off the line of the modes `primitives` and `elements`. The mode
   `chart` of `line` without `SHOWLINE=1` has no line: the line has `borderWidth` 0
   (`controller.line.js:63-65`). Thus the acceptance of Chart.js ADR 0021 §8 compares the mode

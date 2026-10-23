@@ -5,6 +5,14 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:chartjs_gallery/bench/chart_bench.dart'
+    show
+        ChartBenchCase,
+        ChartBenchScene,
+        chartBenchCases,
+        chartBenchFadeFrames,
+        chartBenchOptions,
+        chartBenchPluginCounts;
 import 'package:chartjs_gallery/demo/canvas_demo.dart' show labelColor;
 import 'package:chartjs_gallery/demo/chart_canvas.dart';
 import 'package:chartjs_gallery/demo/demo_chart.dart';
@@ -14,6 +22,7 @@ import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_timing.dart';
+import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
@@ -28,6 +37,9 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
 import 'package:flutter_chartjs_port/src/elements/index.dart';
 import 'package:flutter_chartjs_port/src/helpers/index.dart'
     show ParsedFont, drawPoint, renderText, requestAnimFrame, toFont;
+import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
+    show fromNativeEvent;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show ChartArea;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -69,7 +81,14 @@ enum StressMode {
   /// stress_axes.dart`): an x axis of a [StressAxisType], a linear or
   /// logarithmic y axis, and the option `ticks.autoSkip` of the x axis.
   /// The calls are [StressChartCall.draw] and [StressChartCall.update].
-  axes(stressPointCounts, 'chart points on scales');
+  axes(stressPointCounts, 'chart points on scales'),
+
+  /// The chart of a plugin case of the frameless benchmark
+  /// (`lib/bench/chart_bench.dart`) in the real frame loop: the legend, the
+  /// title, the tooltip or the filler ([StressPluginScene]). N is the point
+  /// count of each dataset. The calls are the calls of the scene
+  /// ([StressPluginScene.calls]).
+  plugins(chartBenchPluginCounts, 'points per dataset');
 
   const StressMode(this.counts, this.items);
 
@@ -80,13 +99,15 @@ enum StressMode {
   final String items;
 
   /// Whether the mode runs a real `Chart` on a chart host of its own:
-  /// [chart] and [axes].
-  bool get runsChart => this == chart || this == axes;
+  /// [chart], [axes] and [plugins].
+  bool get runsChart => this == chart || this == axes || this == plugins;
 }
 
-/// The call of each frame in the modes [StressMode.chart] and
-/// [StressMode.axes] (Chart.js ADR 0021, section 8). [draw] and [update] run
-/// with `animation: false`. The mode [StressMode.axes] has no [animate].
+/// The call of each frame in the modes [StressMode.chart],
+/// [StressMode.axes] and [StressMode.plugins] (Chart.js ADR 0021, section
+/// 8). [draw] and [update] of the modes chart and axes run with
+/// `animation: false`. The mode [StressMode.axes] has no [animate]. Only the
+/// mode [StressMode.plugins] has [frame] ([stressCallsOf]).
 enum StressChartCall {
   /// Case (a): `chart.draw()`. The points do not move.
   draw,
@@ -103,6 +124,227 @@ enum StressChartCall {
   /// animations (the property writes) and calls `chart.draw()`. `animatorMs`
   /// is the time of that tick without the draw.
   animate,
+
+  /// The frame of a tooltip scene of the mode [StressMode.plugins] (the call
+  /// `frame` of the benchmark): an event of the chart, and in the scene
+  /// [StressPluginScene.fade] the tick of the animator in the real frames.
+  /// The data does not change.
+  frame,
+}
+
+/// The calls of the mode [mode]: the scene [scene] gives the calls of the
+/// mode [StressMode.plugins]. The element modes have the calls of the mode
+/// [StressMode.chart], which they do not use.
+List<StressChartCall> stressCallsOf(
+  StressMode mode,
+  StressPluginScene scene,
+) => switch (mode) {
+  StressMode.axes => const [StressChartCall.draw, StressChartCall.update],
+  StressMode.plugins => scene.calls,
+  _ => const [
+    StressChartCall.draw,
+    StressChartCall.update,
+    StressChartCall.animate,
+  ],
+};
+
+/// The call [call] in the mode [mode] with the plugin scene [scene]: [call]
+/// when the mode has it ([stressCallsOf]), else the first call of the mode.
+/// Thus the mode axes takes [StressChartCall.draw] for
+/// [StressChartCall.animate], and a tooltip scene takes
+/// [StressChartCall.frame].
+StressChartCall stressCallOf(
+  StressMode mode,
+  StressChartCall call,
+  StressPluginScene scene,
+) {
+  final calls = stressCallsOf(mode, scene);
+  return calls.contains(call) ? call : calls.first;
+}
+
+/// The calls of the cases with a draw and an update.
+const List<StressChartCall> _drawAndUpdate = [
+  StressChartCall.draw,
+  StressChartCall.update,
+];
+
+/// The scenes of the mode [StressMode.plugins]: each is a plugin case of the
+/// frameless benchmark (`chartBenchCases` of `lib/bench/chart_bench.dart`,
+/// task P1 of step 8 of phase 8), with the config of that case.
+///
+/// The scenes of the legend, the title and the filler run with
+/// `animation: false` and `events: []`. The tooltip scenes listen to the
+/// default events: a pointer over the chart host also gives events.
+enum StressPluginScene {
+  /// `legend.line`: three datasets on the visible default scales, with the
+  /// legend of the docs blocks, or without it (the base of the legend and
+  /// the title; [StressPluginCase.legend]).
+  legend('legend', 'line', _drawAndUpdate),
+
+  /// `title.line`: the chart of [legend] without the legend, with the title
+  /// 'Chart.js Line Chart'.
+  title('title', 'line', _drawAndUpdate),
+
+  /// `tooltip.hover` (Chart.js ADR 0039, Open 1, case (a)): each frame sends
+  /// a `mousemove` over the next point of dataset 0 to the event handler of
+  /// the chart, with `animation: false`. Thus the tooltip changes its index
+  /// in each frame, and the event draws the chart.
+  hover('tooltip', 'hover', [StressChartCall.frame]),
+
+  /// `tooltip.still` (case (b)): the default animations. The preparation of
+  /// the benchmark hovers the middle point and ends the animations. Each
+  /// frame calls `chart.draw()`.
+  still('tooltip', 'still', [StressChartCall.draw]),
+
+  /// `tooltip.fade` (case (c)): the default animations. The first frame of
+  /// each `chartBenchFadeFrames` (12) frames sends a `mousemove` over the
+  /// middle point of dataset 0 or a `mouseout`, in turn. The animator of the
+  /// chart ticks the fade in the real frames: no manual tick.
+  fade('tooltip', 'fade', [StressChartCall.frame]),
+
+  /// `fill.gaps` (Chart.js ADR 0040, Open 2): a gap every 12 points and the
+  /// fill `{target: 'origin', above, below}` (the path clips).
+  gaps('fill', 'gaps', _drawAndUpdate),
+
+  /// `fill.stack`: stacked y values and `fill: 'stack'`.
+  stack('fill', 'stack', _drawAndUpdate),
+
+  /// `fill.radar`: a radar with the fills `origin`, `-1` and `-1`.
+  radar('fill', 'radar', _drawAndUpdate);
+
+  const StressPluginScene(this.benchMode, this.benchName, this.calls);
+
+  /// The mode of the benchmark case, for example `tooltip`.
+  final String benchMode;
+
+  /// The name of the benchmark case in its mode, for example `hover`.
+  final String benchName;
+
+  /// The calls of the scene: the calls of its benchmark cases.
+  final List<StressChartCall> calls;
+
+  /// The id of the benchmark case: `tooltip.hover`.
+  String get benchId => '$benchMode.$benchName';
+
+  /// Whether the scene is a tooltip case, with the part `tooltipDraw` and
+  /// the choice of 3 or 10 datasets.
+  bool get tooltip => benchMode == 'tooltip';
+}
+
+/// The dataset counts of the tooltip scenes.
+const List<int> stressPluginDatasets = [3, 10];
+
+/// One case of the mode [StressMode.plugins]: a scene and its keys. The keys
+/// select one case of the benchmark ([benchKeys]).
+@immutable
+final class StressPluginCase {
+  /// The case of [scene]. [legend] applies to the scene
+  /// [StressPluginScene.legend], [tooltip] to the scenes
+  /// [StressPluginScene.hover] and [StressPluginScene.still], and
+  /// [datasets] (3 or 10) to the three tooltip scenes.
+  const StressPluginCase(
+    this.scene, {
+    this.legend = true,
+    this.tooltip = true,
+    this.datasets = 10,
+  });
+
+  /// The scene.
+  final StressPluginScene scene;
+
+  /// Whether the scene [StressPluginScene.legend] shows the legend.
+  final bool legend;
+
+  /// Whether the scenes [StressPluginScene.hover] and
+  /// [StressPluginScene.still] have the tooltip plugin.
+  final bool tooltip;
+
+  /// The datasets of the tooltip scenes.
+  final int datasets;
+
+  /// The keys of the benchmark case, as its BENCH line gives them.
+  Map<String, Object?> get benchKeys => switch (scene) {
+    StressPluginScene.legend => {
+      'datasets': 3,
+      'legend': legend,
+      'title': false,
+    },
+    StressPluginScene.title => {'datasets': 3, 'legend': false, 'title': true},
+    StressPluginScene.hover || StressPluginScene.still => {
+      'datasets': datasets,
+      'tooltip': tooltip,
+    },
+    StressPluginScene.fade => {'datasets': datasets, 'tooltip': true},
+    StressPluginScene.gaps ||
+    StressPluginScene.stack ||
+    StressPluginScene.radar => {'datasets': 3},
+  };
+
+  /// This case with the values that are given.
+  StressPluginCase copyWith({
+    StressPluginScene? scene,
+    bool? legend,
+    bool? tooltip,
+    int? datasets,
+  }) => StressPluginCase(
+    scene ?? this.scene,
+    legend: legend ?? this.legend,
+    tooltip: tooltip ?? this.tooltip,
+    datasets: datasets ?? this.datasets,
+  );
+
+  /// Two cases are equal when they select the same benchmark case.
+  @override
+  bool operator ==(Object other) =>
+      other is StressPluginCase &&
+      other.scene == scene &&
+      mapEquals(other.benchKeys, benchKeys);
+
+  @override
+  int get hashCode => Object.hash(
+    scene,
+    Object.hashAllUnordered([
+      for (final MapEntry(:key, :value) in benchKeys.entries)
+        Object.hash(key, value),
+    ]),
+  );
+
+  @override
+  String toString() => '${scene.benchId} $benchKeys';
+}
+
+/// The benchmark case of [pluginCase] with the call [call]: the case of
+/// `chartBenchCases` with the id of the scene, the call and the keys of
+/// [pluginCase]. A call that the scene does not have throws an
+/// [ArgumentError].
+ChartBenchCase stressPluginBenchCase(
+  StressPluginCase pluginCase,
+  StressChartCall call,
+) {
+  if (!pluginCase.scene.calls.contains(call)) {
+    throw ArgumentError.value(call, 'call', 'Not a call of $pluginCase');
+  }
+  final keys = pluginCase.benchKeys;
+  return chartBenchCases.singleWhere(
+    (c) =>
+        c.id == pluginCase.scene.benchId &&
+        c.call.name == call.name &&
+        mapEquals(c.keys, keys),
+  );
+}
+
+/// The config of a benchmark chart [config] for a chart host, in place:
+/// without the keys of `chartBenchOptions` (`responsive: false` and the
+/// fixed device pixel ratio), with `maintainAspectRatio: false`, and without
+/// the platform of the benchmark (`config.platform`). Thus the chart fills
+/// its host, and it gets the `FlutterPlatform`, which keeps the option
+/// `animation`, as the DOM platform does. The other keys stay.
+AnyObject stressHostConfig(AnyObject config) {
+  final options = config['options']! as AnyObject;
+  chartBenchOptions.keys.forEach(options.remove);
+  options['maintainAspectRatio'] = false;
+  config.remove('platform');
+  return config;
 }
 
 /// The figures of the stress tab, published twice a second and when the
@@ -119,30 +361,159 @@ enum StressChartCall {
 /// type before the first chart). The mode [StressMode.axes] gives the tick
 /// count (`ticks`, after the auto skip) and the `labelRotation`
 /// (`rotation`) of the x axis. They are 0 or false in the other modes.
-typedef StressStats = ({
-  StressMode mode,
-  int points,
-  int labels,
-  int frames,
-  double fps,
-  double drawMs,
-  double updateMs,
-  double animatorMs,
-  double elementsMs,
-  double layoutMs,
-  double datasetsUpdateMs,
-  double datasetsDrawMs,
-  int ticks,
-  double rotation,
-  bool sharing,
-  double buildMs,
-  double buildMaxMs,
-  double rasterMs,
-  double rasterMaxMs,
-  int timings,
-});
+///
+/// The mode [StressMode.plugins] gives the four parts, `animatorMs` (the
+/// tick of the animator before its draw, in the scene
+/// [StressPluginScene.fade]) and `tooltipDrawMs`, the draw of the tooltip
+/// from `beforeTooltipDraw` to `afterTooltipDraw` in the tooltip scenes.
+///
+/// A class with the field-wise `==` of a record: dart2wasm (Dart 3.11 to
+/// 3.13.5) crashes on a record type with exactly 20 fields, because the
+/// generated `hashCode` calls `Object.hash` with 21 arguments.
+@immutable
+final class StressStats {
+  /// Creates the figures.
+  const StressStats({
+    required this.mode,
+    required this.points,
+    required this.labels,
+    required this.frames,
+    required this.fps,
+    required this.drawMs,
+    required this.updateMs,
+    required this.animatorMs,
+    required this.elementsMs,
+    required this.layoutMs,
+    required this.datasetsUpdateMs,
+    required this.datasetsDrawMs,
+    required this.ticks,
+    required this.rotation,
+    required this.sharing,
+    required this.buildMs,
+    required this.buildMaxMs,
+    required this.rasterMs,
+    required this.rasterMaxMs,
+    required this.timings,
+    this.tooltipDrawMs = 0,
+  });
 
-const StressStats _noStats = (
+  /// The mode.
+  final StressMode mode;
+
+  /// The item count N.
+  final int points;
+
+  /// The label count M.
+  final int labels;
+
+  /// The frames since the loop started.
+  final int frames;
+
+  /// The frames per second.
+  final double fps;
+
+  /// The mean time of the draw calls of a frame.
+  final double drawMs;
+
+  /// The time of `chart.update()` without its draw.
+  final double updateMs;
+
+  /// The time of the animator tick without its draw.
+  final double animatorMs;
+
+  /// The part `elements` of `StressChartTiming`.
+  final double elementsMs;
+
+  /// The part `layout` of `StressChartTiming`.
+  final double layoutMs;
+
+  /// The part `datasetsUpdate` of `StressChartTiming`.
+  final double datasetsUpdateMs;
+
+  /// The part `datasetsDraw` of `StressChartTiming`.
+  final double datasetsDrawMs;
+
+  /// The tick count of the x axis after the auto skip.
+  final int ticks;
+
+  /// The `labelRotation` of the x axis.
+  final double rotation;
+
+  /// The `enableOptionSharing` of the controller of dataset 0.
+  final bool sharing;
+
+  /// The mean build time of the frame timings.
+  final double buildMs;
+
+  /// The longest build time of the frame timings.
+  final double buildMaxMs;
+
+  /// The mean raster time of the frame timings.
+  final double rasterMs;
+
+  /// The longest raster time of the frame timings.
+  final double rasterMaxMs;
+
+  /// The count of frame timings.
+  final int timings;
+
+  /// The part `tooltipDraw` of the tooltip scenes of the mode
+  /// [StressMode.plugins].
+  final double tooltipDrawMs;
+
+  @override
+  bool operator ==(Object other) =>
+      other is StressStats &&
+      mode == other.mode &&
+      points == other.points &&
+      labels == other.labels &&
+      frames == other.frames &&
+      fps == other.fps &&
+      drawMs == other.drawMs &&
+      updateMs == other.updateMs &&
+      animatorMs == other.animatorMs &&
+      elementsMs == other.elementsMs &&
+      layoutMs == other.layoutMs &&
+      datasetsUpdateMs == other.datasetsUpdateMs &&
+      datasetsDrawMs == other.datasetsDrawMs &&
+      ticks == other.ticks &&
+      rotation == other.rotation &&
+      sharing == other.sharing &&
+      buildMs == other.buildMs &&
+      buildMaxMs == other.buildMaxMs &&
+      rasterMs == other.rasterMs &&
+      rasterMaxMs == other.rasterMaxMs &&
+      timings == other.timings &&
+      tooltipDrawMs == other.tooltipDrawMs;
+
+  // Object.hash takes at most 20 values.
+  @override
+  int get hashCode => Object.hashAll([
+    mode,
+    points,
+    labels,
+    frames,
+    fps,
+    drawMs,
+    updateMs,
+    animatorMs,
+    elementsMs,
+    layoutMs,
+    datasetsUpdateMs,
+    datasetsDrawMs,
+    ticks,
+    rotation,
+    sharing,
+    buildMs,
+    buildMaxMs,
+    rasterMs,
+    rasterMaxMs,
+    timings,
+    tooltipDrawMs,
+  ]);
+}
+
+const StressStats _noStats = StressStats(
   mode: StressMode.primitives,
   points: 0,
   labels: 0,
@@ -183,13 +554,18 @@ const StressStats _noStats = (
 /// - [StressMode.axes]: the chart of [StressMode.chart] on real scales. An
 ///   update gives the scales new data limits, ticks, label sizes and a
 ///   rotation, and maps each point with `getPixelForValue`.
+/// - [StressMode.plugins]: the chart of a plugin case of the frameless
+///   benchmark ([StressPluginScene]). Each frame calls `chart.draw()`, or
+///   changes the data and calls `chart.update('none')`, or sends the event
+///   of a tooltip scene to the chart ([StressChartCall.frame]).
 ///
 /// The element modes make their elements once for each mode and N. Each
 /// frame writes the properties that move with the typed setters, and then
 /// calls `draw` of each element. The mode [StressMode.chart] makes a new
 /// chart for each N, chart type, `showLine` value and `backgroundColor`
 /// form. The mode [StressMode.axes] makes a new chart for each N, scale
-/// type and `autoSkip` value.
+/// type and `autoSkip` value. The mode [StressMode.plugins] makes a new
+/// chart for each N and [StressPluginCase].
 ///
 /// The labels have one fixed angle of -45 degrees, as the tick labels of a
 /// chart have; the `spin labels` switch gives each label a new angle in
@@ -199,8 +575,8 @@ const StressStats _noStats = (
 ///
 /// Every control has a `ValueKey` (`stress.mode.bars`, `stress.n.5000`,
 /// `stress.m.200`, `stress.start`, `stress.chart.call.update`,
-/// `stress.chart.type.bar`, `stress.axes.scale.time`, …) so that automation
-/// can drive it.
+/// `stress.chart.type.bar`, `stress.axes.scale.time`,
+/// `stress.plugins.scene.fade`, …) so that automation can drive it.
 class StressDemo extends StatefulWidget {
   /// Creates the stress tab.
   ///
@@ -209,8 +585,12 @@ class StressDemo extends StatefulWidget {
   /// two layer switches. [initialCall], [initialType], [initialShowLine] and
   /// [initialScriptable] set the case of the mode [StressMode.chart].
   /// [initialCall], [initialScale], [initialYScale] and [initialAutoSkip]
-  /// set the case of the mode [StressMode.axes]. The mode [StressMode.axes]
-  /// takes [StressChartCall.draw] for [StressChartCall.animate].
+  /// set the case of the mode [StressMode.axes]. [initialPluginCase] sets
+  /// the case of the mode [StressMode.plugins]. Each mode takes the first
+  /// of its calls for a call that it does not have ([stressCallOf]): the
+  /// mode [StressMode.axes] takes [StressChartCall.draw] for
+  /// [StressChartCall.animate], and a tooltip scene takes
+  /// [StressChartCall.frame].
   /// [autoStart] starts the loop when the chart exists. [onStats] receives
   /// each published [StressStats]. They let a profiling entry point
   /// (`lib/main_stress.dart`) or a test drive the tab.
@@ -227,6 +607,7 @@ class StressDemo extends StatefulWidget {
     this.initialScale = StressAxisType.linear,
     this.initialYScale = StressAxisType.linear,
     this.initialAutoSkip = true,
+    this.initialPluginCase = const StressPluginCase(StressPluginScene.legend),
     this.autoStart = false,
     this.onStats,
     super.key,
@@ -273,6 +654,9 @@ class StressDemo extends StatefulWidget {
   /// [StressMode.axes].
   final bool initialAutoSkip;
 
+  /// The first case of the mode [StressMode.plugins].
+  final StressPluginCase initialPluginCase;
+
   /// Whether the loop starts as soon as the chart exists.
   final bool autoStart;
 
@@ -294,12 +678,14 @@ class StressDemoState extends State<StressDemo> {
   bool _points = true;
   late bool _line = widget.initialLine;
   late bool _spin = widget.initialSpin;
+  late StressPluginCase _pluginCase = widget.initialPluginCase;
   // The mode axes has no call animate: it takes the call draw, as _setScene
   // does. Else the first frame waits for an animation that does not start.
-  late StressChartCall _call =
-      _mode == StressMode.axes && widget.initialCall == StressChartCall.animate
-      ? StressChartCall.draw
-      : widget.initialCall;
+  late StressChartCall _call = stressCallOf(
+    _mode,
+    widget.initialCall,
+    _pluginCase.scene,
+  );
   late bool _showLine = widget.initialShowLine;
   late bool _scriptable = widget.initialScriptable;
   late StressAxisType _scale = widget.initialScale;
@@ -323,6 +709,14 @@ class StressDemoState extends State<StressDemo> {
 
   // The mode [StressMode.axes]: the data objects of the chart.
   StressAxesScene? _axesScene;
+
+  // The mode [StressMode.plugins]: the benchmark scene of the chart, the
+  // index of the hovered point (scene hover), and the frame of the fade and
+  // its direction (scene fade).
+  ChartBenchScene? _pluginScene;
+  int _hoverIndex = 0;
+  int _fadeFrame = 0;
+  bool _fadeShown = false;
 
   // Point positions and velocities, in fractions of the chart per second.
   // The chart benchmark (lib/bench/chart_bench.dart) uses the same points.
@@ -358,6 +752,7 @@ class StressDemoState extends State<StressDemo> {
   int _windowLayoutTicks = 0;
   int _windowDatasetsUpdateTicks = 0;
   int _windowDatasetsDrawTicks = 0;
+  int _windowTooltipDrawTicks = 0;
   Duration _windowStart = Duration.zero;
   double _fps = 0;
   double _drawMs = 0;
@@ -367,6 +762,7 @@ class StressDemoState extends State<StressDemo> {
   double _layoutMs = 0;
   double _datasetsUpdateMs = 0;
   double _datasetsDrawMs = 0;
+  double _tooltipDrawMs = 0;
   final List<FrameTiming> _timings = [];
 
   final ParsedFont _labelFont = toFont(<String, Object?>{'size': 12});
@@ -454,6 +850,7 @@ class StressDemoState extends State<StressDemo> {
       _windowLayoutTicks = 0;
       _windowDatasetsUpdateTicks = 0;
       _windowDatasetsDrawTicks = 0;
+      _windowTooltipDrawTicks = 0;
       _frames = 0;
       _timings.clear();
       // The first frame of the animated case starts the animation again.
@@ -474,8 +871,9 @@ class StressDemoState extends State<StressDemo> {
   /// but not above the largest count of the new mode. An explicit [n] wins.
   /// A change of either makes the elements again. In the modes
   /// [StressMode.chart] and [StressMode.axes], a change of N makes a new
-  /// chart. The mode [StressMode.axes] changes the call
-  /// [StressChartCall.animate] to [StressChartCall.draw].
+  /// chart. The new mode takes the first of its calls for a call that it
+  /// does not have ([stressCallOf]): the mode [StressMode.axes] changes the
+  /// call [StressChartCall.animate] to [StressChartCall.draw].
   void _setScene({StressMode? mode, int? n}) {
     final newMode = mode ?? _mode;
     final newN = n ?? (mode == null ? _n : _countForMode(newMode));
@@ -489,9 +887,7 @@ class StressDemoState extends State<StressDemo> {
     } else if (_mode.runsChart) {
       _stressChart = null;
     }
-    if (newMode == StressMode.axes && _call == StressChartCall.animate) {
-      _call = StressChartCall.draw;
-    }
+    _call = stressCallOf(newMode, _call, _pluginCase.scene);
     _mode = newMode;
     _n = newN;
     _buildScene();
@@ -524,6 +920,16 @@ class StressDemoState extends State<StressDemo> {
     _scale = newScale;
     _yScale = newYScale;
     _autoSkip = newAutoSkip;
+    _stressChart = null;
+  }
+
+  /// Sets the case of the mode [StressMode.plugins]. A change makes a new
+  /// chart. The new scene takes the first of its calls for a call that it
+  /// does not have.
+  void _setPluginCase(StressPluginCase pluginCase) {
+    if (pluginCase == _pluginCase) return;
+    _pluginCase = pluginCase;
+    _call = stressCallOf(_mode, _call, pluginCase.scene);
     _stressChart = null;
   }
 
@@ -675,8 +1081,8 @@ class StressDemoState extends State<StressDemo> {
           for (var i = 0; i < _n; i++)
             ArcElement()..options = _arcOptions[i % _arcSlices],
         ];
-      case StressMode.chart || StressMode.axes:
-        // The chart makes its point elements.
+      case StressMode.chart || StressMode.axes || StressMode.plugins:
+        // The chart makes its elements.
         return;
     }
     _sceneBuilds++;
@@ -727,6 +1133,46 @@ class StressDemoState extends State<StressDemo> {
         plugins: [_labelsPlugin, _timing.plugin],
       ),
     );
+  }
+
+  /// `new Chart(canvas, config)` of the mode [StressMode.plugins]: the
+  /// config of the benchmark case of the plugin case and the call
+  /// ([stressPluginBenchCase]) for N points in each dataset, made for the
+  /// host by [stressHostConfig]. The config keeps the timing plugins of the
+  /// case: the four parts of `StressChartTiming`, and the part
+  /// `tooltipDraw` in the tooltip scenes. The inline plugin `stressLabels`
+  /// comes first, as in the mode [StressMode.chart].
+  Chart _createPluginChart(UiCanvasElement canvas) {
+    registerGalleryComponents();
+    final scene = _pluginScene = stressPluginBenchCase(
+      _pluginCase,
+      _call,
+    ).scene(_n);
+    final config = stressHostConfig(scene.config);
+    config['plugins'] = <Object?>[
+      _labelsPlugin,
+      ...config['plugins']! as List<Object?>,
+    ];
+    _chartData = const [];
+    return _StressChart(canvas, config);
+  }
+
+  /// Brings a new chart of the mode [StressMode.plugins] into the state of
+  /// its case, before the first frame: the preparation of the benchmark
+  /// case (for example the hover and the end of the animations of the
+  /// scene [StressPluginScene.still]). Then it drops the times and the
+  /// parts of the construction.
+  void _preparePluginChart(_StressChart chart) {
+    final scene = _pluginScene;
+    if (scene == null) return;
+    scene.prepare?.call(chart);
+    _hoverIndex = 0;
+    _fadeFrame = 0;
+    _fadeShown = false;
+    scene.takeParts?.call();
+    chart
+      ..drawMicros = 0
+      ..animatorMicros = 0;
   }
 
   /// The inline plugin `stressLabels`: the M labels and the title, after the
@@ -814,6 +1260,7 @@ class StressDemoState extends State<StressDemo> {
       _layoutMs = perFrame(_windowLayoutTicks);
       _datasetsUpdateMs = perFrame(_windowDatasetsUpdateTicks);
       _datasetsDrawMs = perFrame(_windowDatasetsDrawTicks);
+      _tooltipDrawMs = perFrame(_windowTooltipDrawTicks);
       _windowStart = now;
       _windowFrames = 0;
       _windowDrawMicros = 0;
@@ -823,6 +1270,7 @@ class StressDemoState extends State<StressDemo> {
       _windowLayoutTicks = 0;
       _windowDatasetsUpdateTicks = 0;
       _windowDatasetsDrawTicks = 0;
+      _windowTooltipDrawTicks = 0;
       _publish();
     }
     // In the animated case, the progress listener of the animator schedules
@@ -848,6 +1296,10 @@ class StressDemoState extends State<StressDemo> {
   /// update at the construction of a chart, and not the update of a resize
   /// of its host.
   void _chartFrame(_StressChart chart) {
+    if (_mode == StressMode.plugins) {
+      _pluginFrame(chart);
+      return;
+    }
     if (_call == StressChartCall.animate) {
       _animateFrame(chart);
       return;
@@ -867,8 +1319,9 @@ class StressDemoState extends State<StressDemo> {
         chart.draw();
       case StressChartCall.update:
         chart.update('none');
-      case StressChartCall.animate:
-        // [_animateFrame] handles this case.
+      case StressChartCall.animate || StressChartCall.frame:
+        // [_animateFrame] handles the call animate. Only the mode plugins
+        // has the call frame ([_pluginFrame]).
         break;
     }
     final total = watch.elapsedMicroseconds;
@@ -914,10 +1367,137 @@ class StressDemoState extends State<StressDemo> {
       ..markTick();
   }
 
+  /// One frame of the mode [StressMode.plugins]: the call of the benchmark
+  /// case in the real frame loop.
+  ///
+  /// - [StressChartCall.draw]: `chart.draw()`.
+  /// - [StressChartCall.update]: the change of the data of the benchmark
+  ///   scene (not timed), then `chart.update('none')`.
+  /// - [StressChartCall.frame], scene [StressPluginScene.hover]: a
+  ///   `mousemove` over the next point of dataset 0 directly to the event
+  ///   handler of the chart, around the host input path
+  ///   ([_sendPluginEvent]). The chart has `animation: false`, so the event
+  ///   draws the chart at once.
+  /// - [StressChartCall.frame], scene [StressPluginScene.fade]: in the
+  ///   first frame of each `chartBenchFadeFrames` frames, a `mousemove`
+  ///   over the middle point of dataset 0 or a `mouseout`, in turn, also
+  ///   directly to the event handler. The event starts the animations.
+  ///   The animator ticks them and draws the chart in its own frame
+  ///   callback.
+  ///
+  /// The update time is the time of the call without its draws: in the
+  /// scenes hover and fade, the event handler of the chart only. The draw
+  /// time has the draws of the call and of the animator callbacks. The
+  /// animator time is the tick of the animator before its draw (scene
+  /// fade): this callback schedules the next frame first, so that it runs
+  /// before the animator callback of the next frame, and it marks the time
+  /// at its end ([_StressChart.markTick]). The parts are the hooks since
+  /// the last frame callback, also those of the animator callbacks. The
+  /// events take the pointer positions from the elements before the
+  /// timing.
+  void _pluginFrame(_StressChart chart) {
+    final scene = _pluginScene;
+    if (scene == null) return;
+    _scheduleFrame();
+    // The animator callback of the last frame (scene fade).
+    _takePluginFigures(chart, scene);
+    final event = _call == StressChartCall.frame ? _pluginEvent(chart) : null;
+    if (_call == StressChartCall.update) scene.change?.call();
+    final watch = Stopwatch()..start();
+    switch (_call) {
+      case StressChartCall.draw:
+        chart.draw();
+      case StressChartCall.update:
+        chart.update('none');
+      case StressChartCall.frame:
+        if (event != null) _sendPluginEvent(chart, event);
+      case StressChartCall.animate:
+        // The mode plugins has no call animate (stressCallsOf).
+        break;
+    }
+    _windowUpdateMicros += watch.elapsedMicroseconds - chart.drawMicros;
+    _takePluginFigures(chart, scene);
+    if (_pluginCase.scene == StressPluginScene.fade) chart.markTick();
+  }
+
+  /// Adds the draw time, the animator time and the parts of [chart] since
+  /// the last call to the window, and resets them.
+  void _takePluginFigures(_StressChart chart, ChartBenchScene scene) {
+    _windowDrawMicros += chart.drawMicros;
+    _windowAnimatorMicros += chart.animatorMicros;
+    chart
+      ..drawMicros = 0
+      ..animatorMicros = 0;
+    final parts = scene.takeParts?.call();
+    if (parts == null) return;
+    _windowElementsTicks += parts['elements'] ?? 0;
+    _windowLayoutTicks += parts['layout'] ?? 0;
+    _windowDatasetsUpdateTicks += parts['datasetsUpdate'] ?? 0;
+    _windowDatasetsDrawTicks += parts['datasetsDraw'] ?? 0;
+    _windowTooltipDrawTicks += parts['tooltipDraw'] ?? 0;
+  }
+
+  /// The event of this frame of the scenes [StressPluginScene.hover] and
+  /// [StressPluginScene.fade]: the type and the position of the pointer, or
+  /// Dart `null` for no event. The pointer is at the y of the middle of the
+  /// chart area, as in the benchmark. The positions come from the elements
+  /// of dataset 0 in each frame, so that a resize of the host moves them.
+  (String, double, double)? _pluginEvent(Chart chart) {
+    final area = chart.chartArea;
+    final points = chart.getDatasetMeta(0).data;
+    if (area == null || points.isEmpty) return null;
+    final y = (area.top + area.bottom) / 2;
+    switch (_pluginCase.scene) {
+      case StressPluginScene.hover:
+        _hoverIndex = (_hoverIndex + 1) % points.length;
+        return ('mousemove', points[_hoverIndex].x, y);
+      case StressPluginScene.fade:
+        final start = _fadeFrame == 0;
+        _fadeFrame = (_fadeFrame + 1) % chartBenchFadeFrames;
+        if (!start) return null;
+        _fadeShown = !_fadeShown;
+        // The pointer leaves the canvas at its left edge.
+        return _fadeShown
+            ? ('mousemove', points[points.length ~/ 2].x, y)
+            : ('mouseout', -1, y);
+      case _:
+        return null;
+    }
+  }
+
+  /// Sends the native event [event] directly to the event handler of
+  /// [chart]: `chart.eventHandler(fromNativeEvent(event, chart))`, the call
+  /// of `_benchEvent` of the benchmark. Thus `updateMs` compares with the
+  /// update of the benchmark cell.
+  ///
+  /// This goes around the host input path of Chart.js ADR 0037: the pointer
+  /// conversion of `ChartHost` and the throttled proxy of
+  /// `createProxyAndListen` (platform.dom.js:240-254,
+  /// `platform.flutter.dart`), which calls the handler in a
+  /// `requestAnimFrame` callback. The handler runs at once, in this frame
+  /// callback. `updateMs` is the time of the event handler of the chart only.
+  void _sendPluginEvent(Chart chart, (String, double, double) event) {
+    final (type, x, y) = event;
+    // A direct call, as `_benchEvent` of the benchmark: no ChartHost pointer
+    // conversion and no throttled proxy of the platform (Chart.js ADR 0037).
+    // ignore: invalid_use_of_internal_member
+    chart.eventHandler(
+      fromNativeEvent(
+        NativeEvent(type: type, offsetX: x, offsetY: y, target: chart.canvas),
+        chart,
+      ),
+    );
+  }
+
   void _step(double dt) {
     _t += dt;
-    // The bars and the arcs move with the time only.
-    if (_mode == StressMode.bars || _mode == StressMode.arcs) return;
+    // The bars and the arcs move with the time only. The data of the mode
+    // plugins changes in the call update ([_pluginFrame]).
+    if (_mode == StressMode.bars ||
+        _mode == StressMode.arcs ||
+        _mode == StressMode.plugins) {
+      return;
+    }
     _field.step(_n, dt);
   }
 
@@ -935,7 +1515,7 @@ class StressDemoState extends State<StressDemo> {
     final axes = _mode == StressMode.axes && stressChart != null
         ? stressAxesTicks(stressChart)
         : null;
-    _stats.value = (
+    _stats.value = StressStats(
       mode: _mode,
       points: _n,
       labels: _m,
@@ -956,6 +1536,7 @@ class StressDemoState extends State<StressDemo> {
       rasterMs: avg(raster),
       rasterMaxMs: max(raster),
       timings: _timings.length,
+      tooltipDrawMs: _tooltipDrawMs,
     );
     widget.onStats?.call(_stats.value);
   }
@@ -989,7 +1570,7 @@ class StressDemoState extends State<StressDemo> {
         _drawBars(ctx, w, h);
       case StressMode.arcs:
         _drawArcs(ctx, w, h);
-      case StressMode.chart || StressMode.axes:
+      case StressMode.chart || StressMode.axes || StressMode.plugins:
         // The chart of these modes has its own host.
         return;
     }
@@ -1223,11 +1804,13 @@ class StressDemoState extends State<StressDemo> {
       StressMode.arcs: 'arcs',
       StressMode.chart: 'chart',
       StressMode.axes: 'axes',
+      StressMode.plugins: 'plug',
     };
     const callText = {
       StressChartCall.draw: 'draw',
       StressChartCall.update: 'upd',
       StressChartCall.animate: 'anim',
+      StressChartCall.frame: 'frame',
     };
     const axisText = {
       StressAxisType.linear: 'lin',
@@ -1293,6 +1876,26 @@ class StressDemoState extends State<StressDemo> {
             onChanged: (type) => setState(() => _setChartCase(type: type)),
           ),
         ],
+        if (_mode == StressMode.plugins) ...[
+          gap,
+          SegmentChoice<StressPluginScene>(
+            label: 'scene',
+            items: [
+              for (final scene in StressPluginScene.values)
+                (
+                  key: 'stress.plugins.scene.${scene.name}',
+                  text: scene.name,
+                  icon: _sceneIcons[scene],
+                  tooltip: scene.benchId,
+                  value: scene,
+                ),
+            ],
+            value: _pluginCase.scene,
+            onChanged: (scene) => setState(
+              () => _setPluginCase(_pluginCase.copyWith(scene: scene)),
+            ),
+          ),
+        ],
         gap,
         SegmentChoice<int>(
           label: 'N',
@@ -1330,18 +1933,37 @@ class StressDemoState extends State<StressDemo> {
           SegmentChoice<StressChartCall>(
             label: 'call',
             items: [
-              for (final call in StressChartCall.values)
-                if (_mode != StressMode.axes || call != StressChartCall.animate)
-                  (
-                    key: 'stress.chart.call.${call.name}',
-                    text: callText[call]!,
-                    icon: null,
-                    tooltip: call.name,
-                    value: call,
-                  ),
+              for (final call in stressCallsOf(_mode, _pluginCase.scene))
+                (
+                  key: 'stress.chart.call.${call.name}',
+                  text: callText[call]!,
+                  icon: null,
+                  tooltip: call.name,
+                  value: call,
+                ),
             ],
             value: _call,
             onChanged: (call) => setState(() => _setChartCase(call: call)),
+          ),
+        ],
+        if (_mode == StressMode.plugins && _pluginCase.scene.tooltip) ...[
+          gap,
+          SegmentChoice<int>(
+            label: 'sets',
+            items: [
+              for (final datasets in stressPluginDatasets)
+                (
+                  key: 'stress.plugins.datasets.$datasets',
+                  text: '$datasets',
+                  icon: null,
+                  tooltip: '$datasets datasets',
+                  value: datasets,
+                ),
+            ],
+            value: _pluginCase.datasets,
+            onChanged: (datasets) => setState(
+              () => _setPluginCase(_pluginCase.copyWith(datasets: datasets)),
+            ),
           ),
         ],
         if (_mode == StressMode.axes) ...[
@@ -1393,6 +2015,19 @@ class StressDemoState extends State<StressDemo> {
     StressChartType.pie: Icons.pie_chart,
     StressChartType.polarArea: Icons.track_changes,
     StressChartType.radar: Icons.radar,
+  };
+
+  /// The icon of each scene on the line `scene` of the mode
+  /// [StressMode.plugins].
+  static const Map<StressPluginScene, IconData> _sceneIcons = {
+    StressPluginScene.legend: Icons.legend_toggle,
+    StressPluginScene.title: Icons.title,
+    StressPluginScene.hover: Icons.ads_click,
+    StressPluginScene.still: Icons.comment,
+    StressPluginScene.fade: Icons.gradient,
+    StressPluginScene.gaps: Icons.area_chart,
+    StressPluginScene.stack: Icons.stacked_line_chart,
+    StressPluginScene.radar: Icons.radar,
   };
 
   /// The controller class of each chart type, for the card.
@@ -1471,12 +2106,46 @@ class StressDemoState extends State<StressDemo> {
             value: _autoSkip,
             onChanged: (v) => setState(() => _setAxesCase(autoSkip: v)),
           ),
+        if (_mode == StressMode.plugins &&
+            _pluginCase.scene == StressPluginScene.legend)
+          (
+            key: 'stress.plugins.legend',
+            icon: Icons.list,
+            tooltip: 'legend (off: the base of the legend and the title)',
+            value: _pluginCase.legend,
+            onChanged: (v) => setState(
+              () => _setPluginCase(_pluginCase.copyWith(legend: v)),
+            ),
+          ),
+        if (_mode == StressMode.plugins &&
+            (_pluginCase.scene == StressPluginScene.hover ||
+                _pluginCase.scene == StressPluginScene.still))
+          (
+            key: 'stress.plugins.tooltip',
+            icon: Icons.chat_bubble_outline,
+            tooltip: 'tooltip plugin (off: the base)',
+            value: _pluginCase.tooltip,
+            onChanged: (v) => setState(
+              () => _setPluginCase(_pluginCase.copyWith(tooltip: v)),
+            ),
+          ),
       ],
     );
   }
 
   /// The call of case (b), for the card.
   static const String _updateCall = "chart.update('none')";
+
+  /// The call of each frame of the mode [StressMode.plugins], for the card.
+  String get _pluginCallText => switch (_call) {
+    StressChartCall.draw => 'core.controller: chart.draw()',
+    StressChartCall.update => 'core.controller: $_updateCall',
+    _ when _pluginCase.scene == StressPluginScene.fade =>
+      'chart event handler: mousemove and mouseout in turn, each '
+          '$chartBenchFadeFrames frames · core.animator: the tick of the fade '
+          'and chart.draw()',
+    _ => 'chart event handler: mousemove over the next point',
+  };
 
   /// The calls of each frame, for the card.
   String get _source => switch (_mode) {
@@ -1500,6 +2169,8 @@ class StressDemoState extends State<StressDemo> {
             StressChartCall.update => _updateCall,
             StressChartCall.animate => 'core.animator: the tick of N looping '
                 'animations and chart.draw()',
+            // The mode chart has no call frame (stressCallsOf).
+            StressChartCall.frame => 'chart.draw()',
           }} · '
           'controllers: ${_controllerNames[_type]} · '
           '${_elementNames[_type]}.draw × N · '
@@ -1510,6 +2181,11 @@ class StressDemoState extends State<StressDemo> {
           'scales: ${_scale.name} x, ${_yScale.name} y · '
           'LineController: getPixelForValue × 2N · '
           'PointElement.draw × N · plugin afterDraw: renderText × M (rotated)',
+    StressMode.plugins =>
+      'helpers.extras: requestAnimFrame each frame · $_pluginCallText · '
+          'benchmark case ${_pluginCase.scene.benchId} '
+          '${_pluginCase.benchKeys} · plugin afterDraw: renderText × M '
+          '(rotated)',
   };
 
   @override
@@ -1531,6 +2207,26 @@ class StressDemoState extends State<StressDemo> {
                   final height = (constraints.maxWidth * 0.6)
                       .clamp(240, 520)
                       .toDouble();
+                  if (_mode == StressMode.plugins) {
+                    // A new N or plugin case gives a new host, thus a new
+                    // chart.
+                    return KeyedSubtree(
+                      key: ValueKey((_n, _pluginCase)),
+                      child: ChartCanvas(
+                        key: const ValueKey('stress.plugins.host'),
+                        height: height,
+                        create: _createPluginChart,
+                        onChart: (chart) {
+                          final stressChart = _stressChart =
+                              chart as _StressChart;
+                          _animating = false;
+                          _preparePluginChart(stressChart);
+                          _chartReady();
+                        },
+                        onTickerModeChanged: _onTickerModeChanged,
+                      ),
+                    );
+                  }
                   if (_mode.runsChart) {
                     final axes = _mode == StressMode.axes;
                     // A new N, chart type, showLine, backgroundColor form or
@@ -1604,6 +2300,15 @@ class StressDemoState extends State<StressDemo> {
                       ('x ticks', '${stats.ticks}'),
                       ('rotation', stats.rotation.toStringAsFixed(1)),
                     ],
+                    if (stats.mode == StressMode.plugins) ...[
+                      ('update', '${ms(stats.updateMs)} ms'),
+                      ('animator', '${ms(stats.animatorMs)} ms'),
+                      ('elements', '${ms(stats.elementsMs)} ms'),
+                      ('layout', '${ms(stats.layoutMs)} ms'),
+                      ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
+                      ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
+                      ('tooltip draw', '${ms(stats.tooltipDrawMs)} ms'),
+                    ],
                     (
                       'build avg/max',
                       stats.timings == 0
@@ -1628,10 +2333,13 @@ class StressDemoState extends State<StressDemo> {
                 '(recording into a ui.Picture). In the element modes, it '
                 'also has the writes of the element properties. update: the '
                 'time of chart.update() without its draw. animator: the tick '
-                'of the animations before their draw (call animate). '
+                'of the animations before their draw (call animate, scene '
+                'fade). '
                 'elements, layout, datasets update and datasets draw (modes '
-                'chart and axes): the parts between the plugin hooks, in the '
-                'draw and update calls of the frames only. elements is the '
+                'chart, axes and plugins): the parts between the plugin '
+                'hooks, in the draw and update calls of the frames only (mode '
+                'plugins: also in the animator frames). tooltip draw: '
+                'beforeTooltipDraw to afterTooltipDraw. elements is the '
                 'parse and the first getMaxOverflow. Draw minus datasets '
                 'draw is the draw of the scales, the labels and the title. '
                 'sharing: enableOptionSharing of the controller. build and '

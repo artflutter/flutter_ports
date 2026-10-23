@@ -338,6 +338,7 @@ void main() {
       final host = switch (mode) {
         StressMode.chart => 'stress.chart.host',
         StressMode.axes => 'stress.axes.host',
+        StressMode.plugins => 'stress.plugins.host',
         _ => 'stress.host',
       };
       if (mode == StressMode.chart) {
