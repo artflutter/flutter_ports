@@ -25,12 +25,18 @@
 // 0041, Open 3). The `pointStyleWidth` case uses `rect` and `line`, which
 // read the width too (helpers.canvas.ts:237-241, :289-293).
 //
-// Each case sets `options.plugins` with unitPlugins(['legend']): the Dart
-// test file registers only the legend plugin until wave 4 (Chart.js ADR
-// 0041, sections 4 and 7). The observation has the key `plugins.legend`
+// Each unit case sets `options.plugins` with unitPlugins(['legend']): the
+// plugin set of the Dart test file in wave 2 (Chart.js ADR 0041, sections 4
+// and 7). The observation has the key `plugins.legend`
 // (the observer `observeLegend` below and in the Dart test file). The test
 // file runs the cases again with the light preset (theming.md section 8
 // test 3).
+//
+// The full case (names that start with `full:`, Chart.js ADR 0041, section
+// 4 item 2) has the default plugin options: `hoverLegend` on two items with
+// the default tooltip. The tooltip keeps its last active elements for an
+// event outside the chart area (plugin.tooltip.js:1190, `inChartArea` of
+// core.controller.js:1168), so it does not open. Its draw calls show it.
 //
 // Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
 // v24.12.0:
@@ -217,5 +223,20 @@ const cases = [
     {steps: [['clickLegend', 1]]},
   ),
 ];
+
+// ---------------------------------------------------------------------------
+// The full cases of Chart.js ADR 0041, section 4 item 2 (wave 4): the
+// default plugin options, so each registered plugin runs (no unitPlugins).
+// A full case exists only where another plugin changes the result (section
+// 4 item 3).
+
+cases.push(
+  legendCase('full: hoverLegend with the tooltip', {...line(), options: {}}, {
+    steps: [
+      ['hoverLegend', 0],
+      ['hoverLegend', 1],
+    ],
+  }),
+);
 
 writeControllerReference(OUT, 'pluginLegend', cases, {title: 'legend plugin'});

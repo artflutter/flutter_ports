@@ -28,7 +28,7 @@ import {
   cartesianTestController,
   loadChartJs,
   named,
-  registerPhase6,
+  registerBuiltins,
   runCase,
   writeReference,
 } from './scale_chart_common.mjs';
@@ -46,7 +46,7 @@ const TimeseriesTestController = cartesianTestController('timeseriesTest', {
   scales: {_index_: {type: 'timeseries'}, _value_: {type: 'linear'}},
 });
 
-registerPhase6(C, TimeseriesTestController);
+registerBuiltins(C, TimeseriesTestController);
 
 const timeExtra = timeObservations(C);
 

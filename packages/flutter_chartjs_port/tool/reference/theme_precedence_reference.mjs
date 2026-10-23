@@ -50,12 +50,20 @@
 // on real charts and for the hover steps, it also registers the pinned
 // src/controllers/controller.{bar,bubble,doughnut,line,pie,polarArea,radar,
 // scatter}.js, as the Dart harness registers them (flutter_test_config.dart).
-// For the palette, it registers the pinned src/plugins/plugin.colors.ts and
-// then sets `defaults.plugins.colors.enabled = false`, as test/index.js:25-28
-// does. Each palette scenario sets `plugins.colors.enabled: true` in the
-// options of its charts (Chart.js ADR 0041, section 7). The plugin module
-// imports `../index.js` (plugin.colors.ts:1), so the run loads all of
-// src/index.ts. The script registers no other plugin.
+// After the element classes, it registers the seven plugins of
+// src/plugins/index.js by name, in the order of its lines 1-7, and then sets
+// `defaults.plugins.colors.enabled = false`, as flutter_test_config.dart
+// does before main() of precedence_test.dart (src/index.umd.ts:28 and
+// test/index.js:25-28, Chart.js ADR 0041 section 1 item 3). The script does
+// not give the module namespace to `Chart.register`: `each` does not walk a
+// module namespace (helpers.core.ts:53-54, :152), so the call registers
+// nothing. The script stops unless the registry then has the seven plugin
+// ids. Each palette scenario sets `plugins.colors.enabled: true` in the
+// options of its charts. The colors plugin imports `../index.js`
+// (plugin.colors.ts:1), so the run loads all of src/index.ts. In the
+// `prototype` run, the load hook of the hunks H4a-H5 applies to
+// plugin.colors.ts through the import of src/plugins/index.js (the same
+// URL).
 // A chart is
 // made as `_acquireChart` of chartjs-test-utils makes it
 // (src/utils.js:36-105): a 512 x 512 canvas, and `animation: false`,
@@ -220,6 +228,7 @@ const ELEMENTS = new URL('elements/index.js', SRC);
 const HELPERS_CORE = new URL('helpers/helpers.core.ts', SRC);
 const HELPERS_OPTIONS = new URL('helpers/helpers.options.ts', SRC);
 const COLORS = new URL('plugins/plugin.colors.ts', SRC);
+const PLUGINS = new URL('plugins/index.js', SRC);
 const PACKAGE = new URL('Chart.js/package.json', THIRD_PARTY);
 const CONTEXT = new URL('chartjs-test-utils/src/context.js', THIRD_PARTY);
 const KURKLE = new URL('kurkle-color/src/index.esm.js', THIRD_PARTY);
@@ -238,6 +247,7 @@ for (const url of [
   HELPERS_CORE,
   HELPERS_OPTIONS,
   COLORS,
+  PLUGINS,
   PACKAGE,
   CONTEXT,
   KURKLE,
@@ -447,7 +457,7 @@ const controllerClasses = [];
 for (const url of CONTROLLERS) {
   controllerClasses.push((await import(url.href)).default);
 }
-const {default: colors} = await import(COLORS.href);
+const pluginExports = await import(PLUGINS.href);
 
 // ---------------------------------------------------------------------------
 // The observations.
@@ -631,6 +641,28 @@ class RadialController extends DatasetController {
 }
 
 Chart.register(ArcElement, BarElement, LineElement, PointElement);
+// src/index.umd.ts:28 registers the namespace `plugins`. A module namespace
+// is not a plain object for helpers.core.ts:53-54, so `each` (:152) does not
+// walk it. Thus the script registers the exports by name, in the order of
+// src/plugins/index.js:1-7 (Chart.js ADR 0041, section 1 item 3).
+Chart.register(
+  pluginExports.Colors,
+  pluginExports.Decimation,
+  pluginExports.Filler,
+  pluginExports.Legend,
+  pluginExports.SubTitle,
+  pluginExports.Title,
+  pluginExports.Tooltip,
+);
+// Disable colors plugin for tests (test/index.js:25-28).
+defaults.plugins.colors.enabled = false;
+{
+  const ids = Object.keys(Chart.registry.plugins.items).join();
+  if (ids !== 'colors,decimation,filler,legend,subtitle,title,tooltip') {
+    console.error(`The registry has the plugins ${ids}, not the seven of src/plugins/index.js.`);
+    process.exit(1);
+  }
+}
 Chart.register(
   themeController('themeTest'),
   themeController('themeTest2'),
@@ -644,10 +676,6 @@ Chart.register(
   RadialController,
 );
 Chart.register(...controllerClasses);
-// The colors plugin, then the line of test/index.js:25-28, as
-// precedence_test.dart does in main() (Chart.js ADR 0041, section 7).
-Chart.register(colors);
-defaults.plugins.colors.enabled = false;
 
 const charts = [];
 

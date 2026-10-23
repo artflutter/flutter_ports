@@ -4,7 +4,7 @@
 // Node.js v24.12.0 (darwin-x64), V8 13.6.233.17-node.37:
 // a build of Chart.js v4.5.1+7169e651 at the commit
 // 7169e65147a47f3720957a6f156a33c838ab9f57, with the Liberation Sans mock
-// context of tool/reference/scale_chart_common.mjs. 8 cases, 96 widths.
+// context of tool/reference/scale_chart_common.mjs. 8 cases, 95 widths.
 
 /// The Node.js version that generated the data.
 const String scaleChartHarnessReferenceNode = 'v24.12.0';
@@ -66,12 +66,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        124.115234375,
-        10.2,
-        492.3154296875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[124.115234375, 32.0, 492.3154296875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'harnessLinear',
@@ -86,12 +81,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             <Object?>[73765.125, '73765.125', false],
             <Object?>[98765.0, '98765', false],
           ],
-          'box': <Object?>[
-            124.115234375,
-            483.59999999999997,
-            492.3154296875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[124.115234375, 483.6, 492.3154296875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[23.349609375, 0.0, 19.6845703125, 0.0],
           'tickPixels': <Object?>[
@@ -122,30 +112,26 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             <Object?>[9.56275, '9.56275', false],
             <Object?>[12.75, '12.75', false],
           ],
-          'box': <Object?>[0.0, 10.2, 124.115234375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 124.115234375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            365.24999999999994,
-            246.89999999999998,
-            128.54999999999998,
-            10.2,
+            483.6,
+            370.70000000000005,
+            257.8,
+            144.9,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[12.75, 6.375500000000001, 0.001],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[124.115234375, 483.59999999999997],
-          <Object?>[492.3154296875, 10.2],
-          <Object?>[128.67173457449317, 223.71086359714485],
+          <Object?>[124.115234375, 483.6],
+          <Object?>[492.3154296875, 32.0],
+          <Object?>[128.67173457449317, 235.6787198996],
         ],
       ],
       'drawCalls': '''
@@ -159,7 +145,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",124.5,10.2]
+["moveTo",124.5,32]
 ["lineTo",124.5,483]
 ["stroke",null]
 ["restore"]
@@ -170,7 +156,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",124.5,484]
-["lineTo",124.5,491.59999999999997]
+["lineTo",124.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -179,7 +165,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",216.5,10.2]
+["moveTo",216.5,32]
 ["lineTo",216.5,483]
 ["stroke",null]
 ["restore"]
@@ -190,7 +176,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",216.5,484]
-["lineTo",216.5,491.59999999999997]
+["lineTo",216.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -199,7 +185,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",308.5,10.2]
+["moveTo",308.5,32]
 ["lineTo",308.5,483]
 ["stroke",null]
 ["restore"]
@@ -210,7 +196,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",308.5,484]
-["lineTo",308.5,491.59999999999997]
+["lineTo",308.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -219,7 +205,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",400.5,10.2]
+["moveTo",400.5,32]
 ["lineTo",400.5,483]
 ["stroke",null]
 ["restore"]
@@ -230,7 +216,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",400.5,484]
-["lineTo",400.5,491.59999999999997]
+["lineTo",400.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -239,7 +225,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",492.5,10.2]
+["moveTo",492.5,32]
 ["lineTo",492.5,483]
 ["stroke",null]
 ["restore"]
@@ -250,7 +236,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",492.5,484]
-["lineTo",492.5,491.59999999999997]
+["lineTo",492.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -279,8 +265,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",125,365.5]
-["lineTo",492.3154296875,365.5]
+["moveTo",125,370.5]
+["lineTo",492.3154296875,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -289,8 +275,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",116.115234375,365.5]
-["lineTo",124,365.5]
+["moveTo",116.115234375,370.5]
+["lineTo",124,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -299,8 +285,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",125,246.5]
-["lineTo",492.3154296875,246.5]
+["moveTo",125,257.5]
+["lineTo",492.3154296875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -309,8 +295,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",116.115234375,246.5]
-["lineTo",124,246.5]
+["moveTo",116.115234375,257.5]
+["lineTo",124,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -319,8 +305,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",125,128.5]
-["lineTo",492.3154296875,128.5]
+["moveTo",125,144.5]
+["lineTo",492.3154296875,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -329,8 +315,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",116.115234375,128.5]
-["lineTo",124,128.5]
+["moveTo",116.115234375,144.5]
+["lineTo",124,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -339,8 +325,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",125,10.5]
-["lineTo",492.3154296875,10.5]
+["moveTo",125,32.5]
+["lineTo",492.3154296875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -349,9 +335,38 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",116.115234375,10.5]
-["lineTo",124,10.5]
+["moveTo",116.115234375,32.5]
+["lineTo",124,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -363,11 +378,11 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",124.115234375,494.59999999999997]
+["translate",124.115234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -376,7 +391,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",216.165283203125,494.59999999999997]
+["translate",216.165283203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -385,7 +400,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",308.21533203125,494.59999999999997]
+["translate",308.21533203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -394,7 +409,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",400.265380859375,494.59999999999997]
+["translate",400.265380859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -403,7 +418,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",492.3154296875,494.59999999999997]
+["translate",492.3154296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -415,7 +430,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",124.5,10]
+["moveTo",124.5,32]
 ["lineTo",124.5,484]
 ["stroke",null]
 ["restore"]
@@ -425,7 +440,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",113.115234375,483.59999999999997]
+["translate",113.115234375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -434,7 +449,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",113.115234375,365.24999999999994]
+["translate",113.115234375,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -443,7 +458,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",113.115234375,246.89999999999998]
+["translate",113.115234375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -452,7 +467,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",113.115234375,128.54999999999998]
+["translate",113.115234375,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -461,7 +476,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",113.115234375,10.2]
+["translate",113.115234375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -473,7 +488,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",124.115234375,483.59999999999997,3,0,6.283185307179586,false]
+["arc",124.115234375,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -481,7 +496,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",492.3154296875,10.2,3,0,6.283185307179586,false]
+["arc",492.3154296875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -489,7 +504,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",128.67173457449317,223.71086359714485,3,0,6.283185307179586,false]
+["arc",128.67173457449317,235.6787198996,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -534,7 +549,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[59.05537109375, 10.8, 502.326171875, 461.2],
+      'chartArea': <Object?>[59.05537109375, 32.0, 502.326171875, 461.2],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'harnessLinear',
@@ -580,17 +595,11 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             <Object?>[86.0, '86', false],
             <Object?>[111.0, '111', false],
           ],
-          'box': <Object?>[0.0, 10.8, 59.05537109375, 461.2],
+          'box': <Object?>[0.0, 32.0, 59.05537109375, 461.2],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.8, 0.0, 10.8],
-          'tickPixels': <Object?>[
-            461.2,
-            348.59999999999997,
-            236.0,
-            123.39999999999999,
-            10.8,
-          ],
-          'valuePixels': <Object?>[461.2, 236.0, 10.8],
+          'tickPixels': <Object?>[461.2, 353.9, 246.6, 139.3, 32.0],
+          'valuePixels': <Object?>[461.2, 246.6, 32.0],
           'valueForPixel': <Object?>[111.0, 61.0, 11.0],
           'basePixel': 461.2,
         },
@@ -598,7 +607,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
       'points': <Object?>[
         <Object?>[
           <Object?>[59.05537109375, 461.2],
-          <Object?>[502.326171875, 10.8],
+          <Object?>[502.326171875, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -612,7 +621,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",59.5,10.8]
+["moveTo",59.5,32]
 ["lineTo",59.5,461]
 ["stroke",null]
 ["restore"]
@@ -632,7 +641,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",169.5,10.8]
+["moveTo",169.5,32]
 ["lineTo",169.5,461]
 ["stroke",null]
 ["restore"]
@@ -652,7 +661,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",280.5,10.8]
+["moveTo",280.5,32]
 ["lineTo",280.5,461]
 ["stroke",null]
 ["restore"]
@@ -672,7 +681,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",391.5,10.8]
+["moveTo",391.5,32]
 ["lineTo",391.5,461]
 ["stroke",null]
 ["restore"]
@@ -692,7 +701,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.8]
+["moveTo",502.5,32]
 ["lineTo",502.5,461]
 ["stroke",null]
 ["restore"]
@@ -741,8 +750,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",60,348.5]
-["lineTo",502.326171875,348.5]
+["moveTo",60,353.5]
+["lineTo",502.326171875,353.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -751,8 +760,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",51.05537109375,348.5]
-["lineTo",59,348.5]
+["moveTo",51.05537109375,353.5]
+["lineTo",59,353.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -761,8 +770,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",60,236.5]
-["lineTo",502.326171875,236.5]
+["moveTo",60,246.5]
+["lineTo",502.326171875,246.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -771,8 +780,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",51.05537109375,236.5]
-["lineTo",59,236.5]
+["moveTo",51.05537109375,246.5]
+["lineTo",59,246.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -781,8 +790,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",60,123.5]
-["lineTo",502.326171875,123.5]
+["moveTo",60,139.5]
+["lineTo",502.326171875,139.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -791,8 +800,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",51.05537109375,123.5]
-["lineTo",59,123.5]
+["moveTo",51.05537109375,139.5]
+["lineTo",59,139.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -801,8 +810,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",60,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",60,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -811,18 +820,47 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",51.05537109375,10.5]
-["lineTo",59,10.5]
+["moveTo",51.05537109375,32.5]
+["lineTo",59,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
 ["setFont","normal 14px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",12.4,236]
+["translate",12.4,246.6]
 ["rotate",-1.5707963267948966]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
 ["setTextBaseline","middle"]
 ["fillText","Average",0,0,null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -886,7 +924,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",59.5,10]
+["moveTo",59.5,32]
 ["lineTo",59.5,462]
 ["stroke",null]
 ["restore"]
@@ -905,7 +943,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",48.05537109375,348.59999999999997]
+["translate",48.05537109375,353.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -914,7 +952,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",48.05537109375,236]
+["translate",48.05537109375,246.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -923,7 +961,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",48.05537109375,123.39999999999999]
+["translate",48.05537109375,139.3]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -932,7 +970,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",48.05537109375,10.8]
+["translate",48.05537109375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -952,7 +990,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,10.8,3,0,6.283185307179586,false]
+["arc",502.326171875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -987,7 +1025,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
     expected: <String, Object?>{
       'chartArea': <Object?>[
         53.04517391136166,
-        10.2,
+        32.0,
         186.92074787649318,
         217.32599722414216,
       ],
@@ -1048,7 +1086,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
           ],
           'box': <Object?>[
             15.689705161361658,
-            10.2,
+            32.0,
             53.04517391136166,
             217.32599722414216,
           ],
@@ -1056,15 +1094,15 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             217.32599722414216,
-            165.54449791810663,
-            113.76299861207109,
-            61.981499306035545,
-            10.2,
+            170.99449791810662,
+            124.66299861207108,
+            78.33149930603554,
+            32.0,
           ],
           'valuePixels': <Object?>[
             217.32599722414216,
-            113.76299861207109,
-            10.2,
+            124.66299861207108,
+            32.0,
           ],
           'valueForPixel': <Object?>[2.0, 1.5, 1.0],
           'basePixel': 217.32599722414216,
@@ -1073,7 +1111,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
       'points': <Object?>[
         <Object?>[
           <Object?>[53.04517391136166, 217.32599722414216],
-          <Object?>[186.92074787649318, 10.2],
+          <Object?>[186.92074787649318, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -1087,7 +1125,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",53.5,10.2]
+["moveTo",53.5,32]
 ["lineTo",53.5,217]
 ["stroke",null]
 ["restore"]
@@ -1107,7 +1145,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",86.5,10.2]
+["moveTo",86.5,32]
 ["lineTo",86.5,217]
 ["stroke",null]
 ["restore"]
@@ -1127,7 +1165,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",119.5,10.2]
+["moveTo",119.5,32]
 ["lineTo",119.5,217]
 ["stroke",null]
 ["restore"]
@@ -1147,7 +1185,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",153.5,10.2]
+["moveTo",153.5,32]
 ["lineTo",153.5,217]
 ["stroke",null]
 ["restore"]
@@ -1167,7 +1205,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",186.5,10.2]
+["moveTo",186.5,32]
 ["lineTo",186.5,217]
 ["stroke",null]
 ["restore"]
@@ -1207,8 +1245,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",54,165.5]
-["lineTo",186.92074787649318,165.5]
+["moveTo",54,170.5]
+["lineTo",186.92074787649318,170.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1217,8 +1255,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",45.04517391136166,165.5]
-["lineTo",53,165.5]
+["moveTo",45.04517391136166,170.5]
+["lineTo",53,170.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1227,8 +1265,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",54,113.5]
-["lineTo",186.92074787649318,113.5]
+["moveTo",54,124.5]
+["lineTo",186.92074787649318,124.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1237,8 +1275,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",45.04517391136166,113.5]
-["lineTo",53,113.5]
+["moveTo",45.04517391136166,124.5]
+["lineTo",53,124.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1247,8 +1285,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",54,61.5]
-["lineTo",186.92074787649318,61.5]
+["moveTo",54,78.5]
+["lineTo",186.92074787649318,78.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1257,8 +1295,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",45.04517391136166,61.5]
-["lineTo",53,61.5]
+["moveTo",45.04517391136166,78.5]
+["lineTo",53,78.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1267,8 +1305,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",54,10.5]
-["lineTo",186.92074787649318,10.5]
+["moveTo",54,32.5]
+["lineTo",186.92074787649318,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1277,9 +1315,38 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",45.04517391136166,10.5]
-["lineTo",53,10.5]
+["moveTo",45.04517391136166,32.5]
+["lineTo",53,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,200,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",50.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",96.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -1343,7 +1410,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",53.5,10]
+["moveTo",53.5,32]
 ["lineTo",53.5,218]
 ["stroke",null]
 ["restore"]
@@ -1362,7 +1429,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",42.04517391136166,165.54449791810663]
+["translate",42.04517391136166,170.99449791810662]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1371,7 +1438,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",42.04517391136166,113.76299861207109]
+["translate",42.04517391136166,124.66299861207108]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1380,7 +1447,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",42.04517391136166,61.981499306035545]
+["translate",42.04517391136166,78.33149930603554]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1389,7 +1456,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",42.04517391136166,10.2]
+["translate",42.04517391136166,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1409,7 +1476,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",186.92074787649318,10.2,3,0,6.283185307179586,false]
+["arc",186.92074787649318,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1444,7 +1511,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[7.171142578125, 32.0, 477.978515625, 501.8],
+      'chartArea': <Object?>[7.171142578125, 64.0, 477.978515625, 501.8],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'harnessLinear',
@@ -1459,7 +1526,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             <Object?>[14.0, '14', false],
             <Object?>[18.0, '18', false],
           ],
-          'box': <Object?>[7.171142578125, 0.0, 477.978515625, 32.0],
+          'box': <Object?>[7.171142578125, 32.0, 477.978515625, 64.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[7.171142578125, 0.0, 11.34228515625, 0.0],
           'tickPixels': <Object?>[
@@ -1490,18 +1557,18 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             <Object?>[185.0, '185', false],
             <Object?>[260.0, '260', false],
           ],
-          'box': <Object?>[477.978515625, 32.0, 512.0, 501.8],
+          'box': <Object?>[477.978515625, 64.0, 512.0, 501.8],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
-          'tickPixels': <Object?>[32.0, 149.45, 266.9, 384.35, 501.8],
-          'valuePixels': <Object?>[32.0, 266.9, 501.8],
+          'tickPixels': <Object?>[64.0, 173.45, 282.9, 392.35, 501.8],
+          'valuePixels': <Object?>[64.0, 282.9, 501.8],
           'valueForPixel': <Object?>[-40.0, 109.99999999999997, 260.0],
-          'basePixel': 94.64,
+          'basePixel': 122.37333333333333,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[7.171142578125, 32.0],
+          <Object?>[7.171142578125, 64.0],
           <Object?>[477.978515625, 501.8],
         ],
       ],
@@ -1516,7 +1583,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",7.5,33]
+["moveTo",7.5,65]
 ["lineTo",7.5,501.8]
 ["stroke",null]
 ["restore"]
@@ -1526,8 +1593,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",7.5,24]
-["lineTo",7.5,32]
+["moveTo",7.5,56]
+["lineTo",7.5,64]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1536,7 +1603,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",124.5,33]
+["moveTo",124.5,65]
 ["lineTo",124.5,501.8]
 ["stroke",null]
 ["restore"]
@@ -1546,8 +1613,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",124.5,24]
-["lineTo",124.5,32]
+["moveTo",124.5,56]
+["lineTo",124.5,64]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1556,7 +1623,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",242.5,33]
+["moveTo",242.5,65]
 ["lineTo",242.5,501.8]
 ["stroke",null]
 ["restore"]
@@ -1566,8 +1633,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",242.5,24]
-["lineTo",242.5,32]
+["moveTo",242.5,56]
+["lineTo",242.5,64]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1576,7 +1643,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",360.5,33]
+["moveTo",360.5,65]
 ["lineTo",360.5,501.8]
 ["stroke",null]
 ["restore"]
@@ -1586,8 +1653,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",360.5,24]
-["lineTo",360.5,32]
+["moveTo",360.5,56]
+["lineTo",360.5,64]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1596,7 +1663,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",477.5,33]
+["moveTo",477.5,65]
 ["lineTo",477.5,501.8]
 ["stroke",null]
 ["restore"]
@@ -1606,8 +1673,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",477.5,24]
-["lineTo",477.5,32]
+["moveTo",477.5,56]
+["lineTo",477.5,64]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1616,8 +1683,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",7.171142578125,32.5]
-["lineTo",477,32.5]
+["moveTo",7.171142578125,64.5]
+["lineTo",477,64.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1626,8 +1693,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",478,32.5]
-["lineTo",485.978515625,32.5]
+["moveTo",478,64.5]
+["lineTo",485.978515625,64.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1636,8 +1703,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",7.171142578125,149.5]
-["lineTo",477,149.5]
+["moveTo",7.171142578125,173.5]
+["lineTo",477,173.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1646,8 +1713,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",478,149.5]
-["lineTo",485.978515625,149.5]
+["moveTo",478,173.5]
+["lineTo",485.978515625,173.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1656,8 +1723,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",7.171142578125,266.5]
-["lineTo",477,266.5]
+["moveTo",7.171142578125,282.5]
+["lineTo",477,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1666,8 +1733,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",478,266.5]
-["lineTo",485.978515625,266.5]
+["moveTo",478,282.5]
+["lineTo",485.978515625,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1676,8 +1743,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",7.171142578125,384.5]
-["lineTo",477,384.5]
+["moveTo",7.171142578125,392.5]
+["lineTo",477,392.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1686,8 +1753,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",478,384.5]
-["lineTo",485.978515625,384.5]
+["moveTo",478,392.5]
+["lineTo",485.978515625,392.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1711,20 +1778,49 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
+["restore"]
+["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",7,32.5]
-["lineTo",478,32.5]
+["moveTo",7,64.5]
+["lineTo",478,64.5]
 ["stroke",null]
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,0,512,32]
+["rect",0,32,512,32]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",7.171142578125,21]
+["translate",7.171142578125,53]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1733,7 +1829,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",124.87298583984375,21]
+["translate",124.87298583984375,53]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1742,7 +1838,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",242.5748291015625,21]
+["translate",242.5748291015625,53]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1751,7 +1847,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",360.27667236328125,21]
+["translate",360.27667236328125,53]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1760,7 +1856,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 15px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",477.978515625,21]
+["translate",477.978515625,53]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1772,7 +1868,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",477.5,32]
+["moveTo",477.5,64]
 ["lineTo",477.5,502]
 ["stroke",null]
 ["restore"]
@@ -1782,7 +1878,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",488.978515625,32]
+["translate",488.978515625,64]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -1791,7 +1887,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",488.978515625,149.45]
+["translate",488.978515625,173.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -1800,7 +1896,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",488.978515625,266.9]
+["translate",488.978515625,282.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -1809,7 +1905,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",488.978515625,384.35]
+["translate",488.978515625,392.35]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -1830,7 +1926,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",7.171142578125,32,3,0,6.283185307179586,false]
+["arc",7.171142578125,64,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1869,12 +1965,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        27.34765625,
-        10.2,
-        505.6630859375,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[27.34765625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'harnessLinear',
@@ -1889,12 +1980,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             <Object?>[3.25, '3.25', false],
             <Object?>[4.0, '4', false],
           ],
-          'box': <Object?>[
-            27.34765625,
-            483.59999999999997,
-            505.6630859375,
-            511.99999999999994,
-          ],
+          'box': <Object?>[27.34765625, 483.6, 505.6630859375, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 6.3369140625, 0.0],
           'tickPixels': <Object?>[
@@ -1925,23 +2011,19 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             <Object?>[25.0, '25', false],
             <Object?>[30.0, '30', false],
           ],
-          'box': <Object?>[0.0, 10.2, 27.34765625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 27.34765625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            365.24999999999994,
-            246.89999999999998,
-            128.54999999999998,
-            10.2,
+            483.6,
+            370.70000000000005,
+            257.8,
+            144.9,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[30.0, 20.0, 10.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
@@ -1950,8 +2032,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
           <Object?>[32767.0, -32768.0],
         ],
         <Object?>[
-          <Object?>[27.34765625, 483.59999999999997],
-          <Object?>[505.6630859375, 10.2],
+          <Object?>[27.34765625, 483.6],
+          <Object?>[505.6630859375, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -1965,7 +2047,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",27.5,10.2]
+["moveTo",27.5,32]
 ["lineTo",27.5,483]
 ["stroke",null]
 ["restore"]
@@ -1976,7 +2058,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",27.5,484]
-["lineTo",27.5,491.59999999999997]
+["lineTo",27.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1985,7 +2067,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",146.5,10.2]
+["moveTo",146.5,32]
 ["lineTo",146.5,483]
 ["stroke",null]
 ["restore"]
@@ -1996,7 +2078,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",146.5,484]
-["lineTo",146.5,491.59999999999997]
+["lineTo",146.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2005,7 +2087,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",266.5,10.2]
+["moveTo",266.5,32]
 ["lineTo",266.5,483]
 ["stroke",null]
 ["restore"]
@@ -2016,7 +2098,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",266.5,484]
-["lineTo",266.5,491.59999999999997]
+["lineTo",266.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2025,7 +2107,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",386.5,10.2]
+["moveTo",386.5,32]
 ["lineTo",386.5,483]
 ["stroke",null]
 ["restore"]
@@ -2036,7 +2118,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",386.5,484]
-["lineTo",386.5,491.59999999999997]
+["lineTo",386.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2045,7 +2127,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",505.5,10.2]
+["moveTo",505.5,32]
 ["lineTo",505.5,483]
 ["stroke",null]
 ["restore"]
@@ -2056,7 +2138,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",505.5,484]
-["lineTo",505.5,491.59999999999997]
+["lineTo",505.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2085,8 +2167,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,365.5]
-["lineTo",505.6630859375,365.5]
+["moveTo",28,370.5]
+["lineTo",505.6630859375,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2095,8 +2177,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,365.5]
-["lineTo",27,365.5]
+["moveTo",19.34765625,370.5]
+["lineTo",27,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2105,8 +2187,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,246.5]
-["lineTo",505.6630859375,246.5]
+["moveTo",28,257.5]
+["lineTo",505.6630859375,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2115,8 +2197,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,246.5]
-["lineTo",27,246.5]
+["moveTo",19.34765625,257.5]
+["lineTo",27,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2125,8 +2207,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,128.5]
-["lineTo",505.6630859375,128.5]
+["moveTo",28,144.5]
+["lineTo",505.6630859375,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2135,8 +2217,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,128.5]
-["lineTo",27,128.5]
+["moveTo",19.34765625,144.5]
+["lineTo",27,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2145,8 +2227,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,10.5]
-["lineTo",505.6630859375,10.5]
+["moveTo",28,32.5]
+["lineTo",505.6630859375,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2155,9 +2237,65 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,10.5]
-["lineTo",27,10.5]
+["moveTo",19.34765625,32.5]
+["lineTo",27,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",152.283203125,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",198.283203125,16,null]
+["measureText","undefined"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["setLineWidth",2]
+["moveTo",183.283203125,18]
+["lineTo",223.283203125,18]
+["stroke",null]
+["restore"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",261,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",307,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -2169,11 +2307,11 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.34765625,494.59999999999997]
+["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2182,7 +2320,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",146.926513671875,494.59999999999997]
+["translate",146.926513671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2191,7 +2329,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",266.50537109375,494.59999999999997]
+["translate",266.50537109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2200,7 +2338,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",386.084228515625,494.59999999999997]
+["translate",386.084228515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2209,7 +2347,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",505.6630859375,494.59999999999997]
+["translate",505.6630859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2221,7 +2359,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",27.5,10]
+["moveTo",27.5,32]
 ["lineTo",27.5,484]
 ["stroke",null]
 ["restore"]
@@ -2231,7 +2369,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,483.59999999999997]
+["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2240,7 +2378,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,365.24999999999994]
+["translate",16.34765625,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2249,7 +2387,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,246.89999999999998]
+["translate",16.34765625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2258,7 +2396,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,128.54999999999998]
+["translate",16.34765625,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2267,7 +2405,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,10.2]
+["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2279,7 +2417,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",27.34765625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",27.34765625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2287,7 +2425,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",505.6630859375,10.2,3,0,6.283185307179586,false]
+["arc",505.6630859375,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2318,12 +2456,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        53.36328125,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[53.36328125, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'harnessLinear',
@@ -2338,23 +2471,19 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             <Object?>[5.0, '5 kg', false],
             <Object?>[6.25, '6.25 kg', false],
           ],
-          'box': <Object?>[0.0, 10.2, 53.36328125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 53.36328125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            365.24999999999994,
-            246.89999999999998,
-            128.54999999999998,
-            10.2,
+            483.6,
+            370.70000000000005,
+            257.8,
+            144.9,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[6.25, 3.75, 1.25],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
         'x': <String, Object?>{
           'type': 'harnessLinear',
@@ -2369,12 +2498,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             <Object?>[2.0, '2', false],
             <Object?>[2.5, '2.5', false],
           ],
-          'box': <Object?>[
-            53.36328125,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[53.36328125, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.3408203125, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -2395,8 +2519,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[53.36328125, 483.59999999999997],
-          <Object?>[500.6591796875, 10.2],
+          <Object?>[53.36328125, 483.6],
+          <Object?>[500.6591796875, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -2430,8 +2554,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",54,365.5]
-["lineTo",500.6591796875,365.5]
+["moveTo",54,370.5]
+["lineTo",500.6591796875,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2440,8 +2564,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",45.36328125,365.5]
-["lineTo",53,365.5]
+["moveTo",45.36328125,370.5]
+["lineTo",53,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2450,8 +2574,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",54,246.5]
-["lineTo",500.6591796875,246.5]
+["moveTo",54,257.5]
+["lineTo",500.6591796875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2460,8 +2584,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",45.36328125,246.5]
-["lineTo",53,246.5]
+["moveTo",45.36328125,257.5]
+["lineTo",53,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2470,8 +2594,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",54,128.5]
-["lineTo",500.6591796875,128.5]
+["moveTo",54,144.5]
+["lineTo",500.6591796875,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2480,8 +2604,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",45.36328125,128.5]
-["lineTo",53,128.5]
+["moveTo",45.36328125,144.5]
+["lineTo",53,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2490,8 +2614,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",54,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",54,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2500,8 +2624,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",45.36328125,10.5]
-["lineTo",53,10.5]
+["moveTo",45.36328125,32.5]
+["lineTo",53,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2510,7 +2634,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",53.5,10.2]
+["moveTo",53.5,32]
 ["lineTo",53.5,483]
 ["stroke",null]
 ["restore"]
@@ -2521,7 +2645,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",53.5,484]
-["lineTo",53.5,491.59999999999997]
+["lineTo",53.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2530,7 +2654,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",165.5,10.2]
+["moveTo",165.5,32]
 ["lineTo",165.5,483]
 ["stroke",null]
 ["restore"]
@@ -2541,7 +2665,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",165.5,484]
-["lineTo",165.5,491.59999999999997]
+["lineTo",165.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2550,7 +2674,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",277.5,10.2]
+["moveTo",277.5,32]
 ["lineTo",277.5,483]
 ["stroke",null]
 ["restore"]
@@ -2561,7 +2685,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",277.5,484]
-["lineTo",277.5,491.59999999999997]
+["lineTo",277.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2570,7 +2694,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",388.5,10.2]
+["moveTo",388.5,32]
 ["lineTo",388.5,483]
 ["stroke",null]
 ["restore"]
@@ -2581,7 +2705,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",388.5,484]
-["lineTo",388.5,491.59999999999997]
+["lineTo",388.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2590,7 +2714,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -2601,14 +2725,43 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",53.5,10]
+["moveTo",53.5,32]
 ["lineTo",53.5,484]
 ["stroke",null]
 ["restore"]
@@ -2618,7 +2771,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",42.36328125,483.59999999999997]
+["translate",42.36328125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2627,7 +2780,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",42.36328125,365.24999999999994]
+["translate",42.36328125,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2636,7 +2789,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",42.36328125,246.89999999999998]
+["translate",42.36328125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2645,7 +2798,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",42.36328125,128.54999999999998]
+["translate",42.36328125,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2654,7 +2807,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",42.36328125,10.2]
+["translate",42.36328125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2672,11 +2825,11 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",53.36328125,494.59999999999997]
+["translate",53.36328125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2685,7 +2838,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",165.187255859375,494.59999999999997]
+["translate",165.187255859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2694,7 +2847,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",277.01123046875,494.59999999999997]
+["translate",277.01123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2703,7 +2856,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",388.835205078125,494.59999999999997]
+["translate",388.835205078125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2712,7 +2865,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2724,7 +2877,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",53.36328125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",53.36328125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2732,7 +2885,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",500.6591796875,10.2,3,0,6.283185307179586,false]
+["arc",500.6591796875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2772,7 +2925,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[46.53173828125, 10.8, 506.497314453125, 487.2],
+      'chartArea': <Object?>[46.53173828125, 32.0, 506.497314453125, 487.2],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'harnessMeasure',
@@ -2804,7 +2957,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
           ],
           'valueForPixel': <Object?>[3.0, 5.0, 7.0],
           'basePixel': 46.53173828125,
-          'measures': <Object?>[49.86083984375],
+          'measures': <Object?>[42.69140625],
         },
         'y': <String, Object?>{
           'type': 'harnessMeasure',
@@ -2819,26 +2972,20 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             <Object?>[939.5, '939.5', false],
             <Object?>[1250.0, '1250', false],
           ],
-          'box': <Object?>[0.0, 10.8, 46.53173828125, 487.2],
+          'box': <Object?>[0.0, 32.0, 46.53173828125, 487.2],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.8, 0.0, 10.8],
-          'tickPixels': <Object?>[
-            487.2,
-            368.09999999999997,
-            249.0,
-            129.9,
-            10.8,
-          ],
-          'valuePixels': <Object?>[487.2, 249.0, 10.8],
-          'valueForPixel': <Object?>[1250.0, 629.0, 8.0],
+          'tickPixels': <Object?>[487.2, 373.4, 259.6, 145.8, 32.0],
+          'valuePixels': <Object?>[487.2, 259.6, 32.0],
+          'valueForPixel': <Object?>[1250.0, 628.9999999999999, 8.0],
           'basePixel': 487.2,
-          'measures': <Object?>[35.576171875, 32.0185546875],
+          'measures': <Object?>[42.69140625, 32.0185546875],
         },
       },
       'points': <Object?>[
         <Object?>[
           <Object?>[46.53173828125, 487.2],
-          <Object?>[506.497314453125, 10.8],
+          <Object?>[506.497314453125, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -2852,7 +2999,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",46.5,10.8]
+["moveTo",46.5,32]
 ["lineTo",46.5,487]
 ["stroke",null]
 ["restore"]
@@ -2872,7 +3019,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",161.5,10.8]
+["moveTo",161.5,32]
 ["lineTo",161.5,487]
 ["stroke",null]
 ["restore"]
@@ -2892,7 +3039,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",276.5,10.8]
+["moveTo",276.5,32]
 ["lineTo",276.5,487]
 ["stroke",null]
 ["restore"]
@@ -2912,7 +3059,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",391.5,10.8]
+["moveTo",391.5,32]
 ["lineTo",391.5,487]
 ["stroke",null]
 ["restore"]
@@ -2932,7 +3079,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",506.5,10.8]
+["moveTo",506.5,32]
 ["lineTo",506.5,487]
 ["stroke",null]
 ["restore"]
@@ -2972,8 +3119,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",47,368.5]
-["lineTo",506.497314453125,368.5]
+["moveTo",47,373.5]
+["lineTo",506.497314453125,373.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2982,8 +3129,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",38.53173828125,368.5]
-["lineTo",46,368.5]
+["moveTo",38.53173828125,373.5]
+["lineTo",46,373.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2992,8 +3139,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",47,249.5]
-["lineTo",506.497314453125,249.5]
+["moveTo",47,259.5]
+["lineTo",506.497314453125,259.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3002,8 +3149,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",38.53173828125,249.5]
-["lineTo",46,249.5]
+["moveTo",38.53173828125,259.5]
+["lineTo",46,259.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3012,8 +3159,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",47,129.5]
-["lineTo",506.497314453125,129.5]
+["moveTo",47,145.5]
+["lineTo",506.497314453125,145.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3022,8 +3169,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",38.53173828125,129.5]
-["lineTo",46,129.5]
+["moveTo",38.53173828125,145.5]
+["lineTo",46,145.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3032,8 +3179,8 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",47,10.5]
-["lineTo",506.497314453125,10.5]
+["moveTo",47,32.5]
+["lineTo",506.497314453125,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3042,9 +3189,38 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",38.53173828125,10.5]
-["lineTo",46,10.5]
+["moveTo",38.53173828125,32.5]
+["lineTo",46,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -3108,7 +3284,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",46.5,10]
+["moveTo",46.5,32]
 ["lineTo",46.5,488]
 ["stroke",null]
 ["restore"]
@@ -3127,7 +3303,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",35.53173828125,368.09999999999997]
+["translate",35.53173828125,373.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3136,7 +3312,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",35.53173828125,249]
+["translate",35.53173828125,259.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3145,7 +3321,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",35.53173828125,129.9]
+["translate",35.53173828125,145.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3154,7 +3330,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["restore"]
 ["save"]
 ["setFont","normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",35.53173828125,10.8]
+["translate",35.53173828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3174,7 +3350,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",506.497314453125,10.8,3,0,6.283185307179586,false]
+["arc",506.497314453125,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -3196,7 +3372,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[0.0, 0.0, 512.0, 512.0],
+      'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
       'scales': <String, Object?>{
         'r': <String, Object?>{
           'type': 'harnessRadial',
@@ -3208,7 +3384,7 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
             <Object?>[59.0, '59', false],
             <Object?>[90.0, '90', false],
           ],
-          'box': <Object?>[0.0, 0.0, 512.0, 512.0],
+          'box': <Object?>[0.0, 0.0, 512.0, 480.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 0.0, 0.0, 0.0],
           'tickPixels': <Object?>[
@@ -3237,30 +3413,35 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 ["resetTransform"]
 ["clearRect",0,0,512,512]
 ["restore"]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
+["save"]
 ["beginPath"]
-["arc",65,0,3,0,6.283185307179586,false]
-["closePath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
 ["fill",null,null]
 ["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",59,10,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
-["setStrokeStyle","rgba(0,0,0,0.1)"]
-["setLineWidth",1]
-["setFillStyle","rgba(0,0,0,0.1)"]
-["beginPath"]
-["arc",90,20,3,0,6.283185307179586,false]
-["closePath"]
-["fill",null,null]
-["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
+["restore"]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
@@ -3276,6 +3457,11 @@ const List<ScaleChartHarnessReferenceCase> scaleChartHarnessReference = [
 
 /// Each text that the cases measured, with its font and width.
 const List<ScaleChartHarnessReferenceWidth> scaleChartHarnessReferenceWidths = [
+  (
+    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    text: 'undefined',
+    width: 52.716796875,
+  ),
   (
     font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
     text: '0.001',
@@ -3541,7 +3727,11 @@ const List<ScaleChartHarnessReferenceWidth> scaleChartHarnessReferenceWidths = [
     text: '0.5',
     width: 16.681640625,
   ),
-  (font: '10px sans-serif', text: 'January', width: 35.576171875),
+  (
+    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    text: 'January',
+    width: 42.69140625,
+  ),
   (
     font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
     text: '8',
@@ -3566,11 +3756,6 @@ const List<ScaleChartHarnessReferenceWidth> scaleChartHarnessReferenceWidths = [
     font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
     text: '1250',
     width: 28.919921875,
-  ),
-  (
-    font: "normal bold 13px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-    text: 'January',
-    width: 49.86083984375,
   ),
   (
     font: "normal 9px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
@@ -3626,11 +3811,6 @@ const List<ScaleChartHarnessReferenceWidth> scaleChartHarnessReferenceWidths = [
     font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
     text: 'Te Yo LT P. F, 11 1111',
     width: 114.5390625,
-  ),
-  (
-    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-    text: 'January',
-    width: 42.69140625,
   ),
   (
     font: "normal bold 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",

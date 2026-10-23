@@ -13,12 +13,15 @@
 // `color`, and a scriptable `text` and a number `text`. The draw calls come
 // after the last step, and `align` changes only the draw. Thus each `align`
 // case ends on the value under test: `start` and `end` at the top, at the
-// left and at the right (the `align` branch, items 5 and 7). Each case sets
-// `options.plugins` with unitPlugins(['title']): the Dart test file
-// registers only the title plugin until wave 4 (Chart.js ADR 0041, sections
-// 4 and 7). The observation has the key `plugins.title` (the observer
+// left and at the right (the `align` branch, items 5 and 7). Each unit case
+// sets `options.plugins` with unitPlugins(['title']): the plugin set of the
+// Dart test file in wave 1 (Chart.js ADR 0041, sections 4 and 7). The observation has the key `plugins.title` (the observer
 // `observeTitle` below and in the Dart test file). The test file runs the
 // cases again with the light preset (theming.md section 8 test 3).
+//
+// The full case (names that start with `full:`, Chart.js ADR 0041, section
+// 4 item 2) has the default plugin options: the title with the default
+// legend, the box order and the chart area, then the legend at the left.
 //
 // Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
 // v24.12.0:
@@ -157,5 +160,19 @@ const cases = [
   titleCase('a scriptable text', line({display: true, text: titleText})),
   titleCase('a number text', line({display: true, text: 0})),
 ];
+
+// ---------------------------------------------------------------------------
+// The full cases of Chart.js ADR 0041, section 4 item 2 (wave 4): the
+// default plugin options, so each registered plugin runs (no unitPlugins).
+// A full case exists only where another plugin changes the result (section
+// 4 item 3).
+
+cases.push(
+  titleCase(
+    'full: title with the default legend',
+    {...line(), options: {plugins: {title: {display: true, text: 'Chart title'}}}},
+    {steps: [['setOption', 'plugins.legend.position', 'left']]},
+  ),
+);
 
 writeControllerReference(OUT, 'pluginTitle', cases, {title: 'title plugin'});

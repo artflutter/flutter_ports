@@ -10,10 +10,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ParsedFont, toFont;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' show Color;
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.subtitle.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -40,8 +36,8 @@ import 'light_reference.dart';
 //
 // The reads use `jsGet`, and no resolver goes to `equals`.
 //
-// Until wave 4 of phase 8 adds the plugins to registerables, main()
-// registers the four plugins (Chart.js ADR 0041, section 7).
+// flutter_test_config.dart registers the plugins with the built-in
+// components (Chart.js ADR 0041, section 1).
 
 /// The plugin options of the plugin [id] of [chart]: the options of its
 /// descriptor (core.plugins.js:175-188).
@@ -106,10 +102,6 @@ Chart _chart(AnyObject? theme) => acquireChart(<String, Object?>{
 });
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([legend, subTitle, title, tooltip]);
-
   test('the plugin keys are the 19 keys of the theme spec', () {
     expect(themeLightPlugins.keys, [
       'title.color',

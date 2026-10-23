@@ -34,8 +34,9 @@ import 'scale_chart_harness.dart';
 // the port is under test. The cartesian test controller `categoryTest` has
 // the category scale on the index axis. flutter_test_config.dart registers
 // the built-in components before main(), and the category scale is one of
-// them (`harness-register-builtins`). The generator registers the same six
-// scales and four elements of the dist (registerPhase6). main() registers
+// them (`harness-register-builtins`). The generator registers the same
+// built-in components and the seven plugins of the dist (registerBuiltins,
+// Chart.js ADR 0041, section 1). main() registers
 // only the test scale and the test controller through their class values,
 // before the snapshot of the defaults restore (Chart.js ADR 0020, section 8,
 // and Chart.js ADR 0022, section 8).

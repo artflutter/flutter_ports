@@ -14,6 +14,9 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
+    as plugin_tooltip;
 import 'package:flutter_chartjs_port/src/scales/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -675,6 +678,50 @@ void main() {
     await mouse.moveTo(tester.getTopLeft(_host) - const Offset(5, 5));
     await _frames(tester, 3);
     expect(_row(state, 'pointer x'), '-');
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('axes: the legend and the tooltip of registerables '
+      '(Chart.js ADR 0031, Open)', (tester) async {
+    final state = await _pumpAxes(tester);
+    final chart = state.chart!;
+    // The tab has no plugin opt-out: the legend box is in the layout with
+    // the scales, above the chart area (plugin.legend.js:637-639).
+    final legend = chart.legend! as Legend;
+    expect(jsGet(legend.options, 'display'), true);
+    expect(
+      [
+        for (final item in legend.legendItems!) jsGet(item, 'text'),
+      ],
+      ['A', 'B'],
+    );
+    expect(legend.height, greaterThan(0));
+    expect(legend.bottom, lessThanOrEqualTo(chart.chartArea!.top));
+    // An x axis at the top is between the legend and the chart area: the
+    // legend has the larger weight (plugin.legend.js:642).
+    await _tap(tester, 'axes.x.position.top');
+    expect(legend.bottom, lessThanOrEqualTo(_scale(chart, 'x').top));
+
+    // The tooltip shows the label and the value texts of the scales
+    // (core.datasetController.js:687-697).
+    await _tap(tester, 'axes.x.type.category');
+    await tester.ensureVisible(find.byKey(const ValueKey('axes.host')));
+    await _frames(tester);
+    final point = _point(chart, 0, 5);
+    final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await mouse.addPointer(location: tester.getTopLeft(_host));
+    addTearDown(mouse.removePointer);
+    await mouse.moveTo(tester.getTopLeft(_host) + Offset(point.x, point.y));
+    await _frames(tester, 3);
+    final tooltip = chart.tooltip! as plugin_tooltip.Tooltip;
+    final items = tooltip.dataPoints!;
+    expect(items, isNotEmpty);
+    final expected = chart.getDatasetMeta(0).controller!.getLabelAndValue(5);
+    expect(expected.label, 'P6');
+    expect(jsGet(items.first, 'datasetIndex'), 0);
+    expect(jsGet(items.first, 'dataIndex'), 5);
+    expect(jsGet(items.first, 'label'), expected.label);
+    expect(jsGet(items.first, 'formattedValue'), expected.value);
+    expect(tooltip.opacity, greaterThan(0));
     expect(tester.takeException(), isNull);
   });
 }

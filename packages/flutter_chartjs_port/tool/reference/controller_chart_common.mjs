@@ -35,9 +35,10 @@
 // (MOMENT_NODE_MODULES, see scale_time_common.mjs) and TZ=UTC.
 //
 // How to write a generator: import this file first, then call loadChartJs(),
-// registerPhase7(C), runControllerCase() for each case, and
-// writeControllerReference(). A plugin generator of phase 8 calls
-// registerBuiltins(C) (re-exported from scale_chart_common.mjs) and the
+// registerBuiltins(C) (re-exported from scale_chart_common.mjs: the
+// components and the plugins of test/flutter_test_config.dart, Chart.js ADR
+// 0041 section 1), runControllerCase() for each case, and
+// writeControllerReference(). A plugin generator of phase 8 also calls the
 // functions of tool/reference/plugin_chart_common.mjs (Chart.js ADR 0041).
 //
 // The recording Path2D
@@ -84,17 +85,6 @@ for (const name of ['moveTo', 'lineTo', 'bezierCurveTo', 'quadraticCurveTo', 'ar
   };
 }
 globalThis.Path2D = Path2D;
-
-/**
- * Registers the built-in components of the Dart registry after phase 7, and
- * then [extra]: `C.Chart.register(C.controllers, C.scales, C.elements)`.
- * flutter_test_config.dart registers the namespaces `controllers`, `scales`,
- * `elements` and `plugins` (`harness-register-builtins`). In phase 7,
- * `plugins` has no entry.
- */
-export function registerPhase7(C, ...extra) {
-  C.Chart.register(C.controllers, C.scales, C.elements, ...extra);
-}
 
 // ---------------------------------------------------------------------------
 // The plain copies.

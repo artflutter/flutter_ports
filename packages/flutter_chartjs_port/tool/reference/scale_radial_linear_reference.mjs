@@ -43,7 +43,7 @@ import {
   RadialTestController,
   loadChartJs,
   named,
-  registerPhase6,
+  registerBuiltins,
   runCase,
   writeReference,
 } from './scale_chart_common.mjs';
@@ -54,7 +54,7 @@ const OUT = fileURLToPath(
 
 const C = await loadChartJs();
 
-registerPhase6(C, RadialTestController);
+registerBuiltins(C, RadialTestController);
 
 /**
  * The observations of a radial linear scale [s], after the observations of

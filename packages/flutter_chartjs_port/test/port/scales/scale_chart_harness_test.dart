@@ -32,9 +32,11 @@ import 'scale_chart_harness_reference.dart';
 // the axis r of the radial test controller `harnessRadialTest`. The
 // registration runs before the snapshot of the defaults restore (Chart.js
 // ADR 0020, section 8, and Chart.js ADR 0022, section 8). The generator
-// registers the same classes after the six scales and the four elements of
-// the dist. The scales of the dist do not change a chart of the test
-// scales: a scale registers only its own defaults.
+// registers the same classes after the built-in components and the seven
+// plugins of the dist (registerBuiltins, Chart.js ADR 0041, section 1), as
+// flutter_test_config.dart registers them before main(). The scales of the
+// dist do not change a chart of the test scales: a scale registers only its
+// own defaults.
 //
 // The cases compare the chart area, each scale (ticks, labels, box, label
 // rotation, paddings and the pixel mapping), the points and the calls of

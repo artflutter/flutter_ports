@@ -15,6 +15,14 @@
 //   of Chart.js ADR 0028, section 8 (names that start with `interfaces:`,
 //   the polar area rows of the interfaces spec, section 7.3). The themed run
 //   does not run them.
+// - The legend override cases of Chart.js ADR 0041, section 5 (names that
+//   start with `legend:`): the real legend with the label options of the
+//   old test legend, its items and hit boxes, a click on the item 1, a
+//   chart without labels, and `legend: off` (the legend plugin off: the
+//   override `generateLabels` throws a TypeError at the read of
+//   `chart.legend.options`). The test file runs them unthemed only (report
+//   decision 2: plugin.legend_test.dart runs the legend with the light
+//   preset).
 // - The cases `interfaces: sharing, ...` use the type `polarAreaSharing`: a
 //   subclass of PolarAreaController with `enableOptionSharing = true` and
 //   its own id. This generator registers it before these cases and
@@ -33,7 +41,7 @@ import {fileURLToPath} from 'node:url';
 import {
   loadChartJs,
   named,
-  registerPhase7,
+  registerBuiltins,
   runControllerCase,
   writeControllerReference,
 } from './controller_chart_common.mjs';
@@ -43,7 +51,7 @@ const OUT = fileURLToPath(
 );
 
 const C = await loadChartJs();
-registerPhase7(C);
+registerBuiltins(C);
 
 // ---------------------------------------------------------------------------
 // The named functions of the configs ('fn:<name>' in the data).
@@ -78,44 +86,34 @@ const polarState = named('polarState', (chart) =>
 );
 
 /**
- * The probe `legend`: the two legend functions of
- * `overrides.polarArea.plugins.legend` (Chart.js ADR 0028, section 6).
- * `noLegend` is the result of generateLabels without `chart.legend`, or the
- * name of its error. Then the probe puts a test legend in `chart.legend`:
- * `items` and `keys` (the keys of each item in order) of generateLabels,
- * then onClick({}, {index: 1}, legend), then `visible1`
- * (getDataVisibility(1)), `hidden` (the `hidden` of each new item) and
- * `outer` (the outerRadius of each arc of the dataset 0). At its end, the
- * chart has no legend again.
+ * The probe `realLegend`: the items and the hit boxes of the real legend,
+ * `{items: chart.legend.legendItems, hitBoxes: chart.legend.legendHitBoxes}`
+ * as plain copies (Chart.js ADR 0041, section 5), and `keys`, the
+ * `Object.keys` of each item in order: the harness compares only the
+ * expected keys of a Map, so `keys` pins the key list of the items. `buildLabels`
+ * (plugin.legend.js:104-121) makes the items with the legend functions of
+ * `overrides.polarArea.plugins.legend` (controller.polarArea.js:35-69).
  */
-const legend = named('legend', (chart) => {
-  const fns = C.Chart.overrides.polarArea.plugins.legend;
-  const out = {};
+const realLegend = named('realLegend', (chart) => ({
+  items: chart.legend.legendItems,
+  keys: chart.legend.legendItems.map((item) => Object.keys(item)),
+  hitBoxes: chart.legend.legendHitBoxes,
+}));
+
+/**
+ * The probe `noLegend`: the override `generateLabels` of
+ * `overrides.polarArea.plugins.legend` on a chart with the legend plugin
+ * off, so `chart.legend` is `undefined`. With labels and a dataset, the
+ * read of `chart.legend.options` (controller.polarArea.js:41) throws: the
+ * probe gives the name of the error.
+ */
+const noLegend = named('noLegend', (chart) => {
+  const {labels} = C.Chart.overrides.polarArea.plugins.legend;
   try {
-    out.noLegend = fns.labels.generateLabels(chart);
+    return labels.generateLabels(chart);
   } catch (e) {
-    out.noLegend = e.name;
+    return e.name;
   }
-  chart.legend = {
-    chart,
-    options: {
-      labels: {
-        pointStyle: 'circle',
-        textAlign: 'left',
-        color: '#666',
-        useBorderRadius: true,
-        borderRadius: 0,
-      },
-    },
-  };
-  out.items = fns.labels.generateLabels(chart);
-  out.keys = out.items.map((item) => Object.keys(item));
-  fns.onClick({}, {index: 1}, chart.legend);
-  out.visible1 = chart.getDataVisibility(1);
-  out.hidden = fns.labels.generateLabels(chart).map((item) => item.hidden);
-  out.outer = chart.getDatasetMeta(0).data.map((a) => a.outerRadius);
-  delete chart.legend;
-  return out;
 });
 
 /**
@@ -414,29 +412,50 @@ for (const [label, dataset, options] of SPACING_ROWS) {
 }
 C.Chart.unregister(PolarAreaSharing);
 
-for (const [label, labels] of [
-  ['with labels', ['a', ['b1', 'b2'], 'c']],
-  ['without labels', []],
-]) {
-  cases.push(
-    runControllerCase(
-      `interfaces: the legend functions, ${label}`,
-      {
-        type: 'polarArea',
-        data: {
-          labels,
-          datasets: [
-            {
-              data: [1, 2, 3],
-              backgroundColor: ['red', 'green', 'blue'],
-              borderRadius: 3,
-            },
-          ],
-        },
+// ---------------------------------------------------------------------------
+// The legend override cases of Chart.js ADR 0041, section 5.
+
+/**
+ * A polar area chart with the labels [labels], 1 dataset and the label
+ * options of the old test legend in `plugins.legend.labels`, then the keys
+ * of [plugins]. The step `clickLegend` clicks the center of the hit box of
+ * the item 1: the `onClick` of the overrides (controller.polarArea.js:65-68)
+ * toggles the data index 1 and updates the chart.
+ */
+const legendChart = (labels = ['a', ['b1', 'b2'], 'c'], plugins = {}) => ({
+  type: 'polarArea',
+  data: {
+    labels,
+    datasets: [{data: [1, 2, 3], backgroundColor: ['red', 'green', 'blue'], borderRadius: 3}],
+  },
+  options: {
+    plugins: {
+      legend: {
+        labels: {pointStyle: 'circle', textAlign: 'left', useBorderRadius: true, borderRadius: 0},
       },
-      {extras: {legend}},
-    ),
-  );
-}
+      ...plugins,
+    },
+  },
+});
+
+cases.push(
+  runControllerCase('legend: items', legendChart(), {extras: {realLegend}}),
+  runControllerCase('legend: click', legendChart(), {
+    steps: [['clickLegend', 1]],
+    extras: {realLegend},
+  }),
+  runControllerCase('legend: click twice', legendChart(), {
+    steps: [
+      ['clickLegend', 1],
+      ['clickLegend', 1],
+    ],
+    extras: {realLegend},
+  }),
+  // `data.labels.length` is 0: generateLabels gives [] (controller.polarArea.js:40).
+  runControllerCase('legend: items without labels', legendChart([]), {extras: {realLegend}}),
+  runControllerCase('legend: off', legendChart(undefined, {legend: false}), {
+    extras: {noLegend},
+  }),
+);
 
 writeControllerReference(OUT, 'controllerPolarArea', cases, {title: 'polar area'});

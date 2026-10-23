@@ -14,7 +14,8 @@
 ///
 /// Before the snapshot of the restore, the file registers the built-in
 /// components, as the UMD entry of the specs does
-/// (`harness-register-builtins`). A file that calls `setUpSpecs()` or
+/// (`harness-register-builtins`), and then disables the colors plugin
+/// (index.js:25-28). A file that calls `setUpSpecs()` or
 /// `removeBuiltins()` removes them again. The unmount of the harness body
 /// releases the charts of `acquireChart`, with a `tearDown` as the fallback
 /// (`harness-release-at-unmount`, Chart.js ADR 0022, section 8). A
@@ -30,8 +31,8 @@ import 'dart:ui';
 // them from the harness: `createMockContext` and the matchers from
 // package:chartjs_test_utils/pure.dart, and `acquireChart`, `releaseChart`,
 // `afterEvent`, `waitForResize` and `triggerMouseEvent` from
-// package:chartjs_test_utils/flutter.dart. `specsFromFixtures` comes in
-// phase 7.
+// package:chartjs_test_utils/flutter.dart. `test/fixtures/index.dart` calls
+// `specsFromFixtures` of the same library (Chart.js ADR 0029).
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
@@ -39,7 +40,8 @@ import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
 // The specs run on the UMD entry of Chart.js, which registers the built-in
 // components. flutter_chartjs_port does not export lib/src/index.dart yet.
 import 'package:flutter_chartjs_port/src/index.dart'
-    show Chart, controllers, elements, plugins, scales;
+    show Chart, controllers, defaults, elements, plugins, scales;
+import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_test/flutter_test.dart';
 
 /// The `devicePixelRatio` of the test view (index.js:3-5).
@@ -94,8 +96,9 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // index.umd.ts:28 `Chart.register(controllers, scales, elements,
   // plugins)`. The call runs before `main()` of the test file and before the
   // snapshot of the restore below. Thus the restore keeps the defaults of the
-  // ported components. In phase 6, only `elements` and `scales` have entries
-  // (Chart.js ADR 0022, section 8). A pure-layer file removes them again in
+  // ported components (Chart.js ADR 0022, section 8). The four namespaces
+  // have all their entries: the plugins register with the other components
+  // (Chart.js ADR 0041, section 1). A pure-layer file removes them again in
   // `setUpSpecs()`, because `dart test` does not run this file.
   // DIVERGES(chartjs): harness-register-builtins, src/index.umd.ts:28.
   setUpBuiltins(
@@ -103,10 +106,16 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
     () => Chart.unregister([controllers, scales, elements, plugins]),
   );
 
-  // index.js:25-28: Disable colors plugin for tests.
-  // `Chart.defaults.plugins.colors.enabled = false` waits for the colors
-  // plugin (phase 8). It must run here, before the snapshot of the restore
-  // below, so that the restore keeps it.
+  // index.js:25-28
+  // Disable colors plugin for tests.
+  //
+  // Upstream runs the line in a top-level `beforeAll`, once, before the
+  // first spec. Here it runs before `main()` of each test file and before
+  // the snapshot of `harness-defaults-restore`, so the restore keeps it.
+  // A file that calls `removeBuiltins()` puts back the scopes of before the
+  // registration, without the colors plugin.
+  ((defaults['plugins']! as AnyObject)['colors']! as AnyObject)['enabled'] =
+      false;
 
   // DIVERGES(chartjs): harness-defaults-restore, restore defaults after tests.
   setUpDefaultsRestore();

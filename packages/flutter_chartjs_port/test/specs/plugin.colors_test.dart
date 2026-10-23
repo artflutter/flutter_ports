@@ -5,10 +5,8 @@ library;
 import 'package:chartjs_test_utils/flutter.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.colors.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -33,14 +31,6 @@ import '../fixtures/index.dart' as fixture;
 AnyObject? _options(Object element) => (element as Element).options;
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([colors]);
-  // index.js:25-28
-  // Disable colors plugin for tests.
-  ((defaults['plugins']! as AnyObject)['colors']! as AnyObject)['enabled'] =
-      false;
-
   group('Plugin.colors', () {
     group('auto', fixture.specs('plugin.colors'));
 

@@ -90,10 +90,6 @@ AnyObject _propagate({required bool propagate}) => <String, Object?>{
 };
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([filler]);
-
   group('Plugin.filler', () {
     group('auto', fixture.specs('plugin.filler'));
 

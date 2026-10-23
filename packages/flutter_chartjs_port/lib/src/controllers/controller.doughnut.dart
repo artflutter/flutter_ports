@@ -23,7 +23,7 @@
 ///   in `_getRotationExtents` (Chart.js ADR 0028, section 1).
 /// - The static `overrides` hold the tear-offs of the legend functions
 ///   `_generateLabels` and `_onClick` (Chart.js ADR 0028, section 6). The
-///   legend plugin of phase 8 calls them.
+///   legend plugin calls them.
 /// - [DoughnutController.jsClass] is the class as a value with the statics
 ///   `id`, `defaults`, `descriptors` and `overrides` (Chart.js ADR 0020,
 ///   section 3).

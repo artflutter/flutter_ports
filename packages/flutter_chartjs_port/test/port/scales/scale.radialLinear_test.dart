@@ -40,8 +40,9 @@ import 'scale_radial_linear_reference.dart';
 // harness-register-builtins). Thus main() registers only the test
 // controller, through its class value, before the snapshot of the defaults
 // restore (Chart.js ADR 0020, section 8, and Chart.js ADR 0022, section 8).
-// The generator also registers the six scales and the four elements of the
-// dist first.
+// The generator also registers the built-in components and the seven
+// plugins of the dist first (registerBuiltins, Chart.js ADR 0041, section
+// 1), as flutter_test_config.dart does.
 //
 // The group of Chart.js ADR 0025 pins the relations of the value types
 // (section 9) without generated values. The radial methods have no fast

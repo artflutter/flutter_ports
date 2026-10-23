@@ -29,7 +29,12 @@
 // The users of this file: the generators of the phase 6 scale reference
 // tests, and tool/reference/controller_chart_common.mjs with the generators
 // of the phase 7 controller reference tests
-// (tool/reference/controller_*_reference.mjs, Chart.js ADR 0030).
+// (tool/reference/controller_*_reference.mjs, Chart.js ADR 0030) and of the
+// phase 8 plugin reference tests (tool/reference/plugin_*_reference.mjs,
+// through tool/reference/plugin_chart_common.mjs, Chart.js ADR 0041). Each
+// of them registers the components and the plugins of
+// test/flutter_test_config.dart with registerBuiltins (Chart.js ADR 0041,
+// section 1).
 //
 // How to run a generator
 // ----------------------
@@ -114,7 +119,7 @@
 // are the fixed values of the upstream mock: no scale reads them.
 //
 // How to write a generator: see tool/reference/scale_chart_harness_reference.mjs.
-// It calls loadChartJs(), registerPhase6() with its own classes, runCase()
+// It calls loadChartJs(), registerBuiltins() with its own classes, runCase()
 // for each chart, and writeReference().
 
 import {execFileSync} from 'node:child_process';
@@ -333,26 +338,15 @@ function loaded() {
 }
 
 /**
- * Registers the components of the Dart registry after phase 6, and then
- * [extra]. flutter_test_config.dart registers the namespaces `controllers`,
- * `scales`, `elements` and `plugins` (`harness-register-builtins`). In
- * phase 6, `controllers` and `plugins` have no entry. Thus the registry has
- * the six scales and the four elements, in the key order of the
- * namespaces.
- */
-export function registerPhase6(C, ...extra) {
-  C.Chart.register(C.scales, C.elements, ...extra);
-}
-
-/**
  * Registers the built-in components as test/flutter_test_config.dart does
  * (harness-register-builtins): src/index.umd.ts:28, then the line of
  * test/index.js:25-28. Then [extra]. Chart.js ADR 0041, section 1.
  *
  * The dist `C.plugins` is a plain object, so `register` walks it. The
- * plugin generators of phase 8 call it (Chart.js ADR 0041, section 3). In
- * wave 4 of phase 8 it takes the place of registerPhase6 and
- * registerPhase7 in the other generators.
+ * registry then has the eight controllers, the six scales, the four
+ * elements and the seven plugins, in the key order of the namespaces, as
+ * the Dart registry of each test. Each generator on the dist calls it, the
+ * scale generators with their test classes as [extra].
  */
 export function registerBuiltins(C, ...extra) {
   C.Chart.register(C.controllers, C.scales, C.elements, C.plugins);
@@ -742,10 +736,56 @@ export class LiberationContext extends Context {
 }
 
 /**
+ * A canvas `style` with the three methods of CSSStyleDeclaration that
+ * helpers.rtl.ts:55-73 calls (`overrideTextDirection` and
+ * `restoreTextDirection`), and the CSSOM rules of `setProperty`: a priority
+ * other than '' and 'important' (ASCII case-insensitive) does nothing, an
+ * empty value (also `null`, [LegacyNullToEmptyString]) removes the
+ * property, and a `direction` value that does not parse does nothing. The
+ * plain properties `width` and `height` of controller_reference.mjs still
+ * read and write on the object. As `_Style` of
+ * test/port/helpers/helpers.rtl_test.dart.
+ */
+function domStyle() {
+  const directions = new Set([
+    'ltr',
+    'rtl',
+    'inherit',
+    'initial',
+    'unset',
+    'revert',
+    'revert-layer',
+  ]);
+  const props = new Map();
+  return {
+    getPropertyValue: (name) => props.get(String(name))?.[0] ?? '',
+    getPropertyPriority: (name) => props.get(String(name))?.[1] ?? '',
+    setProperty(name, value, priority = '') {
+      name = String(name);
+      value = value === null ? '' : String(value);
+      priority = priority === null ? '' : String(priority);
+      const important = priority.toLowerCase() === 'important';
+      if (priority !== '' && !important) return;
+      if (value === '') {
+        props.delete(name);
+        return;
+      }
+      if (name === 'direction') {
+        // A keyword parses ASCII case-insensitive and serializes in lower case.
+        value = value.toLowerCase();
+        if (!directions.has(value)) return;
+      }
+      props.set(name, [value, important ? 'important' : '']);
+    },
+  };
+}
+
+/**
  * A canvas of [width] x [height] with a LiberationContext, as a DOM canvas:
- * the `id` `''`, and a write of `width` or `height` takes the `ToUint32` of
- * the value and resets the font state of the context. The default is the
- * 512 x 512 canvas of `_acquireChart` (chartjs-test-utils src/utils.js:41).
+ * the `id` `''`, the `style` of [domStyle], and a write of `width` or
+ * `height` takes the `ToUint32` of the value and resets the font state of
+ * the context. The default is the 512 x 512 canvas of `_acquireChart`
+ * (chartjs-test-utils src/utils.js:41).
  */
 export function fakeCanvas(width = 512, height = 512) {
   const ctx = new LiberationContext();
@@ -767,7 +807,7 @@ export function fakeCanvas(width = 512, height = 512) {
       h = value >>> 0;
       ctx.resetFontState();
     },
-    style: {},
+    style: domStyle(),
     getContext(id) {
       return id === '2d' ? ctx : null;
     },

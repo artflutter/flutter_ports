@@ -11,10 +11,10 @@
 // The generator registers the built-in components and the seven plugins
 // (registerBuiltins: src/index.umd.ts:28, then
 // `defaults.plugins.colors.enabled = false`, test/index.js:25-28). Each case
-// is a unit case (Chart.js ADR 0041, section 4): `options.plugins` is
-// unitPlugins(['colors'], ...), so each other plugin is `false`, and the
-// case sets `colors.enabled: true`. The Dart test file registers only the
-// colors plugin in wave 1.
+// except the full case is a unit case (Chart.js ADR 0041, section 4):
+// `options.plugins` is unitPlugins(['colors'], ...), so each other plugin
+// is `false`, and the case sets `colors.enabled: true`. This is the plugin
+// set of the Dart test file in wave 1.
 //
 // The observation of a case is the controller observation without the hit
 // matrix, `boxes`, and `plugins.colors`: for each dataset of
@@ -41,6 +41,11 @@
 //   type) and a polar area dataset. The three colorizers share the one
 //   counter `i` of getColorizer (plugin.colors.ts:55-66): the pie starts at
 //   color 2, and the polar area starts at color 6 and wraps.
+//
+// - The full case `full: radar` (Chart.js ADR 0041, section 4 item 3): the
+//   default plugin options with the colors plugin on. The filler fills each
+//   radar line (the radar default `fill: 'start'`) with the color of the
+//   palette.
 //
 // The Dart test file runs the cases two times: unthemed, and with the
 // light preset (theming.md section 8 test 3, Chart.js ADR 0042).
@@ -189,5 +194,19 @@ const cases = [
     options: colorsOn(),
   }),
 ];
+
+// ---------------------------------------------------------------------------
+// The full cases of Chart.js ADR 0041, section 4 item 2 (wave 4): the
+// default plugin options, so each registered plugin runs (no unitPlugins).
+// A full case exists only where another plugin changes the result (section
+// 4 item 3).
+
+cases.push(
+  colorsCase('full: radar', {
+    type: 'radar',
+    data: {labels: labels(5), datasets: datasets(2, 5)},
+    options: {plugins: {colors: {enabled: true}}},
+  }),
+);
 
 writeControllerReference(OUT, 'pluginColors', cases, {title: 'colors plugin'});

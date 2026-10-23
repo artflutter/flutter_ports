@@ -403,9 +403,8 @@ void main() {
   });
 
   // The row adapt-merge-element-target (Chart.js ADR 0039, section 10).
-  // The upstream values come from the probe
-  // .handover/phase8/units/W3-merge/probes/merge_element.mjs: the pinned
-  // Chart.js build in Node.js v24.12.0 on x64.
+  // The upstream values come from a probe of phase 8: the pinned Chart.js
+  // build in Node.js v24.12.0 on x64.
   group('adapt-merge-element-target', () {
     /// The two `merge` calls of the probe into [target]. It gives the
     /// `options` object after the first call.
@@ -512,8 +511,8 @@ void main() {
       expect(element['z'], same(undefined));
     });
 
-    // The upstream values of the next two tests come from the probe
-    // .handover/phase8/units/W3-merge/probes/review-merge-edges.mjs.
+    // The upstream values of the next two tests come from a probe of phase 8
+    // (the pinned Chart.js build in Node.js v24.12.0 on x64).
     test('merge skips an element source, unlike upstream', () {
       // Port difference: upstream merge({}, element) copies the 8 own keys
       // x, y, active, options, $animations, parsed, skip and stop.

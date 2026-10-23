@@ -26,13 +26,16 @@
 // - a bar dataset and a line dataset: the bar controller has no
 //   `supportsDecimation` (:225), the line dataset decimates.
 //
-// Each case sets `parsing: false` (except the parsing case) and
-// `options.plugins` with unitPlugins(['decimation'], ...): the Dart test
-// file registers only the decimation plugin until wave 4 (Chart.js ADR
-// 0041, sections 4 and 7). The observation has the key
+// Each unit case sets `parsing: false` (except the parsing case) and
+// `options.plugins` with unitPlugins(['decimation'], ...): the plugin set
+// of the Dart test file in wave 2 (Chart.js ADR 0041, sections 4 and 7). The observation has the key
 // `plugins.decimation` (the observer `observeDecimation` below and in the
 // Dart test file). The Dart test file runs the cases again with the light
 // preset (theming.md section 8 test 3).
+//
+// The full case `full: lttb with a fill` (Chart.js ADR 0041, section 4
+// item 3) has the default plugin options with the decimation on: the
+// filler fills the line with the decimated data.
 //
 // The named function `writeData` is the `beforeUpdate` hook of the inline
 // plugin `writer`. The Dart test file has a function of the same name with
@@ -225,5 +228,32 @@ const cases = [
     options: decimationOn({algorithm: 'lttb', samples: 6, threshold: 10}),
   }),
 ];
+
+// ---------------------------------------------------------------------------
+// The full cases of Chart.js ADR 0041, section 4 item 2 (wave 4): the
+// default plugin options, so each registered plugin runs (no unitPlugins).
+// A full case exists only where another plugin changes the result (section
+// 4 item 3).
+
+cases.push(
+  decimationCase('full: lttb with a fill', {
+    type: 'line',
+    data: {
+      datasets: [
+        {
+          label: 'd0',
+          data: series(60, wave),
+          fill: 'origin',
+          backgroundColor: 'rgba(0, 0, 255, 0.3)',
+        },
+      ],
+    },
+    options: {
+      parsing: false,
+      scales: {x: {type: 'linear'}},
+      plugins: {decimation: {enabled: true, algorithm: 'lttb', samples: 12, threshold: 20}},
+    },
+  }),
+);
 
 writeControllerReference(OUT, 'pluginDecimation', cases, {title: 'decimation plugin'});

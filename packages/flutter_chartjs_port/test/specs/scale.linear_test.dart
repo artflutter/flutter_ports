@@ -28,9 +28,10 @@ import '../support/jasmine.dart';
 // `Chart.defaults.scales.linear`.
 //
 // The chart cases call `acquireChart`. Thus they are `testWidgets` cases,
-// and the file runs on the VM (Chart.js ADR 0022, sections 1 and 2). A case
-// that needs a module of a later phase skips with the missing module of the
-// latest phase.
+// and the file runs on the VM (Chart.js ADR 0022, sections 1 and 2). The
+// cases at :998 and :1041 also need the legend, which
+// flutter_test_config.dart registers: the legend changes the top of the
+// chart area.
 //
 // The spec forms:
 // - `not.toBe(undefined)` is `isNot(same(undefined))`.
@@ -69,11 +70,12 @@ AnyObject _optionsY(Chart chart, [String? key]) {
 
 /// Jasmine `toBeCloseTo(expected, precision)` of jasmine-core 3.99.1:
 /// `Math.round(delta * 10^(precision + 1)) <= 10^-precision / 2 *
-/// 10^(precision + 1)`, with `delta = |expected - actual|`.
-Matcher _toBeCloseTo(num expected, [int precision = 2]) {
-  // js-ok: the exponents are ints, as in Jasmine's Math.pow.
+/// 10^(precision + 1)`, with `delta = |expected - actual|`. The spec also
+/// gives a precision that is not an integer, `1e-2` (:1027-1038).
+Matcher _toBeCloseTo(num expected, [num precision = 2]) {
+  // js-ok: a test tolerance only, as Jasmine's Math.pow.
   final pow = math.pow(10.0, precision + 1);
-  // js-ok: the exponent is an int, as in Jasmine's Math.pow.
+  // js-ok: a test tolerance only, as Jasmine's Math.pow.
   final maxDelta = math.pow(10.0, -precision) / 2;
   return predicate<Object?>(
     (actual) =>
@@ -1260,13 +1262,123 @@ void main() {
       },
     );
 
-    test(
-      'Should get the correct pixel value for a point',
-      () {},
-      skip: 'blocked: plugin.legend',
-    );
+    testWidgets('Should get the correct pixel value for a point', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'labels': <Object?>[-1, 1],
+          'datasets': <Object?>[
+            <String, Object?>{
+              'xAxisID': 'x',
+              'yAxisID': 'y',
+              'data': <Object?>[-1, 1],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+            'y': <String, Object?>{'type': 'linear'},
+          },
+        },
+      });
 
-    test('should fit correctly', () {}, skip: 'blocked: plugin.legend');
+      final xScale = chart.scales['x']!;
+      expect(
+        xScale.getPixelForValue(1),
+        toBeCloseToPixel(501),
+      ); // right - paddingRight
+      expect(
+        xScale.getPixelForValue(-1),
+        toBeCloseToPixel(31 + 3),
+      ); // left + paddingLeft + tick padding
+      expect(
+        xScale.getPixelForValue(0),
+        toBeCloseToPixel(266 + 3 / 2),
+      ); // halfway*/
+
+      expect(xScale.getValueForPixel(501), _toBeCloseTo(1, 1e-2));
+      expect(xScale.getValueForPixel(31), _toBeCloseTo(-1, 1e-2));
+      expect(xScale.getValueForPixel(266), _toBeCloseTo(0, 1e-2));
+
+      final yScale = chart.scales['y']!;
+      expect(
+        yScale.getPixelForValue(1),
+        toBeCloseToPixel(32),
+      ); // right - paddingRight
+      expect(
+        yScale.getPixelForValue(-1),
+        toBeCloseToPixel(484),
+      ); // left + paddingLeft
+      expect(yScale.getPixelForValue(0), toBeCloseToPixel(258)); // halfway*/
+
+      expect(yScale.getValueForPixel(32), _toBeCloseTo(1, 1e-2));
+      expect(yScale.getValueForPixel(484), _toBeCloseTo(-1, 1e-2));
+      expect(yScale.getValueForPixel(258), _toBeCloseTo(0, 1e-2));
+    });
+
+    testWidgets('should fit correctly', (tester) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'datasets': <Object?>[
+            <String, Object?>{
+              'xAxisID': 'x',
+              'yAxisID': 'y',
+              'data': <Object?>[
+                <String, Object?>{'x': 10, 'y': 100},
+                <String, Object?>{'x': -10, 'y': 0},
+                <String, Object?>{'x': 0, 'y': 0},
+                <String, Object?>{'x': 99, 'y': 7},
+              ],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'scales': <String, Object?>{
+            'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+            'y': <String, Object?>{'type': 'linear'},
+          },
+        },
+      });
+
+      final xScale = chart.scales['x']!;
+      final yScale = chart.scales['y']!;
+      expect(xScale.paddingTop, toBeCloseToPixel(0));
+      expect(xScale.paddingBottom, toBeCloseToPixel(0));
+      expect(xScale.paddingLeft, toBeCloseToPixel(12));
+      expect(xScale.paddingRight, toBeCloseToPixel(13.5));
+      expect(xScale.width, toBeCloseToPixel(468 - 3)); // minus tick padding
+      expect(xScale.height, toBeCloseToPixel(30));
+
+      expect(yScale.paddingTop, toBeCloseToPixel(10));
+      expect(yScale.paddingBottom, toBeCloseToPixel(10));
+      expect(yScale.paddingLeft, toBeCloseToPixel(0));
+      expect(yScale.paddingRight, toBeCloseToPixel(0));
+      expect(yScale.width, toBeCloseToPixel(31 + 3)); // plus tick padding
+      expect(yScale.height, toBeCloseToPixel(450));
+
+      // Extra size when scale label showing
+      (jsGet(xScale.options, 'title')! as AnyObject)['display'] = true;
+      (jsGet(yScale.options, 'title')! as AnyObject)['display'] = true;
+      chart.update();
+
+      expect(xScale.paddingTop, toBeCloseToPixel(0));
+      expect(xScale.paddingBottom, toBeCloseToPixel(0));
+      expect(xScale.paddingLeft, toBeCloseToPixel(12));
+      expect(xScale.paddingRight, toBeCloseToPixel(13.5));
+      expect(xScale.width, toBeCloseToPixel(442));
+      expect(xScale.height, toBeCloseToPixel(50));
+
+      expect(yScale.paddingTop, toBeCloseToPixel(10));
+      expect(yScale.paddingBottom, toBeCloseToPixel(10));
+      expect(yScale.paddingLeft, toBeCloseToPixel(0));
+      expect(yScale.paddingRight, toBeCloseToPixel(0));
+      expect(yScale.width, toBeCloseToPixel(58));
+      expect(yScale.height, toBeCloseToPixel(429));
+    });
 
     testWidgets('should fit correctly when display is turned off', (
       tester,

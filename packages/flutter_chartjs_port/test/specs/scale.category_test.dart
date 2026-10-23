@@ -25,11 +25,10 @@ import '../support/jasmine.dart';
 // Each chart case of the spec makes a line or a bar chart. Thus it needs a
 // controller of phase 7, and it is a `testWidgets` case that calls
 // `acquireChart` in its body (Chart.js ADR 0022, sections 1 and 2). The
-// file runs on the VM. A case that needs a module of a later phase skips
-// with the missing module of the latest phase. The cases that read a pixel
-// of a vertical category axis (:287, :330, :406 and :479) also need the
-// legend of phase 8: the legend changes the top of the chart area. The
-// other cases give the same values without the legend.
+// file runs on the VM. The cases that read a pixel of a vertical category
+// axis (:287, :330, :406 and :479) also need the legend, which
+// flutter_test_config.dart registers: the legend changes the top of the
+// chart area.
 //
 // Two cases give a label string to `getPixelForValue` (Chart.js ADR 0025,
 // scale.category.tests.js:247 and :534).
@@ -379,16 +378,91 @@ void main() {
       },
     );
 
-    test(
+    testWidgets(
       'should get the correct pixel for a value when vertical',
-      () {},
-      skip: 'blocked: plugin.legend',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'xAxisID': 'x',
+                'yAxisID': 'y',
+                'data': <Object?>['3', '5', '1', '4', '2'],
+              },
+            ],
+            'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
+            'yLabels': <Object?>['1', '2', '3', '4', '5'],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+              'y': <String, Object?>{
+                'type': 'category',
+                'position': 'left',
+              },
+            },
+          },
+        });
+
+        final yScale = chart.scales['y']!;
+        expect(yScale.getPixelForValue(0), toBeCloseToPixel(32));
+        expect(yScale.getValueForPixel(257), 2);
+
+        expect(yScale.getPixelForValue(4), toBeCloseToPixel(484));
+        expect(yScale.getValueForPixel(144), 1);
+
+        yScale.options['offset'] = true;
+        chart.update();
+
+        expect(yScale.getPixelForValue(0), toBeCloseToPixel(77));
+        expect(yScale.getValueForPixel(256), 2);
+
+        expect(yScale.getPixelForValue(4), toBeCloseToPixel(438));
+        expect(yScale.getValueForPixel(167), 1);
+      },
     );
 
-    test(
+    testWidgets(
       'should get the correct pixel for a value when vertical and zoomed',
-      () {},
-      skip: 'blocked: plugin.legend',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'xAxisID': 'x',
+                'yAxisID': 'y',
+                'data': <Object?>['3', '5', '1', '4', '2'],
+              },
+            ],
+            'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
+            'yLabels': <Object?>['1', '2', '3', '4', '5'],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+              'y': <String, Object?>{
+                'type': 'category',
+                'position': 'left',
+                'min': '2',
+                'max': '4',
+              },
+            },
+          },
+        });
+
+        final yScale = chart.scales['y']!;
+
+        expect(yScale.getPixelForValue(1), toBeCloseToPixel(32));
+        expect(yScale.getPixelForValue(3), toBeCloseToPixel(482));
+
+        yScale.options['offset'] = true;
+        chart.update();
+
+        expect(yScale.getPixelForValue(1), toBeCloseToPixel(107));
+        expect(yScale.getPixelForValue(3), toBeCloseToPixel(407));
+      },
     );
 
     testWidgets(
@@ -427,10 +501,40 @@ void main() {
       },
     );
 
-    test(
+    testWidgets(
       'Should get the correct pixel for an object value when vertical',
-      () {},
-      skip: 'blocked: plugin.legend',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'xAxisID': 'x',
+                'yAxisID': 'y',
+                'data': <Object?>[
+                  <String, Object?>{'x': 0, 'y': 2},
+                  <String, Object?>{'x': 1, 'y': 4},
+                  <String, Object?>{'x': 2, 'y': 0},
+                  <String, Object?>{'x': 3, 'y': 3},
+                  <String, Object?>{'x': 0, 'y': 1},
+                ],
+              },
+            ],
+            'labels': <Object?>[0, 1, 2, 3],
+            'yLabels': <Object?>[0, 1, 2, 3, 4],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'category', 'position': 'bottom'},
+              'y': <String, Object?>{'type': 'category', 'position': 'left'},
+            },
+          },
+        });
+
+        final yScale = chart.scales['y']!;
+        expect(yScale.getPixelForValue(0), toBeCloseToPixel(32));
+        expect(yScale.getPixelForValue(4), toBeCloseToPixel(483));
+      },
     );
 
     testWidgets(
@@ -469,11 +573,40 @@ void main() {
       },
     );
 
-    test(
+    testWidgets(
       'Should get the correct pixel for an object value in a horizontal bar '
       'chart',
-      () {},
-      skip: 'blocked: plugin.legend',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'bar',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 10, 'y': 0},
+                  <String, Object?>{'x': 5, 'y': 1},
+                  <String, Object?>{'x': 0, 'y': 2},
+                  <String, Object?>{'x': 25, 'y': 3},
+                  <String, Object?>{'x': 78, 'y': 0},
+                ],
+              },
+            ],
+            'labels': <Object?>[0, 1, 2, 3],
+          },
+          'options': <String, Object?>{
+            'indexAxis': 'y',
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'linear', 'position': 'bottom'},
+              'y': <String, Object?>{'type': 'category'},
+            },
+          },
+        });
+
+        final yScale = chart.scales['y']!;
+        expect(yScale.getPixelForValue(0), toBeCloseToPixel(88));
+        expect(yScale.getPixelForValue(3), toBeCloseToPixel(426));
+        expect(yScale.getPixelForValue(4), toBeCloseToPixel(538));
+      },
     );
 
     testWidgets(

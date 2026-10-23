@@ -6,6 +6,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show Registry;
 import 'package:flutter_chartjs_port/src/index.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_test/flutter_test.dart';
 
 // The namespaces and `registerables` of src/index.ts:8-25 (Chart.js ADR
@@ -17,7 +18,11 @@ import 'package:flutter_test/flutter_test.dart';
 // register in the order category, linear, logarithmic, radialLinear, time,
 // timeseries: the code unit order and the source order of scales/index.js
 // (:1-6) are the same. The namespace `controllers` has the eight
-// controllers of phase 7, and `plugins` has no entry before phase 8.
+// controllers of phase 7. The namespace `plugins` has the seven plugin
+// objects of src/plugins/index.js:1-7, and `Chart.register(
+// ...registerables)` registers the plugin ids in the order colors,
+// decimation, filler, legend, subtitle, title, tooltip (Chart.js ADR 0038,
+// section 2).
 //
 // The library also exports the names of src/core/index.ts and of the other
 // index modules. The test reads some of them, so that a missing export
@@ -112,8 +117,31 @@ void main() {
     );
   });
 
-  test('the namespaces of later phases are empty', () {
-    expect(plugins, isEmpty);
+  test('the namespace plugins has the export names in code unit order', () {
+    // The order of the x64 Node.js v24.12.0 run of the pinned build:
+    // `Object.keys(plugins)` (Chart.js ADR 0038, section 2). Each value is
+    // the plugin object of its module, the default export of
+    // src/plugins/index.js:1-7.
+    expect(jsObjectKeys(plugins), [
+      'Colors',
+      'Decimation',
+      'Filler',
+      'Legend',
+      'SubTitle',
+      'Title',
+      'Tooltip',
+    ]);
+    expect(plugins['Colors'], same(colors));
+    expect(plugins['Decimation'], same(decimation));
+    expect(plugins['Filler'], same(filler));
+    expect(plugins['Legend'], same(legend));
+    expect(plugins['SubTitle'], same(subTitle));
+    expect(plugins['Title'], same(title));
+    expect(plugins['Tooltip'], same(tooltip));
+    expect(
+      () => plugins['X'] = colors,
+      throwsA(isA<UnsupportedError>()),
+    );
   });
 
   test('a namespace is unmodifiable, as a frozen object', () {
@@ -191,7 +219,29 @@ void main() {
     );
     expect(jsObjectKeys(defaults.get('datasets')), ids);
     expect(jsObjectKeys(Chart.overrides), ids);
-    expect(registry.plugins.items, isEmpty);
+    // The plugins register in the order of the namespace, and each one adds
+    // its defaults to `defaults.plugins`. The orders of the x64 Node.js
+    // v24.12.0 run of the pinned build: `Object.keys` of
+    // `Chart.registry.plugins.items` and of `Chart.defaults.plugins`.
+    const pluginIds = [
+      'colors',
+      'decimation',
+      'filler',
+      'legend',
+      'subtitle',
+      'title',
+      'tooltip',
+    ];
+    expect(jsObjectKeys(registry.plugins.items), pluginIds);
+    expect(jsObjectKeys(defaults.get('plugins')), pluginIds);
+    for (final name in jsObjectKeys(plugins)) {
+      final plugin = plugins[name]! as AnyObject;
+      expect(
+        registry.plugins.items[plugin['id']! as String],
+        same(plugin),
+        reason: 'the registry item of $name',
+      );
+    }
   });
 
   test('Chart.register([registerables]) throws at the first namespace', () {

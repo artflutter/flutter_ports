@@ -1,21 +1,19 @@
 // Ported from Chart.js v4.5.1+7169e651 src/index.ts (MIT, Chart.js Contributors).
 
-/// Port of `src/index.ts`, the part of phases 6 and 7: the exports of the
-/// ported modules, the four namespaces and [registerables] (Chart.js ADR
-/// 0020, section 6).
+/// Port of `src/index.ts`: the exports of the ported modules, the four
+/// namespaces and [registerables] (Chart.js ADR 0020, section 6, and Chart.js
+/// ADR 0038, section 2).
 ///
 /// - index.ts:1-6 `export * from` the six `index` modules. The port exports
 ///   `controllers/index.dart` (:1), `core/index.dart` (:2),
-///   `elements/index.dart` (:3), `platform/index.dart` (:4) and
-///   `scales/index.dart` (:6). The module of `plugins` (:5, phase 8) comes
-///   in its phase.
+///   `elements/index.dart` (:3), `platform/index.dart` (:4),
+///   `plugins/index.dart` (:5) and `scales/index.dart` (:6).
 /// - index.ts:8-11 `import * as` the four namespaces. In the published
 ///   bundle, a namespace is a frozen object with the export names as its
 ///   keys, in code unit order (Chart.js ADR 0020, probe 2). Thus each
 ///   namespace is an unmodifiable Map from the export name to the class
-///   value of the class, or to the Map of the plugin. [controllers],
-///   [elements] and [scales] have all their entries. [plugins] gets its
-///   entries in phase 8.
+///   value of the class, or to the Map of the plugin. Each namespace has all
+///   its entries.
 /// - index.ts:13-18 exports the four namespaces by name.
 ///
 /// `lib/flutter_chartjs_port.dart` does not export this library yet: the public
@@ -35,6 +33,7 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
+import 'package:flutter_chartjs_port/src/plugins/index.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.logarithmic.dart';
@@ -47,6 +46,7 @@ export 'package:flutter_chartjs_port/src/controllers/index.dart';
 export 'package:flutter_chartjs_port/src/core/index.dart';
 export 'package:flutter_chartjs_port/src/elements/index.dart';
 export 'package:flutter_chartjs_port/src/platform/index.dart';
+export 'package:flutter_chartjs_port/src/plugins/index.dart';
 export 'package:flutter_chartjs_port/src/scales/index.dart';
 
 /// index.ts:8 `import * as controllers from './controllers/index.js'`.
@@ -86,11 +86,20 @@ final AnyObject elements = Map<String, Object?>.unmodifiable(
 
 /// index.ts:10 `import * as plugins from './plugins/index.js'`.
 ///
-/// The bundle keys are `Colors`, `Decimation`, `Filler`, `Legend`,
-/// `SubTitle`, `Title` and `Tooltip`. The plugins come in phase 8. Thus the
-/// Map has no entry yet.
+/// The keys are the seven plugins in code unit order, as in the bundle
+/// (Chart.js ADR 0038, section 2). That order is also the source order of
+/// `plugins/index.js` (:1-7). Each value is the plugin object of its module
+/// (Chart.js ADR 0038, section 1).
 final AnyObject plugins = Map<String, Object?>.unmodifiable(
-  <String, Object?>{},
+  <String, Object?>{
+    'Colors': colors,
+    'Decimation': decimation,
+    'Filler': filler,
+    'Legend': legend,
+    'SubTitle': subTitle,
+    'Title': title,
+    'Tooltip': tooltip,
+  },
 );
 
 /// index.ts:11 `import * as scales from './scales/index.js'`.
@@ -113,5 +122,7 @@ final AnyObject scales = Map<String, Object?>.unmodifiable(
 ///
 /// `Chart.register(...registerables)` of upstream is
 /// `Chart.register(registerables)`: the List is the array of the rest
-/// parameter (Chart.js ADR 0020, section 6).
+/// parameter (Chart.js ADR 0020, section 6). It registers the plugin ids in
+/// the order `colors`, `decimation`, `filler`, `legend`, `subtitle`, `title`
+/// and `tooltip`, as the pinned build does (Chart.js ADR 0038, section 2).
 final List<AnyObject> registerables = [controllers, elements, plugins, scales];

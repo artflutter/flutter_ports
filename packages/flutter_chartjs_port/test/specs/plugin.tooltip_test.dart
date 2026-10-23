@@ -16,7 +16,6 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
@@ -203,10 +202,6 @@ final class _TextAlignChart implements types.Chart {
 }
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([legend, tooltip]);
-
   group('Plugin.Tooltip', () {
     group('auto', fixture.specs('plugin.tooltip'));
 

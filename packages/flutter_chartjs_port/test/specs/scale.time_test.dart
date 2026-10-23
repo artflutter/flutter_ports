@@ -40,9 +40,9 @@ import '../support/jasmine.dart';
 //
 // The chart cases call `acquireChart`. Thus they are `testWidgets` cases,
 // and the file runs on the VM (Chart.js ADR 0022, sections 1 and 2). A
-// case with a dataset needs the line controller of phase 7. A case that
-// needs a module of a later phase skips with the missing module of the
-// latest phase. The cases at :305, :390 and :490 assert the lower-case day
+// case with a dataset needs the line controller of phase 7. The cases of
+// the group at :246 also need the legend, which flutter_test_config.dart
+// registers. The cases at :305, :390 and :490 assert the lower-case day
 // period of moment, which the default adapter gives (Chart.js ADR 0024,
 // decision 6).
 //
@@ -155,14 +155,22 @@ AnyObject _scaleOptionsX(Chart chart) =>
     jsGet(jsGet(chart.options, 'scales'), 'x')! as AnyObject;
 
 /// scale.time.tests.js:31-48 the matcher `toBeCloseToTime`:
-/// `Math.abs(moment(time).diff(value, unit, true)) < 0.01`. The precise
-/// moment diff of the unit `hour` is the difference in ms over 3600000.
-/// The cases use only that unit.
-Matcher _toBeCloseToTime(double value, String unit) {
-  if (unit != 'hour') throw ArgumentError.value(unit, 'unit');
+/// `Math.abs(moment(time).diff(value, unit, true)) < threshold`, with the
+/// default threshold 0.01. The precise moment diff of the unit `hour` is
+/// the difference in ms over 3600000. The precise moment diff of the unit
+/// `day` is the difference in ms over 86400000, because the default zone of
+/// the tests is UTC: no zone offset changes between the two times. The
+/// cases use only these two units.
+Matcher _toBeCloseToTime(double value, String unit, [double threshold = 0.01]) {
+  final msPerUnit = switch (unit) {
+    'hour' => 3600000,
+    'day' => 86400000,
+    _ => throw ArgumentError.value(unit, 'unit'),
+  };
   return predicate<Object?>(
-    (time) => ((jsToNumber(time) - value) / 3600000).abs() < 0.01,
-    'a time close to ${jsToString(value)} (unit $unit)',
+    (time) => ((jsToNumber(time) - value) / msPerUnit).abs() < threshold,
+    'a time close to ${jsToString(value)} (unit $unit, threshold '
+    '${jsToString(threshold)})',
   );
 }
 
@@ -430,25 +438,102 @@ void main() {
     });
 
     group('when rendering several years', () {
+      late Chart chart;
+      late Scale scale;
+
       // The chart has no dataset. Its labels depend on the font that the
       // legend sets before the fit of the x scale (plugin.legend.js:143).
-      test(
-        "should be bounded by nearest step's year start and end",
-        () {},
-        skip: 'blocked: plugin.legend',
-      );
+      // The beforeEach acquires a chart: a local function that each case
+      // calls first in its body.
+      void beforeEach() {
+        chart = acquireChart(
+          <String, Object?>{
+            'type': 'line',
+            'data': <String, Object?>{
+              'labels': <Object?>['2005-07-04', '2017-01-20'],
+            },
+            'options': <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'time',
+                  'bounds': 'ticks',
+                  'position': 'bottom',
+                },
+              },
+            },
+          },
+          <String, Object?>{
+            'canvas': <String, Object?>{'width': 800, 'height': 200},
+          },
+        );
 
-      test(
-        'should build the correct ticks',
-        () {},
-        skip: 'blocked: plugin.legend',
-      );
+        scale = chart.scales['x']!;
+      }
 
-      test(
-        'should have ticks with accurate labels',
-        () {},
-        skip: 'blocked: plugin.legend',
-      );
+      testWidgets("should be bounded by nearest step's year start and end", (
+        tester,
+      ) async {
+        beforeEach();
+        final ticks = scale.getTicks()!;
+        final step = ticks[1].value - ticks[0].value;
+        final stepsAmount = ((scale.max - scale.min) / step).floorToDouble();
+
+        expect(
+          scale.getValueForPixel(scale.left),
+          _toBeCloseToTime(_startOf(scale.min, 'year'), 'hour'),
+        );
+        expect(
+          scale.getValueForPixel(scale.right),
+          _toBeCloseToTime(
+            _endOf(scale.min + step * stepsAmount, 'year'),
+            'hour',
+          ),
+        );
+      });
+
+      testWidgets('should build the correct ticks', (tester) async {
+        beforeEach();
+        expect(
+          _getLabels(scale),
+          jasmineEquals(<Object?>[
+            '2005',
+            '2006',
+            '2007',
+            '2008',
+            '2009',
+            '2010',
+            '2011',
+            '2012',
+            '2013',
+            '2014',
+            '2015',
+            '2016',
+            '2017',
+            '2018',
+          ]),
+        );
+      });
+
+      testWidgets('should have ticks with accurate labels', (tester) async {
+        beforeEach();
+        final ticks = scale.getTicks()!;
+        // pixelsPerTick is an approximation which assumes same number of
+        // milliseconds per year (not true)
+        // we use a threshold of 1 day so that we still match these values
+        final pixelsPerTick = scale.width / (ticks.length - 1);
+
+        for (var i = 0; i < ticks.length - 1; i++) {
+          final offset = pixelsPerTick * i;
+          expect(
+            scale.getValueForPixel(scale.left + offset),
+            _toBeCloseToTime(
+              _moment(jsAdd(ticks[i].label, '-01-01')),
+              'day',
+              1,
+            ),
+          );
+        }
+      });
     });
 
     testWidgets('should get the correct label for a data value', (

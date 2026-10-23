@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
+    show Legend;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -36,22 +38,26 @@ import 'controller_doughnut_reference.dart';
 // with the element draws (controller_chart_harness.dart).
 //
 // The 15 cases of Chart.js ADR 0030, section 7 run two times: unthemed, and
-// with the light preset (theming.md section 8 test 3). A doughnut chart has
-// no scale. Thus the themed group has no check of the stale scale keys. The
-// cases whose names start with `parsed:` (Chart.js ADR 0036, section 9) or
-// `interfaces:` (Chart.js ADR 0028, section 8) run unthemed only. The groups
-// `parsed data` and `interfaces` hold the pin tests that need no generated
-// value: relations between two charts of the port, and the identity of
-// values.
+// with the light preset (theming.md section 8 test 3). A doughnut chart has no
+// scale. Thus the themed group has no check of the stale scale keys. The cases
+// whose names start with `parsed:` (Chart.js ADR 0036, section 9) or
+// `interfaces:` (Chart.js ADR 0028, section 8) run unthemed only. The cases
+// whose names start with `legend:` (Chart.js ADR 0041, section 5) run the real
+// legend with the legend functions of the overrides: the items, the hit boxes
+// and a click on the item 1. They also run unthemed only. The groups `parsed
+// data` and `interfaces` hold the pin tests that need no generated value:
+// relations between two charts of the port, and the identity of values.
 //
-// flutter_test_config.dart registers the doughnut controller with the
-// built-in components before main() (Chart.js ADR 0030, section 3 item 4).
+// flutter_test_config.dart registers the doughnut controller with the built-in
+// components before main() (Chart.js ADR 0030, section 3 item 4), and the seven
+// plugins with `defaults.plugins.colors.enabled = false` (Chart.js ADR 0041,
+// section 1). The generator registers the same components (registerBuiltins).
 
 /// The probes of the key `extra` of the generator, with the same bodies.
 final Map<String, Object? Function(Chart chart)> _extras = {
   'parsedIsData': _parsedIsData,
   'ringGeometry': _ringGeometry,
-  'legendItems': _legendItems,
+  'realLegend': _realLegend,
 };
 
 /// `chart.data.datasets`.
@@ -83,33 +89,6 @@ Object? _ringGeometry(Chart chart) => [
     },
 ];
 
-/// A test legend `{chart, options}`: the two members that the legend
-/// functions read (Chart.js ADR 0028, section 6).
-final class _TestLegend implements types.LegendElement {
-  _TestLegend(this.chart, this.options);
-
-  @override
-  final types.Chart chart;
-
-  /// index.d.ts:2417 `legendItems`. The legend functions do not read it.
-  @override
-  List<Object?>? get legendItems => null;
-
-  @override
-  final Map<String, Object?> options;
-}
-
-/// The options of the test legend of the probe `legendItems`.
-AnyObject _legendOptions() => <String, Object?>{
-  'labels': <String, Object?>{
-    'pointStyle': 'circle',
-    'textAlign': 'left',
-    'color': '#666',
-    'useBorderRadius': true,
-    'borderRadius': 0.0,
-  },
-};
-
 /// `overrides.doughnut.plugins.legend`.
 Object? _legendOverrides() =>
     jsGet(jsGet(overrides['doughnut'], 'plugins'), 'legend');
@@ -121,25 +100,21 @@ List<Object?> _generateLabels(Chart chart) =>
         ])!
         as List<Object?>;
 
-/// The probe `legendItems` of the generator: the items of `generateLabels`
-/// with a test legend and their keys, then `onClick` with the item index 1,
-/// the visibility of the indices 0 to 2 and the items after the click.
-Object? _legendItems(Chart chart) {
-  final legend = _legendOverrides();
-  chart.legend = _TestLegend(chart, _legendOptions());
-  final items = _generateLabels(chart);
-  jsCall(jsGet(legend, 'onClick'), [
-    <String, Object?>{},
-    <String, Object?>{'index': 1.0},
-    chart.legend,
-  ]);
+/// The probe `realLegend` of the generator: the items and the hit boxes of
+/// the real legend. It reads `legendItems` through `types.LegendElement`
+/// (Chart.js ADR 0028 Open 2), and `legendHitBoxes` through a cast to
+/// [Legend]: the member is not in index.d.ts (Chart.js ADR 0038, section 6;
+/// Chart.js ADR 0041, section 5). `keys` is the key list of each item in
+/// order (`Object.keys`): the harness compares only the expected keys of a
+/// Map.
+Object? _realLegend(Chart chart) {
+  final legend = chart.legend!;
   return <String, Object?>{
-    'items': items,
-    'keys': [for (final item in items) jsObjectKeys(item! as AnyObject)],
-    'visible': [
-      for (var i = 0; i < 3; i++) chart.getDataVisibility(i.toDouble()),
+    'items': legend.legendItems,
+    'keys': [
+      for (final item in legend.legendItems!) jsObjectKeys(item! as AnyObject),
     ],
-    'after': _generateLabels(chart),
+    'hitBoxes': (legend as Legend).legendHitBoxes,
   };
 }
 
@@ -248,7 +223,9 @@ void main() {
   test('the reference has the 15 cases of Chart.js ADR 0030 first', () {
     final names = [for (final c in controllerDoughnutReference) c.name];
     bool prefixed(String n) =>
-        n.startsWith('parsed:') || n.startsWith('interfaces:');
+        n.startsWith('parsed:') ||
+        n.startsWith('interfaces:') ||
+        n.startsWith('legend:');
     expect(names.first, 'default');
     expect(names.length, greaterThanOrEqualTo(15));
     expect(names.take(15).where(prefixed), isEmpty);
@@ -258,8 +235,15 @@ void main() {
   testControllerChartCases(_reference, extras: _extras);
 
   group('theming.md §8 test 3: the light preset', () {
+    // The `legend:` cases run unthemed only, as the `interfaces:` cases:
+    // their probe compares the item colors as strings, and
+    // test/port/plugins/plugin.legend_test.dart runs the legend with the
+    // light preset.
     testControllerChartCases(
-      _reference,
+      [
+        for (final c in _reference)
+          if (!c.name.startsWith('legend:')) c,
+      ],
       extras: _extras,
       theme: compileChartTheme(ChartThemes.light),
     );
@@ -422,7 +406,13 @@ void main() {
     testWidgets('generateLabels throws a TypeError without a legend', (
       tester,
     ) async {
-      final chart = acquireChart(_one(const {}, <Object?>[1.0, 2.0, 3.0]));
+      // The legend plugin is off, so it writes no `chart.legend`.
+      final chart = acquireChart(
+        _one(const {}, <Object?>[1.0, 2.0, 3.0])
+          ..['options'] = <String, Object?>{
+            'plugins': <String, Object?>{'legend': false},
+          },
+      );
       expect(chart.legend, isNull);
       expect(() => _generateLabels(chart), throwsA(isA<TypeError>()));
     });
@@ -440,8 +430,7 @@ void main() {
           },
         ];
       final chart = acquireChart(config);
-      final legend = _TestLegend(chart, _legendOptions());
-      chart.legend = legend;
+      final legend = chart.legend!;
       final before = updates;
 
       jsCall(jsGet(_legendOverrides(), 'onClick'), [
@@ -484,8 +473,7 @@ void main() {
         tester,
       ) async {
         final chart = acquireChart(_one(const {}, <Object?>[1.0, 2.0, 3.0]));
-        final legend = _TestLegend(chart, _legendOptions());
-        chart.legend = legend;
+        final legend = chart.legend!;
         jsCall(jsGet(_legendOverrides(), 'onClick'), [
           <String, Object?>{},
           <String, Object?>{'index': index},
@@ -529,8 +517,7 @@ void main() {
           final chart = acquireChart(
             _one(const {}, <Object?>[1.0, 2.0, 3.0, 4.0]),
           );
-          final legend = _TestLegend(chart, _legendOptions());
-          chart.legend = legend;
+          final legend = chart.legend!;
           jsCall(jsGet(_legendOverrides(), 'onClick'), [
             <String, Object?>{},
             <String, Object?>{'index': index},

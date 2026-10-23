@@ -116,6 +116,13 @@ _datasetStyles = [
 ///   pointer: its pixel through `getValueForPixel`, `getLabelForValue`, and
 ///   back through `getPixelForValue`. An inline plugin gets the pointer in
 ///   its `afterEvent` hook.
+/// - The plugins of `registerables` run with their defaults, as in a chart
+///   of the Chart.js bundle (`src/index.umd.ts:28`). The legend box takes
+///   its place in the layout with the scales, and the tooltip shows the
+///   label and the value texts of the scales (`getLabelAndValue`,
+///   core.datasetController.js:687-697). The tab has no plugin opt-out
+///   (Chart.js ADR 0031, Open): the chart area of the readout is the area
+///   of an upstream chart with these options.
 ///
 /// The controls of the ticks, the grid, the border, the title, `reverse`,
 /// `beginAtZero` and `bounds` apply to both axes. The chart has no
@@ -617,7 +624,8 @@ class AxesDemoState extends State<AxesDemo> {
               'core.adapters: the default date adapter · LineController: '
               'getPixelForValue · options.scales[id]: type, position, '
               'bounds, reverse, beginAtZero, time.unit, ticks, grid, border, '
-              'title · options.locale · parsing: true → scale.parse',
+              'title · options.locale · parsing: true → scale.parse · '
+              'plugins: legend, tooltip',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -760,8 +768,9 @@ class AxesDemoState extends State<AxesDemo> {
                 'A real line chart of the ported core with the ported '
                 'scales. Move the mouse over the chart, or touch it: the '
                 'readout maps the pointer to a value of each scale and back. '
-                'The scale options apply to both axes. The chart has no '
-                'animation: the Core tab shows the animations.',
+                'The tooltip shows the label and the value texts of the '
+                'scales. The scale options apply to both axes. The chart has '
+                'no animation: the Core tab shows the animations.',
                 key: const ValueKey('axes.help'),
                 style: theme.textTheme.bodySmall,
               ),

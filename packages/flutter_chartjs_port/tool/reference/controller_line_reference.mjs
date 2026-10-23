@@ -29,7 +29,7 @@ import {fileURLToPath} from 'node:url';
 import {
   loadChartJs,
   named,
-  registerPhase7,
+  registerBuiltins,
   runControllerCase,
   writeControllerReference,
 } from './controller_chart_common.mjs';
@@ -39,7 +39,7 @@ const OUT = fileURLToPath(
 );
 
 const C = await loadChartJs();
-registerPhase7(C);
+registerBuiltins(C);
 
 /**
  * The segment option `borderColor` of the cases with `segment`: red for

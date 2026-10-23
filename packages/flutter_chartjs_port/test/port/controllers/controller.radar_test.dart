@@ -310,8 +310,10 @@ void main() {
   // `xCenter` and `yCenter` as `undefined` (scale.radialLinear.js:416-418).
   // An x64 Node.js probe on the build at the pin gives:
   // before the layout, `x` and `y` are `undefined` and `skip` is true; after
-  // the update, the animation `x` goes from 25 to 25 and the animation `y`
-  // from 256 to 256.
+  // the update, the animation `x` goes from 41 to 41 and the animation `y`
+  // from 272 to 272 (the phase 8 probe pins_plugins_probe.mjs with the seven
+  // plugins registered, `pin1 radar`: the legend moves the center down by
+  // 16 and the scale r2 to the right by 16).
   group('the reset on a new radial scale', () {
     testWidgets('writes x and y undefined, and the animations start at the '
         'target', (tester) async {
@@ -353,25 +355,27 @@ void main() {
       final point = meta.data[3] as Element;
       final x = point.$animations!['x']! as animation.Animation;
       final y = point.$animations!['y']! as animation.Animation;
-      expect([x.from, x.to], [25.0, 25.0]);
-      expect([y.from, y.to], [256.0, 256.0]);
+      expect([x.from, x.to], [41.0, 41.0]);
+      expect([y.from, y.to], [272.0, 272.0]);
       // At 500 ms the new point is at its target, drawn and hit
-      // (pins_probe.out, `pin1 radar`). A NaN start gives x NaN and no hit.
+      // (pins_plugins_probe.out, `pin1 radar`). A NaN start gives x NaN and
+      // no hit.
       await tester.pump(const Duration(milliseconds: 500));
-      expect([point.x, point.y], [25.0, 256.0]);
-      expect(_hitsAt(chart, 25, 256, 'point'), [
+      expect([point.x, point.y], [41.0, 272.0]);
+      expect(_hitsAt(chart, 41, 272, 'point'), [
         [0, 3],
       ]);
-      expect(_hitsAt(chart, 25, 256, 'nearest'), [
+      expect(_hitsAt(chart, 41, 272, 'nearest'), [
         [0, 3],
       ]);
       await tester.pump(const Duration(milliseconds: 600));
-      expect([point.x, point.y], [25.0, 256.0]);
+      expect([point.x, point.y], [41.0, 272.0]);
     });
 
     // A reset at a NaN center writes NaN, not undefined. The next animation
     // then starts at NaN, and the point is not drawn and not hit until it
-    // ends (pin_e2_probe.out, `E2 radar`; Chart.js ADR 0033).
+    // ends (Chart.js ADR 0033; the phase 8 probe pins_plugins_probe.mjs with
+    // the seven plugins registered, `E2 radar`).
     testWidgets('a reset at a NaN center keeps NaN, and the next animation '
         'starts at NaN', (tester) async {
       final chart = acquireChart(
@@ -409,9 +413,9 @@ void main() {
       expect(x.from, isNaN);
       expect(x.to, closeTo(389.4495078835456, 1e-9));
       expect(y.from, isNaN);
-      expect(y.to, closeTo(251.62998998399627, 1e-9));
+      expect(y.to, closeTo(267.62998998399627, 1e-9));
       const qx = 389.4495078835456;
-      const qy = 251.62998998399627;
+      const qy = 267.62998998399627;
       await tester.pump(const Duration(milliseconds: 1));
       expect(point.x, isNaN);
       expect(_hitsAt(chart, qx, qy, 'point'), isEmpty);
@@ -426,7 +430,8 @@ void main() {
     });
 
     // A point with r null has x and y NaN. When it gets a value, its
-    // animation starts at NaN, as upstream (pins_probe.out, `pin3 radar`;
+    // animation starts at NaN, as upstream (the phase 8 probe
+    // pins_plugins_probe.mjs with the seven plugins registered, `pin3 radar`;
     // Chart.js ADR 0033). A NaN that stands for undefined would start it at
     // the target.
     testWidgets('a point with a null value animates from NaN when it gets a '
@@ -451,18 +456,18 @@ void main() {
       final x = point.$animations!['x']! as animation.Animation;
       final y = point.$animations!['y']! as animation.Animation;
       expect(x.from, isNaN);
-      expect(x.to, 371.5);
+      expect(x.to, 363.5);
       expect(y.from, isNaN);
-      expect(y.to, 256.0);
+      expect(y.to, 272.0);
       await tester.pump(const Duration(milliseconds: 1));
       expect(point.x, isNaN);
-      expect(_hitsAt(chart, 371.5, 256, 'point'), isEmpty);
+      expect(_hitsAt(chart, 363.5, 272, 'point'), isEmpty);
       await tester.pump(const Duration(milliseconds: 499));
       expect(point.x, isNaN);
-      expect(_hitsAt(chart, 371.5, 256, 'point'), isEmpty);
+      expect(_hitsAt(chart, 363.5, 272, 'point'), isEmpty);
       await tester.pump(const Duration(milliseconds: 600));
-      expect([point.x, point.y], [371.5, 256.0]);
-      expect(_hitsAt(chart, 371.5, 256, 'point'), [
+      expect([point.x, point.y], [363.5, 272.0]);
+      expect(_hitsAt(chart, 363.5, 272, 'point'), [
         [0, 1],
       ]);
     });

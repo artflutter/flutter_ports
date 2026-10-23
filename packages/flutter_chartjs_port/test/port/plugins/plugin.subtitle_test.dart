@@ -161,10 +161,6 @@ AnyObject _pluginOptions(Chart chart) =>
     jsGet(chart.options, 'plugins')! as AnyObject;
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([subTitle, title]);
-
   testReferenceOrigin(
     node: pluginSubtitleReferenceNode,
     arch: pluginSubtitleReferenceArch,
@@ -183,6 +179,7 @@ void main() {
         'display false (the default)',
         'padding',
         'a text array with font, color and align',
+        'full: subtitle, title and legend',
       ],
     );
   });

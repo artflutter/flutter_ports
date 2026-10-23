@@ -789,8 +789,11 @@ class Chart implements types.Chart {
   List<types.ActiveElement> active = [];
 
   /// core.controller.js:161 `_lastEvent = undefined`. Dart `null` stands for
-  /// JS `null` and `undefined`. The readers test its truthiness.
-  types.ChartEvent? _lastEvent;
+  /// JS `null` and `undefined`. The readers test its truthiness. The input
+  /// reference test reads it after each step
+  /// (`test/port/platform/chart_host_input_test.dart`).
+  @internal
+  types.ChartEvent? lastEvent;
 
   /// core.controller.js:162 `_listeners = {}`: the event listeners by type.
   Map<String, Function> _listeners = {};
@@ -856,7 +859,7 @@ class Chart implements types.Chart {
   double? _minPadding;
 
   /// index.d.ts:543 `legend`: the legend element. Dart `null` stands for JS
-  /// `undefined`, the start value. The legend plugin of phase 8 writes it
+  /// `undefined`, the start value. The legend plugin writes it
   /// (plugin.legend.js:602) and deletes it (:609).
   @override
   types.LegendElement? legend;
@@ -1331,7 +1334,7 @@ class Chart implements types.Chart {
     // Replay last event from before update, or set hover styles on active
     // elements
     final active = this.active;
-    final lastEvent = _lastEvent;
+    final lastEvent = this.lastEvent;
     if (lastEvent != null) {
       eventHandler(lastEvent, true);
     } else if (active.isNotEmpty) {
@@ -2121,7 +2124,7 @@ class Chart implements types.Chart {
       active = newActive;
       // Make sure we don't use the previous mouse event to override the
       // active elements in update.
-      _lastEvent = null;
+      lastEvent = null;
       _updateHoverStyles(newActive, lastActive);
     }
   }
@@ -2290,12 +2293,17 @@ class Chart implements types.Chart {
       useFinalPosition,
     );
     final isClick = isClickEvent(e);
-    final lastEvent = _determineLastEvent(e, _lastEvent, inChartArea, isClick);
+    final lastEvent = _determineLastEvent(
+      e,
+      this.lastEvent,
+      inChartArea,
+      isClick,
+    );
 
     if (jsTruthy(inChartArea)) {
       // Set _lastEvent to null while we are processing the event handlers.
       // This prevents recursion if the handler calls chart.update()
-      _lastEvent = null;
+      this.lastEvent = null;
 
       // Invoke onHover hook
       callback(options['onHover'], [e, active, this], this);
@@ -2311,7 +2319,7 @@ class Chart implements types.Chart {
       _updateHoverStyles(active, lastActive, replay);
     }
 
-    _lastEvent = lastEvent;
+    this.lastEvent = lastEvent;
 
     return changed;
   }

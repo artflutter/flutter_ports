@@ -751,9 +751,9 @@ abstract interface class Scale implements Element, LayoutItem {
 }
 
 /// index.d.ts:3676 `RadialLinearScale`. `RadialLinearScale` of
-/// `scale.radialLinear.dart` implements it. The filler of phase 8 tests
+/// `scale.radialLinear.dart` implements it. The filler tests
 /// `scale is RadialLinearScale` for `if (scale.getPointPositionForValue)`
-/// (filler.target.js:50).
+/// (filler.target.js:50, filler.drawing.js:28).
 abstract interface class RadialLinearScale implements Scale {
   /// index.d.ts:3677 `xCenter`. controller.polarArea.js:167 and
   /// controller.radar.js:90 read it.

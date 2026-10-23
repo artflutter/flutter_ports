@@ -61,7 +61,10 @@ import '../support/jasmine.dart';
 //
 // Three cases need the line controller of wave 2 (:70, :310, :671). The
 // lift of wave 2 gave them their bodies (test-strategy spec, section 4.2).
-// One case needs the tooltip plugin of phase 8 (:1808).
+// The tooltip case (:1808) reads `chart.tooltip`, the field of `Chart` (a
+// `types.TooltipModel?`), through the interface.
+// `chart.options.plugins.tooltip = value` writes the key `tooltip` of the
+// Map `chart.options['plugins']`.
 
 /// `chart.data.datasets[index]`.
 AnyObject _dataset(Chart chart, int index) =>
@@ -1541,8 +1544,9 @@ void main() {
     });
 
     // The two cases of this group get bodies (Chart.js ADR 0030 §12 item 6):
-    // the default legend changes the asserted heights, but the assertion is
-    // relative to the scale height and passes without the legend.
+    // the default legend changes the asserted heights. The assertion is
+    // relative to the scale height. Thus it passed before the legend was
+    // registered, and it also passes with the legend.
     group('Bar height (horizontal type)', () {
       late AnyObject data;
       late AnyObject config;
@@ -1716,8 +1720,9 @@ void main() {
     });
 
     // Chart.js ADR 0030 §12 item 6: the default legend changes the y
-    // positions of the bars, but the assertion is relative to `base` and
-    // passes without the legend.
+    // positions of the bars. The assertion is relative to `base`. Thus it
+    // passed before the legend was registered, and it also passes with the
+    // legend.
     testWidgets('minBarLength settings should be used on Y axis on bar chart', (
       tester,
     ) async {
@@ -2015,13 +2020,69 @@ void main() {
       expect(controller.getStackCount(1), 2);
     });
 
-    // :1808 The case reads chart.tooltip: it needs the tooltip plugin of
-    // phase 8.
-    test(
-      'should not override tooltip title and label callbacks',
-      () {},
-      skip: 'blocked: plugin.tooltip',
-    );
+    // :1808
+    testWidgets('should not override tooltip title and label callbacks', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'bar',
+        'data': <String, Object?>{
+          'labels': <Object?>['Label 1', 'Label 2'],
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[21, 79],
+              'label': 'Dataset 1',
+            },
+            <String, Object?>{
+              'data': <Object?>[33, 67],
+              'label': 'Dataset 2',
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'responsive': true,
+          'maintainAspectRatio': true,
+        },
+      });
+      final tooltip = chart.tooltip!;
+      final point = chart.getDatasetMeta(0).data[0];
+
+      await triggerMouseEvent(chart, 'mousemove', point);
+
+      expect(tooltip.title, jasmineEquals(<Object?>['Label 1']));
+      expect(
+        tooltip.body,
+        jasmineEquals(<Object?>[
+          <String, Object?>{
+            'before': <Object?>[],
+            'lines': <Object?>['Dataset 1: 21'],
+            'after': <Object?>[],
+          },
+        ]),
+      );
+
+      (chart.options['plugins']! as Map<String, Object?>)['tooltip'] =
+          <String, Object?>{'mode': 'dataset'};
+      chart.update();
+      await triggerMouseEvent(chart, 'mousemove', point);
+
+      expect(tooltip.title, jasmineEquals(<Object?>['Dataset 1']));
+      expect(
+        tooltip.body,
+        jasmineEquals(<Object?>[
+          <String, Object?>{
+            'before': <Object?>[],
+            'lines': <Object?>['Label 1: 21'],
+            'after': <Object?>[],
+          },
+          <String, Object?>{
+            'before': <Object?>[],
+            'lines': <Object?>['Label 2: 79'],
+            'after': <Object?>[],
+          },
+        ]),
+      );
+    });
   });
 }
 

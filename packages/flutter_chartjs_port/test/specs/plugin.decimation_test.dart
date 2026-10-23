@@ -7,7 +7,6 @@ import 'package:chartjs_test_utils/flutter.dart';
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -49,10 +48,6 @@ AnyObject _canvas(int width, int height) => <String, Object?>{
 };
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([decimation]);
-
   group('Plugin.decimation', () {
     group('auto', fixture.specs('plugin.decimation'));
 

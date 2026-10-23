@@ -10,9 +10,12 @@
 /// A case makes a real `Chart` on a `UiCanvasElement` that no chart host
 /// shows. Thus `detectPlatform` gives the `BasicPlatform`, and no frame
 /// drives the chart. The chart has `responsive: false`, `animation: false`,
-/// `events: []` and `devicePixelRatio: 1`, and a bitmap of
-/// [chartBenchWidth] x [chartBenchHeight] pixels. Each iteration calls the
-/// chart directly and times three parts on the UI thread:
+/// `events: []`, `devicePixelRatio: 1` and no legend (`plugins.legend:
+/// false` of `stressPluginOptions`, Chart.js ADR 0031, Open), and a bitmap
+/// of [chartBenchWidth] x [chartBenchHeight] pixels. The other plugins of
+/// `registerables` run: the filler fills the radar of `chart.radar`. Each
+/// iteration calls the chart directly and times three parts on the UI
+/// thread:
 /// - update: `chart.update('none')` without its draw. Only the cases with
 ///   [ChartBenchCall.update] have it.
 /// - draw: `chart.draw()`, also the draw inside `chart.update('none')`.

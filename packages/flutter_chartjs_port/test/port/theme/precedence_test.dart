@@ -93,10 +93,10 @@ import 'precedence_reference.dart';
 // pinned src/plugins/plugin.colors.ts, with a JavaScript prototype of the
 // hunks H4a-H5 in the prototype run.
 //
-// Until wave 4 of phase 8 adds the plugins to registerables, main() registers
-// the colors plugin and then sets `defaults.plugins.colors.enabled = false`,
-// as test/index.js:25-28 does (Chart.js ADR 0041, section 7). Each palette
-// chart sets `plugins.colors.enabled: true`.
+// flutter_test_config.dart registers the plugins with the built-in
+// components and sets `defaults.plugins.colors.enabled = false`, as
+// test/index.js:25-28 does (Chart.js ADR 0041, sections 1 and 6). Each
+// palette chart sets `plugins.colors.enabled: true`.
 
 // ---------------------------------------------------------------------------
 // The registered components.
@@ -1057,13 +1057,6 @@ void main() {
     _themeController('themeReal2', 'category', 'linear'),
     _radialThemeController,
   ]);
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([colors]);
-  // index.js:25-28
-  // Disable colors plugin for tests.
-  ((defaults['plugins']! as AnyObject)['colors']! as AnyObject)['enabled'] =
-      false;
 
   test('the reference comes from Node.js v24.12.0 on x64', () {
     expect(themePrecedenceReferenceNode, 'v24.12.0');

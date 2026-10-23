@@ -509,8 +509,9 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
 - **Frameless benchmark.** `apps/chartjs_gallery/lib/main_bench.dart` times the costs of the UI
   thread of the chart path without frames (`lib/bench/chart_bench.dart`).
   - The chart is a `UiCanvasElement` of 800 x 480 without a host, so it gets `BasicPlatform`. It
-    has `responsive: false`, `devicePixelRatio: 1`, `animation: false` and `events: []`. It has
-    no labels and no title, so its draw is lower than `drawMs` of the stress entry.
+    has `responsive: false`, `devicePixelRatio: 1`, `animation: false`, `events: []` and
+    `plugins.legend: false` (from phase 8: `stressPluginOptions`, Chart.js ADR 0031 Open). The
+    other plugins of `registerables` run. It has no labels and no title, so its draw is lower than `drawMs` of the stress entry.
   - After the first frame, the app runs each case for each N. It prints one line `BENCH {json}`
     for each case and N, and `BENCH done` at the end. A line has the median, p10 and p90 of
     `update('none')` without its draw, of `draw()` and of the end of the recording into a
@@ -2184,7 +2185,8 @@ for each update of a dataset, against 1.1 ns and 0.6 ns for typed setters. The r
   import to the default run (0.24-0.37 s for 20 test files, ADR 0029 Evidence E4).
 - Open (ADR 0029 Open item 2): when the hand ports of phase 8 make the import of
   `test/fixtures/index.dart` cost more than 4 s for each run of `test:fixtures` with `-j 1`, each
-  spec file imports a registry of its own prefix.
+  spec file imports a registry of its own prefix. Chart.js ADR 0041 §9 keeps one registry. §14.4
+  has the figures of phase 8.
 
 ### 13.4 The writable `DatasetController.ctx` (Chart.js ADR 0030)
 
@@ -3110,3 +3112,49 @@ allocates one `FillerPoint` in `main` that never enters a line.
   keeps the access by name: the gain of a field reaches 0.1 ms only at about 1700 datasets.
 - No frame figure yet. Step 8 adds the fill cases to the frameless benchmark (ADR Open 2: a line
   with gaps and `above` and `below`, a `stack` fill of 1000 points, and a radar fill).
+
+### 14.2 The test time of the reference tests (Chart.js ADR 0041 §2)
+
+The reference tests of `test/port/scales/` and `test/port/controllers/` (17 files), command
+`flutter test test/port/scales test/port/controllers --exclude-tags fixtures --reporter json`,
+summed for each test from the JSON events, on the 16-core Mac (Flutter 3.47.7):
+- Before wave 4: 1137 tests, 19.46 s and 19.44 s (2 runs, load 4.6 to 6.4).
+- After the regeneration of wave 4 (the seven plugins in each generator and in
+  `flutter_test_config.dart`, 10 new `legend:` cases): 1147 tests, 20.97 s and 21.35 s (2 runs,
+  load 7.3 to 8.8).
+- The mean grows by 8.8 % (19.45 s to 21.16 s), below the limit of +25 % (24.3 s) of Chart.js
+  ADR 0041 Open 1.
+- The data of the 13 dist generators without new cases grows by 1.86 % (15,935,534 to 16,232,377
+  bytes; Chart.js ADR 0041 §1 item 5 estimates about 2.2 %). All 16 grow by 3.86 % with the 10
+  new `legend:` cases.
+- `test/port/scales/scale_time_reference.dart` is 2,406,449 bytes (limit 2,500,000). The largest
+  plugin data file is `plugin_tooltip_reference.dart` with 2,214,007 bytes, after the split of
+  the tooltip data into two files.
+
+### 14.3 The legend opt-out of the stress and benchmark charts (Chart.js ADR 0031 Open)
+
+The stress and benchmark charts turn off the legend with `plugins.legend: false`, not with
+`legend.display: false`. With `display: false` the legend still builds one item for each arc in
+each update (plugin.legend.js:88, :623-626). Frameless benchmark, macOS release, ABBA, update
+median:
+- `chart.doughnut` at 5000 arcs: 16.342 and 16.895 ms with `display: false`, 5.040 and 4.892 ms
+  with `legend: false`.
+- `chart.polarArea` at 5000 arcs: 14.205 and 14.616 ms with `display: false`, 5.398 and 5.441 ms
+  with `legend: false`.
+
+From phase 8 the radar of `chart.radar` fills (`fill: 'start'`, controller.radar.js:16-20). Thus
+its draw figures do not compare with the figures of phase 7 (JIT probe, 1000 points: 0.66-0.71 ms
+with the filler, 0.30-0.32 ms with no plugin).
+
+### 14.4 The fixture registry (Chart.js ADR 0041 §9)
+
+The design of Chart.js ADR 0041 measured the import of `test/fixtures/index.dart` in `-j 1` runs
+of 29 test files, each without the compile cache, ABBA, 3 pairs: 0.38 s for 119 hand ports, and
+1.07 s for 147 hand ports (95 % interval 0.54 to 1.50 s). The trigger is 4 s. Wave 4 of phase 8
+has the real 147 hand ports. The same method on the real registry (2026-10-23, Apple M3 Max,
+Flutter 3.47.7): W 21.70, 21.08 and 21.16 s, N 20.79, 20.85 and 20.94 s. The pair differences are
+0.91, 0.23 and 0.22 s, mean 0.45 s (95 % bootstrap interval 0.22 to 0.91 s, 20000 resamples, seed
+8), 0.016 s for each file. The load average (1 minute) was 9.8 at the start and 4.4 at the end:
+the Mac was not quiet, so the figure is flagged. It is far below the trigger of 4 s. Thus one
+registry stays, and ADR 0029 Open item 2 does not fire. A run on a quiet Mac can confirm the
+figure.

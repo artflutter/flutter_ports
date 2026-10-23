@@ -40,7 +40,7 @@ import {
   makeChart,
   named,
   observe,
-  registerPhase6,
+  registerBuiltins,
   runCase,
   writeReference,
 } from './scale_chart_common.mjs';
@@ -61,7 +61,7 @@ const LogValueTestController = cartesianTestController('logValueTest', {
   scales: {_index_: {type: 'category'}, _value_: {type: 'logarithmic'}},
 });
 
-registerPhase6(C, LogTestController, LogValueTestController);
+registerBuiltins(C, LogTestController, LogValueTestController);
 
 /**
  * The observations of a logarithmic scale [s], after the observations of

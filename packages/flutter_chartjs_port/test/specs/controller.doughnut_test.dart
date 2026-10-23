@@ -50,7 +50,10 @@ import '../support/jasmine.dart';
 //   `beforeEach` of the group `Interactions` acquires a chart. Thus it is a
 //   local function `beforeEach()`, and each test calls it first.
 //
-// One case needs the tooltip plugin of phase 8 (:418).
+// The tooltip case (:418) reads `chart.tooltip`, the field of `Chart` (a
+// `types.TooltipModel?`), through the interface.
+// `chart.options.plugins.tooltip = value` writes the key `tooltip` of the
+// Map `chart.options['plugins']`.
 
 /// Jasmine `toBeCloseTo(expected, precision)`: within half a unit in the
 /// `precision`-th decimal place. Jasmine's default precision is 2.
@@ -535,13 +538,68 @@ void main() {
       });
     });
 
-    // :418 The case reads `chart.tooltip` and writes
-    // `chart.options.plugins.tooltip`: it needs the tooltip plugin of
-    // phase 8.
-    test(
-      'should not override tooltip title and label callbacks',
-      () {},
-      skip: 'blocked: plugin.tooltip',
-    );
+    // :418
+    testWidgets('should not override tooltip title and label callbacks', (
+      tester,
+    ) async {
+      final chart = acquireChart(<String, Object?>{
+        'type': 'doughnut',
+        'data': <String, Object?>{
+          'labels': <Object?>['Label 1', 'Label 2'],
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[21, 79],
+              'label': 'Dataset 1',
+            },
+            <String, Object?>{
+              'data': <Object?>[33, 67],
+              'label': 'Dataset 2',
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'responsive': true,
+          'maintainAspectRatio': true,
+        },
+      });
+      final tooltip = chart.tooltip!;
+      final point = chart.getDatasetMeta(0).data[0];
+
+      await triggerMouseEvent(chart, 'mousemove', point);
+
+      expect(tooltip.title, jasmineEquals(<Object?>['Label 1']));
+      expect(
+        tooltip.body,
+        jasmineEquals(<Object?>[
+          <String, Object?>{
+            'before': <Object?>[],
+            'lines': <Object?>['Dataset 1: 21'],
+            'after': <Object?>[],
+          },
+        ]),
+      );
+
+      (chart.options['plugins']! as Map<String, Object?>)['tooltip'] =
+          <String, Object?>{'mode': 'dataset'};
+      chart.update();
+      await triggerMouseEvent(chart, 'mousemove', point);
+
+      expect(tooltip.title, jasmineEquals(<Object?>['Dataset 1']));
+      expect(
+        tooltip.body,
+        jasmineEquals(<Object?>[
+          <String, Object?>{
+            'before': <Object?>[],
+            'lines': <Object?>['Label 1: 21'],
+            'after': <Object?>[],
+          },
+          <String, Object?>{
+            'before': <Object?>[],
+            'lines': <Object?>['Label 2: 79'],
+            'after': <Object?>[],
+          },
+        ]),
+      );
+    });
   });
 }

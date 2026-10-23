@@ -20,6 +20,7 @@ import 'package:flutter_chartjs_port/src/elements/index.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsObjectIsFrozen;
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -408,6 +409,46 @@ void main() {
     });
   }
 
+  for (final type in StressChartType.values) {
+    test('${type.name}: the chart has no legend (Chart.js ADR 0031, Open)', () {
+      final field = StressPointField(20);
+      final chart = _framelessChart(StressChartScene(type, 20, field));
+      // The same config without the opt-out: the legend of registerables
+      // displays by default (plugin.legend.js:637-639).
+      final withLegend = Chart(
+        UiCanvasElement(width: chartBenchWidth, height: chartBenchHeight),
+        stressChartConfig(
+          scene: StressChartScene(type, 20, field),
+          scriptable: false,
+          options: {...chartBenchOptions, 'plugins': <String, Object?>{}},
+        ),
+      );
+      try {
+        // `plugins.legend: false` disables the plugin for the chart
+        // (core.plugins.js:146-149, :163-165): it starts no legend.
+        expect(chart.legend, isNull);
+        expect(chart.boxes.whereType<Legend>(), isEmpty);
+        final legend = withLegend.legend! as Legend;
+        expect(withLegend.boxes, contains(legend));
+        expect(legend.height, greaterThan(0));
+        // A doughnut, pie or polar area legend has one item for each arc
+        // (controller.doughnut.js:93-129, controller.polarArea.js:36-69).
+        final arcs =
+            type == StressChartType.doughnut ||
+            type == StressChartType.pie ||
+            type == StressChartType.polarArea;
+        expect(legend.legendItems, hasLength(arcs ? 20 : 1));
+        expect(
+          withLegend.chartArea!.top,
+          greaterThan(chart.chartArea!.top),
+        );
+      } finally {
+        chart.destroy();
+        withLegend.destroy();
+      }
+    });
+  }
+
   test('StressChartScene: the data of each type, and the write', () {
     final field = StressPointField(4);
     for (final type in StressChartType.values) {
@@ -459,6 +500,7 @@ void main() {
               as Map<String, Object?>;
       expect(c['type'], type.name);
       expect(options['events'], isEmpty);
+      expect(options['plugins'], {'legend': false});
       expect(dataset.containsKey('optionSharing'), isFalse);
       expect(dataset['backgroundColor'], stressChartBackground);
       if (type.points) {

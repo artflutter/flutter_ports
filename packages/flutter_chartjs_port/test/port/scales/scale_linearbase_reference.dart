@@ -4,7 +4,7 @@
 // Node.js v24.12.0 (darwin-x64), V8 13.6.233.17-node.37:
 // a build of Chart.js v4.5.1+7169e651 at the commit
 // 7169e65147a47f3720957a6f156a33c838ab9f57, with the Liberation Sans mock
-// context of tool/reference/scale_chart_common.mjs. 54 cases, 236 widths.
+// context of tool/reference/scale_chart_common.mjs. 54 cases, 237 widths.
 
 /// The Node.js version that generated the data.
 const String scaleLinearBaseReferenceNode = 'v24.12.0';
@@ -66,12 +66,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.021484375,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -88,12 +83,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[30.0, '30', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -160,26 +150,22 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[100.0, '100', false],
             <Object?>[120.0, '120', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            415.9714285714286,
-            348.3428571428571,
-            280.71428571428567,
-            213.0857142857143,
-            145.45714285714283,
-            77.82857142857145,
-            10.2,
+            483.6,
+            419.08571428571435,
+            354.5714285714286,
+            290.0571428571429,
+            225.54285714285717,
+            161.02857142857144,
+            96.51428571428573,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[120.0, 50.0, -20.0],
-          'basePixel': 415.9714285714286,
+          'basePixel': 419.08571428571435,
           'warnings': <Object?>[],
           'start': -20.0,
           'end': 120.0,
@@ -219,9 +205,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[92.5595703125, 405.82714285714286],
-          <Object?>[502.326171875, 20.344285714285732],
-          <Object?>[246.70986328125, 483.59999999999997],
+          <Object?>[92.5595703125, 409.40857142857146],
+          <Object?>[502.326171875, 41.677142857142876],
+          <Object?>[246.70986328125, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -235,7 +221,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -246,7 +232,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -255,7 +241,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",112.5,10.2]
+["moveTo",112.5,32]
 ["lineTo",112.5,483]
 ["stroke",null]
 ["restore"]
@@ -266,7 +252,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",112.5,484]
-["lineTo",112.5,491.59999999999997]
+["lineTo",112.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -275,7 +261,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",190.5,10.2]
+["moveTo",190.5,32]
 ["lineTo",190.5,483]
 ["stroke",null]
 ["restore"]
@@ -286,7 +272,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",190.5,484]
-["lineTo",190.5,491.59999999999997]
+["lineTo",190.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -295,7 +281,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",268.5,10.2]
+["moveTo",268.5,32]
 ["lineTo",268.5,483]
 ["stroke",null]
 ["restore"]
@@ -306,7 +292,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",268.5,484]
-["lineTo",268.5,491.59999999999997]
+["lineTo",268.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -315,7 +301,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",346.5,10.2]
+["moveTo",346.5,32]
 ["lineTo",346.5,483]
 ["stroke",null]
 ["restore"]
@@ -326,7 +312,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",346.5,484]
-["lineTo",346.5,491.59999999999997]
+["lineTo",346.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -335,7 +321,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",424.5,10.2]
+["moveTo",424.5,32]
 ["lineTo",424.5,483]
 ["stroke",null]
 ["restore"]
@@ -346,7 +332,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",424.5,484]
-["lineTo",424.5,491.59999999999997]
+["lineTo",424.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -355,7 +341,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -366,7 +352,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -395,8 +381,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,415.5]
-["lineTo",502.326171875,415.5]
+["moveTo",35,419.5]
+["lineTo",502.326171875,419.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -405,8 +391,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,415.5]
-["lineTo",34,415.5]
+["moveTo",26.021484375,419.5]
+["lineTo",34,419.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -415,8 +401,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,348.5]
-["lineTo",502.326171875,348.5]
+["moveTo",35,354.5]
+["lineTo",502.326171875,354.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -425,8 +411,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,348.5]
-["lineTo",34,348.5]
+["moveTo",26.021484375,354.5]
+["lineTo",34,354.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -435,8 +421,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,280.5]
-["lineTo",502.326171875,280.5]
+["moveTo",35,290.5]
+["lineTo",502.326171875,290.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -445,8 +431,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,280.5]
-["lineTo",34,280.5]
+["moveTo",26.021484375,290.5]
+["lineTo",34,290.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -455,8 +441,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,213.5]
-["lineTo",502.326171875,213.5]
+["moveTo",35,225.5]
+["lineTo",502.326171875,225.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -465,8 +451,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,213.5]
-["lineTo",34,213.5]
+["moveTo",26.021484375,225.5]
+["lineTo",34,225.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -475,8 +461,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,145.5]
-["lineTo",502.326171875,145.5]
+["moveTo",35,161.5]
+["lineTo",502.326171875,161.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -485,8 +471,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,145.5]
-["lineTo",34,145.5]
+["moveTo",26.021484375,161.5]
+["lineTo",34,161.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -495,8 +481,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,77.5]
-["lineTo",502.326171875,77.5]
+["moveTo",35,96.5]
+["lineTo",502.326171875,96.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -505,8 +491,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,77.5]
-["lineTo",34,77.5]
+["moveTo",26.021484375,96.5]
+["lineTo",34,96.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -515,8 +501,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",35,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -525,9 +511,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,10.5]
-["lineTo",34,10.5]
+["moveTo",26.021484375,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -539,11 +554,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.021484375,494.59999999999997]
+["translate",34.021484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -552,7 +567,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",112.072265625,494.59999999999997]
+["translate",112.072265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -561,7 +576,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",190.123046875,494.59999999999997]
+["translate",190.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -570,7 +585,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",268.173828125,494.59999999999997]
+["translate",268.173828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -579,7 +594,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",346.224609375,494.59999999999997]
+["translate",346.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -588,7 +603,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.275390625,494.59999999999997]
+["translate",424.275390625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -597,7 +612,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -609,7 +624,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -619,7 +634,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,483.59999999999997]
+["translate",23.021484375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -628,7 +643,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,415.9714285714286]
+["translate",23.021484375,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -637,7 +652,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,348.3428571428571]
+["translate",23.021484375,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -646,7 +661,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,280.71428571428567]
+["translate",23.021484375,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -655,7 +670,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,213.0857142857143]
+["translate",23.021484375,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -664,7 +679,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,145.45714285714283]
+["translate",23.021484375,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -673,7 +688,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,77.82857142857145]
+["translate",23.021484375,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -682,7 +697,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,10.2]
+["translate",23.021484375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -694,7 +709,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",92.5595703125,405.82714285714286,3,0,6.283185307179586,false]
+["arc",92.5595703125,409.40857142857146,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -702,7 +717,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,20.344285714285732,3,0,6.283185307179586,false]
+["arc",502.326171875,41.677142857142876,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -710,7 +725,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",246.70986328125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",246.70986328125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -732,12 +747,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        27.34765625,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[27.34765625, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -754,12 +764,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[3.5, '3.5', false],
             <Object?>[4.0, '4.0', false],
           ],
-          'box': <Object?>[
-            27.34765625,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[27.34765625, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.3408203125, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -833,29 +838,25 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[19.0, '19', false],
             <Object?>[20.0, '20', false],
           ],
-          'box': <Object?>[0.0, 10.2, 27.34765625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 27.34765625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.56,
-            152.22,
-            104.87999999999998,
-            57.53999999999999,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.64000000000001,
+            167.48000000000002,
+            122.31999999999998,
+            77.16,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[20.0, 15.0, 10.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 10.0,
           'end': 20.0,
@@ -895,9 +896,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[27.34765625, 483.59999999999997],
-          <Object?>[264.00341796875, 10.2],
-          <Object?>[500.6591796875, 246.89999999999998],
+          <Object?>[27.34765625, 483.6],
+          <Object?>[264.00341796875, 32.0],
+          <Object?>[500.6591796875, 257.8],
         ],
       ],
       'drawCalls': '''
@@ -911,7 +912,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",27.5,10.2]
+["moveTo",27.5,32]
 ["lineTo",27.5,483]
 ["stroke",null]
 ["restore"]
@@ -922,7 +923,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",27.5,484]
-["lineTo",27.5,491.59999999999997]
+["lineTo",27.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -931,7 +932,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",106.5,10.2]
+["moveTo",106.5,32]
 ["lineTo",106.5,483]
 ["stroke",null]
 ["restore"]
@@ -942,7 +943,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",106.5,484]
-["lineTo",106.5,491.59999999999997]
+["lineTo",106.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -951,7 +952,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",185.5,10.2]
+["moveTo",185.5,32]
 ["lineTo",185.5,483]
 ["stroke",null]
 ["restore"]
@@ -962,7 +963,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",185.5,484]
-["lineTo",185.5,491.59999999999997]
+["lineTo",185.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -971,7 +972,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",264.5,10.2]
+["moveTo",264.5,32]
 ["lineTo",264.5,483]
 ["stroke",null]
 ["restore"]
@@ -982,7 +983,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",264.5,484]
-["lineTo",264.5,491.59999999999997]
+["lineTo",264.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -991,7 +992,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",342.5,10.2]
+["moveTo",342.5,32]
 ["lineTo",342.5,483]
 ["stroke",null]
 ["restore"]
@@ -1002,7 +1003,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",342.5,484]
-["lineTo",342.5,491.59999999999997]
+["lineTo",342.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1011,7 +1012,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",421.5,10.2]
+["moveTo",421.5,32]
 ["lineTo",421.5,483]
 ["stroke",null]
 ["restore"]
@@ -1022,7 +1023,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",421.5,484]
-["lineTo",421.5,491.59999999999997]
+["lineTo",421.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1031,7 +1032,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -1042,7 +1043,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1071,8 +1072,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,436.5]
-["lineTo",500.6591796875,436.5]
+["moveTo",28,438.5]
+["lineTo",500.6591796875,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1081,8 +1082,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,436.5]
-["lineTo",27,436.5]
+["moveTo",19.34765625,438.5]
+["lineTo",27,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1091,8 +1092,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,388.5]
-["lineTo",500.6591796875,388.5]
+["moveTo",28,393.5]
+["lineTo",500.6591796875,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1101,8 +1102,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,388.5]
-["lineTo",27,388.5]
+["moveTo",19.34765625,393.5]
+["lineTo",27,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1111,8 +1112,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,341.5]
-["lineTo",500.6591796875,341.5]
+["moveTo",28,348.5]
+["lineTo",500.6591796875,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1121,8 +1122,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,341.5]
-["lineTo",27,341.5]
+["moveTo",19.34765625,348.5]
+["lineTo",27,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1131,8 +1132,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,294.5]
-["lineTo",500.6591796875,294.5]
+["moveTo",28,302.5]
+["lineTo",500.6591796875,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1141,8 +1142,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,294.5]
-["lineTo",27,294.5]
+["moveTo",19.34765625,302.5]
+["lineTo",27,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1151,8 +1152,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,246.5]
-["lineTo",500.6591796875,246.5]
+["moveTo",28,257.5]
+["lineTo",500.6591796875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1161,8 +1162,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,246.5]
-["lineTo",27,246.5]
+["moveTo",19.34765625,257.5]
+["lineTo",27,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1171,8 +1172,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,199.5]
-["lineTo",500.6591796875,199.5]
+["moveTo",28,212.5]
+["lineTo",500.6591796875,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1181,8 +1182,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,199.5]
-["lineTo",27,199.5]
+["moveTo",19.34765625,212.5]
+["lineTo",27,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1191,8 +1192,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,152.5]
-["lineTo",500.6591796875,152.5]
+["moveTo",28,167.5]
+["lineTo",500.6591796875,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1201,8 +1202,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,152.5]
-["lineTo",27,152.5]
+["moveTo",19.34765625,167.5]
+["lineTo",27,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1211,8 +1212,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,104.5]
-["lineTo",500.6591796875,104.5]
+["moveTo",28,122.5]
+["lineTo",500.6591796875,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1221,8 +1222,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,104.5]
-["lineTo",27,104.5]
+["moveTo",19.34765625,122.5]
+["lineTo",27,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1231,8 +1232,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,57.5]
-["lineTo",500.6591796875,57.5]
+["moveTo",28,77.5]
+["lineTo",500.6591796875,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1241,8 +1242,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,57.5]
-["lineTo",27,57.5]
+["moveTo",19.34765625,77.5]
+["lineTo",27,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1251,8 +1252,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",28,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1261,9 +1262,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,10.5]
-["lineTo",27,10.5]
+["moveTo",19.34765625,32.5]
+["lineTo",27,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -1275,11 +1305,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.34765625,494.59999999999997]
+["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1288,7 +1318,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",106.23291015625,494.59999999999997]
+["translate",106.23291015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1297,7 +1327,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",185.1181640625,494.59999999999997]
+["translate",185.1181640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1306,7 +1336,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",264.00341796875,494.59999999999997]
+["translate",264.00341796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1315,7 +1345,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",342.888671875,494.59999999999997]
+["translate",342.888671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1324,7 +1354,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",421.77392578125,494.59999999999997]
+["translate",421.77392578125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1333,7 +1363,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1345,7 +1375,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",27.5,10]
+["moveTo",27.5,32]
 ["lineTo",27.5,484]
 ["stroke",null]
 ["restore"]
@@ -1355,7 +1385,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,483.59999999999997]
+["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1364,7 +1394,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,436.26]
+["translate",16.34765625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1373,7 +1403,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,388.92]
+["translate",16.34765625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1382,7 +1412,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,341.5799999999999]
+["translate",16.34765625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1391,7 +1421,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,294.23999999999995]
+["translate",16.34765625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1400,7 +1430,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,246.89999999999998]
+["translate",16.34765625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1409,7 +1439,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,199.56]
+["translate",16.34765625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1418,7 +1448,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,152.22]
+["translate",16.34765625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1427,7 +1457,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,104.87999999999998]
+["translate",16.34765625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1436,7 +1466,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,57.53999999999999]
+["translate",16.34765625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1445,7 +1475,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,10.2]
+["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1457,7 +1487,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",27.34765625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",27.34765625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1465,7 +1495,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",264.00341796875,10.2,3,0,6.283185307179586,false]
+["arc",264.00341796875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1473,7 +1503,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",500.6591796875,246.89999999999998,3,0,6.283185307179586,false]
+["arc",500.6591796875,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1494,12 +1524,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -1520,12 +1545,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -1599,25 +1619,21 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            404.7,
-            325.8,
-            246.89999999999998,
-            168.0,
-            89.09999999999998,
-            10.2,
+            483.6,
+            408.33333333333337,
+            333.0666666666667,
+            257.8,
+            182.53333333333336,
+            107.26666666666665,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 6.0, 3.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 3.0,
           'end': 9.0,
@@ -1659,11 +1675,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
         <Object?>[
           <Object?>[
             <String, Object?>{'num': 'NaN'},
-            483.59999999999997,
+            483.6,
           ],
           <Object?>[
             <String, Object?>{'num': 'NaN'},
-            10.2,
+            32.0,
           ],
         ],
       ],
@@ -1678,7 +1694,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -1689,7 +1705,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1698,7 +1714,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",68.5,10.2]
+["moveTo",68.5,32]
 ["lineTo",68.5,483]
 ["stroke",null]
 ["restore"]
@@ -1709,7 +1725,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",68.5,484]
-["lineTo",68.5,491.59999999999997]
+["lineTo",68.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1718,7 +1734,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",116.5,10.2]
+["moveTo",116.5,32]
 ["lineTo",116.5,483]
 ["stroke",null]
 ["restore"]
@@ -1729,7 +1745,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",116.5,484]
-["lineTo",116.5,491.59999999999997]
+["lineTo",116.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1738,7 +1754,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",164.5,10.2]
+["moveTo",164.5,32]
 ["lineTo",164.5,483]
 ["stroke",null]
 ["restore"]
@@ -1749,7 +1765,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",164.5,484]
-["lineTo",164.5,491.59999999999997]
+["lineTo",164.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1758,7 +1774,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",212.5,10.2]
+["moveTo",212.5,32]
 ["lineTo",212.5,483]
 ["stroke",null]
 ["restore"]
@@ -1769,7 +1785,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",212.5,484]
-["lineTo",212.5,491.59999999999997]
+["lineTo",212.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1778,7 +1794,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",260.5,10.2]
+["moveTo",260.5,32]
 ["lineTo",260.5,483]
 ["stroke",null]
 ["restore"]
@@ -1789,7 +1805,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",260.5,484]
-["lineTo",260.5,491.59999999999997]
+["lineTo",260.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1798,7 +1814,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",308.5,10.2]
+["moveTo",308.5,32]
 ["lineTo",308.5,483]
 ["stroke",null]
 ["restore"]
@@ -1809,7 +1825,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",308.5,484]
-["lineTo",308.5,491.59999999999997]
+["lineTo",308.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1818,7 +1834,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",356.5,10.2]
+["moveTo",356.5,32]
 ["lineTo",356.5,483]
 ["stroke",null]
 ["restore"]
@@ -1829,7 +1845,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",356.5,484]
-["lineTo",356.5,491.59999999999997]
+["lineTo",356.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1838,7 +1854,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",404.5,10.2]
+["moveTo",404.5,32]
 ["lineTo",404.5,483]
 ["stroke",null]
 ["restore"]
@@ -1849,7 +1865,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",404.5,484]
-["lineTo",404.5,491.59999999999997]
+["lineTo",404.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1858,7 +1874,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",452.5,10.2]
+["moveTo",452.5,32]
 ["lineTo",452.5,483]
 ["stroke",null]
 ["restore"]
@@ -1869,7 +1885,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",452.5,484]
-["lineTo",452.5,491.59999999999997]
+["lineTo",452.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1878,7 +1894,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -1889,7 +1905,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1918,8 +1934,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,404.5]
-["lineTo",500.6591796875,404.5]
+["moveTo",21,408.5]
+["lineTo",500.6591796875,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1928,8 +1944,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,404.5]
-["lineTo",20,404.5]
+["moveTo",12.673828125,408.5]
+["lineTo",20,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1938,8 +1954,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",500.6591796875,325.5]
+["moveTo",21,333.5]
+["lineTo",500.6591796875,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1948,8 +1964,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1958,8 +1974,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,246.5]
-["lineTo",500.6591796875,246.5]
+["moveTo",21,257.5]
+["lineTo",500.6591796875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1968,8 +1984,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,246.5]
-["lineTo",20,246.5]
+["moveTo",12.673828125,257.5]
+["lineTo",20,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1978,8 +1994,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",500.6591796875,168.5]
+["moveTo",21,182.5]
+["lineTo",500.6591796875,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1988,8 +2004,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1998,8 +2014,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,89.5]
-["lineTo",500.6591796875,89.5]
+["moveTo",21,107.5]
+["lineTo",500.6591796875,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2008,8 +2024,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,89.5]
-["lineTo",20,89.5]
+["moveTo",12.673828125,107.5]
+["lineTo",20,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2018,8 +2034,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",21,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2028,9 +2044,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -2042,11 +2087,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2055,7 +2100,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",68.67236328125,494.59999999999997]
+["translate",68.67236328125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2064,7 +2109,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",116.6708984375,494.59999999999997]
+["translate",116.6708984375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2073,7 +2118,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",164.66943359375,494.59999999999997]
+["translate",164.66943359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2082,7 +2127,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",212.66796875,494.59999999999997]
+["translate",212.66796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2091,7 +2136,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",260.66650390625,494.59999999999997]
+["translate",260.66650390625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2100,7 +2145,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",308.6650390625,494.59999999999997]
+["translate",308.6650390625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2109,7 +2154,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",356.66357421875,494.59999999999997]
+["translate",356.66357421875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2118,7 +2163,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",404.662109375,494.59999999999997]
+["translate",404.662109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2127,7 +2172,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",452.66064453125,494.59999999999997]
+["translate",452.66064453125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2136,7 +2181,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2148,7 +2193,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -2158,7 +2203,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2167,7 +2212,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,404.7]
+["translate",9.673828125,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2176,7 +2221,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2185,7 +2230,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,246.89999999999998]
+["translate",9.673828125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2194,7 +2239,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2203,7 +2248,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,89.09999999999998]
+["translate",9.673828125,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2212,7 +2257,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2235,12 +2280,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -2261,12 +2301,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -2344,29 +2379,25 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.56,
-            152.22,
-            104.87999999999998,
-            57.53999999999999,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.64000000000001,
+            167.48000000000002,
+            122.31999999999998,
+            77.16,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[1.0, 0.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 1.0,
@@ -2416,7 +2447,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -2427,7 +2458,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2436,7 +2467,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",77.5,10.2]
+["moveTo",77.5,32]
 ["lineTo",77.5,483]
 ["stroke",null]
 ["restore"]
@@ -2447,7 +2478,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",77.5,484]
-["lineTo",77.5,491.59999999999997]
+["lineTo",77.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2456,7 +2487,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",124.5,10.2]
+["moveTo",124.5,32]
 ["lineTo",124.5,483]
 ["stroke",null]
 ["restore"]
@@ -2467,7 +2498,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",124.5,484]
-["lineTo",124.5,491.59999999999997]
+["lineTo",124.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2476,7 +2507,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",171.5,10.2]
+["moveTo",171.5,32]
 ["lineTo",171.5,483]
 ["stroke",null]
 ["restore"]
@@ -2487,7 +2518,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",171.5,484]
-["lineTo",171.5,491.59999999999997]
+["lineTo",171.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2496,7 +2527,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",218.5,10.2]
+["moveTo",218.5,32]
 ["lineTo",218.5,483]
 ["stroke",null]
 ["restore"]
@@ -2507,7 +2538,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",218.5,484]
-["lineTo",218.5,491.59999999999997]
+["lineTo",218.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2516,7 +2547,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",265.5,10.2]
+["moveTo",265.5,32]
 ["lineTo",265.5,483]
 ["stroke",null]
 ["restore"]
@@ -2527,7 +2558,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",265.5,484]
-["lineTo",265.5,491.59999999999997]
+["lineTo",265.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2536,7 +2567,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",312.5,10.2]
+["moveTo",312.5,32]
 ["lineTo",312.5,483]
 ["stroke",null]
 ["restore"]
@@ -2547,7 +2578,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",312.5,484]
-["lineTo",312.5,491.59999999999997]
+["lineTo",312.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2556,7 +2587,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",359.5,10.2]
+["moveTo",359.5,32]
 ["lineTo",359.5,483]
 ["stroke",null]
 ["restore"]
@@ -2567,7 +2598,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",359.5,484]
-["lineTo",359.5,491.59999999999997]
+["lineTo",359.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2576,7 +2607,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",406.5,10.2]
+["moveTo",406.5,32]
 ["lineTo",406.5,483]
 ["stroke",null]
 ["restore"]
@@ -2587,7 +2618,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",406.5,484]
-["lineTo",406.5,491.59999999999997]
+["lineTo",406.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2596,7 +2627,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",453.5,10.2]
+["moveTo",453.5,32]
 ["lineTo",453.5,483]
 ["stroke",null]
 ["restore"]
@@ -2607,7 +2638,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",453.5,484]
-["lineTo",453.5,491.59999999999997]
+["lineTo",453.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2616,7 +2647,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -2627,7 +2658,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2656,8 +2687,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,436.5]
-["lineTo",500.6591796875,436.5]
+["moveTo",31,438.5]
+["lineTo",500.6591796875,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2666,8 +2697,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,436.5]
-["lineTo",30,436.5]
+["moveTo",22.681640625,438.5]
+["lineTo",30,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2676,8 +2707,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,388.5]
-["lineTo",500.6591796875,388.5]
+["moveTo",31,393.5]
+["lineTo",500.6591796875,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2686,8 +2717,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,388.5]
-["lineTo",30,388.5]
+["moveTo",22.681640625,393.5]
+["lineTo",30,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2696,8 +2727,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,341.5]
-["lineTo",500.6591796875,341.5]
+["moveTo",31,348.5]
+["lineTo",500.6591796875,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2706,8 +2737,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,341.5]
-["lineTo",30,341.5]
+["moveTo",22.681640625,348.5]
+["lineTo",30,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2716,8 +2747,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,294.5]
-["lineTo",500.6591796875,294.5]
+["moveTo",31,302.5]
+["lineTo",500.6591796875,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2726,8 +2757,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,294.5]
-["lineTo",30,294.5]
+["moveTo",22.681640625,302.5]
+["lineTo",30,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2736,8 +2767,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,246.5]
-["lineTo",500.6591796875,246.5]
+["moveTo",31,257.5]
+["lineTo",500.6591796875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2746,8 +2777,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,246.5]
-["lineTo",30,246.5]
+["moveTo",22.681640625,257.5]
+["lineTo",30,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2756,8 +2787,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,199.5]
-["lineTo",500.6591796875,199.5]
+["moveTo",31,212.5]
+["lineTo",500.6591796875,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2766,8 +2797,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,199.5]
-["lineTo",30,199.5]
+["moveTo",22.681640625,212.5]
+["lineTo",30,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2776,8 +2807,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,152.5]
-["lineTo",500.6591796875,152.5]
+["moveTo",31,167.5]
+["lineTo",500.6591796875,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2786,8 +2817,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,152.5]
-["lineTo",30,152.5]
+["moveTo",22.681640625,167.5]
+["lineTo",30,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2796,8 +2827,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,104.5]
-["lineTo",500.6591796875,104.5]
+["moveTo",31,122.5]
+["lineTo",500.6591796875,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2806,8 +2837,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,104.5]
-["lineTo",30,104.5]
+["moveTo",22.681640625,122.5]
+["lineTo",30,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2816,8 +2847,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,57.5]
-["lineTo",500.6591796875,57.5]
+["moveTo",31,77.5]
+["lineTo",500.6591796875,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2826,8 +2857,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,57.5]
-["lineTo",30,57.5]
+["moveTo",22.681640625,77.5]
+["lineTo",30,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2836,8 +2867,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",31,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2846,9 +2877,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -2860,11 +2920,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2873,7 +2933,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",77.67939453125001,494.59999999999997]
+["translate",77.67939453125001,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2882,7 +2942,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",124.67714843750001,494.59999999999997]
+["translate",124.67714843750001,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2891,7 +2951,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",171.67490234375,494.59999999999997]
+["translate",171.67490234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2900,7 +2960,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",218.67265625000002,494.59999999999997]
+["translate",218.67265625000002,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2909,7 +2969,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",265.67041015625,494.59999999999997]
+["translate",265.67041015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2918,7 +2978,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",312.6681640625,494.59999999999997]
+["translate",312.6681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2927,7 +2987,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",359.66591796874997,494.59999999999997]
+["translate",359.66591796874997,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2936,7 +2996,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",406.66367187500003,494.59999999999997]
+["translate",406.66367187500003,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2945,7 +3005,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",453.66142578125,494.59999999999997]
+["translate",453.66142578125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2954,7 +3014,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2966,7 +3026,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -2976,7 +3036,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2985,7 +3045,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,436.26]
+["translate",19.681640625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2994,7 +3054,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,388.92]
+["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3003,7 +3063,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,341.5799999999999]
+["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3012,7 +3072,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,294.23999999999995]
+["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3021,7 +3081,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,246.89999999999998]
+["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3030,7 +3090,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,199.56]
+["translate",19.681640625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3039,7 +3099,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,152.22]
+["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3048,7 +3108,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,104.87999999999998]
+["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3057,7 +3117,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,57.53999999999999]
+["translate",19.681640625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3066,7 +3126,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3098,12 +3158,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        505.6630859375,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -3120,12 +3175,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[6.0, '6', false],
             <Object?>[7.0, '7', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            505.6630859375,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 505.6630859375, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 6.3369140625, 0.0],
           'tickPixels': <Object?>[
@@ -3198,28 +3248,24 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[8.0, '8.0', false],
             <Object?>[8.5, '8.5', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[8.5, 6.25, 4.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 4.0,
           'end': 8.5,
@@ -3269,14 +3315,14 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
           ],
           <Object?>[
             <String, Object?>{'num': 'NaN'},
-            483.59999999999997,
+            483.6,
           ],
-          <Object?>[189.0087890625, 378.4],
+          <Object?>[189.0087890625, 383.24444444444447],
           <Object?>[
             <String, Object?>{'num': 'NaN'},
-            273.2,
+            282.8888888888889,
           ],
-          <Object?>[505.6630859375, 10.2],
+          <Object?>[505.6630859375, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -3290,7 +3336,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -3301,7 +3347,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3310,7 +3356,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",109.5,10.2]
+["moveTo",109.5,32]
 ["lineTo",109.5,483]
 ["stroke",null]
 ["restore"]
@@ -3321,7 +3367,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",109.5,484]
-["lineTo",109.5,491.59999999999997]
+["lineTo",109.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3330,7 +3376,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",189.5,10.2]
+["moveTo",189.5,32]
 ["lineTo",189.5,483]
 ["stroke",null]
 ["restore"]
@@ -3341,7 +3387,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",189.5,484]
-["lineTo",189.5,491.59999999999997]
+["lineTo",189.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3350,7 +3396,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",268.5,10.2]
+["moveTo",268.5,32]
 ["lineTo",268.5,483]
 ["stroke",null]
 ["restore"]
@@ -3361,7 +3407,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",268.5,484]
-["lineTo",268.5,491.59999999999997]
+["lineTo",268.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3370,7 +3416,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",347.5,10.2]
+["moveTo",347.5,32]
 ["lineTo",347.5,483]
 ["stroke",null]
 ["restore"]
@@ -3381,7 +3427,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",347.5,484]
-["lineTo",347.5,491.59999999999997]
+["lineTo",347.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3390,7 +3436,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",426.5,10.2]
+["moveTo",426.5,32]
 ["lineTo",426.5,483]
 ["stroke",null]
 ["restore"]
@@ -3401,7 +3447,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",426.5,484]
-["lineTo",426.5,491.59999999999997]
+["lineTo",426.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3410,7 +3456,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",505.5,10.2]
+["moveTo",505.5,32]
 ["lineTo",505.5,483]
 ["stroke",null]
 ["restore"]
@@ -3421,7 +3467,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",505.5,484]
-["lineTo",505.5,491.59999999999997]
+["lineTo",505.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3450,8 +3496,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,430.5]
-["lineTo",505.6630859375,430.5]
+["moveTo",31,433.5]
+["lineTo",505.6630859375,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3460,8 +3506,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,430.5]
-["lineTo",30,430.5]
+["moveTo",22.681640625,433.5]
+["lineTo",30,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3470,8 +3516,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,378.5]
-["lineTo",505.6630859375,378.5]
+["moveTo",31,383.5]
+["lineTo",505.6630859375,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3480,8 +3526,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,378.5]
-["lineTo",30,378.5]
+["moveTo",22.681640625,383.5]
+["lineTo",30,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3490,8 +3536,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,325.5]
-["lineTo",505.6630859375,325.5]
+["moveTo",31,333.5]
+["lineTo",505.6630859375,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3500,8 +3546,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,325.5]
-["lineTo",30,325.5]
+["moveTo",22.681640625,333.5]
+["lineTo",30,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3510,8 +3556,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,273.5]
-["lineTo",505.6630859375,273.5]
+["moveTo",31,282.5]
+["lineTo",505.6630859375,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3520,8 +3566,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,273.5]
-["lineTo",30,273.5]
+["moveTo",22.681640625,282.5]
+["lineTo",30,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3530,8 +3576,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,220.5]
-["lineTo",505.6630859375,220.5]
+["moveTo",31,232.5]
+["lineTo",505.6630859375,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3540,8 +3586,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,220.5]
-["lineTo",30,220.5]
+["moveTo",22.681640625,232.5]
+["lineTo",30,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3550,8 +3596,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,168.5]
-["lineTo",505.6630859375,168.5]
+["moveTo",31,182.5]
+["lineTo",505.6630859375,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3560,8 +3606,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,168.5]
-["lineTo",30,168.5]
+["moveTo",22.681640625,182.5]
+["lineTo",30,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3570,8 +3616,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,115.5]
-["lineTo",505.6630859375,115.5]
+["moveTo",31,132.5]
+["lineTo",505.6630859375,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3580,8 +3626,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,115.5]
-["lineTo",30,115.5]
+["moveTo",22.681640625,132.5]
+["lineTo",30,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3590,8 +3636,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,62.5]
-["lineTo",505.6630859375,62.5]
+["moveTo",31,82.5]
+["lineTo",505.6630859375,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3600,8 +3646,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,62.5]
-["lineTo",30,62.5]
+["moveTo",22.681640625,82.5]
+["lineTo",30,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3610,8 +3656,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",505.6630859375,10.5]
+["moveTo",31,32.5]
+["lineTo",505.6630859375,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3620,9 +3666,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -3634,11 +3709,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3647,7 +3722,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",109.84521484375,494.59999999999997]
+["translate",109.84521484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3656,7 +3731,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",189.0087890625,494.59999999999997]
+["translate",189.0087890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3665,7 +3740,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",268.17236328125,494.59999999999997]
+["translate",268.17236328125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3674,7 +3749,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",347.3359375,494.59999999999997]
+["translate",347.3359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3683,7 +3758,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",426.49951171875,494.59999999999997]
+["translate",426.49951171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3692,7 +3767,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",505.6630859375,494.59999999999997]
+["translate",505.6630859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3704,7 +3779,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -3714,7 +3789,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3723,7 +3798,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,430.99999999999994]
+["translate",19.681640625,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3732,7 +3807,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,378.4]
+["translate",19.681640625,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3741,7 +3816,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,325.8]
+["translate",19.681640625,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3750,7 +3825,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,273.2]
+["translate",19.681640625,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3759,7 +3834,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,220.59999999999997]
+["translate",19.681640625,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3768,7 +3843,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,168]
+["translate",19.681640625,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3777,7 +3852,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,115.39999999999999]
+["translate",19.681640625,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3786,7 +3861,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,62.800000000000026]
+["translate",19.681640625,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3795,7 +3870,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3807,7 +3882,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",189.0087890625,378.4,3,0,6.283185307179586,false]
+["arc",189.0087890625,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -3815,7 +3890,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",505.6630859375,10.2,3,0,6.283185307179586,false]
+["arc",505.6630859375,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -3846,12 +3921,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        27.34765625,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[27.34765625, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -3868,12 +3938,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[3.5, '3.5', false],
             <Object?>[4.0, '4.0', false],
           ],
-          'box': <Object?>[
-            27.34765625,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[27.34765625, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.3408203125, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -3947,29 +4012,25 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[28.0, '28', false],
             <Object?>[30.0, '30', false],
           ],
-          'box': <Object?>[0.0, 10.2, 27.34765625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 27.34765625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.56,
-            152.22,
-            104.87999999999998,
-            57.53999999999999,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.64000000000001,
+            167.48000000000002,
+            122.31999999999998,
+            77.16,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[30.0, 20.0, 10.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 10.0,
           'end': 30.0,
@@ -4013,8 +4074,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
           <Object?>[32767.0, -32768.0],
         ],
         <Object?>[
-          <Object?>[27.34765625, 483.59999999999997],
-          <Object?>[500.6591796875, 10.2],
+          <Object?>[27.34765625, 483.6],
+          <Object?>[500.6591796875, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -4028,7 +4089,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",27.5,10.2]
+["moveTo",27.5,32]
 ["lineTo",27.5,483]
 ["stroke",null]
 ["restore"]
@@ -4039,7 +4100,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",27.5,484]
-["lineTo",27.5,491.59999999999997]
+["lineTo",27.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4048,7 +4109,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",106.5,10.2]
+["moveTo",106.5,32]
 ["lineTo",106.5,483]
 ["stroke",null]
 ["restore"]
@@ -4059,7 +4120,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",106.5,484]
-["lineTo",106.5,491.59999999999997]
+["lineTo",106.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4068,7 +4129,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",185.5,10.2]
+["moveTo",185.5,32]
 ["lineTo",185.5,483]
 ["stroke",null]
 ["restore"]
@@ -4079,7 +4140,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",185.5,484]
-["lineTo",185.5,491.59999999999997]
+["lineTo",185.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4088,7 +4149,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",264.5,10.2]
+["moveTo",264.5,32]
 ["lineTo",264.5,483]
 ["stroke",null]
 ["restore"]
@@ -4099,7 +4160,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",264.5,484]
-["lineTo",264.5,491.59999999999997]
+["lineTo",264.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4108,7 +4169,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",342.5,10.2]
+["moveTo",342.5,32]
 ["lineTo",342.5,483]
 ["stroke",null]
 ["restore"]
@@ -4119,7 +4180,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",342.5,484]
-["lineTo",342.5,491.59999999999997]
+["lineTo",342.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4128,7 +4189,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",421.5,10.2]
+["moveTo",421.5,32]
 ["lineTo",421.5,483]
 ["stroke",null]
 ["restore"]
@@ -4139,7 +4200,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",421.5,484]
-["lineTo",421.5,491.59999999999997]
+["lineTo",421.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4148,7 +4209,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -4159,7 +4220,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4188,8 +4249,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,436.5]
-["lineTo",500.6591796875,436.5]
+["moveTo",28,438.5]
+["lineTo",500.6591796875,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4198,8 +4259,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,436.5]
-["lineTo",27,436.5]
+["moveTo",19.34765625,438.5]
+["lineTo",27,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4208,8 +4269,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,388.5]
-["lineTo",500.6591796875,388.5]
+["moveTo",28,393.5]
+["lineTo",500.6591796875,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4218,8 +4279,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,388.5]
-["lineTo",27,388.5]
+["moveTo",19.34765625,393.5]
+["lineTo",27,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4228,8 +4289,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,341.5]
-["lineTo",500.6591796875,341.5]
+["moveTo",28,348.5]
+["lineTo",500.6591796875,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4238,8 +4299,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,341.5]
-["lineTo",27,341.5]
+["moveTo",19.34765625,348.5]
+["lineTo",27,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4248,8 +4309,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,294.5]
-["lineTo",500.6591796875,294.5]
+["moveTo",28,302.5]
+["lineTo",500.6591796875,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4258,8 +4319,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,294.5]
-["lineTo",27,294.5]
+["moveTo",19.34765625,302.5]
+["lineTo",27,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4268,8 +4329,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,246.5]
-["lineTo",500.6591796875,246.5]
+["moveTo",28,257.5]
+["lineTo",500.6591796875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4278,8 +4339,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,246.5]
-["lineTo",27,246.5]
+["moveTo",19.34765625,257.5]
+["lineTo",27,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4288,8 +4349,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,199.5]
-["lineTo",500.6591796875,199.5]
+["moveTo",28,212.5]
+["lineTo",500.6591796875,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4298,8 +4359,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,199.5]
-["lineTo",27,199.5]
+["moveTo",19.34765625,212.5]
+["lineTo",27,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4308,8 +4369,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,152.5]
-["lineTo",500.6591796875,152.5]
+["moveTo",28,167.5]
+["lineTo",500.6591796875,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4318,8 +4379,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,152.5]
-["lineTo",27,152.5]
+["moveTo",19.34765625,167.5]
+["lineTo",27,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4328,8 +4389,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,104.5]
-["lineTo",500.6591796875,104.5]
+["moveTo",28,122.5]
+["lineTo",500.6591796875,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4338,8 +4399,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,104.5]
-["lineTo",27,104.5]
+["moveTo",19.34765625,122.5]
+["lineTo",27,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4348,8 +4409,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,57.5]
-["lineTo",500.6591796875,57.5]
+["moveTo",28,77.5]
+["lineTo",500.6591796875,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4358,8 +4419,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,57.5]
-["lineTo",27,57.5]
+["moveTo",19.34765625,77.5]
+["lineTo",27,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4368,8 +4429,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",28,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4378,9 +4439,65 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,10.5]
-["lineTo",27,10.5]
+["moveTo",19.34765625,32.5]
+["lineTo",27,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",152.283203125,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",198.283203125,16,null]
+["measureText","undefined"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["setLineWidth",2]
+["moveTo",183.283203125,18]
+["lineTo",223.283203125,18]
+["stroke",null]
+["restore"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",261,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",307,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -4392,11 +4509,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.34765625,494.59999999999997]
+["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4405,7 +4522,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",106.23291015625,494.59999999999997]
+["translate",106.23291015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4414,7 +4531,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",185.1181640625,494.59999999999997]
+["translate",185.1181640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4423,7 +4540,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",264.00341796875,494.59999999999997]
+["translate",264.00341796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4432,7 +4549,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",342.888671875,494.59999999999997]
+["translate",342.888671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4441,7 +4558,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",421.77392578125,494.59999999999997]
+["translate",421.77392578125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4450,7 +4567,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4462,7 +4579,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",27.5,10]
+["moveTo",27.5,32]
 ["lineTo",27.5,484]
 ["stroke",null]
 ["restore"]
@@ -4472,7 +4589,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,483.59999999999997]
+["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4481,7 +4598,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,436.26]
+["translate",16.34765625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4490,7 +4607,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,388.92]
+["translate",16.34765625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4499,7 +4616,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,341.5799999999999]
+["translate",16.34765625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4508,7 +4625,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,294.23999999999995]
+["translate",16.34765625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4517,7 +4634,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,246.89999999999998]
+["translate",16.34765625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4526,7 +4643,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,199.56]
+["translate",16.34765625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4535,7 +4652,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,152.22]
+["translate",16.34765625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4544,7 +4661,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,104.87999999999998]
+["translate",16.34765625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4553,7 +4670,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,57.53999999999999]
+["translate",16.34765625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4562,7 +4679,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,10.2]
+["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4574,7 +4691,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",27.34765625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",27.34765625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -4582,7 +4699,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",500.6591796875,10.2,3,0,6.283185307179586,false]
+["arc",500.6591796875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -4613,12 +4730,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.021484375,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -4636,12 +4748,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[50.0, '50', false],
             <Object?>[55.0, '55', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[8.3349609375, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -4712,29 +4819,25 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[90.0, '90', false],
             <Object?>[100.0, '100', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.56,
-            152.22,
-            104.87999999999998,
-            57.53999999999999,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.64000000000001,
+            167.48000000000002,
+            122.31999999999998,
+            77.16,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[100.0, 50.0, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 100.0,
@@ -4774,9 +4877,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[-24.5166015625, 469.39799999999997],
-          <Object?>[385.25, -70.27799999999996],
-          <Object?>[129.63369140625, 578.28],
+          <Object?>[-24.5166015625, 470.052],
+          <Object?>[385.25, -44.77199999999998],
+          <Object?>[129.63369140625, 573.92],
         ],
       ],
       'drawCalls': '''
@@ -4790,7 +4893,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -4801,7 +4904,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4810,7 +4913,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",73.5,10.2]
+["moveTo",73.5,32]
 ["lineTo",73.5,483]
 ["stroke",null]
 ["restore"]
@@ -4821,7 +4924,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",73.5,484]
-["lineTo",73.5,491.59999999999997]
+["lineTo",73.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4830,7 +4933,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",151.5,10.2]
+["moveTo",151.5,32]
 ["lineTo",151.5,483]
 ["stroke",null]
 ["restore"]
@@ -4841,7 +4944,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",151.5,484]
-["lineTo",151.5,491.59999999999997]
+["lineTo",151.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4850,7 +4953,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",229.5,10.2]
+["moveTo",229.5,32]
 ["lineTo",229.5,483]
 ["stroke",null]
 ["restore"]
@@ -4861,7 +4964,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",229.5,484]
-["lineTo",229.5,491.59999999999997]
+["lineTo",229.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4870,7 +4973,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",307.5,10.2]
+["moveTo",307.5,32]
 ["lineTo",307.5,483]
 ["stroke",null]
 ["restore"]
@@ -4881,7 +4984,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",307.5,484]
-["lineTo",307.5,491.59999999999997]
+["lineTo",307.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4890,7 +4993,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",385.5,10.2]
+["moveTo",385.5,32]
 ["lineTo",385.5,483]
 ["stroke",null]
 ["restore"]
@@ -4901,7 +5004,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",385.5,484]
-["lineTo",385.5,491.59999999999997]
+["lineTo",385.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4910,7 +5013,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",463.5,10.2]
+["moveTo",463.5,32]
 ["lineTo",463.5,483]
 ["stroke",null]
 ["restore"]
@@ -4921,7 +5024,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",463.5,484]
-["lineTo",463.5,491.59999999999997]
+["lineTo",463.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4930,7 +5033,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -4941,7 +5044,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4970,8 +5073,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,436.5]
-["lineTo",502.326171875,436.5]
+["moveTo",35,438.5]
+["lineTo",502.326171875,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4980,8 +5083,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,436.5]
-["lineTo",34,436.5]
+["moveTo",26.021484375,438.5]
+["lineTo",34,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4990,8 +5093,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,388.5]
-["lineTo",502.326171875,388.5]
+["moveTo",35,393.5]
+["lineTo",502.326171875,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5000,8 +5103,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,388.5]
-["lineTo",34,388.5]
+["moveTo",26.021484375,393.5]
+["lineTo",34,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5010,8 +5113,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,341.5]
-["lineTo",502.326171875,341.5]
+["moveTo",35,348.5]
+["lineTo",502.326171875,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5020,8 +5123,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,341.5]
-["lineTo",34,341.5]
+["moveTo",26.021484375,348.5]
+["lineTo",34,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5030,8 +5133,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,294.5]
-["lineTo",502.326171875,294.5]
+["moveTo",35,302.5]
+["lineTo",502.326171875,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5040,8 +5143,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,294.5]
-["lineTo",34,294.5]
+["moveTo",26.021484375,302.5]
+["lineTo",34,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5050,8 +5153,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,246.5]
-["lineTo",502.326171875,246.5]
+["moveTo",35,257.5]
+["lineTo",502.326171875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5060,8 +5163,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,246.5]
-["lineTo",34,246.5]
+["moveTo",26.021484375,257.5]
+["lineTo",34,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5070,8 +5173,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,199.5]
-["lineTo",502.326171875,199.5]
+["moveTo",35,212.5]
+["lineTo",502.326171875,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5080,8 +5183,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,199.5]
-["lineTo",34,199.5]
+["moveTo",26.021484375,212.5]
+["lineTo",34,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5090,8 +5193,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,152.5]
-["lineTo",502.326171875,152.5]
+["moveTo",35,167.5]
+["lineTo",502.326171875,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5100,8 +5203,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,152.5]
-["lineTo",34,152.5]
+["moveTo",26.021484375,167.5]
+["lineTo",34,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5110,8 +5213,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,104.5]
-["lineTo",502.326171875,104.5]
+["moveTo",35,122.5]
+["lineTo",502.326171875,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5120,8 +5223,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,104.5]
-["lineTo",34,104.5]
+["moveTo",26.021484375,122.5]
+["lineTo",34,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5130,8 +5233,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,57.5]
-["lineTo",502.326171875,57.5]
+["moveTo",35,77.5]
+["lineTo",502.326171875,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5140,8 +5243,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,57.5]
-["lineTo",34,57.5]
+["moveTo",26.021484375,77.5]
+["lineTo",34,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5150,8 +5253,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",35,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5160,9 +5263,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,10.5]
-["lineTo",34,10.5]
+["moveTo",26.021484375,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -5174,11 +5306,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.021484375,494.59999999999997]
+["translate",34.021484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5187,7 +5319,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",73.046875,494.59999999999997]
+["translate",73.046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5196,7 +5328,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",151.09765625,494.59999999999997]
+["translate",151.09765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5205,7 +5337,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",229.1484375,494.59999999999997]
+["translate",229.1484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5214,7 +5346,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",307.19921875,494.59999999999997]
+["translate",307.19921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5223,7 +5355,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",385.25,494.59999999999997]
+["translate",385.25,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5232,7 +5364,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",463.30078125,494.59999999999997]
+["translate",463.30078125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5241,7 +5373,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5253,7 +5385,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -5263,7 +5395,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,483.59999999999997]
+["translate",23.021484375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5272,7 +5404,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,436.26]
+["translate",23.021484375,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5281,7 +5413,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,388.92]
+["translate",23.021484375,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5290,7 +5422,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,341.5799999999999]
+["translate",23.021484375,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5299,7 +5431,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,294.23999999999995]
+["translate",23.021484375,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5308,7 +5440,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,246.89999999999998]
+["translate",23.021484375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5317,7 +5449,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,199.56]
+["translate",23.021484375,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5326,7 +5458,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,152.22]
+["translate",23.021484375,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5335,7 +5467,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,104.87999999999998]
+["translate",23.021484375,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5344,7 +5476,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,57.53999999999999]
+["translate",23.021484375,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5353,7 +5485,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,10.2]
+["translate",23.021484375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5388,12 +5520,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        38.017578125,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[38.017578125, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -5411,12 +5538,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[40.0, '40', false],
             <Object?>[50.0, '50', false],
           ],
-          'box': <Object?>[
-            38.017578125,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[38.017578125, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -5485,27 +5607,23 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[250.0, '250', false],
             <Object?>[300.0, '300', false],
           ],
-          'box': <Object?>[0.0, 10.2, 38.017578125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 38.017578125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            424.42499999999995,
-            365.24999999999994,
-            306.075,
-            246.89999999999998,
-            187.72499999999997,
-            128.54999999999998,
-            69.375,
-            10.2,
+            483.6,
+            427.15000000000003,
+            370.70000000000005,
+            314.25,
+            257.8,
+            201.35000000000002,
+            144.9,
+            88.45,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[300.0, 100.0, -100.0],
-          'basePixel': 365.24999999999994,
+          'basePixel': 370.70000000000005,
           'warnings': <Object?>[],
           'start': -100.0,
           'end': 300.0,
@@ -5545,9 +5663,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[87.76492745535714, 361.69949999999994],
-          <Object?>[435.9963727678571, 226.7805],
-          <Object?>[218.76628069196428, 388.92],
+          <Object?>[87.76492745535714, 367.313],
+          <Object?>[435.9963727678571, 238.60700000000003],
+          <Object?>[218.76628069196428, 393.28000000000003],
         ],
       ],
       'drawCalls': '''
@@ -5561,7 +5679,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38.5,10.2]
+["moveTo",38.5,32]
 ["lineTo",38.5,483]
 ["stroke",null]
 ["restore"]
@@ -5572,7 +5690,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",38.5,484]
-["lineTo",38.5,491.59999999999997]
+["lineTo",38.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5581,7 +5699,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",104.5,10.2]
+["moveTo",104.5,32]
 ["lineTo",104.5,483]
 ["stroke",null]
 ["restore"]
@@ -5592,7 +5710,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",104.5,484]
-["lineTo",104.5,491.59999999999997]
+["lineTo",104.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5601,7 +5719,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",170.5,10.2]
+["moveTo",170.5,32]
 ["lineTo",170.5,483]
 ["stroke",null]
 ["restore"]
@@ -5612,7 +5730,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",170.5,484]
-["lineTo",170.5,491.59999999999997]
+["lineTo",170.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5621,7 +5739,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",237.5,10.2]
+["moveTo",237.5,32]
 ["lineTo",237.5,483]
 ["stroke",null]
 ["restore"]
@@ -5632,7 +5750,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",237.5,484]
-["lineTo",237.5,491.59999999999997]
+["lineTo",237.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5641,7 +5759,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",303.5,10.2]
+["moveTo",303.5,32]
 ["lineTo",303.5,483]
 ["stroke",null]
 ["restore"]
@@ -5652,7 +5770,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",303.5,484]
-["lineTo",303.5,491.59999999999997]
+["lineTo",303.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5661,7 +5779,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",369.5,10.2]
+["moveTo",369.5,32]
 ["lineTo",369.5,483]
 ["stroke",null]
 ["restore"]
@@ -5672,7 +5790,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",369.5,484]
-["lineTo",369.5,491.59999999999997]
+["lineTo",369.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5681,7 +5799,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",435.5,10.2]
+["moveTo",435.5,32]
 ["lineTo",435.5,483]
 ["stroke",null]
 ["restore"]
@@ -5692,7 +5810,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",435.5,484]
-["lineTo",435.5,491.59999999999997]
+["lineTo",435.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5701,7 +5819,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -5712,7 +5830,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5741,8 +5859,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,424.5]
-["lineTo",502.326171875,424.5]
+["moveTo",39,427.5]
+["lineTo",502.326171875,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5751,8 +5869,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.017578125,424.5]
-["lineTo",38,424.5]
+["moveTo",30.017578125,427.5]
+["lineTo",38,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5761,8 +5879,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,365.5]
-["lineTo",502.326171875,365.5]
+["moveTo",39,370.5]
+["lineTo",502.326171875,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5771,8 +5889,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.017578125,365.5]
-["lineTo",38,365.5]
+["moveTo",30.017578125,370.5]
+["lineTo",38,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5781,8 +5899,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,306.5]
-["lineTo",502.326171875,306.5]
+["moveTo",39,314.5]
+["lineTo",502.326171875,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5791,8 +5909,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.017578125,306.5]
-["lineTo",38,306.5]
+["moveTo",30.017578125,314.5]
+["lineTo",38,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5801,8 +5919,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,246.5]
-["lineTo",502.326171875,246.5]
+["moveTo",39,257.5]
+["lineTo",502.326171875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5811,8 +5929,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.017578125,246.5]
-["lineTo",38,246.5]
+["moveTo",30.017578125,257.5]
+["lineTo",38,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5821,8 +5939,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,187.5]
-["lineTo",502.326171875,187.5]
+["moveTo",39,201.5]
+["lineTo",502.326171875,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5831,8 +5949,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.017578125,187.5]
-["lineTo",38,187.5]
+["moveTo",30.017578125,201.5]
+["lineTo",38,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5841,8 +5959,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,128.5]
-["lineTo",502.326171875,128.5]
+["moveTo",39,144.5]
+["lineTo",502.326171875,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5851,8 +5969,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.017578125,128.5]
-["lineTo",38,128.5]
+["moveTo",30.017578125,144.5]
+["lineTo",38,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5861,8 +5979,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,69.5]
-["lineTo",502.326171875,69.5]
+["moveTo",39,88.5]
+["lineTo",502.326171875,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5871,8 +5989,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.017578125,69.5]
-["lineTo",38,69.5]
+["moveTo",30.017578125,88.5]
+["lineTo",38,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5881,8 +5999,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",39,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5891,9 +6009,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.017578125,10.5]
-["lineTo",38,10.5]
+["moveTo",30.017578125,32.5]
+["lineTo",38,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -5905,11 +6052,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",38.017578125,494.59999999999997]
+["translate",38.017578125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5918,7 +6065,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",104.34737723214285,494.59999999999997]
+["translate",104.34737723214285,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5927,7 +6074,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",170.6771763392857,494.59999999999997]
+["translate",170.6771763392857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5936,7 +6083,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",237.00697544642856,494.59999999999997]
+["translate",237.00697544642856,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5945,7 +6092,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",303.3367745535714,494.59999999999997]
+["translate",303.3367745535714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5954,7 +6101,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",369.6665736607143,494.59999999999997]
+["translate",369.6665736607143,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5963,7 +6110,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",435.9963727678571,494.59999999999997]
+["translate",435.9963727678571,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5972,7 +6119,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5984,7 +6131,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",38.5,10]
+["moveTo",38.5,32]
 ["lineTo",38.5,484]
 ["stroke",null]
 ["restore"]
@@ -5994,7 +6141,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,483.59999999999997]
+["translate",27.017578125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6003,7 +6150,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,424.42499999999995]
+["translate",27.017578125,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6012,7 +6159,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,365.24999999999994]
+["translate",27.017578125,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6021,7 +6168,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,306.075]
+["translate",27.017578125,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6030,7 +6177,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,246.89999999999998]
+["translate",27.017578125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6039,7 +6186,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,187.72499999999997]
+["translate",27.017578125,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6048,7 +6195,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,128.54999999999998]
+["translate",27.017578125,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6057,7 +6204,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,69.375]
+["translate",27.017578125,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6066,7 +6213,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,10.2]
+["translate",27.017578125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6078,7 +6225,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",87.76492745535714,361.69949999999994,3,0,6.283185307179586,false]
+["arc",87.76492745535714,367.313,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6086,7 +6233,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",435.9963727678571,226.7805,3,0,6.283185307179586,false]
+["arc",435.9963727678571,238.60700000000003,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6094,7 +6241,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",218.76628069196428,388.92,3,0,6.283185307179586,false]
+["arc",218.76628069196428,393.28000000000003,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6125,12 +6272,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.021484375,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -6148,12 +6290,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[40.0, '40', false],
             <Object?>[50.0, '50', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -6223,28 +6360,24 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[120.0, '120', false],
             <Object?>[140.0, '140', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[140.0, 50.0, -40.0],
-          'basePixel': 378.4,
+          'basePixel': 383.24444444444447,
           'warnings': <Object?>[],
           'start': -40.0,
           'end': 140.0,
@@ -6284,9 +6417,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[84.19698660714286, 370.50999999999993],
-          <Object?>[435.42550223214283, 70.69],
-          <Object?>[216.3258091517857, 430.99999999999994],
+          <Object?>[84.19698660714286, 375.71777777777777],
+          <Object?>[435.42550223214283, 89.70444444444445],
+          <Object?>[216.3258091517857, 433.4222222222222],
         ],
       ],
       'drawCalls': '''
@@ -6300,7 +6433,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -6311,7 +6444,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6320,7 +6453,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",100.5,10.2]
+["moveTo",100.5,32]
 ["lineTo",100.5,483]
 ["stroke",null]
 ["restore"]
@@ -6331,7 +6464,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",100.5,484]
-["lineTo",100.5,491.59999999999997]
+["lineTo",100.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6340,7 +6473,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",167.5,10.2]
+["moveTo",167.5,32]
 ["lineTo",167.5,483]
 ["stroke",null]
 ["restore"]
@@ -6351,7 +6484,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",167.5,484]
-["lineTo",167.5,491.59999999999997]
+["lineTo",167.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6360,7 +6493,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",234.5,10.2]
+["moveTo",234.5,32]
 ["lineTo",234.5,483]
 ["stroke",null]
 ["restore"]
@@ -6371,7 +6504,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",234.5,484]
-["lineTo",234.5,491.59999999999997]
+["lineTo",234.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6380,7 +6513,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",301.5,10.2]
+["moveTo",301.5,32]
 ["lineTo",301.5,483]
 ["stroke",null]
 ["restore"]
@@ -6391,7 +6524,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",301.5,484]
-["lineTo",301.5,491.59999999999997]
+["lineTo",301.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6400,7 +6533,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",368.5,10.2]
+["moveTo",368.5,32]
 ["lineTo",368.5,483]
 ["stroke",null]
 ["restore"]
@@ -6411,7 +6544,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",368.5,484]
-["lineTo",368.5,491.59999999999997]
+["lineTo",368.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6420,7 +6553,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",435.5,10.2]
+["moveTo",435.5,32]
 ["lineTo",435.5,483]
 ["stroke",null]
 ["restore"]
@@ -6431,7 +6564,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",435.5,484]
-["lineTo",435.5,491.59999999999997]
+["lineTo",435.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6440,7 +6573,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -6451,7 +6584,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6480,8 +6613,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,430.5]
-["lineTo",502.326171875,430.5]
+["moveTo",35,433.5]
+["lineTo",502.326171875,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6490,8 +6623,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,430.5]
-["lineTo",34,430.5]
+["moveTo",26.021484375,433.5]
+["lineTo",34,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6500,8 +6633,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,378.5]
-["lineTo",502.326171875,378.5]
+["moveTo",35,383.5]
+["lineTo",502.326171875,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6510,8 +6643,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,378.5]
-["lineTo",34,378.5]
+["moveTo",26.021484375,383.5]
+["lineTo",34,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6520,8 +6653,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,325.5]
-["lineTo",502.326171875,325.5]
+["moveTo",35,333.5]
+["lineTo",502.326171875,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6530,8 +6663,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,325.5]
-["lineTo",34,325.5]
+["moveTo",26.021484375,333.5]
+["lineTo",34,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6540,8 +6673,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,273.5]
-["lineTo",502.326171875,273.5]
+["moveTo",35,282.5]
+["lineTo",502.326171875,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6550,8 +6683,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,273.5]
-["lineTo",34,273.5]
+["moveTo",26.021484375,282.5]
+["lineTo",34,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6560,8 +6693,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,220.5]
-["lineTo",502.326171875,220.5]
+["moveTo",35,232.5]
+["lineTo",502.326171875,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6570,8 +6703,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,220.5]
-["lineTo",34,220.5]
+["moveTo",26.021484375,232.5]
+["lineTo",34,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6580,8 +6713,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,168.5]
-["lineTo",502.326171875,168.5]
+["moveTo",35,182.5]
+["lineTo",502.326171875,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6590,8 +6723,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,168.5]
-["lineTo",34,168.5]
+["moveTo",26.021484375,182.5]
+["lineTo",34,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6600,8 +6733,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,115.5]
-["lineTo",502.326171875,115.5]
+["moveTo",35,132.5]
+["lineTo",502.326171875,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6610,8 +6743,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,115.5]
-["lineTo",34,115.5]
+["moveTo",26.021484375,132.5]
+["lineTo",34,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6620,8 +6753,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,62.5]
-["lineTo",502.326171875,62.5]
+["moveTo",35,82.5]
+["lineTo",502.326171875,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6630,8 +6763,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,62.5]
-["lineTo",34,62.5]
+["moveTo",26.021484375,82.5]
+["lineTo",34,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6640,8 +6773,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",35,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6650,9 +6783,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,10.5]
-["lineTo",34,10.5]
+["moveTo",26.021484375,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -6664,11 +6826,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.021484375,494.59999999999997]
+["translate",34.021484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6677,7 +6839,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",100.92215401785714,494.59999999999997]
+["translate",100.92215401785714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6686,7 +6848,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",167.82282366071428,494.59999999999997]
+["translate",167.82282366071428,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6695,7 +6857,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",234.72349330357142,494.59999999999997]
+["translate",234.72349330357142,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6704,7 +6866,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",301.62416294642856,494.59999999999997]
+["translate",301.62416294642856,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6713,7 +6875,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",368.5248325892857,494.59999999999997]
+["translate",368.5248325892857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6722,7 +6884,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",435.42550223214283,494.59999999999997]
+["translate",435.42550223214283,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6731,7 +6893,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6743,7 +6905,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -6753,7 +6915,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,483.59999999999997]
+["translate",23.021484375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6762,7 +6924,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,430.99999999999994]
+["translate",23.021484375,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6771,7 +6933,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,378.4]
+["translate",23.021484375,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6780,7 +6942,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,325.8]
+["translate",23.021484375,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6789,7 +6951,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,273.2]
+["translate",23.021484375,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6798,7 +6960,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,220.59999999999997]
+["translate",23.021484375,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6807,7 +6969,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,168]
+["translate",23.021484375,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6816,7 +6978,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,115.39999999999999]
+["translate",23.021484375,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6825,7 +6987,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,62.800000000000026]
+["translate",23.021484375,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6834,7 +6996,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,10.2]
+["translate",23.021484375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6846,7 +7008,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",84.19698660714286,370.50999999999993,3,0,6.283185307179586,false]
+["arc",84.19698660714286,375.71777777777777,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6854,7 +7016,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",435.42550223214283,70.69,3,0,6.283185307179586,false]
+["arc",435.42550223214283,89.70444444444445,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6862,7 +7024,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",216.3258091517857,430.99999999999994,3,0,6.283185307179586,false]
+["arc",216.3258091517857,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6892,7 +7054,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[31.34375, 10.2, 502.326171875, 483.59999999999997],
+      'chartArea': <Object?>[31.34375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -6909,12 +7071,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[25.0, '25', false],
             <Object?>[30.0, '30', false],
           ],
-          'box': <Object?>[
-            31.34375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[31.34375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -6982,27 +7139,23 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[-10.0, '-10', false],
             <Object?>[0.0, '0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 31.34375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 31.34375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            424.42499999999995,
-            365.24999999999994,
-            306.075,
-            246.89999999999998,
-            187.72499999999997,
-            128.54999999999998,
-            69.375,
-            10.2,
+            483.6,
+            427.15000000000003,
+            370.70000000000005,
+            314.25,
+            257.8,
+            201.35000000000002,
+            144.9,
+            88.45,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[0.0, -40.0, -80.0],
-          'basePixel': 10.2,
+          'basePixel': 32.0,
           'warnings': <Object?>[],
           'start': -80.0,
           'end': 0.0,
@@ -7042,8 +7195,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[188.337890625, 306.075],
-          <Object?>[502.326171875, 483.59999999999997],
+          <Object?>[188.337890625, 314.25],
+          <Object?>[502.326171875, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -7057,7 +7210,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31.5,10.2]
+["moveTo",31.5,32]
 ["lineTo",31.5,483]
 ["stroke",null]
 ["restore"]
@@ -7068,7 +7221,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",31.5,484]
-["lineTo",31.5,491.59999999999997]
+["lineTo",31.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7077,7 +7230,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",109.5,10.2]
+["moveTo",109.5,32]
 ["lineTo",109.5,483]
 ["stroke",null]
 ["restore"]
@@ -7088,7 +7241,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",109.5,484]
-["lineTo",109.5,491.59999999999997]
+["lineTo",109.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7097,7 +7250,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",188.5,10.2]
+["moveTo",188.5,32]
 ["lineTo",188.5,483]
 ["stroke",null]
 ["restore"]
@@ -7108,7 +7261,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",188.5,484]
-["lineTo",188.5,491.59999999999997]
+["lineTo",188.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7117,7 +7270,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",266.5,10.2]
+["moveTo",266.5,32]
 ["lineTo",266.5,483]
 ["stroke",null]
 ["restore"]
@@ -7128,7 +7281,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",266.5,484]
-["lineTo",266.5,491.59999999999997]
+["lineTo",266.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7137,7 +7290,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",345.5,10.2]
+["moveTo",345.5,32]
 ["lineTo",345.5,483]
 ["stroke",null]
 ["restore"]
@@ -7148,7 +7301,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",345.5,484]
-["lineTo",345.5,491.59999999999997]
+["lineTo",345.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7157,7 +7310,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",423.5,10.2]
+["moveTo",423.5,32]
 ["lineTo",423.5,483]
 ["stroke",null]
 ["restore"]
@@ -7168,7 +7321,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",423.5,484]
-["lineTo",423.5,491.59999999999997]
+["lineTo",423.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7177,7 +7330,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -7188,7 +7341,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7217,8 +7370,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,424.5]
-["lineTo",502.326171875,424.5]
+["moveTo",32,427.5]
+["lineTo",502.326171875,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7227,8 +7380,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,424.5]
-["lineTo",31,424.5]
+["moveTo",23.34375,427.5]
+["lineTo",31,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7237,8 +7390,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,365.5]
-["lineTo",502.326171875,365.5]
+["moveTo",32,370.5]
+["lineTo",502.326171875,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7247,8 +7400,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,365.5]
-["lineTo",31,365.5]
+["moveTo",23.34375,370.5]
+["lineTo",31,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7257,8 +7410,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,306.5]
-["lineTo",502.326171875,306.5]
+["moveTo",32,314.5]
+["lineTo",502.326171875,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7267,8 +7420,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,306.5]
-["lineTo",31,306.5]
+["moveTo",23.34375,314.5]
+["lineTo",31,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7277,8 +7430,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,246.5]
-["lineTo",502.326171875,246.5]
+["moveTo",32,257.5]
+["lineTo",502.326171875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7287,8 +7440,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,246.5]
-["lineTo",31,246.5]
+["moveTo",23.34375,257.5]
+["lineTo",31,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7297,8 +7450,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,187.5]
-["lineTo",502.326171875,187.5]
+["moveTo",32,201.5]
+["lineTo",502.326171875,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7307,8 +7460,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,187.5]
-["lineTo",31,187.5]
+["moveTo",23.34375,201.5]
+["lineTo",31,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7317,8 +7470,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,128.5]
-["lineTo",502.326171875,128.5]
+["moveTo",32,144.5]
+["lineTo",502.326171875,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7327,8 +7480,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,128.5]
-["lineTo",31,128.5]
+["moveTo",23.34375,144.5]
+["lineTo",31,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7337,8 +7490,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,69.5]
-["lineTo",502.326171875,69.5]
+["moveTo",32,88.5]
+["lineTo",502.326171875,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7347,8 +7500,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,69.5]
-["lineTo",31,69.5]
+["moveTo",23.34375,88.5]
+["lineTo",31,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7357,8 +7510,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",32,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7367,9 +7520,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,10.5]
-["lineTo",31,10.5]
+["moveTo",23.34375,32.5]
+["lineTo",31,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -7381,11 +7563,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",31.34375,494.59999999999997]
+["translate",31.34375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7394,7 +7576,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",109.8408203125,494.59999999999997]
+["translate",109.8408203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7403,7 +7585,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",188.337890625,494.59999999999997]
+["translate",188.337890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7412,7 +7594,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",266.8349609375,494.59999999999997]
+["translate",266.8349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7421,7 +7603,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",345.33203125,494.59999999999997]
+["translate",345.33203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7430,7 +7612,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",423.8291015625,494.59999999999997]
+["translate",423.8291015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7439,7 +7621,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7451,7 +7633,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",31.5,10]
+["moveTo",31.5,32]
 ["lineTo",31.5,484]
 ["stroke",null]
 ["restore"]
@@ -7461,7 +7643,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,483.59999999999997]
+["translate",20.34375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7470,7 +7652,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,424.42499999999995]
+["translate",20.34375,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7479,7 +7661,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,365.24999999999994]
+["translate",20.34375,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7488,7 +7670,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,306.075]
+["translate",20.34375,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7497,7 +7679,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,246.89999999999998]
+["translate",20.34375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7506,7 +7688,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,187.72499999999997]
+["translate",20.34375,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7515,7 +7697,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,128.54999999999998]
+["translate",20.34375,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7524,7 +7706,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,69.375]
+["translate",20.34375,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7533,7 +7715,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,10.2]
+["translate",20.34375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7545,7 +7727,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",188.337890625,306.075,3,0,6.283185307179586,false]
+["arc",188.337890625,314.25,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -7553,7 +7735,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,483.59999999999997,3,0,6.283185307179586,false]
+["arc",502.326171875,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -7583,12 +7765,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        27.34765625,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -7607,12 +7784,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[25.0, '25', false],
             <Object?>[30.0, '30', false],
           ],
-          'box': <Object?>[
-            27.34765625,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[27.34765625, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -7680,25 +7852,21 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[70.0, '70', false],
             <Object?>[80.0, '80', false],
           ],
-          'box': <Object?>[0.0, 10.2, 27.34765625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 27.34765625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            404.7,
-            325.8,
-            246.89999999999998,
-            168.0,
-            89.09999999999998,
-            10.2,
+            483.6,
+            408.33333333333337,
+            333.0666666666667,
+            257.8,
+            182.53333333333336,
+            107.26666666666665,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[80.0, 50.0, 20.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 20.0,
           'end': 80.0,
@@ -7738,8 +7906,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[27.34765625, 246.89999999999998],
-          <Object?>[502.326171875, 10.2],
+          <Object?>[27.34765625, 257.8],
+          <Object?>[502.326171875, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -7753,7 +7921,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",27.5,10.2]
+["moveTo",27.5,32]
 ["lineTo",27.5,483]
 ["stroke",null]
 ["restore"]
@@ -7764,7 +7932,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",27.5,484]
-["lineTo",27.5,491.59999999999997]
+["lineTo",27.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7773,7 +7941,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",86.5,10.2]
+["moveTo",86.5,32]
 ["lineTo",86.5,483]
 ["stroke",null]
 ["restore"]
@@ -7784,7 +7952,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",86.5,484]
-["lineTo",86.5,491.59999999999997]
+["lineTo",86.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7793,7 +7961,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",146.5,10.2]
+["moveTo",146.5,32]
 ["lineTo",146.5,483]
 ["stroke",null]
 ["restore"]
@@ -7804,7 +7972,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",146.5,484]
-["lineTo",146.5,491.59999999999997]
+["lineTo",146.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7813,7 +7981,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",205.5,10.2]
+["moveTo",205.5,32]
 ["lineTo",205.5,483]
 ["stroke",null]
 ["restore"]
@@ -7824,7 +7992,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",205.5,484]
-["lineTo",205.5,491.59999999999997]
+["lineTo",205.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7833,7 +8001,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",264.5,10.2]
+["moveTo",264.5,32]
 ["lineTo",264.5,483]
 ["stroke",null]
 ["restore"]
@@ -7844,7 +8012,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",264.5,484]
-["lineTo",264.5,491.59999999999997]
+["lineTo",264.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7853,7 +8021,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",324.5,10.2]
+["moveTo",324.5,32]
 ["lineTo",324.5,483]
 ["stroke",null]
 ["restore"]
@@ -7864,7 +8032,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",324.5,484]
-["lineTo",324.5,491.59999999999997]
+["lineTo",324.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7873,7 +8041,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",383.5,10.2]
+["moveTo",383.5,32]
 ["lineTo",383.5,483]
 ["stroke",null]
 ["restore"]
@@ -7884,7 +8052,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",383.5,484]
-["lineTo",383.5,491.59999999999997]
+["lineTo",383.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7893,7 +8061,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",442.5,10.2]
+["moveTo",442.5,32]
 ["lineTo",442.5,483]
 ["stroke",null]
 ["restore"]
@@ -7904,7 +8072,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",442.5,484]
-["lineTo",442.5,491.59999999999997]
+["lineTo",442.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7913,7 +8081,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -7924,7 +8092,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7953,8 +8121,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,404.5]
-["lineTo",502.326171875,404.5]
+["moveTo",28,408.5]
+["lineTo",502.326171875,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7963,8 +8131,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,404.5]
-["lineTo",27,404.5]
+["moveTo",19.34765625,408.5]
+["lineTo",27,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7973,8 +8141,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,325.5]
-["lineTo",502.326171875,325.5]
+["moveTo",28,333.5]
+["lineTo",502.326171875,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7983,8 +8151,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,325.5]
-["lineTo",27,325.5]
+["moveTo",19.34765625,333.5]
+["lineTo",27,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7993,8 +8161,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,246.5]
-["lineTo",502.326171875,246.5]
+["moveTo",28,257.5]
+["lineTo",502.326171875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8003,8 +8171,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,246.5]
-["lineTo",27,246.5]
+["moveTo",19.34765625,257.5]
+["lineTo",27,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8013,8 +8181,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,168.5]
-["lineTo",502.326171875,168.5]
+["moveTo",28,182.5]
+["lineTo",502.326171875,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8023,8 +8191,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,168.5]
-["lineTo",27,168.5]
+["moveTo",19.34765625,182.5]
+["lineTo",27,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8033,8 +8201,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,89.5]
-["lineTo",502.326171875,89.5]
+["moveTo",28,107.5]
+["lineTo",502.326171875,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8043,8 +8211,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,89.5]
-["lineTo",27,89.5]
+["moveTo",19.34765625,107.5]
+["lineTo",27,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8053,8 +8221,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",28,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8063,9 +8231,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,10.5]
-["lineTo",27,10.5]
+["moveTo",19.34765625,32.5]
+["lineTo",27,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -8077,11 +8274,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.34765625,494.59999999999997]
+["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8090,7 +8287,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",86.719970703125,494.59999999999997]
+["translate",86.719970703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8099,7 +8296,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",146.09228515625,494.59999999999997]
+["translate",146.09228515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8108,7 +8305,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",205.464599609375,494.59999999999997]
+["translate",205.464599609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8117,7 +8314,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",264.8369140625,494.59999999999997]
+["translate",264.8369140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8126,7 +8323,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",324.209228515625,494.59999999999997]
+["translate",324.209228515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8135,7 +8332,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",383.58154296875,494.59999999999997]
+["translate",383.58154296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8144,7 +8341,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",442.953857421875,494.59999999999997]
+["translate",442.953857421875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8153,7 +8350,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8165,7 +8362,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",27.5,10]
+["moveTo",27.5,32]
 ["lineTo",27.5,484]
 ["stroke",null]
 ["restore"]
@@ -8175,7 +8372,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,483.59999999999997]
+["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8184,7 +8381,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,404.7]
+["translate",16.34765625,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8193,7 +8390,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,325.8]
+["translate",16.34765625,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8202,7 +8399,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,246.89999999999998]
+["translate",16.34765625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8211,7 +8408,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,168]
+["translate",16.34765625,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8220,7 +8417,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,89.09999999999998]
+["translate",16.34765625,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8229,7 +8426,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,10.2]
+["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8241,7 +8438,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",27.34765625,246.89999999999998,3,0,6.283185307179586,false]
+["arc",27.34765625,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -8249,7 +8446,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,10.2,3,0,6.283185307179586,false]
+["arc",502.326171875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -8278,7 +8475,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[31.34375, 10.2, 502.326171875, 483.59999999999997],
+      'chartArea': <Object?>[31.34375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -8295,25 +8492,21 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[-30.0, '-30', false],
             <Object?>[-20.0, '-20', false],
           ],
-          'box': <Object?>[0.0, 10.2, 31.34375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 31.34375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            404.7,
-            325.8,
-            246.89999999999998,
-            168.0,
-            89.09999999999998,
-            10.2,
+            483.6,
+            408.33333333333337,
+            333.0666666666667,
+            257.8,
+            182.53333333333336,
+            107.26666666666665,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[-20.0, -50.0, -80.0],
-          'basePixel': 10.2,
+          'basePixel': 32.0,
           'warnings': <Object?>[],
           'start': -80.0,
           'end': -20.0,
@@ -8369,12 +8562,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[28.0, '28', false],
             <Object?>[30.0, '30', false],
           ],
-          'box': <Object?>[
-            31.34375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[31.34375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[9.673828125, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -8432,8 +8620,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[31.34375, 246.89999999999998],
-          <Object?>[502.326171875, 483.59999999999997],
+          <Object?>[31.34375, 257.8],
+          <Object?>[502.326171875, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -8467,8 +8655,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,404.5]
-["lineTo",502.326171875,404.5]
+["moveTo",32,408.5]
+["lineTo",502.326171875,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8477,8 +8665,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,404.5]
-["lineTo",31,404.5]
+["moveTo",23.34375,408.5]
+["lineTo",31,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8487,8 +8675,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,325.5]
-["lineTo",502.326171875,325.5]
+["moveTo",32,333.5]
+["lineTo",502.326171875,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8497,8 +8685,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,325.5]
-["lineTo",31,325.5]
+["moveTo",23.34375,333.5]
+["lineTo",31,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8507,8 +8695,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,246.5]
-["lineTo",502.326171875,246.5]
+["moveTo",32,257.5]
+["lineTo",502.326171875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8517,8 +8705,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,246.5]
-["lineTo",31,246.5]
+["moveTo",23.34375,257.5]
+["lineTo",31,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8527,8 +8715,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,168.5]
-["lineTo",502.326171875,168.5]
+["moveTo",32,182.5]
+["lineTo",502.326171875,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8537,8 +8725,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,168.5]
-["lineTo",31,168.5]
+["moveTo",23.34375,182.5]
+["lineTo",31,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8547,8 +8735,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,89.5]
-["lineTo",502.326171875,89.5]
+["moveTo",32,107.5]
+["lineTo",502.326171875,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8557,8 +8745,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,89.5]
-["lineTo",31,89.5]
+["moveTo",23.34375,107.5]
+["lineTo",31,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8567,8 +8755,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",32,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",32,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8577,8 +8765,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",23.34375,10.5]
-["lineTo",31,10.5]
+["moveTo",23.34375,32.5]
+["lineTo",31,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8587,7 +8775,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31.5,10.2]
+["moveTo",31.5,32]
 ["lineTo",31.5,483]
 ["stroke",null]
 ["restore"]
@@ -8598,7 +8786,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",31.5,484]
-["lineTo",31.5,491.59999999999997]
+["lineTo",31.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8607,7 +8795,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",78.5,10.2]
+["moveTo",78.5,32]
 ["lineTo",78.5,483]
 ["stroke",null]
 ["restore"]
@@ -8618,7 +8806,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",78.5,484]
-["lineTo",78.5,491.59999999999997]
+["lineTo",78.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8627,7 +8815,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",125.5,10.2]
+["moveTo",125.5,32]
 ["lineTo",125.5,483]
 ["stroke",null]
 ["restore"]
@@ -8638,7 +8826,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",125.5,484]
-["lineTo",125.5,491.59999999999997]
+["lineTo",125.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8647,7 +8835,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",172.5,10.2]
+["moveTo",172.5,32]
 ["lineTo",172.5,483]
 ["stroke",null]
 ["restore"]
@@ -8658,7 +8846,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",172.5,484]
-["lineTo",172.5,491.59999999999997]
+["lineTo",172.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8667,7 +8855,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",219.5,10.2]
+["moveTo",219.5,32]
 ["lineTo",219.5,483]
 ["stroke",null]
 ["restore"]
@@ -8678,7 +8866,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",219.5,484]
-["lineTo",219.5,491.59999999999997]
+["lineTo",219.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8687,7 +8875,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",266.5,10.2]
+["moveTo",266.5,32]
 ["lineTo",266.5,483]
 ["stroke",null]
 ["restore"]
@@ -8698,7 +8886,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",266.5,484]
-["lineTo",266.5,491.59999999999997]
+["lineTo",266.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8707,7 +8895,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",313.5,10.2]
+["moveTo",313.5,32]
 ["lineTo",313.5,483]
 ["stroke",null]
 ["restore"]
@@ -8718,7 +8906,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",313.5,484]
-["lineTo",313.5,491.59999999999997]
+["lineTo",313.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8727,7 +8915,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",361.5,10.2]
+["moveTo",361.5,32]
 ["lineTo",361.5,483]
 ["stroke",null]
 ["restore"]
@@ -8738,7 +8926,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",361.5,484]
-["lineTo",361.5,491.59999999999997]
+["lineTo",361.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8747,7 +8935,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",408.5,10.2]
+["moveTo",408.5,32]
 ["lineTo",408.5,483]
 ["stroke",null]
 ["restore"]
@@ -8758,7 +8946,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",408.5,484]
-["lineTo",408.5,491.59999999999997]
+["lineTo",408.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8767,7 +8955,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",455.5,10.2]
+["moveTo",455.5,32]
 ["lineTo",455.5,483]
 ["stroke",null]
 ["restore"]
@@ -8778,7 +8966,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",455.5,484]
-["lineTo",455.5,491.59999999999997]
+["lineTo",455.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8787,7 +8975,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -8798,14 +8986,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",31.5,10]
+["moveTo",31.5,32]
 ["lineTo",31.5,484]
 ["stroke",null]
 ["restore"]
@@ -8815,7 +9032,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,483.59999999999997]
+["translate",20.34375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8824,7 +9041,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,404.7]
+["translate",20.34375,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8833,7 +9050,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,325.8]
+["translate",20.34375,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8842,7 +9059,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,246.89999999999998]
+["translate",20.34375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8851,7 +9068,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,168]
+["translate",20.34375,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8860,7 +9077,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,89.09999999999998]
+["translate",20.34375,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8869,7 +9086,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.34375,10.2]
+["translate",20.34375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8887,11 +9104,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",31.34375,494.59999999999997]
+["translate",31.34375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8900,7 +9117,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",78.4419921875,494.59999999999997]
+["translate",78.4419921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8909,7 +9126,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",125.54023437500001,494.59999999999997]
+["translate",125.54023437500001,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8918,7 +9135,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",172.6384765625,494.59999999999997]
+["translate",172.6384765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8927,7 +9144,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",219.73671875000002,494.59999999999997]
+["translate",219.73671875000002,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8936,7 +9153,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",266.8349609375,494.59999999999997]
+["translate",266.8349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8945,7 +9162,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",313.933203125,494.59999999999997]
+["translate",313.933203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8954,7 +9171,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",361.03144531249995,494.59999999999997]
+["translate",361.03144531249995,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8963,7 +9180,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",408.12968750000005,494.59999999999997]
+["translate",408.12968750000005,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8972,7 +9189,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",455.2279296875,494.59999999999997]
+["translate",455.2279296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8981,7 +9198,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8993,7 +9210,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",31.34375,246.89999999999998,3,0,6.283185307179586,false]
+["arc",31.34375,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -9001,7 +9218,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,483.59999999999997,3,0,6.283185307179586,false]
+["arc",502.326171875,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -9025,12 +9242,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        37.35546875,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[37.35546875, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -9051,12 +9263,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.8, '0.8', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[
-            37.35546875,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[37.35546875, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[13.3388671875, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -9134,29 +9341,25 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[5.2, '5.20', false],
             <Object?>[5.25, '5.25', false],
           ],
-          'box': <Object?>[0.0, 10.2, 37.35546875, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 37.35546875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26000000000016,
-            388.9200000000003,
-            341.57999999999964,
-            294.2399999999998,
-            246.89999999999998,
-            199.56000000000014,
-            152.2200000000003,
-            104.87999999999967,
-            57.539999999999836,
-            10.2,
+            483.6,
+            438.44000000000017,
+            393.2800000000003,
+            348.1199999999997,
+            302.95999999999987,
+            257.8,
+            212.64000000000016,
+            167.48000000000033,
+            122.31999999999968,
+            77.15999999999984,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[5.25, 5.0, 4.75],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 4.75,
           'end': 5.25,
@@ -9196,8 +9399,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[269.00732421875, 246.89999999999998],
-          <Object?>[269.00732421875, 246.89999999999998],
+          <Object?>[269.00732421875, 257.8],
+          <Object?>[269.00732421875, 257.8],
         ],
       ],
       'drawCalls': '''
@@ -9211,7 +9414,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",37.5,10.2]
+["moveTo",37.5,32]
 ["lineTo",37.5,483]
 ["stroke",null]
 ["restore"]
@@ -9222,7 +9425,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",37.5,484]
-["lineTo",37.5,491.59999999999997]
+["lineTo",37.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9231,7 +9434,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",83.5,10.2]
+["moveTo",83.5,32]
 ["lineTo",83.5,483]
 ["stroke",null]
 ["restore"]
@@ -9242,7 +9445,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",83.5,484]
-["lineTo",83.5,491.59999999999997]
+["lineTo",83.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9251,7 +9454,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",130.5,10.2]
+["moveTo",130.5,32]
 ["lineTo",130.5,483]
 ["stroke",null]
 ["restore"]
@@ -9262,7 +9465,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",130.5,484]
-["lineTo",130.5,491.59999999999997]
+["lineTo",130.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9271,7 +9474,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",176.5,10.2]
+["moveTo",176.5,32]
 ["lineTo",176.5,483]
 ["stroke",null]
 ["restore"]
@@ -9282,7 +9485,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",176.5,484]
-["lineTo",176.5,491.59999999999997]
+["lineTo",176.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9291,7 +9494,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",222.5,10.2]
+["moveTo",222.5,32]
 ["lineTo",222.5,483]
 ["stroke",null]
 ["restore"]
@@ -9302,7 +9505,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",222.5,484]
-["lineTo",222.5,491.59999999999997]
+["lineTo",222.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9311,7 +9514,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",269.5,10.2]
+["moveTo",269.5,32]
 ["lineTo",269.5,483]
 ["stroke",null]
 ["restore"]
@@ -9322,7 +9525,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",269.5,484]
-["lineTo",269.5,491.59999999999997]
+["lineTo",269.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9331,7 +9534,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",315.5,10.2]
+["moveTo",315.5,32]
 ["lineTo",315.5,483]
 ["stroke",null]
 ["restore"]
@@ -9342,7 +9545,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",315.5,484]
-["lineTo",315.5,491.59999999999997]
+["lineTo",315.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9351,7 +9554,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",361.5,10.2]
+["moveTo",361.5,32]
 ["lineTo",361.5,483]
 ["stroke",null]
 ["restore"]
@@ -9362,7 +9565,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",361.5,484]
-["lineTo",361.5,491.59999999999997]
+["lineTo",361.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9371,7 +9574,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",407.5,10.2]
+["moveTo",407.5,32]
 ["lineTo",407.5,483]
 ["stroke",null]
 ["restore"]
@@ -9382,7 +9585,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",407.5,484]
-["lineTo",407.5,491.59999999999997]
+["lineTo",407.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9391,7 +9594,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",454.5,10.2]
+["moveTo",454.5,32]
 ["lineTo",454.5,483]
 ["stroke",null]
 ["restore"]
@@ -9402,7 +9605,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",454.5,484]
-["lineTo",454.5,491.59999999999997]
+["lineTo",454.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9411,7 +9614,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -9422,7 +9625,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9451,8 +9654,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,436.5]
-["lineTo",500.6591796875,436.5]
+["moveTo",38,438.5]
+["lineTo",500.6591796875,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9461,8 +9664,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,436.5]
-["lineTo",37,436.5]
+["moveTo",29.35546875,438.5]
+["lineTo",37,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9471,8 +9674,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,388.5]
-["lineTo",500.6591796875,388.5]
+["moveTo",38,393.5]
+["lineTo",500.6591796875,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9481,8 +9684,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,388.5]
-["lineTo",37,388.5]
+["moveTo",29.35546875,393.5]
+["lineTo",37,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9491,8 +9694,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,341.5]
-["lineTo",500.6591796875,341.5]
+["moveTo",38,348.5]
+["lineTo",500.6591796875,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9501,8 +9704,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,341.5]
-["lineTo",37,341.5]
+["moveTo",29.35546875,348.5]
+["lineTo",37,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9511,8 +9714,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,294.5]
-["lineTo",500.6591796875,294.5]
+["moveTo",38,302.5]
+["lineTo",500.6591796875,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9521,8 +9724,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,294.5]
-["lineTo",37,294.5]
+["moveTo",29.35546875,302.5]
+["lineTo",37,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9531,8 +9734,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,246.5]
-["lineTo",500.6591796875,246.5]
+["moveTo",38,257.5]
+["lineTo",500.6591796875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9541,8 +9744,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,246.5]
-["lineTo",37,246.5]
+["moveTo",29.35546875,257.5]
+["lineTo",37,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9551,8 +9754,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,199.5]
-["lineTo",500.6591796875,199.5]
+["moveTo",38,212.5]
+["lineTo",500.6591796875,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9561,8 +9764,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,199.5]
-["lineTo",37,199.5]
+["moveTo",29.35546875,212.5]
+["lineTo",37,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9571,8 +9774,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,152.5]
-["lineTo",500.6591796875,152.5]
+["moveTo",38,167.5]
+["lineTo",500.6591796875,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9581,8 +9784,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,152.5]
-["lineTo",37,152.5]
+["moveTo",29.35546875,167.5]
+["lineTo",37,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9591,8 +9794,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,104.5]
-["lineTo",500.6591796875,104.5]
+["moveTo",38,122.5]
+["lineTo",500.6591796875,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9601,8 +9804,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,104.5]
-["lineTo",37,104.5]
+["moveTo",29.35546875,122.5]
+["lineTo",37,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9611,8 +9814,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,57.5]
-["lineTo",500.6591796875,57.5]
+["moveTo",38,77.5]
+["lineTo",500.6591796875,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9621,8 +9824,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,57.5]
-["lineTo",37,57.5]
+["moveTo",29.35546875,77.5]
+["lineTo",37,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9631,8 +9834,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",38,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9641,9 +9844,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,10.5]
-["lineTo",37,10.5]
+["moveTo",29.35546875,32.5]
+["lineTo",37,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -9655,11 +9887,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",37.35546875,494.59999999999997]
+["translate",37.35546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9668,7 +9900,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",83.68583984374999,494.59999999999997]
+["translate",83.68583984374999,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9677,7 +9909,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",130.0162109375,494.59999999999997]
+["translate",130.0162109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9686,7 +9918,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",176.34658203125,494.59999999999997]
+["translate",176.34658203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9695,7 +9927,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",222.676953125,494.59999999999997]
+["translate",222.676953125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9704,7 +9936,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",269.00732421875,494.59999999999997]
+["translate",269.00732421875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9713,7 +9945,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",315.3376953125,494.59999999999997]
+["translate",315.3376953125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9722,7 +9954,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",361.66806640625,494.59999999999997]
+["translate",361.66806640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9731,7 +9963,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",407.9984375,494.59999999999997]
+["translate",407.9984375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9740,7 +9972,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",454.32880859375,494.59999999999997]
+["translate",454.32880859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9749,7 +9981,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9761,7 +9993,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",37.5,10]
+["moveTo",37.5,32]
 ["lineTo",37.5,484]
 ["stroke",null]
 ["restore"]
@@ -9771,7 +10003,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,483.59999999999997]
+["translate",26.35546875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9780,7 +10012,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,436.26000000000016]
+["translate",26.35546875,438.44000000000017]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9789,7 +10021,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,388.9200000000003]
+["translate",26.35546875,393.2800000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9798,7 +10030,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,341.57999999999964]
+["translate",26.35546875,348.1199999999997]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9807,7 +10039,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,294.2399999999998]
+["translate",26.35546875,302.95999999999987]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9816,7 +10048,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,246.89999999999998]
+["translate",26.35546875,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9825,7 +10057,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,199.56000000000014]
+["translate",26.35546875,212.64000000000016]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9834,7 +10066,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,152.2200000000003]
+["translate",26.35546875,167.48000000000033]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9843,7 +10075,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,104.87999999999967]
+["translate",26.35546875,122.31999999999968]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9852,7 +10084,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,57.539999999999836]
+["translate",26.35546875,77.15999999999984]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9861,7 +10093,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,10.2]
+["translate",26.35546875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9873,7 +10105,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",269.00732421875,246.89999999999998,3,0,6.283185307179586,false]
+["arc",269.00732421875,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -9881,7 +10113,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",269.00732421875,246.89999999999998,3,0,6.283185307179586,false]
+["arc",269.00732421875,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -9911,12 +10143,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.677734375,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.677734375, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -9937,12 +10164,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[
-            34.677734375,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.677734375, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -10016,25 +10238,21 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[-0.5, '-0.5', false],
             <Object?>[0.0, '0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.677734375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.677734375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            404.7,
-            325.8,
-            246.89999999999998,
-            168.0,
-            89.09999999999998,
-            10.2,
+            483.6,
+            408.33333333333337,
+            333.0666666666667,
+            257.8,
+            182.53333333333336,
+            107.26666666666665,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[0.0, -1.5, -3.0],
-          'basePixel': 10.2,
+          'basePixel': 32.0,
           'warnings': <Object?>[],
           'start': -3.0,
           'end': 0.0,
@@ -10074,8 +10292,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[34.677734375, 483.59999999999997],
-          <Object?>[34.677734375, 483.59999999999997],
+          <Object?>[34.677734375, 483.6],
+          <Object?>[34.677734375, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -10089,7 +10307,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -10100,7 +10318,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10109,7 +10327,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",81.5,10.2]
+["moveTo",81.5,32]
 ["lineTo",81.5,483]
 ["stroke",null]
 ["restore"]
@@ -10120,7 +10338,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",81.5,484]
-["lineTo",81.5,491.59999999999997]
+["lineTo",81.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10129,7 +10347,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",127.5,10.2]
+["moveTo",127.5,32]
 ["lineTo",127.5,483]
 ["stroke",null]
 ["restore"]
@@ -10140,7 +10358,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",127.5,484]
-["lineTo",127.5,491.59999999999997]
+["lineTo",127.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10149,7 +10367,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",174.5,10.2]
+["moveTo",174.5,32]
 ["lineTo",174.5,483]
 ["stroke",null]
 ["restore"]
@@ -10160,7 +10378,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",174.5,484]
-["lineTo",174.5,491.59999999999997]
+["lineTo",174.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10169,7 +10387,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",221.5,10.2]
+["moveTo",221.5,32]
 ["lineTo",221.5,483]
 ["stroke",null]
 ["restore"]
@@ -10180,7 +10398,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",221.5,484]
-["lineTo",221.5,491.59999999999997]
+["lineTo",221.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10189,7 +10407,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",267.5,10.2]
+["moveTo",267.5,32]
 ["lineTo",267.5,483]
 ["stroke",null]
 ["restore"]
@@ -10200,7 +10418,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",267.5,484]
-["lineTo",267.5,491.59999999999997]
+["lineTo",267.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10209,7 +10427,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",314.5,10.2]
+["moveTo",314.5,32]
 ["lineTo",314.5,483]
 ["stroke",null]
 ["restore"]
@@ -10220,7 +10438,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",314.5,484]
-["lineTo",314.5,491.59999999999997]
+["lineTo",314.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10229,7 +10447,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",360.5,10.2]
+["moveTo",360.5,32]
 ["lineTo",360.5,483]
 ["stroke",null]
 ["restore"]
@@ -10240,7 +10458,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",360.5,484]
-["lineTo",360.5,491.59999999999997]
+["lineTo",360.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10249,7 +10467,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",407.5,10.2]
+["moveTo",407.5,32]
 ["lineTo",407.5,483]
 ["stroke",null]
 ["restore"]
@@ -10260,7 +10478,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",407.5,484]
-["lineTo",407.5,491.59999999999997]
+["lineTo",407.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10269,7 +10487,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",454.5,10.2]
+["moveTo",454.5,32]
 ["lineTo",454.5,483]
 ["stroke",null]
 ["restore"]
@@ -10280,7 +10498,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",454.5,484]
-["lineTo",454.5,491.59999999999997]
+["lineTo",454.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10289,7 +10507,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -10300,7 +10518,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10329,8 +10547,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,404.5]
-["lineTo",500.6591796875,404.5]
+["moveTo",35,408.5]
+["lineTo",500.6591796875,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10339,8 +10557,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.677734375,404.5]
-["lineTo",34,404.5]
+["moveTo",26.677734375,408.5]
+["lineTo",34,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10349,8 +10567,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,325.5]
-["lineTo",500.6591796875,325.5]
+["moveTo",35,333.5]
+["lineTo",500.6591796875,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10359,8 +10577,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.677734375,325.5]
-["lineTo",34,325.5]
+["moveTo",26.677734375,333.5]
+["lineTo",34,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10369,8 +10587,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,246.5]
-["lineTo",500.6591796875,246.5]
+["moveTo",35,257.5]
+["lineTo",500.6591796875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10379,8 +10597,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.677734375,246.5]
-["lineTo",34,246.5]
+["moveTo",26.677734375,257.5]
+["lineTo",34,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10389,8 +10607,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,168.5]
-["lineTo",500.6591796875,168.5]
+["moveTo",35,182.5]
+["lineTo",500.6591796875,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10399,8 +10617,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.677734375,168.5]
-["lineTo",34,168.5]
+["moveTo",26.677734375,182.5]
+["lineTo",34,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10409,8 +10627,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,89.5]
-["lineTo",500.6591796875,89.5]
+["moveTo",35,107.5]
+["lineTo",500.6591796875,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10419,8 +10637,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.677734375,89.5]
-["lineTo",34,89.5]
+["moveTo",26.677734375,107.5]
+["lineTo",34,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10429,8 +10647,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",35,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10439,9 +10657,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.677734375,10.5]
-["lineTo",34,10.5]
+["moveTo",26.677734375,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -10453,11 +10700,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.677734375,494.59999999999997]
+["translate",34.677734375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10466,7 +10713,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",81.27587890625,494.59999999999997]
+["translate",81.27587890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10475,7 +10722,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",127.8740234375,494.59999999999997]
+["translate",127.8740234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10484,7 +10731,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",174.47216796875,494.59999999999997]
+["translate",174.47216796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10493,7 +10740,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",221.0703125,494.59999999999997]
+["translate",221.0703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10502,7 +10749,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",267.66845703125,494.59999999999997]
+["translate",267.66845703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10511,7 +10758,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",314.2666015625,494.59999999999997]
+["translate",314.2666015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10520,7 +10767,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",360.86474609375,494.59999999999997]
+["translate",360.86474609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10529,7 +10776,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",407.462890625,494.59999999999997]
+["translate",407.462890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10538,7 +10785,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",454.06103515625,494.59999999999997]
+["translate",454.06103515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10547,7 +10794,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10559,7 +10806,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -10569,7 +10816,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.677734375,483.59999999999997]
+["translate",23.677734375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10578,7 +10825,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.677734375,404.7]
+["translate",23.677734375,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10587,7 +10834,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.677734375,325.8]
+["translate",23.677734375,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10596,7 +10843,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.677734375,246.89999999999998]
+["translate",23.677734375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10605,7 +10852,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.677734375,168]
+["translate",23.677734375,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10614,7 +10861,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.677734375,89.09999999999998]
+["translate",23.677734375,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10623,7 +10870,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.677734375,10.2]
+["translate",23.677734375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10635,7 +10882,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",34.677734375,483.59999999999997,3,0,6.283185307179586,false]
+["arc",34.677734375,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10643,7 +10890,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",34.677734375,483.59999999999997,3,0,6.283185307179586,false]
+["arc",34.677734375,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10673,12 +10920,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        37.35546875,
-        10.2,
-        497.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[37.35546875, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -10693,12 +10935,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[4.15, '4.15', false],
             <Object?>[4.2, '4.20', false],
           ],
-          'box': <Object?>[
-            37.35546875,
-            483.59999999999997,
-            497.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[37.35546875, 483.6, 497.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[14.677734375, 0.0, 14.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -10765,24 +11002,20 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[4.95, '4.95', false],
             <Object?>[5.0, '5.00', false],
           ],
-          'box': <Object?>[0.0, 10.2, 37.35546875, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 37.35546875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            388.9200000000003,
-            294.24000000000063,
-            199.55999999999932,
-            104.87999999999967,
-            10.2,
+            483.6,
+            393.2800000000003,
+            302.96000000000066,
+            212.63999999999936,
+            122.31999999999968,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[5.0, 4.875, 4.75],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 4.75,
           'end': 5.0,
@@ -10822,8 +11055,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[37.35546875, 10.2],
-          <Object?>[37.35546875, 10.2],
+          <Object?>[37.35546875, 32.0],
+          <Object?>[37.35546875, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -10837,7 +11070,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",37.5,10.2]
+["moveTo",37.5,32]
 ["lineTo",37.5,483]
 ["stroke",null]
 ["restore"]
@@ -10848,7 +11081,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",37.5,484]
-["lineTo",37.5,491.59999999999997]
+["lineTo",37.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10857,7 +11090,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",152.5,10.2]
+["moveTo",152.5,32]
 ["lineTo",152.5,483]
 ["stroke",null]
 ["restore"]
@@ -10868,7 +11101,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",152.5,484]
-["lineTo",152.5,491.59999999999997]
+["lineTo",152.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10877,7 +11110,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",267.5,10.2]
+["moveTo",267.5,32]
 ["lineTo",267.5,483]
 ["stroke",null]
 ["restore"]
@@ -10888,7 +11121,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",267.5,484]
-["lineTo",267.5,491.59999999999997]
+["lineTo",267.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10897,7 +11130,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",382.5,10.2]
+["moveTo",382.5,32]
 ["lineTo",382.5,483]
 ["stroke",null]
 ["restore"]
@@ -10908,7 +11141,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",382.5,484]
-["lineTo",382.5,491.59999999999997]
+["lineTo",382.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10917,7 +11150,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",497.5,10.2]
+["moveTo",497.5,32]
 ["lineTo",497.5,483]
 ["stroke",null]
 ["restore"]
@@ -10928,7 +11161,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",497.5,484]
-["lineTo",497.5,491.59999999999997]
+["lineTo",497.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10957,8 +11190,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,388.5]
-["lineTo",497.322265625,388.5]
+["moveTo",38,393.5]
+["lineTo",497.322265625,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10967,8 +11200,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,388.5]
-["lineTo",37,388.5]
+["moveTo",29.35546875,393.5]
+["lineTo",37,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10977,8 +11210,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,294.5]
-["lineTo",497.322265625,294.5]
+["moveTo",38,302.5]
+["lineTo",497.322265625,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10987,8 +11220,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,294.5]
-["lineTo",37,294.5]
+["moveTo",29.35546875,302.5]
+["lineTo",37,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10997,8 +11230,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,199.5]
-["lineTo",497.322265625,199.5]
+["moveTo",38,212.5]
+["lineTo",497.322265625,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11007,8 +11240,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,199.5]
-["lineTo",37,199.5]
+["moveTo",29.35546875,212.5]
+["lineTo",37,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11017,8 +11250,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,104.5]
-["lineTo",497.322265625,104.5]
+["moveTo",38,122.5]
+["lineTo",497.322265625,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11027,8 +11260,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,104.5]
-["lineTo",37,104.5]
+["moveTo",29.35546875,122.5]
+["lineTo",37,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11037,8 +11270,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,10.5]
-["lineTo",497.322265625,10.5]
+["moveTo",38,32.5]
+["lineTo",497.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11047,9 +11280,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,10.5]
-["lineTo",37,10.5]
+["moveTo",29.35546875,32.5]
+["lineTo",37,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -11061,11 +11323,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",37.35546875,494.59999999999997]
+["translate",37.35546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11074,7 +11336,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",152.3471679687495,494.59999999999997]
+["translate",152.3471679687495,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11083,7 +11345,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",267.338867187499,494.59999999999997]
+["translate",267.338867187499,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11092,7 +11354,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",382.3305664062505,494.59999999999997]
+["translate",382.3305664062505,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11101,7 +11363,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",497.322265625,494.59999999999997]
+["translate",497.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11113,7 +11375,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",37.5,10]
+["moveTo",37.5,32]
 ["lineTo",37.5,484]
 ["stroke",null]
 ["restore"]
@@ -11123,7 +11385,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,483.59999999999997]
+["translate",26.35546875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11132,7 +11394,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,388.9200000000003]
+["translate",26.35546875,393.2800000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11141,7 +11403,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,294.24000000000063]
+["translate",26.35546875,302.96000000000066]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11150,7 +11412,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,199.55999999999932]
+["translate",26.35546875,212.63999999999936]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11159,7 +11421,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,104.87999999999967]
+["translate",26.35546875,122.31999999999968]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11168,7 +11430,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,10.2]
+["translate",26.35546875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11180,7 +11442,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",37.35546875,10.2,3,0,6.283185307179586,false]
+["arc",37.35546875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -11188,7 +11450,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",37.35546875,10.2,3,0,6.283185307179586,false]
+["arc",37.35546875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -11217,12 +11479,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -11243,29 +11500,25 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.56,
-            152.22,
-            104.87999999999998,
-            57.53999999999999,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.64000000000001,
+            167.48000000000002,
+            122.31999999999998,
+            77.16,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[1.0, 0.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 1.0,
@@ -11321,12 +11574,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.8, '0.8', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[13.3388671875, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -11388,8 +11636,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[265.67041015625, 483.59999999999997],
-          <Object?>[265.67041015625, 483.59999999999997],
+          <Object?>[265.67041015625, 483.6],
+          <Object?>[265.67041015625, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -11423,8 +11671,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,436.5]
-["lineTo",500.6591796875,436.5]
+["moveTo",31,438.5]
+["lineTo",500.6591796875,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11433,8 +11681,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,436.5]
-["lineTo",30,436.5]
+["moveTo",22.681640625,438.5]
+["lineTo",30,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11443,8 +11691,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,388.5]
-["lineTo",500.6591796875,388.5]
+["moveTo",31,393.5]
+["lineTo",500.6591796875,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11453,8 +11701,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,388.5]
-["lineTo",30,388.5]
+["moveTo",22.681640625,393.5]
+["lineTo",30,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11463,8 +11711,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,341.5]
-["lineTo",500.6591796875,341.5]
+["moveTo",31,348.5]
+["lineTo",500.6591796875,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11473,8 +11721,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,341.5]
-["lineTo",30,341.5]
+["moveTo",22.681640625,348.5]
+["lineTo",30,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11483,8 +11731,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,294.5]
-["lineTo",500.6591796875,294.5]
+["moveTo",31,302.5]
+["lineTo",500.6591796875,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11493,8 +11741,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,294.5]
-["lineTo",30,294.5]
+["moveTo",22.681640625,302.5]
+["lineTo",30,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11503,8 +11751,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,246.5]
-["lineTo",500.6591796875,246.5]
+["moveTo",31,257.5]
+["lineTo",500.6591796875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11513,8 +11761,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,246.5]
-["lineTo",30,246.5]
+["moveTo",22.681640625,257.5]
+["lineTo",30,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11523,8 +11771,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,199.5]
-["lineTo",500.6591796875,199.5]
+["moveTo",31,212.5]
+["lineTo",500.6591796875,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11533,8 +11781,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,199.5]
-["lineTo",30,199.5]
+["moveTo",22.681640625,212.5]
+["lineTo",30,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11543,8 +11791,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,152.5]
-["lineTo",500.6591796875,152.5]
+["moveTo",31,167.5]
+["lineTo",500.6591796875,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11553,8 +11801,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,152.5]
-["lineTo",30,152.5]
+["moveTo",22.681640625,167.5]
+["lineTo",30,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11563,8 +11811,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,104.5]
-["lineTo",500.6591796875,104.5]
+["moveTo",31,122.5]
+["lineTo",500.6591796875,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11573,8 +11821,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,104.5]
-["lineTo",30,104.5]
+["moveTo",22.681640625,122.5]
+["lineTo",30,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11583,8 +11831,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,57.5]
-["lineTo",500.6591796875,57.5]
+["moveTo",31,77.5]
+["lineTo",500.6591796875,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11593,8 +11841,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,57.5]
-["lineTo",30,57.5]
+["moveTo",22.681640625,77.5]
+["lineTo",30,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11603,8 +11851,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",31,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11613,8 +11861,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11623,7 +11871,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -11634,7 +11882,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11643,7 +11891,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",77.5,10.2]
+["moveTo",77.5,32]
 ["lineTo",77.5,483]
 ["stroke",null]
 ["restore"]
@@ -11654,7 +11902,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",77.5,484]
-["lineTo",77.5,491.59999999999997]
+["lineTo",77.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11663,7 +11911,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",124.5,10.2]
+["moveTo",124.5,32]
 ["lineTo",124.5,483]
 ["stroke",null]
 ["restore"]
@@ -11674,7 +11922,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",124.5,484]
-["lineTo",124.5,491.59999999999997]
+["lineTo",124.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11683,7 +11931,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",171.5,10.2]
+["moveTo",171.5,32]
 ["lineTo",171.5,483]
 ["stroke",null]
 ["restore"]
@@ -11694,7 +11942,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",171.5,484]
-["lineTo",171.5,491.59999999999997]
+["lineTo",171.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11703,7 +11951,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",218.5,10.2]
+["moveTo",218.5,32]
 ["lineTo",218.5,483]
 ["stroke",null]
 ["restore"]
@@ -11714,7 +11962,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",218.5,484]
-["lineTo",218.5,491.59999999999997]
+["lineTo",218.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11723,7 +11971,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",265.5,10.2]
+["moveTo",265.5,32]
 ["lineTo",265.5,483]
 ["stroke",null]
 ["restore"]
@@ -11734,7 +11982,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",265.5,484]
-["lineTo",265.5,491.59999999999997]
+["lineTo",265.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11743,7 +11991,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",312.5,10.2]
+["moveTo",312.5,32]
 ["lineTo",312.5,483]
 ["stroke",null]
 ["restore"]
@@ -11754,7 +12002,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",312.5,484]
-["lineTo",312.5,491.59999999999997]
+["lineTo",312.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11763,7 +12011,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",359.5,10.2]
+["moveTo",359.5,32]
 ["lineTo",359.5,483]
 ["stroke",null]
 ["restore"]
@@ -11774,7 +12022,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",359.5,484]
-["lineTo",359.5,491.59999999999997]
+["lineTo",359.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11783,7 +12031,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",406.5,10.2]
+["moveTo",406.5,32]
 ["lineTo",406.5,483]
 ["stroke",null]
 ["restore"]
@@ -11794,7 +12042,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",406.5,484]
-["lineTo",406.5,491.59999999999997]
+["lineTo",406.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11803,7 +12051,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",453.5,10.2]
+["moveTo",453.5,32]
 ["lineTo",453.5,483]
 ["stroke",null]
 ["restore"]
@@ -11814,7 +12062,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",453.5,484]
-["lineTo",453.5,491.59999999999997]
+["lineTo",453.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11823,7 +12071,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -11834,14 +12082,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -11851,7 +12128,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11860,7 +12137,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,436.26]
+["translate",19.681640625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11869,7 +12146,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,388.92]
+["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11878,7 +12155,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,341.5799999999999]
+["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11887,7 +12164,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,294.23999999999995]
+["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11896,7 +12173,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,246.89999999999998]
+["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11905,7 +12182,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,199.56]
+["translate",19.681640625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11914,7 +12191,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,152.22]
+["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11923,7 +12200,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,104.87999999999998]
+["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11932,7 +12209,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,57.53999999999999]
+["translate",19.681640625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11941,7 +12218,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11959,11 +12236,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11972,7 +12249,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",77.67939453124998,494.59999999999997]
+["translate",77.67939453124998,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11981,7 +12258,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",124.67714843750001,494.59999999999997]
+["translate",124.67714843750001,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11990,7 +12267,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",171.67490234375,494.59999999999997]
+["translate",171.67490234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11999,7 +12276,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",218.67265625000002,494.59999999999997]
+["translate",218.67265625000002,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12008,7 +12285,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",265.67041015625,494.59999999999997]
+["translate",265.67041015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12017,7 +12294,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",312.6681640625,494.59999999999997]
+["translate",312.6681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12026,7 +12303,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",359.66591796874997,494.59999999999997]
+["translate",359.66591796874997,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12035,7 +12312,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",406.66367187500003,494.59999999999997]
+["translate",406.66367187500003,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12044,7 +12321,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",453.66142578125,494.59999999999997]
+["translate",453.66142578125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12053,7 +12330,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12065,7 +12342,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",265.67041015625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",265.67041015625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -12073,7 +12350,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",265.67041015625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",265.67041015625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -12104,12 +12381,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        37.35546875,
-        10.2,
-        505.6630859375,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[37.35546875, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -12129,12 +12401,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[6.0, '6', false],
             <Object?>[8.0, '8', false],
           ],
-          'box': <Object?>[
-            37.35546875,
-            483.59999999999997,
-            505.6630859375,
-            511.99999999999994,
-          ],
+          'box': <Object?>[37.35546875, 483.6, 505.6630859375, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[16.23046875, 0.0, 6.3369140625, 0.0],
           'tickPixels': <Object?>[
@@ -12207,25 +12474,21 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[80.0, '80', false],
             <Object?>[99.5, '99.5', false],
           ],
-          'box': <Object?>[0.0, 10.2, 37.35546875, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 37.35546875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            404.36987447698743,
-            325.1397489539749,
-            245.90962343096234,
-            166.67949790794978,
-            87.44937238493725,
-            10.2,
+            483.6,
+            408.01841004184104,
+            332.43682008368205,
+            256.855230125523,
+            181.27364016736405,
+            105.69205020920504,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[99.5, 39.75, -20.0],
-          'basePixel': 404.36987447698743,
+          'basePixel': 408.01841004184104,
           'warnings': <Object?>[],
           'start': -20.0,
           'end': 99.5,
@@ -12265,9 +12528,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[18.337900539340083, 392.4853556485356],
-          <Object?>[1266.365814363896, -59.12635983263597],
-          <Object?>[487.8341157400064, 483.59999999999997],
+          <Object?>[18.337900539340083, 396.6811715481172],
+          <Object?>[1266.365814363896, -34.13389121338912],
+          <Object?>[487.8341157400064, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -12281,7 +12544,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",37.5,10.2]
+["moveTo",37.5,32]
 ["lineTo",37.5,483]
 ["stroke",null]
 ["restore"]
@@ -12292,7 +12555,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",37.5,484]
-["lineTo",37.5,491.59999999999997]
+["lineTo",37.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12301,7 +12564,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",125.5,10.2]
+["moveTo",125.5,32]
 ["lineTo",125.5,483]
 ["stroke",null]
 ["restore"]
@@ -12312,7 +12575,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",125.5,484]
-["lineTo",125.5,491.59999999999997]
+["lineTo",125.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12321,7 +12584,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",172.5,10.2]
+["moveTo",172.5,32]
 ["lineTo",172.5,483]
 ["stroke",null]
 ["restore"]
@@ -12332,7 +12595,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",172.5,484]
-["lineTo",172.5,491.59999999999997]
+["lineTo",172.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12341,7 +12604,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",220.5,10.2]
+["moveTo",220.5,32]
 ["lineTo",220.5,483]
 ["stroke",null]
 ["restore"]
@@ -12352,7 +12615,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",220.5,484]
-["lineTo",220.5,491.59999999999997]
+["lineTo",220.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12361,7 +12624,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",267.5,10.2]
+["moveTo",267.5,32]
 ["lineTo",267.5,483]
 ["stroke",null]
 ["restore"]
@@ -12372,7 +12635,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",267.5,484]
-["lineTo",267.5,491.59999999999997]
+["lineTo",267.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12381,7 +12644,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",315.5,10.2]
+["moveTo",315.5,32]
 ["lineTo",315.5,483]
 ["stroke",null]
 ["restore"]
@@ -12392,7 +12655,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",315.5,484]
-["lineTo",315.5,491.59999999999997]
+["lineTo",315.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12401,7 +12664,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",363.5,10.2]
+["moveTo",363.5,32]
 ["lineTo",363.5,483]
 ["stroke",null]
 ["restore"]
@@ -12412,7 +12675,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",363.5,484]
-["lineTo",363.5,491.59999999999997]
+["lineTo",363.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12421,7 +12684,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",410.5,10.2]
+["moveTo",410.5,32]
 ["lineTo",410.5,483]
 ["stroke",null]
 ["restore"]
@@ -12432,7 +12695,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",410.5,484]
-["lineTo",410.5,491.59999999999997]
+["lineTo",410.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12441,7 +12704,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",458.5,10.2]
+["moveTo",458.5,32]
 ["lineTo",458.5,483]
 ["stroke",null]
 ["restore"]
@@ -12452,7 +12715,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",458.5,484]
-["lineTo",458.5,491.59999999999997]
+["lineTo",458.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12461,7 +12724,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",505.5,10.2]
+["moveTo",505.5,32]
 ["lineTo",505.5,483]
 ["stroke",null]
 ["restore"]
@@ -12472,7 +12735,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",505.5,484]
-["lineTo",505.5,491.59999999999997]
+["lineTo",505.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12501,8 +12764,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,404.5]
-["lineTo",505.6630859375,404.5]
+["moveTo",38,408.5]
+["lineTo",505.6630859375,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12511,8 +12774,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,404.5]
-["lineTo",37,404.5]
+["moveTo",29.35546875,408.5]
+["lineTo",37,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12521,8 +12784,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,325.5]
-["lineTo",505.6630859375,325.5]
+["moveTo",38,332.5]
+["lineTo",505.6630859375,332.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12531,8 +12794,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,325.5]
-["lineTo",37,325.5]
+["moveTo",29.35546875,332.5]
+["lineTo",37,332.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12541,8 +12804,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,245.5]
-["lineTo",505.6630859375,245.5]
+["moveTo",38,256.5]
+["lineTo",505.6630859375,256.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12551,8 +12814,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,245.5]
-["lineTo",37,245.5]
+["moveTo",29.35546875,256.5]
+["lineTo",37,256.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12561,8 +12824,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,166.5]
-["lineTo",505.6630859375,166.5]
+["moveTo",38,181.5]
+["lineTo",505.6630859375,181.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12571,8 +12834,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,166.5]
-["lineTo",37,166.5]
+["moveTo",29.35546875,181.5]
+["lineTo",37,181.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12581,8 +12844,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,87.5]
-["lineTo",505.6630859375,87.5]
+["moveTo",38,105.5]
+["lineTo",505.6630859375,105.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12591,8 +12854,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,87.5]
-["lineTo",37,87.5]
+["moveTo",29.35546875,105.5]
+["lineTo",37,105.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12601,8 +12864,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,10.5]
-["lineTo",505.6630859375,10.5]
+["moveTo",38,32.5]
+["lineTo",505.6630859375,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12611,9 +12874,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,10.5]
-["lineTo",37,10.5]
+["moveTo",29.35546875,32.5]
+["lineTo",37,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -12625,11 +12917,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",37.35546875,494.59999999999997]
+["translate",37.35546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12638,7 +12930,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",125.31172172430202,494.59999999999997]
+["translate",125.31172172430202,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12647,7 +12939,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",172.85564225095177,494.59999999999997]
+["translate",172.85564225095177,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12656,7 +12948,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",220.3995627776015,494.59999999999997]
+["translate",220.3995627776015,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12665,7 +12957,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",267.94348330425123,494.59999999999997]
+["translate",267.94348330425123,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12674,7 +12966,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",315.48740383090103,494.59999999999997]
+["translate",315.48740383090103,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12683,7 +12975,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",363.0313243575508,494.59999999999997]
+["translate",363.0313243575508,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12692,7 +12984,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",410.57524488420046,494.59999999999997]
+["translate",410.57524488420046,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12701,7 +12993,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",458.11916541085026,494.59999999999997]
+["translate",458.11916541085026,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12710,7 +13002,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",505.6630859375,494.59999999999997]
+["translate",505.6630859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12722,7 +13014,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",37.5,10]
+["moveTo",37.5,32]
 ["lineTo",37.5,484]
 ["stroke",null]
 ["restore"]
@@ -12732,7 +13024,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,483.59999999999997]
+["translate",26.35546875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12741,7 +13033,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,404.36987447698743]
+["translate",26.35546875,408.01841004184104]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12750,7 +13042,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,325.1397489539749]
+["translate",26.35546875,332.43682008368205]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12759,7 +13051,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,245.90962343096234]
+["translate",26.35546875,256.855230125523]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12768,7 +13060,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,166.67949790794978]
+["translate",26.35546875,181.27364016736405]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12777,7 +13069,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,87.44937238493725]
+["translate",26.35546875,105.69205020920504]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12786,7 +13078,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,10.2]
+["translate",26.35546875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12798,7 +13090,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",487.8341157400064,483.59999999999997,3,0,6.283185307179586,false]
+["arc",487.8341157400064,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -12828,12 +13120,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.021484375,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.021484375, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -12845,17 +13132,13 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[100.0, '100', false],
             <Object?>[0.0, '0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
-          'tickPixels': <Object?>[10.2, 483.59999999999997],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'tickPixels': <Object?>[32.0, 483.6],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[100.0, 50.0, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 100.0,
@@ -12911,12 +13194,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -12978,9 +13256,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[-5798.94970703125, 469.39799999999997],
-          <Object?>[18699.529296875, -70.27799999999996],
-          <Object?>[3417.144775390625, 578.28],
+          <Object?>[-5798.94970703125, 470.052],
+          <Object?>[18699.529296875, -44.77199999999998],
+          <Object?>[3417.144775390625, 573.92],
         ],
       ],
       'drawCalls': '''
@@ -12994,8 +13272,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",35,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13004,8 +13282,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,10.5]
-["lineTo",34,10.5]
+["moveTo",26.021484375,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13034,7 +13312,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -13045,7 +13323,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13054,7 +13332,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",80.5,10.2]
+["moveTo",80.5,32]
 ["lineTo",80.5,483]
 ["stroke",null]
 ["restore"]
@@ -13065,7 +13343,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",80.5,484]
-["lineTo",80.5,491.59999999999997]
+["lineTo",80.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13074,7 +13352,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",127.5,10.2]
+["moveTo",127.5,32]
 ["lineTo",127.5,483]
 ["stroke",null]
 ["restore"]
@@ -13085,7 +13363,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",127.5,484]
-["lineTo",127.5,491.59999999999997]
+["lineTo",127.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13094,7 +13372,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",174.5,10.2]
+["moveTo",174.5,32]
 ["lineTo",174.5,483]
 ["stroke",null]
 ["restore"]
@@ -13105,7 +13383,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",174.5,484]
-["lineTo",174.5,491.59999999999997]
+["lineTo",174.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13114,7 +13392,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",220.5,10.2]
+["moveTo",220.5,32]
 ["lineTo",220.5,483]
 ["stroke",null]
 ["restore"]
@@ -13125,7 +13403,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",220.5,484]
-["lineTo",220.5,491.59999999999997]
+["lineTo",220.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13134,7 +13412,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",267.5,10.2]
+["moveTo",267.5,32]
 ["lineTo",267.5,483]
 ["stroke",null]
 ["restore"]
@@ -13145,7 +13423,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",267.5,484]
-["lineTo",267.5,491.59999999999997]
+["lineTo",267.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13154,7 +13432,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",314.5,10.2]
+["moveTo",314.5,32]
 ["lineTo",314.5,483]
 ["stroke",null]
 ["restore"]
@@ -13165,7 +13443,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",314.5,484]
-["lineTo",314.5,491.59999999999997]
+["lineTo",314.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13174,7 +13452,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",360.5,10.2]
+["moveTo",360.5,32]
 ["lineTo",360.5,483]
 ["stroke",null]
 ["restore"]
@@ -13185,7 +13463,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",360.5,484]
-["lineTo",360.5,491.59999999999997]
+["lineTo",360.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13194,7 +13472,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",407.5,10.2]
+["moveTo",407.5,32]
 ["lineTo",407.5,483]
 ["stroke",null]
 ["restore"]
@@ -13205,7 +13483,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",407.5,484]
-["lineTo",407.5,491.59999999999997]
+["lineTo",407.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13214,7 +13492,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",453.5,10.2]
+["moveTo",453.5,32]
 ["lineTo",453.5,483]
 ["stroke",null]
 ["restore"]
@@ -13225,7 +13503,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",453.5,484]
-["lineTo",453.5,491.59999999999997]
+["lineTo",453.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13234,7 +13512,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -13245,14 +13523,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -13262,7 +13569,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,10.2]
+["translate",23.021484375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13271,7 +13578,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,483.59999999999997]
+["translate",23.021484375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13289,11 +13596,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.021484375,494.59999999999997]
+["translate",34.021484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -13302,7 +13609,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",80.68525390625001,494.59999999999997]
+["translate",80.68525390625001,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -13311,7 +13618,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",127.34902343750001,494.59999999999997]
+["translate",127.34902343750001,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -13320,7 +13627,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",174.01279296875,494.59999999999997]
+["translate",174.01279296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -13329,7 +13636,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",220.67656250000002,494.59999999999997]
+["translate",220.67656250000002,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -13338,7 +13645,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",267.34033203125,494.59999999999997]
+["translate",267.34033203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -13347,7 +13654,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",314.0041015625,494.59999999999997]
+["translate",314.0041015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -13356,7 +13663,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",360.66787109374997,494.59999999999997]
+["translate",360.66787109374997,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -13365,7 +13672,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",407.33164062500003,494.59999999999997]
+["translate",407.33164062500003,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -13374,7 +13681,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",453.99541015625,494.59999999999997]
+["translate",453.99541015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -13383,7 +13690,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -13417,12 +13724,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        38.005859375,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[38.005859375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -13449,27 +13751,23 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
               false,
             ],
           ],
-          'box': <Object?>[0.0, 10.2, 38.005859375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 38.005859375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             <String, Object?>{'num': 'NaN'},
-            483.59999999999997,
-            414.49051094890507,
-            345.38102189781023,
-            276.2715328467153,
-            207.16204379562043,
-            138.05255474452554,
-            68.94306569343064,
+            483.6,
+            417.67299270072994,
+            351.7459854014599,
+            285.8189781021898,
+            219.89197080291973,
+            153.96496350364964,
+            88.03795620437955,
             <String, Object?>{'num': 'NaN'},
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[117.0, 48.5, -20.0],
-          'basePixel': 414.49051094890507,
+          'basePixel': 417.67299270072994,
           'warnings': <Object?>[],
           'start': -20.0,
           'end': 117.0,
@@ -13521,12 +13819,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[30.0, '30', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            38.005859375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[38.005859375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -13580,9 +13873,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[96.0458984375, 404.1240875912408],
-          <Object?>[502.326171875, 10.2],
-          <Object?>[248.88466796875, 483.59999999999997],
+          <Object?>[96.0458984375, 407.7839416058394],
+          <Object?>[502.326171875, 32.0],
+          <Object?>[248.88466796875, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -13636,8 +13929,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,414.5]
-["lineTo",502.326171875,414.5]
+["moveTo",39,417.5]
+["lineTo",502.326171875,417.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13646,8 +13939,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.005859375,414.5]
-["lineTo",38,414.5]
+["moveTo",30.005859375,417.5]
+["lineTo",38,417.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13656,8 +13949,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,345.5]
-["lineTo",502.326171875,345.5]
+["moveTo",39,351.5]
+["lineTo",502.326171875,351.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13666,8 +13959,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.005859375,345.5]
-["lineTo",38,345.5]
+["moveTo",30.005859375,351.5]
+["lineTo",38,351.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13676,8 +13969,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,276.5]
-["lineTo",502.326171875,276.5]
+["moveTo",39,285.5]
+["lineTo",502.326171875,285.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13686,8 +13979,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.005859375,276.5]
-["lineTo",38,276.5]
+["moveTo",30.005859375,285.5]
+["lineTo",38,285.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13696,8 +13989,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,207.5]
-["lineTo",502.326171875,207.5]
+["moveTo",39,219.5]
+["lineTo",502.326171875,219.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13706,8 +13999,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.005859375,207.5]
-["lineTo",38,207.5]
+["moveTo",30.005859375,219.5]
+["lineTo",38,219.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13716,8 +14009,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,138.5]
-["lineTo",502.326171875,138.5]
+["moveTo",39,153.5]
+["lineTo",502.326171875,153.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13726,8 +14019,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.005859375,138.5]
-["lineTo",38,138.5]
+["moveTo",30.005859375,153.5]
+["lineTo",38,153.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13736,8 +14029,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,68.5]
-["lineTo",502.326171875,68.5]
+["moveTo",39,88.5]
+["lineTo",502.326171875,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13746,8 +14039,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.005859375,68.5]
-["lineTo",38,68.5]
+["moveTo",30.005859375,88.5]
+["lineTo",38,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13776,7 +14069,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38.5,10.2]
+["moveTo",38.5,32]
 ["lineTo",38.5,483]
 ["stroke",null]
 ["restore"]
@@ -13787,7 +14080,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",38.5,484]
-["lineTo",38.5,491.59999999999997]
+["lineTo",38.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13796,7 +14089,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",115.5,10.2]
+["moveTo",115.5,32]
 ["lineTo",115.5,483]
 ["stroke",null]
 ["restore"]
@@ -13807,7 +14100,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",115.5,484]
-["lineTo",115.5,491.59999999999997]
+["lineTo",115.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13816,7 +14109,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",192.5,10.2]
+["moveTo",192.5,32]
 ["lineTo",192.5,483]
 ["stroke",null]
 ["restore"]
@@ -13827,7 +14120,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",192.5,484]
-["lineTo",192.5,491.59999999999997]
+["lineTo",192.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13836,7 +14129,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",270.5,10.2]
+["moveTo",270.5,32]
 ["lineTo",270.5,483]
 ["stroke",null]
 ["restore"]
@@ -13847,7 +14140,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",270.5,484]
-["lineTo",270.5,491.59999999999997]
+["lineTo",270.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13856,7 +14149,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",347.5,10.2]
+["moveTo",347.5,32]
 ["lineTo",347.5,483]
 ["stroke",null]
 ["restore"]
@@ -13867,7 +14160,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",347.5,484]
-["lineTo",347.5,491.59999999999997]
+["lineTo",347.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13876,7 +14169,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",424.5,10.2]
+["moveTo",424.5,32]
 ["lineTo",424.5,483]
 ["stroke",null]
 ["restore"]
@@ -13887,7 +14180,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",424.5,484]
-["lineTo",424.5,491.59999999999997]
+["lineTo",424.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13896,7 +14189,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -13907,14 +14200,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",38.5,10]
+["moveTo",38.5,32]
 ["lineTo",38.5,484]
 ["stroke",null]
 ["restore"]
@@ -13933,7 +14255,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.005859375,483.59999999999997]
+["translate",27.005859375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13942,7 +14264,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.005859375,414.49051094890507]
+["translate",27.005859375,417.67299270072994]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13951,7 +14273,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.005859375,345.38102189781023]
+["translate",27.005859375,351.7459854014599]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13960,7 +14282,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.005859375,276.2715328467153]
+["translate",27.005859375,285.8189781021898]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13969,7 +14291,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.005859375,207.16204379562043]
+["translate",27.005859375,219.89197080291973]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13978,7 +14300,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.005859375,138.05255474452554]
+["translate",27.005859375,153.96496350364964]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13987,7 +14309,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.005859375,68.94306569343064]
+["translate",27.005859375,88.03795620437955]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14014,11 +14336,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",38.005859375,494.59999999999997]
+["translate",38.005859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14027,7 +14349,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",115.392578125,494.59999999999997]
+["translate",115.392578125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14036,7 +14358,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",192.779296875,494.59999999999997]
+["translate",192.779296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14045,7 +14367,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",270.166015625,494.59999999999997]
+["translate",270.166015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14054,7 +14376,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",347.552734375,494.59999999999997]
+["translate",347.552734375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14063,7 +14385,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.939453125,494.59999999999997]
+["translate",424.939453125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14072,7 +14394,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14084,7 +14406,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",96.0458984375,404.1240875912408,3,0,6.283185307179586,false]
+["arc",96.0458984375,407.7839416058394,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -14092,7 +14414,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,10.2,3,0,6.283185307179586,false]
+["arc",502.326171875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -14100,7 +14422,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",248.88466796875,483.59999999999997,3,0,6.283185307179586,false]
+["arc",248.88466796875,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -14134,12 +14456,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        37.35546875,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -14160,12 +14477,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[28.0, '28', false],
             <Object?>[30.0, '30', false],
           ],
-          'box': <Object?>[
-            37.35546875,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[37.35546875, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[9.673828125, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -14239,29 +14551,25 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[90.0, '90', false],
             <Object?>[99.5, '99.5', false],
           ],
-          'box': <Object?>[0.0, 10.2, 37.35546875, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 37.35546875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.02211055276376,
-            388.4442211055276,
-            340.8663316582914,
-            293.28844221105527,
-            245.7105527638191,
-            198.13266331658292,
-            150.5547738693467,
-            102.97688442211053,
-            55.398994974874356,
-            10.2,
+            483.6,
+            438.21306532663317,
+            392.8261306532664,
+            347.4391959798995,
+            302.05226130653267,
+            256.6653266331658,
+            211.27839195979902,
+            165.89145728643214,
+            120.50452261306532,
+            75.11758793969848,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[99.5, 49.75, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 99.5,
@@ -14301,8 +14609,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[37.35546875, 245.7105527638191],
-          <Object?>[502.326171875, 102.97688442211053],
+          <Object?>[37.35546875, 256.6653266331658],
+          <Object?>[502.326171875, 120.50452261306532],
         ],
       ],
       'drawCalls': '''
@@ -14316,7 +14624,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",37.5,10.2]
+["moveTo",37.5,32]
 ["lineTo",37.5,483]
 ["stroke",null]
 ["restore"]
@@ -14327,7 +14635,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",37.5,484]
-["lineTo",37.5,491.59999999999997]
+["lineTo",37.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14336,7 +14644,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",83.5,10.2]
+["moveTo",83.5,32]
 ["lineTo",83.5,483]
 ["stroke",null]
 ["restore"]
@@ -14347,7 +14655,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",83.5,484]
-["lineTo",83.5,491.59999999999997]
+["lineTo",83.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14356,7 +14664,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",130.5,10.2]
+["moveTo",130.5,32]
 ["lineTo",130.5,483]
 ["stroke",null]
 ["restore"]
@@ -14367,7 +14675,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",130.5,484]
-["lineTo",130.5,491.59999999999997]
+["lineTo",130.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14376,7 +14684,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",176.5,10.2]
+["moveTo",176.5,32]
 ["lineTo",176.5,483]
 ["stroke",null]
 ["restore"]
@@ -14387,7 +14695,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",176.5,484]
-["lineTo",176.5,491.59999999999997]
+["lineTo",176.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14396,7 +14704,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",223.5,10.2]
+["moveTo",223.5,32]
 ["lineTo",223.5,483]
 ["stroke",null]
 ["restore"]
@@ -14407,7 +14715,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",223.5,484]
-["lineTo",223.5,491.59999999999997]
+["lineTo",223.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14416,7 +14724,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",269.5,10.2]
+["moveTo",269.5,32]
 ["lineTo",269.5,483]
 ["stroke",null]
 ["restore"]
@@ -14427,7 +14735,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",269.5,484]
-["lineTo",269.5,491.59999999999997]
+["lineTo",269.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14436,7 +14744,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",316.5,10.2]
+["moveTo",316.5,32]
 ["lineTo",316.5,483]
 ["stroke",null]
 ["restore"]
@@ -14447,7 +14755,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",316.5,484]
-["lineTo",316.5,491.59999999999997]
+["lineTo",316.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14456,7 +14764,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",362.5,10.2]
+["moveTo",362.5,32]
 ["lineTo",362.5,483]
 ["stroke",null]
 ["restore"]
@@ -14467,7 +14775,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",362.5,484]
-["lineTo",362.5,491.59999999999997]
+["lineTo",362.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14476,7 +14784,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",409.5,10.2]
+["moveTo",409.5,32]
 ["lineTo",409.5,483]
 ["stroke",null]
 ["restore"]
@@ -14487,7 +14795,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",409.5,484]
-["lineTo",409.5,491.59999999999997]
+["lineTo",409.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14496,7 +14804,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",455.5,10.2]
+["moveTo",455.5,32]
 ["lineTo",455.5,483]
 ["stroke",null]
 ["restore"]
@@ -14507,7 +14815,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",455.5,484]
-["lineTo",455.5,491.59999999999997]
+["lineTo",455.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14516,7 +14824,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -14527,7 +14835,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14556,8 +14864,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,436.5]
-["lineTo",502.326171875,436.5]
+["moveTo",38,438.5]
+["lineTo",502.326171875,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14566,8 +14874,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,436.5]
-["lineTo",37,436.5]
+["moveTo",29.35546875,438.5]
+["lineTo",37,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14576,8 +14884,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,388.5]
-["lineTo",502.326171875,388.5]
+["moveTo",38,392.5]
+["lineTo",502.326171875,392.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14586,8 +14894,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,388.5]
-["lineTo",37,388.5]
+["moveTo",29.35546875,392.5]
+["lineTo",37,392.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14596,8 +14904,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,340.5]
-["lineTo",502.326171875,340.5]
+["moveTo",38,347.5]
+["lineTo",502.326171875,347.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14606,8 +14914,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,340.5]
-["lineTo",37,340.5]
+["moveTo",29.35546875,347.5]
+["lineTo",37,347.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14616,8 +14924,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,293.5]
-["lineTo",502.326171875,293.5]
+["moveTo",38,302.5]
+["lineTo",502.326171875,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14626,8 +14934,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,293.5]
-["lineTo",37,293.5]
+["moveTo",29.35546875,302.5]
+["lineTo",37,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14636,8 +14944,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,245.5]
-["lineTo",502.326171875,245.5]
+["moveTo",38,256.5]
+["lineTo",502.326171875,256.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14646,8 +14954,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,245.5]
-["lineTo",37,245.5]
+["moveTo",29.35546875,256.5]
+["lineTo",37,256.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14656,8 +14964,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,198.5]
-["lineTo",502.326171875,198.5]
+["moveTo",38,211.5]
+["lineTo",502.326171875,211.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14666,8 +14974,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,198.5]
-["lineTo",37,198.5]
+["moveTo",29.35546875,211.5]
+["lineTo",37,211.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14676,8 +14984,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,150.5]
-["lineTo",502.326171875,150.5]
+["moveTo",38,165.5]
+["lineTo",502.326171875,165.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14686,8 +14994,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,150.5]
-["lineTo",37,150.5]
+["moveTo",29.35546875,165.5]
+["lineTo",37,165.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14696,8 +15004,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,102.5]
-["lineTo",502.326171875,102.5]
+["moveTo",38,120.5]
+["lineTo",502.326171875,120.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14706,8 +15014,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,102.5]
-["lineTo",37,102.5]
+["moveTo",29.35546875,120.5]
+["lineTo",37,120.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14716,8 +15024,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,55.5]
-["lineTo",502.326171875,55.5]
+["moveTo",38,75.5]
+["lineTo",502.326171875,75.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14726,8 +15034,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,55.5]
-["lineTo",37,55.5]
+["moveTo",29.35546875,75.5]
+["lineTo",37,75.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14736,8 +15044,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",38,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14746,9 +15054,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,10.5]
-["lineTo",37,10.5]
+["moveTo",29.35546875,32.5]
+["lineTo",37,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -14760,11 +15097,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",37.35546875,494.59999999999997]
+["translate",37.35546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14773,7 +15110,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",83.8525390625,494.59999999999997]
+["translate",83.8525390625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14782,7 +15119,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",130.349609375,494.59999999999997]
+["translate",130.349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14791,7 +15128,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",176.8466796875,494.59999999999997]
+["translate",176.8466796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14800,7 +15137,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",223.34375,494.59999999999997]
+["translate",223.34375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14809,7 +15146,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",269.8408203125,494.59999999999997]
+["translate",269.8408203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14818,7 +15155,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",316.337890625,494.59999999999997]
+["translate",316.337890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14827,7 +15164,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",362.8349609375,494.59999999999997]
+["translate",362.8349609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14836,7 +15173,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",409.33203125,494.59999999999997]
+["translate",409.33203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14845,7 +15182,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",455.8291015625,494.59999999999997]
+["translate",455.8291015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14854,7 +15191,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -14866,7 +15203,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",37.5,10]
+["moveTo",37.5,32]
 ["lineTo",37.5,484]
 ["stroke",null]
 ["restore"]
@@ -14876,7 +15213,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,483.59999999999997]
+["translate",26.35546875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14885,7 +15222,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,436.02211055276376]
+["translate",26.35546875,438.21306532663317]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14894,7 +15231,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,388.4442211055276]
+["translate",26.35546875,392.8261306532664]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14903,7 +15240,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,340.8663316582914]
+["translate",26.35546875,347.4391959798995]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14912,7 +15249,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,293.28844221105527]
+["translate",26.35546875,302.05226130653267]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14921,7 +15258,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,245.7105527638191]
+["translate",26.35546875,256.6653266331658]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14930,7 +15267,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,198.13266331658292]
+["translate",26.35546875,211.27839195979902]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14939,7 +15276,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,150.5547738693467]
+["translate",26.35546875,165.89145728643214]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14948,7 +15285,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,102.97688442211053]
+["translate",26.35546875,120.50452261306532]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14957,7 +15294,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,55.398994974874356]
+["translate",26.35546875,75.11758793969848]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14966,7 +15303,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,10.2]
+["translate",26.35546875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14978,7 +15315,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",37.35546875,245.7105527638191,3,0,6.283185307179586,false]
+["arc",37.35546875,256.6653266331658,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -14986,7 +15323,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,102.97688442211053,3,0,6.283185307179586,false]
+["arc",502.326171875,120.50452261306532,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -15018,12 +15355,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.021484375,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -15054,39 +15386,35 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[112.0, '112', false],
             <Object?>[119.0, '119', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            459.92999999999995,
-            436.26,
-            412.59,
-            388.92,
-            365.24999999999994,
-            341.5799999999999,
-            317.90999999999997,
-            294.23999999999995,
-            270.57,
-            246.89999999999998,
-            223.22999999999996,
-            199.56,
-            175.88999999999996,
-            152.22,
-            128.54999999999998,
-            104.87999999999998,
-            81.21000000000001,
-            57.53999999999999,
-            33.87000000000002,
-            10.2,
+            483.6,
+            461.02,
+            438.44000000000005,
+            415.86,
+            393.28000000000003,
+            370.70000000000005,
+            348.12,
+            325.54,
+            302.96,
+            280.38,
+            257.8,
+            235.22,
+            212.64000000000001,
+            190.06,
+            167.48000000000002,
+            144.9,
+            122.31999999999998,
+            99.74000000000001,
+            77.16,
+            54.58000000000002,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[119.0, 49.0, -21.0],
-          'basePixel': 412.59,
+          'basePixel': 415.86,
           'warnings': <Object?>[],
           'start': -21.0,
           'end': 119.0,
@@ -15138,12 +15466,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[30.0, '30', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -15197,9 +15520,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[92.5595703125, 402.44571428571425],
-          <Object?>[502.326171875, 16.962857142857118],
-          <Object?>[246.70986328125, 480.2185714285714],
+          <Object?>[92.5595703125, 406.18285714285713],
+          <Object?>[502.326171875, 38.45142857142855],
+          <Object?>[246.70986328125, 480.37428571428575],
         ],
       ],
       'drawCalls': '''
@@ -15233,8 +15556,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,459.5]
-["lineTo",502.326171875,459.5]
+["moveTo",35,461.5]
+["lineTo",502.326171875,461.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15243,8 +15566,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,459.5]
-["lineTo",34,459.5]
+["moveTo",26.021484375,461.5]
+["lineTo",34,461.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15253,8 +15576,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,436.5]
-["lineTo",502.326171875,436.5]
+["moveTo",35,438.5]
+["lineTo",502.326171875,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15263,8 +15586,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,436.5]
-["lineTo",34,436.5]
+["moveTo",26.021484375,438.5]
+["lineTo",34,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15273,8 +15596,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,412.5]
-["lineTo",502.326171875,412.5]
+["moveTo",35,415.5]
+["lineTo",502.326171875,415.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15283,8 +15606,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,412.5]
-["lineTo",34,412.5]
+["moveTo",26.021484375,415.5]
+["lineTo",34,415.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15293,8 +15616,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,388.5]
-["lineTo",502.326171875,388.5]
+["moveTo",35,393.5]
+["lineTo",502.326171875,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15303,8 +15626,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,388.5]
-["lineTo",34,388.5]
+["moveTo",26.021484375,393.5]
+["lineTo",34,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15313,8 +15636,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,365.5]
-["lineTo",502.326171875,365.5]
+["moveTo",35,370.5]
+["lineTo",502.326171875,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15323,8 +15646,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,365.5]
-["lineTo",34,365.5]
+["moveTo",26.021484375,370.5]
+["lineTo",34,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15333,8 +15656,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,341.5]
-["lineTo",502.326171875,341.5]
+["moveTo",35,348.5]
+["lineTo",502.326171875,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15343,8 +15666,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,341.5]
-["lineTo",34,341.5]
+["moveTo",26.021484375,348.5]
+["lineTo",34,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15353,8 +15676,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,317.5]
-["lineTo",502.326171875,317.5]
+["moveTo",35,325.5]
+["lineTo",502.326171875,325.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15363,8 +15686,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,317.5]
-["lineTo",34,317.5]
+["moveTo",26.021484375,325.5]
+["lineTo",34,325.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15373,8 +15696,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,294.5]
-["lineTo",502.326171875,294.5]
+["moveTo",35,302.5]
+["lineTo",502.326171875,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15383,8 +15706,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,294.5]
-["lineTo",34,294.5]
+["moveTo",26.021484375,302.5]
+["lineTo",34,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15393,8 +15716,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,270.5]
-["lineTo",502.326171875,270.5]
+["moveTo",35,280.5]
+["lineTo",502.326171875,280.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15403,8 +15726,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,270.5]
-["lineTo",34,270.5]
+["moveTo",26.021484375,280.5]
+["lineTo",34,280.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15413,8 +15736,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,246.5]
-["lineTo",502.326171875,246.5]
+["moveTo",35,257.5]
+["lineTo",502.326171875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15423,8 +15746,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,246.5]
-["lineTo",34,246.5]
+["moveTo",26.021484375,257.5]
+["lineTo",34,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15433,8 +15756,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,223.5]
-["lineTo",502.326171875,223.5]
+["moveTo",35,235.5]
+["lineTo",502.326171875,235.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15443,8 +15766,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,223.5]
-["lineTo",34,223.5]
+["moveTo",26.021484375,235.5]
+["lineTo",34,235.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15453,8 +15776,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,199.5]
-["lineTo",502.326171875,199.5]
+["moveTo",35,212.5]
+["lineTo",502.326171875,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15463,8 +15786,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,199.5]
-["lineTo",34,199.5]
+["moveTo",26.021484375,212.5]
+["lineTo",34,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15473,8 +15796,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,175.5]
-["lineTo",502.326171875,175.5]
+["moveTo",35,190.5]
+["lineTo",502.326171875,190.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15483,8 +15806,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,175.5]
-["lineTo",34,175.5]
+["moveTo",26.021484375,190.5]
+["lineTo",34,190.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15493,8 +15816,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,152.5]
-["lineTo",502.326171875,152.5]
+["moveTo",35,167.5]
+["lineTo",502.326171875,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15503,8 +15826,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,152.5]
-["lineTo",34,152.5]
+["moveTo",26.021484375,167.5]
+["lineTo",34,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15513,8 +15836,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,128.5]
-["lineTo",502.326171875,128.5]
+["moveTo",35,144.5]
+["lineTo",502.326171875,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15523,8 +15846,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,128.5]
-["lineTo",34,128.5]
+["moveTo",26.021484375,144.5]
+["lineTo",34,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15533,8 +15856,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,104.5]
-["lineTo",502.326171875,104.5]
+["moveTo",35,122.5]
+["lineTo",502.326171875,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15543,8 +15866,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,104.5]
-["lineTo",34,104.5]
+["moveTo",26.021484375,122.5]
+["lineTo",34,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15553,8 +15876,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,81.5]
-["lineTo",502.326171875,81.5]
+["moveTo",35,99.5]
+["lineTo",502.326171875,99.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15563,8 +15886,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,81.5]
-["lineTo",34,81.5]
+["moveTo",26.021484375,99.5]
+["lineTo",34,99.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15573,8 +15896,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,57.5]
-["lineTo",502.326171875,57.5]
+["moveTo",35,77.5]
+["lineTo",502.326171875,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15583,8 +15906,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,57.5]
-["lineTo",34,57.5]
+["moveTo",26.021484375,77.5]
+["lineTo",34,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15593,8 +15916,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,33.5]
-["lineTo",502.326171875,33.5]
+["moveTo",35,54.5]
+["lineTo",502.326171875,54.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15603,8 +15926,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,33.5]
-["lineTo",34,33.5]
+["moveTo",26.021484375,54.5]
+["lineTo",34,54.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15613,8 +15936,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",35,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15623,8 +15946,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,10.5]
-["lineTo",34,10.5]
+["moveTo",26.021484375,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15633,7 +15956,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -15644,7 +15967,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15653,7 +15976,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",112.5,10.2]
+["moveTo",112.5,32]
 ["lineTo",112.5,483]
 ["stroke",null]
 ["restore"]
@@ -15664,7 +15987,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",112.5,484]
-["lineTo",112.5,491.59999999999997]
+["lineTo",112.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15673,7 +15996,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",190.5,10.2]
+["moveTo",190.5,32]
 ["lineTo",190.5,483]
 ["stroke",null]
 ["restore"]
@@ -15684,7 +16007,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",190.5,484]
-["lineTo",190.5,491.59999999999997]
+["lineTo",190.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15693,7 +16016,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",268.5,10.2]
+["moveTo",268.5,32]
 ["lineTo",268.5,483]
 ["stroke",null]
 ["restore"]
@@ -15704,7 +16027,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",268.5,484]
-["lineTo",268.5,491.59999999999997]
+["lineTo",268.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15713,7 +16036,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",346.5,10.2]
+["moveTo",346.5,32]
 ["lineTo",346.5,483]
 ["stroke",null]
 ["restore"]
@@ -15724,7 +16047,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",346.5,484]
-["lineTo",346.5,491.59999999999997]
+["lineTo",346.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15733,7 +16056,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",424.5,10.2]
+["moveTo",424.5,32]
 ["lineTo",424.5,483]
 ["stroke",null]
 ["restore"]
@@ -15744,7 +16067,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",424.5,484]
-["lineTo",424.5,491.59999999999997]
+["lineTo",424.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15753,7 +16076,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -15764,14 +16087,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -15781,7 +16133,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,483.59999999999997]
+["translate",23.021484375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15790,7 +16142,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,459.92999999999995]
+["translate",23.021484375,461.02]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15799,7 +16151,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,436.26]
+["translate",23.021484375,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15808,7 +16160,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,412.59]
+["translate",23.021484375,415.86]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15817,7 +16169,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,388.92]
+["translate",23.021484375,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15826,7 +16178,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,365.24999999999994]
+["translate",23.021484375,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15835,7 +16187,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,341.5799999999999]
+["translate",23.021484375,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15844,7 +16196,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,317.90999999999997]
+["translate",23.021484375,325.54]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15853,7 +16205,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,294.23999999999995]
+["translate",23.021484375,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15862,7 +16214,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,270.57]
+["translate",23.021484375,280.38]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15871,7 +16223,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,246.89999999999998]
+["translate",23.021484375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15880,7 +16232,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,223.22999999999996]
+["translate",23.021484375,235.22]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15889,7 +16241,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,199.56]
+["translate",23.021484375,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15898,7 +16250,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,175.88999999999996]
+["translate",23.021484375,190.06]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15907,7 +16259,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,152.22]
+["translate",23.021484375,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15916,7 +16268,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,128.54999999999998]
+["translate",23.021484375,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15925,7 +16277,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,104.87999999999998]
+["translate",23.021484375,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15934,7 +16286,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,81.21000000000001]
+["translate",23.021484375,99.74000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15943,7 +16295,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,57.53999999999999]
+["translate",23.021484375,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15952,7 +16304,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,33.87000000000002]
+["translate",23.021484375,54.58000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15961,7 +16313,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,10.2]
+["translate",23.021484375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15979,11 +16331,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.021484375,494.59999999999997]
+["translate",34.021484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -15992,7 +16344,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",112.072265625,494.59999999999997]
+["translate",112.072265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16001,7 +16353,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",190.123046875,494.59999999999997]
+["translate",190.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16010,7 +16362,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",268.173828125,494.59999999999997]
+["translate",268.173828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16019,7 +16371,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",346.224609375,494.59999999999997]
+["translate",346.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16028,7 +16380,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.275390625,494.59999999999997]
+["translate",424.275390625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16037,7 +16389,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16049,7 +16401,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",92.5595703125,402.44571428571425,3,0,6.283185307179586,false]
+["arc",92.5595703125,406.18285714285713,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16057,7 +16409,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,16.962857142857118,3,0,6.283185307179586,false]
+["arc",502.326171875,38.45142857142855,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16065,7 +16417,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",246.70986328125,480.2185714285714,3,0,6.283185307179586,false]
+["arc",246.70986328125,480.37428571428575,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16104,12 +16456,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        27.34765625,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -16126,12 +16473,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[25.0, '25', false],
             <Object?>[30.0, '30', false],
           ],
-          'box': <Object?>[
-            27.34765625,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[27.34765625, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -16198,26 +16540,22 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[30.0, '30', false],
             <Object?>[31.0, '31', false],
           ],
-          'box': <Object?>[0.0, 10.2, 27.34765625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 27.34765625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            407.2451612903226,
-            330.89032258064515,
-            254.5354838709677,
-            178.1806451612903,
-            101.82580645161292,
-            25.470967741935468,
-            10.2,
+            483.6,
+            410.7612903225807,
+            337.92258064516136,
+            265.083870967742,
+            192.24516129032259,
+            119.40645161290325,
+            46.56774193548386,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[31.0, 15.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 31.0,
@@ -16257,9 +16595,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[-170.56005859375, 437.7870967741935],
-          <Object?>[660.65234375, -1303.1032258064515],
-          <Object?>[142.134130859375, 789.0193548387097],
+          <Object?>[-170.56005859375, 439.8967741935484],
+          <Object?>[660.65234375, -1220.825806451613],
+          <Object?>[142.134130859375, 774.9548387096773],
         ],
       ],
       'drawCalls': '''
@@ -16273,7 +16611,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",27.5,10.2]
+["moveTo",27.5,32]
 ["lineTo",27.5,483]
 ["stroke",null]
 ["restore"]
@@ -16284,7 +16622,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",27.5,484]
-["lineTo",27.5,491.59999999999997]
+["lineTo",27.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16293,7 +16631,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",106.5,10.2]
+["moveTo",106.5,32]
 ["lineTo",106.5,483]
 ["stroke",null]
 ["restore"]
@@ -16304,7 +16642,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",106.5,484]
-["lineTo",106.5,491.59999999999997]
+["lineTo",106.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16313,7 +16651,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",185.5,10.2]
+["moveTo",185.5,32]
 ["lineTo",185.5,483]
 ["stroke",null]
 ["restore"]
@@ -16324,7 +16662,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",185.5,484]
-["lineTo",185.5,491.59999999999997]
+["lineTo",185.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16333,7 +16671,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",264.5,10.2]
+["moveTo",264.5,32]
 ["lineTo",264.5,483]
 ["stroke",null]
 ["restore"]
@@ -16344,7 +16682,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",264.5,484]
-["lineTo",264.5,491.59999999999997]
+["lineTo",264.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16353,7 +16691,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",344.5,10.2]
+["moveTo",344.5,32]
 ["lineTo",344.5,483]
 ["stroke",null]
 ["restore"]
@@ -16364,7 +16702,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",344.5,484]
-["lineTo",344.5,491.59999999999997]
+["lineTo",344.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16373,7 +16711,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",423.5,10.2]
+["moveTo",423.5,32]
 ["lineTo",423.5,483]
 ["stroke",null]
 ["restore"]
@@ -16384,7 +16722,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",423.5,484]
-["lineTo",423.5,491.59999999999997]
+["lineTo",423.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16393,7 +16731,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -16404,7 +16742,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16433,8 +16771,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,407.5]
-["lineTo",502.326171875,407.5]
+["moveTo",28,410.5]
+["lineTo",502.326171875,410.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16443,8 +16781,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,407.5]
-["lineTo",27,407.5]
+["moveTo",19.34765625,410.5]
+["lineTo",27,410.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16453,8 +16791,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,330.5]
-["lineTo",502.326171875,330.5]
+["moveTo",28,337.5]
+["lineTo",502.326171875,337.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16463,8 +16801,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,330.5]
-["lineTo",27,330.5]
+["moveTo",19.34765625,337.5]
+["lineTo",27,337.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16473,8 +16811,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,254.5]
-["lineTo",502.326171875,254.5]
+["moveTo",28,265.5]
+["lineTo",502.326171875,265.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16483,8 +16821,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,254.5]
-["lineTo",27,254.5]
+["moveTo",19.34765625,265.5]
+["lineTo",27,265.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16493,8 +16831,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,178.5]
-["lineTo",502.326171875,178.5]
+["moveTo",28,192.5]
+["lineTo",502.326171875,192.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16503,8 +16841,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,178.5]
-["lineTo",27,178.5]
+["moveTo",19.34765625,192.5]
+["lineTo",27,192.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16513,8 +16851,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,101.5]
-["lineTo",502.326171875,101.5]
+["moveTo",28,119.5]
+["lineTo",502.326171875,119.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16523,8 +16861,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,101.5]
-["lineTo",27,101.5]
+["moveTo",19.34765625,119.5]
+["lineTo",27,119.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16533,8 +16871,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,25.5]
-["lineTo",502.326171875,25.5]
+["moveTo",28,46.5]
+["lineTo",502.326171875,46.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16543,8 +16881,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,25.5]
-["lineTo",27,25.5]
+["moveTo",19.34765625,46.5]
+["lineTo",27,46.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16553,8 +16891,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",28,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16563,9 +16901,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,10.5]
-["lineTo",27,10.5]
+["moveTo",19.34765625,32.5]
+["lineTo",27,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -16577,11 +16944,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.34765625,494.59999999999997]
+["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16590,7 +16957,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",106.5107421875,494.59999999999997]
+["translate",106.5107421875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16599,7 +16966,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",185.673828125,494.59999999999997]
+["translate",185.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16608,7 +16975,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",264.8369140625,494.59999999999997]
+["translate",264.8369140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16617,7 +16984,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",344,494.59999999999997]
+["translate",344,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16626,7 +16993,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",423.1630859375,494.59999999999997]
+["translate",423.1630859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16635,7 +17002,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -16647,7 +17014,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",27.5,10]
+["moveTo",27.5,32]
 ["lineTo",27.5,484]
 ["stroke",null]
 ["restore"]
@@ -16657,7 +17024,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,483.59999999999997]
+["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16666,7 +17033,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,407.2451612903226]
+["translate",16.34765625,410.7612903225807]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16675,7 +17042,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,330.89032258064515]
+["translate",16.34765625,337.92258064516136]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16684,7 +17051,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,254.5354838709677]
+["translate",16.34765625,265.083870967742]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16693,7 +17060,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,178.1806451612903]
+["translate",16.34765625,192.24516129032259]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16702,7 +17069,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,101.82580645161292]
+["translate",16.34765625,119.40645161290325]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16711,7 +17078,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,25.470967741935468]
+["translate",16.34765625,46.56774193548386]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16720,7 +17087,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,10.2]
+["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16758,12 +17125,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.021484375,
-        10.2,
-        495.76953125,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.021484375, 32.0, 495.76953125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -16779,24 +17141,20 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[80.0, '80', false],
             <Object?>[100.0, '100', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            388.92,
-            294.23999999999995,
-            199.56,
-            104.87999999999998,
-            10.2,
+            483.6,
+            393.28000000000003,
+            302.96,
+            212.64000000000001,
+            122.31999999999998,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[100.0, 50.0, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 100.0,
@@ -16849,12 +17207,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[-12.0, '-12.0', false],
             <Object?>[-11.8, '-11.8', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            495.76953125,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 495.76953125, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[16.67578125, 0.0, 16.23046875, 0.0],
           'tickPixels': <Object?>[
@@ -16913,9 +17266,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[264.89550781250034, 469.39799999999997],
-          <Object?>[17580.447265624996, -70.27799999999996],
-          <Object?>[6778.841169084821, 578.28],
+          <Object?>[264.89550781250034, 470.052],
+          <Object?>[17580.447265624996, -44.77199999999998],
+          <Object?>[6778.841169084821, 573.92],
         ],
       ],
       'drawCalls': '''
@@ -16949,8 +17302,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,388.5]
-["lineTo",495.76953125,388.5]
+["moveTo",35,393.5]
+["lineTo",495.76953125,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16959,8 +17312,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,388.5]
-["lineTo",34,388.5]
+["moveTo",26.021484375,393.5]
+["lineTo",34,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16969,8 +17322,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,294.5]
-["lineTo",495.76953125,294.5]
+["moveTo",35,302.5]
+["lineTo",495.76953125,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16979,8 +17332,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,294.5]
-["lineTo",34,294.5]
+["moveTo",26.021484375,302.5]
+["lineTo",34,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16989,8 +17342,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,199.5]
-["lineTo",495.76953125,199.5]
+["moveTo",35,212.5]
+["lineTo",495.76953125,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -16999,8 +17352,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,199.5]
-["lineTo",34,199.5]
+["moveTo",26.021484375,212.5]
+["lineTo",34,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17009,8 +17362,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,104.5]
-["lineTo",495.76953125,104.5]
+["moveTo",35,122.5]
+["lineTo",495.76953125,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17019,8 +17372,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,104.5]
-["lineTo",34,104.5]
+["moveTo",26.021484375,122.5]
+["lineTo",34,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17029,8 +17382,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",495.76953125,10.5]
+["moveTo",35,32.5]
+["lineTo",495.76953125,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17039,8 +17392,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,10.5]
-["lineTo",34,10.5]
+["moveTo",26.021484375,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17049,7 +17402,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -17060,7 +17413,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17069,7 +17422,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",99.5,10.2]
+["moveTo",99.5,32]
 ["lineTo",99.5,483]
 ["stroke",null]
 ["restore"]
@@ -17080,7 +17433,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",99.5,484]
-["lineTo",99.5,491.59999999999997]
+["lineTo",99.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17089,7 +17442,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",165.5,10.2]
+["moveTo",165.5,32]
 ["lineTo",165.5,483]
 ["stroke",null]
 ["restore"]
@@ -17100,7 +17453,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",165.5,484]
-["lineTo",165.5,491.59999999999997]
+["lineTo",165.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17109,7 +17462,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",231.5,10.2]
+["moveTo",231.5,32]
 ["lineTo",231.5,483]
 ["stroke",null]
 ["restore"]
@@ -17120,7 +17473,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",231.5,484]
-["lineTo",231.5,491.59999999999997]
+["lineTo",231.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17129,7 +17482,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",297.5,10.2]
+["moveTo",297.5,32]
 ["lineTo",297.5,483]
 ["stroke",null]
 ["restore"]
@@ -17140,7 +17493,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",297.5,484]
-["lineTo",297.5,491.59999999999997]
+["lineTo",297.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17149,7 +17502,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",363.5,10.2]
+["moveTo",363.5,32]
 ["lineTo",363.5,483]
 ["stroke",null]
 ["restore"]
@@ -17160,7 +17513,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",363.5,484]
-["lineTo",363.5,491.59999999999997]
+["lineTo",363.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17169,7 +17522,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",429.5,10.2]
+["moveTo",429.5,32]
 ["lineTo",429.5,483]
 ["stroke",null]
 ["restore"]
@@ -17180,7 +17533,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",429.5,484]
-["lineTo",429.5,491.59999999999997]
+["lineTo",429.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17189,7 +17542,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",495.5,10.2]
+["moveTo",495.5,32]
 ["lineTo",495.5,483]
 ["stroke",null]
 ["restore"]
@@ -17200,14 +17553,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",495.5,484]
-["lineTo",495.5,491.59999999999997]
+["lineTo",495.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -17217,7 +17599,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,483.59999999999997]
+["translate",23.021484375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17226,7 +17608,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,388.92]
+["translate",23.021484375,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17235,7 +17617,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,294.23999999999995]
+["translate",23.021484375,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17244,7 +17626,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,199.56]
+["translate",23.021484375,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17253,7 +17635,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,104.87999999999998]
+["translate",23.021484375,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17262,7 +17644,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,10.2]
+["translate",23.021484375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17280,11 +17662,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.021484375,494.59999999999997]
+["translate",34.021484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17293,7 +17675,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",99.98549107142833,494.59999999999997]
+["translate",99.98549107142833,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17302,7 +17684,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",165.94949776785722,494.59999999999997]
+["translate",165.94949776785722,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17311,7 +17693,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",231.91350446428555,494.59999999999997]
+["translate",231.91350446428555,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17320,7 +17702,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",297.87751116071445,494.59999999999997]
+["translate",297.87751116071445,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17329,7 +17711,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",363.8415178571428,494.59999999999997]
+["translate",363.8415178571428,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17338,7 +17720,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",429.8055245535717,494.59999999999997]
+["translate",429.8055245535717,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17347,7 +17729,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",495.76953125,494.59999999999997]
+["translate",495.76953125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17359,7 +17741,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",264.89550781250034,469.39799999999997,3,0,6.283185307179586,false]
+["arc",264.89550781250034,470.052,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17391,12 +17773,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        37.35546875,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -17410,17 +17787,18 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[71.33333333333333, '71.3', false],
             <Object?>[117.0, '117', false],
           ],
-          'box': <Object?>[0.0, 10.2, 37.35546875, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 37.35546875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
-          'tickPixels': <Object?>[483.59999999999997, 325.8, 168.0, 10.2],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
+          'tickPixels': <Object?>[
+            483.6,
+            333.0666666666667,
+            182.53333333333336,
+            32.0,
           ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[117.0, 48.5, -20.0],
-          'basePixel': 414.49051094890507,
+          'basePixel': 417.67299270072994,
           'warnings': <Object?>[
             <Object?>[
               'scales.y.ticks.stepSize:',
@@ -17501,12 +17879,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[30.0, '30', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            37.35546875,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[37.35546875, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -17560,9 +17933,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[95.476806640625, 404.1240875912408],
-          <Object?>[502.326171875, 10.2],
-          <Object?>[248.5296630859375, 483.59999999999997],
+          <Object?>[95.476806640625, 407.7839416058394],
+          <Object?>[502.326171875, 32.0],
+          <Object?>[248.5296630859375, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -17596,8 +17969,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,325.5]
-["lineTo",502.326171875,325.5]
+["moveTo",38,333.5]
+["lineTo",502.326171875,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17606,8 +17979,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,325.5]
-["lineTo",37,325.5]
+["moveTo",29.35546875,333.5]
+["lineTo",37,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17616,8 +17989,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,168.5]
-["lineTo",502.326171875,168.5]
+["moveTo",38,182.5]
+["lineTo",502.326171875,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17626,8 +17999,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,168.5]
-["lineTo",37,168.5]
+["moveTo",29.35546875,182.5]
+["lineTo",37,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17636,8 +18009,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",38,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17646,8 +18019,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,10.5]
-["lineTo",37,10.5]
+["moveTo",29.35546875,32.5]
+["lineTo",37,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17656,7 +18029,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",37.5,10.2]
+["moveTo",37.5,32]
 ["lineTo",37.5,483]
 ["stroke",null]
 ["restore"]
@@ -17667,7 +18040,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",37.5,484]
-["lineTo",37.5,491.59999999999997]
+["lineTo",37.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17676,7 +18049,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",114.5,10.2]
+["moveTo",114.5,32]
 ["lineTo",114.5,483]
 ["stroke",null]
 ["restore"]
@@ -17687,7 +18060,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",114.5,484]
-["lineTo",114.5,491.59999999999997]
+["lineTo",114.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17696,7 +18069,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",192.5,10.2]
+["moveTo",192.5,32]
 ["lineTo",192.5,483]
 ["stroke",null]
 ["restore"]
@@ -17707,7 +18080,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",192.5,484]
-["lineTo",192.5,491.59999999999997]
+["lineTo",192.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17716,7 +18089,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",269.5,10.2]
+["moveTo",269.5,32]
 ["lineTo",269.5,483]
 ["stroke",null]
 ["restore"]
@@ -17727,7 +18100,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",269.5,484]
-["lineTo",269.5,491.59999999999997]
+["lineTo",269.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17736,7 +18109,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",347.5,10.2]
+["moveTo",347.5,32]
 ["lineTo",347.5,483]
 ["stroke",null]
 ["restore"]
@@ -17747,7 +18120,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",347.5,484]
-["lineTo",347.5,491.59999999999997]
+["lineTo",347.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17756,7 +18129,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",424.5,10.2]
+["moveTo",424.5,32]
 ["lineTo",424.5,483]
 ["stroke",null]
 ["restore"]
@@ -17767,7 +18140,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",424.5,484]
-["lineTo",424.5,491.59999999999997]
+["lineTo",424.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17776,7 +18149,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -17787,14 +18160,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",37.5,10]
+["moveTo",37.5,32]
 ["lineTo",37.5,484]
 ["stroke",null]
 ["restore"]
@@ -17804,7 +18206,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,483.59999999999997]
+["translate",26.35546875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17813,7 +18215,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,325.8]
+["translate",26.35546875,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17822,7 +18224,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,168]
+["translate",26.35546875,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17831,7 +18233,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,10.2]
+["translate",26.35546875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17849,11 +18251,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",37.35546875,494.59999999999997]
+["translate",37.35546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17862,7 +18264,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",114.8505859375,494.59999999999997]
+["translate",114.8505859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17871,7 +18273,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",192.345703125,494.59999999999997]
+["translate",192.345703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17880,7 +18282,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",269.8408203125,494.59999999999997]
+["translate",269.8408203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17889,7 +18291,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",347.3359375,494.59999999999997]
+["translate",347.3359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17898,7 +18300,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.8310546875,494.59999999999997]
+["translate",424.8310546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17907,7 +18309,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -17919,7 +18321,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",95.476806640625,404.1240875912408,3,0,6.283185307179586,false]
+["arc",95.476806640625,407.7839416058394,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17927,7 +18329,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,10.2,3,0,6.283185307179586,false]
+["arc",502.326171875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17935,7 +18337,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",248.5296630859375,483.59999999999997,3,0,6.283185307179586,false]
+["arc",248.5296630859375,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17967,12 +18369,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.021484375,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -17997,33 +18394,29 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[110.0, '110', false],
             <Object?>[120.0, '120', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            449.7857142857143,
-            415.9714285714286,
-            382.15714285714284,
-            348.3428571428571,
-            314.52857142857135,
-            280.71428571428567,
-            246.89999999999998,
-            213.0857142857143,
-            179.27142857142852,
-            145.45714285714283,
-            111.64285714285715,
-            77.82857142857145,
-            44.01428571428569,
-            10.2,
+            483.6,
+            451.34285714285716,
+            419.08571428571435,
+            386.8285714285714,
+            354.5714285714286,
+            322.3142857142857,
+            290.0571428571429,
+            257.8,
+            225.54285714285717,
+            193.28571428571428,
+            161.02857142857144,
+            128.7714285714286,
+            96.51428571428573,
+            64.25714285714284,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[120.0, 50.0, -20.0],
-          'basePixel': 415.9714285714286,
+          'basePixel': 419.08571428571435,
           'warnings': <Object?>[],
           'start': -20.0,
           'end': 120.0,
@@ -18075,12 +18468,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[30.0, '30', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -18134,9 +18522,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[92.5595703125, 405.82714285714286],
-          <Object?>[502.326171875, 20.344285714285732],
-          <Object?>[246.70986328125, 483.59999999999997],
+          <Object?>[92.5595703125, 409.40857142857146],
+          <Object?>[502.326171875, 41.677142857142876],
+          <Object?>[246.70986328125, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -18170,7 +18558,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -18181,7 +18569,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18190,7 +18578,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",112.5,10.2]
+["moveTo",112.5,32]
 ["lineTo",112.5,483]
 ["stroke",null]
 ["restore"]
@@ -18201,7 +18589,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",112.5,484]
-["lineTo",112.5,491.59999999999997]
+["lineTo",112.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18210,7 +18598,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",190.5,10.2]
+["moveTo",190.5,32]
 ["lineTo",190.5,483]
 ["stroke",null]
 ["restore"]
@@ -18221,7 +18609,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",190.5,484]
-["lineTo",190.5,491.59999999999997]
+["lineTo",190.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18230,7 +18618,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",268.5,10.2]
+["moveTo",268.5,32]
 ["lineTo",268.5,483]
 ["stroke",null]
 ["restore"]
@@ -18241,7 +18629,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",268.5,484]
-["lineTo",268.5,491.59999999999997]
+["lineTo",268.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18250,7 +18638,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",346.5,10.2]
+["moveTo",346.5,32]
 ["lineTo",346.5,483]
 ["stroke",null]
 ["restore"]
@@ -18261,7 +18649,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",346.5,484]
-["lineTo",346.5,491.59999999999997]
+["lineTo",346.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18270,7 +18658,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",424.5,10.2]
+["moveTo",424.5,32]
 ["lineTo",424.5,483]
 ["stroke",null]
 ["restore"]
@@ -18281,7 +18669,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",424.5,484]
-["lineTo",424.5,491.59999999999997]
+["lineTo",424.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18290,7 +18678,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -18301,14 +18689,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -18318,7 +18735,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,483.59999999999997]
+["translate",23.021484375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18327,7 +18744,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,449.7857142857143]
+["translate",23.021484375,451.34285714285716]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18336,7 +18753,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,415.9714285714286]
+["translate",23.021484375,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18345,7 +18762,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,382.15714285714284]
+["translate",23.021484375,386.8285714285714]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18354,7 +18771,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,348.3428571428571]
+["translate",23.021484375,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18363,7 +18780,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,314.52857142857135]
+["translate",23.021484375,322.3142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18372,7 +18789,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,280.71428571428567]
+["translate",23.021484375,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18381,7 +18798,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,246.89999999999998]
+["translate",23.021484375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18390,7 +18807,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,213.0857142857143]
+["translate",23.021484375,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18399,7 +18816,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,179.27142857142852]
+["translate",23.021484375,193.28571428571428]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18408,7 +18825,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,145.45714285714283]
+["translate",23.021484375,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18417,7 +18834,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,111.64285714285715]
+["translate",23.021484375,128.7714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18426,7 +18843,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,77.82857142857145]
+["translate",23.021484375,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18435,7 +18852,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,44.01428571428569]
+["translate",23.021484375,64.25714285714284]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18444,7 +18861,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,10.2]
+["translate",23.021484375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -18462,11 +18879,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.021484375,494.59999999999997]
+["translate",34.021484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -18475,7 +18892,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",112.072265625,494.59999999999997]
+["translate",112.072265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -18484,7 +18901,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",190.123046875,494.59999999999997]
+["translate",190.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -18493,7 +18910,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",268.173828125,494.59999999999997]
+["translate",268.173828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -18502,7 +18919,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",346.224609375,494.59999999999997]
+["translate",346.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -18511,7 +18928,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.275390625,494.59999999999997]
+["translate",424.275390625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -18520,7 +18937,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -18532,7 +18949,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",92.5595703125,405.82714285714286,3,0,6.283185307179586,false]
+["arc",92.5595703125,409.40857142857146,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18540,7 +18957,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,20.344285714285732,3,0,6.283185307179586,false]
+["arc",502.326171875,41.677142857142876,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18548,7 +18965,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",246.70986328125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",246.70986328125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18582,12 +18999,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.021484375,
-        10.2,
-        495.76953125,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.021484375, 32.0, 495.76953125, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -18602,23 +19014,19 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[75.0, '75', false],
             <Object?>[100.0, '100', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            365.24999999999994,
-            246.89999999999998,
-            128.54999999999998,
-            10.2,
+            483.6,
+            370.70000000000005,
+            257.8,
+            144.9,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[100.0, 50.0, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 100.0,
@@ -18671,12 +19079,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[-12.0, '-12.0', false],
             <Object?>[-11.8, '-11.8', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            495.76953125,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 495.76953125, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[16.67578125, 0.0, 16.23046875, 0.0],
           'tickPixels': <Object?>[
@@ -18735,9 +19138,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[264.89550781250034, 469.39799999999997],
-          <Object?>[17580.447265624996, -70.27799999999996],
-          <Object?>[6778.841169084821, 578.28],
+          <Object?>[264.89550781250034, 470.052],
+          <Object?>[17580.447265624996, -44.77199999999998],
+          <Object?>[6778.841169084821, 573.92],
         ],
       ],
       'drawCalls': '''
@@ -18771,8 +19174,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,365.5]
-["lineTo",495.76953125,365.5]
+["moveTo",35,370.5]
+["lineTo",495.76953125,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18781,8 +19184,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,365.5]
-["lineTo",34,365.5]
+["moveTo",26.021484375,370.5]
+["lineTo",34,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18791,8 +19194,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,246.5]
-["lineTo",495.76953125,246.5]
+["moveTo",35,257.5]
+["lineTo",495.76953125,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18801,8 +19204,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,246.5]
-["lineTo",34,246.5]
+["moveTo",26.021484375,257.5]
+["lineTo",34,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18811,8 +19214,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,128.5]
-["lineTo",495.76953125,128.5]
+["moveTo",35,144.5]
+["lineTo",495.76953125,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18821,8 +19224,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,128.5]
-["lineTo",34,128.5]
+["moveTo",26.021484375,144.5]
+["lineTo",34,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18831,8 +19234,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",495.76953125,10.5]
+["moveTo",35,32.5]
+["lineTo",495.76953125,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18841,8 +19244,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,10.5]
-["lineTo",34,10.5]
+["moveTo",26.021484375,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18851,7 +19254,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -18862,7 +19265,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18871,7 +19274,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",99.5,10.2]
+["moveTo",99.5,32]
 ["lineTo",99.5,483]
 ["stroke",null]
 ["restore"]
@@ -18882,7 +19285,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",99.5,484]
-["lineTo",99.5,491.59999999999997]
+["lineTo",99.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18891,7 +19294,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",165.5,10.2]
+["moveTo",165.5,32]
 ["lineTo",165.5,483]
 ["stroke",null]
 ["restore"]
@@ -18902,7 +19305,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",165.5,484]
-["lineTo",165.5,491.59999999999997]
+["lineTo",165.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18911,7 +19314,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",231.5,10.2]
+["moveTo",231.5,32]
 ["lineTo",231.5,483]
 ["stroke",null]
 ["restore"]
@@ -18922,7 +19325,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",231.5,484]
-["lineTo",231.5,491.59999999999997]
+["lineTo",231.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18931,7 +19334,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",297.5,10.2]
+["moveTo",297.5,32]
 ["lineTo",297.5,483]
 ["stroke",null]
 ["restore"]
@@ -18942,7 +19345,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",297.5,484]
-["lineTo",297.5,491.59999999999997]
+["lineTo",297.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18951,7 +19354,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",363.5,10.2]
+["moveTo",363.5,32]
 ["lineTo",363.5,483]
 ["stroke",null]
 ["restore"]
@@ -18962,7 +19365,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",363.5,484]
-["lineTo",363.5,491.59999999999997]
+["lineTo",363.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18971,7 +19374,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",429.5,10.2]
+["moveTo",429.5,32]
 ["lineTo",429.5,483]
 ["stroke",null]
 ["restore"]
@@ -18982,7 +19385,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",429.5,484]
-["lineTo",429.5,491.59999999999997]
+["lineTo",429.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18991,7 +19394,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",495.5,10.2]
+["moveTo",495.5,32]
 ["lineTo",495.5,483]
 ["stroke",null]
 ["restore"]
@@ -19002,14 +19405,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",495.5,484]
-["lineTo",495.5,491.59999999999997]
+["lineTo",495.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -19019,7 +19451,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,483.59999999999997]
+["translate",23.021484375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19028,7 +19460,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,365.24999999999994]
+["translate",23.021484375,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19037,7 +19469,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,246.89999999999998]
+["translate",23.021484375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19046,7 +19478,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,128.54999999999998]
+["translate",23.021484375,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19055,7 +19487,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,10.2]
+["translate",23.021484375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19073,11 +19505,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.021484375,494.59999999999997]
+["translate",34.021484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19086,7 +19518,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",99.98549107142833,494.59999999999997]
+["translate",99.98549107142833,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19095,7 +19527,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",165.94949776785722,494.59999999999997]
+["translate",165.94949776785722,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19104,7 +19536,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",231.91350446428555,494.59999999999997]
+["translate",231.91350446428555,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19113,7 +19545,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",297.87751116071445,494.59999999999997]
+["translate",297.87751116071445,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19122,7 +19554,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",363.8415178571428,494.59999999999997]
+["translate",363.8415178571428,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19131,7 +19563,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",429.8055245535717,494.59999999999997]
+["translate",429.8055245535717,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19140,7 +19572,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",495.76953125,494.59999999999997]
+["translate",495.76953125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19152,7 +19584,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",264.89550781250034,469.39799999999997,3,0,6.283185307179586,false]
+["arc",264.89550781250034,470.052,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19187,7 +19619,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[38.005859375, 10.2, 512.0, 483.59999999999997],
+      'chartArea': <Object?>[38.005859375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -19202,12 +19634,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
               false,
             ],
           ],
-          'box': <Object?>[
-            38.005859375,
-            483.59999999999997,
-            512.0,
-            511.99999999999994,
-          ],
+          'box': <Object?>[38.005859375, 483.6, 512.0, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[
             <String, Object?>{'num': 'NaN'},
@@ -19270,19 +19697,15 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
               false,
             ],
           ],
-          'box': <Object?>[0.0, 10.2, 38.005859375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 38.005859375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             <String, Object?>{'num': 'NaN'},
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[117.0, 48.5, -20.0],
-          'basePixel': 414.49051094890507,
+          'basePixel': 417.67299270072994,
           'warnings': <Object?>[],
           'start': -20.0,
           'end': 117.0,
@@ -19322,9 +19745,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[38.005859375, 404.1240875912408],
-          <Object?>[512.0, 10.2],
-          <Object?>[216.31794084821428, 483.59999999999997],
+          <Object?>[38.005859375, 407.7839416058394],
+          <Object?>[512.0, 32.0],
+          <Object?>[216.31794084821428, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -19338,7 +19761,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",{"num":"NaN"},10.2]
+["moveTo",{"num":"NaN"},32]
 ["lineTo",{"num":"NaN"},483]
 ["stroke",null]
 ["restore"]
@@ -19349,7 +19772,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",{"num":"NaN"},484]
-["lineTo",{"num":"NaN"},491.59999999999997]
+["lineTo",{"num":"NaN"},491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19373,6 +19796,35 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
+["restore"]
+["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
@@ -19382,11 +19834,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",{"num":"NaN"},494.59999999999997]
+["translate",{"num":"NaN"},494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19398,7 +19850,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",38.5,10]
+["moveTo",38.5,32]
 ["lineTo",38.5,484]
 ["stroke",null]
 ["restore"]
@@ -19420,7 +19872,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",38.005859375,404.1240875912408,3,0,6.283185307179586,false]
+["arc",38.005859375,407.7839416058394,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19428,7 +19880,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",512,10.2,3,0,6.283185307179586,false]
+["arc",512,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19436,7 +19888,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",216.31794084821428,483.59999999999997,3,0,6.283185307179586,false]
+["arc",216.31794084821428,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19471,12 +19923,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        37.35546875,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[37.35546875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -19490,12 +19937,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[20.0, '20', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            37.35546875,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[37.35546875, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -19558,25 +20000,21 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[96.66666666666666, '96.7', false],
             <Object?>[120.0, '120', false],
           ],
-          'box': <Object?>[0.0, 10.2, 37.35546875, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 37.35546875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            404.7,
-            325.8,
-            246.89999999999998,
-            168.0,
-            89.10000000000004,
-            10.2,
+            483.6,
+            408.33333333333337,
+            333.0666666666667,
+            257.8,
+            182.53333333333336,
+            107.26666666666671,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[120.0, 50.0, -20.0],
-          'basePixel': 415.9714285714286,
+          'basePixel': 419.08571428571435,
           'warnings': <Object?>[],
           'start': -20.0,
           'end': 120.0,
@@ -19616,9 +20054,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[95.476806640625, 405.82714285714286],
-          <Object?>[502.326171875, 20.344285714285732],
-          <Object?>[248.5296630859375, 483.59999999999997],
+          <Object?>[95.476806640625, 409.40857142857146],
+          <Object?>[502.326171875, 41.677142857142876],
+          <Object?>[248.5296630859375, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -19632,7 +20070,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",37.5,10.2]
+["moveTo",37.5,32]
 ["lineTo",37.5,483]
 ["stroke",null]
 ["restore"]
@@ -19643,7 +20081,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",37.5,484]
-["lineTo",37.5,491.59999999999997]
+["lineTo",37.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19652,7 +20090,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",192.5,10.2]
+["moveTo",192.5,32]
 ["lineTo",192.5,483]
 ["stroke",null]
 ["restore"]
@@ -19663,7 +20101,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",192.5,484]
-["lineTo",192.5,491.59999999999997]
+["lineTo",192.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19672,7 +20110,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",347.5,10.2]
+["moveTo",347.5,32]
 ["lineTo",347.5,483]
 ["stroke",null]
 ["restore"]
@@ -19683,7 +20121,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",347.5,484]
-["lineTo",347.5,491.59999999999997]
+["lineTo",347.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19692,7 +20130,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -19703,7 +20141,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19732,8 +20170,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,404.5]
-["lineTo",502.326171875,404.5]
+["moveTo",38,408.5]
+["lineTo",502.326171875,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19742,8 +20180,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,404.5]
-["lineTo",37,404.5]
+["moveTo",29.35546875,408.5]
+["lineTo",37,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19752,8 +20190,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,325.5]
-["lineTo",502.326171875,325.5]
+["moveTo",38,333.5]
+["lineTo",502.326171875,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19762,8 +20200,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,325.5]
-["lineTo",37,325.5]
+["moveTo",29.35546875,333.5]
+["lineTo",37,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19772,8 +20210,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,246.5]
-["lineTo",502.326171875,246.5]
+["moveTo",38,257.5]
+["lineTo",502.326171875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19782,8 +20220,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,246.5]
-["lineTo",37,246.5]
+["moveTo",29.35546875,257.5]
+["lineTo",37,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19792,8 +20230,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,168.5]
-["lineTo",502.326171875,168.5]
+["moveTo",38,182.5]
+["lineTo",502.326171875,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19802,8 +20240,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,168.5]
-["lineTo",37,168.5]
+["moveTo",29.35546875,182.5]
+["lineTo",37,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19812,8 +20250,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,89.5]
-["lineTo",502.326171875,89.5]
+["moveTo",38,107.5]
+["lineTo",502.326171875,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19822,8 +20260,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,89.5]
-["lineTo",37,89.5]
+["moveTo",29.35546875,107.5]
+["lineTo",37,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19832,8 +20270,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",38,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19842,9 +20280,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,10.5]
-["lineTo",37,10.5]
+["moveTo",29.35546875,32.5]
+["lineTo",37,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -19856,11 +20323,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",37.35546875,494.59999999999997]
+["translate",37.35546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19869,7 +20336,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",192.345703125,494.59999999999997]
+["translate",192.345703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19878,7 +20345,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",347.3359375,494.59999999999997]
+["translate",347.3359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19887,7 +20354,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19899,7 +20366,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",37.5,10]
+["moveTo",37.5,32]
 ["lineTo",37.5,484]
 ["stroke",null]
 ["restore"]
@@ -19909,7 +20376,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,483.59999999999997]
+["translate",26.35546875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19918,7 +20385,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,404.7]
+["translate",26.35546875,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19927,7 +20394,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,325.8]
+["translate",26.35546875,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19936,7 +20403,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,246.89999999999998]
+["translate",26.35546875,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19945,7 +20412,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,168]
+["translate",26.35546875,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19954,7 +20421,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,89.10000000000004]
+["translate",26.35546875,107.26666666666671]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19963,7 +20430,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,10.2]
+["translate",26.35546875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19975,7 +20442,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",95.476806640625,405.82714285714286,3,0,6.283185307179586,false]
+["arc",95.476806640625,409.40857142857146,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19983,7 +20450,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,20.344285714285732,3,0,6.283185307179586,false]
+["arc",502.326171875,41.677142857142876,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19991,7 +20458,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",248.5296630859375,483.59999999999997,3,0,6.283185307179586,false]
+["arc",248.5296630859375,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20029,12 +20496,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        27.34765625,
-        10.2,
-        497.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[27.34765625, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -20049,12 +20511,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[2.605, '2.61', false],
             <Object?>[2.64, '2.64', false],
           ],
-          'box': <Object?>[
-            27.34765625,
-            483.59999999999997,
-            497.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[27.34765625, 483.6, 497.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[14.677734375, 0.0, 14.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -20121,24 +20578,20 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[13.0, '13', false],
             <Object?>[17.0, '17', false],
           ],
-          'box': <Object?>[0.0, 10.2, 27.34765625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 27.34765625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            388.92,
-            294.23999999999995,
-            199.56,
-            104.87999999999998,
-            10.2,
+            483.6,
+            393.28000000000003,
+            302.96,
+            212.64000000000001,
+            122.31999999999998,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[17.0, 7.0, -3.0],
-          'basePixel': 412.59,
+          'basePixel': 415.86,
           'warnings': <Object?>[],
           'start': -3.0,
           'end': 17.0,
@@ -20178,9 +20631,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[-32768.0, 341.5799999999999],
-          <Object?>[32767.0, -2356.8],
-          <Object?>[15972.914760044627, 885.99],
+          <Object?>[-32768.0, 348.12],
+          <Object?>[32767.0, -2226.0],
+          <Object?>[15972.914760044627, 867.46],
         ],
       ],
       'drawCalls': '''
@@ -20194,7 +20647,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",27.5,10.2]
+["moveTo",27.5,32]
 ["lineTo",27.5,483]
 ["stroke",null]
 ["restore"]
@@ -20205,7 +20658,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",27.5,484]
-["lineTo",27.5,491.59999999999997]
+["lineTo",27.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20214,7 +20667,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",144.5,10.2]
+["moveTo",144.5,32]
 ["lineTo",144.5,483]
 ["stroke",null]
 ["restore"]
@@ -20225,7 +20678,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",144.5,484]
-["lineTo",144.5,491.59999999999997]
+["lineTo",144.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20234,7 +20687,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",262.5,10.2]
+["moveTo",262.5,32]
 ["lineTo",262.5,483]
 ["stroke",null]
 ["restore"]
@@ -20245,7 +20698,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",262.5,484]
-["lineTo",262.5,491.59999999999997]
+["lineTo",262.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20254,7 +20707,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",379.5,10.2]
+["moveTo",379.5,32]
 ["lineTo",379.5,483]
 ["stroke",null]
 ["restore"]
@@ -20265,7 +20718,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",379.5,484]
-["lineTo",379.5,491.59999999999997]
+["lineTo",379.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20274,7 +20727,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",497.5,10.2]
+["moveTo",497.5,32]
 ["lineTo",497.5,483]
 ["stroke",null]
 ["restore"]
@@ -20285,7 +20738,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",497.5,484]
-["lineTo",497.5,491.59999999999997]
+["lineTo",497.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20314,8 +20767,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,388.5]
-["lineTo",497.322265625,388.5]
+["moveTo",28,393.5]
+["lineTo",497.322265625,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20324,8 +20777,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,388.5]
-["lineTo",27,388.5]
+["moveTo",19.34765625,393.5]
+["lineTo",27,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20334,8 +20787,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,294.5]
-["lineTo",497.322265625,294.5]
+["moveTo",28,302.5]
+["lineTo",497.322265625,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20344,8 +20797,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,294.5]
-["lineTo",27,294.5]
+["moveTo",19.34765625,302.5]
+["lineTo",27,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20354,8 +20807,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,199.5]
-["lineTo",497.322265625,199.5]
+["moveTo",28,212.5]
+["lineTo",497.322265625,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20364,8 +20817,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,199.5]
-["lineTo",27,199.5]
+["moveTo",19.34765625,212.5]
+["lineTo",27,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20374,8 +20827,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,104.5]
-["lineTo",497.322265625,104.5]
+["moveTo",28,122.5]
+["lineTo",497.322265625,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20384,8 +20837,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,104.5]
-["lineTo",27,104.5]
+["moveTo",19.34765625,122.5]
+["lineTo",27,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20394,8 +20847,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,10.5]
-["lineTo",497.322265625,10.5]
+["moveTo",28,32.5]
+["lineTo",497.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20404,9 +20857,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,10.5]
-["lineTo",27,10.5]
+["moveTo",19.34765625,32.5]
+["lineTo",27,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -20418,11 +20900,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.34765625,494.59999999999997]
+["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -20431,7 +20913,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",144.84130859375037,494.59999999999997]
+["translate",144.84130859375037,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -20440,7 +20922,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",262.33496093750074,494.59999999999997]
+["translate",262.33496093750074,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -20449,7 +20931,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",379.82861328124966,494.59999999999997]
+["translate",379.82861328124966,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -20458,7 +20940,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",497.322265625,494.59999999999997]
+["translate",497.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -20470,7 +20952,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",27.5,10]
+["moveTo",27.5,32]
 ["lineTo",27.5,484]
 ["stroke",null]
 ["restore"]
@@ -20480,7 +20962,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,483.59999999999997]
+["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20489,7 +20971,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,388.92]
+["translate",16.34765625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20498,7 +20980,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,294.23999999999995]
+["translate",16.34765625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20507,7 +20989,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,199.56]
+["translate",16.34765625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20516,7 +20998,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,104.87999999999998]
+["translate",16.34765625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20525,7 +21007,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,10.2]
+["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20564,12 +21046,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        38.005859375,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[38.005859375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -20580,12 +21057,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
           'ticks': <Object?>[
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            38.005859375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[38.005859375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[502.326171875],
@@ -20641,19 +21113,15 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
               false,
             ],
           ],
-          'box': <Object?>[0.0, 10.2, 38.005859375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 38.005859375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             <String, Object?>{'num': 'NaN'},
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[117.0, 48.5, -20.0],
-          'basePixel': 414.49051094890507,
+          'basePixel': 417.67299270072994,
           'warnings': <Object?>[],
           'start': -20.0,
           'end': 117.0,
@@ -20693,9 +21161,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[38.005859375, 404.1240875912408],
-          <Object?>[502.326171875, 10.2],
-          <Object?>[212.6787388392857, 483.59999999999997],
+          <Object?>[38.005859375, 407.7839416058394],
+          <Object?>[502.326171875, 32.0],
+          <Object?>[212.6787388392857, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -20709,7 +21177,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -20720,7 +21188,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20744,6 +21212,35 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
+["restore"]
+["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
@@ -20753,11 +21250,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -20769,7 +21266,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",38.5,10]
+["moveTo",38.5,32]
 ["lineTo",38.5,484]
 ["stroke",null]
 ["restore"]
@@ -20791,7 +21288,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",38.005859375,404.1240875912408,3,0,6.283185307179586,false]
+["arc",38.005859375,407.7839416058394,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20799,7 +21296,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,10.2,3,0,6.283185307179586,false]
+["arc",502.326171875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20807,7 +21304,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",212.6787388392857,483.59999999999997,3,0,6.283185307179586,false]
+["arc",212.6787388392857,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20841,12 +21338,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        505.6630859375,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 505.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -20860,12 +21352,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[2.0, '2', false],
             <Object?>[3.0, '3', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            505.6630859375,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 505.6630859375, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 6.3369140625, 0.0],
           'tickPixels': <Object?>[
@@ -20930,23 +21417,19 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.3, '0.3', false],
             <Object?>[0.4, '0.4', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            365.24999999999994,
-            246.89999999999998,
-            128.55000000000004,
-            10.2,
+            483.6,
+            370.70000000000005,
+            257.8,
+            144.90000000000006,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[0.4, 0.2, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 0.4,
@@ -20986,8 +21469,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[30.681640625, 483.59999999999997],
-          <Object?>[505.6630859375, 45.70500000000003],
+          <Object?>[30.681640625, 483.6],
+          <Object?>[505.6630859375, 65.87000000000003],
         ],
       ],
       'drawCalls': '''
@@ -21001,7 +21484,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -21012,7 +21495,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21021,7 +21504,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",189.5,10.2]
+["moveTo",189.5,32]
 ["lineTo",189.5,483]
 ["stroke",null]
 ["restore"]
@@ -21032,7 +21515,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",189.5,484]
-["lineTo",189.5,491.59999999999997]
+["lineTo",189.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21041,7 +21524,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",347.5,10.2]
+["moveTo",347.5,32]
 ["lineTo",347.5,483]
 ["stroke",null]
 ["restore"]
@@ -21052,7 +21535,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",347.5,484]
-["lineTo",347.5,491.59999999999997]
+["lineTo",347.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21061,7 +21544,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",505.5,10.2]
+["moveTo",505.5,32]
 ["lineTo",505.5,483]
 ["stroke",null]
 ["restore"]
@@ -21072,7 +21555,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",505.5,484]
-["lineTo",505.5,491.59999999999997]
+["lineTo",505.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21101,8 +21584,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,365.5]
-["lineTo",505.6630859375,365.5]
+["moveTo",31,370.5]
+["lineTo",505.6630859375,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21111,8 +21594,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,365.5]
-["lineTo",30,365.5]
+["moveTo",22.681640625,370.5]
+["lineTo",30,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21121,8 +21604,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,246.5]
-["lineTo",505.6630859375,246.5]
+["moveTo",31,257.5]
+["lineTo",505.6630859375,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21131,8 +21614,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,246.5]
-["lineTo",30,246.5]
+["moveTo",22.681640625,257.5]
+["lineTo",30,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21141,8 +21624,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,128.5]
-["lineTo",505.6630859375,128.5]
+["moveTo",31,144.5]
+["lineTo",505.6630859375,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21151,8 +21634,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,128.5]
-["lineTo",30,128.5]
+["moveTo",22.681640625,144.5]
+["lineTo",30,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21161,8 +21644,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",505.6630859375,10.5]
+["moveTo",31,32.5]
+["lineTo",505.6630859375,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21171,9 +21654,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -21185,11 +21697,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -21198,7 +21710,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",189.0087890625,494.59999999999997]
+["translate",189.0087890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -21207,7 +21719,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",347.3359375,494.59999999999997]
+["translate",347.3359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -21216,7 +21728,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",505.6630859375,494.59999999999997]
+["translate",505.6630859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -21228,7 +21740,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -21238,7 +21750,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21247,7 +21759,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,365.24999999999994]
+["translate",19.681640625,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21256,7 +21768,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,246.89999999999998]
+["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21265,7 +21777,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,128.55000000000004]
+["translate",19.681640625,144.90000000000006]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21274,7 +21786,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21286,7 +21798,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",30.681640625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",30.681640625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -21294,7 +21806,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",505.6630859375,45.70500000000003,3,0,6.283185307179586,false]
+["arc",505.6630859375,65.87000000000003,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -21330,12 +21842,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        37.35546875,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[37.35546875, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -21349,12 +21856,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.67, '0.7', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[
-            37.35546875,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[37.35546875, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -21422,26 +21924,22 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.3, '0.30', false],
             <Object?>[0.33, '0.33', false],
           ],
-          'box': <Object?>[0.0, 10.2, 37.35546875, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 37.35546875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            424.42499999999995,
-            350.45624999999995,
-            276.48749999999995,
-            202.51874999999998,
-            128.54999999999998,
-            54.581250000000054,
-            10.2,
+            483.6,
+            427.15000000000003,
+            356.58750000000003,
+            286.025,
+            215.4625,
+            144.9,
+            74.33750000000006,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[0.33, 0.17, 0.01],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.01,
           'end': 0.33,
@@ -21481,8 +21979,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[37.35546875, 498.39374999999995],
-          <Object?>[1427.2666015625, -48.974999999999994],
+          <Object?>[37.35546875, 497.71250000000003],
+          <Object?>[1427.2666015625, -24.450000000000003],
         ],
       ],
       'drawCalls': '''
@@ -21496,7 +21994,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",37.5,10.2]
+["moveTo",37.5,32]
 ["lineTo",37.5,483]
 ["stroke",null]
 ["restore"]
@@ -21507,7 +22005,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",37.5,484]
-["lineTo",37.5,491.59999999999997]
+["lineTo",37.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21516,7 +22014,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",190.5,10.2]
+["moveTo",190.5,32]
 ["lineTo",190.5,483]
 ["stroke",null]
 ["restore"]
@@ -21527,7 +22025,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",190.5,484]
-["lineTo",190.5,491.59999999999997]
+["lineTo",190.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21536,7 +22034,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",347.5,10.2]
+["moveTo",347.5,32]
 ["lineTo",347.5,483]
 ["stroke",null]
 ["restore"]
@@ -21547,7 +22045,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",347.5,484]
-["lineTo",347.5,491.59999999999997]
+["lineTo",347.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21556,7 +22054,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -21567,7 +22065,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21596,8 +22094,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,424.5]
-["lineTo",500.6591796875,424.5]
+["moveTo",38,427.5]
+["lineTo",500.6591796875,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21606,8 +22104,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,424.5]
-["lineTo",37,424.5]
+["moveTo",29.35546875,427.5]
+["lineTo",37,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21616,8 +22114,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,350.5]
-["lineTo",500.6591796875,350.5]
+["moveTo",38,356.5]
+["lineTo",500.6591796875,356.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21626,8 +22124,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,350.5]
-["lineTo",37,350.5]
+["moveTo",29.35546875,356.5]
+["lineTo",37,356.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21636,8 +22134,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,276.5]
-["lineTo",500.6591796875,276.5]
+["moveTo",38,286.5]
+["lineTo",500.6591796875,286.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21646,8 +22144,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,276.5]
-["lineTo",37,276.5]
+["moveTo",29.35546875,286.5]
+["lineTo",37,286.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21656,8 +22154,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,202.5]
-["lineTo",500.6591796875,202.5]
+["moveTo",38,215.5]
+["lineTo",500.6591796875,215.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21666,8 +22164,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,202.5]
-["lineTo",37,202.5]
+["moveTo",29.35546875,215.5]
+["lineTo",37,215.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21676,8 +22174,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,128.5]
-["lineTo",500.6591796875,128.5]
+["moveTo",38,144.5]
+["lineTo",500.6591796875,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21686,8 +22184,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,128.5]
-["lineTo",37,128.5]
+["moveTo",29.35546875,144.5]
+["lineTo",37,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21696,8 +22194,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,54.5]
-["lineTo",500.6591796875,54.5]
+["moveTo",38,74.5]
+["lineTo",500.6591796875,74.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21706,8 +22204,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,54.5]
-["lineTo",37,54.5]
+["moveTo",29.35546875,74.5]
+["lineTo",37,74.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21716,8 +22214,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",38,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21726,9 +22224,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,10.5]
-["lineTo",37,10.5]
+["moveTo",29.35546875,32.5]
+["lineTo",37,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -21740,11 +22267,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",37.35546875,494.59999999999997]
+["translate",37.35546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -21753,7 +22280,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",190.245693359375,494.59999999999997]
+["translate",190.245693359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -21762,7 +22289,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",347.76895507812503,494.59999999999997]
+["translate",347.76895507812503,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -21771,7 +22298,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -21783,7 +22310,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",37.5,10]
+["moveTo",37.5,32]
 ["lineTo",37.5,484]
 ["stroke",null]
 ["restore"]
@@ -21793,7 +22320,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,483.59999999999997]
+["translate",26.35546875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21802,7 +22329,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,424.42499999999995]
+["translate",26.35546875,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21811,7 +22338,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,350.45624999999995]
+["translate",26.35546875,356.58750000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21820,7 +22347,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,276.48749999999995]
+["translate",26.35546875,286.025]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21829,7 +22356,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,202.51874999999998]
+["translate",26.35546875,215.4625]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21838,7 +22365,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,128.54999999999998]
+["translate",26.35546875,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21847,7 +22374,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,54.581250000000054]
+["translate",26.35546875,74.33750000000006]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21856,7 +22383,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,10.2]
+["translate",26.35546875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21895,12 +22422,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.021484375,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -21913,12 +22435,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[10.0, '10', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[34.021484375, 268.173828125, 502.326171875],
@@ -21977,26 +22494,22 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[100.0, '100', false],
             <Object?>[120.0, '120', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            415.9714285714286,
-            348.3428571428571,
-            280.71428571428567,
-            213.0857142857143,
-            145.45714285714283,
-            77.82857142857145,
-            10.2,
+            483.6,
+            419.08571428571435,
+            354.5714285714286,
+            290.0571428571429,
+            225.54285714285717,
+            161.02857142857144,
+            96.51428571428573,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[120.0, 50.0, -20.0],
-          'basePixel': 415.9714285714286,
+          'basePixel': 419.08571428571435,
           'warnings': <Object?>[],
           'start': -20.0,
           'end': 120.0,
@@ -22036,9 +22549,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[92.5595703125, 405.82714285714286],
-          <Object?>[502.326171875, 20.344285714285732],
-          <Object?>[246.70986328125, 483.59999999999997],
+          <Object?>[92.5595703125, 409.40857142857146],
+          <Object?>[502.326171875, 41.677142857142876],
+          <Object?>[246.70986328125, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -22052,7 +22565,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -22063,7 +22576,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22072,7 +22585,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",268.5,10.2]
+["moveTo",268.5,32]
 ["lineTo",268.5,483]
 ["stroke",null]
 ["restore"]
@@ -22083,7 +22596,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",268.5,484]
-["lineTo",268.5,491.59999999999997]
+["lineTo",268.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22092,7 +22605,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -22103,7 +22616,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22132,8 +22645,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,415.5]
-["lineTo",502.326171875,415.5]
+["moveTo",35,419.5]
+["lineTo",502.326171875,419.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22142,8 +22655,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,415.5]
-["lineTo",34,415.5]
+["moveTo",26.021484375,419.5]
+["lineTo",34,419.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22152,8 +22665,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,348.5]
-["lineTo",502.326171875,348.5]
+["moveTo",35,354.5]
+["lineTo",502.326171875,354.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22162,8 +22675,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,348.5]
-["lineTo",34,348.5]
+["moveTo",26.021484375,354.5]
+["lineTo",34,354.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22172,8 +22685,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,280.5]
-["lineTo",502.326171875,280.5]
+["moveTo",35,290.5]
+["lineTo",502.326171875,290.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22182,8 +22695,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,280.5]
-["lineTo",34,280.5]
+["moveTo",26.021484375,290.5]
+["lineTo",34,290.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22192,8 +22705,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,213.5]
-["lineTo",502.326171875,213.5]
+["moveTo",35,225.5]
+["lineTo",502.326171875,225.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22202,8 +22715,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,213.5]
-["lineTo",34,213.5]
+["moveTo",26.021484375,225.5]
+["lineTo",34,225.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22212,8 +22725,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,145.5]
-["lineTo",502.326171875,145.5]
+["moveTo",35,161.5]
+["lineTo",502.326171875,161.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22222,8 +22735,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,145.5]
-["lineTo",34,145.5]
+["moveTo",26.021484375,161.5]
+["lineTo",34,161.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22232,8 +22745,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,77.5]
-["lineTo",502.326171875,77.5]
+["moveTo",35,96.5]
+["lineTo",502.326171875,96.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22242,8 +22755,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,77.5]
-["lineTo",34,77.5]
+["moveTo",26.021484375,96.5]
+["lineTo",34,96.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22252,8 +22765,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",35,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22262,9 +22775,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,10.5]
-["lineTo",34,10.5]
+["moveTo",26.021484375,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -22276,11 +22818,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.021484375,494.59999999999997]
+["translate",34.021484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -22289,7 +22831,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",268.173828125,494.59999999999997]
+["translate",268.173828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -22298,7 +22840,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -22310,7 +22852,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -22320,7 +22862,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,483.59999999999997]
+["translate",23.021484375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22329,7 +22871,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,415.9714285714286]
+["translate",23.021484375,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22338,7 +22880,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,348.3428571428571]
+["translate",23.021484375,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22347,7 +22889,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,280.71428571428567]
+["translate",23.021484375,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22356,7 +22898,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,213.0857142857143]
+["translate",23.021484375,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22365,7 +22907,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,145.45714285714283]
+["translate",23.021484375,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22374,7 +22916,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,77.82857142857145]
+["translate",23.021484375,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22383,7 +22925,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,10.2]
+["translate",23.021484375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22395,7 +22937,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",92.5595703125,405.82714285714286,3,0,6.283185307179586,false]
+["arc",92.5595703125,409.40857142857146,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -22403,7 +22945,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,20.344285714285732,3,0,6.283185307179586,false]
+["arc",502.326171875,41.677142857142876,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -22411,7 +22953,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",246.70986328125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",246.70986328125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -22445,12 +22987,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -22464,22 +23001,13 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.7, '0.7', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
-          'tickPixels': <Object?>[
-            483.59999999999997,
-            341.5799999999999,
-            152.22,
-            10.2,
-          ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'tickPixels': <Object?>[483.6, 348.12, 167.48000000000002, 32.0],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[1.0, 0.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 1.0,
@@ -22535,12 +23063,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -22602,9 +23125,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[-5844.03759765625, -936.5999999999999],
+          <Object?>[-5844.03759765625, -871.2],
           <Object?>[18829.783203125, -32768.0],
-          <Object?>[3438.018798828125, 9951.6],
+          <Object?>[3438.018798828125, 9515.6],
         ],
       ],
       'drawCalls': '''
@@ -22638,8 +23161,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,341.5]
-["lineTo",500.6591796875,341.5]
+["moveTo",31,348.5]
+["lineTo",500.6591796875,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22648,8 +23171,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,341.5]
-["lineTo",30,341.5]
+["moveTo",22.681640625,348.5]
+["lineTo",30,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22658,8 +23181,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,152.5]
-["lineTo",500.6591796875,152.5]
+["moveTo",31,167.5]
+["lineTo",500.6591796875,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22668,8 +23191,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,152.5]
-["lineTo",30,152.5]
+["moveTo",22.681640625,167.5]
+["lineTo",30,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22678,8 +23201,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",31,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22688,8 +23211,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22698,7 +23221,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -22709,7 +23232,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22718,7 +23241,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",77.5,10.2]
+["moveTo",77.5,32]
 ["lineTo",77.5,483]
 ["stroke",null]
 ["restore"]
@@ -22729,7 +23252,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",77.5,484]
-["lineTo",77.5,491.59999999999997]
+["lineTo",77.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22738,7 +23261,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",124.5,10.2]
+["moveTo",124.5,32]
 ["lineTo",124.5,483]
 ["stroke",null]
 ["restore"]
@@ -22749,7 +23272,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",124.5,484]
-["lineTo",124.5,491.59999999999997]
+["lineTo",124.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22758,7 +23281,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",171.5,10.2]
+["moveTo",171.5,32]
 ["lineTo",171.5,483]
 ["stroke",null]
 ["restore"]
@@ -22769,7 +23292,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",171.5,484]
-["lineTo",171.5,491.59999999999997]
+["lineTo",171.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22778,7 +23301,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",218.5,10.2]
+["moveTo",218.5,32]
 ["lineTo",218.5,483]
 ["stroke",null]
 ["restore"]
@@ -22789,7 +23312,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",218.5,484]
-["lineTo",218.5,491.59999999999997]
+["lineTo",218.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22798,7 +23321,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",265.5,10.2]
+["moveTo",265.5,32]
 ["lineTo",265.5,483]
 ["stroke",null]
 ["restore"]
@@ -22809,7 +23332,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",265.5,484]
-["lineTo",265.5,491.59999999999997]
+["lineTo",265.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22818,7 +23341,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",312.5,10.2]
+["moveTo",312.5,32]
 ["lineTo",312.5,483]
 ["stroke",null]
 ["restore"]
@@ -22829,7 +23352,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",312.5,484]
-["lineTo",312.5,491.59999999999997]
+["lineTo",312.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22838,7 +23361,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",359.5,10.2]
+["moveTo",359.5,32]
 ["lineTo",359.5,483]
 ["stroke",null]
 ["restore"]
@@ -22849,7 +23372,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",359.5,484]
-["lineTo",359.5,491.59999999999997]
+["lineTo",359.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22858,7 +23381,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",406.5,10.2]
+["moveTo",406.5,32]
 ["lineTo",406.5,483]
 ["stroke",null]
 ["restore"]
@@ -22869,7 +23392,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",406.5,484]
-["lineTo",406.5,491.59999999999997]
+["lineTo",406.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22878,7 +23401,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",453.5,10.2]
+["moveTo",453.5,32]
 ["lineTo",453.5,483]
 ["stroke",null]
 ["restore"]
@@ -22889,7 +23412,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",453.5,484]
-["lineTo",453.5,491.59999999999997]
+["lineTo",453.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22898,7 +23421,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -22909,14 +23432,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -22926,7 +23478,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22935,7 +23487,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,341.5799999999999]
+["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22944,7 +23496,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,152.22]
+["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22953,7 +23505,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22971,11 +23523,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -22984,7 +23536,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",77.67939453125001,494.59999999999997]
+["translate",77.67939453125001,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -22993,7 +23545,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",124.67714843750001,494.59999999999997]
+["translate",124.67714843750001,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23002,7 +23554,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",171.67490234375,494.59999999999997]
+["translate",171.67490234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23011,7 +23563,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",218.67265625000002,494.59999999999997]
+["translate",218.67265625000002,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23020,7 +23572,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",265.67041015625,494.59999999999997]
+["translate",265.67041015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23029,7 +23581,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",312.6681640625,494.59999999999997]
+["translate",312.6681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23038,7 +23590,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",359.66591796874997,494.59999999999997]
+["translate",359.66591796874997,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23047,7 +23599,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",406.66367187500003,494.59999999999997]
+["translate",406.66367187500003,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23056,7 +23608,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",453.66142578125,494.59999999999997]
+["translate",453.66142578125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23065,7 +23617,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23104,12 +23656,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        38.017578125,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[38.017578125, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -23126,12 +23673,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[30.0, '30', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            38.017578125,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[38.017578125, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -23194,17 +23736,18 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[100.0, '100', false],
             <Object?>[200.0, '200', false],
           ],
-          'box': <Object?>[0.0, 10.2, 38.017578125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 38.017578125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
-          'tickPixels': <Object?>[483.59999999999997, 325.8, 168.0, 10.2],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
+          'tickPixels': <Object?>[
+            483.6,
+            333.0666666666667,
+            182.53333333333336,
+            32.0,
           ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[200.0, 50.0, -100.0],
-          'basePixel': 325.8,
+          'basePixel': 333.0666666666667,
           'warnings': <Object?>[],
           'start': -100.0,
           'end': 200.0,
@@ -23244,9 +23787,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[96.05615234375, 321.06600000000003],
-          <Object?>[502.326171875, 141.17399999999995],
-          <Object?>[248.891064453125, 357.36],
+          <Object?>[96.05615234375, 328.5506666666667],
+          <Object?>[502.326171875, 156.94266666666664],
+          <Object?>[248.891064453125, 363.1733333333334],
         ],
       ],
       'drawCalls': '''
@@ -23260,7 +23803,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38.5,10.2]
+["moveTo",38.5,32]
 ["lineTo",38.5,483]
 ["stroke",null]
 ["restore"]
@@ -23271,7 +23814,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",38.5,484]
-["lineTo",38.5,491.59999999999997]
+["lineTo",38.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23300,8 +23843,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,325.5]
-["lineTo",502.326171875,325.5]
+["moveTo",39,333.5]
+["lineTo",502.326171875,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23310,8 +23853,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.017578125,325.5]
-["lineTo",38,325.5]
+["moveTo",30.017578125,333.5]
+["lineTo",38,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23320,8 +23863,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,168.5]
-["lineTo",502.326171875,168.5]
+["moveTo",39,182.5]
+["lineTo",502.326171875,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23330,8 +23873,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.017578125,168.5]
-["lineTo",38,168.5]
+["moveTo",30.017578125,182.5]
+["lineTo",38,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23340,8 +23883,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",39,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",39,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23350,9 +23893,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",30.017578125,10.5]
-["lineTo",38,10.5]
+["moveTo",30.017578125,32.5]
+["lineTo",38,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -23364,11 +23936,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",38.017578125,494.59999999999997]
+["translate",38.017578125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23377,7 +23949,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",115.40234375,494.59999999999997]
+["translate",115.40234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23386,7 +23958,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",192.787109375,494.59999999999997]
+["translate",192.787109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23395,7 +23967,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",270.171875,494.59999999999997]
+["translate",270.171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23404,7 +23976,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",347.556640625,494.59999999999997]
+["translate",347.556640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23413,7 +23985,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.94140625,494.59999999999997]
+["translate",424.94140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23422,7 +23994,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23434,7 +24006,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",38.5,10]
+["moveTo",38.5,32]
 ["lineTo",38.5,484]
 ["stroke",null]
 ["restore"]
@@ -23444,7 +24016,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,483.59999999999997]
+["translate",27.017578125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23453,7 +24025,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,325.8]
+["translate",27.017578125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23462,7 +24034,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,168]
+["translate",27.017578125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23471,7 +24043,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.017578125,10.2]
+["translate",27.017578125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23483,7 +24055,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",96.05615234375,321.06600000000003,3,0,6.283185307179586,false]
+["arc",96.05615234375,328.5506666666667,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23491,7 +24063,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,141.17399999999995,3,0,6.283185307179586,false]
+["arc",502.326171875,156.94266666666664,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23499,7 +24071,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",248.891064453125,357.36,3,0,6.283185307179586,false]
+["arc",248.891064453125,363.1733333333334,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23534,12 +24106,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.021484375,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.021484375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -23553,12 +24120,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[20.0, '20', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -23619,23 +24181,19 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[100.0, '100', false],
             <Object?>[150.0, '150', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            365.24999999999994,
-            246.89999999999998,
-            128.54999999999998,
-            10.2,
+            483.6,
+            370.70000000000005,
+            257.8,
+            144.9,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[150.0, 50.0, -50.0],
-          'basePixel': 365.24999999999994,
+          'basePixel': 370.70000000000005,
           'warnings': <Object?>[],
           'start': -50.0,
           'end': 150.0,
@@ -23675,9 +24233,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[92.5595703125, 358.14899999999994],
-          <Object?>[502.326171875, 88.31100000000002],
-          <Object?>[246.70986328125, 412.59],
+          <Object?>[92.5595703125, 363.926],
+          <Object?>[502.326171875, 106.51400000000002],
+          <Object?>[246.70986328125, 415.86],
         ],
       ],
       'drawCalls': '''
@@ -23691,7 +24249,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -23702,7 +24260,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23711,7 +24269,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",190.5,10.2]
+["moveTo",190.5,32]
 ["lineTo",190.5,483]
 ["stroke",null]
 ["restore"]
@@ -23722,7 +24280,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",190.5,484]
-["lineTo",190.5,491.59999999999997]
+["lineTo",190.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23731,7 +24289,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",346.5,10.2]
+["moveTo",346.5,32]
 ["lineTo",346.5,483]
 ["stroke",null]
 ["restore"]
@@ -23742,7 +24300,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",346.5,484]
-["lineTo",346.5,491.59999999999997]
+["lineTo",346.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23751,7 +24309,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -23762,7 +24320,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23791,8 +24349,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,365.5]
-["lineTo",502.326171875,365.5]
+["moveTo",35,370.5]
+["lineTo",502.326171875,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23801,8 +24359,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,365.5]
-["lineTo",34,365.5]
+["moveTo",26.021484375,370.5]
+["lineTo",34,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23811,8 +24369,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,246.5]
-["lineTo",502.326171875,246.5]
+["moveTo",35,257.5]
+["lineTo",502.326171875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23821,8 +24379,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,246.5]
-["lineTo",34,246.5]
+["moveTo",26.021484375,257.5]
+["lineTo",34,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23831,8 +24389,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,128.5]
-["lineTo",502.326171875,128.5]
+["moveTo",35,144.5]
+["lineTo",502.326171875,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23841,8 +24399,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,128.5]
-["lineTo",34,128.5]
+["moveTo",26.021484375,144.5]
+["lineTo",34,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23851,8 +24409,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",35,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23861,9 +24419,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,10.5]
-["lineTo",34,10.5]
+["moveTo",26.021484375,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -23875,11 +24462,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.021484375,494.59999999999997]
+["translate",34.021484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23888,7 +24475,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",190.123046875,494.59999999999997]
+["translate",190.123046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23897,7 +24484,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",346.224609375,494.59999999999997]
+["translate",346.224609375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23906,7 +24493,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23918,7 +24505,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -23928,7 +24515,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,483.59999999999997]
+["translate",23.021484375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23937,7 +24524,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,365.24999999999994]
+["translate",23.021484375,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23946,7 +24533,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,246.89999999999998]
+["translate",23.021484375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23955,7 +24542,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,128.54999999999998]
+["translate",23.021484375,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23964,7 +24551,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,10.2]
+["translate",23.021484375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23976,7 +24563,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",92.5595703125,358.14899999999994,3,0,6.283185307179586,false]
+["arc",92.5595703125,363.926,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23984,7 +24571,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,88.31100000000002,3,0,6.283185307179586,false]
+["arc",502.326171875,106.51400000000002,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23992,7 +24579,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",246.70986328125,412.59,3,0,6.283185307179586,false]
+["arc",246.70986328125,415.86,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -24023,12 +24610,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        41.3515625,
-        10.2,
-        497.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[41.3515625, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -24044,12 +24626,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[30.0, '30', false],
             <Object?>[39.9, '39.9', false],
           ],
-          'box': <Object?>[
-            41.3515625,
-            483.59999999999997,
-            497.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[41.3515625, 483.6, 497.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.2265625, 0.0, 14.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -24114,25 +24691,21 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[80.0, '80', false],
             <Object?>[99.5, '99.5', false],
           ],
-          'box': <Object?>[0.0, 10.2, 41.3515625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 41.3515625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            406.0260504201681,
-            326.463025210084,
-            246.89999999999998,
-            167.33697478991596,
-            87.77394957983192,
-            10.2,
+            483.6,
+            409.59831932773113,
+            333.6991596638656,
+            257.8,
+            181.90084033613448,
+            106.0016806722689,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[99.5, 40.0, -19.5],
-          'basePixel': 406.0260504201681,
+          'basePixel': 409.59831932773113,
           'warnings': <Object?>[],
           'start': -19.5,
           'end': 99.5,
@@ -24172,9 +24745,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[27.914311916748524, 394.09159663865546],
-          <Object?>[498.2180823305501, -59.41764705882349],
-          <Object?>[204.83811126289294, 485.58907563025207],
+          <Object?>[27.914311916748524, 398.2134453781513],
+          <Object?>[498.2180823305501, -34.41176470588232],
+          <Object?>[204.83811126289294, 485.49747899159667],
         ],
       ],
       'drawCalls': '''
@@ -24188,7 +24761,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",41.5,10.2]
+["moveTo",41.5,32]
 ["lineTo",41.5,483]
 ["stroke",null]
 ["restore"]
@@ -24199,7 +24772,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",41.5,484]
-["lineTo",41.5,491.59999999999997]
+["lineTo",41.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24208,7 +24781,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",139.5,10.2]
+["moveTo",139.5,32]
 ["lineTo",139.5,483]
 ["stroke",null]
 ["restore"]
@@ -24219,7 +24792,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",139.5,484]
-["lineTo",139.5,491.59999999999997]
+["lineTo",139.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24228,7 +24801,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",229.5,10.2]
+["moveTo",229.5,32]
 ["lineTo",229.5,483]
 ["stroke",null]
 ["restore"]
@@ -24239,7 +24812,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",229.5,484]
-["lineTo",229.5,491.59999999999997]
+["lineTo",229.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24248,7 +24821,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",319.5,10.2]
+["moveTo",319.5,32]
 ["lineTo",319.5,483]
 ["stroke",null]
 ["restore"]
@@ -24259,7 +24832,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",319.5,484]
-["lineTo",319.5,491.59999999999997]
+["lineTo",319.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24268,7 +24841,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",408.5,10.2]
+["moveTo",408.5,32]
 ["lineTo",408.5,483]
 ["stroke",null]
 ["restore"]
@@ -24279,7 +24852,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",408.5,484]
-["lineTo",408.5,491.59999999999997]
+["lineTo",408.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24288,7 +24861,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",497.5,10.2]
+["moveTo",497.5,32]
 ["lineTo",497.5,483]
 ["stroke",null]
 ["restore"]
@@ -24299,7 +24872,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",497.5,484]
-["lineTo",497.5,491.59999999999997]
+["lineTo",497.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24328,8 +24901,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",42,406.5]
-["lineTo",497.322265625,406.5]
+["moveTo",42,409.5]
+["lineTo",497.322265625,409.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24338,8 +24911,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",33.3515625,406.5]
-["lineTo",41,406.5]
+["moveTo",33.3515625,409.5]
+["lineTo",41,409.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24348,8 +24921,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",42,326.5]
-["lineTo",497.322265625,326.5]
+["moveTo",42,333.5]
+["lineTo",497.322265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24358,8 +24931,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",33.3515625,326.5]
-["lineTo",41,326.5]
+["moveTo",33.3515625,333.5]
+["lineTo",41,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24368,8 +24941,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",42,246.5]
-["lineTo",497.322265625,246.5]
+["moveTo",42,257.5]
+["lineTo",497.322265625,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24378,8 +24951,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",33.3515625,246.5]
-["lineTo",41,246.5]
+["moveTo",33.3515625,257.5]
+["lineTo",41,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24388,8 +24961,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",42,167.5]
-["lineTo",497.322265625,167.5]
+["moveTo",42,181.5]
+["lineTo",497.322265625,181.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24398,8 +24971,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",33.3515625,167.5]
-["lineTo",41,167.5]
+["moveTo",33.3515625,181.5]
+["lineTo",41,181.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24408,8 +24981,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",42,87.5]
-["lineTo",497.322265625,87.5]
+["moveTo",42,106.5]
+["lineTo",497.322265625,106.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24418,8 +24991,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",33.3515625,87.5]
-["lineTo",41,87.5]
+["moveTo",33.3515625,106.5]
+["lineTo",41,106.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24428,8 +25001,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",42,10.5]
-["lineTo",497.322265625,10.5]
+["moveTo",42,32.5]
+["lineTo",497.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24438,9 +25011,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",33.3515625,10.5]
-["lineTo",41,10.5]
+["moveTo",33.3515625,32.5]
+["lineTo",41,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -24452,11 +25054,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",41.3515625,494.59999999999997]
+["translate",41.3515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24465,7 +25067,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",139.8914001105108,494.59999999999997]
+["translate",139.8914001105108,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24474,7 +25076,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",229.47307066552062,494.59999999999997]
+["translate",229.47307066552062,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24483,7 +25085,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",319.05474122053045,494.59999999999997]
+["translate",319.05474122053045,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24492,7 +25094,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",408.6364117755403,494.59999999999997]
+["translate",408.6364117755403,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24501,7 +25103,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",497.322265625,494.59999999999997]
+["translate",497.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24513,7 +25115,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",41.5,10]
+["moveTo",41.5,32]
 ["lineTo",41.5,484]
 ["stroke",null]
 ["restore"]
@@ -24523,7 +25125,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.3515625,483.59999999999997]
+["translate",30.3515625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24532,7 +25134,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.3515625,406.0260504201681]
+["translate",30.3515625,409.59831932773113]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24541,7 +25143,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.3515625,326.463025210084]
+["translate",30.3515625,333.6991596638656]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24550,7 +25152,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.3515625,246.89999999999998]
+["translate",30.3515625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24559,7 +25161,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.3515625,167.33697478991596]
+["translate",30.3515625,181.90084033613448]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24568,7 +25170,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.3515625,87.77394957983192]
+["translate",30.3515625,106.0016806722689]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24577,7 +25179,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.3515625,10.2]
+["translate",30.3515625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24589,7 +25191,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",204.83811126289294,485.58907563025207,3,0,6.283185307179586,false]
+["arc",204.83811126289294,485.49747899159667,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -24628,7 +25230,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[27.34765625, 10.2, 512.0, 483.59999999999997],
+      'chartArea': <Object?>[27.34765625, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -24643,12 +25245,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[20.0, '20', false],
             <Object?>[30.0, '30', false],
           ],
-          'box': <Object?>[
-            27.34765625,
-            483.59999999999997,
-            512.0,
-            511.99999999999994,
-          ],
+          'box': <Object?>[27.34765625, 483.6, 512.0, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[2.193308491983969, 0.0, 0.0, 0.0],
           'tickPixels': <Object?>[
@@ -24714,27 +25311,23 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[80.0, '80', false],
             <Object?>[90.0, '90', false],
           ],
-          'box': <Object?>[0.0, 10.2, 27.34765625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 27.34765625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            448.34680851063825,
-            397.9851063829787,
-            347.6234042553191,
-            297.2617021276596,
-            246.89999999999998,
-            196.5382978723404,
-            146.17659574468084,
-            95.81489361702127,
-            45.45319148936173,
+            449.97021276595746,
+            401.9276595744681,
+            353.88510638297873,
+            305.8425531914894,
+            257.8,
+            209.75744680851062,
+            161.7148936170213,
+            113.67234042553191,
+            65.62978723404258,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[97.0, 50.0, 3.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 3.0,
           'end': 97.0,
@@ -24774,9 +25367,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[13.065170677799607, 483.59999999999997],
-          <Object?>[512.9521657048133, -90.52340425531918],
-          <Object?>[201.11789737843813, 599.4319148936171],
+          <Object?>[13.065170677799607, 483.6],
+          <Object?>[512.9521657048133, -64.08510638297876],
+          <Object?>[201.11789737843813, 594.0978723404256],
         ],
       ],
       'drawCalls': '''
@@ -24790,7 +25383,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",36.5,10.2]
+["moveTo",36.5,32]
 ["lineTo",36.5,483]
 ["stroke",null]
 ["restore"]
@@ -24801,7 +25394,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",36.5,484]
-["lineTo",36.5,491.59999999999997]
+["lineTo",36.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24810,7 +25403,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",132.5,10.2]
+["moveTo",132.5,32]
 ["lineTo",132.5,483]
 ["stroke",null]
 ["restore"]
@@ -24821,7 +25414,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",132.5,484]
-["lineTo",132.5,491.59999999999997]
+["lineTo",132.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24830,7 +25423,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",227.5,10.2]
+["moveTo",227.5,32]
 ["lineTo",227.5,483]
 ["stroke",null]
 ["restore"]
@@ -24841,7 +25434,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",227.5,484]
-["lineTo",227.5,491.59999999999997]
+["lineTo",227.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24850,7 +25443,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",322.5,10.2]
+["moveTo",322.5,32]
 ["lineTo",322.5,483]
 ["stroke",null]
 ["restore"]
@@ -24861,7 +25454,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",322.5,484]
-["lineTo",322.5,491.59999999999997]
+["lineTo",322.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24870,7 +25463,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",417.5,10.2]
+["moveTo",417.5,32]
 ["lineTo",417.5,483]
 ["stroke",null]
 ["restore"]
@@ -24881,7 +25474,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",417.5,484]
-["lineTo",417.5,491.59999999999997]
+["lineTo",417.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24890,8 +25483,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,448.5]
-["lineTo",512,448.5]
+["moveTo",28,449.5]
+["lineTo",512,449.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24900,8 +25493,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,448.5]
-["lineTo",27,448.5]
+["moveTo",19.34765625,449.5]
+["lineTo",27,449.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24910,8 +25503,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,397.5]
-["lineTo",512,397.5]
+["moveTo",28,401.5]
+["lineTo",512,401.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24920,8 +25513,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,397.5]
-["lineTo",27,397.5]
+["moveTo",19.34765625,401.5]
+["lineTo",27,401.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24930,8 +25523,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,347.5]
-["lineTo",512,347.5]
+["moveTo",28,353.5]
+["lineTo",512,353.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24940,8 +25533,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,347.5]
-["lineTo",27,347.5]
+["moveTo",19.34765625,353.5]
+["lineTo",27,353.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24950,8 +25543,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,297.5]
-["lineTo",512,297.5]
+["moveTo",28,305.5]
+["lineTo",512,305.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24960,8 +25553,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,297.5]
-["lineTo",27,297.5]
+["moveTo",19.34765625,305.5]
+["lineTo",27,305.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24970,8 +25563,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,246.5]
-["lineTo",512,246.5]
+["moveTo",28,257.5]
+["lineTo",512,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24980,8 +25573,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,246.5]
-["lineTo",27,246.5]
+["moveTo",19.34765625,257.5]
+["lineTo",27,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24990,8 +25583,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,196.5]
-["lineTo",512,196.5]
+["moveTo",28,209.5]
+["lineTo",512,209.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25000,8 +25593,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,196.5]
-["lineTo",27,196.5]
+["moveTo",19.34765625,209.5]
+["lineTo",27,209.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25010,8 +25603,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,146.5]
-["lineTo",512,146.5]
+["moveTo",28,161.5]
+["lineTo",512,161.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25020,8 +25613,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,146.5]
-["lineTo",27,146.5]
+["moveTo",19.34765625,161.5]
+["lineTo",27,161.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25030,8 +25623,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,95.5]
-["lineTo",512,95.5]
+["moveTo",28,113.5]
+["lineTo",512,113.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25040,8 +25633,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,95.5]
-["lineTo",27,95.5]
+["moveTo",19.34765625,113.5]
+["lineTo",27,113.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25050,8 +25643,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,45.5]
-["lineTo",512,45.5]
+["moveTo",28,65.5]
+["lineTo",512,65.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25060,9 +25653,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,45.5]
-["lineTo",27,45.5]
+["moveTo",19.34765625,65.5]
+["lineTo",27,65.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -25074,11 +25696,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",36.86931329813359,494.59999999999997]
+["translate",36.86931329813359,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25087,7 +25709,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",132.08588377946955,494.59999999999997]
+["translate",132.08588377946955,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25096,7 +25718,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",227.30245426080552,494.59999999999997]
+["translate",227.30245426080552,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25105,7 +25727,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",322.5190247421415,494.59999999999997]
+["translate",322.5190247421415,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25114,7 +25736,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",417.73559522347745,494.59999999999997]
+["translate",417.73559522347745,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25126,7 +25748,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",27.5,10]
+["moveTo",27.5,32]
 ["lineTo",27.5,484]
 ["stroke",null]
 ["restore"]
@@ -25136,7 +25758,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,448.34680851063825]
+["translate",16.34765625,449.97021276595746]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25145,7 +25767,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,397.9851063829787]
+["translate",16.34765625,401.9276595744681]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25154,7 +25776,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,347.6234042553191]
+["translate",16.34765625,353.88510638297873]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25163,7 +25785,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,297.2617021276596]
+["translate",16.34765625,305.8425531914894]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25172,7 +25794,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,246.89999999999998]
+["translate",16.34765625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25181,7 +25803,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,196.5382978723404]
+["translate",16.34765625,209.75744680851062]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25190,7 +25812,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,146.17659574468084]
+["translate",16.34765625,161.7148936170213]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25199,7 +25821,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,95.81489361702127]
+["translate",16.34765625,113.67234042553191]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25208,7 +25830,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,45.45319148936173]
+["translate",16.34765625,65.62978723404258]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25243,12 +25865,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        44.029296875,
-        10.2,
-        497.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[44.029296875, 32.0, 497.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -25269,12 +25886,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[45.0, '45', false],
             <Object?>[49.8, '49.8', false],
           ],
-          'box': <Object?>[
-            44.029296875,
-            483.59999999999997,
-            497.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[44.029296875, 483.6, 497.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.3408203125, 0.0, 14.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -25349,26 +25961,22 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[100.0, '100', false],
             <Object?>[120.4, '120.4', false],
           ],
-          'box': <Object?>[0.0, 10.2, 44.029296875, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 44.029296875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            415.0107954545454,
-            347.7664772727273,
-            280.5221590909091,
-            213.27784090909088,
-            146.03352272727273,
-            78.78920454545455,
-            10.2,
+            483.6,
+            418.1693181818182,
+            354.02159090909095,
+            289.87386363636364,
+            225.72613636363636,
+            161.57840909090913,
+            97.43068181818182,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[120.4, 50.00000000000001, -20.4],
-          'basePixel': 415.0107954545454,
+          'basePixel': 418.1693181818182,
           'warnings': <Object?>[],
           'start': -20.4,
           'end': 120.4,
@@ -25408,9 +26016,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[-72.03563665574596, 404.9241477272727],
-          <Object?>[407.7603484122984, 21.6315340909091],
-          <Object?>[108.45904344128024, 482.2551136363636],
+          <Object?>[-72.03563665574596, 408.54715909090913],
+          <Object?>[407.7603484122984, 42.905113636363645],
+          <Object?>[108.45904344128024, 482.3170454545455],
         ],
       ],
       'drawCalls': '''
@@ -25424,7 +26032,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",44.5,10.2]
+["moveTo",44.5,32]
 ["lineTo",44.5,483]
 ["stroke",null]
 ["restore"]
@@ -25435,7 +26043,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",44.5,484]
-["lineTo",44.5,491.59999999999997]
+["lineTo",44.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25444,7 +26052,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",87.5,10.2]
+["moveTo",87.5,32]
 ["lineTo",87.5,483]
 ["stroke",null]
 ["restore"]
@@ -25455,7 +26063,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",87.5,484]
-["lineTo",87.5,491.59999999999997]
+["lineTo",87.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25464,7 +26072,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",133.5,10.2]
+["moveTo",133.5,32]
 ["lineTo",133.5,483]
 ["stroke",null]
 ["restore"]
@@ -25475,7 +26083,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",133.5,484]
-["lineTo",133.5,491.59999999999997]
+["lineTo",133.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25484,7 +26092,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",179.5,10.2]
+["moveTo",179.5,32]
 ["lineTo",179.5,483]
 ["stroke",null]
 ["restore"]
@@ -25495,7 +26103,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",179.5,484]
-["lineTo",179.5,491.59999999999997]
+["lineTo",179.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25504,7 +26112,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",224.5,10.2]
+["moveTo",224.5,32]
 ["lineTo",224.5,483]
 ["stroke",null]
 ["restore"]
@@ -25515,7 +26123,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",224.5,484]
-["lineTo",224.5,491.59999999999997]
+["lineTo",224.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25524,7 +26132,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",270.5,10.2]
+["moveTo",270.5,32]
 ["lineTo",270.5,483]
 ["stroke",null]
 ["restore"]
@@ -25535,7 +26143,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",270.5,484]
-["lineTo",270.5,491.59999999999997]
+["lineTo",270.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25544,7 +26152,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",316.5,10.2]
+["moveTo",316.5,32]
 ["lineTo",316.5,483]
 ["stroke",null]
 ["restore"]
@@ -25555,7 +26163,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",316.5,484]
-["lineTo",316.5,491.59999999999997]
+["lineTo",316.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25564,7 +26172,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",362.5,10.2]
+["moveTo",362.5,32]
 ["lineTo",362.5,483]
 ["stroke",null]
 ["restore"]
@@ -25575,7 +26183,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",362.5,484]
-["lineTo",362.5,491.59999999999997]
+["lineTo",362.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25584,7 +26192,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",407.5,10.2]
+["moveTo",407.5,32]
 ["lineTo",407.5,483]
 ["stroke",null]
 ["restore"]
@@ -25595,7 +26203,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",407.5,484]
-["lineTo",407.5,491.59999999999997]
+["lineTo",407.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25604,7 +26212,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",453.5,10.2]
+["moveTo",453.5,32]
 ["lineTo",453.5,483]
 ["stroke",null]
 ["restore"]
@@ -25615,7 +26223,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",453.5,484]
-["lineTo",453.5,491.59999999999997]
+["lineTo",453.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25624,7 +26232,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",497.5,10.2]
+["moveTo",497.5,32]
 ["lineTo",497.5,483]
 ["stroke",null]
 ["restore"]
@@ -25635,7 +26243,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",497.5,484]
-["lineTo",497.5,491.59999999999997]
+["lineTo",497.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25664,8 +26272,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,415.5]
-["lineTo",497.322265625,415.5]
+["moveTo",45,418.5]
+["lineTo",497.322265625,418.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25674,8 +26282,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.029296875,415.5]
-["lineTo",44,415.5]
+["moveTo",36.029296875,418.5]
+["lineTo",44,418.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25684,8 +26292,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,347.5]
-["lineTo",497.322265625,347.5]
+["moveTo",45,354.5]
+["lineTo",497.322265625,354.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25694,8 +26302,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.029296875,347.5]
-["lineTo",44,347.5]
+["moveTo",36.029296875,354.5]
+["lineTo",44,354.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25704,8 +26312,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,280.5]
-["lineTo",497.322265625,280.5]
+["moveTo",45,289.5]
+["lineTo",497.322265625,289.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25714,8 +26322,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.029296875,280.5]
-["lineTo",44,280.5]
+["moveTo",36.029296875,289.5]
+["lineTo",44,289.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25724,8 +26332,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,213.5]
-["lineTo",497.322265625,213.5]
+["moveTo",45,225.5]
+["lineTo",497.322265625,225.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25734,8 +26342,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.029296875,213.5]
-["lineTo",44,213.5]
+["moveTo",36.029296875,225.5]
+["lineTo",44,225.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25744,8 +26352,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,146.5]
-["lineTo",497.322265625,146.5]
+["moveTo",45,161.5]
+["lineTo",497.322265625,161.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25754,8 +26362,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.029296875,146.5]
-["lineTo",44,146.5]
+["moveTo",36.029296875,161.5]
+["lineTo",44,161.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25764,8 +26372,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,78.5]
-["lineTo",497.322265625,78.5]
+["moveTo",45,97.5]
+["lineTo",497.322265625,97.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25774,8 +26382,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.029296875,78.5]
-["lineTo",44,78.5]
+["moveTo",36.029296875,97.5]
+["lineTo",44,97.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25784,8 +26392,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,10.5]
-["lineTo",497.322265625,10.5]
+["moveTo",45,32.5]
+["lineTo",497.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25794,9 +26402,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.029296875,10.5]
-["lineTo",44,10.5]
+["moveTo",36.029296875,32.5]
+["lineTo",44,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -25808,11 +26445,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",44.029296875,494.59999999999997]
+["translate",44.029296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25821,7 +26458,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",87.89635836693549,494.59999999999997]
+["translate",87.89635836693549,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25830,7 +26467,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",133.59121408770164,494.59999999999997]
+["translate",133.59121408770164,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25839,7 +26476,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",179.28606980846777,494.59999999999997]
+["translate",179.28606980846777,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25848,7 +26485,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",224.9809255292339,494.59999999999997]
+["translate",224.9809255292339,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25857,7 +26494,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",270.67578125000006,494.59999999999997]
+["translate",270.67578125000006,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25866,7 +26503,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",316.3706369707662,494.59999999999997]
+["translate",316.3706369707662,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25875,7 +26512,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",362.06549269153226,494.59999999999997]
+["translate",362.06549269153226,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25884,7 +26521,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",407.7603484122984,494.59999999999997]
+["translate",407.7603484122984,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25893,7 +26530,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",453.45520413306457,494.59999999999997]
+["translate",453.45520413306457,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25902,7 +26539,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",497.322265625,494.59999999999997]
+["translate",497.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25914,7 +26551,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",44.5,10]
+["moveTo",44.5,32]
 ["lineTo",44.5,484]
 ["stroke",null]
 ["restore"]
@@ -25924,7 +26561,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.029296875,483.59999999999997]
+["translate",33.029296875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25933,7 +26570,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.029296875,415.0107954545454]
+["translate",33.029296875,418.1693181818182]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25942,7 +26579,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.029296875,347.7664772727273]
+["translate",33.029296875,354.02159090909095]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25951,7 +26588,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.029296875,280.5221590909091]
+["translate",33.029296875,289.87386363636364]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25960,7 +26597,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.029296875,213.27784090909088]
+["translate",33.029296875,225.72613636363636]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25969,7 +26606,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.029296875,146.03352272727273]
+["translate",33.029296875,161.57840909090913]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25978,7 +26615,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.029296875,78.78920454545455]
+["translate",33.029296875,97.43068181818182]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25987,7 +26624,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.029296875,10.2]
+["translate",33.029296875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25999,7 +26636,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",407.7603484122984,21.6315340909091,3,0,6.283185307179586,false]
+["arc",407.7603484122984,42.905113636363645,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -26007,7 +26644,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",108.45904344128024,482.2551136363636,3,0,6.283185307179586,false]
+["arc",108.45904344128024,482.3170454545455,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -26042,12 +26679,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        33.130859375,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[33.130859375, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -26064,12 +26696,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[37.5, '37.5', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            33.130859375,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[33.130859375, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[16.67578125, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -26131,17 +26758,13 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[48.0, '48', false],
             <Object?>[117.0, '117', false],
           ],
-          'box': <Object?>[0.0, 10.2, 33.130859375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 33.130859375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
-          'tickPixels': <Object?>[483.59999999999997, 246.89999999999998, 10.2],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'tickPixels': <Object?>[483.6, 257.8, 32.0],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[117.0, 48.0, -21.0],
-          'basePixel': 411.56086956521733,
+          'basePixel': 414.8782608695652,
           'warnings': <Object?>[],
           'start': -21.0,
           'end': 117.0,
@@ -26181,9 +26804,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[33.130859375, 401.2695652173913],
-          <Object?>[502.326171875, 10.2],
-          <Object?>[209.63766741071427, 480.16956521739127],
+          <Object?>[33.130859375, 405.0608695652174],
+          <Object?>[502.326171875, 32.0],
+          <Object?>[209.63766741071427, 480.32753623188404],
         ],
       ],
       'drawCalls': '''
@@ -26197,7 +26820,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",33.5,10.2]
+["moveTo",33.5,32]
 ["lineTo",33.5,483]
 ["stroke",null]
 ["restore"]
@@ -26208,7 +26831,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",33.5,484]
-["lineTo",33.5,491.59999999999997]
+["lineTo",33.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26217,7 +26840,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",122.5,10.2]
+["moveTo",122.5,32]
 ["lineTo",122.5,483]
 ["stroke",null]
 ["restore"]
@@ -26228,7 +26851,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",122.5,484]
-["lineTo",122.5,491.59999999999997]
+["lineTo",122.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26237,7 +26860,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",211.5,10.2]
+["moveTo",211.5,32]
 ["lineTo",211.5,483]
 ["stroke",null]
 ["restore"]
@@ -26248,7 +26871,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",211.5,484]
-["lineTo",211.5,491.59999999999997]
+["lineTo",211.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26257,7 +26880,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",301.5,10.2]
+["moveTo",301.5,32]
 ["lineTo",301.5,483]
 ["stroke",null]
 ["restore"]
@@ -26268,7 +26891,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",301.5,484]
-["lineTo",301.5,491.59999999999997]
+["lineTo",301.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26277,7 +26900,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",390.5,10.2]
+["moveTo",390.5,32]
 ["lineTo",390.5,483]
 ["stroke",null]
 ["restore"]
@@ -26288,7 +26911,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",390.5,484]
-["lineTo",390.5,491.59999999999997]
+["lineTo",390.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26297,7 +26920,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",479.5,10.2]
+["moveTo",479.5,32]
 ["lineTo",479.5,483]
 ["stroke",null]
 ["restore"]
@@ -26308,7 +26931,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",479.5,484]
-["lineTo",479.5,491.59999999999997]
+["lineTo",479.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26317,7 +26940,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -26328,7 +26951,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26357,8 +26980,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,246.5]
-["lineTo",502.326171875,246.5]
+["moveTo",34,257.5]
+["lineTo",502.326171875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26367,8 +26990,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.130859375,246.5]
-["lineTo",33,246.5]
+["moveTo",25.130859375,257.5]
+["lineTo",33,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26377,8 +27000,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",34,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26387,9 +27010,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.130859375,10.5]
-["lineTo",33,10.5]
+["moveTo",25.130859375,32.5]
+["lineTo",33,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -26401,11 +27053,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.130859375,494.59999999999997]
+["translate",33.130859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26414,7 +27066,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",122.50139508928571,494.59999999999997]
+["translate",122.50139508928571,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26423,7 +27075,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",211.87193080357142,494.59999999999997]
+["translate",211.87193080357142,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26432,7 +27084,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",301.2424665178571,494.59999999999997]
+["translate",301.2424665178571,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26441,7 +27093,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",390.61300223214283,494.59999999999997]
+["translate",390.61300223214283,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26450,7 +27102,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",479.98353794642856,494.59999999999997]
+["translate",479.98353794642856,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26459,7 +27111,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26471,7 +27123,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",33.5,10]
+["moveTo",33.5,32]
 ["lineTo",33.5,484]
 ["stroke",null]
 ["restore"]
@@ -26481,7 +27133,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.130859375,483.59999999999997]
+["translate",22.130859375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26490,7 +27142,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.130859375,246.89999999999998]
+["translate",22.130859375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26499,7 +27151,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.130859375,10.2]
+["translate",22.130859375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26511,7 +27163,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",33.130859375,401.2695652173913,3,0,6.283185307179586,false]
+["arc",33.130859375,405.0608695652174,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -26519,7 +27171,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,10.2,3,0,6.283185307179586,false]
+["arc",502.326171875,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -26527,7 +27179,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",209.63766741071427,480.16956521739127,3,0,6.283185307179586,false]
+["arc",209.63766741071427,480.32753623188404,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -26558,7 +27210,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[34.021484375, 10.2, 512.0, 483.59999999999997],
+      'chartArea': <Object?>[34.021484375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -26575,12 +27227,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[30.0, '30', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            512.0,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 512.0, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 0.0, 0.0, 0.0],
           'tickPixels': <Object?>[
@@ -26651,26 +27298,22 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[100.0, '100', false],
             <Object?>[120.0, '120', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            454.0125,
-            394.8375,
-            335.66249999999997,
-            276.48749999999995,
-            217.31249999999997,
-            158.1375,
-            98.96249999999999,
-            39.787499999999994,
+            455.375,
+            398.925,
+            342.475,
+            286.025,
+            229.57500000000002,
+            173.125,
+            116.67500000000001,
+            60.225,
           ],
-          'valuePixels': <Object?>[
-            454.0125,
-            246.89999999999998,
-            39.787499999999994,
-          ],
+          'valuePixels': <Object?>[455.375, 257.8, 60.225],
           'valueForPixel': <Object?>[130.0, 50.0, -30.0],
-          'basePixel': 394.8375,
+          'basePixel': 398.925,
           'warnings': <Object?>[],
           'start': -20.0,
           'end': 120.0,
@@ -26710,9 +27353,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[119.37479073660714, 385.96124999999995],
-          <Object?>[477.85867745535717, 48.66375000000002],
-          <Object?>[254.23301478794642, 454.0125],
+          <Object?>[119.37479073660714, 390.4575],
+          <Object?>[477.85867745535717, 68.69250000000002],
+          <Object?>[254.23301478794642, 455.375],
         ],
       ],
       'drawCalls': '''
@@ -26726,7 +27369,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",68.5,10.2]
+["moveTo",68.5,32]
 ["lineTo",68.5,483]
 ["stroke",null]
 ["restore"]
@@ -26737,7 +27380,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",68.5,484]
-["lineTo",68.5,491.59999999999997]
+["lineTo",68.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26746,7 +27389,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",136.5,10.2]
+["moveTo",136.5,32]
 ["lineTo",136.5,483]
 ["stroke",null]
 ["restore"]
@@ -26757,7 +27400,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",136.5,484]
-["lineTo",136.5,491.59999999999997]
+["lineTo",136.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26766,7 +27409,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",204.5,10.2]
+["moveTo",204.5,32]
 ["lineTo",204.5,483]
 ["stroke",null]
 ["restore"]
@@ -26777,7 +27420,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",204.5,484]
-["lineTo",204.5,491.59999999999997]
+["lineTo",204.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26786,7 +27429,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",273.5,10.2]
+["moveTo",273.5,32]
 ["lineTo",273.5,483]
 ["stroke",null]
 ["restore"]
@@ -26797,7 +27440,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",273.5,484]
-["lineTo",273.5,491.59999999999997]
+["lineTo",273.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26806,7 +27449,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",341.5,10.2]
+["moveTo",341.5,32]
 ["lineTo",341.5,483]
 ["stroke",null]
 ["restore"]
@@ -26817,7 +27460,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",341.5,484]
-["lineTo",341.5,491.59999999999997]
+["lineTo",341.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26826,7 +27469,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",409.5,10.2]
+["moveTo",409.5,32]
 ["lineTo",409.5,483]
 ["stroke",null]
 ["restore"]
@@ -26837,7 +27480,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",409.5,484]
-["lineTo",409.5,491.59999999999997]
+["lineTo",409.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26846,7 +27489,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",477.5,10.2]
+["moveTo",477.5,32]
 ["lineTo",477.5,483]
 ["stroke",null]
 ["restore"]
@@ -26857,7 +27500,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",477.5,484]
-["lineTo",477.5,491.59999999999997]
+["lineTo",477.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26866,8 +27509,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,454.5]
-["lineTo",512,454.5]
+["moveTo",35,455.5]
+["lineTo",512,455.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26876,8 +27519,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,454.5]
-["lineTo",34,454.5]
+["moveTo",26.021484375,455.5]
+["lineTo",34,455.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26886,8 +27529,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,394.5]
-["lineTo",512,394.5]
+["moveTo",35,398.5]
+["lineTo",512,398.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26896,8 +27539,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,394.5]
-["lineTo",34,394.5]
+["moveTo",26.021484375,398.5]
+["lineTo",34,398.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26906,8 +27549,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,335.5]
-["lineTo",512,335.5]
+["moveTo",35,342.5]
+["lineTo",512,342.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26916,8 +27559,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,335.5]
-["lineTo",34,335.5]
+["moveTo",26.021484375,342.5]
+["lineTo",34,342.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26926,8 +27569,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,276.5]
-["lineTo",512,276.5]
+["moveTo",35,286.5]
+["lineTo",512,286.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26936,8 +27579,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,276.5]
-["lineTo",34,276.5]
+["moveTo",26.021484375,286.5]
+["lineTo",34,286.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26946,8 +27589,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,217.5]
-["lineTo",512,217.5]
+["moveTo",35,229.5]
+["lineTo",512,229.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26956,8 +27599,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,217.5]
-["lineTo",34,217.5]
+["moveTo",26.021484375,229.5]
+["lineTo",34,229.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26966,8 +27609,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,158.5]
-["lineTo",512,158.5]
+["moveTo",35,173.5]
+["lineTo",512,173.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26976,8 +27619,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,158.5]
-["lineTo",34,158.5]
+["moveTo",26.021484375,173.5]
+["lineTo",34,173.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26986,8 +27629,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,98.5]
-["lineTo",512,98.5]
+["moveTo",35,116.5]
+["lineTo",512,116.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26996,8 +27639,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,98.5]
-["lineTo",34,98.5]
+["moveTo",26.021484375,116.5]
+["lineTo",34,116.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27006,8 +27649,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,39.5]
-["lineTo",512,39.5]
+["moveTo",35,60.5]
+["lineTo",512,60.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27016,9 +27659,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,39.5]
-["lineTo",34,39.5]
+["moveTo",26.021484375,60.5]
+["lineTo",34,60.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -27030,11 +27702,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",68.16280691964286,494.59999999999997]
+["translate",68.16280691964286,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27043,7 +27715,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",136.44545200892856,494.59999999999997]
+["translate",136.44545200892856,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27052,7 +27724,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",204.72809709821428,494.59999999999997]
+["translate",204.72809709821428,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27061,7 +27733,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",273.0107421875,494.59999999999997]
+["translate",273.0107421875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27070,7 +27742,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",341.2933872767857,494.59999999999997]
+["translate",341.2933872767857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27079,7 +27751,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",409.57603236607144,494.59999999999997]
+["translate",409.57603236607144,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27088,7 +27760,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",477.85867745535717,494.59999999999997]
+["translate",477.85867745535717,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27100,7 +27772,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -27110,7 +27782,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,454.0125]
+["translate",23.021484375,455.375]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -27119,7 +27791,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,394.8375]
+["translate",23.021484375,398.925]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -27128,7 +27800,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,335.66249999999997]
+["translate",23.021484375,342.475]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -27137,7 +27809,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,276.48749999999995]
+["translate",23.021484375,286.025]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -27146,7 +27818,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,217.31249999999997]
+["translate",23.021484375,229.57500000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -27155,7 +27827,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,158.1375]
+["translate",23.021484375,173.125]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -27164,7 +27836,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,98.96249999999999]
+["translate",23.021484375,116.67500000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -27173,7 +27845,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,39.787499999999994]
+["translate",23.021484375,60.225]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -27185,7 +27857,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",119.37479073660714,385.96124999999995,3,0,6.283185307179586,false]
+["arc",119.37479073660714,390.4575,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27193,7 +27865,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",477.85867745535717,48.66375000000002,3,0,6.283185307179586,false]
+["arc",477.85867745535717,68.69250000000002,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27201,7 +27873,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",254.23301478794642,454.0125,3,0,6.283185307179586,false]
+["arc",254.23301478794642,455.375,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27239,12 +27911,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -27255,17 +27922,13 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
           'ticks': <Object?>[
             <Object?>[3.5, '4', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
-          'tickPixels': <Object?>[246.89999999999998],
-          'valuePixels': <Object?>[
-            365.24999999999994,
-            246.89999999999998,
-            128.54999999999998,
-          ],
+          'tickPixels': <Object?>[257.8],
+          'valuePixels': <Object?>[370.70000000000005, 257.8, 144.9],
           'valueForPixel': <Object?>[4.3, 3.5, 2.7],
-          'basePixel': 365.24999999999994,
+          'basePixel': 370.70000000000005,
           'warnings': <Object?>[],
           'start': 3.1,
           'end': 3.9,
@@ -27321,12 +27984,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -27388,9 +28046,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[-5979.14306640625, 394.83750000000003],
-          <Object?>[19220.087890625, -32768.0],
-          <Object?>[3500.567626953125, 7199.9625000000015],
+          <Object?>[-5979.14306640625, 398.92500000000007],
+          <Object?>[19220.087890625, -31777.575000000008],
+          <Object?>[3500.567626953125, 6890.675000000002],
         ],
       ],
       'drawCalls': '''
@@ -27404,8 +28062,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,246.5]
-["lineTo",500.6591796875,246.5]
+["moveTo",21,257.5]
+["lineTo",500.6591796875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27414,8 +28072,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,246.5]
-["lineTo",20,246.5]
+["moveTo",12.673828125,257.5]
+["lineTo",20,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27424,7 +28082,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -27435,7 +28093,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27444,7 +28102,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",68.5,10.2]
+["moveTo",68.5,32]
 ["lineTo",68.5,483]
 ["stroke",null]
 ["restore"]
@@ -27455,7 +28113,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",68.5,484]
-["lineTo",68.5,491.59999999999997]
+["lineTo",68.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27464,7 +28122,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",116.5,10.2]
+["moveTo",116.5,32]
 ["lineTo",116.5,483]
 ["stroke",null]
 ["restore"]
@@ -27475,7 +28133,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",116.5,484]
-["lineTo",116.5,491.59999999999997]
+["lineTo",116.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27484,7 +28142,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",164.5,10.2]
+["moveTo",164.5,32]
 ["lineTo",164.5,483]
 ["stroke",null]
 ["restore"]
@@ -27495,7 +28153,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",164.5,484]
-["lineTo",164.5,491.59999999999997]
+["lineTo",164.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27504,7 +28162,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",212.5,10.2]
+["moveTo",212.5,32]
 ["lineTo",212.5,483]
 ["stroke",null]
 ["restore"]
@@ -27515,7 +28173,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",212.5,484]
-["lineTo",212.5,491.59999999999997]
+["lineTo",212.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27524,7 +28182,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",260.5,10.2]
+["moveTo",260.5,32]
 ["lineTo",260.5,483]
 ["stroke",null]
 ["restore"]
@@ -27535,7 +28193,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",260.5,484]
-["lineTo",260.5,491.59999999999997]
+["lineTo",260.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27544,7 +28202,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",308.5,10.2]
+["moveTo",308.5,32]
 ["lineTo",308.5,483]
 ["stroke",null]
 ["restore"]
@@ -27555,7 +28213,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",308.5,484]
-["lineTo",308.5,491.59999999999997]
+["lineTo",308.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27564,7 +28222,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",356.5,10.2]
+["moveTo",356.5,32]
 ["lineTo",356.5,483]
 ["stroke",null]
 ["restore"]
@@ -27575,7 +28233,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",356.5,484]
-["lineTo",356.5,491.59999999999997]
+["lineTo",356.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27584,7 +28242,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",404.5,10.2]
+["moveTo",404.5,32]
 ["lineTo",404.5,483]
 ["stroke",null]
 ["restore"]
@@ -27595,7 +28253,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",404.5,484]
-["lineTo",404.5,491.59999999999997]
+["lineTo",404.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27604,7 +28262,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",452.5,10.2]
+["moveTo",452.5,32]
 ["lineTo",452.5,483]
 ["stroke",null]
 ["restore"]
@@ -27615,7 +28273,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",452.5,484]
-["lineTo",452.5,491.59999999999997]
+["lineTo",452.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -27624,7 +28282,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -27635,14 +28293,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -27652,7 +28339,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,246.89999999999998]
+["translate",9.673828125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -27670,11 +28357,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27683,7 +28370,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",68.67236328125,494.59999999999997]
+["translate",68.67236328125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27692,7 +28379,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",116.6708984375,494.59999999999997]
+["translate",116.6708984375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27701,7 +28388,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",164.66943359375,494.59999999999997]
+["translate",164.66943359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27710,7 +28397,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",212.66796875,494.59999999999997]
+["translate",212.66796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27719,7 +28406,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",260.66650390625,494.59999999999997]
+["translate",260.66650390625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27728,7 +28415,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",308.6650390625,494.59999999999997]
+["translate",308.6650390625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27737,7 +28424,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",356.66357421875,494.59999999999997]
+["translate",356.66357421875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27746,7 +28433,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",404.662109375,494.59999999999997]
+["translate",404.662109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27755,7 +28442,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",452.66064453125,494.59999999999997]
+["translate",452.66064453125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27764,7 +28451,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -27806,7 +28493,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[8.0, 0.0, 500.6591796875, 483.6],
+      'chartArea': <Object?>[8.0, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -27815,11 +28502,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
           'min': 3.1,
           'max': 3.9,
           'ticks': <Object?>[],
-          'box': <Object?>[0.0, 0.0, 8.0, 483.6],
+          'box': <Object?>[0.0, 32.0, 8.0, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 0.0, 0.0, 0.0],
           'tickPixels': <Object?>[],
-          'valuePixels': <Object?>[483.6, 241.8, 0.0],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[3.9, 3.5, 3.1],
           'basePixel': 483.6,
           'warnings': <Object?>[],
@@ -27935,9 +28622,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[-6150.23974609375, 544.0500000000002],
+          <Object?>[-6150.23974609375, 540.0500000000002],
           <Object?>[19714.3671875, -32768.0],
-          <Object?>[3579.779052734375, 14447.550000000005],
+          <Object?>[3579.779052734375, 13523.550000000005],
         ],
       ],
       'drawCalls': '''
@@ -27951,7 +28638,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",8.5,0]
+["moveTo",8.5,32]
 ["lineTo",8.5,483]
 ["stroke",null]
 ["restore"]
@@ -27971,7 +28658,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",57.5,0]
+["moveTo",57.5,32]
 ["lineTo",57.5,483]
 ["stroke",null]
 ["restore"]
@@ -27991,7 +28678,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",106.5,0]
+["moveTo",106.5,32]
 ["lineTo",106.5,483]
 ["stroke",null]
 ["restore"]
@@ -28011,7 +28698,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",155.5,0]
+["moveTo",155.5,32]
 ["lineTo",155.5,483]
 ["stroke",null]
 ["restore"]
@@ -28031,7 +28718,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",205.5,0]
+["moveTo",205.5,32]
 ["lineTo",205.5,483]
 ["stroke",null]
 ["restore"]
@@ -28051,7 +28738,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",254.5,0]
+["moveTo",254.5,32]
 ["lineTo",254.5,483]
 ["stroke",null]
 ["restore"]
@@ -28071,7 +28758,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",303.5,0]
+["moveTo",303.5,32]
 ["lineTo",303.5,483]
 ["stroke",null]
 ["restore"]
@@ -28091,7 +28778,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",352.5,0]
+["moveTo",352.5,32]
 ["lineTo",352.5,483]
 ["stroke",null]
 ["restore"]
@@ -28111,7 +28798,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",402.5,0]
+["moveTo",402.5,32]
 ["lineTo",402.5,483]
 ["stroke",null]
 ["restore"]
@@ -28131,7 +28818,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",451.5,0]
+["moveTo",451.5,32]
 ["lineTo",451.5,483]
 ["stroke",null]
 ["restore"]
@@ -28151,7 +28838,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,0]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -28166,10 +28853,39 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
+["restore"]
+["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",8.5,0]
+["moveTo",8.5,32]
 ["lineTo",8.5,484]
 ["stroke",null]
 ["restore"]
@@ -28317,12 +29033,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        34.021484375,
-        10.2,
-        500.328125,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[34.021484375, 32.0, 500.328125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -28339,12 +29050,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[-10.0, '-10', false],
             <Object?>[-20.0, '-20', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            500.328125,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 500.328125, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[9.673828125, 0.0, 11.671875, 0.0],
           'tickPixels': <Object?>[
@@ -28410,25 +29116,21 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[20.0, '20', false],
             <Object?>[0.0, '0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            404.7,
-            325.79999999999995,
-            246.89999999999998,
-            167.99999999999997,
-            89.1,
-            10.2,
+            483.6,
+            408.33333333333337,
+            333.06666666666666,
+            257.8,
+            182.53333333333333,
+            107.26666666666667,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            10.2,
-            246.89999999999998,
-            483.59999999999997,
-          ],
+          'valuePixels': <Object?>[32.0, 257.8, 483.6],
           'valueForPixel': <Object?>[0.0, 60.0, 120.0],
-          'basePixel': 10.2,
+          'basePixel': 32.0,
           'warnings': <Object?>[],
           'start': 120.0,
           'end': 0.0,
@@ -28468,9 +29170,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[442.039794921875, 22.035],
-          <Object?>[34.021484375, 471.76499999999993],
-          <Object?>[288.54719238281257, -68.69999999999999],
+          <Object?>[442.039794921875, 43.29],
+          <Object?>[34.021484375, 472.31],
+          <Object?>[288.54719238281257, -43.266666666666666],
         ],
       ],
       'drawCalls': '''
@@ -28484,7 +29186,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,483]
 ["stroke",null]
 ["restore"]
@@ -28495,7 +29197,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,484]
-["lineTo",34.5,491.59999999999997]
+["lineTo",34.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28504,7 +29206,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",111.5,10.2]
+["moveTo",111.5,32]
 ["lineTo",111.5,483]
 ["stroke",null]
 ["restore"]
@@ -28515,7 +29217,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",111.5,484]
-["lineTo",111.5,491.59999999999997]
+["lineTo",111.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28524,7 +29226,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",189.5,10.2]
+["moveTo",189.5,32]
 ["lineTo",189.5,483]
 ["stroke",null]
 ["restore"]
@@ -28535,7 +29237,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",189.5,484]
-["lineTo",189.5,491.59999999999997]
+["lineTo",189.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28544,7 +29246,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",267.5,10.2]
+["moveTo",267.5,32]
 ["lineTo",267.5,483]
 ["stroke",null]
 ["restore"]
@@ -28555,7 +29257,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",267.5,484]
-["lineTo",267.5,491.59999999999997]
+["lineTo",267.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28564,7 +29266,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",344.5,10.2]
+["moveTo",344.5,32]
 ["lineTo",344.5,483]
 ["stroke",null]
 ["restore"]
@@ -28575,7 +29277,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",344.5,484]
-["lineTo",344.5,491.59999999999997]
+["lineTo",344.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28584,7 +29286,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",422.5,10.2]
+["moveTo",422.5,32]
 ["lineTo",422.5,483]
 ["stroke",null]
 ["restore"]
@@ -28595,7 +29297,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",422.5,484]
-["lineTo",422.5,491.59999999999997]
+["lineTo",422.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28604,7 +29306,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -28615,7 +29317,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28644,8 +29346,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,404.5]
-["lineTo",500.328125,404.5]
+["moveTo",35,408.5]
+["lineTo",500.328125,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28654,8 +29356,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,404.5]
-["lineTo",34,404.5]
+["moveTo",26.021484375,408.5]
+["lineTo",34,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28664,8 +29366,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,325.5]
-["lineTo",500.328125,325.5]
+["moveTo",35,333.5]
+["lineTo",500.328125,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28674,8 +29376,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,325.5]
-["lineTo",34,325.5]
+["moveTo",26.021484375,333.5]
+["lineTo",34,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28684,8 +29386,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,246.5]
-["lineTo",500.328125,246.5]
+["moveTo",35,257.5]
+["lineTo",500.328125,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28694,8 +29396,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,246.5]
-["lineTo",34,246.5]
+["moveTo",26.021484375,257.5]
+["lineTo",34,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28704,8 +29406,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,167.5]
-["lineTo",500.328125,167.5]
+["moveTo",35,182.5]
+["lineTo",500.328125,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28714,8 +29416,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,167.5]
-["lineTo",34,167.5]
+["moveTo",26.021484375,182.5]
+["lineTo",34,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28724,8 +29426,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,89.5]
-["lineTo",500.328125,89.5]
+["moveTo",35,107.5]
+["lineTo",500.328125,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28734,8 +29436,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,89.5]
-["lineTo",34,89.5]
+["moveTo",26.021484375,107.5]
+["lineTo",34,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28744,8 +29446,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",500.328125,10.5]
+["moveTo",35,32.5]
+["lineTo",500.328125,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28754,9 +29456,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,10.5]
-["lineTo",34,10.5]
+["moveTo",26.021484375,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -28768,11 +29499,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",34.021484375,494.59999999999997]
+["translate",34.021484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28781,7 +29512,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",111.73925781249999,494.59999999999997]
+["translate",111.73925781249999,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28790,7 +29521,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",189.45703125000003,494.59999999999997]
+["translate",189.45703125000003,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28799,7 +29530,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",267.1748046875,494.59999999999997]
+["translate",267.1748046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28808,7 +29539,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",344.89257812500006,494.59999999999997]
+["translate",344.89257812500006,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28817,7 +29548,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",422.6103515625,494.59999999999997]
+["translate",422.6103515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28826,7 +29557,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.328125,494.59999999999997]
+["translate",500.328125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28838,7 +29569,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -28848,7 +29579,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,483.59999999999997]
+["translate",23.021484375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28857,7 +29588,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,404.7]
+["translate",23.021484375,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28866,7 +29597,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,325.79999999999995]
+["translate",23.021484375,333.06666666666666]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28875,7 +29606,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,246.89999999999998]
+["translate",23.021484375,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28884,7 +29615,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,167.99999999999997]
+["translate",23.021484375,182.53333333333333]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28893,7 +29624,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,89.1]
+["translate",23.021484375,107.26666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28902,7 +29633,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,10.2]
+["translate",23.021484375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28914,7 +29645,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",442.039794921875,22.035,3,0,6.283185307179586,false]
+["arc",442.039794921875,43.29,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -28922,7 +29653,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",34.021484375,471.76499999999993,3,0,6.283185307179586,false]
+["arc",34.021484375,472.31,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -28957,7 +29688,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[34.021484375, 10.2, 512.0, 483.59999999999997],
+      'chartArea': <Object?>[34.021484375, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -28974,12 +29705,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[-10.0, '-10', false],
             <Object?>[-20.0, '-20', false],
           ],
-          'box': <Object?>[
-            34.021484375,
-            483.59999999999997,
-            512.0,
-            511.99999999999994,
-          ],
+          'box': <Object?>[34.021484375, 483.6, 512.0, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 0.0, 0.0, 0.0],
           'tickPixels': <Object?>[
@@ -29050,30 +29776,30 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.0, '0', false],
             <Object?>[-20.0, '-20', false],
           ],
-          'box': <Object?>[0.0, 10.2, 34.021484375, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 34.021484375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            454.01249999999993,
-            402.61231751824806,
-            342.1415145985401,
-            281.67071167883205,
-            221.19990875912404,
-            160.72910583941604,
-            100.25830291970802,
-            39.787499999999994,
+            455.37499999999994,
+            406.3417883211678,
+            348.65565693430653,
+            290.96952554744524,
+            233.28339416058392,
+            175.59726277372263,
+            117.91113138686131,
+            60.224999999999994,
           ],
           'valuePixels': <Object?>[
-            39.787499999999994,
-            246.89999999999992,
-            454.01249999999993,
+            60.224999999999994,
+            257.79999999999995,
+            455.37499999999994,
           ],
           'valueForPixel': <Object?>[
             -29.785714285714285,
             48.50000000000001,
             126.7857142857143,
           ],
-          'basePixel': 100.25830291970802,
+          'basePixel': 117.91113138686131,
           'warnings': <Object?>[],
           'start': 117.0,
           'end': -20.0,
@@ -29113,9 +29839,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[426.64669363839283, 109.32892335766422],
-          <Object?>[68.16280691964283, 454.01249999999993],
-          <Object?>[291.7884695870536, 39.787499999999994],
+          <Object?>[426.64669363839283, 126.5640510948905],
+          <Object?>[68.16280691964283, 455.37499999999994],
+          <Object?>[291.7884695870536, 60.224999999999994],
         ],
       ],
       'drawCalls': '''
@@ -29129,7 +29855,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",68.5,10.2]
+["moveTo",68.5,32]
 ["lineTo",68.5,483]
 ["stroke",null]
 ["restore"]
@@ -29140,7 +29866,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",68.5,484]
-["lineTo",68.5,491.59999999999997]
+["lineTo",68.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29149,7 +29875,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",136.5,10.2]
+["moveTo",136.5,32]
 ["lineTo",136.5,483]
 ["stroke",null]
 ["restore"]
@@ -29160,7 +29886,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",136.5,484]
-["lineTo",136.5,491.59999999999997]
+["lineTo",136.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29169,7 +29895,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",204.5,10.2]
+["moveTo",204.5,32]
 ["lineTo",204.5,483]
 ["stroke",null]
 ["restore"]
@@ -29180,7 +29906,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",204.5,484]
-["lineTo",204.5,491.59999999999997]
+["lineTo",204.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29189,7 +29915,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",273.5,10.2]
+["moveTo",273.5,32]
 ["lineTo",273.5,483]
 ["stroke",null]
 ["restore"]
@@ -29200,7 +29926,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",273.5,484]
-["lineTo",273.5,491.59999999999997]
+["lineTo",273.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29209,7 +29935,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",341.5,10.2]
+["moveTo",341.5,32]
 ["lineTo",341.5,483]
 ["stroke",null]
 ["restore"]
@@ -29220,7 +29946,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",341.5,484]
-["lineTo",341.5,491.59999999999997]
+["lineTo",341.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29229,7 +29955,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",409.5,10.2]
+["moveTo",409.5,32]
 ["lineTo",409.5,483]
 ["stroke",null]
 ["restore"]
@@ -29240,7 +29966,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",409.5,484]
-["lineTo",409.5,491.59999999999997]
+["lineTo",409.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29249,7 +29975,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",477.5,10.2]
+["moveTo",477.5,32]
 ["lineTo",477.5,483]
 ["stroke",null]
 ["restore"]
@@ -29260,7 +29986,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",477.5,484]
-["lineTo",477.5,491.59999999999997]
+["lineTo",477.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29269,8 +29995,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,454.5]
-["lineTo",512,454.5]
+["moveTo",35,455.5]
+["lineTo",512,455.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29279,8 +30005,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,454.5]
-["lineTo",34,454.5]
+["moveTo",26.021484375,455.5]
+["lineTo",34,455.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29289,8 +30015,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,402.5]
-["lineTo",512,402.5]
+["moveTo",35,406.5]
+["lineTo",512,406.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29299,8 +30025,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,402.5]
-["lineTo",34,402.5]
+["moveTo",26.021484375,406.5]
+["lineTo",34,406.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29309,8 +30035,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,342.5]
-["lineTo",512,342.5]
+["moveTo",35,348.5]
+["lineTo",512,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29319,8 +30045,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,342.5]
-["lineTo",34,342.5]
+["moveTo",26.021484375,348.5]
+["lineTo",34,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29329,8 +30055,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,281.5]
-["lineTo",512,281.5]
+["moveTo",35,290.5]
+["lineTo",512,290.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29339,8 +30065,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,281.5]
-["lineTo",34,281.5]
+["moveTo",26.021484375,290.5]
+["lineTo",34,290.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29349,8 +30075,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,221.5]
-["lineTo",512,221.5]
+["moveTo",35,233.5]
+["lineTo",512,233.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29359,8 +30085,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,221.5]
-["lineTo",34,221.5]
+["moveTo",26.021484375,233.5]
+["lineTo",34,233.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29369,8 +30095,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,160.5]
-["lineTo",512,160.5]
+["moveTo",35,175.5]
+["lineTo",512,175.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29379,8 +30105,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,160.5]
-["lineTo",34,160.5]
+["moveTo",26.021484375,175.5]
+["lineTo",34,175.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29389,8 +30115,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,100.5]
-["lineTo",512,100.5]
+["moveTo",35,117.5]
+["lineTo",512,117.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29399,8 +30125,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,100.5]
-["lineTo",34,100.5]
+["moveTo",26.021484375,117.5]
+["lineTo",34,117.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29409,8 +30135,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,39.5]
-["lineTo",512,39.5]
+["moveTo",35,60.5]
+["lineTo",512,60.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29419,9 +30145,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.021484375,39.5]
-["lineTo",34,39.5]
+["moveTo",26.021484375,60.5]
+["lineTo",34,60.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -29433,11 +30188,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",68.16280691964283,494.59999999999997]
+["translate",68.16280691964283,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29446,7 +30201,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",136.44545200892858,494.59999999999997]
+["translate",136.44545200892858,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29455,7 +30210,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",204.72809709821425,494.59999999999997]
+["translate",204.72809709821425,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29464,7 +30219,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",273.0107421875,494.59999999999997]
+["translate",273.0107421875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29473,7 +30228,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",341.29338727678567,494.59999999999997]
+["translate",341.29338727678567,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29482,7 +30237,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",409.57603236607144,494.59999999999997]
+["translate",409.57603236607144,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29491,7 +30246,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",477.85867745535717,494.59999999999997]
+["translate",477.85867745535717,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29503,7 +30258,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,484]
 ["stroke",null]
 ["restore"]
@@ -29513,7 +30268,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,454.01249999999993]
+["translate",23.021484375,455.37499999999994]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29522,7 +30277,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,402.61231751824806]
+["translate",23.021484375,406.3417883211678]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29531,7 +30286,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,342.1415145985401]
+["translate",23.021484375,348.65565693430653]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29540,7 +30295,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,281.67071167883205]
+["translate",23.021484375,290.96952554744524]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29549,7 +30304,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,221.19990875912404]
+["translate",23.021484375,233.28339416058392]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29558,7 +30313,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,160.72910583941604]
+["translate",23.021484375,175.59726277372263]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29567,7 +30322,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,100.25830291970802]
+["translate",23.021484375,117.91113138686131]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29576,7 +30331,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.021484375,39.787499999999994]
+["translate",23.021484375,60.224999999999994]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29588,7 +30343,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",426.64669363839283,109.32892335766422,3,0,6.283185307179586,false]
+["arc",426.64669363839283,126.5640510948905,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -29596,7 +30351,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",68.16280691964283,454.01249999999993,3,0,6.283185307179586,false]
+["arc",68.16280691964283,455.37499999999994,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -29604,7 +30359,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",291.7884695870536,39.787499999999994,3,0,6.283185307179586,false]
+["arc",291.7884695870536,60.224999999999994,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -29637,7 +30392,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     expected: <String, Object?>{
       'chartArea': <Object?>[
         11.671875,
-        28.4,
+        60.4,
         477.978515625,
         501.79999999999995,
       ],
@@ -29657,7 +30412,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[30.0, '30', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[11.671875, 0.0, 477.978515625, 28.4],
+          'box': <Object?>[11.671875, 32.0, 477.978515625, 60.4],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -29724,26 +30479,26 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[100.0, '100', false],
             <Object?>[120.0, '120', false],
           ],
-          'box': <Object?>[477.978515625, 28.4, 512.0, 501.79999999999995],
+          'box': <Object?>[477.978515625, 60.4, 512.0, 501.79999999999995],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             501.79999999999995,
-            434.1714285714286,
-            366.5428571428571,
-            298.91428571428565,
-            231.2857142857143,
-            163.65714285714284,
-            96.02857142857144,
-            28.4,
+            438.74285714285713,
+            375.68571428571425,
+            312.6285714285714,
+            249.57142857142858,
+            186.5142857142857,
+            123.45714285714288,
+            60.4,
           ],
           'valuePixels': <Object?>[
             501.79999999999995,
-            265.09999999999997,
-            28.4,
+            281.09999999999997,
+            60.4,
           ],
           'valueForPixel': <Object?>[120.0, 50.0, -20.0],
-          'basePixel': 434.1714285714286,
+          'basePixel': 438.74285714285713,
           'warnings': <Object?>[],
           'start': -20.0,
           'end': 120.0,
@@ -29783,8 +30538,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[69.960205078125, 424.02714285714285],
-          <Object?>[477.978515625, 38.54428571428573],
+          <Object?>[69.960205078125, 429.28428571428566],
+          <Object?>[477.978515625, 69.85857142857144],
           <Object?>[223.4528076171875, 501.79999999999995],
         ],
       ],
@@ -29799,7 +30554,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",11.5,29]
+["moveTo",11.5,61]
 ["lineTo",11.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -29809,8 +30564,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",11.5,20.4]
-["lineTo",11.5,28]
+["moveTo",11.5,52.4]
+["lineTo",11.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29819,7 +30574,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",89.5,29]
+["moveTo",89.5,61]
 ["lineTo",89.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -29829,8 +30584,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",89.5,20.4]
-["lineTo",89.5,28]
+["moveTo",89.5,52.4]
+["lineTo",89.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29839,7 +30594,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",167.5,29]
+["moveTo",167.5,61]
 ["lineTo",167.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -29849,8 +30604,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",167.5,20.4]
-["lineTo",167.5,28]
+["moveTo",167.5,52.4]
+["lineTo",167.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29859,7 +30614,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",244.5,29]
+["moveTo",244.5,61]
 ["lineTo",244.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -29869,8 +30624,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",244.5,20.4]
-["lineTo",244.5,28]
+["moveTo",244.5,52.4]
+["lineTo",244.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29879,7 +30634,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",322.5,29]
+["moveTo",322.5,61]
 ["lineTo",322.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -29889,8 +30644,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",322.5,20.4]
-["lineTo",322.5,28]
+["moveTo",322.5,52.4]
+["lineTo",322.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29899,7 +30654,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",400.5,29]
+["moveTo",400.5,61]
 ["lineTo",400.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -29909,8 +30664,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",400.5,20.4]
-["lineTo",400.5,28]
+["moveTo",400.5,52.4]
+["lineTo",400.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29919,7 +30674,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",477.5,29]
+["moveTo",477.5,61]
 ["lineTo",477.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -29929,8 +30684,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",477.5,20.4]
-["lineTo",477.5,28]
+["moveTo",477.5,52.4]
+["lineTo",477.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29959,8 +30714,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",11.671875,434.5]
-["lineTo",477,434.5]
+["moveTo",11.671875,438.5]
+["lineTo",477,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29969,8 +30724,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",478,434.5]
-["lineTo",485.978515625,434.5]
+["moveTo",478,438.5]
+["lineTo",485.978515625,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29979,8 +30734,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",11.671875,366.5]
-["lineTo",477,366.5]
+["moveTo",11.671875,375.5]
+["lineTo",477,375.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29989,8 +30744,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",478,366.5]
-["lineTo",485.978515625,366.5]
+["moveTo",478,375.5]
+["lineTo",485.978515625,375.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29999,8 +30754,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",11.671875,298.5]
-["lineTo",477,298.5]
+["moveTo",11.671875,312.5]
+["lineTo",477,312.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30009,8 +30764,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",478,298.5]
-["lineTo",485.978515625,298.5]
+["moveTo",478,312.5]
+["lineTo",485.978515625,312.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30019,8 +30774,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",11.671875,231.5]
-["lineTo",477,231.5]
+["moveTo",11.671875,249.5]
+["lineTo",477,249.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30029,8 +30784,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",478,231.5]
-["lineTo",485.978515625,231.5]
+["moveTo",478,249.5]
+["lineTo",485.978515625,249.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30039,8 +30794,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",11.671875,163.5]
-["lineTo",477,163.5]
+["moveTo",11.671875,186.5]
+["lineTo",477,186.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30049,8 +30804,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",478,163.5]
-["lineTo",485.978515625,163.5]
+["moveTo",478,186.5]
+["lineTo",485.978515625,186.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30059,8 +30814,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",11.671875,96.5]
-["lineTo",477,96.5]
+["moveTo",11.671875,123.5]
+["lineTo",477,123.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30069,8 +30824,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",478,96.5]
-["lineTo",485.978515625,96.5]
+["moveTo",478,123.5]
+["lineTo",485.978515625,123.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30079,8 +30834,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",11.671875,28.5]
-["lineTo",477,28.5]
+["moveTo",11.671875,60.5]
+["lineTo",477,60.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30089,25 +30844,54 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",478,28.5]
-["lineTo",485.978515625,28.5]
+["moveTo",478,60.5]
+["lineTo",485.978515625,60.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",11,28.5]
-["lineTo",478,28.5]
+["moveTo",11,60.5]
+["lineTo",478,60.5]
 ["stroke",null]
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,0,512,28.4]
+["rect",0,32,512,28.4]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",11.671875,17.4]
+["translate",11.671875,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30116,7 +30900,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",89.3896484375,17.4]
+["translate",89.3896484375,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30125,7 +30909,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",167.107421875,17.4]
+["translate",167.107421875,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30134,7 +30918,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",244.8251953125,17.4]
+["translate",244.8251953125,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30143,7 +30927,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",322.54296875,17.4]
+["translate",322.54296875,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30152,7 +30936,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",400.2607421875,17.4]
+["translate",400.2607421875,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30161,7 +30945,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",477.978515625,17.4]
+["translate",477.978515625,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30173,7 +30957,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",477.5,28]
+["moveTo",477.5,60]
 ["lineTo",477.5,502]
 ["stroke",null]
 ["restore"]
@@ -30192,7 +30976,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",488.978515625,434.1714285714286]
+["translate",488.978515625,438.74285714285713]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -30201,7 +30985,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",488.978515625,366.5428571428571]
+["translate",488.978515625,375.68571428571425]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -30210,7 +30994,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",488.978515625,298.91428571428565]
+["translate",488.978515625,312.6285714285714]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -30219,7 +31003,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",488.978515625,231.2857142857143]
+["translate",488.978515625,249.57142857142858]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -30228,7 +31012,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",488.978515625,163.65714285714284]
+["translate",488.978515625,186.5142857142857]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -30237,7 +31021,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",488.978515625,96.02857142857144]
+["translate",488.978515625,123.45714285714288]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -30246,7 +31030,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",488.978515625,28.4]
+["translate",488.978515625,60.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -30258,7 +31042,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",69.960205078125,424.02714285714285,3,0,6.283185307179586,false]
+["arc",69.960205078125,429.28428571428566,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -30266,7 +31050,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",477.978515625,38.54428571428573,3,0,6.283185307179586,false]
+["arc",477.978515625,69.85857142857144,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -30301,12 +31085,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        134.78515625,
-        10.2,
-        453.9423828125,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[134.78515625, 32.0, 453.9423828125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -30318,12 +31097,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[1.0, '1.000000000000000', false],
             <Object?>[1.000000000000001, '1.000000000000001', false],
           ],
-          'box': <Object?>[
-            134.78515625,
-            483.59999999999997,
-            453.9423828125,
-            511.99999999999994,
-          ],
+          'box': <Object?>[134.78515625, 483.6, 453.9423828125, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[58.0576171875, 0.0, 58.0576171875, 0.0],
           'tickPixels': <Object?>[134.78515625, 453.9423828125],
@@ -30380,17 +31154,13 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[-100.0, '-100.00000000000000', false],
             <Object?>[-99.99999999999999, '-99.99999999999999', false],
           ],
-          'box': <Object?>[0.0, 10.2, 134.78515625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 134.78515625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
-          'tickPixels': <Object?>[483.59999999999997, 10.2],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            483.59999999999997,
-            10.2,
-          ],
+          'tickPixels': <Object?>[483.6, 32.0],
+          'valuePixels': <Object?>[483.6, 483.6, 32.0],
           'valueForPixel': <Object?>[-99.99999999999999, -100.0, -100.0],
-          'basePixel': 10.2,
+          'basePixel': 32.0,
           'warnings': <Object?>[],
           'start': -100.0,
           'end': -99.99999999999999,
@@ -30430,8 +31200,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[134.78515625, 483.59999999999997],
-          <Object?>[453.9423828125, 10.2],
+          <Object?>[134.78515625, 483.6],
+          <Object?>[453.9423828125, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -30445,7 +31215,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",134.5,10.2]
+["moveTo",134.5,32]
 ["lineTo",134.5,483]
 ["stroke",null]
 ["restore"]
@@ -30456,7 +31226,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",134.5,484]
-["lineTo",134.5,491.59999999999997]
+["lineTo",134.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30465,7 +31235,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",453.5,10.2]
+["moveTo",453.5,32]
 ["lineTo",453.5,483]
 ["stroke",null]
 ["restore"]
@@ -30476,7 +31246,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",453.5,484]
-["lineTo",453.5,491.59999999999997]
+["lineTo",453.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30505,8 +31275,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",135,10.5]
-["lineTo",453.9423828125,10.5]
+["moveTo",135,32.5]
+["lineTo",453.9423828125,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30515,9 +31285,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",126.78515625,10.5]
-["lineTo",134,10.5]
+["moveTo",126.78515625,32.5]
+["lineTo",134,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -30529,11 +31328,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",134.78515625,494.59999999999997]
+["translate",134.78515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30542,7 +31341,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",453.9423828125,494.59999999999997]
+["translate",453.9423828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30554,7 +31353,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",134.5,10]
+["moveTo",134.5,32]
 ["lineTo",134.5,484]
 ["stroke",null]
 ["restore"]
@@ -30564,7 +31363,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",123.78515625,483.59999999999997]
+["translate",123.78515625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30573,7 +31372,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",123.78515625,10.2]
+["translate",123.78515625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30585,7 +31384,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",134.78515625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",134.78515625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -30593,7 +31392,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",453.9423828125,10.2,3,0,6.283185307179586,false]
+["arc",453.9423828125,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -30627,7 +31426,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     expected: <String, Object?>{
       'chartArea': <Object?>[
         37.35546875,
-        10.2,
+        32.0,
         504.351937039021,
         441.50632382787984,
       ],
@@ -30735,23 +31534,27 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[1.9, '1.90', false],
             <Object?>[2.0, '2.00', false],
           ],
-          'box': <Object?>[0.0, 10.2, 37.35546875, 441.50632382787984],
+          'box': <Object?>[0.0, 32.0, 37.35546875, 441.50632382787984],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             441.50632382787984,
-            398.37569144509183,
-            355.2450590623039,
-            312.1144266795159,
-            268.9837942967279,
-            225.8531619139399,
-            182.72252953115188,
-            139.59189714836396,
-            96.46126476557595,
-            53.330632382788025,
-            10.2,
+            400.55569144509184,
+            359.6050590623039,
+            318.6544266795159,
+            277.70379429672795,
+            236.75316191393992,
+            195.8025295311519,
+            154.85189714836397,
+            113.90126476557595,
+            72.95063238278803,
+            32.0,
           ],
-          'valuePixels': <Object?>[441.50632382787984, 225.8531619139399, 10.2],
+          'valuePixels': <Object?>[
+            441.50632382787984,
+            236.75316191393992,
+            32.0,
+          ],
           'valueForPixel': <Object?>[2.0, 1.5, 1.0],
           'basePixel': 441.50632382787984,
           'warnings': <Object?>[],
@@ -30794,7 +31597,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       'points': <Object?>[
         <Object?>[
           <Object?>[37.35546875, 441.50632382787984],
-          <Object?>[504.351937039021, 10.2],
+          <Object?>[504.351937039021, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -30808,7 +31611,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",37.5,10.2]
+["moveTo",37.5,32]
 ["lineTo",37.5,441]
 ["stroke",null]
 ["restore"]
@@ -30828,7 +31631,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",130.5,10.2]
+["moveTo",130.5,32]
 ["lineTo",130.5,441]
 ["stroke",null]
 ["restore"]
@@ -30848,7 +31651,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",224.5,10.2]
+["moveTo",224.5,32]
 ["lineTo",224.5,441]
 ["stroke",null]
 ["restore"]
@@ -30868,7 +31671,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",317.5,10.2]
+["moveTo",317.5,32]
 ["lineTo",317.5,441]
 ["stroke",null]
 ["restore"]
@@ -30888,7 +31691,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",410.5,10.2]
+["moveTo",410.5,32]
 ["lineTo",410.5,441]
 ["stroke",null]
 ["restore"]
@@ -30908,7 +31711,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",504.5,10.2]
+["moveTo",504.5,32]
 ["lineTo",504.5,441]
 ["stroke",null]
 ["restore"]
@@ -30928,7 +31731,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",504.5,10.2]
+["moveTo",504.5,32]
 ["lineTo",504.5,441]
 ["stroke",null]
 ["restore"]
@@ -30968,8 +31771,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,398.5]
-["lineTo",504.351937039021,398.5]
+["moveTo",38,400.5]
+["lineTo",504.351937039021,400.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30978,8 +31781,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,398.5]
-["lineTo",37,398.5]
+["moveTo",29.35546875,400.5]
+["lineTo",37,400.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30988,8 +31791,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,355.5]
-["lineTo",504.351937039021,355.5]
+["moveTo",38,359.5]
+["lineTo",504.351937039021,359.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30998,8 +31801,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,355.5]
-["lineTo",37,355.5]
+["moveTo",29.35546875,359.5]
+["lineTo",37,359.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31008,8 +31811,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,312.5]
-["lineTo",504.351937039021,312.5]
+["moveTo",38,318.5]
+["lineTo",504.351937039021,318.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31018,8 +31821,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,312.5]
-["lineTo",37,312.5]
+["moveTo",29.35546875,318.5]
+["lineTo",37,318.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31028,8 +31831,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,268.5]
-["lineTo",504.351937039021,268.5]
+["moveTo",38,277.5]
+["lineTo",504.351937039021,277.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31038,8 +31841,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,268.5]
-["lineTo",37,268.5]
+["moveTo",29.35546875,277.5]
+["lineTo",37,277.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31048,8 +31851,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,225.5]
-["lineTo",504.351937039021,225.5]
+["moveTo",38,236.5]
+["lineTo",504.351937039021,236.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31058,8 +31861,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,225.5]
-["lineTo",37,225.5]
+["moveTo",29.35546875,236.5]
+["lineTo",37,236.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31068,8 +31871,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,182.5]
-["lineTo",504.351937039021,182.5]
+["moveTo",38,195.5]
+["lineTo",504.351937039021,195.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31078,8 +31881,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,182.5]
-["lineTo",37,182.5]
+["moveTo",29.35546875,195.5]
+["lineTo",37,195.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31088,8 +31891,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,139.5]
-["lineTo",504.351937039021,139.5]
+["moveTo",38,154.5]
+["lineTo",504.351937039021,154.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31098,8 +31901,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,139.5]
-["lineTo",37,139.5]
+["moveTo",29.35546875,154.5]
+["lineTo",37,154.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31108,8 +31911,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,96.5]
-["lineTo",504.351937039021,96.5]
+["moveTo",38,113.5]
+["lineTo",504.351937039021,113.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31118,8 +31921,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,96.5]
-["lineTo",37,96.5]
+["moveTo",29.35546875,113.5]
+["lineTo",37,113.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31128,8 +31931,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,53.5]
-["lineTo",504.351937039021,53.5]
+["moveTo",38,72.5]
+["lineTo",504.351937039021,72.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31138,8 +31941,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,53.5]
-["lineTo",37,53.5]
+["moveTo",29.35546875,72.5]
+["lineTo",37,72.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31148,8 +31951,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,10.5]
-["lineTo",504.351937039021,10.5]
+["moveTo",38,32.5]
+["lineTo",504.351937039021,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31158,9 +31961,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,10.5]
-["lineTo",37,10.5]
+["moveTo",29.35546875,32.5]
+["lineTo",37,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -31242,7 +32074,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",37.5,10]
+["moveTo",37.5,32]
 ["lineTo",37.5,442]
 ["stroke",null]
 ["restore"]
@@ -31261,7 +32093,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,398.37569144509183]
+["translate",26.35546875,400.55569144509184]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31270,7 +32102,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,355.2450590623039]
+["translate",26.35546875,359.6050590623039]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31279,7 +32111,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,312.1144266795159]
+["translate",26.35546875,318.6544266795159]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31288,7 +32120,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,268.9837942967279]
+["translate",26.35546875,277.70379429672795]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31297,7 +32129,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,225.8531619139399]
+["translate",26.35546875,236.75316191393992]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31306,7 +32138,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,182.72252953115188]
+["translate",26.35546875,195.8025295311519]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31315,7 +32147,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,139.59189714836396]
+["translate",26.35546875,154.85189714836397]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31324,7 +32156,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,96.46126476557595]
+["translate",26.35546875,113.90126476557595]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31333,7 +32165,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,53.330632382788025]
+["translate",26.35546875,72.95063238278803]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31342,7 +32174,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,10.2]
+["translate",26.35546875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31362,7 +32194,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",504.351937039021,10.2,3,0,6.283185307179586,false]
+["arc",504.351937039021,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -31394,12 +32226,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        50.029296875,
-        10.2,
-        502.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[50.029296875, 32.0, 502.326171875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -31417,26 +32244,22 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[100.0, '100 kg', false],
             <Object?>[120.0, '120 kg', false],
           ],
-          'box': <Object?>[0.0, 10.2, 50.029296875, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 50.029296875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            415.9714285714286,
-            348.3428571428571,
-            280.71428571428567,
-            213.0857142857143,
-            145.45714285714283,
-            77.82857142857145,
-            10.2,
+            483.6,
+            419.08571428571435,
+            354.5714285714286,
+            290.0571428571429,
+            225.54285714285717,
+            161.02857142857144,
+            96.51428571428573,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[120.0, 50.0, -20.0],
-          'basePixel': 415.9714285714286,
+          'basePixel': 419.08571428571435,
           'warnings': <Object?>[],
           'start': -20.0,
           'end': 120.0,
@@ -31488,12 +32311,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[30.0, '30', false],
             <Object?>[40.0, '40', false],
           ],
-          'box': <Object?>[
-            50.029296875,
-            483.59999999999997,
-            502.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[50.029296875, 483.6, 502.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[11.671875, 0.0, 9.673828125, 0.0],
           'tickPixels': <Object?>[
@@ -31547,9 +32365,9 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[106.56640625, 405.82714285714286],
-          <Object?>[502.326171875, 20.344285714285732],
-          <Object?>[255.4474609375, 483.59999999999997],
+          <Object?>[106.56640625, 409.40857142857146],
+          <Object?>[502.326171875, 41.677142857142876],
+          <Object?>[255.4474609375, 483.6],
         ],
       ],
       'drawCalls': '''
@@ -31583,8 +32401,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",51,415.5]
-["lineTo",502.326171875,415.5]
+["moveTo",51,419.5]
+["lineTo",502.326171875,419.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31593,8 +32411,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",42.029296875,415.5]
-["lineTo",50,415.5]
+["moveTo",42.029296875,419.5]
+["lineTo",50,419.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31603,8 +32421,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",51,348.5]
-["lineTo",502.326171875,348.5]
+["moveTo",51,354.5]
+["lineTo",502.326171875,354.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31613,8 +32431,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",42.029296875,348.5]
-["lineTo",50,348.5]
+["moveTo",42.029296875,354.5]
+["lineTo",50,354.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31623,8 +32441,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",51,280.5]
-["lineTo",502.326171875,280.5]
+["moveTo",51,290.5]
+["lineTo",502.326171875,290.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31633,8 +32451,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",42.029296875,280.5]
-["lineTo",50,280.5]
+["moveTo",42.029296875,290.5]
+["lineTo",50,290.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31643,8 +32461,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",51,213.5]
-["lineTo",502.326171875,213.5]
+["moveTo",51,225.5]
+["lineTo",502.326171875,225.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31653,8 +32471,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",42.029296875,213.5]
-["lineTo",50,213.5]
+["moveTo",42.029296875,225.5]
+["lineTo",50,225.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31663,8 +32481,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",51,145.5]
-["lineTo",502.326171875,145.5]
+["moveTo",51,161.5]
+["lineTo",502.326171875,161.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31673,8 +32491,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",42.029296875,145.5]
-["lineTo",50,145.5]
+["moveTo",42.029296875,161.5]
+["lineTo",50,161.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31683,8 +32501,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",51,77.5]
-["lineTo",502.326171875,77.5]
+["moveTo",51,96.5]
+["lineTo",502.326171875,96.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31693,8 +32511,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",42.029296875,77.5]
-["lineTo",50,77.5]
+["moveTo",42.029296875,96.5]
+["lineTo",50,96.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31703,8 +32521,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",51,10.5]
-["lineTo",502.326171875,10.5]
+["moveTo",51,32.5]
+["lineTo",502.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31713,8 +32531,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",42.029296875,10.5]
-["lineTo",50,10.5]
+["moveTo",42.029296875,32.5]
+["lineTo",50,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31723,7 +32541,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",50.5,10.2]
+["moveTo",50.5,32]
 ["lineTo",50.5,483]
 ["stroke",null]
 ["restore"]
@@ -31734,7 +32552,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",50.5,484]
-["lineTo",50.5,491.59999999999997]
+["lineTo",50.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31743,7 +32561,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",125.5,10.2]
+["moveTo",125.5,32]
 ["lineTo",125.5,483]
 ["stroke",null]
 ["restore"]
@@ -31754,7 +32572,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",125.5,484]
-["lineTo",125.5,491.59999999999997]
+["lineTo",125.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31763,7 +32581,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",200.5,10.2]
+["moveTo",200.5,32]
 ["lineTo",200.5,483]
 ["stroke",null]
 ["restore"]
@@ -31774,7 +32592,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",200.5,484]
-["lineTo",200.5,491.59999999999997]
+["lineTo",200.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31783,7 +32601,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",276.5,10.2]
+["moveTo",276.5,32]
 ["lineTo",276.5,483]
 ["stroke",null]
 ["restore"]
@@ -31794,7 +32612,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",276.5,484]
-["lineTo",276.5,491.59999999999997]
+["lineTo",276.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31803,7 +32621,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",351.5,10.2]
+["moveTo",351.5,32]
 ["lineTo",351.5,483]
 ["stroke",null]
 ["restore"]
@@ -31814,7 +32632,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",351.5,484]
-["lineTo",351.5,491.59999999999997]
+["lineTo",351.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31823,7 +32641,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",426.5,10.2]
+["moveTo",426.5,32]
 ["lineTo",426.5,483]
 ["stroke",null]
 ["restore"]
@@ -31834,7 +32652,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",426.5,484]
-["lineTo",426.5,491.59999999999997]
+["lineTo",426.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31843,7 +32661,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",502.5,10.2]
+["moveTo",502.5,32]
 ["lineTo",502.5,483]
 ["stroke",null]
 ["restore"]
@@ -31854,14 +32672,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",502.5,484]
-["lineTo",502.5,491.59999999999997]
+["lineTo",502.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",50.5,10]
+["moveTo",50.5,32]
 ["lineTo",50.5,484]
 ["stroke",null]
 ["restore"]
@@ -31871,7 +32718,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",39.029296875,483.59999999999997]
+["translate",39.029296875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31880,7 +32727,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",39.029296875,415.9714285714286]
+["translate",39.029296875,419.08571428571435]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31889,7 +32736,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",39.029296875,348.3428571428571]
+["translate",39.029296875,354.5714285714286]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31898,7 +32745,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",39.029296875,280.71428571428567]
+["translate",39.029296875,290.0571428571429]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31907,7 +32754,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",39.029296875,213.0857142857143]
+["translate",39.029296875,225.54285714285717]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31916,7 +32763,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",39.029296875,145.45714285714283]
+["translate",39.029296875,161.02857142857144]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31925,7 +32772,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",39.029296875,77.82857142857145]
+["translate",39.029296875,96.51428571428573]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31934,7 +32781,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",39.029296875,10.2]
+["translate",39.029296875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31952,11 +32799,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",50.029296875,494.59999999999997]
+["translate",50.029296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -31965,7 +32812,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",125.412109375,494.59999999999997]
+["translate",125.412109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -31974,7 +32821,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",200.794921875,494.59999999999997]
+["translate",200.794921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -31983,7 +32830,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",276.177734375,494.59999999999997]
+["translate",276.177734375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -31992,7 +32839,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",351.560546875,494.59999999999997]
+["translate",351.560546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -32001,7 +32848,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",426.943359375,494.59999999999997]
+["translate",426.943359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -32010,7 +32857,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",502.326171875,494.59999999999997]
+["translate",502.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -32022,7 +32869,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",106.56640625,405.82714285714286,3,0,6.283185307179586,false]
+["arc",106.56640625,409.40857142857146,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -32030,7 +32877,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.326171875,20.344285714285732,3,0,6.283185307179586,false]
+["arc",502.326171875,41.677142857142876,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -32038,7 +32885,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",255.4474609375,483.59999999999997,3,0,6.283185307179586,false]
+["arc",255.4474609375,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -32072,12 +32919,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        487.3115234375,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 487.3115234375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBase',
@@ -32094,12 +32936,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[80000.0, '80.000', false],
             <Object?>[100000.0, '100.000', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            487.3115234375,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 487.3115234375, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[23.349609375, 0.0, 24.6884765625, 0.0],
           'tickPixels': <Object?>[
@@ -32168,24 +33005,20 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[2.5, '2,5', false],
             <Object?>[3.0, '3,0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            388.92,
-            294.23999999999995,
-            199.56,
-            104.87999999999998,
-            10.2,
+            483.6,
+            393.28000000000003,
+            302.96,
+            212.64000000000001,
+            122.31999999999998,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[3.0, 1.75, 0.5],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.5,
           'end': 3.0,
@@ -32225,8 +33058,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[102.0890411743164, 483.59999999999997],
-          <Object?>[482.61299220581054, 57.53999999999999],
+          <Object?>[102.0890411743164, 483.6],
+          <Object?>[482.61299220581054, 77.16],
         ],
       ],
       'drawCalls': '''
@@ -32240,7 +33073,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -32251,7 +33084,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32260,7 +33093,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",106.5,10.2]
+["moveTo",106.5,32]
 ["lineTo",106.5,483]
 ["stroke",null]
 ["restore"]
@@ -32271,7 +33104,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",106.5,484]
-["lineTo",106.5,491.59999999999997]
+["lineTo",106.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32280,7 +33113,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",182.5,10.2]
+["moveTo",182.5,32]
 ["lineTo",182.5,483]
 ["stroke",null]
 ["restore"]
@@ -32291,7 +33124,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",182.5,484]
-["lineTo",182.5,491.59999999999997]
+["lineTo",182.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32300,7 +33133,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",258.5,10.2]
+["moveTo",258.5,32]
 ["lineTo",258.5,483]
 ["stroke",null]
 ["restore"]
@@ -32311,7 +33144,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",258.5,484]
-["lineTo",258.5,491.59999999999997]
+["lineTo",258.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32320,7 +33153,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",335.5,10.2]
+["moveTo",335.5,32]
 ["lineTo",335.5,483]
 ["stroke",null]
 ["restore"]
@@ -32331,7 +33164,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",335.5,484]
-["lineTo",335.5,491.59999999999997]
+["lineTo",335.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32340,7 +33173,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",411.5,10.2]
+["moveTo",411.5,32]
 ["lineTo",411.5,483]
 ["stroke",null]
 ["restore"]
@@ -32351,7 +33184,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",411.5,484]
-["lineTo",411.5,491.59999999999997]
+["lineTo",411.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32360,7 +33193,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",487.5,10.2]
+["moveTo",487.5,32]
 ["lineTo",487.5,483]
 ["stroke",null]
 ["restore"]
@@ -32371,7 +33204,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",487.5,484]
-["lineTo",487.5,491.59999999999997]
+["lineTo",487.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32400,8 +33233,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,388.5]
-["lineTo",487.3115234375,388.5]
+["moveTo",31,393.5]
+["lineTo",487.3115234375,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32410,8 +33243,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,388.5]
-["lineTo",30,388.5]
+["moveTo",22.681640625,393.5]
+["lineTo",30,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32420,8 +33253,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,294.5]
-["lineTo",487.3115234375,294.5]
+["moveTo",31,302.5]
+["lineTo",487.3115234375,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32430,8 +33263,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,294.5]
-["lineTo",30,294.5]
+["moveTo",22.681640625,302.5]
+["lineTo",30,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32440,8 +33273,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,199.5]
-["lineTo",487.3115234375,199.5]
+["moveTo",31,212.5]
+["lineTo",487.3115234375,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32450,8 +33283,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,199.5]
-["lineTo",30,199.5]
+["moveTo",22.681640625,212.5]
+["lineTo",30,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32460,8 +33293,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,104.5]
-["lineTo",487.3115234375,104.5]
+["moveTo",31,122.5]
+["lineTo",487.3115234375,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32470,8 +33303,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,104.5]
-["lineTo",30,104.5]
+["moveTo",22.681640625,122.5]
+["lineTo",30,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32480,8 +33313,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",487.3115234375,10.5]
+["moveTo",31,32.5]
+["lineTo",487.3115234375,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32490,9 +33323,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -32504,11 +33366,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -32517,7 +33379,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",106.78662109375,494.59999999999997]
+["translate",106.78662109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -32526,7 +33388,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",182.8916015625,494.59999999999997]
+["translate",182.8916015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -32535,7 +33397,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",258.99658203125,494.59999999999997]
+["translate",258.99658203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -32544,7 +33406,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",335.1015625,494.59999999999997]
+["translate",335.1015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -32553,7 +33415,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",411.20654296875,494.59999999999997]
+["translate",411.20654296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -32562,7 +33424,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",487.3115234375,494.59999999999997]
+["translate",487.3115234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -32574,7 +33436,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -32584,7 +33446,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -32593,7 +33455,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,388.92]
+["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -32602,7 +33464,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,294.23999999999995]
+["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -32611,7 +33473,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,199.56]
+["translate",19.681640625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -32620,7 +33482,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,104.87999999999998]
+["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -32629,7 +33491,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -32641,7 +33503,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",102.0890411743164,483.59999999999997,3,0,6.283185307179586,false]
+["arc",102.0890411743164,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -32649,7 +33511,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",482.61299220581054,57.53999999999999,3,0,6.283185307179586,false]
+["arc",482.61299220581054,77.16,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -32682,12 +33544,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        54.69921875,
-        10.2,
-        500.6591796875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[54.69921875, 32.0, 500.6591796875, 483.6],
       'scales': <String, Object?>{
         'y': <String, Object?>{
           'type': 'testLinearBase',
@@ -32708,29 +33565,25 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.9, '90.0%', false],
             <Object?>[1.0, '100.0%', false],
           ],
-          'box': <Object?>[0.0, 10.2, 54.69921875, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 54.69921875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.56,
-            152.22,
-            104.87999999999998,
-            57.53999999999999,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.64000000000001,
+            167.48000000000002,
+            122.31999999999998,
+            77.16,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[1.0, 0.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
           'warnings': <Object?>[],
           'start': 0.0,
           'end': 1.0,
@@ -32786,12 +33639,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[
-            54.69921875,
-            483.59999999999997,
-            500.6591796875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[54.69921875, 483.6, 500.6591796875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 11.3408203125, 0.0],
           'tickPixels': <Object?>[
@@ -32853,8 +33701,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[54.69921875, 459.92999999999995],
-          <Object?>[500.6591796875, 33.87000000000002],
+          <Object?>[54.69921875, 461.02],
+          <Object?>[500.6591796875, 54.58000000000002],
         ],
       ],
       'drawCalls': '''
@@ -32888,8 +33736,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,436.5]
-["lineTo",500.6591796875,436.5]
+["moveTo",55,438.5]
+["lineTo",500.6591796875,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32898,8 +33746,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,436.5]
-["lineTo",54,436.5]
+["moveTo",46.69921875,438.5]
+["lineTo",54,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32908,8 +33756,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,388.5]
-["lineTo",500.6591796875,388.5]
+["moveTo",55,393.5]
+["lineTo",500.6591796875,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32918,8 +33766,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,388.5]
-["lineTo",54,388.5]
+["moveTo",46.69921875,393.5]
+["lineTo",54,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32928,8 +33776,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,341.5]
-["lineTo",500.6591796875,341.5]
+["moveTo",55,348.5]
+["lineTo",500.6591796875,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32938,8 +33786,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,341.5]
-["lineTo",54,341.5]
+["moveTo",46.69921875,348.5]
+["lineTo",54,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32948,8 +33796,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,294.5]
-["lineTo",500.6591796875,294.5]
+["moveTo",55,302.5]
+["lineTo",500.6591796875,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32958,8 +33806,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,294.5]
-["lineTo",54,294.5]
+["moveTo",46.69921875,302.5]
+["lineTo",54,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32968,8 +33816,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,246.5]
-["lineTo",500.6591796875,246.5]
+["moveTo",55,257.5]
+["lineTo",500.6591796875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32978,8 +33826,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,246.5]
-["lineTo",54,246.5]
+["moveTo",46.69921875,257.5]
+["lineTo",54,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32988,8 +33836,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,199.5]
-["lineTo",500.6591796875,199.5]
+["moveTo",55,212.5]
+["lineTo",500.6591796875,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -32998,8 +33846,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,199.5]
-["lineTo",54,199.5]
+["moveTo",46.69921875,212.5]
+["lineTo",54,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33008,8 +33856,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,152.5]
-["lineTo",500.6591796875,152.5]
+["moveTo",55,167.5]
+["lineTo",500.6591796875,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33018,8 +33866,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,152.5]
-["lineTo",54,152.5]
+["moveTo",46.69921875,167.5]
+["lineTo",54,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33028,8 +33876,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,104.5]
-["lineTo",500.6591796875,104.5]
+["moveTo",55,122.5]
+["lineTo",500.6591796875,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33038,8 +33886,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,104.5]
-["lineTo",54,104.5]
+["moveTo",46.69921875,122.5]
+["lineTo",54,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33048,8 +33896,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,57.5]
-["lineTo",500.6591796875,57.5]
+["moveTo",55,77.5]
+["lineTo",500.6591796875,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33058,8 +33906,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,57.5]
-["lineTo",54,57.5]
+["moveTo",46.69921875,77.5]
+["lineTo",54,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33068,8 +33916,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",55,10.5]
-["lineTo",500.6591796875,10.5]
+["moveTo",55,32.5]
+["lineTo",500.6591796875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33078,8 +33926,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",46.69921875,10.5]
-["lineTo",54,10.5]
+["moveTo",46.69921875,32.5]
+["lineTo",54,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33088,7 +33936,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",54.5,10.2]
+["moveTo",54.5,32]
 ["lineTo",54.5,483]
 ["stroke",null]
 ["restore"]
@@ -33099,7 +33947,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",54.5,484]
-["lineTo",54.5,491.59999999999997]
+["lineTo",54.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33108,7 +33956,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",99.5,10.2]
+["moveTo",99.5,32]
 ["lineTo",99.5,483]
 ["stroke",null]
 ["restore"]
@@ -33119,7 +33967,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",99.5,484]
-["lineTo",99.5,491.59999999999997]
+["lineTo",99.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33128,7 +33976,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",143.5,10.2]
+["moveTo",143.5,32]
 ["lineTo",143.5,483]
 ["stroke",null]
 ["restore"]
@@ -33139,7 +33987,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",143.5,484]
-["lineTo",143.5,491.59999999999997]
+["lineTo",143.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33148,7 +33996,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",188.5,10.2]
+["moveTo",188.5,32]
 ["lineTo",188.5,483]
 ["stroke",null]
 ["restore"]
@@ -33159,7 +34007,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",188.5,484]
-["lineTo",188.5,491.59999999999997]
+["lineTo",188.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33168,7 +34016,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",233.5,10.2]
+["moveTo",233.5,32]
 ["lineTo",233.5,483]
 ["stroke",null]
 ["restore"]
@@ -33179,7 +34027,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",233.5,484]
-["lineTo",233.5,491.59999999999997]
+["lineTo",233.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33188,7 +34036,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",277.5,10.2]
+["moveTo",277.5,32]
 ["lineTo",277.5,483]
 ["stroke",null]
 ["restore"]
@@ -33199,7 +34047,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",277.5,484]
-["lineTo",277.5,491.59999999999997]
+["lineTo",277.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33208,7 +34056,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",322.5,10.2]
+["moveTo",322.5,32]
 ["lineTo",322.5,483]
 ["stroke",null]
 ["restore"]
@@ -33219,7 +34067,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",322.5,484]
-["lineTo",322.5,491.59999999999997]
+["lineTo",322.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33228,7 +34076,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",366.5,10.2]
+["moveTo",366.5,32]
 ["lineTo",366.5,483]
 ["stroke",null]
 ["restore"]
@@ -33239,7 +34087,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",366.5,484]
-["lineTo",366.5,491.59999999999997]
+["lineTo",366.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33248,7 +34096,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",411.5,10.2]
+["moveTo",411.5,32]
 ["lineTo",411.5,483]
 ["stroke",null]
 ["restore"]
@@ -33259,7 +34107,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",411.5,484]
-["lineTo",411.5,491.59999999999997]
+["lineTo",411.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33268,7 +34116,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",456.5,10.2]
+["moveTo",456.5,32]
 ["lineTo",456.5,483]
 ["stroke",null]
 ["restore"]
@@ -33279,7 +34127,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",456.5,484]
-["lineTo",456.5,491.59999999999997]
+["lineTo",456.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33288,7 +34136,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",500.5,10.2]
+["moveTo",500.5,32]
 ["lineTo",500.5,483]
 ["stroke",null]
 ["restore"]
@@ -33299,14 +34147,43 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",500.5,484]
-["lineTo",500.5,491.59999999999997]
+["lineTo",500.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",54.5,10]
+["moveTo",54.5,32]
 ["lineTo",54.5,484]
 ["stroke",null]
 ["restore"]
@@ -33316,7 +34193,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",43.69921875,483.59999999999997]
+["translate",43.69921875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -33325,7 +34202,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",43.69921875,436.26]
+["translate",43.69921875,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -33334,7 +34211,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",43.69921875,388.92]
+["translate",43.69921875,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -33343,7 +34220,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",43.69921875,341.5799999999999]
+["translate",43.69921875,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -33352,7 +34229,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",43.69921875,294.23999999999995]
+["translate",43.69921875,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -33361,7 +34238,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",43.69921875,246.89999999999998]
+["translate",43.69921875,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -33370,7 +34247,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",43.69921875,199.56]
+["translate",43.69921875,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -33379,7 +34256,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",43.69921875,152.22]
+["translate",43.69921875,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -33388,7 +34265,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",43.69921875,104.87999999999998]
+["translate",43.69921875,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -33397,7 +34274,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",43.69921875,57.53999999999999]
+["translate",43.69921875,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -33406,7 +34283,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",43.69921875,10.2]
+["translate",43.69921875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -33424,11 +34301,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",54.69921875,494.59999999999997]
+["translate",54.69921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -33437,7 +34314,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",99.29521484375,494.59999999999997]
+["translate",99.29521484375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -33446,7 +34323,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",143.8912109375,494.59999999999997]
+["translate",143.8912109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -33455,7 +34332,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",188.48720703125,494.59999999999997]
+["translate",188.48720703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -33464,7 +34341,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",233.083203125,494.59999999999997]
+["translate",233.083203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -33473,7 +34350,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",277.67919921875,494.59999999999997]
+["translate",277.67919921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -33482,7 +34359,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",322.2751953125,494.59999999999997]
+["translate",322.2751953125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -33491,7 +34368,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",366.87119140625,494.59999999999997]
+["translate",366.87119140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -33500,7 +34377,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",411.4671875,494.59999999999997]
+["translate",411.4671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -33509,7 +34386,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",456.06318359375,494.59999999999997]
+["translate",456.06318359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -33518,7 +34395,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",500.6591796875,494.59999999999997]
+["translate",500.6591796875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -33530,7 +34407,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",54.69921875,459.92999999999995,3,0,6.283185307179586,false]
+["arc",54.69921875,461.02,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -33538,7 +34415,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",500.6591796875,33.87000000000002,3,0,6.283185307179586,false]
+["arc",500.6591796875,54.58000000000002,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -33570,12 +34447,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       'canvas': <String, Object?>{'width': 200.0, 'height': 300.0},
     },
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        37.35546875,
-        10.2,
-        166.970703125,
-        271.59999999999997,
-      ],
+      'chartArea': <Object?>[37.35546875, 32.0, 166.970703125, 271.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'testLinearBaseLimit',
@@ -33588,12 +34460,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[5000000.0, '5,000,000', false],
             <Object?>[10000000.0, '10,000,000', false],
           ],
-          'box': <Object?>[
-            37.35546875,
-            271.59999999999997,
-            166.970703125,
-            299.99999999999994,
-          ],
+          'box': <Object?>[37.35546875, 271.6, 166.970703125, 300.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[6.3369140625, 0.0, 33.029296875, 0.0],
           'tickPixels': <Object?>[37.35546875, 102.1630859375, 166.970703125],
@@ -33655,29 +34522,25 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[1.9, '1.90', false],
             <Object?>[2.0, '2.00', false],
           ],
-          'box': <Object?>[0.0, 10.2, 37.35546875, 271.59999999999997],
+          'box': <Object?>[0.0, 32.0, 37.35546875, 271.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            271.59999999999997,
-            245.45999999999995,
-            219.32,
-            193.17999999999995,
-            167.04,
-            140.89999999999998,
-            114.75999999999998,
-            88.62,
-            62.47999999999999,
-            36.34000000000002,
-            10.2,
+            271.6,
+            247.64,
+            223.68000000000004,
+            199.72,
+            175.76000000000005,
+            151.8,
+            127.83999999999999,
+            103.88000000000002,
+            79.91999999999999,
+            55.96000000000002,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            271.59999999999997,
-            140.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[271.6, 151.8, 32.0],
           'valueForPixel': <Object?>[2.0, 1.5, 1.0],
-          'basePixel': 271.59999999999997,
+          'basePixel': 271.6,
           'warnings': <Object?>[],
           'start': 1.0,
           'end': 2.0,
@@ -33717,8 +34580,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[50.31699380769043, 271.59999999999997],
-          <Object?>[166.97069664423827, 10.2],
+          <Object?>[50.31699380769043, 271.6],
+          <Object?>[166.97069664423827, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -33732,7 +34595,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",37.5,10.2]
+["moveTo",37.5,32]
 ["lineTo",37.5,271]
 ["stroke",null]
 ["restore"]
@@ -33743,7 +34606,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",37.5,272]
-["lineTo",37.5,279.59999999999997]
+["lineTo",37.5,279.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33752,7 +34615,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",102.5,10.2]
+["moveTo",102.5,32]
 ["lineTo",102.5,271]
 ["stroke",null]
 ["restore"]
@@ -33763,7 +34626,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",102.5,272]
-["lineTo",102.5,279.59999999999997]
+["lineTo",102.5,279.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33772,7 +34635,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",166.5,10.2]
+["moveTo",166.5,32]
 ["lineTo",166.5,271]
 ["stroke",null]
 ["restore"]
@@ -33783,7 +34646,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",166.5,272]
-["lineTo",166.5,279.59999999999997]
+["lineTo",166.5,279.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33812,8 +34675,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,245.5]
-["lineTo",166.970703125,245.5]
+["moveTo",38,247.5]
+["lineTo",166.970703125,247.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33822,8 +34685,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,245.5]
-["lineTo",37,245.5]
+["moveTo",29.35546875,247.5]
+["lineTo",37,247.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33832,8 +34695,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,219.5]
-["lineTo",166.970703125,219.5]
+["moveTo",38,223.5]
+["lineTo",166.970703125,223.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33842,8 +34705,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,219.5]
-["lineTo",37,219.5]
+["moveTo",29.35546875,223.5]
+["lineTo",37,223.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33852,8 +34715,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,193.5]
-["lineTo",166.970703125,193.5]
+["moveTo",38,199.5]
+["lineTo",166.970703125,199.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33862,8 +34725,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,193.5]
-["lineTo",37,193.5]
+["moveTo",29.35546875,199.5]
+["lineTo",37,199.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33872,8 +34735,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,167.5]
-["lineTo",166.970703125,167.5]
+["moveTo",38,175.5]
+["lineTo",166.970703125,175.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33882,8 +34745,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,167.5]
-["lineTo",37,167.5]
+["moveTo",29.35546875,175.5]
+["lineTo",37,175.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33892,8 +34755,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,140.5]
-["lineTo",166.970703125,140.5]
+["moveTo",38,151.5]
+["lineTo",166.970703125,151.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33902,8 +34765,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,140.5]
-["lineTo",37,140.5]
+["moveTo",29.35546875,151.5]
+["lineTo",37,151.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33912,8 +34775,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,114.5]
-["lineTo",166.970703125,114.5]
+["moveTo",38,127.5]
+["lineTo",166.970703125,127.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33922,8 +34785,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,114.5]
-["lineTo",37,114.5]
+["moveTo",29.35546875,127.5]
+["lineTo",37,127.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33932,8 +34795,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,88.5]
-["lineTo",166.970703125,88.5]
+["moveTo",38,103.5]
+["lineTo",166.970703125,103.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33942,8 +34805,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,88.5]
-["lineTo",37,88.5]
+["moveTo",29.35546875,103.5]
+["lineTo",37,103.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33952,8 +34815,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,62.5]
-["lineTo",166.970703125,62.5]
+["moveTo",38,79.5]
+["lineTo",166.970703125,79.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33962,8 +34825,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,62.5]
-["lineTo",37,62.5]
+["moveTo",29.35546875,79.5]
+["lineTo",37,79.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33972,8 +34835,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,36.5]
-["lineTo",166.970703125,36.5]
+["moveTo",38,55.5]
+["lineTo",166.970703125,55.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33982,8 +34845,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,36.5]
-["lineTo",37,36.5]
+["moveTo",29.35546875,55.5]
+["lineTo",37,55.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -33992,8 +34855,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,10.5]
-["lineTo",166.970703125,10.5]
+["moveTo",38,32.5]
+["lineTo",166.970703125,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34002,9 +34865,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,10.5]
-["lineTo",37,10.5]
+["moveTo",29.35546875,32.5]
+["lineTo",37,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,200,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",50.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",96.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -34016,11 +34908,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,271.59999999999997,200,28.399999999999977]
+["rect",0,271.6,200,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",37.35546875,282.59999999999997]
+["translate",37.35546875,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34029,7 +34921,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",102.1630859375,282.59999999999997]
+["translate",102.1630859375,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34038,7 +34930,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",166.970703125,282.59999999999997]
+["translate",166.970703125,282.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -34050,7 +34942,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",37.5,10]
+["moveTo",37.5,32]
 ["lineTo",37.5,272]
 ["stroke",null]
 ["restore"]
@@ -34060,7 +34952,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,271.59999999999997]
+["translate",26.35546875,271.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34069,7 +34961,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,245.45999999999995]
+["translate",26.35546875,247.64]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34078,7 +34970,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,219.32]
+["translate",26.35546875,223.68000000000004]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34087,7 +34979,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,193.17999999999995]
+["translate",26.35546875,199.72]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34096,7 +34988,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,167.04]
+["translate",26.35546875,175.76000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34105,7 +34997,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,140.89999999999998]
+["translate",26.35546875,151.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34114,7 +35006,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,114.75999999999998]
+["translate",26.35546875,127.83999999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34123,7 +35015,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,88.62]
+["translate",26.35546875,103.88000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34132,7 +35024,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,62.47999999999999]
+["translate",26.35546875,79.91999999999999]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34141,7 +35033,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,36.34000000000002]
+["translate",26.35546875,55.96000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34150,7 +35042,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,10.2]
+["translate",26.35546875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34162,7 +35054,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",50.31699380769043,271.59999999999997,3,0,6.283185307179586,false]
+["arc",50.31699380769043,271.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -34170,7 +35062,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",166.97069664423827,10.2,3,0,6.283185307179586,false]
+["arc",166.97069664423827,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -34213,7 +35105,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     expected: <String, Object?>{
       'chartArea': <Object?>[
         35.64672455805252,
-        10.2,
+        32.0,
         286.81766235091374,
         133.34982344176072,
       ],
@@ -34310,18 +35202,18 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[1.8, '1.8', false],
             <Object?>[2.03, '2.0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 35.64672455805252, 133.34982344176072],
+          'box': <Object?>[0.0, 32.0, 35.64672455805252, 133.34982344176072],
           'labelRotation': 30.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             133.34982344176072,
-            104.84291986727906,
-            82.03739700769374,
-            59.2318741481084,
-            36.426351288523094,
-            10.2,
+            109.88921616357537,
+            91.12073034102707,
+            72.35224451847878,
+            53.583758695930506,
+            32.0,
           ],
-          'valuePixels': <Object?>[133.34982344176072, 71.77491172088037, 10.2],
+          'valuePixels': <Object?>[133.34982344176072, 82.67491172088037, 32.0],
           'valueForPixel': <Object?>[2.03, 1.4899999999999998, 0.95],
           'basePixel': 133.34982344176072,
           'warnings': <Object?>[],
@@ -34363,8 +35255,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[35.64675595441277, 127.64844272686437],
-          <Object?>[286.8176204891001, 13.62082842893777],
+          <Object?>[35.64675595441277, 128.65770198612364],
+          <Object?>[286.8176204891001, 34.81527287338222],
         ],
       ],
       'drawCalls': '''
@@ -34378,7 +35270,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35.5,10.2]
+["moveTo",35.5,32]
 ["lineTo",35.5,133]
 ["stroke",null]
 ["restore"]
@@ -34398,7 +35290,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",63.5,10.2]
+["moveTo",63.5,32]
 ["lineTo",63.5,133]
 ["stroke",null]
 ["restore"]
@@ -34418,7 +35310,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",119.5,10.2]
+["moveTo",119.5,32]
 ["lineTo",119.5,133]
 ["stroke",null]
 ["restore"]
@@ -34438,7 +35330,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",175.5,10.2]
+["moveTo",175.5,32]
 ["lineTo",175.5,133]
 ["stroke",null]
 ["restore"]
@@ -34458,7 +35350,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",231.5,10.2]
+["moveTo",231.5,32]
 ["lineTo",231.5,133]
 ["stroke",null]
 ["restore"]
@@ -34478,7 +35370,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",286.5,10.2]
+["moveTo",286.5,32]
 ["lineTo",286.5,133]
 ["stroke",null]
 ["restore"]
@@ -34518,8 +35410,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",36,104.5]
-["lineTo",286.81766235091374,104.5]
+["moveTo",36,109.5]
+["lineTo",286.81766235091374,109.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34528,8 +35420,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",27.64672455805252,104.5]
-["lineTo",35,104.5]
+["moveTo",27.64672455805252,109.5]
+["lineTo",35,109.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34538,8 +35430,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",36,82.5]
-["lineTo",286.81766235091374,82.5]
+["moveTo",36,91.5]
+["lineTo",286.81766235091374,91.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34548,8 +35440,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",27.64672455805252,82.5]
-["lineTo",35,82.5]
+["moveTo",27.64672455805252,91.5]
+["lineTo",35,91.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34558,8 +35450,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",36,59.5]
-["lineTo",286.81766235091374,59.5]
+["moveTo",36,72.5]
+["lineTo",286.81766235091374,72.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34568,8 +35460,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",27.64672455805252,59.5]
-["lineTo",35,59.5]
+["moveTo",27.64672455805252,72.5]
+["lineTo",35,72.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34578,8 +35470,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",36,36.5]
-["lineTo",286.81766235091374,36.5]
+["moveTo",36,53.5]
+["lineTo",286.81766235091374,53.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34588,8 +35480,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",27.64672455805252,36.5]
-["lineTo",35,36.5]
+["moveTo",27.64672455805252,53.5]
+["lineTo",35,53.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34598,8 +35490,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",36,10.5]
-["lineTo",286.81766235091374,10.5]
+["moveTo",36,32.5]
+["lineTo",286.81766235091374,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -34608,9 +35500,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",27.64672455805252,10.5]
-["lineTo",35,10.5]
+["moveTo",27.64672455805252,32.5]
+["lineTo",35,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,300,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",100.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",146.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -34683,7 +35604,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",35.5,10]
+["moveTo",35.5,32]
 ["lineTo",35.5,134]
 ["stroke",null]
 ["restore"]
@@ -34702,7 +35623,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",24.64672455805252,104.84291986727906]
+["translate",24.64672455805252,109.88921616357537]
 ["rotate",-0.5235987755982988]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34711,7 +35632,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",24.64672455805252,82.03739700769374]
+["translate",24.64672455805252,91.12073034102707]
 ["rotate",-0.5235987755982988]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34720,7 +35641,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",24.64672455805252,59.2318741481084]
+["translate",24.64672455805252,72.35224451847878]
 ["rotate",-0.5235987755982988]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34729,7 +35650,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",24.64672455805252,36.426351288523094]
+["translate",24.64672455805252,53.583758695930506]
 ["rotate",-0.5235987755982988]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34738,7 +35659,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",24.64672455805252,10.2]
+["translate",24.64672455805252,32]
 ["rotate",-0.5235987755982988]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -34750,7 +35671,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",35.64675595441277,127.64844272686437,3,0,6.283185307179586,false]
+["arc",35.64675595441277,128.65770198612364,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -34758,7 +35679,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",286.8176204891001,13.62082842893777,3,0,6.283185307179586,false]
+["arc",286.8176204891001,34.81527287338222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -34793,7 +35714,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
     expected: <String, Object?>{
       'chartArea': <Object?>[
         37.35546875,
-        10.2,
+        32.0,
         182.9968791448677,
         224.23921403327563,
       ],
@@ -34903,26 +35824,26 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
             <Object?>[1.9, '1.90', false],
             <Object?>[2.0, '2.00', false],
           ],
-          'box': <Object?>[0.0, 10.2, 37.35546875, 224.23921403327563],
+          'box': <Object?>[0.0, 32.0, 37.35546875, 224.23921403327563],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             224.23921403327563,
-            202.83529262994804,
-            181.4313712266205,
-            160.02744982329293,
-            138.6235284199654,
-            117.21960701663782,
-            95.81568561331024,
-            74.4117642099827,
-            53.00784280665512,
-            31.603921403327583,
-            10.2,
+            205.01529262994805,
+            185.79137122662053,
+            166.56744982329292,
+            147.3435284199654,
+            128.11960701663781,
+            108.89568561331023,
+            89.6717642099827,
+            70.44784280665512,
+            51.22392140332758,
+            32.0,
           ],
           'valuePixels': <Object?>[
             224.23921403327563,
-            117.21960701663782,
-            10.2,
+            128.11960701663781,
+            32.0,
           ],
           'valueForPixel': <Object?>[2.0, 1.5, 1.0],
           'basePixel': 224.23921403327563,
@@ -34966,7 +35887,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
       'points': <Object?>[
         <Object?>[
           <Object?>[37.35547077279737, 224.23921403327563],
-          <Object?>[182.99687105367823, 10.2],
+          <Object?>[182.99687105367823, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -34980,7 +35901,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",37.5,10.2]
+["moveTo",37.5,32]
 ["lineTo",37.5,224]
 ["stroke",null]
 ["restore"]
@@ -35000,7 +35921,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",53.5,10.2]
+["moveTo",53.5,32]
 ["lineTo",53.5,224]
 ["stroke",null]
 ["restore"]
@@ -35020,7 +35941,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",69.5,10.2]
+["moveTo",69.5,32]
 ["lineTo",69.5,224]
 ["stroke",null]
 ["restore"]
@@ -35040,7 +35961,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",85.5,10.2]
+["moveTo",85.5,32]
 ["lineTo",85.5,224]
 ["stroke",null]
 ["restore"]
@@ -35060,7 +35981,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",102.5,10.2]
+["moveTo",102.5,32]
 ["lineTo",102.5,224]
 ["stroke",null]
 ["restore"]
@@ -35080,7 +36001,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",118.5,10.2]
+["moveTo",118.5,32]
 ["lineTo",118.5,224]
 ["stroke",null]
 ["restore"]
@@ -35100,7 +36021,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",134.5,10.2]
+["moveTo",134.5,32]
 ["lineTo",134.5,224]
 ["stroke",null]
 ["restore"]
@@ -35120,7 +36041,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",150.5,10.2]
+["moveTo",150.5,32]
 ["lineTo",150.5,224]
 ["stroke",null]
 ["restore"]
@@ -35140,7 +36061,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",166.5,10.2]
+["moveTo",166.5,32]
 ["lineTo",166.5,224]
 ["stroke",null]
 ["restore"]
@@ -35160,7 +36081,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",182.5,10.2]
+["moveTo",182.5,32]
 ["lineTo",182.5,224]
 ["stroke",null]
 ["restore"]
@@ -35200,8 +36121,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,202.5]
-["lineTo",182.9968791448677,202.5]
+["moveTo",38,205.5]
+["lineTo",182.9968791448677,205.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35210,8 +36131,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,202.5]
-["lineTo",37,202.5]
+["moveTo",29.35546875,205.5]
+["lineTo",37,205.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35220,8 +36141,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,181.5]
-["lineTo",182.9968791448677,181.5]
+["moveTo",38,185.5]
+["lineTo",182.9968791448677,185.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35230,8 +36151,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,181.5]
-["lineTo",37,181.5]
+["moveTo",29.35546875,185.5]
+["lineTo",37,185.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35240,8 +36161,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,160.5]
-["lineTo",182.9968791448677,160.5]
+["moveTo",38,166.5]
+["lineTo",182.9968791448677,166.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35250,8 +36171,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,160.5]
-["lineTo",37,160.5]
+["moveTo",29.35546875,166.5]
+["lineTo",37,166.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35260,8 +36181,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,138.5]
-["lineTo",182.9968791448677,138.5]
+["moveTo",38,147.5]
+["lineTo",182.9968791448677,147.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35270,8 +36191,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,138.5]
-["lineTo",37,138.5]
+["moveTo",29.35546875,147.5]
+["lineTo",37,147.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35280,8 +36201,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,117.5]
-["lineTo",182.9968791448677,117.5]
+["moveTo",38,128.5]
+["lineTo",182.9968791448677,128.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35290,8 +36211,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,117.5]
-["lineTo",37,117.5]
+["moveTo",29.35546875,128.5]
+["lineTo",37,128.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35300,8 +36221,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,95.5]
-["lineTo",182.9968791448677,95.5]
+["moveTo",38,108.5]
+["lineTo",182.9968791448677,108.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35310,8 +36231,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,95.5]
-["lineTo",37,95.5]
+["moveTo",29.35546875,108.5]
+["lineTo",37,108.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35320,8 +36241,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,74.5]
-["lineTo",182.9968791448677,74.5]
+["moveTo",38,89.5]
+["lineTo",182.9968791448677,89.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35330,8 +36251,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,74.5]
-["lineTo",37,74.5]
+["moveTo",29.35546875,89.5]
+["lineTo",37,89.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35340,8 +36261,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,53.5]
-["lineTo",182.9968791448677,53.5]
+["moveTo",38,70.5]
+["lineTo",182.9968791448677,70.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35350,8 +36271,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,53.5]
-["lineTo",37,53.5]
+["moveTo",29.35546875,70.5]
+["lineTo",37,70.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35360,8 +36281,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,31.5]
-["lineTo",182.9968791448677,31.5]
+["moveTo",38,51.5]
+["lineTo",182.9968791448677,51.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35370,8 +36291,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,31.5]
-["lineTo",37,31.5]
+["moveTo",29.35546875,51.5]
+["lineTo",37,51.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35380,8 +36301,8 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",38,10.5]
-["lineTo",182.9968791448677,10.5]
+["moveTo",38,32.5]
+["lineTo",182.9968791448677,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -35390,9 +36311,38 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",29.35546875,10.5]
-["lineTo",37,10.5]
+["moveTo",29.35546875,32.5]
+["lineTo",37,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,200,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",50.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",96.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -35501,7 +36451,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",37.5,10]
+["moveTo",37.5,32]
 ["lineTo",37.5,225]
 ["stroke",null]
 ["restore"]
@@ -35520,7 +36470,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,202.83529262994804]
+["translate",26.35546875,205.01529262994805]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -35529,7 +36479,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,181.4313712266205]
+["translate",26.35546875,185.79137122662053]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -35538,7 +36488,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,160.02744982329293]
+["translate",26.35546875,166.56744982329292]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -35547,7 +36497,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,138.6235284199654]
+["translate",26.35546875,147.3435284199654]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -35556,7 +36506,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,117.21960701663782]
+["translate",26.35546875,128.11960701663781]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -35565,7 +36515,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,95.81568561331024]
+["translate",26.35546875,108.89568561331023]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -35574,7 +36524,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,74.4117642099827]
+["translate",26.35546875,89.6717642099827]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -35583,7 +36533,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,53.00784280665512]
+["translate",26.35546875,70.44784280665512]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -35592,7 +36542,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,31.603921403327583]
+["translate",26.35546875,51.22392140332758]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -35601,7 +36551,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",26.35546875,10.2]
+["translate",26.35546875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -35621,7 +36571,7 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",182.99687105367823,10.2,3,0,6.283185307179586,false]
+["arc",182.99687105367823,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -35632,6 +36582,11 @@ const List<ScaleLinearBaseReferenceCase> scaleLinearBaseReference = [
 
 /// Each text that the cases measured, with its font and width.
 const List<ScaleLinearBaseReferenceWidth> scaleLinearBaseReferenceWidths = [
+  (
+    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    text: 'undefined',
+    width: 52.716796875,
+  ),
   (
     font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
     text: '-20',

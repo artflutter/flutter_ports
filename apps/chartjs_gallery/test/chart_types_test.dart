@@ -337,7 +337,7 @@ void main() {
     });
   }
 
-  testWidgets('area: the fill origin, no filler, the data of the seed 2026', (
+  testWidgets('area: the fill origin, the filler, the data of the seed 2026', (
     tester,
   ) async {
     _setView(tester, _pixel8a, 2.625);
@@ -360,18 +360,27 @@ void main() {
       -59.53,
       -0.87,
     ]);
-    expect(chart.isPluginEnabled('filler'), isFalse);
-    // core.datasetController.js:285: one warning for the one dataset.
-    expect(lines.where((l) => l.startsWith(_fillWarning)), hasLength(1));
+    // The gallery registers the plugins of registerables: the filler is
+    // enabled, so the controller gives no fill warning
+    // (core.datasetController.js:286-288).
+    expect(chart.isPluginEnabled('filler'), isTrue);
+    expect(lines.where((l) => l.startsWith(_fillWarning)), isEmpty);
     final note = galleryChartTypes.first.note!;
     expect(find.textContaining(note), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('radar: one fill warning for each dataset', (tester) async {
+  testWidgets('radar: no fill warning with the filler of registerables', (
+    tester,
+  ) async {
     _setView(tester, _pixel8a, 2.625);
-    final lines = await _printed(() => _open(tester, 'radar'));
-    expect(lines.where((l) => l.startsWith(_fillWarning)), hasLength(2));
+    late ChartTypePageState state;
+    final lines = await _printed(() async {
+      state = await _open(tester, 'radar');
+    });
+    expect(state.chart!.isPluginEnabled('filler'), isTrue);
+    // core.datasetController.js:286-288 warns only without the filler.
+    expect(lines.where((l) => l.startsWith(_fillWarning)), isEmpty);
     expect(tester.takeException(), isNull);
   });
 

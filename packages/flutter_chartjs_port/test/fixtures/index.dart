@@ -92,6 +92,8 @@ import 'hand/controller.doughnut/doughnut-set-active-elements.dart'
     as controller_doughnut_doughnut_set_active_elements;
 import 'hand/controller.doughnut/event-replay.dart'
     as controller_doughnut_event_replay;
+import 'hand/controller.line/backgroundColor/scriptable.dart'
+    as controller_line_backgroundcolor_scriptable;
 import 'hand/controller.line/borderCapStyle/scriptable.dart'
     as controller_line_bordercapstyle_scriptable;
 import 'hand/controller.line/borderColor/scriptable.dart'
@@ -107,6 +109,10 @@ import 'hand/controller.line/borderWidth/scriptable.dart'
 import 'hand/controller.line/clip/false.dart' as controller_line_clip_false;
 import 'hand/controller.line/cubicInterpolationMode/scriptable.dart'
     as controller_line_cubicinterpolationmode_scriptable;
+import 'hand/controller.line/fill/no-border.dart'
+    as controller_line_fill_no_border;
+import 'hand/controller.line/fill/scriptable.dart'
+    as controller_line_fill_scriptable;
 import 'hand/controller.line/issue-8902.dart' as controller_line_issue_8902;
 import 'hand/controller.line/pointBackgroundColor/scriptable.dart'
     as controller_line_pointbackgroundcolor_scriptable;
@@ -161,6 +167,8 @@ import 'hand/controller.polarArea/polar-area-animation-rotate.dart'
     as controller_polararea_polar_area_animation_rotate;
 import 'hand/controller.polarArea/polar-area-animation-scale.dart'
     as controller_polararea_polar_area_animation_scale;
+import 'hand/controller.radar/backgroundColor/scriptable.dart'
+    as controller_radar_backgroundcolor_scriptable;
 import 'hand/controller.radar/borderCapStyle/scriptable.dart'
     as controller_radar_bordercapstyle_scriptable;
 import 'hand/controller.radar/borderColor/scriptable.dart'
@@ -173,6 +181,8 @@ import 'hand/controller.radar/borderJoinStyle/scriptable.dart'
     as controller_radar_borderjoinstyle_scriptable;
 import 'hand/controller.radar/borderWidth/scriptable.dart'
     as controller_radar_borderwidth_scriptable;
+import 'hand/controller.radar/fill/scriptable.dart'
+    as controller_radar_fill_scriptable;
 import 'hand/controller.radar/pointBackgroundColor/scriptable.dart'
     as controller_radar_pointbackgroundcolor_scriptable;
 import 'hand/controller.radar/pointBorderColor/scriptable.dart'
@@ -187,6 +197,12 @@ import 'hand/controller.radar/rotation/scriptable.dart'
     as controller_radar_rotation_scriptable;
 import 'hand/controller.scatter/showLine/changed.dart'
     as controller_scatter_showline_changed;
+import 'hand/core.interaction/drawActiveElementsOnTop-false.dart'
+    as core_interaction_drawactiveelementsontop_false;
+import 'hand/core.interaction/nearest-partial-bar.dart'
+    as core_interaction_nearest_partial_bar;
+import 'hand/core.interaction/nearest-point-behind-scale.dart'
+    as core_interaction_nearest_point_behind_scale;
 import 'hand/core.layouts/hidden-vertical-boxes.dart'
     as core_layouts_hidden_vertical_boxes;
 import 'hand/core.layouts/scriptable.dart' as core_layouts_scriptable;
@@ -439,6 +455,10 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_doughnut_event_replay.fixture,
     sha256: 'b60b32f584d9',
   ),
+  'controller.line/backgroundColor/scriptable.js': (
+    load: controller_line_backgroundcolor_scriptable.fixture,
+    sha256: '6b335045acd5',
+  ),
   'controller.line/borderCapStyle/scriptable.js': (
     load: controller_line_bordercapstyle_scriptable.fixture,
     sha256: '30478ff89367',
@@ -470,6 +490,14 @@ final Map<String, HandFixture> handFixtures = {
   'controller.line/cubicInterpolationMode/scriptable.js': (
     load: controller_line_cubicinterpolationmode_scriptable.fixture,
     sha256: 'ce42a5d3d739',
+  ),
+  'controller.line/fill/no-border.js': (
+    load: controller_line_fill_no_border.fixture,
+    sha256: '2c4c06669722',
+  ),
+  'controller.line/fill/scriptable.js': (
+    load: controller_line_fill_scriptable.fixture,
+    sha256: '6a79addf5883',
   ),
   'controller.line/issue-8902.js': (
     load: controller_line_issue_8902.fixture,
@@ -584,6 +612,10 @@ final Map<String, HandFixture> handFixtures = {
     load: controller_polararea_polar_area_animation_scale.fixture,
     sha256: '5dc2b7a377f5',
   ),
+  'controller.radar/backgroundColor/scriptable.js': (
+    load: controller_radar_backgroundcolor_scriptable.fixture,
+    sha256: 'f22197417af4',
+  ),
   'controller.radar/borderCapStyle/scriptable.js': (
     load: controller_radar_bordercapstyle_scriptable.fixture,
     sha256: '5a54608b60d1',
@@ -607,6 +639,10 @@ final Map<String, HandFixture> handFixtures = {
   'controller.radar/borderWidth/scriptable.js': (
     load: controller_radar_borderwidth_scriptable.fixture,
     sha256: '0e135ebaad8c',
+  ),
+  'controller.radar/fill/scriptable.js': (
+    load: controller_radar_fill_scriptable.fixture,
+    sha256: '2e41806f6eec',
   ),
   'controller.radar/pointBackgroundColor/scriptable.js': (
     load: controller_radar_pointbackgroundcolor_scriptable.fixture,
@@ -635,6 +671,18 @@ final Map<String, HandFixture> handFixtures = {
   'controller.scatter/showLine/changed.js': (
     load: controller_scatter_showline_changed.fixture,
     sha256: '4f29b0a4faa8',
+  ),
+  'core.interaction/drawActiveElementsOnTop-false.js': (
+    load: core_interaction_drawactiveelementsontop_false.fixture,
+    sha256: '40e58cf68224',
+  ),
+  'core.interaction/nearest-partial-bar.js': (
+    load: core_interaction_nearest_partial_bar.fixture,
+    sha256: '7e8dcdf76bde',
+  ),
+  'core.interaction/nearest-point-behind-scale.js': (
+    load: core_interaction_nearest_point_behind_scale.fixture,
+    sha256: '438f249bbf9c',
   ),
   'core.layouts/hidden-vertical-boxes.js': (
     load: core_layouts_hidden_vertical_boxes.fixture,
@@ -840,9 +888,12 @@ final Map<String, HandFixture> handFixtures = {
 
 /// The fixtures that skip, by fixture path (Chart.js ADR 0029, section 9).
 ///
-/// - `'blocked: plugin.<id>'`: the upstream observations need the plugin of
-///   phase 8. The runner fails such a skip as stale when the plugin is
-///   registered.
+/// - `'blocked: <module>'`: the upstream observations need a module that is
+///   not ported yet. The runner fails a `'blocked: plugin.<id>'` skip as
+///   stale when the plugin is registered, and `test:cases` fails a
+///   `'blocked: <module>'` skip when each `src/` row of the module in
+///   `parity.md` is `ported` (Chart.js ADR 0041, section 8). No entry has
+///   this reason now.
 /// - `'diverges: adapt-date-moment-format'`: the config parses with a
 ///   moment format string. `test/port/fixtures/moment_twins_test.dart` runs
 ///   the pure data configs with the ICU pattern.
@@ -880,52 +931,8 @@ const Map<String, String> fixtureSkips = {
       'diverges: adapt-date-moment-format',
   'controller.bar/bar-thickness-stacked.json':
       'diverges: adapt-date-moment-format',
-  'controller.line/backgroundColor/scriptable.js': 'blocked: plugin.filler',
-  'controller.line/backgroundColor/value.js': 'blocked: plugin.filler',
-  'controller.line/fill/no-border.js': 'blocked: plugin.filler',
-  'controller.line/fill/order-default.js': 'blocked: plugin.filler',
-  'controller.line/fill/order.js': 'blocked: plugin.filler',
-  'controller.line/fill/scriptable.js': 'blocked: plugin.filler',
-  'controller.line/fill/value.js': 'blocked: plugin.filler',
-  'controller.line/showLine/false.js': 'blocked: plugin.filler',
-  'controller.line/stacking/order-default.js': 'blocked: plugin.filler',
-  'controller.line/stacking/order-specified.js': 'blocked: plugin.filler',
-  'controller.line/stacking/single.js': 'blocked: plugin.filler',
-  'controller.polarArea/pointLabels/withTitle/bottom-centered-45.js':
-      'blocked: plugin.title',
-  'controller.polarArea/pointLabels/withTitle/bottom-centered.js':
-      'blocked: plugin.title',
-  'controller.polarArea/pointLabels/withTitle/left-centered-45.js':
-      'blocked: plugin.title',
-  'controller.polarArea/pointLabels/withTitle/left-centered.js':
-      'blocked: plugin.title',
-  'controller.polarArea/pointLabels/withTitle/right-centered-45.js':
-      'blocked: plugin.title',
-  'controller.polarArea/pointLabels/withTitle/right-centered.js':
-      'blocked: plugin.title',
-  'controller.polarArea/pointLabels/withTitle/top-centered-45.js':
-      'blocked: plugin.title',
-  'controller.polarArea/pointLabels/withTitle/top-centered.js':
-      'blocked: plugin.title',
-  'controller.polarArea/pointLabels/withTitle/top-default-45.js':
-      'blocked: plugin.title',
-  'controller.polarArea/pointLabels/withTitle/top-default.js':
-      'blocked: plugin.title',
-  'controller.radar/backgroundColor/scriptable.js': 'blocked: plugin.filler',
-  'controller.radar/backgroundColor/value.js': 'blocked: plugin.filler',
-  'controller.radar/fill/scriptable.js': 'blocked: plugin.filler',
-  'controller.radar/fill/value.js': 'blocked: plugin.filler',
-  'controller.radar/showLine/value.js': 'blocked: plugin.filler',
-  'core.interaction/drawActiveElementsOnTop-false.js':
-      'blocked: plugin.subtitle',
-  'core.interaction/nearest-partial-bar.js': 'blocked: plugin.tooltip',
-  'core.interaction/nearest-point-behind-scale.js': 'blocked: plugin.tooltip',
-  'core.layouts/refit-vertical-boxes.js': 'blocked: plugin.legend',
-  'scale.radialLinear/gridlines-no-z.json': 'blocked: plugin.filler',
-  'scale.radialLinear/gridlines-z.json': 'blocked: plugin.filler',
   'scale.time/invalid-data.js': 'diverges: adapt-date-moment-format',
   'scale.time/labels.js': 'diverges: adapt-date-moment-format',
-  'scale.time/negative-times.js': 'blocked: plugin.filler',
   'scale.time/skip-null-gridlines.js': 'diverges: adapt-date-moment-format',
   'scale.time/skip-undefined-gridlines.js':
       'diverges: adapt-date-moment-format',

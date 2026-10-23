@@ -25,6 +25,8 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
+    show Legend;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -47,17 +49,24 @@ import 'controller_polar_area_reference.dart';
 // steps and compares the observations, the hit queries and the draw calls
 // with the element draws (controller_chart_harness.dart).
 //
-// The 9 cases of Chart.js ADR 0030, section 7 run two times: unthemed, and
-// with the light preset (theming.md section 8 test 3). The cases whose names
-// start with `parsed:` (Chart.js ADR 0036, section 9) or `interfaces:`
-// (Chart.js ADR 0028, section 8) run unthemed only. The cases
-// `interfaces: sharing, ...` run in a group that registers the test
-// subclass with option sharing before each case and unregisters it after
-// the case (Chart.js ADR 0030, section 3 item 4). The groups `parsed data`
-// and `interfaces` hold the pin tests that need no generated value.
+// The 9 cases of Chart.js ADR 0030, section 7 run two times: unthemed, and with
+// the light preset (theming.md section 8 test 3). The cases whose names start
+// with `parsed:` (Chart.js ADR 0036, section 9) or `interfaces:` (Chart.js ADR
+// 0028, section 8) run unthemed only. The cases `interfaces: sharing, ...` run
+// in a group that registers the test subclass with option sharing before each
+// case and unregisters it after the case (Chart.js ADR 0030, section 3 item 4).
+// The cases whose names start with `legend:` (Chart.js ADR 0041, section 5) run
+// the real legend with the legend functions of the overrides: the items, the
+// hit boxes, a click on the item 1, a chart without labels, and `legend: off`
+// (the override `generateLabels` without a legend). They also run unthemed
+// only. The groups `parsed data` and `interfaces` hold the pin tests that need
+// no generated value.
 //
-// flutter_test_config.dart registers the polar area controller with the
-// built-in components before main() (Chart.js ADR 0030, section 3 item 4).
+// flutter_test_config.dart registers the polar area controller with the built-
+// in components before main() (Chart.js ADR 0030, section 3 item 4), and the
+// seven plugins with `defaults.plugins.colors.enabled = false` (Chart.js ADR
+// 0041, section 1). The generator registers the same components
+// (registerBuiltins).
 
 /// The named functions of the generator (`'fn:<name>'`), with the same
 /// bodies.
@@ -70,7 +79,8 @@ final Map<String, Object?> _functions = {
 /// The probes of the key `extra` of the generator, with the same bodies.
 final Map<String, Object? Function(Chart chart)> _extras = {
   'polarState': _polarState,
-  'legend': _legend,
+  'realLegend': _realLegend,
+  'noLegend': _noLegend,
 };
 
 /// `chart.data.datasets.length`.
@@ -101,66 +111,43 @@ Map<String, Object?> _state(PolarAreaController c) {
   };
 }
 
-/// The test legend of the probe `legend`: `{chart, options}`.
-final class _TestLegend implements types.LegendElement {
-  _TestLegend(this.chart, this.options);
-
-  @override
-  final types.Chart chart;
-
-  /// index.d.ts:2417 `legendItems`. The legend functions do not read it.
-  @override
-  List<Object?>? get legendItems => null;
-
-  @override
-  final Map<String, Object?> options;
-}
-
 /// `C.Chart.overrides.polarArea.plugins.legend`.
 Object? _legendFunctions() =>
     jsGet(jsGet(jsGet(overrides, 'polarArea'), 'plugins'), 'legend');
 
-/// The probe `legend` of the generator: the two legend functions without
-/// and with a test legend in `chart.legend`.
-Object? _legend(Chart chart) {
-  final fns = _legendFunctions();
-  final generateLabels = jsGet(jsGet(fns, 'labels'), 'generateLabels');
-  final out = <String, Object?>{};
+/// The probe `realLegend` of the generator: the items and the hit boxes of
+/// the real legend. It reads `legendItems` through `types.LegendElement`
+/// (Chart.js ADR 0028 Open 2), and `legendHitBoxes` through a cast to
+/// [Legend]: the member is not in index.d.ts (Chart.js ADR 0038, section 6;
+/// Chart.js ADR 0041, section 5). `keys` is the key list of each item in
+/// order (`Object.keys`): the harness compares only the expected keys of a
+/// Map.
+Object? _realLegend(Chart chart) {
+  final legend = chart.legend!;
+  return <String, Object?>{
+    'items': legend.legendItems,
+    'keys': [
+      for (final item in legend.legendItems!) jsObjectKeys(item! as AnyObject),
+    ],
+    'hitBoxes': (legend as Legend).legendHitBoxes,
+  };
+}
+
+/// The probe `noLegend` of the generator: the override `generateLabels` on
+/// a chart with the legend plugin off (no `chart.legend`), or the name of
+/// its error.
+Object? _noLegend(Chart chart) {
+  final generateLabels = jsGet(
+    jsGet(_legendFunctions(), 'labels'),
+    'generateLabels',
+  );
   try {
-    out['noLegend'] = jsCall(generateLabels, [chart]);
+    return jsCall(generateLabels, [chart]);
     // The JS `catch (e)` of the probe: a JS TypeError is a Dart TypeError.
     // ignore: avoid_catching_errors
   } on TypeError {
-    out['noLegend'] = 'TypeError';
+    return 'TypeError';
   }
-  chart.legend = _TestLegend(chart, <String, Object?>{
-    'labels': <String, Object?>{
-      'pointStyle': 'circle',
-      'textAlign': 'left',
-      'color': '#666',
-      'useBorderRadius': true,
-      'borderRadius': 0.0,
-    },
-  });
-  final items = jsCall(generateLabels, [chart])! as List<Object?>;
-  out['items'] = items;
-  out['keys'] = [for (final item in items) jsObjectKeys(item! as AnyObject)];
-  jsCall(jsGet(fns, 'onClick'), [
-    <String, Object?>{},
-    <String, Object?>{'index': 1.0},
-    chart.legend,
-  ]);
-  out['visible1'] = chart.getDataVisibility(1);
-  out['hidden'] = [
-    for (final item in jsCall(generateLabels, [chart])! as List<Object?>)
-      jsGet(item, 'hidden'),
-  ];
-  out['outer'] = [
-    for (final arc in chart.getDatasetMeta(0).data)
-      (arc as types.ElementPropertyRead)['outerRadius'],
-  ];
-  chart.legend = null;
-  return out;
 }
 
 /// The test subclass of Chart.js ADR 0028, section 5: the polar area
@@ -234,7 +221,9 @@ void main() {
   test('the reference has the 9 cases of Chart.js ADR 0030 first', () {
     final names = [for (final c in controllerPolarAreaReference) c.name];
     bool prefixed(String n) =>
-        n.startsWith('parsed:') || n.startsWith('interfaces:');
+        n.startsWith('parsed:') ||
+        n.startsWith('interfaces:') ||
+        n.startsWith('legend:');
     expect(names.first, 'default');
     expect(names.length, greaterThan(9));
     expect(names.take(9).where(prefixed), isEmpty);
@@ -266,8 +255,15 @@ void main() {
   });
 
   group('theming.md §8 test 3: the light preset', () {
+    // The `legend:` cases run unthemed only, as the `interfaces:` cases:
+    // their probe compares the item colors as strings, and
+    // test/port/plugins/plugin.legend_test.dart runs the legend with the
+    // light preset.
     testControllerChartCases(
-      controllerPolarAreaReference,
+      [
+        for (final c in controllerPolarAreaReference)
+          if (!c.name.startsWith('legend:')) c,
+      ],
       functions: _functions,
       extras: _extras,
       theme: compileChartTheme(ChartThemes.light),
@@ -382,10 +378,7 @@ void main() {
         },
       ];
       final chart = acquireChart(config);
-      final legend = _TestLegend(chart, <String, Object?>{
-        'labels': <String, Object?>{'color': '#666'},
-      });
-      chart.legend = legend;
+      final legend = chart.legend!;
       updates = 0;
       jsCall(jsGet(_legendFunctions(), 'onClick'), [
         <String, Object?>{},
@@ -432,7 +425,7 @@ void main() {
         jsCall(jsGet(_legendFunctions(), 'onClick'), [
           <String, Object?>{},
           <String, Object?>{'index': index},
-          _TestLegend(chart, <String, Object?>{}),
+          chart.legend,
         ]);
         expect(
           [
@@ -447,8 +440,9 @@ void main() {
     // The key after a data insert (Chart.js ADR 0028 §6).
     // `_updateHiddenIndices` moves the key '01' to '2'
     // (core.controller.js:72-84). A probe of the build at the pin in x64
-    // Node.js v24.12.0 gives the visibility
-    // 1101 and the outer radii 248, 27.555556, 0 and 82.666667 (rounded).
+    // Node.js v24.12.0 with the seven plugins registered (phase 8
+    // `pins_plugins_probe.mjs`, `onclick01 polarArea`) gives the visibility
+    // 1101 and the outer radii 232, 25.777778, 0 and 77.333333 (rounded).
     testWidgets("onClick with the index '01', then unshift, hides the data "
         'index 2', (tester) async {
       final chart = acquireChart(
@@ -457,7 +451,7 @@ void main() {
       jsCall(jsGet(_legendFunctions(), 'onClick'), [
         <String, Object?>{},
         <String, Object?>{'index': '01'},
-        _TestLegend(chart, <String, Object?>{}),
+        chart.legend,
       ]);
       final data =
           jsGet(jsGetIndex(jsGet(chart.data, 'datasets'), 0), 'data')!
@@ -478,10 +472,10 @@ void main() {
             (arc as Element)['outerRadius'],
         ],
         [
-          closeTo(248, 1e-6),
-          closeTo(27.555556, 1e-6),
+          closeTo(232, 1e-6),
+          closeTo(25.777778, 1e-6),
           0,
-          closeTo(82.666667, 1e-6),
+          closeTo(77.333333, 1e-6),
         ],
       );
     });
@@ -532,14 +526,15 @@ void main() {
       final x = arc.$animations!['x']! as animation.Animation;
       final y = arc.$animations!['y']! as animation.Animation;
       expect([x.from, x.to], [256.0, 256.0]);
-      expect([y.from, y.to], [256.0, 256.0]);
+      expect([y.from, y.to], [272.0, 272.0]);
       // At 500 ms the new arc is drawn and hit at the middle of its final
-      // area (pins_probe.out, `pin1 polarArea`). A NaN start gives x NaN and
-      // no hit in each mode.
+      // area (the phase 8 probe pins_plugins_probe.mjs with the seven
+      // plugins registered, `pin1 polarArea`: the legend moves the center
+      // down by 16). A NaN start gives x NaN and no hit in each mode.
       await tester.pump(const Duration(milliseconds: 500));
-      expect([arc.x, arc.y], [256.0, 256.0]);
-      const qx = 168.31875913286808;
-      const qy = 168.3187591328681;
+      expect([arc.x, arc.y], [256.0, 272.0]);
+      const qx = 173.97561338236045;
+      const qy = 189.9756133823605;
       expect(_hitsAt(chart, qx, qy, 'point'), [
         [0, 3],
       ]);
@@ -553,7 +548,7 @@ void main() {
         [0, 3],
       ]);
       await tester.pump(const Duration(milliseconds: 600));
-      expect([arc.x, arc.y], [256.0, 256.0]);
+      expect([arc.x, arc.y], [256.0, 272.0]);
     });
 
     // A center that is NaN after a layout is not `undefined` (finding F1 of
@@ -564,7 +559,9 @@ void main() {
     // `xCenter` needs two values: Dart `null` and NaN. The x64 Node.js probe
     // of the X-fix fixer on the build at the pin
     // (`wave3/X-fix-fix/probe_f1c.mjs`, case `newAxisId`) gives the
-    // animation of `x` from 256 to NaN.
+    // animation of `x` from 256 to NaN. With the seven plugins registered,
+    // the arc starts at (256, 272) (phase 8 `pins_plugins_probe.mjs`,
+    // `F1 polarArea`).
     testWidgets('a NaN center after a layout animates x to NaN', (
       tester,
     ) async {
@@ -579,7 +576,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 1100));
       final meta = chart.getDatasetMeta(0);
       final arc = meta.data[1] as Element;
-      expect([arc.x, arc.y], [256.0, 256.0]);
+      expect([arc.x, arc.y], [256.0, 272.0]);
 
       (chart.options['scales']! as AnyObject)['r2'] = <String, Object?>{
         'type': 'radialLinear',
@@ -599,7 +596,8 @@ void main() {
 
     // A reset at a NaN center writes NaN, not undefined. The next animation
     // then starts at NaN, and the arc is not drawn and not hit until it ends
-    // (pin_e2_probe.out, `E2 polarArea`; Chart.js ADR 0033).
+    // (Chart.js ADR 0033; the phase 8 probe pins_plugins_probe.mjs with the
+    // seven plugins registered, `E2 polarArea`).
     testWidgets('a reset at a NaN center keeps NaN, and the next animation '
         'starts at NaN', (tester) async {
       final config = _one(
@@ -637,9 +635,9 @@ void main() {
       expect(x.from, isNaN);
       expect(x.to, 376.0);
       expect(y.from, isNaN);
-      expect(y.to, 256.0);
+      expect(y.to, 272.0);
       const qx = 411.91189405530497;
-      const qy = 267.668481707598;
+      const qy = 283.668481707598;
       await tester.pump(const Duration(milliseconds: 1));
       expect(arc.x, isNaN);
       expect(_hitsAt(chart, qx, qy, 'nearest'), isEmpty);
@@ -647,7 +645,7 @@ void main() {
       expect(arc.x, isNaN);
       expect(_hitsAt(chart, qx, qy, 'nearest'), isEmpty);
       await tester.pump(const Duration(milliseconds: 600));
-      expect([arc.x, arc.y], [376.0, 256.0]);
+      expect([arc.x, arc.y], [376.0, 272.0]);
       expect(_hitsAt(chart, qx, qy, 'nearest'), [
         [0, 1],
       ]);

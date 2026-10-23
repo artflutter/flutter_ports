@@ -16,12 +16,16 @@
 //   radar rows of the interfaces spec, section 7.3). The themed run does not
 //   run them.
 //
-// The generator registers no plugin (registerPhase7). Thus no filler plugin
-// calls `updateControlPoints` of the radar line: a line with a tension
-// strokes the control points that the points do not have (NaN), as in the
-// port of phase 7. The shared recorder (dartArgs of scale_chart_common.mjs)
+// The generator registers the built-in components and the seven plugins
+// (registerBuiltins, Chart.js ADR 0041 section 1), as
+// test/flutter_test_config.dart does. Thus the filler plugin calls
+// `updateControlPoints` of each radar line in its hook `beforeDraw`
+// (plugin.filler/index.js:51-66), and the radar default `fill: 'start'`
+// (controller.radar.js:18) fills each radar line before its draw
+// (plugin.filler/index.js:83-91). The legend and the tooltip have their
+// default options. The shared recorder (dartArgs of scale_chart_common.mjs)
 // converts the arguments of `bezierCurveTo` and `quadraticCurveTo` with
-// `ToNumber`, as a browser does: `undefined` gives NaN.
+// `ToNumber`, as a browser does.
 //
 // Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
 // v24.12.0:
@@ -37,7 +41,7 @@ import {
   loadChartJs,
   makeChart,
   named,
-  registerPhase7,
+  registerBuiltins,
   runControllerCase,
   writeControllerReference,
 } from './controller_chart_common.mjs';
@@ -47,7 +51,7 @@ const OUT = fileURLToPath(
 );
 
 const C = await loadChartJs();
-registerPhase7(C);
+registerBuiltins(C);
 
 /**
  * The integer point `[x, y]` of the center (`Math.round` of
@@ -67,7 +71,7 @@ function centerOf(config, d, index) {
 /**
  * The probe `pointAngles`: for each dataset, the `angle` of each point.
  * The observations of Chart.js ADR 0030 have no such key. The controller
- * writes it (:96), and the filler plugin of phase 8 reads it
+ * writes it (:96), and the filler plugin reads it
  * (plugin.filler/simpleArc.js:20).
  */
 const pointAngles = named('pointAngles', (chart) =>

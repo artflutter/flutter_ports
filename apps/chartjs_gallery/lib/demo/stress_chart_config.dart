@@ -246,6 +246,31 @@ final class StressChartScene {
   }
 }
 
+/// The plugin options of the stress and benchmark charts: the upstream
+/// opt-out `plugins.legend: false` disables the legend plugin for the chart
+/// (core.plugins.js:146-149, :163-165; docs/developers/plugins.md:94-111).
+///
+/// `registerGalleryComponents` registers the plugins of `registerables`.
+/// The legend displays by default (plugin.legend.js:637) and takes a box at
+/// the top of the chart. Thus it changes the chart area of Chart.js ADR 0031
+/// (Open). Also with `display: false`, the legend builds its items in each
+/// update (plugin.legend.js:88, :623-626): one item for each arc of a
+/// doughnut, pie or polar area chart (controller.doughnut.js:93-129,
+/// controller.polarArea.js:36-69). On macOS (release), that made the update
+/// of `chart.doughnut` at 5000 arcs 3.3 times slower (16.3 ms against
+/// 4.9 ms). `legend: false` gives the figures of the chart without the
+/// legend plugin.
+///
+/// The other plugins need no opt-out: the charts listen to no event (the
+/// tooltip), the datasets give their colors (the colors plugin), and the
+/// title, the subtitle and the decimation are off by default. The filler
+/// fills the radar, as the default `fill: 'start'` of the radar controller
+/// asks (controller.radar.js:16-20). The line of a line chart has the
+/// default `fill: false` (element.line.js:258).
+///
+/// Each call gives a new Map: the chart can write into its options.
+AnyObject stressPluginOptions() => <String, Object?>{'legend': false};
+
 /// A hidden scale with user bounds (Chart.js ADR 0031 section 5).
 AnyObject stressHiddenScale(String type, {double? min, double? max}) =>
     <String, Object?>{
@@ -285,7 +310,8 @@ AnyObject? _stressScales(StressChartType type) => switch (type) {
 ///   Another type throws an [ArgumentError] when it is true.
 /// - [animate]: the looping animation of the call `animate`. Without it,
 ///   the chart has `animation: false`.
-/// - [options]: more chart options, after the options of the mode.
+/// - [options]: more chart options, after the options of the mode. A
+///   `plugins` key in [options] replaces [stressPluginOptions].
 /// - [plugins]: the inline plugins.
 ///
 /// line and scatter have `parsing: false`, `layout.autoPadding: false`, the
@@ -302,6 +328,10 @@ AnyObject? _stressScales(StressChartType type) => switch (type) {
 /// modes take no pointer input. Otherwise a pointer over the host replays
 /// its last event in each `update` (core.controller.js:528-534), which can
 /// add a second draw to a frame.
+///
+/// The chart has no legend (`plugins.legend: false`,
+/// [stressPluginOptions]): the chart area and the figures stay those of the
+/// chart path without a legend (Chart.js ADR 0031, Open).
 ///
 /// The dataset has the colors and the border of the stress mode `elements`.
 /// Only line and scatter also get the point style and the radius of phase 5
@@ -349,6 +379,7 @@ AnyObject stressChartConfig({
           : false,
       'events': <String>[],
       'maintainAspectRatio': false,
+      'plugins': stressPluginOptions(),
       if (type.points) ...{
         'parsing': false,
         'layout': <String, Object?>{'autoPadding': false},

@@ -16,6 +16,11 @@
 //   of Chart.js ADR 0028, section 8 (names that start with `interfaces:`,
 //   the doughnut rows of the interfaces spec, section 7.3). The themed run
 //   does not run them.
+// - The legend override cases of Chart.js ADR 0041, section 5 (names that
+//   start with `legend:`): the real legend with the label options of the
+//   old test legend, its items and hit boxes, and a click on the item 1.
+//   The test file runs them unthemed only (report decision 2:
+//   plugin.legend_test.dart runs the legend with the light preset).
 //
 // Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
 // v24.12.0:
@@ -30,7 +35,7 @@ import {fileURLToPath} from 'node:url';
 import {
   loadChartJs,
   named,
-  registerPhase7,
+  registerBuiltins,
   runControllerCase,
   writeControllerReference,
 } from './controller_chart_common.mjs';
@@ -40,7 +45,7 @@ const OUT = fileURLToPath(
 );
 
 const C = await loadChartJs();
-registerPhase7(C);
+registerBuiltins(C);
 
 // The platform of the charts. The Dart harness gives each chart the
 // platform of platform.flutter.dart, the port of platform.dom.js (Chart.js
@@ -79,31 +84,19 @@ const ringGeometry = named('ringGeometry', (chart) =>
 );
 
 /**
- * The probe `legendItems`: the legend functions of
- * `overrides.doughnut.plugins.legend` (controller.doughnut.js:92-129) with
- * a test legend `{chart, options}`. `items` and `keys` come from
- * `generateLabels`, then `onClick` with the item index 1 toggles that
- * index, and `visible` and `after` give the state after the click.
+ * The probe `realLegend`: the items and the hit boxes of the real legend,
+ * `{items: chart.legend.legendItems, hitBoxes: chart.legend.legendHitBoxes}`
+ * as plain copies (Chart.js ADR 0041, section 5), and `keys`, the
+ * `Object.keys` of each item in order: the harness compares only the
+ * expected keys of a Map, so `keys` pins the key list of the items. `buildLabels`
+ * (plugin.legend.js:104-121) makes the items with the legend functions of
+ * `overrides.doughnut.plugins.legend` (controller.doughnut.js:92-129).
  */
-const legendItems = named('legendItems', (chart) => {
-  const legend = C.Chart.overrides.doughnut.plugins.legend;
-  const labels = {
-    pointStyle: 'circle',
-    textAlign: 'left',
-    color: '#666',
-    useBorderRadius: true,
-    borderRadius: 0,
-  };
-  chart.legend = {chart, options: {labels}};
-  const items = legend.labels.generateLabels(chart);
-  legend.onClick({}, {index: 1}, chart.legend);
-  return {
-    items,
-    keys: items.map((item) => Object.keys(item)),
-    visible: [0, 1, 2].map((i) => chart.getDataVisibility(i)),
-    after: legend.labels.generateLabels(chart),
-  };
-});
+const realLegend = named('realLegend', (chart) => ({
+  items: chart.legend.legendItems,
+  keys: chart.legend.legendItems.map((item) => Object.keys(item)),
+  hitBoxes: chart.legend.legendHitBoxes,
+}));
 
 /** A doughnut chart with the labels a, b, c, d and one dataset [extra]. */
 const one = (extra, data = [10, 20, 30, 15], options = undefined) => ({
@@ -304,20 +297,45 @@ for (const [label, labels] of [
     }),
   );
 }
-cases.push(
-  runControllerCase(
-    'interfaces: the legend functions with a test legend',
-    {
-      type: 'doughnut',
-      data: {
-        labels: ['a', ['b1', 'b2'], 'c'],
-        datasets: [
-          {data: [1, 2, 3], backgroundColor: ['red', 'green', 'blue'], borderRadius: 3},
-        ],
+
+// ---------------------------------------------------------------------------
+// The legend override cases of Chart.js ADR 0041, section 5.
+
+/**
+ * A doughnut chart with 3 labels (the label 1 has two lines), 1 dataset and
+ * the label options of the old test legend in `plugins.legend.labels`. The
+ * step `clickLegend` clicks the center of the hit box of the item 1: the
+ * `onClick` of the overrides (controller.doughnut.js:125-128) toggles the
+ * data index 1 and updates the chart.
+ */
+const legendChart = () => ({
+  type: 'doughnut',
+  data: {
+    labels: ['a', ['b1', 'b2'], 'c'],
+    datasets: [{data: [1, 2, 3], backgroundColor: ['red', 'green', 'blue'], borderRadius: 3}],
+  },
+  options: {
+    plugins: {
+      legend: {
+        labels: {pointStyle: 'circle', textAlign: 'left', useBorderRadius: true, borderRadius: 0},
       },
     },
-    {extras: {legendItems}},
-  ),
+  },
+});
+
+cases.push(
+  runControllerCase('legend: items', legendChart(), {extras: {realLegend}}),
+  runControllerCase('legend: click', legendChart(), {
+    steps: [['clickLegend', 1]],
+    extras: {realLegend},
+  }),
+  runControllerCase('legend: click twice', legendChart(), {
+    steps: [
+      ['clickLegend', 1],
+      ['clickLegend', 1],
+    ],
+    extras: {realLegend},
+  }),
 );
 
 writeControllerReference(OUT, 'controllerDoughnut', cases, {title: 'doughnut controller'});

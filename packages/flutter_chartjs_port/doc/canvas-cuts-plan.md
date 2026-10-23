@@ -399,6 +399,18 @@ Changes to the cited files:
   that this plan cites (lines 378-422) do not move. `lib/src/helpers/helpers.core.dart` changes
   `merge`, `merger` and `mergeIf`, not `isNullOrUndef`. The references, the inventory (§1.1), the
   tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-23, wave 4 of phase 8 (Chart.js ADR 0041 §7, Chart.js ADR 0031 Open). The gallery
+  files of A3 (`stress_demo.dart`, `main_stress.dart`) do not change.
+  `lib/demo/stress_chart_config.dart` gets `stressPluginOptions` (`plugins.legend: false`), and
+  `stressChartConfig` and `stressAxesConfig` (`lib/demo/stress_axes.dart`) put it in their
+  options. Thus the modes `chart` and `axes` and the frameless benchmark keep the chart area of
+  phase 7. The filler of `registerables` fills the radar of the mode `chart`. This plan cites no
+  line of these files. `stress_chart_test.dart` gets one test for each chart type.
+  `lib/src/core/core.controller.dart` renames the field `_lastEvent` to `lastEvent` with
+  `@internal`, not a change of `_resize`. `doc/parity.md` gets new port-only rows after line 422
+  (the input reference test of the chart host). The `parity.md` rows that this plan cites (lines
+  378-422) do not move. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
+  estimates do not change. No trigger occurred.
 
 ## 1. Why
 

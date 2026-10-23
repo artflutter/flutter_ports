@@ -15,6 +15,9 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsObjectIsFrozen;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
+    as plugin_tooltip;
 import 'package:flutter_test/flutter_test.dart';
 
 /// A tall desktop window: the whole Core tab is in view.
@@ -726,6 +729,83 @@ void main() {
       _point(chart, 0, 0).y,
       closeTo(area.bottom - (item['y']! as double) * area.height, 1e-9),
     );
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('core: the legend and the tooltip of registerables '
+      '(Chart.js ADR 0031, Open)', (tester) async {
+    final state = await _pumpCore(tester);
+    final chart = state.chart!;
+    // The tab has no plugin opt-out: the legend shows the two datasets in
+    // a box above the chart area (plugin.legend.js:637-639).
+    final legend = chart.legend! as Legend;
+    expect(jsGet(legend.options, 'display'), true);
+    expect(
+      [
+        for (final item in legend.legendItems!) jsGet(item, 'text'),
+      ],
+      ['A', 'B'],
+    );
+    expect(legend.height, greaterThan(0));
+    expect(legend.bottom, lessThanOrEqualTo(chart.chartArea!.top));
+
+    // A tap on the legend item B hides the dataset 1 (plugin.legend.js:
+    // 645-655), and the dataset segment reads the new state.
+    Future<void> tapItem(int index) async {
+      final box = legend.legendHitBoxes[index];
+      final left = jsGet(box, 'left')! as double;
+      final top = jsGet(box, 'top')! as double;
+      final width = jsGet(box, 'width')! as double;
+      final height = jsGet(box, 'height')! as double;
+      await tester.tapAt(
+        tester.getTopLeft(_host) + Offset(left + width / 2, top + height / 2),
+      );
+      await _frames(tester);
+    }
+
+    expect(_selected(tester, 'core.dataset.1'), isTrue);
+    await tapItem(1);
+    expect(chart.isDatasetVisible(1), isFalse);
+    expect(jsGet(legend.legendItems![1], 'hidden'), true);
+    expect(_selected(tester, 'core.dataset.1'), isFalse);
+    await _frames(tester, 70);
+    await tapItem(1);
+    expect(chart.isDatasetVisible(1), isTrue);
+    expect(_selected(tester, 'core.dataset.1'), isTrue);
+    await _frames(tester, 70);
+    // Without animation, no `onProgress` rebuilds the readout: the hook
+    // `afterEvent` of the inline plugin rebuilds the segments.
+    await _tap(tester, 'core.animation');
+    expect(chart.options['animation'], false);
+    await tapItem(0);
+    expect(chart.isDatasetVisible(0), isFalse);
+    expect(_selected(tester, 'core.dataset.0'), isFalse);
+    await tapItem(0);
+    expect(chart.isDatasetVisible(0), isTrue);
+    expect(_selected(tester, 'core.dataset.0'), isTrue);
+    await _tap(tester, 'core.animation');
+
+    // The tooltip shows the points that the mode finds: its options fall
+    // back to `interaction` (plugin.tooltip.js:1348-1349).
+    await _tap(tester, 'core.mode.index');
+    final tooltip = chart.tooltip! as plugin_tooltip.Tooltip;
+    expect(tooltip.getActiveElements(), isEmpty);
+    final point = _point(chart, 0, 7);
+    final mouse = await _mouse(tester);
+    await _moveTo(tester, mouse, point.x, point.y);
+    await _frames(tester, 30);
+    expect(state.activeLabel, 'd0#7 d1#7');
+    expect(
+      [
+        for (final item in tooltip.getActiveElements())
+          'd${item.datasetIndex.toInt()}#${item.index.toInt()}',
+      ],
+      ['d0#7', 'd1#7'],
+    );
+    expect(tooltip.dataPoints, hasLength(2));
+    expect(tooltip.opacity, 1);
+    await _moveOff(tester, mouse, chart);
+    await _frames(tester, 30);
+    expect(tooltip.getActiveElements(), isEmpty);
     expect(tester.takeException(), isNull);
   });
 }

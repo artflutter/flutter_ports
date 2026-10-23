@@ -2,11 +2,6 @@
 @TestOn('vm')
 library;
 
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.subtitle.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -16,10 +11,6 @@ import '../fixtures/index.dart' as fixture;
 // fixture `plugin.subtitle/basic.js` is pure data and needs no hand port.
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([subTitle, title]);
-
   group('plugin.subtitle', () {
     group('auto', fixture.specs('plugin.subtitle'));
   });

@@ -4,7 +4,7 @@
 // Node.js v24.12.0 (darwin-x64), V8 13.6.233.17-node.37:
 // a build of Chart.js v4.5.1+7169e651 at the commit
 // 7169e65147a47f3720957a6f156a33c838ab9f57, with the Liberation Sans mock
-// context of tool/reference/scale_chart_common.mjs. 10 cases, 50 widths.
+// context of tool/reference/scale_chart_common.mjs. 11 cases, 51 widths.
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
@@ -24507,6 +24507,1358 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
 ''',
     },
   ),
+  (
+    name: 'full: lttb with a fill',
+    config: <String, Object?>{
+      'type': 'line',
+      'data': <String, Object?>{
+        'datasets': <Object?>[
+          <String, Object?>{
+            'label': 'd0',
+            'data': <Object?>[
+              <String, Object?>{'x': 0.0, 'y': 0.0},
+              <String, Object?>{'x': 1.0, 'y': 14.0},
+              <String, Object?>{'x': 2.0, 'y': 5.0},
+              <String, Object?>{'x': 3.0, 'y': 19.0},
+              <String, Object?>{'x': 4.0, 'y': 10.0},
+              <String, Object?>{'x': 5.0, 'y': 1.0},
+              <String, Object?>{'x': 6.0, 'y': 15.0},
+              <String, Object?>{'x': 7.0, 'y': 6.0},
+              <String, Object?>{'x': 8.0, 'y': 20.0},
+              <String, Object?>{'x': 9.0, 'y': 11.0},
+              <String, Object?>{'x': 10.0, 'y': 2.0},
+              <String, Object?>{'x': 11.0, 'y': 16.0},
+              <String, Object?>{'x': 12.0, 'y': 7.0},
+              <String, Object?>{'x': 13.0, 'y': 21.0},
+              <String, Object?>{'x': 14.0, 'y': 12.0},
+              <String, Object?>{'x': 15.0, 'y': 3.0},
+              <String, Object?>{'x': 16.0, 'y': 17.0},
+              <String, Object?>{'x': 17.0, 'y': 8.0},
+              <String, Object?>{'x': 18.0, 'y': 22.0},
+              <String, Object?>{'x': 19.0, 'y': 13.0},
+              <String, Object?>{'x': 20.0, 'y': 4.0},
+              <String, Object?>{'x': 21.0, 'y': 18.0},
+              <String, Object?>{'x': 22.0, 'y': 9.0},
+              <String, Object?>{'x': 23.0, 'y': 0.0},
+              <String, Object?>{'x': 24.0, 'y': 14.0},
+              <String, Object?>{'x': 25.0, 'y': 5.0},
+              <String, Object?>{'x': 26.0, 'y': 19.0},
+              <String, Object?>{'x': 27.0, 'y': 10.0},
+              <String, Object?>{'x': 28.0, 'y': 1.0},
+              <String, Object?>{'x': 29.0, 'y': 15.0},
+              <String, Object?>{'x': 30.0, 'y': 6.0},
+              <String, Object?>{'x': 31.0, 'y': 20.0},
+              <String, Object?>{'x': 32.0, 'y': 11.0},
+              <String, Object?>{'x': 33.0, 'y': 2.0},
+              <String, Object?>{'x': 34.0, 'y': 16.0},
+              <String, Object?>{'x': 35.0, 'y': 7.0},
+              <String, Object?>{'x': 36.0, 'y': 21.0},
+              <String, Object?>{'x': 37.0, 'y': 12.0},
+              <String, Object?>{'x': 38.0, 'y': 3.0},
+              <String, Object?>{'x': 39.0, 'y': 17.0},
+              <String, Object?>{'x': 40.0, 'y': 8.0},
+              <String, Object?>{'x': 41.0, 'y': 22.0},
+              <String, Object?>{'x': 42.0, 'y': 13.0},
+              <String, Object?>{'x': 43.0, 'y': 4.0},
+              <String, Object?>{'x': 44.0, 'y': 18.0},
+              <String, Object?>{'x': 45.0, 'y': 9.0},
+              <String, Object?>{'x': 46.0, 'y': 0.0},
+              <String, Object?>{'x': 47.0, 'y': 14.0},
+              <String, Object?>{'x': 48.0, 'y': 5.0},
+              <String, Object?>{'x': 49.0, 'y': 19.0},
+              <String, Object?>{'x': 50.0, 'y': 10.0},
+              <String, Object?>{'x': 51.0, 'y': 1.0},
+              <String, Object?>{'x': 52.0, 'y': 15.0},
+              <String, Object?>{'x': 53.0, 'y': 6.0},
+              <String, Object?>{'x': 54.0, 'y': 20.0},
+              <String, Object?>{'x': 55.0, 'y': 11.0},
+              <String, Object?>{'x': 56.0, 'y': 2.0},
+              <String, Object?>{'x': 57.0, 'y': 16.0},
+              <String, Object?>{'x': 58.0, 'y': 7.0},
+              <String, Object?>{'x': 59.0, 'y': 21.0},
+            ],
+            'fill': 'origin',
+            'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'parsing': false,
+        'scales': <String, Object?>{
+          'x': <String, Object?>{'type': 'linear'},
+        },
+        'plugins': <String, Object?>{
+          'decimation': <String, Object?>{
+            'enabled': true,
+            'algorithm': 'lttb',
+            'samples': 12.0,
+            'threshold': 20.0,
+          },
+        },
+      },
+    },
+    options: <String, Object?>{},
+    expected: <String, Object?>{
+      'initial': <String, Object?>{
+        'chartArea': <Object?>[27.34765625, 32.0, 502.326171875, 483.6],
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'type': 'linear',
+            'axis': 'x',
+            'position': 'bottom',
+            'min': 0.0,
+            'max': 60.0,
+            'ticks': <Object?>[
+              <Object?>[0.0, '0', false],
+              <Object?>[10.0, '10', false],
+              <Object?>[20.0, '20', false],
+              <Object?>[30.0, '30', false],
+              <Object?>[40.0, '40', false],
+              <Object?>[50.0, '50', false],
+              <Object?>[60.0, '60', false],
+            ],
+            'box': <Object?>[27.34765625, 483.6, 502.326171875, 512.0],
+            'labelRotation': 0.0,
+            'paddings': <Object?>[6.3369140625, 0.0, 9.673828125, 0.0],
+            'tickPixels': <Object?>[
+              27.34765625,
+              106.5107421875,
+              185.673828125,
+              264.8369140625,
+              344.0,
+              423.1630859375,
+              502.326171875,
+            ],
+            'valuePixels': <Object?>[
+              27.34765625,
+              264.8369140625,
+              502.326171875,
+            ],
+            'valueForPixel': <Object?>[0.0, 30.0, 60.0],
+            'basePixel': 27.34765625,
+          },
+          'y': <String, Object?>{
+            'type': 'linear',
+            'axis': 'y',
+            'position': 'left',
+            'min': 0.0,
+            'max': 25.0,
+            'ticks': <Object?>[
+              <Object?>[0.0, '0', false],
+              <Object?>[5.0, '5', false],
+              <Object?>[10.0, '10', false],
+              <Object?>[15.0, '15', false],
+              <Object?>[20.0, '20', false],
+              <Object?>[25.0, '25', false],
+            ],
+            'box': <Object?>[0.0, 32.0, 27.34765625, 483.6],
+            'labelRotation': 0.0,
+            'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
+            'tickPixels': <Object?>[
+              483.6,
+              393.28000000000003,
+              302.96,
+              212.64000000000001,
+              122.31999999999998,
+              32.0,
+            ],
+            'valuePixels': <Object?>[483.6, 257.8, 32.0],
+            'valueForPixel': <Object?>[25.0, 12.5, 0.0],
+            'basePixel': 483.6,
+          },
+        },
+        'stacks': undefined,
+        'datasets': <Object?>[
+          <String, Object?>{
+            'type': 'line',
+            'indexAxis': 'x',
+            'xAxisID': 'x',
+            'yAxisID': 'y',
+            'rAxisID': undefined,
+            'stack': undefined,
+            'order': 0.0,
+            'visible': true,
+            'hidden': null,
+            '_clip': <String, Object?>{
+              'top': 5.0,
+              'right': 5.0,
+              'bottom': 5.0,
+              'left': 5.0,
+              'disabled': false,
+            },
+            '_drawStart': 0.0,
+            '_drawCount': 12.0,
+            'maxOverflow': 5.0,
+            'datasetOptions': <String, Object?>{
+              'showLine': true,
+              'spanGaps': false,
+              'drawActiveElementsOnTop': true,
+            },
+            'parsed': <Object?>[
+              <String, Object?>{'x': 0.0, 'y': 0.0},
+              <String, Object?>{'x': 3.0, 'y': 19.0},
+              <String, Object?>{'x': 10.0, 'y': 2.0},
+              <String, Object?>{'x': 13.0, 'y': 21.0},
+              <String, Object?>{'x': 23.0, 'y': 0.0},
+              <String, Object?>{'x': 26.0, 'y': 19.0},
+              <String, Object?>{'x': 33.0, 'y': 2.0},
+              <String, Object?>{'x': 36.0, 'y': 21.0},
+              <String, Object?>{'x': 46.0, 'y': 0.0},
+              <String, Object?>{'x': 49.0, 'y': 19.0},
+              <String, Object?>{'x': 56.0, 'y': 2.0},
+              <String, Object?>{'x': 59.0, 'y': 21.0},
+            ],
+            'dataset': <String, Object?>{
+              '_loop': undefined,
+              '_fullLoop': undefined,
+              'pointCount': 12.0,
+              'segments': <Object?>[
+                <Object?>[0.0, 11.0, false],
+              ],
+              'options': <String, Object?>{
+                r'$shared': false,
+                'borderCapStyle': 'butt',
+                'borderDash': <Object?>[],
+                'borderDashOffset': 0.0,
+                'borderJoinStyle': 'miter',
+                'borderWidth': 3.0,
+                'capBezierPoints': true,
+                'cubicInterpolationMode': 'default',
+                'fill': 'origin',
+                'spanGaps': false,
+                'stepped': false,
+                'tension': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+                'segment': undefined,
+              },
+            },
+            'data': <Object?>[
+              <String, Object?>{
+                'x': 27.34765625,
+                'y': 483.6,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[27.34765625, 483.6],
+                'tooltipPosition': <Object?>[27.34765625, 483.6],
+              },
+              <String, Object?>{
+                'x': 51.09658203125,
+                'y': 140.38400000000001,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[51.09658203125, 140.38400000000001],
+                'tooltipPosition': <Object?>[
+                  51.09658203125,
+                  140.38400000000001,
+                ],
+              },
+              <String, Object?>{
+                'x': 106.5107421875,
+                'y': 447.47200000000004,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[106.5107421875, 447.47200000000004],
+                'tooltipPosition': <Object?>[
+                  106.5107421875,
+                  447.47200000000004,
+                ],
+              },
+              <String, Object?>{
+                'x': 130.25966796875002,
+                'y': 104.25600000000001,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[130.25966796875002, 104.25600000000001],
+                'tooltipPosition': <Object?>[
+                  130.25966796875002,
+                  104.25600000000001,
+                ],
+              },
+              <String, Object?>{
+                'x': 209.42275390625002,
+                'y': 483.6,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[209.42275390625002, 483.6],
+                'tooltipPosition': <Object?>[209.42275390625002, 483.6],
+              },
+              <String, Object?>{
+                'x': 233.17167968750002,
+                'y': 140.38400000000001,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[233.17167968750002, 140.38400000000001],
+                'tooltipPosition': <Object?>[
+                  233.17167968750002,
+                  140.38400000000001,
+                ],
+              },
+              <String, Object?>{
+                'x': 288.58583984375,
+                'y': 447.47200000000004,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[288.58583984375, 447.47200000000004],
+                'tooltipPosition': <Object?>[
+                  288.58583984375,
+                  447.47200000000004,
+                ],
+              },
+              <String, Object?>{
+                'x': 312.334765625,
+                'y': 104.25600000000001,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[312.334765625, 104.25600000000001],
+                'tooltipPosition': <Object?>[312.334765625, 104.25600000000001],
+              },
+              <String, Object?>{
+                'x': 391.49785156250005,
+                'y': 483.6,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[391.49785156250005, 483.6],
+                'tooltipPosition': <Object?>[391.49785156250005, 483.6],
+              },
+              <String, Object?>{
+                'x': 415.24677734375,
+                'y': 140.38400000000001,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[415.24677734375, 140.38400000000001],
+                'tooltipPosition': <Object?>[
+                  415.24677734375,
+                  140.38400000000001,
+                ],
+              },
+              <String, Object?>{
+                'x': 470.6609375,
+                'y': 447.47200000000004,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[470.6609375, 447.47200000000004],
+                'tooltipPosition': <Object?>[470.6609375, 447.47200000000004],
+              },
+              <String, Object?>{
+                'x': 494.40986328124995,
+                'y': 104.25600000000001,
+                'skip': false,
+                'stop': false,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[494.40986328124995, 104.25600000000001],
+                'tooltipPosition': <Object?>[
+                  494.40986328124995,
+                  104.25600000000001,
+                ],
+              },
+            ],
+            'options': <Object?>[
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+              <String, Object?>{
+                r'$shared': true,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(0, 0, 255, 0.3)',
+                'borderColor': 'rgba(0,0,0,0.1)',
+              },
+            ],
+            'active': <Object?>[
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#0000E64C',
+                'borderColor': '#00000019',
+              },
+            ],
+            'labelAndValue': <Object?>[
+              <String, Object?>{'label': '0', 'value': '0'},
+              <String, Object?>{'label': '3', 'value': '19'},
+              <String, Object?>{'label': '10', 'value': '2'},
+              <String, Object?>{'label': '13', 'value': '21'},
+              <String, Object?>{'label': '23', 'value': '0'},
+              <String, Object?>{'label': '26', 'value': '19'},
+              <String, Object?>{'label': '33', 'value': '2'},
+              <String, Object?>{'label': '36', 'value': '21'},
+              <String, Object?>{'label': '46', 'value': '0'},
+              <String, Object?>{'label': '49', 'value': '19'},
+              <String, Object?>{'label': '56', 'value': '2'},
+              <String, Object?>{'label': '59', 'value': '21'},
+            ],
+          },
+        ],
+        'boxes': <Object?>[
+          <Object?>[
+            'legend',
+            'top',
+            1000.0,
+            true,
+            0.0,
+            0.0,
+            512.0,
+            32.0,
+            512.0,
+            32.0,
+          ],
+          <Object?>[
+            'subtitle',
+            'top',
+            1500.0,
+            true,
+            0.0,
+            0.0,
+            512.0,
+            0.0,
+            512.0,
+            0.0,
+          ],
+          <Object?>[
+            'title',
+            'top',
+            2000.0,
+            true,
+            0.0,
+            0.0,
+            512.0,
+            0.0,
+            512.0,
+            0.0,
+          ],
+          <Object?>[
+            'x',
+            'bottom',
+            0.0,
+            false,
+            27.34765625,
+            483.6,
+            502.326171875,
+            512.0,
+            474.978515625,
+            28.4,
+          ],
+          <Object?>[
+            'y',
+            'left',
+            0.0,
+            false,
+            0.0,
+            32.0,
+            27.34765625,
+            483.6,
+            27.34765625,
+            451.6,
+          ],
+        ],
+        'plugins.decimation': <Object?>[
+          <String, Object?>{
+            'keys': <Object?>[
+              'label',
+              'fill',
+              'backgroundColor',
+              '_data',
+              'data',
+              '_decimated',
+            ],
+            'decimated': true,
+            'ownData': true,
+            'dataIsDecimated': true,
+            'data': <Object?>[
+              <String, Object?>{'x': 0.0, 'y': 0.0},
+              <String, Object?>{'x': 3.0, 'y': 19.0},
+              <String, Object?>{'x': 10.0, 'y': 2.0},
+              <String, Object?>{'x': 13.0, 'y': 21.0},
+              <String, Object?>{'x': 23.0, 'y': 0.0},
+              <String, Object?>{'x': 26.0, 'y': 19.0},
+              <String, Object?>{'x': 33.0, 'y': 2.0},
+              <String, Object?>{'x': 36.0, 'y': 21.0},
+              <String, Object?>{'x': 46.0, 'y': 0.0},
+              <String, Object?>{'x': 49.0, 'y': 19.0},
+              <String, Object?>{'x': 56.0, 'y': 2.0},
+              <String, Object?>{'x': 59.0, 'y': 21.0},
+            ],
+          },
+        ],
+      },
+      'steps': <Object?>[],
+      'drawCalls': '''
+["save"]
+["resetTransform"]
+["clearRect",0,0,512,512]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",27.5,32]
+["lineTo",27.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",27.5,484]
+["lineTo",27.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",106.5,32]
+["lineTo",106.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",106.5,484]
+["lineTo",106.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",185.5,32]
+["lineTo",185.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",185.5,484]
+["lineTo",185.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",264.5,32]
+["lineTo",264.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",264.5,484]
+["lineTo",264.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",344.5,32]
+["lineTo",344.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",344.5,484]
+["lineTo",344.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",423.5,32]
+["lineTo",423.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",423.5,484]
+["lineTo",423.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",502.5,32]
+["lineTo",502.5,483]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",502.5,484]
+["lineTo",502.5,491.6]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,483.5]
+["lineTo",502.326171875,483.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,483.5]
+["lineTo",27,483.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,393.5]
+["lineTo",502.326171875,393.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,393.5]
+["lineTo",27,393.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,302.5]
+["lineTo",502.326171875,302.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,302.5]
+["lineTo",27,302.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,212.5]
+["lineTo",502.326171875,212.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,212.5]
+["lineTo",27,212.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,122.5]
+["lineTo",502.326171875,122.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,122.5]
+["lineTo",27,122.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",28,32.5]
+["lineTo",502.326171875,32.5]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",null]
+["beginPath"]
+["moveTo",19.34765625,32.5]
+["lineTo",27,32.5]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","d0"]
+["save"]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",226.326171875,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","d0",272.326171875,16,null]
+["restore"]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",27,483.5]
+["lineTo",503,483.5]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,483.6,512,28.399999999999977]
+["clip",null,null]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",27.34765625,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","0",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",106.5107421875,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","10",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",185.673828125,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","20",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",264.8369140625,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","30",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",344,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","40",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",423.1630859375,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","50",0,7.199999999999999,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",502.326171875,494.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","60",0,7.199999999999999,null]
+["restore"]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["moveTo",27.5,32]
+["lineTo",27.5,484]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,27.34765625,512]
+["clip",null,null]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,483.6]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","0",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,393.28000000000003]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","5",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,302.96]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","10",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,212.64000000000001]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","15",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,122.31999999999998]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","20",0,0,null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["translate",16.34765625,32]
+["rotate",{"num":"-0"}]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","25",0,0,null]
+["restore"]
+["restore"]
+["save"]
+["beginPath"]
+["rect",27.34765625,32,474.978515625,451.6]
+["clip",null,null]
+["save"]
+["save"]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["rect",27.34765625,32,467.06220703124995,451.6]
+["clip",null,null]
+["beginPath"]
+["moveTo",27.34765625,483.6]
+["lineTo",51.09658203125,140.38400000000001]
+["lineTo",106.5107421875,447.47200000000004]
+["lineTo",130.25966796875002,104.25600000000001]
+["lineTo",209.42275390625002,483.6]
+["lineTo",233.17167968750002,140.38400000000001]
+["lineTo",288.58583984375,447.47200000000004]
+["lineTo",312.334765625,104.25600000000001]
+["lineTo",391.49785156250005,483.6]
+["lineTo",415.24677734375,140.38400000000001]
+["lineTo",470.6609375,447.47200000000004]
+["lineTo",494.40986328124995,104.25600000000001]
+["lineTo",494.40986328124995,483.6]
+["lineTo",494.40986328124995,483.6]
+["lineTo",27.34765625,483.6]
+["lineTo",27.34765625,483.6]
+["closePath"]
+["fill","nonzero",null]
+["restore"]
+["restore"]
+["restore"]
+["save"]
+["beginPath"]
+["rect",22.34765625,27,484.978515625,461.6]
+["clip",null,null]
+["save"]
+["setLineCap","butt"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["stroke",{"path":1,"calls":[["moveTo",27.34765625,483.6],["lineTo",51.09658203125,140.38400000000001],["lineTo",106.5107421875,447.47200000000004],["lineTo",130.25966796875002,104.25600000000001],["lineTo",209.42275390625002,483.6],["lineTo",233.17167968750002,140.38400000000001],["lineTo",288.58583984375,447.47200000000004],["lineTo",312.334765625,104.25600000000001],["lineTo",391.49785156250005,483.6],["lineTo",415.24677734375,140.38400000000001],["lineTo",470.6609375,447.47200000000004],["lineTo",494.40986328124995,104.25600000000001]]}]
+["restore"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",27.34765625,483.6,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",51.09658203125,140.38400000000001,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",106.5107421875,447.47200000000004,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",130.25966796875002,104.25600000000001,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",209.42275390625002,483.6,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",233.17167968750002,140.38400000000001,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",288.58583984375,447.47200000000004,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",312.334765625,104.25600000000001,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",391.49785156250005,483.6,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",415.24677734375,140.38400000000001,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",470.6609375,447.47200000000004,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setFillStyle","rgba(0, 0, 255, 0.3)"]
+["beginPath"]
+["arc",494.40986328124995,104.25600000000001,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["restore"]
+''',
+    },
+  ),
 ];
 
 /// Each text that the cases measured, with its font and width.
@@ -24759,6 +26111,11 @@ const List<PluginDecimationReferenceWidth> pluginDecimationReferenceWidths = [
   (
     font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
     text: '80',
+    width: 13.34765625,
+  ),
+  (
+    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    text: 'd0',
     width: 13.34765625,
   ),
 ];

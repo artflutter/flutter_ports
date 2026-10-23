@@ -28,6 +28,21 @@ import 'package:flutter_test/flutter_test.dart';
 /// `Chart.defaults.elements[id]`.
 Object? _elementDefaults(String id) => jsGet(defaults['elements'], id);
 
+/// `Chart.defaults.plugins[id]`.
+Object? _pluginDefaults(String id) => jsGet(defaults['plugins'], id);
+
+/// Whether a test of the group `harness-register-builtins` wrote
+/// `defaults.plugins.colors.enabled = true`.
+bool _colorsWritten = false;
+
+/// Whether a test read `defaults.plugins.colors.enabled` as false after an
+/// earlier test wrote true.
+bool _colorsRestored = false;
+
+/// The number of tests that read and wrote
+/// `defaults.plugins.colors.enabled`.
+int _colorsRuns = 0;
+
 /// The hooks of the charts of the group `harness-release-at-unmount`.
 final List<String> _releaseLog = [];
 
@@ -240,6 +255,47 @@ void main() {
       expect(_keptFound, _keptRuns == 2);
     });
 
+    // Chart.js ADR 0041, sections 6 and 13. The plugins register with the
+    // other components, in the order of src/plugins/index.js:1-7, which is
+    // the hook order (core.plugins.js:125-131). Then the config file ports
+    // test/index.js:25-28: `defaults.plugins.colors.enabled = false`, before
+    // the snapshot of the restore. Each test of the two reads false and then
+    // writes true. A test that runs after a write of the other test reads
+    // false only because of the restore. A shard (`--total-shards`) can run
+    // one of the two tests only: then no test runs after a write.
+    void checkColorsAndWrite() {
+      expect(jsObjectKeys(Chart.registry.plugins.items), [
+        'colors',
+        'decimation',
+        'filler',
+        'legend',
+        'subtitle',
+        'title',
+        'tooltip',
+      ]);
+      final colors = _pluginDefaults('colors')! as Map<String, Object?>;
+      expect(colors['enabled'], isFalse);
+      if (_colorsWritten) _colorsRestored = true;
+      colors['enabled'] = true;
+      expect(jsGet(_pluginDefaults('colors'), 'enabled'), isTrue);
+      _colorsWritten = true;
+      _colorsRuns++;
+    }
+
+    test(
+      'the plugins are registered and the colors plugin is disabled',
+      checkColorsAndWrite,
+    );
+
+    test(
+      'the next test finds the colors plugin disabled again',
+      checkColorsAndWrite,
+    );
+
+    tearDownAll(() {
+      expect(_colorsRestored, _colorsRuns == 2);
+    });
+
     testWidgets('a chart of acquireChart resolves the element defaults', (
       tester,
     ) async {
@@ -247,6 +303,10 @@ void main() {
       final elements = jsGet(chart.options, 'elements');
       expect(jsGet(jsGet(elements, 'point'), 'radius'), 3);
       expect(jsGet(jsGet(elements, 'line'), 'tension'), 0);
+      // The resolved option of the colors plugin (probe at the pin:
+      // `chart.options.plugins.colors.enabled` is false).
+      final plugins = jsGet(chart.options, 'plugins');
+      expect(jsGet(jsGet(plugins, 'colors'), 'enabled'), isFalse);
     });
   });
 

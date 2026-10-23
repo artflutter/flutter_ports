@@ -202,10 +202,6 @@ AnyObject _lineChart([Object? legendOptions]) => <String, Object?>{
 };
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([legend]);
-
   // Test the rectangle element
   group('Legend block tests', () {
     group('auto', fixture.specs('plugin.legend'));

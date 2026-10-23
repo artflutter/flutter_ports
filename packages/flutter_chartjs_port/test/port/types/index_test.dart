@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
+    show Legend;
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -22,8 +24,17 @@ import 'package:flutter_test/flutter_test.dart';
 // The charts are real charts of IV section 7.1: a bar chart (category on
 // the index axis, linear on the value axis) and a polar area chart
 // (radialLinear on the axis r). test/flutter_test_config.dart registers the
-// controllers, the scales and the elements of lib/src/index.dart before
-// main().
+// controllers, the elements, the plugins and the scales of
+// lib/src/index.dart before main(), and disables the colors plugin. Thus
+// each chart has the legend, as a chart of the specs has.
+//
+// The values with the plugins come from a probe at the pin (Chart.js ADR
+// 0041, section 1 item 6): the build of Chart.js at 7169e651 on the x64
+// Node.js v24.12.0, with registerBuiltins and makeChart of
+// tool/reference/scale_chart_common.mjs, and the bar and polar area charts
+// of this file. It logged: bar `legend is a Legend true`, `legend after the
+// write of null null`; polarArea `legend box 0 32 32`, `chartArea {left: 0,
+// top: 32, right: 512, bottom: 512}`, `xCenter 256 yCenter 272`.
 
 /// A chart of the controller [type] with the labels [labels] and one
 /// dataset of [data].
@@ -70,8 +81,18 @@ void main() {
       expect(t.isDatasetVisible(1), isFalse);
       expect(t.getVisibleDatasetCount(), 1);
       expect(t.getVisibleDatasetCount(), chart.getVisibleDatasetCount());
+      // The legend plugin writes chart.legend (plugin.legend.js:602). Probe:
+      // `chart.legend instanceof Legend` is true.
+      expect(t.legend, isA<Legend>());
+      expect(t.legend, same(chart.legend));
+      // The interface reads the field: after `chart.legend = null`, it gives
+      // Dart null (probe: null). The update below needs the legend again
+      // (plugin.legend.js:615-618), so the test puts it back.
+      final legend = chart.legend;
+      chart.legend = null;
       expect(t.legend, isNull);
       expect(t.legend, same(chart.legend));
+      chart.legend = legend;
 
       t.toggleDataVisibility(1);
       expect(t.getDataVisibility(1), isFalse);
@@ -201,13 +222,16 @@ void main() {
       final t = chart.scales['r']! as types.RadialLinearScale;
       // Dart null is the undefined start value before the first layout
       // (scale.radialLinear.js:416-418). Thus the laid-out center is a
-      // number: the center of the 512 x 512 canvas of acquireChart.
+      // number: the center of the chart area of the 512 x 512 canvas of
+      // acquireChart. The legend box at the top takes 32 pixels, so the
+      // chart area is {left: 0, top: 32, right: 512, bottom: 512} (probe:
+      // xCenter 256, yCenter 272).
       expect(t.xCenter, isNotNull);
       expect(t.yCenter, isNotNull);
       expect(t.xCenter, scale.xCenter);
       expect(t.yCenter, scale.yCenter);
       expect(t.xCenter, 256.0);
-      expect(t.yCenter, 256.0);
+      expect(t.yCenter, 272.0);
       // Chart.js ADR 0033: the interface type is double? (Dart null is the
       // undefined start value).
       expect(_staticType(t.xCenter), _type<double?>());

@@ -145,14 +145,16 @@ final class StressAxesScene {
 /// The dataset has `showLine: false` (the line has `borderWidth: 0`,
 /// controller.line.js:63-65, thus it does not draw) and `clip: false`. The
 /// chart has `parsing: false` (the data is sorted), `layout.autoPadding:
-/// false`, `animation: false`, `events: []` and `maintainAspectRatio:
-/// false`. Thus the chart area and the split of `drawMs` are those of
-/// phase 6: no overflow padding, and no dataset clip that moves the flush of
-/// the circle batch into the dataset draw.
+/// false`, `animation: false`, `events: []`, `maintainAspectRatio:
+/// false` and no legend (`plugins.legend: false`, [stressPluginOptions]).
+/// Thus the chart area and the split of `drawMs` are those of phase 6: no
+/// overflow padding, no legend box, and no dataset clip that moves the flush
+/// of the circle batch into the dataset draw.
 ///
 /// [autoSkip] is the option `ticks.autoSkip` of the x axis. A category axis
 /// without it draws N rotated labels in each frame. [options] adds chart
-/// options, and [plugins] are the inline plugins.
+/// options (a `plugins` key replaces [stressPluginOptions]), and [plugins]
+/// are the inline plugins.
 AnyObject stressAxesConfig({
   required StressAxesScene scene,
   required bool autoSkip,
@@ -179,6 +181,7 @@ AnyObject stressAxesConfig({
     'animation': false,
     'events': <String>[],
     'maintainAspectRatio': false,
+    'plugins': stressPluginOptions(),
     'parsing': false,
     'layout': <String, Object?>{'autoPadding': false},
     ...options,

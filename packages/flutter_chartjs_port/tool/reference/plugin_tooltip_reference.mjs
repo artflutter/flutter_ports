@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: tooltip plugin reference generator.
 //
-// It writes test/port/plugins/plugin_tooltip_reference.dart, the data of
+// It writes test/port/plugins/plugin_tooltip_reference.dart and
+// test/port/plugins/plugin_tooltip_more_reference.dart, the data of
 // test/port/plugins/plugin.tooltip_test.dart: real charts with the tooltip
 // plugin of a build of the pinned Chart.js (Chart.js ADR 0041, section 3).
 // See the headers of tool/reference/plugin_chart_common.mjs,
@@ -11,23 +12,29 @@
 // `tooltip`): the modes `index`, `nearest`, `point`, `dataset`, `x` and `y`
 // with `intersect`, the positioners `average`, `nearest` and a custom one,
 // the callbacks of each text part, `xAlign` and `yAlign`, a caret near each
-// edge, `rtl`, `displayColors: false`, `usePointStyle`, `boxPadding`,
-// `padding`, `filter`, `itemSort`, `footer`, `external`, `enabled: false`,
-// the steps `hover`, `mouseout`, `setTooltip` and `click` with `events:
-// ['click']`. More cases cover the chart types of Chart.js ADR 0039,
-// section 15 (bar, pie, polar area, scatter), a label color with a border
-// radius, a dash and a border width object, and the tooltip border with a
-// corner radius object. The draw calls come after the last step, so each
-// case ends on the state under test.
+// edge, `rtl`, `textDirection`, `displayColors: false`, `usePointStyle`,
+// `boxPadding`, `padding`, `filter`, `itemSort`, `footer`, `external`,
+// `enabled: false`, the steps `hover`, `mouseout`, `setTooltip` and `click`
+// with `events: ['click']`. More cases cover the chart types of Chart.js
+// ADR 0039, section 15 (bar, pie, polar area, scatter), a label color with
+// a border radius, a dash and a border width object, and the tooltip border
+// with a corner radius object. The more cases and the full case are in the
+// second data file. The draw calls come after the last step, so each case
+// ends on the state under test.
 //
-// No case sets the option `textDirection`: `overrideTextDirection` writes
-// the `direction` of `canvas.style`, and the canvas of the mock has a plain
-// `style` object without `setProperty` (scale_chart_common.mjs,
-// `fakeCanvas`). The `rtl` cases cover the RTL adapter of the draw.
+// The case `textDirection rtl` writes the `direction` of `canvas.style`
+// (`overrideTextDirection`, helpers.rtl.ts:55-73): the fake canvas has the
+// style of `domStyle` (scale_chart_common.mjs). The draw calls do not show
+// the calls of the style.
 //
-// Each case sets `options.plugins` with unitPlugins(['legend', 'tooltip']):
-// the Dart test file registers the legend and the tooltip until wave 4
-// (Chart.js ADR 0041, sections 4 and 7). The observation has the key
+// The full case `full: title, filler and clickLegend` (Chart.js ADR 0041,
+// section 4 item 3) has the default plugin options with a title, a fill
+// and a tooltip in the mode `index`: the step `clickLegend` hides the
+// dataset 1, and the tooltip items of the next `hover` leave it out.
+//
+// Each unit case sets `options.plugins` with unitPlugins(['legend',
+// 'tooltip']): the plugin set of the Dart test file in wave 3 (Chart.js ADR
+// 0041, sections 4 and 7). The observation has the key
 // `plugins.tooltip` (the observer `observeTooltip` below and in the Dart
 // test file). The test file runs the cases again with the light preset
 // (theming.md section 8 test 3).
@@ -64,6 +71,9 @@ import {makeChart, named} from './controller_chart_common.mjs';
 
 const OUT = fileURLToPath(
   new URL('../../test/port/plugins/plugin_tooltip_reference.dart', import.meta.url),
+);
+const OUT_MORE = fileURLToPath(
+  new URL('../../test/port/plugins/plugin_tooltip_more_reference.dart', import.meta.url),
 );
 
 const C = await loadChartJs();
@@ -358,6 +368,13 @@ const cases = [
   ),
   hoverCase('rtl', chart({mode: 'index', intersect: false, rtl: true}), 0, 1, {y: 'top', dy: 10}),
   hoverCase(
+    'textDirection rtl',
+    chart({mode: 'index', intersect: false, rtl: true, textDirection: 'rtl'}),
+    0,
+    1,
+    {y: 'top', dy: 10},
+  ),
+  hoverCase(
     'displayColors false',
     chart({mode: 'index', intersect: false, displayColors: false}),
     0,
@@ -415,6 +432,13 @@ const cases = [
   tooltipCase('click with events click', clickChart, {
     steps: [pointStep('hover', clickChart, 0, 1), pointStep('click', clickChart, 0, 1)],
   }),
+];
+
+// The more cases go into their own data file, plugin_tooltip_more_reference.dart:
+// one file of all cases is above the limit of 2,500,000 bytes for each data
+// file (Chart.js ADR 0041, section 4 item 4; Chart.js ADR 0030, section 3
+// item 6). The Dart test file runs the cases of both files.
+const moreCases = [
   hoverCase('a bar chart in mode index', chart({mode: 'index'}, {type: 'bar'}), 1, 2),
   hoverCase('a pie chart', pie(), 0, 1),
   hoverCase('a polar area chart', pie(undefined, 'polarArea'), 0, 0),
@@ -446,4 +470,38 @@ const cases = [
   ),
 ];
 
+// ---------------------------------------------------------------------------
+// The full cases of Chart.js ADR 0041, section 4 item 2 (wave 4): the
+// default plugin options, so each registered plugin runs (no unitPlugins).
+// A full case exists only where another plugin changes the result (section
+// 4 item 3).
+
+/** A line chart with the three datasets, a title, a fill and a tooltip. */
+const fullChart = {
+  type: 'line',
+  data: {
+    labels: ['Jan', 'Feb', 'Mar', 'Apr'],
+    datasets: DATASETS.map((d, i) => ({
+      ...d,
+      data: [...d.data],
+      ...(i === 0 ? {fill: 'origin'} : {}),
+    })),
+  },
+  options: {
+    plugins: {
+      title: {display: true, text: 'Chart title'},
+      tooltip: {mode: 'index', intersect: false},
+    },
+  },
+};
+
+moreCases.push(
+  tooltipCase('full: title, filler and clickLegend', fullChart, {
+    steps: [['clickLegend', 1], pointStep('hover', fullChart, 0, 1, {y: 'top', dy: 10})],
+  }),
+);
+
 writeControllerReference(OUT, 'pluginTooltip', cases, {title: 'tooltip plugin'});
+writeControllerReference(OUT_MORE, 'pluginTooltipMore', moreCases, {
+  title: 'more tooltip plugin',
+});

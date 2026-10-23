@@ -13,11 +13,13 @@
 // a `weight` step that puts the subtitle above the title), `position:
 // 'left'`, `display: false` (with the steps that stop and start the
 // plugin), `padding`, and a text array with `font`, `color` and `align`.
-// The row also names a case with a legend. The Dart test file registers
-// only `subtitle` and `title` until wave 4, so that case is a full case of
-// wave 4 ("subtitle with title and legend", Chart.js ADR 0041, section 4
-// item 3). Each case sets `options.plugins` with
-// unitPlugins(['subtitle', 'title']) (Chart.js ADR 0041, sections 4 and 7).
+// The row also names a case with a legend: the full case of wave 4
+// `full: subtitle, title and legend` (Chart.js ADR 0041, section 4 item 3),
+// with the default plugin options, so the three boxes are at the top with
+// the weights 1000 (legend, plugin.legend.js:642), 1500 (subtitle,
+// plugin.subtitle.js:42) and 2000 (title, plugin.title.js:155). Each unit
+// case sets `options.plugins` with unitPlugins(['subtitle', 'title'])
+// (Chart.js ADR 0041, sections 4 and 7).
 // The observation has the keys `plugins.subtitle` and `plugins.title` (the
 // observers `observeSubtitle` and `observeTitle` below and in the Dart test
 // file). The test file runs the cases again with the light preset
@@ -154,5 +156,23 @@ const cases = [
     ),
   ),
 ];
+
+// ---------------------------------------------------------------------------
+// The full cases of Chart.js ADR 0041, section 4 item 2 (wave 4): the
+// default plugin options, so each registered plugin runs (no unitPlugins).
+// A full case exists only where another plugin changes the result (section
+// 4 item 3).
+
+cases.push(
+  subtitleCase('full: subtitle, title and legend', {
+    ...line(),
+    options: {
+      plugins: {
+        subtitle: {display: true, text: 'Chart subtitle'},
+        title: {display: true, text: 'Chart title'},
+      },
+    },
+  }),
+);
 
 writeControllerReference(OUT, 'pluginSubtitle', cases, {title: 'subtitle plugin'});

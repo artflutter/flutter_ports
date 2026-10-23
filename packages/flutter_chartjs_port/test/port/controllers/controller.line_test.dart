@@ -447,7 +447,11 @@ void main() {
     // in Node.js v24.12.0 on x64 (a probe of a plugin whose `beforeLayout`
     // returns false, at each point count): only `capBezierPoints` with two
     // points or more throws. The generator cannot give these cases: its
-    // observation reads `chartArea.left`.
+    // observation reads `chartArea.left`. The config turns the legend off:
+    // with the legend on, its `afterUpdate` reads `lineWidths` of a legend
+    // without a layout (plugin.legend.js:239, :623-627), and each case throws
+    // a TypeError before the draw (the phase 8 probe pins_plugins_probe.mjs,
+    // `noLayout`).
     group('a plugin cancels the first layout', () {
       AnyObject config(Map<String, Object?> dataset) => <String, Object?>{
         'type': 'line',
@@ -459,6 +463,9 @@ void main() {
               ...dataset,
             },
           ],
+        },
+        'options': <String, Object?>{
+          'plugins': <String, Object?>{'legend': false},
         },
         'plugins': <Object?>[
           <String, Object?>{

@@ -4,7 +4,7 @@
 // Node.js v24.12.0 (darwin-x64), V8 13.6.233.17-node.37:
 // a build of Chart.js v4.5.1+7169e651 at the commit
 // 7169e65147a47f3720957a6f156a33c838ab9f57, with the Liberation Sans mock
-// context of tool/reference/scale_chart_common.mjs. 13 cases, 42 widths.
+// context of tool/reference/scale_chart_common.mjs. 14 cases, 44 widths.
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
@@ -13258,6 +13258,1160 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
 ''',
     },
   ),
+  (
+    name: 'full: radar',
+    config: <String, Object?>{
+      'type': 'radar',
+      'data': <String, Object?>{
+        'labels': <Object?>['l0', 'l1', 'l2', 'l3', 'l4'],
+        'datasets': <Object?>[
+          <String, Object?>{
+            'label': 'd0',
+            'data': <Object?>[1.0, 4.0, 7.0, 10.0, 2.0],
+          },
+          <String, Object?>{
+            'label': 'd1',
+            'data': <Object?>[8.0, 11.0, 3.0, 6.0, 9.0],
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'plugins': <String, Object?>{
+          'colors': <String, Object?>{'enabled': true},
+        },
+      },
+    },
+    options: <String, Object?>{},
+    expected: <String, Object?>{
+      'initial': <String, Object?>{
+        'chartArea': <Object?>[0.0, 32.0, 512.0, 512.0],
+        'scales': <String, Object?>{
+          'r': <String, Object?>{
+            'type': 'radialLinear',
+            'axis': 'r',
+            'position': 'chartArea',
+            'min': 1.0,
+            'max': 11.0,
+            'ticks': <Object?>[
+              <Object?>[1.0, '1', false],
+              <Object?>[2.0, '2', false],
+              <Object?>[3.0, '3', false],
+              <Object?>[4.0, '4', false],
+              <Object?>[5.0, '5', false],
+              <Object?>[6.0, '6', false],
+              <Object?>[7.0, '7', false],
+              <Object?>[8.0, '8', false],
+              <Object?>[9.0, '9', false],
+              <Object?>[10.0, '10', false],
+              <Object?>[11.0, '11', false],
+            ],
+            'box': <Object?>[0.0, 32.0, 512.0, 512.0],
+            'labelRotation': 0.0,
+            'paddings': <Object?>[
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+            ],
+            'tickPixels': <Object?>[
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+            ],
+            'valuePixels': <Object?>[
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+              <String, Object?>{'num': 'NaN'},
+            ],
+            'valueForPixel': <Object?>[null, null, null],
+            'basePixel': <String, Object?>{'num': 'NaN'},
+          },
+        },
+        'stacks': undefined,
+        'datasets': <Object?>[
+          <String, Object?>{
+            'type': 'radar',
+            'indexAxis': 'r',
+            'xAxisID': undefined,
+            'yAxisID': undefined,
+            'rAxisID': 'r',
+            'stack': undefined,
+            'order': 0.0,
+            'visible': true,
+            'hidden': null,
+            '_clip': <String, Object?>{
+              'top': false,
+              'right': false,
+              'bottom': false,
+              'left': false,
+              'disabled': true,
+            },
+            'maxOverflow': false,
+            'datasetOptions': <String, Object?>{'showLine': true},
+            'parsed': <Object?>[
+              <String, Object?>{'r': 1.0},
+              <String, Object?>{'r': 4.0},
+              <String, Object?>{'r': 7.0},
+              <String, Object?>{'r': 10.0},
+              <String, Object?>{'r': 2.0},
+            ],
+            'dataset': <String, Object?>{
+              '_loop': true,
+              '_fullLoop': true,
+              'pointCount': 5.0,
+              'segments': <Object?>[
+                <Object?>[0.0, 4.0, true],
+              ],
+              'options': <String, Object?>{
+                r'$shared': false,
+                'borderCapStyle': 'butt',
+                'borderDash': <Object?>[],
+                'borderDashOffset': 0.0,
+                'borderJoinStyle': 'miter',
+                'borderWidth': 3.0,
+                'capBezierPoints': true,
+                'cubicInterpolationMode': 'default',
+                'fill': 'start',
+                'spanGaps': false,
+                'stepped': false,
+                'tension': 0.0,
+                'backgroundColor': 'rgba(54, 162, 235, 0.5)',
+                'borderColor': 'rgb(54, 162, 235)',
+              },
+            },
+            'data': <Object?>[
+              <String, Object?>{
+                'x': 256.0,
+                'y': 280.0,
+                'skip': false,
+                'stop': undefined,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[256.0, 280.0],
+                'tooltipPosition': <Object?>[256.0, 280.0],
+              },
+              <String, Object?>{
+                'x': 317.3431453010374,
+                'y': 260.0684038628159,
+                'skip': false,
+                'stop': undefined,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[317.3431453010374, 260.0684038628159],
+                'tooltipPosition': <Object?>[
+                  317.3431453010374,
+                  260.0684038628159,
+                ],
+              },
+              <String, Object?>{
+                'x': 331.82429754572905,
+                'y': 384.3631922743682,
+                'skip': false,
+                'stop': undefined,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[331.82429754572905, 384.3631922743682],
+                'tooltipPosition': <Object?>[
+                  331.82429754572905,
+                  384.3631922743682,
+                ],
+              },
+              <String, Object?>{
+                'x': 142.26355368140645,
+                'y': 436.5447884115523,
+                'skip': false,
+                'stop': undefined,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[142.26355368140645, 436.5447884115523],
+                'tooltipPosition': <Object?>[
+                  142.26355368140645,
+                  436.5447884115523,
+                ],
+              },
+              <String, Object?>{
+                'x': 235.55228489965418,
+                'y': 273.35613462093863,
+                'skip': false,
+                'stop': undefined,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[235.55228489965418, 273.35613462093863],
+                'tooltipPosition': <Object?>[
+                  235.55228489965418,
+                  273.35613462093863,
+                ],
+              },
+            ],
+            'options': <Object?>[
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(54, 162, 235, 0.5)',
+                'borderColor': 'rgb(54, 162, 235)',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(54, 162, 235, 0.5)',
+                'borderColor': 'rgb(54, 162, 235)',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(54, 162, 235, 0.5)',
+                'borderColor': 'rgb(54, 162, 235)',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(54, 162, 235, 0.5)',
+                'borderColor': 'rgb(54, 162, 235)',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(54, 162, 235, 0.5)',
+                'borderColor': 'rgb(54, 162, 235)',
+              },
+            ],
+            'active': <Object?>[
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#059BFF7F',
+                'borderColor': '#059BFF',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#059BFF7F',
+                'borderColor': '#059BFF',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#059BFF7F',
+                'borderColor': '#059BFF',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#059BFF7F',
+                'borderColor': '#059BFF',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#059BFF7F',
+                'borderColor': '#059BFF',
+              },
+            ],
+            'labelAndValue': <Object?>[
+              <String, Object?>{'label': 'l0', 'value': '1'},
+              <String, Object?>{'label': 'l1', 'value': '4'},
+              <String, Object?>{'label': 'l2', 'value': '7'},
+              <String, Object?>{'label': 'l3', 'value': '10'},
+              <String, Object?>{'label': 'l4', 'value': '2'},
+            ],
+          },
+          <String, Object?>{
+            'type': 'radar',
+            'indexAxis': 'r',
+            'xAxisID': undefined,
+            'yAxisID': undefined,
+            'rAxisID': 'r',
+            'stack': undefined,
+            'order': 0.0,
+            'visible': true,
+            'hidden': null,
+            '_clip': <String, Object?>{
+              'top': false,
+              'right': false,
+              'bottom': false,
+              'left': false,
+              'disabled': true,
+            },
+            'maxOverflow': false,
+            'datasetOptions': <String, Object?>{'showLine': true},
+            'parsed': <Object?>[
+              <String, Object?>{'r': 8.0},
+              <String, Object?>{'r': 11.0},
+              <String, Object?>{'r': 3.0},
+              <String, Object?>{'r': 6.0},
+              <String, Object?>{'r': 9.0},
+            ],
+            'dataset': <String, Object?>{
+              '_loop': true,
+              '_fullLoop': true,
+              'pointCount': 5.0,
+              'segments': <Object?>[
+                <Object?>[0.0, 4.0, true],
+              ],
+              'options': <String, Object?>{
+                r'$shared': false,
+                'borderCapStyle': 'butt',
+                'borderDash': <Object?>[],
+                'borderDashOffset': 0.0,
+                'borderJoinStyle': 'miter',
+                'borderWidth': 3.0,
+                'capBezierPoints': true,
+                'cubicInterpolationMode': 'default',
+                'fill': 'start',
+                'spanGaps': false,
+                'stepped': false,
+                'tension': 0.0,
+                'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+                'borderColor': 'rgb(255, 99, 132)',
+              },
+            },
+            'data': <Object?>[
+              <String, Object?>{
+                'x': 256.0,
+                'y': 129.5,
+                'skip': false,
+                'stop': undefined,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[256.0, 129.5],
+                'tooltipPosition': <Object?>[256.0, 129.5],
+              },
+              <String, Object?>{
+                'x': 460.477151003458,
+                'y': 213.56134620938633,
+                'skip': false,
+                'stop': undefined,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[460.477151003458, 213.56134620938633],
+                'tooltipPosition': <Object?>[
+                  460.477151003458,
+                  213.56134620938633,
+                ],
+              },
+              <String, Object?>{
+                'x': 281.27476584857635,
+                'y': 314.78773075812273,
+                'skip': false,
+                'stop': undefined,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[281.27476584857635, 314.78773075812273],
+                'tooltipPosition': <Object?>[
+                  281.27476584857635,
+                  314.78773075812273,
+                ],
+              },
+              <String, Object?>{
+                'x': 192.81308537855915,
+                'y': 366.96932689530684,
+                'skip': false,
+                'stop': undefined,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[192.81308537855915, 366.96932689530684],
+                'tooltipPosition': <Object?>[
+                  192.81308537855915,
+                  366.96932689530684,
+                ],
+              },
+              <String, Object?>{
+                'x': 92.41827919723357,
+                'y': 226.84907696750906,
+                'skip': false,
+                'stop': undefined,
+                'active': false,
+                'hidden': undefined,
+                'center': <Object?>[92.41827919723357, 226.84907696750906],
+                'tooltipPosition': <Object?>[
+                  92.41827919723357,
+                  226.84907696750906,
+                ],
+              },
+            ],
+            'options': <Object?>[
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+                'borderColor': 'rgb(255, 99, 132)',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+                'borderColor': 'rgb(255, 99, 132)',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+                'borderColor': 'rgb(255, 99, 132)',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+                'borderColor': 'rgb(255, 99, 132)',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 3.0,
+                'rotation': 0.0,
+                'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+                'borderColor': 'rgb(255, 99, 132)',
+              },
+            ],
+            'active': <Object?>[
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#FF40697F',
+                'borderColor': '#FF4069',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#FF40697F',
+                'borderColor': '#FF4069',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#FF40697F',
+                'borderColor': '#FF4069',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#FF40697F',
+                'borderColor': '#FF4069',
+              },
+              <String, Object?>{
+                r'$shared': false,
+                'borderWidth': 1.0,
+                'hitRadius': 1.0,
+                'hoverBorderWidth': 1.0,
+                'hoverRadius': 4.0,
+                'pointStyle': 'circle',
+                'radius': 4.0,
+                'rotation': 0.0,
+                'backgroundColor': '#FF40697F',
+                'borderColor': '#FF4069',
+              },
+            ],
+            'labelAndValue': <Object?>[
+              <String, Object?>{'label': 'l0', 'value': '8'},
+              <String, Object?>{'label': 'l1', 'value': '11'},
+              <String, Object?>{'label': 'l2', 'value': '3'},
+              <String, Object?>{'label': 'l3', 'value': '6'},
+              <String, Object?>{'label': 'l4', 'value': '9'},
+            ],
+          },
+        ],
+        'boxes': <Object?>[
+          <Object?>[
+            'legend',
+            'top',
+            1000.0,
+            true,
+            0.0,
+            0.0,
+            512.0,
+            32.0,
+            512.0,
+            32.0,
+          ],
+          <Object?>[
+            'subtitle',
+            'top',
+            1500.0,
+            true,
+            0.0,
+            0.0,
+            512.0,
+            0.0,
+            512.0,
+            0.0,
+          ],
+          <Object?>[
+            'title',
+            'top',
+            2000.0,
+            true,
+            0.0,
+            0.0,
+            512.0,
+            0.0,
+            512.0,
+            0.0,
+          ],
+          <Object?>[
+            'r',
+            'chartArea',
+            0.0,
+            false,
+            0.0,
+            32.0,
+            512.0,
+            512.0,
+            496.0,
+            464.0,
+          ],
+        ],
+        'plugins.colors': <Object?>[
+          <String, Object?>{
+            'backgroundColor': 'rgba(54, 162, 235, 0.5)',
+            'borderColor': 'rgb(54, 162, 235)',
+          },
+          <String, Object?>{
+            'backgroundColor': 'rgba(255, 99, 132, 0.5)',
+            'borderColor': 'rgb(255, 99, 132)',
+          },
+        ],
+      },
+      'steps': <Object?>[],
+      'drawCalls': '''
+["save"]
+["resetTransform"]
+["clearRect",0,0,512,512]
+["restore"]
+["save"]
+["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","l4",39.15911428470497,203.54412528251203,null]
+["restore"]
+["save"]
+["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["setTextAlign","right"]
+["setTextBaseline","middle"]
+["fillText","l3",121.98496247731615,470.45587471748803,null]
+["restore"]
+["save"]
+["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["fillText","l2",390.0150375226839,470.45587471748803,null]
+["restore"]
+["save"]
+["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["fillText","l1",472.84088571529503,203.544125282512,null]
+["restore"]
+["save"]
+["setFont","normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["fillText","l0",256,46,null]
+["restore"]
+["save"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,258.5]
+["lineTo",276.4477151003458,273.35613462093863]
+["lineTo",268.63738292428815,297.39386537906137]
+["lineTo",243.36261707571182,297.39386537906137]
+["lineTo",235.55228489965418,273.35613462093863]
+["closePath"]
+["stroke",null]
+["restore"]
+["save"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,237]
+["lineTo",296.8954302006916,266.71226924187727]
+["lineTo",281.27476584857635,314.78773075812273]
+["lineTo",230.72523415142365,314.78773075812273]
+["lineTo",215.1045697993084,266.71226924187727]
+["closePath"]
+["stroke",null]
+["restore"]
+["save"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,215.5]
+["lineTo",317.3431453010374,260.0684038628159]
+["lineTo",293.9121487728645,332.1815961371841]
+["lineTo",218.0878512271355,332.1815961371841]
+["lineTo",194.6568546989626,260.0684038628159]
+["closePath"]
+["stroke",null]
+["restore"]
+["save"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,194]
+["lineTo",337.7908604013832,253.42453848375453]
+["lineTo",306.5495316971527,349.57546151624547]
+["lineTo",205.45046830284733,349.57546151624547]
+["lineTo",174.2091395986168,253.42453848375453]
+["closePath"]
+["stroke",null]
+["restore"]
+["save"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,172.5]
+["lineTo",358.238575501729,246.78067310469316]
+["lineTo",319.18691462144085,366.96932689530684]
+["lineTo",192.81308537855915,366.96932689530684]
+["lineTo",153.76142449827097,246.78067310469316]
+["closePath"]
+["stroke",null]
+["restore"]
+["save"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,151]
+["lineTo",378.6862906020748,240.1368077256318]
+["lineTo",331.82429754572905,384.3631922743682]
+["lineTo",180.17570245427098,384.3631922743682]
+["lineTo",133.31370939792518,240.1368077256318]
+["closePath"]
+["stroke",null]
+["restore"]
+["save"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,129.5]
+["lineTo",399.1340057024206,233.49294234657043]
+["lineTo",344.4616804700172,401.75705765342957]
+["lineTo",167.5383195299828,401.75705765342957]
+["lineTo",112.86599429757939,233.49294234657043]
+["closePath"]
+["stroke",null]
+["restore"]
+["save"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,108]
+["lineTo",419.5817208027664,226.84907696750906]
+["lineTo",357.0990633943054,419.15092303249094]
+["lineTo",154.90093660569465,419.15092303249094]
+["lineTo",92.41827919723357,226.84907696750906]
+["closePath"]
+["stroke",null]
+["restore"]
+["save"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,86.5]
+["lineTo",440.02943590311224,220.2052115884477]
+["lineTo",369.73644631859355,436.5447884115523]
+["lineTo",142.26355368140645,436.5447884115523]
+["lineTo",71.97056409688776,220.2052115884477]
+["closePath"]
+["stroke",null]
+["restore"]
+["save"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineWidth",1]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,65]
+["lineTo",460.477151003458,213.56134620938633]
+["lineTo",382.3738292428817,453.93865379061367]
+["lineTo",129.6261707571183,453.93865379061367]
+["lineTo",51.52284899654197,213.56134620938633]
+["closePath"]
+["stroke",null]
+["restore"]
+["save"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,280]
+["lineTo",51.52284899654197,213.56134620938633]
+["stroke",null]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,280]
+["lineTo",129.6261707571183,453.93865379061367]
+["stroke",null]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,280]
+["lineTo",382.3738292428817,453.93865379061367]
+["stroke",null]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,280]
+["lineTo",460.477151003458,213.56134620938633]
+["stroke",null]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["beginPath"]
+["moveTo",256,280]
+["lineTo",256,65]
+["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","d0"]
+["save"]
+["setFillStyle","rgba(54, 162, 235, 0.5)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","rgb(54, 162, 235)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",191.65234375,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","d0",237.65234375,16,null]
+["restore"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","d1"]
+["save"]
+["setFillStyle","rgba(255, 99, 132, 0.5)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","rgb(255, 99, 132)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",261,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","d1",307,16,null]
+["restore"]
+["restore"]
+["save"]
+["translate",256,280]
+["rotate",0]
+["setTextAlign","center"]
+["setTextBaseline","middle"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["measureText","2"]
+["setFillStyle","rgba(255, 255, 255, 0.75)"]
+["fillRect",-5.3369140625,-29.5,10.673828125,16]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["fillText","2",0,-21.5,null]
+["restore"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["measureText","3"]
+["setFillStyle","rgba(255, 255, 255, 0.75)"]
+["fillRect",-5.3369140625,-51,10.673828125,16]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["fillText","3",0,-43,null]
+["restore"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["measureText","4"]
+["setFillStyle","rgba(255, 255, 255, 0.75)"]
+["fillRect",-5.3369140625,-72.5,10.673828125,16]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["fillText","4",0,-64.5,null]
+["restore"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["measureText","5"]
+["setFillStyle","rgba(255, 255, 255, 0.75)"]
+["fillRect",-5.3369140625,-94,10.673828125,16]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["fillText","5",0,-86,null]
+["restore"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["measureText","6"]
+["setFillStyle","rgba(255, 255, 255, 0.75)"]
+["fillRect",-5.3369140625,-115.5,10.673828125,16]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["fillText","6",0,-107.5,null]
+["restore"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["measureText","7"]
+["setFillStyle","rgba(255, 255, 255, 0.75)"]
+["fillRect",-5.3369140625,-137,10.673828125,16]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["fillText","7",0,-129,null]
+["restore"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["measureText","8"]
+["setFillStyle","rgba(255, 255, 255, 0.75)"]
+["fillRect",-5.3369140625,-158.5,10.673828125,16]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["fillText","8",0,-150.5,null]
+["restore"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["measureText","9"]
+["setFillStyle","rgba(255, 255, 255, 0.75)"]
+["fillRect",-5.3369140625,-180,10.673828125,16]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["fillText","9",0,-172,null]
+["restore"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["measureText","10"]
+["setFillStyle","rgba(255, 255, 255, 0.75)"]
+["fillRect",-8.673828125,-201.5,17.34765625,16]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["fillText","10",0,-193.5,null]
+["restore"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["measureText","11"]
+["setFillStyle","rgba(255, 255, 255, 0.75)"]
+["fillRect",-8.228515625,-223,16.45703125,16]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setFillStyle","#666"]
+["fillText","11",0,-215,null]
+["restore"]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,32,512,480]
+["clip",null,null]
+["save"]
+["save"]
+["setFillStyle","rgba(255, 99, 132, 0.5)"]
+["beginPath"]
+["moveTo",256,129.5]
+["lineTo",460.477151003458,213.56134620938633]
+["lineTo",281.27476584857635,314.78773075812273]
+["lineTo",192.81308537855915,366.96932689530684]
+["lineTo",92.41827919723357,226.84907696750906]
+["lineTo",256,129.5]
+["closePath"]
+["moveTo",256,280]
+["lineTo",256,280]
+["lineTo",256,280]
+["lineTo",256,280]
+["lineTo",256,280]
+["lineTo",256,280]
+["closePath"]
+["fill","evenodd",null]
+["restore"]
+["restore"]
+["restore"]
+["save"]
+["setLineCap","butt"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","rgb(255, 99, 132)"]
+["stroke",{"path":1,"calls":[["moveTo",256,129.5],["lineTo",460.477151003458,213.56134620938633],["lineTo",281.27476584857635,314.78773075812273],["lineTo",192.81308537855915,366.96932689530684],["lineTo",92.41827919723357,226.84907696750906],["lineTo",256,129.5],["closePath"]]}]
+["restore"]
+["setStrokeStyle","rgb(255, 99, 132)"]
+["setLineWidth",1]
+["setFillStyle","rgba(255, 99, 132, 0.5)"]
+["beginPath"]
+["arc",256,129.5,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgb(255, 99, 132)"]
+["setLineWidth",1]
+["setFillStyle","rgba(255, 99, 132, 0.5)"]
+["beginPath"]
+["arc",460.477151003458,213.56134620938633,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgb(255, 99, 132)"]
+["setLineWidth",1]
+["setFillStyle","rgba(255, 99, 132, 0.5)"]
+["beginPath"]
+["arc",281.27476584857635,314.78773075812273,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgb(255, 99, 132)"]
+["setLineWidth",1]
+["setFillStyle","rgba(255, 99, 132, 0.5)"]
+["beginPath"]
+["arc",192.81308537855915,366.96932689530684,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgb(255, 99, 132)"]
+["setLineWidth",1]
+["setFillStyle","rgba(255, 99, 132, 0.5)"]
+["beginPath"]
+["arc",92.41827919723357,226.84907696750906,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["save"]
+["beginPath"]
+["rect",0,32,512,480]
+["clip",null,null]
+["save"]
+["save"]
+["setFillStyle","rgba(54, 162, 235, 0.5)"]
+["beginPath"]
+["moveTo",256,280]
+["lineTo",317.3431453010374,260.0684038628159]
+["lineTo",331.82429754572905,384.3631922743682]
+["lineTo",142.26355368140645,436.5447884115523]
+["lineTo",235.55228489965418,273.35613462093863]
+["lineTo",256,280]
+["closePath"]
+["moveTo",256,280]
+["lineTo",256,280]
+["lineTo",256,280]
+["lineTo",256,280]
+["lineTo",256,280]
+["lineTo",256,280]
+["closePath"]
+["fill","evenodd",null]
+["restore"]
+["restore"]
+["restore"]
+["save"]
+["setLineCap","butt"]
+["setLineDash",[]]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",3]
+["setStrokeStyle","rgb(54, 162, 235)"]
+["stroke",{"path":2,"calls":[["moveTo",256,280],["lineTo",317.3431453010374,260.0684038628159],["lineTo",331.82429754572905,384.3631922743682],["lineTo",142.26355368140645,436.5447884115523],["lineTo",235.55228489965418,273.35613462093863],["lineTo",256,280],["closePath"]]}]
+["restore"]
+["setStrokeStyle","rgb(54, 162, 235)"]
+["setLineWidth",1]
+["setFillStyle","rgba(54, 162, 235, 0.5)"]
+["beginPath"]
+["arc",256,280,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgb(54, 162, 235)"]
+["setLineWidth",1]
+["setFillStyle","rgba(54, 162, 235, 0.5)"]
+["beginPath"]
+["arc",317.3431453010374,260.0684038628159,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgb(54, 162, 235)"]
+["setLineWidth",1]
+["setFillStyle","rgba(54, 162, 235, 0.5)"]
+["beginPath"]
+["arc",331.82429754572905,384.3631922743682,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgb(54, 162, 235)"]
+["setLineWidth",1]
+["setFillStyle","rgba(54, 162, 235, 0.5)"]
+["beginPath"]
+["arc",142.26355368140645,436.5447884115523,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+["setStrokeStyle","rgb(54, 162, 235)"]
+["setLineWidth",1]
+["setFillStyle","rgba(54, 162, 235, 0.5)"]
+["beginPath"]
+["arc",235.55228489965418,273.35613462093863,3,0,6.283185307179586,false]
+["closePath"]
+["fill",null,null]
+["stroke",null]
+''',
+    },
+  ),
 ];
 
 /// Each text that the cases measured, with its font and width.
@@ -13470,6 +14624,16 @@ const List<PluginColorsReferenceWidth> pluginColorsReferenceWidths = [
   (
     font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
     text: '20',
+    width: 13.34765625,
+  ),
+  (
+    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    text: 'd0',
+    width: 13.34765625,
+  ),
+  (
+    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    text: 'd1',
     width: 13.34765625,
   ),
 ];

@@ -71,12 +71,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        491.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -94,12 +89,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613260800000.0, 'Feb 14', false],
             <Object?>[1618358400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            491.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 491.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 20.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -245,40 +235,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[20.673828125, 483.59999999999997],
-          <Object?>[87.90931919642857, 273.2],
-          <Object?>[155.14481026785714, 62.800000000000026],
-          <Object?>[222.3803013392857, 430.99999999999994],
-          <Object?>[289.6157924107143, 220.59999999999997],
-          <Object?>[356.8512834821429, 10.2],
-          <Object?>[424.0867745535714, 378.4],
-          <Object?>[491.322265625, 168.0],
+          <Object?>[20.673828125, 483.6],
+          <Object?>[87.90931919642857, 282.8888888888889],
+          <Object?>[155.14481026785714, 82.1777777777778],
+          <Object?>[222.3803013392857, 433.4222222222222],
+          <Object?>[289.6157924107143, 232.7111111111111],
+          <Object?>[356.8512834821429, 32.0],
+          <Object?>[424.0867745535714, 383.24444444444447],
+          <Object?>[491.322265625, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -292,7 +278,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -303,7 +289,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -312,7 +298,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",87.5,10.2]
+["moveTo",87.5,32]
 ["lineTo",87.5,483]
 ["stroke",null]
 ["restore"]
@@ -323,7 +309,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",87.5,484]
-["lineTo",87.5,491.59999999999997]
+["lineTo",87.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -332,7 +318,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",155.5,10.2]
+["moveTo",155.5,32]
 ["lineTo",155.5,483]
 ["stroke",null]
 ["restore"]
@@ -343,7 +329,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",155.5,484]
-["lineTo",155.5,491.59999999999997]
+["lineTo",155.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -352,7 +338,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",222.5,10.2]
+["moveTo",222.5,32]
 ["lineTo",222.5,483]
 ["stroke",null]
 ["restore"]
@@ -363,7 +349,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",222.5,484]
-["lineTo",222.5,491.59999999999997]
+["lineTo",222.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -372,7 +358,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",289.5,10.2]
+["moveTo",289.5,32]
 ["lineTo",289.5,483]
 ["stroke",null]
 ["restore"]
@@ -383,7 +369,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",289.5,484]
-["lineTo",289.5,491.59999999999997]
+["lineTo",289.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -392,7 +378,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",356.5,10.2]
+["moveTo",356.5,32]
 ["lineTo",356.5,483]
 ["stroke",null]
 ["restore"]
@@ -403,7 +389,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",356.5,484]
-["lineTo",356.5,491.59999999999997]
+["lineTo",356.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -412,7 +398,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",424.5,10.2]
+["moveTo",424.5,32]
 ["lineTo",424.5,483]
 ["stroke",null]
 ["restore"]
@@ -423,7 +409,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",424.5,484]
-["lineTo",424.5,491.59999999999997]
+["lineTo",424.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -432,7 +418,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",491.5,10.2]
+["moveTo",491.5,32]
 ["lineTo",491.5,483]
 ["stroke",null]
 ["restore"]
@@ -443,7 +429,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",491.5,484]
-["lineTo",491.5,491.59999999999997]
+["lineTo",491.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -472,8 +458,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",491.322265625,430.5]
+["moveTo",21,433.5]
+["lineTo",491.322265625,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -482,8 +468,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -492,8 +478,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",491.322265625,378.5]
+["moveTo",21,383.5]
+["lineTo",491.322265625,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -502,8 +488,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -512,8 +498,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",491.322265625,325.5]
+["moveTo",21,333.5]
+["lineTo",491.322265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -522,8 +508,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -532,8 +518,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",491.322265625,273.5]
+["moveTo",21,282.5]
+["lineTo",491.322265625,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -542,8 +528,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -552,8 +538,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",491.322265625,220.5]
+["moveTo",21,232.5]
+["lineTo",491.322265625,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -562,8 +548,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -572,8 +558,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",491.322265625,168.5]
+["moveTo",21,182.5]
+["lineTo",491.322265625,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -582,8 +568,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -592,8 +578,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",491.322265625,115.5]
+["moveTo",21,132.5]
+["lineTo",491.322265625,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -602,8 +588,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -612,8 +598,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",491.322265625,62.5]
+["moveTo",21,82.5]
+["lineTo",491.322265625,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -622,8 +608,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -632,8 +618,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",491.322265625,10.5]
+["moveTo",21,32.5]
+["lineTo",491.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -642,9 +628,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -656,11 +671,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -669,7 +684,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",87.90931919642857,494.59999999999997]
+["translate",87.90931919642857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -678,7 +693,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",155.14481026785714,494.59999999999997]
+["translate",155.14481026785714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -687,7 +702,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",222.3803013392857,494.59999999999997]
+["translate",222.3803013392857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -696,7 +711,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",289.6157924107143,494.59999999999997]
+["translate",289.6157924107143,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -705,7 +720,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",356.8512834821429,494.59999999999997]
+["translate",356.8512834821429,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -714,7 +729,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.0867745535714,494.59999999999997]
+["translate",424.0867745535714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -723,7 +738,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",491.322265625,494.59999999999997]
+["translate",491.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -735,7 +750,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -745,7 +760,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -754,7 +769,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -763,7 +778,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -772,7 +787,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -781,7 +796,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -790,7 +805,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -799,7 +814,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -808,7 +823,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -817,7 +832,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -826,7 +841,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -838,7 +853,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.673828125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",20.673828125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -846,7 +861,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",87.90931919642857,273.2,3,0,6.283185307179586,false]
+["arc",87.90931919642857,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -854,7 +869,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",155.14481026785714,62.800000000000026,3,0,6.283185307179586,false]
+["arc",155.14481026785714,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -862,7 +877,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",222.3803013392857,430.99999999999994,3,0,6.283185307179586,false]
+["arc",222.3803013392857,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -870,7 +885,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",289.6157924107143,220.59999999999997,3,0,6.283185307179586,false]
+["arc",289.6157924107143,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -878,7 +893,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",356.8512834821429,10.2,3,0,6.283185307179586,false]
+["arc",356.8512834821429,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -886,7 +901,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",424.0867745535714,378.4,3,0,6.283185307179586,false]
+["arc",424.0867745535714,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -894,7 +909,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",491.322265625,168,3,0,6.283185307179586,false]
+["arc",491.322265625,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -925,12 +940,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        491.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -948,12 +958,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613260800000.0, 'Feb 14', false],
             <Object?>[1618358400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            491.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 491.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 20.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -1113,40 +1118,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[20.673828125, 483.59999999999997],
-          <Object?>[87.90931919642857, 273.2],
-          <Object?>[155.14481026785714, 62.800000000000026],
-          <Object?>[222.3803013392857, 430.99999999999994],
-          <Object?>[289.6157924107143, 220.59999999999997],
-          <Object?>[356.8512834821429, 10.2],
-          <Object?>[424.0867745535714, 378.4],
-          <Object?>[491.322265625, 168.0],
+          <Object?>[20.673828125, 483.6],
+          <Object?>[87.90931919642857, 282.8888888888889],
+          <Object?>[155.14481026785714, 82.1777777777778],
+          <Object?>[222.3803013392857, 433.4222222222222],
+          <Object?>[289.6157924107143, 232.7111111111111],
+          <Object?>[356.8512834821429, 32.0],
+          <Object?>[424.0867745535714, 383.24444444444447],
+          <Object?>[491.322265625, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -1160,7 +1161,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -1171,7 +1172,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1180,7 +1181,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",87.5,10.2]
+["moveTo",87.5,32]
 ["lineTo",87.5,483]
 ["stroke",null]
 ["restore"]
@@ -1191,7 +1192,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",87.5,484]
-["lineTo",87.5,491.59999999999997]
+["lineTo",87.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1200,7 +1201,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",155.5,10.2]
+["moveTo",155.5,32]
 ["lineTo",155.5,483]
 ["stroke",null]
 ["restore"]
@@ -1211,7 +1212,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",155.5,484]
-["lineTo",155.5,491.59999999999997]
+["lineTo",155.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1220,7 +1221,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",222.5,10.2]
+["moveTo",222.5,32]
 ["lineTo",222.5,483]
 ["stroke",null]
 ["restore"]
@@ -1231,7 +1232,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",222.5,484]
-["lineTo",222.5,491.59999999999997]
+["lineTo",222.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1240,7 +1241,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",289.5,10.2]
+["moveTo",289.5,32]
 ["lineTo",289.5,483]
 ["stroke",null]
 ["restore"]
@@ -1251,7 +1252,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",289.5,484]
-["lineTo",289.5,491.59999999999997]
+["lineTo",289.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1260,7 +1261,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",356.5,10.2]
+["moveTo",356.5,32]
 ["lineTo",356.5,483]
 ["stroke",null]
 ["restore"]
@@ -1271,7 +1272,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",356.5,484]
-["lineTo",356.5,491.59999999999997]
+["lineTo",356.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1280,7 +1281,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",424.5,10.2]
+["moveTo",424.5,32]
 ["lineTo",424.5,483]
 ["stroke",null]
 ["restore"]
@@ -1291,7 +1292,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",424.5,484]
-["lineTo",424.5,491.59999999999997]
+["lineTo",424.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1300,7 +1301,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",491.5,10.2]
+["moveTo",491.5,32]
 ["lineTo",491.5,483]
 ["stroke",null]
 ["restore"]
@@ -1311,7 +1312,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",491.5,484]
-["lineTo",491.5,491.59999999999997]
+["lineTo",491.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1340,8 +1341,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",491.322265625,430.5]
+["moveTo",21,433.5]
+["lineTo",491.322265625,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1350,8 +1351,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1360,8 +1361,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",491.322265625,378.5]
+["moveTo",21,383.5]
+["lineTo",491.322265625,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1370,8 +1371,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1380,8 +1381,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",491.322265625,325.5]
+["moveTo",21,333.5]
+["lineTo",491.322265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1390,8 +1391,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1400,8 +1401,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",491.322265625,273.5]
+["moveTo",21,282.5]
+["lineTo",491.322265625,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1410,8 +1411,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1420,8 +1421,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",491.322265625,220.5]
+["moveTo",21,232.5]
+["lineTo",491.322265625,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1430,8 +1431,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1440,8 +1441,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",491.322265625,168.5]
+["moveTo",21,182.5]
+["lineTo",491.322265625,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1450,8 +1451,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1460,8 +1461,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",491.322265625,115.5]
+["moveTo",21,132.5]
+["lineTo",491.322265625,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1470,8 +1471,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1480,8 +1481,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",491.322265625,62.5]
+["moveTo",21,82.5]
+["lineTo",491.322265625,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1490,8 +1491,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1500,8 +1501,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",491.322265625,10.5]
+["moveTo",21,32.5]
+["lineTo",491.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -1510,9 +1511,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -1524,11 +1554,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1537,7 +1567,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",87.90931919642857,494.59999999999997]
+["translate",87.90931919642857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1546,7 +1576,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",155.14481026785714,494.59999999999997]
+["translate",155.14481026785714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1555,7 +1585,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",222.3803013392857,494.59999999999997]
+["translate",222.3803013392857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1564,7 +1594,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",289.6157924107143,494.59999999999997]
+["translate",289.6157924107143,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1573,7 +1603,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",356.8512834821429,494.59999999999997]
+["translate",356.8512834821429,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1582,7 +1612,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.0867745535714,494.59999999999997]
+["translate",424.0867745535714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1591,7 +1621,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",491.322265625,494.59999999999997]
+["translate",491.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -1603,7 +1633,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -1613,7 +1643,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1622,7 +1652,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1631,7 +1661,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1640,7 +1670,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1649,7 +1679,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1658,7 +1688,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1667,7 +1697,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1676,7 +1706,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1685,7 +1715,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1694,7 +1724,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -1706,7 +1736,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.673828125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",20.673828125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1714,7 +1744,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",87.90931919642857,273.2,3,0,6.283185307179586,false]
+["arc",87.90931919642857,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1722,7 +1752,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",155.14481026785714,62.800000000000026,3,0,6.283185307179586,false]
+["arc",155.14481026785714,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1730,7 +1760,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",222.3803013392857,430.99999999999994,3,0,6.283185307179586,false]
+["arc",222.3803013392857,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1738,7 +1768,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",289.6157924107143,220.59999999999997,3,0,6.283185307179586,false]
+["arc",289.6157924107143,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1746,7 +1776,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",356.8512834821429,10.2,3,0,6.283185307179586,false]
+["arc",356.8512834821429,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1754,7 +1784,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",424.0867745535714,378.4,3,0,6.283185307179586,false]
+["arc",424.0867745535714,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1762,7 +1792,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",491.322265625,168,3,0,6.283185307179586,false]
+["arc",491.322265625,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -1794,12 +1824,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        27.34765625,
-        10.2,
-        490.9853515625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[27.34765625, 32.0, 490.9853515625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -1819,12 +1844,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1610409600000.0, 'Jan 12', false],
             <Object?>[1610496000000.0, 'Jan 13', false],
           ],
-          'box': <Object?>[
-            27.34765625,
-            483.59999999999997,
-            490.9853515625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[27.34765625, 483.6, 490.9853515625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 21.0146484375, 0.0],
           'tickPixels': <Object?>[
@@ -1972,43 +1992,39 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[9.0, '9', false],
             <Object?>[10.0, '10', false],
           ],
-          'box': <Object?>[0.0, 10.2, 27.34765625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 27.34765625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.56,
-            152.22,
-            104.87999999999998,
-            57.53999999999999,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.64000000000001,
+            167.48000000000002,
+            122.31999999999998,
+            77.16,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[10.0, 5.0, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[27.34765625, 483.59999999999997],
-          <Object?>[78.86295572916666, 294.23999999999995],
-          <Object?>[130.37825520833331, 104.87999999999998],
-          <Object?>[181.8935546875, 436.26],
-          <Object?>[233.40885416666666, 246.89999999999998],
-          <Object?>[284.92415364583337, 57.53999999999999],
-          <Object?>[336.439453125, 388.92],
-          <Object?>[387.9547526041667, 199.56],
-          <Object?>[439.4700520833333, 10.2],
-          <Object?>[490.9853515625, 341.5799999999999],
+          <Object?>[27.34765625, 483.6],
+          <Object?>[78.86295572916666, 302.96],
+          <Object?>[130.37825520833331, 122.31999999999998],
+          <Object?>[181.8935546875, 438.44000000000005],
+          <Object?>[233.40885416666666, 257.8],
+          <Object?>[284.92415364583337, 77.16],
+          <Object?>[336.439453125, 393.28000000000003],
+          <Object?>[387.9547526041667, 212.64000000000001],
+          <Object?>[439.4700520833333, 32.0],
+          <Object?>[490.9853515625, 348.12],
         ],
       ],
       'drawCalls': '''
@@ -2022,7 +2038,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",27.5,10.2]
+["moveTo",27.5,32]
 ["lineTo",27.5,483]
 ["stroke",null]
 ["restore"]
@@ -2033,7 +2049,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",27.5,484]
-["lineTo",27.5,491.59999999999997]
+["lineTo",27.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2042,7 +2058,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",78.5,10.2]
+["moveTo",78.5,32]
 ["lineTo",78.5,483]
 ["stroke",null]
 ["restore"]
@@ -2053,7 +2069,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",78.5,484]
-["lineTo",78.5,491.59999999999997]
+["lineTo",78.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2062,7 +2078,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",130.5,10.2]
+["moveTo",130.5,32]
 ["lineTo",130.5,483]
 ["stroke",null]
 ["restore"]
@@ -2073,7 +2089,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",130.5,484]
-["lineTo",130.5,491.59999999999997]
+["lineTo",130.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2082,7 +2098,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",181.5,10.2]
+["moveTo",181.5,32]
 ["lineTo",181.5,483]
 ["stroke",null]
 ["restore"]
@@ -2093,7 +2109,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",181.5,484]
-["lineTo",181.5,491.59999999999997]
+["lineTo",181.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2102,7 +2118,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",233.5,10.2]
+["moveTo",233.5,32]
 ["lineTo",233.5,483]
 ["stroke",null]
 ["restore"]
@@ -2113,7 +2129,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",233.5,484]
-["lineTo",233.5,491.59999999999997]
+["lineTo",233.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2122,7 +2138,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",284.5,10.2]
+["moveTo",284.5,32]
 ["lineTo",284.5,483]
 ["stroke",null]
 ["restore"]
@@ -2133,7 +2149,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",284.5,484]
-["lineTo",284.5,491.59999999999997]
+["lineTo",284.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2142,7 +2158,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",336.5,10.2]
+["moveTo",336.5,32]
 ["lineTo",336.5,483]
 ["stroke",null]
 ["restore"]
@@ -2153,7 +2169,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",336.5,484]
-["lineTo",336.5,491.59999999999997]
+["lineTo",336.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2162,7 +2178,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",387.5,10.2]
+["moveTo",387.5,32]
 ["lineTo",387.5,483]
 ["stroke",null]
 ["restore"]
@@ -2173,7 +2189,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",387.5,484]
-["lineTo",387.5,491.59999999999997]
+["lineTo",387.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2182,7 +2198,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",439.5,10.2]
+["moveTo",439.5,32]
 ["lineTo",439.5,483]
 ["stroke",null]
 ["restore"]
@@ -2193,7 +2209,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",439.5,484]
-["lineTo",439.5,491.59999999999997]
+["lineTo",439.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2202,7 +2218,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",490.5,10.2]
+["moveTo",490.5,32]
 ["lineTo",490.5,483]
 ["stroke",null]
 ["restore"]
@@ -2213,7 +2229,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",490.5,484]
-["lineTo",490.5,491.59999999999997]
+["lineTo",490.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2242,8 +2258,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,436.5]
-["lineTo",490.9853515625,436.5]
+["moveTo",28,438.5]
+["lineTo",490.9853515625,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2252,8 +2268,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,436.5]
-["lineTo",27,436.5]
+["moveTo",19.34765625,438.5]
+["lineTo",27,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2262,8 +2278,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,388.5]
-["lineTo",490.9853515625,388.5]
+["moveTo",28,393.5]
+["lineTo",490.9853515625,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2272,8 +2288,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,388.5]
-["lineTo",27,388.5]
+["moveTo",19.34765625,393.5]
+["lineTo",27,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2282,8 +2298,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,341.5]
-["lineTo",490.9853515625,341.5]
+["moveTo",28,348.5]
+["lineTo",490.9853515625,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2292,8 +2308,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,341.5]
-["lineTo",27,341.5]
+["moveTo",19.34765625,348.5]
+["lineTo",27,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2302,8 +2318,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,294.5]
-["lineTo",490.9853515625,294.5]
+["moveTo",28,302.5]
+["lineTo",490.9853515625,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2312,8 +2328,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,294.5]
-["lineTo",27,294.5]
+["moveTo",19.34765625,302.5]
+["lineTo",27,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2322,8 +2338,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,246.5]
-["lineTo",490.9853515625,246.5]
+["moveTo",28,257.5]
+["lineTo",490.9853515625,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2332,8 +2348,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,246.5]
-["lineTo",27,246.5]
+["moveTo",19.34765625,257.5]
+["lineTo",27,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2342,8 +2358,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,199.5]
-["lineTo",490.9853515625,199.5]
+["moveTo",28,212.5]
+["lineTo",490.9853515625,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2352,8 +2368,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,199.5]
-["lineTo",27,199.5]
+["moveTo",19.34765625,212.5]
+["lineTo",27,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2362,8 +2378,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,152.5]
-["lineTo",490.9853515625,152.5]
+["moveTo",28,167.5]
+["lineTo",490.9853515625,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2372,8 +2388,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,152.5]
-["lineTo",27,152.5]
+["moveTo",19.34765625,167.5]
+["lineTo",27,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2382,8 +2398,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,104.5]
-["lineTo",490.9853515625,104.5]
+["moveTo",28,122.5]
+["lineTo",490.9853515625,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2392,8 +2408,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,104.5]
-["lineTo",27,104.5]
+["moveTo",19.34765625,122.5]
+["lineTo",27,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2402,8 +2418,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,57.5]
-["lineTo",490.9853515625,57.5]
+["moveTo",28,77.5]
+["lineTo",490.9853515625,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2412,8 +2428,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,57.5]
-["lineTo",27,57.5]
+["moveTo",19.34765625,77.5]
+["lineTo",27,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2422,8 +2438,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,10.5]
-["lineTo",490.9853515625,10.5]
+["moveTo",28,32.5]
+["lineTo",490.9853515625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2432,9 +2448,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.34765625,10.5]
-["lineTo",27,10.5]
+["moveTo",19.34765625,32.5]
+["lineTo",27,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -2446,11 +2491,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.34765625,494.59999999999997]
+["translate",27.34765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2459,7 +2504,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",78.86295572916666,494.59999999999997]
+["translate",78.86295572916666,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2468,7 +2513,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",130.37825520833331,494.59999999999997]
+["translate",130.37825520833331,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2477,7 +2522,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",181.8935546875,494.59999999999997]
+["translate",181.8935546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2486,7 +2531,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",233.40885416666666,494.59999999999997]
+["translate",233.40885416666666,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2495,7 +2540,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",284.92415364583337,494.59999999999997]
+["translate",284.92415364583337,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2504,7 +2549,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",336.439453125,494.59999999999997]
+["translate",336.439453125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2513,7 +2558,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",387.9547526041667,494.59999999999997]
+["translate",387.9547526041667,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2522,7 +2567,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",439.4700520833333,494.59999999999997]
+["translate",439.4700520833333,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2531,7 +2576,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",490.9853515625,494.59999999999997]
+["translate",490.9853515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -2543,7 +2588,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",27.5,10]
+["moveTo",27.5,32]
 ["lineTo",27.5,484]
 ["stroke",null]
 ["restore"]
@@ -2553,7 +2598,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,483.59999999999997]
+["translate",16.34765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2562,7 +2607,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,436.26]
+["translate",16.34765625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2571,7 +2616,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,388.92]
+["translate",16.34765625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2580,7 +2625,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,341.5799999999999]
+["translate",16.34765625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2589,7 +2634,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,294.23999999999995]
+["translate",16.34765625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2598,7 +2643,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,246.89999999999998]
+["translate",16.34765625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2607,7 +2652,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,199.56]
+["translate",16.34765625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2616,7 +2661,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,152.22]
+["translate",16.34765625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2625,7 +2670,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,104.87999999999998]
+["translate",16.34765625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2634,7 +2679,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,57.53999999999999]
+["translate",16.34765625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2643,7 +2688,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.34765625,10.2]
+["translate",16.34765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -2655,7 +2700,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",27.34765625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",27.34765625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2663,7 +2708,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",78.86295572916666,294.23999999999995,3,0,6.283185307179586,false]
+["arc",78.86295572916666,302.96,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2671,7 +2716,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",130.37825520833331,104.87999999999998,3,0,6.283185307179586,false]
+["arc",130.37825520833331,122.31999999999998,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2679,7 +2724,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",181.8935546875,436.26,3,0,6.283185307179586,false]
+["arc",181.8935546875,438.44000000000005,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2687,7 +2732,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",233.40885416666666,246.89999999999998,3,0,6.283185307179586,false]
+["arc",233.40885416666666,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2695,7 +2740,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",284.92415364583337,57.53999999999999,3,0,6.283185307179586,false]
+["arc",284.92415364583337,77.16,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2703,7 +2748,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",336.439453125,388.92,3,0,6.283185307179586,false]
+["arc",336.439453125,393.28000000000003,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2711,7 +2756,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",387.9547526041667,199.56,3,0,6.283185307179586,false]
+["arc",387.9547526041667,212.64000000000001,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2719,7 +2764,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",439.4700520833333,10.2,3,0,6.283185307179586,false]
+["arc",439.4700520833333,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2727,7 +2772,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",490.9853515625,341.5799999999999,3,0,6.283185307179586,false]
+["arc",490.9853515625,348.12,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -2762,7 +2807,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[20.673828125, 10.2, 512.0, 483.59999999999997],
+      'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -2780,12 +2825,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613260800000.0, 'Feb 14', false],
             <Object?>[1618358400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            512.0,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 512.0, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 0.0, 0.0, 0.0],
           'tickPixels': <Object?>[
@@ -2931,40 +2971,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[51.3817138671875, 483.59999999999997],
-          <Object?>[112.7974853515625, 273.2],
-          <Object?>[174.21325683593747, 62.800000000000026],
-          <Object?>[235.6290283203125, 430.99999999999994],
-          <Object?>[297.0447998046875, 220.59999999999997],
-          <Object?>[358.4605712890625, 10.2],
-          <Object?>[419.87634277343744, 378.4],
-          <Object?>[481.2921142578125, 168.0],
+          <Object?>[51.3817138671875, 483.6],
+          <Object?>[112.7974853515625, 282.8888888888889],
+          <Object?>[174.21325683593747, 82.1777777777778],
+          <Object?>[235.6290283203125, 433.4222222222222],
+          <Object?>[297.0447998046875, 232.7111111111111],
+          <Object?>[358.4605712890625, 32.0],
+          <Object?>[419.87634277343744, 383.24444444444447],
+          <Object?>[481.2921142578125, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -2978,7 +3014,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",51.5,10.2]
+["moveTo",51.5,32]
 ["lineTo",51.5,483]
 ["stroke",null]
 ["restore"]
@@ -2989,7 +3025,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",51.5,484]
-["lineTo",51.5,491.59999999999997]
+["lineTo",51.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -2998,7 +3034,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",112.5,10.2]
+["moveTo",112.5,32]
 ["lineTo",112.5,483]
 ["stroke",null]
 ["restore"]
@@ -3009,7 +3045,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",112.5,484]
-["lineTo",112.5,491.59999999999997]
+["lineTo",112.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3018,7 +3054,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",174.5,10.2]
+["moveTo",174.5,32]
 ["lineTo",174.5,483]
 ["stroke",null]
 ["restore"]
@@ -3029,7 +3065,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",174.5,484]
-["lineTo",174.5,491.59999999999997]
+["lineTo",174.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3038,7 +3074,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",235.5,10.2]
+["moveTo",235.5,32]
 ["lineTo",235.5,483]
 ["stroke",null]
 ["restore"]
@@ -3049,7 +3085,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",235.5,484]
-["lineTo",235.5,491.59999999999997]
+["lineTo",235.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3058,7 +3094,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",297.5,10.2]
+["moveTo",297.5,32]
 ["lineTo",297.5,483]
 ["stroke",null]
 ["restore"]
@@ -3069,7 +3105,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",297.5,484]
-["lineTo",297.5,491.59999999999997]
+["lineTo",297.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3078,7 +3114,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",358.5,10.2]
+["moveTo",358.5,32]
 ["lineTo",358.5,483]
 ["stroke",null]
 ["restore"]
@@ -3089,7 +3125,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",358.5,484]
-["lineTo",358.5,491.59999999999997]
+["lineTo",358.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3098,7 +3134,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",419.5,10.2]
+["moveTo",419.5,32]
 ["lineTo",419.5,483]
 ["stroke",null]
 ["restore"]
@@ -3109,7 +3145,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",419.5,484]
-["lineTo",419.5,491.59999999999997]
+["lineTo",419.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3118,7 +3154,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",481.5,10.2]
+["moveTo",481.5,32]
 ["lineTo",481.5,483]
 ["stroke",null]
 ["restore"]
@@ -3129,7 +3165,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",481.5,484]
-["lineTo",481.5,491.59999999999997]
+["lineTo",481.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3158,8 +3194,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",512,430.5]
+["moveTo",21,433.5]
+["lineTo",512,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3168,8 +3204,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3178,8 +3214,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",512,378.5]
+["moveTo",21,383.5]
+["lineTo",512,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3188,8 +3224,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3198,8 +3234,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",512,325.5]
+["moveTo",21,333.5]
+["lineTo",512,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3208,8 +3244,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3218,8 +3254,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",512,273.5]
+["moveTo",21,282.5]
+["lineTo",512,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3228,8 +3264,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3238,8 +3274,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",512,220.5]
+["moveTo",21,232.5]
+["lineTo",512,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3248,8 +3284,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3258,8 +3294,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",512,168.5]
+["moveTo",21,182.5]
+["lineTo",512,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3268,8 +3304,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3278,8 +3314,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",512,115.5]
+["moveTo",21,132.5]
+["lineTo",512,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3288,8 +3324,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3298,8 +3334,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",512,62.5]
+["moveTo",21,82.5]
+["lineTo",512,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3308,8 +3344,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3318,8 +3354,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",512,10.5]
+["moveTo",21,32.5]
+["lineTo",512,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3328,9 +3364,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -3342,11 +3407,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",51.3817138671875,494.59999999999997]
+["translate",51.3817138671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3355,7 +3420,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",112.7974853515625,494.59999999999997]
+["translate",112.7974853515625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3364,7 +3429,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",174.21325683593747,494.59999999999997]
+["translate",174.21325683593747,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3373,7 +3438,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",235.6290283203125,494.59999999999997]
+["translate",235.6290283203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3382,7 +3447,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",297.0447998046875,494.59999999999997]
+["translate",297.0447998046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3391,7 +3456,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",358.4605712890625,494.59999999999997]
+["translate",358.4605712890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3400,7 +3465,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",419.87634277343744,494.59999999999997]
+["translate",419.87634277343744,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3409,7 +3474,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",481.2921142578125,494.59999999999997]
+["translate",481.2921142578125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -3421,7 +3486,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -3431,7 +3496,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3440,7 +3505,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3449,7 +3514,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3458,7 +3523,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3467,7 +3532,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3476,7 +3541,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3485,7 +3550,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3494,7 +3559,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3503,7 +3568,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3512,7 +3577,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -3524,7 +3589,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",51.3817138671875,483.59999999999997,3,0,6.283185307179586,false]
+["arc",51.3817138671875,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -3532,7 +3597,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",112.7974853515625,273.2,3,0,6.283185307179586,false]
+["arc",112.7974853515625,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -3540,7 +3605,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",174.21325683593747,62.800000000000026,3,0,6.283185307179586,false]
+["arc",174.21325683593747,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -3548,7 +3613,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",235.6290283203125,430.99999999999994,3,0,6.283185307179586,false]
+["arc",235.6290283203125,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -3556,7 +3621,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",297.0447998046875,220.59999999999997,3,0,6.283185307179586,false]
+["arc",297.0447998046875,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -3564,7 +3629,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",358.4605712890625,10.2,3,0,6.283185307179586,false]
+["arc",358.4605712890625,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -3572,7 +3637,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",419.87634277343744,378.4,3,0,6.283185307179586,false]
+["arc",419.87634277343744,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -3580,7 +3645,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",481.2921142578125,168,3,0,6.283185307179586,false]
+["arc",481.2921142578125,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -3615,12 +3680,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.677734375,
-        10.2,
-        494.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.677734375, 32.0, 494.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -3638,12 +3698,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1609804800000.0, 'Jan 5', false],
             <Object?>[1609718400000.0, 'Jan 4', false],
           ],
-          'box': <Object?>[
-            20.677734375,
-            483.59999999999997,
-            494.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.677734375, 483.6, 494.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[20.677734375, 0.0, 17.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -3789,40 +3844,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.00390625, 10.2, 20.677734375, 483.59999999999997],
+          'box': <Object?>[0.00390625, 32.0, 20.677734375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[494.322265625, 483.59999999999997],
-          <Object?>[426.65876116071433, 273.2],
-          <Object?>[358.99525669642856, 62.800000000000026],
-          <Object?>[291.33175223214283, 430.99999999999994],
-          <Object?>[223.66824776785717, 220.59999999999997],
-          <Object?>[156.00474330357142, 10.2],
-          <Object?>[88.34123883928574, 378.4],
-          <Object?>[20.677734375, 168.0],
+          <Object?>[494.322265625, 483.6],
+          <Object?>[426.65876116071433, 282.8888888888889],
+          <Object?>[358.99525669642856, 82.1777777777778],
+          <Object?>[291.33175223214283, 433.4222222222222],
+          <Object?>[223.66824776785717, 232.7111111111111],
+          <Object?>[156.00474330357142, 32.0],
+          <Object?>[88.34123883928574, 383.24444444444447],
+          <Object?>[20.677734375, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -3836,7 +3887,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -3847,7 +3898,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3856,7 +3907,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",88.5,10.2]
+["moveTo",88.5,32]
 ["lineTo",88.5,483]
 ["stroke",null]
 ["restore"]
@@ -3867,7 +3918,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",88.5,484]
-["lineTo",88.5,491.59999999999997]
+["lineTo",88.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3876,7 +3927,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",156.5,10.2]
+["moveTo",156.5,32]
 ["lineTo",156.5,483]
 ["stroke",null]
 ["restore"]
@@ -3887,7 +3938,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",156.5,484]
-["lineTo",156.5,491.59999999999997]
+["lineTo",156.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3896,7 +3947,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",223.5,10.2]
+["moveTo",223.5,32]
 ["lineTo",223.5,483]
 ["stroke",null]
 ["restore"]
@@ -3907,7 +3958,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",223.5,484]
-["lineTo",223.5,491.59999999999997]
+["lineTo",223.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3916,7 +3967,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",291.5,10.2]
+["moveTo",291.5,32]
 ["lineTo",291.5,483]
 ["stroke",null]
 ["restore"]
@@ -3927,7 +3978,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",291.5,484]
-["lineTo",291.5,491.59999999999997]
+["lineTo",291.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3936,7 +3987,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",358.5,10.2]
+["moveTo",358.5,32]
 ["lineTo",358.5,483]
 ["stroke",null]
 ["restore"]
@@ -3947,7 +3998,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",358.5,484]
-["lineTo",358.5,491.59999999999997]
+["lineTo",358.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3956,7 +4007,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",426.5,10.2]
+["moveTo",426.5,32]
 ["lineTo",426.5,483]
 ["stroke",null]
 ["restore"]
@@ -3967,7 +4018,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",426.5,484]
-["lineTo",426.5,491.59999999999997]
+["lineTo",426.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -3976,7 +4027,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",494.5,10.2]
+["moveTo",494.5,32]
 ["lineTo",494.5,483]
 ["stroke",null]
 ["restore"]
@@ -3987,7 +4038,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",494.5,484]
-["lineTo",494.5,491.59999999999997]
+["lineTo",494.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4016,8 +4067,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",494.322265625,430.5]
+["moveTo",21,433.5]
+["lineTo",494.322265625,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4026,8 +4077,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,430.5]
-["lineTo",20,430.5]
+["moveTo",12.677734375,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4036,8 +4087,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",494.322265625,378.5]
+["moveTo",21,383.5]
+["lineTo",494.322265625,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4046,8 +4097,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,378.5]
-["lineTo",20,378.5]
+["moveTo",12.677734375,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4056,8 +4107,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",494.322265625,325.5]
+["moveTo",21,333.5]
+["lineTo",494.322265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4066,8 +4117,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,325.5]
-["lineTo",20,325.5]
+["moveTo",12.677734375,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4076,8 +4127,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",494.322265625,273.5]
+["moveTo",21,282.5]
+["lineTo",494.322265625,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4086,8 +4137,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,273.5]
-["lineTo",20,273.5]
+["moveTo",12.677734375,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4096,8 +4147,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",494.322265625,220.5]
+["moveTo",21,232.5]
+["lineTo",494.322265625,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4106,8 +4157,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,220.5]
-["lineTo",20,220.5]
+["moveTo",12.677734375,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4116,8 +4167,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",494.322265625,168.5]
+["moveTo",21,182.5]
+["lineTo",494.322265625,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4126,8 +4177,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,168.5]
-["lineTo",20,168.5]
+["moveTo",12.677734375,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4136,8 +4187,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",494.322265625,115.5]
+["moveTo",21,132.5]
+["lineTo",494.322265625,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4146,8 +4197,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,115.5]
-["lineTo",20,115.5]
+["moveTo",12.677734375,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4156,8 +4207,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",494.322265625,62.5]
+["moveTo",21,82.5]
+["lineTo",494.322265625,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4166,8 +4217,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,62.5]
-["lineTo",20,62.5]
+["moveTo",12.677734375,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4176,8 +4227,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",494.322265625,10.5]
+["moveTo",21,32.5]
+["lineTo",494.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4186,9 +4237,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,10.5]
-["lineTo",20,10.5]
+["moveTo",12.677734375,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -4200,11 +4280,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.677734375,494.59999999999997]
+["translate",20.677734375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4213,7 +4293,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",88.34123883928574,494.59999999999997]
+["translate",88.34123883928574,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4222,7 +4302,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",156.00474330357142,494.59999999999997]
+["translate",156.00474330357142,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4231,7 +4311,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",223.66824776785717,494.59999999999997]
+["translate",223.66824776785717,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4240,7 +4320,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",291.33175223214283,494.59999999999997]
+["translate",291.33175223214283,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4249,7 +4329,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",358.99525669642856,494.59999999999997]
+["translate",358.99525669642856,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4258,7 +4338,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",426.65876116071433,494.59999999999997]
+["translate",426.65876116071433,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4267,7 +4347,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",494.322265625,494.59999999999997]
+["translate",494.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -4279,7 +4359,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -4289,7 +4369,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,483.59999999999997]
+["translate",9.677734375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4298,7 +4378,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,430.99999999999994]
+["translate",9.677734375,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4307,7 +4387,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,378.4]
+["translate",9.677734375,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4316,7 +4396,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,325.8]
+["translate",9.677734375,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4325,7 +4405,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,273.2]
+["translate",9.677734375,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4334,7 +4414,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,220.59999999999997]
+["translate",9.677734375,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4343,7 +4423,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,168]
+["translate",9.677734375,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4352,7 +4432,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,115.39999999999999]
+["translate",9.677734375,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4361,7 +4441,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,62.800000000000026]
+["translate",9.677734375,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4370,7 +4450,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,10.2]
+["translate",9.677734375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -4382,7 +4462,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",494.322265625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",494.322265625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -4390,7 +4470,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",426.65876116071433,273.2,3,0,6.283185307179586,false]
+["arc",426.65876116071433,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -4398,7 +4478,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",358.99525669642856,62.800000000000026,3,0,6.283185307179586,false]
+["arc",358.99525669642856,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -4406,7 +4486,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",291.33175223214283,430.99999999999994,3,0,6.283185307179586,false]
+["arc",291.33175223214283,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -4414,7 +4494,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",223.66824776785717,220.59999999999997,3,0,6.283185307179586,false]
+["arc",223.66824776785717,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -4422,7 +4502,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",156.00474330357142,10.2,3,0,6.283185307179586,false]
+["arc",156.00474330357142,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -4430,7 +4510,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",88.34123883928574,378.4,3,0,6.283185307179586,false]
+["arc",88.34123883928574,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -4438,7 +4518,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.677734375,168,3,0,6.283185307179586,false]
+["arc",20.677734375,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -4475,12 +4555,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        491.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -4498,12 +4573,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613260800000.0, 'Feb 14', false],
             <Object?>[1618358400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            491.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 491.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 20.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -4649,40 +4719,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[20.673828125, 483.59999999999997],
-          <Object?>[87.90931919642857, 273.2],
-          <Object?>[155.14481026785714, 62.800000000000026],
-          <Object?>[222.3803013392857, 430.99999999999994],
-          <Object?>[289.6157924107143, 220.59999999999997],
-          <Object?>[356.8512834821429, 10.2],
-          <Object?>[424.0867745535714, 378.4],
-          <Object?>[491.322265625, 168.0],
+          <Object?>[20.673828125, 483.6],
+          <Object?>[87.90931919642857, 282.8888888888889],
+          <Object?>[155.14481026785714, 82.1777777777778],
+          <Object?>[222.3803013392857, 433.4222222222222],
+          <Object?>[289.6157924107143, 232.7111111111111],
+          <Object?>[356.8512834821429, 32.0],
+          <Object?>[424.0867745535714, 383.24444444444447],
+          <Object?>[491.322265625, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -4696,7 +4762,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -4707,7 +4773,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4716,7 +4782,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",87.5,10.2]
+["moveTo",87.5,32]
 ["lineTo",87.5,483]
 ["stroke",null]
 ["restore"]
@@ -4727,7 +4793,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",87.5,484]
-["lineTo",87.5,491.59999999999997]
+["lineTo",87.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4736,7 +4802,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",155.5,10.2]
+["moveTo",155.5,32]
 ["lineTo",155.5,483]
 ["stroke",null]
 ["restore"]
@@ -4747,7 +4813,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",155.5,484]
-["lineTo",155.5,491.59999999999997]
+["lineTo",155.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4756,7 +4822,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",222.5,10.2]
+["moveTo",222.5,32]
 ["lineTo",222.5,483]
 ["stroke",null]
 ["restore"]
@@ -4767,7 +4833,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",222.5,484]
-["lineTo",222.5,491.59999999999997]
+["lineTo",222.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4776,7 +4842,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",289.5,10.2]
+["moveTo",289.5,32]
 ["lineTo",289.5,483]
 ["stroke",null]
 ["restore"]
@@ -4787,7 +4853,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",289.5,484]
-["lineTo",289.5,491.59999999999997]
+["lineTo",289.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4796,7 +4862,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",356.5,10.2]
+["moveTo",356.5,32]
 ["lineTo",356.5,483]
 ["stroke",null]
 ["restore"]
@@ -4807,7 +4873,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",356.5,484]
-["lineTo",356.5,491.59999999999997]
+["lineTo",356.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4816,7 +4882,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",424.5,10.2]
+["moveTo",424.5,32]
 ["lineTo",424.5,483]
 ["stroke",null]
 ["restore"]
@@ -4827,7 +4893,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",424.5,484]
-["lineTo",424.5,491.59999999999997]
+["lineTo",424.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4836,7 +4902,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",491.5,10.2]
+["moveTo",491.5,32]
 ["lineTo",491.5,483]
 ["stroke",null]
 ["restore"]
@@ -4847,7 +4913,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",491.5,484]
-["lineTo",491.5,491.59999999999997]
+["lineTo",491.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4876,8 +4942,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",491.322265625,430.5]
+["moveTo",21,433.5]
+["lineTo",491.322265625,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4886,8 +4952,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4896,8 +4962,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",491.322265625,378.5]
+["moveTo",21,383.5]
+["lineTo",491.322265625,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4906,8 +4972,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4916,8 +4982,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",491.322265625,325.5]
+["moveTo",21,333.5]
+["lineTo",491.322265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4926,8 +4992,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4936,8 +5002,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",491.322265625,273.5]
+["moveTo",21,282.5]
+["lineTo",491.322265625,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4946,8 +5012,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4956,8 +5022,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",491.322265625,220.5]
+["moveTo",21,232.5]
+["lineTo",491.322265625,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4966,8 +5032,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4976,8 +5042,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",491.322265625,168.5]
+["moveTo",21,182.5]
+["lineTo",491.322265625,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4986,8 +5052,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -4996,8 +5062,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",491.322265625,115.5]
+["moveTo",21,132.5]
+["lineTo",491.322265625,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5006,8 +5072,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5016,8 +5082,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",491.322265625,62.5]
+["moveTo",21,82.5]
+["lineTo",491.322265625,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5026,8 +5092,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5036,8 +5102,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",491.322265625,10.5]
+["moveTo",21,32.5]
+["lineTo",491.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5046,9 +5112,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -5060,11 +5155,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5073,7 +5168,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",87.90931919642857,494.59999999999997]
+["translate",87.90931919642857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5082,7 +5177,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",155.14481026785714,494.59999999999997]
+["translate",155.14481026785714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5091,7 +5186,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",222.3803013392857,494.59999999999997]
+["translate",222.3803013392857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5100,7 +5195,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",289.6157924107143,494.59999999999997]
+["translate",289.6157924107143,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5109,7 +5204,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",356.8512834821429,494.59999999999997]
+["translate",356.8512834821429,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5118,7 +5213,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.0867745535714,494.59999999999997]
+["translate",424.0867745535714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5127,7 +5222,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",491.322265625,494.59999999999997]
+["translate",491.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5139,7 +5234,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -5149,7 +5244,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5158,7 +5253,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5167,7 +5262,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5176,7 +5271,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5185,7 +5280,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5194,7 +5289,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5203,7 +5298,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5212,7 +5307,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5221,7 +5316,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5230,7 +5325,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5242,7 +5337,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.673828125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",20.673828125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5250,7 +5345,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",87.90931919642857,273.2,3,0,6.283185307179586,false]
+["arc",87.90931919642857,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5258,7 +5353,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",155.14481026785714,62.800000000000026,3,0,6.283185307179586,false]
+["arc",155.14481026785714,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5266,7 +5361,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",222.3803013392857,430.99999999999994,3,0,6.283185307179586,false]
+["arc",222.3803013392857,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5274,7 +5369,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",289.6157924107143,220.59999999999997,3,0,6.283185307179586,false]
+["arc",289.6157924107143,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5282,7 +5377,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",356.8512834821429,10.2,3,0,6.283185307179586,false]
+["arc",356.8512834821429,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5290,7 +5385,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",424.0867745535714,378.4,3,0,6.283185307179586,false]
+["arc",424.0867745535714,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5298,7 +5393,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",491.322265625,168,3,0,6.283185307179586,false]
+["arc",491.322265625,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5336,7 +5431,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[20.673828125, 10.2, 512.0, 483.59999999999997],
+      'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -5349,12 +5444,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1611100800000.0, 'Jan 20', false],
             <Object?>[1614556800000.0, 'Mar 1', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            512.0,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 512.0, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 0.0, 0.0, 0.0],
           'tickPixels': <Object?>[75.265625, 293.6328125, 457.408203125],
@@ -5492,40 +5582,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[20.673828125, 483.59999999999997],
-          <Object?>[75.265625, 273.2],
-          <Object?>[129.857421875, 62.800000000000026],
-          <Object?>[184.44921875, 430.99999999999994],
-          <Object?>[239.041015625, 220.59999999999997],
-          <Object?>[348.224609375, 10.2],
-          <Object?>[402.81640625, 378.4],
-          <Object?>[512.0, 168.0],
+          <Object?>[20.673828125, 483.6],
+          <Object?>[75.265625, 282.8888888888889],
+          <Object?>[129.857421875, 82.1777777777778],
+          <Object?>[184.44921875, 433.4222222222222],
+          <Object?>[239.041015625, 232.7111111111111],
+          <Object?>[348.224609375, 32.0],
+          <Object?>[402.81640625, 383.24444444444447],
+          <Object?>[512.0, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -5539,7 +5625,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",75.5,10.2]
+["moveTo",75.5,32]
 ["lineTo",75.5,483]
 ["stroke",null]
 ["restore"]
@@ -5550,7 +5636,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",75.5,484]
-["lineTo",75.5,491.59999999999997]
+["lineTo",75.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5559,7 +5645,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",293.5,10.2]
+["moveTo",293.5,32]
 ["lineTo",293.5,483]
 ["stroke",null]
 ["restore"]
@@ -5570,7 +5656,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",293.5,484]
-["lineTo",293.5,491.59999999999997]
+["lineTo",293.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5579,7 +5665,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",457.5,10.2]
+["moveTo",457.5,32]
 ["lineTo",457.5,483]
 ["stroke",null]
 ["restore"]
@@ -5590,7 +5676,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",457.5,484]
-["lineTo",457.5,491.59999999999997]
+["lineTo",457.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5619,8 +5705,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",512,430.5]
+["moveTo",21,433.5]
+["lineTo",512,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5629,8 +5715,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5639,8 +5725,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",512,378.5]
+["moveTo",21,383.5]
+["lineTo",512,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5649,8 +5735,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5659,8 +5745,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",512,325.5]
+["moveTo",21,333.5]
+["lineTo",512,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5669,8 +5755,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5679,8 +5765,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",512,273.5]
+["moveTo",21,282.5]
+["lineTo",512,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5689,8 +5775,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5699,8 +5785,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",512,220.5]
+["moveTo",21,232.5]
+["lineTo",512,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5709,8 +5795,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5719,8 +5805,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",512,168.5]
+["moveTo",21,182.5]
+["lineTo",512,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5729,8 +5815,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5739,8 +5825,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",512,115.5]
+["moveTo",21,132.5]
+["lineTo",512,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5749,8 +5835,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5759,8 +5845,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",512,62.5]
+["moveTo",21,82.5]
+["lineTo",512,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5769,8 +5855,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5779,8 +5865,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",512,10.5]
+["moveTo",21,32.5]
+["lineTo",512,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -5789,9 +5875,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -5803,11 +5918,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",75.265625,494.59999999999997]
+["translate",75.265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5816,7 +5931,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",293.6328125,494.59999999999997]
+["translate",293.6328125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5825,7 +5940,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",457.408203125,494.59999999999997]
+["translate",457.408203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -5837,7 +5952,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -5847,7 +5962,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5856,7 +5971,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5865,7 +5980,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5874,7 +5989,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5883,7 +5998,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5892,7 +6007,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5901,7 +6016,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5910,7 +6025,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5919,7 +6034,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5928,7 +6043,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -5940,7 +6055,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.673828125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",20.673828125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5948,7 +6063,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",75.265625,273.2,3,0,6.283185307179586,false]
+["arc",75.265625,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5956,7 +6071,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",129.857421875,62.800000000000026,3,0,6.283185307179586,false]
+["arc",129.857421875,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5964,7 +6079,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",184.44921875,430.99999999999994,3,0,6.283185307179586,false]
+["arc",184.44921875,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5972,7 +6087,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",239.041015625,220.59999999999997,3,0,6.283185307179586,false]
+["arc",239.041015625,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5980,7 +6095,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",348.224609375,10.2,3,0,6.283185307179586,false]
+["arc",348.224609375,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5988,7 +6103,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",402.81640625,378.4,3,0,6.283185307179586,false]
+["arc",402.81640625,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -5996,7 +6111,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",512,168,3,0,6.283185307179586,false]
+["arc",512,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6031,12 +6146,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        491.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -6054,12 +6164,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613278800000.0, 'Feb 14', false],
             <Object?>[1618376400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            491.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 491.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 20.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -6205,40 +6310,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[20.673828125, 483.59999999999997],
-          <Object?>[87.90931919642857, 273.2],
-          <Object?>[155.14481026785714, 62.800000000000026],
-          <Object?>[222.3803013392857, 430.99999999999994],
-          <Object?>[289.6157924107143, 220.59999999999997],
-          <Object?>[356.8512834821429, 10.2],
-          <Object?>[424.0867745535714, 378.4],
-          <Object?>[491.322265625, 168.0],
+          <Object?>[20.673828125, 483.6],
+          <Object?>[87.90931919642857, 282.8888888888889],
+          <Object?>[155.14481026785714, 82.1777777777778],
+          <Object?>[222.3803013392857, 433.4222222222222],
+          <Object?>[289.6157924107143, 232.7111111111111],
+          <Object?>[356.8512834821429, 32.0],
+          <Object?>[424.0867745535714, 383.24444444444447],
+          <Object?>[491.322265625, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -6252,7 +6353,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -6263,7 +6364,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6272,7 +6373,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",87.5,10.2]
+["moveTo",87.5,32]
 ["lineTo",87.5,483]
 ["stroke",null]
 ["restore"]
@@ -6283,7 +6384,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",87.5,484]
-["lineTo",87.5,491.59999999999997]
+["lineTo",87.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6292,7 +6393,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",155.5,10.2]
+["moveTo",155.5,32]
 ["lineTo",155.5,483]
 ["stroke",null]
 ["restore"]
@@ -6303,7 +6404,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",155.5,484]
-["lineTo",155.5,491.59999999999997]
+["lineTo",155.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6312,7 +6413,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",222.5,10.2]
+["moveTo",222.5,32]
 ["lineTo",222.5,483]
 ["stroke",null]
 ["restore"]
@@ -6323,7 +6424,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",222.5,484]
-["lineTo",222.5,491.59999999999997]
+["lineTo",222.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6332,7 +6433,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",289.5,10.2]
+["moveTo",289.5,32]
 ["lineTo",289.5,483]
 ["stroke",null]
 ["restore"]
@@ -6343,7 +6444,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",289.5,484]
-["lineTo",289.5,491.59999999999997]
+["lineTo",289.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6352,7 +6453,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",356.5,10.2]
+["moveTo",356.5,32]
 ["lineTo",356.5,483]
 ["stroke",null]
 ["restore"]
@@ -6363,7 +6464,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",356.5,484]
-["lineTo",356.5,491.59999999999997]
+["lineTo",356.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6372,7 +6473,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",424.5,10.2]
+["moveTo",424.5,32]
 ["lineTo",424.5,483]
 ["stroke",null]
 ["restore"]
@@ -6383,7 +6484,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",424.5,484]
-["lineTo",424.5,491.59999999999997]
+["lineTo",424.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6392,7 +6493,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",491.5,10.2]
+["moveTo",491.5,32]
 ["lineTo",491.5,483]
 ["stroke",null]
 ["restore"]
@@ -6403,7 +6504,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",491.5,484]
-["lineTo",491.5,491.59999999999997]
+["lineTo",491.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6432,8 +6533,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",491.322265625,430.5]
+["moveTo",21,433.5]
+["lineTo",491.322265625,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6442,8 +6543,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6452,8 +6553,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",491.322265625,378.5]
+["moveTo",21,383.5]
+["lineTo",491.322265625,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6462,8 +6563,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6472,8 +6573,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",491.322265625,325.5]
+["moveTo",21,333.5]
+["lineTo",491.322265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6482,8 +6583,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6492,8 +6593,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",491.322265625,273.5]
+["moveTo",21,282.5]
+["lineTo",491.322265625,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6502,8 +6603,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6512,8 +6613,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",491.322265625,220.5]
+["moveTo",21,232.5]
+["lineTo",491.322265625,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6522,8 +6623,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6532,8 +6633,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",491.322265625,168.5]
+["moveTo",21,182.5]
+["lineTo",491.322265625,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6542,8 +6643,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6552,8 +6653,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",491.322265625,115.5]
+["moveTo",21,132.5]
+["lineTo",491.322265625,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6562,8 +6663,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6572,8 +6673,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",491.322265625,62.5]
+["moveTo",21,82.5]
+["lineTo",491.322265625,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6582,8 +6683,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6592,8 +6693,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",491.322265625,10.5]
+["moveTo",21,32.5]
+["lineTo",491.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -6602,9 +6703,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -6616,11 +6746,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6629,7 +6759,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",87.90931919642857,494.59999999999997]
+["translate",87.90931919642857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6638,7 +6768,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",155.14481026785714,494.59999999999997]
+["translate",155.14481026785714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6647,7 +6777,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",222.3803013392857,494.59999999999997]
+["translate",222.3803013392857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6656,7 +6786,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",289.6157924107143,494.59999999999997]
+["translate",289.6157924107143,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6665,7 +6795,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",356.8512834821429,494.59999999999997]
+["translate",356.8512834821429,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6674,7 +6804,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.0867745535714,494.59999999999997]
+["translate",424.0867745535714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6683,7 +6813,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",491.322265625,494.59999999999997]
+["translate",491.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -6695,7 +6825,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -6705,7 +6835,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6714,7 +6844,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6723,7 +6853,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6732,7 +6862,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6741,7 +6871,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6750,7 +6880,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6759,7 +6889,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6768,7 +6898,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6777,7 +6907,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6786,7 +6916,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -6798,7 +6928,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.673828125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",20.673828125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6806,7 +6936,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",87.90931919642857,273.2,3,0,6.283185307179586,false]
+["arc",87.90931919642857,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6814,7 +6944,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",155.14481026785714,62.800000000000026,3,0,6.283185307179586,false]
+["arc",155.14481026785714,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6822,7 +6952,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",222.3803013392857,430.99999999999994,3,0,6.283185307179586,false]
+["arc",222.3803013392857,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6830,7 +6960,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",289.6157924107143,220.59999999999997,3,0,6.283185307179586,false]
+["arc",289.6157924107143,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6838,7 +6968,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",356.8512834821429,10.2,3,0,6.283185307179586,false]
+["arc",356.8512834821429,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6846,7 +6976,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",424.0867745535714,378.4,3,0,6.283185307179586,false]
+["arc",424.0867745535714,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6854,7 +6984,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",491.322265625,168,3,0,6.283185307179586,false]
+["arc",491.322265625,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -6889,12 +7019,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        490.3203125,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 490.3203125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -6909,12 +7034,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613174400000.0, 'Feb 13', false],
             <Object?>[1613260800000.0, 'Feb 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            490.3203125,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 490.3203125, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 21.6796875, 0.0],
           'tickPixels': <Object?>[
@@ -7054,39 +7174,35 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            424.42499999999995,
-            365.24999999999994,
-            306.075,
-            246.89999999999998,
-            187.72499999999997,
-            128.54999999999998,
-            69.375,
-            10.2,
+            483.6,
+            427.15000000000003,
+            370.70000000000005,
+            314.25,
+            257.8,
+            201.35000000000002,
+            144.9,
+            88.45,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 5.0, 1.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[-3.4106069711538467, 542.775],
-          <Object?>[8.631610576923077, 306.075],
-          <Object?>[20.673828125, 69.375],
-          <Object?>[138.08544921875, 483.59999999999997],
-          <Object?>[255.4970703125, 246.89999999999998],
-          <Object?>[372.90869140625, 10.2],
-          <Object?>[490.3203125, 424.42499999999995],
-          <Object?>[1200.8111478365383, 187.72499999999997],
+          <Object?>[-3.4106069711538467, 540.05],
+          <Object?>[8.631610576923077, 314.25],
+          <Object?>[20.673828125, 88.45],
+          <Object?>[138.08544921875, 483.6],
+          <Object?>[255.4970703125, 257.8],
+          <Object?>[372.90869140625, 32.0],
+          <Object?>[490.3203125, 427.15000000000003],
+          <Object?>[1200.8111478365383, 201.35000000000002],
         ],
       ],
       'drawCalls': '''
@@ -7100,7 +7216,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -7111,7 +7227,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7120,7 +7236,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",138.5,10.2]
+["moveTo",138.5,32]
 ["lineTo",138.5,483]
 ["stroke",null]
 ["restore"]
@@ -7131,7 +7247,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",138.5,484]
-["lineTo",138.5,491.59999999999997]
+["lineTo",138.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7140,7 +7256,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",255.5,10.2]
+["moveTo",255.5,32]
 ["lineTo",255.5,483]
 ["stroke",null]
 ["restore"]
@@ -7151,7 +7267,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",255.5,484]
-["lineTo",255.5,491.59999999999997]
+["lineTo",255.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7160,7 +7276,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",372.5,10.2]
+["moveTo",372.5,32]
 ["lineTo",372.5,483]
 ["stroke",null]
 ["restore"]
@@ -7171,7 +7287,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",372.5,484]
-["lineTo",372.5,491.59999999999997]
+["lineTo",372.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7180,7 +7296,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",490.5,10.2]
+["moveTo",490.5,32]
 ["lineTo",490.5,483]
 ["stroke",null]
 ["restore"]
@@ -7191,7 +7307,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",490.5,484]
-["lineTo",490.5,491.59999999999997]
+["lineTo",490.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7220,8 +7336,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,424.5]
-["lineTo",490.3203125,424.5]
+["moveTo",21,427.5]
+["lineTo",490.3203125,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7230,8 +7346,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,424.5]
-["lineTo",20,424.5]
+["moveTo",12.673828125,427.5]
+["lineTo",20,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7240,8 +7356,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,365.5]
-["lineTo",490.3203125,365.5]
+["moveTo",21,370.5]
+["lineTo",490.3203125,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7250,8 +7366,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,365.5]
-["lineTo",20,365.5]
+["moveTo",12.673828125,370.5]
+["lineTo",20,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7260,8 +7376,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,306.5]
-["lineTo",490.3203125,306.5]
+["moveTo",21,314.5]
+["lineTo",490.3203125,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7270,8 +7386,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,306.5]
-["lineTo",20,306.5]
+["moveTo",12.673828125,314.5]
+["lineTo",20,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7280,8 +7396,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,246.5]
-["lineTo",490.3203125,246.5]
+["moveTo",21,257.5]
+["lineTo",490.3203125,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7290,8 +7406,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,246.5]
-["lineTo",20,246.5]
+["moveTo",12.673828125,257.5]
+["lineTo",20,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7300,8 +7416,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,187.5]
-["lineTo",490.3203125,187.5]
+["moveTo",21,201.5]
+["lineTo",490.3203125,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7310,8 +7426,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,187.5]
-["lineTo",20,187.5]
+["moveTo",12.673828125,201.5]
+["lineTo",20,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7320,8 +7436,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,128.5]
-["lineTo",490.3203125,128.5]
+["moveTo",21,144.5]
+["lineTo",490.3203125,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7330,8 +7446,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,128.5]
-["lineTo",20,128.5]
+["moveTo",12.673828125,144.5]
+["lineTo",20,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7340,8 +7456,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,69.5]
-["lineTo",490.3203125,69.5]
+["moveTo",21,88.5]
+["lineTo",490.3203125,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7350,8 +7466,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,69.5]
-["lineTo",20,69.5]
+["moveTo",12.673828125,88.5]
+["lineTo",20,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7360,8 +7476,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",490.3203125,10.5]
+["moveTo",21,32.5]
+["lineTo",490.3203125,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7370,9 +7486,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -7384,11 +7529,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7397,7 +7542,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",138.08544921875,494.59999999999997]
+["translate",138.08544921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7406,7 +7551,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",255.4970703125,494.59999999999997]
+["translate",255.4970703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7415,7 +7560,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",372.90869140625,494.59999999999997]
+["translate",372.90869140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7424,7 +7569,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",490.3203125,494.59999999999997]
+["translate",490.3203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -7436,7 +7581,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -7446,7 +7591,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7455,7 +7600,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,424.42499999999995]
+["translate",9.673828125,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7464,7 +7609,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,365.24999999999994]
+["translate",9.673828125,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7473,7 +7618,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,306.075]
+["translate",9.673828125,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7482,7 +7627,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,246.89999999999998]
+["translate",9.673828125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7491,7 +7636,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,187.72499999999997]
+["translate",9.673828125,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7500,7 +7645,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,128.54999999999998]
+["translate",9.673828125,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7509,7 +7654,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,69.375]
+["translate",9.673828125,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7518,7 +7663,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -7530,7 +7675,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.673828125,69.375,3,0,6.283185307179586,false]
+["arc",20.673828125,88.45,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -7538,7 +7683,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",138.08544921875,483.59999999999997,3,0,6.283185307179586,false]
+["arc",138.08544921875,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -7546,7 +7691,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",255.4970703125,246.89999999999998,3,0,6.283185307179586,false]
+["arc",255.4970703125,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -7554,7 +7699,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",372.90869140625,10.2,3,0,6.283185307179586,false]
+["arc",372.90869140625,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -7562,7 +7707,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",490.3203125,424.42499999999995,3,0,6.283185307179586,false]
+["arc",490.3203125,427.15000000000003,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -7597,12 +7742,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        492.6611328125,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 492.6611328125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -7622,12 +7762,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1618358400000.0, 'Apr 14', false],
             <Object?>[1620086400000.0, 'May 4', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            492.6611328125,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 492.6611328125, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[18.673828125, 0.0, 19.3388671875, 0.0],
           'tickPixels': <Object?>[
@@ -7781,40 +7916,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[73.11686197916666, 483.59999999999997],
-          <Object?>[125.55989583333333, 273.2],
-          <Object?>[178.0029296875, 62.800000000000026],
-          <Object?>[230.44596354166666, 430.99999999999994],
-          <Object?>[282.88899739583337, 220.59999999999997],
-          <Object?>[335.33203125, 10.2],
-          <Object?>[387.7750651041667, 378.4],
-          <Object?>[440.2180989583333, 168.0],
+          <Object?>[73.11686197916666, 483.6],
+          <Object?>[125.55989583333333, 282.8888888888889],
+          <Object?>[178.0029296875, 82.1777777777778],
+          <Object?>[230.44596354166666, 433.4222222222222],
+          <Object?>[282.88899739583337, 232.7111111111111],
+          <Object?>[335.33203125, 32.0],
+          <Object?>[387.7750651041667, 383.24444444444447],
+          <Object?>[440.2180989583333, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -7828,7 +7959,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -7839,7 +7970,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7848,7 +7979,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",73.5,10.2]
+["moveTo",73.5,32]
 ["lineTo",73.5,483]
 ["stroke",null]
 ["restore"]
@@ -7859,7 +7990,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",73.5,484]
-["lineTo",73.5,491.59999999999997]
+["lineTo",73.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7868,7 +7999,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",125.5,10.2]
+["moveTo",125.5,32]
 ["lineTo",125.5,483]
 ["stroke",null]
 ["restore"]
@@ -7879,7 +8010,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",125.5,484]
-["lineTo",125.5,491.59999999999997]
+["lineTo",125.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7888,7 +8019,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",178.5,10.2]
+["moveTo",178.5,32]
 ["lineTo",178.5,483]
 ["stroke",null]
 ["restore"]
@@ -7899,7 +8030,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",178.5,484]
-["lineTo",178.5,491.59999999999997]
+["lineTo",178.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7908,7 +8039,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",230.5,10.2]
+["moveTo",230.5,32]
 ["lineTo",230.5,483]
 ["stroke",null]
 ["restore"]
@@ -7919,7 +8050,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",230.5,484]
-["lineTo",230.5,491.59999999999997]
+["lineTo",230.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7928,7 +8059,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",282.5,10.2]
+["moveTo",282.5,32]
 ["lineTo",282.5,483]
 ["stroke",null]
 ["restore"]
@@ -7939,7 +8070,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",282.5,484]
-["lineTo",282.5,491.59999999999997]
+["lineTo",282.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7948,7 +8079,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",335.5,10.2]
+["moveTo",335.5,32]
 ["lineTo",335.5,483]
 ["stroke",null]
 ["restore"]
@@ -7959,7 +8090,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",335.5,484]
-["lineTo",335.5,491.59999999999997]
+["lineTo",335.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7968,7 +8099,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",387.5,10.2]
+["moveTo",387.5,32]
 ["lineTo",387.5,483]
 ["stroke",null]
 ["restore"]
@@ -7979,7 +8110,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",387.5,484]
-["lineTo",387.5,491.59999999999997]
+["lineTo",387.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -7988,7 +8119,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",440.5,10.2]
+["moveTo",440.5,32]
 ["lineTo",440.5,483]
 ["stroke",null]
 ["restore"]
@@ -7999,7 +8130,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",440.5,484]
-["lineTo",440.5,491.59999999999997]
+["lineTo",440.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8008,7 +8139,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",492.5,10.2]
+["moveTo",492.5,32]
 ["lineTo",492.5,483]
 ["stroke",null]
 ["restore"]
@@ -8019,7 +8150,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",492.5,484]
-["lineTo",492.5,491.59999999999997]
+["lineTo",492.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8048,8 +8179,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",492.6611328125,430.5]
+["moveTo",21,433.5]
+["lineTo",492.6611328125,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8058,8 +8189,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8068,8 +8199,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",492.6611328125,378.5]
+["moveTo",21,383.5]
+["lineTo",492.6611328125,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8078,8 +8209,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8088,8 +8219,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",492.6611328125,325.5]
+["moveTo",21,333.5]
+["lineTo",492.6611328125,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8098,8 +8229,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8108,8 +8239,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",492.6611328125,273.5]
+["moveTo",21,282.5]
+["lineTo",492.6611328125,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8118,8 +8249,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8128,8 +8259,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",492.6611328125,220.5]
+["moveTo",21,232.5]
+["lineTo",492.6611328125,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8138,8 +8269,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8148,8 +8279,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",492.6611328125,168.5]
+["moveTo",21,182.5]
+["lineTo",492.6611328125,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8158,8 +8289,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8168,8 +8299,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",492.6611328125,115.5]
+["moveTo",21,132.5]
+["lineTo",492.6611328125,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8178,8 +8309,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8188,8 +8319,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",492.6611328125,62.5]
+["moveTo",21,82.5]
+["lineTo",492.6611328125,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8198,8 +8329,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8208,8 +8339,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",492.6611328125,10.5]
+["moveTo",21,32.5]
+["lineTo",492.6611328125,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8218,9 +8349,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -8232,11 +8392,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8245,7 +8405,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",73.11686197916666,494.59999999999997]
+["translate",73.11686197916666,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8254,7 +8414,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",125.55989583333333,494.59999999999997]
+["translate",125.55989583333333,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8263,7 +8423,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",178.0029296875,494.59999999999997]
+["translate",178.0029296875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8272,7 +8432,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",230.44596354166666,494.59999999999997]
+["translate",230.44596354166666,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8281,7 +8441,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",282.88899739583337,494.59999999999997]
+["translate",282.88899739583337,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8290,7 +8450,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",335.33203125,494.59999999999997]
+["translate",335.33203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8299,7 +8459,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",387.7750651041667,494.59999999999997]
+["translate",387.7750651041667,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8308,7 +8468,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",440.2180989583333,494.59999999999997]
+["translate",440.2180989583333,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8317,7 +8477,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",492.6611328125,494.59999999999997]
+["translate",492.6611328125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8329,7 +8489,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -8339,7 +8499,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8348,7 +8508,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8357,7 +8517,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8366,7 +8526,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8375,7 +8535,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8384,7 +8544,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8393,7 +8553,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8402,7 +8562,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8411,7 +8571,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8420,7 +8580,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -8432,7 +8592,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",73.11686197916666,483.59999999999997,3,0,6.283185307179586,false]
+["arc",73.11686197916666,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -8440,7 +8600,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",125.55989583333333,273.2,3,0,6.283185307179586,false]
+["arc",125.55989583333333,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -8448,7 +8608,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",178.0029296875,62.800000000000026,3,0,6.283185307179586,false]
+["arc",178.0029296875,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -8456,7 +8616,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",230.44596354166666,430.99999999999994,3,0,6.283185307179586,false]
+["arc",230.44596354166666,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -8464,7 +8624,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",282.88899739583337,220.59999999999997,3,0,6.283185307179586,false]
+["arc",282.88899739583337,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -8472,7 +8632,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",335.33203125,10.2,3,0,6.283185307179586,false]
+["arc",335.33203125,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -8480,7 +8640,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",387.7750651041667,378.4,3,0,6.283185307179586,false]
+["arc",387.7750651041667,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -8488,7 +8648,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",440.2180989583333,168,3,0,6.283185307179586,false]
+["arc",440.2180989583333,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -8511,12 +8671,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        44.6982421875,
-        10.2,
-        467.3017578125,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[44.6982421875, 32.0, 467.3017578125, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -8529,12 +8684,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1609743600000.0, '7:00:00.000 am', false],
             <Object?>[1609743600001.0, '7:00:00.001 am', false],
           ],
-          'box': <Object?>[
-            44.6982421875,
-            483.59999999999997,
-            467.3017578125,
-            511.99999999999994,
-          ],
+          'box': <Object?>[44.6982421875, 483.6, 467.3017578125, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[44.6982421875, 0.0, 44.6982421875, 0.0],
           'tickPixels': <Object?>[44.6982421875, 256.0, 467.3017578125],
@@ -8649,39 +8799,30 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[0.8, '0.8', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[
-            10.0205078125,
-            10.2,
-            44.6982421875,
-            483.59999999999997,
-          ],
+          'box': <Object?>[10.0205078125, 32.0, 44.6982421875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.56,
-            152.22,
-            104.87999999999998,
-            57.53999999999999,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.64000000000001,
+            167.48000000000002,
+            122.31999999999998,
+            77.16,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[1.0, 0.0, -1.0],
-          'basePixel': 246.89999999999998,
+          'basePixel': 257.8,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[256.0, 246.89999999999998],
+          <Object?>[256.0, 257.8],
         ],
       ],
       'drawCalls': '''
@@ -8695,7 +8836,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",44.5,10.2]
+["moveTo",44.5,32]
 ["lineTo",44.5,483]
 ["stroke",null]
 ["restore"]
@@ -8706,7 +8847,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",44.5,484]
-["lineTo",44.5,491.59999999999997]
+["lineTo",44.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8715,7 +8856,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",256.5,10.2]
+["moveTo",256.5,32]
 ["lineTo",256.5,483]
 ["stroke",null]
 ["restore"]
@@ -8726,7 +8867,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",256.5,484]
-["lineTo",256.5,491.59999999999997]
+["lineTo",256.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8735,7 +8876,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",467.5,10.2]
+["moveTo",467.5,32]
 ["lineTo",467.5,483]
 ["stroke",null]
 ["restore"]
@@ -8746,7 +8887,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",467.5,484]
-["lineTo",467.5,491.59999999999997]
+["lineTo",467.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8775,8 +8916,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,436.5]
-["lineTo",467.3017578125,436.5]
+["moveTo",45,438.5]
+["lineTo",467.3017578125,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8785,8 +8926,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.6982421875,436.5]
-["lineTo",44,436.5]
+["moveTo",36.6982421875,438.5]
+["lineTo",44,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8795,8 +8936,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,388.5]
-["lineTo",467.3017578125,388.5]
+["moveTo",45,393.5]
+["lineTo",467.3017578125,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8805,8 +8946,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.6982421875,388.5]
-["lineTo",44,388.5]
+["moveTo",36.6982421875,393.5]
+["lineTo",44,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8815,8 +8956,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,341.5]
-["lineTo",467.3017578125,341.5]
+["moveTo",45,348.5]
+["lineTo",467.3017578125,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8825,8 +8966,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.6982421875,341.5]
-["lineTo",44,341.5]
+["moveTo",36.6982421875,348.5]
+["lineTo",44,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8835,8 +8976,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,294.5]
-["lineTo",467.3017578125,294.5]
+["moveTo",45,302.5]
+["lineTo",467.3017578125,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8845,8 +8986,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.6982421875,294.5]
-["lineTo",44,294.5]
+["moveTo",36.6982421875,302.5]
+["lineTo",44,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8855,8 +8996,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,246.5]
-["lineTo",467.3017578125,246.5]
+["moveTo",45,257.5]
+["lineTo",467.3017578125,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8865,8 +9006,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.6982421875,246.5]
-["lineTo",44,246.5]
+["moveTo",36.6982421875,257.5]
+["lineTo",44,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8875,8 +9016,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,199.5]
-["lineTo",467.3017578125,199.5]
+["moveTo",45,212.5]
+["lineTo",467.3017578125,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8885,8 +9026,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.6982421875,199.5]
-["lineTo",44,199.5]
+["moveTo",36.6982421875,212.5]
+["lineTo",44,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8895,8 +9036,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,152.5]
-["lineTo",467.3017578125,152.5]
+["moveTo",45,167.5]
+["lineTo",467.3017578125,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8905,8 +9046,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.6982421875,152.5]
-["lineTo",44,152.5]
+["moveTo",36.6982421875,167.5]
+["lineTo",44,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8915,8 +9056,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,104.5]
-["lineTo",467.3017578125,104.5]
+["moveTo",45,122.5]
+["lineTo",467.3017578125,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8925,8 +9066,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.6982421875,104.5]
-["lineTo",44,104.5]
+["moveTo",36.6982421875,122.5]
+["lineTo",44,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8935,8 +9076,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,57.5]
-["lineTo",467.3017578125,57.5]
+["moveTo",45,77.5]
+["lineTo",467.3017578125,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8945,8 +9086,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.6982421875,57.5]
-["lineTo",44,57.5]
+["moveTo",36.6982421875,77.5]
+["lineTo",44,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8955,8 +9096,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45,10.5]
-["lineTo",467.3017578125,10.5]
+["moveTo",45,32.5]
+["lineTo",467.3017578125,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -8965,9 +9106,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",36.6982421875,10.5]
-["lineTo",44,10.5]
+["moveTo",36.6982421875,32.5]
+["lineTo",44,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -8979,11 +9149,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",44.6982421875,494.59999999999997]
+["translate",44.6982421875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -8992,7 +9162,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",256,494.59999999999997]
+["translate",256,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9001,7 +9171,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",467.3017578125,494.59999999999997]
+["translate",467.3017578125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9013,7 +9183,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",44.5,10]
+["moveTo",44.5,32]
 ["lineTo",44.5,484]
 ["stroke",null]
 ["restore"]
@@ -9023,7 +9193,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6982421875,483.59999999999997]
+["translate",33.6982421875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9032,7 +9202,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6982421875,436.26]
+["translate",33.6982421875,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9041,7 +9211,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6982421875,388.92]
+["translate",33.6982421875,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9050,7 +9220,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6982421875,341.5799999999999]
+["translate",33.6982421875,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9059,7 +9229,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6982421875,294.23999999999995]
+["translate",33.6982421875,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9068,7 +9238,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6982421875,246.89999999999998]
+["translate",33.6982421875,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9077,7 +9247,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6982421875,199.56]
+["translate",33.6982421875,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9086,7 +9256,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6982421875,152.22]
+["translate",33.6982421875,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9095,7 +9265,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6982421875,104.87999999999998]
+["translate",33.6982421875,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9104,7 +9274,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6982421875,57.53999999999999]
+["translate",33.6982421875,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9113,7 +9283,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6982421875,10.2]
+["translate",33.6982421875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9125,7 +9295,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",256,246.89999999999998,3,0,6.283185307179586,false]
+["arc",256,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -9144,12 +9314,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        493.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 493.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -9161,12 +9326,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1623715200000.0, '12AM', false],
             <Object?>[1623801600000.0, '12AM', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            493.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 493.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[18.673828125, 0.0, 18.673828125, 0.0],
           'tickPixels': <Object?>[30.681640625, 493.326171875],
@@ -9277,29 +9437,25 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.56,
-            152.22,
-            104.87999999999998,
-            57.53999999999999,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.64000000000001,
+            167.48000000000002,
+            122.31999999999998,
+            77.16,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[1.0, 0.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[<Object?>[]],
@@ -9314,7 +9470,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -9325,7 +9481,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9334,7 +9490,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",493.5,10.2]
+["moveTo",493.5,32]
 ["lineTo",493.5,483]
 ["stroke",null]
 ["restore"]
@@ -9345,7 +9501,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",493.5,484]
-["lineTo",493.5,491.59999999999997]
+["lineTo",493.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9374,8 +9530,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,436.5]
-["lineTo",493.326171875,436.5]
+["moveTo",31,438.5]
+["lineTo",493.326171875,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9384,8 +9540,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,436.5]
-["lineTo",30,436.5]
+["moveTo",22.681640625,438.5]
+["lineTo",30,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9394,8 +9550,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,388.5]
-["lineTo",493.326171875,388.5]
+["moveTo",31,393.5]
+["lineTo",493.326171875,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9404,8 +9560,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,388.5]
-["lineTo",30,388.5]
+["moveTo",22.681640625,393.5]
+["lineTo",30,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9414,8 +9570,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,341.5]
-["lineTo",493.326171875,341.5]
+["moveTo",31,348.5]
+["lineTo",493.326171875,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9424,8 +9580,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,341.5]
-["lineTo",30,341.5]
+["moveTo",22.681640625,348.5]
+["lineTo",30,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9434,8 +9590,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,294.5]
-["lineTo",493.326171875,294.5]
+["moveTo",31,302.5]
+["lineTo",493.326171875,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9444,8 +9600,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,294.5]
-["lineTo",30,294.5]
+["moveTo",22.681640625,302.5]
+["lineTo",30,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9454,8 +9610,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,246.5]
-["lineTo",493.326171875,246.5]
+["moveTo",31,257.5]
+["lineTo",493.326171875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9464,8 +9620,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,246.5]
-["lineTo",30,246.5]
+["moveTo",22.681640625,257.5]
+["lineTo",30,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9474,8 +9630,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,199.5]
-["lineTo",493.326171875,199.5]
+["moveTo",31,212.5]
+["lineTo",493.326171875,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9484,8 +9640,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,199.5]
-["lineTo",30,199.5]
+["moveTo",22.681640625,212.5]
+["lineTo",30,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9494,8 +9650,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,152.5]
-["lineTo",493.326171875,152.5]
+["moveTo",31,167.5]
+["lineTo",493.326171875,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9504,8 +9660,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,152.5]
-["lineTo",30,152.5]
+["moveTo",22.681640625,167.5]
+["lineTo",30,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9514,8 +9670,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,104.5]
-["lineTo",493.326171875,104.5]
+["moveTo",31,122.5]
+["lineTo",493.326171875,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9524,8 +9680,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,104.5]
-["lineTo",30,104.5]
+["moveTo",22.681640625,122.5]
+["lineTo",30,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9534,8 +9690,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,57.5]
-["lineTo",493.326171875,57.5]
+["moveTo",31,77.5]
+["lineTo",493.326171875,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9544,8 +9700,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,57.5]
-["lineTo",30,57.5]
+["moveTo",22.681640625,77.5]
+["lineTo",30,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9554,8 +9710,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",493.326171875,10.5]
+["moveTo",31,32.5]
+["lineTo",493.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -9564,9 +9720,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -9578,11 +9763,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9591,7 +9776,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",493.326171875,494.59999999999997]
+["translate",493.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -9603,7 +9788,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -9613,7 +9798,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9622,7 +9807,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,436.26]
+["translate",19.681640625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9631,7 +9816,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,388.92]
+["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9640,7 +9825,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,341.5799999999999]
+["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9649,7 +9834,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,294.23999999999995]
+["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9658,7 +9843,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,246.89999999999998]
+["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9667,7 +9852,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,199.56]
+["translate",19.681640625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9676,7 +9861,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,152.22]
+["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9685,7 +9870,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,104.87999999999998]
+["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9694,7 +9879,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,57.53999999999999]
+["translate",19.681640625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9703,7 +9888,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -9744,12 +9929,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        491.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -9769,12 +9949,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1615766400000.0, 'Mar 15', false],
             <Object?>[1618358400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            491.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 491.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 20.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -9928,45 +10103,41 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[20.673828125, 483.59999999999997],
-          <Object?>[72.96809895833333, 273.2],
-          <Object?>[125.26236979166666, 62.800000000000026],
-          <Object?>[229.85091145833331, 430.99999999999994],
-          <Object?>[282.1451822916667, 220.59999999999997],
-          <Object?>[334.439453125, 10.2],
-          <Object?>[386.7337239583333, 378.4],
-          <Object?>[491.322265625, 168.0],
+          <Object?>[20.673828125, 483.6],
+          <Object?>[72.96809895833333, 282.8888888888889],
+          <Object?>[125.26236979166666, 82.1777777777778],
+          <Object?>[229.85091145833331, 433.4222222222222],
+          <Object?>[282.1451822916667, 232.7111111111111],
+          <Object?>[334.439453125, 32.0],
+          <Object?>[386.7337239583333, 383.24444444444447],
+          <Object?>[491.322265625, 182.53333333333336],
         ],
         <Object?>[
-          <Object?>[177.556640625, 483.59999999999997],
-          <Object?>[229.85091145833331, 273.2],
-          <Object?>[439.02799479166663, 62.800000000000026],
+          <Object?>[177.556640625, 483.6],
+          <Object?>[229.85091145833331, 282.8888888888889],
+          <Object?>[439.02799479166663, 82.1777777777778],
         ],
       ],
       'drawCalls': '''
@@ -9980,7 +10151,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -9991,7 +10162,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10000,7 +10171,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",72.5,10.2]
+["moveTo",72.5,32]
 ["lineTo",72.5,483]
 ["stroke",null]
 ["restore"]
@@ -10011,7 +10182,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",72.5,484]
-["lineTo",72.5,491.59999999999997]
+["lineTo",72.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10020,7 +10191,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",125.5,10.2]
+["moveTo",125.5,32]
 ["lineTo",125.5,483]
 ["stroke",null]
 ["restore"]
@@ -10031,7 +10202,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",125.5,484]
-["lineTo",125.5,491.59999999999997]
+["lineTo",125.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10040,7 +10211,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",177.5,10.2]
+["moveTo",177.5,32]
 ["lineTo",177.5,483]
 ["stroke",null]
 ["restore"]
@@ -10051,7 +10222,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",177.5,484]
-["lineTo",177.5,491.59999999999997]
+["lineTo",177.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10060,7 +10231,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",229.5,10.2]
+["moveTo",229.5,32]
 ["lineTo",229.5,483]
 ["stroke",null]
 ["restore"]
@@ -10071,7 +10242,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",229.5,484]
-["lineTo",229.5,491.59999999999997]
+["lineTo",229.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10080,7 +10251,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",282.5,10.2]
+["moveTo",282.5,32]
 ["lineTo",282.5,483]
 ["stroke",null]
 ["restore"]
@@ -10091,7 +10262,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",282.5,484]
-["lineTo",282.5,491.59999999999997]
+["lineTo",282.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10100,7 +10271,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",334.5,10.2]
+["moveTo",334.5,32]
 ["lineTo",334.5,483]
 ["stroke",null]
 ["restore"]
@@ -10111,7 +10282,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",334.5,484]
-["lineTo",334.5,491.59999999999997]
+["lineTo",334.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10120,7 +10291,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",386.5,10.2]
+["moveTo",386.5,32]
 ["lineTo",386.5,483]
 ["stroke",null]
 ["restore"]
@@ -10131,7 +10302,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",386.5,484]
-["lineTo",386.5,491.59999999999997]
+["lineTo",386.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10140,7 +10311,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",439.5,10.2]
+["moveTo",439.5,32]
 ["lineTo",439.5,483]
 ["stroke",null]
 ["restore"]
@@ -10151,7 +10322,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",439.5,484]
-["lineTo",439.5,491.59999999999997]
+["lineTo",439.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10160,7 +10331,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",491.5,10.2]
+["moveTo",491.5,32]
 ["lineTo",491.5,483]
 ["stroke",null]
 ["restore"]
@@ -10171,7 +10342,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",491.5,484]
-["lineTo",491.5,491.59999999999997]
+["lineTo",491.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10200,8 +10371,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",491.322265625,430.5]
+["moveTo",21,433.5]
+["lineTo",491.322265625,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10210,8 +10381,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10220,8 +10391,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",491.322265625,378.5]
+["moveTo",21,383.5]
+["lineTo",491.322265625,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10230,8 +10401,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10240,8 +10411,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",491.322265625,325.5]
+["moveTo",21,333.5]
+["lineTo",491.322265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10250,8 +10421,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10260,8 +10431,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",491.322265625,273.5]
+["moveTo",21,282.5]
+["lineTo",491.322265625,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10270,8 +10441,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10280,8 +10451,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",491.322265625,220.5]
+["moveTo",21,232.5]
+["lineTo",491.322265625,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10290,8 +10461,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10300,8 +10471,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",491.322265625,168.5]
+["moveTo",21,182.5]
+["lineTo",491.322265625,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10310,8 +10481,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10320,8 +10491,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",491.322265625,115.5]
+["moveTo",21,132.5]
+["lineTo",491.322265625,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10330,8 +10501,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10340,8 +10511,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",491.322265625,62.5]
+["moveTo",21,82.5]
+["lineTo",491.322265625,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10350,8 +10521,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10360,8 +10531,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",491.322265625,10.5]
+["moveTo",21,32.5]
+["lineTo",491.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10370,9 +10541,58 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",152.283203125,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",198.283203125,16,null]
+["restore"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",261,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",307,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -10384,11 +10604,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10397,7 +10617,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",72.96809895833333,494.59999999999997]
+["translate",72.96809895833333,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10406,7 +10626,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",125.26236979166666,494.59999999999997]
+["translate",125.26236979166666,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10415,7 +10635,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",177.556640625,494.59999999999997]
+["translate",177.556640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10424,7 +10644,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",229.85091145833331,494.59999999999997]
+["translate",229.85091145833331,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10433,7 +10653,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",282.1451822916667,494.59999999999997]
+["translate",282.1451822916667,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10442,7 +10662,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",334.439453125,494.59999999999997]
+["translate",334.439453125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10451,7 +10671,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",386.7337239583333,494.59999999999997]
+["translate",386.7337239583333,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10460,7 +10680,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",439.02799479166663,494.59999999999997]
+["translate",439.02799479166663,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10469,7 +10689,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",491.322265625,494.59999999999997]
+["translate",491.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -10481,7 +10701,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -10491,7 +10711,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10500,7 +10720,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10509,7 +10729,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10518,7 +10738,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10527,7 +10747,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10536,7 +10756,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10545,7 +10765,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10554,7 +10774,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10563,7 +10783,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10572,7 +10792,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -10584,7 +10804,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",177.556640625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",177.556640625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10592,7 +10812,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",229.85091145833331,273.2,3,0,6.283185307179586,false]
+["arc",229.85091145833331,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10600,7 +10820,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",439.02799479166663,62.800000000000026,3,0,6.283185307179586,false]
+["arc",439.02799479166663,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10608,7 +10828,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.673828125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",20.673828125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10616,7 +10836,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",72.96809895833333,273.2,3,0,6.283185307179586,false]
+["arc",72.96809895833333,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10624,7 +10844,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",125.26236979166666,62.800000000000026,3,0,6.283185307179586,false]
+["arc",125.26236979166666,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10632,7 +10852,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",229.85091145833331,430.99999999999994,3,0,6.283185307179586,false]
+["arc",229.85091145833331,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10640,7 +10860,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",282.1451822916667,220.59999999999997,3,0,6.283185307179586,false]
+["arc",282.1451822916667,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10648,7 +10868,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",334.439453125,10.2,3,0,6.283185307179586,false]
+["arc",334.439453125,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10656,7 +10876,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",386.7337239583333,378.4,3,0,6.283185307179586,false]
+["arc",386.7337239583333,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10664,7 +10884,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",491.322265625,168,3,0,6.283185307179586,false]
+["arc",491.322265625,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -10702,12 +10922,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        491.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -10725,12 +10940,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613260800000.0, 'Feb 14', false],
             <Object?>[1618358400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            491.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 491.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 20.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -10876,45 +11086,41 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[20.673828125, 483.59999999999997],
-          <Object?>[87.90931919642857, 273.2],
-          <Object?>[155.14481026785714, 62.800000000000026],
-          <Object?>[222.3803013392857, 430.99999999999994],
-          <Object?>[289.6157924107143, 220.59999999999997],
-          <Object?>[356.8512834821429, 10.2],
-          <Object?>[424.0867745535714, 378.4],
-          <Object?>[491.322265625, 168.0],
+          <Object?>[20.673828125, 483.6],
+          <Object?>[87.90931919642857, 282.8888888888889],
+          <Object?>[155.14481026785714, 82.1777777777778],
+          <Object?>[222.3803013392857, 433.4222222222222],
+          <Object?>[289.6157924107143, 232.7111111111111],
+          <Object?>[356.8512834821429, 32.0],
+          <Object?>[424.0867745535714, 383.24444444444447],
+          <Object?>[491.322265625, 182.53333333333336],
         ],
         <Object?>[
-          <Object?>[183.9600207270408, 483.59999999999997],
-          <Object?>[457.13472779207024, 273.2],
-          <Object?>[961.970703125, 62.800000000000026],
+          <Object?>[183.9600207270408, 483.6],
+          <Object?>[457.13472779207024, 282.8888888888889],
+          <Object?>[961.970703125, 82.1777777777778],
         ],
       ],
       'drawCalls': '''
@@ -10928,7 +11134,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -10939,7 +11145,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10948,7 +11154,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",87.5,10.2]
+["moveTo",87.5,32]
 ["lineTo",87.5,483]
 ["stroke",null]
 ["restore"]
@@ -10959,7 +11165,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",87.5,484]
-["lineTo",87.5,491.59999999999997]
+["lineTo",87.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10968,7 +11174,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",155.5,10.2]
+["moveTo",155.5,32]
 ["lineTo",155.5,483]
 ["stroke",null]
 ["restore"]
@@ -10979,7 +11185,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",155.5,484]
-["lineTo",155.5,491.59999999999997]
+["lineTo",155.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -10988,7 +11194,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",222.5,10.2]
+["moveTo",222.5,32]
 ["lineTo",222.5,483]
 ["stroke",null]
 ["restore"]
@@ -10999,7 +11205,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",222.5,484]
-["lineTo",222.5,491.59999999999997]
+["lineTo",222.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11008,7 +11214,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",289.5,10.2]
+["moveTo",289.5,32]
 ["lineTo",289.5,483]
 ["stroke",null]
 ["restore"]
@@ -11019,7 +11225,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",289.5,484]
-["lineTo",289.5,491.59999999999997]
+["lineTo",289.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11028,7 +11234,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",356.5,10.2]
+["moveTo",356.5,32]
 ["lineTo",356.5,483]
 ["stroke",null]
 ["restore"]
@@ -11039,7 +11245,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",356.5,484]
-["lineTo",356.5,491.59999999999997]
+["lineTo",356.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11048,7 +11254,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",424.5,10.2]
+["moveTo",424.5,32]
 ["lineTo",424.5,483]
 ["stroke",null]
 ["restore"]
@@ -11059,7 +11265,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",424.5,484]
-["lineTo",424.5,491.59999999999997]
+["lineTo",424.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11068,7 +11274,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",491.5,10.2]
+["moveTo",491.5,32]
 ["lineTo",491.5,483]
 ["stroke",null]
 ["restore"]
@@ -11079,7 +11285,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",491.5,484]
-["lineTo",491.5,491.59999999999997]
+["lineTo",491.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11108,8 +11314,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",491.322265625,430.5]
+["moveTo",21,433.5]
+["lineTo",491.322265625,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11118,8 +11324,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11128,8 +11334,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",491.322265625,378.5]
+["moveTo",21,383.5]
+["lineTo",491.322265625,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11138,8 +11344,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11148,8 +11354,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",491.322265625,325.5]
+["moveTo",21,333.5]
+["lineTo",491.322265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11158,8 +11364,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11168,8 +11374,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",491.322265625,273.5]
+["moveTo",21,282.5]
+["lineTo",491.322265625,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11178,8 +11384,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11188,8 +11394,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",491.322265625,220.5]
+["moveTo",21,232.5]
+["lineTo",491.322265625,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11198,8 +11404,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11208,8 +11414,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",491.322265625,168.5]
+["moveTo",21,182.5]
+["lineTo",491.322265625,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11218,8 +11424,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11228,8 +11434,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",491.322265625,115.5]
+["moveTo",21,132.5]
+["lineTo",491.322265625,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11238,8 +11444,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11248,8 +11454,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",491.322265625,62.5]
+["moveTo",21,82.5]
+["lineTo",491.322265625,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11258,8 +11464,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11268,8 +11474,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",491.322265625,10.5]
+["moveTo",21,32.5]
+["lineTo",491.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11278,9 +11484,65 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",152.283203125,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",198.283203125,16,null]
+["restore"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",261,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",307,16,null]
+["measureText","undefined"]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["beginPath"]
+["setLineWidth",2]
+["moveTo",292,18]
+["lineTo",332,18]
+["stroke",null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -11292,11 +11554,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11305,7 +11567,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",87.90931919642857,494.59999999999997]
+["translate",87.90931919642857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11314,7 +11576,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",155.14481026785714,494.59999999999997]
+["translate",155.14481026785714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11323,7 +11585,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",222.3803013392857,494.59999999999997]
+["translate",222.3803013392857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11332,7 +11594,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",289.6157924107143,494.59999999999997]
+["translate",289.6157924107143,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11341,7 +11603,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",356.8512834821429,494.59999999999997]
+["translate",356.8512834821429,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11350,7 +11612,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.0867745535714,494.59999999999997]
+["translate",424.0867745535714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11359,7 +11621,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",491.322265625,494.59999999999997]
+["translate",491.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -11371,7 +11633,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -11381,7 +11643,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11390,7 +11652,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11399,7 +11661,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11408,7 +11670,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11417,7 +11679,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11426,7 +11688,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11435,7 +11697,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11444,7 +11706,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11453,7 +11715,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11462,7 +11724,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -11474,7 +11736,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.673828125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",20.673828125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -11482,7 +11744,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",87.90931919642857,273.2,3,0,6.283185307179586,false]
+["arc",87.90931919642857,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -11490,7 +11752,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",155.14481026785714,62.800000000000026,3,0,6.283185307179586,false]
+["arc",155.14481026785714,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -11498,7 +11760,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",222.3803013392857,430.99999999999994,3,0,6.283185307179586,false]
+["arc",222.3803013392857,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -11506,7 +11768,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",289.6157924107143,220.59999999999997,3,0,6.283185307179586,false]
+["arc",289.6157924107143,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -11514,7 +11776,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",356.8512834821429,10.2,3,0,6.283185307179586,false]
+["arc",356.8512834821429,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -11522,7 +11784,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",424.0867745535714,378.4,3,0,6.283185307179586,false]
+["arc",424.0867745535714,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -11530,7 +11792,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",491.322265625,168,3,0,6.283185307179586,false]
+["arc",491.322265625,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -11567,12 +11829,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        491.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -11590,12 +11847,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613260800000.0, 'Feb 14', false],
             <Object?>[1618358400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            491.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 491.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 20.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -11741,40 +11993,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[20.673828125, 483.59999999999997],
-          <Object?>[87.90931919642857, 273.2],
-          <Object?>[155.14481026785714, 62.800000000000026],
-          <Object?>[222.3803013392857, 430.99999999999994],
-          <Object?>[289.6157924107143, 220.59999999999997],
-          <Object?>[356.8512834821429, 10.2],
-          <Object?>[424.0867745535714, 378.4],
-          <Object?>[491.322265625, 168.0],
+          <Object?>[20.673828125, 483.6],
+          <Object?>[87.90931919642857, 282.8888888888889],
+          <Object?>[155.14481026785714, 82.1777777777778],
+          <Object?>[222.3803013392857, 433.4222222222222],
+          <Object?>[289.6157924107143, 232.7111111111111],
+          <Object?>[356.8512834821429, 32.0],
+          <Object?>[424.0867745535714, 383.24444444444447],
+          <Object?>[491.322265625, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -11788,7 +12036,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -11799,7 +12047,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11808,7 +12056,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",87.5,10.2]
+["moveTo",87.5,32]
 ["lineTo",87.5,483]
 ["stroke",null]
 ["restore"]
@@ -11819,7 +12067,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",87.5,484]
-["lineTo",87.5,491.59999999999997]
+["lineTo",87.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11828,7 +12076,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",155.5,10.2]
+["moveTo",155.5,32]
 ["lineTo",155.5,483]
 ["stroke",null]
 ["restore"]
@@ -11839,7 +12087,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",155.5,484]
-["lineTo",155.5,491.59999999999997]
+["lineTo",155.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11848,7 +12096,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",222.5,10.2]
+["moveTo",222.5,32]
 ["lineTo",222.5,483]
 ["stroke",null]
 ["restore"]
@@ -11859,7 +12107,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",222.5,484]
-["lineTo",222.5,491.59999999999997]
+["lineTo",222.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11868,7 +12116,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",289.5,10.2]
+["moveTo",289.5,32]
 ["lineTo",289.5,483]
 ["stroke",null]
 ["restore"]
@@ -11879,7 +12127,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",289.5,484]
-["lineTo",289.5,491.59999999999997]
+["lineTo",289.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11888,7 +12136,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",356.5,10.2]
+["moveTo",356.5,32]
 ["lineTo",356.5,483]
 ["stroke",null]
 ["restore"]
@@ -11899,7 +12147,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",356.5,484]
-["lineTo",356.5,491.59999999999997]
+["lineTo",356.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11908,7 +12156,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",424.5,10.2]
+["moveTo",424.5,32]
 ["lineTo",424.5,483]
 ["stroke",null]
 ["restore"]
@@ -11919,7 +12167,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",424.5,484]
-["lineTo",424.5,491.59999999999997]
+["lineTo",424.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11928,7 +12176,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",491.5,10.2]
+["moveTo",491.5,32]
 ["lineTo",491.5,483]
 ["stroke",null]
 ["restore"]
@@ -11939,7 +12187,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",491.5,484]
-["lineTo",491.5,491.59999999999997]
+["lineTo",491.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11968,8 +12216,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",491.322265625,430.5]
+["moveTo",21,433.5]
+["lineTo",491.322265625,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11978,8 +12226,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11988,8 +12236,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",491.322265625,378.5]
+["moveTo",21,383.5]
+["lineTo",491.322265625,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -11998,8 +12246,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12008,8 +12256,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",491.322265625,325.5]
+["moveTo",21,333.5]
+["lineTo",491.322265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12018,8 +12266,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12028,8 +12276,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",491.322265625,273.5]
+["moveTo",21,282.5]
+["lineTo",491.322265625,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12038,8 +12286,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12048,8 +12296,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",491.322265625,220.5]
+["moveTo",21,232.5]
+["lineTo",491.322265625,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12058,8 +12306,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12068,8 +12316,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",491.322265625,168.5]
+["moveTo",21,182.5]
+["lineTo",491.322265625,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12078,8 +12326,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12088,8 +12336,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",491.322265625,115.5]
+["moveTo",21,132.5]
+["lineTo",491.322265625,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12098,8 +12346,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12108,8 +12356,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",491.322265625,62.5]
+["moveTo",21,82.5]
+["lineTo",491.322265625,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12118,8 +12366,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12128,8 +12376,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",491.322265625,10.5]
+["moveTo",21,32.5]
+["lineTo",491.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12138,9 +12386,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -12152,11 +12429,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12165,7 +12442,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",87.90931919642857,494.59999999999997]
+["translate",87.90931919642857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12174,7 +12451,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",155.14481026785714,494.59999999999997]
+["translate",155.14481026785714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12183,7 +12460,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",222.3803013392857,494.59999999999997]
+["translate",222.3803013392857,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12192,7 +12469,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",289.6157924107143,494.59999999999997]
+["translate",289.6157924107143,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12201,7 +12478,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",356.8512834821429,494.59999999999997]
+["translate",356.8512834821429,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12210,7 +12487,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",424.0867745535714,494.59999999999997]
+["translate",424.0867745535714,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12219,7 +12496,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",491.322265625,494.59999999999997]
+["translate",491.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -12231,7 +12508,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -12241,7 +12518,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12250,7 +12527,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12259,7 +12536,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12268,7 +12545,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12277,7 +12554,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12286,7 +12563,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12295,7 +12572,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12304,7 +12581,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12313,7 +12590,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12322,7 +12599,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -12334,7 +12611,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.673828125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",20.673828125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -12342,7 +12619,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",87.90931919642857,273.2,3,0,6.283185307179586,false]
+["arc",87.90931919642857,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -12350,7 +12627,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",155.14481026785714,62.800000000000026,3,0,6.283185307179586,false]
+["arc",155.14481026785714,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -12358,7 +12635,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",222.3803013392857,430.99999999999994,3,0,6.283185307179586,false]
+["arc",222.3803013392857,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -12366,7 +12643,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",289.6157924107143,220.59999999999997,3,0,6.283185307179586,false]
+["arc",289.6157924107143,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -12374,7 +12651,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",356.8512834821429,10.2,3,0,6.283185307179586,false]
+["arc",356.8512834821429,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -12382,7 +12659,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",424.0867745535714,378.4,3,0,6.283185307179586,false]
+["arc",424.0867745535714,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -12390,7 +12667,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",491.322265625,168,3,0,6.283185307179586,false]
+["arc",491.322265625,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -12476,9 +12753,9 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     expected: <String, Object?>{
       'chartArea': <Object?>[
         34.73889367282305,
-        10.2,
+        32.0,
         198.91763787778768,
-        176.37391474036485,
+        176.37391474036488,
       ],
       'scales': <String, Object?>{
         'x': <String, Object?>{
@@ -12499,9 +12776,9 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           ],
           'box': <Object?>[
             34.73889367282305,
-            176.37391474036485,
+            176.37391474036488,
             198.91763787778768,
-            239.99999999999997,
+            240.0,
           ],
           'labelRotation': 50.0,
           'paddings': <Object?>[
@@ -12784,87 +13061,91 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           ],
           'box': <Object?>[
             7.391237422823053,
-            10.2,
+            32.0,
             34.73889367282305,
-            176.37391474036485,
+            176.37391474036488,
           ],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            176.37391474036485,
-            143.1391317922919,
-            109.90434884421892,
-            76.66956589614595,
-            43.434782948072964,
-            10.2,
+            176.37391474036488,
+            147.4991317922919,
+            118.62434884421893,
+            89.74956589614595,
+            60.87478294807297,
+            32.0,
           ],
-          'valuePixels': <Object?>[176.37391474036485, 93.28695737018244, 10.2],
-          'valueForPixel': <Object?>[10.0, 5.000000000000001, 0.0],
-          'basePixel': 176.37391474036485,
+          'valuePixels': <Object?>[
+            176.37391474036488,
+            104.18695737018244,
+            32.0,
+          ],
+          'valueForPixel': <Object?>[10.0, 5.0, 0.0],
+          'basePixel': 176.37391474036488,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[34.73889367282305, 176.37391474036485],
-          <Object?>[40.93431798244436, 109.90434884421892],
-          <Object?>[37.836605827633704, 43.434782948072964],
-          <Object?>[44.03203013725501, 159.75652326632837],
-          <Object?>[47.129742292065664, 93.28695737018244],
-          <Object?>[50.22745444687632, 26.817391474036484],
-          <Object?>[53.32516660168697, 143.1391317922919],
-          <Object?>[59.520590911308275, 76.66956589614595],
-          <Object?>[56.422878756497624, 10.2],
-          <Object?>[56.422878756497624, 126.5217403182554],
-          <Object?>[65.71601522092959, 60.05217442210946],
-          <Object?>[62.61830306611893, 176.37391474036485],
-          <Object?>[68.81372737574024, 109.90434884421892],
-          <Object?>[71.9114395305509, 43.434782948072964],
-          <Object?>[75.00915168536154, 159.75652326632837],
-          <Object?>[78.1068638401722, 93.28695737018244],
-          <Object?>[84.3022881497935, 26.817391474036484],
-          <Object?>[81.20457599498286, 143.1391317922919],
-          <Object?>[81.20457599498286, 76.66956589614595],
-          <Object?>[90.49771245941481, 10.2],
-          <Object?>[87.40000030460416, 126.5217403182554],
-          <Object?>[93.59542461422546, 60.05217442210946],
-          <Object?>[96.69313676903613, 176.37391474036485],
-          <Object?>[99.79084892384678, 109.90434884421892],
-          <Object?>[102.88856107865743, 43.434782948072964],
-          <Object?>[109.08398538827873, 159.75652326632837],
-          <Object?>[105.98627323346808, 93.28695737018244],
-          <Object?>[105.98627323346808, 26.817391474036484],
-          <Object?>[115.27940969790004, 143.1391317922919],
-          <Object?>[112.18169754308938, 76.66956589614595],
-          <Object?>[118.3771218527107, 10.2],
-          <Object?>[121.47483400752135, 126.5217403182554],
-          <Object?>[124.572546162332, 60.05217442210946],
-          <Object?>[127.67025831714265, 176.37391474036485],
-          <Object?>[133.86568262676394, 109.90434884421892],
-          <Object?>[130.7679704719533, 43.434782948072964],
-          <Object?>[130.7679704719533, 159.75652326632837],
-          <Object?>[140.06110693638527, 93.28695737018244],
-          <Object?>[136.9633947815746, 26.817391474036484],
-          <Object?>[143.15881909119594, 143.1391317922919],
-          <Object?>[146.25653124600657, 76.66956589614595],
-          <Object?>[149.3542434008172, 10.2],
-          <Object?>[152.45195555562788, 126.5217403182554],
-          <Object?>[158.6473798652492, 60.05217442210946],
-          <Object?>[155.54966771043854, 176.37391474036485],
-          <Object?>[155.54966771043854, 109.90434884421892],
-          <Object?>[164.8428041748705, 43.434782948072964],
-          <Object?>[161.74509202005987, 159.75652326632837],
-          <Object?>[167.94051632968115, 93.28695737018244],
-          <Object?>[171.0382284844918, 26.817391474036484],
-          <Object?>[174.13594063930248, 143.1391317922919],
-          <Object?>[177.2336527941131, 76.66956589614595],
-          <Object?>[183.42907710373441, 10.2],
-          <Object?>[180.33136494892378, 126.5217403182554],
-          <Object?>[180.33136494892378, 60.05217442210946],
-          <Object?>[189.62450141335572, 176.37391474036485],
-          <Object?>[186.52678925854508, 109.90434884421892],
-          <Object?>[192.72221356816638, 43.434782948072964],
-          <Object?>[195.81992572297702, 159.75652326632837],
-          <Object?>[198.91763787778768, 93.28695737018244],
+          <Object?>[34.73889367282305, 176.37391474036488],
+          <Object?>[40.93431798244436, 118.62434884421893],
+          <Object?>[37.836605827633704, 60.87478294807297],
+          <Object?>[44.03203013725501, 161.9365232663284],
+          <Object?>[47.129742292065664, 104.18695737018244],
+          <Object?>[50.22745444687632, 46.43739147403649],
+          <Object?>[53.32516660168697, 147.4991317922919],
+          <Object?>[59.520590911308275, 89.74956589614595],
+          <Object?>[56.422878756497624, 32.0],
+          <Object?>[56.422878756497624, 133.06174031825543],
+          <Object?>[65.71601522092959, 75.31217442210948],
+          <Object?>[62.61830306611893, 176.37391474036488],
+          <Object?>[68.81372737574024, 118.62434884421893],
+          <Object?>[71.9114395305509, 60.87478294807297],
+          <Object?>[75.00915168536154, 161.9365232663284],
+          <Object?>[78.1068638401722, 104.18695737018244],
+          <Object?>[84.3022881497935, 46.43739147403649],
+          <Object?>[81.20457599498286, 147.4991317922919],
+          <Object?>[81.20457599498286, 89.74956589614595],
+          <Object?>[90.49771245941481, 32.0],
+          <Object?>[87.40000030460416, 133.06174031825543],
+          <Object?>[93.59542461422546, 75.31217442210948],
+          <Object?>[96.69313676903613, 176.37391474036488],
+          <Object?>[99.79084892384678, 118.62434884421893],
+          <Object?>[102.88856107865743, 60.87478294807297],
+          <Object?>[109.08398538827873, 161.9365232663284],
+          <Object?>[105.98627323346808, 104.18695737018244],
+          <Object?>[105.98627323346808, 46.43739147403649],
+          <Object?>[115.27940969790004, 147.4991317922919],
+          <Object?>[112.18169754308938, 89.74956589614595],
+          <Object?>[118.3771218527107, 32.0],
+          <Object?>[121.47483400752135, 133.06174031825543],
+          <Object?>[124.572546162332, 75.31217442210948],
+          <Object?>[127.67025831714265, 176.37391474036488],
+          <Object?>[133.86568262676394, 118.62434884421893],
+          <Object?>[130.7679704719533, 60.87478294807297],
+          <Object?>[130.7679704719533, 161.9365232663284],
+          <Object?>[140.06110693638527, 104.18695737018244],
+          <Object?>[136.9633947815746, 46.43739147403649],
+          <Object?>[143.15881909119594, 147.4991317922919],
+          <Object?>[146.25653124600657, 89.74956589614595],
+          <Object?>[149.3542434008172, 32.0],
+          <Object?>[152.45195555562788, 133.06174031825543],
+          <Object?>[158.6473798652492, 75.31217442210948],
+          <Object?>[155.54966771043854, 176.37391474036488],
+          <Object?>[155.54966771043854, 118.62434884421893],
+          <Object?>[164.8428041748705, 60.87478294807297],
+          <Object?>[161.74509202005987, 161.9365232663284],
+          <Object?>[167.94051632968115, 104.18695737018244],
+          <Object?>[171.0382284844918, 46.43739147403649],
+          <Object?>[174.13594063930248, 147.4991317922919],
+          <Object?>[177.2336527941131, 89.74956589614595],
+          <Object?>[183.42907710373441, 32.0],
+          <Object?>[180.33136494892378, 133.06174031825543],
+          <Object?>[180.33136494892378, 75.31217442210948],
+          <Object?>[189.62450141335572, 176.37391474036488],
+          <Object?>[186.52678925854508, 118.62434884421893],
+          <Object?>[192.72221356816638, 60.87478294807297],
+          <Object?>[195.81992572297702, 161.9365232663284],
+          <Object?>[198.91763787778768, 104.18695737018244],
         ],
       ],
       'drawCalls': '''
@@ -12878,7 +13159,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,176]
 ["stroke",null]
 ["restore"]
@@ -12889,7 +13170,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",34.5,177]
-["lineTo",34.5,184.37391474036485]
+["lineTo",34.5,184.37391474036488]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12898,7 +13179,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",56.5,10.2]
+["moveTo",56.5,32]
 ["lineTo",56.5,176]
 ["stroke",null]
 ["restore"]
@@ -12909,7 +13190,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",56.5,177]
-["lineTo",56.5,184.37391474036485]
+["lineTo",56.5,184.37391474036488]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12918,7 +13199,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",78.5,10.2]
+["moveTo",78.5,32]
 ["lineTo",78.5,176]
 ["stroke",null]
 ["restore"]
@@ -12929,7 +13210,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",78.5,177]
-["lineTo",78.5,184.37391474036485]
+["lineTo",78.5,184.37391474036488]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12938,7 +13219,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",99.5,10.2]
+["moveTo",99.5,32]
 ["lineTo",99.5,176]
 ["stroke",null]
 ["restore"]
@@ -12949,7 +13230,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",99.5,177]
-["lineTo",99.5,184.37391474036485]
+["lineTo",99.5,184.37391474036488]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12958,7 +13239,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",121.5,10.2]
+["moveTo",121.5,32]
 ["lineTo",121.5,176]
 ["stroke",null]
 ["restore"]
@@ -12969,7 +13250,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",121.5,177]
-["lineTo",121.5,184.37391474036485]
+["lineTo",121.5,184.37391474036488]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12978,7 +13259,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",143.5,10.2]
+["moveTo",143.5,32]
 ["lineTo",143.5,176]
 ["stroke",null]
 ["restore"]
@@ -12989,7 +13270,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",143.5,177]
-["lineTo",143.5,184.37391474036485]
+["lineTo",143.5,184.37391474036488]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -12998,7 +13279,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",164.5,10.2]
+["moveTo",164.5,32]
 ["lineTo",164.5,176]
 ["stroke",null]
 ["restore"]
@@ -13009,7 +13290,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",164.5,177]
-["lineTo",164.5,184.37391474036485]
+["lineTo",164.5,184.37391474036488]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13018,7 +13299,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",186.5,10.2]
+["moveTo",186.5,32]
 ["lineTo",186.5,176]
 ["stroke",null]
 ["restore"]
@@ -13029,7 +13310,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",186.5,177]
-["lineTo",186.5,184.37391474036485]
+["lineTo",186.5,184.37391474036488]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13058,8 +13339,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,143.5]
-["lineTo",198.91763787778768,143.5]
+["moveTo",35,147.5]
+["lineTo",198.91763787778768,147.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13068,8 +13349,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,143.5]
-["lineTo",34,143.5]
+["moveTo",26.738893672823053,147.5]
+["lineTo",34,147.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13078,8 +13359,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,109.5]
-["lineTo",198.91763787778768,109.5]
+["moveTo",35,118.5]
+["lineTo",198.91763787778768,118.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13088,8 +13369,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,109.5]
-["lineTo",34,109.5]
+["moveTo",26.738893672823053,118.5]
+["lineTo",34,118.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13098,8 +13379,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,76.5]
-["lineTo",198.91763787778768,76.5]
+["moveTo",35,89.5]
+["lineTo",198.91763787778768,89.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13108,8 +13389,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,76.5]
-["lineTo",34,76.5]
+["moveTo",26.738893672823053,89.5]
+["lineTo",34,89.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13118,8 +13399,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,43.5]
-["lineTo",198.91763787778768,43.5]
+["moveTo",35,60.5]
+["lineTo",198.91763787778768,60.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13128,8 +13409,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,43.5]
-["lineTo",34,43.5]
+["moveTo",26.738893672823053,60.5]
+["lineTo",34,60.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13138,8 +13419,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",198.91763787778768,10.5]
+["moveTo",35,32.5]
+["lineTo",198.91763787778768,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -13148,9 +13429,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,10.5]
-["lineTo",34,10.5]
+["moveTo",26.738893672823053,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,200,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",50.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",96.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -13162,11 +13472,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,176.37391474036485,200,63.62608525963512]
+["rect",0,176.37391474036488,200,63.62608525963512]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",29.22337368236641,187.37391474036485]
+["translate",29.22337368236641,187.37391474036488]
 ["rotate",-0.8726646259971648]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13175,7 +13485,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",50.907358766040986,187.37391474036485]
+["translate",50.907358766040986,187.37391474036488]
 ["rotate",-0.8726646259971648]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13184,7 +13494,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",72.59134384971556,187.37391474036485]
+["translate",72.59134384971556,187.37391474036488]
 ["rotate",-0.8726646259971648]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13193,7 +13503,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",94.27532893339014,187.37391474036485]
+["translate",94.27532893339014,187.37391474036488]
 ["rotate",-0.8726646259971648]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13202,7 +13512,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",115.95931401706471,187.37391474036485]
+["translate",115.95931401706471,187.37391474036488]
 ["rotate",-0.8726646259971648]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13211,7 +13521,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",137.64329910073928,187.37391474036485]
+["translate",137.64329910073928,187.37391474036488]
 ["rotate",-0.8726646259971648]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13220,7 +13530,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",159.32728418441386,187.37391474036485]
+["translate",159.32728418441386,187.37391474036488]
 ["rotate",-0.8726646259971648]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13229,7 +13539,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",181.01126926808843,187.37391474036485]
+["translate",181.01126926808843,187.37391474036488]
 ["rotate",-0.8726646259971648]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13241,7 +13551,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,177]
 ["stroke",null]
 ["restore"]
@@ -13251,7 +13561,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,176.37391474036485]
+["translate",23.738893672823053,176.37391474036488]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13260,7 +13570,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,143.1391317922919]
+["translate",23.738893672823053,147.4991317922919]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13269,7 +13579,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,109.90434884421892]
+["translate",23.738893672823053,118.62434884421893]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13278,7 +13588,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,76.66956589614595]
+["translate",23.738893672823053,89.74956589614595]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13287,7 +13597,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,43.434782948072964]
+["translate",23.738893672823053,60.87478294807297]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13296,7 +13606,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,10.2]
+["translate",23.738893672823053,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -13308,7 +13618,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",34.73889367282305,176.37391474036485,3,0,6.283185307179586,false]
+["arc",34.73889367282305,176.37391474036488,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13316,7 +13626,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",40.93431798244436,109.90434884421892,3,0,6.283185307179586,false]
+["arc",40.93431798244436,118.62434884421893,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13324,7 +13634,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",37.836605827633704,43.434782948072964,3,0,6.283185307179586,false]
+["arc",37.836605827633704,60.87478294807297,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13332,7 +13642,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",44.03203013725501,159.75652326632837,3,0,6.283185307179586,false]
+["arc",44.03203013725501,161.9365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13340,7 +13650,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",47.129742292065664,93.28695737018244,3,0,6.283185307179586,false]
+["arc",47.129742292065664,104.18695737018244,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13348,7 +13658,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",50.22745444687632,26.817391474036484,3,0,6.283185307179586,false]
+["arc",50.22745444687632,46.43739147403649,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13356,7 +13666,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",53.32516660168697,143.1391317922919,3,0,6.283185307179586,false]
+["arc",53.32516660168697,147.4991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13364,7 +13674,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",59.520590911308275,76.66956589614595,3,0,6.283185307179586,false]
+["arc",59.520590911308275,89.74956589614595,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13372,7 +13682,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",56.422878756497624,10.2,3,0,6.283185307179586,false]
+["arc",56.422878756497624,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13380,7 +13690,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",56.422878756497624,126.5217403182554,3,0,6.283185307179586,false]
+["arc",56.422878756497624,133.06174031825543,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13388,7 +13698,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",65.71601522092959,60.05217442210946,3,0,6.283185307179586,false]
+["arc",65.71601522092959,75.31217442210948,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13396,7 +13706,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",62.61830306611893,176.37391474036485,3,0,6.283185307179586,false]
+["arc",62.61830306611893,176.37391474036488,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13404,7 +13714,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",68.81372737574024,109.90434884421892,3,0,6.283185307179586,false]
+["arc",68.81372737574024,118.62434884421893,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13412,7 +13722,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",71.9114395305509,43.434782948072964,3,0,6.283185307179586,false]
+["arc",71.9114395305509,60.87478294807297,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13420,7 +13730,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",75.00915168536154,159.75652326632837,3,0,6.283185307179586,false]
+["arc",75.00915168536154,161.9365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13428,7 +13738,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",78.1068638401722,93.28695737018244,3,0,6.283185307179586,false]
+["arc",78.1068638401722,104.18695737018244,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13436,7 +13746,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",84.3022881497935,26.817391474036484,3,0,6.283185307179586,false]
+["arc",84.3022881497935,46.43739147403649,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13444,7 +13754,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",81.20457599498286,143.1391317922919,3,0,6.283185307179586,false]
+["arc",81.20457599498286,147.4991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13452,7 +13762,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",81.20457599498286,76.66956589614595,3,0,6.283185307179586,false]
+["arc",81.20457599498286,89.74956589614595,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13460,7 +13770,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",90.49771245941481,10.2,3,0,6.283185307179586,false]
+["arc",90.49771245941481,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13468,7 +13778,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",87.40000030460416,126.5217403182554,3,0,6.283185307179586,false]
+["arc",87.40000030460416,133.06174031825543,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13476,7 +13786,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",93.59542461422546,60.05217442210946,3,0,6.283185307179586,false]
+["arc",93.59542461422546,75.31217442210948,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13484,7 +13794,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",96.69313676903613,176.37391474036485,3,0,6.283185307179586,false]
+["arc",96.69313676903613,176.37391474036488,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13492,7 +13802,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",99.79084892384678,109.90434884421892,3,0,6.283185307179586,false]
+["arc",99.79084892384678,118.62434884421893,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13500,7 +13810,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",102.88856107865743,43.434782948072964,3,0,6.283185307179586,false]
+["arc",102.88856107865743,60.87478294807297,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13508,7 +13818,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",109.08398538827873,159.75652326632837,3,0,6.283185307179586,false]
+["arc",109.08398538827873,161.9365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13516,7 +13826,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",105.98627323346808,93.28695737018244,3,0,6.283185307179586,false]
+["arc",105.98627323346808,104.18695737018244,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13524,7 +13834,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",105.98627323346808,26.817391474036484,3,0,6.283185307179586,false]
+["arc",105.98627323346808,46.43739147403649,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13532,7 +13842,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",115.27940969790004,143.1391317922919,3,0,6.283185307179586,false]
+["arc",115.27940969790004,147.4991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13540,7 +13850,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",112.18169754308938,76.66956589614595,3,0,6.283185307179586,false]
+["arc",112.18169754308938,89.74956589614595,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13548,7 +13858,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",118.3771218527107,10.2,3,0,6.283185307179586,false]
+["arc",118.3771218527107,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13556,7 +13866,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",121.47483400752135,126.5217403182554,3,0,6.283185307179586,false]
+["arc",121.47483400752135,133.06174031825543,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13564,7 +13874,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",124.572546162332,60.05217442210946,3,0,6.283185307179586,false]
+["arc",124.572546162332,75.31217442210948,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13572,7 +13882,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",127.67025831714265,176.37391474036485,3,0,6.283185307179586,false]
+["arc",127.67025831714265,176.37391474036488,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13580,7 +13890,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",133.86568262676394,109.90434884421892,3,0,6.283185307179586,false]
+["arc",133.86568262676394,118.62434884421893,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13588,7 +13898,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",130.7679704719533,43.434782948072964,3,0,6.283185307179586,false]
+["arc",130.7679704719533,60.87478294807297,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13596,7 +13906,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",130.7679704719533,159.75652326632837,3,0,6.283185307179586,false]
+["arc",130.7679704719533,161.9365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13604,7 +13914,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",140.06110693638527,93.28695737018244,3,0,6.283185307179586,false]
+["arc",140.06110693638527,104.18695737018244,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13612,7 +13922,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",136.9633947815746,26.817391474036484,3,0,6.283185307179586,false]
+["arc",136.9633947815746,46.43739147403649,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13620,7 +13930,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",143.15881909119594,143.1391317922919,3,0,6.283185307179586,false]
+["arc",143.15881909119594,147.4991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13628,7 +13938,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",146.25653124600657,76.66956589614595,3,0,6.283185307179586,false]
+["arc",146.25653124600657,89.74956589614595,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13636,7 +13946,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",149.3542434008172,10.2,3,0,6.283185307179586,false]
+["arc",149.3542434008172,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13644,7 +13954,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",152.45195555562788,126.5217403182554,3,0,6.283185307179586,false]
+["arc",152.45195555562788,133.06174031825543,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13652,7 +13962,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",158.6473798652492,60.05217442210946,3,0,6.283185307179586,false]
+["arc",158.6473798652492,75.31217442210948,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13660,7 +13970,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",155.54966771043854,176.37391474036485,3,0,6.283185307179586,false]
+["arc",155.54966771043854,176.37391474036488,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13668,7 +13978,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",155.54966771043854,109.90434884421892,3,0,6.283185307179586,false]
+["arc",155.54966771043854,118.62434884421893,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13676,7 +13986,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",164.8428041748705,43.434782948072964,3,0,6.283185307179586,false]
+["arc",164.8428041748705,60.87478294807297,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13684,7 +13994,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",161.74509202005987,159.75652326632837,3,0,6.283185307179586,false]
+["arc",161.74509202005987,161.9365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13692,7 +14002,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",167.94051632968115,93.28695737018244,3,0,6.283185307179586,false]
+["arc",167.94051632968115,104.18695737018244,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13700,7 +14010,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",171.0382284844918,26.817391474036484,3,0,6.283185307179586,false]
+["arc",171.0382284844918,46.43739147403649,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13708,7 +14018,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",174.13594063930248,143.1391317922919,3,0,6.283185307179586,false]
+["arc",174.13594063930248,147.4991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13716,7 +14026,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",177.2336527941131,76.66956589614595,3,0,6.283185307179586,false]
+["arc",177.2336527941131,89.74956589614595,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13724,7 +14034,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",183.42907710373441,10.2,3,0,6.283185307179586,false]
+["arc",183.42907710373441,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13732,7 +14042,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",180.33136494892378,126.5217403182554,3,0,6.283185307179586,false]
+["arc",180.33136494892378,133.06174031825543,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13740,7 +14050,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",180.33136494892378,60.05217442210946,3,0,6.283185307179586,false]
+["arc",180.33136494892378,75.31217442210948,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13748,7 +14058,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",189.62450141335572,176.37391474036485,3,0,6.283185307179586,false]
+["arc",189.62450141335572,176.37391474036488,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13756,7 +14066,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",186.52678925854508,109.90434884421892,3,0,6.283185307179586,false]
+["arc",186.52678925854508,118.62434884421893,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13764,7 +14074,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",192.72221356816638,43.434782948072964,3,0,6.283185307179586,false]
+["arc",192.72221356816638,60.87478294807297,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13772,7 +14082,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",195.81992572297702,159.75652326632837,3,0,6.283185307179586,false]
+["arc",195.81992572297702,161.9365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13780,7 +14090,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",198.91763787778768,93.28695737018244,3,0,6.283185307179586,false]
+["arc",198.91763787778768,104.18695737018244,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -13813,7 +14123,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     expected: <String, Object?>{
       'chartArea': <Object?>[
         104.0703125,
-        10.2,
+        32.0,
         501.7987589773054,
         435.4734727490724,
       ],
@@ -13834,20 +14144,20 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '12:00:00.008 am', false],
             <Object?>[9.0, '12:00:00.009 am', false],
           ],
-          'box': <Object?>[0.0, 10.2, 104.0703125, 435.4734727490724],
+          'box': <Object?>[0.0, 32.0, 104.0703125, 435.4734727490724],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             435.4734727490724,
-            374.72011949920494,
-            313.96676624933747,
-            222.8367363745362,
-            177.27172143713557,
-            131.70670649973496,
-            50.70223549991165,
-            10.2,
+            377.83440521349064,
+            320.19533767790887,
+            233.7367363745362,
+            190.50743572284986,
+            147.27813507116355,
+            70.42604502372117,
+            32.0,
           ],
-          'valuePixels': <Object?>[435.4734727490724, 200.05422890583588, 10.2],
+          'valuePixels': <Object?>[435.4734727490724, 212.12208604869303, 32.0],
           'valueForPixel': <Object?>[9.0, 4.0, 0.0],
           'basePixel': 435.4734727490724,
           'unit': 'millisecond',
@@ -13872,13 +14182,13 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             435.4734727490724,
             <String, Object?>{'num': 'NaN'},
             <String, Object?>{'num': 'NaN'},
-            200.05422890583588,
-            374.72011949920494,
+            212.12208604869303,
+            377.83440521349064,
           ],
           'valuesForPixels': <Object?>[
-            9.423257060536685,
-            5.866666666666666,
-            -0.4232570605366843,
+            9.446125983880842,
+            5.866666666666667,
+            -0.4461259838808418,
           ],
           'labelForValue': <Object?>[
             'Jan 1, 1970, 12:00:00 am',
@@ -13932,10 +14242,10 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             9.0,
             7.95,
             6.9,
-            5.866666666666666,
+            5.866666666666667,
             4.933333333333334,
             4.0,
-            3.066666666666667,
+            3.066666666666668,
             2.1333333333333337,
             1.3999999999999997,
             0.6999999999999998,
@@ -14003,13 +14313,13 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'points': <Object?>[
         <Object?>[
           <Object?>[132.64312409492962, 435.4734727490724],
-          <Object?>[136.07949787249353, 222.8367363745362],
-          <Object?>[139.51587165005745, 50.70223549991165],
-          <Object?>[163.57048809300488, 374.72011949920494],
-          <Object?>[167.0068618705688, 177.27172143713557],
-          <Object?>[270.09807519748637, 10.2],
-          <Object?>[273.5344489750503, 313.96676624933747],
-          <Object?>[476.2805018513215, 131.70670649973496],
+          <Object?>[136.07949787249353, 233.7367363745362],
+          <Object?>[139.51587165005745, 70.42604502372117],
+          <Object?>[163.57048809300488, 377.83440521349064],
+          <Object?>[167.0068618705688, 190.50743572284986],
+          <Object?>[270.09807519748637, 32.0],
+          <Object?>[273.5344489750503, 320.19533767790887],
+          <Object?>[476.2805018513215, 147.27813507116355],
         ],
       ],
       'drawCalls': '''
@@ -14043,8 +14353,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",105,374.5]
-["lineTo",501.7987589773054,374.5]
+["moveTo",105,377.5]
+["lineTo",501.7987589773054,377.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14053,8 +14363,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",96.0703125,374.5]
-["lineTo",104,374.5]
+["moveTo",96.0703125,377.5]
+["lineTo",104,377.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14063,8 +14373,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",105,313.5]
-["lineTo",501.7987589773054,313.5]
+["moveTo",105,320.5]
+["lineTo",501.7987589773054,320.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14073,8 +14383,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",96.0703125,313.5]
-["lineTo",104,313.5]
+["moveTo",96.0703125,320.5]
+["lineTo",104,320.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14083,8 +14393,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",105,222.5]
-["lineTo",501.7987589773054,222.5]
+["moveTo",105,233.5]
+["lineTo",501.7987589773054,233.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14093,8 +14403,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",96.0703125,222.5]
-["lineTo",104,222.5]
+["moveTo",96.0703125,233.5]
+["lineTo",104,233.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14103,8 +14413,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",105,177.5]
-["lineTo",501.7987589773054,177.5]
+["moveTo",105,190.5]
+["lineTo",501.7987589773054,190.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14113,8 +14423,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",96.0703125,177.5]
-["lineTo",104,177.5]
+["moveTo",96.0703125,190.5]
+["lineTo",104,190.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14123,8 +14433,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",105,131.5]
-["lineTo",501.7987589773054,131.5]
+["moveTo",105,147.5]
+["lineTo",501.7987589773054,147.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14133,8 +14443,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",96.0703125,131.5]
-["lineTo",104,131.5]
+["moveTo",96.0703125,147.5]
+["lineTo",104,147.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14143,8 +14453,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",105,50.5]
-["lineTo",501.7987589773054,50.5]
+["moveTo",105,70.5]
+["lineTo",501.7987589773054,70.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14153,8 +14463,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",96.0703125,50.5]
-["lineTo",104,50.5]
+["moveTo",96.0703125,70.5]
+["lineTo",104,70.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14163,8 +14473,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",105,10.5]
-["lineTo",501.7987589773054,10.5]
+["moveTo",105,32.5]
+["lineTo",501.7987589773054,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14173,8 +14483,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",96.0703125,10.5]
-["lineTo",104,10.5]
+["moveTo",96.0703125,32.5]
+["lineTo",104,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -14183,7 +14493,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",104.5,10.2]
+["moveTo",104.5,32]
 ["lineTo",104.5,435]
 ["stroke",null]
 ["restore"]
@@ -14203,7 +14513,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",143.5,10.2]
+["moveTo",143.5,32]
 ["lineTo",143.5,435]
 ["stroke",null]
 ["restore"]
@@ -14223,7 +14533,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",183.5,10.2]
+["moveTo",183.5,32]
 ["lineTo",183.5,435]
 ["stroke",null]
 ["restore"]
@@ -14243,7 +14553,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",223.5,10.2]
+["moveTo",223.5,32]
 ["lineTo",223.5,435]
 ["stroke",null]
 ["restore"]
@@ -14263,7 +14573,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",263.5,10.2]
+["moveTo",263.5,32]
 ["lineTo",263.5,435]
 ["stroke",null]
 ["restore"]
@@ -14283,7 +14593,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",302.5,10.2]
+["moveTo",302.5,32]
 ["lineTo",302.5,435]
 ["stroke",null]
 ["restore"]
@@ -14303,7 +14613,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",342.5,10.2]
+["moveTo",342.5,32]
 ["lineTo",342.5,435]
 ["stroke",null]
 ["restore"]
@@ -14323,7 +14633,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",382.5,10.2]
+["moveTo",382.5,32]
 ["lineTo",382.5,435]
 ["stroke",null]
 ["restore"]
@@ -14343,7 +14653,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",422.5,10.2]
+["moveTo",422.5,32]
 ["lineTo",422.5,435]
 ["stroke",null]
 ["restore"]
@@ -14363,7 +14673,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",462.5,10.2]
+["moveTo",462.5,32]
 ["lineTo",462.5,435]
 ["stroke",null]
 ["restore"]
@@ -14383,7 +14693,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",501.5,10.2]
+["moveTo",501.5,32]
 ["lineTo",501.5,435]
 ["stroke",null]
 ["restore"]
@@ -14398,10 +14708,39 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
+["restore"]
+["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",104.5,10]
+["moveTo",104.5,32]
 ["lineTo",104.5,436]
 ["stroke",null]
 ["restore"]
@@ -14420,7 +14759,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",93.0703125,374.72011949920494]
+["translate",93.0703125,377.83440521349064]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14429,7 +14768,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",93.0703125,313.96676624933747]
+["translate",93.0703125,320.19533767790887]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14438,7 +14777,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",93.0703125,222.8367363745362]
+["translate",93.0703125,233.7367363745362]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14447,7 +14786,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",93.0703125,177.27172143713557]
+["translate",93.0703125,190.50743572284986]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14456,7 +14795,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",93.0703125,131.70670649973496]
+["translate",93.0703125,147.27813507116355]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14465,7 +14804,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",93.0703125,50.70223549991165]
+["translate",93.0703125,70.42604502372117]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14474,7 +14813,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",93.0703125,10.2]
+["translate",93.0703125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -14606,7 +14945,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",136.07949787249353,222.8367363745362,3,0,6.283185307179586,false]
+["arc",136.07949787249353,233.7367363745362,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -14614,7 +14953,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",139.51587165005745,50.70223549991165,3,0,6.283185307179586,false]
+["arc",139.51587165005745,70.42604502372117,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -14622,7 +14961,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",163.57048809300488,374.72011949920494,3,0,6.283185307179586,false]
+["arc",163.57048809300488,377.83440521349064,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -14630,7 +14969,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",167.0068618705688,177.27172143713557,3,0,6.283185307179586,false]
+["arc",167.0068618705688,190.50743572284986,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -14638,7 +14977,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",270.09807519748637,10.2,3,0,6.283185307179586,false]
+["arc",270.09807519748637,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -14646,7 +14985,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",273.5344489750503,313.96676624933747,3,0,6.283185307179586,false]
+["arc",273.5344489750503,320.19533767790887,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -14654,7 +14993,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",476.2805018513215,131.70670649973496,3,0,6.283185307179586,false]
+["arc",476.2805018513215,147.27813507116355,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -14747,7 +15086,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     expected: <String, Object?>{
       'chartArea': <Object?>[
         34.73889367282305,
-        10.2,
+        32.0,
         512.0,
         448.37391474036485,
       ],
@@ -15070,7 +15409,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           ],
           'box': <Object?>[
             7.391237422823053,
-            10.2,
+            32.0,
             34.73889367282305,
             448.37391474036485,
           ],
@@ -15078,21 +15417,21 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             448.37391474036485,
-            404.5565232663284,
-            360.7391317922919,
-            316.9217403182554,
-            273.1043488442189,
-            229.28695737018242,
-            185.46956589614595,
-            141.65217442210945,
-            97.83478294807296,
-            54.01739147403647,
-            10.2,
+            406.7365232663284,
+            365.0991317922919,
+            323.46174031825535,
+            281.8243488442189,
+            240.18695737018243,
+            198.54956589614596,
+            156.91217442210947,
+            115.27478294807295,
+            73.63739147403648,
+            32.0,
           ],
           'valuePixels': <Object?>[
             448.37391474036485,
-            229.28695737018242,
-            10.2,
+            240.18695737018243,
+            32.0,
           ],
           'valueForPixel': <Object?>[10.0, 5.0, 0.0],
           'basePixel': 448.37391474036485,
@@ -15101,65 +15440,65 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'points': <Object?>[
         <Object?>[
           <Object?>[34.73889367282305, 448.37391474036485],
-          <Object?>[52.748746741773125, 273.1043488442189],
-          <Object?>[43.743820207298086, 97.83478294807296],
-          <Object?>[61.753673276248165, 404.5565232663284],
-          <Object?>[70.7585998107232, 229.28695737018242],
-          <Object?>[79.76352634519824, 54.01739147403647],
-          <Object?>[88.76845287967328, 360.7391317922919],
-          <Object?>[106.77830594862334, 185.46956589614595],
-          <Object?>[97.77337941414831, 10.2],
-          <Object?>[97.77337941414831, 316.9217403182554],
-          <Object?>[124.78815901757342, 141.65217442210945],
+          <Object?>[52.748746741773125, 281.8243488442189],
+          <Object?>[43.743820207298086, 115.27478294807295],
+          <Object?>[61.753673276248165, 406.7365232663284],
+          <Object?>[70.7585998107232, 240.18695737018243],
+          <Object?>[79.76352634519824, 73.63739147403648],
+          <Object?>[88.76845287967328, 365.0991317922919],
+          <Object?>[106.77830594862334, 198.54956589614596],
+          <Object?>[97.77337941414831, 32.0],
+          <Object?>[97.77337941414831, 323.46174031825535],
+          <Object?>[124.78815901757342, 156.91217442210947],
           <Object?>[115.78323248309837, 448.37391474036485],
-          <Object?>[133.79308555204847, 273.1043488442189],
-          <Object?>[142.7980120865235, 97.83478294807296],
-          <Object?>[151.80293862099853, 404.5565232663284],
-          <Object?>[160.80786515547356, 229.28695737018242],
-          <Object?>[178.81771822442363, 54.01739147403647],
-          <Object?>[169.8127916899486, 360.7391317922919],
-          <Object?>[169.8127916899486, 185.46956589614595],
-          <Object?>[196.8275712933737, 10.2],
-          <Object?>[187.82264475889866, 316.9217403182554],
-          <Object?>[205.83249782784873, 141.65217442210945],
+          <Object?>[133.79308555204847, 281.8243488442189],
+          <Object?>[142.7980120865235, 115.27478294807295],
+          <Object?>[151.80293862099853, 406.7365232663284],
+          <Object?>[160.80786515547356, 240.18695737018243],
+          <Object?>[178.81771822442363, 73.63739147403648],
+          <Object?>[169.8127916899486, 365.0991317922919],
+          <Object?>[169.8127916899486, 198.54956589614596],
+          <Object?>[196.8275712933737, 32.0],
+          <Object?>[187.82264475889866, 323.46174031825535],
+          <Object?>[205.83249782784873, 156.91217442210947],
           <Object?>[214.8374243623238, 448.37391474036485],
-          <Object?>[223.84235089679885, 273.1043488442189],
-          <Object?>[232.84727743127388, 97.83478294807296],
-          <Object?>[250.85713050022395, 404.5565232663284],
-          <Object?>[241.8522039657489, 229.28695737018242],
-          <Object?>[241.8522039657489, 54.01739147403647],
-          <Object?>[268.866983569174, 360.7391317922919],
-          <Object?>[259.862057034699, 185.46956589614595],
-          <Object?>[277.87191010364904, 10.2],
-          <Object?>[286.8768366381241, 316.9217403182554],
-          <Object?>[295.8817631725991, 141.65217442210945],
+          <Object?>[223.84235089679885, 281.8243488442189],
+          <Object?>[232.84727743127388, 115.27478294807295],
+          <Object?>[250.85713050022395, 406.7365232663284],
+          <Object?>[241.8522039657489, 240.18695737018243],
+          <Object?>[241.8522039657489, 73.63739147403648],
+          <Object?>[268.866983569174, 365.0991317922919],
+          <Object?>[259.862057034699, 198.54956589614596],
+          <Object?>[277.87191010364904, 32.0],
+          <Object?>[286.8768366381241, 323.46174031825535],
+          <Object?>[295.8817631725991, 156.91217442210947],
           <Object?>[304.88668970707414, 448.37391474036485],
-          <Object?>[322.8965427760242, 273.1043488442189],
-          <Object?>[313.8916162415492, 97.83478294807296],
-          <Object?>[313.8916162415492, 404.5565232663284],
-          <Object?>[340.90639584497427, 229.28695737018242],
-          <Object?>[331.90146931049924, 54.01739147403647],
-          <Object?>[349.9113223794493, 360.7391317922919],
-          <Object?>[358.91624891392433, 185.46956589614595],
-          <Object?>[367.92117544839937, 10.2],
-          <Object?>[376.9261019828744, 316.9217403182554],
-          <Object?>[394.9359550518245, 141.65217442210945],
+          <Object?>[322.8965427760242, 281.8243488442189],
+          <Object?>[313.8916162415492, 115.27478294807295],
+          <Object?>[313.8916162415492, 406.7365232663284],
+          <Object?>[340.90639584497427, 240.18695737018243],
+          <Object?>[331.90146931049924, 73.63739147403648],
+          <Object?>[349.9113223794493, 365.0991317922919],
+          <Object?>[358.91624891392433, 198.54956589614596],
+          <Object?>[367.92117544839937, 32.0],
+          <Object?>[376.9261019828744, 323.46174031825535],
+          <Object?>[394.9359550518245, 156.91217442210947],
           <Object?>[385.9310285173495, 448.37391474036485],
-          <Object?>[385.9310285173495, 273.1043488442189],
-          <Object?>[412.94580812077464, 97.83478294807296],
-          <Object?>[403.9408815862996, 404.5565232663284],
-          <Object?>[421.9507346552497, 229.28695737018242],
-          <Object?>[430.9556611897247, 54.01739147403647],
-          <Object?>[439.96058772419974, 360.7391317922919],
-          <Object?>[448.9655142586748, 185.46956589614595],
-          <Object?>[466.97536732762484, 10.2],
-          <Object?>[457.9704407931498, 316.9217403182554],
-          <Object?>[457.9704407931498, 141.65217442210945],
+          <Object?>[385.9310285173495, 281.8243488442189],
+          <Object?>[412.94580812077464, 115.27478294807295],
+          <Object?>[403.9408815862996, 406.7365232663284],
+          <Object?>[421.9507346552497, 240.18695737018243],
+          <Object?>[430.9556611897247, 73.63739147403648],
+          <Object?>[439.96058772419974, 365.0991317922919],
+          <Object?>[448.9655142586748, 198.54956589614596],
+          <Object?>[466.97536732762484, 32.0],
+          <Object?>[457.9704407931498, 323.46174031825535],
+          <Object?>[457.9704407931498, 156.91217442210947],
           <Object?>[484.9852203965749, 448.37391474036485],
-          <Object?>[475.98029386209987, 273.1043488442189],
-          <Object?>[493.99014693104994, 97.83478294807296],
-          <Object?>[502.99507346552497, 404.5565232663284],
-          <Object?>[512.0, 229.28695737018242],
+          <Object?>[475.98029386209987, 281.8243488442189],
+          <Object?>[493.99014693104994, 115.27478294807295],
+          <Object?>[502.99507346552497, 406.7365232663284],
+          <Object?>[512.0, 240.18695737018243],
         ],
       ],
       'drawCalls': '''
@@ -15173,7 +15512,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,448]
 ["stroke",null]
 ["restore"]
@@ -15193,7 +15532,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",61.5,10.2]
+["moveTo",61.5,32]
 ["lineTo",61.5,448]
 ["stroke",null]
 ["restore"]
@@ -15213,7 +15552,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",88.5,10.2]
+["moveTo",88.5,32]
 ["lineTo",88.5,448]
 ["stroke",null]
 ["restore"]
@@ -15233,7 +15572,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",115.5,10.2]
+["moveTo",115.5,32]
 ["lineTo",115.5,448]
 ["stroke",null]
 ["restore"]
@@ -15253,7 +15592,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",142.5,10.2]
+["moveTo",142.5,32]
 ["lineTo",142.5,448]
 ["stroke",null]
 ["restore"]
@@ -15273,7 +15612,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",169.5,10.2]
+["moveTo",169.5,32]
 ["lineTo",169.5,448]
 ["stroke",null]
 ["restore"]
@@ -15293,7 +15632,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",196.5,10.2]
+["moveTo",196.5,32]
 ["lineTo",196.5,448]
 ["stroke",null]
 ["restore"]
@@ -15313,7 +15652,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",223.5,10.2]
+["moveTo",223.5,32]
 ["lineTo",223.5,448]
 ["stroke",null]
 ["restore"]
@@ -15333,7 +15672,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",250.5,10.2]
+["moveTo",250.5,32]
 ["lineTo",250.5,448]
 ["stroke",null]
 ["restore"]
@@ -15353,7 +15692,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",277.5,10.2]
+["moveTo",277.5,32]
 ["lineTo",277.5,448]
 ["stroke",null]
 ["restore"]
@@ -15373,7 +15712,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",304.5,10.2]
+["moveTo",304.5,32]
 ["lineTo",304.5,448]
 ["stroke",null]
 ["restore"]
@@ -15393,7 +15732,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",331.5,10.2]
+["moveTo",331.5,32]
 ["lineTo",331.5,448]
 ["stroke",null]
 ["restore"]
@@ -15413,7 +15752,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",358.5,10.2]
+["moveTo",358.5,32]
 ["lineTo",358.5,448]
 ["stroke",null]
 ["restore"]
@@ -15433,7 +15772,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",385.5,10.2]
+["moveTo",385.5,32]
 ["lineTo",385.5,448]
 ["stroke",null]
 ["restore"]
@@ -15453,7 +15792,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",412.5,10.2]
+["moveTo",412.5,32]
 ["lineTo",412.5,448]
 ["stroke",null]
 ["restore"]
@@ -15473,7 +15812,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",439.5,10.2]
+["moveTo",439.5,32]
 ["lineTo",439.5,448]
 ["stroke",null]
 ["restore"]
@@ -15493,7 +15832,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",466.5,10.2]
+["moveTo",466.5,32]
 ["lineTo",466.5,448]
 ["stroke",null]
 ["restore"]
@@ -15513,7 +15852,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",493.5,10.2]
+["moveTo",493.5,32]
 ["lineTo",493.5,448]
 ["stroke",null]
 ["restore"]
@@ -15553,8 +15892,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,404.5]
-["lineTo",512,404.5]
+["moveTo",35,406.5]
+["lineTo",512,406.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15563,8 +15902,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,404.5]
-["lineTo",34,404.5]
+["moveTo",26.738893672823053,406.5]
+["lineTo",34,406.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15573,8 +15912,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,360.5]
-["lineTo",512,360.5]
+["moveTo",35,365.5]
+["lineTo",512,365.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15583,8 +15922,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,360.5]
-["lineTo",34,360.5]
+["moveTo",26.738893672823053,365.5]
+["lineTo",34,365.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15593,8 +15932,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,316.5]
-["lineTo",512,316.5]
+["moveTo",35,323.5]
+["lineTo",512,323.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15603,8 +15942,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,316.5]
-["lineTo",34,316.5]
+["moveTo",26.738893672823053,323.5]
+["lineTo",34,323.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15613,8 +15952,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,273.5]
-["lineTo",512,273.5]
+["moveTo",35,281.5]
+["lineTo",512,281.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15623,8 +15962,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,273.5]
-["lineTo",34,273.5]
+["moveTo",26.738893672823053,281.5]
+["lineTo",34,281.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15633,8 +15972,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,229.5]
-["lineTo",512,229.5]
+["moveTo",35,240.5]
+["lineTo",512,240.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15643,8 +15982,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,229.5]
-["lineTo",34,229.5]
+["moveTo",26.738893672823053,240.5]
+["lineTo",34,240.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15653,8 +15992,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,185.5]
-["lineTo",512,185.5]
+["moveTo",35,198.5]
+["lineTo",512,198.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15663,8 +16002,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,185.5]
-["lineTo",34,185.5]
+["moveTo",26.738893672823053,198.5]
+["lineTo",34,198.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15673,8 +16012,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,141.5]
-["lineTo",512,141.5]
+["moveTo",35,156.5]
+["lineTo",512,156.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15683,8 +16022,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,141.5]
-["lineTo",34,141.5]
+["moveTo",26.738893672823053,156.5]
+["lineTo",34,156.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15693,8 +16032,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,97.5]
-["lineTo",512,97.5]
+["moveTo",35,115.5]
+["lineTo",512,115.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15703,8 +16042,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,97.5]
-["lineTo",34,97.5]
+["moveTo",26.738893672823053,115.5]
+["lineTo",34,115.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15713,8 +16052,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,54.5]
-["lineTo",512,54.5]
+["moveTo",35,73.5]
+["lineTo",512,73.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15723,8 +16062,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,54.5]
-["lineTo",34,54.5]
+["moveTo",26.738893672823053,73.5]
+["lineTo",34,73.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15733,8 +16072,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",35,10.5]
-["lineTo",512,10.5]
+["moveTo",35,32.5]
+["lineTo",512,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -15743,9 +16082,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",26.738893672823053,10.5]
-["lineTo",34,10.5]
+["moveTo",26.738893672823053,32.5]
+["lineTo",34,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -15926,7 +16294,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",34.5,10]
+["moveTo",34.5,32]
 ["lineTo",34.5,449]
 ["stroke",null]
 ["restore"]
@@ -15945,7 +16313,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,404.5565232663284]
+["translate",23.738893672823053,406.7365232663284]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15954,7 +16322,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,360.7391317922919]
+["translate",23.738893672823053,365.0991317922919]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15963,7 +16331,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,316.9217403182554]
+["translate",23.738893672823053,323.46174031825535]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15972,7 +16340,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,273.1043488442189]
+["translate",23.738893672823053,281.8243488442189]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15981,7 +16349,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,229.28695737018242]
+["translate",23.738893672823053,240.18695737018243]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15990,7 +16358,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,185.46956589614595]
+["translate",23.738893672823053,198.54956589614596]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -15999,7 +16367,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,141.65217442210945]
+["translate",23.738893672823053,156.91217442210947]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16008,7 +16376,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,97.83478294807296]
+["translate",23.738893672823053,115.27478294807295]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16017,7 +16385,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,54.01739147403647]
+["translate",23.738893672823053,73.63739147403648]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16026,7 +16394,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.738893672823053,10.2]
+["translate",23.738893672823053,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -16046,7 +16414,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",52.748746741773125,273.1043488442189,3,0,6.283185307179586,false]
+["arc",52.748746741773125,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16054,7 +16422,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",43.743820207298086,97.83478294807296,3,0,6.283185307179586,false]
+["arc",43.743820207298086,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16062,7 +16430,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",61.753673276248165,404.5565232663284,3,0,6.283185307179586,false]
+["arc",61.753673276248165,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16070,7 +16438,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",70.7585998107232,229.28695737018242,3,0,6.283185307179586,false]
+["arc",70.7585998107232,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16078,7 +16446,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",79.76352634519824,54.01739147403647,3,0,6.283185307179586,false]
+["arc",79.76352634519824,73.63739147403648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16086,7 +16454,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",88.76845287967328,360.7391317922919,3,0,6.283185307179586,false]
+["arc",88.76845287967328,365.0991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16094,7 +16462,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",106.77830594862334,185.46956589614595,3,0,6.283185307179586,false]
+["arc",106.77830594862334,198.54956589614596,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16102,7 +16470,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",97.77337941414831,10.2,3,0,6.283185307179586,false]
+["arc",97.77337941414831,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16110,7 +16478,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",97.77337941414831,316.9217403182554,3,0,6.283185307179586,false]
+["arc",97.77337941414831,323.46174031825535,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16118,7 +16486,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",124.78815901757342,141.65217442210945,3,0,6.283185307179586,false]
+["arc",124.78815901757342,156.91217442210947,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16134,7 +16502,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",133.79308555204847,273.1043488442189,3,0,6.283185307179586,false]
+["arc",133.79308555204847,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16142,7 +16510,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",142.7980120865235,97.83478294807296,3,0,6.283185307179586,false]
+["arc",142.7980120865235,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16150,7 +16518,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",151.80293862099853,404.5565232663284,3,0,6.283185307179586,false]
+["arc",151.80293862099853,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16158,7 +16526,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",160.80786515547356,229.28695737018242,3,0,6.283185307179586,false]
+["arc",160.80786515547356,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16166,7 +16534,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",178.81771822442363,54.01739147403647,3,0,6.283185307179586,false]
+["arc",178.81771822442363,73.63739147403648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16174,7 +16542,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",169.8127916899486,360.7391317922919,3,0,6.283185307179586,false]
+["arc",169.8127916899486,365.0991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16182,7 +16550,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",169.8127916899486,185.46956589614595,3,0,6.283185307179586,false]
+["arc",169.8127916899486,198.54956589614596,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16190,7 +16558,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",196.8275712933737,10.2,3,0,6.283185307179586,false]
+["arc",196.8275712933737,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16198,7 +16566,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",187.82264475889866,316.9217403182554,3,0,6.283185307179586,false]
+["arc",187.82264475889866,323.46174031825535,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16206,7 +16574,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",205.83249782784873,141.65217442210945,3,0,6.283185307179586,false]
+["arc",205.83249782784873,156.91217442210947,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16222,7 +16590,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",223.84235089679885,273.1043488442189,3,0,6.283185307179586,false]
+["arc",223.84235089679885,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16230,7 +16598,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",232.84727743127388,97.83478294807296,3,0,6.283185307179586,false]
+["arc",232.84727743127388,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16238,7 +16606,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",250.85713050022395,404.5565232663284,3,0,6.283185307179586,false]
+["arc",250.85713050022395,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16246,7 +16614,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",241.8522039657489,229.28695737018242,3,0,6.283185307179586,false]
+["arc",241.8522039657489,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16254,7 +16622,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",241.8522039657489,54.01739147403647,3,0,6.283185307179586,false]
+["arc",241.8522039657489,73.63739147403648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16262,7 +16630,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",268.866983569174,360.7391317922919,3,0,6.283185307179586,false]
+["arc",268.866983569174,365.0991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16270,7 +16638,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",259.862057034699,185.46956589614595,3,0,6.283185307179586,false]
+["arc",259.862057034699,198.54956589614596,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16278,7 +16646,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",277.87191010364904,10.2,3,0,6.283185307179586,false]
+["arc",277.87191010364904,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16286,7 +16654,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",286.8768366381241,316.9217403182554,3,0,6.283185307179586,false]
+["arc",286.8768366381241,323.46174031825535,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16294,7 +16662,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",295.8817631725991,141.65217442210945,3,0,6.283185307179586,false]
+["arc",295.8817631725991,156.91217442210947,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16310,7 +16678,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",322.8965427760242,273.1043488442189,3,0,6.283185307179586,false]
+["arc",322.8965427760242,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16318,7 +16686,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",313.8916162415492,97.83478294807296,3,0,6.283185307179586,false]
+["arc",313.8916162415492,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16326,7 +16694,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",313.8916162415492,404.5565232663284,3,0,6.283185307179586,false]
+["arc",313.8916162415492,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16334,7 +16702,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",340.90639584497427,229.28695737018242,3,0,6.283185307179586,false]
+["arc",340.90639584497427,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16342,7 +16710,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",331.90146931049924,54.01739147403647,3,0,6.283185307179586,false]
+["arc",331.90146931049924,73.63739147403648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16350,7 +16718,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",349.9113223794493,360.7391317922919,3,0,6.283185307179586,false]
+["arc",349.9113223794493,365.0991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16358,7 +16726,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",358.91624891392433,185.46956589614595,3,0,6.283185307179586,false]
+["arc",358.91624891392433,198.54956589614596,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16366,7 +16734,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",367.92117544839937,10.2,3,0,6.283185307179586,false]
+["arc",367.92117544839937,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16374,7 +16742,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",376.9261019828744,316.9217403182554,3,0,6.283185307179586,false]
+["arc",376.9261019828744,323.46174031825535,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16382,7 +16750,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",394.9359550518245,141.65217442210945,3,0,6.283185307179586,false]
+["arc",394.9359550518245,156.91217442210947,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16398,7 +16766,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",385.9310285173495,273.1043488442189,3,0,6.283185307179586,false]
+["arc",385.9310285173495,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16406,7 +16774,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",412.94580812077464,97.83478294807296,3,0,6.283185307179586,false]
+["arc",412.94580812077464,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16414,7 +16782,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",403.9408815862996,404.5565232663284,3,0,6.283185307179586,false]
+["arc",403.9408815862996,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16422,7 +16790,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",421.9507346552497,229.28695737018242,3,0,6.283185307179586,false]
+["arc",421.9507346552497,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16430,7 +16798,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",430.9556611897247,54.01739147403647,3,0,6.283185307179586,false]
+["arc",430.9556611897247,73.63739147403648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16438,7 +16806,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",439.96058772419974,360.7391317922919,3,0,6.283185307179586,false]
+["arc",439.96058772419974,365.0991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16446,7 +16814,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",448.9655142586748,185.46956589614595,3,0,6.283185307179586,false]
+["arc",448.9655142586748,198.54956589614596,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16454,7 +16822,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",466.97536732762484,10.2,3,0,6.283185307179586,false]
+["arc",466.97536732762484,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16462,7 +16830,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",457.9704407931498,316.9217403182554,3,0,6.283185307179586,false]
+["arc",457.9704407931498,323.46174031825535,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16470,7 +16838,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",457.9704407931498,141.65217442210945,3,0,6.283185307179586,false]
+["arc",457.9704407931498,156.91217442210947,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16486,7 +16854,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",475.98029386209987,273.1043488442189,3,0,6.283185307179586,false]
+["arc",475.98029386209987,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16494,7 +16862,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",493.99014693104994,97.83478294807296,3,0,6.283185307179586,false]
+["arc",493.99014693104994,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16502,7 +16870,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",502.99507346552497,404.5565232663284,3,0,6.283185307179586,false]
+["arc",502.99507346552497,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16510,7 +16878,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",512,229.28695737018242,3,0,6.283185307179586,false]
+["arc",512,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -16599,7 +16967,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     expected: <String, Object?>{
       'chartArea': <Object?>[
         30.534095073970928,
-        10.2,
+        32.0,
         512.0,
         448.37391474036485,
       ],
@@ -16931,7 +17299,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           ],
           'box': <Object?>[
             3.186438823970928,
-            10.2,
+            32.0,
             30.534095073970928,
             448.37391474036485,
           ],
@@ -16939,21 +17307,21 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             448.37391474036485,
-            404.5565232663284,
-            360.7391317922919,
-            316.9217403182554,
-            273.1043488442189,
-            229.28695737018242,
-            185.46956589614595,
-            141.65217442210945,
-            97.83478294807296,
-            54.01739147403647,
-            10.2,
+            406.7365232663284,
+            365.0991317922919,
+            323.46174031825535,
+            281.8243488442189,
+            240.18695737018243,
+            198.54956589614596,
+            156.91217442210947,
+            115.27478294807295,
+            73.63739147403648,
+            32.0,
           ],
           'valuePixels': <Object?>[
             448.37391474036485,
-            229.28695737018242,
-            10.2,
+            240.18695737018243,
+            32.0,
           ],
           'valueForPixel': <Object?>[10.0, 5.0, 0.0],
           'basePixel': 448.37391474036485,
@@ -16962,65 +17330,65 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'points': <Object?>[
         <Object?>[
           <Object?>[34.9921127121749, 448.37391474036485],
-          <Object?>[52.824183264990786, 273.1043488442189],
-          <Object?>[43.90814798858284, 97.83478294807296],
-          <Object?>[61.74021854139873, 404.5565232663284],
-          <Object?>[70.65625381780667, 229.28695737018242],
-          <Object?>[79.57228909421463, 54.01739147403647],
-          <Object?>[88.48832437062256, 360.7391317922919],
-          <Object?>[106.32039492343844, 185.46956589614595],
-          <Object?>[97.40435964703052, 10.2],
-          <Object?>[97.40435964703052, 316.9217403182554],
-          <Object?>[124.15246547625435, 141.65217442210945],
+          <Object?>[52.824183264990786, 281.8243488442189],
+          <Object?>[43.90814798858284, 115.27478294807295],
+          <Object?>[61.74021854139873, 406.7365232663284],
+          <Object?>[70.65625381780667, 240.18695737018243],
+          <Object?>[79.57228909421463, 73.63739147403648],
+          <Object?>[88.48832437062256, 365.0991317922919],
+          <Object?>[106.32039492343844, 198.54956589614596],
+          <Object?>[97.40435964703052, 32.0],
+          <Object?>[97.40435964703052, 323.46174031825535],
+          <Object?>[124.15246547625435, 156.91217442210947],
           <Object?>[115.23643019984638, 448.37391474036485],
-          <Object?>[133.0685007526623, 273.1043488442189],
-          <Object?>[141.98453602907023, 97.83478294807296],
-          <Object?>[150.90057130547817, 404.5565232663284],
-          <Object?>[159.81660658188608, 229.28695737018242],
-          <Object?>[177.64867713470198, 54.01739147403647],
-          <Object?>[168.73264185829404, 360.7391317922919],
-          <Object?>[168.73264185829404, 185.46956589614595],
-          <Object?>[195.48074768751786, 10.2],
-          <Object?>[186.56471241110992, 316.9217403182554],
-          <Object?>[204.3967829639258, 141.65217442210945],
+          <Object?>[133.0685007526623, 281.8243488442189],
+          <Object?>[141.98453602907023, 115.27478294807295],
+          <Object?>[150.90057130547817, 406.7365232663284],
+          <Object?>[159.81660658188608, 240.18695737018243],
+          <Object?>[177.64867713470198, 73.63739147403648],
+          <Object?>[168.73264185829404, 365.0991317922919],
+          <Object?>[168.73264185829404, 198.54956589614596],
+          <Object?>[195.48074768751786, 32.0],
+          <Object?>[186.56471241110992, 323.46174031825535],
+          <Object?>[204.3967829639258, 156.91217442210947],
           <Object?>[213.31281824033377, 448.37391474036485],
-          <Object?>[222.2288535167417, 273.1043488442189],
-          <Object?>[231.14488879314965, 97.83478294807296],
-          <Object?>[248.97695934596553, 404.5565232663284],
-          <Object?>[240.06092406955761, 229.28695737018242],
-          <Object?>[240.06092406955761, 54.01739147403647],
-          <Object?>[266.80902989878143, 360.7391317922919],
-          <Object?>[257.8929946223735, 185.46956589614595],
-          <Object?>[275.7250651751894, 10.2],
-          <Object?>[284.6411004515973, 316.9217403182554],
-          <Object?>[293.5571357280053, 141.65217442210945],
+          <Object?>[222.2288535167417, 281.8243488442189],
+          <Object?>[231.14488879314965, 115.27478294807295],
+          <Object?>[248.97695934596553, 406.7365232663284],
+          <Object?>[240.06092406955761, 240.18695737018243],
+          <Object?>[240.06092406955761, 73.63739147403648],
+          <Object?>[266.80902989878143, 365.0991317922919],
+          <Object?>[257.8929946223735, 198.54956589614596],
+          <Object?>[275.7250651751894, 32.0],
+          <Object?>[284.6411004515973, 323.46174031825535],
+          <Object?>[293.5571357280053, 156.91217442210947],
           <Object?>[302.4731710044132, 448.37391474036485],
-          <Object?>[320.3052415572291, 273.1043488442189],
-          <Object?>[311.38920628082116, 97.83478294807296],
-          <Object?>[311.38920628082116, 404.5565232663284],
-          <Object?>[338.137312110045, 229.28695737018242],
-          <Object?>[329.22127683363703, 54.01739147403647],
-          <Object?>[347.0533473864529, 360.7391317922919],
-          <Object?>[355.9693826628608, 185.46956589614595],
-          <Object?>[364.88541793926885, 10.2],
-          <Object?>[373.80145321567676, 316.9217403182554],
-          <Object?>[391.6335237684927, 141.65217442210945],
+          <Object?>[320.3052415572291, 281.8243488442189],
+          <Object?>[311.38920628082116, 115.27478294807295],
+          <Object?>[311.38920628082116, 406.7365232663284],
+          <Object?>[338.137312110045, 240.18695737018243],
+          <Object?>[329.22127683363703, 73.63739147403648],
+          <Object?>[347.0533473864529, 365.0991317922919],
+          <Object?>[355.9693826628608, 198.54956589614596],
+          <Object?>[364.88541793926885, 32.0],
+          <Object?>[373.80145321567676, 323.46174031825535],
+          <Object?>[391.6335237684927, 156.91217442210947],
           <Object?>[382.7174884920847, 448.37391474036485],
-          <Object?>[382.7174884920847, 273.1043488442189],
-          <Object?>[409.4655943213086, 97.83478294807296],
-          <Object?>[400.5495590449006, 404.5565232663284],
-          <Object?>[418.38162959771654, 229.28695737018242],
-          <Object?>[427.29766487412445, 54.01739147403647],
-          <Object?>[436.2137001505324, 360.7391317922919],
-          <Object?>[445.12973542694033, 185.46956589614595],
-          <Object?>[462.96180597975626, 10.2],
-          <Object?>[454.04577070334824, 316.9217403182554],
-          <Object?>[454.04577070334824, 141.65217442210945],
+          <Object?>[382.7174884920847, 281.8243488442189],
+          <Object?>[409.4655943213086, 115.27478294807295],
+          <Object?>[400.5495590449006, 406.7365232663284],
+          <Object?>[418.38162959771654, 240.18695737018243],
+          <Object?>[427.29766487412445, 73.63739147403648],
+          <Object?>[436.2137001505324, 365.0991317922919],
+          <Object?>[445.12973542694033, 198.54956589614596],
+          <Object?>[462.96180597975626, 32.0],
+          <Object?>[454.04577070334824, 323.46174031825535],
+          <Object?>[454.04577070334824, 156.91217442210947],
           <Object?>[480.7938765325721, 448.37391474036485],
-          <Object?>[471.8778412561642, 273.1043488442189],
-          <Object?>[489.70991180898005, 97.83478294807296],
-          <Object?>[498.62594708538796, 404.5565232663284],
-          <Object?>[507.541982361796, 229.28695737018242],
+          <Object?>[471.8778412561642, 281.8243488442189],
+          <Object?>[489.70991180898005, 115.27478294807295],
+          <Object?>[498.62594708538796, 406.7365232663284],
+          <Object?>[507.541982361796, 240.18695737018243],
         ],
       ],
       'drawCalls': '''
@@ -17034,7 +17402,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34.5,10.2]
+["moveTo",34.5,32]
 ["lineTo",34.5,448]
 ["stroke",null]
 ["restore"]
@@ -17054,7 +17422,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",61.5,10.2]
+["moveTo",61.5,32]
 ["lineTo",61.5,448]
 ["stroke",null]
 ["restore"]
@@ -17074,7 +17442,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",88.5,10.2]
+["moveTo",88.5,32]
 ["lineTo",88.5,448]
 ["stroke",null]
 ["restore"]
@@ -17094,7 +17462,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",115.5,10.2]
+["moveTo",115.5,32]
 ["lineTo",115.5,448]
 ["stroke",null]
 ["restore"]
@@ -17114,7 +17482,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",141.5,10.2]
+["moveTo",141.5,32]
 ["lineTo",141.5,448]
 ["stroke",null]
 ["restore"]
@@ -17134,7 +17502,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",168.5,10.2]
+["moveTo",168.5,32]
 ["lineTo",168.5,448]
 ["stroke",null]
 ["restore"]
@@ -17154,7 +17522,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",195.5,10.2]
+["moveTo",195.5,32]
 ["lineTo",195.5,448]
 ["stroke",null]
 ["restore"]
@@ -17174,7 +17542,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",222.5,10.2]
+["moveTo",222.5,32]
 ["lineTo",222.5,448]
 ["stroke",null]
 ["restore"]
@@ -17194,7 +17562,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",248.5,10.2]
+["moveTo",248.5,32]
 ["lineTo",248.5,448]
 ["stroke",null]
 ["restore"]
@@ -17214,7 +17582,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",275.5,10.2]
+["moveTo",275.5,32]
 ["lineTo",275.5,448]
 ["stroke",null]
 ["restore"]
@@ -17234,7 +17602,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",302.5,10.2]
+["moveTo",302.5,32]
 ["lineTo",302.5,448]
 ["stroke",null]
 ["restore"]
@@ -17254,7 +17622,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",329.5,10.2]
+["moveTo",329.5,32]
 ["lineTo",329.5,448]
 ["stroke",null]
 ["restore"]
@@ -17274,7 +17642,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",355.5,10.2]
+["moveTo",355.5,32]
 ["lineTo",355.5,448]
 ["stroke",null]
 ["restore"]
@@ -17294,7 +17662,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",382.5,10.2]
+["moveTo",382.5,32]
 ["lineTo",382.5,448]
 ["stroke",null]
 ["restore"]
@@ -17314,7 +17682,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",409.5,10.2]
+["moveTo",409.5,32]
 ["lineTo",409.5,448]
 ["stroke",null]
 ["restore"]
@@ -17334,7 +17702,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",436.5,10.2]
+["moveTo",436.5,32]
 ["lineTo",436.5,448]
 ["stroke",null]
 ["restore"]
@@ -17354,7 +17722,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",462.5,10.2]
+["moveTo",462.5,32]
 ["lineTo",462.5,448]
 ["stroke",null]
 ["restore"]
@@ -17374,7 +17742,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",489.5,10.2]
+["moveTo",489.5,32]
 ["lineTo",489.5,448]
 ["stroke",null]
 ["restore"]
@@ -17414,8 +17782,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,404.5]
-["lineTo",512,404.5]
+["moveTo",31,406.5]
+["lineTo",512,406.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17424,8 +17792,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.534095073970928,404.5]
-["lineTo",30,404.5]
+["moveTo",22.534095073970928,406.5]
+["lineTo",30,406.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17434,8 +17802,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,360.5]
-["lineTo",512,360.5]
+["moveTo",31,365.5]
+["lineTo",512,365.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17444,8 +17812,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.534095073970928,360.5]
-["lineTo",30,360.5]
+["moveTo",22.534095073970928,365.5]
+["lineTo",30,365.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17454,8 +17822,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,316.5]
-["lineTo",512,316.5]
+["moveTo",31,323.5]
+["lineTo",512,323.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17464,8 +17832,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.534095073970928,316.5]
-["lineTo",30,316.5]
+["moveTo",22.534095073970928,323.5]
+["lineTo",30,323.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17474,8 +17842,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,273.5]
-["lineTo",512,273.5]
+["moveTo",31,281.5]
+["lineTo",512,281.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17484,8 +17852,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.534095073970928,273.5]
-["lineTo",30,273.5]
+["moveTo",22.534095073970928,281.5]
+["lineTo",30,281.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17494,8 +17862,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,229.5]
-["lineTo",512,229.5]
+["moveTo",31,240.5]
+["lineTo",512,240.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17504,8 +17872,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.534095073970928,229.5]
-["lineTo",30,229.5]
+["moveTo",22.534095073970928,240.5]
+["lineTo",30,240.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17514,8 +17882,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,185.5]
-["lineTo",512,185.5]
+["moveTo",31,198.5]
+["lineTo",512,198.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17524,8 +17892,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.534095073970928,185.5]
-["lineTo",30,185.5]
+["moveTo",22.534095073970928,198.5]
+["lineTo",30,198.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17534,8 +17902,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,141.5]
-["lineTo",512,141.5]
+["moveTo",31,156.5]
+["lineTo",512,156.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17544,8 +17912,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.534095073970928,141.5]
-["lineTo",30,141.5]
+["moveTo",22.534095073970928,156.5]
+["lineTo",30,156.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17554,8 +17922,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,97.5]
-["lineTo",512,97.5]
+["moveTo",31,115.5]
+["lineTo",512,115.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17564,8 +17932,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.534095073970928,97.5]
-["lineTo",30,97.5]
+["moveTo",22.534095073970928,115.5]
+["lineTo",30,115.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17574,8 +17942,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,54.5]
-["lineTo",512,54.5]
+["moveTo",31,73.5]
+["lineTo",512,73.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17584,8 +17952,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.534095073970928,54.5]
-["lineTo",30,54.5]
+["moveTo",22.534095073970928,73.5]
+["lineTo",30,73.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17594,8 +17962,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",512,10.5]
+["moveTo",31,32.5]
+["lineTo",512,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -17604,9 +17972,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.534095073970928,10.5]
-["lineTo",30,10.5]
+["moveTo",22.534095073970928,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -17787,7 +18184,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,449]
 ["stroke",null]
 ["restore"]
@@ -17806,7 +18203,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.534095073970928,404.5565232663284]
+["translate",19.534095073970928,406.7365232663284]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17815,7 +18212,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.534095073970928,360.7391317922919]
+["translate",19.534095073970928,365.0991317922919]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17824,7 +18221,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.534095073970928,316.9217403182554]
+["translate",19.534095073970928,323.46174031825535]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17833,7 +18230,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.534095073970928,273.1043488442189]
+["translate",19.534095073970928,281.8243488442189]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17842,7 +18239,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.534095073970928,229.28695737018242]
+["translate",19.534095073970928,240.18695737018243]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17851,7 +18248,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.534095073970928,185.46956589614595]
+["translate",19.534095073970928,198.54956589614596]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17860,7 +18257,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.534095073970928,141.65217442210945]
+["translate",19.534095073970928,156.91217442210947]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17869,7 +18266,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.534095073970928,97.83478294807296]
+["translate",19.534095073970928,115.27478294807295]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17878,7 +18275,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.534095073970928,54.01739147403647]
+["translate",19.534095073970928,73.63739147403648]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17887,7 +18284,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.534095073970928,10.2]
+["translate",19.534095073970928,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -17907,7 +18304,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",52.824183264990786,273.1043488442189,3,0,6.283185307179586,false]
+["arc",52.824183264990786,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17915,7 +18312,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",43.90814798858284,97.83478294807296,3,0,6.283185307179586,false]
+["arc",43.90814798858284,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17923,7 +18320,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",61.74021854139873,404.5565232663284,3,0,6.283185307179586,false]
+["arc",61.74021854139873,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17931,7 +18328,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",70.65625381780667,229.28695737018242,3,0,6.283185307179586,false]
+["arc",70.65625381780667,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17939,7 +18336,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",79.57228909421463,54.01739147403647,3,0,6.283185307179586,false]
+["arc",79.57228909421463,73.63739147403648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17947,7 +18344,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",88.48832437062256,360.7391317922919,3,0,6.283185307179586,false]
+["arc",88.48832437062256,365.0991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17955,7 +18352,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",106.32039492343844,185.46956589614595,3,0,6.283185307179586,false]
+["arc",106.32039492343844,198.54956589614596,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17963,7 +18360,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",97.40435964703052,10.2,3,0,6.283185307179586,false]
+["arc",97.40435964703052,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17971,7 +18368,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",97.40435964703052,316.9217403182554,3,0,6.283185307179586,false]
+["arc",97.40435964703052,323.46174031825535,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17979,7 +18376,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",124.15246547625435,141.65217442210945,3,0,6.283185307179586,false]
+["arc",124.15246547625435,156.91217442210947,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -17995,7 +18392,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",133.0685007526623,273.1043488442189,3,0,6.283185307179586,false]
+["arc",133.0685007526623,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18003,7 +18400,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",141.98453602907023,97.83478294807296,3,0,6.283185307179586,false]
+["arc",141.98453602907023,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18011,7 +18408,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",150.90057130547817,404.5565232663284,3,0,6.283185307179586,false]
+["arc",150.90057130547817,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18019,7 +18416,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",159.81660658188608,229.28695737018242,3,0,6.283185307179586,false]
+["arc",159.81660658188608,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18027,7 +18424,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",177.64867713470198,54.01739147403647,3,0,6.283185307179586,false]
+["arc",177.64867713470198,73.63739147403648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18035,7 +18432,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",168.73264185829404,360.7391317922919,3,0,6.283185307179586,false]
+["arc",168.73264185829404,365.0991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18043,7 +18440,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",168.73264185829404,185.46956589614595,3,0,6.283185307179586,false]
+["arc",168.73264185829404,198.54956589614596,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18051,7 +18448,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",195.48074768751786,10.2,3,0,6.283185307179586,false]
+["arc",195.48074768751786,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18059,7 +18456,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",186.56471241110992,316.9217403182554,3,0,6.283185307179586,false]
+["arc",186.56471241110992,323.46174031825535,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18067,7 +18464,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",204.3967829639258,141.65217442210945,3,0,6.283185307179586,false]
+["arc",204.3967829639258,156.91217442210947,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18083,7 +18480,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",222.2288535167417,273.1043488442189,3,0,6.283185307179586,false]
+["arc",222.2288535167417,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18091,7 +18488,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",231.14488879314965,97.83478294807296,3,0,6.283185307179586,false]
+["arc",231.14488879314965,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18099,7 +18496,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",248.97695934596553,404.5565232663284,3,0,6.283185307179586,false]
+["arc",248.97695934596553,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18107,7 +18504,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",240.06092406955761,229.28695737018242,3,0,6.283185307179586,false]
+["arc",240.06092406955761,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18115,7 +18512,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",240.06092406955761,54.01739147403647,3,0,6.283185307179586,false]
+["arc",240.06092406955761,73.63739147403648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18123,7 +18520,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",266.80902989878143,360.7391317922919,3,0,6.283185307179586,false]
+["arc",266.80902989878143,365.0991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18131,7 +18528,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",257.8929946223735,185.46956589614595,3,0,6.283185307179586,false]
+["arc",257.8929946223735,198.54956589614596,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18139,7 +18536,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",275.7250651751894,10.2,3,0,6.283185307179586,false]
+["arc",275.7250651751894,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18147,7 +18544,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",284.6411004515973,316.9217403182554,3,0,6.283185307179586,false]
+["arc",284.6411004515973,323.46174031825535,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18155,7 +18552,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",293.5571357280053,141.65217442210945,3,0,6.283185307179586,false]
+["arc",293.5571357280053,156.91217442210947,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18171,7 +18568,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",320.3052415572291,273.1043488442189,3,0,6.283185307179586,false]
+["arc",320.3052415572291,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18179,7 +18576,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",311.38920628082116,97.83478294807296,3,0,6.283185307179586,false]
+["arc",311.38920628082116,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18187,7 +18584,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",311.38920628082116,404.5565232663284,3,0,6.283185307179586,false]
+["arc",311.38920628082116,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18195,7 +18592,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",338.137312110045,229.28695737018242,3,0,6.283185307179586,false]
+["arc",338.137312110045,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18203,7 +18600,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",329.22127683363703,54.01739147403647,3,0,6.283185307179586,false]
+["arc",329.22127683363703,73.63739147403648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18211,7 +18608,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",347.0533473864529,360.7391317922919,3,0,6.283185307179586,false]
+["arc",347.0533473864529,365.0991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18219,7 +18616,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",355.9693826628608,185.46956589614595,3,0,6.283185307179586,false]
+["arc",355.9693826628608,198.54956589614596,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18227,7 +18624,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",364.88541793926885,10.2,3,0,6.283185307179586,false]
+["arc",364.88541793926885,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18235,7 +18632,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",373.80145321567676,316.9217403182554,3,0,6.283185307179586,false]
+["arc",373.80145321567676,323.46174031825535,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18243,7 +18640,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",391.6335237684927,141.65217442210945,3,0,6.283185307179586,false]
+["arc",391.6335237684927,156.91217442210947,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18259,7 +18656,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",382.7174884920847,273.1043488442189,3,0,6.283185307179586,false]
+["arc",382.7174884920847,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18267,7 +18664,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",409.4655943213086,97.83478294807296,3,0,6.283185307179586,false]
+["arc",409.4655943213086,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18275,7 +18672,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",400.5495590449006,404.5565232663284,3,0,6.283185307179586,false]
+["arc",400.5495590449006,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18283,7 +18680,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",418.38162959771654,229.28695737018242,3,0,6.283185307179586,false]
+["arc",418.38162959771654,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18291,7 +18688,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",427.29766487412445,54.01739147403647,3,0,6.283185307179586,false]
+["arc",427.29766487412445,73.63739147403648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18299,7 +18696,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",436.2137001505324,360.7391317922919,3,0,6.283185307179586,false]
+["arc",436.2137001505324,365.0991317922919,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18307,7 +18704,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",445.12973542694033,185.46956589614595,3,0,6.283185307179586,false]
+["arc",445.12973542694033,198.54956589614596,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18315,7 +18712,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",462.96180597975626,10.2,3,0,6.283185307179586,false]
+["arc",462.96180597975626,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18323,7 +18720,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",454.04577070334824,316.9217403182554,3,0,6.283185307179586,false]
+["arc",454.04577070334824,323.46174031825535,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18331,7 +18728,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",454.04577070334824,141.65217442210945,3,0,6.283185307179586,false]
+["arc",454.04577070334824,156.91217442210947,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18347,7 +18744,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",471.8778412561642,273.1043488442189,3,0,6.283185307179586,false]
+["arc",471.8778412561642,281.8243488442189,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18355,7 +18752,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",489.70991180898005,97.83478294807296,3,0,6.283185307179586,false]
+["arc",489.70991180898005,115.27478294807295,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18363,7 +18760,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",498.62594708538796,404.5565232663284,3,0,6.283185307179586,false]
+["arc",498.62594708538796,406.7365232663284,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18371,7 +18768,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",507.541982361796,229.28695737018242,3,0,6.283185307179586,false]
+["arc",507.541982361796,240.18695737018243,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -18408,12 +18805,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        27.6884765625,
-        10.2,
-        484.6513671875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[27.6884765625, 32.0, 484.6513671875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -18432,12 +18824,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1618358400000.0, 'Apr 2021', false],
             <Object?>[1635638400000.0, 'Oct 2021', false],
           ],
-          'box': <Object?>[
-            27.6884765625,
-            483.59999999999997,
-            484.6513671875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[27.6884765625, 483.6, 484.6513671875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[27.6884765625, 0.0, 27.3486328125, 0.0],
           'tickPixels': <Object?>[
@@ -18587,49 +18974,40 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[
-            7.0146484375,
-            10.2,
-            27.6884765625,
-            483.59999999999997,
-          ],
+          'box': <Object?>[7.0146484375, 32.0, 27.6884765625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[27.6884765625, 483.59999999999997],
-          <Object?>[84.808837890625, 273.2],
-          <Object?>[141.92919921875, 62.800000000000026],
-          <Object?>[199.049560546875, 430.99999999999994],
-          <Object?>[256.169921875, 220.59999999999997],
-          <Object?>[313.290283203125, 10.2],
-          <Object?>[370.41064453125, 378.4],
-          <Object?>[427.531005859375, 168.0],
+          <Object?>[27.6884765625, 483.6],
+          <Object?>[84.808837890625, 282.8888888888889],
+          <Object?>[141.92919921875, 82.1777777777778],
+          <Object?>[199.049560546875, 433.4222222222222],
+          <Object?>[256.169921875, 232.7111111111111],
+          <Object?>[313.290283203125, 32.0],
+          <Object?>[370.41064453125, 383.24444444444447],
+          <Object?>[427.531005859375, 182.53333333333336],
         ],
         <Object?>[
-          <Object?>[166.4093540736607, 483.59999999999997],
-          <Object?>[484.6513671875, 273.2],
+          <Object?>[166.4093540736607, 483.6],
+          <Object?>[484.6513671875, 282.8888888888889],
         ],
       ],
       'drawCalls': '''
@@ -18643,7 +19021,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",27.5,10.2]
+["moveTo",27.5,32]
 ["lineTo",27.5,483]
 ["stroke",null]
 ["restore"]
@@ -18654,7 +19032,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",27.5,484]
-["lineTo",27.5,491.59999999999997]
+["lineTo",27.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18663,7 +19041,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",84.5,10.2]
+["moveTo",84.5,32]
 ["lineTo",84.5,483]
 ["stroke",null]
 ["restore"]
@@ -18674,7 +19052,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",84.5,484]
-["lineTo",84.5,491.59999999999997]
+["lineTo",84.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18683,7 +19061,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",141.5,10.2]
+["moveTo",141.5,32]
 ["lineTo",141.5,483]
 ["stroke",null]
 ["restore"]
@@ -18694,7 +19072,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",141.5,484]
-["lineTo",141.5,491.59999999999997]
+["lineTo",141.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18703,7 +19081,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",199.5,10.2]
+["moveTo",199.5,32]
 ["lineTo",199.5,483]
 ["stroke",null]
 ["restore"]
@@ -18714,7 +19092,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",199.5,484]
-["lineTo",199.5,491.59999999999997]
+["lineTo",199.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18723,7 +19101,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",256.5,10.2]
+["moveTo",256.5,32]
 ["lineTo",256.5,483]
 ["stroke",null]
 ["restore"]
@@ -18734,7 +19112,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",256.5,484]
-["lineTo",256.5,491.59999999999997]
+["lineTo",256.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18743,7 +19121,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",313.5,10.2]
+["moveTo",313.5,32]
 ["lineTo",313.5,483]
 ["stroke",null]
 ["restore"]
@@ -18754,7 +19132,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",313.5,484]
-["lineTo",313.5,491.59999999999997]
+["lineTo",313.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18763,7 +19141,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",370.5,10.2]
+["moveTo",370.5,32]
 ["lineTo",370.5,483]
 ["stroke",null]
 ["restore"]
@@ -18774,7 +19152,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",370.5,484]
-["lineTo",370.5,491.59999999999997]
+["lineTo",370.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18783,7 +19161,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",427.5,10.2]
+["moveTo",427.5,32]
 ["lineTo",427.5,483]
 ["stroke",null]
 ["restore"]
@@ -18794,7 +19172,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",427.5,484]
-["lineTo",427.5,491.59999999999997]
+["lineTo",427.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18803,7 +19181,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",484.5,10.2]
+["moveTo",484.5,32]
 ["lineTo",484.5,483]
 ["stroke",null]
 ["restore"]
@@ -18814,7 +19192,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",484.5,484]
-["lineTo",484.5,491.59999999999997]
+["lineTo",484.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18843,8 +19221,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,430.5]
-["lineTo",484.6513671875,430.5]
+["moveTo",28,433.5]
+["lineTo",484.6513671875,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18853,8 +19231,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.6884765625,430.5]
-["lineTo",27,430.5]
+["moveTo",19.6884765625,433.5]
+["lineTo",27,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18863,8 +19241,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,378.5]
-["lineTo",484.6513671875,378.5]
+["moveTo",28,383.5]
+["lineTo",484.6513671875,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18873,8 +19251,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.6884765625,378.5]
-["lineTo",27,378.5]
+["moveTo",19.6884765625,383.5]
+["lineTo",27,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18883,8 +19261,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,325.5]
-["lineTo",484.6513671875,325.5]
+["moveTo",28,333.5]
+["lineTo",484.6513671875,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18893,8 +19271,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.6884765625,325.5]
-["lineTo",27,325.5]
+["moveTo",19.6884765625,333.5]
+["lineTo",27,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18903,8 +19281,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,273.5]
-["lineTo",484.6513671875,273.5]
+["moveTo",28,282.5]
+["lineTo",484.6513671875,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18913,8 +19291,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.6884765625,273.5]
-["lineTo",27,273.5]
+["moveTo",19.6884765625,282.5]
+["lineTo",27,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18923,8 +19301,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,220.5]
-["lineTo",484.6513671875,220.5]
+["moveTo",28,232.5]
+["lineTo",484.6513671875,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18933,8 +19311,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.6884765625,220.5]
-["lineTo",27,220.5]
+["moveTo",19.6884765625,232.5]
+["lineTo",27,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18943,8 +19321,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,168.5]
-["lineTo",484.6513671875,168.5]
+["moveTo",28,182.5]
+["lineTo",484.6513671875,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18953,8 +19331,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.6884765625,168.5]
-["lineTo",27,168.5]
+["moveTo",19.6884765625,182.5]
+["lineTo",27,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18963,8 +19341,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,115.5]
-["lineTo",484.6513671875,115.5]
+["moveTo",28,132.5]
+["lineTo",484.6513671875,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18973,8 +19351,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.6884765625,115.5]
-["lineTo",27,115.5]
+["moveTo",19.6884765625,132.5]
+["lineTo",27,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18983,8 +19361,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,62.5]
-["lineTo",484.6513671875,62.5]
+["moveTo",28,82.5]
+["lineTo",484.6513671875,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -18993,8 +19371,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.6884765625,62.5]
-["lineTo",27,62.5]
+["moveTo",19.6884765625,82.5]
+["lineTo",27,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19003,8 +19381,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",28,10.5]
-["lineTo",484.6513671875,10.5]
+["moveTo",28,32.5]
+["lineTo",484.6513671875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19013,9 +19391,58 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",19.6884765625,10.5]
-["lineTo",27,10.5]
+["moveTo",19.6884765625,32.5]
+["lineTo",27,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",152.283203125,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",198.283203125,16,null]
+["restore"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",261,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",307,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -19027,11 +19454,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",27.6884765625,494.59999999999997]
+["translate",27.6884765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19040,7 +19467,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",84.808837890625,494.59999999999997]
+["translate",84.808837890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19049,7 +19476,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",141.92919921875,494.59999999999997]
+["translate",141.92919921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19058,7 +19485,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",199.049560546875,494.59999999999997]
+["translate",199.049560546875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19067,7 +19494,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",256.169921875,494.59999999999997]
+["translate",256.169921875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19076,7 +19503,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",313.290283203125,494.59999999999997]
+["translate",313.290283203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19085,7 +19512,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",370.41064453125,494.59999999999997]
+["translate",370.41064453125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19094,7 +19521,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",427.531005859375,494.59999999999997]
+["translate",427.531005859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19103,7 +19530,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",484.6513671875,494.59999999999997]
+["translate",484.6513671875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19115,7 +19542,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",27.5,10]
+["moveTo",27.5,32]
 ["lineTo",27.5,484]
 ["stroke",null]
 ["restore"]
@@ -19125,7 +19552,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.6884765625,483.59999999999997]
+["translate",16.6884765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19134,7 +19561,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.6884765625,430.99999999999994]
+["translate",16.6884765625,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19143,7 +19570,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.6884765625,378.4]
+["translate",16.6884765625,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19152,7 +19579,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.6884765625,325.8]
+["translate",16.6884765625,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19161,7 +19588,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.6884765625,273.2]
+["translate",16.6884765625,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19170,7 +19597,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.6884765625,220.59999999999997]
+["translate",16.6884765625,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19179,7 +19606,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.6884765625,168]
+["translate",16.6884765625,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19188,7 +19615,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.6884765625,115.39999999999999]
+["translate",16.6884765625,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19197,7 +19624,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.6884765625,62.800000000000026]
+["translate",16.6884765625,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19206,7 +19633,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",16.6884765625,10.2]
+["translate",16.6884765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -19218,7 +19645,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",166.4093540736607,483.59999999999997,3,0,6.283185307179586,false]
+["arc",166.4093540736607,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19226,7 +19653,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",484.6513671875,273.2,3,0,6.283185307179586,false]
+["arc",484.6513671875,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19234,7 +19661,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",27.6884765625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",27.6884765625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19242,7 +19669,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",84.808837890625,273.2,3,0,6.283185307179586,false]
+["arc",84.808837890625,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19250,7 +19677,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",141.92919921875,62.800000000000026,3,0,6.283185307179586,false]
+["arc",141.92919921875,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19258,7 +19685,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",199.049560546875,430.99999999999994,3,0,6.283185307179586,false]
+["arc",199.049560546875,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19266,7 +19693,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",256.169921875,220.59999999999997,3,0,6.283185307179586,false]
+["arc",256.169921875,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19274,7 +19701,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",313.290283203125,10.2,3,0,6.283185307179586,false]
+["arc",313.290283203125,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19282,7 +19709,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",370.41064453125,378.4,3,0,6.283185307179586,false]
+["arc",370.41064453125,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19290,7 +19717,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",427.531005859375,168,3,0,6.283185307179586,false]
+["arc",427.531005859375,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -19321,12 +19748,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        491.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -19344,12 +19766,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613260800000.0, 'Feb 14', false],
             <Object?>[1618358400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            491.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 491.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 20.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -19495,40 +19912,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[20.673828125, 483.59999999999997],
-          <Object?>[72.96809895833333, 273.2],
-          <Object?>[125.26236979166666, 62.800000000000026],
-          <Object?>[229.85091145833331, 430.99999999999994],
-          <Object?>[282.1451822916667, 220.59999999999997],
-          <Object?>[386.7337239583333, 10.2],
-          <Object?>[439.02799479166663, 378.4],
-          <Object?>[491.322265625, 168.0],
+          <Object?>[20.673828125, 483.6],
+          <Object?>[72.96809895833333, 282.8888888888889],
+          <Object?>[125.26236979166666, 82.1777777777778],
+          <Object?>[229.85091145833331, 433.4222222222222],
+          <Object?>[282.1451822916667, 232.7111111111111],
+          <Object?>[386.7337239583333, 32.0],
+          <Object?>[439.02799479166663, 383.24444444444447],
+          <Object?>[491.322265625, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -19542,7 +19955,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -19553,7 +19966,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19562,7 +19975,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",72.5,10.2]
+["moveTo",72.5,32]
 ["lineTo",72.5,483]
 ["stroke",null]
 ["restore"]
@@ -19573,7 +19986,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",72.5,484]
-["lineTo",72.5,491.59999999999997]
+["lineTo",72.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19582,7 +19995,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",125.5,10.2]
+["moveTo",125.5,32]
 ["lineTo",125.5,483]
 ["stroke",null]
 ["restore"]
@@ -19593,7 +20006,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",125.5,484]
-["lineTo",125.5,491.59999999999997]
+["lineTo",125.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19602,7 +20015,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",229.5,10.2]
+["moveTo",229.5,32]
 ["lineTo",229.5,483]
 ["stroke",null]
 ["restore"]
@@ -19613,7 +20026,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",229.5,484]
-["lineTo",229.5,491.59999999999997]
+["lineTo",229.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19622,7 +20035,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",282.5,10.2]
+["moveTo",282.5,32]
 ["lineTo",282.5,483]
 ["stroke",null]
 ["restore"]
@@ -19633,7 +20046,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",282.5,484]
-["lineTo",282.5,491.59999999999997]
+["lineTo",282.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19642,7 +20055,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",386.5,10.2]
+["moveTo",386.5,32]
 ["lineTo",386.5,483]
 ["stroke",null]
 ["restore"]
@@ -19653,7 +20066,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",386.5,484]
-["lineTo",386.5,491.59999999999997]
+["lineTo",386.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19662,7 +20075,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",439.5,10.2]
+["moveTo",439.5,32]
 ["lineTo",439.5,483]
 ["stroke",null]
 ["restore"]
@@ -19673,7 +20086,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",439.5,484]
-["lineTo",439.5,491.59999999999997]
+["lineTo",439.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19682,7 +20095,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",491.5,10.2]
+["moveTo",491.5,32]
 ["lineTo",491.5,483]
 ["stroke",null]
 ["restore"]
@@ -19693,7 +20106,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",491.5,484]
-["lineTo",491.5,491.59999999999997]
+["lineTo",491.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19722,8 +20135,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",491.322265625,430.5]
+["moveTo",21,433.5]
+["lineTo",491.322265625,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19732,8 +20145,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19742,8 +20155,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",491.322265625,378.5]
+["moveTo",21,383.5]
+["lineTo",491.322265625,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19752,8 +20165,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19762,8 +20175,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",491.322265625,325.5]
+["moveTo",21,333.5]
+["lineTo",491.322265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19772,8 +20185,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19782,8 +20195,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",491.322265625,273.5]
+["moveTo",21,282.5]
+["lineTo",491.322265625,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19792,8 +20205,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19802,8 +20215,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",491.322265625,220.5]
+["moveTo",21,232.5]
+["lineTo",491.322265625,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19812,8 +20225,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19822,8 +20235,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",491.322265625,168.5]
+["moveTo",21,182.5]
+["lineTo",491.322265625,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19832,8 +20245,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19842,8 +20255,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",491.322265625,115.5]
+["moveTo",21,132.5]
+["lineTo",491.322265625,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19852,8 +20265,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19862,8 +20275,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",491.322265625,62.5]
+["moveTo",21,82.5]
+["lineTo",491.322265625,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19872,8 +20285,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19882,8 +20295,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",491.322265625,10.5]
+["moveTo",21,32.5]
+["lineTo",491.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -19892,9 +20305,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -19906,11 +20348,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19919,7 +20361,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",72.96809895833333,494.59999999999997]
+["translate",72.96809895833333,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19928,7 +20370,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",125.26236979166666,494.59999999999997]
+["translate",125.26236979166666,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19937,7 +20379,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",229.85091145833331,494.59999999999997]
+["translate",229.85091145833331,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19946,7 +20388,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",282.1451822916667,494.59999999999997]
+["translate",282.1451822916667,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19955,7 +20397,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",386.7337239583333,494.59999999999997]
+["translate",386.7337239583333,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19964,7 +20406,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",439.02799479166663,494.59999999999997]
+["translate",439.02799479166663,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19973,7 +20415,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",491.322265625,494.59999999999997]
+["translate",491.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -19985,7 +20427,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -19995,7 +20437,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20004,7 +20446,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20013,7 +20455,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20022,7 +20464,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20031,7 +20473,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20040,7 +20482,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20049,7 +20491,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20058,7 +20500,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20067,7 +20509,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20076,7 +20518,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20088,7 +20530,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.673828125,483.59999999999997,3,0,6.283185307179586,false]
+["arc",20.673828125,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20096,7 +20538,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",72.96809895833333,273.2,3,0,6.283185307179586,false]
+["arc",72.96809895833333,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20104,7 +20546,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",125.26236979166666,62.800000000000026,3,0,6.283185307179586,false]
+["arc",125.26236979166666,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20112,7 +20554,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",229.85091145833331,430.99999999999994,3,0,6.283185307179586,false]
+["arc",229.85091145833331,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20120,7 +20562,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",282.1451822916667,220.59999999999997,3,0,6.283185307179586,false]
+["arc",282.1451822916667,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20128,7 +20570,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",386.7337239583333,10.2,3,0,6.283185307179586,false]
+["arc",386.7337239583333,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20136,7 +20578,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",439.02799479166663,378.4,3,0,6.283185307179586,false]
+["arc",439.02799479166663,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20144,7 +20586,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",491.322265625,168,3,0,6.283185307179586,false]
+["arc",491.322265625,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20171,12 +20613,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        493.6572265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 493.6572265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -20189,12 +20626,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1609977600000.0, 'Jan 7', false],
             <Object?>[1612310400000.0, 'Feb 3', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            493.6572265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 493.6572265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 18.3427734375, 0.0],
           'tickPixels': <Object?>[
@@ -20316,36 +20748,32 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[4.5, '4.5', false],
             <Object?>[5.0, '5.0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            424.42499999999995,
-            365.24999999999994,
-            306.075,
-            246.89999999999998,
-            187.72499999999997,
-            128.54999999999998,
-            69.375,
-            10.2,
+            483.6,
+            427.15000000000003,
+            370.70000000000005,
+            314.25,
+            257.8,
+            201.35000000000002,
+            144.9,
+            88.45,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[5.0, 3.0, 1.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[30.681640625, 483.59999999999997],
-          <Object?>[-32768.0, 365.24999999999994],
-          <Object?>[-32768.0, 246.89999999999998],
-          <Object?>[262.16943359375, 128.54999999999998],
-          <Object?>[493.6572265625, 10.2],
+          <Object?>[30.681640625, 483.6],
+          <Object?>[-32768.0, 370.70000000000005],
+          <Object?>[-32768.0, 257.8],
+          <Object?>[262.16943359375, 144.9],
+          <Object?>[493.6572265625, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -20359,7 +20787,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -20370,7 +20798,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20379,7 +20807,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",262.5,10.2]
+["moveTo",262.5,32]
 ["lineTo",262.5,483]
 ["stroke",null]
 ["restore"]
@@ -20390,7 +20818,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",262.5,484]
-["lineTo",262.5,491.59999999999997]
+["lineTo",262.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20399,7 +20827,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",493.5,10.2]
+["moveTo",493.5,32]
 ["lineTo",493.5,483]
 ["stroke",null]
 ["restore"]
@@ -20410,7 +20838,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",493.5,484]
-["lineTo",493.5,491.59999999999997]
+["lineTo",493.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20439,8 +20867,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,424.5]
-["lineTo",493.6572265625,424.5]
+["moveTo",31,427.5]
+["lineTo",493.6572265625,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20449,8 +20877,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,424.5]
-["lineTo",30,424.5]
+["moveTo",22.681640625,427.5]
+["lineTo",30,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20459,8 +20887,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,365.5]
-["lineTo",493.6572265625,365.5]
+["moveTo",31,370.5]
+["lineTo",493.6572265625,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20469,8 +20897,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,365.5]
-["lineTo",30,365.5]
+["moveTo",22.681640625,370.5]
+["lineTo",30,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20479,8 +20907,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,306.5]
-["lineTo",493.6572265625,306.5]
+["moveTo",31,314.5]
+["lineTo",493.6572265625,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20489,8 +20917,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,306.5]
-["lineTo",30,306.5]
+["moveTo",22.681640625,314.5]
+["lineTo",30,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20499,8 +20927,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,246.5]
-["lineTo",493.6572265625,246.5]
+["moveTo",31,257.5]
+["lineTo",493.6572265625,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20509,8 +20937,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,246.5]
-["lineTo",30,246.5]
+["moveTo",22.681640625,257.5]
+["lineTo",30,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20519,8 +20947,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,187.5]
-["lineTo",493.6572265625,187.5]
+["moveTo",31,201.5]
+["lineTo",493.6572265625,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20529,8 +20957,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,187.5]
-["lineTo",30,187.5]
+["moveTo",22.681640625,201.5]
+["lineTo",30,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20539,8 +20967,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,128.5]
-["lineTo",493.6572265625,128.5]
+["moveTo",31,144.5]
+["lineTo",493.6572265625,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20549,8 +20977,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,128.5]
-["lineTo",30,128.5]
+["moveTo",22.681640625,144.5]
+["lineTo",30,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20559,8 +20987,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,69.5]
-["lineTo",493.6572265625,69.5]
+["moveTo",31,88.5]
+["lineTo",493.6572265625,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20569,8 +20997,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,69.5]
-["lineTo",30,69.5]
+["moveTo",22.681640625,88.5]
+["lineTo",30,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20579,8 +21007,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",493.6572265625,10.5]
+["moveTo",31,32.5]
+["lineTo",493.6572265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -20589,9 +21017,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -20603,11 +21060,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -20616,7 +21073,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",262.16943359375,494.59999999999997]
+["translate",262.16943359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -20625,7 +21082,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",493.6572265625,494.59999999999997]
+["translate",493.6572265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -20637,7 +21094,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -20647,7 +21104,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20656,7 +21113,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,424.42499999999995]
+["translate",19.681640625,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20665,7 +21122,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,365.24999999999994]
+["translate",19.681640625,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20674,7 +21131,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,306.075]
+["translate",19.681640625,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20683,7 +21140,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,246.89999999999998]
+["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20692,7 +21149,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,187.72499999999997]
+["translate",19.681640625,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20701,7 +21158,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,128.54999999999998]
+["translate",19.681640625,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20710,7 +21167,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,69.375]
+["translate",19.681640625,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20719,7 +21176,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -20731,7 +21188,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",30.681640625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",30.681640625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20739,7 +21196,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",262.16943359375,128.54999999999998,3,0,6.283185307179586,false]
+["arc",262.16943359375,144.9,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20747,7 +21204,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",493.6572265625,10.2,3,0,6.283185307179586,false]
+["arc",493.6572265625,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -20785,7 +21242,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[20.677734375, 0.0, 494.322265625, 483.6],
+      'chartArea': <Object?>[20.677734375, 10.0, 494.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -20931,7 +21388,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,0]
+["moveTo",20.5,10]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -20951,7 +21408,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",300.5,0]
+["moveTo",300.5,10]
 ["lineTo",300.5,483]
 ["stroke",null]
 ["restore"]
@@ -20971,7 +21428,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",304.5,0]
+["moveTo",304.5,10]
 ["lineTo",304.5,483]
 ["stroke",null]
 ["restore"]
@@ -20991,7 +21448,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",446.5,0]
+["moveTo",446.5,10]
 ["lineTo",446.5,483]
 ["stroke",null]
 ["restore"]
@@ -21011,7 +21468,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",451.5,0]
+["moveTo",451.5,10]
 ["lineTo",451.5,483]
 ["stroke",null]
 ["restore"]
@@ -21031,7 +21488,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",484.5,0]
+["moveTo",484.5,10]
 ["lineTo",484.5,483]
 ["stroke",null]
 ["restore"]
@@ -21051,7 +21508,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",489.5,0]
+["moveTo",489.5,10]
 ["lineTo",489.5,483]
 ["stroke",null]
 ["restore"]
@@ -21071,7 +21528,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",494.5,0]
+["moveTo",494.5,10]
 ["lineTo",494.5,483]
 ["stroke",null]
 ["restore"]
@@ -21084,6 +21541,15 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["moveTo",494.5,484]
 ["lineTo",494.5,491.6]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,10]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -21188,12 +21654,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        495.65234375,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 495.65234375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -21206,12 +21667,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1609718400000.0, '2021', false],
             <Object?>[1611100800000.0, '2021', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            495.65234375,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 495.65234375, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[16.34765625, 0.0, 16.34765625, 0.0],
           'tickPixels': <Object?>[30.681640625, 340.662109375, 495.65234375],
@@ -21324,36 +21780,32 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[2.8, '2.8', false],
             <Object?>[3.0, '3.0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.55999999999995,
-            152.22,
-            104.87999999999998,
-            57.540000000000035,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.63999999999996,
+            167.48000000000002,
+            122.31999999999998,
+            77.16000000000004,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[3.0, 2.0, 1.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[340.662109375, 483.59999999999997],
-          <Object?>[30.681640625, 246.89999999999998],
-          <Object?>[495.65234375, 10.2],
+          <Object?>[340.662109375, 483.6],
+          <Object?>[30.681640625, 257.8],
+          <Object?>[495.65234375, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -21367,7 +21819,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -21378,7 +21830,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21387,7 +21839,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",340.5,10.2]
+["moveTo",340.5,32]
 ["lineTo",340.5,483]
 ["stroke",null]
 ["restore"]
@@ -21398,7 +21850,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",340.5,484]
-["lineTo",340.5,491.59999999999997]
+["lineTo",340.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21407,7 +21859,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",495.5,10.2]
+["moveTo",495.5,32]
 ["lineTo",495.5,483]
 ["stroke",null]
 ["restore"]
@@ -21418,7 +21870,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",495.5,484]
-["lineTo",495.5,491.59999999999997]
+["lineTo",495.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21447,8 +21899,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,436.5]
-["lineTo",495.65234375,436.5]
+["moveTo",31,438.5]
+["lineTo",495.65234375,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21457,8 +21909,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,436.5]
-["lineTo",30,436.5]
+["moveTo",22.681640625,438.5]
+["lineTo",30,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21467,8 +21919,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,388.5]
-["lineTo",495.65234375,388.5]
+["moveTo",31,393.5]
+["lineTo",495.65234375,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21477,8 +21929,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,388.5]
-["lineTo",30,388.5]
+["moveTo",22.681640625,393.5]
+["lineTo",30,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21487,8 +21939,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,341.5]
-["lineTo",495.65234375,341.5]
+["moveTo",31,348.5]
+["lineTo",495.65234375,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21497,8 +21949,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,341.5]
-["lineTo",30,341.5]
+["moveTo",22.681640625,348.5]
+["lineTo",30,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21507,8 +21959,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,294.5]
-["lineTo",495.65234375,294.5]
+["moveTo",31,302.5]
+["lineTo",495.65234375,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21517,8 +21969,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,294.5]
-["lineTo",30,294.5]
+["moveTo",22.681640625,302.5]
+["lineTo",30,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21527,8 +21979,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,246.5]
-["lineTo",495.65234375,246.5]
+["moveTo",31,257.5]
+["lineTo",495.65234375,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21537,8 +21989,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,246.5]
-["lineTo",30,246.5]
+["moveTo",22.681640625,257.5]
+["lineTo",30,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21547,8 +21999,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,199.5]
-["lineTo",495.65234375,199.5]
+["moveTo",31,212.5]
+["lineTo",495.65234375,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21557,8 +22009,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,199.5]
-["lineTo",30,199.5]
+["moveTo",22.681640625,212.5]
+["lineTo",30,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21567,8 +22019,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,152.5]
-["lineTo",495.65234375,152.5]
+["moveTo",31,167.5]
+["lineTo",495.65234375,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21577,8 +22029,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,152.5]
-["lineTo",30,152.5]
+["moveTo",22.681640625,167.5]
+["lineTo",30,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21587,8 +22039,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,104.5]
-["lineTo",495.65234375,104.5]
+["moveTo",31,122.5]
+["lineTo",495.65234375,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21597,8 +22049,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,104.5]
-["lineTo",30,104.5]
+["moveTo",22.681640625,122.5]
+["lineTo",30,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21607,8 +22059,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,57.5]
-["lineTo",495.65234375,57.5]
+["moveTo",31,77.5]
+["lineTo",495.65234375,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21617,8 +22069,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,57.5]
-["lineTo",30,57.5]
+["moveTo",22.681640625,77.5]
+["lineTo",30,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21627,8 +22079,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",495.65234375,10.5]
+["moveTo",31,32.5]
+["lineTo",495.65234375,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -21637,9 +22089,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -21651,11 +22132,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -21664,7 +22145,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",340.662109375,494.59999999999997]
+["translate",340.662109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -21673,7 +22154,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",495.65234375,494.59999999999997]
+["translate",495.65234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -21685,7 +22166,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -21695,7 +22176,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21704,7 +22185,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,436.26]
+["translate",19.681640625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21713,7 +22194,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,388.92]
+["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21722,7 +22203,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,341.5799999999999]
+["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21731,7 +22212,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,294.23999999999995]
+["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21740,7 +22221,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,246.89999999999998]
+["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21749,7 +22230,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,199.55999999999995]
+["translate",19.681640625,212.63999999999996]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21758,7 +22239,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,152.22]
+["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21767,7 +22248,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,104.87999999999998]
+["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21776,7 +22257,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,57.540000000000035]
+["translate",19.681640625,77.16000000000004]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21785,7 +22266,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -21797,7 +22278,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",340.662109375,483.59999999999997,3,0,6.283185307179586,false]
+["arc",340.662109375,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -21805,7 +22286,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",30.681640625,246.89999999999998,3,0,6.283185307179586,false]
+["arc",30.681640625,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -21813,7 +22294,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",495.65234375,10.2,3,0,6.283185307179586,false]
+["arc",495.65234375,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -21842,12 +22323,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        33.6884765625,
-        10.2,
-        495.65234375,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[33.6884765625, 32.0, 495.65234375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -21860,12 +22336,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1609718400000.0, '2021', false],
             <Object?>[1611100800000.0, '2021', false],
           ],
-          'box': <Object?>[
-            33.6884765625,
-            483.59999999999997,
-            495.65234375,
-            511.99999999999994,
-          ],
+          'box': <Object?>[33.6884765625, 483.6, 495.65234375, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[33.6884765625, 0.0, 16.34765625, 0.0],
           'tickPixels': <Object?>[33.6884765625, 264.67041015625, 495.65234375],
@@ -21977,41 +22448,32 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[2.8, '2.8', false],
             <Object?>[3.0, '3.0', false],
           ],
-          'box': <Object?>[
-            3.0068359375,
-            10.2,
-            33.6884765625,
-            483.59999999999997,
-          ],
+          'box': <Object?>[3.0068359375, 32.0, 33.6884765625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.55999999999995,
-            152.22,
-            104.87999999999998,
-            57.540000000000035,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.63999999999996,
+            167.48000000000002,
+            122.31999999999998,
+            77.16000000000004,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[3.0, 2.0, 1.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[264.67041015625, 483.59999999999997],
-          <Object?>[33.6884765625, 246.89999999999998],
-          <Object?>[495.65234375, 10.2],
+          <Object?>[264.67041015625, 483.6],
+          <Object?>[33.6884765625, 257.8],
+          <Object?>[495.65234375, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -22025,7 +22487,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",33.5,10.2]
+["moveTo",33.5,32]
 ["lineTo",33.5,483]
 ["stroke",null]
 ["restore"]
@@ -22036,7 +22498,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",33.5,484]
-["lineTo",33.5,491.59999999999997]
+["lineTo",33.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22045,7 +22507,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",264.5,10.2]
+["moveTo",264.5,32]
 ["lineTo",264.5,483]
 ["stroke",null]
 ["restore"]
@@ -22056,7 +22518,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",264.5,484]
-["lineTo",264.5,491.59999999999997]
+["lineTo",264.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22065,7 +22527,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",495.5,10.2]
+["moveTo",495.5,32]
 ["lineTo",495.5,483]
 ["stroke",null]
 ["restore"]
@@ -22076,7 +22538,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",495.5,484]
-["lineTo",495.5,491.59999999999997]
+["lineTo",495.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22105,8 +22567,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,436.5]
-["lineTo",495.65234375,436.5]
+["moveTo",34,438.5]
+["lineTo",495.65234375,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22115,8 +22577,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,436.5]
-["lineTo",33,436.5]
+["moveTo",25.6884765625,438.5]
+["lineTo",33,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22125,8 +22587,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,388.5]
-["lineTo",495.65234375,388.5]
+["moveTo",34,393.5]
+["lineTo",495.65234375,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22135,8 +22597,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,388.5]
-["lineTo",33,388.5]
+["moveTo",25.6884765625,393.5]
+["lineTo",33,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22145,8 +22607,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,341.5]
-["lineTo",495.65234375,341.5]
+["moveTo",34,348.5]
+["lineTo",495.65234375,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22155,8 +22617,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,341.5]
-["lineTo",33,341.5]
+["moveTo",25.6884765625,348.5]
+["lineTo",33,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22165,8 +22627,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,294.5]
-["lineTo",495.65234375,294.5]
+["moveTo",34,302.5]
+["lineTo",495.65234375,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22175,8 +22637,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,294.5]
-["lineTo",33,294.5]
+["moveTo",25.6884765625,302.5]
+["lineTo",33,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22185,8 +22647,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,246.5]
-["lineTo",495.65234375,246.5]
+["moveTo",34,257.5]
+["lineTo",495.65234375,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22195,8 +22657,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,246.5]
-["lineTo",33,246.5]
+["moveTo",25.6884765625,257.5]
+["lineTo",33,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22205,8 +22667,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,199.5]
-["lineTo",495.65234375,199.5]
+["moveTo",34,212.5]
+["lineTo",495.65234375,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22215,8 +22677,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,199.5]
-["lineTo",33,199.5]
+["moveTo",25.6884765625,212.5]
+["lineTo",33,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22225,8 +22687,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,152.5]
-["lineTo",495.65234375,152.5]
+["moveTo",34,167.5]
+["lineTo",495.65234375,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22235,8 +22697,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,152.5]
-["lineTo",33,152.5]
+["moveTo",25.6884765625,167.5]
+["lineTo",33,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22245,8 +22707,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,104.5]
-["lineTo",495.65234375,104.5]
+["moveTo",34,122.5]
+["lineTo",495.65234375,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22255,8 +22717,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,104.5]
-["lineTo",33,104.5]
+["moveTo",25.6884765625,122.5]
+["lineTo",33,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22265,8 +22727,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,57.5]
-["lineTo",495.65234375,57.5]
+["moveTo",34,77.5]
+["lineTo",495.65234375,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22275,8 +22737,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,57.5]
-["lineTo",33,57.5]
+["moveTo",25.6884765625,77.5]
+["lineTo",33,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22285,8 +22747,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,10.5]
-["lineTo",495.65234375,10.5]
+["moveTo",34,32.5]
+["lineTo",495.65234375,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22295,9 +22757,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,10.5]
-["lineTo",33,10.5]
+["moveTo",25.6884765625,32.5]
+["lineTo",33,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -22309,11 +22800,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6884765625,494.59999999999997]
+["translate",33.6884765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -22322,7 +22813,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",264.67041015625,494.59999999999997]
+["translate",264.67041015625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -22331,7 +22822,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",495.65234375,494.59999999999997]
+["translate",495.65234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -22343,7 +22834,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",33.5,10]
+["moveTo",33.5,32]
 ["lineTo",33.5,484]
 ["stroke",null]
 ["restore"]
@@ -22353,7 +22844,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,483.59999999999997]
+["translate",22.6884765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22362,7 +22853,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,436.26]
+["translate",22.6884765625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22371,7 +22862,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,388.92]
+["translate",22.6884765625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22380,7 +22871,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,341.5799999999999]
+["translate",22.6884765625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22389,7 +22880,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,294.23999999999995]
+["translate",22.6884765625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22398,7 +22889,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,246.89999999999998]
+["translate",22.6884765625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22407,7 +22898,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,199.55999999999995]
+["translate",22.6884765625,212.63999999999996]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22416,7 +22907,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,152.22]
+["translate",22.6884765625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22425,7 +22916,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,104.87999999999998]
+["translate",22.6884765625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22434,7 +22925,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,57.540000000000035]
+["translate",22.6884765625,77.16000000000004]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22443,7 +22934,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,10.2]
+["translate",22.6884765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22455,7 +22946,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",264.67041015625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",264.67041015625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -22463,7 +22954,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",33.6884765625,246.89999999999998,3,0,6.283185307179586,false]
+["arc",33.6884765625,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -22471,7 +22962,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",495.65234375,10.2,3,0,6.283185307179586,false]
+["arc",495.65234375,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -22504,12 +22995,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        33.6884765625,
-        10.2,
-        495.65234375,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[33.6884765625, 32.0, 495.65234375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -22522,12 +23008,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1609718400000.0, '2021', false],
             <Object?>[1611100800000.0, '2021', false],
           ],
-          'box': <Object?>[
-            33.6884765625,
-            483.59999999999997,
-            495.65234375,
-            511.99999999999994,
-          ],
+          'box': <Object?>[33.6884765625, 483.6, 495.65234375, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[33.6884765625, 0.0, 16.34765625, 0.0],
           'tickPixels': <Object?>[
@@ -22650,39 +23131,30 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[7.0, '7', false],
             <Object?>[8.0, '8', false],
           ],
-          'box': <Object?>[
-            13.0146484375,
-            10.2,
-            33.6884765625,
-            483.59999999999997,
-          ],
+          'box': <Object?>[13.0146484375, 32.0, 33.6884765625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            424.42499999999995,
-            365.24999999999994,
-            306.075,
-            246.89999999999998,
-            187.72499999999997,
-            128.54999999999998,
-            69.375,
-            10.2,
+            483.6,
+            427.15000000000003,
+            370.70000000000005,
+            314.25,
+            257.8,
+            201.35000000000002,
+            144.9,
+            88.45,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[8.0, 4.0, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[187.67643229166666, 483.59999999999997],
-          <Object?>[341.6643880208333, 246.89999999999998],
-          <Object?>[495.65234375, 10.2],
+          <Object?>[187.67643229166666, 483.6],
+          <Object?>[341.6643880208333, 257.8],
+          <Object?>[495.65234375, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -22696,7 +23168,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",33.5,10.2]
+["moveTo",33.5,32]
 ["lineTo",33.5,483]
 ["stroke",null]
 ["restore"]
@@ -22707,7 +23179,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",33.5,484]
-["lineTo",33.5,491.59999999999997]
+["lineTo",33.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22716,7 +23188,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",187.5,10.2]
+["moveTo",187.5,32]
 ["lineTo",187.5,483]
 ["stroke",null]
 ["restore"]
@@ -22727,7 +23199,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",187.5,484]
-["lineTo",187.5,491.59999999999997]
+["lineTo",187.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22736,7 +23208,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",495.5,10.2]
+["moveTo",495.5,32]
 ["lineTo",495.5,483]
 ["stroke",null]
 ["restore"]
@@ -22747,7 +23219,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",495.5,484]
-["lineTo",495.5,491.59999999999997]
+["lineTo",495.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22776,8 +23248,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,424.5]
-["lineTo",495.65234375,424.5]
+["moveTo",34,427.5]
+["lineTo",495.65234375,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22786,8 +23258,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,424.5]
-["lineTo",33,424.5]
+["moveTo",25.6884765625,427.5]
+["lineTo",33,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22796,8 +23268,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,365.5]
-["lineTo",495.65234375,365.5]
+["moveTo",34,370.5]
+["lineTo",495.65234375,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22806,8 +23278,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,365.5]
-["lineTo",33,365.5]
+["moveTo",25.6884765625,370.5]
+["lineTo",33,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22816,8 +23288,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,306.5]
-["lineTo",495.65234375,306.5]
+["moveTo",34,314.5]
+["lineTo",495.65234375,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22826,8 +23298,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,306.5]
-["lineTo",33,306.5]
+["moveTo",25.6884765625,314.5]
+["lineTo",33,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22836,8 +23308,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,246.5]
-["lineTo",495.65234375,246.5]
+["moveTo",34,257.5]
+["lineTo",495.65234375,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22846,8 +23318,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,246.5]
-["lineTo",33,246.5]
+["moveTo",25.6884765625,257.5]
+["lineTo",33,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22856,8 +23328,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,187.5]
-["lineTo",495.65234375,187.5]
+["moveTo",34,201.5]
+["lineTo",495.65234375,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22866,8 +23338,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,187.5]
-["lineTo",33,187.5]
+["moveTo",25.6884765625,201.5]
+["lineTo",33,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22876,8 +23348,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,128.5]
-["lineTo",495.65234375,128.5]
+["moveTo",34,144.5]
+["lineTo",495.65234375,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22886,8 +23358,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,128.5]
-["lineTo",33,128.5]
+["moveTo",25.6884765625,144.5]
+["lineTo",33,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22896,8 +23368,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,69.5]
-["lineTo",495.65234375,69.5]
+["moveTo",34,88.5]
+["lineTo",495.65234375,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22906,8 +23378,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,69.5]
-["lineTo",33,69.5]
+["moveTo",25.6884765625,88.5]
+["lineTo",33,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22916,8 +23388,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",34,10.5]
-["lineTo",495.65234375,10.5]
+["moveTo",34,32.5]
+["lineTo",495.65234375,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -22926,9 +23398,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",25.6884765625,10.5]
-["lineTo",33,10.5]
+["moveTo",25.6884765625,32.5]
+["lineTo",33,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -22940,11 +23441,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",33.6884765625,494.59999999999997]
+["translate",33.6884765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -22953,7 +23454,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",187.67643229166666,494.59999999999997]
+["translate",187.67643229166666,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -22962,7 +23463,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",495.65234375,494.59999999999997]
+["translate",495.65234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -22974,7 +23475,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",33.5,10]
+["moveTo",33.5,32]
 ["lineTo",33.5,484]
 ["stroke",null]
 ["restore"]
@@ -22984,7 +23485,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,483.59999999999997]
+["translate",22.6884765625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -22993,7 +23494,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,424.42499999999995]
+["translate",22.6884765625,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23002,7 +23503,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,365.24999999999994]
+["translate",22.6884765625,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23011,7 +23512,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,306.075]
+["translate",22.6884765625,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23020,7 +23521,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,246.89999999999998]
+["translate",22.6884765625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23029,7 +23530,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,187.72499999999997]
+["translate",22.6884765625,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23038,7 +23539,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,128.54999999999998]
+["translate",22.6884765625,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23047,7 +23548,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,69.375]
+["translate",22.6884765625,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23056,7 +23557,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.6884765625,10.2]
+["translate",22.6884765625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23068,7 +23569,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",187.67643229166666,483.59999999999997,3,0,6.283185307179586,false]
+["arc",187.67643229166666,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23076,7 +23577,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",341.6643880208333,246.89999999999998,3,0,6.283185307179586,false]
+["arc",341.6643880208333,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23084,7 +23585,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",495.65234375,10.2,3,0,6.283185307179586,false]
+["arc",495.65234375,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23119,12 +23620,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.673828125,
-        10.2,
-        491.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.673828125, 32.0, 491.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -23141,12 +23637,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613278800000.0, 'Feb 14', false],
             <Object?>[1618376400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            491.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 491.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 20.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -23292,39 +23783,35 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            424.42499999999995,
-            365.24999999999994,
-            306.075,
-            246.89999999999998,
-            187.72499999999997,
-            128.54999999999998,
-            69.375,
-            10.2,
+            483.6,
+            427.15000000000003,
+            370.70000000000005,
+            314.25,
+            257.8,
+            201.35000000000002,
+            144.9,
+            88.45,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 5.0, 1.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[15.719634046052633, 542.775],
-          <Object?>[20.475660361842106, 306.075],
-          <Object?>[99.115234375, 69.375],
-          <Object?>[177.556640625, 483.59999999999997],
-          <Object?>[255.998046875, 246.89999999999998],
-          <Object?>[334.439453125, 10.2],
-          <Object?>[412.880859375, 424.42499999999995],
-          <Object?>[491.322265625, 187.72499999999997],
+          <Object?>[15.719634046052633, 540.05],
+          <Object?>[20.475660361842106, 314.25],
+          <Object?>[99.115234375, 88.45],
+          <Object?>[177.556640625, 483.6],
+          <Object?>[255.998046875, 257.8],
+          <Object?>[334.439453125, 32.0],
+          <Object?>[412.880859375, 427.15000000000003],
+          <Object?>[491.322265625, 201.35000000000002],
         ],
       ],
       'drawCalls': '''
@@ -23338,7 +23825,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -23349,7 +23836,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23358,7 +23845,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",99.5,10.2]
+["moveTo",99.5,32]
 ["lineTo",99.5,483]
 ["stroke",null]
 ["restore"]
@@ -23369,7 +23856,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",99.5,484]
-["lineTo",99.5,491.59999999999997]
+["lineTo",99.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23378,7 +23865,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",177.5,10.2]
+["moveTo",177.5,32]
 ["lineTo",177.5,483]
 ["stroke",null]
 ["restore"]
@@ -23389,7 +23876,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",177.5,484]
-["lineTo",177.5,491.59999999999997]
+["lineTo",177.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23398,7 +23885,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",255.5,10.2]
+["moveTo",255.5,32]
 ["lineTo",255.5,483]
 ["stroke",null]
 ["restore"]
@@ -23409,7 +23896,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",255.5,484]
-["lineTo",255.5,491.59999999999997]
+["lineTo",255.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23418,7 +23905,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",334.5,10.2]
+["moveTo",334.5,32]
 ["lineTo",334.5,483]
 ["stroke",null]
 ["restore"]
@@ -23429,7 +23916,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",334.5,484]
-["lineTo",334.5,491.59999999999997]
+["lineTo",334.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23438,7 +23925,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",412.5,10.2]
+["moveTo",412.5,32]
 ["lineTo",412.5,483]
 ["stroke",null]
 ["restore"]
@@ -23449,7 +23936,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",412.5,484]
-["lineTo",412.5,491.59999999999997]
+["lineTo",412.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23458,7 +23945,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",491.5,10.2]
+["moveTo",491.5,32]
 ["lineTo",491.5,483]
 ["stroke",null]
 ["restore"]
@@ -23469,7 +23956,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",491.5,484]
-["lineTo",491.5,491.59999999999997]
+["lineTo",491.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23498,8 +23985,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,424.5]
-["lineTo",491.322265625,424.5]
+["moveTo",21,427.5]
+["lineTo",491.322265625,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23508,8 +23995,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,424.5]
-["lineTo",20,424.5]
+["moveTo",12.673828125,427.5]
+["lineTo",20,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23518,8 +24005,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,365.5]
-["lineTo",491.322265625,365.5]
+["moveTo",21,370.5]
+["lineTo",491.322265625,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23528,8 +24015,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,365.5]
-["lineTo",20,365.5]
+["moveTo",12.673828125,370.5]
+["lineTo",20,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23538,8 +24025,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,306.5]
-["lineTo",491.322265625,306.5]
+["moveTo",21,314.5]
+["lineTo",491.322265625,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23548,8 +24035,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,306.5]
-["lineTo",20,306.5]
+["moveTo",12.673828125,314.5]
+["lineTo",20,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23558,8 +24045,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,246.5]
-["lineTo",491.322265625,246.5]
+["moveTo",21,257.5]
+["lineTo",491.322265625,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23568,8 +24055,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,246.5]
-["lineTo",20,246.5]
+["moveTo",12.673828125,257.5]
+["lineTo",20,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23578,8 +24065,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,187.5]
-["lineTo",491.322265625,187.5]
+["moveTo",21,201.5]
+["lineTo",491.322265625,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23588,8 +24075,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,187.5]
-["lineTo",20,187.5]
+["moveTo",12.673828125,201.5]
+["lineTo",20,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23598,8 +24085,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,128.5]
-["lineTo",491.322265625,128.5]
+["moveTo",21,144.5]
+["lineTo",491.322265625,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23608,8 +24095,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,128.5]
-["lineTo",20,128.5]
+["moveTo",12.673828125,144.5]
+["lineTo",20,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23618,8 +24105,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,69.5]
-["lineTo",491.322265625,69.5]
+["moveTo",21,88.5]
+["lineTo",491.322265625,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23628,8 +24115,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,69.5]
-["lineTo",20,69.5]
+["moveTo",12.673828125,88.5]
+["lineTo",20,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23638,8 +24125,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",491.322265625,10.5]
+["moveTo",21,32.5]
+["lineTo",491.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -23648,9 +24135,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -23662,11 +24178,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,494.59999999999997]
+["translate",20.673828125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23675,7 +24191,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",99.115234375,494.59999999999997]
+["translate",99.115234375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23684,7 +24200,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",177.556640625,494.59999999999997]
+["translate",177.556640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23693,7 +24209,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",255.998046875,494.59999999999997]
+["translate",255.998046875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23702,7 +24218,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",334.439453125,494.59999999999997]
+["translate",334.439453125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23711,7 +24227,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",412.880859375,494.59999999999997]
+["translate",412.880859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23720,7 +24236,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",491.322265625,494.59999999999997]
+["translate",491.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -23732,7 +24248,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -23742,7 +24258,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23751,7 +24267,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,424.42499999999995]
+["translate",9.673828125,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23760,7 +24276,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,365.24999999999994]
+["translate",9.673828125,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23769,7 +24285,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,306.075]
+["translate",9.673828125,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23778,7 +24294,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,246.89999999999998]
+["translate",9.673828125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23787,7 +24303,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,187.72499999999997]
+["translate",9.673828125,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23796,7 +24312,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,128.54999999999998]
+["translate",9.673828125,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23805,7 +24321,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,69.375]
+["translate",9.673828125,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23814,7 +24330,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -23826,7 +24342,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.475660361842106,306.075,3,0,6.283185307179586,false]
+["arc",20.475660361842106,314.25,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23834,7 +24350,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",99.115234375,69.375,3,0,6.283185307179586,false]
+["arc",99.115234375,88.45,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23842,7 +24358,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",177.556640625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",177.556640625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23850,7 +24366,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",255.998046875,246.89999999999998,3,0,6.283185307179586,false]
+["arc",255.998046875,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23858,7 +24374,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",334.439453125,10.2,3,0,6.283185307179586,false]
+["arc",334.439453125,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23866,7 +24382,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",412.880859375,424.42499999999995,3,0,6.283185307179586,false]
+["arc",412.880859375,427.15000000000003,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23874,7 +24390,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",491.322265625,187.72499999999997,3,0,6.283185307179586,false]
+["arc",491.322265625,201.35000000000002,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -23913,12 +24429,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        20.677734375,
-        10.2,
-        494.322265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[20.677734375, 32.0, 494.322265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -23936,12 +24447,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1609804800000.0, 'Jan 5', false],
             <Object?>[1609718400000.0, 'Jan 4', false],
           ],
-          'box': <Object?>[
-            20.677734375,
-            483.59999999999997,
-            494.322265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.677734375, 483.6, 494.322265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[20.677734375, 0.0, 17.677734375, 0.0],
           'tickPixels': <Object?>[
@@ -24083,40 +24589,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.00390625, 10.2, 20.677734375, 483.59999999999997],
+          'box': <Object?>[0.00390625, 32.0, 20.677734375, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[494.322265625, 483.59999999999997],
-          <Object?>[489.5858203125, 273.2],
-          <Object?>[484.849375, 62.800000000000026],
-          <Object?>[451.69425781250004, 430.99999999999994],
-          <Object?>[446.9578125, 220.59999999999997],
-          <Object?>[304.864453125, 10.2],
-          <Object?>[300.12800781249996, 378.4],
-          <Object?>[20.677734375, 168.0],
+          <Object?>[494.322265625, 483.6],
+          <Object?>[489.5858203125, 282.8888888888889],
+          <Object?>[484.849375, 82.1777777777778],
+          <Object?>[451.69425781250004, 433.4222222222222],
+          <Object?>[446.9578125, 232.7111111111111],
+          <Object?>[304.864453125, 32.0],
+          <Object?>[300.12800781249996, 383.24444444444447],
+          <Object?>[20.677734375, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -24130,7 +24632,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,10.2]
+["moveTo",20.5,32]
 ["lineTo",20.5,483]
 ["stroke",null]
 ["restore"]
@@ -24141,7 +24643,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",20.5,484]
-["lineTo",20.5,491.59999999999997]
+["lineTo",20.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24150,7 +24652,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",300.5,10.2]
+["moveTo",300.5,32]
 ["lineTo",300.5,483]
 ["stroke",null]
 ["restore"]
@@ -24161,7 +24663,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",300.5,484]
-["lineTo",300.5,491.59999999999997]
+["lineTo",300.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24170,7 +24672,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",304.5,10.2]
+["moveTo",304.5,32]
 ["lineTo",304.5,483]
 ["stroke",null]
 ["restore"]
@@ -24181,7 +24683,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",304.5,484]
-["lineTo",304.5,491.59999999999997]
+["lineTo",304.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24190,7 +24692,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",446.5,10.2]
+["moveTo",446.5,32]
 ["lineTo",446.5,483]
 ["stroke",null]
 ["restore"]
@@ -24201,7 +24703,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",446.5,484]
-["lineTo",446.5,491.59999999999997]
+["lineTo",446.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24210,7 +24712,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",451.5,10.2]
+["moveTo",451.5,32]
 ["lineTo",451.5,483]
 ["stroke",null]
 ["restore"]
@@ -24221,7 +24723,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",451.5,484]
-["lineTo",451.5,491.59999999999997]
+["lineTo",451.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24230,7 +24732,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",484.5,10.2]
+["moveTo",484.5,32]
 ["lineTo",484.5,483]
 ["stroke",null]
 ["restore"]
@@ -24241,7 +24743,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",484.5,484]
-["lineTo",484.5,491.59999999999997]
+["lineTo",484.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24250,7 +24752,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",489.5,10.2]
+["moveTo",489.5,32]
 ["lineTo",489.5,483]
 ["stroke",null]
 ["restore"]
@@ -24261,7 +24763,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",489.5,484]
-["lineTo",489.5,491.59999999999997]
+["lineTo",489.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24270,7 +24772,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",494.5,10.2]
+["moveTo",494.5,32]
 ["lineTo",494.5,483]
 ["stroke",null]
 ["restore"]
@@ -24281,7 +24783,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",494.5,484]
-["lineTo",494.5,491.59999999999997]
+["lineTo",494.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24310,8 +24812,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",494.322265625,430.5]
+["moveTo",21,433.5]
+["lineTo",494.322265625,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24320,8 +24822,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,430.5]
-["lineTo",20,430.5]
+["moveTo",12.677734375,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24330,8 +24832,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",494.322265625,378.5]
+["moveTo",21,383.5]
+["lineTo",494.322265625,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24340,8 +24842,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,378.5]
-["lineTo",20,378.5]
+["moveTo",12.677734375,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24350,8 +24852,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",494.322265625,325.5]
+["moveTo",21,333.5]
+["lineTo",494.322265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24360,8 +24862,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,325.5]
-["lineTo",20,325.5]
+["moveTo",12.677734375,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24370,8 +24872,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",494.322265625,273.5]
+["moveTo",21,282.5]
+["lineTo",494.322265625,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24380,8 +24882,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,273.5]
-["lineTo",20,273.5]
+["moveTo",12.677734375,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24390,8 +24892,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",494.322265625,220.5]
+["moveTo",21,232.5]
+["lineTo",494.322265625,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24400,8 +24902,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,220.5]
-["lineTo",20,220.5]
+["moveTo",12.677734375,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24410,8 +24912,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",494.322265625,168.5]
+["moveTo",21,182.5]
+["lineTo",494.322265625,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24420,8 +24922,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,168.5]
-["lineTo",20,168.5]
+["moveTo",12.677734375,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24430,8 +24932,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",494.322265625,115.5]
+["moveTo",21,132.5]
+["lineTo",494.322265625,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24440,8 +24942,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,115.5]
-["lineTo",20,115.5]
+["moveTo",12.677734375,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24450,8 +24952,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",494.322265625,62.5]
+["moveTo",21,82.5]
+["lineTo",494.322265625,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24460,8 +24962,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,62.5]
-["lineTo",20,62.5]
+["moveTo",12.677734375,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24470,8 +24972,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",494.322265625,10.5]
+["moveTo",21,32.5]
+["lineTo",494.322265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -24480,9 +24982,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.677734375,10.5]
-["lineTo",20,10.5]
+["moveTo",12.677734375,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -24494,11 +25025,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.677734375,494.59999999999997]
+["translate",20.677734375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24507,7 +25038,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",300.12800781249996,494.59999999999997]
+["translate",300.12800781249996,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24516,7 +25047,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",304.864453125,494.59999999999997]
+["translate",304.864453125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24525,7 +25056,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",446.9578125,494.59999999999997]
+["translate",446.9578125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24534,7 +25065,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",451.69425781250004,494.59999999999997]
+["translate",451.69425781250004,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24543,7 +25074,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",484.849375,494.59999999999997]
+["translate",484.849375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24552,7 +25083,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",489.5858203125,494.59999999999997]
+["translate",489.5858203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24561,7 +25092,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",494.322265625,494.59999999999997]
+["translate",494.322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -24573,7 +25104,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -24583,7 +25114,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,483.59999999999997]
+["translate",9.677734375,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24592,7 +25123,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,430.99999999999994]
+["translate",9.677734375,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24601,7 +25132,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,378.4]
+["translate",9.677734375,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24610,7 +25141,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,325.8]
+["translate",9.677734375,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24619,7 +25150,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,273.2]
+["translate",9.677734375,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24628,7 +25159,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,220.59999999999997]
+["translate",9.677734375,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24637,7 +25168,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,168]
+["translate",9.677734375,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24646,7 +25177,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,115.39999999999999]
+["translate",9.677734375,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24655,7 +25186,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,62.800000000000026]
+["translate",9.677734375,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24664,7 +25195,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.677734375,10.2]
+["translate",9.677734375,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -24676,7 +25207,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",494.322265625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",494.322265625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -24684,7 +25215,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",489.5858203125,273.2,3,0,6.283185307179586,false]
+["arc",489.5858203125,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -24692,7 +25223,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",484.849375,62.800000000000026,3,0,6.283185307179586,false]
+["arc",484.849375,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -24700,7 +25231,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",451.69425781250004,430.99999999999994,3,0,6.283185307179586,false]
+["arc",451.69425781250004,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -24708,7 +25239,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",446.9578125,220.59999999999997,3,0,6.283185307179586,false]
+["arc",446.9578125,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -24716,7 +25247,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",304.864453125,10.2,3,0,6.283185307179586,false]
+["arc",304.864453125,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -24724,7 +25255,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",300.12800781249996,378.4,3,0,6.283185307179586,false]
+["arc",300.12800781249996,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -24732,7 +25263,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",20.677734375,168,3,0,6.283185307179586,false]
+["arc",20.677734375,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -24771,7 +25302,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[20.673828125, 10.2, 512.0, 483.59999999999997],
+      'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -24789,12 +25320,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613260800000.0, 'Feb 14', false],
             <Object?>[1618358400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            512.0,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 512.0, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 0.0, 0.0, 0.0],
           'tickPixels': <Object?>[
@@ -24944,40 +25470,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[45.240136718749994, 483.59999999999997],
-          <Object?>[94.37275390624998, 273.2],
-          <Object?>[143.50537109375, 62.800000000000026],
-          <Object?>[241.77060546874998, 430.99999999999994],
-          <Object?>[290.90322265625, 220.59999999999997],
-          <Object?>[340.03583984374995, 10.2],
-          <Object?>[389.16845703125, 378.4],
-          <Object?>[487.43369140625, 168.0],
+          <Object?>[45.240136718749994, 483.6],
+          <Object?>[94.37275390624998, 282.8888888888889],
+          <Object?>[143.50537109375, 82.1777777777778],
+          <Object?>[241.77060546874998, 433.4222222222222],
+          <Object?>[290.90322265625, 232.7111111111111],
+          <Object?>[340.03583984374995, 32.0],
+          <Object?>[389.16845703125, 383.24444444444447],
+          <Object?>[487.43369140625, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -24991,7 +25513,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",45.5,10.2]
+["moveTo",45.5,32]
 ["lineTo",45.5,483]
 ["stroke",null]
 ["restore"]
@@ -25002,7 +25524,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",45.5,484]
-["lineTo",45.5,491.59999999999997]
+["lineTo",45.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25011,7 +25533,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",94.5,10.2]
+["moveTo",94.5,32]
 ["lineTo",94.5,483]
 ["stroke",null]
 ["restore"]
@@ -25022,7 +25544,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",94.5,484]
-["lineTo",94.5,491.59999999999997]
+["lineTo",94.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25031,7 +25553,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",143.5,10.2]
+["moveTo",143.5,32]
 ["lineTo",143.5,483]
 ["stroke",null]
 ["restore"]
@@ -25042,7 +25564,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",143.5,484]
-["lineTo",143.5,491.59999999999997]
+["lineTo",143.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25051,7 +25573,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",241.5,10.2]
+["moveTo",241.5,32]
 ["lineTo",241.5,483]
 ["stroke",null]
 ["restore"]
@@ -25062,7 +25584,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",241.5,484]
-["lineTo",241.5,491.59999999999997]
+["lineTo",241.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25071,7 +25593,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",290.5,10.2]
+["moveTo",290.5,32]
 ["lineTo",290.5,483]
 ["stroke",null]
 ["restore"]
@@ -25082,7 +25604,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",290.5,484]
-["lineTo",290.5,491.59999999999997]
+["lineTo",290.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25091,7 +25613,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",340.5,10.2]
+["moveTo",340.5,32]
 ["lineTo",340.5,483]
 ["stroke",null]
 ["restore"]
@@ -25102,7 +25624,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",340.5,484]
-["lineTo",340.5,491.59999999999997]
+["lineTo",340.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25111,7 +25633,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",389.5,10.2]
+["moveTo",389.5,32]
 ["lineTo",389.5,483]
 ["stroke",null]
 ["restore"]
@@ -25122,7 +25644,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",389.5,484]
-["lineTo",389.5,491.59999999999997]
+["lineTo",389.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25131,7 +25653,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",487.5,10.2]
+["moveTo",487.5,32]
 ["lineTo",487.5,483]
 ["stroke",null]
 ["restore"]
@@ -25142,7 +25664,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",487.5,484]
-["lineTo",487.5,491.59999999999997]
+["lineTo",487.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25171,8 +25693,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,430.5]
-["lineTo",512,430.5]
+["moveTo",21,433.5]
+["lineTo",512,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25181,8 +25703,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,430.5]
-["lineTo",20,430.5]
+["moveTo",12.673828125,433.5]
+["lineTo",20,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25191,8 +25713,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,378.5]
-["lineTo",512,378.5]
+["moveTo",21,383.5]
+["lineTo",512,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25201,8 +25723,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,378.5]
-["lineTo",20,378.5]
+["moveTo",12.673828125,383.5]
+["lineTo",20,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25211,8 +25733,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,325.5]
-["lineTo",512,325.5]
+["moveTo",21,333.5]
+["lineTo",512,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25221,8 +25743,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,325.5]
-["lineTo",20,325.5]
+["moveTo",12.673828125,333.5]
+["lineTo",20,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25231,8 +25753,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,273.5]
-["lineTo",512,273.5]
+["moveTo",21,282.5]
+["lineTo",512,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25241,8 +25763,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,273.5]
-["lineTo",20,273.5]
+["moveTo",12.673828125,282.5]
+["lineTo",20,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25251,8 +25773,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,220.5]
-["lineTo",512,220.5]
+["moveTo",21,232.5]
+["lineTo",512,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25261,8 +25783,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,220.5]
-["lineTo",20,220.5]
+["moveTo",12.673828125,232.5]
+["lineTo",20,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25271,8 +25793,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,168.5]
-["lineTo",512,168.5]
+["moveTo",21,182.5]
+["lineTo",512,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25281,8 +25803,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,168.5]
-["lineTo",20,168.5]
+["moveTo",12.673828125,182.5]
+["lineTo",20,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25291,8 +25813,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,115.5]
-["lineTo",512,115.5]
+["moveTo",21,132.5]
+["lineTo",512,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25301,8 +25823,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,115.5]
-["lineTo",20,115.5]
+["moveTo",12.673828125,132.5]
+["lineTo",20,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25311,8 +25833,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,62.5]
-["lineTo",512,62.5]
+["moveTo",21,82.5]
+["lineTo",512,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25321,8 +25843,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,62.5]
-["lineTo",20,62.5]
+["moveTo",12.673828125,82.5]
+["lineTo",20,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25331,8 +25853,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",512,10.5]
+["moveTo",21,32.5]
+["lineTo",512,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25341,9 +25863,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -25355,11 +25906,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",45.240136718749994,494.59999999999997]
+["translate",45.240136718749994,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25368,7 +25919,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",94.37275390624998,494.59999999999997]
+["translate",94.37275390624998,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25377,7 +25928,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",143.50537109375,494.59999999999997]
+["translate",143.50537109375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25386,7 +25937,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",241.77060546874998,494.59999999999997]
+["translate",241.77060546874998,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25395,7 +25946,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",290.90322265625,494.59999999999997]
+["translate",290.90322265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25404,7 +25955,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",340.03583984374995,494.59999999999997]
+["translate",340.03583984374995,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25413,7 +25964,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",389.16845703125,494.59999999999997]
+["translate",389.16845703125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25422,7 +25973,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",487.43369140625,494.59999999999997]
+["translate",487.43369140625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -25434,7 +25985,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -25444,7 +25995,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25453,7 +26004,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,430.99999999999994]
+["translate",9.673828125,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25462,7 +26013,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,378.4]
+["translate",9.673828125,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25471,7 +26022,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,325.8]
+["translate",9.673828125,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25480,7 +26031,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,273.2]
+["translate",9.673828125,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25489,7 +26040,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,220.59999999999997]
+["translate",9.673828125,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25498,7 +26049,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,168]
+["translate",9.673828125,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25507,7 +26058,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,115.39999999999999]
+["translate",9.673828125,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25516,7 +26067,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,62.800000000000026]
+["translate",9.673828125,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25525,7 +26076,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -25537,7 +26088,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",45.240136718749994,483.59999999999997,3,0,6.283185307179586,false]
+["arc",45.240136718749994,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -25545,7 +26096,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",94.37275390624998,273.2,3,0,6.283185307179586,false]
+["arc",94.37275390624998,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -25553,7 +26104,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",143.50537109375,62.800000000000026,3,0,6.283185307179586,false]
+["arc",143.50537109375,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -25561,7 +26112,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",241.77060546874998,430.99999999999994,3,0,6.283185307179586,false]
+["arc",241.77060546874998,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -25569,7 +26120,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",290.90322265625,220.59999999999997,3,0,6.283185307179586,false]
+["arc",290.90322265625,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -25577,7 +26128,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",340.03583984374995,10.2,3,0,6.283185307179586,false]
+["arc",340.03583984374995,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -25585,7 +26136,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",389.16845703125,378.4,3,0,6.283185307179586,false]
+["arc",389.16845703125,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -25593,7 +26144,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",487.43369140625,168,3,0,6.283185307179586,false]
+["arc",487.43369140625,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -25629,12 +26180,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        493.6630859375,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 493.6630859375, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -25649,12 +26195,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1610323200000.0, 'Jan 11', false],
             <Object?>[1614556800000.0, 'Mar 1', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            493.6630859375,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 493.6630859375, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 0.0, 18.3369140625, 0.0],
           'tickPixels': <Object?>[
@@ -25797,36 +26338,32 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[4.5, '4.5', false],
             <Object?>[5.0, '5.0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            424.42499999999995,
-            365.24999999999994,
-            306.075,
-            246.89999999999998,
-            187.72499999999997,
-            128.54999999999998,
-            69.375,
-            10.2,
+            483.6,
+            427.15000000000003,
+            370.70000000000005,
+            314.25,
+            257.8,
+            201.35000000000002,
+            144.9,
+            88.45,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[5.0, 3.0, 1.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[339.3359375, 483.59999999999997],
-          <Object?>[30.681640625, 365.24999999999994],
-          <Object?>[30.681640625, 246.89999999999998],
-          <Object?>[185.0087890625, 128.54999999999998],
-          <Object?>[493.6630859375, 10.2],
+          <Object?>[339.3359375, 483.6],
+          <Object?>[30.681640625, 370.70000000000005],
+          <Object?>[30.681640625, 257.8],
+          <Object?>[185.0087890625, 144.9],
+          <Object?>[493.6630859375, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -25840,7 +26377,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",339.5,10.2]
+["moveTo",339.5,32]
 ["lineTo",339.5,483]
 ["stroke",null]
 ["restore"]
@@ -25851,7 +26388,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",339.5,484]
-["lineTo",339.5,491.59999999999997]
+["lineTo",339.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25860,7 +26397,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -25871,7 +26408,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25880,7 +26417,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -25891,7 +26428,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25900,7 +26437,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",185.5,10.2]
+["moveTo",185.5,32]
 ["lineTo",185.5,483]
 ["stroke",null]
 ["restore"]
@@ -25911,7 +26448,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",185.5,484]
-["lineTo",185.5,491.59999999999997]
+["lineTo",185.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25920,7 +26457,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",493.5,10.2]
+["moveTo",493.5,32]
 ["lineTo",493.5,483]
 ["stroke",null]
 ["restore"]
@@ -25931,7 +26468,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",493.5,484]
-["lineTo",493.5,491.59999999999997]
+["lineTo",493.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25960,8 +26497,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,424.5]
-["lineTo",493.6630859375,424.5]
+["moveTo",31,427.5]
+["lineTo",493.6630859375,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25970,8 +26507,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,424.5]
-["lineTo",30,424.5]
+["moveTo",22.681640625,427.5]
+["lineTo",30,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25980,8 +26517,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,365.5]
-["lineTo",493.6630859375,365.5]
+["moveTo",31,370.5]
+["lineTo",493.6630859375,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -25990,8 +26527,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,365.5]
-["lineTo",30,365.5]
+["moveTo",22.681640625,370.5]
+["lineTo",30,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26000,8 +26537,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,306.5]
-["lineTo",493.6630859375,306.5]
+["moveTo",31,314.5]
+["lineTo",493.6630859375,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26010,8 +26547,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,306.5]
-["lineTo",30,306.5]
+["moveTo",22.681640625,314.5]
+["lineTo",30,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26020,8 +26557,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,246.5]
-["lineTo",493.6630859375,246.5]
+["moveTo",31,257.5]
+["lineTo",493.6630859375,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26030,8 +26567,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,246.5]
-["lineTo",30,246.5]
+["moveTo",22.681640625,257.5]
+["lineTo",30,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26040,8 +26577,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,187.5]
-["lineTo",493.6630859375,187.5]
+["moveTo",31,201.5]
+["lineTo",493.6630859375,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26050,8 +26587,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,187.5]
-["lineTo",30,187.5]
+["moveTo",22.681640625,201.5]
+["lineTo",30,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26060,8 +26597,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,128.5]
-["lineTo",493.6630859375,128.5]
+["moveTo",31,144.5]
+["lineTo",493.6630859375,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26070,8 +26607,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,128.5]
-["lineTo",30,128.5]
+["moveTo",22.681640625,144.5]
+["lineTo",30,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26080,8 +26617,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,69.5]
-["lineTo",493.6630859375,69.5]
+["moveTo",31,88.5]
+["lineTo",493.6630859375,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26090,8 +26627,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,69.5]
-["lineTo",30,69.5]
+["moveTo",22.681640625,88.5]
+["lineTo",30,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26100,8 +26637,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",493.6630859375,10.5]
+["moveTo",31,32.5]
+["lineTo",493.6630859375,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26110,9 +26647,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -26124,11 +26690,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",339.3359375,494.59999999999997]
+["translate",339.3359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26137,7 +26703,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26146,7 +26712,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26155,7 +26721,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",185.0087890625,494.59999999999997]
+["translate",185.0087890625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26164,7 +26730,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",493.6630859375,494.59999999999997]
+["translate",493.6630859375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -26176,7 +26742,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -26186,7 +26752,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26195,7 +26761,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,424.42499999999995]
+["translate",19.681640625,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26204,7 +26770,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,365.24999999999994]
+["translate",19.681640625,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26213,7 +26779,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,306.075]
+["translate",19.681640625,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26222,7 +26788,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,246.89999999999998]
+["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26231,7 +26797,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,187.72499999999997]
+["translate",19.681640625,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26240,7 +26806,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,128.54999999999998]
+["translate",19.681640625,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26249,7 +26815,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,69.375]
+["translate",19.681640625,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26258,7 +26824,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -26270,7 +26836,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",339.3359375,483.59999999999997,3,0,6.283185307179586,false]
+["arc",339.3359375,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -26278,7 +26844,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",30.681640625,365.24999999999994,3,0,6.283185307179586,false]
+["arc",30.681640625,370.70000000000005,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -26286,7 +26852,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",30.681640625,246.89999999999998,3,0,6.283185307179586,false]
+["arc",30.681640625,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -26294,7 +26860,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",185.0087890625,128.54999999999998,3,0,6.283185307179586,false]
+["arc",185.0087890625,144.9,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -26302,7 +26868,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",493.6630859375,10.2,3,0,6.283185307179586,false]
+["arc",493.6630859375,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -26392,7 +26958,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     expected: <String, Object?>{
       'chartArea': <Object?>[
         92.3844084864283,
-        10.2,
+        32.0,
         407.9296875,
         440.0901214678324,
       ],
@@ -26416,25 +26982,25 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1.0, '12:00:00.001 am', false],
             <Object?>[0.0, '12:00:00.000 am', false],
           ],
-          'box': <Object?>[407.9296875, 10.2, 512.0, 440.0901214678324],
+          'box': <Object?>[407.9296875, 32.0, 512.0, 440.0901214678324],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             440.0901214678324,
-            397.10110932104914,
-            354.1120971742659,
-            311.12308502748266,
-            268.1340728806994,
-            225.14506073391618,
-            182.15604858713294,
-            139.1670364403497,
-            96.17802429356648,
-            53.18901214678324,
-            10.2,
+            399.28110932104914,
+            358.4720971742659,
+            317.6630850274826,
+            276.8540728806994,
+            236.0450607339162,
+            195.23604858713296,
+            154.4270364403497,
+            113.61802429356648,
+            72.80901214678323,
+            32.0,
           ],
-          'valuePixels': <Object?>[10.2, 225.14506073391618, 440.0901214678324],
+          'valuePixels': <Object?>[32.0, 236.0450607339162, 440.0901214678324],
           'valueForPixel': <Object?>[0.0, 5.0, 10.0],
-          'basePixel': 10.2,
+          'basePixel': 32.0,
           'unit': 'millisecond',
           'offsets': <Object?>[0.0, 0.0, 1.0],
           'dataTimestamps': <Object?>[
@@ -26466,16 +27032,16 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             0.1,
           ],
           'pixelForValue': <Object?>[
-            10.2,
+            32.0,
             <String, Object?>{'num': 'NaN'},
             <String, Object?>{'num': 'NaN'},
-            225.14506073391618,
-            53.18901214678324,
+            236.0450607339162,
+            72.80901214678323,
           ],
           'valuesForPixels': <Object?>[
-            -0.4652351612945019,
-            3.0,
-            10.465235161294501,
+            -0.4900878249163033,
+            2.999999999999999,
+            10.490087824916303,
           ],
           'labelForValue': <Object?>[
             'Jan 1, 1970, 12:00:00 am',
@@ -26528,12 +27094,12 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
           ],
           'valuesAlongAxis': <Object?>[
             0.0,
-            1.0,
+            0.9999999999999999,
             2.0,
-            3.0,
+            2.999999999999999,
             4.0,
             5.0,
-            6.0,
+            5.999999999999998,
             7.0,
             8.0,
             9.0,
@@ -26593,66 +27159,66 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[122.50846445625729, 10.2],
-          <Object?>[139.16925518817385, 182.15604858713294],
-          <Object?>[131.59616849184815, 354.1120971742659],
-          <Object?>[140.683872527439, 53.18901214678324],
-          <Object?>[152.80081124156015, 225.14506073391618],
-          <Object?>[154.3154285808253, 397.10110932104914],
-          <Object?>[158.85928059862073, 96.17802429356648],
-          <Object?>[166.43236729494646, 268.1340728806994],
+          <Object?>[122.50846445625729, 32.0],
+          <Object?>[139.16925518817385, 195.23604858713296],
+          <Object?>[131.59616849184815, 358.4720971742659],
+          <Object?>[140.683872527439, 72.80901214678323],
+          <Object?>[152.80081124156015, 236.0450607339162],
+          <Object?>[154.3154285808253, 399.28110932104914],
+          <Object?>[158.85928059862073, 113.61802429356648],
+          <Object?>[166.43236729494646, 276.8540728806994],
           <Object?>[163.40313261641617, 440.0901214678324],
-          <Object?>[163.40313261641617, 139.1670364403497],
-          <Object?>[180.06392334833276, 311.12308502748266],
-          <Object?>[172.49083665200703, 10.2],
-          <Object?>[181.57854068759792, 182.15604858713294],
-          <Object?>[193.69547940171907, 354.1120971742659],
-          <Object?>[195.21009674098423, 53.18901214678324],
-          <Object?>[199.75394875877964, 225.14506073391618],
-          <Object?>[207.32703545510537, 397.10110932104914],
-          <Object?>[204.29780077657506, 96.17802429356648],
-          <Object?>[204.29780077657506, 268.1340728806994],
+          <Object?>[163.40313261641617, 154.4270364403497],
+          <Object?>[180.06392334833276, 317.6630850274826],
+          <Object?>[172.49083665200703, 32.0],
+          <Object?>[181.57854068759792, 195.23604858713296],
+          <Object?>[193.69547940171907, 358.4720971742659],
+          <Object?>[195.21009674098423, 72.80901214678323],
+          <Object?>[199.75394875877964, 236.0450607339162],
+          <Object?>[207.32703545510537, 399.28110932104914],
+          <Object?>[204.29780077657506, 113.61802429356648],
+          <Object?>[204.29780077657506, 276.8540728806994],
           <Object?>[220.95859150849165, 440.0901214678324],
-          <Object?>[213.38550481216595, 139.1670364403497],
-          <Object?>[222.47320884775678, 311.12308502748266],
-          <Object?>[234.59014756187796, 10.2],
-          <Object?>[236.10476490114308, 182.15604858713294],
-          <Object?>[240.64861691893853, 354.1120971742659],
-          <Object?>[248.22170361526423, 53.18901214678324],
-          <Object?>[245.19246893673395, 225.14506073391618],
-          <Object?>[245.19246893673395, 397.10110932104914],
-          <Object?>[261.85325966865054, 96.17802429356648],
-          <Object?>[254.28017297232483, 268.1340728806994],
+          <Object?>[213.38550481216595, 154.4270364403497],
+          <Object?>[222.47320884775678, 317.6630850274826],
+          <Object?>[234.59014756187796, 32.0],
+          <Object?>[236.10476490114308, 195.23604858713296],
+          <Object?>[240.64861691893853, 358.4720971742659],
+          <Object?>[248.22170361526423, 72.80901214678323],
+          <Object?>[245.19246893673395, 236.0450607339162],
+          <Object?>[245.19246893673395, 399.28110932104914],
+          <Object?>[261.85325966865054, 113.61802429356648],
+          <Object?>[254.28017297232483, 276.8540728806994],
           <Object?>[263.3678770079157, 440.0901214678324],
-          <Object?>[275.48481572203684, 139.1670364403497],
-          <Object?>[276.99943306130194, 311.12308502748266],
-          <Object?>[281.5432850790974, 10.2],
-          <Object?>[289.1163717754231, 182.15604858713294],
-          <Object?>[286.0871370968929, 354.1120971742659],
-          <Object?>[286.0871370968929, 53.18901214678324],
-          <Object?>[302.74792782880945, 225.14506073391618],
-          <Object?>[295.1748411324837, 397.10110932104914],
-          <Object?>[304.26254516807455, 96.17802429356648],
-          <Object?>[316.3794838821957, 268.1340728806994],
+          <Object?>[275.48481572203684, 154.4270364403497],
+          <Object?>[276.99943306130194, 317.6630850274826],
+          <Object?>[281.5432850790974, 32.0],
+          <Object?>[289.1163717754231, 195.23604858713296],
+          <Object?>[286.0871370968929, 358.4720971742659],
+          <Object?>[286.0871370968929, 72.80901214678323],
+          <Object?>[302.74792782880945, 236.0450607339162],
+          <Object?>[295.1748411324837, 399.28110932104914],
+          <Object?>[304.26254516807455, 113.61802429356648],
+          <Object?>[316.3794838821957, 276.8540728806994],
           <Object?>[317.8941012214609, 440.0901214678324],
-          <Object?>[322.43795323925633, 139.1670364403497],
-          <Object?>[330.01103993558206, 311.12308502748266],
-          <Object?>[326.98180525705175, 10.2],
-          <Object?>[326.98180525705175, 182.15604858713294],
-          <Object?>[343.6425959889683, 354.1120971742659],
-          <Object?>[336.0695092926426, 53.18901214678324],
-          <Object?>[345.15721332823347, 225.14506073391618],
-          <Object?>[357.2741520423546, 397.10110932104914],
-          <Object?>[358.7887693816198, 96.17802429356648],
-          <Object?>[363.3326213994152, 268.1340728806994],
+          <Object?>[322.43795323925633, 154.4270364403497],
+          <Object?>[330.01103993558206, 317.6630850274826],
+          <Object?>[326.98180525705175, 32.0],
+          <Object?>[326.98180525705175, 195.23604858713296],
+          <Object?>[343.6425959889683, 358.4720971742659],
+          <Object?>[336.0695092926426, 72.80901214678323],
+          <Object?>[345.15721332823347, 236.0450607339162],
+          <Object?>[357.2741520423546, 399.28110932104914],
+          <Object?>[358.7887693816198, 113.61802429356648],
+          <Object?>[363.3326213994152, 276.8540728806994],
           <Object?>[370.9057080957409, 440.0901214678324],
-          <Object?>[367.8764734172106, 139.1670364403497],
-          <Object?>[367.8764734172106, 311.12308502748266],
-          <Object?>[384.5372641491272, 10.2],
-          <Object?>[376.9641774528015, 182.15604858713294],
-          <Object?>[386.0518814883924, 354.1120971742659],
-          <Object?>[398.16882020251353, 53.18901214678324],
-          <Object?>[399.68343754177863, 225.14506073391618],
+          <Object?>[367.8764734172106, 154.4270364403497],
+          <Object?>[367.8764734172106, 317.6630850274826],
+          <Object?>[384.5372641491272, 32.0],
+          <Object?>[376.9641774528015, 195.23604858713296],
+          <Object?>[386.0518814883924, 358.4720971742659],
+          <Object?>[398.16882020251353, 72.80901214678323],
+          <Object?>[399.68343754177863, 236.0450607339162],
         ],
       ],
       'drawCalls': '''
@@ -26686,8 +27252,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",92.3844084864283,397.5]
-["lineTo",407,397.5]
+["moveTo",92.3844084864283,399.5]
+["lineTo",407,399.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26696,8 +27262,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",408,397.5]
-["lineTo",415.9296875,397.5]
+["moveTo",408,399.5]
+["lineTo",415.9296875,399.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26706,8 +27272,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",92.3844084864283,354.5]
-["lineTo",407,354.5]
+["moveTo",92.3844084864283,358.5]
+["lineTo",407,358.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26716,8 +27282,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",408,354.5]
-["lineTo",415.9296875,354.5]
+["moveTo",408,358.5]
+["lineTo",415.9296875,358.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26726,8 +27292,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",92.3844084864283,311.5]
-["lineTo",407,311.5]
+["moveTo",92.3844084864283,317.5]
+["lineTo",407,317.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26736,8 +27302,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",408,311.5]
-["lineTo",415.9296875,311.5]
+["moveTo",408,317.5]
+["lineTo",415.9296875,317.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26746,8 +27312,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",92.3844084864283,268.5]
-["lineTo",407,268.5]
+["moveTo",92.3844084864283,276.5]
+["lineTo",407,276.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26756,8 +27322,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",408,268.5]
-["lineTo",415.9296875,268.5]
+["moveTo",408,276.5]
+["lineTo",415.9296875,276.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26766,8 +27332,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",92.3844084864283,225.5]
-["lineTo",407,225.5]
+["moveTo",92.3844084864283,236.5]
+["lineTo",407,236.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26776,8 +27342,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",408,225.5]
-["lineTo",415.9296875,225.5]
+["moveTo",408,236.5]
+["lineTo",415.9296875,236.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26786,8 +27352,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",92.3844084864283,182.5]
-["lineTo",407,182.5]
+["moveTo",92.3844084864283,195.5]
+["lineTo",407,195.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26796,8 +27362,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",408,182.5]
-["lineTo",415.9296875,182.5]
+["moveTo",408,195.5]
+["lineTo",415.9296875,195.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26806,8 +27372,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",92.3844084864283,139.5]
-["lineTo",407,139.5]
+["moveTo",92.3844084864283,154.5]
+["lineTo",407,154.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26816,8 +27382,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",408,139.5]
-["lineTo",415.9296875,139.5]
+["moveTo",408,154.5]
+["lineTo",415.9296875,154.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26826,8 +27392,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",92.3844084864283,96.5]
-["lineTo",407,96.5]
+["moveTo",92.3844084864283,113.5]
+["lineTo",407,113.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26836,8 +27402,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",408,96.5]
-["lineTo",415.9296875,96.5]
+["moveTo",408,113.5]
+["lineTo",415.9296875,113.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26846,8 +27412,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",92.3844084864283,53.5]
-["lineTo",407,53.5]
+["moveTo",92.3844084864283,72.5]
+["lineTo",407,72.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26856,8 +27422,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",408,53.5]
-["lineTo",415.9296875,53.5]
+["moveTo",408,72.5]
+["lineTo",415.9296875,72.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26866,8 +27432,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",92.3844084864283,10.5]
-["lineTo",407,10.5]
+["moveTo",92.3844084864283,32.5]
+["lineTo",407,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26876,8 +27442,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",408,10.5]
-["lineTo",415.9296875,10.5]
+["moveTo",408,32.5]
+["lineTo",415.9296875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -26886,7 +27452,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",92.5,10.2]
+["moveTo",92.5,32]
 ["lineTo",92.5,440]
 ["stroke",null]
 ["restore"]
@@ -26906,7 +27472,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",127.5,10.2]
+["moveTo",127.5,32]
 ["lineTo",127.5,440]
 ["stroke",null]
 ["restore"]
@@ -26926,7 +27492,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",162.5,10.2]
+["moveTo",162.5,32]
 ["lineTo",162.5,440]
 ["stroke",null]
 ["restore"]
@@ -26946,7 +27512,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",197.5,10.2]
+["moveTo",197.5,32]
 ["lineTo",197.5,440]
 ["stroke",null]
 ["restore"]
@@ -26966,7 +27532,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",232.5,10.2]
+["moveTo",232.5,32]
 ["lineTo",232.5,440]
 ["stroke",null]
 ["restore"]
@@ -26986,7 +27552,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",267.5,10.2]
+["moveTo",267.5,32]
 ["lineTo",267.5,440]
 ["stroke",null]
 ["restore"]
@@ -27006,7 +27572,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",302.5,10.2]
+["moveTo",302.5,32]
 ["lineTo",302.5,440]
 ["stroke",null]
 ["restore"]
@@ -27026,7 +27592,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",337.5,10.2]
+["moveTo",337.5,32]
 ["lineTo",337.5,440]
 ["stroke",null]
 ["restore"]
@@ -27046,7 +27612,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",372.5,10.2]
+["moveTo",372.5,32]
 ["lineTo",372.5,440]
 ["stroke",null]
 ["restore"]
@@ -27066,7 +27632,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",407.5,10.2]
+["moveTo",407.5,32]
 ["lineTo",407.5,440]
 ["stroke",null]
 ["restore"]
@@ -27081,10 +27647,39 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["stroke",null]
 ["restore"]
 ["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
+["restore"]
+["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",407.5,10]
+["moveTo",407.5,32]
 ["lineTo",407.5,441]
 ["stroke",null]
 ["restore"]
@@ -27103,7 +27698,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",418.9296875,397.10110932104914]
+["translate",418.9296875,399.28110932104914]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -27112,7 +27707,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",418.9296875,354.1120971742659]
+["translate",418.9296875,358.4720971742659]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -27121,7 +27716,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",418.9296875,311.12308502748266]
+["translate",418.9296875,317.6630850274826]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -27130,7 +27725,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",418.9296875,268.1340728806994]
+["translate",418.9296875,276.8540728806994]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -27139,7 +27734,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",418.9296875,225.14506073391618]
+["translate",418.9296875,236.0450607339162]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -27148,7 +27743,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",418.9296875,182.15604858713294]
+["translate",418.9296875,195.23604858713296]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -27157,7 +27752,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",418.9296875,139.1670364403497]
+["translate",418.9296875,154.4270364403497]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -27166,7 +27761,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",418.9296875,96.17802429356648]
+["translate",418.9296875,113.61802429356648]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -27175,7 +27770,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",418.9296875,53.18901214678324]
+["translate",418.9296875,72.80901214678323]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -27184,7 +27779,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",418.9296875,10.2]
+["translate",418.9296875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","left"]
@@ -27299,7 +27894,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",122.50846445625729,10.2,3,0,6.283185307179586,false]
+["arc",122.50846445625729,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27307,7 +27902,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",139.16925518817385,182.15604858713294,3,0,6.283185307179586,false]
+["arc",139.16925518817385,195.23604858713296,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27315,7 +27910,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",131.59616849184815,354.1120971742659,3,0,6.283185307179586,false]
+["arc",131.59616849184815,358.4720971742659,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27323,7 +27918,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",140.683872527439,53.18901214678324,3,0,6.283185307179586,false]
+["arc",140.683872527439,72.80901214678323,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27331,7 +27926,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",152.80081124156015,225.14506073391618,3,0,6.283185307179586,false]
+["arc",152.80081124156015,236.0450607339162,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27339,7 +27934,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",154.3154285808253,397.10110932104914,3,0,6.283185307179586,false]
+["arc",154.3154285808253,399.28110932104914,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27347,7 +27942,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",158.85928059862073,96.17802429356648,3,0,6.283185307179586,false]
+["arc",158.85928059862073,113.61802429356648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27355,7 +27950,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",166.43236729494646,268.1340728806994,3,0,6.283185307179586,false]
+["arc",166.43236729494646,276.8540728806994,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27371,7 +27966,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",163.40313261641617,139.1670364403497,3,0,6.283185307179586,false]
+["arc",163.40313261641617,154.4270364403497,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27379,7 +27974,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",180.06392334833276,311.12308502748266,3,0,6.283185307179586,false]
+["arc",180.06392334833276,317.6630850274826,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27387,7 +27982,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",172.49083665200703,10.2,3,0,6.283185307179586,false]
+["arc",172.49083665200703,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27395,7 +27990,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",181.57854068759792,182.15604858713294,3,0,6.283185307179586,false]
+["arc",181.57854068759792,195.23604858713296,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27403,7 +27998,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",193.69547940171907,354.1120971742659,3,0,6.283185307179586,false]
+["arc",193.69547940171907,358.4720971742659,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27411,7 +28006,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",195.21009674098423,53.18901214678324,3,0,6.283185307179586,false]
+["arc",195.21009674098423,72.80901214678323,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27419,7 +28014,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",199.75394875877964,225.14506073391618,3,0,6.283185307179586,false]
+["arc",199.75394875877964,236.0450607339162,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27427,7 +28022,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",207.32703545510537,397.10110932104914,3,0,6.283185307179586,false]
+["arc",207.32703545510537,399.28110932104914,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27435,7 +28030,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",204.29780077657506,96.17802429356648,3,0,6.283185307179586,false]
+["arc",204.29780077657506,113.61802429356648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27443,7 +28038,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",204.29780077657506,268.1340728806994,3,0,6.283185307179586,false]
+["arc",204.29780077657506,276.8540728806994,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27459,7 +28054,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",213.38550481216595,139.1670364403497,3,0,6.283185307179586,false]
+["arc",213.38550481216595,154.4270364403497,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27467,7 +28062,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",222.47320884775678,311.12308502748266,3,0,6.283185307179586,false]
+["arc",222.47320884775678,317.6630850274826,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27475,7 +28070,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",234.59014756187796,10.2,3,0,6.283185307179586,false]
+["arc",234.59014756187796,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27483,7 +28078,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",236.10476490114308,182.15604858713294,3,0,6.283185307179586,false]
+["arc",236.10476490114308,195.23604858713296,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27491,7 +28086,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",240.64861691893853,354.1120971742659,3,0,6.283185307179586,false]
+["arc",240.64861691893853,358.4720971742659,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27499,7 +28094,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",248.22170361526423,53.18901214678324,3,0,6.283185307179586,false]
+["arc",248.22170361526423,72.80901214678323,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27507,7 +28102,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",245.19246893673395,225.14506073391618,3,0,6.283185307179586,false]
+["arc",245.19246893673395,236.0450607339162,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27515,7 +28110,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",245.19246893673395,397.10110932104914,3,0,6.283185307179586,false]
+["arc",245.19246893673395,399.28110932104914,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27523,7 +28118,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",261.85325966865054,96.17802429356648,3,0,6.283185307179586,false]
+["arc",261.85325966865054,113.61802429356648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27531,7 +28126,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",254.28017297232483,268.1340728806994,3,0,6.283185307179586,false]
+["arc",254.28017297232483,276.8540728806994,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27547,7 +28142,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",275.48481572203684,139.1670364403497,3,0,6.283185307179586,false]
+["arc",275.48481572203684,154.4270364403497,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27555,7 +28150,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",276.99943306130194,311.12308502748266,3,0,6.283185307179586,false]
+["arc",276.99943306130194,317.6630850274826,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27563,7 +28158,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",281.5432850790974,10.2,3,0,6.283185307179586,false]
+["arc",281.5432850790974,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27571,7 +28166,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",289.1163717754231,182.15604858713294,3,0,6.283185307179586,false]
+["arc",289.1163717754231,195.23604858713296,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27579,7 +28174,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",286.0871370968929,354.1120971742659,3,0,6.283185307179586,false]
+["arc",286.0871370968929,358.4720971742659,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27587,7 +28182,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",286.0871370968929,53.18901214678324,3,0,6.283185307179586,false]
+["arc",286.0871370968929,72.80901214678323,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27595,7 +28190,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",302.74792782880945,225.14506073391618,3,0,6.283185307179586,false]
+["arc",302.74792782880945,236.0450607339162,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27603,7 +28198,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",295.1748411324837,397.10110932104914,3,0,6.283185307179586,false]
+["arc",295.1748411324837,399.28110932104914,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27611,7 +28206,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",304.26254516807455,96.17802429356648,3,0,6.283185307179586,false]
+["arc",304.26254516807455,113.61802429356648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27619,7 +28214,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",316.3794838821957,268.1340728806994,3,0,6.283185307179586,false]
+["arc",316.3794838821957,276.8540728806994,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27635,7 +28230,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",322.43795323925633,139.1670364403497,3,0,6.283185307179586,false]
+["arc",322.43795323925633,154.4270364403497,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27643,7 +28238,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",330.01103993558206,311.12308502748266,3,0,6.283185307179586,false]
+["arc",330.01103993558206,317.6630850274826,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27651,7 +28246,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",326.98180525705175,10.2,3,0,6.283185307179586,false]
+["arc",326.98180525705175,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27659,7 +28254,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",326.98180525705175,182.15604858713294,3,0,6.283185307179586,false]
+["arc",326.98180525705175,195.23604858713296,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27667,7 +28262,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",343.6425959889683,354.1120971742659,3,0,6.283185307179586,false]
+["arc",343.6425959889683,358.4720971742659,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27675,7 +28270,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",336.0695092926426,53.18901214678324,3,0,6.283185307179586,false]
+["arc",336.0695092926426,72.80901214678323,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27683,7 +28278,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",345.15721332823347,225.14506073391618,3,0,6.283185307179586,false]
+["arc",345.15721332823347,236.0450607339162,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27691,7 +28286,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",357.2741520423546,397.10110932104914,3,0,6.283185307179586,false]
+["arc",357.2741520423546,399.28110932104914,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27699,7 +28294,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",358.7887693816198,96.17802429356648,3,0,6.283185307179586,false]
+["arc",358.7887693816198,113.61802429356648,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27707,7 +28302,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",363.3326213994152,268.1340728806994,3,0,6.283185307179586,false]
+["arc",363.3326213994152,276.8540728806994,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27723,7 +28318,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",367.8764734172106,139.1670364403497,3,0,6.283185307179586,false]
+["arc",367.8764734172106,154.4270364403497,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27731,7 +28326,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",367.8764734172106,311.12308502748266,3,0,6.283185307179586,false]
+["arc",367.8764734172106,317.6630850274826,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27739,7 +28334,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",384.5372641491272,10.2,3,0,6.283185307179586,false]
+["arc",384.5372641491272,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27747,7 +28342,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",376.9641774528015,182.15604858713294,3,0,6.283185307179586,false]
+["arc",376.9641774528015,195.23604858713296,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27755,7 +28350,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",386.0518814883924,354.1120971742659,3,0,6.283185307179586,false]
+["arc",386.0518814883924,358.4720971742659,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27763,7 +28358,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",398.16882020251353,53.18901214678324,3,0,6.283185307179586,false]
+["arc",398.16882020251353,72.80901214678323,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27771,7 +28366,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",399.68343754177863,225.14506073391618,3,0,6.283185307179586,false]
+["arc",399.68343754177863,236.0450607339162,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -27811,7 +28406,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     expected: <String, Object?>{
       'chartArea': <Object?>[
         20.673828125,
-        28.4,
+        60.4,
         501.998046875,
         501.79999999999995,
       ],
@@ -27832,7 +28427,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613260800000.0, 'T6', false],
             <Object?>[1618358400000.0, 'T7', false],
           ],
-          'box': <Object?>[20.673828125, 0.0, 501.998046875, 28.4],
+          'box': <Object?>[20.673828125, 32.0, 501.998046875, 60.4],
           'labelRotation': 0.0,
           'paddings': <Object?>[10.001953125, 0.0, 10.001953125, 0.0],
           'tickPixels': <Object?>[
@@ -27978,25 +28573,25 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 28.4, 20.673828125, 501.79999999999995],
+          'box': <Object?>[0.0, 60.4, 20.673828125, 501.79999999999995],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
             501.79999999999995,
-            449.19999999999993,
-            396.59999999999997,
-            344.0,
-            291.4,
-            238.79999999999998,
-            186.20000000000002,
-            133.6,
-            81.00000000000003,
-            28.4,
+            452.7555555555555,
+            403.71111111111105,
+            354.6666666666667,
+            305.6222222222222,
+            256.5777777777777,
+            207.53333333333336,
+            158.48888888888888,
+            109.44444444444446,
+            60.4,
           ],
           'valuePixels': <Object?>[
             501.79999999999995,
-            265.09999999999997,
-            28.4,
+            281.09999999999997,
+            60.4,
           ],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
           'basePixel': 501.79999999999995,
@@ -28005,13 +28600,13 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
       'points': <Object?>[
         <Object?>[
           <Object?>[20.673828125, 501.79999999999995],
-          <Object?>[89.43443080357143, 291.4],
-          <Object?>[158.19503348214286, 81.00000000000003],
-          <Object?>[226.95563616071428, 449.19999999999993],
-          <Object?>[295.7162388392857, 238.79999999999998],
-          <Object?>[364.47684151785717, 28.4],
-          <Object?>[433.23744419642856, 396.59999999999997],
-          <Object?>[501.998046875, 186.20000000000002],
+          <Object?>[89.43443080357143, 305.6222222222222],
+          <Object?>[158.19503348214286, 109.44444444444446],
+          <Object?>[226.95563616071428, 452.7555555555555],
+          <Object?>[295.7162388392857, 256.5777777777777],
+          <Object?>[364.47684151785717, 60.4],
+          <Object?>[433.23744419642856, 403.71111111111105],
+          <Object?>[501.998046875, 207.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -28025,7 +28620,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",20.5,29]
+["moveTo",20.5,61]
 ["lineTo",20.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -28035,8 +28630,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",20.5,20.4]
-["lineTo",20.5,28]
+["moveTo",20.5,52.4]
+["lineTo",20.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28045,7 +28640,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",89.5,29]
+["moveTo",89.5,61]
 ["lineTo",89.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -28055,8 +28650,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",89.5,20.4]
-["lineTo",89.5,28]
+["moveTo",89.5,52.4]
+["lineTo",89.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28065,7 +28660,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",158.5,29]
+["moveTo",158.5,61]
 ["lineTo",158.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -28075,8 +28670,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",158.5,20.4]
-["lineTo",158.5,28]
+["moveTo",158.5,52.4]
+["lineTo",158.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28085,7 +28680,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",226.5,29]
+["moveTo",226.5,61]
 ["lineTo",226.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -28095,8 +28690,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",226.5,20.4]
-["lineTo",226.5,28]
+["moveTo",226.5,52.4]
+["lineTo",226.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28105,7 +28700,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",295.5,29]
+["moveTo",295.5,61]
 ["lineTo",295.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -28115,8 +28710,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",295.5,20.4]
-["lineTo",295.5,28]
+["moveTo",295.5,52.4]
+["lineTo",295.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28125,7 +28720,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",364.5,29]
+["moveTo",364.5,61]
 ["lineTo",364.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -28135,8 +28730,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",364.5,20.4]
-["lineTo",364.5,28]
+["moveTo",364.5,52.4]
+["lineTo",364.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28145,7 +28740,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",433.5,29]
+["moveTo",433.5,61]
 ["lineTo",433.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -28155,8 +28750,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",433.5,20.4]
-["lineTo",433.5,28]
+["moveTo",433.5,52.4]
+["lineTo",433.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28165,7 +28760,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",501.5,29]
+["moveTo",501.5,61]
 ["lineTo",501.5,501.79999999999995]
 ["stroke",null]
 ["restore"]
@@ -28175,8 +28770,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",501.5,20.4]
-["lineTo",501.5,28]
+["moveTo",501.5,52.4]
+["lineTo",501.5,60]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28205,8 +28800,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,449.5]
-["lineTo",501.998046875,449.5]
+["moveTo",21,452.5]
+["lineTo",501.998046875,452.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28215,8 +28810,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,449.5]
-["lineTo",20,449.5]
+["moveTo",12.673828125,452.5]
+["lineTo",20,452.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28225,8 +28820,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,396.5]
-["lineTo",501.998046875,396.5]
+["moveTo",21,403.5]
+["lineTo",501.998046875,403.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28235,8 +28830,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,396.5]
-["lineTo",20,396.5]
+["moveTo",12.673828125,403.5]
+["lineTo",20,403.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28245,8 +28840,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,344.5]
-["lineTo",501.998046875,344.5]
+["moveTo",21,354.5]
+["lineTo",501.998046875,354.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28255,8 +28850,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,344.5]
-["lineTo",20,344.5]
+["moveTo",12.673828125,354.5]
+["lineTo",20,354.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28265,8 +28860,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,291.5]
-["lineTo",501.998046875,291.5]
+["moveTo",21,305.5]
+["lineTo",501.998046875,305.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28275,8 +28870,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,291.5]
-["lineTo",20,291.5]
+["moveTo",12.673828125,305.5]
+["lineTo",20,305.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28285,8 +28880,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,238.5]
-["lineTo",501.998046875,238.5]
+["moveTo",21,256.5]
+["lineTo",501.998046875,256.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28295,8 +28890,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,238.5]
-["lineTo",20,238.5]
+["moveTo",12.673828125,256.5]
+["lineTo",20,256.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28305,8 +28900,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,186.5]
-["lineTo",501.998046875,186.5]
+["moveTo",21,207.5]
+["lineTo",501.998046875,207.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28315,8 +28910,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,186.5]
-["lineTo",20,186.5]
+["moveTo",12.673828125,207.5]
+["lineTo",20,207.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28325,8 +28920,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,133.5]
-["lineTo",501.998046875,133.5]
+["moveTo",21,158.5]
+["lineTo",501.998046875,158.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28335,8 +28930,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,133.5]
-["lineTo",20,133.5]
+["moveTo",12.673828125,158.5]
+["lineTo",20,158.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28345,8 +28940,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,81.5]
-["lineTo",501.998046875,81.5]
+["moveTo",21,109.5]
+["lineTo",501.998046875,109.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28355,8 +28950,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,81.5]
-["lineTo",20,81.5]
+["moveTo",12.673828125,109.5]
+["lineTo",20,109.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28365,8 +28960,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,28.5]
-["lineTo",501.998046875,28.5]
+["moveTo",21,60.5]
+["lineTo",501.998046875,60.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28375,25 +28970,54 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,28.5]
-["lineTo",20,28.5]
+["moveTo",12.673828125,60.5]
+["lineTo",20,60.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20,28.5]
-["lineTo",502,28.5]
+["moveTo",20,60.5]
+["lineTo",502,60.5]
 ["stroke",null]
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,0,512,28.4]
+["rect",0,32,512,28.4]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",20.673828125,17.4]
+["translate",20.673828125,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28402,7 +29026,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",89.43443080357143,17.4]
+["translate",89.43443080357143,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28411,7 +29035,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",158.19503348214286,17.4]
+["translate",158.19503348214286,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28420,7 +29044,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",226.95563616071428,17.4]
+["translate",226.95563616071428,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28429,7 +29053,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",295.7162388392857,17.4]
+["translate",295.7162388392857,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28438,7 +29062,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",364.47684151785717,17.4]
+["translate",364.47684151785717,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28447,7 +29071,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",433.23744419642856,17.4]
+["translate",433.23744419642856,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28456,7 +29080,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",501.998046875,17.4]
+["translate",501.998046875,49.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -28468,7 +29092,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,28]
+["moveTo",20.5,60]
 ["lineTo",20.5,502]
 ["stroke",null]
 ["restore"]
@@ -28487,7 +29111,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,449.19999999999993]
+["translate",9.673828125,452.7555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28496,7 +29120,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,396.59999999999997]
+["translate",9.673828125,403.71111111111105]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28505,7 +29129,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,344]
+["translate",9.673828125,354.6666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28514,7 +29138,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,291.4]
+["translate",9.673828125,305.6222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28523,7 +29147,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,238.79999999999998]
+["translate",9.673828125,256.5777777777777]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28532,7 +29156,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,186.20000000000002]
+["translate",9.673828125,207.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28541,7 +29165,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,133.6]
+["translate",9.673828125,158.48888888888888]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28550,7 +29174,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,81.00000000000003]
+["translate",9.673828125,109.44444444444446]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28559,7 +29183,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,28.4]
+["translate",9.673828125,60.4]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -28579,7 +29203,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",89.43443080357143,291.4,3,0,6.283185307179586,false]
+["arc",89.43443080357143,305.6222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -28587,7 +29211,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",158.19503348214286,81.00000000000003,3,0,6.283185307179586,false]
+["arc",158.19503348214286,109.44444444444446,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -28595,7 +29219,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",226.95563616071428,449.19999999999993,3,0,6.283185307179586,false]
+["arc",226.95563616071428,452.7555555555555,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -28603,7 +29227,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",295.7162388392857,238.79999999999998,3,0,6.283185307179586,false]
+["arc",295.7162388392857,256.5777777777777,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -28611,7 +29235,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",364.47684151785717,28.4,3,0,6.283185307179586,false]
+["arc",364.47684151785717,60.4,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -28619,7 +29243,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",433.23744419642856,396.59999999999997,3,0,6.283185307179586,false]
+["arc",433.23744419642856,403.71111111111105,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -28627,7 +29251,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",501.998046875,186.20000000000002,3,0,6.283185307179586,false]
+["arc",501.998046875,207.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -28665,12 +29289,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        22.0107421875,
-        10.2,
-        489.32421875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[22.0107421875, 32.0, 489.32421875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -28690,12 +29309,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1618358400000.0, 'Apr 14', false],
             <Object?>[1620950400000.0, 'May 14', false],
           ],
-          'box': <Object?>[
-            22.0107421875,
-            483.59999999999997,
-            489.32421875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[22.0107421875, 483.6, 489.32421875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[22.0107421875, 0.0, 22.67578125, 0.0],
           'tickPixels': <Object?>[
@@ -28849,45 +29463,36 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[
-            1.3369140625,
-            10.2,
-            22.0107421875,
-            483.59999999999997,
-          ],
+          'box': <Object?>[1.3369140625, 32.0, 22.0107421875, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            430.99999999999994,
-            378.4,
-            325.8,
-            273.2,
-            220.59999999999997,
-            168.0,
-            115.39999999999999,
-            62.800000000000026,
-            10.2,
+            483.6,
+            433.4222222222222,
+            383.24444444444447,
+            333.0666666666667,
+            282.8888888888889,
+            232.7111111111111,
+            182.53333333333336,
+            132.35555555555555,
+            82.1777777777778,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 4.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[73.93446180555554, 483.59999999999997],
-          <Object?>[125.8581814236111, 273.2],
-          <Object?>[177.78190104166666, 62.800000000000026],
-          <Object?>[229.7056206597222, 430.99999999999994],
-          <Object?>[281.62934027777777, 220.59999999999997],
-          <Object?>[333.5530598958333, 10.2],
-          <Object?>[385.4767795138889, 378.4],
-          <Object?>[437.4004991319444, 168.0],
+          <Object?>[73.93446180555554, 483.6],
+          <Object?>[125.8581814236111, 282.8888888888889],
+          <Object?>[177.78190104166666, 82.1777777777778],
+          <Object?>[229.7056206597222, 433.4222222222222],
+          <Object?>[281.62934027777777, 232.7111111111111],
+          <Object?>[333.5530598958333, 32.0],
+          <Object?>[385.4767795138889, 383.24444444444447],
+          <Object?>[437.4004991319444, 182.53333333333336],
         ],
       ],
       'drawCalls': '''
@@ -28901,7 +29506,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",22.5,10.2]
+["moveTo",22.5,32]
 ["lineTo",22.5,483]
 ["stroke",null]
 ["restore"]
@@ -28912,7 +29517,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",22.5,484]
-["lineTo",22.5,491.59999999999997]
+["lineTo",22.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28921,7 +29526,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",73.5,10.2]
+["moveTo",73.5,32]
 ["lineTo",73.5,483]
 ["stroke",null]
 ["restore"]
@@ -28932,7 +29537,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",73.5,484]
-["lineTo",73.5,491.59999999999997]
+["lineTo",73.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28941,7 +29546,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",125.5,10.2]
+["moveTo",125.5,32]
 ["lineTo",125.5,483]
 ["stroke",null]
 ["restore"]
@@ -28952,7 +29557,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",125.5,484]
-["lineTo",125.5,491.59999999999997]
+["lineTo",125.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28961,7 +29566,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",177.5,10.2]
+["moveTo",177.5,32]
 ["lineTo",177.5,483]
 ["stroke",null]
 ["restore"]
@@ -28972,7 +29577,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",177.5,484]
-["lineTo",177.5,491.59999999999997]
+["lineTo",177.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -28981,7 +29586,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",229.5,10.2]
+["moveTo",229.5,32]
 ["lineTo",229.5,483]
 ["stroke",null]
 ["restore"]
@@ -28992,7 +29597,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",229.5,484]
-["lineTo",229.5,491.59999999999997]
+["lineTo",229.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29001,7 +29606,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",281.5,10.2]
+["moveTo",281.5,32]
 ["lineTo",281.5,483]
 ["stroke",null]
 ["restore"]
@@ -29012,7 +29617,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",281.5,484]
-["lineTo",281.5,491.59999999999997]
+["lineTo",281.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29021,7 +29626,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",333.5,10.2]
+["moveTo",333.5,32]
 ["lineTo",333.5,483]
 ["stroke",null]
 ["restore"]
@@ -29032,7 +29637,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",333.5,484]
-["lineTo",333.5,491.59999999999997]
+["lineTo",333.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29041,7 +29646,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",385.5,10.2]
+["moveTo",385.5,32]
 ["lineTo",385.5,483]
 ["stroke",null]
 ["restore"]
@@ -29052,7 +29657,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",385.5,484]
-["lineTo",385.5,491.59999999999997]
+["lineTo",385.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29061,7 +29666,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",437.5,10.2]
+["moveTo",437.5,32]
 ["lineTo",437.5,483]
 ["stroke",null]
 ["restore"]
@@ -29072,7 +29677,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",437.5,484]
-["lineTo",437.5,491.59999999999997]
+["lineTo",437.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29081,7 +29686,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",489.5,10.2]
+["moveTo",489.5,32]
 ["lineTo",489.5,483]
 ["stroke",null]
 ["restore"]
@@ -29092,7 +29697,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",489.5,484]
-["lineTo",489.5,491.59999999999997]
+["lineTo",489.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29121,8 +29726,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",23,430.5]
-["lineTo",489.32421875,430.5]
+["moveTo",23,433.5]
+["lineTo",489.32421875,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29131,8 +29736,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",14.0107421875,430.5]
-["lineTo",22,430.5]
+["moveTo",14.0107421875,433.5]
+["lineTo",22,433.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29141,8 +29746,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",23,378.5]
-["lineTo",489.32421875,378.5]
+["moveTo",23,383.5]
+["lineTo",489.32421875,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29151,8 +29756,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",14.0107421875,378.5]
-["lineTo",22,378.5]
+["moveTo",14.0107421875,383.5]
+["lineTo",22,383.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29161,8 +29766,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",23,325.5]
-["lineTo",489.32421875,325.5]
+["moveTo",23,333.5]
+["lineTo",489.32421875,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29171,8 +29776,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",14.0107421875,325.5]
-["lineTo",22,325.5]
+["moveTo",14.0107421875,333.5]
+["lineTo",22,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29181,8 +29786,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",23,273.5]
-["lineTo",489.32421875,273.5]
+["moveTo",23,282.5]
+["lineTo",489.32421875,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29191,8 +29796,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",14.0107421875,273.5]
-["lineTo",22,273.5]
+["moveTo",14.0107421875,282.5]
+["lineTo",22,282.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29201,8 +29806,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",23,220.5]
-["lineTo",489.32421875,220.5]
+["moveTo",23,232.5]
+["lineTo",489.32421875,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29211,8 +29816,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",14.0107421875,220.5]
-["lineTo",22,220.5]
+["moveTo",14.0107421875,232.5]
+["lineTo",22,232.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29221,8 +29826,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",23,168.5]
-["lineTo",489.32421875,168.5]
+["moveTo",23,182.5]
+["lineTo",489.32421875,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29231,8 +29836,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",14.0107421875,168.5]
-["lineTo",22,168.5]
+["moveTo",14.0107421875,182.5]
+["lineTo",22,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29241,8 +29846,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",23,115.5]
-["lineTo",489.32421875,115.5]
+["moveTo",23,132.5]
+["lineTo",489.32421875,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29251,8 +29856,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",14.0107421875,115.5]
-["lineTo",22,115.5]
+["moveTo",14.0107421875,132.5]
+["lineTo",22,132.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29261,8 +29866,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",23,62.5]
-["lineTo",489.32421875,62.5]
+["moveTo",23,82.5]
+["lineTo",489.32421875,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29271,8 +29876,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",14.0107421875,62.5]
-["lineTo",22,62.5]
+["moveTo",14.0107421875,82.5]
+["lineTo",22,82.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29281,8 +29886,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",23,10.5]
-["lineTo",489.32421875,10.5]
+["moveTo",23,32.5]
+["lineTo",489.32421875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29291,9 +29896,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",14.0107421875,10.5]
-["lineTo",22,10.5]
+["moveTo",14.0107421875,32.5]
+["lineTo",22,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -29305,11 +29939,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",22.0107421875,494.59999999999997]
+["translate",22.0107421875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29318,7 +29952,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",73.93446180555554,494.59999999999997]
+["translate",73.93446180555554,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29327,7 +29961,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",125.8581814236111,494.59999999999997]
+["translate",125.8581814236111,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29336,7 +29970,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",177.78190104166666,494.59999999999997]
+["translate",177.78190104166666,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29345,7 +29979,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",229.7056206597222,494.59999999999997]
+["translate",229.7056206597222,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29354,7 +29988,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",281.62934027777777,494.59999999999997]
+["translate",281.62934027777777,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29363,7 +29997,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",333.5530598958333,494.59999999999997]
+["translate",333.5530598958333,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29372,7 +30006,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",385.4767795138889,494.59999999999997]
+["translate",385.4767795138889,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29381,7 +30015,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",437.4004991319444,494.59999999999997]
+["translate",437.4004991319444,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29390,7 +30024,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",489.32421875,494.59999999999997]
+["translate",489.32421875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -29402,7 +30036,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",22.5,10]
+["moveTo",22.5,32]
 ["lineTo",22.5,484]
 ["stroke",null]
 ["restore"]
@@ -29412,7 +30046,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",11.0107421875,483.59999999999997]
+["translate",11.0107421875,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29421,7 +30055,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",11.0107421875,430.99999999999994]
+["translate",11.0107421875,433.4222222222222]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29430,7 +30064,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",11.0107421875,378.4]
+["translate",11.0107421875,383.24444444444447]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29439,7 +30073,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",11.0107421875,325.8]
+["translate",11.0107421875,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29448,7 +30082,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",11.0107421875,273.2]
+["translate",11.0107421875,282.8888888888889]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29457,7 +30091,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",11.0107421875,220.59999999999997]
+["translate",11.0107421875,232.7111111111111]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29466,7 +30100,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",11.0107421875,168]
+["translate",11.0107421875,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29475,7 +30109,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",11.0107421875,115.39999999999999]
+["translate",11.0107421875,132.35555555555555]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29484,7 +30118,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",11.0107421875,62.800000000000026]
+["translate",11.0107421875,82.1777777777778]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29493,7 +30127,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",11.0107421875,10.2]
+["translate",11.0107421875,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -29505,7 +30139,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",73.93446180555554,483.59999999999997,3,0,6.283185307179586,false]
+["arc",73.93446180555554,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -29513,7 +30147,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",125.8581814236111,273.2,3,0,6.283185307179586,false]
+["arc",125.8581814236111,282.8888888888889,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -29521,7 +30155,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",177.78190104166666,62.800000000000026,3,0,6.283185307179586,false]
+["arc",177.78190104166666,82.1777777777778,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -29529,7 +30163,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",229.7056206597222,430.99999999999994,3,0,6.283185307179586,false]
+["arc",229.7056206597222,433.4222222222222,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -29537,7 +30171,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",281.62934027777777,220.59999999999997,3,0,6.283185307179586,false]
+["arc",281.62934027777777,232.7111111111111,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -29545,7 +30179,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",333.5530598958333,10.2,3,0,6.283185307179586,false]
+["arc",333.5530598958333,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -29553,7 +30187,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",385.4767795138889,378.4,3,0,6.283185307179586,false]
+["arc",385.4767795138889,383.24444444444447,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -29561,7 +30195,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",437.4004991319444,168,3,0,6.283185307179586,false]
+["arc",437.4004991319444,182.53333333333336,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -29599,12 +30233,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        493.326171875,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 493.326171875, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -29616,12 +30245,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1610150400000.0, '12AM', false],
             <Object?>[1610236800000.0, '12AM', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            493.326171875,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 493.326171875, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[18.673828125, 0.0, 18.673828125, 0.0],
           'tickPixels': <Object?>[30.681640625, 493.326171875],
@@ -29754,41 +30378,37 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[0.9, '0.9', false],
             <Object?>[1.0, '1.0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            436.26,
-            388.92,
-            341.5799999999999,
-            294.23999999999995,
-            246.89999999999998,
-            199.56,
-            152.22,
-            104.87999999999998,
-            57.53999999999999,
-            10.2,
+            483.6,
+            438.44000000000005,
+            393.28000000000003,
+            348.12,
+            302.96,
+            257.8,
+            212.64000000000001,
+            167.48000000000002,
+            122.31999999999998,
+            77.16,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[1.0, 0.5, 0.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[-2282.541015625, 483.59999999999997],
-          <Object?>[-1819.896484375, -1409.9999999999998],
-          <Object?>[-1357.251953125, -3303.6],
-          <Object?>[1881.259765625, 10.2],
-          <Object?>[2343.904296875, -1883.3999999999999],
-          <Object?>[16223.240234375, -3777.0],
-          <Object?>[16685.884765625, -463.2],
-          <Object?>[32767.0, -2356.8],
+          <Object?>[-2282.541015625, 483.6],
+          <Object?>[-1819.896484375, -1322.8000000000002],
+          <Object?>[-1357.251953125, -3129.2000000000003],
+          <Object?>[1881.259765625, 32.0],
+          <Object?>[2343.904296875, -1774.4],
+          <Object?>[16223.240234375, -3580.8],
+          <Object?>[16685.884765625, -419.6],
+          <Object?>[32767.0, -2226.0],
         ],
       ],
       'drawCalls': '''
@@ -29802,7 +30422,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -29813,7 +30433,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29822,7 +30442,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",493.5,10.2]
+["moveTo",493.5,32]
 ["lineTo",493.5,483]
 ["stroke",null]
 ["restore"]
@@ -29833,7 +30453,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",493.5,484]
-["lineTo",493.5,491.59999999999997]
+["lineTo",493.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29862,8 +30482,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,436.5]
-["lineTo",493.326171875,436.5]
+["moveTo",31,438.5]
+["lineTo",493.326171875,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29872,8 +30492,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,436.5]
-["lineTo",30,436.5]
+["moveTo",22.681640625,438.5]
+["lineTo",30,438.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29882,8 +30502,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,388.5]
-["lineTo",493.326171875,388.5]
+["moveTo",31,393.5]
+["lineTo",493.326171875,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29892,8 +30512,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,388.5]
-["lineTo",30,388.5]
+["moveTo",22.681640625,393.5]
+["lineTo",30,393.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29902,8 +30522,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,341.5]
-["lineTo",493.326171875,341.5]
+["moveTo",31,348.5]
+["lineTo",493.326171875,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29912,8 +30532,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,341.5]
-["lineTo",30,341.5]
+["moveTo",22.681640625,348.5]
+["lineTo",30,348.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29922,8 +30542,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,294.5]
-["lineTo",493.326171875,294.5]
+["moveTo",31,302.5]
+["lineTo",493.326171875,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29932,8 +30552,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,294.5]
-["lineTo",30,294.5]
+["moveTo",22.681640625,302.5]
+["lineTo",30,302.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29942,8 +30562,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,246.5]
-["lineTo",493.326171875,246.5]
+["moveTo",31,257.5]
+["lineTo",493.326171875,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29952,8 +30572,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,246.5]
-["lineTo",30,246.5]
+["moveTo",22.681640625,257.5]
+["lineTo",30,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29962,8 +30582,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,199.5]
-["lineTo",493.326171875,199.5]
+["moveTo",31,212.5]
+["lineTo",493.326171875,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29972,8 +30592,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,199.5]
-["lineTo",30,199.5]
+["moveTo",22.681640625,212.5]
+["lineTo",30,212.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29982,8 +30602,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,152.5]
-["lineTo",493.326171875,152.5]
+["moveTo",31,167.5]
+["lineTo",493.326171875,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -29992,8 +30612,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,152.5]
-["lineTo",30,152.5]
+["moveTo",22.681640625,167.5]
+["lineTo",30,167.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30002,8 +30622,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,104.5]
-["lineTo",493.326171875,104.5]
+["moveTo",31,122.5]
+["lineTo",493.326171875,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30012,8 +30632,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,104.5]
-["lineTo",30,104.5]
+["moveTo",22.681640625,122.5]
+["lineTo",30,122.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30022,8 +30642,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,57.5]
-["lineTo",493.326171875,57.5]
+["moveTo",31,77.5]
+["lineTo",493.326171875,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30032,8 +30652,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,57.5]
-["lineTo",30,57.5]
+["moveTo",22.681640625,77.5]
+["lineTo",30,77.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30042,8 +30662,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",493.326171875,10.5]
+["moveTo",31,32.5]
+["lineTo",493.326171875,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30052,9 +30672,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -30066,11 +30715,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30079,7 +30728,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",493.326171875,494.59999999999997]
+["translate",493.326171875,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30091,7 +30740,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -30101,7 +30750,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30110,7 +30759,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,436.26]
+["translate",19.681640625,438.44000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30119,7 +30768,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,388.92]
+["translate",19.681640625,393.28000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30128,7 +30777,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,341.5799999999999]
+["translate",19.681640625,348.12]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30137,7 +30786,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,294.23999999999995]
+["translate",19.681640625,302.96]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30146,7 +30795,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,246.89999999999998]
+["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30155,7 +30804,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,199.56]
+["translate",19.681640625,212.64000000000001]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30164,7 +30813,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,152.22]
+["translate",19.681640625,167.48000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30173,7 +30822,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,104.87999999999998]
+["translate",19.681640625,122.31999999999998]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30182,7 +30831,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,57.53999999999999]
+["translate",19.681640625,77.16]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30191,7 +30840,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30230,7 +30879,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[20.673828125, 10.2, 512.0, 483.59999999999997],
+      'chartArea': <Object?>[20.673828125, 32.0, 512.0, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -30246,12 +30895,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1613260800000.0, 'Feb 14', false],
             <Object?>[1618358400000.0, 'Apr 14', false],
           ],
-          'box': <Object?>[
-            20.673828125,
-            483.59999999999997,
-            512.0,
-            511.99999999999994,
-          ],
+          'box': <Object?>[20.673828125, 483.6, 512.0, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[15.411473908492823, 0.0, 0.0, 0.0],
           'tickPixels': <Object?>[
@@ -30399,39 +31043,35 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[8.0, '8', false],
             <Object?>[9.0, '9', false],
           ],
-          'box': <Object?>[0.0, 10.2, 20.673828125, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 20.673828125, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            424.42499999999995,
-            365.24999999999994,
-            306.075,
-            246.89999999999998,
-            187.72499999999997,
-            128.54999999999998,
-            69.375,
-            10.2,
+            483.6,
+            427.15000000000003,
+            370.70000000000005,
+            314.25,
+            257.8,
+            201.35000000000002,
+            144.9,
+            88.45,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[9.0, 5.0, 1.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[-0.3830078125000007, 542.775],
-          <Object?>[4.296289062499998, 306.075],
-          <Object?>[8.975585937499996, 69.375],
-          <Object?>[111.92011718750001, 483.59999999999997],
-          <Object?>[200.82675781250003, 246.89999999999998],
-          <Object?>[289.7333984375, 10.2],
-          <Object?>[378.6400390625001, 424.42499999999995],
-          <Object?>[467.54667968750005, 187.72499999999997],
+          <Object?>[-0.3830078125000007, 540.05],
+          <Object?>[4.296289062499998, 314.25],
+          <Object?>[8.975585937499996, 88.45],
+          <Object?>[111.92011718750001, 483.6],
+          <Object?>[200.82675781250003, 257.8],
+          <Object?>[289.7333984375, 32.0],
+          <Object?>[378.6400390625001, 427.15000000000003],
+          <Object?>[467.54667968750005, 201.35000000000002],
         ],
       ],
       'drawCalls': '''
@@ -30445,7 +31085,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",23.5,10.2]
+["moveTo",23.5,32]
 ["lineTo",23.5,483]
 ["stroke",null]
 ["restore"]
@@ -30456,7 +31096,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",23.5,484]
-["lineTo",23.5,491.59999999999997]
+["lineTo",23.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30465,7 +31105,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",111.5,10.2]
+["moveTo",111.5,32]
 ["lineTo",111.5,483]
 ["stroke",null]
 ["restore"]
@@ -30476,7 +31116,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",111.5,484]
-["lineTo",111.5,491.59999999999997]
+["lineTo",111.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30485,7 +31125,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",200.5,10.2]
+["moveTo",200.5,32]
 ["lineTo",200.5,483]
 ["stroke",null]
 ["restore"]
@@ -30496,7 +31136,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",200.5,484]
-["lineTo",200.5,491.59999999999997]
+["lineTo",200.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30505,7 +31145,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",289.5,10.2]
+["moveTo",289.5,32]
 ["lineTo",289.5,483]
 ["stroke",null]
 ["restore"]
@@ -30516,7 +31156,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",289.5,484]
-["lineTo",289.5,491.59999999999997]
+["lineTo",289.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30525,7 +31165,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",378.5,10.2]
+["moveTo",378.5,32]
 ["lineTo",378.5,483]
 ["stroke",null]
 ["restore"]
@@ -30536,7 +31176,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",378.5,484]
-["lineTo",378.5,491.59999999999997]
+["lineTo",378.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30545,7 +31185,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",467.5,10.2]
+["moveTo",467.5,32]
 ["lineTo",467.5,483]
 ["stroke",null]
 ["restore"]
@@ -30556,7 +31196,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",467.5,484]
-["lineTo",467.5,491.59999999999997]
+["lineTo",467.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30585,8 +31225,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,424.5]
-["lineTo",512,424.5]
+["moveTo",21,427.5]
+["lineTo",512,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30595,8 +31235,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,424.5]
-["lineTo",20,424.5]
+["moveTo",12.673828125,427.5]
+["lineTo",20,427.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30605,8 +31245,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,365.5]
-["lineTo",512,365.5]
+["moveTo",21,370.5]
+["lineTo",512,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30615,8 +31255,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,365.5]
-["lineTo",20,365.5]
+["moveTo",12.673828125,370.5]
+["lineTo",20,370.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30625,8 +31265,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,306.5]
-["lineTo",512,306.5]
+["moveTo",21,314.5]
+["lineTo",512,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30635,8 +31275,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,306.5]
-["lineTo",20,306.5]
+["moveTo",12.673828125,314.5]
+["lineTo",20,314.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30645,8 +31285,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,246.5]
-["lineTo",512,246.5]
+["moveTo",21,257.5]
+["lineTo",512,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30655,8 +31295,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,246.5]
-["lineTo",20,246.5]
+["moveTo",12.673828125,257.5]
+["lineTo",20,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30665,8 +31305,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,187.5]
-["lineTo",512,187.5]
+["moveTo",21,201.5]
+["lineTo",512,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30675,8 +31315,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,187.5]
-["lineTo",20,187.5]
+["moveTo",12.673828125,201.5]
+["lineTo",20,201.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30685,8 +31325,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,128.5]
-["lineTo",512,128.5]
+["moveTo",21,144.5]
+["lineTo",512,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30695,8 +31335,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,128.5]
-["lineTo",20,128.5]
+["moveTo",12.673828125,144.5]
+["lineTo",20,144.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30705,8 +31345,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,69.5]
-["lineTo",512,69.5]
+["moveTo",21,88.5]
+["lineTo",512,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30715,8 +31355,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,69.5]
-["lineTo",20,69.5]
+["moveTo",12.673828125,88.5]
+["lineTo",20,88.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30725,8 +31365,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",21,10.5]
-["lineTo",512,10.5]
+["moveTo",21,32.5]
+["lineTo",512,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -30735,9 +31375,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",12.673828125,10.5]
-["lineTo",20,10.5]
+["moveTo",12.673828125,32.5]
+["lineTo",20,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -30749,11 +31418,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",23.0134765625,494.59999999999997]
+["translate",23.0134765625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30762,7 +31431,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",111.92011718750001,494.59999999999997]
+["translate",111.92011718750001,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30771,7 +31440,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",200.82675781250003,494.59999999999997]
+["translate",200.82675781250003,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30780,7 +31449,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",289.7333984375,494.59999999999997]
+["translate",289.7333984375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30789,7 +31458,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",378.6400390625001,494.59999999999997]
+["translate",378.6400390625001,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30798,7 +31467,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",467.54667968750005,494.59999999999997]
+["translate",467.54667968750005,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -30810,7 +31479,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",20.5,10]
+["moveTo",20.5,32]
 ["lineTo",20.5,484]
 ["stroke",null]
 ["restore"]
@@ -30820,7 +31489,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,483.59999999999997]
+["translate",9.673828125,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30829,7 +31498,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,424.42499999999995]
+["translate",9.673828125,427.15000000000003]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30838,7 +31507,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,365.24999999999994]
+["translate",9.673828125,370.70000000000005]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30847,7 +31516,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,306.075]
+["translate",9.673828125,314.25]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30856,7 +31525,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,246.89999999999998]
+["translate",9.673828125,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30865,7 +31534,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,187.72499999999997]
+["translate",9.673828125,201.35000000000002]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30874,7 +31543,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,128.54999999999998]
+["translate",9.673828125,144.9]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30883,7 +31552,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,69.375]
+["translate",9.673828125,88.45]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30892,7 +31561,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",9.673828125,10.2]
+["translate",9.673828125,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -30904,7 +31573,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",111.92011718750001,483.59999999999997,3,0,6.283185307179586,false]
+["arc",111.92011718750001,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -30912,7 +31581,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",200.82675781250003,246.89999999999998,3,0,6.283185307179586,false]
+["arc",200.82675781250003,257.8,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -30920,7 +31589,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",289.7333984375,10.2,3,0,6.283185307179586,false]
+["arc",289.7333984375,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -30928,7 +31597,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",378.6400390625001,424.42499999999995,3,0,6.283185307179586,false]
+["arc",378.6400390625001,427.15000000000003,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -30936,7 +31605,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",467.54667968750005,187.72499999999997,3,0,6.283185307179586,false]
+["arc",467.54667968750005,201.35000000000002,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -30963,12 +31632,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
     },
     options: <String, Object?>{},
     expected: <String, Object?>{
-      'chartArea': <Object?>[
-        30.681640625,
-        10.2,
-        493.6572265625,
-        483.59999999999997,
-      ],
+      'chartArea': <Object?>[30.681640625, 32.0, 493.6572265625, 483.6],
       'scales': <String, Object?>{
         'x': <String, Object?>{
           'type': 'timeseries',
@@ -30982,12 +31646,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[1610150400000.0, 'Jan 9', false],
             <Object?>[1612137600000.0, 'Feb 1', false],
           ],
-          'box': <Object?>[
-            30.681640625,
-            483.59999999999997,
-            493.6572265625,
-            511.99999999999994,
-          ],
+          'box': <Object?>[30.681640625, 483.6, 493.6572265625, 512.0],
           'labelRotation': 0.0,
           'paddings': <Object?>[17.677734375, 0.0, 18.3427734375, 0.0],
           'tickPixels': <Object?>[
@@ -31122,30 +31781,26 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             <Object?>[3.5, '3.5', false],
             <Object?>[4.0, '4.0', false],
           ],
-          'box': <Object?>[0.0, 10.2, 30.681640625, 483.59999999999997],
+          'box': <Object?>[0.0, 32.0, 30.681640625, 483.6],
           'labelRotation': 0.0,
           'paddings': <Object?>[0.0, 10.2, 0.0, 10.2],
           'tickPixels': <Object?>[
-            483.59999999999997,
-            404.7,
-            325.8,
-            246.89999999999998,
-            168.0,
-            89.09999999999998,
-            10.2,
+            483.6,
+            408.33333333333337,
+            333.0666666666667,
+            257.8,
+            182.53333333333336,
+            107.26666666666665,
+            32.0,
           ],
-          'valuePixels': <Object?>[
-            483.59999999999997,
-            246.89999999999998,
-            10.2,
-          ],
+          'valuePixels': <Object?>[483.6, 257.8, 32.0],
           'valueForPixel': <Object?>[4.0, 2.5, 1.0],
-          'basePixel': 483.59999999999997,
+          'basePixel': 483.6,
         },
       },
       'points': <Object?>[
         <Object?>[
-          <Object?>[30.681640625, 483.59999999999997],
+          <Object?>[30.681640625, 483.6],
           <Object?>[
             185.0068359375,
             <String, Object?>{'num': 'NaN'},
@@ -31154,7 +31809,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
             339.33203125,
             <String, Object?>{'num': 'NaN'},
           ],
-          <Object?>[493.6572265625, 10.2],
+          <Object?>[493.6572265625, 32.0],
         ],
       ],
       'drawCalls': '''
@@ -31168,7 +31823,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",30.5,10.2]
+["moveTo",30.5,32]
 ["lineTo",30.5,483]
 ["stroke",null]
 ["restore"]
@@ -31179,7 +31834,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",30.5,484]
-["lineTo",30.5,491.59999999999997]
+["lineTo",30.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31188,7 +31843,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",185.5,10.2]
+["moveTo",185.5,32]
 ["lineTo",185.5,483]
 ["stroke",null]
 ["restore"]
@@ -31199,7 +31854,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",185.5,484]
-["lineTo",185.5,491.59999999999997]
+["lineTo",185.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31208,7 +31863,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",339.5,10.2]
+["moveTo",339.5,32]
 ["lineTo",339.5,483]
 ["stroke",null]
 ["restore"]
@@ -31219,7 +31874,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",339.5,484]
-["lineTo",339.5,491.59999999999997]
+["lineTo",339.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31228,7 +31883,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",493.5,10.2]
+["moveTo",493.5,32]
 ["lineTo",493.5,483]
 ["stroke",null]
 ["restore"]
@@ -31239,7 +31894,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDashOffset",null]
 ["beginPath"]
 ["moveTo",493.5,484]
-["lineTo",493.5,491.59999999999997]
+["lineTo",493.5,491.6]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31268,8 +31923,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,404.5]
-["lineTo",493.6572265625,404.5]
+["moveTo",31,408.5]
+["lineTo",493.6572265625,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31278,8 +31933,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,404.5]
-["lineTo",30,404.5]
+["moveTo",22.681640625,408.5]
+["lineTo",30,408.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31288,8 +31943,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,325.5]
-["lineTo",493.6572265625,325.5]
+["moveTo",31,333.5]
+["lineTo",493.6572265625,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31298,8 +31953,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,325.5]
-["lineTo",30,325.5]
+["moveTo",22.681640625,333.5]
+["lineTo",30,333.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31308,8 +31963,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,246.5]
-["lineTo",493.6572265625,246.5]
+["moveTo",31,257.5]
+["lineTo",493.6572265625,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31318,8 +31973,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,246.5]
-["lineTo",30,246.5]
+["moveTo",22.681640625,257.5]
+["lineTo",30,257.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31328,8 +31983,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,168.5]
-["lineTo",493.6572265625,168.5]
+["moveTo",31,182.5]
+["lineTo",493.6572265625,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31338,8 +31993,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,168.5]
-["lineTo",30,168.5]
+["moveTo",22.681640625,182.5]
+["lineTo",30,182.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31348,8 +32003,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,89.5]
-["lineTo",493.6572265625,89.5]
+["moveTo",31,107.5]
+["lineTo",493.6572265625,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31358,8 +32013,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,89.5]
-["lineTo",30,89.5]
+["moveTo",22.681640625,107.5]
+["lineTo",30,107.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31368,8 +32023,8 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",0]
 ["beginPath"]
-["moveTo",31,10.5]
-["lineTo",493.6572265625,10.5]
+["moveTo",31,32.5]
+["lineTo",493.6572265625,32.5]
 ["stroke",null]
 ["restore"]
 ["save"]
@@ -31378,9 +32033,38 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineDash",[]]
 ["setLineDashOffset",null]
 ["beginPath"]
-["moveTo",22.681640625,10.5]
-["lineTo",30,10.5]
+["moveTo",22.681640625,32.5]
+["lineTo",30,32.5]
 ["stroke",null]
+["restore"]
+["save"]
+["beginPath"]
+["rect",0,0,512,32]
+["clip",null,null]
+["setTextAlign","left"]
+["setTextBaseline","middle"]
+["setLineWidth",0.5]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["setStrokeStyle","#666"]
+["setFillStyle","#666"]
+["measureText","undefined"]
+["save"]
+["setFillStyle","rgba(0,0,0,0.1)"]
+["setLineCap","butt"]
+["setLineDashOffset",0]
+["setLineJoin","miter"]
+["setLineWidth",1]
+["setStrokeStyle","rgba(0,0,0,0.1)"]
+["setLineDash",[]]
+["beginPath"]
+["rect",206.6416015625,10,40,12]
+["fill",null,null]
+["stroke",null]
+["restore"]
+["save"]
+["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
+["fillText","undefined",252.6416015625,16,null]
+["restore"]
 ["restore"]
 ["save"]
 ["setLineWidth",1]
@@ -31392,11 +32076,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["beginPath"]
-["rect",0,483.59999999999997,512,28.399999999999977]
+["rect",0,483.6,512,28.399999999999977]
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",30.681640625,494.59999999999997]
+["translate",30.681640625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -31405,7 +32089,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",185.0068359375,494.59999999999997]
+["translate",185.0068359375,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -31414,7 +32098,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",339.33203125,494.59999999999997]
+["translate",339.33203125,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -31423,7 +32107,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",493.6572265625,494.59999999999997]
+["translate",493.6572265625,494.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","center"]
@@ -31435,7 +32119,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setStrokeStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["moveTo",30.5,10]
+["moveTo",30.5,32]
 ["lineTo",30.5,484]
 ["stroke",null]
 ["restore"]
@@ -31445,7 +32129,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["clip",null,null]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,483.59999999999997]
+["translate",19.681640625,483.6]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31454,7 +32138,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,404.7]
+["translate",19.681640625,408.33333333333337]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31463,7 +32147,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,325.8]
+["translate",19.681640625,333.0666666666667]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31472,7 +32156,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,246.89999999999998]
+["translate",19.681640625,257.8]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31481,7 +32165,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,168]
+["translate",19.681640625,182.53333333333336]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31490,7 +32174,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,89.09999999999998]
+["translate",19.681640625,107.26666666666665]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31499,7 +32183,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["restore"]
 ["save"]
 ["setFont","normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-["translate",19.681640625,10.2]
+["translate",19.681640625,32]
 ["rotate",{"num":"-0"}]
 ["setFillStyle","#666"]
 ["setTextAlign","right"]
@@ -31511,7 +32195,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",30.681640625,483.59999999999997,3,0,6.283185307179586,false]
+["arc",30.681640625,483.6,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -31519,7 +32203,7 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 ["setLineWidth",1]
 ["setFillStyle","rgba(0,0,0,0.1)"]
 ["beginPath"]
-["arc",493.6572265625,10.2,3,0,6.283185307179586,false]
+["arc",493.6572265625,32,3,0,6.283185307179586,false]
 ["closePath"]
 ["fill",null,null]
 ["stroke",null]
@@ -31530,6 +32214,11 @@ const List<ScaleTimeseriesReferenceCase> scaleTimeseriesReference = [
 
 /// Each text that the cases measured, with its font and width.
 const List<ScaleTimeseriesReferenceWidth> scaleTimeseriesReferenceWidths = [
+  (
+    font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
+    text: 'undefined',
+    width: 52.716796875,
+  ),
   (
     font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
     text: '0',
@@ -31820,7 +32509,6 @@ const List<ScaleTimeseriesReferenceWidth> scaleTimeseriesReferenceWidths = [
     text: 'Jul 2021',
     width: 45.369140625,
   ),
-  (font: '10px sans-serif', text: '12:00:00.000 am', width: 75.05859375),
   (
     font: "normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
     text: '12:00:00.001 am',

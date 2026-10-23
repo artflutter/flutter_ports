@@ -9,7 +9,6 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -68,10 +67,6 @@ AnyObject _config(String type) => <String, Object?>{
 };
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([legend]);
-
   group('Default Configs', () {
     group('Doughnut Chart', () {
       testWidgets('should return correct legend label objects', (

@@ -19,8 +19,18 @@
 // 10 px for each character. Node.js has no DOM, so `_detectPlatform` gives
 // BasicPlatform, which disables the animations. The mock has no
 // `resetTransform`: the fake context adds it, with a record. The scenarios
-// register the four element classes, a dataset controller `test` and a
-// scale `testlinear`. The Dart test builds the same classes.
+// register the four element classes, the seven plugins of
+// src/plugins/index.js, a dataset controller `test` and a scale
+// `testlinear`. The Dart test builds the same classes. The plugins are the
+// ones that flutter_test_config.dart registers before main() of the Dart
+// test: the script registers them by name, in the order of
+// src/plugins/index.js:1-7, and then sets
+// `defaults.plugins.colors.enabled = false` (src/index.umd.ts:28 and
+// test/index.js:25-28, Chart.js ADR 0041 section 1 item 3). It does not
+// give the module namespace to `Chart.register`: `each` does not walk a
+// module namespace (helpers.core.ts:53-54, :152), so the call registers
+// nothing. The script stops unless the registry then has the seven plugin
+// ids.
 //
 // Each observation is one line `<label>: <value>`. A value is a text of the
 // observation, or the JSON of JSON.stringify with a replacer: a labelled
@@ -58,6 +68,7 @@ const SCALE = new URL('core/core.scale.js', SRC);
 const INTERACTION = new URL('core/core.interaction.js', SRC);
 const ELEMENTS = new URL('elements/index.js', SRC);
 const PLATFORM = new URL('platform/index.js', SRC);
+const PLUGINS = new URL('plugins/index.js', SRC);
 const PACKAGE = new URL('Chart.js/package.json', THIRD_PARTY);
 const CONTEXT = new URL('chartjs-test-utils/src/context.js', THIRD_PARTY);
 const KURKLE = new URL('kurkle-color/src/index.esm.js', THIRD_PARTY);
@@ -72,6 +83,7 @@ for (const url of [
   INTERACTION,
   ELEMENTS,
   PLATFORM,
+  PLUGINS,
   PACKAGE,
   CONTEXT,
   KURKLE,
@@ -140,6 +152,7 @@ const {ArcElement, BarElement, LineElement, PointElement} = await import(
   ELEMENTS.href
 );
 const {BasicPlatform} = await import(PLATFORM.href);
+const pluginExports = await import(PLUGINS.href);
 const {default: Context} = await import(CONTEXT.href);
 
 // ---------------------------------------------------------------------------
@@ -282,6 +295,28 @@ class TestScale extends Scale {
 }
 
 Chart.register(ArcElement, BarElement, LineElement, PointElement);
+// src/index.umd.ts:28 registers the namespace `plugins`. A module namespace
+// is not a plain object for helpers.core.ts:53-54, so `each` (:152) does not
+// walk it. Thus the script registers the exports by name, in the order of
+// src/plugins/index.js:1-7 (Chart.js ADR 0041, section 1 item 3).
+Chart.register(
+  pluginExports.Colors,
+  pluginExports.Decimation,
+  pluginExports.Filler,
+  pluginExports.Legend,
+  pluginExports.SubTitle,
+  pluginExports.Title,
+  pluginExports.Tooltip,
+);
+// Disable colors plugin for tests (test/index.js:25-28).
+Chart.defaults.plugins.colors.enabled = false;
+{
+  const ids = Object.keys(Chart.registry.plugins.items).join();
+  if (ids !== 'colors,decimation,filler,legend,subtitle,title,tooltip') {
+    console.error(`The registry has the plugins ${ids}, not the seven of src/plugins/index.js.`);
+    process.exit(1);
+  }
+}
 Chart.register(TestController, TestScale);
 
 /** The hooks that the spy plugin logs. */

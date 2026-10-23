@@ -29,8 +29,7 @@ import '../support/jasmine.dart';
 //
 // Each chart case is a `testWidgets` case with the harness of Chart.js ADR
 // 0022, section 2: `acquireChart`, `waitForResize`, `waitForDone`,
-// `setTimeout` and `toBeChartOfSize`. A case that needs a module of a later
-// phase skips with the missing module of the latest phase.
+// `setTimeout` and `toBeChartOfSize`.
 //
 // The spec forms of Chart.js ADR 0022, section 2:
 // - `chart.canvas.parentNode` is `chart.canvas!.parentElement`. The
@@ -52,9 +51,10 @@ import '../support/jasmine.dart';
 //   `new Error(m)` is a StateError with the message m.
 //
 // flutter_test_config.dart registers the built-in components before main().
-// Thus the scales of phase 6 and the controllers of phase 7 are in the
-// registry, and the defaults of the scales are in `defaults.scales`. The
-// pie and line cases get their controller from the registry.
+// Thus the scales of phase 6, the controllers of phase 7 and the plugins of
+// phase 8 are in the registry, and the defaults of the scales are in
+// `defaults.scales`. The pie and line cases get their controller from the
+// registry.
 //
 // Three cases without acquireChart build a chart with
 // `Chart(canvas, config)` on a canvas of `document.createElement`. Its
@@ -84,6 +84,11 @@ import '../support/jasmine.dart';
 //   array has no listeners, so its notification does nothing, as upstream.
 // - `chart.data.labels` is `_labels(chart)`, and
 //   `chart.data.datasets[i].data` is `_data(chart, i)`.
+// - `chart.tooltip` is the field of `Chart`, a `types.TooltipModel?`.
+//   `chart._active` is `chart.active`, and `tooltip._active` is
+//   `_tooltipActive(tooltip)`.
+// - `chart.options.plugins.tooltip = value` writes the key `tooltip` of the
+//   Map `chart.options['plugins']`.
 
 /// :3 `const overrides = Chart.overrides`: `overrides.line`.
 Map<String, Object?> get _line =>
@@ -103,6 +108,12 @@ List<Object?> _activeElements(Chart chart) => [
       'index': active.index,
     },
 ];
+
+/// `tooltip._active`, the active elements of [tooltip], read by name
+/// (core.controller.tests.js:1719). The `Tooltip` class of
+/// plugin.tooltip.dart extends `Element` and gives the property by name.
+List<types.ActiveElement> _tooltipActive(types.TooltipModel tooltip) =>
+    (tooltip as Element)['_active']! as List<types.ActiveElement>;
 
 /// `point.y` of a data element.
 double _y(types.Element point) => (point as Element).y;
@@ -645,11 +656,71 @@ void main() {
         expect(_activeElements(chart), jasmineEquals(<Object?>[]));
       });
 
-      test(
+      testWidgets(
         'should not change the active elements when outside chartArea, except '
         'for mouseout',
-        () {},
-        skip: 'blocked: plugin.tooltip',
+        (tester) async {
+          final chart = acquireChart(<String, Object?>{
+            'type': 'line',
+            'data': <String, Object?>{
+              'labels': <Object?>['A', 'B', 'C', 'D'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[10, 20, 30, 100],
+                  'hoverRadius': 0,
+                },
+              ],
+            },
+            'options': <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'display': false},
+                'y': <String, Object?>{'display': false},
+              },
+              'layout': <String, Object?>{'padding': 5},
+            },
+          });
+
+          final point = chart.getDatasetMeta(0).data[0];
+
+          await triggerMouseEvent(chart, 'mousemove', <String, Object?>{
+            'x': point.x,
+            'y': _y(point),
+          });
+          expect(
+            _activeElements(chart),
+            jasmineEquals(<Object?>[
+              <String, Object?>{
+                'datasetIndex': 0,
+                'index': 0,
+                'element': point,
+              },
+            ]),
+          );
+
+          await triggerMouseEvent(chart, 'mousemove', <String, Object?>{
+            'x': 1,
+            'y': 1,
+          });
+          expect(
+            _activeElements(chart),
+            jasmineEquals(<Object?>[
+              <String, Object?>{
+                'datasetIndex': 0,
+                'index': 0,
+                'element': point,
+              },
+            ]),
+          );
+
+          await triggerMouseEvent(chart, 'mouseout', <String, Object?>{
+            'x': 1,
+            'y': 1,
+          });
+          expect(
+            chart.tooltip!.getActiveElements(),
+            jasmineEquals(<Object?>[]),
+          );
+        },
       );
     });
 
@@ -1982,11 +2053,38 @@ void main() {
     });
 
     group('controller.reset', () {
-      test(
-        'should reset the chart elements',
-        () {},
-        skip: 'blocked: plugin.legend',
-      );
+      // :1515 The y values include the legend box at the top of the chart.
+      testWidgets('should reset the chart elements', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>['A', 'B', 'C', 'D'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 20, 30, 0],
+              },
+            ],
+          },
+          'options': <String, Object?>{'responsive': true},
+        });
+
+        final meta = chart.getDatasetMeta(0);
+
+        // Verify that points are at their initial correct location,
+        // then we will reset and see that they moved
+        expect(_y(meta.data[0]), toBeCloseToPixel(333));
+        expect(_y(meta.data[1]), toBeCloseToPixel(183));
+        expect(_y(meta.data[2]), toBeCloseToPixel(32));
+        expect(_y(meta.data[3]), toBeCloseToPixel(482));
+
+        chart.reset();
+
+        // For a line chart, the animation state is the bottom
+        expect(_y(meta.data[0]), toBeCloseToPixel(482));
+        expect(_y(meta.data[1]), toBeCloseToPixel(482));
+        expect(_y(meta.data[2]), toBeCloseToPixel(482));
+        expect(_y(meta.data[3]), toBeCloseToPixel(482));
+      });
     });
 
     group('config update', () {
@@ -2102,17 +2200,65 @@ void main() {
         expect(newyScale.options['max'], 10);
       });
 
-      test(
-        'should update tooltip options',
-        () {},
-        skip: 'blocked: plugin.tooltip',
-      );
+      testWidgets('should update tooltip options', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>['A', 'B', 'C', 'D'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 20, 30, 100],
+              },
+            ],
+          },
+          'options': <String, Object?>{'responsive': true},
+        });
 
-      test(
-        'should update the tooltip on update',
-        () {},
-        skip: 'blocked: plugin.tooltip',
-      );
+        final newTooltipConfig = <String, Object?>{
+          'mode': 'dataset',
+          'intersect': false,
+        };
+        (chart.options['plugins']! as Map<String, Object?>)['tooltip'] =
+            newTooltipConfig;
+
+        chart.update();
+        expect(chart.tooltip!.options, toEqualOptions(newTooltipConfig));
+      });
+
+      testWidgets('should update the tooltip on update', (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'line',
+          'data': <String, Object?>{
+            'labels': <Object?>['A', 'B', 'C', 'D'],
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 20, 30, 100],
+              },
+            ],
+          },
+          'options': <String, Object?>{
+            'responsive': true,
+            'tooltip': <String, Object?>{'mode': 'nearest'},
+          },
+        });
+
+        // Trigger an event over top of a point to
+        // put an item into the tooltip
+        final meta = chart.getDatasetMeta(0);
+        final point = meta.data[1];
+
+        await triggerMouseEvent(chart, 'mousemove', point);
+        // Check and see if tooltip was displayed
+        final tooltip = chart.tooltip!;
+
+        expect(chart.active[0].element, jasmineEquals(point));
+        expect(_tooltipActive(tooltip)[0].element, jasmineEquals(point));
+
+        // Update and confirm tooltip is updated
+        chart.update();
+        expect(chart.active[0].element, jasmineEquals(point));
+        expect(_tooltipActive(tooltip)[0].element, jasmineEquals(point));
+      });
 
       testWidgets('should update the metadata', (tester) async {
         final cfg = <String, Object?>{

@@ -21,7 +21,7 @@ import 'package:flutter_chartjs_port/src/elements/index.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsObjectIsFrozen;
+    show jsGet, jsObjectIsFrozen;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -90,6 +90,15 @@ _datasetStyles = [
 ///   `hide` and `show` transitions of a dataset.
 /// - An inline plugin of `core.plugins` draws the value lines in its
 ///   `beforeDatasetsDraw` hook.
+/// - The plugins of `registerables` run with their defaults, as in a chart
+///   of the Chart.js bundle (`src/index.umd.ts:28`). The legend shows the
+///   two datasets, and a click on a legend item hides or shows its dataset
+///   (plugin.legend.js:645-655). The tooltip shows the points that the
+///   interaction mode finds: its options fall back to `interaction`
+///   (plugin.tooltip.js:1348-1349). The tab has no plugin opt-out
+///   (Chart.js ADR 0031, Open). The inline plugin gets each event after the
+///   legend in its `afterEvent` hook, and the dataset segments then read
+///   the visibility again.
 ///
 /// The controls are above the chart, one full-width segmented button on
 /// each line (Chart.js ADR 0031, section 10): `mode`, `axis`, the toggles
@@ -218,6 +227,13 @@ class CoreDemoState extends State<CoreDemo> {
           'id': 'galleryValueLines',
           'beforeDatasetsDraw': (Object? chart, Object? args, Object? options) {
             _drawValueLines(chart! as Chart);
+          },
+          // The registered plugins come before the inline plugins
+          // (core.plugins.js:125-144). Thus the legend has handled a click
+          // when this hook runs. A replayed event of `update` is not new
+          // input (core.controller.js:528-534).
+          'afterEvent': (Object? chart, Object? args, Object? options) {
+            if (jsGet(args, 'replay') != true) _readout.value++;
           },
         },
       ],
@@ -445,7 +461,8 @@ class CoreDemoState extends State<CoreDemo> {
               'hide(i), show(i) · LineController · core.interaction: '
               'Interaction.modes · options: interaction, '
               'transitions.active.animation, animation · core.animations · '
-              'core.animator · core.plugins: an inline plugin',
+              'core.animator · core.plugins: an inline plugin · '
+              'plugins: legend, tooltip',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -467,7 +484,12 @@ class CoreDemoState extends State<CoreDemo> {
                 onChanged: (v) => _change(() => _axis = v),
               ),
               gap,
-              _toggles(_chart),
+              // A legend click hides or shows a dataset without a rebuild
+              // of the page: the segments rebuild with the readout.
+              ValueListenableBuilder<int>(
+                valueListenable: _readout,
+                builder: (context, _, _) => _toggles(_chart),
+              ),
               gap,
               SegmentChoice<double>(
                 label: 'hover',
@@ -501,8 +523,9 @@ class CoreDemoState extends State<CoreDemo> {
                 'A real line chart of the ported core, on two hidden linear '
                 'scales. Move the mouse over a point, or touch it: the '
                 'interaction mode finds the points, and their hover options '
-                'animate. The dataset segments hide and show a dataset. '
-                'The shuffle, + and - segments change the data.',
+                'animate, and the tooltip shows them. The dataset segments '
+                'and the legend items hide and show a dataset. The shuffle, '
+                '+ and - segments change the data.',
                 key: const ValueKey('core.help'),
                 style: theme.textTheme.bodySmall,
               ),

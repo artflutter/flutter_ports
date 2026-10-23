@@ -33,7 +33,7 @@ import {
   loadChartJs,
   named,
   radialTestController,
-  registerPhase6,
+  registerBuiltins,
   runCase,
   writeReference,
 } from './scale_chart_common.mjs';
@@ -140,7 +140,7 @@ const HarnessRadialTestController = radialTestController('harnessRadialTest', {
   scales: {r: {type: 'harnessRadial'}},
 });
 
-registerPhase6(
+registerBuiltins(
   C,
   HarnessLinearScale,
   HarnessMeasureScale,

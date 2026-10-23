@@ -492,8 +492,14 @@ void main() {
         ..observe('chartArea', _edges(chart.chartArea))
         ..observe(
           'boxes',
+          // A legend or a title box has no `id`: the template literal of
+          // the generator writes `undefined`.
           chart.boxes
-              .map((b) => '${(b as Scale).id}@${b.position}:${_edges(b)}')
+              .map(
+                (b) =>
+                    '${b is Scale ? b.id : 'undefined'}@${b.position}:'
+                    '${_edges(b)}',
+              )
               .join(' '),
         )
         ..observe('scales', jsObjectKeys(chart.scales).join(','));
@@ -1106,7 +1112,9 @@ void main() {
         )
         ..observe(
           'boxes',
-          chart.boxes.map((b) => (b as Scale).id).join(','),
+          // A legend or a title box has no `id`: `join` writes '' for
+          // `undefined` (Array.prototype.join).
+          chart.boxes.map((b) => b is Scale ? b.id : '').join(','),
         )
         ..observe('chartArea', _edges(chart.chartArea))
         ..observe(

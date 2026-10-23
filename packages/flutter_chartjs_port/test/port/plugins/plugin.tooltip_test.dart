@@ -25,7 +25,6 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/color.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
@@ -40,6 +39,7 @@ import '../controllers/controller_chart_harness.dart'
 import '../core/animation_reference.dart';
 import '../scales/scale_chart_harness.dart';
 import 'plugin_chart_harness.dart';
+import 'plugin_tooltip_more_reference.dart';
 import 'plugin_tooltip_reference.dart';
 
 // The port-only reference tests of lib/src/plugins/plugin.tooltip.dart
@@ -290,9 +290,12 @@ AnyObject _undefinedAxisIds(AnyObject observation) => <String, Object?>{
   ],
 };
 
-/// The reference cases with the axis ids of [_undefinedAxisIds].
+/// The reference cases of both data files with the axis ids of
+/// [_undefinedAxisIds]. The generator splits the cases into two files,
+/// because one file is above the limit of 2,500,000 bytes (Chart.js ADR
+/// 0041, section 4 item 4).
 final List<ScaleChartCase> _reference = _mapObservations(
-  pluginTooltipReference,
+  [...pluginTooltipReference, ...pluginTooltipMoreReference],
   _undefinedAxisIds,
 );
 
@@ -563,9 +566,6 @@ void _replay(
 Tooltip _newTooltip() => Tooltip((chart: _FakeChart(), options: null));
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([legend, tooltip]);
   // The custom positioner of the generator.
   Tooltip.positioners['custom'] = _customPositioner;
 
@@ -576,10 +576,23 @@ void main() {
     commit: pluginTooltipReferenceCommit,
   );
   testReferenceWidths(pluginTooltipReferenceWidths);
+  testReferenceOrigin(
+    node: pluginTooltipMoreReferenceNode,
+    arch: pluginTooltipMoreReferenceArch,
+    dist: pluginTooltipMoreReferenceDist,
+    commit: pluginTooltipMoreReferenceCommit,
+  );
+  testReferenceWidths(pluginTooltipMoreReferenceWidths);
 
   test('the reference has the unit cases of Chart.js ADR 0041', () {
     expect(
-      [for (final c in pluginTooltipReference) c.name],
+      [
+        for (final c in [
+          ...pluginTooltipReference,
+          ...pluginTooltipMoreReference,
+        ])
+          c.name,
+      ],
       [
         'mode index with intersect false',
         'mode nearest with intersect true',
@@ -596,6 +609,7 @@ void main() {
         'a caret near the top edge',
         'a caret near the bottom edge',
         'rtl',
+        'textDirection rtl',
         'displayColors false',
         'usePointStyle',
         'boxPadding and padding',
@@ -613,6 +627,7 @@ void main() {
         'a scatter chart with the positioner nearest',
         'a label color with a border radius',
         'a corner radius object and a border',
+        'full: title, filler and clickLegend',
       ],
     );
   });
@@ -1469,9 +1484,9 @@ void main() {
 
   group('this of filter and itemSort', () {
     // plugin.tooltip.js:615 and :620 are method calls: `this` is the
-    // options resolver. The expected values come from the probe
-    // .handover/phase8/units/W3-tooltip/probes/fix-node.mjs (output
-    // fix-node.out.json), on the probe chart with a second dataset `two`
+    // options resolver. The expected values come from a probe of phase 8
+    // (the pinned Chart.js build in Node.js v24.12.0 on x64), on the probe
+    // chart with a second dataset `two`
     // (data 1, 2 and 3), mode index, intersect false, and the items
     // {datasetIndex: 0, index: 1} and {datasetIndex: 1, index: 1}.
     AnyObject twoDatasets(AnyObject tooltipOptions) {
@@ -1564,15 +1579,14 @@ void main() {
 
   group('textDirection', () {
     // plugin.tooltip.js:1074 and :1087 (helpers.rtl.ts:55-73). The
-    // reference generator has no textDirection case: the fake canvas of
-    // scale_chart_common.mjs has a plain `style` object (the hand-off of
-    // W3-tooltip, review finding R2). The expected values come from the
-    // probe .handover/phase8/units/W3-tooltip/probes/fix-node.mjs (output
-    // fix-node.out.json): two draws of the probe chart after
-    // `setActiveElements`, on a canvas style with the DOM rules of
-    // `setProperty`. The restore gives the direction String as the
-    // `[value, priority]` pair, so its call reads `'r'` and `'t'` (or `'l'`
-    // and `'t'`), and the DOM ignores it: the override stays.
+    // reference case `textDirection rtl` compares one chart with upstream.
+    // This group pins two draws in a row. The expected values come from a
+    // probe of phase 8 (the pinned Chart.js build in Node.js v24.12.0 on
+    // x64): two draws of the probe chart after `setActiveElements`, on a
+    // canvas style with the DOM rules of `setProperty`. The restore gives
+    // the direction String as the `[value, priority]` pair, so its call
+    // reads `'r'` and `'t'` (or `'l'` and `'t'`), and the DOM ignores it: the
+    // override stays.
     List<List<String?>> drawTwice(Chart chart) {
       final t = _tooltipOf(chart);
       final ctx = _StyleContext();

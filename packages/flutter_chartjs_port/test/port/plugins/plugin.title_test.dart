@@ -126,10 +126,6 @@ AnyObject _line(Object? titleOptions) => <String, Object?>{
 };
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([title]);
-
   testReferenceOrigin(
     node: pluginTitleReferenceNode,
     arch: pluginTitleReferenceArch,
@@ -158,6 +154,7 @@ void main() {
         'font and color',
         'a scriptable text',
         'a number text',
+        'full: title with the default legend',
       ],
     );
   });
@@ -308,7 +305,15 @@ void main() {
     ) async {
       final chart = acquireChart(_line(false));
       expect(chart.titleBlock, isNull);
-      expect(chart.boxes.whereType<Title>(), isEmpty);
+      // The seven plugins of registerables are registered (Chart.js ADR
+      // 0041, section 1). Thus the one Title box is the box of the subtitle
+      // plugin (plugin.subtitle.js:9-18), with the weight 1500 of
+      // plugin.subtitle.js:42. A probe on the pinned build with the seven
+      // plugins logged the same boxes: Legend 1000, Title 1500, then the two
+      // scales.
+      final titles = chart.boxes.whereType<Title>().toList();
+      expect(titles, hasLength(1));
+      expect(titles.single.weight, 1500);
     });
 
     testWidgets('the stop hook on a chart without a title block does not '

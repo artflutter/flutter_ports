@@ -99,10 +99,10 @@ scaleBase+rootColor: T6-root-color
 rootColor: T6-root-color
 none: #666''',
   'radial tick backdrop': '''
-no theme: ["<undefined>",496,496]
-no theme, defaults.font.size 30: ["<undefined>",478,478]
-a theme tick font with a size: ["<undefined>",478,478]
-a theme tick font without a size: ["<undefined>",478,478]''',
+no theme: ["<undefined>",496,464]
+no theme, defaults.font.size 30: ["<undefined>",478,428]
+a theme tick font with a size: ["<undefined>",478,428]
+a theme tick font without a size: ["<undefined>",478,428]''',
   'no theme': r'''
 element: {"$shared":false,"borderWidth":1,"hitRadius":1,"hoverBorderWidth":1,"hoverRadius":4,"pointStyle":"circle","radius":3,"rotation":0,"backgroundColor":"rgba(0,0,0,0.1)","borderColor":"rgba(0,0,0,0.1)"}
 same options: false
@@ -163,35 +163,35 @@ plugin: "<undefined>"''',
 scales: r
 colors: ["#666","rgba(0,0,0,0.1)","#666","rgba(255, 255, 255, 0.75)","rgba(0,0,0,0.1)","<undefined>"]
 fonts: ["'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",10,"normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",12,"normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-size: [496,496]''',
+size: [496,464]''',
   'a radial chart with a compiled theme': '''
 theme: {"color":"rgba(51, 102, 153, 1)","scale":{"ticks":{"color":"rgba(51, 102, 153, 1)","backdropColor":"rgba(0, 0, 0, 0.75)","font":{"family":"Arial","size":14}},"title":{"color":"rgba(51, 102, 153, 1)","font":{"family":"Arial","size":14}},"grid":{"color":"rgba(0, 128, 0, 0.5)"},"border":{"color":"rgba(0, 128, 0, 0.5)"}},"scales":{"radialLinear":{"pointLabels":{"color":"rgba(51, 102, 153, 1)","font":{"family":"Arial","style":"italic","size":11}},"angleLines":{"color":"rgba(0, 128, 0, 0.5)"}}},"plugins":{"title":{"color":"rgba(51, 102, 153, 1)","font":{"family":"Arial","size":14}},"subtitle":{"color":"rgba(51, 102, 153, 1)","font":{"family":"Arial","size":14}},"legend":{"labels":{"font":{"family":"Arial","size":14}},"title":{"font":{"family":"Arial","size":14}}},"tooltip":{"titleFont":{"family":"Arial","size":14},"bodyFont":{"family":"Arial","size":14},"footerFont":{"family":"Arial","size":14}}},"elements":{"point":{"borderColor":"rgba(0, 128, 0, 0.5)","backgroundColor":"rgba(200, 0, 0, 1)"},"line":{"borderColor":"rgba(0, 128, 0, 0.5)","backgroundColor":"rgba(200, 0, 0, 1)"},"bar":{"borderColor":"rgba(0, 128, 0, 0.5)","backgroundColor":"rgba(200, 0, 0, 1)"},"arc":{"backgroundColor":"rgba(200, 0, 0, 1)","borderColor":"rgba(0, 0, 0, 1)"}},"transitions":{"theme":{"animation":{"duration":200,"easing":"linear"}},"themeFrame":{"animation":{"duration":0}}}}
 scales: r
 colors: ["#666","rgba(0,0,0,0.1)","#666","rgba(255, 255, 255, 0.75)","rgba(0,0,0,0.1)","<undefined>"]
 fonts: ["'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",10,"normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",12,"normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-size: [496,496]''',
+size: [496,464]''',
   'a radial chart with the light preset': r'''
 theme: {"color":"rgba(102, 102, 102, 1)","scale":{"ticks":{"color":"rgba(102, 102, 102, 1)","backdropColor":"rgba(255, 255, 255, 0.75)","font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"title":{"color":"rgba(102, 102, 102, 1)","font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"grid":{"color":"rgba(0, 0, 0, 0.1)"},"border":{"color":"rgba(0, 0, 0, 0.1)"}},"scales":{"radialLinear":{"pointLabels":{"color":"rgba(102, 102, 102, 1)","font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","style":"normal","lineHeight":1.2,"size":10}},"angleLines":{"color":"rgba(0, 0, 0, 0.1)"}}},"plugins":{"title":{"color":"rgba(102, 102, 102, 1)","font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"subtitle":{"color":"rgba(102, 102, 102, 1)","font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"legend":{"labels":{"font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"title":{"font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}}},"tooltip":{"backgroundColor":"rgba(0, 0, 0, 0.8)","titleColor":"rgba(255, 255, 255, 1)","bodyColor":"rgba(255, 255, 255, 1)","footerColor":"rgba(255, 255, 255, 1)","multiKeyBackground":"rgba(255, 255, 255, 1)","titleFont":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2},"bodyFont":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2},"footerFont":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"colors":{"$borderColors":["rgba(54, 162, 235, 1)","rgba(255, 99, 132, 1)","rgba(255, 159, 64, 1)","rgba(255, 205, 86, 1)","rgba(75, 192, 192, 1)","rgba(153, 102, 255, 1)","rgba(201, 203, 207, 1)"],"$backgroundColors":["rgba(54, 162, 235, 0.5)","rgba(255, 99, 132, 0.5)","rgba(255, 159, 64, 0.5)","rgba(255, 205, 86, 0.5)","rgba(75, 192, 192, 0.5)","rgba(153, 102, 255, 0.5)","rgba(201, 203, 207, 0.5)"]}},"elements":{"point":{"borderColor":"rgba(0, 0, 0, 0.1)","backgroundColor":"rgba(0, 0, 0, 0.1)"},"line":{"borderColor":"rgba(0, 0, 0, 0.1)","backgroundColor":"rgba(0, 0, 0, 0.1)"},"bar":{"borderColor":"rgba(0, 0, 0, 0.1)","backgroundColor":"rgba(0, 0, 0, 0.1)"},"arc":{"backgroundColor":"rgba(0, 0, 0, 0.1)","borderColor":"rgba(255, 255, 255, 1)"}},"transitions":{"theme":{"animation":{"duration":200,"easing":"linear"}},"themeFrame":{"animation":{"duration":0}}}}
 scales: r
 colors: ["#666","rgba(0,0,0,0.1)","#666","rgba(255, 255, 255, 0.75)","rgba(0,0,0,0.1)","<undefined>"]
 fonts: ["'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",10,"normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",12,"normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-size: [496,496]''',
+size: [496,464]''',
   'a radial chart with a theme font without size': '''
 theme: {"scale":{"ticks":{"font":{"family":"serif","size":14}},"title":{"font":{"family":"serif","size":14}}},"scales":{"radialLinear":{"pointLabels":{"font":{"family":"serif"}}}},"plugins":{"title":{"font":{"family":"serif","size":14}},"subtitle":{"font":{"family":"serif","size":14}},"legend":{"labels":{"font":{"family":"serif","size":14}},"title":{"font":{"family":"serif","size":14}}},"tooltip":{"titleFont":{"family":"serif","size":14},"bodyFont":{"family":"serif","size":14},"footerFont":{"family":"serif","size":14}}},"transitions":{"theme":{"animation":{"duration":200,"easing":"linear"}},"themeFrame":{"animation":{"duration":0}}}}
 scales: r
 colors: ["#666","rgba(0,0,0,0.1)","#666","rgba(255, 255, 255, 0.75)","rgba(0,0,0,0.1)","<undefined>"]
 fonts: ["'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",10,"normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",12,"normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-size: [496,496]''',
+size: [496,464]''',
   'a radial chart with the values that the tokens replace': '''
 scales: r
 colors: ["rgba(51, 102, 153, 1)","rgba(0, 128, 0, 0.5)","rgba(51, 102, 153, 1)","rgba(0, 0, 0, 0.75)","rgba(0, 128, 0, 0.5)","<undefined>"]
 fonts: ["Arial",11,"italic 11px Arial","Arial",14,"normal 14px Arial"]
-size: [494,494]''',
+size: [494,460]''',
   'a radial chart with the font that the theme font replaces': '''
 scales: r
 colors: ["#666","rgba(0,0,0,0.1)","#666","rgba(255, 255, 255, 0.75)","rgba(0,0,0,0.1)","<undefined>"]
 fonts: ["serif",10,"normal 10px serif","serif",14,"normal 14px serif"]
-size: [494,494]''',
+size: [494,460]''',
   'axes of a cartesian chart without a theme': '''
 scales: x,y
 option scales: x,y
@@ -703,10 +703,10 @@ scaleBase+rootColor: T6-root-color
 rootColor: T6-root-color
 none: #666''',
   'radial tick backdrop': '''
-no theme: ["<undefined>",496,496]
-no theme, defaults.font.size 30: ["<undefined>",478,478]
-a theme tick font with a size: [20,488,488]
-a theme tick font without a size: [30,478,478]''',
+no theme: ["<undefined>",496,464]
+no theme, defaults.font.size 30: ["<undefined>",478,428]
+a theme tick font with a size: [20,488,438]
+a theme tick font without a size: [30,478,428]''',
   'no theme': r'''
 element: {"$shared":false,"borderWidth":1,"hitRadius":1,"hoverBorderWidth":1,"hoverRadius":4,"pointStyle":"circle","radius":3,"rotation":0,"backgroundColor":"rgba(0,0,0,0.1)","borderColor":"rgba(0,0,0,0.1)"}
 same options: false
@@ -767,35 +767,35 @@ plugin: "<undefined>"''',
 scales: r
 colors: ["#666","rgba(0,0,0,0.1)","#666","rgba(255, 255, 255, 0.75)","rgba(0,0,0,0.1)","<undefined>"]
 fonts: ["'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",10,"normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",12,"normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-size: [496,496]''',
+size: [496,464]''',
   'a radial chart with a compiled theme': '''
 theme: {"color":"rgba(51, 102, 153, 1)","scale":{"ticks":{"color":"rgba(51, 102, 153, 1)","backdropColor":"rgba(0, 0, 0, 0.75)","font":{"family":"Arial","size":14}},"title":{"color":"rgba(51, 102, 153, 1)","font":{"family":"Arial","size":14}},"grid":{"color":"rgba(0, 128, 0, 0.5)"},"border":{"color":"rgba(0, 128, 0, 0.5)"}},"scales":{"radialLinear":{"pointLabels":{"color":"rgba(51, 102, 153, 1)","font":{"family":"Arial","style":"italic","size":11}},"angleLines":{"color":"rgba(0, 128, 0, 0.5)"}}},"plugins":{"title":{"color":"rgba(51, 102, 153, 1)","font":{"family":"Arial","size":14}},"subtitle":{"color":"rgba(51, 102, 153, 1)","font":{"family":"Arial","size":14}},"legend":{"labels":{"font":{"family":"Arial","size":14}},"title":{"font":{"family":"Arial","size":14}}},"tooltip":{"titleFont":{"family":"Arial","size":14},"bodyFont":{"family":"Arial","size":14},"footerFont":{"family":"Arial","size":14}}},"elements":{"point":{"borderColor":"rgba(0, 128, 0, 0.5)","backgroundColor":"rgba(200, 0, 0, 1)"},"line":{"borderColor":"rgba(0, 128, 0, 0.5)","backgroundColor":"rgba(200, 0, 0, 1)"},"bar":{"borderColor":"rgba(0, 128, 0, 0.5)","backgroundColor":"rgba(200, 0, 0, 1)"},"arc":{"backgroundColor":"rgba(200, 0, 0, 1)","borderColor":"rgba(0, 0, 0, 1)"}},"transitions":{"theme":{"animation":{"duration":200,"easing":"linear"}},"themeFrame":{"animation":{"duration":0}}}}
 scales: r
 colors: ["rgba(51, 102, 153, 1)","rgba(0, 128, 0, 0.5)","rgba(51, 102, 153, 1)","rgba(0, 0, 0, 0.75)","rgba(0, 128, 0, 0.5)","<undefined>"]
 fonts: ["Arial",11,"italic 11px Arial","Arial",14,"normal 14px Arial"]
-size: [494,494]''',
+size: [494,460]''',
   'a radial chart with the light preset': r'''
 theme: {"color":"rgba(102, 102, 102, 1)","scale":{"ticks":{"color":"rgba(102, 102, 102, 1)","backdropColor":"rgba(255, 255, 255, 0.75)","font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"title":{"color":"rgba(102, 102, 102, 1)","font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"grid":{"color":"rgba(0, 0, 0, 0.1)"},"border":{"color":"rgba(0, 0, 0, 0.1)"}},"scales":{"radialLinear":{"pointLabels":{"color":"rgba(102, 102, 102, 1)","font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","style":"normal","lineHeight":1.2,"size":10}},"angleLines":{"color":"rgba(0, 0, 0, 0.1)"}}},"plugins":{"title":{"color":"rgba(102, 102, 102, 1)","font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"subtitle":{"color":"rgba(102, 102, 102, 1)","font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"legend":{"labels":{"font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"title":{"font":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}}},"tooltip":{"backgroundColor":"rgba(0, 0, 0, 0.8)","titleColor":"rgba(255, 255, 255, 1)","bodyColor":"rgba(255, 255, 255, 1)","footerColor":"rgba(255, 255, 255, 1)","multiKeyBackground":"rgba(255, 255, 255, 1)","titleFont":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2},"bodyFont":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2},"footerFont":{"family":"'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","size":12,"style":"normal","lineHeight":1.2}},"colors":{"$borderColors":["rgba(54, 162, 235, 1)","rgba(255, 99, 132, 1)","rgba(255, 159, 64, 1)","rgba(255, 205, 86, 1)","rgba(75, 192, 192, 1)","rgba(153, 102, 255, 1)","rgba(201, 203, 207, 1)"],"$backgroundColors":["rgba(54, 162, 235, 0.5)","rgba(255, 99, 132, 0.5)","rgba(255, 159, 64, 0.5)","rgba(255, 205, 86, 0.5)","rgba(75, 192, 192, 0.5)","rgba(153, 102, 255, 0.5)","rgba(201, 203, 207, 0.5)"]}},"elements":{"point":{"borderColor":"rgba(0, 0, 0, 0.1)","backgroundColor":"rgba(0, 0, 0, 0.1)"},"line":{"borderColor":"rgba(0, 0, 0, 0.1)","backgroundColor":"rgba(0, 0, 0, 0.1)"},"bar":{"borderColor":"rgba(0, 0, 0, 0.1)","backgroundColor":"rgba(0, 0, 0, 0.1)"},"arc":{"backgroundColor":"rgba(0, 0, 0, 0.1)","borderColor":"rgba(255, 255, 255, 1)"}},"transitions":{"theme":{"animation":{"duration":200,"easing":"linear"}},"themeFrame":{"animation":{"duration":0}}}}
 scales: r
 colors: ["rgba(102, 102, 102, 1)","rgba(0, 0, 0, 0.1)","rgba(102, 102, 102, 1)","rgba(255, 255, 255, 0.75)","rgba(0, 0, 0, 0.1)","<undefined>"]
 fonts: ["'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",10,"normal 10px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif","'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",12,"normal 12px 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"]
-size: [496,496]''',
+size: [496,464]''',
   'a radial chart with a theme font without size': '''
 theme: {"scale":{"ticks":{"font":{"family":"serif","size":14}},"title":{"font":{"family":"serif","size":14}}},"scales":{"radialLinear":{"pointLabels":{"font":{"family":"serif"}}}},"plugins":{"title":{"font":{"family":"serif","size":14}},"subtitle":{"font":{"family":"serif","size":14}},"legend":{"labels":{"font":{"family":"serif","size":14}},"title":{"font":{"family":"serif","size":14}}},"tooltip":{"titleFont":{"family":"serif","size":14},"bodyFont":{"family":"serif","size":14},"footerFont":{"family":"serif","size":14}}},"transitions":{"theme":{"animation":{"duration":200,"easing":"linear"}},"themeFrame":{"animation":{"duration":0}}}}
 scales: r
 colors: ["#666","rgba(0,0,0,0.1)","#666","rgba(255, 255, 255, 0.75)","rgba(0,0,0,0.1)","<undefined>"]
 fonts: ["serif",10,"normal 10px serif","serif",14,"normal 14px serif"]
-size: [494,494]''',
+size: [494,460]''',
   'a radial chart with the values that the tokens replace': '''
 scales: r
 colors: ["rgba(51, 102, 153, 1)","rgba(0, 128, 0, 0.5)","rgba(51, 102, 153, 1)","rgba(0, 0, 0, 0.75)","rgba(0, 128, 0, 0.5)","<undefined>"]
 fonts: ["Arial",11,"italic 11px Arial","Arial",14,"normal 14px Arial"]
-size: [494,494]''',
+size: [494,460]''',
   'a radial chart with the font that the theme font replaces': '''
 scales: r
 colors: ["#666","rgba(0,0,0,0.1)","#666","rgba(255, 255, 255, 0.75)","rgba(0,0,0,0.1)","<undefined>"]
 fonts: ["serif",10,"normal 10px serif","serif",14,"normal 14px serif"]
-size: [494,494]''',
+size: [494,460]''',
   'axes of a cartesian chart without a theme': '''
 scales: x,y
 option scales: x,y

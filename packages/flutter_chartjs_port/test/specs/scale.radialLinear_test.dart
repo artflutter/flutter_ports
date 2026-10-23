@@ -35,11 +35,10 @@ import '../support/jasmine.dart';
 // section 2). The case "Should ensure that the scale has a max and min that
 // are not equal" has no dataset, but it needs the radar overrides too:
 // without them, the scale has no radialLinear defaults. Three cases also
-// need the legend plugin of phase 8. The legend makes the chart area
-// smaller, and the cases compare `drawingArea` (215), `yCenter` (280) and
-// the values that come from them. Without the legend, these are 231 and
-// 264. A case that needs a module of a later phase skips with the missing
-// module of the latest phase.
+// need the legend plugin, which flutter_test_config.dart registers. The
+// legend makes the chart area smaller, and the cases compare `drawingArea`
+// (215), `yCenter` (280) and the values that come from them. Without the
+// legend, these are 231 and 264.
 //
 // The spec forms:
 // - A property chain of the spec, for example `Chart.defaults.scales`, is a
@@ -674,12 +673,41 @@ void main() {
       },
     );
 
-    // :388-413 also needs controller.radar. Without the legend, drawingArea
-    // is 231 and yCenter is 264, not 215 and 280.
-    test(
+    testWidgets(
       'should correctly set the center point',
-      () {},
-      skip: 'blocked: plugin.legend',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'radar',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 5, 0, 25, 78],
+              },
+            ],
+            'labels': <Object?>[
+              'label1',
+              'label2',
+              'label3',
+              'label4',
+              'label5',
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'r': <String, Object?>{
+                'pointLabels': <String, Object?>{
+                  'callback': (Object? value, Object? index) =>
+                      jsToString(index),
+                },
+              },
+            },
+          },
+        });
+
+        expect(_r(chart).drawingArea, 215);
+        expect(_r(chart).xCenter, 256);
+        expect(_r(chart).yCenter, 280);
+      },
     );
 
     testWidgets(
@@ -716,20 +744,107 @@ void main() {
       },
     );
 
-    // :439-473 also needs controller.radar. Without the legend, the distance
-    // of the max is 231, not 215.
-    test(
+    testWidgets(
       'should get the correct distance from the center point',
-      () {},
-      skip: 'blocked: plugin.legend',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'radar',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 5, 0, 25, 78],
+              },
+            ],
+            'labels': <Object?>[
+              'label1',
+              'label2',
+              'label3',
+              'label4',
+              'label5',
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'r': <String, Object?>{
+                'pointLabels': <String, Object?>{
+                  'callback': (Object? value, Object? index) =>
+                      jsToString(index),
+                },
+              },
+            },
+          },
+        });
+
+        expect(
+          _r(chart).getDistanceFromCenterForValue(_r(chart).min),
+          0,
+        );
+        expect(
+          _r(chart).getDistanceFromCenterForValue(_r(chart).max),
+          215,
+        );
+
+        final position = _r(chart).getPointPositionForValue(1, 5);
+        expect(position.x, toBeCloseToPixel(269));
+        expect(position.y, toBeCloseToPixel(276));
+
+        _r(chart).options['reverse'] = true;
+        chart.update();
+
+        expect(
+          _r(chart).getDistanceFromCenterForValue(_r(chart).min),
+          215,
+        );
+        expect(
+          _r(chart).getDistanceFromCenterForValue(_r(chart).max),
+          0,
+        );
+      },
     );
 
-    // :475-508 also needs controller.radar. Without the legend, the value
-    // for the distance 215 is not the max.
-    test(
+    testWidgets(
       'should get the correct value for a distance from the center point',
-      () {},
-      skip: 'blocked: plugin.legend',
+      (tester) async {
+        final chart = acquireChart(<String, Object?>{
+          'type': 'radar',
+          'data': <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[10, 5, 0, 25, 78],
+              },
+            ],
+            'labels': <Object?>[
+              'label1',
+              'label2',
+              'label3',
+              'label4',
+              'label5',
+            ],
+          },
+          'options': <String, Object?>{
+            'scales': <String, Object?>{
+              'r': <String, Object?>{
+                'pointLabels': <String, Object?>{
+                  'callback': (Object? value, Object? index) =>
+                      jsToString(index),
+                },
+              },
+            },
+          },
+        });
+
+        expect(_r(chart).getValueForDistanceFromCenter(0), _r(chart).min);
+        expect(_r(chart).getValueForDistanceFromCenter(215), _r(chart).max);
+
+        final dist = _r(chart).getDistanceFromCenterForValue(5);
+        expect(_r(chart).getValueForDistanceFromCenter(dist), 5);
+
+        _r(chart).options['reverse'] = true;
+        chart.update();
+
+        expect(_r(chart).getValueForDistanceFromCenter(0), _r(chart).max);
+        expect(_r(chart).getValueForDistanceFromCenter(215), _r(chart).min);
+      },
     );
 
     testWidgets(

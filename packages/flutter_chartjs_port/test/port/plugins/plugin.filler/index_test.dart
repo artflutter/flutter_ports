@@ -137,10 +137,6 @@ const List<String> _upstreamKeys = [
 ];
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([filler]);
-
   testReferenceOrigin(
     node: pluginFillerReferenceNode,
     arch: pluginFillerReferenceArch,
@@ -199,6 +195,9 @@ void main() {
         'radar circular with a gap',
         'throws: shape with two colors',
         'throws: radar without a layout',
+        'full: radar with colors on',
+        'full: lttb with fill origin',
+        'full: min-max with fill stack',
       ],
     );
   });

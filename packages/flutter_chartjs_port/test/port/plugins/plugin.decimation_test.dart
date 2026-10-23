@@ -158,10 +158,6 @@ const List<String> _decimatedKeys = [
 ];
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([decimation]);
-
   testReferenceOrigin(
     node: pluginDecimationReferenceNode,
     arch: pluginDecimationReferenceArch,

@@ -11,7 +11,9 @@ import 'package:flutter_chartjs_port/src/controllers/index.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/elements/index.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/scales/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -183,6 +185,32 @@ void main() {
     expect(line['elementsMedianMs'], '0.000');
     expect(line['layoutMedianMs'], '0.000');
     expect(line['datasetsUpdateMedianMs'], '0.000');
+  });
+
+  test('each case has no legend (Chart.js ADR 0031, Open)', () {
+    // The configs of stressChartConfig and stressAxesConfig have
+    // `plugins.legend: false` (stressPluginOptions), and chartBenchOptions
+    // has no `plugins` key that replaces it.
+    expect(chartBenchOptions.containsKey('plugins'), isFalse);
+    for (final benchCase in chartBenchCases) {
+      var checked = false;
+      runChartBenchCase(
+        benchCase,
+        10,
+        const ChartBenchSettings(batches: 1, batchMs: 1, warmupMs: 1),
+        onChart: (chart) {
+          checked = true;
+          expect(
+            jsGet(chart.options['plugins'], 'legend'),
+            false,
+            reason: benchCase.id,
+          );
+          expect(chart.legend, isNull, reason: benchCase.id);
+          expect(chart.boxes.whereType<Legend>(), isEmpty);
+        },
+      );
+      expect(checked, isTrue, reason: benchCase.id);
+    }
   });
 
   testWidgets('the update cases move the points of the stress mode', (

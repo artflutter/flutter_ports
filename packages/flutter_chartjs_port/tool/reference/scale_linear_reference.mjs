@@ -41,7 +41,7 @@ import {
   makeChart,
   named,
   observe,
-  registerPhase6,
+  registerBuiltins,
   runCase,
   writeReference,
 } from './scale_chart_common.mjs';
@@ -62,7 +62,7 @@ const LinearTestController = cartesianTestController('linearTest', {
   scales: {_index_: {type: 'linear'}, _value_: {type: 'linear'}},
 });
 
-registerPhase6(C, ScaleTestController, ScaleTest2Controller, LinearTestController);
+registerBuiltins(C, ScaleTestController, ScaleTest2Controller, LinearTestController);
 
 /**
  * The values of the observation `pixelForValue`: numbers, and JS values that

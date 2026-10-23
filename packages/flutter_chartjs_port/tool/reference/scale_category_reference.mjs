@@ -45,7 +45,7 @@ import {
   makeChart,
   named,
   observe,
-  registerPhase6,
+  registerBuiltins,
   runCase,
   writeReference,
 } from './scale_chart_common.mjs';
@@ -92,7 +92,7 @@ const CategoryTestController = cartesianTestController('categoryTest', {
   scales: {_index_: {type: 'category'}, _value_: {type: 'testLinear'}},
 });
 
-registerPhase6(C, TestLinearScale, CategoryTestController);
+registerBuiltins(C, TestLinearScale, CategoryTestController);
 
 /**
  * The observations of a category scale [s], after the observations of

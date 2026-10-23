@@ -38,7 +38,7 @@ import {
   cartesianTestController,
   loadChartJs,
   named,
-  registerPhase6,
+  registerBuiltins,
   runCase,
   writeReference,
 } from './scale_chart_common.mjs';
@@ -104,7 +104,7 @@ const LinearBaseChartController = cartesianTestController('linearBaseChart', {
   scales: {_index_: {type: 'testLinearBase'}, _value_: {type: 'testLinearBase'}},
 });
 
-registerPhase6(C, TestLinearBaseScale, TestLinearBaseLimitScale, LinearBaseChartController);
+registerBuiltins(C, TestLinearBaseScale, TestLinearBaseLimitScale, LinearBaseChartController);
 
 /** The messages of console.warn of the current case. */
 const warnings = [];

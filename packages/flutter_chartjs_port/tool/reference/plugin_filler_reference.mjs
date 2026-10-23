@@ -11,9 +11,10 @@
 // The generator registers the built-in components and the seven plugins
 // (registerBuiltins: src/index.umd.ts:28, then
 // `defaults.plugins.colors.enabled = false`, test/index.js:25-28). Each case
-// is a unit case (Chart.js ADR 0041, section 4): `options.plugins` is
-// unitPlugins(['filler'], ...), so each other plugin is `false`. The Dart
-// test file registers only the filler plugin in wave 2.
+// of items 1-11 is a unit case (Chart.js ADR 0041, section 4):
+// `options.plugins` is unitPlugins(['filler'], ...), so each other plugin
+// is `false`, as in wave 2, when the Dart test file registered only the
+// filler plugin. The full cases of item 12 have the default plugin options.
 //
 // The observation of a case is the controller observation without the hit
 // matrix, `boxes`, and `plugins.filler`: for each dataset, `meta.$filler`
@@ -53,9 +54,7 @@
 //    `first()` gives `0` upstream, and the hook calls `lineTo(NaN, clipY)`.
 // 7. `offset: true` with `min` and `max` on a category scale (#12283).
 // 8. A line of 120 points with `parsing: false` on a linear `x`. The cases
-//    with the decimation plugin wait for wave 4 (the full case of Chart.js
-//    ADR 0041, section 4 item 3): the Dart test file registers only the
-//    filler in wave 2.
+//    with the decimation plugin are full cases (below).
 // 9. Radar charts on a polygon grid: `origin`, `start`, `end`, `{value}`, a
 //    gap (the `'angle'` interpolate), `fill: 1` (`evenodd`), `reverse` and
 //    a negative minimum (`getBaseValue`).
@@ -64,6 +63,14 @@
 //     chart without a layout (an inline plugin whose `beforeLayout` returns
 //     `false`). Both throw in `new Chart`. The calls before the throw are in
 //     the data of filler_target_reference.mjs.
+// 12. The full cases of Chart.js ADR 0041, section 4 items 2-3 (names that
+//     start with `full:`): the default plugin options, so each plugin
+//     runs. A radar with the colors plugin on (the fill color of the
+//     palette), and the decimation with a fill (filler spec section 4.2
+//     item 8): `lttb` with `fill: 'origin'` (60 items to 12), and
+//     `min-max` with `fill: 'stack'` on a canvas of 100 x 100 (64 items in
+//     16 clusters of 4, each cluster in one pixel column of
+//     plugin.decimation.js:95-97, so the branch :99-133 runs).
 //
 // The Dart test file runs the cases two times: unthemed, and with the
 // light preset (theming.md section 8 test 3, Chart.js ADR 0042).
@@ -488,5 +495,74 @@ const cases = [
     plugins: [{id: 'noLayout', beforeLayout: noLayout}],
   }),
 ];
+
+// ---------------------------------------------------------------------------
+// The full cases of Chart.js ADR 0041, section 4 item 2 (wave 4): the
+// default plugin options, so each registered plugin runs (no unitPlugins).
+// A full case exists only where another plugin changes the result (section
+// 4 item 3).
+
+/** [n] items `{x: i, y: f(i)}` for the decimation. */
+const series = (n, f) => Array.from({length: n}, (_, i) => ({x: i, y: f(i)}));
+
+/**
+ * 64 items in 16 clusters of 4, the y values plus [dy]: the x values of a
+ * cluster are 0.25 apart, and the clusters are 10 apart. On a canvas of 100
+ * pixels, each cluster is in one pixel column of minMaxDecimation
+ * (plugin.decimation.js:95-97), so the min/max branch (:99-133) runs. The
+ * data of `clustered()` of plugin_decimation_reference.mjs.
+ */
+const clustered = (dy) =>
+  Array.from({length: 64}, (_, i) => ({
+    x: Math.floor(i / 4) * 10 + (i % 4) * 0.25,
+    y: ((i * 37) % 23) - 5 + dy,
+  }));
+
+/**
+ * A line chart with the [datasets], `parsing: false`, a linear `x` and the
+ * decimation options [decimation] (`threshold: 20`). No unitPlugins.
+ */
+const decimated = (datasets, decimation) => ({
+  type: 'line',
+  data: {datasets},
+  options: {
+    parsing: false,
+    scales: {x: {type: 'linear'}},
+    plugins: {decimation: {enabled: true, threshold: 20, ...decimation}},
+  },
+});
+
+cases.push(
+  fillerCase('full: radar with colors on', {
+    type: 'radar',
+    data: {
+      labels: LABELS.slice(0, 5),
+      datasets: [{data: [3, 5, 2, 6, 4]}, {data: [1, 2, 1, 3, 2]}],
+    },
+    options: {plugins: {colors: {enabled: true}}},
+  }),
+  fillerCase(
+    'full: lttb with fill origin',
+    decimated([ds(series(60, (i) => ((i * 37) % 23) - 8), {fill: 'origin', pointRadius: 0})], {
+      algorithm: 'lttb',
+      samples: 12,
+    }),
+  ),
+  fillerCase(
+    'full: min-max with fill stack',
+    decimated(
+      [
+        ds(clustered(0), {pointRadius: 0}),
+        ds(clustered(5), {
+          fill: 'stack',
+          backgroundColor: RED,
+          pointRadius: 0,
+        }),
+      ],
+      {algorithm: 'min-max'},
+    ),
+    {options: {canvas: {width: 100, height: 100}}},
+  ),
+);
 
 writeControllerReference(OUT, 'pluginFiller', cases, {title: 'filler plugin'});

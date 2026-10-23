@@ -25,7 +25,7 @@
 ///   section 5). The controller never sets `enableOptionSharing`.
 /// - `overrides` holds the tear-offs of the two legend functions
 ///   `_generateLabels` and `_onClick` (Chart.js ADR 0028, section 6). The
-///   legend plugin of phase 8 calls them.
+///   legend plugin calls them.
 /// - [PolarAreaController.jsClass] is the class as a value with the statics
 ///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
 ///

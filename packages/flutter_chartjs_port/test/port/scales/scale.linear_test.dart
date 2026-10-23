@@ -38,9 +38,11 @@ import 'scale_linear_reference.dart';
 // not register the scales yet. Thus main() registers the category scale, the
 // linear scale and the test controllers through their class values, before
 // the snapshot of the defaults restore (Chart.js ADR 0020, section 8, and
-// Chart.js ADR 0022, section 8). The generator registers the six scales and
-// the four elements of the dist first. The other scales of the dist do not
-// change these charts: a scale registers only its own defaults.
+// Chart.js ADR 0022, section 8). The generator registers the built-in
+// components and the seven plugins of the dist first (registerBuiltins,
+// Chart.js ADR 0041, section 1), as flutter_test_config.dart does. The other
+// scales of the dist do not change these charts: a scale registers only its
+// own defaults.
 //
 // The groups of Chart.js ADR 0025 pin the fast path of getPixelForValue
 // (section 3) and the relations of the value types (section 9) without

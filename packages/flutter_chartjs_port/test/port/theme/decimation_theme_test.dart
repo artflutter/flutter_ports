@@ -6,11 +6,8 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.colors.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -33,11 +30,10 @@ import 'package:flutter_test/flutter_test.dart';
 // The reads use `jsGet`. Thus the test does not depend on the form of the
 // differences.md row adapt-decimation-data-accessor.
 //
-// Until wave 4 of phase 8 adds the plugins to registerables, main() registers
-// the colors and decimation plugins and then sets
-// `defaults.plugins.colors.enabled = false`, as test/index.js:25-28 does
-// (Chart.js ADR 0041, section 7). Each chart sets
-// `plugins.colors.enabled: true`.
+// flutter_test_config.dart registers the plugins with the built-in
+// components and sets `defaults.plugins.colors.enabled = false`, as
+// test/index.js:25-28 does (Chart.js ADR 0041, sections 1 and 6). Each chart
+// sets `plugins.colors.enabled: true`.
 
 /// The color `rgb(200, 0, 0)`.
 const RawThemeColor _red = (alpha: 1.0, red: 200 / 255, green: 0.0, blue: 0.0);
@@ -134,14 +130,6 @@ Future<(_State, _State)> _run(
 }
 
 void main() {
-  // Chart.js ADR 0041 section 7: until wave 4 adds the plugins to
-  // registerables, this file registers the plugins that its cases need.
-  Chart.register([colors, decimation]);
-  // index.js:25-28
-  // Disable colors plugin for tests.
-  ((defaults['plugins']! as AnyObject)['colors']! as AnyObject)['enabled'] =
-      false;
-
   for (final (name, algorithm) in <(String, AnyObject)>[
     ('min-max', <String, Object?>{'algorithm': 'min-max'}),
     ('lttb', <String, Object?>{'algorithm': 'lttb', 'samples': 50}),

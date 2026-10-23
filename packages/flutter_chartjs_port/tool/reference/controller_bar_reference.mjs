@@ -34,7 +34,7 @@ import {fileURLToPath} from 'node:url';
 import {
   loadChartJs,
   named,
-  registerPhase7,
+  registerBuiltins,
   runControllerCase,
   writeControllerReference,
 } from './controller_chart_common.mjs';
@@ -46,7 +46,7 @@ const OUT = fileURLToPath(
 
 const C = await loadChartJs();
 await loadMomentAdapter(C);
-registerPhase7(C);
+registerBuiltins(C);
 
 /** One day in ms. */
 const DAY = 86400000;
