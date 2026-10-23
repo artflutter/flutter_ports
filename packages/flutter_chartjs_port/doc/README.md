@@ -161,7 +161,8 @@ the fixture smoke runner ([Chart.js ADR 0029](adr/0029-fixture-smoke-runner.md))
 pages of the nine chart types ([Chart.js ADR 0031](adr/0031-gallery-chart-types.md)). At its end,
 831 spec cases pass, 0 fail and 111 skip in the 45 ported spec files, and 457 of the 529 upstream
 fixtures pass. The rows of porting-flow.md §5 give the results of each phase. Phase 8 (plugins)
-is next.
+is in progress: the seven plugins of `src/plugins/` are ported, and `registerables` registers
+them (2026-10-23).
 
 The order follows upstream's own layering:
 - `helpers` depend only on `core.defaults` (and a type-only import of the chart controller).

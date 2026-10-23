@@ -101,7 +101,7 @@ E3) and the Node.js probes of upstream (E2) give eleven rows. Eight of them diff
 | S3 | `events: ['mousemove']`, touch tap | The tooltip shows | Nothing |
 | S4 | Touch tap on a legend item, `onHover` set | `onHover`, then `onClick` | `onClick` only |
 | S5 | A tap outside after S4 | `onLeave` | Nothing |
-| S6 | `events` with `pointerout` or `pointerleave`, touch lift | The tooltip hides | Nothing |
+| S6 | `events` with `pointerout` or `pointerleave` and without `mousemove` and `click`, touch lift | The tooltip hides | Nothing |
 | S7 | `events` with `pointerup`, tap on a legend item | `onClick` 2 times | Same |
 | S8 | Mouse move and exit in one frame | `mousemove`, then `mouseout` | Same |
 | S9 | Mouse exit inside a legend hit box | The hover stays | Same |
@@ -449,9 +449,11 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
    tooltip stays after the lift. A tap on an empty point of the chart area hides it (the
    compatibility `mousemove` and `click` find no element in the default mode). A tap outside the
    chart hides it through the `mouseout` of section 9. A user who wants a hide on lift adds
-   `pointerout` or `pointerleave` to `events`, as in Chrome. The port adds no port-only hide, no
-   fade and no `touchend` in the default `events`. The ledger Signal #7738 stays open: the port
-   follows upstream when a release changes it.
+   `pointerout` or `pointerleave` to `events` and removes `mousemove` and `click`, as in Chrome.
+   With the default `events`, the compatibility `mousemove` and `click` of the lift come after the
+   `pointerout` and show the tooltip again. The port adds no port-only hide, no fade and no
+   `touchend` in the default `events`. The ledger Signal #7738 stays open: the port follows upstream
+   when a release changes it.
 5. **`events: ['mousemove']` on a touch device.** A tap gives the compatibility `mousemove`. The
    tooltip shows. A touch drag gives `touchmove`, which the chart does not listen to, as in Chrome.
 6. **A tap outside the chart.** Section 9 gives `mouseout`. The tooltip hides, and the legend
@@ -637,8 +639,10 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
     All 12 pass. A tap leaves the tooltip active with opacity 1 after the lift. A later
     `mouseout` outside makes it inactive with opacity 0. With `touchend` added to `events`, the
     lift does not hide the tooltip, because the NaN position is outside the chart area. With
-    `pointerout` added, the lift hides it. With `events: ['mousemove']`, the compatibility
-    `mousemove` shows it. A tap on legend item 1 and then a tap outside log
+    `pointerout` added and without the compatibility events, the lift hides it. With the
+    compatibility events of the tap, the `mousemove` after the `pointerout` shows it again (the
+    reference cases of `chart_host_input_test.dart`). With `events: ['mousemove']`, the
+    compatibility `mousemove` shows it. A tap on legend item 1 and then a tap outside log
     `hover:mousemove:one`, `click:click:one`, `leave:mouseout:one`. With `pointerup` added, a
     tap on a legend item calls `onClick` 2 times. A `touchstart` on an empty point hides the
     tooltip. A `click` at (3, 3) outside the chart area keeps it.
