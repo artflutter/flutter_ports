@@ -9,16 +9,21 @@
 ///
 /// A case makes a real `Chart` on a `UiCanvasElement` that no chart host
 /// shows. Thus `detectPlatform` gives the `BasicPlatform`, and no frame
-/// drives the chart. The chart has `responsive: false`, `animation: false`,
-/// `events: []`, `devicePixelRatio: 1` and no legend (`plugins.legend:
-/// false` of `stressPluginOptions`, Chart.js ADR 0031, Open), and a bitmap
-/// of [chartBenchWidth] x [chartBenchHeight] pixels. The other plugins of
-/// `registerables` run: the filler fills the radar of `chart.radar`. Each
-/// iteration calls the chart directly and times three parts on the UI
-/// thread:
+/// drives the chart. The chart has `responsive: false`,
+/// `devicePixelRatio: 1` and a bitmap of [chartBenchWidth] x
+/// [chartBenchHeight] pixels. The cases of the modes `chart` and `axes`
+/// (phases 5 to 7) also have `animation: false`, `events: []` and no legend
+/// (`plugins.legend: false` of `stressPluginOptions`, Chart.js ADR 0031,
+/// Open). The other plugins of `registerables` run: the filler fills the
+/// radar of `chart.radar`. The cases of the plugins (phase 8, the modes
+/// `plugins`, `tooltip`, `fill`, `legend` and `title`) give their own
+/// options. Each iteration calls the chart directly and times three parts
+/// on the UI thread:
 /// - update: `chart.update('none')` without its draw. Only the cases with
-///   [ChartBenchCall.update] have it.
-/// - draw: `chart.draw()`, also the draw inside `chart.update('none')`.
+///   [ChartBenchCall.update] have it. For [ChartBenchCall.frame], it is the
+///   frame without its draws: the event and the tick of the animator.
+/// - draw: `chart.draw()`, also the draw inside `chart.update('none')`, in
+///   an event or in a tick of the animator.
 /// - end: the end of the recording. The context draws its picture into a
 ///   throwaway `ui.PictureRecorder`, as the paint of a chart host does, and
 ///   the recorder ends its picture and disposes of it. The end of the
@@ -49,8 +54,18 @@ import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.plugins.dart'
+    show FilterCallback;
+import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
+import 'package:flutter_chartjs_port/src/js/js_date.dart' show jsDateNow;
+import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
+import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
+    show fromNativeEvent;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The width of the bitmap of the benchmark canvas, in device pixels.
 const int chartBenchWidth = 800;
@@ -96,7 +111,23 @@ enum ChartBenchCall {
 
   /// A change of the data (not timed), then `chart.update('none')`.
   update,
+
+  /// One frame of [ChartBenchScene.frame]: an event, a tick of the
+  /// animator, or both, with the draws that they cause. The data does not
+  /// change.
+  frame;
+
+  /// The primary metric of a case with this call: the cost of one whole
+  /// frame, the sum of the medians of these figures (performance.md
+  /// section 6). `draw+end` for [draw], else `update+draw+end`.
+  String get frameMetric => this == draw ? 'draw+end' : 'update+draw+end';
 }
+
+/// The calls of a case that times a draw and an update.
+const List<ChartBenchCall> chartBenchDrawAndUpdate = [
+  ChartBenchCall.draw,
+  ChartBenchCall.update,
+];
 
 /// The chart of a case for one point count.
 final class ChartBenchScene {
@@ -108,10 +139,21 @@ final class ChartBenchScene {
     this.change,
     this.takeParts,
     this.describe,
+    this.prepare,
+    this.frame,
   });
 
   /// The config of `new Chart(canvas, config)`.
   final AnyObject config;
+
+  /// Brings the new chart into the state of the case, outside the timing,
+  /// before the warm-up: for example a hover and the end of the
+  /// animations. Dart `null` for no preparation.
+  final void Function(Chart chart)? prepare;
+
+  /// The frame of [ChartBenchCall.frame], timed. Dart `null` for the other
+  /// calls.
+  final void Function(Chart chart)? frame;
 
   /// Changes the data before each update, outside the timing. Dart `null`
   /// for no change.
@@ -148,7 +190,14 @@ final class ChartBenchCase {
     required this.scene,
     this.keys = const {},
     this.counts,
+    this.primary,
   });
+
+  /// The primary metric of the case, for example `update+draw+end`
+  /// ([ChartBenchCall.frameMetric]): the BENCH line gets it as the key
+  /// `primary`. The cases of phase 8 name it. Dart `null` for the cases of
+  /// phases 5 to 7, whose lines keep their keys.
+  final String? primary;
 
   /// The point counts of the case without the define `N`, or Dart `null`
   /// for [chartBenchDefaultCounts].
@@ -266,6 +315,666 @@ ChartBenchCase _axesCase(StressAxisType scale, ChartBenchCall call) =>
       },
     );
 
+/// The border colors of the datasets of the plugin cases, in turn.
+const List<String> _benchBorders = [
+  'rgb(54, 162, 235)',
+  'rgb(255, 99, 132)',
+  'rgb(255, 159, 64)',
+  'rgb(255, 205, 86)',
+  'rgb(75, 192, 192)',
+  'rgb(153, 102, 255)',
+  'rgb(201, 203, 207)',
+];
+
+/// The fill colors of the datasets of the plugin cases: the border colors
+/// with alpha 0.5.
+const List<String> _benchFills = [
+  'rgba(54, 162, 235, 0.5)',
+  'rgba(255, 99, 132, 0.5)',
+  'rgba(255, 159, 64, 0.5)',
+  'rgba(255, 205, 86, 0.5)',
+  'rgba(75, 192, 192, 0.5)',
+  'rgba(153, 102, 255, 0.5)',
+  'rgba(201, 203, 207, 0.5)',
+];
+
+/// The time of one frame at 60 Hz, in ms: the step of the dates of the
+/// animator ticks of the case `tooltip.fade`.
+const double chartBenchFrameMs = chartBenchStep * 1000;
+
+/// The frames of one fade of the tooltip in the case `tooltip.fade`: the
+/// 200 ms of the opacity animation of the tooltip
+/// (plugin.tooltip.js:1319-1322) at 60 Hz. The frame 12 ticks at 200 ms,
+/// the end of the fade.
+const int chartBenchFadeFrames = 12;
+
+/// The phase step of the tick dates of the case `tooltip.fade`, in frames:
+/// the fractional part of the golden ratio. The fade `c` (from 0) ticks at
+/// the dates `start + (frame + phase) * chartBenchFrameMs`, with `phase` the
+/// fractional part of `c * chartBenchFadePhase`. A real frame loop ticks at
+/// the dates of the vsync, so the opacities of two fades are not the same.
+/// With the same dates in each fade, the opacities repeat, and from the third
+/// fade each line of the tooltip comes from the paragraph cache (Chart.js ADR
+/// 0039, section 13, item 1).
+const double chartBenchFadePhase = 0.6180339887498949;
+
+/// The point counts of the cases of the tooltip, the fill, the legend and
+/// the title: the points of each dataset.
+const List<int> chartBenchPluginCounts = [100, 1000];
+
+/// The values of [datasets] datasets of [n] points each, at the y values
+/// of a `StressPointField` of `datasets * n` points: the point `i` of the
+/// dataset `k` is the point `k * n + i` of the field.
+final class _BenchSeries {
+  _BenchSeries(
+    this.datasets,
+    this.n, {
+    this.scale = 1,
+    this.offset = 0,
+    this.gapEvery = 0,
+  }) : field = StressPointField(datasets * n) {
+    for (var k = 0; k < datasets; k++) {
+      data.add([for (var i = 0; i < n; i++) _value(k, i)]);
+    }
+  }
+
+  final int datasets;
+  final int n;
+
+  /// The value of a field value `y` is `offset + scale * y`.
+  final double scale;
+  final double offset;
+
+  /// A gap (`null`) at each point `i` with `i % gapEvery == gapEvery - 1`.
+  /// 0 for no gap.
+  final int gapEvery;
+
+  final StressPointField field;
+
+  /// The data of each dataset.
+  final List<List<Object?>> data = [];
+
+  /// `data.labels`: `Point <i>`.
+  List<Object?> labels() => [for (var i = 0; i < n; i++) 'Point $i'];
+
+  Object? _value(int k, int i) => gapEvery > 0 && i % gapEvery == gapEvery - 1
+      ? null
+      : offset + scale * field.y[k * n + i];
+
+  /// Moves the points of the field by one frame and writes the new values
+  /// into [data] in place. The gaps stay.
+  void step() {
+    field.step(datasets * n, chartBenchStep);
+    for (var k = 0; k < datasets; k++) {
+      final values = data[k];
+      for (var i = 0; i < n; i++) {
+        values[i] = _value(k, i);
+      }
+    }
+  }
+}
+
+/// The dataset `k` with the [data], the label `Dataset <k + 1>`, a color
+/// of [_benchBorders] and [_benchFills], `borderWidth` 1 and the options
+/// [more].
+AnyObject _benchDataset(int k, List<Object?> data, [AnyObject? more]) =>
+    <String, Object?>{
+      'label': 'Dataset ${k + 1}',
+      'data': data,
+      'borderColor': _benchBorders[k % _benchBorders.length],
+      'backgroundColor': _benchFills[k % _benchFills.length],
+      'borderWidth': 1.0,
+      ...?more,
+    };
+
+/// The config of a chart of [type] with the labels of [series], the
+/// [datasets], [chartBenchOptions] and the chart options [options].
+AnyObject _benchConfig(
+  String type,
+  _BenchSeries series, {
+  required List<Object?> datasets,
+  required AnyObject options,
+  List<Object?> plugins = const [],
+}) => <String, Object?>{
+  'type': type,
+  'data': <String, Object?>{'labels': series.labels(), 'datasets': datasets},
+  'options': <String, Object?>{...chartBenchOptions, ...options},
+  'plugins': <Object?>[...plugins],
+};
+
+/// The hidden category x axis and linear y axis of the plugin and fill
+/// cases, with the user bounds [min] and [max] of y (Chart.js ADR 0031,
+/// section 5). [stacked] stacks the y values.
+AnyObject _benchHiddenScales({
+  required double min,
+  required double max,
+  bool stacked = false,
+}) => <String, Object?>{
+  'x': stressHiddenScale('category'),
+  'y': <String, Object?>{
+    ...stressHiddenScale('linear', min: min, max: max),
+    if (stacked) 'stacked': true,
+  },
+};
+
+/// The timing parts of a plugin case: the four parts of
+/// `StressChartTiming`, and with [tooltip] the part `tooltipDraw`, the
+/// draw of the tooltip from `beforeTooltipDraw` to `afterTooltipDraw`
+/// (plugin.tooltip.js:1246-1262).
+final class _PluginTiming {
+  _PluginTiming({this.tooltip = false});
+
+  final bool tooltip;
+  final StressChartTiming _parts = StressChartTiming();
+  int _tooltipStart = 0;
+  int _tooltipTicks = 0;
+
+  /// The inline plugins of the chart.
+  List<Object?> get plugins => [
+    _parts.plugin,
+    if (tooltip)
+      <String, Object?>{
+        'id': 'benchTooltipTiming',
+        'beforeTooltipDraw': (Object? chart, Object? args, Object? options) {
+          _tooltipStart = _watch.elapsedTicks;
+        },
+        'afterTooltipDraw': (Object? chart, Object? args, Object? options) {
+          _tooltipTicks += _watch.elapsedTicks - _tooltipStart;
+        },
+      },
+  ];
+
+  /// The ticks of each part since the last call. It resets the parts.
+  Map<String, int> take() {
+    final parts = {
+      ..._parts.take(),
+      if (tooltip) 'tooltipDraw': _tooltipTicks,
+    };
+    _tooltipTicks = 0;
+    return parts;
+  }
+}
+
+/// A case of phase 8: it names its primary metric
+/// ([ChartBenchCall.frameMetric]).
+ChartBenchCase _pluginCase(
+  String mode,
+  String name,
+  ChartBenchCall call, {
+  required List<int> counts,
+  required Map<String, Object?> keys,
+  required ChartBenchScene Function(int n) scene,
+}) => ChartBenchCase(
+  mode: mode,
+  name: name,
+  call: call,
+  keys: keys,
+  counts: counts,
+  primary: call.frameMetric,
+  scene: (n) {
+    registerGalleryComponents();
+    return scene(n);
+  },
+);
+
+/// The plugin options of config A of Chart.js ADR 0038, section 10, item
+/// 1: each plugin of `registerables` with its least work. The tooltip has
+/// no option: the chart listens to no event.
+AnyObject _leastWorkPlugins() => <String, Object?>{
+  'legend': <String, Object?>{'display': false},
+  'title': <String, Object?>{'display': false},
+  'subtitle': <String, Object?>{'display': false},
+  'colors': <String, Object?>{'enabled': false},
+  'decimation': <String, Object?>{'enabled': false},
+};
+
+/// A case `plugins.line` of the CT stage 1 (Chart.js ADR 0038, section 10,
+/// items 1 and 2): a line chart of [datasets] datasets in the config
+/// [config].
+/// - `A`: the seven plugins of `registerables`, each with its least work
+///   ([_leastWorkPlugins]), no `fill` (the default `fill: false` of the
+///   line) and no event (`events: []`).
+/// - `B`: the same chart with `options.plugins: false`. Then
+///   `_createDescriptors` gives no descriptor (core.plugins.js:101-107), and
+///   each notify visits no plugin.
+///
+/// A minus B is an upper bound of the gain of the typed hook slots (CT):
+/// the dispatch, the hook bodies and the three empty boxes. The chart has
+/// no timing plugin, because B would turn it off: the BENCH line has no
+/// parts. The key `notifies` gives the notifies of one iteration. The
+/// scales are hidden (Chart.js ADR 0031, section 5).
+ChartBenchCase _dispatchCase(
+  String config,
+  int datasets,
+  ChartBenchCall call,
+) => _pluginCase(
+  'plugins',
+  'line',
+  call,
+  counts: [if (datasets == 3) 1000 else 100],
+  keys: {'config': config, 'datasets': datasets},
+  scene: (n) {
+    final series = _BenchSeries(datasets, n);
+    return ChartBenchScene(
+      config: _benchConfig(
+        'line',
+        series,
+        datasets: [
+          for (var k = 0; k < datasets; k++) _benchDataset(k, series.data[k]),
+        ],
+        options: <String, Object?>{
+          'animation': false,
+          'events': <String>[],
+          'scales': _benchHiddenScales(min: 0, max: 1),
+          'plugins': config == 'A' ? _leastWorkPlugins() : false,
+        },
+      ),
+      change: series.step,
+    );
+  },
+);
+
+/// Sends a native event of [type] at ([x], [y]) to [chart], as the
+/// listener of the platform does (platform.dom.js:109-118 and
+/// core.controller.js:1163). The benchmark chart has no host, so no
+/// platform listener exists.
+void _benchEvent(Chart chart, String type, double x, double y) {
+  final event = NativeEvent(
+    type: type,
+    offsetX: x,
+    offsetY: y,
+    target: chart.canvas,
+  );
+  // The benchmark sends the event as the listener of a host does.
+  // ignore: invalid_use_of_internal_member
+  chart.eventHandler(fromNativeEvent(event, chart));
+}
+
+/// Ticks the animator at [date], as a frame callback of the animator does
+/// (core.animator.js:57-110). The frameless benchmark has no frame.
+void _benchTick(double date) {
+  // The benchmark ticks the animator as its frame callback does.
+  // ignore: invalid_use_of_internal_member
+  animator.update(date);
+}
+
+/// Ends each animation of the animator: two ticks one hour after now. The
+/// first tick gives each animation its end value, and the second tick
+/// removes the animations (core.animator.js:57-110).
+void _benchFinishAnimations() {
+  final date = jsDateNow() + Duration.millisecondsPerHour;
+  _benchTick(date);
+  _benchTick(date);
+}
+
+/// The pointer of the tooltip cases: the x of each point of dataset 0 and
+/// the y of the middle of the chart area.
+final class _BenchPointer {
+  Float64List _xs = Float64List(0);
+  double _y = 0;
+
+  /// Reads the positions of the points of [chart]. Call it after the end
+  /// of the animations.
+  void measure(Chart chart) {
+    _xs = Float64List.fromList([
+      for (final element in chart.getDatasetMeta(0).data) element.x,
+    ]);
+    final area = chart.chartArea!;
+    _y = (area.top + area.bottom) / 2;
+  }
+
+  /// A `mousemove` over the point [index] of dataset 0.
+  void move(Chart chart, int index) =>
+      _benchEvent(chart, 'mousemove', _xs[index], _y);
+
+  /// A `mouseout`: the pointer leaves the canvas at its left edge.
+  void out(Chart chart) => _benchEvent(chart, 'mouseout', -1, _y);
+}
+
+/// A `BasicPlatform` with the no-op `updateConfig` of `BasePlatform`
+/// (platform.base.js:80-82): the chart keeps its option `animation`.
+/// `BasicPlatform` writes `animation: false` (platform.basic.js:20-22). The
+/// cases `tooltip.still` and `tooltip.fade` need the animations. The
+/// reference generators of the controllers do the same in Node.js.
+final class _AnimatedPlatform extends BasicPlatform {
+  /// The class value of `config.platform` (core.controller.js:136).
+  static final JsClass jsClass = JsClass(
+    'AnimatedBasicPlatform',
+    superclass: BasicPlatform.jsClass,
+    construct: (newTarget, args) => _AnimatedPlatform(),
+  );
+
+  @override
+  void updateConfig(types.ChartConfiguration config) {
+    // no-op
+  }
+}
+
+/// The chart of the tooltip cases (Chart.js ADR 0039, Open 1): a line
+/// chart of [datasets] datasets of [n] points on the default scales of
+/// the docs blocks (a visible category x axis and a visible linear y axis),
+/// with `interaction: {mode: 'index', intersect: false}` and no legend.
+/// Without [tooltip], the chart has `plugins.tooltip: false`: the same
+/// chart without the tooltip plugin. With [animate], the chart has the
+/// default animations on the platform [_AnimatedPlatform], else
+/// `animation: false`. The chart listens to the default events.
+ChartBenchScene _tooltipScene(
+  int datasets,
+  int n, {
+  required bool tooltip,
+  required bool animate,
+  void Function(Chart chart)? prepare,
+  void Function(Chart chart)? frame,
+}) {
+  final series = _BenchSeries(datasets, n);
+  final timing = _PluginTiming(tooltip: true);
+  final config = _benchConfig(
+    'line',
+    series,
+    datasets: [
+      for (var k = 0; k < datasets; k++) _benchDataset(k, series.data[k]),
+    ],
+    options: <String, Object?>{
+      if (!animate) 'animation': false,
+      'interaction': <String, Object?>{'mode': 'index', 'intersect': false},
+      'plugins': <String, Object?>{
+        'legend': false,
+        if (!tooltip) 'tooltip': false,
+      },
+    },
+    plugins: timing.plugins,
+  );
+  if (animate) config['platform'] = _AnimatedPlatform.jsClass;
+  return ChartBenchScene(
+    config: config,
+    takeParts: timing.take,
+    prepare: prepare,
+    frame: frame,
+  );
+}
+
+/// The keys of a tooltip case.
+Map<String, Object?> _tooltipKeys(int datasets, {required bool tooltip}) => {
+  'datasets': datasets,
+  'tooltip': tooltip,
+};
+
+/// Case (a) of Chart.js ADR 0039, Open 1, `tooltip.hover`: a hover change
+/// in each frame. Each frame sends a `mousemove` over the next point of
+/// dataset 0, so the index of the tooltip changes in each frame. The chart
+/// has `animation: false`: the event draws the chart at once
+/// (core.controller.js:683-695, :1180-1182). The frameless benchmark cannot
+/// tick the animations of the elements in frame time, because each
+/// animation takes its start from the clock (core.animation.js:37, :58).
+/// Without [tooltip], it is the guard cell of the same chart without the
+/// tooltip plugin.
+ChartBenchCase _hoverCase(int datasets, {required bool tooltip}) => _pluginCase(
+  'tooltip',
+  'hover',
+  ChartBenchCall.frame,
+  counts: chartBenchPluginCounts,
+  keys: _tooltipKeys(datasets, tooltip: tooltip),
+  scene: (n) {
+    final pointer = _BenchPointer();
+    var index = 0;
+    return _tooltipScene(
+      datasets,
+      n,
+      tooltip: tooltip,
+      animate: false,
+      prepare: pointer.measure,
+      frame: (chart) {
+        index = (index + 1) % n;
+        pointer.move(chart, index);
+      },
+    );
+  },
+);
+
+/// Case (b) of Chart.js ADR 0039, Open 1, `tooltip.still`: a still tooltip
+/// after its animation. The preparation sends a `mousemove` over the
+/// middle point of dataset 0 and ends the animations. Each iteration calls
+/// `chart.draw()`. The `$animations` of the tooltip keep their entries
+/// after the end, so each draw calls the positioner and measures the lines
+/// again (plugin.tooltip.js:1006-1048, Chart.js ADR 0039, section 13).
+/// Without [tooltip], it is the same chart without the tooltip plugin.
+ChartBenchCase _stillCase(int datasets, {required bool tooltip}) => _pluginCase(
+  'tooltip',
+  'still',
+  ChartBenchCall.draw,
+  counts: chartBenchPluginCounts,
+  keys: _tooltipKeys(datasets, tooltip: tooltip),
+  scene: (n) {
+    final pointer = _BenchPointer();
+    return _tooltipScene(
+      datasets,
+      n,
+      tooltip: tooltip,
+      animate: true,
+      prepare: (chart) {
+        _benchFinishAnimations();
+        pointer
+          ..measure(chart)
+          ..move(chart, n ~/ 2);
+        _benchFinishAnimations();
+      },
+    );
+  },
+);
+
+/// Case (c) of Chart.js ADR 0039, Open 1, `tooltip.fade`: the fade in and
+/// out of the tooltip, with the default animations. Each iteration is one
+/// frame of a fade: a tick of the animator at a date
+/// [chartBenchFrameMs] later than the frame before, and the draw of that
+/// tick. The first frame of each fade also sends the event: a `mousemove`
+/// over the middle point of dataset 0 (fade in) or a `mouseout` (fade
+/// out), in turn. A fade has [chartBenchFadeFrames] frames, so each frame
+/// draws the tooltip with a new opacity (Chart.js ADR 0039, section 13 and
+/// Open 2). The dates of the ticks start at the clock after the event, as
+/// the animations of the event take their start from the clock
+/// (core.animation.js:37, :58). Each fade moves the dates of its ticks by
+/// its phase ([chartBenchFadePhase]), so the opacities of one fade do not
+/// repeat in the next fades, as in a real frame loop.
+ChartBenchCase _fadeCase(int datasets) => _pluginCase(
+  'tooltip',
+  'fade',
+  ChartBenchCall.frame,
+  counts: chartBenchPluginCounts,
+  keys: _tooltipKeys(datasets, tooltip: true),
+  scene: (n) {
+    final pointer = _BenchPointer();
+    var frame = 0;
+    var fade = 0;
+    var phase = 0.0;
+    var shown = false;
+    var start = 0.0;
+    return _tooltipScene(
+      datasets,
+      n,
+      tooltip: true,
+      animate: true,
+      prepare: (chart) {
+        _benchFinishAnimations();
+        pointer.measure(chart);
+      },
+      frame: (chart) {
+        if (frame == 0) {
+          shown = !shown;
+          if (shown) {
+            pointer.move(chart, n ~/ 2);
+          } else {
+            pointer.out(chart);
+          }
+          start = jsDateNow();
+          phase = (fade * chartBenchFadePhase) % 1;
+          fade++;
+        }
+        frame++;
+        _benchTick(start + (frame + phase) * chartBenchFrameMs);
+        if (frame == chartBenchFadeFrames) frame = 0;
+      },
+    );
+  },
+);
+
+/// A fill case of Chart.js ADR 0040, Open 2: three datasets of N points on
+/// hidden scales, with `pointRadius: 0`, `animation: false`, `events: []`
+/// and no legend.
+/// - `fill.gaps`: a line chart, the values from -1 to 1 with a gap every
+///   12 points, and `fill: {target: 'origin', above, below}` on each
+///   dataset. `above` and `below` make the path clips of the filler
+///   (`filler.drawing.js`, `clipVertical` and `clipHorizontal`).
+/// - `fill.stack`: a line chart with stacked y values and `fill: 'stack'`
+///   on each dataset. The stack target is quadratic in N, as upstream.
+/// - `fill.radar`: a radar chart on a hidden polygon grid with the fills
+///   `origin`, `-1` and `-1`.
+ChartBenchCase _fillCase(String name, ChartBenchCall call) => _pluginCase(
+  'fill',
+  name,
+  call,
+  counts: chartBenchPluginCounts,
+  keys: {'datasets': 3},
+  scene: (n) {
+    final timing = _PluginTiming();
+    final series = switch (name) {
+      'gaps' => _BenchSeries(3, n, scale: 2, offset: -1, gapEvery: 12),
+      _ => _BenchSeries(3, n),
+    };
+    final AnyObject scales;
+    final List<Object?> fills;
+    switch (name) {
+      case 'gaps':
+        scales = _benchHiddenScales(min: -1, max: 1);
+        fills = [
+          for (var k = 0; k < 3; k++)
+            <String, Object?>{
+              'target': 'origin',
+              'above': _benchFills[1],
+              'below': _benchFills[0],
+            },
+        ];
+      case 'stack':
+        scales = _benchHiddenScales(min: 0, max: 3, stacked: true);
+        fills = ['stack', 'stack', 'stack'];
+      default:
+        scales = <String, Object?>{
+          'r': stressHiddenScale('radialLinear', min: 0, max: 1),
+        };
+        fills = ['origin', '-1', '-1'];
+    }
+    return ChartBenchScene(
+      config: _benchConfig(
+        name == 'radar' ? 'radar' : 'line',
+        series,
+        datasets: [
+          for (var k = 0; k < 3; k++)
+            _benchDataset(k, series.data[k], <String, Object?>{
+              'fill': fills[k],
+              'pointRadius': 0.0,
+            }),
+        ],
+        options: <String, Object?>{
+          'animation': false,
+          'events': <String>[],
+          'scales': scales,
+          'plugins': stressPluginOptions(),
+        },
+        plugins: timing.plugins,
+      ),
+      change: series.step,
+      takeParts: timing.take,
+    );
+  },
+);
+
+/// The line chart of the legend and title cases: three datasets of N
+/// points on the default scales of the docs blocks, `animation: false` and
+/// `events: []`.
+/// - `legend.line` with `legend: true`: the legend of the docs blocks,
+///   the defaults (`display: true`, `position: 'top'`,
+///   plugin.legend.js:637-638).
+/// - `legend.line` with `legend: false`: the same chart with
+///   `plugins.legend: false`, the base of the legend and the title.
+/// - `title.line`: `plugins.legend: false` and the title
+///   `{display: true, text: 'Chart.js Line Chart'}`.
+ChartBenchCase _boxCase(
+  String mode,
+  ChartBenchCall call, {
+  required bool legend,
+  required bool title,
+}) => _pluginCase(
+  mode,
+  'line',
+  call,
+  counts: chartBenchPluginCounts,
+  keys: {'datasets': 3, 'legend': legend, 'title': title},
+  scene: (n) {
+    final timing = _PluginTiming();
+    final series = _BenchSeries(3, n);
+    return ChartBenchScene(
+      config: _benchConfig(
+        'line',
+        series,
+        datasets: [
+          for (var k = 0; k < 3; k++) _benchDataset(k, series.data[k]),
+        ],
+        options: <String, Object?>{
+          'animation': false,
+          'events': <String>[],
+          'plugins': <String, Object?>{
+            if (!legend) 'legend': false,
+            if (title)
+              'title': <String, Object?>{
+                'display': true,
+                'text': 'Chart.js Line Chart',
+              },
+          },
+        },
+        plugins: timing.plugins,
+      ),
+      change: series.step,
+      takeParts: timing.take,
+    );
+  },
+);
+
+/// The cases of the plugins of phase 8, in the order of a run, after the
+/// cases of phases 5 to 7. Each names its primary metric (the key
+/// `primary` of its BENCH line). N is the point count of each dataset.
+/// - `plugins.line` (CT stage 1, Chart.js ADR 0038, section 10): the
+///   configs `A` and `B` ([_dispatchCase]), with 3 datasets of 1000 points
+///   and 100 datasets of 100 points, each with `draw` and `update`. The
+///   100-dataset cells are primary.
+/// - `tooltip.hover`, `tooltip.still` and `tooltip.fade`: the cases (a),
+///   (b) and (c) of Chart.js ADR 0039, Open 1, with 3 and 10 datasets.
+///   `hover` and `still` also run without the tooltip plugin (the key
+///   `tooltip` false): the guard cells. The lines have the part
+///   `tooltipDraw`.
+/// - `fill.gaps`, `fill.stack` and `fill.radar`: the fills of Chart.js ADR
+///   0040, Open 2 ([_fillCase]), each with `draw` and `update`.
+/// - `legend.line` (the legend on and off) and `title.line`
+///   ([_boxCase]), each with `draw` and `update`.
+final List<ChartBenchCase> _pluginCases = [
+  for (final datasets in const [3, 100])
+    for (final call in chartBenchDrawAndUpdate)
+      for (final config in const ['A', 'B'])
+        _dispatchCase(config, datasets, call),
+  for (final datasets in const [3, 10]) ...[
+    for (final tooltip in const [true, false])
+      _hoverCase(datasets, tooltip: tooltip),
+    for (final tooltip in const [true, false])
+      _stillCase(datasets, tooltip: tooltip),
+    _fadeCase(datasets),
+  ],
+  for (final name in const ['gaps', 'stack', 'radar'])
+    for (final call in chartBenchDrawAndUpdate) _fillCase(name, call),
+  for (final call in chartBenchDrawAndUpdate) ...[
+    _boxCase('legend', call, legend: true, title: false),
+    _boxCase('legend', call, legend: false, title: false),
+    _boxCase('title', call, legend: false, title: true),
+  ],
+];
+
 /// The cases of the benchmark, in the order of a run.
 ///
 /// The mode `chart` has the cases of the stress mode chart. They have no
@@ -303,6 +1012,11 @@ ChartBenchCase _axesCase(StressAxisType scale, ChartBenchCall call) =>
 /// run times the cases of phase 5 and phase 6 first. The selector `chart`
 /// selects 16 cases; `CASES=a,b,c` selects the cases of Chart.js ADR 0021,
 /// section 8.
+///
+/// After them come the cases of the plugins of phase 8 ([_pluginCases]):
+/// the modes `plugins`, `tooltip`, `fill`, `legend` and `title`. Their
+/// BENCH lines have the key `primary`. Thus a default run times the cases
+/// of phases 5 to 7 first, in the same order as before.
 final List<ChartBenchCase> chartBenchCases = [
   _stressCase('a', ChartBenchCall.draw, type: StressChartType.line),
   _stressCase('b', ChartBenchCall.update, type: StressChartType.line),
@@ -314,10 +1028,11 @@ final List<ChartBenchCase> chartBenchCases = [
     scriptable: true,
   ),
   for (final scale in StressAxisType.values)
-    for (final call in ChartBenchCall.values) _axesCase(scale, call),
+    for (final call in chartBenchDrawAndUpdate) _axesCase(scale, call),
   for (final type in StressChartType.values)
     if (!type.points)
-      for (final call in ChartBenchCall.values) _typeCase(type, call),
+      for (final call in chartBenchDrawAndUpdate) _typeCase(type, call),
+  ..._pluginCases,
 ];
 
 /// The cases of [selection], a comma list of selectors (see
@@ -356,23 +1071,42 @@ final class _BenchChart extends Chart {
   /// The ticks of the draws since the last reset.
   int drawTicks = 0;
 
+  /// The calls of `notifyPlugins` since the last reset: one for each
+  /// notify of a hook, also when no plugin gets it (Chart.js ADR 0038,
+  /// section 10, item 4).
+  int notifies = 0;
+
   @override
   void draw() {
     final start = _watch.elapsedTicks;
     super.draw();
     drawTicks += _watch.elapsedTicks - start;
   }
+
+  @override
+  bool? notifyPlugins(String hook, [AnyObject? args, FilterCallback? filter]) {
+    notifies++;
+    return super.notifyPlugins(hook, args, filter);
+  }
 }
 
 /// The iterations of one case, with the sums of their times in ticks.
 final class _Loop {
-  _Loop(this.chart, this.context, this.call, this.change, this.takeParts);
+  _Loop(
+    this.chart,
+    this.context,
+    this.call,
+    this.change,
+    this.takeParts,
+    this.frame,
+  );
 
   final _BenchChart chart;
   final UiCanvasContext context;
   final ChartBenchCall call;
   final VoidCallback? change;
   final Map<String, int> Function()? takeParts;
+  final void Function(Chart chart)? frame;
 
   int updateTicks = 0;
   int drawTicks = 0;
@@ -386,16 +1120,21 @@ final class _Loop {
   }
 
   /// One iteration: the change of the data for an update, then the call
-  /// and the end of the recording.
+  /// and the end of the recording. The notify count of the chart starts at
+  /// 0: after the last iteration, it is the count of one iteration.
   void iterate() {
     if (call == ChartBenchCall.update) change?.call();
-    chart.drawTicks = 0;
+    chart
+      ..drawTicks = 0
+      ..notifies = 0;
     final start = _watch.elapsedTicks;
     switch (call) {
       case ChartBenchCall.draw:
         chart.draw();
       case ChartBenchCall.update:
         chart.update('none');
+      case ChartBenchCall.frame:
+        frame!(chart);
     }
     final called = _watch.elapsedTicks;
     final recorder = ui.PictureRecorder();
@@ -417,11 +1156,14 @@ String get _buildMode => kReleaseMode
 /// Runs [benchCase] with [n] points and gives the keys of its BENCH line.
 ///
 /// The line has the keys `mode`, `case`, `n`, the keys of the case, the
-/// keys of [ChartBenchScene.describe], `call` and `iterations` (the timed
-/// iterations). For each part, it has the
+/// keys of [ChartBenchScene.describe], `call`, `primary` (only for a case
+/// with [ChartBenchCase.primary]), `iterations` (the timed iterations) and
+/// `notifies` (the calls of `notifyPlugins` in the last iteration). For
+/// each part, it has the
 /// median, the 10th and the 90th percentile of the batches in ms, as
 /// strings with 3 decimals: `updateMedianMs`, `updateP10Ms`, `updateP90Ms`
-/// (only for [ChartBenchCall.update]), `drawMedianMs`, … and `endP90Ms`,
+/// (only for [ChartBenchCall.update] and [ChartBenchCall.frame]),
+/// `drawMedianMs`, … and `endP90Ms`,
 /// then the figures of the parts of [ChartBenchScene.takeParts], for
 /// example `layoutMedianMs`.
 /// It also has the keys that a run script needs to check the run:
@@ -452,12 +1194,14 @@ Map<String, Object?> runChartBenchCase(
   final chart = _BenchChart(canvas, scene.config);
   final context = canvas.getContext2d();
   try {
+    scene.prepare?.call(chart);
     final loop = _Loop(
       chart,
       context,
       benchCase.call,
       scene.change,
       scene.takeParts,
+      scene.frame,
     );
     final ticksPerMs = _watch.frequency / 1000;
 
@@ -522,8 +1266,10 @@ Map<String, Object?> runChartBenchCase(
       ...benchCase.keys,
       ...described,
       'call': benchCase.call.name,
+      'primary': ?benchCase.primary,
       'iterations': settings.batches * batchIterations,
-      if (benchCase.call == ChartBenchCall.update) ...figures('update', update),
+      'notifies': chart.notifies,
+      if (benchCase.call != ChartBenchCall.draw) ...figures('update', update),
       ...figures('draw', draw),
       ...figures('end', end),
       for (final MapEntry(key: name, value: samples) in parts.entries)

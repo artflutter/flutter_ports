@@ -511,15 +511,30 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
 - **Frameless benchmark.** `apps/chartjs_gallery/lib/main_bench.dart` times the costs of the UI
   thread of the chart path without frames (`lib/bench/chart_bench.dart`).
   - The chart is a `UiCanvasElement` of 800 x 480 without a host, so it gets `BasicPlatform`. It
-    has `responsive: false`, `devicePixelRatio: 1`, `animation: false`, `events: []` and
-    `plugins.legend: false` (from phase 8: `stressPluginOptions`, Chart.js ADR 0031 Open). The
-    other plugins of `registerables` run. It has no labels and no title, so its draw is lower than `drawMs` of the stress entry.
+    has `responsive: false` and `devicePixelRatio: 1`. The cases of the modes `chart` and `axes`
+    (phases 5 to 7) also have `animation: false`, `events: []` and `plugins.legend: false` (from
+    phase 8: `stressPluginOptions`, Chart.js ADR 0031 Open). The other plugins of
+    `registerables` run. These charts have no labels and no title, so their draw is lower than
+    `drawMs` of the stress entry. The cases of phase 8 (below) give their own options.
   - After the first frame, the app runs each case for each N. It prints one line `BENCH {json}`
     for each case and N, and `BENCH done` at the end. A line has the median, p10 and p90 of
     `update('none')` without its draw, of `draw()` and of the end of the recording into a
     `ui.PictureRecorder`. Each case also gives the four timing parts `elements`, `layout`,
     `datasetsUpdate` and `datasetsDraw`. The `chart` cases give the keys `type`, `sharing` and
     `scriptable`. The `axes` cases give `ticks` and `rotation` of the x axis.
+  - From phase 8, each line also has the key `notifies`: the calls of `notifyPlugins` in the last
+    iteration, also when no plugin gets the hook (Chart.js ADR 0038 §10 item 4). A draw of one
+    dataset gives 6. The benchmark chart counts them in an override of `notifyPlugins`, not in
+    `lib/`. The override is in each case, also in the cases of phases 5 to 7: it adds one call and
+    one increment to each notify (6 for each draw of `chart.a`). A comparison of a figure of
+    phases 5 to 7 with a figure of a later build of the benchmark includes this change.
+  - The primary metric of a cell is the cost of one whole frame: the sum of the run medians
+    `updateMedianMs + drawMedianMs + endMedianMs`, or `drawMedianMs + endMedianMs` for a draw
+    case. Each case of phase 8 names it in the key `primary` (`update+draw+end` or `draw+end`).
+    The lines of phases 5 to 7 have no key `primary`.
+  - The call `frame` (phase 8): each iteration runs one frame of the case, for example an event
+    or a tick of the animator, with the draws that they cause. The data does not change. Its
+    `update` figures are the frame without its draws (the event and the tick).
   - The cases, in this order: `chart.a` (draw, `line`), `chart.b` (update, `line` with sharing and
     `scatter` without sharing) and `chart.c` (update, `line`, scriptable), the cases (a) to (c) of
     the mode `chart`. For each scale type of the mode `axes`, a draw case and an update case, for
@@ -527,8 +542,53 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
     `bubble`, `doughnut`, `pie`, `polarArea` and `radar`, each with `draw` and `update`. A default
     run thus times the cases with before figures first. The `before` lines join on `mode`, `case`,
     `sharing`, `scriptable` and `n`.
+  - After them come the 30 cases of phase 8 (step 8, task P1). N is the point count of each
+    dataset. The keys tell apart the cases of one id.
+    - `plugins.line` (CT stage 1, Chart.js ADR 0038 §10 items 1-2): a line chart on hidden scales
+      with `animation: false` and `events: []`, in two configs (key `config`). A: the seven
+      plugins of `registerables`, each with its least work (`legend.display`, `title.display`
+      and `subtitle.display` false, `colors.enabled` and `decimation.enabled` false, no `fill`, no
+      event). B: `options.plugins: false`, so each notify visits no plugin. 3 datasets of 1000
+      points and 100 datasets of 100 points (key `datasets`, 204 notifies for each draw of 100
+      datasets), each with `draw` and `update`: 8 cases. A minus B is the upper bound of the gain
+      of CT. The 100-dataset cells are primary. These lines have no timing parts, because B
+      turns off the timing plugin too.
+    - `tooltip.hover`, `tooltip.still`, `tooltip.fade`: the cases (a), (b) and (c) of Chart.js ADR
+      0039 Open 1. A line chart of 3 or 10 datasets (key `datasets`) on the visible default
+      scales, `interaction: {mode: 'index', intersect: false}`, the default events and no legend.
+      (a) `hover` (call `frame`): each frame sends a `mousemove` over the next point, so the
+      tooltip index changes in each frame. It has `animation: false`, because the frameless
+      benchmark cannot tick the element animations in frame time: each animation takes its start
+      from the clock. (b) `still` (call `draw`): the preparation hovers the middle point and ends
+      the animations; each iteration calls `chart.draw()`. (c) `fade` (call `frame`): a tick of
+      the animator 1000/60 ms after the tick before, with a `mousemove` or a `mouseout` in the
+      first frame of each fade of 12 frames (the 200 ms opacity animation), so each frame draws
+      the tooltip with a new opacity. Each fade moves the dates of its ticks by a phase (the
+      fractional part of the fade count times 0.618 frames, `chartBenchFadePhase`), as the vsync of
+      a real frame loop does. Thus the opacities of one fade do not come again in the next fades,
+      and the lines of the tooltip miss the paragraph cache, as on a device (Chart.js ADR 0039
+      §13). With the same dates in each fade, each line came from the cache from the third
+      fade. (b) and (c) run on a `BasicPlatform` with the no-op
+      `updateConfig` of `BasePlatform`, so the chart keeps its default animations. `hover` and
+      `still` also run with `plugins.tooltip: false` (key `tooltip` false): the guard cells of the
+      same chart without the tooltip. The lines have the part `tooltipDraw` (`beforeTooltipDraw`
+      to `afterTooltipDraw`): the draw of the tooltip of the 0.1 ms rule of the ADR. 10 cases.
+    - `fill.gaps`, `fill.stack`, `fill.radar` (Chart.js ADR 0040 Open 2): 3 datasets on hidden
+      scales with `pointRadius: 0`, `animation: false`, `events: []` and no legend, each with
+      `draw` and `update`. `gaps`: values from -1 to 1 with a gap every 12 points and
+      `fill: {target: 'origin', above, below}` (the path clips). `stack`: stacked y values and
+      `fill: 'stack'` (quadratic in N, as upstream). `radar`: a radar on a hidden polygon grid
+      with the fills `origin`, `-1` and `-1`. 6 cases. `chart.radar` also fills (`fill: 'start'`,
+      one dataset).
+    - `legend.line` and `title.line`: a line chart of 3 datasets on the visible default scales,
+      `animation: false` and `events: []`, each with `draw` and `update`. `legend.line` with the
+      legend of the docs blocks (the defaults: `display: true`, `position: 'top'`; key `legend`
+      true) and without it (`plugins.legend: false`, the base of the legend and the title).
+      `title.line`: no legend and the title `{display: true, text: 'Chart.js Line Chart'}`. 6
+      cases.
   - Each case has its own point counts (`ChartBenchCase.counts`): the counts of its chart type in
-    the mode `chart`, else 1000, 5000 and 20000.
+    the mode `chart`, 1000 (3 datasets) or 100 (100 datasets) in `plugins.line`, 100 and 1000 in
+    the modes `tooltip`, `fill`, `legend` and `title`, else 1000, 5000 and 20000.
   - The loop is the loop of `tool/bench/src/harness.dart`: a warm-up, a calibration, then
     batches of a fixed number of iterations. A batch figure is the mean of its iterations, so
     each batch carries its part of the garbage collection. The update cases move the points
@@ -537,7 +597,13 @@ The test group "rotated text" of `test/port/canvas/canvas_ui_test.dart` pins the
     (a comma list of counts for all cases; without it, each case runs its own counts), `BATCHES`
     (15), `BATCH_MS` (200) and `WARMUP_MS` (1000). A selector that selects no case throws at the
     start. The selector `chart` selects 16 cases. `CASES=a,b,c` selects the cases of Chart.js ADR
-    0021 §8, for a before/after run against `0e0ab93`.
+    0021 §8, for a before/after run against `0e0ab93`. The selectors `plugins`, `tooltip`, `fill`,
+    `legend` and `title` select the cases of phase 8. The bare name `radar` selects `chart.radar`
+    and `fill.radar`, and `line` selects `plugins.line`, `legend.line` and `title.line`: use the
+    ids. A default run times all 54 cases, 124 cells (the 24 cases and 72 cells of phases 5 to 7
+    first). The define `N` gives the points of each dataset to all cases, also to the 100
+    datasets of `plugins.line`. The stack fill at 1000 points takes about 0.1 s for each draw in
+    V8, so a run of `fill` takes longer.
   - Example: `flutter build apk --profile --target-platform android-arm64 -t lib/main_bench.dart
     --dart-define=CASES=c --dart-define=N=5000`. Install and start the APK, and read the lines
     with `adb logcat -d -s flutter:I`. On a cool Pixel 8a at 2.9 GHz, case c at 5000 gave an

@@ -6,14 +6,18 @@ import 'package:chartjs_gallery/bench/chart_bench.dart';
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/main_bench.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Title, Tooltip;
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/controllers/index.dart';
+import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/elements/index.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/scales/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -73,6 +77,38 @@ Future<void> _runApp(WidgetTester tester, ChartBenchApp app) async {
 /// The only case of [selection].
 ChartBenchCase _case(String selection) =>
     selectChartBenchCases(selection).single;
+
+/// The modes of the cases of phases 5 to 7.
+const List<String> _phase7Modes = ['chart', 'axes'];
+
+/// The case of [selection] with the call [call] and the keys [keys].
+ChartBenchCase _pluginCase(
+  String selection,
+  ChartBenchCall call, [
+  Map<String, Object?> keys = const {},
+]) => selectChartBenchCases(selection).singleWhere(
+  (c) => c.call == call && keys.entries.every((e) => c.keys[e.key] == e.value),
+);
+
+/// The figure keys of the parts that a case with [call] gives:
+/// `update` (not for a draw), `draw` and `end`, then [parts].
+List<String> _figureKeys(ChartBenchCall call, List<String> parts) => [
+  if (call != ChartBenchCall.draw) ..._keys('update'),
+  ..._keys('draw'),
+  ..._keys('end'),
+  for (final part in parts) ..._keys(part),
+];
+
+/// The case `tooltip.fade` with [datasets] datasets.
+ChartBenchCase _fade(int datasets) => _pluginCase(
+  'tooltip.fade',
+  ChartBenchCall.frame,
+  {'datasets': datasets},
+);
+
+/// The median of the figure [part] of [line], in ms.
+double _median(Map<String, Object?> line, String part) =>
+    double.parse(line['${part}MedianMs']! as String);
 
 void main() {
   testWidgets('main_bench prints one BENCH line for a tiny case', (
@@ -187,31 +223,36 @@ void main() {
     expect(line['datasetsUpdateMedianMs'], '0.000');
   });
 
-  test('each case has no legend (Chart.js ADR 0031, Open)', () {
-    // The configs of stressChartConfig and stressAxesConfig have
-    // `plugins.legend: false` (stressPluginOptions), and chartBenchOptions
-    // has no `plugins` key that replaces it.
-    expect(chartBenchOptions.containsKey('plugins'), isFalse);
-    for (final benchCase in chartBenchCases) {
-      var checked = false;
-      runChartBenchCase(
-        benchCase,
-        10,
-        const ChartBenchSettings(batches: 1, batchMs: 1, warmupMs: 1),
-        onChart: (chart) {
-          checked = true;
-          expect(
-            jsGet(chart.options['plugins'], 'legend'),
-            false,
-            reason: benchCase.id,
-          );
-          expect(chart.legend, isNull, reason: benchCase.id);
-          expect(chart.boxes.whereType<Legend>(), isEmpty);
-        },
-      );
-      expect(checked, isTrue, reason: benchCase.id);
-    }
-  });
+  test(
+    'each case of phases 5 to 7 has no legend (Chart.js ADR 0031, Open)',
+    () {
+      // The configs of stressChartConfig and stressAxesConfig have
+      // `plugins.legend: false` (stressPluginOptions), and chartBenchOptions
+      // has no `plugins` key that replaces it. The cases of phase 8 give
+      // their own plugin options.
+      expect(chartBenchOptions.containsKey('plugins'), isFalse);
+      for (final benchCase in chartBenchCases) {
+        if (!_phase7Modes.contains(benchCase.mode)) continue;
+        var checked = false;
+        runChartBenchCase(
+          benchCase,
+          10,
+          const ChartBenchSettings(batches: 1, batchMs: 1, warmupMs: 1),
+          onChart: (chart) {
+            checked = true;
+            expect(
+              jsGet(chart.options['plugins'], 'legend'),
+              false,
+              reason: benchCase.id,
+            );
+            expect(chart.legend, isNull, reason: benchCase.id);
+            expect(chart.boxes.whereType<Legend>(), isEmpty);
+          },
+        );
+        expect(checked, isTrue, reason: benchCase.id);
+      }
+    },
+  );
 
   testWidgets('the update cases move the points of the stress mode', (
     tester,
@@ -447,16 +488,24 @@ void main() {
   test('the cases chart.<type> come after the axes cases, two calls each', () {
     final ids = [for (final c in chartBenchCases) c.id];
     final lastAxes = ids.lastIndexWhere((id) => id.startsWith('axes.'));
-    final types = chartBenchCases.sublist(lastAxes + 1);
+    final types = chartBenchCases.sublist(lastAxes + 1, lastAxes + 13);
     expect(ids.indexWhere((id) => id.startsWith('axes.')), 4);
     expect(
       [for (final c in types) '${c.id} ${c.call.name}'],
       [
         for (final type in StressChartType.values)
           if (!type.points)
-            for (final call in ChartBenchCall.values)
+            for (final call in chartBenchDrawAndUpdate)
               'chart.${type.name} ${call.name}',
       ],
+    );
+    // The cases of phase 8 come after them.
+    expect(
+      [
+        for (final c in chartBenchCases.sublist(lastAxes + 13))
+          if (_phase7Modes.contains(c.mode)) c.id,
+      ],
+      isEmpty,
     );
     expect(types, hasLength(12));
     for (final c in types) {
@@ -597,5 +646,447 @@ void main() {
       expect(jsonEncode(data), isNot(before), reason: name);
       expect(scene.takeParts!().keys, _parts, reason: name);
     }
+  });
+
+  test('the cases of phase 8 come last and name their primary metric', () {
+    final first = chartBenchCases.indexWhere(
+      (c) => !_phase7Modes.contains(c.mode),
+    );
+    final phase8 = chartBenchCases.sublist(first);
+    // The 24 cases of phases 5 to 7 keep their order before them.
+    expect(first, 24);
+    expect(
+      [for (final c in phase8) '${c.id} ${c.call.name} ${c.keys}'],
+      [
+        for (final datasets in [3, 100])
+          for (final call in ['draw', 'update'])
+            for (final config in ['A', 'B'])
+              'plugins.line $call {config: $config, datasets: $datasets}',
+        for (final datasets in [3, 10]) ...[
+          'tooltip.hover frame {datasets: $datasets, tooltip: true}',
+          'tooltip.hover frame {datasets: $datasets, tooltip: false}',
+          'tooltip.still draw {datasets: $datasets, tooltip: true}',
+          'tooltip.still draw {datasets: $datasets, tooltip: false}',
+          'tooltip.fade frame {datasets: $datasets, tooltip: true}',
+        ],
+        for (final name in ['gaps', 'stack', 'radar'])
+          for (final call in ['draw', 'update'])
+            'fill.$name $call {datasets: 3}',
+        for (final call in ['draw', 'update']) ...[
+          'legend.line $call {datasets: 3, legend: true, title: false}',
+          'legend.line $call {datasets: 3, legend: false, title: false}',
+          'title.line $call {datasets: 3, legend: false, title: true}',
+        ],
+      ],
+    );
+    for (final c in phase8) {
+      expect(c.primary, c.call.frameMetric, reason: c.id);
+      if (c.mode == 'plugins') {
+        expect(c.counts, [if (c.keys['datasets'] == 3) 1000 else 100]);
+      } else {
+        expect(c.counts, chartBenchPluginCounts, reason: c.id);
+      }
+    }
+    expect(ChartBenchCall.draw.frameMetric, 'draw+end');
+    expect(ChartBenchCall.update.frameMetric, 'update+draw+end');
+    expect(ChartBenchCall.frame.frameMetric, 'update+draw+end');
+    // The cases of phases 5 to 7 name no primary metric: their lines keep
+    // their keys.
+    for (final c in chartBenchCases.sublist(0, first)) {
+      expect(c.primary, isNull, reason: c.id);
+    }
+    expect(selectChartBenchCases('plugins.line'), hasLength(8));
+    expect(selectChartBenchCases('tooltip'), hasLength(10));
+    expect(selectChartBenchCases('fill'), hasLength(6));
+    // The bare name `radar` selects chart.radar and fill.radar.
+    expect(
+      {for (final c in selectChartBenchCases('radar')) c.id},
+      {'chart.radar', 'fill.radar'},
+    );
+  });
+
+  testWidgets('plugins.line runs config A with the seven plugins and B '
+      'with none (Chart.js ADR 0038, section 10)', (tester) async {
+    for (final datasets in [3, 100]) {
+      for (final call in chartBenchDrawAndUpdate) {
+        final notifies = <String, Object?>{};
+        for (final config in ['A', 'B']) {
+          final reason = '$config $datasets ${call.name}';
+          final line = runChartBenchCase(
+            _pluginCase('plugins.line', call, {
+              'config': config,
+              'datasets': datasets,
+            }),
+            4,
+            _settings,
+            onChart: (chart) {
+              expect(chart.data['datasets'], hasLength(datasets));
+              expect(chart.options['events'], isEmpty, reason: reason);
+              expect(chart.options['animation'], false, reason: reason);
+              for (final id in [
+                'colors',
+                'decimation',
+                'filler',
+                'legend',
+                'subtitle',
+                'title',
+                'tooltip',
+              ]) {
+                expect(
+                  chart.isPluginEnabled(id),
+                  config == 'A',
+                  reason: '$reason $id',
+                );
+              }
+              if (config == 'A') {
+                final plugins = chart.options['plugins'];
+                expect(jsGet(jsGet(plugins, 'legend'), 'display'), false);
+                expect(jsGet(jsGet(plugins, 'title'), 'display'), false);
+                expect(jsGet(jsGet(plugins, 'subtitle'), 'display'), false);
+                expect(jsGet(jsGet(plugins, 'colors'), 'enabled'), false);
+                expect(jsGet(jsGet(plugins, 'decimation'), 'enabled'), false);
+                // The legend builds its box, also with `display: false`.
+                expect(chart.legend, isNotNull, reason: reason);
+              } else {
+                expect(chart.options['plugins'], false, reason: reason);
+                expect(chart.legend, isNull, reason: reason);
+              }
+            },
+          );
+          expect(line['mode'], 'plugins');
+          expect(line['case'], 'line');
+          expect(line['config'], config);
+          expect(line['datasets'], datasets);
+          expect(line['primary'], call.frameMetric);
+          for (final key in _figureKeys(call, const [])) {
+            expect(line[key], _figure, reason: '$reason $key');
+          }
+          // No timing plugin: B would turn it off.
+          expect(line.keys, isNot(contains('elementsMedianMs')));
+          notifies[config] = line['notifies'];
+        }
+        // The notifies do not depend on the plugins.
+        expect(notifies['A'], notifies['B']);
+        if (call == ChartBenchCall.draw) {
+          // beforeDraw, beforeDatasetsDraw, two for each dataset,
+          // afterDatasetsDraw and afterDraw: 204 for 100 datasets.
+          expect(notifies['A'], 4 + 2 * datasets);
+        } else {
+          expect(notifies['A'], greaterThan(4 + 2 * datasets));
+        }
+      }
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('tooltip.hover changes the hover in each frame', (tester) async {
+    for (final datasets in [3, 10]) {
+      for (final tooltip in [true, false]) {
+        final reason = '$datasets $tooltip';
+        final line = runChartBenchCase(
+          _pluginCase('tooltip.hover', ChartBenchCall.frame, {
+            'datasets': datasets,
+            'tooltip': tooltip,
+          }),
+          12,
+          _settings,
+          onChart: (chart) {
+            expect(chart.options['animation'], false, reason: reason);
+            expect(
+              jsGet(chart.options['interaction'], 'mode'),
+              'index',
+              reason: reason,
+            );
+            expect(chart.legend, isNull, reason: reason);
+            // The mode index makes the point of each dataset active.
+            expect(chart.getActiveElements(), hasLength(datasets));
+            if (tooltip) {
+              final model = chart.tooltip! as Tooltip;
+              expect(model.opacity, 1, reason: reason);
+              expect(model.getActiveElements(), hasLength(datasets));
+            } else {
+              expect(chart.tooltip, isNull, reason: reason);
+            }
+          },
+        );
+        expect(line['call'], 'frame');
+        expect(line['primary'], 'update+draw+end');
+        for (final key in _figureKeys(ChartBenchCall.frame, [
+          ..._parts,
+          'tooltipDraw',
+        ])) {
+          expect(line[key], _figure, reason: '$reason $key');
+        }
+        // Each frame draws the chart in the event.
+        expect(_median(line, 'draw'), greaterThan(0), reason: reason);
+        expect(_median(line, 'datasetsDraw'), greaterThan(0), reason: reason);
+        expect(line['elementsMedianMs'], '0.000', reason: reason);
+        if (tooltip) {
+          expect(_median(line, 'tooltipDraw'), greaterThan(0), reason: reason);
+        } else {
+          expect(line['tooltipDrawMedianMs'], '0.000', reason: reason);
+        }
+      }
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('tooltip.hover moves the tooltip to the next point', (
+    tester,
+  ) async {
+    final scene = _pluginCase('tooltip.hover', ChartBenchCall.frame, {
+      'datasets': 3,
+      'tooltip': true,
+    }).scene(6);
+    final chart = Chart(
+      UiCanvasElement(width: chartBenchWidth, height: chartBenchHeight),
+      scene.config,
+    );
+    addTearDown(chart.destroy);
+    scene.prepare!(chart);
+    final indexes = <Object?>[];
+    for (var i = 0; i < 7; i++) {
+      scene.frame!(chart);
+      final active = (chart.tooltip! as Tooltip).getActiveElements();
+      indexes.add(active.first.index);
+    }
+    expect(indexes, [1, 2, 3, 4, 5, 0, 1]);
+  });
+
+  testWidgets('tooltip.still draws a still tooltip after its animations', (
+    tester,
+  ) async {
+    for (final tooltip in [true, false]) {
+      final line = runChartBenchCase(
+        _pluginCase('tooltip.still', ChartBenchCall.draw, {
+          'datasets': 3,
+          'tooltip': tooltip,
+        }),
+        12,
+        _settings,
+        onChart: (chart) {
+          // The default animations, all at their end.
+          expect(chart.options['animation'], isNot(false));
+          expect(animator.running(chart), isFalse);
+          expect(chart.getActiveElements(), hasLength(3));
+          if (tooltip) {
+            final model = chart.tooltip! as Tooltip;
+            expect(model.opacity, 1);
+            expect(model.getActiveElements().first.index, 6);
+            // The ended animations stay in `$animations`.
+            expect(model.$animations!.keys, containsAll(['x', 'y']));
+          } else {
+            expect(chart.tooltip, isNull);
+          }
+        },
+      );
+      expect(line['call'], 'draw');
+      expect(line['primary'], 'draw+end');
+      for (final key in _figureKeys(ChartBenchCall.draw, [
+        ..._parts,
+        'tooltipDraw',
+      ])) {
+        expect(line[key], _figure, reason: key);
+      }
+      expect(_median(line, 'tooltipDraw') > 0, tooltip);
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('tooltip.fade gives a new opacity in each frame', (
+    tester,
+  ) async {
+    final scene = _fade(3).scene(12);
+    final chart = Chart(
+      UiCanvasElement(width: chartBenchWidth, height: chartBenchHeight),
+      scene.config,
+    );
+    addTearDown(chart.destroy);
+    scene.prepare!(chart);
+    expect(animator.running(chart), isFalse);
+    final opacities = <double>[];
+    for (var i = 0; i < 3 * chartBenchFadeFrames; i++) {
+      scene.frame!(chart);
+      opacities.add((chart.tooltip! as Tooltip).opacity);
+    }
+    const f = chartBenchFadeFrames;
+    // The fade c ticks at the frames i + 1 + phase(c), phase(c) the
+    // fractional part of c * chartBenchFadePhase. The last frame ends it.
+    double phase(int c) => (c * chartBenchFadePhase) % 1;
+    double done(int c, int i) => ((i + 1 + phase(c)) / f).clamp(0.0, 1.0);
+    for (var i = 0; i < f; i++) {
+      // The linear fade in, then the fade out, then the fade in again.
+      expect(opacities[i], closeTo(done(0, i), 1e-5), reason: '$i');
+      expect(opacities[f + i], closeTo(1 - done(1, i), 1e-5), reason: '$i');
+      expect(opacities[2 * f + i], closeTo(done(2, i), 1e-5), reason: '$i');
+    }
+    // Each frame gives a new opacity, also against the earlier fades: a
+    // real frame loop does not repeat the opacities of a fade, so the
+    // lines of the tooltip miss the paragraph cache, as on a device
+    // (Chart.js ADR 0039, section 13, item 1).
+    final partial = [
+      for (final o in opacities)
+        if (o > 0 && o < 1) o,
+    ];
+    expect(partial, hasLength(3 * (f - 1)));
+    expect(partial.toSet(), hasLength(partial.length));
+    final line = runChartBenchCase(_fade(10), 12, _settings);
+    expect(line['call'], 'frame');
+    expect(line['tooltip'], true);
+    expect(line['datasets'], 10);
+    for (final key in _figureKeys(ChartBenchCall.frame, [
+      ..._parts,
+      'tooltipDraw',
+    ])) {
+      expect(line[key], _figure, reason: key);
+    }
+    expect(_median(line, 'draw'), greaterThan(0));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the fill cases fill with the targets of Chart.js ADR 0040', (
+    tester,
+  ) async {
+    for (final name in ['gaps', 'stack', 'radar']) {
+      for (final call in chartBenchDrawAndUpdate) {
+        final reason = '$name ${call.name}';
+        final line = runChartBenchCase(
+          _pluginCase('fill.$name', call),
+          24,
+          _settings,
+          onChart: (chart) {
+            expect(chart.config.type, name == 'radar' ? 'radar' : 'line');
+            expect(chart.legend, isNull, reason: reason);
+            final datasets = chart.data['datasets']! as List<Object?>;
+            expect(datasets, hasLength(3));
+            for (var k = 0; k < 3; k++) {
+              final dataset = datasets[k]! as Map<String, Object?>;
+              final data = dataset['data']! as List<Object?>;
+              expect(data, hasLength(24));
+              final fill = dataset['fill'];
+              switch (name) {
+                case 'gaps':
+                  expect(data[11], isNull, reason: reason);
+                  expect(data[23], isNull, reason: reason);
+                  expect(data[10], isA<double>(), reason: reason);
+                  expect(fill, containsPair('target', 'origin'));
+                  expect(fill, contains('above'));
+                  expect(fill, contains('below'));
+                case 'stack':
+                  expect(fill, 'stack', reason: reason);
+                default:
+                  expect(fill, ['origin', '-1', '-1'][k], reason: reason);
+              }
+              // The filler made the source of each dataset.
+              expect(
+                chart.getDatasetMeta(k.toDouble())[r'$filler'],
+                isNotNull,
+                reason: '$reason $k',
+              );
+            }
+            if (name == 'stack') {
+              expect(
+                jsGet(chart.scales['y']!.options, 'stacked'),
+                true,
+                reason: reason,
+              );
+            }
+          },
+        );
+        expect(line['mode'], 'fill');
+        expect(line['primary'], call.frameMetric);
+        for (final key in _figureKeys(call, _parts)) {
+          expect(line[key], _figure, reason: '$reason $key');
+        }
+        expect(_median(line, 'datasetsDraw'), greaterThan(0), reason: reason);
+      }
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  test('an update of a plugin case moves the values and keeps the gaps', () {
+    for (final selection in [
+      'plugins.line',
+      'fill.gaps',
+      'fill.stack',
+      'fill.radar',
+      'legend.line',
+      'title.line',
+    ]) {
+      final benchCase = selectChartBenchCases(
+        selection,
+      ).firstWhere((c) => c.call == ChartBenchCall.update);
+      final scene = benchCase.scene(24);
+      final datasets =
+          (scene.config['data']! as Map<String, Object?>)['datasets']!
+              as List<Object?>;
+      final data =
+          (datasets.first! as Map<String, Object?>)['data']! as List<Object?>;
+      final before = jsonEncode(data);
+      scene.change!();
+      expect(jsonEncode(data), isNot(before), reason: selection);
+      if (selection == 'fill.gaps') {
+        expect(data[11], isNull);
+        expect(data[23], isNull);
+      }
+    }
+  });
+
+  testWidgets('the legend and title cases show their boxes', (tester) async {
+    for (final call in chartBenchDrawAndUpdate) {
+      for (final (selection, legend, title) in [
+        ('legend.line', true, false),
+        ('legend.line', false, false),
+        ('title.line', false, true),
+      ]) {
+        final reason = '$selection $legend ${call.name}';
+        final line = runChartBenchCase(
+          _pluginCase(selection, call, {'legend': legend}),
+          12,
+          _settings,
+          onChart: (chart) {
+            expect(chart.data['datasets'], hasLength(3));
+            expect(chart.options['events'], isEmpty);
+            if (legend) {
+              final box = chart.legend! as Legend;
+              expect(box.options['display'], true, reason: reason);
+              expect(box.options['position'], 'top', reason: reason);
+              expect(box.legendItems, hasLength(3), reason: reason);
+              expect(chart.boxes, contains(box));
+            } else {
+              expect(chart.legend, isNull, reason: reason);
+            }
+            // The title plugin and the subtitle plugin each add a box,
+            // also with `display: false` (plugin.title.js:108-118, :129-131).
+            final block = chart.titleBlock! as Title;
+            expect(chart.boxes, contains(block));
+            expect(jsGet(block.options, 'display'), title, reason: reason);
+            if (title) {
+              expect(jsGet(block.options, 'text'), 'Chart.js Line Chart');
+            }
+            // The scales of the docs blocks are visible.
+            expect(chart.scales['x']!.options['display'], true);
+            expect(chart.chartArea!.top, greaterThan(0), reason: reason);
+          },
+        );
+        expect(line['legend'], legend);
+        expect(line['title'], title);
+        expect(line['primary'], call.frameMetric);
+        for (final key in _figureKeys(call, _parts)) {
+          expect(line[key], _figure, reason: '$reason $key');
+        }
+      }
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('each BENCH line has the notify count of one iteration', (
+    tester,
+  ) async {
+    final draw = runChartBenchCase(_case('chart.a'), 10, _settings);
+    // beforeDraw, beforeDatasetsDraw, beforeDatasetDraw, afterDatasetDraw,
+    // afterDatasetsDraw and afterDraw: 6 for the draw of one dataset.
+    expect(draw['notifies'], 6);
+    expect(draw.keys, isNot(contains('primary')));
   });
 }
