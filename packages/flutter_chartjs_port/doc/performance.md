@@ -13,7 +13,9 @@
   guards ([Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md)). Section 12 has the
   date figures of phase 6 ([Chart.js ADR 0024](adr/0024-dates.md)). Section 13 has the controller
   figures of phase 7, and section 13.6 the figures of step 7 on the phones. Section 14 has the
-  plugin figures of phase 8 ([Chart.js ADR 0040](adr/0040-filler-targets-and-plain-points.md)).
+  plugin figures of phase 8 ([Chart.js ADR 0040](adr/0040-filler-targets-and-plain-points.md)),
+  and section 14.5 the cost of the theme palette and the plugin tokens
+  ([Chart.js ADR 0042](adr/0042-theming.md)).
 - Date: 2026-10-22
 - Related: [Chart.js ADR 0016](adr/0016-frame-scheduling.md) (frame scheduling),
   [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (no display-only JS exactness).
@@ -3156,5 +3158,92 @@ Flutter 3.47.7): W 21.70, 21.08 and 21.16 s, N 20.79, 20.85 and 20.94 s. The pai
 0.91, 0.23 and 0.22 s, mean 0.45 s (95 % bootstrap interval 0.22 to 0.91 s, 20000 resamples, seed
 8), 0.016 s for each file. The load average (1 minute) was 9.8 at the start and 4.4 at the end:
 the Mac was not quiet, so the figure is flagged. It is far below the trigger of 4 s. Thus one
-registry stays, and ADR 0029 Open item 2 does not fire. A run on a quiet Mac can confirm the
-figure.
+registry stays, and ADR 0029 Open item 2 does not fire. Step 4 of phase 8 measured again with the
+same method, 6 pairs and a gate before each pair (the 1-minute load at or below 4.0, a wait of
+at most 10 minutes; 2026-10-23, the same Mac and toolchain): W 23.74, 21.40, 21.40, 21.31, 21.37
+and 21.28 s, N 21.16, 21.23, 21.00, 21.56, 21.09 and 21.31 s. The pair differences are 2.58,
+0.17, 0.40, -0.25, 0.28 and -0.03 s, mean 0.53 s (95 % bootstrap interval -0.02 to 1.38 s, 20000
+resamples, seed 8). Pair 1 did not pass its gate (load 5.13 after 10 minutes) and is the first
+run after `flutter pub get`. The 5 pairs that passed their gate give a mean of 0.11 s (interval
+-0.10 to 0.31 s), 0.004 s for each file. Both figures are far below the trigger of 4 s.
+The decision compares the upper bound of the interval with the trigger, not the sign of the mean,
+so the series does not add 6 pairs when the interval includes 0.
+
+### 14.5 The theme palette and the plugin tokens (Chart.js ADR 0042)
+
+The design panel of Chart.js ADR 0042 measured the hunks H4a-H5 and the plugin tokens of the
+theme ([theming.md](theming.md) §3.5). Bed: Apple M3 Max, Dart 3.13.5. AOT is
+`dart compile exe`. wasm is `dart compile wasm -O2` (probe P4: `-O1`, the default level, where
+its table says so), run in Node.js v24.12.0: the x64 build under Rosetta, or the arm64 build
+where a table says so. Other sessions loaded the Mac (load average 6.3 to 10.2). Thus the absolute figures are high, but the order of the forms is the same in each
+run. The scripts and outputs are working files of the theme design of phase 8, not committed.
+
+How often the colorizer runs. The JavaScript prototype of H4a-H5 of the performance draft
+(`h4_h5_prototype.mjs`, its probe P1) runs on the pinned sources. It counts the runs of create and
+100 updates with the default options, and the runs of 100 updates, 100 hover events and 100
+`render()` calls with `forceOverride`. A Dart probe on the port (2026-10-23, Flutter 3.47.7)
+counts the writes of `borderColor` into one bar dataset with the colors plugin on, without a
+theme and with the light preset. The Dart probe gives all cells of the table. Where both probes
+have a count, the counts are equal:
+
+| Step | Default options | `forceOverride: true` |
+|---|---:|---:|
+| Create the chart | 1 | 1 |
+| 100 `update()` calls | 0 | 100 |
+| 100 `render()` calls | 0 | 0 |
+| 100 `mousemove` events | 0 | 0 |
+
+After the first run the datasets have colors, and the plugin returns before the colorizer
+(`plugin.colors.ts:113-121`). Thus H5 and the getters run one time for each chart, or one time
+for each update only with `forceOverride`. They never run in a frame of an event or of an
+animation.
+
+The getters of H4b and H4c (probe J2: direct calls, the median of 25 ABBA rounds of 1,000,000
+calls), ns for each call:
+
+| Case | Form | AOT (3 runs) | wasm, x64 (2 runs) |
+|---|---|---:|---:|
+| no theme | upstream | 1.39-1.42 | 1.22-1.29 |
+| no theme | `??` | 2.85-2.90 | 6.86-7.04 |
+| no theme | split (the port) | 1.70-1.75 | 2.50-2.54 |
+| theme | `??` | 2.87-2.88 | 8.92-10.75 |
+| theme | split (the port) | 2.23-2.25 | 8.65-8.68 |
+
+The port uses the split form: the theme branch, then the unchanged upstream line. Without a
+theme it costs 0.3 ns (AOT) and 1.3 ns (wasm) more than upstream for each call. A getter runs one
+time for each dataset, or for each data item of a doughnut, pie or polar area dataset, in each
+colorizer run. Thus a doughnut of 1000 items with `forceOverride` spends about 1.3 µs more for
+each update on wasm.
+
+H5 (probe P4: a fresh plugin options resolver with 5 scopes, as after each update, that reads
+`enabled` and `forceOverride`; the median of 15 runs of 200000 iterations), ns for each colorizer
+run:
+
+| Build | Run | Upstream reads | H5 from the plugin options | H5 from the theme map (the port) |
+|---|---|---:|---:|---:|
+| AOT | 1 | 1597.3 | 2103.3 (+506.1) | 1656.7 (+59.5) |
+| AOT | 2 | 1576.4 | 2040.2 (+463.9) | 1617.9 (+41.5) |
+| AOT | 3 | 1537.0 | 2035.8 (+498.8) | 1598.0 (+61.0) |
+| wasm `-O1` (the default level), x64 | 1 | 1782.6 | 2661.9 (+879.3) | 1843.5 (+60.8) |
+
+Probe B3 gives the same order with a resolver of 3 scopes, µs for each colorizer run: the
+upstream reads 1.47-1.48 (AOT), 1.22-1.23 (wasm, arm64) and 1.41 (wasm, x64); with H5 from the
+theme map 1.53-1.56, 1.27-1.30 and 1.49. The port form of H5 thus costs below 0.1 µs for each
+colorizer run. Chart.js ADR 0042 chose the theme map for its behavior (probe J1), not for this
+gain.
+
+The plugin tokens (probe B4: 31 tooltip option keys, that is 29 keys of the `defaults` of
+`plugin.tooltip.js:1275-1325`, and `rtl` and `textDirection` of `:762, 1074`). Hunk
+H2 adds the theme Map of `plugins.tooltip` as one more scope. µs for the 31 reads:
+
+| Case | AOT (3 runs) | wasm, arm64 (3 runs) | wasm, x64 (1 run) |
+|---|---:|---:|---:|
+| fresh resolver, 3 scopes (no plugin tokens) | 10.78-11.65 | 10.85-11.46 | 12.45 |
+| fresh resolver, 4 scopes (plugin tokens) | 12.98-13.90 | 12.07-12.67 | 14.66 |
+| cached resolver, 3 scopes | 0.225-0.240 | 0.314-0.358 | 0.413 |
+| cached resolver, 4 scopes | 0.223-0.233 | 0.320-0.349 | 0.362 |
+
+In each process the tokens add 1.2-2.4 µs to the first reads after each update of a themed
+chart. The cached reads of a frame or an event take the same time. Thus no part of the theme
+palette or of the plugin tokens changes a frame figure: the frame figures of this document are
+in milliseconds.

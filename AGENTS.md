@@ -436,12 +436,18 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (`lib/charts/chart_types.dart`), in the order of the docs. Each tile is enabled and opens
     `ChartTypePage` (`lib/charts/chart_type_page.dart`). The variants of a page are the configs of
     the 11 `chart-editor` blocks of `docs/charts/*.md` in `lib/docs/charts/` and of the Area sample
-    `lib/docs/samples/area/line_boundaries.dart`. These files have rule-2 headers. The filler of
-    `registerables` fills the Area and Radar charts, and no page prints the `fill` warning. The Area
-    tile still has the icon `timelapse` and the note "Line only: the fill needs plugin.filler (phase
-    8)" until the gallery step of phase 8.
+    `lib/docs/samples/area/line_boundaries.dart`. These files have rule-2 headers. Each tile has
+    the icon `check_circle_outline` and its docs source as the subtitle, and no entry has a note.
+    The gallery registers `registerables` with the seven plugins, as the docs do: each chart shows
+    the legend and the tooltip with their defaults, the filler fills the Radar chart and the Area
+    variants `origin`, `start` and `end`, and no page prints the `fill` warning. The Area page has
+    the four fill actions of `docs/samples/area/line-boundaries.md:39-74` as its variants:
+    `origin` (the first), `start`, `end` and `false` (Chart.js ADR 0031, Open "The Area `fill`
+    control").
   - A type page has at most one control line (the variant), then the chart, the readout (the
-    datasets, and the hover text of `getLabelAndValue`) and the help text. The host has no height:
+    datasets, and the hover text of `getLabelAndValue`) and the help text. The help text gives the
+    docs source and the input: a hover or a tap on an element shows the tooltip, a tap outside the
+    chart hides it, and a tap on a legend item hides or shows its data. The host has no height:
     the platform gives the aspect of the docs (2, or 1 for doughnut, pie, polar area and radar).
     The page body caps its width at 600. The keys are `gallery.type.<stem>`,
     `type.<stem>.variant.<variant>`, `type.<stem>.host`, `type.<stem>.readout` and
@@ -475,6 +481,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `SegmentChoice` item with an `icon` shows the icon only, else its short text. No chip, slider,
     popup menu, dropdown or horizontal scroll. The chart host is fully in view after the first frame
     at 412 x 915. The type pages are also in view at 360 x 640. A widget test pins each page.
+    `test/chart_types_test.dart` also pins, on each variant of each type page at 412 x 915, the
+    input of Chart.js ADR 0037 §15: a tap on an element shows the tooltip and the readout, a tap on
+    the help text hides them, and two taps on legend item 0 hide and show its data. It pins the
+    help text of each variant, the keys of the host, the readout, the help text and each variant
+    segment, and the title and the filler source of each Area variant.
   - Each control has a `ValueKey`. A test finds a segment by its key.
 - `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC). Phase 0
   has no ported code. `doc/README.md` has the plan and the roadmap.

@@ -167,10 +167,10 @@ Emitted:
 - `transitions.theme.animation.{duration,easing}` and `transitions.themeFrame.animation.duration: 0`
 
 In phase 5, the tokens emit only the root `color`, the `scale` keys and the element keys. Phase 6
-adds the `scales.radialLinear` keys. Phase 8 adds the plugin keys and the palette keys. Wave 1
-adds `plugins.title.color`, `plugins.title.font` and the palette keys. Wave 2 adds
+added the `scales.radialLinear` keys. Phase 8 added the plugin keys and the palette keys. Wave 1
+added `plugins.title.color`, `plugins.title.font` and the palette keys. Wave 2 added
 `plugins.subtitle.color`, `plugins.subtitle.font` (without `weight`) and the two legend fonts
-`plugins.legend.labels.font` and `plugins.legend.title.font` (the whole font token). Wave 3 adds
+`plugins.legend.labels.font` and `plugins.legend.title.font` (the whole font token). Wave 3 added
 the tooltip keys: the tokens `inverseSurface` and `onInverseSurface` give
 `plugins.tooltip.backgroundColor`, `titleColor`, `bodyColor`, `footerColor` and
 `multiKeyBackground`. The font token gives `plugins.tooltip.bodyFont` (the whole font token) and
@@ -520,9 +520,11 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
 3. **The light preset equals upstream** (H4a, H4b, H4c, H5). The test resolves 8 chart types with
    the colors plugin on and off. It compares element options (default and active) and the scale,
    legend, tooltip, title and subtitle keys, with colors parsed. The JS prototype matched 16 of 16
-   cases with the explicit palette. The group `test 3: the light palette` of
-   `precedence_test.dart` has the part with the colors plugin on (phase 8, wave 1). The plugin
-   keys are in `presets_plugins_test.dart` (phase 8, wave 3).
+   cases with the explicit palette. The controller test files have the part with the colors
+   plugin off (phase 7). The group `test 3: the light palette` of `precedence_test.dart` has the
+   part with the colors plugin on (phase 8, wave 1). The plugin keys are in
+   `presets_plugins_test.dart` (phase 8, wave 3). The reference tests of the seven plugins run
+   their cases again with the light preset (phase 8).
 4. **Coverage snapshot.** A committed JSON snapshot holds `compileChartTheme(ChartThemes.light)`.
    The test compares it with the defaults inventory of the upstream manifest (porting-flow.md,
    tool 4) and a `notThemed` list with a reason per key. It reports:
@@ -537,13 +539,16 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    `scales.radialLinear` creates no axis on a bar chart.
 6. **Blue screen.** A test-support theme sets every token and the palette (alpha 1) to one blue,
    on a blue background. In all 8 chart types, with titles, legend title and a visible tooltip,
-   every pixel must be blue. The test needs no golden file. A committed known-leaks list (now
-   `plugin.legend.js:286, 314, 319`) fails when it changes. The JS prototype covered 6 types
-   without scatter and pie, with no hover. It found no leak. The active-element case waits for
+   every pixel must be blue. The test needs no golden file. The 8 default charts have no leak:
+   their committed known-leaks list is empty. A pin case gives a legend item without `fillStyle`
+   and `strokeStyle`. It has the leak of the singleton `defaults.color`
+   (`plugin.legend.js:286, 314, 319`) in its own committed list. Each list fails when it changes.
+   The JS prototype (Chart.js ADR 0042, probe P2) covered the 8 types with the colors plugin on
+   and off, with no hover. It found no leak. The active-element case waits for
    `IdentityChartHover`.
 
-Section 10 ("Phase 5 state", "Phase 6 state" and "Phase 7 state") names the test files and the
-test groups of phases 5 to 7.
+Section 10 ("Phase 5 state" to "Phase 8 state") names the test files and the test groups of
+phases 5 to 8.
 
 Required in phase 9:
 
@@ -570,7 +575,7 @@ Review these items on each bump, and on each backport (ADR 0006) into a hunk hos
 - the routes (`defaultRoutes`, `defaults.route`), because they define what a token means
 - new visual keys, also keys without defaults
 - the hunk hosts `core.config.js:106-110, 296-342` and `plugin.colors.ts:14-33, 102-126`, with 3
-  and 6 commits in `v4.0.0-release..v4.5.1`. The palette hunks land last, in phase 8.
+  and 6 commits in `v4.0.0-release..v4.5.1`. The palette hunks landed in phase 8.
 - the singleton reads that the theme cannot reach: `plugin.legend.js:286`, `helpers.options.ts:117`,
   `scale.radialLinear.js:14`, `plugin.colors.ts:91`, `core.datasetController.js:817`
 - resolver semantics, `mode` branches in controllers, and the upstream signals #12268, #12205 and
@@ -697,13 +702,74 @@ theming work in each phase.
   8 chart types, with no tolerance. The committed known-leaks list is empty. A control chart
   without the theme paints other pixels, and the 8 themed charts leave `defaults` unchanged.
 
-These parts wait:
-- The plugin tokens and the palette come in phase 8. A new color token also goes into
-  `_blueTheme` of `blue_screen_test.dart`, or the blue screen can show a leak of the plugins.
-- The blue screen with an active element waits for `IdentityChartHover` (§8 item 6).
+**Phase 8 state.** These parts exist, in addition to the parts of phase 7 ([Chart.js ADR
+0042](adr/0042-theming.md)):
+- The hunks H4a, H4b, H4c and H5 in `lib/src/plugins/plugin.colors.dart`, with the rows
+  `theme-H4a` to `theme-H5`. H5 reads the palette from the theme map of the chart through
+  `chartThemeOf`, the public H0 reader of `lib/src/core/core.config.dart`. The group `theme-H0`
+  of `test/port/core/core.config_test.dart` pins `chartThemeOf`. The group `theme palette` of
+  `test/port/plugins/plugin.colors_test.dart` pins the palette on bar, doughnut and polar area
+  charts and the reset of H5.
+- `compile.dart` emits the plugin keys of §3.3: the title and subtitle colors and fonts, the two
+  legend fonts and the tooltip keys. The `palette` field `{colors, backgroundAlpha}` emits
+  `plugins.colors.$borderColors` and `plugins.colors.$backgroundColors`. The guard has rule 2b
+  (the paths of `themePluginBehaviorPaths`) and rule 9 (a palette value that is not a List with
+  at least one item). `compile_test.dart` has the emission tests of these keys and rules.
+- `ChartThemes.light` also holds `colors.inverseSurface`, `colors.onInverseSurface` and the
+  `palette`: the 7 colors of `BORDER_COLORS` at alpha 1 and `backgroundAlpha` 0.5
+  (`plugin.colors.ts:14-25`).
+- `test/flutter_test_config.dart` registers the seven plugins with the built-in components. It
+  then sets `defaults.plugins.colors.enabled = false` before the snapshot of the restore, as
+  `test/index.js:25-28` does. The spec `plugin.colors_test.dart` and the fixtures of
+  `plugin.colors` run without a theme (invariant 1).
+- Test 2: the group `palette` of `precedence_test.dart` has 8 rows. The palette beats the theme
+  element colors. User colors disable the palette, and `forceOverride` writes over them. A theme
+  without a palette keeps the upstream palette. Two interleaved charts keep their own palettes. A
+  palette key in the user options, in `defaults` or in `overrides` has no effect. An empty or
+  non-List theme palette keeps the upstream palette. The palette keys of `plugin.colors.dart`
+  equal the keys of the compiler. A removed theme gives the upstream palette at the next
+  colorize. `tool/reference/theme_precedence_reference.mjs` registers the seven pinned plugins,
+  disables the colors plugin as `test/index.js:25-28` does, and writes 62 scenarios. In waves 1,
+  2 and 3 the `theme:` lines of 9, 9 and 8 of the 47 scenarios of phase 7 got the new plugin and
+  palette keys of the compiled themes. The other lines stayed byte-identical. In wave 4 the
+  registered legend changed the layout values of 7 of the 47 scenarios, in the upstream run and in
+  the prototype run.
+- Test 3: the group `test 3: the light palette` of `precedence_test.dart` compares the 8 chart
+  types with the colors plugin on, with the light preset and without a theme. The dataset colors,
+  the element options in the modes `default` and `active` and the style setters of one draw are
+  equal after the parse. `presets_plugins_test.dart` compares the 19 resolved keys of the title,
+  subtitle, legend and tooltip plugins with `themeLightPlugins` of `light_reference.dart`. The
+  title, tooltip title and tooltip footer fonts keep `bold`, and the subtitle font keeps
+  `normal`. `tool/reference/theme_light_reference.mjs` registers five plugins. The reference
+  tests of the seven plugins in `test/port/plugins/` run their cases again with the light
+  preset, in the group `theming.md §8 test 3: the light preset`.
+- Test 4: `coverage_test.dart` has 25 `notThemed` keys and 2 module constants
+  (`plugins.colors.$borderColors` and `$backgroundColors`, `plugin.colors.ts:14-25`). A field of
+  a manifest route leaf with a Map value (the tooltip fonts, `plugin.tooltip.js:1327-1331`) is a
+  leaf with the route value of that field. The 10 "phase 8" entries of `notThemed` are gone
+  (title 1, subtitle 1, tooltip 8).
+- The decimation: `test/port/theme/decimation_theme_test.dart` (VM only). A theme leaves the
+  decimated data and `_data` of `plugin.decimation.js:249-265` unchanged, for `min-max` and for
+  `lttb`. Only `borderColor` and `backgroundColor` of the dataset differ (§3.7).
+- The full blue screen: `test/port/theme/blue_screen_test.dart` (VM only). A theme with each
+  color token and the palette at `#2050c0` paints only that blue over a background of the same
+  blue, for the 8 chart types with the colors plugin on and off, with the title, the subtitle,
+  the legend title and a visible tooltip, with no tolerance. The known-leaks list of the 8 chart
+  types is empty. The pin case of a legend item without `fillStyle` and `strokeStyle` has the
+  list `setFillStyle #666` and `setStrokeStyle #666` (`plugin.legend.js:286, 314, 319`). A blue
+  theme without the palette and with the colors plugin on paints the upstream palette (the rows
+  `theme-H4b` and `theme-H4c`).
+- The cost of the palette: [performance.md](performance.md) §14.5.
 
-Chart.js ADR 0001 stays proposed beyond its four invariants. The porting lead accepts the rest
-when phase 8 implements the hunks H4a-H4c and H5.
+These parts wait:
+- The blue screen with an active element waits for `IdentityChartHover` (§8 item 6).
+- The layout keys of the plugin boxes, the fonts and some scale keys pass the guard. The
+  adversarial review of phase 8 checks them (Chart.js ADR 0042, Open item 1).
+- Phase 9 decides the public palette type (Chart.js ADR 0042, Open item 3).
+
+Chart.js ADR 0042 (proposed) restates Chart.js ADR 0001 with the palette change of §3.5. The
+porting lead accepts it after the adversarial review of phase 8, when all gates are green. Then
+it supersedes Chart.js ADR 0001.
 
 ## 11. Risks, open questions and alternatives
 
