@@ -66,13 +66,13 @@
 ///   begins the pan: `pointercancel`, `pointerout` and `pointerleave` at the
 ///   view origin for each touch-like pointer, then only `touch*` events
 ///   until all touch-like pointers of the host lift.
-/// - The tap rule (section 8): one touch-like pointer on the host, no pan,
-///   no cancel, and the up before `kLongPressTimeout`. A tap gives the
-///   compatibility mouse events `mouseover` and `mouseenter` (only when the
-///   compatibility mouse is not over the host), `mousemove`, `mousedown`,
-///   `mouseup` and `click` at the down position. A pointer held past
-///   `kLongPressTimeout` gives `mouseover`, `mouseenter` and `mousemove` at
-///   the down position while it is down, and no `click`.
+/// - The tap rule (section 8): one touch-like pointer on the host, no pan, no
+///   cancel, and the up before `kLongPressTimeout`. A tap gives `mouseover` and
+///   `mouseenter` (when the compatibility mouse is not over the host),
+///   `mousemove`, `mousedown`, `mouseup` and `click` at its tap point: the down
+///   position, the up position for a stylus and an inverted stylus (P4 STN10).
+///   A pointer held past `kLongPressTimeout` gives `mouseover`, `mouseenter`
+///   and `mousemove` at the down position, and no `click`.
 /// - The compatibility mouse (section 9): one for each isolate, as a browser
 ///   has one. A tap or a long press on a host makes that host the owner.
 ///   While an owner exists, one global pointer route watches the touch-like
@@ -1034,16 +1034,21 @@ class RenderChartHost extends RenderBox
     if (tap != null && tap.pointer == event.pointer) {
       _endTap();
       if (!tap.longPressed && attached) {
-        // A tap: the compatibility mouse events and the click at the down
-        // position, as Chrome hit-tests the tap at its down point (P4 D4;
-        // gesture_provider.cc, tap_down_point_).
-        final down = tap.down;
-        _takeMouse(down);
-        _emit(
-          const ['mousemove', 'mousedown', 'mouseup', 'click'],
-          globalToLocal(down.position),
-          down,
-        );
+        // A tap: the compatibility mouse events and the click at the tap
+        // point (P4 D4 and STN10). Chrome hit-tests the tap there, so a tap
+        // point outside the box moves the compatibility mouse off its owner.
+        final source = _tapPoint(tap, event);
+        final position = globalToLocal(source.position);
+        if (size.contains(position)) {
+          _takeMouse(source);
+          _emit(
+            const ['mousemove', 'mousedown', 'mouseup', 'click'],
+            position,
+            source,
+          );
+        } else if (_mouseOwner != null) {
+          _releaseMouse(source, emit: true);
+        }
       }
     }
     // The route has no candidate for this pointer: the pointer was in
@@ -1126,7 +1131,7 @@ class RenderChartHost extends RenderBox
         GestureBinding.instance.pointerRouter.addGlobalRoute(_route);
       }
       // The position of the source in the coordinates of the host at the
-      // time of the event (the down of a tap: P4 D4).
+      // time of the event (the tap point: P4 D4 and STN10).
       _emit(
         const ['mouseover', 'mouseenter'],
         globalToLocal(source.position),
@@ -1164,7 +1169,8 @@ class RenderChartHost extends RenderBox
   /// The global pointer route while an owner exists: it applies the tap
   /// rule to the touch-like pointers that do not go down on a host. A tap or
   /// a long press of such a pointer moves the compatibility mouse off the
-  /// owner, at its down position (P4 D4). A drag or a scroll gives nothing.
+  /// owner, at its tap point or its down position (P4 D4 and STN10). A drag
+  /// or a scroll gives nothing.
   static void _route(PointerEvent event) {
     final pointer = event.pointer;
     // A real mouse keeps the MouseTracker path.
@@ -1205,7 +1211,7 @@ class RenderChartHost extends RenderBox
         if (tap != null) {
           tap.dispose();
           if (!tap.longPressed) {
-            _releaseMouse(tap.down, emit: true);
+            _releaseMouse(_tapPoint(tap, event), emit: true);
           }
         }
       case PointerCancelEvent():
@@ -1215,6 +1221,20 @@ class RenderChartHost extends RenderBox
         break;
     }
   }
+
+  /// The event at the tap point of the tap [tap] that ends with the up
+  /// [up]: the up for a stylus and an inverted stylus, else the down.
+  /// Chrome on Android gives a pen and an eraser tap no touch adjustment
+  /// (Blink `event_handler.cc:1788-1797`). Thus their tap is at the point of
+  /// the up event (`gesture_detector.cc:400-417`,
+  /// `gesture_provider.cc:693-700`; device check P4, row STN10). The touch
+  /// adjustment of a finger keeps its tap at the down point (P4 D4). A long
+  /// press is at the down point for each kind (`gesture_detector.cc:531`).
+  static PointerEvent _tapPoint(_TouchTap tap, PointerUpEvent up) =>
+      switch (up.kind) {
+        PointerDeviceKind.stylus || PointerDeviceKind.invertedStylus => up,
+        _ => tap.down,
+      };
 
   static void _handleOutsideLongPress(_TouchTap tap) {
     if (identical(_outsideTaps[tap.pointer], tap)) {
@@ -1433,8 +1453,9 @@ final class _TouchTap {
   /// The pointer id.
   final int pointer;
 
-  /// The down event. A tap and a long press give their compatibility events
-  /// at its position (device check P4, D4).
+  /// The down event. A long press, and a tap of a kind other than the
+  /// stylus and the inverted stylus, give their compatibility events at its
+  /// position (device check P4, D4 and STN10; `RenderChartHost._tapPoint`).
   final PointerDownEvent down;
 
   /// The square of the slop limit, in logical pixels.

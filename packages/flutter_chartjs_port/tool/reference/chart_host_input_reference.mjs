@@ -48,6 +48,11 @@
 // - The compatibility events and `click` of a tap, and the `mousemove` of a
 //   long press, are at the down position, and so is the `mouseout` of a tap
 //   or a long press outside (P4 rows S04 and S07; gesture_provider.cc).
+// - A stylus tap is at the up position: its compatibility events and
+//   `click`, or the `mouseout` and `mouseleave` of the canvas when the up
+//   position is outside it (P4 row STN10; Blink event_handler.cc gives a
+//   pen no touch adjustment). The long press of a stylus stays at the down
+//   position (gesture_detector.cc).
 //
 // The model sends one DOM event for each action that gives events. Chrome
 // coalesces the moves of one frame (Chart.js ADR 0037, Open 10). Thus the
@@ -236,18 +241,33 @@ class Browser {
       this.emit(['pointerup', 'pointerout', 'pointerleave'], p);
       this.emitTouch('touchend', p);
       if (tap) {
-        // The compatibility events of a tap have the down position (P4 D4).
-        const q = this.tap.p0;
-        if (!this.owner) this.emit(['mouseover', 'mouseenter'], q);
-        this.owner = true;
-        this.emit(['mousemove', 'mousedown', 'mouseup', 'click'], q);
+        // The compatibility events of a tap are at its tap point (P4 D4 and
+        // STN10). Chrome hit-tests the tap there.
+        const q = this.tapPoint();
+        if (inside(q)) {
+          if (!this.owner) this.emit(['mouseover', 'mouseenter'], q);
+          this.owner = true;
+          this.emit(['mousemove', 'mousedown', 'mouseup', 'click'], q);
+        } else if (this.owner) {
+          this.emit(['mouseout', 'mouseleave'], q);
+          this.owner = false;
+        }
       }
     } else if (tap && this.owner) {
-      this.emit(['mouseout', 'mouseleave'], this.tap.p0);
+      this.emit(['mouseout', 'mouseleave'], this.tapPoint());
       this.owner = false;
     }
     this.touch = null;
     this.tap = null;
+  }
+
+  /**
+   * The tap point of the touch-like pointer: the up position (the last
+   * position of the model) for a stylus, which Chrome gives no touch
+   * adjustment (P4 STN10), else the down position (P4 D4).
+   */
+  tapPoint() {
+    return this.touch.kind === 'stylus' ? this.touch.p : this.tap.p0;
   }
 
   wait(ms) {
@@ -406,6 +426,8 @@ function points() {
 
 const AT = points();
 const {P, L, L2, E, O, Q, R} = AT;
+// The stylus tap from legend item 1 lifts 20 px above it, outside the canvas.
+if (inside({x: L.x, y: L.y - 20})) throw new Error('L is more than 20 px below the top.');
 
 /** The steps of a touch tap at [p]: the down, then the up. */
 const tap = (p) => [[['touchDown', p.x, p.y]], [['touchUp']]];
@@ -559,7 +581,8 @@ const cases = [
     ['mousemove'],
   ),
   // 20 px is past the touch slop limit (18.05) and inside the stylus slop
-  // limit (27.05).
+  // limit (27.05). The tap is at the up position, 20 px from the point
+  // (P4 STN10): the tooltip does not show.
   runCase('a stylus drag of 20 px from a point stays a tap', [
     [['touchDown', P.x, P.y, 'stylus']],
     [['touchMove', P.x + 20, P.y]],
@@ -568,6 +591,20 @@ const cases = [
   runCase('a stylus drag of 30 px from a point cancels', [
     [['touchDown', P.x, P.y, 'stylus']],
     [['touchMove', P.x + 30, P.y]],
+    [['touchUp']],
+  ]),
+  // The up position of the stylus tap is outside the canvas (P4 STN10): the
+  // compatibility mouse leaves the canvas, and legend item 1 gets no click.
+  runCase('a tap on a point, then a stylus tap from legend item 1 to outside', [
+    ...tap(P),
+    [['touchDown', L.x, L.y, 'stylus']],
+    [['touchMove', L.x, L.y - 20]],
+    [['touchUp']],
+  ]),
+  runCase('a tap on a point, then a stylus tap outside with a move of 10 px', [
+    ...tap(P),
+    [['touchDown', O.x, O.y, 'stylus']],
+    [['touchMove', O.x + 10, O.y]],
     [['touchUp']],
   ]),
   runCase('a long press on a point, then a drag past the slop', [

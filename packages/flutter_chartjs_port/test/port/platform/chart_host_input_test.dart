@@ -32,9 +32,10 @@ import 'chart_host_input_reference.dart';
 // ChartHost. The touch rules of the model come from the device check P4 of
 // Chart.js ADR 0037 (sections 6 and 8): no event for a move with no change,
 // no `touchmove` inside the slop limit, the cancel at the pan begin, the
-// compatibility events at the down position, and the stylus as a
-// touch-like kind. A step of a case is one frame: its actions, then one
-// pump. The test compares after each step:
+// compatibility events of a tap at the down position (at the up position
+// for a stylus, P4 row STN10) and of a long press at the down position,
+// and the stylus as a touch-like kind. A step of a case is one frame: its
+// actions, then one pump. The test compares after each step:
 //
 // - `dom`: the DOM events that the host sent to the canvas, as `[type, x,
 //   y]` with the position of getRelativePosition. A listener of each type

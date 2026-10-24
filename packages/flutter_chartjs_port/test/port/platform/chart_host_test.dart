@@ -2397,6 +2397,184 @@ void main() {
       expect(_owner, isNull);
       expect(_globalRoutes(tester), routes);
     });
+
+    // P4 row STN10: Chrome on Android gives the tap of a pen and of an
+    // eraser no touch adjustment (event_handler.cc:1788-1797). Its
+    // compatibility events and its click are at the up position.
+    for (final kind in const [
+      PointerDeviceKind.stylus,
+      PointerDeviceKind.invertedStylus,
+    ]) {
+      testWidgets('STN10: a tap of the kind ${kind.name} gives its '
+          'compatibility events at the up position', (tester) async {
+        final log = <NativeEvent>[];
+        await _pumpHost(tester, log);
+        final gesture = await tester.startGesture(
+          const Offset(100, 50),
+          kind: kind,
+        );
+        await gesture.moveBy(const Offset(7, 0));
+        log.clear();
+        await gesture.up();
+        final compatibility = log.where(
+          (event) => event.type.startsWith('mouse') || event.type == 'click',
+        );
+        expect(_types(compatibility.toList()), [
+          'mouseover',
+          'mouseenter',
+          'mousemove',
+          'mousedown',
+          'mouseup',
+          'click',
+        ]);
+        for (final event in compatibility) {
+          expect(at(event), (67.0, 50.0));
+          expect(event.source, isA<PointerUpEvent>());
+        }
+        expect(_owner, same(_host(tester)));
+      });
+
+      testWidgets('STN10: a long press of the kind ${kind.name} gives its '
+          'mousemove at the down position', (tester) async {
+        final log = <NativeEvent>[];
+        await _pumpHost(tester, log);
+        final gesture = await tester.startGesture(
+          const Offset(100, 50),
+          kind: kind,
+        );
+        await gesture.moveBy(const Offset(7, 0));
+        log.clear();
+        await tester.pump(kLongPressTimeout);
+        expect(_types(log), ['mouseover', 'mouseenter', 'mousemove']);
+        for (final event in log) {
+          expect(at(event), (60.0, 50.0));
+        }
+        log.clear();
+        await gesture.up();
+        expect(_types(log), [
+          'pointerup',
+          'pointerout',
+          'pointerleave',
+          'touchend',
+        ]);
+      });
+
+      testWidgets('STN10: a tap of the kind ${kind.name} outside gives '
+          'mouseout at its up position', (tester) async {
+        final log = <NativeEvent>[];
+        await _pumpHost(tester, log);
+        await tester.tapAt(const Offset(100, 50));
+        log.clear();
+        final gesture = await tester.startGesture(
+          const Offset(20, 50),
+          kind: kind,
+        );
+        await gesture.moveBy(const Offset(5, 0));
+        await gesture.up();
+        expect(_types(log), ['mouseout', 'mouseleave']);
+        expect(at(log.last), (-15.0, 50.0));
+        expect(_owner, isNull);
+      });
+    }
+
+    testWidgets('STN10: a stylus tap that lifts outside the box gives no '
+        'compatibility event to the host and moves the compatibility mouse '
+        'off its owner', (tester) async {
+      final log = <NativeEvent>[];
+      await _pumpHost(tester, log);
+      final routes = _globalRoutes(tester);
+      // No owner: the tap gives no compatibility event.
+      var gesture = await tester.startGesture(
+        const Offset(330, 50),
+        kind: PointerDeviceKind.stylus,
+      );
+      await gesture.moveBy(const Offset(15, 0));
+      log.clear();
+      await gesture.up();
+      expect(_types(log), [
+        'pointerup',
+        'pointerout',
+        'pointerleave',
+        'touchend',
+      ]);
+      expect(_owner, isNull);
+      expect(_globalRoutes(tester), routes);
+      // The host is the owner: the tap gives it mouseout and mouseleave at
+      // the up position, and no click.
+      await tester.tapAt(const Offset(100, 50));
+      expect(_owner, same(_host(tester)));
+      gesture = await tester.startGesture(
+        const Offset(330, 50),
+        kind: PointerDeviceKind.stylus,
+      );
+      await gesture.moveBy(const Offset(15, 0));
+      log.clear();
+      await gesture.up();
+      expect(_types(log), [
+        'pointerup',
+        'pointerout',
+        'pointerleave',
+        'touchend',
+        'mouseout',
+        'mouseleave',
+      ]);
+      expect(at(log.last), (305.0, 50.0));
+      expect(_owner, isNull);
+      expect(_globalRoutes(tester), routes);
+    });
+
+    testWidgets('STN10: a stylus tap on host A that lifts outside both '
+        'boxes moves the compatibility mouse off host B', (tester) async {
+      final a = UiCanvasElement();
+      final b = UiCanvasElement();
+      final log = <NativeEvent>[];
+      _record(a, log);
+      _record(b, log);
+      // A at x 0 to 150 and B at x 250 to 400, both 75 px high.
+      await tester.pumpWidget(
+        _box(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(width: 150, child: ChartHost(canvas: a)),
+              const SizedBox(width: 100),
+              SizedBox(width: 150, child: ChartHost(canvas: b)),
+            ],
+          ),
+        ),
+      );
+      final routes = _globalRoutes(tester);
+      await tester.tapAt(const Offset(300, 40));
+      expect(_owner!.canvas, same(b));
+      final gesture = await tester.startGesture(
+        const Offset(145, 40),
+        kind: PointerDeviceKind.stylus,
+      );
+      await gesture.moveBy(const Offset(15, 0));
+      log.clear();
+      await gesture.up();
+      expect(
+        [
+          for (final event in log)
+            '${identical(event.target, a) ? 'A' : 'B'} ${event.type}',
+        ],
+        [
+          'A pointerup',
+          'A pointerout',
+          'A pointerleave',
+          'A touchend',
+          'B mouseout',
+          'B mouseleave',
+        ],
+      );
+      // B gets the up position in its own coordinates.
+      for (final event in log.where((event) => identical(event.target, b))) {
+        expect(at(event), (-90.0, 40.0));
+        expect(event.source, isA<PointerUpEvent>());
+      }
+      expect(_owner, isNull);
+      expect(_globalRoutes(tester), routes);
+    });
   });
 
   group('canvas event target', () {

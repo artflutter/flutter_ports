@@ -2,7 +2,8 @@
 
 - Status: proposed
 - Date: 2026-10-22
-- Revised: 2026-10-23, after the device check of Open 1 (Evidence E8 and E9)
+- Revised: 2026-10-23, after the device check of Open 1 (Evidence E8 and E9); 2026-10-24, after
+  the device re-check of the input fix (Evidence E10, row STN10)
 - Supersedes: [Chart.js ADR 0014](0014-input-events-and-chart-host.md) on acceptance
 - Related: [Chart.js ADR 0016](0016-frame-scheduling.md) (the scheduling of the host; it
   supersedes Chart.js ADR 0007),
@@ -118,10 +119,17 @@ tag.
 - **The move filter.** `components/input/passthrough_touch_event_queue.cc:33-46`, `:361-363` and
   `:490-506` (`HasPointChanged`): a move with no change of the position, the radii, the rotation
   angle, the force or the tilt is not sent (D2).
-- **The tap position.** `gesture_provider.cc:168` and `:714-719`: the tap gesture is at the down
-  point. `gesture_detector.cc:531`: the long press uses the down event (D4).
+- **The tap position.** `gesture_detector.cc:400-417` and `gesture_provider.cc:693-700`: the tap
+  gesture has the point of the up event. `gesture_provider.cc:168` and `:705-722`: the tap area of
+  that gesture has its center at the down point. Blink
+  `third_party/blink/renderer/core/input/event_handler.cc:2083-2148` applies the touch adjustment
+  to the tap of a touch: the device rows of a finger (S04, S07 and SN08) give the down point (D4).
+  `event_handler.cc:1788-1797`: a pen and an eraser get no touch adjustment. Thus their tap is at
+  the up point (Evidence E10, row STN10). `gesture_manager.cc:219-465` (`HandleGestureTap`) sends
+  the compatibility events and `click` at the point of the tap.
+  `gesture_detector.cc:531`: the long press uses the down event, for each tool type (D4).
 - **The stylus.** Chrome on Android gives a stylus contact the touch sequence, with the
-  `pointerType` `pen` (D5).
+  `pointerType` `pen` (D5). Its tap is at the up point (Evidence E10).
 
 ### The port before this ADR
 
@@ -173,7 +181,7 @@ with these changes, and supersedes it:
 6. The touch rows apply to all touch-like kinds, also the stylus. They follow the Chromium rules
    of a touch sequence (sections 6 and 8): no event for a move with no change, no `touchmove`
    inside the slop, the cancel at the pan begin, and the compatibility events at the down
-   position.
+   position (at the up position for a stylus and an inverted stylus).
 
 The other sections keep the decisions of Chart.js ADR 0014.
 
@@ -323,7 +331,7 @@ not the platform. `eventTypes` and the `options.events` filter stay as upstream.
 | `PointerMoveEvent` of another touch-like pointer before the pan, that does not begin the pan | `pointermove`, `touchmove` |
 | the `PointerMoveEvent` that begins the pan (section 8) | `pointermove`, `touchmove`, then for each touch-like pointer of the host, in the order of the pointer ids: `pointercancel`, `pointerout`, `pointerleave` |
 | `PointerMoveEvent`, touch-like kind, after the pan | `touchmove` |
-| `PointerUpEvent`, touch-like kind, before the pan | `pointerup`, `pointerout`, `pointerleave`, `touchend`, then for a tap (section 8): `mouseover` and `mouseenter` (only when the compatibility mouse is not over the host), `mousemove`, `mousedown`, `mouseup`, `click` |
+| `PointerUpEvent`, touch-like kind, before the pan | `pointerup`, `pointerout`, `pointerleave`, `touchend`, then for a tap (section 8) with its tap point in the box: `mouseover` and `mouseenter` (only when the compatibility mouse is not over the host), `mousemove`, `mousedown`, `mouseup`, `click`. A tap with its tap point outside the box gives these events to no host (section 9) |
 | `PointerUpEvent`, touch-like kind, after the pan | `touchend` |
 | `PointerCancelEvent`, touch-like kind, before the pan | `pointercancel`, `pointerout`, `pointerleave`, `touchcancel` |
 | `PointerCancelEvent`, touch-like kind, after the pan | `touchcancel` |
@@ -356,10 +364,14 @@ kinds.
   `touches` list. Thus it gives NaN coordinates, as upstream does (`helpers.dom.ts:81-93`).
 - A `pointer*` event of a touch-like pointer has the offsets of its event. The `pointerup`,
   `pointerout` and `pointerleave` of a lift have the up position.
-- The compatibility `mouse*` events and the `click` of a tap, and the `mouseover`, `mouseenter`
-  and `mousemove` of a long press, have the down position of the pointer. The host converts it
-  to its own coordinates at the time of the event, as Chromium hit-tests the screen point of the
-  down when it sends the tap (Evidence E8, D4).
+- The compatibility `mouse*` events and the `click` of a tap have the tap point of the pointer:
+  the down position for a touch and the kind `unknown` (Evidence E8, D4), and the up position for
+  a stylus and an inverted stylus, as Chrome gives a pen and an eraser no touch adjustment
+  (Evidence E10, row STN10). The `mouseover`, `mouseenter` and `mousemove` of a long press have
+  the down position for each kind. The host converts the point to its own coordinates at the
+  time of the event, as Chromium hit-tests the screen point of the tap when it sends the tap. A
+  tap point outside the host box gives the host no compatibility event and no `click`. That tap
+  then moves the compatibility mouse off its owner (section 9).
 - The `pointercancel`, `pointerout` and `pointerleave` of the pan begin have the position of the
   view origin in the coordinates of the host, as Chrome gives them the client point (0, 0)
   (Evidence E8, D3). A platform cancel has the position of its event (Open 17). The view origin
@@ -368,8 +380,8 @@ kinds.
   the check, Chrome gave (-16, -40) and the port gives (-16, -86.1) for the same canvas. Both
   points are outside the chart area, and the chart events and the state are equal (Evidence
   E8).
-- A `mouseout` or `mouseleave` of a tap or a long press outside has the down position of that
-  pointer in the coordinates of the host that gets it.
+- A `mouseout` or `mouseleave` of a tap outside has the tap point of that tap, and of a long press
+  outside the down position of that pointer, in the coordinates of the host that gets it.
 
 ### 7. The click rule
 
@@ -379,7 +391,7 @@ The host gives `click` by the DOM rule. It adds no recognizer to the gesture are
   `mouseup`. The distance between the down and the up has no limit. An up outside the box gives
   no `click`, because the DOM sends the click to the common ancestor. A down with another button
   gives no `click`. `contextmenu` and `auxclick` have no mapping (section 16).
-- A touch-like pointer: a tap (section 8) gives `click` at the down position, after its
+- A touch-like pointer: a tap (section 8) gives `click` at its tap point (section 6), after its
   compatibility mouse events. A long press gives no `click`.
 - The host emits `click` in `handleEvent`, synchronously. Thus the compatibility events and
   `click` of one tap come in the DOM order.
@@ -420,7 +432,8 @@ section 9 use the same tap rule.
   `touchstart` only, a move `touchmove` only, an up `touchend` only and a cancel `touchcancel`
   only. The host keeps this state for its own pointers. Chrome keeps it for the page (Open 14).
 - A cancel ends the candidate.
-- An up of the candidate pointer before the long-press time is a tap.
+- An up of the candidate pointer before the long-press time is a tap. Its tap point is the down
+  position, or the up position for a stylus and an inverted stylus (section 6).
 - The long-press time is `kLongPressTimeout` (500 ms, `gestures/constants.dart:29`). A timer
   starts at the down of a candidate. When it fires and the candidate still exists, the candidate
   is a long press. The host sends `mouseover` and `mouseenter` (only when the compatibility mouse
@@ -435,7 +448,7 @@ section 9 use the same tap rule.
 A browser has one compatibility mouse. The port has one for each isolate: a static owner of
 `RenderChartHost`.
 - A tap or a long press on a host makes that host the owner. When another host was the owner, that
-  host first gets `mouseout` and `mouseleave` at the down position of the tap, in its own
+  host first gets `mouseout` and `mouseleave` at the tap point of the tap, in its own
   coordinates.
   Then the new owner gets `mouseover` and `mouseenter`. A tap on the owner gives no `mouseover`
   and no `mouseenter`.
@@ -451,9 +464,14 @@ A browser has one compatibility mouse. The port has one for each isolate: a stat
   adds in its `handleEvent` of an up sees that same up, because `PointerRouter.route` copies the
   global routes after the hit path ran (`gestures/pointer_router.dart:124-131`).
 - The route applies the tap rule of section 8 to the other touch-like pointers. A tap or a long
-  press that does not hit a host gives the owner `mouseout` and `mouseleave` at the down position
-  of that pointer, in the coordinates of the owner. Then the owner ends, and the route goes. A drag
-  or a scroll outside is not a tap and gives nothing, as in Chrome.
+  press that does not hit a host gives the owner `mouseout` and `mouseleave` at the tap point of
+  that tap or the down position of that long press, in the coordinates of the owner. Then the
+  owner ends, and the route goes. A drag or a scroll outside is not a tap and gives nothing, as in
+  Chrome.
+- A tap on a host with its tap point outside the box of that host (a stylus that lifts outside the
+  box) does not hit a host either. The host gives the owner `mouseout` and `mouseleave` at the tap
+  point, also when the owner is that host. Then the owner ends. The host does not look for another
+  host at the tap point (Open 19).
 - The route ignores the mouse-like kinds. A real mouse keeps the `MouseTracker` path.
 - At `detach` and at `dispose` of the owner, the owner ends without an event, and the route goes.
   A DOM element that leaves the document gets no `mouseout` either.
@@ -661,9 +679,17 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
   a second source of the size. It caps the attach resize by the container height. It has no
   `round1`. `onResize` and the `resize` plugin hook need `_resize` of `core.controller`.
 
-- **The up position for the compatibility events and `click`** (the first text of this ADR).
-  Rejected. Chrome puts them at the down position (Evidence E8, D4). After a move of 7 px, the up
-  position misses the point that Chrome hits, and the active elements and the tooltip differ.
+- **The up position for the compatibility events and `click` of a touch** (the first text of this
+  ADR). Rejected. Chrome puts them at the down position (Evidence E8, D4). After a move of 7 px, the
+  up position misses the point that Chrome hits, and the active elements and the tooltip differ.
+- **The down position for the compatibility events and `click` of a stylus** (the text of
+  2026-10-23). Rejected. Chrome gives a pen no touch adjustment and puts them at the up position
+  (Evidence E10, row STN10). After a stylus move of 10 px, the down position showed the tooltip of
+  point 1 in the port, and Chrome showed no tooltip.
+- **A hit test at the up point of each stylus tap**, to give the tap to the host under that point
+  (`GestureBinding.hitTestInView`). Not now (Open 19). It changes the result only for a stylus
+  tap that moves from one element onto another inside the stylus slop. It adds a second hit test
+  path to the host and to the route.
 - **The pan cancel at the finger position.** Rejected. Chrome gives the cancel the client point
   (0, 0). With `pointerout` or `pointerleave` in `events`, the finger position can keep a legend
   hover or an active element that the view origin clears.
@@ -710,7 +736,8 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
 - A drag past the slop gives `pointercancel`, `pointerout` and `pointerleave` at the slop, while
   the finger is down. A `pointerup` listener gets no event for that drag, and a `pointerout`
   listener gets it at the slop, as in Chrome.
-- A stylus tap gives the touch sequence, the compatibility events and `click`.
+- A stylus tap and an inverted stylus tap give the touch sequence, the compatibility events and
+  `click`, at the up position.
 - The legend and the tooltip need no input code of their own. Their spec cases run through the
   harness with no change.
 - `getRelativePosition` gives the upstream values for a chart whose canvas has the device size
@@ -743,12 +770,20 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
      physical pixels: 21 px is 8.000 px and 22 px is 8.381 px on the Pixel 8a, with the same
      result for a limit of 8.0 and of 8.05. The epsilon is 0.13 physical px. Only a finger with
      fractional positions can show it. The epsilon comes from the Chromium source (Evidence E9);
-   - the stylus factor of 1.5 of the slop limit (section 8): the stylus row of the check had no
-     move. The stylus moves of the re-run check it, if `adb` gives the tool type stylus.
-   A device re-run of the rows of the check with the changed host confirms the changed table
-   before the ADR goes to accepted. It also runs a hold of 600 ms and then a drag of 30 px
-   (Open 15), a stylus move of 10 and 14 px (the stylus slop limit), and a touch move of 8 and
-   9 px (the touch slop, not the epsilon).
+   - the stylus factor of 1.5 of the slop limit (section 8): in the re-check (Evidence E10), a
+     stylus move of 9.9 to 10.3 px gave a tap (STN10) and a move of 14.1 px the pan (STN14), on
+     both sides. Thus the stylus limit of Chrome is between 10.3 and 14.1 px. This agrees with
+     12.05 px. `adb` cannot show the exact factor;
+   - the tap point of a stylus (section 6): the re-check found it (STN10). The host of this
+     revision does not run on the device yet. The long press of a stylus (the down position, from
+     the Chromium source), a stylus tap outside, a stylus tap that lifts outside the box of its
+     host, and the inverted stylus have no device row.
+   The device re-run of 2026-10-23 (Evidence E10) ran the rows of the check with the host of the
+   input fix. It also ran a hold of 600 ms and then a drag of 30 px (LPD, Open 15), a stylus move
+   of 10 and 14 px (STN10, STN14), and a touch move of 8 and 9 px (SN08, SN09). All rows but STN10
+   gave the Chrome result (T15 with a difference in the moves only, Open 10). STN10 changed section
+   6. Before the ADR goes to accepted, the independent recompute of Evidence E8 and E10 agrees with
+   them, and the row STN10 runs again on the device with the host of this revision.
 2. **iOS.** Safari keeps the tooltip at a tap outside. The port gives the Chrome result on iOS
    too. A later ADR can change this for each platform if a user asks for it.
 3. **`touch-action`.** Closed by the device check (D3): the host cancels the pointers at the pan
@@ -801,8 +836,8 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
     `pointerout`, `pointerleave` for each pointer in the order of the ids), and the pinch. Chrome
     keeps the cancel state for the page, and the host keeps it for itself: two hosts that are
     touched at the same time can differ. NOT CHECKED: the rows with two fingers need a person.
-15. **A move after a long press.** The host begins the pan, as the Chromium source does. NOT
-    CHECKED: no device row.
+15. **A move after a long press.** The host begins the pan, as the Chromium source does. The
+    re-check row LPD gave the same events on both sides (Evidence E10).
 16. **A hovering stylus, a desktop pen and the kind `unknown`.** A stylus that hovers on the
     host and then taps it gets these events two times: `pointerover` and `pointerenter` again at
     the down; `pointerout` and `pointerleave` at the up while the stylus still hovers on the host;
@@ -817,6 +852,14 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
 18. **The long-press time.** Chrome on the device sent the long press 485 to 492 ms after
     `touchstart` (Android `long_press_timeout` 400). The port uses 500 ms. The check found no
     difference: a hold of 450 ms is a tap and a hold of 550 ms a long press on both sides.
+19. **A stylus tap that lifts on another element.** Chrome hit-tests the tap of a pen at the up
+    point. When a stylus goes down on one chart and lifts on another chart inside its slop, the
+    compatibility events and `click` go to the second canvas. The host of the down gives the
+    owner `mouseout` and `mouseleave`, and the second host gets no event. When a stylus goes down
+    outside the hosts and lifts on a host inside its slop, Chrome gives that canvas the tap. The
+    route gives the owner `mouseout` and `mouseleave` only. Only a tap that starts less than the
+    stylus slop limit (12.05 px on the Pixel 8a) from the edge of a host can show this. NOT
+    CHECKED: no device row.
 
 ## Evidence
 
@@ -968,6 +1011,35 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
   `AndroidTouchProcessor.java:404-437` (the pressure and the radii of an Android touch) and
   `:382` (the pointer id 0 of each event), and
   `lib/ui/window/pointer_data_packet_converter.cc:157-179` (a hover keeps that id, section 6).
+- **E10, the device re-check of the input fix** (2026-10-23, 22:07 to 22:14 UTC; `result-fix.md`
+  of the handover, not recomputed yet). The Pixel 8a and the Chrome of E8, and a profile build of
+  the port at commit `363f28d` (the host of the input fix, D1 to D5). The rows of E8 ran again,
+  and five new rows: LPD (a hold of 600 ms, then a drag of 30 px), SN08 and SN09 (a touch move of
+  21 and 24 physical px, 8.000 and 9.14 px), STN10 and STN14 (an `adb shell input stylus swipe`
+  of 26 or 27 and 37 physical px, 9.9 to 10.3 and 14.1 px, `pointerType` `pen` on both sides).
+  The rows with a difference ran in two rounds (f1, f2). Results:
+  - All rows but STN10 gave the Chrome result. T15 differed in the positions of 3 moves only
+    (Open 10). SN08 was a tap and SN09 the pan on both sides. STN10 was a tap and STN14 the pan
+    on both sides. LPD gave the pan begin after the long press on both sides.
+  - STN10, down at (138, 132) and up at (148, 132) in the canvas, in both rounds: Chrome sent
+    `pointermove` from 139 to 148, then `pointerup`, `pointerout`, `pointerleave` and `touchend`
+    at the up position, then `mouseover`, `mouseenter`, `mousemove`, `mousedown`, `mouseup` and
+    `click` at (148, 132), the up position. The chart got `mousemove` and `click` at (148, 132):
+    no active element, tooltip opacity 0. The port sent the compatibility events at (138, 132),
+    the down position, and showed the tooltip of point 1. The touch rows with a move inside the
+    slop (S04, S07 and SN08) gave the down position on both sides. Chrome sent the last
+    `pointermove` at the up position, so the data cannot tell the up point from the last move
+    point. The Chromium source gives the up event (below).
+  - ST1 (a stylus tap with no move): the down and the up are at the same point. It cannot show
+    the tap point.
+  - Chromium source at the tag `155.0.8059.84`:
+    `third_party/blink/renderer/core/input/event_handler.cc:1788-1797`
+    (`ShouldApplyTouchAdjustment`: false for a pen and an eraser) and `:2083-2148` (the touch
+    adjustment of a gesture); `gesture_manager.cc:219-465` (`HandleGestureTap`: the compatibility
+    events at the point of the tap); `ui/events/gesture_detection/gesture_detector.cc:400-417` (the
+    single tap at the up event) and `:531` (the long press at the down event);
+    `gesture_provider.cc:693-700` (the tap gesture at the point of its event) and `:705-722` (the
+    tap area at the down point).
 - **E7, the host tests of Chart.js ADR 0014** stay valid for sections 1 to 5, 11 and 12:
   `test/port/platform/chart_host_test.dart` (the groups 'first layout', 'resize', 'display size
   and bitmap stretch', 'unbounded constraints', 'dry layout', 'TickerMode', 'attach and detach',

@@ -450,6 +450,20 @@ Changes to the cited files:
   changes the rows of `chart_host.dart` and of its tests in place (tool 6). The rows that this
   plan cites do not move. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
   estimates do not change. No trigger occurred.
+- 2026-10-24, step 8 of phase 8, the stylus tap point after the device re-check of
+  [Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md) (proposed, Evidence E10, row
+  STN10). `lib/src/platform/chart_host.dart`: the tap of a stylus and of an inverted stylus gives
+  its compatibility events and `click` at the up position (`_tapPoint`), and a tap point outside
+  the box moves the compatibility mouse off its owner. The library doc of the input (lines 70 to
+  75) changes in place with the same line count. The other changes are in the section
+  `// Input.` (from line 765) and in `_TouchTap`. Thus lines 1 to 764 do not move, and the
+  citations of §1.1 and of the inventory stay valid. The file has 1476 lines (21 lines more). The
+  new code is input code: the inventory gets no row. The review fixes reflow the library doc of
+  the input (lines 69 to 75, the same line count). `test/port/platform/chart_host_test.dart` gets
+  8 tests at the end of the group 'touch sequence' (108 tests). The tests of §3.5 do not
+  change. `doc/parity.md` changes the rows of `chart_host.dart` and of its tests in place (tool
+  6). The rows that this plan cites do not move. The references, the inventory (§1.1), the tests
+  of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

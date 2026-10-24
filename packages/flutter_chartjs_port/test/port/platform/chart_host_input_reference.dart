@@ -4,7 +4,7 @@
 // Node.js v24.12.0 (darwin-x64), V8 13.6.233.17-node.37:
 // a build of Chart.js v4.5.1+7169e651 at the commit
 // 7169e65147a47f3720957a6f156a33c838ab9f57, with the Liberation Sans mock
-// context of tool/reference/scale_chart_common.mjs. 26 cases, 15 widths.
+// context of tool/reference/scale_chart_common.mjs. 28 cases, 15 widths.
 //
 // The points: P (189, 183) point 1 of dataset 0, L (219, 16) the
 // center of legend item 1, L2 (294, 16) the center of legend item 2,
@@ -119,6 +119,20 @@
 //   0: pointerover pointerenter pointerdown touchstart
 //   1: pointermove touchmove pointercancel pointerout pointerleave
 //   2: touchend
+// a tap on a point, then a stylus tap from legend item 1 to outside:
+//   0: pointerover pointerenter pointerdown touchstart
+//   1: pointerup pointerout pointerleave touchend mouseover mouseenter
+//     mousemove mousedown mouseup click
+//   2: pointerover pointerenter pointerdown touchstart
+//   3: pointermove
+//   4: pointerup pointerout pointerleave touchend mouseout mouseleave
+// a tap on a point, then a stylus tap outside with a move of 10 px:
+//   0: pointerover pointerenter pointerdown touchstart
+//   1: pointerup pointerout pointerleave touchend mouseover mouseenter
+//     mousemove mousedown mouseup click
+//   2: (none)
+//   3: (none)
+//   4: mouseout mouseleave
 // a long press on a point, then a drag past the slop:
 //   0: pointerover pointerenter pointerdown touchstart
 //   1: mouseover mouseenter mousemove
@@ -2541,31 +2555,27 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
             <Object?>['pointerout', 209.0, 183.0],
             <Object?>['pointerleave', 209.0, 183.0],
             <Object?>['touchend', double.nan, double.nan],
-            <Object?>['mouseover', 189.0, 183.0],
-            <Object?>['mouseenter', 189.0, 183.0],
-            <Object?>['mousemove', 189.0, 183.0],
-            <Object?>['mousedown', 189.0, 183.0],
-            <Object?>['mouseup', 189.0, 183.0],
-            <Object?>['click', 189.0, 183.0],
+            <Object?>['mouseover', 209.0, 183.0],
+            <Object?>['mouseenter', 209.0, 183.0],
+            <Object?>['mousemove', 209.0, 183.0],
+            <Object?>['mousedown', 209.0, 183.0],
+            <Object?>['mouseup', 209.0, 183.0],
+            <Object?>['click', 209.0, 183.0],
           ],
           'events': <Object?>[
-            <Object?>['mousemove', 'mousemove', 189.0, 183.0, false],
-            <Object?>['click', 'click', 189.0, 183.0, false],
+            <Object?>['mousemove', 'mousemove', 209.0, 183.0, false],
+            <Object?>['click', 'click', 209.0, 183.0, false],
           ],
-          'active': <Object?>[
-            <Object?>[0.0, 1.0],
-          ],
-          'tooltip': <Object?>[
-            <Object?>[0.0, 1.0],
-          ],
-          'opacity': 1.0,
+          'active': <Object?>[],
+          'tooltip': <Object?>[],
+          'opacity': 0.0,
           'legend': <Object?>[],
           'visible': <Object?>[true, true],
-          'lastEvent': <Object?>['mousemove', 'mousemove', 189.0, 183.0],
+          'lastEvent': <Object?>['mousemove', 'mousemove', 209.0, 183.0],
         },
       ],
       'replay': <Object?>[
-        <Object?>['mousemove', 'mousemove', 189.0, 183.0, true],
+        <Object?>['mousemove', 'mousemove', 209.0, 183.0, true],
       ],
     },
   ),
@@ -2668,6 +2678,311 @@ const List<ChartHostInputReferenceCase> chartHostInputReference = [
       'replay': <Object?>[
         <Object?>['mousemove', 'touchmove', 219.0, 183.0, true],
       ],
+    },
+  ),
+  (
+    name: 'a tap on a point, then a stylus tap from legend item 1 to outside',
+    config: <String, Object?>{
+      'type': 'line',
+      'data': <String, Object?>{
+        'labels': <Object?>['a', 'b', 'c', 'd'],
+        'datasets': <Object?>[
+          <String, Object?>{
+            'label': 'one',
+            'data': <Object?>[1.0, 3.0, 2.0, 4.0],
+          },
+          <String, Object?>{
+            'label': 'two',
+            'data': <Object?>[4.0, 2.0, 3.0, 1.0],
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'plugins': <String, Object?>{
+          'legend': <String, Object?>{
+            'onHover': 'fn:legendHover',
+            'onLeave': 'fn:legendLeave',
+            'onClick': 'fn:legendClick',
+          },
+        },
+      },
+      'plugins': <Object?>[
+        <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
+      ],
+    },
+    options: <String, Object?>{},
+    expected: <String, Object?>{
+      'steps': <Object?>[
+        <Object?>[
+          <Object?>['touchDown', 189.0, 183.0],
+        ],
+        <Object?>[
+          <Object?>['touchUp'],
+        ],
+        <Object?>[
+          <Object?>['touchDown', 219.0, 16.0, 'stylus'],
+        ],
+        <Object?>[
+          <Object?>['touchMove', 219.0, -4.0],
+        ],
+        <Object?>[
+          <Object?>['touchUp'],
+        ],
+      ],
+      'observations': <Object?>[
+        <String, Object?>{
+          'dom': <Object?>[
+            <Object?>['pointerover', 189.0, 183.0],
+            <Object?>['pointerenter', 189.0, 183.0],
+            <Object?>['pointerdown', 189.0, 183.0],
+            <Object?>['touchstart', 189.0, 183.0],
+          ],
+          'events': <Object?>[
+            <Object?>['mousedown', 'touchstart', 189.0, 183.0, false],
+          ],
+          'active': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'tooltip': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'opacity': 1.0,
+          'legend': <Object?>[],
+          'visible': <Object?>[true, true],
+          'lastEvent': <Object?>['mousedown', 'touchstart', 189.0, 183.0],
+        },
+        <String, Object?>{
+          'dom': <Object?>[
+            <Object?>['pointerup', 189.0, 183.0],
+            <Object?>['pointerout', 189.0, 183.0],
+            <Object?>['pointerleave', 189.0, 183.0],
+            <Object?>['touchend', double.nan, double.nan],
+            <Object?>['mouseover', 189.0, 183.0],
+            <Object?>['mouseenter', 189.0, 183.0],
+            <Object?>['mousemove', 189.0, 183.0],
+            <Object?>['mousedown', 189.0, 183.0],
+            <Object?>['mouseup', 189.0, 183.0],
+            <Object?>['click', 189.0, 183.0],
+          ],
+          'events': <Object?>[
+            <Object?>['mousemove', 'mousemove', 189.0, 183.0, false],
+            <Object?>['click', 'click', 189.0, 183.0, false],
+          ],
+          'active': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'tooltip': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'opacity': 1.0,
+          'legend': <Object?>[],
+          'visible': <Object?>[true, true],
+          'lastEvent': <Object?>['mousemove', 'mousemove', 189.0, 183.0],
+        },
+        <String, Object?>{
+          'dom': <Object?>[
+            <Object?>['pointerover', 219.0, 16.0],
+            <Object?>['pointerenter', 219.0, 16.0],
+            <Object?>['pointerdown', 219.0, 16.0],
+            <Object?>['touchstart', 219.0, 16.0],
+          ],
+          'events': <Object?>[
+            <Object?>['mousedown', 'touchstart', 219.0, 16.0, false],
+          ],
+          'active': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'tooltip': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'opacity': 1.0,
+          'legend': <Object?>[],
+          'visible': <Object?>[true, true],
+          'lastEvent': null,
+        },
+        <String, Object?>{
+          'dom': <Object?>[
+            <Object?>['pointermove', 219.0, -4.0],
+          ],
+          'events': <Object?>[],
+          'active': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'tooltip': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'opacity': 1.0,
+          'legend': <Object?>[],
+          'visible': <Object?>[true, true],
+          'lastEvent': null,
+        },
+        <String, Object?>{
+          'dom': <Object?>[
+            <Object?>['pointerup', 219.0, -4.0],
+            <Object?>['pointerout', 219.0, -4.0],
+            <Object?>['pointerleave', 219.0, -4.0],
+            <Object?>['touchend', double.nan, double.nan],
+            <Object?>['mouseout', 219.0, -4.0],
+            <Object?>['mouseleave', 219.0, -4.0],
+          ],
+          'events': <Object?>[
+            <Object?>['mouseout', 'mouseout', 219.0, -4.0, false],
+          ],
+          'active': <Object?>[],
+          'tooltip': <Object?>[],
+          'opacity': 0.0,
+          'legend': <Object?>[],
+          'visible': <Object?>[true, true],
+          'lastEvent': null,
+        },
+      ],
+      'replay': <Object?>[],
+    },
+  ),
+  (
+    name: 'a tap on a point, then a stylus tap outside with a move of 10 px',
+    config: <String, Object?>{
+      'type': 'line',
+      'data': <String, Object?>{
+        'labels': <Object?>['a', 'b', 'c', 'd'],
+        'datasets': <Object?>[
+          <String, Object?>{
+            'label': 'one',
+            'data': <Object?>[1.0, 3.0, 2.0, 4.0],
+          },
+          <String, Object?>{
+            'label': 'two',
+            'data': <Object?>[4.0, 2.0, 3.0, 1.0],
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'plugins': <String, Object?>{
+          'legend': <String, Object?>{
+            'onHover': 'fn:legendHover',
+            'onLeave': 'fn:legendLeave',
+            'onClick': 'fn:legendClick',
+          },
+        },
+      },
+      'plugins': <Object?>[
+        <String, Object?>{'id': 'log', 'beforeEvent': 'fn:logEvent'},
+      ],
+    },
+    options: <String, Object?>{},
+    expected: <String, Object?>{
+      'steps': <Object?>[
+        <Object?>[
+          <Object?>['touchDown', 189.0, 183.0],
+        ],
+        <Object?>[
+          <Object?>['touchUp'],
+        ],
+        <Object?>[
+          <Object?>['touchDown', 700.0, 300.0, 'stylus'],
+        ],
+        <Object?>[
+          <Object?>['touchMove', 710.0, 300.0],
+        ],
+        <Object?>[
+          <Object?>['touchUp'],
+        ],
+      ],
+      'observations': <Object?>[
+        <String, Object?>{
+          'dom': <Object?>[
+            <Object?>['pointerover', 189.0, 183.0],
+            <Object?>['pointerenter', 189.0, 183.0],
+            <Object?>['pointerdown', 189.0, 183.0],
+            <Object?>['touchstart', 189.0, 183.0],
+          ],
+          'events': <Object?>[
+            <Object?>['mousedown', 'touchstart', 189.0, 183.0, false],
+          ],
+          'active': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'tooltip': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'opacity': 1.0,
+          'legend': <Object?>[],
+          'visible': <Object?>[true, true],
+          'lastEvent': <Object?>['mousedown', 'touchstart', 189.0, 183.0],
+        },
+        <String, Object?>{
+          'dom': <Object?>[
+            <Object?>['pointerup', 189.0, 183.0],
+            <Object?>['pointerout', 189.0, 183.0],
+            <Object?>['pointerleave', 189.0, 183.0],
+            <Object?>['touchend', double.nan, double.nan],
+            <Object?>['mouseover', 189.0, 183.0],
+            <Object?>['mouseenter', 189.0, 183.0],
+            <Object?>['mousemove', 189.0, 183.0],
+            <Object?>['mousedown', 189.0, 183.0],
+            <Object?>['mouseup', 189.0, 183.0],
+            <Object?>['click', 189.0, 183.0],
+          ],
+          'events': <Object?>[
+            <Object?>['mousemove', 'mousemove', 189.0, 183.0, false],
+            <Object?>['click', 'click', 189.0, 183.0, false],
+          ],
+          'active': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'tooltip': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'opacity': 1.0,
+          'legend': <Object?>[],
+          'visible': <Object?>[true, true],
+          'lastEvent': <Object?>['mousemove', 'mousemove', 189.0, 183.0],
+        },
+        <String, Object?>{
+          'dom': <Object?>[],
+          'events': <Object?>[],
+          'active': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'tooltip': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'opacity': 1.0,
+          'legend': <Object?>[],
+          'visible': <Object?>[true, true],
+          'lastEvent': <Object?>['mousemove', 'mousemove', 189.0, 183.0],
+        },
+        <String, Object?>{
+          'dom': <Object?>[],
+          'events': <Object?>[],
+          'active': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'tooltip': <Object?>[
+            <Object?>[0.0, 1.0],
+          ],
+          'opacity': 1.0,
+          'legend': <Object?>[],
+          'visible': <Object?>[true, true],
+          'lastEvent': <Object?>['mousemove', 'mousemove', 189.0, 183.0],
+        },
+        <String, Object?>{
+          'dom': <Object?>[
+            <Object?>['mouseout', 710.0, 300.0],
+            <Object?>['mouseleave', 710.0, 300.0],
+          ],
+          'events': <Object?>[
+            <Object?>['mouseout', 'mouseout', 710.0, 300.0, false],
+          ],
+          'active': <Object?>[],
+          'tooltip': <Object?>[],
+          'opacity': 0.0,
+          'legend': <Object?>[],
+          'visible': <Object?>[true, true],
+          'lastEvent': null,
+        },
+      ],
+      'replay': <Object?>[],
     },
   ),
   (
