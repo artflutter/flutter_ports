@@ -3394,3 +3394,400 @@ The host path costs less in each case. The larger gain is the chart work: with t
 hit test and a tooltip hit test (Chart.js ADR 0037, E5: 214 µs at 10000 points on JIT). A finger
 that rests on a chart, or that moves inside the slop, now gives no chart event, as in Chrome. The
 device figures come from the dispatch series on the Pixel 8a when the phone is free.
+
+### 14.7 The figures of step 8
+
+Step 8 of phase 8 measured the plugin paths from 2026-10-23 to 2026-10-24. The protocols, the
+raw data, the scripts and the recomputes are working files of phase 8, not committed. Each
+protocol was written before its first run, and no decision rule changed after the data. This
+section gives the figures and the decisions.
+
+**Method.**
+
+- Trees. The cells are the cells of C8 (`4e332a5`, section 6). All series measured `ce340ca`
+  (C8s: C8 with the stress mode `plugins` and the class `StressStats`; the benchmark code does not
+  change). The before side of the stress record is `ff83f19`, the last commit before the code of
+  phase 8 (no plugin is registered). Flutter 3.47.7 (Dart 3.13.5), profile builds, one build at a
+  time, in worktrees outside the main checkout.
+- Statistics. A config comparison runs two labelled processes of one build in the ABBA order, 6
+  pairs, and 6 more pairs when the stage 2 condition of the protocol is true. A cell gives the
+  mean of the pair differences of the run medians (the run value is the median of 15 batches),
+  with a 95 % percentile bootstrap interval (20000 resamples, seed 20261023). A series without a
+  comparison gives the median of the run values and the mean with the same interval over the
+  runs.
+- Pixel 8a (`4B071JEKB17363`, Android 17, AC power): the gate and the window rule of section
+  13.6 (the battery at 33.0 °C or less, `cpu8` at 2.8 GHz or more, a window is excluded when more
+  than 10 % of its samples of the UI-thread core are below 2.5 GHz). The sampler gave about 2
+  samples a second, not 4. Thus one low sample excluded a window of about 4 s (dispatch 18 of 35
+  excluded cells, tooltip 21 of 60). The rule was applied as written.
+- iPhone 17 Pro (iOS 26.6.2, on the cable): a fresh `flutter run --profile` for each run, the
+  lock state `passcodeRequired: false` before and after each run, a pause of 60 s after it. The
+  iPhone has no gate and no window rule.
+- macOS (Apple M3 Max, AC power): one fresh process for each run with the app window in front,
+  the gate of the quiet Mac (the 1-minute load at 4.0 or less), and an exclusion when the load
+  after the run is above 8 or the app is not in front in more than 10 % of the samples.
+- VS Code browser (Chromium, dart2wasm): Chromium 148.0.7778.280 in Electron 42.8.1, VS Code
+  1.134.0, a dart2wasm profile build at the root of its own port with COOP and COEP headers, the
+  macOS gate before each run. A run starts only in a visible tab. From the tooltip run
+  `t1000-p4-off`, each run opened its own new tab, because two runs hung in a long-lived tab (the
+  renderer at 99 % CPU and 1.1 GB). The recompute ran the T1 and F cells of the two tab methods
+  apart: the same cells fire, and the means differ by 0.007 ms or less.
+- Schedule (decisions of the porting lead). The maintainer stopped the Pixel 8a series on
+  2026-10-23 at 14:10, because the battery gate waited 5-6 minutes before most runs. The iPhone
+  17 Pro ran the other phone series in the day. From 2026-10-23 21:00 no iPhone run occurred
+  in this phase (each app start needed a person to unlock the phone). The quiet-Mac block ran in
+  the night of 2026-10-24 and ended at 08:00. The Pixel 8a ran only the stress before/after
+  record and the input re-check of Chart.js ADR 0037 in that night.
+- Recompute. An independent agent computed all figures, exclusions and decisions again from the
+  raw files with its own scripts, and an adversarial checker did the same for the day data. All
+  figures agree (means within 0.001 ms, interval ends within 0.01 ms), and all decisions agree.
+
+What ran (runs that count):
+
+| Topic | Pixel 8a | iPhone 17 Pro | macOS | VS Code browser (Chromium, dart2wasm) |
+|---|---|---|---|---|
+| Dispatch, CT stage 1 | 24 (12 pairs) | 24 (12 pairs) | 11 of 12 (5 valid pairs) | 12 (6 pairs) |
+| Dispatch, CT stage 2 (P5) | not measured (no phone run) | not measured (no phone run) | not measured (night ended) | not measured (night ended) |
+| Tooltip (a), (b), (c) | 46 of 48 (2 with user input) | 24 (6 pairs of each group) | 24 (6 pairs of each group) | 22 of 24 (2 hung) |
+| Tooltip P6 (V1, V2) | not measured (no phone run) | not measured (no phone run) | not measured (night ended) | not measured (night ended) |
+| Legend and title | not measured (stopped after 9 runs: incomplete, not used) | 24 (12 pairs) | 24 (12 pairs) | 24 (12 pairs) |
+| Fill | not measured (thermal gate, then no phone run) | 12 (6 runs of each group) | 12 | 12, and 3 upstream runs |
+| Stress S-a, S-b | 48 (12 before, 36 after) | 12 (1 run each, after) | 36 (after) | 36 (after) |
+| Stress S-c (plugin scenes) | not measured (not in the night task) | 10 (1 run each) | 30 | 30 |
+| Upstream comparison (P3) | not measured (thermal gate) | not measured (no phone run) | - | not measured (tab hidden) |
+| Fixture registry | - | - | 24 (12 pairs) | - |
+
+**The hook dispatch: CT stage 1 (Chart.js ADR 0038 §10).** The benchmark cell `plugins.line`
+(section 6). Config A has `registerables` with the least work of each plugin, config B has
+`options.plugins: false`. A - B is an upper bound of the gain of CT: it holds the whole dispatch,
+the hook bodies and three empty boxes. R1 and R2 have 3 datasets of 1000 points, R3 and R4 have
+100 datasets of 100 points (204 notifies for each draw; R3 and R4 are primary). Whole frame:
+`draw+end` for a draw, `update+draw+end` for an update. ms.
+
+| Cell | Platform | Pairs | A | B | Mean A - B | 95 % interval | Rel. | Rule 1 |
+|---|---|---:|---:|---:|---:|---|---:|---|
+| R1, 3 datasets, draw | Pixel 8a | 6 | 1.226 | 1.252 | -0.0433 | -0.0870 .. -0.0132 | -3.4 % | pass |
+| R1 | iPhone 17 Pro | 12 | 0.567 | 0.583 | -0.0141 | -0.0220 .. -0.0047 | -2.4 % | pass |
+| R1 | macOS | 5 | 0.650 | 0.651 | +0.0018 | +0.0002 .. +0.0032 | +0.3 % | pass |
+| R1 | VS Code browser | 6 | 0.796 | 0.782 | +0.0133 | +0.0092 .. +0.0173 | +1.7 % | pass |
+| R2, 3 datasets, update | Pixel 8a | 8 | 5.173 | 5.107 | -0.0742 | -0.2627 .. +0.1015 | -1.4 % | fail |
+| R2 | iPhone 17 Pro | 12 | 2.053 | 2.030 | +0.0352 | +0.0198 .. +0.0533 | +1.7 % | pass |
+| R2 | macOS | 5 | 2.335 | 2.283 | +0.0670 | +0.0470 .. +0.0834 | +2.9 % | pass |
+| R2 | VS Code browser | 6 | 2.785 | 2.697 | +0.0748 | +0.0603 .. +0.0920 | +2.8 % | pass |
+| R3, 100 datasets, draw | Pixel 8a | 10 | 4.768 | 4.659 | +0.0843 | +0.0276 .. +0.1375 | +1.8 % | fail |
+| R3 | iPhone 17 Pro | 12 | 2.221 | 2.213 | +0.0133 | -0.0113 .. +0.0378 | +0.6 % | pass |
+| R3 | macOS | 5 | 2.367 | 2.323 | +0.0444 | +0.0324 .. +0.0564 | +1.9 % | pass |
+| R3 | VS Code browser | 6 | 3.370 | 3.314 | +0.0638 | +0.0523 .. +0.0738 | +1.9 % | pass |
+| R4, 100 datasets, update | Pixel 8a | 7 | 25.658 | 22.723 | +2.2671 | +1.5987 .. +2.8803 | +9.8 % | fail |
+| R4 | iPhone 17 Pro | 12 | 12.290 | 11.729 | +0.5844 | +0.4992 .. +0.7100 | +5.0 % | fail |
+| R4 | macOS | 5 | 12.765 | 12.097 | +0.6730 | +0.6472 .. +0.7026 | +5.6 % | fail |
+| R4 | VS Code browser | 6 | 12.882 | 12.546 | +0.3917 | +0.3128 .. +0.4738 | +3.1 % | fail |
+
+A and B are the medians of the run values of the valid pairs. Rule 1 passes when the upper end
+is below 0.1 ms. The R2 failure on the Pixel 8a comes from the width of its interval (upper end
++0.1015 ms, mean below 0). On each platform the cost of R4 is in the part `update`: Pixel 8a
++4.96 ms (`draw` -2.69), iPhone 17 Pro +0.588 ms (`draw` -0.004), macOS +0.661 ms (`draw`
++0.012), VS Code browser +0.500 ms (`draw` -0.109). The draw alone (R3) costs 0.013-0.084 ms for
+each frame. This agrees with the calculation of the ADR (30-80 µs on a phone).
+
+**The hook dispatch: CT stage 2 (P5).** Rule 1 failed R2, R3 and R4 on the Pixel 8a and R4 on
+the other three platforms, so stage 2 started. Variant B (a descriptor list for each hook in
+`PluginService`, one file, +54 lines; a measurement variant, not a valid port) was frozen with its
+SHA-256 before any stage 2 run, with the primary cells R2, R3 and R4 in config A and the guards
+`chart.a` N 1000 and R1. With no phone run, macOS replaced the Pixel 8a as a platform of the decision. The
+screen of the Mac stayed locked from before the first run to 08:00, so no stage 2 run occurred
+on macOS or in the VS Code browser: **no data**. CT is not adopted. A calculation, not a
+decision: the gain of CT cannot be larger than the stage 1 cost A - B, and R3 has an upper end of
++0.0564 ms on macOS and +0.0738 ms in the VS Code browser. Thus rule 2 (a gain of 0.1 ms or more
+in each primary cell) is almost certainly false on these two platforms.
+
+**The tooltip (Chart.js ADR 0039 Open 1 and 2).** The cells `tooltip.hover` (a), `tooltip.still`
+(b) and `tooltip.fade` (c) of section 6, with 3 or 10 datasets of N points (P1 = 3 datasets and N
+100, P2 = 10 and 100, P3 = 3 and 1000, P4 = 10 and 1000). The on and off labels are the processes
+with and without the tooltip plugin. Whole frame of (a), on - off, ms:
+
+| Cell | Platform | Pairs | On | Off | Mean on - off | 95 % interval | Rel. |
+|---|---|---:|---:|---:|---:|---|---:|
+| P1 | Pixel 8a | 7 | 0.669 | 0.570 | +0.0941 | +0.0646 .. +0.1233 | +16.4 % |
+| P2 | Pixel 8a | 7 | 2.033 | 1.071 | +0.9651 | +0.9454 .. +0.9849 | +90.4 % |
+| P3 | Pixel 8a | 7 | 1.629 | 1.334 | +0.2821 | +0.2319 .. +0.3364 | +21.0 % |
+| P4 | Pixel 8a | 10 | 4.954 | 3.831 | +1.1111 | +1.0837 .. +1.1357 | +28.8 % |
+| P1 | iPhone 17 Pro | 6 | 0.231 | 0.194 | +0.0363 | +0.0350 .. +0.0378 | +18.7 % |
+| P2 | iPhone 17 Pro | 6 | 0.659 | 0.431 | +0.2295 | +0.2275 .. +0.2317 | +53.4 % |
+| P3 | iPhone 17 Pro | 6 | 0.601 | 0.548 | +0.0540 | +0.0523 .. +0.0553 | +9.9 % |
+| P4 | iPhone 17 Pro | 6 | 1.922 | 1.741 | +0.1722 | +0.1570 .. +0.1863 | +9.9 % |
+| P1 | macOS | 6 | 0.283 | 0.228 | +0.0543 | +0.0513 .. +0.0572 | +23.8 % |
+| P2 | macOS | 6 | 0.766 | 0.458 | +0.3088 | +0.3050 .. +0.3127 | +67.3 % |
+| P3 | macOS | 6 | 0.713 | 0.606 | +0.1073 | +0.1042 .. +0.1103 | +17.7 % |
+| P4 | macOS | 6 | 2.033 | 1.788 | +0.2475 | +0.2382 .. +0.2573 | +13.9 % |
+| P1 | VS Code browser | 6 | 0.270 | 0.206 | +0.0632 | +0.0597 .. +0.0663 | +30.7 % |
+| P2 | VS Code browser | 6 | 0.891 | 0.499 | +0.3940 | +0.3872 .. +0.3990 | +79.1 % |
+| P3 | VS Code browser | 4 | 0.875 | 0.710 | +0.1657 | +0.1565 .. +0.1750 | +23.4 % |
+| P4 | VS Code browser | 4 | 3.030 | 2.324 | +0.7260 | +0.6795 .. +0.7830 | +31.4 % |
+
+Most of the cost is in the part `draw` at 10 datasets (Pixel 8a P2: `update` +0.129, `draw`
++0.821, `end` +0.015 ms). At N 1000 about one hover step in four keeps the same nearest index
+(the points are about 0.75 px apart, and the event position rounds to whole pixels, as upstream),
+so that iteration gives no render (`notifies` 2). Thus P3 and P4 are the cost of a hover frame of
+this pointer path.
+
+(b), a still tooltip, on - off of `draw+end`, ms (P1, P2, P3, P4): Pixel 8a +0.0833, +0.1590,
++0.1167, +0.2914; iPhone 17 Pro +0.0235, +0.0473, +0.0165, +0.0397; macOS +0.0292, +0.0590,
++0.0422, +0.0753; VS Code browser +0.0290, +0.0558, +0.0348, +0.1855 (+0.0148 .. +0.4222).
+
+(c), the fade, whole frame, the median of the runs, ms (P1, P2, P3, P4): Pixel 8a 0.816, 1.649,
+2.369, 6.912; iPhone 17 Pro 0.282, 0.603, 0.969, 3.011; macOS 0.306, 0.650, 1.012, 3.027; VS Code
+browser 0.333, 0.766, 1.292, 4.174.
+
+Rule T1 reads `tooltipDraw` (`beforeTooltipDraw` to `afterTooltipDraw`) of (a) on and (b) on, the
+mean over all valid runs of both labels. It fires when one cell on the Pixel 8a or in the VS Code
+browser has a lower end of 0.1 ms or more. ms, mean (lower end); the iPhone 17 Pro and macOS
+figures are information only:
+
+| Cell | Pixel 8a | VS Code browser | iPhone 17 Pro | macOS |
+|---|---|---|---:|---:|
+| (a) 3 datasets, N 100 | 0.0505 (0.0498) | 0.0244 (0.0242) | 0.0163 | 0.0211 |
+| (b) 3 datasets, N 100 | 0.0635 (0.0629) | 0.0291 (0.0287) | 0.0239 | 0.0272 |
+| (a) 10 datasets, N 100 | **0.7614 (0.7542)** | **0.3098 (0.3073)** | 0.1664 | 0.2329 |
+| (b) 10 datasets, N 100 | **0.1338 (0.1332)** | 0.0523 (0.0516) | 0.0463 | 0.0519 |
+| (a) 3 datasets, N 1000 | **0.2451 (0.2417)** | **0.1053 (0.1039)** | 0.0461 | 0.0710 |
+| (b) 3 datasets, N 1000 | 0.0860 (0.0853) | 0.0324 (0.0321) | 0.0243 | 0.0279 |
+| (a) 10 datasets, N 1000 | **0.6029 (0.5971)** | **0.4685 (0.4659)** | 0.1314 | 0.1838 |
+| (b) 10 datasets, N 1000 | **0.2123 (0.2093)** | **0.1467 (0.1433)** | 0.0480 | 0.0552 |
+
+**T1 fires** (bold cells: 5 on the Pixel 8a, 4 in the VS Code browser). Rule T2 (a CPU profile of
+a hover frame) applies only when T1 does not fire. The design panel of T1 (three drafts, a judge
+and a synthesis) found the cause and kept the decision of Chart.js ADR 0039 §7:
+- The typed snapshot of section 7 changes a resolved option. An upstream probe on the pinned
+  build gives other values for a scriptable option that reads the context in 6-7 of 12 fade
+  frames. A scriptable font size reaches `width` and `height`, and the defaults `boxWidth` and
+  `boxHeight` are functions (`plugin.tooltip.js:1303-1304`). The port gives the upstream values
+  today. Thus the snapshot fails priority 1.
+- The cost is the paragraph build of each new tooltip line in the canvas layer. In case (a) the
+  hover index changes in each frame, and at 10 datasets the bench cycle of 1100 lines is longer
+  than the paragraph cache of 512 entries. A model of the cache gives 0, 11, 4 and 11 misses for
+  each frame at P1, P2, P3 and P4, and about one `paragraph.dispose()` for each miss, in batches of
+  128. A local pointer move gives 0.7-0.8 misses for each frame.
+- The cost of one new line, from the (a) cells at N 100 (two bounds that need no guessed
+  fraction), µs: Pixel 8a 56.6-64.6, iPhone 17 Pro 11.1-13.7, macOS 15.9-19.3, VS Code browser
+  22.1-25.9. The new lines are 73-93 % of `tooltipDraw` of (a) 10 datasets, N 100 on each
+  platform. Even with no other cost, that Pixel 8a cell stays at 0.622 ms or more, so no form of
+  the option reads can stop T1.
+- On macOS the Dart part of the tooltip draw is 17.8 of 232.9 µs (7.7 %) for (a) 10 datasets,
+  N 100, and 25.5 of 51.9 µs (49 %) for (b). An exact memo of the option reads (lazy, key by key,
+  with the context resolver of the frame and a reset after each resolver write) passes the
+  behavior probes, but its estimated gain is 0.011-0.04 ms for each frame (macOS 0.011-0.012,
+  VS Code browser 0.014 or less, Pixel 8a 0.03-0.04). That is below the 0.1 ms of Chart.js ADR
+  0020 §13 for a change of the upstream structure. Thus no candidate exists, and no code A/B ran.
+- The first visit of a line builds two paragraphs: a black one in `measureCanvasText` (update)
+  and the colored one in `layoutCanvasText` (draw).
+- The number path of `toLineHeight` (section 11.8 item 1, form (a)) also helps the tooltip:
+  -5.30 µs (AOT) and -4.63 µs (dart2wasm) for each draw, -6.44 and -5.74 µs with the animation
+  reads. It is evidence for section 11.8, not a T1 candidate.
+
+Rule F reads E = `tooltipDraw` of (c) - `tooltipDraw` of (b) on, in the same run. P6 runs when one
+cell on the Pixel 8a or in the VS Code browser has a mean of 0.1 ms or more and a lower end above
+0. ms, mean (interval) (P1, P2, P3, P4):
+- Pixel 8a: +0.1085 (+0.1069 .. +0.1101), +0.2821 (+0.2781 .. +0.2865), +0.1292 (+0.1274 ..
+  +0.1310), +0.3554 (+0.3505 .. +0.3609). P6 runs (4 cells).
+- VS Code browser: +0.0642 (+0.0633 .. +0.0652), +0.1719 (+0.1693 .. +0.1742), +0.0658 (+0.0654
+  .. +0.0663), +0.2407 (+0.2305 .. +0.2490). P6 runs (P2 and P4).
+- Information: iPhone 17 Pro +0.0238, +0.0638, +0.0220, +0.0644; macOS +0.0363, +0.1005 (+0.0998
+  .. +0.1013), +0.0367, +0.1103 (+0.1079 .. +0.1126).
+
+**P6, the fade frames.** Two variants of `lib/src/canvas/canvas_ui.dart` (`_drawText`, the fill
+branch) were written, tested and frozen with their SHA-256 before any P6 run. V1 rounds the
+composite alpha of a fill text to a step of 1/64, and the rounded color is the key of the
+paragraph cache (an error of at most 1/128 in alpha). V2 caches an opaque paragraph and draws it
+in a `saveLayer` with the global alpha. The A/B of each variant (primary cells: the whole frame of
+(c) at N 1000) was to run on macOS and in the VS Code browser. The task started after 08:00, so
+**no P6 run occurred: not measured (night ended)**. The raster check of V2 names a stress record
+on the Pixel 8a, which the schedule did not permit. The fade frames keep the present cache.
+
+**The legend and the title.** The cells `legend.line` and `title.line` (section 6): 3 datasets.
+X has no legend and no title, Y1 has the legend, Y2 has the title. d_L = Y1 - X and d_T = Y2 - X,
+whole frame, 12 pairs, ms, mean (interval):
+
+| Cell | iPhone 17 Pro | macOS | VS Code browser |
+|---|---|---|---|
+| d_L draw N 100 | +0.0021 (+0.0010 .. +0.0031) | +0.0140 (+0.0133 .. +0.0147) | +0.0020 (+0.0006 .. +0.0034) |
+| d_L draw N 1000 | -0.0158 (-0.0192 .. -0.0124) | +0.0138 (+0.0114 .. +0.0158) | +0.0588 (+0.0530 .. +0.0643) |
+| d_L update N 100 | +0.0328 (+0.0271 .. +0.0391) | +0.0498 (+0.0442 .. +0.0552) | +0.0525 (+0.0490 .. +0.0559) |
+| d_L update N 1000 | -0.0021 (-0.0212 .. +0.0180) | +0.0558 (+0.0317 .. +0.0832) | +0.0353 (+0.0094 .. +0.0634) |
+| d_T draw N 100 | +0.0067 (+0.0056 .. +0.0076) | +0.0025 (+0.0014 .. +0.0035) | -0.0086 (-0.0099 .. -0.0073) |
+| d_T draw N 1000 | +0.0171 (+0.0137 .. +0.0207) | +0.0030 (-0.0013 .. +0.0073) | +0.0086 (+0.0012 .. +0.0158) |
+| d_T update N 100 | +0.0181 (+0.0128 .. +0.0238) | +0.0056 (+0.0009 .. +0.0101) | +0.0128 (+0.0092 .. +0.0167) |
+| d_T update N 1000 | +0.0446 (+0.0236 .. +0.0650) | +0.0295 (+0.0204 .. +0.0394) | +0.0009 (-0.0277 .. +0.0310) |
+
+The base X (median, ms; draw N 100, draw N 1000, update N 100, update N 1000): iPhone 17 Pro
+0.164, 0.707, 1.073, 4.394; macOS 0.187, 0.753, 1.142, 4.636; VS Code browser 0.184, 0.845, 1.131,
+4.904. The legend costs 0.06 ms or less for each frame, the title 0.05 ms or less. The fit of the
+boxes (the part `layout` of an update) costs about 0.02 ms for the legend at N 100. On the iPhone
+the legend frame at N 1000 draws 0.016 ms faster: the legend box takes height from the chart
+area, so the lines are shorter (`datasetsDraw` -0.021 ms). No ADR rule reads these cells.
+
+**The filler (Chart.js ADR 0040 Open 2 and 3).** The cells `fill.gaps` (a line with gaps and
+`above` and `below`), `fill.stack` (the `stack` fill) and `fill.radar` (section 6), 3 datasets.
+Whole frame, the median of 6 runs (minimum-maximum), ms:
+
+| Cell | Call | N | iPhone 17 Pro | macOS | VS Code browser |
+|---|---|---:|---|---|---|
+| fill.gaps | draw | 100 | 0.185 (0.184-0.193) | 0.215 (0.213-0.218) | 0.220 (0.217-0.222) |
+| fill.gaps | draw | 1000 | 4.998 (4.957-5.107) | 5.203 (5.120-5.311) | 5.989 (5.965-6.000) |
+| fill.gaps | update | 100 | 0.570 (0.565-0.577) | 0.643 (0.639-0.657) | 0.662 (0.656-0.667) |
+| fill.gaps | update | 1000 | 6.793 (6.743-6.905) | 7.028 (6.961-7.155) | 8.332 (8.309-8.383) |
+| fill.stack | draw | 100 | 0.414 (0.411-0.419) | 0.438 (0.437-0.441) | 0.507 (0.505-0.513) |
+| fill.stack | draw | 1000 | 30.692 (30.185-30.904) | 31.160 (30.636-31.621) | 36.770 (36.615-36.928) |
+| fill.stack | update | 100 | 0.945 (0.937-0.953) | 1.014 (1.009-1.019) | 1.148 (1.139-1.154) |
+| fill.stack | update | 1000 | 36.821 (35.815-37.058) | 36.599 (36.420-36.900) | 41.451 (41.406-41.661) |
+| fill.radar | draw | 100 | 0.059 (0.058-0.060) | 0.063 (0.061-0.064) | 0.068 (0.066-0.068) |
+| fill.radar | draw | 1000 | 0.404 (0.400-0.412) | 0.410 (0.408-0.421) | 0.500 (0.496-0.503) |
+| fill.radar | update | 100 | 0.472 (0.470-0.476) | 0.510 (0.507-0.517) | 0.481 (0.479-0.483) |
+| fill.radar | update | 1000 | 2.632 (2.614-2.648) | 2.881 (2.865-2.903) | 2.595 (2.568-2.613) |
+
+The part `datasetsDraw` has almost all of the draw. The `stack` fill grows by a factor of 75 for
+10 times the points (iPhone 17 Pro draw 0.411 to 30.688 ms), the quadratic stack target of
+upstream. The raster figures come from the stress scenes (`rasterMs`, median, ms): macOS `gaps`
+1.79, `stack` 0.63 (N 1000) and 1.26 (N 100), `radar` 1.58; iPhone 17 Pro `gaps` 1.01, `stack`
+0.50 and 0.95, `radar` 0.83. The VS Code browser gives no raster time for each frame (see the
+stress figures below).
+
+Open 3 compares the port draw of `fill.stack`, call `draw`, N 1000 (the median of the run values
+of `drawMedianMs`) with the upstream draw of the same cell (the median of the run medians of 3
+runs of the pinned build in the VS Code browser, a new tab for each run). Port 36.755 ms
+(36.601-36.913), upstream 19.862 ms (the run medians 20.163, 19.862 and 19.678 ms): **R = 1.85**
+(1.85 with `draw+end`, an upper bound). R is 1.5 or more, so Open 3 goes to a design panel and a
+new ADR. Step 8 does not change `interpolate`. On macOS the port draw is 31.151 ms. The Pixel 8a
+has no fill figure and no upstream figure.
+
+**The stress frames.** `lib/main_stress.dart`, the 7-s window, the means after the first 30
+frames. S-a is the line chart and S-b the radar chart of the mode `chart` (the legend off, the
+other plugins on). S-c is the mode `plugins` with N 1000 (and `stack` also at N 100). No scenario
+fell below 4 FPS, so none needed `SECONDS=60`. The Pixel 8a before/after record: before is 1 run
+of `ff83f19`, after is the median of 3 runs of `ce340ca`, with the ratio after / before:
+
+| Scenario | fps | updateMs | drawMs | buildMs | rasterMs |
+|---|---|---|---|---|---|
+| line draw 1000 | 58.49 to 58.32 (1.00x) | 0.01 to 0.01 | 5.25 to 5.45 (1.04x) | 6.27 to 6.38 (1.02x) | 5.39 to 5.61 (1.04x) |
+| line update 1000 | 58.33 to 58.16 (1.00x) | 3.25 to 3.50 (1.08x) | 2.97 to 2.90 (0.98x) | 7.16 to 7.37 (1.03x) | 4.49 to 4.79 (1.07x) |
+| line draw 5000 | 58.17 to 57.65 (0.99x) | 0.00 to 0.00 | 7.67 to 7.74 (1.01x) | 8.43 to 8.55 (1.01x) | 4.88 to 5.05 (1.03x) |
+| line update 5000 | 56.68 to 56.51 (1.00x) | 4.10 to 4.17 (1.02x) | 4.91 to 4.89 (1.00x) | 10.27 to 10.30 (1.00x) | 4.82 to 5.19 (1.08x) |
+| line draw 20000 | 56.19 to 51.22 (0.91x) | 0.00 to 0.00 | 10.80 to 11.59 (1.07x) | 11.57 to 12.45 (1.08x) | 7.29 to 7.94 (1.09x) |
+| line update 20000 | 30.46 to 29.75 (0.98x) | 6.35 to 6.71 (1.06x) | 11.61 to 12.15 (1.05x) | 20.73 to 21.94 (1.06x) | 9.72 to 9.59 (0.99x) |
+| radar draw 1000 | 58.33 to 58.32 (1.00x) | 0.01 to 0.00 | 5.60 to 5.76 (1.03x) | 6.33 to 6.42 (1.01x) | 5.87 to 5.54 (0.94x) |
+| radar update 1000 | 57.99 to 57.50 (0.99x) | 5.18 to 4.79 (0.92x) | 2.76 to 3.54 (1.28x) | 8.56 to 8.97 (1.05x) | 4.49 to 4.70 (1.05x) |
+| radar draw 5000 | 58.34 to 57.50 (0.99x) | 0.01 to 0.00 | 8.51 to 9.58 (1.13x) | 9.10 to 10.19 (1.12x) | 5.99 to 6.52 (1.09x) |
+| radar update 5000 | 48.55 to 43.14 (0.89x) | 8.45 to 8.84 (1.05x) | 4.23 to 6.72 (1.59x) | 13.04 to 16.24 (1.25x) | 7.77 to 8.38 (1.08x) |
+| radar draw 20000 | 56.72 to 29.29 (0.52x) | 0.00 to 0.00 | 11.21 to 20.23 (1.80x) | 12.05 to 21.58 (1.79x) | 10.83 to 16.94 (1.56x) |
+| radar update 20000 | 14.35 to 12.61 (0.88x) | 40.85 to 37.23 (0.91x) | 18.30 to 32.34 (1.77x) | 57.83 to 71.68 (1.24x) | 12.26 to 14.00 (1.14x) |
+
+- The line chart with the real plugins: `drawMs`, `updateMs` and `buildMs` are 0.98-1.08x of the
+  before record, within the spread of the phase 7 figures (section 13.6). The one high before run
+  of line draw 20000 (56.19 FPS) explains its FPS change: phase 7 gave 50.91 FPS with the same
+  draw time. The plugin dispatch adds no large cost in a real frame.
+- The radar chart draws more, because the filler now draws the fill `start` of the radar defaults
+  (`controller.radar.js:16-20`), which `ff83f19` did not draw. At 20000 points the draw goes from
+  11.21 to 20.23 ms and the scene from 57 to 29 FPS. The iPhone 17 Pro shows the same against its
+  phase 7 figures (radar draw 20000: 5.81 to 11.02 ms, 117 to 75 FPS). The line chart there is
+  unchanged (draw and update within 0.03 ms).
+
+The plugin costs in a real frame (S-c, the scene median minus the base median, ms; the iPhone 17
+Pro has 1 run of each scene; fps differences are in FPS):
+
+| Cost | Platform | fps | updateMs | drawMs | buildMs | rasterMs |
+|---|---|---:|---:|---:|---:|---:|
+| legend (legend on - off) | iPhone 17 Pro | +0.04 | +0.00 | +0.01 | +0.02 | -0.04 |
+| legend | macOS | +0.00 | +0.00 | +0.06 | +0.05 | +0.01 |
+| legend | VS Code browser | +0.05 | +0.00 | +0.04 | +0.50 | not measured (no frame raster time) |
+| title (title - legend off) | iPhone 17 Pro | -0.15 | +0.00 | -0.01 | +0.00 | -0.02 |
+| title | macOS | +0.01 | +0.00 | +0.01 | -0.01 | +0.00 |
+| title | VS Code browser | +0.04 | +0.00 | +0.02 | +0.35 | not measured (no frame raster time) |
+| tooltip hover (tooltip on - off) | iPhone 17 Pro | -0.49 | +0.18 | -0.01 | +0.25 | +0.02 |
+| tooltip hover | macOS | -0.06 | +0.40 | -0.15 | +0.28 | -0.02 |
+| tooltip hover | VS Code browser | -0.05 | +0.37 | +0.31 | +1.20 | not measured (no frame raster time) |
+| tooltip fade (fade - hover off) | iPhone 17 Pro | +0.05 | -0.09 | +1.25 | +1.23 | -0.88 |
+| tooltip fade | macOS | -0.06 | -0.20 | +1.83 | +1.62 | -0.15 |
+| tooltip fade | VS Code browser | -0.05 | -0.14 | +2.03 | +0.43 | not measured (no frame raster time) |
+
+- The legend and the title cost 0.06 ms of draw or less. Each S-c scene holds the frame rate
+  (60 FPS on macOS and in the VS Code browser, 120 FPS on the iPhone 17 Pro), except
+  `fill.stack` at N 1000: 30.28 FPS (iPhone 17 Pro), 29.55 FPS (macOS), 25.90 FPS (VS Code
+  browser). Of S-a and S-b on these platforms, only the radar at 20000 points is below the frame
+  rate: the update at 29.15 (iPhone 17 Pro), 27.21 (macOS) and 37.45 FPS (VS Code browser), and
+  the draw at 75.08 FPS on the iPhone 17 Pro.
+- The fade row is not the cost of the tooltip alone: the fade sends one event in 12 frames, and
+  the animator draws the chart in each frame. The events of the tooltip scenes go directly to
+  `chart.eventHandler`, not through the host input path of Chart.js ADR 0037.
+- `tooltipDrawMs` (median, ms; hover on, fade): iPhone 17 Pro 0.12, 0.12; macOS 0.25, 0.36; VS
+  Code browser 0.43, 0.68.
+- In the VS Code browser, `rasterMs` is not a raster time for each frame: it is 13-900 ms in the
+  radar, legend, title, tooltip and fill scenes while the page holds 60 FPS. Thus no browser
+  raster figure is given.
+- `buildMaxMs` and `rasterMaxMs` of a `STRESS` line are the maximum of the last statistics window
+  only (`main_stress.dart` writes `last?.rasterMaxMs`), not of the run. This section gives no
+  maximum.
+
+**The upstream comparison (P3).** Not measured on any platform. The Pixel 8a series stopped at
+the thermal gate before it. The Safari runs on the iPhone 17 Pro stopped with the end of the
+iPhone runs and are not data. In the VS Code browser the screen of the Mac locked after the
+quiet-Mac block, the tab stayed hidden for 10 minutes, and no page loaded: not measured (tab
+hidden). Thus the excess over upstream of each plugin cell is not known, and the fix candidates
+of a plugin path (an excess of 0.1 ms or more on the Pixel 8a and a CPU profile) have no data.
+The only upstream figure of step 8 is the `fill.stack` draw for Open 3 above.
+
+**The fixture registry on a quiet Mac (Chart.js ADR 0029 Open 2).** Section 14.4 flagged its
+figures: the Mac was busy. The same method ran again on 2026-10-24 at night, at `ce340ca`. W
+imports the registry of 147 hand ports in each of 29 test files, N does not. Each run is
+`flutter test --no-pub -j 1` without the compile cache. ABBA, 12 pairs, each run with a passed
+gate (the 1-minute load 2.90-3.94 before the run, 4.14 or less after it), and one warm run of
+each side first. W median 21.48 s, N median 21.10 s, mean W - N **+0.703 s (95 % interval
+-0.444 .. +1.882 s)**, +24.2 ms for each file. Pairs 1-6 alone: +0.360 s (-1.082 .. +2.010 s).
+Five runs of both sides took 23.9-25.3 s against 20.9-21.6 s for the others: noise of the shared
+Mac. The upper end is below the trigger of 4 s, so one registry stays and Open 2 does not fire.
+This confirms section 14.4.
+
+**The rule decisions of step 8.**
+
+| Rule | Platforms | Result | Consequence |
+|---|---|---|---|
+| CT rule 1 (Chart.js ADR 0038 §10 item 5) | Pixel 8a, iPhone 17 Pro, macOS, VS Code browser | fail: R2, R3, R4 on the Pixel 8a; R4 on the other three | stage 2 (P5) starts; Chart.js ADR 0020 Open 1 does not close by rule 1 |
+| CT rule 2 (item 7, P5) | macOS and VS Code browser (in place of the Pixel 8a: no phone run) | no data (night ended) | CT is not adopted; Chart.js ADR 0038 Open 1 and Chart.js ADR 0020 Open 1 stay open |
+| Tooltip T1 (Chart.js ADR 0039 Open 1) | Pixel 8a (5 cells), VS Code browser (4 cells) | fires | the design panel keeps Chart.js ADR 0039 §7; no candidate, no code A/B |
+| Tooltip T2 | Pixel 8a, VS Code browser | does not apply (T1 fires) | no CPU profile |
+| Tooltip F (Chart.js ADR 0039 Open 2) | Pixel 8a (4 cells), VS Code browser (2 cells) | P6 runs | V1 and V2 frozen |
+| P6, V1 and V2 | macOS and VS Code browser (in place of the Pixel 8a) | not measured (night ended); the V2 raster check not measured (its platform, the Pixel 8a, had no run in the schedule) | no variant accepted or rejected; Chart.js ADR 0039 Open 2 stays open |
+| Fill, Open 2 (frame, draw and raster figures) | iPhone 17 Pro, macOS, VS Code browser (raster: iPhone 17 Pro and macOS) | done for these platforms; the Pixel 8a not measured (the thermal gate, then no phone run) | Chart.js ADR 0040 Open 2 stays open for the Pixel 8a |
+| Fill, Open 3 (R of `fill.stack`) | VS Code browser (dart2wasm against V8) | R = 1.85, 1.5 or more | a design panel and a new ADR for `interpolate`; the Pixel 8a part has no data |
+| Fix candidates of a plugin path | Pixel 8a | no data (no upstream comparison) | none |
+| Legend, title, stress | all | no rule reads them | figures only |
+| Registry (Chart.js ADR 0029 Open 2) | macOS, quiet | does not fire (upper end +1.882 s) | one registry stays |
+
+### 14.8 Open: the plugins
+
+1. **CT stage 2 (P5).** The variant and its cells are frozen. A run needs a quiet Mac with an
+   unlocked screen: macOS pairs 1-6, then the VS Code browser pairs 1-6, then stage 2 where its
+   condition is true. Until then Chart.js ADR 0020 Open 1 and Chart.js ADR 0038 Open 1 stay open.
+2. **P6.** V1 and V2 are frozen. A run needs the same quiet Mac. Before any P6 data, the porting
+   lead names the platform of the raster check of V2 (the protocol names the Pixel 8a), for
+   example the stress scene `fade` on macOS. Until then Chart.js ADR 0039 Open 2 stays open.
+3. **`interpolate` and the quadratic stack** (Chart.js ADR 0040 Open 3): a design panel and a new
+   ADR (R = 1.85 in the VS Code browser).
+4. **The Pixel 8a** has no fill, legend, title, S-c or upstream figure (the battery gate, then
+   the schedule). Chart.js ADR 0040 Open 2 stays open for it.
+5. **The upstream comparison (P3)** has no figure on any platform. The page, the plan and the
+   summary script are ready. A run needs an unlocked Mac and a visible tab for about 80 minutes.
+6. **The paragraph build of new tooltip lines** (rule T1) is a cost of the canvas layer:
+   57-65 µs for each new line on the Pixel 8a. A change of the paragraph cache must not use (a) at
+   N 100 as its primary cell: a cache of more than about 1150 entries makes the bench cycle all
+   hits, a false gain. The facts go to the revisit of
+   [canvas-cuts-plan.md](canvas-cuts-plan.md) ("after phase 8, before phase 9").
+7. **An exact memo of the tooltip option reads** stays specified, with a reference
+   implementation, for a later trigger: a device figure where the option reads of one tooltip draw
+   cost 0.1 ms or more (about 30-70 body items), or a change of the threshold of Chart.js ADR 0020
+   §13. It needs a `DIVERGES` marker and an `adapt` row.
+8. **Not explained, no rule asks for it:** (b) at 10 datasets costs more at N 1000 than at N 100
+   on the Pixel 8a (0.134 to 0.212 ms) and in the VS Code browser (0.052 to 0.147 ms), but not on
+   macOS and the iPhone 17 Pro. A CPU profile of (b) 10 datasets, N 1000 in the VS Code browser
+   can show the cause.
+9. **The sampler of the Pixel 8a** gives about 2 samples a second. A later protocol that keeps
+   the 10 % rule of a window must take the sample rate into account.

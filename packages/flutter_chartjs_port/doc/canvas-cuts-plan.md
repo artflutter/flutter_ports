@@ -464,6 +464,15 @@ Changes to the cited files:
   change. `doc/parity.md` changes the rows of `chart_host.dart` and of its tests in place (tool
   6). The rows that this plan cites do not move. The references, the inventory (§1.1), the tests
   of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-24, the record of step 8 of phase 8 (the performance of the plugin paths).
+  `doc/performance.md` gets §14.7 and §14.8 at its end: no cited section number changes.
+  `doc/porting-flow.md` changes the row of phase 8 of the §5 table in place: §2.2, the harness
+  table of §3 and §5.1 do not move. No library file, test or gallery file changes. §14.8 item 6
+  gives facts of the canvas layer for the revisit point of this plan: one new tooltip line
+  builds a paragraph (57-65 µs on the Pixel 8a), and the bench cycle of the tooltip at 10
+  datasets is longer than the paragraph cache of 512 entries. The variants V1 and V2 of the fade
+  frames (`canvas_ui.dart`) were not applied. The references, the inventory (§1.1), the tests of
+  §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 
