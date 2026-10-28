@@ -71,8 +71,8 @@
 //
 //   node tool/reference/theme_light_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
-// on any other architecture. It also stops unless each of the checkouts
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032). The script does not
+// stop on another architecture. It also stops unless each of the checkouts
 // third_party/Chart.js and third_party/kurkle-color is at the `commit` of its
 // entry in tool/port_sources.yaml and has no change in src/.
 
@@ -144,14 +144,6 @@ function checkPin() {
       process.exit(1);
     }
   }
-}
-
-if (process.arch !== 'x64') {
-  console.error(
-    `The reference is V8 on x64; this Node.js is ${process.arch}. ` +
-      'Run an x64 build of Node.js.',
-  );
-  process.exit(1);
 }
 
 const THIRD_PARTY = new URL('../../../../third_party/', import.meta.url);

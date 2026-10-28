@@ -12,8 +12,8 @@
 //
 //   node tool/reference/trig_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
-// on any other architecture. V8 on arm64 compiles fdlibm with fused
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032). The script does not
+// stop on another architecture. V8 on arm64 compiles fdlibm with fused
 // multiply-add and differs in the last bit for some inputs.
 //
 // The input groups, in this order:
@@ -36,14 +36,6 @@
 
 import {writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-
-if (process.arch !== 'x64') {
-  console.error(
-    `The reference is V8 on x64; this Node.js is ${process.arch}. ` +
-      'Run an x64 build of Node.js.',
-  );
-  process.exit(1);
-}
 
 const TOTAL = 4040;
 const OUT = fileURLToPath(

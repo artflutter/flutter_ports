@@ -934,7 +934,9 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   writes two files, `plugin_tooltip_reference.dart` and `plugin_tooltip_more_reference.dart`,
   because a data file stays below 2,500,000 bytes) and
   `test/port/platform/chart_host_input_reference.dart` (the input path of the legend and the
-  tooltip, Chart.js ADR 0037 §17). They stop unless Node.js is an x64 build.
+  tooltip, Chart.js ADR 0037 §17). They do not stop on arm64. Do not run
+  `log10_reference.mjs` and `trig_reference.mjs` on arm64: their fdlibm data then differ in the
+  last bits and in the NaN signs.
   `theme_precedence_reference.mjs` also registers the 8 pinned controllers, and adds a JavaScript
   prototype of the hunks H4a-H5 to `plugin.colors.ts` in its prototype run. It and
   `controller_reference.mjs` register the seven plugins of `src/plugins/index.js` by name (a module

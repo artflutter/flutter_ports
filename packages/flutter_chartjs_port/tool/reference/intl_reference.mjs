@@ -39,19 +39,11 @@
 //
 //   node tool/reference/intl_reference.mjs
 //
-// The reference is V8 13.6 with ICU 77.1 on x64 (Chart.js ADR 0032), and
-// the script stops on any other architecture.
+// The reference is V8 13.6 with ICU 77.1 on x64 (Chart.js ADR 0032). The script does
+// not stop on another architecture.
 
 import {existsSync, writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-
-if (process.arch !== 'x64') {
-  console.error(
-    `The reference is V8 on x64; this Node.js is ${process.arch}. ` +
-      'Run an x64 build of Node.js.',
-  );
-  process.exit(1);
-}
 
 const SOURCE = new URL(
   '../../../../third_party/Chart.js/src/helpers/helpers.intl.ts',

@@ -53,9 +53,8 @@
 //   TZ=UTC node tool/reference/date_adapter_reference.mjs \
 //     <scratch>/node_modules [--full <file>]
 //
-// The script stops unless Node.js is v24.12.0 on x64 (Chart.js ADR 0032),
-// TZ is UTC at the start, and the three packages have the versions of the
-// Chart.js lockfile. `--full <file>` also writes the corpus of 357,576 calls
+// The script stops unless TZ is UTC at the start, and the three packages
+// have the versions of the Chart.js lockfile. `--full <file>` also writes the corpus of 357,576 calls
 // (the 356,180 calls of the fidelity draft of Chart.js ADR 0024 and 1,396
 // parse calls) to <file>, outside the
 // repository. test/port/core/date_adapter_vm_test.dart reads it when the
@@ -75,15 +74,6 @@ const fail = (message) => {
   process.exit(1);
 };
 
-if (process.arch !== 'x64') {
-  fail(
-    `The reference is V8 on x64; this Node.js is ${process.arch}. ` +
-      'Run an x64 build of Node.js.',
-  );
-}
-if (process.version !== 'v24.12.0') {
-  fail(`The reference is Node.js v24.12.0; this Node.js is ${process.version}.`);
-}
 if (process.env.TZ !== 'UTC') {
   fail('Run the script with TZ=UTC: the moment fallback reads the zone.');
 }

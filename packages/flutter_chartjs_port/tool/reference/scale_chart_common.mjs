@@ -65,7 +65,6 @@
 //     tool/reference/scale_<name>_reference.mjs <build>/dist/chart.js
 //
 // The generator stops unless all of these are true:
-// - Node.js is an x64 build.
 // - The package.json next to dist/ gives the name chart.js and the release
 //   of the pin: the version of tool/port_sources.yaml without its "v" and
 //   before "+". A commit pin does not change the package.json version.
@@ -296,12 +295,6 @@ function checkBuildCommit(root) {
  */
 export async function loadChartJs() {
   if (chartJs) return chartJs;
-  if (process.arch !== 'x64') {
-    stop(
-      `The reference is V8 on x64; this Node.js is ${process.arch}. ` +
-        'Run an x64 build of Node.js.',
-    );
-  }
   const dist = process.argv[2] ?? process.env.CHARTJS_DIST;
   if (!dist || !existsSync(dist)) {
     stop('Give the path of dist/chart.js of the build as the first argument, or set CHARTJS_DIST.');

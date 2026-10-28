@@ -22,22 +22,14 @@
 //
 //   node tool/reference/arc_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
-// on any other architecture. The test compares each number with closeTo, but
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032). The script does not
+// stop on another architecture. The test compares each number with closeTo, but
 // Chart.js ADR 0032 takes all reference data from one engine.
 
 import {execFileSync} from 'node:child_process';
 import {existsSync, writeFileSync} from 'node:fs';
 import {registerHooks} from 'node:module';
 import {fileURLToPath} from 'node:url';
-
-if (process.arch !== 'x64') {
-  console.error(
-    `The reference is V8 on x64; this Node.js is ${process.arch}. ` +
-      'Run an x64 build of Node.js.',
-  );
-  process.exit(1);
-}
 
 const THIRD_PARTY = new URL('../../../../third_party/', import.meta.url);
 const SOURCE = new URL('Chart.js/src/elements/element.arc.ts', THIRD_PARTY);

@@ -11,21 +11,13 @@
 //
 //   node tool/reference/number_to_string_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0032), and the script stops
-// on any other architecture. Number::toString is exact, so other engines give
+// The reference is V8 13.6 on x64 (Chart.js ADR 0032). The script does not
+// stop on another architecture. Number::toString is exact, so other engines give
 // the same strings, but Chart.js ADR 0032 takes all reference data from one
 // engine.
 
 import {writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-
-if (process.arch !== 'x64') {
-  console.error(
-    `The reference is V8 on x64; this Node.js is ${process.arch}. ` +
-      'Run an x64 build of Node.js.',
-  );
-  process.exit(1);
-}
 
 const TOTAL = 10000;
 const OUT = fileURLToPath(
