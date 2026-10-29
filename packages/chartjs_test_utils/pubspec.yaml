@@ -24,8 +24,10 @@ dependencies:
   flutter:
     sdk: flutter
   # flutter_chartjs_port has a dev_dependency on this package. The workspace
-  # resolves the cycle (porting-flow.md section 3).
-  flutter_chartjs_port: ^0.0.1
+  # resolves the cycle (porting-flow.md section 3). A path dependency: a
+  # release of the port does not change this file (Chart.js ADR 0047).
+  flutter_chartjs_port:
+    path: ../flutter_chartjs_port
   # lib/src/dom.dart, the DOM stand-in, attaches its body with the test
   # binding and pumps frames (Chart.js ADR 0022). pure.dart does not import
   # it.

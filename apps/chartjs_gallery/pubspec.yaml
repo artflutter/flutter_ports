@@ -12,7 +12,10 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  flutter_chartjs_port: ^0.0.1
+  # A path dependency: a release of the port does not change this file
+  # (Chart.js ADR 0047).
+  flutter_chartjs_port:
+    path: ../../packages/flutter_chartjs_port
 
 dev_dependencies:
   flutter_test:

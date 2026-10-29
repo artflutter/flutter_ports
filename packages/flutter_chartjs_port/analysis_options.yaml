@@ -1,0 +1,10 @@
+# The rules of the root analysis_options.yaml. pana formats the package with
+# the formatter setting of very_good_analysis only through this file
+# (Chart.js ADR 0047).
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/build/**"
+    - build/**

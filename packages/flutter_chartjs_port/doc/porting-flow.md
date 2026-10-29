@@ -1329,8 +1329,10 @@ stays in the list as closed.
 6. **Hot modules.** element.arc, core.datasetController, plugin.tooltip, plugin.filler,
    helpers.dom, helpers.canvas, core.scale, core.controller, scale.time, scale.radialLinear,
    plugin.colors and controller.bar change most often. Keep them at the strictest fidelity.
-7. **Unpublished dev_dependency.** It is possible that pana rejects a dev_dependency on an
-   unpublished package. Phase 9 runs pana first.
+7. **Unpublished dev_dependency.** Closed. pana resolves the package only without its
+   dev_dependencies, and it formats `lib/` without the options of the workspace. A package
+   `analysis_options.yaml`, a dev_dependency on `very_good_analysis` and a path dev_dependency on
+   the harness fix it ([Chart.js ADR 0047](adr/0047-published-archive.md)).
 
 **Open questions**
 - fdlibm or correctly rounded libm for `log10` and `atan2`? log10 differs in the last bit on

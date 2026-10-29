@@ -119,6 +119,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 ## Layout
 
 - `packages/flutter_chartjs_port`: the Chart.js port (library, `publish_to: none` until 0.1.0).
+  Its `analysis_options.yaml` includes the rules of the root file, and its `.pubignore` keeps
+  `doc/`, `test/`, `tool/` and `dart_test.yaml` out of the published archive (Chart.js ADR 0047).
+  The harness and the gallery name it as a path dependency.
   - `lib/src/`: ported modules at their upstream paths (`controllers/`, `core/`, `elements/`,
     `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), `kurkle_color/` (the `@kurkle/color`
     0.3.2 port), and `js/`, the JS runtime: port-only `js_*.dart` files and the fdlibm ports
@@ -367,7 +370,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0046. Thirteen of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0047. Thirteen of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR
       0012 supersedes Chart.js ADR 0004, and Chart.js ADR 0026 supersedes Chart.js ADR 0008.
       Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0033 supersedes Chart.js ADR
@@ -389,7 +392,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       maintainer, 2026-10-21). It accepts an ADR when the decision is implemented and its gates are
       green. A changed decision still gets a new ADR that supersedes the old one. Chart.js ADR 0044
       (the stack fill search) is rejected: its code A/B rejected the change, and Chart.js ADR 0046
-      records the result. The other ADRs are accepted. Docs name them "Chart.js ADR NNNN".
+      records the result. Chart.js ADR 0047 (the published archive) is proposed. The other ADRs
+      are accepted. Docs name them "Chart.js ADR NNNN".
       "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. An accepted ADR does not change. A changed decision
@@ -1052,7 +1056,8 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   `flutter_chartjs_port_forui`. The directory and the commit scope of a package are its name.
   Before a change adds a name, examine `https://pub.dev/api/packages/<name>`: it must give 404.
 - Lints: `very_good_analysis` (root `analysis_options.yaml`, which also carries its formatter
-  settings, so run Dart tools after `flutter pub get`). Public APIs are documented.
+  settings, so run Dart tools after `flutter pub get`). The `analysis_options.yaml` of
+  `flutter_chartjs_port` includes the same rules (Chart.js ADR 0047). Public APIs are documented.
 - Commits: Conventional Commits, signed off (`git commit -s`, DCO), for example
   `feat(flutter_chartjs_port): port helpers.math`. The scope of the D3 port is `flutter_d3_port`.
   The scope of the ECharts port is `flutter_echarts_port`. Checks:

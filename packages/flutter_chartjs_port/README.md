@@ -17,7 +17,7 @@ JavaScript Chart.js in a WebView. For how the existing Chart.js packages work, s
 ## Upstream
 
 Ports Chart.js **4.6.1** (exposed as `chartJsVersion`). The tag ended the commit pin
-`4.5.1+7169e651` of [doc/upstream-tracking.md](doc/upstream-tracking.md) §2.4.
+`4.5.1+7169e651` of [doc/upstream-tracking.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_port/doc/upstream-tracking.md) §2.4.
 Chart.js is MIT-licensed by the Chart.js Contributors, and its notice is kept in [LICENSE](LICENSE).
 This project is not affiliated with the Chart.js project. The functions that match JavaScript
 `Math.log10` and `Math.atan2` are ported from fdlibm 5.3 (Sun Microsystems, Inc.); their notice is

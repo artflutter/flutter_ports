@@ -513,6 +513,12 @@ Changes to the cited files:
   fake does not change. The reference data of `test/port/` come again from the arm64 engine. The
   `parity.md` rows that this plan cites do not change. The references, the inventory (§1.1), the
   tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-29, [Chart.js ADR 0047](adr/0047-published-archive.md) (proposed, the published archive).
+  The package gets `analysis_options.yaml` and `.pubignore`, and the harness and the port name each
+  other as path dependencies. The root `pubspec.lock` does not change. porting-flow.md changes risk
+  7 of §7 (lines 1332-1335) in place, and no cited line moves. AGENTS.md changes its list of ADRs. No library file, test or
+  gallery file changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
+  estimates do not change. No trigger occurred.
 
 ## 1. Why
 

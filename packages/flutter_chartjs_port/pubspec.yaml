@@ -44,11 +44,17 @@ dev_dependencies:
   # 12.1.0 is the version that test_core already resolves in the workspace.
   analyzer: ^12.1.0
   # The test harness (porting-flow.md section 3). It depends on this package;
-  # the workspace resolves the cycle.
-  chartjs_test_utils: ^0.0.1
+  # the workspace resolves the cycle. A path dependency: the harness is not on
+  # pub.dev, and pana drops a path dev_dependency (Chart.js ADR 0047).
+  chartjs_test_utils:
+    path: ../chartjs_test_utils
   flutter_test:
     sdk: flutter
   # Pure-layer specs and port tests run with `dart test` on the VM, dart2js and
   # dart2wasm (porting-flow.md section 3). 1.31.1 matches the test_api pin of
   # flutter_test in Flutter 3.47.7 (0.7.12).
   test: ^1.31.1
+  # analysis_options.yaml includes its rules, as the root file does. pana
+  # formats the package with them (Chart.js ADR 0047). The constraint is the
+  # constraint of the root pubspec.
+  very_good_analysis: ^10.3.0

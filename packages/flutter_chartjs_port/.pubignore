@@ -1,0 +1,8 @@
+# The published archive (Chart.js ADR 0047): lib/, example/ and the package
+# files. The docs, the tests, the tools and the reference data stay in the
+# repository.
+doc/
+test/
+tool/
+dart_test.yaml
+build/
