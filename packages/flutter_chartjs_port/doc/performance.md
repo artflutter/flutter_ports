@@ -3858,7 +3858,8 @@ platform of the choice rule of P6, and macOS as the platform of the raster check
 2026-10-29 at 03:39 CET, before the pilot of P3, the source of the port runs of group 2 (a port series
 of the same night in the same tab, P3); on 2026-10-29 at 02:40 CET, the iPhone 17 Pro as an added
 platform that does not decide (the ADR 0044 A/B, P5 and P6; the iPhone series stopped before its
-first run, because the app launch failed). No decision rule changed after the data.
+first run, because the app launch failed, and ran on the day of 2026-10-29: see the paragraph
+"The iPhone 17 Pro" below). No decision rule changed after the data.
 
 **Method.**
 
@@ -4063,6 +4064,51 @@ profile in the browser (the profile method of the port does not exist for dart2w
 candidates of a plugin path read the Pixel 8a only. Thus this series gives figures and an order of
 the cells, and no fix candidate.
 
+**The iPhone 17 Pro, an added platform (2026-10-29, day).** The iPhone series of the night
+did not run: the launch of the first app failed, and the phone needed a restart and a trust of the
+developer profile. The series ran on the day of 2026-10-29 from 07:15 to 08:09 UTC with the same
+builds of `1d271cd` and the same patches. The phone was an iPhone 17 Pro with iOS 26.6.2, on a
+cable and unlocked before and after each run. Each run installed its app and started a new
+process. The Mac only installed the apps and read the console. One warm-up run of each side came
+before the first timed run of each topic and is not data. Each topic ran stage 1 only (6 pairs,
+ABBA), with the statistics and the rules of the night. All 60 timed runs are valid. An
+independent recompute from the raw files agrees with each figure and each class. These figures
+do not change a decision: the iPhone is an added platform (the amendment of 2026-10-29). B - A,
+ms (the frame metric of each cell, as in the tables above):
+
+| Topic | Cell | Pairs | A | B | Mean B - A | 95 % interval | Rel. |
+|---|---|---:|---:|---:|---:|---|---:|
+| ADR 0044 | P1 `fill.stack` draw N 1000 | 6 | 32.831 | 1.166 | -32.0563 | -33.0723 .. -31.3878 | -96.5 % |
+| ADR 0044 | P2 `fill.stack` update N 1000 | 6 | 38.982 | 4.388 | -34.7435 | -35.8960 .. -33.9107 | -88.8 % |
+| ADR 0044 | G1 `fill.gaps` draw N 1000 | 6 | 5.531 | 2.751 | -2.7690 | -2.7917 .. -2.7457 | -50.0 % |
+| ADR 0044 | G2 `fill.radar` draw N 1000 | 6 | 0.421 | 0.423 | -0.0007 | -0.0070 .. +0.0033 | -0.2 % |
+| ADR 0044 | G3 `fill.stack` draw N 100 | 6 | 0.459 | 0.126 | -0.3318 | -0.3433 .. -0.3227 | -72.1 % |
+| P5 | R2, 3 datasets, update | 6 | 2.620 | 2.622 | +0.0017 | -0.0065 .. +0.0112 | +0.1 % |
+| P5 | R3, 100 datasets, draw | 6 | 2.723 | 2.737 | +0.0068 | -0.0088 .. +0.0203 | +0.3 % |
+| P5 | R4, 100 datasets, update | 6 | 15.656 | 15.780 | +0.1167 | +0.0525 .. +0.1868 | +0.7 % |
+| P5 | G1 `chart.a` N 1000 | 6 | 0.211 | 0.211 | +0.0000 | -0.0012 .. +0.0013 | +0.0 % |
+| P5 | G2 R1 | 6 | 0.669 | 0.668 | -0.0008 | -0.0092 .. +0.0068 | -0.1 % |
+| P6 V1 | (c) 3 datasets | 6 | 1.032 | 1.010 | -0.0220 | -0.0285 .. -0.0153 | -2.1 % |
+| P6 V1 | (c) 10 datasets | 6 | 3.397 | 3.377 | -0.0237 | -0.0358 .. -0.0105 | -0.7 % |
+| P6 V2 | (c) 3 datasets | 6 | 1.189 | 1.152 | -0.0307 | -0.0400 .. -0.0215 | -2.6 % |
+| P6 V2 | (c) 10 datasets | 6 | 3.527 | 3.458 | -0.0735 | -0.0830 .. -0.0637 | -2.1 % |
+
+The results for this platform:
+
+- The ADR 0044 A/B gives **ACCEPT**: no guard interval lies wholly above 0, and the control screen
+  passes (h = 0, h* = 4). This is the result of macOS. The VS Code browser rejects the change, so
+  Chart.js ADR 0044 stays rejected.
+- P5 gives **CT not adopted**: (a) is false, because no primary cell has a gain with a lower end
+  of 0.1 ms or more. R4 is slower with B. The control screen fails (h = 5, h* = 3). The stage 2
+  condition of the protocol was true (the intervals of R2 and R3 include 0), but stage 2 did not
+  run, because no decision depends on this platform.
+- P6-V1 gives **ACCEPT**: no guard above 0, h = 0. P6-V2 gives **REJECT**: G2 (+0.0100,
+  +0.0007 .. +0.0197) lies wholly above 0, and h = 10. No raster check ran on the iPhone, because
+  the protocol gives it for macOS only. In the V2 series the A side is about 15 % slower than in
+  the V1 series (fade, 3 datasets: 1.189 ms against 1.032 ms). It is possible that the phone was
+  warmer, because devicectl gives no thermal state. The pair differences use A and B of the same
+  series.
+
 **The rule decisions of the night.**
 
 | Rule | Platforms | Result | Consequence |
@@ -4073,3 +4119,4 @@ the cells, and no fix candidate.
 | P6, V1 | macOS, VS Code browser | REJECT on macOS (G1 and G3 wholly above 0, h = 12); ACCEPT in the VS Code browser | not accepted |
 | P6, V2 and its raster check | macOS, VS Code browser; raster: macOS | REJECT on macOS (G1, G2 and G3 wholly above 0, h = 18); ACCEPT in the VS Code browser; the raster check fails (+0.16 ms `rasterMs`) | not accepted; the present paragraph cache stays; Chart.js ADR 0039 Open 2 closes with these figures |
 | P3, the excess | VS Code browser | measured (2026-10-29) | figures only |
+| The added platform (stage 1) | iPhone 17 Pro (2026-10-29, day) | the ADR 0044 A/B ACCEPT; P5 CT not adopted; P6-V1 ACCEPT; P6-V2 REJECT | figures only; no decision changes |
