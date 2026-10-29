@@ -109,6 +109,9 @@ ChartConfiguration
 ChartEvent
 ChartMeta
 ChartMetaClip
+ChartTheme
+ChartThemeData
+ChartView
 DatasetController
 DateAdapter
 Defaults

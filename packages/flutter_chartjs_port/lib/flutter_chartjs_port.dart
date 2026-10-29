@@ -20,4 +20,9 @@
 library;
 
 export 'package:flutter_chartjs_port/chartjs.dart' hide Animation, Element;
-export 'package:flutter_chartjs_port/src/widgets/chart_view.dart' show ChartView;
+export 'package:flutter_chartjs_port/src/theme/chart_theme.dart'
+    show ChartTheme;
+export 'package:flutter_chartjs_port/src/theme/theme_data.dart'
+    show ChartThemeData;
+export 'package:flutter_chartjs_port/src/widgets/chart_view.dart'
+    show ChartView;

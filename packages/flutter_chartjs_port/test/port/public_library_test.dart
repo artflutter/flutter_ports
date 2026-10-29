@@ -44,4 +44,40 @@ void main() {
     );
     expect(find.text('Chart.js'), findsOneWidget);
   });
+
+  testWidgets('an app shows a line chart in ChartView next to Material', (
+    tester,
+  ) async {
+    Chart.register(_lineSet);
+    addTearDown(() => Chart.unregister(_lineSet));
+    Chart? created;
+    // A config is never const: Chart.js writes into its `data` and
+    // `options` objects (core.config.js:115-126).
+    final config = <String, Object?>{
+      'type': 'line',
+      'data': <String, Object?>{
+        'labels': <Object?>['a', 'b', 'c'],
+        'datasets': <Object?>[
+          <String, Object?>{
+            'data': <Object?>[1, 3, 2],
+          },
+        ],
+      },
+      'options': <String, Object?>{'animation': false},
+    };
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ChartView(
+            config: config,
+            onChartCreated: (chart) => created = chart,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(created, isA<Chart>());
+    expect(created!.config.type, 'line');
+    expect(created!.getDatasetMeta(0).data, hasLength(3));
+  });
 }
