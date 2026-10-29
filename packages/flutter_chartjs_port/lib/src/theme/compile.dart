@@ -8,9 +8,10 @@
 /// reads it as the option scope between `overrides[type]` and `defaults`
 /// (hunks H0-H3, theming.md §3.1).
 ///
-/// The public theme classes (`ChartThemeData`, `ChartColors`,
-/// `ChartTypography`) come in phase 9 (theming.md §5). Until then, a theme is
-/// a raw Map theme, a Map with the fields of `ChartThemeData`:
+/// The input is a raw Map theme. The public `ChartThemeData` of
+/// `theme_data.dart` (Chart.js ADR 0050) converts to one with
+/// `themeDataToRaw`. The raw Map themes stay for the tests. A raw Map theme
+/// has these fields:
 ///
 /// - `colors`: a Map of color tokens. Each value is a [RawThemeColor] or
 ///   Dart `null`, which themes nothing.
@@ -21,7 +22,8 @@
 ///   values, and `backgroundAlpha`, a number (Chart.js ADR 0042, theming.md
 ///   §3.5). It replaces the palette of the colors plugin.
 /// - `raw`: a Map of Chart.js keys without a token. Its keys beat the token
-///   keys.
+///   keys. Only the raw Map themes of the tests have it: `ChartThemeData`
+///   has no `raw` in 0.1.0 (Chart.js ADR 0050).
 ///
 /// The compiler knows the tokens of these parts: `core.defaults`, the
 /// elements, `core.scale.defaults`, the `scales.radialLinear` keys of
@@ -48,9 +50,9 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// A color token of a raw Map theme: the sRGB components of the `dart:ui`
 /// constructor `Color.from(alpha:, red:, green:, blue:)`, each from 0 to 1.
 ///
-/// The phase 9 theme classes convert a `dart:ui` `Color` of another color
-/// space through `ColorSpace.extendedSRGB` to these components (theming.md
-/// §3.3). [themeColorToRgba] clamps them.
+/// `themeDataToRaw` of `theme_data.dart` converts a `dart:ui` `Color` of
+/// any color space through `ColorSpace.extendedSRGB` to these components
+/// (Chart.js ADR 0050, theming.md §3.3). [themeColorToRgba] clamps them.
 typedef RawThemeColor = ({double alpha, double red, double green, double blue});
 
 /// The `rgba()` string of [color] (theming.md §3.3): 8-bit sRGB channels and
@@ -241,6 +243,11 @@ const Set<String> _paletteKeys = {r'$borderColors', r'$backgroundColors'};
 ///
 /// The compiler adds its own `transitions` keys after the guard (theming.md
 /// §3.8). Thus they pass, although `animation` is a behavior key.
+///
+/// In 0.1.0 no public input reaches the guard (Chart.js ADR 0050): the token
+/// emission of [compileChartTheme] is the allowlist, and its debug assert
+/// checks each token key against the guard. The guard keeps the
+/// never-emitted list for the `raw` keys of the raw Map themes of the tests.
 String? themeNeverEmittedReason(List<String> path, Object? value) {
   if (path.length == 1 && _rootStyleKeys.contains(path[0])) {
     return 'a root ${path[0]} beats the element defaults';
@@ -534,7 +541,7 @@ const Object _noTheme = Object();
 ///
 /// The result is memoized per instance of [theme]: a second call with the
 /// same Map gives the same result. Thus [theme] must not change after its
-/// first compile, as the immutable `ChartThemeData` of phase 9.
+/// first compile, as the immutable `ChartThemeData`.
 AnyObject? compileChartTheme(AnyObject? theme) {
   if (theme == null) return null;
   final memo = _compiled[theme];

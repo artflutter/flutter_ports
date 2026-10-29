@@ -524,6 +524,13 @@ Changes to the cited files:
   the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. The code
   commits of these ADRs update this plan for `chart_host.dart`, `canvas.dart` and `canvas_ui.dart`.
   No trigger occurred.
+- 2026-10-29, the public theme classes of [Chart.js ADR 0050](adr/0050-public-theme-api.md)
+  (proposed), in phase 9. `lib/src/theme/` gets `theme_data.dart` and `chart_theme.dart`, and
+  `test/port/theme/` gets their two test files. `parity.md` gets four port-only rows after the
+  row of `presets.dart` (lines 441-444), below the rows that this plan cites. No cited row number
+  moves. No library file, test or gallery file that this plan cites changes. The references, the
+  inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No trigger
+  occurred.
 
 ## 1. Why
 

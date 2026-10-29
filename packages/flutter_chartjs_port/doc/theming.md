@@ -1,14 +1,16 @@
 # flutter_chartjs_port theming design
 
 - Status: proposed ([Chart.js ADR 0042](adr/0042-theming.md), accepted (2026-10-23), restates
-  [Chart.js ADR 0001](adr/0001-theming.md) with the palette change and supersedes it)
+  [Chart.js ADR 0001](adr/0001-theming.md) with the palette change and supersedes it.
+  [Chart.js ADR 0050](adr/0050-public-theme-api.md), proposed, restates Chart.js ADR 0042 with
+  the public API and supersedes it on acceptance)
 - Date: 2026-10-16
 - Related: [forui theming survey](prior-art/forui-theming.md), [porting flow](porting-flow.md),
   [upstream tracking](upstream-tracking.md),
   [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md)
 
 This document gives the design behind Chart.js ADR 0042. That ADR decides the mechanism in
-section 3. Section 5 is an API sketch for phase 9.
+section 3. Section 5 gives the public API of Chart.js ADR 0050 (phase 9).
 
 Upstream paths are relative to `third_party/Chart.js` (v4.5.1, `9c5cf9f`). forui citations use
 the form `forui/0.27.6:<path>:<line>` of the [survey](prior-art/forui-theming.md).
@@ -53,11 +55,11 @@ Non-goals:
 
 | forui 0.27.6 | flutter_chartjs_port | Verdict | Reason |
 |---|---|---|---|
-| `FTheme` → `_AnimatedTheme` → `_InheritedTheme` (`forui/0.27.6:forui/lib/src/theme/theme.dart:94, 228, 358`) | `ChartTheme extends InheritedTheme`, not animated | adapt | Chart.js animates element colors itself. A lerped theme costs one chart update per frame |
-| Without a theme, `FTheme.of` returns `neutral.light.touch` (`forui/0.27.6:forui/lib/src/theme/theme.dart:138-140`) | `maybeOf` gives charts null (upstream). `of` returns `ChartThemes.light` instead | adapt | An unthemed chart must equal upstream |
+| `FTheme` → `_AnimatedTheme` → `_InheritedTheme` (`forui/0.27.6:forui/lib/src/theme/theme.dart:94, 228, 358`) | `ChartTheme extends InheritedTheme` with a non-null `data`, as `IconTheme`, not animated | adapt | Chart.js animates element colors itself. A lerped theme costs one chart update per frame |
+| Without a theme, `FTheme.of` returns `neutral.light.touch` (`forui/0.27.6:forui/lib/src/theme/theme.dart:138-140`) | `maybeOf` gives charts null (upstream). `of` returns `const ChartThemeData.light()` instead | adapt | An unthemed chart must equal upstream |
 | `copyWith` without tokens, `touch: true` hard-coded, custom icons lost (`forui/0.27.6:forui/lib/src/theme/theme_data.dart:1411-1418, 617`) | `copyWith` carries every field | adopt, fixed | forui loses fields |
-| `FThemeData` factory (`forui/0.27.6:forui/lib/src/theme/theme_data.dart:614-618`), `FColors` (`forui/0.27.6:forui/lib/src/theme/colors.dart:280-299`) | `ChartColors`, named after the `Chart.defaults` fields. The compiler derives every key from them | adapt | The same one-way derivation. Equal names keep bump audits mechanical |
-| `FTypography`, `FSizes` (`forui/0.27.6:forui/lib/src/theme/sizes.dart:7`), `FAdaptiveScope` (`forui/0.27.6:forui/lib/src/theme/adaptive_scope.dart:24-38`) | `ChartTypography` of `ChartFont`. No sizes and no platform in 0.1.0 | adapt | Chart.js reads `FontSpec`. Core never reads the platform. `flutter_test` reports Android |
+| `FThemeData` factory (`forui/0.27.6:forui/lib/src/theme/theme_data.dart:614-618`), `FColors` (`forui/0.27.6:forui/lib/src/theme/colors.dart:280-299`) | One flat `ChartThemeData` ([Chart.js ADR 0050](adr/0050-public-theme-api.md)): 6 `Color?` tokens named after the `Chart.defaults` fields, 2 `TextStyle?` fonts and the palette fields. The compiler derives every key from them | adapt | The same one-way derivation. Equal names keep bump audits mechanical. The flat class writes `copyWith`, `lerp`, `==` and diagnostics once, as `IconThemeData` |
+| `FTypography`, `FSizes` (`forui/0.27.6:forui/lib/src/theme/sizes.dart:7`), `FAdaptiveScope` (`forui/0.27.6:forui/lib/src/theme/adaptive_scope.dart:24-38`) | The two `TextStyle?` fonts of `ChartThemeData`. No sizes and no platform, in 0.1.0 or later | adapt | Chart.js reads `FontSpec`, and the compile reads six `TextStyle` fields. Hit and hover radii are behavior keys (Chart.js ADR 0050, "No touch sizes"). Core never reads the platform. `flutter_test` reports Android |
 | Generated deltas and sentinels | Chart.js options beat the theme key by key | reject | Options are partial already. Deltas "sometimes confuse even us, the maintainers". LLMs do worse (`forui/0.27.6:design_docs/shipped/untime_retrospective.md:26-32`). The generator needs Dart 3.13. Since 2026-10-21, the library floor is Dart 3.13. Thus this reason no longer applies |
 | `FVariants` (`forui/0.27.6:forui/lib/src/theme/variants.dart:173-190`) | modes `default` and `active` | reject | More modes need dataset-controller hunks |
 | Blue-screen goldens (`forui/0.27.6:forui/test/src/test_scaffold.dart:14`) | a blue-screen pixel assertion | adopt | It shows that no color bypasses the theme |
@@ -143,12 +145,14 @@ dataset without a type also adds the chart-type overrides to the scales that it 
 
 ### 3.3 Compile step and emitted keys
 
-`compileChartTheme(ChartThemeData?)` is pure and memoized per instance. It returns null when it
-emits no visual key. It adds the `transitions` keys only beside visual keys. It freezes its result
-deeply. If neither the user options nor `overrides[type]` hold `plugins.<id>`, the theme's map is
-`scopes[0]` (`core.plugins.js:162, 177`, `core.config.js:306-314`), the target of the set trap
-(`helpers.config.ts:35, 101-106`). No v4.5.1 code writes there. A future write throws instead of a
-leak into other charts.
+`compileChartTheme` takes a raw Map theme. It is pure and memoized per instance. It returns null
+when it emits no visual key. It adds the `transitions` keys only beside visual keys. It freezes
+its result deeply. If neither the user options nor `overrides[type]` hold `plugins.<id>`, the
+theme's map is `scopes[0]` (`core.plugins.js:162, 177`, `core.config.js:306-314`), the target of
+the set trap (`helpers.config.ts:35, 101-106`). No v4.5.1 code writes there. A future write throws
+instead of a leak into other charts. `compileThemeData` of `theme_data.dart` converts a
+`ChartThemeData` to a raw Map theme (`themeDataToRaw`) and keeps the compiled map for each
+`ChartThemeData` instance (Chart.js ADR 0050).
 
 Colors become `rgba()` strings with 8-bit sRGB channels and an alpha from `jsNumberToString`. Other
 color spaces convert through `ColorSpace.extendedSRGB` and clamp, because a direct Display P3 to
@@ -162,7 +166,9 @@ Emitted:
 - `plugins.colors.$borderColors` and `plugins.colors.$backgroundColors`, from the `palette` field
   `{colors, backgroundAlpha}`: the colors at their alpha, and the colors at `backgroundAlpha` (0.5
   when absent)
-- the `raw` keys that pass the guard
+- the `raw` keys that pass the guard. Only the raw Map themes of the tests have them:
+  `ChartThemeData` has no `raw` in 0.1.0 (Chart.js ADR 0050, "No public `raw` in 0.1.0"). Thus no
+  public input reaches the guard, and the token keys of section 4 are the allowlist of 0.1.0
 - `transitions.theme.animation.{duration,easing}` and `transitions.themeFrame.animation.duration: 0`
 
 In phase 5, the tokens emit only the root `color`, the `scale` keys and the element keys. Phase 6
@@ -360,100 +366,165 @@ duration and the easing are fixed.
 
 ## 4. Token mapping
 
-A null token themes nothing. A partial theme thus restates nothing.
+A null token themes nothing. A partial theme thus restates nothing. The token names are the fields
+of `ChartThemeData` ([Chart.js ADR 0050](adr/0050-public-theme-api.md)). The raw Map theme of
+`compile.dart` names them `colors.<token>`, `typography.font`, `typography.pointLabels` and
+`palette.{colors, backgroundAlpha}`.
 
-| Token | Replaces (v4.5.1) | Emitted keys |
+| Token | Replaces (v4.6.1) | Emitted keys |
 |---|---|---|
-| `colors.color` | `Defaults.color` `'#666'` (`core.defaults.js:43`) | root `color` (the legend reads it through `chart.options.color`, `plugin.legend.js:661, 707`), `scale.ticks.color`, `scale.title.color`, `scales.radialLinear.pointLabels.color`, `plugins.title.color`, `plugins.subtitle.color` |
-| `colors.borderColor` | `Defaults.borderColor` (`:42`) | `scale.grid.color`, `scale.border.color`, `scales.radialLinear.angleLines.color`, `elements.{point,line,bar}.borderColor` |
-| `colors.backgroundColor` | `Defaults.backgroundColor` (`:41`) | `elements.{point,line,bar,arc}.backgroundColor` |
-| `colors.surface` | `'#fff'` (`element.arc.ts:379`), `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`) | `elements.arc.borderColor`, `scale.ticks.backdropColor` at alpha 0.75 |
-| `colors.inverseSurface` | `'rgba(0,0,0,0.8)'` (`plugin.tooltip.js:1279`) | `plugins.tooltip.backgroundColor` |
-| `colors.onInverseSurface` | `'#fff'` (`plugin.tooltip.js:1280, 1287, 1292, 1305`) | `plugins.tooltip.{titleColor,bodyColor,footerColor,multiKeyBackground}` |
-| `palette` (`{colors, backgroundAlpha}`) | `BORDER_COLORS`, `BACKGROUND_COLORS` (`plugin.colors.ts:14-25`) | `plugins.colors.$borderColors` (the colors at their alpha), `plugins.colors.$backgroundColors` (the colors at `backgroundAlpha`, 0.5 when absent) |
-| `typography.font` | `Defaults.font` (`core.defaults.js:54-60`) | `scale.ticks.font`, `scale.title.font`, `plugins.legend.labels.font`, `plugins.legend.title.font`, `plugins.tooltip.bodyFont`. Without weight: `plugins.title.font`, `plugins.subtitle.font`, `plugins.tooltip.titleFont`, `plugins.tooltip.footerFont` |
-| `typography.pointLabels` | point-label size 10 (`scale.radialLinear.js:383-385`) | `scales.radialLinear.pointLabels.font`: the base font without size, then this font |
+| `color` | `Defaults.color` `'#666'` (`core.defaults.js:43`) | root `color` (the legend reads it through `chart.options.color`, `plugin.legend.js:661, 707`), `scale.ticks.color`, `scale.title.color`, `scales.radialLinear.pointLabels.color`, `plugins.title.color`, `plugins.subtitle.color` |
+| `borderColor` | `Defaults.borderColor` (`:42`) | `scale.grid.color`, `scale.border.color`, `scales.radialLinear.angleLines.color`, `elements.{point,line,bar}.borderColor` |
+| `backgroundColor` | `Defaults.backgroundColor` (`:41`) | `elements.{point,line,bar,arc}.backgroundColor` |
+| `surface` | `'#fff'` (`element.arc.ts:379`), `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`) | `elements.arc.borderColor`, `scale.ticks.backdropColor` at alpha 0.75 |
+| `inverseSurface` | `'rgba(0,0,0,0.8)'` (`plugin.tooltip.js:1279`) | `plugins.tooltip.backgroundColor` |
+| `onInverseSurface` | `'#fff'` (`plugin.tooltip.js:1280, 1287, 1292, 1305`) | `plugins.tooltip.{titleColor,bodyColor,footerColor,multiKeyBackground}` |
+| `palette`, `paletteBackgroundAlpha` | `BORDER_COLORS`, `BACKGROUND_COLORS` (`plugin.colors.ts:14-25`) | `plugins.colors.$borderColors` (the colors at their alpha), `plugins.colors.$backgroundColors` (the colors at `paletteBackgroundAlpha`, 0.5 by default). Null and an empty list emit nothing. `paletteBackgroundAlpha` alone emits nothing |
+| `font` | `Defaults.font` (`core.defaults.js:54-60`) | `scale.ticks.font`, `scale.title.font`, `plugins.legend.labels.font`, `plugins.legend.title.font`, `plugins.tooltip.bodyFont`. Without weight: `plugins.title.font`, `plugins.subtitle.font`, `plugins.tooltip.titleFont`, `plugins.tooltip.footerFont` |
+| `pointLabelsFont` | point-label size 10 (`scale.radialLinear.js:383-385`) | `scales.radialLinear.pointLabels.font`: the base font without size, then this font |
 
 "At alpha 0.75" replaces the alpha of the surface color, as `plugin.colors.ts:25` replaces the
 alpha of the palette.
 
-`ChartThemes.light` writes `borderColor: Color.from(alpha: 0.1, red: 0, green: 0, blue: 0)`.
-This keeps the alpha exact. `Color(0x1A000000)` emits `rgba(0, 0, 0, 0.10196078431372549)`
-instead.
+The token keys of this table are the allowlist of 0.1.0: no public input reaches another key
+(Chart.js ADR 0050, "No public `raw` in 0.1.0"). The group `B3: the token allowlist` of
+`test/port/theme/theme_data_test.dart` compiles each token alone and compares the emitted paths
+with this table.
 
-## 5. API sketch (decided in phase 9)
+The conversion of `themeDataToRaw` (Chart.js ADR 0050): a color goes through
+`Color.withValues(colorSpace: ColorSpace.extendedSRGB)`, and `themeColorToRgba` clamps it. A
+font reads six `TextStyle` fields, each only when it is not null: the family string
+(`fontFamily` and `fontFamilyFallback`, each name in single quotes except the CSS generic
+families), `fontSize` as `size`, `fontStyle` as `'normal'` or `'italic'`, `fontWeight.value` as
+the number `weight` and `height` as `lineHeight`. The compile ignores the other fields, with no
+assert, so an app can give `textTheme.bodySmall`. A px line height, `'oblique'` and `'lighter'`
+stay in the chart options.
 
-The theme classes stay internal until phase 9. The sketch fixes only the names that the mechanism
-tests use. The samples compile under Dart 3.13, the library floor (porting-flow.md §2.12).
+`const ChartThemeData.light()` holds `borderColor: Color.from(alpha: 0.1, red: 0, green: 0,
+blue: 0)`. This keeps the alpha exact. `Color(0x1A000000)` emits
+`rgba(0, 0, 0, 0.10196078431372549)` instead.
+
+## 5. Public API (Chart.js ADR 0050)
+
+[Chart.js ADR 0050](adr/0050-public-theme-api.md) decides the public API. The classes are in
+`lib/src/theme/theme_data.dart` and `lib/src/theme/chart_theme.dart`. They import `dart:ui` and
+the widgets library, so they are not pure layers. `compile.dart` and `presets.dart` stay pure and
+internal. The app library of [Chart.js ADR 0048](adr/0048-entry-points-and-public-library.md)
+exports two names: `ChartTheme` and `ChartThemeData`. The samples compile under Dart 3.13, the
+library floor (porting-flow.md §2.12).
 
 ### 5.1 The 0.1.0 surface
 
-`ChartTheme({required ChartThemeData? data, required Widget child})` extends `InheritedTheme`.
-`data: null` disables theming. Charts read `ChartTheme.maybeOf`, where null means upstream. Other
-widgets read `ChartTheme.of` or `context.chartTheme`, with `ChartThemes.light` as the fallback.
+`ChartTheme({required ChartThemeData data, required Widget child})` extends `InheritedTheme`.
+`data` is non-null, as `IconTheme.data`. Charts read `ChartTheme.maybeOf`, where null means
+upstream. Other widgets read `ChartTheme.of`, with `const ChartThemeData.light()` as the fallback.
+There is no `context.chartTheme`. `wrap` gives the theme to `InheritedTheme.capture`, and
+`updateShouldNotify` compares the data with `==`.
 
 ```dart
 @immutable
 class ChartThemeData with Diagnosticable {
   /// `const ChartThemeData()` themes nothing and compiles to null.
   const ChartThemeData({
-    this.colors = const ChartColors(),
-    this.typography = const ChartTypography(),
+    this.color,
+    this.borderColor,
+    this.backgroundColor,
+    this.surface,
+    this.inverseSurface,
+    this.onInverseSurface,
+    this.font,
+    this.pointLabelsFont,
     this.palette,
-    this.raw = const <String, Object?>{},
+    this.paletteBackgroundAlpha = 0.5,
   });
 
-  final ChartColors colors;
-  final ChartTypography typography;
+  const ChartThemeData.light(); // the presets
+  const ChartThemeData.dark();
 
-  /// Null keeps the Chart.js palette (plugin.colors.ts:14-25).
-  final ChartPalette? palette;
+  final Color? color; // and the other five color tokens of section 4
 
-  /// Chart.js keys without a token. They beat the token keys.
-  final Map<String, Object?> raw;
+  /// Reads fontFamily, fontFamilyFallback, fontSize, fontStyle, fontWeight
+  /// and height.
+  final TextStyle? font;
+  final TextStyle? pointLabelsFont;
 
-  // copyWith (every field), lerp, == and hashCode (deep) omitted.
+  /// Null and an empty list keep the Chart.js palette (plugin.colors.ts:14-25).
+  final List<Color>? palette;
+  final double paletteBackgroundAlpha;
+
+  // copyWith (every field), lerp, == and hashCode (deep), debugFillProperties.
 }
 ```
 
-`ChartThemeData` stores nothing derived. `copyWith(colors: …)` thus changes every key that
-derives from the colors. `lerp` interpolates the tokens and the palette. It switches `raw` at
-`t = 0.5`. It returns `a` for `lerp(a, a, t)`, because `a*(1-t)+a*t != a` in floating point.
-Examples of `raw` keys are `scale.ticks.textStrokeColor` (`core.scale.defaults.js:67`) and
-`plugins.tooltip.borderColor` (`plugin.tooltip.js:1308`). The emission guard applies to them too.
+`ChartThemeData` stores the values of the app and nothing derived. `copyWith(color: …)` thus
+changes every key that derives from the color. A null argument keeps the token. `lerp` returns
+`a` for `identical(a, b)`, as `ThemeData.lerp`, because `Color.lerp(a, a, t) != a` for some `t`
+in floating point. A token lerps only when both ends have it. Else it switches at `t = 0.5`: a
+null token means the upstream value, and `Color.lerp` of a null end fades the alpha. Two fonts
+also switch at 0.5 when one of them sets `fontSize`, `fontWeight` or `height` and the other does
+not, because `TextStyle.lerp` fills the missing field. Palettes of one length lerp pairwise, else
+they switch at 0.5. `==` and `hashCode` compare each field, the palette with `listEquals` and
+`Object.hashAll`. `compileThemeData` keeps the compiled map of each instance in an `Expando`.
+Thus the palette list must not change after the construction. A debug assert checks
+`paletteBackgroundAlpha` in [0, 1]. It has no effect without `palette`.
 
 Presets:
 
-- `ChartThemes.light` holds every token at its v4.5.1 value. Its palette is the list of
-  `plugin.colors.ts:14-22` with background alpha 0.5 (`:25`). Test 3 checks it against the
-  unthemed oracle.
-  Without a theme, `ChartTheme.of` returns it.
-- `ChartThemes.dark` uses this project's own colors, not forui colors. It keeps the Chart.js
-  palette and the upstream hover colors.
-- `ChartThemes.none` is `const ChartThemeData()`. It compiles to null. It is a per-chart opt-out.
+- `const ChartThemeData.light()` holds every token at its v4.6.1 value. Its palette is the list of
+  `plugin.colors.ts:14-22` at alpha 1 with `paletteBackgroundAlpha` 0.5 (`:25`). A chart with it
+  equals an unthemed chart. `themeDataToRaw` of it equals the internal raw Map theme
+  `ChartThemes.light`, the oracle of test 3 and of the coverage test. Without a theme,
+  `ChartTheme.of` returns it.
+- `const ChartThemeData.dark()` follows the mirror rule: each color token is
+  `(1 - r, 1 - g, 1 - b)` of the light token with its alpha kept. `color` is `#999999`,
+  `borderColor` and `backgroundColor` are white at alpha 0.1, `surface` is `#000000`,
+  `inverseSurface` is white at alpha 0.8 and `onInverseSurface` is `#000000`. It keeps the light
+  fonts, the Chart.js palette at 0.5 and the upstream hover colors. The text on the surface has a
+  contrast of 7.37:1 and the tooltip text of 13.08:1 (light: 5.74:1 and 12.63:1). An app with
+  another background sets `surface` with `copyWith`.
+- The opt-out is `const ChartThemeData()`. It compiles to null. The internal raw Map presets
+  `ChartThemes.light` and `ChartThemes.none` of `presets.dart` stay for the pure tests. The library
+  exports no `ChartThemes`.
 
-On the phase 9 widget, here `ChartView({required config, theme})`, Chart.js options in `config`
-beat the theme key by key. This is the delta mechanism. `theme:` replaces the inherited theme, for
-example with `ChartTheme.maybeOf(context)?.copyWith(…)`. `ChartTheme(data: null)` or
-`theme: ChartThemes.none` disables theming. The widget name must not be `Chart`, because `Chart`
-is the ported controller (`core.controller.js:103`).
+0.1.0 has no public `raw` (Chart.js ADR 0050). The token emission of section 4 is the allowlist.
+No public input reaches a behavior key, a box layout key (`position`, `align`, `fullSize`,
+`weight`, `padding`) or `plugins.filler.drawTime`. A key without a token stays in the chart
+options, for example `scale.ticks.textStrokeColor` (`core.scale.defaults.js:67`) and
+`plugins.tooltip.borderColor` (`plugin.tooltip.js:1308`). A later `raw` field needs a new ADR
+(section 5.2).
+
+On the widget of [Chart.js ADR 0049](adr/0049-chart-view-widget.md), `ChartView`, Chart.js
+options in `config` beat the theme key by key. This is the delta mechanism. Its `theme` parameter
+replaces the inherited theme, for example with `ChartTheme.maybeOf(context)?.copyWith(…)`.
+`theme: const ChartThemeData()` disables theming for one chart, and
+`ChartTheme(data: const ChartThemeData())` for a subtree. The widget name must not be `Chart`,
+because `Chart` is the ported controller (`core.controller.js:103`).
 
 Typed component styles (elements, scale, legend, tooltip, title) are not part of 0.1.0. ADR:
 Typed options API decides them after 0.1.0 (porting-flow.md, decision 2.1). One option reuses
-the generated option classes, with the tokens as defaults. The other option keeps component
-overrides in `raw`. Until then, one internal function derives the keys of section 4.
+the generated option classes, with the tokens as defaults. The other option adds a `raw` field
+under the conditions of section 5.2. Until then, one internal function derives the keys of
+section 4.
 
 ### 5.2 Later
 
 | Item | Content | Condition |
 |---|---|---|
 | `AnimatedChartTheme`, `ChartTheme.targetOf` | lerps `data` per frame. A private `ChartTheme._({data, target, child})` gives charts the end value | an app needs a lerped theme |
-| `ChartThemeTransition.frames` | one chart update per frame, scales included | a phase 9 benchmark |
+| `ChartThemeTransition.frames` | does not exist | a later ADR, on an app request, when rule F of Chart.js ADR 0050 passes: the p90 of `update+draw+end` is at most 4.17 ms at N 100 and at most 8.33 ms at N 1000 on each deciding platform |
+| `raw` allowlist | a `raw` field of `ChartThemeData` with an allowlist of normalized paths (a `scale.` path also under each `scales.<type>`) and the deny rules of the guard as a second gate. A path joins the list only with a style-only test on the 8 chart types. Fonts are the one accepted layout exception. The 38 candidate keys of probe F-P1 are its regression list | a new ADR: an app asks for a theme-wide key without a token, or ADR: Typed options API decides component styles (Chart.js ADR 0050) |
 | `ChartThemeExtension<T>` with `toScope` | `plugins.<id>.*` of a third-party plugin, from the tokens | the first ported third-party plugin |
 | Hover strategies | sealed `ChartHover`: `UpstreamChartHover`, `IdentityChartHover`, `LightnessChartHover`. Root `hover*Color` scriptables, one set per value, read only in active mode | a dark preset with lighter hover colors |
-| `touch` flag, `ChartSizes` | hit and hover radius, tooltip and legend padding, font sizes. Never behavior keys | a new ADR that supersedes Chart.js ADR 0042, together with ADR: Input events and interaction state |
 | Material snippet | `onSurfaceVariant`, `outlineVariant`, `primary` at alpha 0.1, `surface`, `inverseSurface`, `onInverseSurface`, `textTheme.bodySmall` of the target `ThemeData`. CI compiles it in the gallery | after 0.1.0 |
 | forui adapter | section 5.3 | after 0.1.0 |
+
+The theme never carries touch sizes, in 0.1.0 or later (Chart.js ADR 0050, "No touch sizes").
+`hitRadius` and `hoverRadius` are behavior keys: the point hit test reads `hitRadius + radius`
+(`element.point.ts:62-66`), and an active point resolves `radius` from `hoverRadius`
+(`core.datasetController.js:815`). Touch never changes `interaction`. The font size is a style
+key that `font` gives. An app that wants larger targets sets `elements.point.hitRadius` and
+`hoverRadius` in its options. The group `B11: no touch sizes` of
+`test/port/theme/theme_data_test.dart` pins the hit element of a themed chart.
 
 `LightnessChartHover` uses this project's own rule over the ported `@kurkle/color`. If the HSL
 lightness of the base color is below 0.5, the hover color is `lighten(lighten)`. Otherwise it is
@@ -498,7 +569,7 @@ The adapter change also does these items:
 | default | mode `'default'`, prefixes `[type, '']` | token keys |
 | active (hover, touch, `setActiveElements`) | mode `'active'`, prefixes `[typeHover, 'hover', type, '']`, `context.active`, 400 ms (`core.datasetController.js:804-835, 919-935`, `core.animations.defaults.js:38-42`) | upstream `getHoverColor` (`helpers.color.ts:28-32`) over the themed base. Hover strategies wait (section 5.2) |
 | pressed, focused, disabled, selected, hidden legend item | none | not modeled. A focus ring is a port-only plugin (ADR: Input events and interaction state) |
-| platform | none | none in 0.1.0. A later `touch` flag changes sizes only |
+| platform | none | none: the theme carries no touch sizes (Chart.js ADR 0050, section 5.2) |
 | brightness | declined (#8658) | The app picks the theme. Nothing reads the platform brightness |
 
 The state is `active`, not `hovered`, because touch and code set it too. The spec harness installs
@@ -572,6 +643,10 @@ Required in phase 9:
 7. **Equality and lerp.** Equal themes are `==` with equal hashes. Each field breaks `==`. The
    test covers `copyWith()`, the `lerp` ends and `lerp(a, a, t)`. Equal themes cause no
    `chart.update`. `InheritedTheme.capture` reaches overlays.
+   `test/port/theme/theme_data_test.dart` has the value parts, the diagnostics, the conversion,
+   the oracle of test 3, the presets and the groups `B3: the token allowlist` and
+   `B11: no touch sizes`. `test/port/theme/chart_theme_test.dart` has `ChartTheme` and
+   `InheritedTheme.capture`. The update count waits for the theme switch of the widget (test 8).
 8. **Theme switch.** A switch updates elements, scales and the palette. A hidden dataset stays
    hidden. Controllers, data arrays and decimated data stay. Removal restores the upstream colors.
    Reduced motion uses `'themeFrame'`.

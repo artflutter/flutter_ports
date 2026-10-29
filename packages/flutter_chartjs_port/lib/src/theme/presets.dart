@@ -3,8 +3,12 @@
 /// The internal theme presets of Chart.js ADR 0042 (theming.md §5.1), as raw
 /// Map themes of `compile.dart`, a pure layer.
 ///
-/// The public presets come with the theme classes in phase 9. Ported files
-/// never import this file (Chart.js ADR 0042, invariant 4).
+/// The public presets are `ChartThemeData.light()` and `.dark()` of
+/// `theme_data.dart` (Chart.js ADR 0050). [ChartThemes] stays internal for
+/// the pure tests and for the oracle of test 3:
+/// `themeDataToRaw(const ChartThemeData.light())` equals [ChartThemes.light].
+/// The library exports no `ChartThemes`. Ported files never import this
+/// file (Chart.js ADR 0042, invariant 4).
 library;
 
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -77,7 +81,8 @@ abstract final class ChartThemes {
     },
   };
 
-  /// The theme that themes nothing: `const ChartThemeData()` of phase 9. It
-  /// compiles to Dart `null`, a per-chart opt-out (theming.md §5.1).
+  /// The theme that themes nothing, the raw form of `const
+  /// ChartThemeData()` (Chart.js ADR 0050). It compiles to Dart `null`, a
+  /// per-chart opt-out (theming.md §5.1).
   static const AnyObject none = <String, Object?>{};
 }
