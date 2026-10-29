@@ -17,9 +17,13 @@ work changes the tree.
 
 ## Deferral
 
-The port does not do this plan now ([porting-flow.md](porting-flow.md) §5.1). The revisit point is
+The port does not do this plan now ([porting-flow.md](porting-flow.md) §5.1). The revisit point was
 after phase 8, before phase 9. Work packages A2 and C2 are done in phase 5 (trigger 1, below).
-Until then:
+
+Decision at the revisit point (2026-10-29): the maintainer kept work packages A1, A3, I, W, C1, D
+and P deferred. No trigger occurred in phase 8, the expected gain is small (about 45 library
+lines, no speed gain), and no ported code reaches the web defect of §2.3. The plan has no new
+revisit point. It waits for a trigger below. While the plan waits:
 - A change that edits a file that this plan cites updates this plan in the same commit: the file
   and line references, the code inventory (§1.1), the tests that pin the behavior (§2.6, §3.5) and
   the estimates. The cited files are `lib/src/canvas/*.dart`, `lib/src/platform/chart_host.dart`,

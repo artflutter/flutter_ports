@@ -3824,8 +3824,9 @@ section 13.7: **measured**, **decided** or **open**.
 6. **The paragraph build of new tooltip lines** (rule T1): open. It is a cost of the canvas layer:
    57-65 µs for each new line on the Pixel 8a. A change of the paragraph cache must not use (a) at
    N 100 as its primary cell: a cache of more than about 1150 entries makes the bench cycle all
-   hits, a false gain. The facts go to the revisit of
-   [canvas-cuts-plan.md](canvas-cuts-plan.md) ("after phase 8, before phase 9").
+   hits, a false gain. The facts went to the revisit of
+   [canvas-cuts-plan.md](canvas-cuts-plan.md) on 2026-10-29. That plan has no work package for
+   the paragraph cache, and the maintainer kept the plan deferred. Thus this item stays open.
 7. **An exact memo of the tooltip option reads**: open. It stays specified, with a reference
    implementation, for a later trigger: a device figure where the option reads of one tooltip draw
    cost 0.1 ms or more (about 30-70 body items), or a change of the threshold of Chart.js ADR 0020
