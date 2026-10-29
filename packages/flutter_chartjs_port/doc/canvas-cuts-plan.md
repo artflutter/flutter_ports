@@ -531,6 +531,15 @@ Changes to the cited files:
   moves. No library file, test or gallery file that this plan cites changes. The references, the
   inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No trigger
   occurred.
+- 2026-10-29, the blue screen with an active element and the light identity of
+  [Chart.js ADR 0050](adr/0050-public-theme-api.md) (proposed), in phase 9.
+  `test/port/theme/blue_screen_test.dart` gets 16 active cases, and the new
+  `test/port/theme/light_pixels_test.dart` compares the bitmaps of the light preset and of no
+  theme. Both read the bitmap with `UiCanvasContext.paint`, as before. `canvas_ui.dart` does not
+  change. `parity.md` gets one port-only row before the row of `blue_screen_test.dart` (line
+  453), below the rows that this plan cites. No cited row number moves. No library file, test or
+  gallery file that this plan cites changes. The references, the inventory (§1.1), the tests of
+  §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

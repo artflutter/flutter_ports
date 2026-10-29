@@ -11,6 +11,9 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
+    show getHoverColor;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/color.dart' as kurkle;
@@ -31,8 +34,21 @@ import '../scales/scale_chart_harness.dart' show drawCalls;
 // Each chart has the title, the subtitle, the legend (with its title) and a
 // visible tooltip with a footer, and sets `plugins.colors.enabled` (on and
 // off). The 8 chart types with the colors plugin on and off are 16 cases.
-// The case with a chart active element (hover) waits for
-// `IdentityChartHover` (theming.md §8 item 6).
+//
+// 16 more cases have an active element (Chart.js ADR 0050, "The blue
+// screen"): `chart.setActiveElements` for the element 0 of the dataset 0,
+// the tooltip active at it, and `chart.update()`. The hover colors are the
+// root scriptables of core.defaults.js:62-64, `getHoverColor` of the themed
+// base color (helpers.color.ts:28-32). Thus the known active setters are
+// `setFillStyle` and `setStrokeStyle` of the ported `getHoverColor` of the
+// blue (`#003CCA`). A bar draws its border as a fill
+// (element.bar.js:191-192), so the bar has `setFillStyle` only. Each pixel
+// that is not the blue lies on the segment from the blue to that color,
+// within 2 units for each channel: the antialiasing of an active element
+// mixes the two colors. The probes F-P2 and Pf-B7 of Chart.js ADR 0050 found
+// these setters in 16 of 16 cases, and each pixel within 1 unit (bubble: 1
+// pixel at 2 units). The setter check finds any other color, so the active
+// cases need no test-only identity hover (theming.md §8 item 6).
 //
 // The tooltip shows through `chart.tooltip.setActiveElements` and
 // `chart.update()`, the form of docs/samples/advanced/programmatic-events.md
@@ -122,6 +138,25 @@ const Set<String> knownSingletonLeaks = {
   'setFillStyle #666',
   'setStrokeStyle #666',
 };
+
+/// The hover color of the blue: the ported `getHoverColor` of `#2050c0`
+/// (helpers.color.ts:28-32), the value of the root hover scriptables of
+/// core.defaults.js:62-64 over the themed base color.
+final Object? _hoverBlue = getHoverColor('#2050c0');
+
+/// The known setters of an active case of the chart type [type]: the
+/// setters with the value [_hoverBlue]. The bar draws its border as a fill
+/// (element.bar.js:191-192), so it has `setFillStyle` only. The test fails
+/// when a set changes in either direction.
+Set<String> knownActiveSetters(String type) => {
+  'setFillStyle $_hoverBlue',
+  if (type != 'bar') 'setStrokeStyle $_hoverBlue',
+};
+
+/// The largest distance from the segment of the blue to the hover color
+/// that the pixels of an active case can have, in 8-bit units for each
+/// channel (Chart.js ADR 0050, "The blue screen").
+const int _segmentUnits = 2;
 
 /// The 8 chart types, in code unit order.
 const List<String> _chartTypes = [
@@ -368,6 +403,69 @@ Iterable<(String, Object?)> _themeColors(
   _ => const [],
 };
 
+/// Acquires the chart of [config], pumps a frame, makes the element 0 of
+/// the dataset 0 active with the tooltip at it, and pumps a frame.
+///
+/// `setActiveElements` of the chart and of the tooltip request no render
+/// (`core.controller.js:1096-1117`, `plugin.tooltip.js:1106-1130`). Thus
+/// `chart.update()` draws the chart again. `acquireChart` gives
+/// `animation: false`: the active colors and the tooltip need no frames.
+Future<Chart> _acquireActive(WidgetTester tester, AnyObject config) async {
+  final chart = acquireChart(config);
+  await tester.pump();
+  final active = [
+    <String, Object?>{'datasetIndex': 0, 'index': 0},
+  ];
+  final element = chart.getDatasetMeta(0).data[0] as Element;
+  chart
+    ..setActiveElements(active)
+    ..tooltip!.setActiveElements(active, <String, Object?>{
+      'x': element['x'],
+      'y': element['y'],
+    })
+    ..update();
+  await tester.pump();
+  expect(chart.getActiveElements(), hasLength(1), reason: 'the hover');
+  expect(chart.tooltip!.opacity, 1, reason: 'the tooltip is visible');
+  expect(chart.tooltip!.getActiveElements(), hasLength(1));
+  return chart;
+}
+
+/// The pixels of [data] that are not the blue, and those of them that lie
+/// farther than [_segmentUnits] from the segment of the blue to the color
+/// [hover], with the largest distance. The distance of a pixel is the
+/// largest channel difference, rounded up, to its projection on the
+/// segment.
+({int notBlue, int offSegment, int worst}) _segmentCheck(
+  ByteData data,
+  List<int> hover,
+) {
+  const blue = [0x20, 0x50, 0xC0];
+  final d = [for (var k = 0; k < 3; k++) hover[k] - blue[k]];
+  final dd = d.fold<int>(0, (sum, x) => sum + x * x);
+  var notBlue = 0;
+  var offSegment = 0;
+  var worst = 0;
+  for (var i = 0; i + 3 < data.lengthInBytes; i += 4) {
+    final p = [data.getUint8(i), data.getUint8(i + 1), data.getUint8(i + 2)];
+    if (p[0] == blue[0] && p[1] == blue[1] && p[2] == blue[2]) continue;
+    notBlue++;
+    var dot = 0;
+    for (var k = 0; k < 3; k++) {
+      dot += (p[k] - blue[k]) * d[k];
+    }
+    final t = dd == 0 ? 0.0 : (dot / dd).clamp(0.0, 1.0);
+    var distance = 0;
+    for (var k = 0; k < 3; k++) {
+      final e = (p[k] - (blue[k] + t * d[k])).abs().ceil();
+      if (e > distance) distance = e;
+    }
+    if (distance > worst) worst = distance;
+    if (distance > _segmentUnits) offSegment++;
+  }
+  return (notBlue: notBlue, offSegment: offSegment, worst: worst);
+}
+
 /// Runs the blue-screen check on [chart]: the leaking setters equal
 /// [known], and with no known leak each pixel over the blue is the blue.
 /// Gives the count of the pixels over the blue that are not the blue.
@@ -476,6 +574,55 @@ void main() {
       final off = await _expectBlue(tester, chart, knownSingletonLeaks);
       expect(off, greaterThan(0), reason: 'the legend box is #666');
     });
+  }
+
+  test('the hover color of the blue is #003CCA', () {
+    // The value of the probes F-P2 and Pf-B7 of Chart.js ADR 0050.
+    expect(_hoverBlue, '#003CCA');
+  });
+
+  for (final colors in [true, false]) {
+    final state = colors ? 'on' : 'off';
+    for (final type in _chartTypes) {
+      testWidgets('a $type chart with an active element, the blue theme and '
+          'the colors plugin $state paints only the blue and its hover '
+          'color', (tester) async {
+        final chart = await _acquireActive(
+          tester,
+          _config(type, theme: _blueTheme, colors: colors),
+        );
+        final pixels = await chartPixelsOver(
+          tester,
+          chart,
+          const ui.Color(_blue),
+        );
+        final rgb = kurkle.Color(_hoverBlue).rgb!;
+        final check = _segmentCheck(pixels, [
+          rgb.r.round(),
+          rgb.g.round(),
+          rgb.b.round(),
+        ]);
+        final calls = drawCalls(chart);
+        expect(
+          {for (final (_, value) in _leaks(calls)) value},
+          knownActiveSetters(type),
+          reason: 'the leaking setters: ${leakingSetters(calls)}',
+        );
+        expect(
+          check.notBlue,
+          greaterThan(0),
+          reason: 'the active element paints its hover color',
+        );
+        expect(
+          check.offSegment,
+          0,
+          reason:
+              'the pixels off the segment from #2050c0 to $_hoverBlue '
+              '(the largest distance ${check.worst})',
+        );
+        expect(_filledTexts(calls), containsAll(_pluginTexts));
+      });
+    }
   }
 
   testWidgets('the tooltip reaches the bitmap', (tester) async {

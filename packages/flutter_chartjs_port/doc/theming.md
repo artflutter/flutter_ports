@@ -612,7 +612,10 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    plugin off (phase 7). The group `test 3: the light palette` of `precedence_test.dart` has the
    part with the colors plugin on (phase 8, wave 1). The plugin keys are in
    `presets_plugins_test.dart` (phase 8, wave 3). The reference tests of the seven plugins run
-   their cases again with the light preset (phase 8).
+   their cases again with the light preset (phase 8). `test/port/theme/light_pixels_test.dart`
+   checks the pixels (Chart.js ADR 0050): in the 16 cases, with an active element and the
+   tooltip, the light preset paints the bytes of the unthemed chart. It runs on the three OS of
+   the job `test`, so `const ChartThemeData()` needs no golden file.
 4. **Coverage snapshot.** A committed JSON snapshot holds `compileChartTheme(ChartThemes.light)`.
    The test compares it with the defaults inventory of the upstream manifest (porting-flow.md,
    tool 4) and a `notThemed` list with a reason per key. It reports:
@@ -632,8 +635,14 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    and `strokeStyle`. It has the leak of the singleton `defaults.color`
    (`plugin.legend.js:286, 314, 319`) in its own committed list. Each list fails when it changes.
    The JS prototype (Chart.js ADR 0042, probe P2) covered the 8 types with the colors plugin on
-   and off, with no hover. It found no leak. The active-element case waits for
-   `IdentityChartHover`.
+   and off, with no hover. It found no leak. 16 more cases have an active element (Chart.js ADR
+   0050): `chart.setActiveElements` for the element 0 of the dataset 0, the tooltip active at it,
+   and `update()`, for the 8 types with the colors plugin on and off. Their known active setters
+   are `setFillStyle` and `setStrokeStyle` of the ported `getHoverColor` of the blue, `#003CCA`
+   (bar: `setFillStyle` only, because a bar draws its border as a fill, `element.bar.js:191-192`).
+   Each pixel that is not the blue lies on the segment from the blue to that color, within 2 units
+   for each channel. The setter check finds any other color, so the test needs no
+   `IdentityChartHover` (section 5.2 keeps it with its condition).
 
 Section 10 ("Phase 5 state" to "Phase 8 state") names the test files and the test groups of
 phases 5 to 8.
