@@ -8,7 +8,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_test/flutter_test.dart';
 
 /// The closest ancestor of the working directory that has a `.gitmodules`

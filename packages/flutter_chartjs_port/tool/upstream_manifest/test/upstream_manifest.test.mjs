@@ -10,6 +10,7 @@ import {join} from 'node:path';
 import {test} from 'node:test';
 
 import {flatten} from '../src/defaults_values.mjs';
+import {declarationNames} from '../src/exports.mjs';
 import {impurities, karmaPattern} from '../src/fixtures.mjs';
 import {matchBracket, objectKeys, stringValue, tokenize} from '../src/js_tokens.mjs';
 import {stringify} from '../src/json_writer.mjs';
@@ -223,5 +224,33 @@ test('collectSpec records each case of a spec file', (t) => {
     chart(['Plain', 'Charted', 'Deeper'], 'inherits the hook', 19, 'beforeEach'),
     {...plain('is pending', 23, {pending: true}), describe: ['Plain', 'Off']},
     {...plain('constructs', 29, {constructsChart: true}), describe: ['Built']},
+  ]);
+});
+
+test('declarationNames lists the declarations and the export lists of a .d.ts file', () => {
+  const text = [
+    "import {Point} from './geometric.js';",
+    "export {default as ArcElement, ArcProps} from '../elements/element.arc.js';",
+    'export {',
+    '  Animation,',
+    '  type Animator,',
+    "} from './animation.js';",
+    'export interface ChartArea {',
+    '  type: string;',
+    '}',
+    'interface ChartMetaClip {}',
+    'export type Align = "start";',
+    'export declare const enum DecimationAlgorithm {}',
+    'export declare enum UpdateModeEnum {}',
+    'export declare class Chart {}',
+    'export declare abstract class Scale {}',
+    'export declare function _adapt(): void;',
+    'export declare const registerables: any[];',
+    'type _DeepPartialArray<T> = Array<T>',
+  ].join('\n');
+  assert.deepEqual(declarationNames(text), [
+    'Align', 'Animation', 'Animator', 'ArcElement', 'ArcProps', 'Chart', 'ChartArea',
+    'ChartMetaClip', 'DecimationAlgorithm', 'Scale', 'UpdateModeEnum', '_DeepPartialArray',
+    '_adapt', 'registerables',
   ]);
 });

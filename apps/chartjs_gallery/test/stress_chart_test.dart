@@ -309,6 +309,8 @@ void main() {
       try {
         // The data of the field is not sorted by x, and each bounce clamps
         // a position to exactly 0 or 1 (stress_chart_config.dart).
+        // `_sorted` of the meta is internal (Chart.js ADR 0048, section 6).
+        // ignore: invalid_use_of_internal_member
         expect(chart.getDatasetMeta(0).sorted, isTrue);
         _expectAllDrawn(chart, scene, n, 'start');
         var bounds = 0;
@@ -355,6 +357,8 @@ void main() {
           (area.left, area.top, area.right, area.bottom),
           (0, 0, chartBenchWidth, chartBenchHeight),
         );
+        // `_clip` of the meta is internal (Chart.js ADR 0048, section 6).
+        // ignore: invalid_use_of_internal_member
         expect(chart.getDatasetMeta(0).clip.disabled, isTrue);
         final y = chart.scales['y']!;
         expect((y.min, y.max), (0, 1));

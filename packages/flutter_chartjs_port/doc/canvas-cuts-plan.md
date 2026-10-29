@@ -575,6 +575,16 @@ Changes to the cited files:
   changes `toBase64Image` (one line less), not `_resize`. `doc/parity.md` changes rows in place: the
   rows that this plan cites (lines 378-422) do not move. The estimates do not change. No trigger
   occurred.
+- 2026-10-29, the public libraries of
+  [Chart.js ADR 0048](adr/0048-entry-points-and-public-library.md) §5 and §6 (proposed, phase 9):
+  `lib/chartjs.dart`, `lib/helpers.dart` and the app library `lib/flutter_chartjs_port.dart`.
+  `lib/src/core/core.controller.dart` gets `@internal` lines on five members of `ChartMeta`, not a
+  change of `_resize`. The gallery tests `stress_axes_test.dart` and `stress_chart_test.dart` get
+  `ignore` lines for two of them; this plan cites no line of them. No file of `lib/src/canvas/`,
+  `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart` or a test of §2.6 and §3.5 changes.
+  `doc/parity.md` changes rows in place and gets four port-only rows at its end: the rows that this
+  plan cites (lines 378-422) do not move. The references, the inventory (§1.1), the tests of §2.6
+  and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

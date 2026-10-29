@@ -10,7 +10,10 @@
 // - defaults: the registration sites in src/ and a snapshot of the
 //   registered defaults, overrides and descriptors (see src/source_scan.mjs
 //   and src/defaults_values.mjs);
-// - builtins: the JS builtin sites in src/ (see src/source_scan.mjs).
+// - builtins: the JS builtin sites in src/ (see src/source_scan.mjs);
+// - exports: the export names of src/index.ts and src/helpers/index.ts and
+//   the declaration names of src/types/*.d.ts, for the public API test of
+//   the port (see src/exports.mjs, Chart.js ADR 0048).
 //
 // The output depends only on the checkout: the same checkout gives the same
 // bytes on any Node.js 24 and any architecture. Nothing in lib/ or test/
@@ -49,6 +52,7 @@ const {compareStrings, stringify} = await import('./src/json_writer.mjs');
 const {StubRegistry} = await import('./src/sandbox.mjs');
 const {builtinSites, defaultsSites} = await import('./src/source_scan.mjs');
 const {collectSpec} = await import('./src/spec_cases.mjs');
+const {exportNames} = await import('./src/exports.mjs');
 
 // Node.js 24 marks node:module stripTypeScriptTypes as experimental, and melos
 // shows each stderr line as an error. The scans call it on purpose, so its
@@ -112,6 +116,7 @@ async function main() {
   const pkg = JSON.parse(readFileSync(`${root}/package.json`, 'utf8'));
 
   const {Chart, defaults, overrides, descriptors} = await loadChart(root);
+  const exports = await exportNames(root);
   // Snapshot the defaults before a describe body can change them.
   const values = {
     defaults: flatten(defaults),
@@ -188,6 +193,7 @@ async function main() {
         .map((api) => [api, apiCounts[api]])),
       sites: builtins,
     },
+    exports,
   };
 
   const manifestText = stringify(manifest);

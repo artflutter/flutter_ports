@@ -5,7 +5,7 @@ the JSON files by hand. Tool 4 writes them from the pinned `third_party/Chart.js
 
 | File | Contents |
 |---|---|
-| `manifest.json` | The spec cases, the image fixtures, the defaults inventory and the JS builtin sites of the pinned Chart.js (the tag v4.6.1) |
+| `manifest.json` | The spec cases, the image fixtures, the defaults inventory, the JS builtin sites and the export names of the pinned Chart.js (the tag v4.6.1) |
 | `fixtures.json` | The fixture configs that are pure data, by fixture path |
 
 ## Make the files again
@@ -139,10 +139,28 @@ site.
 Limits: the scan does not resolve values. It does not find a builtin that the code reads through a
 variable, and it does not find `sort` through a computed member.
 
+## Export names
+
+`exports` gives three lists, each as `{count, names}`, in code unit order
+([Chart.js ADR 0048](../adr/0048-entry-points-and-public-library.md) §5 and §6):
+- `index`: the runtime exports of `src/index.ts`, the keys of its module namespace. They include
+  the re-exports of the six `index` modules, the four namespaces and `registerables`. At the pin:
+  47 names.
+- `helpers`: the runtime exports of `src/helpers/index.ts`. At the pin: 122 names, 47 of them with
+  a `_`.
+- `types`: the names that `src/types/*.d.ts` declare, exported or not, and the names of their
+  `export {...} from` lists. At the pin: 231 names.
+
+The first two lists come from the module namespaces that Node.js loads with type stripping. A
+type-only export is not in them. The third list comes from a scan of the lines of the declaration
+files (`src/exports.mjs`). The public API test of the port (`test/tool/public_api_test.dart`)
+reads the three lists.
+
 ## Consumers
 
 - Tool 5 (`dart run melos run test:cases`) maps the Dart tests of `test/specs` onto the cases.
   See [Dart test names for tool 5](#dart-test-names-for-tool-5).
+- The public API test (`test/tool/public_api_test.dart`) reads `exports`.
 - The bump report and the watch preview of [upstream-tracking.md](../upstream-tracking.md) read the
   committed manifests.
 

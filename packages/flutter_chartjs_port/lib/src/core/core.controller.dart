@@ -339,10 +339,12 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
   final Object? dataset_;
 
   /// core.controller.js:846 `_parsed: []`.
+  @internal
   @override
   List<Object?> parsed = <Object?>[];
 
   /// core.controller.js:847 `_sorted: false`.
+  @internal
   @override
   bool sorted = false;
 
@@ -371,6 +373,7 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
 
   /// core.datasetController.js:284 `_stacked`. See
   /// `types.ChartMeta.stacked`.
+  @internal
   @override
   Object? stacked;
 
@@ -413,9 +416,11 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
   /// throws a [TypeError], as the upstream readers throw for the property
   /// of `undefined`. The read by name gives [undefined] then ([operator
   /// []]).
+  @internal
   @override
   types.ChartMetaClip get clip => _clip ?? (throw TypeError());
 
+  @internal
   @override
   set clip(types.ChartMetaClip value) => _clip = value;
 
@@ -424,6 +429,7 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
   types.ChartMetaClip? _clip;
 
   /// helpers.extras.ts:153 `_scaleRanges`.
+  @internal
   @override
   types.ScaleRanges? scaleRanges;
 

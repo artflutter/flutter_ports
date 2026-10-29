@@ -16,9 +16,9 @@
 ///   its entries.
 /// - index.ts:13-18 exports the four namespaces by name.
 ///
-/// `lib/flutter_chartjs_port.dart` does not export this library yet: the public
-/// API comes in phase 9. The library exports `core/index.dart`, which is
-/// not a pure layer.
+/// `lib/chartjs.dart` exports this library through `lib/src/types.dart`
+/// (Chart.js ADR 0048, section 5). The library exports `core/index.dart`,
+/// which is not a pure layer.
 library;
 
 import 'package:flutter_chartjs_port/src/controllers/controller.bar.dart';

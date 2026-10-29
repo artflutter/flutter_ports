@@ -304,6 +304,7 @@ class Animation implements types.Animation {
   }
 
   /// core.animation.js:43 `_to`, the target value (animation.d.ts:10).
+  @internal
   @override
   Object? get to => _to;
 
