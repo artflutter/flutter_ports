@@ -599,6 +599,22 @@ Changes to the cited files:
   test and of `lib/flutter_chartjs_port.dart` in place and gets the port-only rows of the widget
   and its two test files (tool 6). The inventory (§1.1) changes only in its line numbers. The
   tests of §2.6 and the estimates do not change. No trigger occurred.
+- 2026-10-29, the night builds of the phase 9 widget (the series A-N1 and A-N3 of the design
+  panel). Two gallery files of A3 change, and the frameless benchmark. `stress_demo.dart` gets
+  `StressHost`: the modes `chart`, `axes` and `plugins` show their chart in the gallery
+  `ChartCanvas` (the default) or in the public `ChartView`, whose plain `Chart` gets two inline
+  plugins that time its draws. `main_stress.dart` gets the defines `HOST` and `BATCHES`: the
+  key `host` in the modes with a chart, and the batch percentiles of the frame timings
+  (`buildP50Ms`, `buildP90Ms`, `rasterP50Ms`, `rasterP90Ms`, `batches`, `batchFrames`); a
+  profile or release build waits for the timings of its window, at most 3 seconds, before its
+  line. Without the new defines, the modes, their defines and their `STRESS` keys do not
+  change, so the baselines of A3 and the figures of phases 4 to 8 stay comparable.
+  `lib/bench/chart_bench.dart` gets the call `motion` and the cases `motion.line` and
+  `motion.bar` after the cases of phase 8; the other cases and their keys do not change.
+  `apps/chartjs_gallery/lib/demo/chart_canvas.dart` does not change. The work of A3
+  (`POINT_STYLE`, the arc scenario and the baselines of §6.3) does not change. No library file
+  that this plan cites changed. The references, the inventory (§1.1), the tests of §2.6 and §3.5
+  and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

@@ -17,11 +17,14 @@
 /// Open). The other plugins of `registerables` run: the filler fills the
 /// radar of `chart.radar`. The cases of the plugins (phase 8, the modes
 /// `plugins`, `tooltip`, `fill`, `legend` and `title`) give their own
-/// options. Each iteration calls the chart directly and times three parts
-/// on the UI thread:
+/// options. The cases of the mode `motion` (phase 9) have the default
+/// animations on a `BasicPlatform` that keeps them. Each iteration calls the
+/// chart directly and times three parts on the UI thread:
 /// - update: `chart.update('none')` without its draw. Only the cases with
 ///   [ChartBenchCall.update] have it. For [ChartBenchCall.frame], it is the
-///   frame without its draws: the event and the tick of the animator.
+///   frame without its draws: the event and the tick of the animator. For
+///   [ChartBenchCall.motion], it is `chart.update()` and its render, which
+///   starts the animator and draws nothing.
 /// - draw: `chart.draw()`, also the draw inside `chart.update('none')`, in
 ///   an event or in a tick of the animator.
 /// - end: the end of the recording. The context draws its picture into a
@@ -115,12 +118,25 @@ enum ChartBenchCall {
   /// One frame of [ChartBenchScene.frame]: an event, a tick of the
   /// animator, or both, with the draws that they cause. The data does not
   /// change.
-  frame;
+  frame,
+
+  /// `chart.update()` in the default mode, with the default animations
+  /// (the cases `motion.<type>` of the night series A-N3 of phase 9,
+  /// Chart.js ADR 0049 section 7). The update makes the animations of each
+  /// element and starts the animator, which no frame ticks. The data does
+  /// not change. Before each iteration, `chart.stop()` ends the animations
+  /// of the last one, outside the timing.
+  motion;
 
   /// The primary metric of a case with this call: the cost of one whole
   /// frame, the sum of the medians of these figures (performance.md
-  /// section 6). `draw+end` for [draw], else `update+draw+end`.
-  String get frameMetric => this == draw ? 'draw+end' : 'update+draw+end';
+  /// section 6). `draw+end` for [draw], `update` for [motion] (the update
+  /// and its render), else `update+draw+end`.
+  String get frameMetric => switch (this) {
+    draw => 'draw+end',
+    motion => 'update',
+    update || frame => 'update+draw+end',
+  };
 }
 
 /// The calls of a case that times a draw and an update.
@@ -977,6 +993,54 @@ final List<ChartBenchCase> _pluginCases = [
   ],
 ];
 
+/// The point counts of the cases `motion.<type>`.
+const List<int> chartBenchMotionCounts = [1000, 20000];
+
+/// A case `motion.<type>` of the night series A-N3 of phase 9 (spec-a
+/// section 9.4): the chart of the stress mode chart of [type] (the config
+/// of `stressChartConfig` with [chartBenchOptions]) with the default
+/// animations on the platform [_AnimatedPlatform], and the call
+/// [ChartBenchCall.motion]. The construction runs the entry animation,
+/// which the preparation ends. The primary figure is `update`: the update
+/// in the default mode and its render, the path of
+/// `Animations._createAnimations` for each element. The case reads no
+/// reduced-motion flag: the canvas of the benchmark has none.
+ChartBenchCase _motionCase(StressChartType type) => ChartBenchCase(
+  mode: 'motion',
+  name: type.name,
+  call: ChartBenchCall.motion,
+  keys: {'type': type.name, 'sharing': type.sharing, 'scriptable': false},
+  counts: chartBenchMotionCounts,
+  primary: ChartBenchCall.motion.frameMetric,
+  scene: (n) {
+    registerGalleryComponents();
+    final field = StressPointField(n);
+    final scene = StressChartScene(type, n, field);
+    final timing = StressChartTiming();
+    final config = stressChartConfig(
+      scene: scene,
+      scriptable: false,
+      options: chartBenchOptions,
+      plugins: [timing.plugin],
+    );
+    // The default animations: no option `animation: false`.
+    (config['options']! as AnyObject).remove('animation');
+    config['platform'] = _AnimatedPlatform.jsClass;
+    return ChartBenchScene(
+      config: config,
+      takeParts: timing.take,
+      prepare: (chart) => _benchFinishAnimations(),
+    );
+  },
+);
+
+/// The cases of phase 9, after the cases of phase 8: `motion.line` and
+/// `motion.bar` ([_motionCase]).
+final List<ChartBenchCase> _motionCases = [
+  _motionCase(StressChartType.line),
+  _motionCase(StressChartType.bar),
+];
+
 /// The cases of the benchmark, in the order of a run.
 ///
 /// The mode `chart` has the cases of the stress mode chart. They have no
@@ -1018,7 +1082,8 @@ final List<ChartBenchCase> _pluginCases = [
 /// After them come the cases of the plugins of phase 8 ([_pluginCases]):
 /// the modes `plugins`, `tooltip`, `fill`, `legend` and `title`. Their
 /// BENCH lines have the key `primary`. Thus a default run times the cases
-/// of phases 5 to 7 first, in the same order as before.
+/// of phases 5 to 7 first, in the same order as before. The cases
+/// `motion.line` and `motion.bar` of phase 9 come last ([_motionCases]).
 final List<ChartBenchCase> chartBenchCases = [
   _stressCase('a', ChartBenchCall.draw, type: StressChartType.line),
   _stressCase('b', ChartBenchCall.update, type: StressChartType.line),
@@ -1035,6 +1100,7 @@ final List<ChartBenchCase> chartBenchCases = [
     if (!type.points)
       for (final call in chartBenchDrawAndUpdate) _typeCase(type, call),
   ..._pluginCases,
+  ..._motionCases,
 ];
 
 /// The cases of [selection], a comma list of selectors (see
@@ -1126,6 +1192,8 @@ final class _Loop {
   /// 0: after the last iteration, it is the count of one iteration.
   void iterate() {
     if (call == ChartBenchCall.update) change?.call();
+    // The animations of the last motion update end, outside the timing.
+    if (call == ChartBenchCall.motion) chart.stop();
     chart
       ..drawTicks = 0
       ..notifies = 0;
@@ -1137,6 +1205,8 @@ final class _Loop {
         chart.update('none');
       case ChartBenchCall.frame:
         frame!(chart);
+      case ChartBenchCall.motion:
+        chart.update();
     }
     final called = _watch.elapsedTicks;
     final recorder = ui.PictureRecorder();
@@ -1164,7 +1234,8 @@ String get _buildMode => kReleaseMode
 /// each part, it has the
 /// median, the 10th and the 90th percentile of the batches in ms, as
 /// strings with 3 decimals: `updateMedianMs`, `updateP10Ms`, `updateP90Ms`
-/// (only for [ChartBenchCall.update] and [ChartBenchCall.frame]),
+/// (only for [ChartBenchCall.update], [ChartBenchCall.frame] and
+/// [ChartBenchCall.motion]),
 /// `drawMedianMs`, … and `endP90Ms`,
 /// then the figures of the parts of [ChartBenchScene.takeParts], for
 /// example `layoutMedianMs`.

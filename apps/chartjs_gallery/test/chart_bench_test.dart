@@ -518,13 +518,15 @@ void main() {
       });
       expect(c.counts, type.counts);
     }
-    for (final selector in ['bar', 'chart.bar']) {
-      expect(
-        [for (final c in selectChartBenchCases(selector)) c.call],
-        [ChartBenchCall.draw, ChartBenchCall.update],
-        reason: selector,
-      );
-    }
+    expect(
+      [for (final c in selectChartBenchCases('chart.bar')) c.call],
+      [ChartBenchCall.draw, ChartBenchCall.update],
+    );
+    // The bare name `bar` also selects motion.bar of phase 9.
+    expect(
+      [for (final c in selectChartBenchCases('bar')) c.id],
+      ['chart.bar', 'chart.bar', 'motion.bar'],
+    );
     // No case has the type of the deleted gallery controller.
     for (final c in chartBenchCases) {
       expect(c.keys['type'], isNot('stressPoint'), reason: c.id);
@@ -652,7 +654,15 @@ void main() {
     final first = chartBenchCases.indexWhere(
       (c) => !_phase7Modes.contains(c.mode),
     );
-    final phase8 = chartBenchCases.sublist(first);
+    // The cases of phase 9 (the mode motion) come after them.
+    final phase8 = [
+      for (final c in chartBenchCases.sublist(first))
+        if (c.mode != 'motion') c,
+    ];
+    expect(
+      [for (final c in chartBenchCases.sublist(first + phase8.length)) c.id],
+      ['motion.line', 'motion.bar'],
+    );
     // The 24 cases of phases 5 to 7 keep their order before them.
     expect(first, 24);
     expect(
@@ -690,6 +700,7 @@ void main() {
     expect(ChartBenchCall.draw.frameMetric, 'draw+end');
     expect(ChartBenchCall.update.frameMetric, 'update+draw+end');
     expect(ChartBenchCall.frame.frameMetric, 'update+draw+end');
+    expect(ChartBenchCall.motion.frameMetric, 'update');
     // The cases of phases 5 to 7 name no primary metric: their lines keep
     // their keys.
     for (final c in chartBenchCases.sublist(0, first)) {
@@ -1078,6 +1089,58 @@ void main() {
       }
     }
     expect(tester.takeException(), isNull);
+  });
+
+  test('the cases motion.line and motion.bar of phase 9', () {
+    final cases = selectChartBenchCases('motion');
+    expect([for (final c in cases) c.id], ['motion.line', 'motion.bar']);
+    for (final c in cases) {
+      final type = StressChartType.values.byName(c.name);
+      expect(c.call, ChartBenchCall.motion);
+      expect(c.primary, 'update');
+      expect(c.counts, chartBenchMotionCounts);
+      expect(c.keys, {
+        'type': type.name,
+        'sharing': type.sharing,
+        'scriptable': false,
+      });
+    }
+    expect(chartBenchMotionCounts, [1000, 20000]);
+  });
+
+  testWidgets('a motion case animates each update and ends the animations '
+      'before the next one', (tester) async {
+    for (final selection in ['motion.line', 'motion.bar']) {
+      final benchCase = _case(selection);
+      final scene = benchCase.scene(10);
+      final config = scene.config;
+      // The default animations on the animated platform.
+      final options = config['options']! as Map<String, Object?>;
+      expect(options.containsKey('animation'), isFalse);
+      Chart? seen;
+      final line = runChartBenchCase(
+        benchCase,
+        10,
+        _settings,
+        onChart: (chart) {
+          seen = chart;
+          // The update of the last iteration runs its animations: the
+          // animator has them, and no frame ticked them.
+          expect(animator.has(chart), isTrue, reason: selection);
+          expect(chart.options['animation'], isNot(false));
+        },
+      );
+      expect(seen, isNotNull);
+      expect(line['mode'], 'motion');
+      expect(line['case'], benchCase.name);
+      expect(line['call'], 'motion');
+      expect(line['primary'], 'update');
+      for (final key in _figureKeys(ChartBenchCall.motion, _parts)) {
+        expect(line[key], _figure, reason: '$selection $key');
+      }
+      // The update renders no frame: the animator would draw it.
+      expect(_median(line, 'draw'), 0);
+    }
   });
 
   testWidgets('each BENCH line has the notify count of one iteration', (

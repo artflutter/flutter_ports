@@ -18,10 +18,11 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/elements/index.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsObjectIsFrozen;
+    show jsGet, jsObjectIsFrozen;
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'stress_controls.dart';
@@ -927,9 +928,124 @@ void main() {
         find.byKey(const ValueKey('stress.chart.host')),
       );
       expect(host.chart!.config.type, type.name);
+      expect(line['host'], 'canvas');
+      for (final key in ['batches', 'batchFrames', 'buildP50Ms']) {
+        expect(line.keys, contains(key));
+      }
       await tester.pumpWidget(const SizedBox());
     });
   }
+
+  for (final mode in [StressMode.chart, StressMode.plugins]) {
+    testWidgets('main_stress hosts the chart of the mode ${mode.name} in a '
+        'ChartView with HOST=view', (tester) async {
+      final lines = await _stressLines(() async {
+        await tester.pumpWidget(
+          StressProfileApp(
+            mode: mode,
+            scenarios: const [(300, 0)],
+            host: StressHost.view,
+            pluginCase: const StressPluginCase(StressPluginScene.hover),
+          ),
+        );
+        // ChartView starts its chart in the first layout of its host.
+        expect(find.byType(ChartView), findsOneWidget);
+        expect(find.byType(ChartCanvas), findsNothing);
+        final chart = _state(tester).debugChart!;
+        // A plain Chart: the widget makes it.
+        expect(chart.runtimeType, Chart);
+        expect(chart.platform, isA<FlutterPlatform>());
+        final plugins = chart.config.plugins! as List<Object?>;
+        expect(jsGet(plugins.first, 'id'), 'stressDrawStart');
+        expect(jsGet(plugins.last, 'id'), 'stressDrawEnd');
+        await _frames(tester, 40);
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 600)),
+        );
+        await _frames(tester, 5);
+        // A rebuild of the tab gives the ChartView the same config.
+        tester.element(find.byType(StressDemo)).markNeedsBuild();
+        await _frames(tester, 2);
+        expect(_state(tester).debugChart, same(chart));
+        expect(chart.config.plugins, same(plugins));
+        await tester.pump(const Duration(seconds: stressSeconds));
+      });
+      expect(lines, hasLength(1));
+      final line = lines.single;
+      expect(line['mode'], mode.name);
+      expect(line['host'], 'view');
+      expect(line['call'], mode == StressMode.chart ? 'draw' : 'frame');
+      // The plugins of the meter time the draws of the chart.
+      expect(double.parse(line['drawMs']! as String), greaterThan(0));
+      await tester.pumpWidget(const SizedBox());
+    });
+  }
+
+  test('the define HOST', () {
+    for (final mode in [
+      StressMode.chart,
+      StressMode.axes,
+      StressMode.plugins,
+    ]) {
+      expect(parseStressHost('', mode), StressHost.canvas);
+      expect(parseStressHost('canvas', mode), StressHost.canvas);
+      expect(parseStressHost('view', mode), StressHost.view);
+      expect(() => parseStressHost('widget', mode), throwsArgumentError);
+    }
+    expect(parseStressHost('', StressMode.primitives), StressHost.canvas);
+    expect(
+      () => parseStressHost('view', StressMode.primitives),
+      throwsArgumentError,
+    );
+    expect(
+      () => parseStressHost('canvas', StressMode.bars),
+      throwsArgumentError,
+    );
+  });
+
+  test('stressBatchFigures gives the median of the batch percentiles', () {
+    // 3 batches of 1000 us each from 0 to 3000; the frames have the build
+    // durations 1, 2, 3 and 4 ms in batch 0, 5 and 6 ms in batch 1, and 7 ms
+    // in batch 2. The raster duration is twice the build duration.
+    StressFrame frame(int vsync, int buildMs) =>
+        (vsync: vsync, build: buildMs * 1000, raster: buildMs * 2000);
+    final frames = [
+      frame(-10, 100),
+      frame(0, 1),
+      frame(100, 2),
+      frame(200, 3),
+      frame(900, 4),
+      frame(1000, 5),
+      frame(1999, 6),
+      frame(2500, 7),
+      frame(3001, 100),
+    ];
+    final figures = stressBatchFigures(
+      frames,
+      start: 0,
+      end: 3000,
+      batches: 3,
+    )!;
+    expect(figures.batches, 3);
+    expect(figures.frames, 7);
+    // p50: 2, 5 and 7 ms; the median is 5 ms. p90: 4, 6 and 7 ms; 6 ms.
+    expect(figures.buildP50Ms, 5);
+    expect(figures.buildP90Ms, 6);
+    expect(figures.rasterP50Ms, 10);
+    expect(figures.rasterP90Ms, 12);
+    // A batch with no frame does not count.
+    final sparse = stressBatchFigures(
+      [frame(0, 1), frame(2900, 3)],
+      start: 0,
+      end: 3000,
+      batches: 3,
+    )!;
+    expect((sparse.batches, sparse.frames, sparse.buildP50Ms), (2, 2, 1));
+    expect(
+      stressBatchFigures(frames, start: 4000, end: 5000, batches: 3),
+      isNull,
+    );
+  });
 
   testWidgets('main_stress keeps a late publish out of the next scenario', (
     tester,

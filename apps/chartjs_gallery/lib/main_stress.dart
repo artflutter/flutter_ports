@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
+import 'dart:ui' show FramePhase;
 
 import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 /// The scene of the profiling entry: `--dart-define=MODE=elements` selects
 /// the [StressMode] of that name (`primitives`, `elements`, `bars`, `arcs`,
@@ -23,6 +27,97 @@ final List<(int, int)> stressScenarios = _parse(
 
 /// The seconds that each scenario runs.
 const int stressSeconds = int.fromEnvironment('SECONDS', defaultValue: 7);
+
+/// The batches of the frame percentiles of each scenario:
+/// `--dart-define=BATCHES=<n>`, 15 by default. See [stressBatchFigures].
+const int stressBatches = int.fromEnvironment('BATCHES', defaultValue: 15);
+
+/// The widget that hosts the chart of the modes `chart`, `axes` and
+/// `plugins`: `--dart-define=HOST=canvas` (the gallery `ChartCanvas`, the
+/// default) or `--dart-define=HOST=view` (the public `ChartView`, Chart.js
+/// ADR 0049). See [parseStressHost].
+final StressHost stressHost = parseStressHost(
+  const String.fromEnvironment('HOST'),
+  stressMode,
+);
+
+/// The host of the define `HOST` [name] in the mode [mode]: see
+/// [stressHost]. An empty string is a define that is not given. `HOST` in a
+/// mode without a chart, or an unknown name, throws an [ArgumentError] at
+/// the start.
+StressHost parseStressHost(String name, StressMode mode) {
+  if (name.isEmpty) return StressHost.canvas;
+  if (!mode.runsChart) {
+    throw ArgumentError.value(
+      name,
+      'HOST',
+      'Not in MODE=chart, MODE=axes or MODE=plugins',
+    );
+  }
+  return StressHost.values.byName(name);
+}
+
+/// One frame of `SchedulerBinding.addTimingsCallback`: the vsync start, and
+/// the build and raster durations, in microseconds.
+typedef StressFrame = ({int vsync, int build, int raster});
+
+/// The batch percentiles of the frames of a timed window: `batches` (the
+/// batches with frames), `frames` (the frames of the window), and the
+/// medians of the batch p50 and p90 of the build and raster durations, in
+/// ms.
+typedef StressBatchFigures = ({
+  int batches,
+  int frames,
+  double buildP50Ms,
+  double buildP90Ms,
+  double rasterP50Ms,
+  double rasterP90Ms,
+});
+
+/// The batch percentiles of the [frames] with a vsync start from [start] to
+/// [end] (microseconds): the window splits into [batches] batches of equal
+/// time. The p50 (or p90) of a batch is the nearest-rank percentile of the
+/// build (or raster) durations of its frames. A figure is the nearest-rank
+/// median of the values of the batches with frames, as the batch figures
+/// of the frameless benchmark. Dart `null` when the window has no frame.
+StressBatchFigures? stressBatchFigures(
+  List<StressFrame> frames, {
+  required int start,
+  required int end,
+  required int batches,
+}) {
+  final span = math.max(1, end - start);
+  final byBatch = [for (var b = 0; b < batches; b++) <StressFrame>[]];
+  var count = 0;
+  for (final frame in frames) {
+    if (frame.vsync < start || frame.vsync > end) continue;
+    final b = ((frame.vsync - start) * batches ~/ span).clamp(0, batches - 1);
+    byBatch[b].add(frame);
+    count++;
+  }
+  final full = [
+    for (final batch in byBatch)
+      if (batch.isNotEmpty) batch,
+  ];
+  if (full.isEmpty) return null;
+  double rank(List<double> sorted, double p) =>
+      sorted[((p * sorted.length).ceil() - 1).clamp(0, sorted.length - 1)];
+  double median(double Function(List<StressFrame> batch) value) =>
+      rank([for (final batch in full) value(batch)]..sort(), 0.5);
+  double percentile(
+    List<StressFrame> batch,
+    int Function(StressFrame) of,
+    double p,
+  ) => rank([for (final frame in batch) of(frame) / 1000]..sort(), p);
+  return (
+    batches: full.length,
+    frames: count,
+    buildP50Ms: median((b) => percentile(b, (f) => f.build, 0.5)),
+    buildP90Ms: median((b) => percentile(b, (f) => f.build, 0.9)),
+    rasterP50Ms: median((b) => percentile(b, (f) => f.raster, 0.5)),
+    rasterP90Ms: median((b) => percentile(b, (f) => f.raster, 0.9)),
+  );
+}
 
 /// Whether the labels get a new angle in each frame:
 /// `--dart-define=SPIN=true`.
@@ -353,6 +448,18 @@ List<(int, int)> _parse(String value) => value.isEmpty
 /// benchKeys]: `datasets`, and `legend` and `title`, or `tooltip`), the
 /// means of the four parts, and in the tooltip scenes `tooltipDrawMs`.
 /// With `LINE=0`, it has the key `line` with the value false.
+/// In the modes `chart`, `axes` and `plugins`, the line has the key `host`
+/// of the define `HOST`.
+/// Each line also has the batch percentiles of the frames
+/// ([stressBatchFigures]): the timed window runs from the first published
+/// figures after the first 30 frames to the last published figures of the
+/// scenario, and it splits into `BATCHES` batches. The keys are `batches`
+/// (the batches with frames), `batchFrames`, `buildP50Ms`, `buildP90Ms`,
+/// `rasterP50Ms` and `rasterP90Ms`, Dart `null` for a window with no frame.
+/// The engine of a profile or release build reports the frame timings in
+/// groups (each second or each 100 frames). Thus a scenario of such a build
+/// waits for the timings of its window, at most 3 seconds, before its line.
+/// A debug build (also a widget test) prints the line at once.
 /// Fresh processes give the most stable figures: run one scenario at a time
 /// with `--dart-define=MODE=<mode> --dart-define=SCENARIO=<N>x<M>`.
 void main() {
@@ -362,10 +469,11 @@ void main() {
 /// The app of the profiling entry.
 class StressProfileApp extends StatefulWidget {
   /// Creates the app. [mode], [scenarios], [scale], [yScale], [autoSkip],
-  /// [type], [showLine], [call] and [pluginCase] default to [stressMode],
-  /// [stressScenarios], [stressScale], [stressYScale], [stressAutoSkip],
-  /// [stressType], [stressShowLine], [stressCall] and [stressPluginCase],
-  /// the values of the defines. A test gives them.
+  /// [type], [showLine], [call], [pluginCase] and [host] default to
+  /// [stressMode], [stressScenarios], [stressScale], [stressYScale],
+  /// [stressAutoSkip], [stressType], [stressShowLine], [stressCall],
+  /// [stressPluginCase] and [stressHost], the values of the defines. A test
+  /// gives them.
   const StressProfileApp({
     super.key,
     this.mode,
@@ -377,6 +485,7 @@ class StressProfileApp extends StatefulWidget {
     this.showLine,
     this.call,
     this.pluginCase,
+    this.host,
   });
 
   /// The mode of the scenarios, or Dart `null` for [stressMode].
@@ -410,6 +519,9 @@ class StressProfileApp extends StatefulWidget {
   /// [stressPluginCase].
   final StressPluginCase? pluginCase;
 
+  /// The host of the chart, or Dart `null` for [stressHost].
+  final StressHost? host;
+
   @override
   State<StressProfileApp> createState() => _StressProfileAppState();
 }
@@ -418,6 +530,24 @@ class _StressProfileAppState extends State<StressProfileApp> {
   int _index = 0;
   final List<StressStats> _window = [];
   Timer? _timer;
+
+  /// The frames of the timings callback since the last line.
+  final List<StressFrame> _frames = [];
+
+  /// Whether the engine reported any frame timing.
+  bool _timed = false;
+
+  /// The frame time stamps of the first published figures after the first
+  /// 30 frames, and of the last published figures, of the scenario.
+  int? _windowStart;
+  int? _windowEnd;
+
+  /// The line of the scenario whose timer fired, while it waits for the
+  /// timings of its window.
+  Map<String, Object?>? _pending;
+  Timer? _pendingTimer;
+
+  StressHost get _host => widget.host ?? stressHost;
 
   StressMode get _mode => widget.mode ?? stressMode;
 
@@ -441,13 +571,83 @@ class _StressProfileAppState extends State<StressProfileApp> {
   @override
   void initState() {
     super.initState();
+    SchedulerBinding.instance.addTimingsCallback(_onTimings);
     _next();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _pendingTimer?.cancel();
+    SchedulerBinding.instance.removeTimingsCallback(_onTimings);
     super.dispose();
+  }
+
+  void _onTimings(List<FrameTiming> timings) {
+    _timed = true;
+    for (final timing in timings) {
+      _frames.add((
+        vsync: timing.timestampInMicroseconds(FramePhase.vsyncStart),
+        build: timing.buildDuration.inMicroseconds,
+        raster: timing.rasterDuration.inMicroseconds,
+      ));
+    }
+    final end = _windowEnd;
+    if (_pending != null &&
+        (end == null || _frames.any((frame) => frame.vsync >= end))) {
+      _finish();
+    }
+  }
+
+  /// Records the frame of the published [stats] of the scenario [index].
+  void _onStats(int index, StressStats stats) {
+    if (index != _index || _pending != null) return;
+    _window.add(stats);
+    if (stats.frames > 30) {
+      final now = SchedulerBinding.instance.currentSystemFrameTimeStamp;
+      _windowStart ??= now.inMicroseconds;
+      _windowEnd = now.inMicroseconds;
+    }
+  }
+
+  /// Prints the [_pending] line with the batch percentiles of its window,
+  /// then starts the next scenario.
+  void _finish() {
+    final line = _pending!;
+    _pending = null;
+    _pendingTimer?.cancel();
+    _pendingTimer = null;
+    final start = _windowStart;
+    final end = _windowEnd;
+    final batches = start == null || end == null
+        ? null
+        : stressBatchFigures(
+            _frames,
+            start: start,
+            end: end,
+            batches: stressBatches,
+          );
+    String? ms(double? value) => value?.toStringAsFixed(2);
+    line.addAll({
+      'batches': batches?.batches,
+      'batchFrames': batches?.frames ?? 0,
+      'buildP50Ms': ms(batches?.buildP50Ms),
+      'buildP90Ms': ms(batches?.buildP90Ms),
+      'rasterP50Ms': ms(batches?.rasterP50Ms),
+      'rasterP90Ms': ms(batches?.rasterP90Ms),
+    });
+    debugPrint('STRESS ${jsonEncode(line)}');
+    _window.clear();
+    _frames.clear();
+    _windowStart = null;
+    _windowEnd = null;
+    if (!mounted) return;
+    if (_index + 1 < _scenarios.length) {
+      setState(() => _index++);
+      _next();
+    } else {
+      debugPrint('STRESS done');
+    }
   }
 
   void _next() {
@@ -461,64 +661,72 @@ class _StressProfileAppState extends State<StressProfileApp> {
                   ? 0
                   : stats.map(f).reduce((a, b) => a + b) / stats.length)
               .toStringAsFixed(2);
-      debugPrint(
-        'STRESS ${jsonEncode({
-          'mode': _mode.name,
-          'n': n,
-          'm': m,
-          'fps': avg((s) => s.fps),
-          'drawMs': avg((s) => s.drawMs),
-          'updateMs': avg((s) => s.updateMs),
-          if (!stressLine) 'line': false,
-          if (_mode == StressMode.chart) ...{
-            'animatorMs': avg((s) => s.animatorMs),
-            'call': _call.name,
-            'type': _type.name,
-            'sharing': last?.sharing ?? _type.sharing,
-            'scriptable': stressScriptable,
-            if (_showLine) 'showLine': true,
-            'elementsMs': avg((s) => s.elementsMs),
-            'layoutMs': avg((s) => s.layoutMs),
-            'datasetsUpdateMs': avg((s) => s.datasetsUpdateMs),
-            'datasetsDrawMs': avg((s) => s.datasetsDrawMs),
-          },
-          if (_mode == StressMode.axes) ...{
-            'call': _call.name,
-            'scale': _scale.name,
-            'yScale': _yScale.name,
-            'autoSkip': _autoSkip,
-            'ticks': last?.ticks,
-            'rotation': last?.rotation.toStringAsFixed(2),
-            'elementsMs': avg((s) => s.elementsMs),
-            'layoutMs': avg((s) => s.layoutMs),
-            'datasetsUpdateMs': avg((s) => s.datasetsUpdateMs),
-            'datasetsDrawMs': avg((s) => s.datasetsDrawMs),
-          },
-          if (_mode == StressMode.plugins) ...{
-            'animatorMs': avg((s) => s.animatorMs),
-            'call': _call.name,
-            'scene': _pluginCase.scene.name,
-            'benchCase': _pluginCase.scene.benchId,
-            ..._pluginCase.benchKeys,
-            'elementsMs': avg((s) => s.elementsMs),
-            'layoutMs': avg((s) => s.layoutMs),
-            'datasetsUpdateMs': avg((s) => s.datasetsUpdateMs),
-            'datasetsDrawMs': avg((s) => s.datasetsDrawMs),
-            if (tooltip) 'tooltipDrawMs': avg((s) => s.tooltipDrawMs),
-          },
-          'buildMs': avg((s) => s.buildMs),
-          'buildMaxMs': last?.buildMaxMs.toStringAsFixed(2),
-          'rasterMs': avg((s) => s.rasterMs),
-          'rasterMaxMs': last?.rasterMaxMs.toStringAsFixed(2),
-        })}',
-      );
-      _window.clear();
-      if (_index + 1 < _scenarios.length) {
-        setState(() => _index++);
-        _next();
-      } else {
-        debugPrint('STRESS done');
+      _pending = {
+        'mode': _mode.name,
+        'n': n,
+        'm': m,
+        'fps': avg((s) => s.fps),
+        'drawMs': avg((s) => s.drawMs),
+        'updateMs': avg((s) => s.updateMs),
+        if (!stressLine) 'line': false,
+        if (_mode == StressMode.chart) ...{
+          'animatorMs': avg((s) => s.animatorMs),
+          'call': _call.name,
+          'type': _type.name,
+          'sharing': last?.sharing ?? _type.sharing,
+          'scriptable': stressScriptable,
+          if (_showLine) 'showLine': true,
+          'elementsMs': avg((s) => s.elementsMs),
+          'layoutMs': avg((s) => s.layoutMs),
+          'datasetsUpdateMs': avg((s) => s.datasetsUpdateMs),
+          'datasetsDrawMs': avg((s) => s.datasetsDrawMs),
+        },
+        if (_mode == StressMode.axes) ...{
+          'call': _call.name,
+          'scale': _scale.name,
+          'yScale': _yScale.name,
+          'autoSkip': _autoSkip,
+          'ticks': last?.ticks,
+          'rotation': last?.rotation.toStringAsFixed(2),
+          'elementsMs': avg((s) => s.elementsMs),
+          'layoutMs': avg((s) => s.layoutMs),
+          'datasetsUpdateMs': avg((s) => s.datasetsUpdateMs),
+          'datasetsDrawMs': avg((s) => s.datasetsDrawMs),
+        },
+        if (_mode == StressMode.plugins) ...{
+          'animatorMs': avg((s) => s.animatorMs),
+          'call': _call.name,
+          'scene': _pluginCase.scene.name,
+          'benchCase': _pluginCase.scene.benchId,
+          ..._pluginCase.benchKeys,
+          'elementsMs': avg((s) => s.elementsMs),
+          'layoutMs': avg((s) => s.layoutMs),
+          'datasetsUpdateMs': avg((s) => s.datasetsUpdateMs),
+          'datasetsDrawMs': avg((s) => s.datasetsDrawMs),
+          if (tooltip) 'tooltipDrawMs': avg((s) => s.tooltipDrawMs),
+        },
+        if (_mode.runsChart) 'host': _host.name,
+        'buildMs': avg((s) => s.buildMs),
+        'buildMaxMs': last?.buildMaxMs.toStringAsFixed(2),
+        'rasterMs': avg((s) => s.rasterMs),
+        'rasterMaxMs': last?.rasterMaxMs.toStringAsFixed(2),
+      };
+      // A profile or release build reports the timings in groups: wait for
+      // the group of the last frame of the window, at most 3 seconds. A
+      // debug build reports each frame at once, and a run without timings
+      // goes on.
+      if (!_timed || kDebugMode) {
+        _finish();
+        return;
       }
+      final end = _windowEnd;
+      if (end == null || _frames.any((frame) => frame.vsync >= end)) {
+        _finish();
+        return;
+      }
+      _pendingTimer = Timer(const Duration(seconds: 3), () {
+        if (_pending != null) _finish();
+      });
     });
   }
 
@@ -546,13 +754,13 @@ class _StressProfileAppState extends State<StressProfileApp> {
           initialAutoSkip: _autoSkip,
           initialPluginCase: _pluginCase,
           autoStart: true,
+          host: _host,
           // The frame after the timer of a scenario runs the old StressDemo
           // once more, before the build that disposes it. Its last figures
           // belong to its own scenario: they must not reach the window of
-          // the next one. N and M cannot tell two scenarios apart.
-          onStats: (stats) {
-            if (index == _index) _window.add(stats);
-          },
+          // the next one. N and M cannot tell two scenarios apart. The
+          // figures after the timer do not reach the window either.
+          onStats: (stats) => _onStats(index, stats),
         ),
       ),
     );

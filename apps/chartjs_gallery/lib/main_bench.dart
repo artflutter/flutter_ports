@@ -14,8 +14,12 @@ import 'package:flutter/material.dart';
 /// eight `axes` cases, and the twelve cases `chart.<type>` of Chart.js ADR
 /// 0031 section 7 (`bar`, `bubble`, `doughnut`, `pie`, `polarArea` and
 /// `radar`, each with `draw` and `update`). The selector `chart` selects 16
-/// cases. `CASES=a,b,c` selects the cases of Chart.js ADR 0021 section 8. A
-/// selector that selects no case throws an [ArgumentError] at the start.
+/// cases. `CASES=a,b,c` selects the cases of Chart.js ADR 0021 section 8.
+/// The cases of the plugins of phase 8 follow, and the cases `motion.line`
+/// and `motion.bar` of phase 9 come last: `CASES=motion` selects the two
+/// cases of the night series A-N3 (an update in the default mode with the
+/// default animations). A selector that selects no case throws an
+/// [ArgumentError] at the start.
 final List<ChartBenchCase> benchCases = selectChartBenchCases(
   const String.fromEnvironment('CASES'),
 );

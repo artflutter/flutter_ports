@@ -26,8 +26,6 @@ import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
-    show UiCanvasElement;
 import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 // The typed options of Chart.js ADR 0018. The prefix keeps them apart from
@@ -43,6 +41,7 @@ import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show ChartArea;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 
 export 'package:chartjs_gallery/demo/stress_chart_config.dart'
     show StressChartType, stressAnimateMs, stressArcCounts, stressPointCounts;
@@ -101,6 +100,26 @@ enum StressMode {
   /// Whether the mode runs a real `Chart` on a chart host of its own:
   /// [chart], [axes] and [plugins].
   bool get runsChart => this == chart || this == axes || this == plugins;
+}
+
+/// The widget that hosts the chart of the modes [StressMode.chart],
+/// [StressMode.axes] and [StressMode.plugins] (the night series A-N1 of
+/// phase 9: the overhead of `ChartView`, Chart.js ADR 0049).
+enum StressHost {
+  /// The gallery host `ChartCanvas` (`lib/demo/chart_canvas.dart`): it
+  /// makes the chart in a post-frame callback after its first frame. The
+  /// chart is a `_StressChart`, which times its draws itself.
+  canvas,
+
+  /// The public widget `ChartView`: it starts the chart in the first layout
+  /// of its host. The widget makes a plain `Chart` of the same config, so
+  /// two more inline plugins time the draws (`_PluginMeter`): the first
+  /// inline plugin marks the start in `beforeDraw`, the last one adds the
+  /// time in `afterDraw`. Its `drawMs` thus has no `clear()` and no
+  /// `beforeDraw` hook of a registered plugin. The stress loop does not
+  /// follow the `TickerMode` of this host: the widget mutes its chart
+  /// itself.
+  view,
 }
 
 /// The call of each frame in the modes [StressMode.chart],
@@ -593,7 +612,8 @@ class StressDemo extends StatefulWidget {
   /// [StressChartCall.frame].
   /// [autoStart] starts the loop when the chart exists. [onStats] receives
   /// each published [StressStats]. They let a profiling entry point
-  /// (`lib/main_stress.dart`) or a test drive the tab.
+  /// (`lib/main_stress.dart`) or a test drive the tab. [host] selects the
+  /// widget of the chart of the modes with a chart ([StressHost]).
   const StressDemo({
     this.initialMode = StressMode.primitives,
     this.initialN,
@@ -610,6 +630,7 @@ class StressDemo extends StatefulWidget {
     this.initialPluginCase = const StressPluginCase(StressPluginScene.legend),
     this.autoStart = false,
     this.onStats,
+    this.host = StressHost.canvas,
     super.key,
   });
 
@@ -663,6 +684,11 @@ class StressDemo extends StatefulWidget {
   /// Receives the figures each time the readout updates.
   final ValueChanged<StressStats>? onStats;
 
+  /// The widget that hosts the chart of the modes [StressMode.chart],
+  /// [StressMode.axes] and [StressMode.plugins]. The other modes draw on the
+  /// demo canvas.
+  final StressHost host;
+
   @override
   State<StressDemo> createState() => StressDemoState();
 }
@@ -699,8 +725,17 @@ class StressDemoState extends State<StressDemo> {
   int? _frameId;
 
   // The modes [StressMode.chart] and [StressMode.axes]: the chart, its
-  // dataset data and the timing plugin.
-  _StressChart? _stressChart;
+  // dataset data and the timing plugin. A [_StressChart] on the host
+  // [StressHost.canvas], a plain chart of a ChartView on [StressHost.view].
+  Chart? _stressChart;
+
+  // The host [StressHost.view]: the config of the ChartView of the host key
+  // [_viewKey], the meter of its plugins, and the meter of each chart that a
+  // ChartView made.
+  Object? _viewKey;
+  AnyObject? _viewConfig;
+  late _PluginMeter _viewMeter;
+  final Expando<_StressMeter> _viewMeters = Expando('stress meters');
   List<Object?> _chartData = const [];
   final StressChartTiming _timing = StressChartTiming();
 
@@ -1088,7 +1123,8 @@ class StressDemoState extends State<StressDemo> {
     _sceneBuilds++;
   }
 
-  /// `new Chart(canvas, config)` of the mode [StressMode.chart]: one dataset
+  /// The config of `new Chart(canvas, config)` of the mode
+  /// [StressMode.chart]: one dataset
   /// of N items of the chart type at the values of the moving points, with
   /// `animation: false`, or the looping animation of
   /// [StressChartCall.animate]. `stressChartConfig` gives the config, which
@@ -1097,26 +1133,23 @@ class StressDemoState extends State<StressDemo> {
   /// The inline plugin `stressLabels` draws the M labels and the title in
   /// its `afterDraw` hook, as the other modes draw them after their items.
   /// The plugin of [StressChartTiming] times the parts.
-  Chart _createChart(UiCanvasElement canvas) {
+  AnyObject _chartConfig() {
     registerGalleryComponents();
     final scene = _chartScene = StressChartScene(_type, _n, _field);
     _chartData = scene.data;
-    return _StressChart(
-      canvas,
-      stressChartConfig(
-        scene: scene,
-        scriptable: _scriptable,
-        showLine: _effectiveShowLine,
-        animate: _call == StressChartCall.animate,
-        plugins: [_labelsPlugin, _timing.plugin],
-      ),
+    return stressChartConfig(
+      scene: scene,
+      scriptable: _scriptable,
+      showLine: _effectiveShowLine,
+      animate: _call == StressChartCall.animate,
+      plugins: [_labelsPlugin, _timing.plugin],
     );
   }
 
-  /// `new Chart(canvas, config)` of the mode [StressMode.axes]: a
-  /// `LineController` chart on the scales of `stressAxesConfig`, and the
-  /// timing plugin of [StressChartTiming].
-  Chart _createAxesChart(UiCanvasElement canvas) {
+  /// The config of `new Chart(canvas, config)` of the mode
+  /// [StressMode.axes]: a `LineController` chart on the scales of
+  /// `stressAxesConfig`, and the timing plugin of [StressChartTiming].
+  AnyObject _axesChartConfig() {
     registerGalleryComponents();
     final scene = _axesScene = StressAxesScene(
       _n,
@@ -1125,24 +1158,21 @@ class StressDemoState extends State<StressDemo> {
       positions: _field,
     );
     _chartData = scene.data;
-    return _StressChart(
-      canvas,
-      stressAxesConfig(
-        scene: scene,
-        autoSkip: _autoSkip,
-        plugins: [_labelsPlugin, _timing.plugin],
-      ),
+    return stressAxesConfig(
+      scene: scene,
+      autoSkip: _autoSkip,
+      plugins: [_labelsPlugin, _timing.plugin],
     );
   }
 
-  /// `new Chart(canvas, config)` of the mode [StressMode.plugins]: the
-  /// config of the benchmark case of the plugin case and the call
-  /// ([stressPluginBenchCase]) for N points in each dataset, made for the
-  /// host by [stressHostConfig]. The config keeps the timing plugins of the
-  /// case: the four parts of `StressChartTiming`, and the part
-  /// `tooltipDraw` in the tooltip scenes. The inline plugin `stressLabels`
-  /// comes first, as in the mode [StressMode.chart].
-  Chart _createPluginChart(UiCanvasElement canvas) {
+  /// The config of `new Chart(canvas, config)` of the mode
+  /// [StressMode.plugins]: the config of the benchmark case of the plugin
+  /// case and the call ([stressPluginBenchCase]) for N points in each
+  /// dataset, made for the host by [stressHostConfig]. The config keeps the
+  /// timing plugins of the case: the four parts of `StressChartTiming`, and
+  /// the part `tooltipDraw` in the tooltip scenes. The inline plugin
+  /// `stressLabels` comes first, as in the mode [StressMode.chart].
+  AnyObject _pluginChartConfig() {
     registerGalleryComponents();
     final scene = _pluginScene = stressPluginBenchCase(
       _pluginCase,
@@ -1154,7 +1184,55 @@ class StressDemoState extends State<StressDemo> {
       ...config['plugins']! as List<Object?>,
     ];
     _chartData = const [];
-    return _StressChart(canvas, config);
+    return config;
+  }
+
+  /// The host of the chart of [config] for the host key [hostKey], with the
+  /// key [key] and the height [height] ([StressHost]): a [ChartCanvas] that
+  /// makes a [_StressChart] of a new config, or a [ChartView] of one config
+  /// for each host key, with the plugins of a [_PluginMeter] around its
+  /// inline plugins. [onChart] gets the chart.
+  Widget _chartHost({
+    required Object hostKey,
+    required String key,
+    required double height,
+    required AnyObject Function() config,
+    required ValueChanged<Chart> onChart,
+  }) {
+    if (widget.host == StressHost.canvas) {
+      return ChartCanvas(
+        key: ValueKey(key),
+        height: height,
+        create: (canvas) => _StressChart(canvas, config()),
+        onChart: onChart,
+        onTickerModeChanged: _onTickerModeChanged,
+      );
+    }
+    // One config for each host: a rebuild of the tab gives the ChartView
+    // the same Map, thus no update (Chart.js ADR 0049, section 4).
+    final viewKey = (_mode, hostKey);
+    if (_viewKey != viewKey || _viewConfig == null) {
+      final meter = _viewMeter = _PluginMeter();
+      final viewConfig = _viewConfig = config();
+      viewConfig['plugins'] = <Object?>[
+        meter.first,
+        ...viewConfig['plugins']! as List<Object?>,
+        meter.last,
+      ];
+      _viewKey = viewKey;
+    }
+    final meter = _viewMeter;
+    return SizedBox(
+      height: height,
+      child: ChartView(
+        key: ValueKey(key),
+        config: _viewConfig!,
+        onChartCreated: (chart) {
+          _viewMeters[chart] = meter;
+          onChart(chart);
+        },
+      ),
+    );
   }
 
   /// Brings a new chart of the mode [StressMode.plugins] into the state of
@@ -1162,7 +1240,7 @@ class StressDemoState extends State<StressDemo> {
   /// case (for example the hover and the end of the animations of the
   /// scene [StressPluginScene.still]). Then it drops the times and the
   /// parts of the construction.
-  void _preparePluginChart(_StressChart chart) {
+  void _preparePluginChart(Chart chart) {
     final scene = _pluginScene;
     if (scene == null) return;
     scene.prepare?.call(chart);
@@ -1170,7 +1248,7 @@ class StressDemoState extends State<StressDemo> {
     _fadeFrame = 0;
     _fadeShown = false;
     scene.takeParts?.call();
-    chart
+    _meterOf(chart)
       ..drawMicros = 0
       ..animatorMicros = 0;
   }
@@ -1283,7 +1361,12 @@ class StressDemoState extends State<StressDemo> {
   bool _animating = false;
 
   /// The chart that has the progress listener of [_animateFrame].
-  _StressChart? _listenedChart;
+  Chart? _listenedChart;
+
+  /// The draw meter of [chart]: the chart itself on the host
+  /// [StressHost.canvas], else the plugins of its ChartView.
+  _StressMeter _meterOf(Chart chart) =>
+      chart is _StressChart ? chart : _viewMeters[chart]!;
 
   /// One frame of the modes [StressMode.chart] and [StressMode.axes]: case
   /// (a) or case (b) of Chart.js ADR 0021, section 8.
@@ -1295,7 +1378,7 @@ class StressDemoState extends State<StressDemo> {
   /// parts count only the hooks of this call, as the draw time does: not the
   /// update at the construction of a chart, and not the update of a resize
   /// of its host.
-  void _chartFrame(_StressChart chart) {
+  void _chartFrame(Chart chart) {
     if (_mode == StressMode.plugins) {
       _pluginFrame(chart);
       return;
@@ -1311,7 +1394,7 @@ class StressDemoState extends State<StressDemo> {
         _chartScene?.write(_field);
       }
     }
-    chart.drawMicros = 0;
+    final meter = _meterOf(chart)..drawMicros = 0;
     final timing = _timing..reset();
     final watch = Stopwatch()..start();
     switch (_call) {
@@ -1325,8 +1408,8 @@ class StressDemoState extends State<StressDemo> {
         break;
     }
     final total = watch.elapsedMicroseconds;
-    _windowDrawMicros += chart.drawMicros;
-    _windowUpdateMicros += total - chart.drawMicros;
+    _windowDrawMicros += meter.drawMicros;
+    _windowUpdateMicros += total - meter.drawMicros;
     _windowElementsTicks += timing.elementsTicks;
     _windowLayoutTicks += timing.layoutTicks;
     _windowDatasetsUpdateTicks += timing.datasetsUpdateTicks;
@@ -1342,7 +1425,8 @@ class StressDemoState extends State<StressDemo> {
   /// first: it marks the time, and [_StressChart.draw] takes the time from
   /// the mark to the start of the draw, the tick of the animator. The
   /// figures of the animator frame come in the next frame.
-  void _animateFrame(_StressChart chart) {
+  void _animateFrame(Chart chart) {
+    final meter = _meterOf(chart);
     if (!_animating) {
       _animating = true;
       _chartScene?.write(_field);
@@ -1354,14 +1438,14 @@ class StressDemoState extends State<StressDemo> {
           }
         });
       }
-      chart.drawMicros = 0;
+      meter.drawMicros = 0;
       final watch = Stopwatch()..start();
       chart.update();
-      _windowUpdateMicros += watch.elapsedMicroseconds - chart.drawMicros;
+      _windowUpdateMicros += watch.elapsedMicroseconds - meter.drawMicros;
     }
-    _windowDrawMicros += chart.drawMicros;
-    _windowAnimatorMicros += chart.animatorMicros;
-    chart
+    _windowDrawMicros += meter.drawMicros;
+    _windowAnimatorMicros += meter.animatorMicros;
+    meter
       ..drawMicros = 0
       ..animatorMicros = 0
       ..markTick();
@@ -1395,7 +1479,7 @@ class StressDemoState extends State<StressDemo> {
   /// the last frame callback, also those of the animator callbacks. The
   /// events take the pointer positions from the elements before the
   /// timing.
-  void _pluginFrame(_StressChart chart) {
+  void _pluginFrame(Chart chart) {
     final scene = _pluginScene;
     if (scene == null) return;
     _scheduleFrame();
@@ -1415,17 +1499,19 @@ class StressDemoState extends State<StressDemo> {
         // The mode plugins has no call animate (stressCallsOf).
         break;
     }
-    _windowUpdateMicros += watch.elapsedMicroseconds - chart.drawMicros;
+    _windowUpdateMicros +=
+        watch.elapsedMicroseconds - _meterOf(chart).drawMicros;
     _takePluginFigures(chart, scene);
-    if (_pluginCase.scene == StressPluginScene.fade) chart.markTick();
+    if (_pluginCase.scene == StressPluginScene.fade) _meterOf(chart).markTick();
   }
 
   /// Adds the draw time, the animator time and the parts of [chart] since
   /// the last call to the window, and resets them.
-  void _takePluginFigures(_StressChart chart, ChartBenchScene scene) {
-    _windowDrawMicros += chart.drawMicros;
-    _windowAnimatorMicros += chart.animatorMicros;
-    chart
+  void _takePluginFigures(Chart chart, ChartBenchScene scene) {
+    final meter = _meterOf(chart);
+    _windowDrawMicros += meter.drawMicros;
+    _windowAnimatorMicros += meter.animatorMicros;
+    meter
       ..drawMicros = 0
       ..animatorMicros = 0;
     final parts = scene.takeParts?.call();
@@ -2210,20 +2296,20 @@ class StressDemoState extends State<StressDemo> {
                   if (_mode == StressMode.plugins) {
                     // A new N or plugin case gives a new host, thus a new
                     // chart.
+                    final hostKey = (_n, _pluginCase);
                     return KeyedSubtree(
-                      key: ValueKey((_n, _pluginCase)),
-                      child: ChartCanvas(
-                        key: const ValueKey('stress.plugins.host'),
+                      key: ValueKey(hostKey),
+                      child: _chartHost(
+                        hostKey: hostKey,
+                        key: 'stress.plugins.host',
                         height: height,
-                        create: _createPluginChart,
+                        config: _pluginChartConfig,
                         onChart: (chart) {
-                          final stressChart = _stressChart =
-                              chart as _StressChart;
+                          _stressChart = chart;
                           _animating = false;
-                          _preparePluginChart(stressChart);
+                          _preparePluginChart(chart);
                           _chartReady();
                         },
-                        onTickerModeChanged: _onTickerModeChanged,
                       ),
                     );
                   }
@@ -2234,30 +2320,27 @@ class StressDemoState extends State<StressDemo> {
                     // a new N, scale type or autoSkip (mode axes) gives a new
                     // host, thus a new chart. A ChartCanvas makes its chart
                     // only once.
+                    final Object hostKey = axes
+                        ? (_n, _scale, _yScale, _autoSkip)
+                        : (
+                            _n,
+                            _type,
+                            _scriptable,
+                            _effectiveShowLine,
+                            _call == StressChartCall.animate,
+                          );
                     return KeyedSubtree(
-                      key: ValueKey(
-                        axes
-                            ? (_n, _scale, _yScale, _autoSkip)
-                            : (
-                                _n,
-                                _type,
-                                _scriptable,
-                                _effectiveShowLine,
-                                _call == StressChartCall.animate,
-                              ),
-                      ),
-                      child: ChartCanvas(
-                        key: ValueKey(
-                          axes ? 'stress.axes.host' : 'stress.chart.host',
-                        ),
+                      key: ValueKey(hostKey),
+                      child: _chartHost(
+                        hostKey: hostKey,
+                        key: axes ? 'stress.axes.host' : 'stress.chart.host',
                         height: height,
-                        create: axes ? _createAxesChart : _createChart,
+                        config: axes ? _axesChartConfig : _chartConfig,
                         onChart: (chart) {
-                          _stressChart = chart as _StressChart;
+                          _stressChart = chart;
                           _animating = false;
                           _chartReady();
                         },
-                        onTickerModeChanged: _onTickerModeChanged,
                       ),
                     );
                   }
@@ -2355,21 +2438,33 @@ class StressDemoState extends State<StressDemo> {
   }
 }
 
-/// The `Chart` of the mode [StressMode.chart]: it adds the time of each
-/// `draw()` to [drawMicros], also the draw inside `update()`.
-///
-/// For [StressChartCall.animate], it also adds the time from the mark of
-/// [markTick] to the start of a draw in the same frame to [animatorMicros]:
-/// the tick of the animator before its draw.
-final class _StressChart extends Chart {
-  _StressChart(super.item, [super.userConfig]);
-
-  /// The clock of the marks.
-  static final Stopwatch _watch = Stopwatch()..start();
-
+/// The draw meter of a stress chart: the time of each `draw()`, also the
+/// draw inside `update()`, and the animator tick before a draw.
+abstract interface class _StressMeter {
   /// The microseconds of the draws since the last reset.
-  int drawMicros = 0;
+  abstract int drawMicros;
 
+  /// The microseconds of the animator ticks since the last reset.
+  abstract int animatorMicros;
+
+  /// Marks the time in a frame callback before the animator callback.
+  void markTick();
+}
+
+/// The clock of the marks of the meters.
+final Stopwatch _meterWatch = Stopwatch()..start();
+
+/// The time stamp of the current frame, or Dart `null` outside the frame
+/// callbacks.
+Duration? get _meterFrame {
+  final scheduler = SchedulerBinding.instance;
+  return scheduler.schedulerPhase == SchedulerPhase.transientCallbacks
+      ? scheduler.currentFrameTimeStamp
+      : null;
+}
+
+/// The mark of [markTick] and the animator time of a meter.
+mixin _TickMark {
   /// The microseconds of the animator ticks since the last reset.
   int animatorMicros = 0;
 
@@ -2379,30 +2474,75 @@ final class _StressChart extends Chart {
   /// The time stamp of the frame of the mark.
   Duration? _markFrame;
 
-  /// The time stamp of the current frame, or Dart `null` outside the frame
-  /// callbacks.
-  static Duration? get _frame {
-    final scheduler = SchedulerBinding.instance;
-    return scheduler.schedulerPhase == SchedulerPhase.transientCallbacks
-        ? scheduler.currentFrameTimeStamp
-        : null;
-  }
-
   /// Marks the time in a frame callback before the animator callback.
   void markTick() {
-    _markFrame = _frame;
-    _markMicros = _markFrame == null ? null : _watch.elapsedMicroseconds;
+    _markFrame = _meterFrame;
+    _markMicros = _markFrame == null ? null : _meterWatch.elapsedMicroseconds;
   }
+
+  /// Adds the time from the mark to now to [animatorMicros] when the mark is
+  /// of the current frame, at the start of a draw.
+  void _takeMark() {
+    final mark = _markMicros;
+    if (mark != null && _meterFrame == _markFrame) {
+      animatorMicros += _meterWatch.elapsedMicroseconds - mark;
+    }
+    _markMicros = null;
+  }
+}
+
+/// The `Chart` of the host [StressHost.canvas]: it adds the time of each
+/// `draw()` to [drawMicros], also the draw inside `update()`.
+///
+/// For [StressChartCall.animate], it also adds the time from the mark of
+/// [markTick] to the start of a draw in the same frame to [animatorMicros]:
+/// the tick of the animator before its draw.
+final class _StressChart extends Chart with _TickMark implements _StressMeter {
+  _StressChart(super.item, [super.userConfig]);
+
+  @override
+  int drawMicros = 0;
 
   @override
   void draw() {
-    final mark = _markMicros;
-    if (mark != null && _frame == _markFrame) {
-      animatorMicros += _watch.elapsedMicroseconds - mark;
-    }
-    _markMicros = null;
+    _takeMark();
     final watch = Stopwatch()..start();
     super.draw();
     drawMicros += watch.elapsedMicroseconds;
   }
+}
+
+/// The draw meter of the chart of a `ChartView` ([StressHost.view]): the
+/// inline plugin [first] marks the start of each draw in `beforeDraw`, and
+/// the inline plugin [last] adds the time to its end in `afterDraw`. The
+/// host puts [first] before the inline plugins of the config and [last]
+/// after them. The `clear()` of `draw()` and the `beforeDraw` hooks of the
+/// registered plugins come before the mark (core.controller.js:715-735).
+final class _PluginMeter with _TickMark implements _StressMeter {
+  @override
+  int drawMicros = 0;
+
+  /// The start of the current draw, or Dart `null` outside a draw.
+  int? _drawStart;
+
+  /// The first inline plugin of the chart.
+  late final AnyObject first = <String, Object?>{
+    'id': 'stressDrawStart',
+    'beforeDraw': (Object? chart, Object? args, Object? options) {
+      _takeMark();
+      _drawStart = _meterWatch.elapsedMicroseconds;
+    },
+  };
+
+  /// The last inline plugin of the chart.
+  late final AnyObject last = <String, Object?>{
+    'id': 'stressDrawEnd',
+    'afterDraw': (Object? chart, Object? args, Object? options) {
+      final start = _drawStart;
+      if (start != null) {
+        drawMicros += _meterWatch.elapsedMicroseconds - start;
+      }
+      _drawStart = null;
+    },
+  };
 }
