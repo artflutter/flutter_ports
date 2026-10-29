@@ -6,7 +6,7 @@
 /// Each interface gets its members when a ported caller needs them. A
 /// TypeScript property becomes an abstract getter, and a setter is added when
 /// a ported caller assigns through the type. `number` is `double`, also for
-/// an index (Chart.js ADR 0032). An inline object type that ported code only
+/// an index (Chart.js ADR 0045). An inline object type that ported code only
 /// reads is a record.
 ///
 /// `index.d.ts` also names classes of other modules: `Element`

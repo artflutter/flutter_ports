@@ -81,7 +81,7 @@ List<Object?> _generateLabels(types.Chart chart) {
 ///
 /// The keys keep the order of the upstream literal. A key of `style` that is
 /// absent gives [jsGet]'s `undefined`, as the JS property read does. `index`
-/// is a `double` (Chart.js ADR 0032).
+/// is a `double` (Chart.js ADR 0045).
 Map<String, Object?> _item(
   types.Chart chart,
   Object? label,

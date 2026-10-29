@@ -119,7 +119,7 @@ const bool Function(Object? value) isFinite = _isNumberFinite;
 /// @param value - The value to return if defined.
 /// @param defaultValue - The value to return if `value` is not finite.
 ///
-/// The result is a `double`, also for an `int` [value] (Chart.js ADR 0032).
+/// The result is a `double`, also for an `int` [value] (Chart.js ADR 0045).
 double finiteOrDefault(Object? value, double defaultValue) {
   return _isNumberFinite(value) ? (value! as num).toDouble() : defaultValue;
 }

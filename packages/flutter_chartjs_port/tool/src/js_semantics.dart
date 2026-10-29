@@ -3,7 +3,7 @@
 /// The JS-semantics check of porting-flow.md section 4, tool 3.
 ///
 /// It flags Dart calls and operators whose results differ from the
-/// JavaScript that a ported file translates (Chart.js ADR 0032). It examines
+/// JavaScript that a ported file translates (Chart.js ADR 0045). It examines
 /// the files whose header block names a `js` project of
 /// `tool/port_sources.yaml`, or a project that the file does not list. A site
 /// passes with a `// js-ok: <reason>` comment at the end of its line, or with
@@ -96,7 +96,7 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     r'\bpow\s*\(',
     'pow returns an int for int operands, and the int can overflow; JS '
         'Math.pow computes with doubles. Pass double operands and add js-ok '
-        'with the reason (Chart.js ADR 0032).',
+        'with the reason (Chart.js ADR 0045).',
   ),
   JsSemanticsRule(
     '.toString()',
@@ -117,7 +117,7 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     'List.sort is not stable on the VM, in dart2wasm and in DDC; '
         'Array.prototype.sort is. Use jsSort.',
   ),
-  // The sorts of package:collection (Chart.js ADR 0032, Sort). A type
+  // The sorts of package:collection (Chart.js ADR 0045, Sort). A type
   // argument can come before the argument list.
   JsSemanticsRule(
     'mergeSort(',
@@ -133,7 +133,7 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     '.sorted(',
     r'\.sorted' + _typeArguments,
     'sorted calls List.sort, which is not stable on the VM, in dart2wasm '
-        'and in DDC; Array.prototype.sort is (Chart.js ADR 0032, Sort). Use '
+        'and in DDC; Array.prototype.sort is (Chart.js ADR 0045, Sort). Use '
         'jsSort.',
   ),
   JsSemanticsRule(
@@ -161,13 +161,13 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     r'\.sortRange' + _typeArguments,
     _quickSortCollectionSort,
   ),
-  // The clock of Date.now() from phase 5 (Chart.js ADR 0032, section 6).
+  // The clock of Date.now() from phase 5 (Chart.js ADR 0045, section 6).
   JsSemanticsRule(
     'DateTime.now(',
     r'\bDateTime\s*\.\s*now\s*\(',
     'DateTime.now() reads the system clock: FakeAsync and withClock do not '
         'move it, so animations do not run in fake time. Use jsDateNow, '
-        'which reads clock.now() (Chart.js ADR 0032, section 6).',
+        'which reads clock.now() (Chart.js ADR 0045, section 6).',
   ),
 ];
 
@@ -179,11 +179,11 @@ const String _typeArguments = r'\s*(?:<(?:[^<>;{}]|<[^<>;{}]*>)*>)?\s*\(';
 const String _stableCollectionSort =
     'this package:collection sort is stable, but it does not change the '
     'comparator result to its sign, with NaN as 0, as Array.prototype.sort '
-    'does (Chart.js ADR 0032, Sort). Use jsSort.';
+    'does (Chart.js ADR 0045, Sort). Use jsSort.';
 
 const String _quickSortCollectionSort =
     'this package:collection sort calls quickSortBy, which is not stable; '
-    'Array.prototype.sort is (Chart.js ADR 0032, Sort). Use jsSort.';
+    'Array.prototype.sort is (Chart.js ADR 0045, Sort). Use jsSort.';
 
 /// The `dart:math` functions whose results differ from the JS `Math`
 /// builtins of the reference engine. `pow` has its own rule.
@@ -191,7 +191,7 @@ const String _quickSortCollectionSort =
 /// `sin` and `cos` are in the list: at a site whose result reaches a
 /// layout, a scale, an element property or a hit test, ported code calls
 /// `jsSin` and `jsCos`. A display-only site keeps `dart:math` with js-ok
-/// (Chart.js ADR 0032).
+/// (Chart.js ADR 0045).
 const List<String> transcendentalFunctions = [
   'sin',
   'cos',
@@ -205,7 +205,7 @@ const List<String> transcendentalFunctions = [
 ];
 
 /// The [transcendentalFunctions] with a display-only exception (Chart.js ADR
-/// 0032).
+/// 0045).
 const Set<String> _trigFunctions = {'sin', 'cos'};
 
 final RegExp _jsOk = RegExp(r'^//\s*js-ok:(.*)$');
@@ -286,12 +286,12 @@ String _mathFunctionMessage(String function) =>
     )
     ? 'dart:math $function calls the host C library on the VM and the '
           'browser on the web. JS Math.$function gives the fdlibm bits of the '
-          'reference engine (Chart.js ADR 0032). Call '
+          'reference engine (Chart.js ADR 0045). Call '
           'js${function[0].toUpperCase()}${function.substring(1)}, or add '
           'js-ok when the result reaches only the canvas or an easing value.'
     : 'dart:math $function calls the host C library on the VM and the '
           'browser on the web. JS Math.$function gives the fdlibm bits of the '
-          'reference engine (Chart.js ADR 0032). Call the lib/src/js port of '
+          'reference engine (Chart.js ADR 0045). Call the lib/src/js port of '
           'the function, or add js-ok with the reason.';
 
 /// Adds a finding for each site in [sites] of the file [path] that has no
@@ -409,7 +409,7 @@ String _normalized(String path) {
 ///
 /// The `max`/`min` rule flags the calls and tear-offs of `dart:math` `max`
 /// and `min` whose type argument is `double` or `num`. Ported code calls
-/// `jsMax` and `jsMin` for them (Chart.js ADR 0032): on dart2wasm, the
+/// `jsMax` and `jsMin` for them (Chart.js ADR 0045): on dart2wasm, the
 /// generic functions box their `double` operands. The rule does not flag an
 /// `int` type argument.
 Future<Map<String, List<JsSite>>> resolvedSites(
@@ -499,7 +499,7 @@ final class _ResolvedSitesVisitor extends RecursiveAstVisitor<void> {
             '$name(',
             'dart:math $name with ${type!.getDisplayString()} operands '
                 'boxes them on dart2wasm. Call $js from '
-                'lib/src/js/js_math.dart (Chart.js ADR 0032), or add js-ok '
+                'lib/src/js/js_math.dart (Chart.js ADR 0045), or add js-ok '
                 'with the reason.',
           ),
         );

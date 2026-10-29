@@ -3,7 +3,7 @@
 /// Port of `src/core/core.scale.defaults.js`.
 ///
 /// Option objects are `Map<String, Object?>` and numbers are `double`
-/// (Chart.js ADRs 0032 and 0043). A scriptable option is a Dart closure
+/// (Chart.js ADRs 0043 and 0045). A scriptable option is a Dart closure
 /// (`lib/src/js/js_function.dart`). [Defaults] is the interface of the
 /// `defaults` object of `core.defaults.js`.
 library;

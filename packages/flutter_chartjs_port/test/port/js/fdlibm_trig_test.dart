@@ -34,6 +34,12 @@ void main() {
       expect(triples, hasLength(4040));
     });
 
+    // The frozen fdlibm data of Chart.js ADR 0045, section 2.
+    test('has the reference of the x64 Node.js v24.12.0', () {
+      expect(trigReferenceNode, 'v24.12.0');
+      expect(trigReferenceArch, 'x64');
+    });
+
     test('equals V8 $trigReferenceV8 on $trigReferenceArch Math.sin and '
         'Math.cos bit for bit', () {
       final mismatches = <String>[];

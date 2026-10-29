@@ -28,8 +28,8 @@
 //   its own id. This generator registers it before these cases and
 //   unregisters it after them. The test file does the same in a group.
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0:
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/controller_polar_area_reference.mjs

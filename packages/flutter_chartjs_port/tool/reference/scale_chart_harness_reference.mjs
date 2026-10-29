@@ -17,8 +17,8 @@
 // mock measured, and of a few more texts in other fonts. The cases are
 // fixed, so a rerun on the same Node.js and dist writes the same file.
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0:
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   node tool/reference/scale_chart_harness_reference.mjs \
 //     <build>/dist/chart.js

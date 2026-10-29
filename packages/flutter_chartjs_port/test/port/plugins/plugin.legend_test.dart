@@ -42,7 +42,7 @@ import 'plugin_legend_reference.dart';
 //
 // The reference group compares real charts with the charts of
 // tool/reference/plugin_legend_reference.mjs: a build of the pinned
-// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with the seven
+// Chart.js in Node.js v24.22.1 on arm64 (Chart.js ADR 0045), with the seven
 // plugins registered and `colors.enabled: false` in the defaults. Each case
 // is a unit case (the other plugins are `false`, Chart.js ADR 0041, section
 // 4), except the full cases (the names that start with `full:`), which have

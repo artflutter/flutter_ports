@@ -38,13 +38,13 @@
 // is `"<fn>"`. An error is `TypeError` for a TypeError and
 // `Error: <message>` for an Error. `ok` is no error.
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js v24.12.0
-// (on Apple silicon, the darwin-x64 build runs under Rosetta) and with the
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045) and with the
 // Dart SDK on the PATH (the script formats the output with `dart format`):
 //
 //   node tool/reference/controller_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0032). The script does not
+// The reference is V8 13.6 on arm64 (Chart.js ADR 0045). The script does not
 // stop on another architecture.
 
 import {execFileSync} from 'node:child_process';

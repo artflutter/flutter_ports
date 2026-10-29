@@ -52,14 +52,14 @@
 // fakes use only `+`, `-`, `*` and `/`, so the Dart fakes give the same
 // bits.
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0 (on Apple silicon, the darwin-x64 build runs under Rosetta) and
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045) and
 // with the Dart SDK on the PATH (the script formats the output with `dart
 // format`):
 //
 //   node tool/reference/filler_target_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0032). The script does not
+// The reference is V8 13.6 on arm64 (Chart.js ADR 0045). The script does not
 // stop on another architecture. It also stops unless each of the checkouts
 // third_party/Chart.js, third_party/kurkle-color and
 // third_party/chartjs-test-utils is at the `commit` of its entry in

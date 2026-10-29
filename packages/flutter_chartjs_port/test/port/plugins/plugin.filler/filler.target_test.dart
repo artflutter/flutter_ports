@@ -5,7 +5,7 @@
 // section 3 item 8; Chart.js ADR 0040): `decodeFill`, `resolveTarget`,
 // `getTargetPixel`, `getTargetValue`, `getTarget` with `segments`, and
 // `drawfill` on the mock context. The generator runs the pinned source
-// files in Node.js v24.12.0 on x64 with fakes of the chart, the metas and
+// files in Node.js v24.22.1 on arm64 with fakes of the chart, the metas and
 // the scales. The fakes of this file give the same values: they use only
 // `+`, `-`, `*` and `/`.
 //
@@ -528,9 +528,9 @@ void _expectValue(Object? actual, Object? expected, String path) {
 }
 
 void main() {
-  test('the reference comes from Node.js v24.12.0 on x64', () {
-    expect(fillerTargetReferenceNode, 'v24.12.0');
-    expect(fillerTargetReferenceArch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64', () {
+    expect(fillerTargetReferenceNode, 'v24.22.1');
+    expect(fillerTargetReferenceArch, 'arm64');
   });
 
   for (final kind in [

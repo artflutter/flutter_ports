@@ -37,7 +37,7 @@ import 'scale_reference.dart';
 //
 // The expected values are in scale_reference.dart, which
 // tool/reference/scale_reference.mjs writes from src/core/core.scale.js at
-// v4.5.1+7169e651 in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with the mock
+// the pin in Node.js v24.22.1 on arm64 (Chart.js ADR 0045), with the mock
 // context of chartjs-test-utils. Both sides use a test subclass of Scale with
 // fixed ticks and a linear mapping, a fake chart, and options that resolve
 // through the user options, `defaults.scale` and `descriptors.scale`. Names
@@ -585,9 +585,9 @@ final class _SubScale extends _TestScale {
 void main() {
   setUpDefaultsRestore();
 
-  test('the reference comes from Node.js v24.12.0 on x64', () {
-    expect(scaleReferenceNode, 'v24.12.0');
-    expect(scaleReferenceArch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64', () {
+    expect(scaleReferenceNode, 'v24.22.1');
+    expect(scaleReferenceArch, 'arm64');
   });
 
   group('the scale pipeline', () {

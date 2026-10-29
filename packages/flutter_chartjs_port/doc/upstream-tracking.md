@@ -317,7 +317,7 @@ Sections:
    without import-only, comment-only and annotation-only hunks (such as #10879).
 3. **JS-semantics hotspots.** Added `Math.round`, `Math.floor`, `Math.ceil`, `%`, `| 0`,
    `Math.log10`, `parseFloat`, `Number(`, `Date.now(`, string coercion and `.sort(`, for
-   [Chart.js ADR 0032](adr/0032-js-numeric-semantics.md).
+   [Chart.js ADR 0045](adr/0045-reference-engine-arm64.md).
 4. **Specs.** Added, removed and renamed cases (spec-case tracking).
 5. **Fixtures.** Added, removed and changed fixture configs, by config hash. The port compares no
    PNGs ([Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md)).

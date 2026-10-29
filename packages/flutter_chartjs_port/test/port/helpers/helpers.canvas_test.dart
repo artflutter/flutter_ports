@@ -16,13 +16,14 @@ import 'rounded_rect_upstream.dart';
 // come from the helpers of the chart.js 4.5.1 npm package
 // (dist/chart.umd.js) in Node.js v24.12.0 on x64.
 //
-// The call sequences of the canvas functions come from
+// The other call sequences of the canvas functions come from
 // src/helpers/helpers.canvas.ts at v4.5.1, run with type stripping in
 // Node.js v24.12.0 on x64 against a recording context with the parameter
 // lists of MockContext (harness-mock-optional-args). The drawPointLegend
 // sequences are in draw_point_reference.dart, which
-// tool/reference/draw_point_reference.mjs writes (Chart.js ADR 0032). The
-// tests compare every number with closeTo (Chart.js ADR 0034).
+// tool/reference/draw_point_reference.mjs writes on the reference engine
+// (Chart.js ADR 0045). The tests compare every number with closeTo
+// (Chart.js ADR 0034).
 
 /// A JavaScript font object literal, passed as a [FontSpec]. A null member
 /// is an absent key or JS `null`.
@@ -766,9 +767,9 @@ void main() {
   });
 
   group('drawPointLegend', () {
-    test('has the reference of Node.js v24.12.0 on x64', () {
-      expect(drawPointReferenceNode, 'v24.12.0');
-      expect(drawPointReferenceArch, 'x64');
+    test('has the reference of Node.js v24.22.1 on arm64', () {
+      expect(drawPointReferenceNode, 'v24.22.1');
+      expect(drawPointReferenceArch, 'arm64');
       expect(drawPointReference, hasLength(64));
     });
 

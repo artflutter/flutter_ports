@@ -536,6 +536,11 @@ void main() {
       expect(pairs, hasLength(10000));
     });
 
+    test('has the reference of Node.js v24.22.1 on arm64', () {
+      expect(numberToStringReferenceNode, 'v24.22.1');
+      expect(numberToStringReferenceArch, 'arm64');
+    });
+
     test('equals V8 $numberToStringReferenceV8 on '
         '$numberToStringReferenceArch String(x) for every input', () {
       final mismatches = <String>[];

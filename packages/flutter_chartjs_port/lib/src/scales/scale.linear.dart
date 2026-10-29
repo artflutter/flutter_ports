@@ -10,7 +10,7 @@
 /// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
 ///   scale reads an option with `options[key]` or [jsGet], and applies
 ///   [jsToNumber] before arithmetic.
-/// - Numbers are `double` (Chart.js ADR 0032).
+/// - Numbers are `double` (Chart.js ADR 0045).
 /// - The value methods take any JS value (Chart.js ADR 0025).
 ///   [LinearScale.getPixelForValue] starts with the port-only fast path for
 ///   a `double` of Chart.js ADR 0025, section 3.

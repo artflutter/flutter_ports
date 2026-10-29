@@ -6,14 +6,14 @@
 // are deterministic, so a rerun on the same Node.js writes the same file.
 // Nothing in lib/ or test/ runs this script (porting-flow.md section 4).
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js v24.12.0
-// (on Apple silicon, the darwin-x64 build runs under Rosetta):
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   node tool/reference/number_to_string_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0032). The script does not
+// The reference is V8 13.6 on arm64 (Chart.js ADR 0045). The script does not
 // stop on another architecture. Number::toString is exact, so other engines give
-// the same strings, but Chart.js ADR 0032 takes all reference data from one
+// the same strings, but Chart.js ADR 0045 takes these reference data from one
 // engine.
 
 import {writeFileSync} from 'node:fs';

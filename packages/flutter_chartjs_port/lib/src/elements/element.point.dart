@@ -335,7 +335,7 @@ class PointElement extends Element
   ///
   /// The test is strict: a mouse position at the distance `hitRadius +
   /// radius` is not in range. `Math.pow(v, 2)` is [jsSquare] (Chart.js ADR
-  /// 0032). Throws a [TypeError] when [options] is in the `undefined` state,
+  /// 0045). Throws a [TypeError] when [options] is in the `undefined` state,
   /// as the upstream property read of `undefined` does. Dart `null` for
   /// [mouseX] or [mouseY] is JS `null`, which the subtraction reads as 0.
   @override

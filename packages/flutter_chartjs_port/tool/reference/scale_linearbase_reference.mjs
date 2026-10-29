@@ -24,8 +24,8 @@
 // values, the results of parse for a list of JS values, and the warnings of
 // console.warn that name the scale, each as the list of its words.
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0:
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   node tool/reference/scale_linearbase_reference.mjs \
 //     <build>/dist/chart.js

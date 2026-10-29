@@ -28,8 +28,8 @@
 //   (report decision 2: plugin.legend_test.dart runs the legend with the
 //   light preset).
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0:
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/controller_pie_reference.mjs
@@ -102,7 +102,7 @@ const realLegend = named('realLegend', (chart) => ({
  * at its step 2 (the steps count from 0: only the index 3 hidden): the hit
  * point 12, (244, 268), is on the line x + y = 512, and query 10 compares
  * two equal distances. `Math.sin(3.665191429188092)` decides the item.
- * `jsSin` gives the V8 bits on every target (Chart.js ADR 0032). The case
+ * `jsSin` gives the V8 bits on every target (Chart.js ADR 0045). The case
  * pins the tie.
  */
 const two = (extra1, extra2, options = undefined) => ({

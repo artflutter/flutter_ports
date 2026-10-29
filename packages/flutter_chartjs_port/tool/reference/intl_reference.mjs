@@ -34,12 +34,12 @@
 // (porting-flow.md section 4). Check out the submodules first
 // (`dart run melos run upstream`).
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js v24.12.0
-// (on Apple silicon, the darwin-x64 build runs under Rosetta):
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   node tool/reference/intl_reference.mjs
 //
-// The reference is V8 13.6 with ICU 77.1 on x64 (Chart.js ADR 0032). The script does
+// The reference is V8 13.6 with ICU 78.3 on arm64 (Chart.js ADR 0045). The script does
 // not stop on another architecture.
 
 import {existsSync, writeFileSync} from 'node:fs';

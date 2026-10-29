@@ -9,7 +9,7 @@
 /// label to that List, and [CategoryScale.init] removes the added strings
 /// again at the next update (scale.category.js:4-12, :56-68).
 ///
-/// - Numbers are `double` (Chart.js ADR 0032). A label index is a `double`
+/// - Numbers are `double` (Chart.js ADR 0045). A label index is a `double`
 ///   too. A read of the labels at a value that is not an integer index in
 ///   the range gives the [undefined] sentinel, as JavaScript does.
 /// - The value methods take any JS value (Chart.js ADR 0025).

@@ -197,13 +197,13 @@ void _clipSelf(
       ctx.arc(x, y, clipWidth, endAngle - pi / 2, startAngle + pi / 2, true);
     } else if (borderJoinStyle == 'bevel') {
       final r = 2 * clipWidth * clipWidth;
-      // js-ok: display only (Chart.js ADR 0032)
+      // js-ok: display only (Chart.js ADR 0045)
       final endX = -r * math.cos(endAngle + pi / 2) + x;
-      // js-ok: display only (Chart.js ADR 0032)
+      // js-ok: display only (Chart.js ADR 0045)
       final endY = -r * math.sin(endAngle + pi / 2) + y;
-      // js-ok: display only (Chart.js ADR 0032)
+      // js-ok: display only (Chart.js ADR 0045)
       final startX = r * math.cos(startAngle + pi / 2) + x;
-      // js-ok: display only (Chart.js ADR 0032)
+      // js-ok: display only (Chart.js ADR 0045)
       final startY = r * math.sin(startAngle + pi / 2) + y;
       ctx
         ..lineTo(endX, endY)
@@ -326,7 +326,7 @@ _BorderRadius _parseBorderRadius(
   double x,
   double y,
 ) {
-  // js-ok: display only (Chart.js ADR 0032)
+  // js-ok: display only (Chart.js ADR 0045)
   return (x: x + r * math.cos(theta), y: y + r * math.sin(theta));
 }
 
@@ -367,9 +367,9 @@ void _pathFullCircle(
     // connector.
     ctx
       ..moveTo(
-        // js-ok: display only (Chart.js ADR 0032)
+        // js-ok: display only (Chart.js ADR 0045)
         x + math.cos(start) * innerRadius,
-        // js-ok: display only (Chart.js ADR 0032)
+        // js-ok: display only (Chart.js ADR 0045)
         y + math.sin(start) * innerRadius,
       )
       ..arc(x, y, innerRadius, start + tau, start, true);
@@ -473,7 +473,7 @@ void _pathArc(
     // Keep spacing trims below half the available span after base offset
     // trimming.
     final maxOffset = jsMax(0, beta / 2 - 0.001);
-    // js-ok: display only (Chart.js ADR 0032)
+    // js-ok: display only (Chart.js ADR 0045)
     final maxOffsetSin = math.sin(maxOffset);
 
     if (spacingMode == 'parallel') {
@@ -651,15 +651,15 @@ void _pathArc(
   } else {
     ctx.moveTo(x, y);
 
-    // js-ok: display only (Chart.js ADR 0032)
+    // js-ok: display only (Chart.js ADR 0045)
     final outerStartX = math.cos(outerStartAdjustedAngle) * outerRadius + x;
-    // js-ok: display only (Chart.js ADR 0032)
+    // js-ok: display only (Chart.js ADR 0045)
     final outerStartY = math.sin(outerStartAdjustedAngle) * outerRadius + y;
     ctx.lineTo(outerStartX, outerStartY);
 
-    // js-ok: display only (Chart.js ADR 0032)
+    // js-ok: display only (Chart.js ADR 0045)
     final outerEndX = math.cos(outerEndAdjustedAngle) * outerRadius + x;
-    // js-ok: display only (Chart.js ADR 0032)
+    // js-ok: display only (Chart.js ADR 0045)
     final outerEndY = math.sin(outerEndAdjustedAngle) * outerRadius + y;
     ctx.lineTo(outerEndX, outerEndY);
   }
@@ -1187,10 +1187,10 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     ctx.save();
 
     final halfAngle = (startAngle + endAngle) / 2;
-    // js-ok: display only (Chart.js ADR 0032)
+    // js-ok: display only (Chart.js ADR 0045)
     ctx.translate(math.cos(halfAngle) * offset, math.sin(halfAngle) * offset);
     final fix =
-        // js-ok: display only (Chart.js ADR 0032)
+        // js-ok: display only (Chart.js ADR 0045)
         1 - math.sin(jsMin(pi, jsTruthy(circumference) ? circumference : 0));
     final radiusOffset = offset * fix;
 

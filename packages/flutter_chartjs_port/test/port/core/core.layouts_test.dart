@@ -20,9 +20,9 @@ import 'layouts_reference.dart';
 // after addBox, as the legend and the title do (plugin.legend.js:617,
 // plugin.title.js:141). The expected box calls, box sizes and positions, chart
 // area and box order come from src/core/core.layouts.js at v4.5.1, run with
-// type stripping in Node.js v24.12.0 on x64 over the same scenes.
+// type stripping in Node.js v24.22.1 on arm64 over the same scenes.
 // layouts_reference.dart has the data, which
-// tool/reference/layouts_reference.mjs writes (Chart.js ADR 0032). The
+// tool/reference/layouts_reference.mjs writes (Chart.js ADR 0045). The
 // layout is IEEE arithmetic and `Math.max`. Thus the tests compare the
 // numbers exactly.
 //
@@ -219,9 +219,9 @@ void main() {
   setUpSpecs();
 
   group('reference', () {
-    test('has the reference of Node.js v24.12.0 on x64', () {
-      expect(layoutsReferenceNode, 'v24.12.0');
-      expect(layoutsReferenceArch, 'x64');
+    test('has the reference of Node.js v24.22.1 on arm64', () {
+      expect(layoutsReferenceNode, 'v24.22.1');
+      expect(layoutsReferenceArch, 'arm64');
       expect(layoutsReference, hasLength(23));
     });
   });

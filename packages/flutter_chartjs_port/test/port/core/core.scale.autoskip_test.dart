@@ -16,8 +16,8 @@ import 'scale_autoskip_reference.dart';
 // (AGENTS.md rule 3). The expected values are in
 // scale_autoskip_reference.dart, which
 // tool/reference/scale_autoskip_reference.mjs writes from
-// src/core/core.scale.autoskip.js at v4.5.1 in Node.js v24.12.0 on x64
-// (Chart.js ADR 0032). core.scale.autoskip imports core.scale, which is not
+// src/core/core.scale.autoskip.js at v4.5.1 in Node.js v24.22.1 on arm64
+// (Chart.js ADR 0045). core.scale.autoskip imports core.scale, which is not
 // a pure layer. Thus this file runs on the VM only.
 
 /// The scale object `{options, _tickSize(), _length, _maxLength}` of a
@@ -54,9 +54,9 @@ List<Tick> _ticks(AutoskipReferenceCase c) => [
 ];
 
 void main() {
-  test('the reference comes from Node.js v24.12.0 on x64', () {
-    expect(autoskipReferenceNode, 'v24.12.0');
-    expect(autoskipReferenceArch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64', () {
+    expect(autoskipReferenceNode, 'v24.22.1');
+    expect(autoskipReferenceArch, 'arm64');
   });
 
   group('autoSkip', () {

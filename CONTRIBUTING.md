@@ -7,7 +7,8 @@ to people as much as to agents.
   `dart run melos run upstream` at the repository root. `upstream` checks out every `third_party/`
   submodule. Install the git hooks with [lefthook](https://lefthook.dev) 1.0 or newer:
   `lefthook install`. The `test:web` script needs Google Chrome. To generate reference data, use
-  an x64 build of Node.js v24.12.0 ([AGENTS.md](AGENTS.md#tests); Chart.js ADR 0032).
+  the darwin-arm64 build of Node.js v24.22.1 ([AGENTS.md](AGENTS.md#tests); Chart.js ADR 0045).
+  The fdlibm data stay frozen: only the x64 build of Node.js v24.12.0 writes them again.
 - **DCO:** sign off every commit (`git commit -s`), certifying the
   [Developer Certificate of Origin](https://developercertificate.org/). The lefthook `commit-msg`
   hook and the CI `dco` job check for the `Signed-off-by` trailer.

@@ -27,7 +27,7 @@ import 'registry_reference.dart';
 // `this` of a hook, the values that are not functions, the hook order, the
 // install, start, stop and uninstall hooks, the plugin options, the filter,
 // the options of the config and the errors of the inline plugins. The
-// expected lines come from the pinned sources in Node.js v24.12.0 on x64.
+// expected lines come from the pinned sources in Node.js v24.22.1 on arm64.
 //
 // A test that registers a plugin in the singleton `registry` unregisters it
 // at its end (Chart.js ADR 0022, section 8).
@@ -110,9 +110,9 @@ String _result(Object? result) => '${result ?? 'undefined'}';
 void main() {
   setUpSpecs();
 
-  test('the reference comes from Node.js v24.12.0 on x64', () {
-    expect(registryReferenceNode, 'v24.12.0');
-    expect(registryReferenceArch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64', () {
+    expect(registryReferenceNode, 'v24.22.1');
+    expect(registryReferenceArch, 'arm64');
   });
 
   test('only false with a truthy cancelable stops the loop', () {

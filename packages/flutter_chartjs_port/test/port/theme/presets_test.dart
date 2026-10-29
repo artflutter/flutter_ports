@@ -25,9 +25,9 @@ import 'light_reference.dart';
 // scales.radialLinear, and each emitted key restates its upstream value,
 // also the plugin keys and the palette of phase 8. The expected values are in
 // light_reference.dart. The generator tool/reference/theme_light_reference.mjs
-// runs the pinned upstream sources in Node.js v24.12.0 on x64, with the four
-// elements, the radial linear scale and five plugins registered, and without
-// a theme.
+// runs the pinned upstream sources in Node.js v24.22.1 on arm64, with the
+// four elements, the radial linear scale and five plugins registered, and
+// without a theme.
 //
 // main() registers the four element classes through a new TypedRegistry
 // (core.typedRegistry.js:24-53, Chart.js ADR 0022, section 8), before the
@@ -147,9 +147,9 @@ void main() {
     PointElement.jsClass,
   ].forEach(TypedRegistry(Element.jsClass, 'elements').register);
 
-  test('the reference comes from Node.js v24.12.0 on x64', () {
-    expect(themeLightReferenceNode, 'v24.12.0');
-    expect(themeLightReferenceArch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64', () {
+    expect(themeLightReferenceNode, 'v24.22.1');
+    expect(themeLightReferenceArch, 'arm64');
   });
 
   group('theming.md §8 test 3, the parts of phases 5 and 6', () {

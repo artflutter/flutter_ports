@@ -10,7 +10,7 @@
 /// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
 ///   scale reads an option with `options[key]` or [jsGet], tests it with
 ///   [jsTruthy], and applies [jsToNumber] before arithmetic.
-/// - Numbers are `double` (Chart.js ADR 0032). A property that starts JS
+/// - Numbers are `double` (Chart.js ADR 0045). A property that starts JS
 ///   `undefined` and holds a number starts as NaN.
 /// - The value methods take any JS value (Chart.js ADR 0025, section 1).
 ///   They have no fast path (Chart.js ADR 0025, Open 1). The object

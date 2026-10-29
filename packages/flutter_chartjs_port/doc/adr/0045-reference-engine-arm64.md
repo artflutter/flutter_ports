@@ -1,8 +1,8 @@
 # Chart.js ADR 0045: Reference engine on arm64
 
-- Status: proposed
+- Status: accepted (2026-10-29)
 - Date: 2026-10-28
-- Supersedes: [Chart.js ADR 0032](0032-js-numeric-semantics.md) on acceptance
+- Supersedes: [Chart.js ADR 0032](0032-js-numeric-semantics.md)
 - Related: [Chart.js ADR 0002](0002-js-numeric-semantics.md) (the first numeric rules),
   [Chart.js ADR 0010](0010-js-numeric-semantics.md) (the numeric rules that Chart.js ADR 0032
   superseded),

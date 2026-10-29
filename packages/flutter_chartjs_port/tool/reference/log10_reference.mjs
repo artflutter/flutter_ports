@@ -7,20 +7,30 @@
 // the same Node.js writes the same file. Nothing in lib/ or test/ runs this
 // script (porting-flow.md section 4).
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js v24.12.0
-// (on Apple silicon, the darwin-x64 build runs under Rosetta):
+// Usage, from packages/flutter_chartjs_port, with the x64 build of Node.js v24.12.0,
+// on an x64 machine or under an x86-64 emulator (Chart.js ADR 0045,
+// section 2 and Open 5):
 //
 //   node tool/reference/log10_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0032). The script does not
-// stop on another architecture. V8 compiles fdlibm without fused multiply-add on
-// x64 and with it on arm64, so the two builds differ in the last bit for some
-// inputs: netlib e_log10.c compiled by clang with -ffp-contract=off gives the
-// x64 results, which the Dart port matches, and with -ffp-contract=on the
-// arm64 results.
+// The data are frozen (Chart.js ADR 0045, section 2): the reference is V8 13.6
+// on x64, and the script stops on any other architecture or Node.js. V8
+// compiles fdlibm without fused multiply-add on x64 and with it on arm64, so
+// the two builds differ in the last bit for some inputs: netlib e_log10.c
+// compiled by clang with -ffp-contract=off gives the x64 results, which the
+// Dart port matches, and with -ffp-contract=on the arm64 results.
 
 import {writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
+
+if (process.arch !== 'x64' || process.version !== 'v24.12.0') {
+  console.error(
+    'The fdlibm data come only from the x64 Node.js v24.12.0 ' +
+      `(Chart.js ADR 0045, section 2); this Node.js is ${process.version} ` +
+      `on ${process.arch}.`,
+  );
+  process.exit(1);
+}
 
 const TOTAL = 5909;
 const OUT = fileURLToPath(

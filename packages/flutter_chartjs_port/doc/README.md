@@ -30,17 +30,16 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043 and 0046 are accepted. Chart.js ADR 0044 is
-  rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. Chart.js
-  ADR 0045 is proposed. The porting lead accepted
-  Chart.js ADRs 0038-0043 on 2026-10-23, and Chart.js ADRs 0037 and 0046 on 2026-10-29. Twelve accepted
-  ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
+  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043, 0045 and 0046 are accepted. Chart.js ADR 0044 is
+  rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
+  lead accepted Chart.js ADRs 0038-0043 on 2026-10-23, and Chart.js ADRs 0037, 0045 and 0046 on
+  2026-10-29. Thirteen accepted ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
   supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR 0004, Chart.js ADR 0016
   supersedes Chart.js ADR 0007, Chart.js ADR 0026 supersedes Chart.js ADR 0008, Chart.js ADR 0032
   supersedes Chart.js ADR 0010, Chart.js ADR 0034 supersedes Chart.js ADR 0009, Chart.js ADR 0035
   supersedes Chart.js ADR 0011, Chart.js ADR 0036 supersedes Chart.js ADR 0027, Chart.js ADR 0037
-  supersedes Chart.js ADR 0014, Chart.js ADR 0042 supersedes Chart.js ADR 0001, and Chart.js ADR
-  0043 supersedes Chart.js ADR 0006.
+  supersedes Chart.js ADR 0014, Chart.js ADR 0042 supersedes Chart.js ADR 0001, Chart.js ADR
+  0043 supersedes Chart.js ADR 0006, and Chart.js ADR 0045 supersedes Chart.js ADR 0032.
   Chart.js ADR 0033 supersedes the `xCenter` and `yCenter` bullet of Chart.js ADR 0025 §5. The
   list:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md) (superseded by Chart.js ADR 0042)
@@ -89,8 +88,8 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0029: Fixture smoke runner](adr/0029-fixture-smoke-runner.md)
   - [Chart.js ADR 0030: Controller test strategy](adr/0030-controller-test-strategy.md)
   - [Chart.js ADR 0031: Gallery chart types and the stress controller](adr/0031-gallery-chart-types.md)
-  - [Chart.js ADR 0032: JS numeric semantics](adr/0032-js-numeric-semantics.md) (it supersedes
-    Chart.js ADR 0010)
+  - [Chart.js ADR 0032: JS numeric semantics](adr/0032-js-numeric-semantics.md) (superseded by
+    Chart.js ADR 0045)
   - [Chart.js ADR 0033: Radial scale centers before the first layout](adr/0033-radial-scale-centers.md)
     (it supersedes the `xCenter` and `yCenter` bullet of Chart.js ADR 0025 §5)
   - [Chart.js ADR 0034: No display-only JS exactness](adr/0034-no-display-only-js-exactness.md) (it
@@ -109,7 +108,8 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0043: Options representation and resolver](adr/0043-options-representation-and-resolver.md)
     (it supersedes Chart.js ADR 0006)
   - [Chart.js ADR 0044: Stack fill search](adr/0044-stack-fill-search.md) (rejected)
-  - [Chart.js ADR 0045: Reference engine on arm64](adr/0045-reference-engine-arm64.md) (proposed)
+  - [Chart.js ADR 0045: Reference engine on arm64](adr/0045-reference-engine-arm64.md) (it
+    supersedes Chart.js ADR 0032)
   - [Chart.js ADR 0046: Stack fill search, the result of the code A/B](adr/0046-stack-fill-search-result.md)
 
 ## What gets ported

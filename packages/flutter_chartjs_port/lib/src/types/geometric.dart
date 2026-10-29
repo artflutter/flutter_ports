@@ -74,7 +74,7 @@ abstract interface class Point {
   /// geometric.d.ts:11 `x: number | null`. Dart `null` is JS `null`, which
   /// `ToNumber` makes 0 (`distanceBetweenPoints`, helpers.math.ts:144).
   /// Ported code writes this `ToNumber` as `x ?? 0`, not `jsToNumber(x)`
-  /// (Chart.js ADR 0032).
+  /// (Chart.js ADR 0045).
   ///
   /// JS `undefined` is not a value of the type. A caller that copies an
   /// `undefined` into a point passes `double.nan`, its `ToNumber` value. An

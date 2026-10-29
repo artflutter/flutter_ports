@@ -75,7 +75,7 @@ import 'precedence_reference.dart';
 //
 // The expected values are in precedence_reference.dart. The generator
 // tool/reference/theme_precedence_reference.mjs runs each case in Node.js
-// v24.12.0 on x64 twice: with the upstream src/core/core.config.js, which
+// v24.22.1 on arm64 twice: with the upstream src/core/core.config.js, which
 // ignores the theme, and with a JavaScript prototype of the hunks H0-H3. A
 // case without a theme must give the upstream result. A case with a theme
 // must give the result of the prototype.
@@ -1058,9 +1058,9 @@ void main() {
     _radialThemeController,
   ]);
 
-  test('the reference comes from Node.js v24.12.0 on x64', () {
-    expect(themePrecedenceReferenceNode, 'v24.12.0');
-    expect(themePrecedenceReferenceArch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64', () {
+    expect(themePrecedenceReferenceNode, 'v24.22.1');
+    expect(themePrecedenceReferenceArch, 'arm64');
   });
 
   group('test 1: no theme equals upstream', () {

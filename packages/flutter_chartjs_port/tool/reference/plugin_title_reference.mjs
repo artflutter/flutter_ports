@@ -23,8 +23,8 @@
 // 4 item 2) has the default plugin options: the title with the default
 // legend, the box order and the chart area, then the legend at the left.
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0:
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/plugin_title_reference.mjs

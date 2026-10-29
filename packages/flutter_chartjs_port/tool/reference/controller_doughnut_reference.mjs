@@ -22,8 +22,8 @@
 //   The test file runs them unthemed only (report decision 2:
 //   plugin.legend_test.dart runs the legend with the light preset).
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0:
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/controller_doughnut_reference.mjs

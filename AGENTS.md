@@ -125,7 +125,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `fdlibm_log.dart`, `fdlibm_atan.dart` and `fdlibm_trig.dart`. `js_webidl.dart` has the WebIDL
     conversions of the Canvas 2D setters. `js_class.dart` has the JS class values (Chart.js ADR
     0020). `js_date.dart`, `js_map.dart` and `js_promise.dart` have `Date.now()`, the `Map`
-    iteration and the promise jobs (Chart.js ADRs 0019 and 0032).
+    iteration and the promise jobs (Chart.js ADRs 0019 and 0045).
   - `lib/src/core/core.element.dart` and `lib/src/elements/` (Chart.js ADR 0017): the port of
     `core.element.ts`, and the four elements (`element.point.dart`, `element.line.dart`,
     `element.bar.dart`, `element.arc.dart`) with `index.dart`. The port-only `element_options.dart`
@@ -367,7 +367,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0046. Twelve of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0046. Thirteen of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR
       0012 supersedes Chart.js ADR 0004, and Chart.js ADR 0026 supersedes Chart.js ADR 0008.
       Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0033 supersedes Chart.js ADR
@@ -380,15 +380,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       decision of Chart.js ADR 0001 with the palette of the theme map, and supersedes it. Chart.js
       ADR 0043 (options representation and resolver) states the complete decision of Chart.js ADR
       0006 with `helpers.merge` into an element target, and supersedes it. Chart.js ADR 0037
-      supersedes Chart.js ADR 0014 (2026-10-29). The porting lead accepted Chart.js ADRs 0032,
-      0034, 0035 and 0036 on 2026-10-21, Chart.js ADRs 0038-0043 on 2026-10-23, and Chart.js ADRs
-      0037 and 0046 on 2026-10-29. Chart.js ADR 0037 waited for the device check of step 8. Docs and code cite them for the current
+      supersedes Chart.js ADR 0014 (2026-10-29). Chart.js ADR 0045 (the reference engine on arm64)
+      states the complete decision of Chart.js ADR 0032 with the arm64 engine, and supersedes it
+      (2026-10-29). The porting lead accepted Chart.js ADRs 0032, 0034, 0035 and 0036 on
+      2026-10-21, Chart.js ADRs 0038-0043 on 2026-10-23, and Chart.js ADRs 0037, 0045 and 0046 on
+      2026-10-29. Chart.js ADR 0037 waited for the device check of step 8. Docs and code cite them for the current
       rules. The porting lead (the agent that runs the phase) owns the ADR statuses (the
       maintainer, 2026-10-21). It accepts an ADR when the decision is implemented and its gates are
       green. A changed decision still gets a new ADR that supersedes the old one. Chart.js ADR 0044
       (the stack fill search) is rejected: its code A/B rejected the change, and Chart.js ADR 0046
-      records the result. Chart.js ADR 0045 (the reference engine on arm64) is proposed. The other
-      ADRs are accepted. Docs name them "Chart.js ADR NNNN".
+      records the result. The other ADRs are accepted. Docs name them "Chart.js ADR NNNN".
       "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. An accepted ADR does not change. A changed decision
@@ -617,7 +618,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
 - The module status values of the `parity.md` legend: `porting-flow.md` §1 step 7 (proposed).
 - `// DIVERGES(chartjs): <row id>, <reason>` markers and their `differences.md` rows:
   `porting-flow.md` §4 (proposed). `check:headers` already pairs markers with rows.
-- The JS numeric translation rules: Chart.js ADR 0032. Number formatting: Chart.js ADR 0026
+- The JS numeric translation rules: Chart.js ADR 0045. Number formatting: Chart.js ADR 0026
   (package:intl with the guards of `js_intl.dart`).
   Emulate JavaScript only where the result changes behavior (Chart.js ADR 0034): the ticks, the
   hit element, the item order, the resolved option, a throw, or a value that reaches a layout, a
@@ -646,7 +647,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036), `jsSin` and
   `jsCos` (`Math.sin` and `Math.cos` at a protected site: a site that reaches a layout, a scale, an
   element property, a hit test, a public return value or a discrete decision; a display-only site
-  keeps `dart:math` with `js-ok`, Chart.js ADR 0032) and the `undefined` sentinel (Chart.js ADR
+  keeps `dart:math` with `js-ok`, Chart.js ADR 0045) and the `undefined` sentinel (Chart.js ADR
   0043). `JsStringList` of `js_array.dart` is a string as an array-like value: the reads `s[i]` and
   `s.length`, and a `TypeError` for each write. `_dataCheck` keeps a string `data` in it.
   `jsToString` of a `DateTime` gives the `Date.prototype.toString` text in the platform zone, with
@@ -672,7 +673,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
     `ownKeys` trap. `jsMapForEach` is `Map.prototype.forEach` while the callback changes the Map.
   - `jsSplice` is `Array.prototype.splice`. `start` and `deleteCount` go through
     `ToIntegerOrInfinity`. Dart `null` stands for an absent `deleteCount`.
-  - `jsDateNow` of `js_date.dart` is `Date.now()` on `clock.now()` (Chart.js ADR 0032 §6). Ported
+  - `jsDateNow` of `js_date.dart` is `Date.now()` on `clock.now()` (Chart.js ADR 0045 §6). Ported
     code never calls `DateTime.now()`. A `DateTime` is a JS `Date`: `jsToNumber` gives its time
     value (Chart.js ADR 0024).
   - `js_promise.dart` has the promise jobs of Chart.js ADR 0019 §7:
@@ -701,9 +702,11 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `packages/chartjs_test_utils`, not in `packages/flutter_chartjs_port/LICENSE` (Licensing item 1):
   Chart.js ADR 0035. `check:headers` reads the `LICENSE` of the package that contains
   the file.
-- The reference engine: Chart.js ADR 0032. Take JavaScript reference values only from
-  an x64 build of Node.js v24.12.0. On Apple silicon, run the darwin-x64 build under Rosetta.
-  Never take reference values from a browser or an arm64 Node.js.
+- The reference engine: Chart.js ADR 0045. Take JavaScript reference values only from the
+  darwin-arm64 build of Node.js v24.22.1 (V8 13.6.233.17-node.58, ICU 78.3). The fdlibm data
+  (`log10_reference.dart`, `atan2_reference.dart` and `trig_reference.dart`) are frozen: only
+  the x64 build of Node.js v24.12.0 writes them again. Each test of a data file pins the Node.js
+  version and the architecture of its data. Never take reference values from a browser.
 - The four theming invariants (specs run unthemed, no forui or Material in `lib/`, no
   `Chart.defaults` writes for theming, no `lib/src/theme/` import in ported files): Chart.js ADR
   0042. `check:lib-imports` already fails on the two import invariants.
@@ -728,7 +731,7 @@ are relative to `packages/flutter_d3_port/doc/`.
   `// DIVERGES(d3): <row id>, <reason>` and a row in `differences.md`.
 - Number strings (D3 ADR 0003): when a string is the result of a module, its JS digits are
   behavior. Examples are d3-format, d3-path, d3-color and d3-time-format. The rules of Chart.js
-  ADR 0032 apply to them.
+  ADR 0045 apply to them.
 - No port depends on another port (ADR 0008). Thus D3 code never imports
   `package:flutter_chartjs_port`. In D3 phase 1, ADR 0008 copies the generic runtime of `lib/src/js/`
   into the shared package `js_semantics`.
@@ -754,7 +757,7 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
 - `upstream-ledger.md` has one section for each repository. A difference carries
   `// DIVERGES(echarts): <row id>, <reason>`, also in a zrender file, and a row in
   `differences.md`.
-- Numbers and JS values follow ECharts ADRs 0003 and 0004 with the rules of Chart.js ADRs 0032
+- Numbers and JS values follow ECharts ADRs 0003 and 0004 with the rules of Chart.js ADRs 0045
   and 0034. No port depends on another port (ADR 0008). Thus ECharts code never imports
   `package:flutter_chartjs_port` or `package:flutter_d3_port`.
 
@@ -937,9 +940,10 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   writes two files, `plugin_tooltip_reference.dart` and `plugin_tooltip_more_reference.dart`,
   because a data file stays below 2,500,000 bytes) and
   `test/port/platform/chart_host_input_reference.dart` (the input path of the legend and the
-  tooltip, Chart.js ADR 0037 §17). They do not stop on arm64. Do not run
-  `log10_reference.mjs` and `trig_reference.mjs` on arm64: their fdlibm data then differ in the
-  last bits and in the NaN signs.
+  tooltip, Chart.js ADR 0037 §17). The other generators run on the reference engine of Chart.js
+  ADR 0045. `log10_reference.mjs`, `atan2_reference.mjs` and `trig_reference.mjs` stop unless
+  Node.js is the x64 build v24.12.0 (Chart.js ADR 0045 §2): on arm64, the log10 and trig data
+  differ in the last bits and in the NaN signs.
   `theme_precedence_reference.mjs` also registers the 8 pinned controllers, and adds a JavaScript
   prototype of the hunks H4a-H5 to `plugin.colors.ts` in its prototype run. It and
   `controller_reference.mjs` register the seven plugins of `src/plugins/index.js` by name (a module
@@ -986,8 +990,8 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   of the first event of each type (section 11). `test/port/platform/chart_host_input_test.dart`
   drives the same actions as Flutter pointer events through `ChartHost`, one pump for each step, and
   compares the DOM events of the host too. `tool/reference/text_metrics/` writes
-  `test/port/canvas/text_metrics_reference.dart` from headless Chrome. The x64 rule does not apply
-  to it. Do not edit the generated files by hand.
+  `test/port/canvas/text_metrics_reference.dart` from headless Chrome. The engine rule of Chart.js ADR 0045
+  does not apply to it. Do not edit the generated files by hand.
 - The D3 tests use `package:test` (D3 ADR 0004). In phase 0, `test/upstream_test.dart` is the
   only D3 test. It has `@TestOn('vm')`. Thus `test:web` does not run the D3 package yet. The first
   pure D3 test adds the package to `test:web`.

@@ -22,7 +22,7 @@
 /// :174, :234, :236): `BarElement` reads a `null` coordinate as "ignore this
 /// axis" (element.bar.js:103-111). Where this file does arithmetic or a
 /// comparison on a coordinate, it writes the `ToNumber` as `x ?? 0`
-/// (Chart.js ADR 0032).
+/// (Chart.js ADR 0045).
 ///
 /// Upstream imports `_isPointInArea` and `isNullOrUndef` from
 /// `helpers/index.js`. The port imports `helpers.canvas.dart` and
@@ -57,7 +57,7 @@ import 'package:meta/meta.dart';
 ///
 /// It implements `types.ActiveElement`, because the chart keeps the items
 /// as its active elements (index.d.ts:520-521). TypeScript accepts them by
-/// structure. [datasetIndex] and [index] are numbers (Chart.js ADR 0032).
+/// structure. [datasetIndex] and [index] are numbers (Chart.js ADR 0045).
 ///
 /// Two items are equal when their fields are equal, as the `toEqual` of a
 /// spec compares two object literals. The elements compare by identity: the
@@ -159,7 +159,7 @@ Object? _parsedValue(Object? point, String key) =>
 /// @param {boolean} [intersect] - should the element intersect
 /// @returns {{lo:number, hi:number}} indices to search data array between
 ///
-/// The indices are list indices, thus `int` values (Chart.js ADR 0032). The
+/// The indices are list indices, thus `int` values (Chart.js ADR 0045). The
 /// search reads [value] as a number: Dart `null` gives 0, the `ToNumber` of
 /// JS `null`. `getRange` follows Chart.js ADR 0020, section 9.
 ///
@@ -292,7 +292,7 @@ void _evaluateInteractionItems(
 /// axis mode setting
 /// @param {string} axis - the axis mode. x|y|xy|r
 ///
-/// `Math.pow(delta, 2)` is [jsSquare] (Chart.js ADR 0032).
+/// `Math.pow(delta, 2)` is [jsSquare] (Chart.js ADR 0045).
 double Function(Point pt1, Point pt2) _getDistanceMetricForAxis(
   Object? axis,
 ) {

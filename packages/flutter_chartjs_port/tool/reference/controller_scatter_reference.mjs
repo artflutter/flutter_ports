@@ -19,8 +19,8 @@
 //   section 7.3, and the override `interaction.mode: 'point'` of
 //   controller.scatter.js:25-27). The themed run does not run them.
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0:
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/controller_scatter_reference.mjs

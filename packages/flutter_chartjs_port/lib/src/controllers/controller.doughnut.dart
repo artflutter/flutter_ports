@@ -677,7 +677,7 @@ List<Object?> _generateLabels(types.Chart chart) {
 ///
 /// Each style value is a read [jsGet]: an absent key gives [undefined], for
 /// example `lineJoin` of the default `borderJoinStyle`. `index` is a number
-/// (Chart.js ADR 0032).
+/// (Chart.js ADR 0045).
 Map<String, Object?> _labelItem(
   types.Chart chart,
   Object? label,

@@ -15,8 +15,8 @@
 // observations of scale_time_common.mjs and the lookup table
 // (timeseriesObservations).
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0:
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //   MOMENT_NODE_MODULES=<scratch>/node_modules \

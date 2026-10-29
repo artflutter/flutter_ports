@@ -14,7 +14,8 @@ import 'date_table_zone.dart';
 
 // The default date adapter of Chart.js ADR 0024. The reference values come
 // from chartjs-adapter-moment 1.0.1 on moment 2.29.4 with moment-timezone
-// 0.5.42 in Node.js v24.12.0 on x64 (tool/reference/date_adapter_reference.mjs).
+// 0.5.42 in Node.js v24.22.1 on arm64
+// (tool/reference/date_adapter_reference.mjs).
 // The tests run on the VM, dart2js and dart2wasm. The cases that need
 // package:clock or Intl.defaultLocale are in date_adapter_vm_test.dart.
 
@@ -90,9 +91,9 @@ void main() {
   });
   tearDown(() => setDefaultDateZone(previousZone));
 
-  test('the reference comes from an x64 Node.js v24.12.0', () {
-    expect(dateReferenceNode, 'v24.12.0');
-    expect(dateReferenceArch, 'x64');
+  test('the reference comes from an arm64 Node.js v24.22.1', () {
+    expect(dateReferenceNode, 'v24.22.1');
+    expect(dateReferenceArch, 'arm64');
     expect(dateReferencePackages, [
       'moment 2.29.4',
       'moment-timezone 0.5.42',

@@ -11,7 +11,7 @@
 ///   `options[key]`, which gives the [undefined] sentinel for an option that
 ///   the resolver does not resolve. A sub-object such as `options['ticks']`
 ///   is a resolver too, and `setContext` is the member of `ContextProxy`.
-/// - Numbers are `double` (Chart.js ADR 0032). An option value goes through
+/// - Numbers are `double` (Chart.js ADR 0045). An option value goes through
 ///   `jsToNumber` before arithmetic, through `jsAdd` in a `+` (a string
 ///   option joins the other operand), through `jsTruthy` for a test, and
 ///   through the conversions of `lib/src/js/js_webidl.dart` before a canvas
@@ -207,7 +207,7 @@ List<Tick> _sample(List<Tick> arr, Object? numItems) {
 /// Dart `null` stands for the `undefined` of a pixel out of the range.
 /// [Scale.getPixelForTick] gives Dart `null` for its JS `null`. The
 /// arithmetic converts that `null` to 0, as `ToNumber(null)` does (Chart.js
-/// ADR 0032). Upstream returns the `null` of a tick out of the range only
+/// ADR 0045). Upstream returns the `null` of a tick out of the range only
 /// for a scale without ticks and with `offsetGridLines` false. Then
 /// `_computeGridLineItems` makes no call: its loop has no index.
 double? _getPixelForGridLine(Scale scale, int index, Object? offsetGridLines) {
@@ -2365,7 +2365,7 @@ class Scale extends _ScalePrototype
           textOffset *= -1;
         }
         if (rotation != 0 && !jsTruthy(optsAtIndex['showLabelBackdrop'])) {
-          // js-ok: a label pixel of getLabelItems (Chart.js ADR 0032)
+          // js-ok: a label pixel of getLabelItems (Chart.js ADR 0045)
           x = jsAdd(x, (lineHeight / 2) * math.sin(rotation));
         }
       } else {

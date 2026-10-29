@@ -10,7 +10,7 @@
 /// (core.scale.autoskip.js:7, core.scale.js:15). The two libraries import
 /// each other, as the two upstream files name each other.
 ///
-/// Numbers are `double` (Chart.js ADR 0032). The indexes of the major ticks
+/// Numbers are `double` (Chart.js ADR 0045). The indexes of the major ticks
 /// are numbers that `skip` and `skipMajors` compare with the loop index and
 /// use in arithmetic. Thus they are `double` too, and the loops convert an
 /// index to an `int` only to read a list. A read of a list at an index that

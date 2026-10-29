@@ -10,7 +10,7 @@
 // test/ runs this code (porting-flow.md section 4).
 //
 // This file imports tool/reference/scale_chart_common.mjs: the checks of
-// loadChartJs (an x64 Node.js, the build at the pinned commit, a clean
+// loadChartJs (the build at the pinned commit, a clean
 // checkout), the Liberation Sans mock context, makeChart, observe,
 // drawCalls and writeReference. See its header for the method and the
 // limits of the text measure.
@@ -19,17 +19,14 @@
 // ----------------------
 //
 // Build Chart.js at the pinned commit as the header of
-// scale_chart_common.mjs says. Then, from packages/flutter_chartjs_port, with an
-// x64 build of Node.js v24.12.0 and with the Dart SDK on the PATH:
+// scale_chart_common.mjs says. Then, from packages/flutter_chartjs_port, with the
+// darwin-arm64 build of Node.js v24.22.1 (Chart.js ADR 0045) and with the Dart
+// SDK on the PATH:
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/controller_<name>_reference.mjs
 //
-// The first argument can also give the path of dist/chart.js. On Apple
-// silicon, run the darwin-x64 build of Node.js under Rosetta:
-//
-//   /usr/bin/arch -x86_64 <node-v24.12.0-darwin-x64>/bin/node \
-//     tool/reference/controller_<name>_reference.mjs <build>/dist/chart.js
+// The first argument can also give the path of dist/chart.js.
 //
 // The bar generator also needs the moment packages
 // (MOMENT_NODE_MODULES, see scale_time_common.mjs) and TZ=UTC.

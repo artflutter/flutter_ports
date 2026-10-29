@@ -134,7 +134,7 @@ RTLAdapter _getLeftToRightAdapter() {
 /// [rtl] is an `Object?`, not a bool. Upstream declares `boolean`, but
 /// `plugin.tooltip.js:762` passes `options.rtl`, which has no default and
 /// thus can be `undefined`. The conditional `rtl ? … : …` applies ToBoolean,
-/// which is [jsTruthy] (Chart.js ADR 0032).
+/// which is [jsTruthy] (Chart.js ADR 0045).
 RTLAdapter getRtlAdapter(Object? rtl, double rectX, double width) {
   return jsTruthy(rtl)
       ? _getRightToLeftAdapter(rectX, width)

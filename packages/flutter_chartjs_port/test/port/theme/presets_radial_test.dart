@@ -22,8 +22,8 @@ import 'light_reference.dart';
 // preset equals upstream for the options of a radial linear scale. The
 // expected values are themeLightRadial of light_reference.dart. The
 // generator tool/reference/theme_light_reference.mjs resolves the scale `r`
-// of the type `radialLinear` through `chartOptionScopes` in Node.js v24.12.0
-// on x64, with the radial linear scale registered, and without a theme.
+// of the type `radialLinear` through `chartOptionScopes` in Node.js v24.22.1
+// on arm64, with the radial linear scale registered, and without a theme.
 //
 // The scales import core.scale, which is not a pure layer. Thus this file
 // runs on the VM only, and presets_test.dart keeps the other cases of test 3
@@ -90,9 +90,9 @@ void main() {
 
   TypedRegistry(Scale.jsClass, 'scales').register(RadialLinearScale.jsClass);
 
-  test('the reference comes from Node.js v24.12.0 on x64', () {
-    expect(themeLightReferenceNode, 'v24.12.0');
-    expect(themeLightReferenceArch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64', () {
+    expect(themeLightReferenceNode, 'v24.22.1');
+    expect(themeLightReferenceArch, 'arm64');
   });
 
   group('theming.md §8 test 3, the radial linear scale', () {

@@ -207,7 +207,7 @@ subsections stay proposals in this document until their ADR files exist.
 | Subsection | ADR | Gate |
 |---|---|---|
 | 2.1 | [Chart.js ADR 0043: Options representation and resolver](adr/0043-options-representation-and-resolver.md), which supersedes Chart.js ADR 0006 | 2 |
-| 2.3 | [Chart.js ADR 0032: JS numeric semantics](adr/0032-js-numeric-semantics.md), which supersedes Chart.js ADR 0010 | 1 |
+| 2.3 | [Chart.js ADR 0045: Reference engine on arm64](adr/0045-reference-engine-arm64.md), which supersedes Chart.js ADR 0032 | 1 |
 | 2.4 | [Chart.js ADR 0003: Type-only dependencies](adr/0003-type-only-dependencies.md) | 1 |
 | 2.5 | [Chart.js ADR 0012: Dart file naming](adr/0012-dart-file-naming.md), which supersedes Chart.js ADR 0004 | 1 |
 | 2.13 | [Chart.js ADR 0035: Third-party sources](adr/0035-third-party-sources.md), which supersedes Chart.js ADR 0011 | 1 |
@@ -269,11 +269,11 @@ short:
 - The layer keeps only the Canvas 2D semantics that change behavior, with no Chromium-exact arc
   math ([Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md)).
 
-### 2.3 Chart.js ADR 0032: JS numeric semantics (gate 1)
+### 2.3 Chart.js ADR 0045: Reference engine on arm64 (gate 1)
 
-[Chart.js ADR 0032](adr/0032-js-numeric-semantics.md) holds the complete decision, the
-translation rules and the evidence. It supersedes Chart.js ADR 0010. Chart.js ADR 0010
-superseded Chart.js ADR 0002.
+[Chart.js ADR 0045](adr/0045-reference-engine-arm64.md) holds the complete decision, the
+translation rules and the evidence. It supersedes Chart.js ADR 0032. Chart.js ADR 0032
+superseded Chart.js ADR 0010. Chart.js ADR 0010 superseded Chart.js ADR 0002.
 [Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md) holds the number formatting
 decision, with six guards against package:intl failures. It supersedes
 [Chart.js ADR 0008](adr/0008-number-formatting-on-package-intl.md).
@@ -281,8 +281,8 @@ decision, with six guards against package:intl failures. It supersedes
 display-only JS exactness. In short:
 - An unexported JS runtime in `lib/src/js/` represents the JS builtins. Ported files call it where
   upstream calls a builtin.
-- The reference engine is V8 13.6 as Node.js v24.12.0 for x64 builds it. Reference data never
-  come from a browser or from an arm64 Node.js.
+- The reference engine is V8 13.6 as Node.js v24.22.1 for darwin-arm64 builds it. The fdlibm
+  data stay the data of the x64 Node.js v24.12.0. Reference data never come from a browser.
 - `Math.log10`, `Math.atan2`, and `Math.sin` and `Math.cos` at a protected site, are pure-Dart
   netlib fdlibm ports, because their last bit changes log-scale ticks and hit tests. A protected
   site is a site whose result reaches a layout, a scale, an element property, a hit test, a value
@@ -294,8 +294,8 @@ display-only JS exactness. In short:
   and dart2js, they call `dart:math` `max` and `min`. With `int` operands, ported code calls
   `dart:math` `max` and `min`.
 - `Math.pow(x, 2)` is `jsSquare(x)` of `lib/src/js/js_math.dart`, which returns `x * x`. The
-  product is correctly rounded. On the reference engine, `Math.pow(x, 2)` gave the bits of
-  `x * x` for all of 23 million probe inputs. Thus the result is the JS result on every target.
+  product is correctly rounded. On the x64 engine, `Math.pow(x, 2)` gave the bits of `x * x`
+  for all of 23 million probe inputs. Thus the result is the JS result on every target.
   `ToNumber` of a `double?` value whose `null` is JS `null`, such as `Point.x` and `Point.y`, is
   `(e ?? 0)`, not `jsToNumber(e)`.
 - Where the Dart SDK or a package that Flutter 3.47.7 depends on gives the JS result, the port
@@ -383,7 +383,7 @@ and the frame source of the animator. `requestAnimFrame` calls
 one module-level animator on `requestAnimFrame`. `TickerMode(enabled: false)` mutes a chart
 (the last bullet of this section). Thus `core.animator.js` has two small `DIVERGES` hunks for the
 mute: the mute and the skip of a muted chart. Its third row is the promise checkpoint (see below).
-[Chart.js ADR 0032](adr/0032-js-numeric-semantics.md) gives the clock: `jsDateNow()` on
+[Chart.js ADR 0045](adr/0045-reference-engine-arm64.md) gives the clock: `jsDateNow()` on
 `clock.now()`.
 
 Chart.js ADR 0016 (accepted 2026-10-21) supersedes Chart.js ADR 0007. It states the complete
@@ -437,7 +437,7 @@ decision, its evidence and the items that stay open. In short:
 - `parse` reads ISO 8601 with the moment grammar, RFC 2822, the ASP.NET form, and a format string
   through intl with the current-date fill. Other strings, Lists and Maps are invalid (row
   `adapt-date-parse-fallback`).
-- "Now" is `jsDateNow()` ([Chart.js ADR 0032](adr/0032-js-numeric-semantics.md)), because
+- "Now" is `jsDateNow()` ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)), because
   `scale.time.js:342-343` calls `Date.now()`. A step of `_generate` that does not advance throws a
   `StateError` (row `adapt-time-generate-no-advance`).
 
@@ -890,8 +890,8 @@ when the test pumps.
 **Reference tests of the controllers.** From phase 7, the port-only reference tests of the dataset
 controllers follow [Chart.js ADR 0030](adr/0030-controller-test-strategy.md) §1-§7:
 - One generator for each controller, `tool/reference/controller_<name>_reference.mjs`, on the
-  shared `controller_chart_common.mjs`. It runs a build of the pinned Chart.js in the x64 Node.js
-  v24.12.0, with the checks of `scale_chart_common.mjs`, and defines a recording `Path2D` before
+  shared `controller_chart_common.mjs`. It runs a build of the pinned Chart.js on the reference
+  engine, with the checks of `scale_chart_common.mjs`, and defines a recording `Path2D` before
   the dist loads. It writes `test/port/controllers/controller_<name>_reference.dart`: Dart `const`
   literals, one JSON-lines string of the draw calls for each case, and one JSON line of hit items
   for each query point. A data file has at most 2.5 MB. A probe line of a comment note has at most
@@ -931,7 +931,7 @@ controllers follow [Chart.js ADR 0030](adr/0030-controller-test-strategy.md) §1
   it. The doughnut and pie test files compare an expected `null` of the two axis ids as
   `undefined`.
 - A hit query between two symmetric arcs can tie at the last bit. `jsSin` and `jsCos` give the V8
-  bits on every target ([Chart.js ADR 0032](adr/0032-js-numeric-semantics.md)), so the tie keeps
+  bits on every target ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)), so the tie keeps
   the V8 item. The pie generator uses the data `[5, 15, 10, 20]`, which has the
   tie of `Math.sin(3.665191429188092)` at step 2 of `the step toggleDataVisibility`. The doughnut
   case `parsed: object items with the default key` has the tie of
@@ -1016,7 +1016,7 @@ and 8. Tool 1 uses allowlists:
   `semantics`, `services` and `widgets`, `package:meta/meta.dart`, `package:intl/intl.dart` with
   its `number_symbols` files, and the package's own files. From phase 2, also
   `package:collection/collection.dart` with `show mergeSort`. From phase 5, also
-  `package:clock/clock.dart` ([Chart.js ADR 0032](adr/0032-js-numeric-semantics.md)).
+  `package:clock/clock.dart` ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)).
 - Pure layers: the same list without `dart:ui` and `package:flutter`, over the transitive closure.
   The roots of the closure are the list `pureRoots` of `tool/src/lib_imports.dart`:
   - `lib/src/js/`, `lib/src/types/`, `lib/src/kurkle_color/` and the helpers except
@@ -1075,11 +1075,11 @@ package. It flags these forms:
   with any base, every `.toString()` call, `is int` and `.sort(`. A `pow` call with `double`
   operands carries `// js-ok`.
 - the `dart:math` functions `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `atan2`, `exp` and
-  `log`. A display-only `sin` or `cos` carries `// js-ok: display only (Chart.js ADR 0032)`
-  ([Chart.js ADR 0032](adr/0032-js-numeric-semantics.md)).
+  `log`. A display-only `sin` or `cos` carries `// js-ok: display only (Chart.js ADR 0045)`
+  ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)).
 - the interpolation of a value with the static type `double` or `num`
 - the calls and tear-offs of `dart:math` `max` and `min` with the type argument `double` or `num`.
-  Use `jsMax` and `jsMin` ([Chart.js ADR 0032](adr/0032-js-numeric-semantics.md)).
+  Use `jsMax` and `jsMin` ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)).
 - from phase 2, the sorts of `package:collection`: `mergeSort(`, `insertionSort(`, `.sorted(`,
   `.sortedBy(`, `.sortedByCompare(`, `.sortBy(`, `.sortByCompare(` and `.sortRange(`
 - from phase 5, `DateTime.now(`. Ported code reads the time through `jsDateNow`, because only
@@ -1088,7 +1088,7 @@ package. It flags these forms:
 A site passes with `// js-ok: <reason>` at the end of its line, or alone on the line before it.
 The lexical rules read the code without comments and strings. The interpolation rule and the
 `max`/`min` rule resolve types with `package:analyzer`, a dev_dependency of `flutter_chartjs_port`.
-[Chart.js ADR 0032](adr/0032-js-numeric-semantics.md) lists the forms that tool 3 does not find.
+[Chart.js ADR 0045](adr/0045-reference-engine-arm64.md) lists the forms that tool 3 does not find.
 
 **4. Upstream manifest** (`tool/upstream_manifest/`, Node, `upstream:manifest`, job
 `upstream-manifest`, mid phase 2). With `--src <checkout> --out <file>`, it writes
@@ -1296,6 +1296,8 @@ Keep each deferred plan current while the phases go on:
   Chart.js ADR 0010, [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (2.2, 2.3,
   2.6, 2.10) supersedes Chart.js ADR 0009, and
   [Chart.js ADR 0035](adr/0035-third-party-sources.md) (2.13) supersedes Chart.js ADR 0011.
+  [Chart.js ADR 0045](adr/0045-reference-engine-arm64.md) (2.3) supersedes Chart.js ADR 0032
+  (2026-10-29): the reference engine moves to Node.js v24.22.1 on arm64.
   [Chart.js ADR 0012](adr/0012-dart-file-naming.md) (2.5) supersedes Chart.js ADR 0004. It adds
   the rule for the members of the type libraries.
 - The phase 2 cleanup removed `third_party/pixelmatch` and its references. The Consequences of
@@ -1333,7 +1335,7 @@ stays in the list as closed.
 **Open questions**
 - fdlibm or correctly rounded libm for `log10` and `atan2`? log10 differs in the last bit on
   7/5,909 inputs.
-  [Chart.js ADR 0032](adr/0032-js-numeric-semantics.md) keeps fdlibm for now. V8 `main` moved
+  [Chart.js ADR 0045](adr/0045-reference-engine-arm64.md) keeps fdlibm for now. V8 `main` moved
   `Math.log10` to a correctly rounded libm on 2026-05-11.
 - Tooltip after touch lift: Chart.js ADR 0037 (accepted 2026-10-29) keeps the Chrome result
   (#7738). The device check of its Open 1 closed the question on Android (its Evidence E8 to E11).

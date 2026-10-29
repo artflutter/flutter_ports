@@ -3,18 +3,20 @@
 // It writes test/port/js/trig_reference.dart, the data of
 // test/port/js/fdlibm_trig_test.dart: 4,040 inputs, each with the bits of
 // Math.sin(x) and Math.cos(x), and the Node.js version, V8 version and
-// architecture in the header (Chart.js ADR 0032 section 2). The inputs are
+// architecture in the header (Chart.js ADR 0045 section 2). The inputs are
 // deterministic, so a rerun on the same Node.js writes the same file. Nothing
 // in lib/ or test/ runs this script (porting-flow.md section 4).
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js v24.12.0
-// (on Apple silicon, the darwin-x64 build runs under Rosetta):
+// Usage, from packages/flutter_chartjs_port, with the x64 build of Node.js v24.12.0,
+// on an x64 machine or under an x86-64 emulator (Chart.js ADR 0045,
+// section 2 and Open 5):
 //
 //   node tool/reference/trig_reference.mjs
 //
-// The reference is V8 13.6 on x64 (Chart.js ADR 0032). The script does not
-// stop on another architecture. V8 on arm64 compiles fdlibm with fused
-// multiply-add and differs in the last bit for some inputs.
+// The data are frozen (Chart.js ADR 0045, section 2): the reference is V8 13.6
+// on x64, and the script stops on any other architecture or Node.js. V8 on
+// arm64 compiles fdlibm with fused multiply-add and differs in the last bit for
+// some inputs.
 //
 // The input groups, in this order:
 // - special (25): +-0, NaN, +-Infinity, the smallest subnormal and normal,
@@ -36,6 +38,15 @@
 
 import {writeFileSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
+
+if (process.arch !== 'x64' || process.version !== 'v24.12.0') {
+  console.error(
+    'The fdlibm data come only from the x64 Node.js v24.12.0 ' +
+      `(Chart.js ADR 0045, section 2); this Node.js is ${process.version} ` +
+      `on ${process.arch}.`,
+  );
+  process.exit(1);
+}
 
 const TOTAL = 4040;
 const OUT = fileURLToPath(

@@ -21,7 +21,7 @@ import 'registry_reference.dart';
 // `isForType`, the parent that registers first, the statics that a subclass
 // inherits, a duplicate `id`, the routes and descriptors, the key order of
 // `items`, the errors and `unregister`. The expected lines come from the
-// pinned sources in Node.js v24.12.0 on x64. The harness restores
+// pinned sources in Node.js v24.22.1 on arm64. The harness restores
 // `defaults`, `overrides` and `descriptors` after each test (setUpSpecs).
 //
 // A class `X extends Y {}` of the generator is a class value with the class
@@ -57,9 +57,9 @@ Object? _get(TypedRegistry registry, Object? id) =>
 void main() {
   setUpSpecs();
 
-  test('the reference comes from Node.js v24.12.0 on x64', () {
-    expect(registryReferenceNode, 'v24.12.0');
-    expect(registryReferenceArch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64', () {
+    expect(registryReferenceNode, 'v24.22.1');
+    expect(registryReferenceArch, 'arm64');
   });
 
   test('isForType is strict and has the Object root', () {

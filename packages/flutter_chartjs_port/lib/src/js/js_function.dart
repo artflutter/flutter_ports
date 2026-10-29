@@ -62,7 +62,7 @@
 /// (`plugin.tooltip.js`, `invokeCallbackWithFallback`).
 ///
 /// **Numbers.** Ported code passes each number as a `double` (Chart.js ADR
-/// 0032). Declare a numeric parameter as `double`, `num` or `Object?`. An
+/// 0045). Declare a numeric parameter as `double`, `num` or `Object?`. An
 /// `int` parameter throws a [TypeError] when it gets a `double`.
 ///
 /// **Limits.**

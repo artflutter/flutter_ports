@@ -1,6 +1,7 @@
 # Chart.js ADR 0032: JS numeric semantics
 
 - Status: accepted (2026-10-21)
+- Superseded by: [Chart.js ADR 0045](0045-reference-engine-arm64.md) (2026-10-29)
 - Date: 2026-10-21
 - Supersedes: [Chart.js ADR 0010](0010-js-numeric-semantics.md)
 - Related: [Chart.js ADR 0002](0002-js-numeric-semantics.md) (the first numeric rules),

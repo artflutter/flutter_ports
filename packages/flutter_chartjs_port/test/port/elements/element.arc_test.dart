@@ -32,7 +32,7 @@ import 'arc_reference.dart';
 //   radius (parseBorderRadius), circular false and the border dash.
 // The expected results come from arc_reference.dart, which
 // tool/reference/arc_reference.mjs writes from the pinned element.arc.ts and
-// the mock context of chartjs-test-utils in Node.js v24.12.0 on x64. Each
+// the mock context of chartjs-test-utils in Node.js v24.22.1 on arm64. Each
 // reference case runs twice (Chart.js ADR 0018, section 6): with the plain
 // Map options of the reference, and with an ArcOptions with the same
 // entries. Both compare with the same reference data.
@@ -128,7 +128,7 @@ ArcElement _arc(
 ///
 /// The reference numbers are V8 numbers. The display-only sites of the arc
 /// call `dart:math` `sin` and `cos`, which can differ in the last bit on
-/// other engines (Chart.js ADR 0032).
+/// other engines (Chart.js ADR 0045).
 void _expectValue(Object? actual, Object? expected, String where) {
   switch (expected) {
     case final num n when n.isNaN:
@@ -454,9 +454,9 @@ void main() {
   });
 
   group('inRange', () {
-    test('has the reference of Node.js v24.12.0 on x64', () {
-      expect(arcReferenceNode, 'v24.12.0');
-      expect(arcReferenceArch, 'x64');
+    test('has the reference of Node.js v24.22.1 on arm64', () {
+      expect(arcReferenceNode, 'v24.22.1');
+      expect(arcReferenceArch, 'arm64');
       expect(arcInRangeReference, hasLength(55));
     });
 
@@ -523,7 +523,7 @@ void main() {
   });
 
   group('getCenterPoint', () {
-    test('has the reference of Node.js v24.12.0 on x64', () {
+    test('has the reference of Node.js v24.22.1 on arm64', () {
       expect(arcCenterReference, hasLength(13));
     });
 
@@ -541,14 +541,14 @@ void main() {
       });
     }
 
-    // The half angles of the two sin ties of phase 7 (Chart.js ADR 0032):
+    // The half angles of the two sin ties of phase 7 (Chart.js ADR 0045):
     // the query point is at the same distance from two arc centers, so the
     // last bit of the center decides the hit item. The center equals the V8
     // value bit for bit. With dart:math sin, the y of the second case on
     // macOS is -0.4999999999999998 (a probe). For the first case on Windows,
     // the y 120.76582809807277 is an inference: it is the only 1-ulp change
     // that gives the hit of CI run 39544591156. No Windows run measured it
-    // (Chart.js ADR 0032, Open 1).
+    // (Chart.js ADR 0045, Open 1).
     group('the half angles of the sin ties', () {
       for (final c in arcCenterReference.where(
         (c) => c.name.startsWith('half angle '),
@@ -633,7 +633,7 @@ void main() {
   });
 
   group('draw', () {
-    test('has the reference of Node.js v24.12.0 on x64', () {
+    test('has the reference of Node.js v24.22.1 on arm64', () {
       expect(arcDrawReference, hasLength(96));
     });
 

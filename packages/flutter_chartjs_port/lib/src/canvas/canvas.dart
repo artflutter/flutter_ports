@@ -13,7 +13,7 @@
 /// as `MockContext` (`package:chartjs_test_utils`).
 ///
 /// Values:
-/// - A number is a `double` (Chart.js ADR 0032).
+/// - A number is a `double` (Chart.js ADR 0045).
 /// - A style property reads as `null` only on a context that never set it.
 ///   The mock context starts with `null` values (`src/context.js:7-15`). The
 ///   `dart:ui` context starts with the DOM defaults.

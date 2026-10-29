@@ -18,10 +18,11 @@ import 'animation_reference.dart';
 
 // The behavior of Chart.js ADR 0019 that test/specs/core.animation.tests.js
 // does not check (AGENTS.md rule 3). The expected values come from
-// src/core/core.animation.js at v4.5.1, run with type stripping in Node.js
-// v24.12.0 on x64. animation_reference.dart has the scenarios and the color
-// data, which tool/reference/animation_reference.mjs writes (Chart.js ADR
-// 0032). The explicit cases below come from the same engine.
+// src/core/core.animation.js at v4.5.1, run with type stripping in Node.js.
+// animation_reference.dart has the scenarios and the color data, which
+// tool/reference/animation_reference.mjs writes on the reference engine
+// (Chart.js ADR 0045). The explicit cases below come from Node.js v24.12.0
+// on x64.
 //
 // Each tick uses a date relative to `start` in whole milliseconds. Thus the
 // results do not depend on the clock. The interpolations are IEEE arithmetic
@@ -146,9 +147,9 @@ List<Object?> _colorResults(Object? from, Object? to) {
 void main() {
   setUpSpecs();
 
-  test('the reference comes from Node.js v24.12.0 on x64', () {
-    expect(animationReferenceNode, 'v24.12.0');
-    expect(animationReferenceArch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64', () {
+    expect(animationReferenceNode, 'v24.22.1');
+    expect(animationReferenceArch, 'arm64');
   });
 
   group('adapt-animation-number-path', () {

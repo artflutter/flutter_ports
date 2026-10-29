@@ -501,6 +501,18 @@ Changes to the cited files:
   change. No library file, test or gallery file that this plan cites changes. The references,
   the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No trigger
   occurred in phase 8. The revisit point of this plan (after phase 8, before phase 9) is now.
+- 2026-10-29, the acceptance of [Chart.js ADR 0045](adr/0045-reference-engine-arm64.md) at the
+  start of phase 9. Chart.js ADR 0045 supersedes Chart.js ADR 0032.
+  `doc/adr/0032-js-numeric-semantics.md` gets only a "Superseded by" line after its status line.
+  The citations of a current rule move from Chart.js ADR 0032 to Chart.js ADR 0045 in place: in
+  the comments of `lib/` (also `canvas.dart`, `element.arc.dart` and `helpers.canvas.dart`), in
+  the tests and in porting-flow.md. No line of a library file moves. porting-flow.md changes §2.3
+  and other citations in place, and its list of superseded ADRs gets two lines after line 1298.
+  The text of §2.2, of §2.7 and of the cited rows of the harness table of §3 does not change. The
+  header comment of `test/port/helpers/helpers.canvas_test.dart` gets one line, and its `_Canvas`
+  fake does not change. The reference data of `test/port/` come again from the arm64 engine. The
+  `parity.md` rows that this plan cites do not change. The references, the inventory (§1.1), the
+  tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

@@ -12,7 +12,7 @@
 ///   scale reads an option with `options[key]` or [jsGet], tests it with
 ///   [jsTruthy], and applies [jsToNumber] before arithmetic. The adapter
 ///   gets the raw option values, as upstream gives them.
-/// - Numbers are `double` (Chart.js ADR 0032). `+value` of an adapter
+/// - Numbers are `double` (Chart.js ADR 0045). `+value` of an adapter
 ///   result is [jsToNumber]. `Date.now()` is [jsDateNow].
 /// - The value methods take any JS value (Chart.js ADR 0025).
 ///   [TimeScale.getDecimalForValue] starts with the port-only fast path for

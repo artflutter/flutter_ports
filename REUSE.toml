@@ -73,7 +73,7 @@ SPDX-License-Identifier = "BSD-3-Clause"
 
 # fdlibm 5.3 e_log.c, e_log10.c, s_atan.c, e_atan2.c, s_sin.c, s_cos.c, k_sin.c, k_cos.c,
 # e_rem_pio2.c, k_rem_pio2.c and s_scalbn.c from netlib, kept unchanged as the reference for
-# the lib/src/js/fdlibm_*.dart ports (Chart.js ADRs 0032 and 0035). They carry a 1993 notice.
+# the lib/src/js/fdlibm_*.dart ports (Chart.js ADRs 0035 and 0045). They carry a 1993 notice.
 [[annotations]]
 path = "third_party/fdlibm/**"
 precedence = "aggregate"

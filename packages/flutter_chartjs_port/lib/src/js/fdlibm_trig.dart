@@ -28,7 +28,7 @@
 //   an exact comparison of |x| with D(H), the double whose high word is H
 //   and whose low word is 0: `ix < H` is `|x| < D(H)`, `ix <= H` is
 //   `|x| < D(H + 1)` and `ix > H` is `|x| >= D(H + 1)`. Each such line has
-//   the C test as a comment (Chart.js ADR 0032 section 3). A NaN fails each
+//   the C test as a comment (Chart.js ADR 0045 section 3). A NaN fails each
 //   comparison. Thus ieee754Sin and ieee754Cos test
 //   `!(|x| <= double.maxFinite)` (C: `ix >= 0x7ff00000`) before the
 //   reduction.
@@ -56,7 +56,7 @@
 // ignore_for_file: parameter_assignments
 
 /// The fdlibm 5.3 sine and cosine (`Math.sin`, `Math.cos`), as V8 13.6 on
-/// x64 computes them (Chart.js ADR 0032).
+/// x64 computes them (Chart.js ADR 0045).
 library;
 
 import 'dart:typed_data';

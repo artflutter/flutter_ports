@@ -8,10 +8,11 @@ import 'package:test/test.dart';
 
 import 'intl_reference.dart';
 
-// The V8 strings come from `new Intl.NumberFormat(locale, options)` in
-// Node.js v24.12.0 (V8 13.6, ICU 77.1) on x64, with LANG=en_US.UTF-8.
-// tool/reference/intl_reference.mjs writes the data of the group
-// `V8 reference data`. The workspace resolves intl 0.20.3 (CLDR 48).
+// The V8 strings come from `new Intl.NumberFormat(locale, options)` with
+// LANG=en_US.UTF-8. The strings of the other groups come from Node.js
+// v24.12.0 (V8 13.6, ICU 77.1) on x64. tool/reference/intl_reference.mjs
+// writes the data of the group `V8 reference data` in Node.js v24.22.1
+// (V8 13.6, ICU 78.3) on arm64. The workspace resolves intl 0.20.3 (CLDR 48).
 
 /// Whether the test runs on dart2js, where an int is a double.
 const bool _dart2js = identical(1, 1.0);
@@ -377,9 +378,9 @@ void main() {
   // ranges of the guards. intl gives other strings for many of them.
   group('V8 reference data', () {
     test('is from the reference engine', () {
-      expect(intlReferenceNode, 'v24.12.0');
-      expect(intlReferenceArch, 'x64');
-      expect(intlReferenceIcu, '77.1');
+      expect(intlReferenceNode, 'v24.22.1');
+      expect(intlReferenceArch, 'arm64');
+      expect(intlReferenceIcu, '78.3');
     });
 
     for (final (section, count) in [

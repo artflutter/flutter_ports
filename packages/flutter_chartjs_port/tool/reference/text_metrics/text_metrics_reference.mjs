@@ -19,7 +19,7 @@
 //
 // The CHROME environment variable sets the Chrome binary. The default is the
 // Google Chrome app on macOS and `google-chrome` on other systems. The
-// reference is Chrome, not V8: Chart.js ADR 0032 does not apply, and any
+// reference is Chrome, not V8: section 2 of Chart.js ADR 0045 does not apply, and any
 // Node.js 22.15 or later runs the script.
 
 import {execFile, execFileSync} from 'node:child_process';

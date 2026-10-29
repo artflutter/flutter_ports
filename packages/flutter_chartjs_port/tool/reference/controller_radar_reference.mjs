@@ -27,8 +27,8 @@
 // converts the arguments of `bezierCurveTo` and `quadraticCurveTo` with
 // `ToNumber`, as a browser does.
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0:
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/controller_radar_reference.mjs

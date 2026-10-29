@@ -43,8 +43,8 @@
 // `Date.UTC(y, m, d, 24)` (moment.js:2640-2655). It records the offset
 // changes of each zone in 2010-2026 for the table zone.
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js v24.12.0
-// (on Apple silicon, the darwin-x64 build runs under Rosetta), with the Dart
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045), with the Dart
 // SDK on the PATH (the script formats the output with `dart format`) and
 // with the submodule third_party/Chart.js (`dart run melos run upstream`):
 //

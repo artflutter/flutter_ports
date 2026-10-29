@@ -44,8 +44,8 @@ import 'registry_observe.dart';
 // update and a render, a plugin that cancels a hook, the metasets, destroy,
 // getChart, the visibility, the events and the active elements, the
 // interaction modes, resize, the options and data aliases and the statics.
-// The expected lines come from the pinned sources in Node.js v24.12.0 on
-// x64.
+// The expected lines come from the pinned sources in Node.js v24.22.1 on
+// arm64.
 //
 // A chart of a scenario draws on a fake canvas with the mock context of the
 // harness. No chart host shows the canvas. Thus the chart gets
@@ -458,9 +458,9 @@ void main() {
   Chart.register(registerables);
   Chart.register([_testController, _testScale]);
 
-  test('the reference comes from Node.js v24.12.0 on x64', () {
-    expect(controllerReferenceNode, 'v24.12.0');
-    expect(controllerReferenceArch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64', () {
+    expect(controllerReferenceNode, 'v24.22.1');
+    expect(controllerReferenceArch, 'arm64');
   });
 
   group('the scenarios of the generator', () {

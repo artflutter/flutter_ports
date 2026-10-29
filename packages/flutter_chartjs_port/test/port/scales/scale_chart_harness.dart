@@ -12,8 +12,8 @@
 ///   section 8).
 /// - The expected values come from a generator in
 ///   `tool/reference/scale_*_reference.mjs`. It runs a build of Chart.js at
-///   the pinned commit in the x64 Node.js v24.12.0 (Chart.js ADR 0032), with
-///   the same test controllers as `DatasetController` subclasses in
+///   the pinned commit in the arm64 Node.js v24.22.1 (Chart.js ADR 0045),
+///   with the same test controllers as `DatasetController` subclasses in
 ///   JavaScript (`tool/reference/scale_chart_common.mjs`).
 /// - Node.js has no canvas. The Node.js side measures text with the advance
 ///   widths and the `kern` pairs of Liberation Sans 2.1.5, the test font of
@@ -777,8 +777,8 @@ typedef ScaleChartCase = ({
 /// generated file has this record type.
 typedef ScaleChartWidth = ({String font, String text, double width});
 
-/// A test that the reference comes from Node.js v24.12.0 on x64 (Chart.js
-/// ADR 0032) and from a build of the pinned Chart.js: [dist] is
+/// A test that the reference comes from Node.js v24.22.1 on arm64
+/// (Chart.js ADR 0045) and from a build of the pinned Chart.js: [dist] is
 /// [chartJsVersion], and [commit] is a full commit. For a commit pin, the
 /// commit starts with the sha8 of [chartJsVersion].
 void testReferenceOrigin({
@@ -787,10 +787,10 @@ void testReferenceOrigin({
   required String dist,
   required String commit,
 }) {
-  test('the reference comes from Node.js v24.12.0 on x64 and a build of the '
-      'pinned Chart.js', () {
-    expect(node, 'v24.12.0');
-    expect(arch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64 and a build of '
+      'the pinned Chart.js', () {
+    expect(node, 'v24.22.1');
+    expect(arch, 'arm64');
     expect(dist, chartJsVersion);
     expect(commit, matches(RegExp(r'^[0-9a-f]{40}$')));
     final plus = chartJsVersion.indexOf('+');

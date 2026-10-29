@@ -3,7 +3,7 @@
 /// Port of `src/core/core.layouts.defaults.js`.
 ///
 /// Option objects are `Map<String, Object?>` and numbers are `double`
-/// (Chart.js ADRs 0032 and 0043). [Defaults] is the interface of the
+/// (Chart.js ADRs 0043 and 0045). [Defaults] is the interface of the
 /// `defaults` object of `core.defaults.js`.
 library;
 

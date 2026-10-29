@@ -11,8 +11,8 @@
 // ADR 0022) in testWidgets cases. A test controller registers through its
 // class value in main(), before the snapshot of the defaults restore
 // (Chart.js ADR 0020, section 8, and Chart.js ADR 0022, section 8). The
-// expected values come from a build of the pinned Chart.js in the x64 Node.js
-// (Chart.js ADR 0032), with the same test controllers as DatasetController
+// expected values come from a build of the pinned Chart.js in the arm64 Node.js
+// (Chart.js ADR 0045), with the same test controllers as DatasetController
 // subclasses in JavaScript. Node.js has no canvas. Thus the Node.js side uses
 // a mock context that measures text with the advance widths and the 'kern'
 // pairs of Liberation Sans 2.1.5, the test font of the harness
@@ -51,18 +51,17 @@
 //   corepack pnpm build
 //
 // The dist imports @kurkle/color from <build>/node_modules. Then, from
-// packages/flutter_chartjs_port, with an x64 build of Node.js v24.12.0 and with
-// the Dart SDK on the PATH (the generator formats its output with
-// `dart format`):
+// packages/flutter_chartjs_port, with the darwin-arm64 build of Node.js
+// v24.22.1 (Chart.js ADR 0045) and with the Dart SDK on the PATH (the
+// generator formats its output with `dart format`):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/scale_<name>_reference.mjs
 //
-// The first argument can also give the path of dist/chart.js. On Apple
-// silicon, run the darwin-x64 build of Node.js under Rosetta:
-//
-//   /usr/bin/arch -x86_64 <node-v24.12.0-darwin-x64>/bin/node \
-//     tool/reference/scale_<name>_reference.mjs <build>/dist/chart.js
+// The first argument can also give the path of dist/chart.js. Under
+// corepack, `pnpm build` can stop in `emitDeclarations`
+// (ERR_PNPM_BAD_PM_VERSION) after rollup wrote dist/. The generators need
+// only dist/: `corepack pnpm exec rollup -c` builds it alone.
 //
 // The generator stops unless all of these are true:
 // - The package.json next to dist/ gives the name chart.js and the release
@@ -288,7 +287,7 @@ function checkBuildCommit(root) {
  *
  * The path of dist/chart.js comes from the first argument of the process or
  * from the environment variable CHARTJS_DIST. The function stops the process
- * unless Node.js is an x64 build (Chart.js ADR 0032), the package.json next
+ * unless the package.json next
  * to dist/ gives the name chart.js and the release of the pin, and its
  * folder is a git checkout at the pinned commit without changes
  * (checkBuildCommit). A second call returns the same module.

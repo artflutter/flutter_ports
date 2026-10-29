@@ -76,8 +76,8 @@
 // The Dart test file runs the cases two times: unthemed, and with the
 // light preset (theming.md section 8 test 3, Chart.js ADR 0042).
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0:
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/plugin_filler_reference.mjs

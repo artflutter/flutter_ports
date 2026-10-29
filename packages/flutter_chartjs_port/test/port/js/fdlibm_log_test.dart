@@ -35,6 +35,12 @@ void main() {
       expect(pairs, hasLength(5912));
     });
 
+    // The frozen fdlibm data of Chart.js ADR 0045, section 2.
+    test('has the reference of the x64 Node.js v24.12.0', () {
+      expect(log10ReferenceNode, 'v24.12.0');
+      expect(log10ReferenceArch, 'x64');
+    });
+
     test('equals V8 $log10ReferenceV8 on $log10ReferenceArch Math.log10 '
         '(fdlibm without fused multiply-add) bit for bit', () {
       final mismatches = <String>[];

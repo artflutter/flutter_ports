@@ -202,7 +202,7 @@ double textX(
 /// @private
 ///
 /// `start` and `count` are JS numbers, thus `double` values (Chart.js ADR
-/// 0032). They are always integers: list positions and lengths. The `lo`
+/// 0045). They are always integers: list positions and lengths. The `lo`
 /// and `hi` of [lookupByKey] are `int` values, which the port converts.
 /// `_parsed.slice(…)` is [_slice].
 ///

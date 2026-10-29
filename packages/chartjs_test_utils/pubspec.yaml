@@ -17,7 +17,7 @@ resolution: workspace
 dependencies:
   # The harness tasks of lib/src/dom.dart are due at clock.now(), the fake
   # clock of testWidgets (Chart.js ADR 0022). The constraint is the clock
-  # constraint of flutter_chartjs_port (Chart.js ADR 0032).
+  # constraint of flutter_chartjs_port (Chart.js ADR 0045).
   clock: ^1.1.2
   # lib/flutter.dart, the flutter test part of the harness, installs the test
   # font with FontLoader (Chart.js ADR 0015). pure.dart does not import it.

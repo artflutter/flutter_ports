@@ -20,7 +20,7 @@
 /// The two algorithms read the data items with the JavaScript operators:
 /// `+=` with [jsAdd], the arithmetic through [jsToNumber], `|` through
 /// [jsToInt32], and the compare of the raw `y` values through [jsLessThan]
-/// (Chart.js ADRs 0032 and 0036). For number items, these are the `double`
+/// (Chart.js ADRs 0036 and 0045). For number items, these are the `double`
 /// operations.
 ///
 /// A pure layer (Chart.js ADR 0038, section 9): it imports only pure

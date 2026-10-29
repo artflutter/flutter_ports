@@ -21,7 +21,7 @@ import 'plugin_dispatch_reference.dart';
 // The plugin hook dispatch with the seven plugins of src/plugins/index.js
 // (Chart.js ADR 0038, sections 3, 10 and 11). The reference is
 // tool/reference/plugin_dispatch_reference.mjs: a build of the pinned
-// Chart.js in Node.js v24.12.0 on x64 (Chart.js ADR 0032), with the
+// Chart.js in Node.js v24.22.1 on arm64 (Chart.js ADR 0045), with the
 // built-in components registered and `colors.enabled: false` in the
 // defaults (Chart.js ADR 0041, section 1), as flutter_test_config.dart
 // registers them here.

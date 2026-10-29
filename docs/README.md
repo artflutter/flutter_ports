@@ -41,8 +41,7 @@ package.
     port follows Chart.js fixes and improvements after the pinned tag.
   - [Upstream ledger](../packages/flutter_chartjs_port/doc/upstream-ledger.md): the upstream commits
     after the pinned tag, with their triage.
-  - Decisions (all accepted, except Chart.js ADR 0044, which is rejected, and Chart.js ADR 0045,
-    which is proposed):
+  - Decisions (all accepted, except Chart.js ADR 0044, which is rejected):
     [Chart.js ADR 0001: Theming](../packages/flutter_chartjs_port/doc/adr/0001-theming.md)
     (superseded by Chart.js ADR 0042),
     [Chart.js ADR 0002: JS numeric semantics](../packages/flutter_chartjs_port/doc/adr/0002-js-numeric-semantics.md)
@@ -91,7 +90,7 @@ package.
     [Chart.js ADR 0030: Controller test strategy](../packages/flutter_chartjs_port/doc/adr/0030-controller-test-strategy.md),
     [Chart.js ADR 0031: Gallery chart types and the stress controller](../packages/flutter_chartjs_port/doc/adr/0031-gallery-chart-types.md),
     [Chart.js ADR 0032: JS numeric semantics](../packages/flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md)
-    (it supersedes Chart.js ADR 0010),
+    (superseded by Chart.js ADR 0045),
     [Chart.js ADR 0033: Radial scale centers before the first layout](../packages/flutter_chartjs_port/doc/adr/0033-radial-scale-centers.md)
     (it supersedes the `xCenter` and `yCenter` bullet of Chart.js ADR 0025 §5),
     [Chart.js ADR 0034: No display-only JS exactness](../packages/flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md)
@@ -113,7 +112,7 @@ package.
     [Chart.js ADR 0044: Stack fill search](../packages/flutter_chartjs_port/doc/adr/0044-stack-fill-search.md)
     (rejected),
     [Chart.js ADR 0045: Reference engine on arm64](../packages/flutter_chartjs_port/doc/adr/0045-reference-engine-arm64.md)
-    (proposed),
+    (it supersedes Chart.js ADR 0032),
     [Chart.js ADR 0046: Stack fill search, the result of the code A/B](../packages/flutter_chartjs_port/doc/adr/0046-stack-fill-search-result.md).
   - Prior art: [overview](../packages/flutter_chartjs_port/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs_port/doc/prior-art/chartjs-packages.md),

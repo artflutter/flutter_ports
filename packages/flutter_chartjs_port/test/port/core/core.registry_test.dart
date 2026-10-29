@@ -29,7 +29,7 @@ import 'registry_reference.dart';
 // the registry of each kind of item, the base classes, the List and Map
 // items, the values that are not items, the register callbacks and their
 // `this`, the getters, the namespace `elements` and the singleton. The
-// expected lines come from the pinned sources in Node.js v24.12.0 on x64.
+// expected lines come from the pinned sources in Node.js v24.22.1 on arm64.
 //
 // Each test makes a new Registry, except the test of the singleton, which
 // unregisters its item, as core.registry.tests.js does (Chart.js ADR 0022,
@@ -54,9 +54,9 @@ List<String> _keys(Map<String, Object> items) => jsObjectKeys(items);
 void main() {
   setUpSpecs();
 
-  test('the reference comes from Node.js v24.12.0 on x64', () {
-    expect(registryReferenceNode, 'v24.12.0');
-    expect(registryReferenceArch, 'x64');
+  test('the reference comes from Node.js v24.22.1 on arm64', () {
+    expect(registryReferenceNode, 'v24.22.1');
+    expect(registryReferenceArch, 'arm64');
   });
 
   test('each kind of item goes to its registry', () {

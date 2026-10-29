@@ -25,9 +25,10 @@ import 'line_reference.dart';
 // loops and spanGaps, the draw arguments, the statics and the access by
 // name. The group 'reference' runs the cases of line_reference.dart, which
 // tool/reference/line_reference.mjs writes from the pinned element.line.js
-// and the mock context of chartjs-test-utils in Node.js v24.12.0 on x64. The
-// other expected values come from a probe of the same sources in the same
-// Node.js. The numbers compare with closeTo (Chart.js ADR 0034).
+// and the mock context of chartjs-test-utils in Node.js v24.22.1 on arm64.
+// The other expected values come from a probe of the same sources in
+// Node.js v24.12.0 on x64. The numbers compare with closeTo (Chart.js ADR
+// 0034).
 //
 // Each reference case runs twice (Chart.js ADR 0018, section 6): with the
 // plain Map options of the reference, and with a LineOptions with the same
@@ -318,9 +319,9 @@ AnyObject _options([AnyObject extra = const {}]) => {
 
 void main() {
   group('reference', () {
-    test('has the reference of Node.js v24.12.0 on x64', () {
-      expect(lineReferenceNode, 'v24.12.0');
-      expect(lineReferenceArch, 'x64');
+    test('has the reference of Node.js v24.22.1 on arm64', () {
+      expect(lineReferenceNode, 'v24.22.1');
+      expect(lineReferenceArch, 'arm64');
       expect(lineReference, hasLength(40));
     });
 

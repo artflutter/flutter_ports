@@ -22,17 +22,17 @@ resolution: workspace
 
 dependencies:
   # jsDateNow reads clock.now(), the clock that the FakeAsync zone of
-  # testWidgets moves (Chart.js ADR 0032 section 6). 1.1.2 is the version that
+  # testWidgets moves (Chart.js ADR 0045 section 6). 1.1.2 is the version that
   # fake_async already resolves in the workspace.
   clock: ^1.1.2
-  # jsSort calls mergeSort, a stable sort (Chart.js ADR 0032, Sort). 1.19.1 is
+  # jsSort calls mergeSort, a stable sort (Chart.js ADR 0045, Sort). 1.19.1 is
   # the lower bound of the collection constraint of Flutter 3.47.7.
   collection: ^1.19.1
   flutter:
     sdk: flutter
   # Numbers (js_intl.dart, Chart.js ADR 0026) and the date adapter
   # (porting-flow.md 2.10) format through intl. 0.20.2 is the constraint of
-  # Chart.js ADR 0032 (the pin of flutter_localizations in Flutter 3.44.9).
+  # Chart.js ADR 0045 (the pin of flutter_localizations in Flutter 3.44.9).
   # flutter_localizations in Flutter 3.47.7 requires ^0.20.3.
   intl: ^0.20.2
   # @internal on underscore members that other modules read (Chart.js ADR

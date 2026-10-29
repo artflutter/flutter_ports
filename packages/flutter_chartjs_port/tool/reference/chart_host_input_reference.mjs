@@ -86,8 +86,9 @@
 // The header of the data file has the DOM types of each step, as comment
 // lines.
 //
-// Usage, from packages/flutter_chartjs_port, with an x64 build of Node.js
-// v24.12.0 and the Dart SDK on the PATH:
+// Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
+// Node.js v24.22.1 (Chart.js ADR 0045)
+// and the Dart SDK on the PATH:
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/chart_host_input_reference.mjs

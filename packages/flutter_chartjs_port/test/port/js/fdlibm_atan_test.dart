@@ -34,6 +34,12 @@ void main() {
       expect(triples, hasLength(3000));
     });
 
+    // The frozen fdlibm data of Chart.js ADR 0045, section 2.
+    test('has the reference of the x64 Node.js v24.12.0', () {
+      expect(atan2ReferenceNode, 'v24.12.0');
+      expect(atan2ReferenceArch, 'x64');
+    });
+
     test('equals V8 $atan2ReferenceV8 on $atan2ReferenceArch Math.atan2 '
         '(fdlibm without fused multiply-add) bit for bit', () {
       final mismatches = <String>[];
