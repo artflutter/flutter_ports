@@ -41,8 +41,8 @@ package.
     port follows Chart.js fixes and improvements after the pinned tag.
   - [Upstream ledger](../packages/flutter_chartjs_port/doc/upstream-ledger.md): the upstream commits
     after the pinned tag, with their triage.
-  - Decisions (all accepted, except Chart.js ADR 0044, which is rejected, and Chart.js ADR 0047,
-    which is proposed):
+  - Decisions (all accepted, except Chart.js ADR 0044, which is rejected, and Chart.js ADRs 0047-0051,
+    which are proposed):
     [Chart.js ADR 0001: Theming](../packages/flutter_chartjs_port/doc/adr/0001-theming.md)
     (superseded by Chart.js ADR 0042),
     [Chart.js ADR 0002: JS numeric semantics](../packages/flutter_chartjs_port/doc/adr/0002-js-numeric-semantics.md)
@@ -116,6 +116,14 @@ package.
     (it supersedes Chart.js ADR 0032),
     [Chart.js ADR 0046: Stack fill search, the result of the code A/B](../packages/flutter_chartjs_port/doc/adr/0046-stack-fill-search-result.md),
     [Chart.js ADR 0047: The published archive](../packages/flutter_chartjs_port/doc/adr/0047-published-archive.md)
+    (proposed),
+    [Chart.js ADR 0048: Entry points and the public library](../packages/flutter_chartjs_port/doc/adr/0048-entry-points-and-public-library.md)
+    (proposed),
+    [Chart.js ADR 0049: The ChartView widget and reduced motion](../packages/flutter_chartjs_port/doc/adr/0049-chart-view-widget.md)
+    (proposed),
+    [Chart.js ADR 0050: The public theme API](../packages/flutter_chartjs_port/doc/adr/0050-public-theme-api.md)
+    (proposed),
+    [Chart.js ADR 0051: Input events and interaction state](../packages/flutter_chartjs_port/doc/adr/0051-input-events-and-interaction-state.md)
     (proposed).
   - Prior art: [overview](../packages/flutter_chartjs_port/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs_port/doc/prior-art/chartjs-packages.md),

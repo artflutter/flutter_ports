@@ -519,6 +519,11 @@ Changes to the cited files:
   7 of §7 (lines 1332-1335) in place, and no cited line moves. AGENTS.md changes its list of ADRs. No library file, test or
   gallery file changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
   estimates do not change. No trigger occurred.
+- 2026-10-29, Chart.js ADRs 0048-0051 (proposed: the entry points, the widget, the theme API, the
+  input). Only the ADR files and the ADR lists of AGENTS.md and the READMEs change. The references,
+  the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. The code
+  commits of these ADRs update this plan for `chart_host.dart`, `canvas.dart` and `canvas_ui.dart`.
+  No trigger occurred.
 
 ## 1. Why
 

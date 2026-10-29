@@ -370,7 +370,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0047. Thirteen of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0051. Thirteen of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR
       0012 supersedes Chart.js ADR 0004, and Chart.js ADR 0026 supersedes Chart.js ADR 0008.
       Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0033 supersedes Chart.js ADR
@@ -392,8 +392,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       maintainer, 2026-10-21). It accepts an ADR when the decision is implemented and its gates are
       green. A changed decision still gets a new ADR that supersedes the old one. Chart.js ADR 0044
       (the stack fill search) is rejected: its code A/B rejected the change, and Chart.js ADR 0046
-      records the result. Chart.js ADR 0047 (the published archive) is proposed. The other ADRs
-      are accepted. Docs name them "Chart.js ADR NNNN".
+      records the result. Chart.js ADRs 0047 (the published archive), 0048 (the entry points and the
+      public library), 0049 (the ChartView widget and reduced motion), 0050 (the public theme API,
+      which supersedes Chart.js ADR 0042 on acceptance) and 0051 (input events and interaction
+      state) are proposed. The other ADRs are accepted. Docs name them "Chart.js ADR NNNN".
       "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. An accepted ADR does not change. A changed decision

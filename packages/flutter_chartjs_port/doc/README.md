@@ -30,8 +30,8 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043, 0045 and 0046 are accepted. Chart.js ADR
-  0047 is proposed. Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
+  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043, 0045 and 0046 are accepted. Chart.js ADRs
+  0047-0051 are proposed. Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
   lead accepted Chart.js ADRs 0038-0043 on 2026-10-23, and Chart.js ADRs 0037, 0045 and 0046 on
   2026-10-29. Thirteen accepted ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
   supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR 0004, Chart.js ADR 0016
@@ -112,6 +112,11 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
     supersedes Chart.js ADR 0032)
   - [Chart.js ADR 0046: Stack fill search, the result of the code A/B](adr/0046-stack-fill-search-result.md)
   - [Chart.js ADR 0047: The published archive](adr/0047-published-archive.md) (proposed)
+  - [Chart.js ADR 0048: Entry points and the public library](adr/0048-entry-points-and-public-library.md) (proposed)
+  - [Chart.js ADR 0049: The ChartView widget and reduced motion](adr/0049-chart-view-widget.md) (proposed)
+  - [Chart.js ADR 0050: The public theme API](adr/0050-public-theme-api.md) (proposed; it supersedes
+    Chart.js ADR 0042 on acceptance)
+  - [Chart.js ADR 0051: Input events and interaction state](adr/0051-input-events-and-interaction-state.md) (proposed)
 
 ## What gets ported
 
