@@ -174,6 +174,10 @@ final class _Canvas implements HTMLCanvasElement {
 
   @override
   void removeAttribute(String name) => throw UnimplementedError();
+
+  @override
+  Future<String> toDataURL([String? type, Object? quality]) =>
+      throw UnimplementedError();
 }
 
 /// An image point style, the `{width, height}` of an `HTMLImageElement`.

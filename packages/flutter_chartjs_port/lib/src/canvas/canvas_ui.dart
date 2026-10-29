@@ -38,6 +38,7 @@
 /// clip is part of the state.
 library;
 
+import 'dart:convert';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -356,6 +357,30 @@ final class UiCanvasElement implements HTMLCanvasElement, CanvasNode {
       throw StateError('The canvas has no pixels.');
     }
     return UiImageSource(getContext2d()._snapshot());
+  }
+
+  /// `toDataURL(type, quality)`: the data URL of the bitmap at the call.
+  ///
+  /// A canvas with no pixels gives `'data:,'`, as the HTML standard gives.
+  /// Else the call takes the snapshot of the bitmap at once, encodes it as
+  /// PNG with `Image.toByteData` and disposes it. Thus a draw after the call
+  /// is not in the result. Each [type] gives PNG, [quality] has no effect,
+  /// and the bytes differ from the PNG encoder of Chrome.
+  // DIVERGES(chartjs): platform-to-base64-image, a Future of a PNG data URL.
+  @override
+  Future<String> toDataURL([String? type, Object? quality]) async {
+    if (_width == 0 || _height == 0) return 'data:,';
+    final image = getContext2d()._snapshot();
+    try {
+      final data = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = data!.buffer.asUint8List(
+        data.offsetInBytes,
+        data.lengthInBytes,
+      );
+      return 'data:image/png;base64,${base64Encode(bytes)}';
+    } finally {
+      image.dispose();
+    }
   }
 }
 

@@ -2373,4 +2373,42 @@ void main() {
       expect(ctx.isEmpty, isTrue);
     });
   });
+
+  group('toDataURL', () {
+    // Chart.js ADR 0048, section 8: a PNG data URL of the bitmap at the call.
+    test('a round trip of the pixels', () async {
+      final canvas = UiCanvasElement(width: 20, height: 10);
+      canvas.getContext2d()
+        ..fillStyle = '#ff0000'
+        ..fillRect(0, 0, 10, 5)
+        ..fillStyle = '#00ff00'
+        ..fillRect(10, 0, 10, 5)
+        ..fillStyle = '#0000ff'
+        ..fillRect(0, 5, 10, 5);
+      final url = await canvas.toDataURL();
+      expect(url, startsWith('data:image/png;base64,'));
+      final codec = await ui.instantiateImageCodec(
+        Uri.parse(url).data!.contentAsBytes(),
+      );
+      final frame = await codec.getNextFrame();
+      expect(frame.image.width, 20);
+      expect(frame.image.height, 10);
+      final data = (await frame.image.toByteData())!;
+      frame.image.dispose();
+      codec.dispose();
+      int rgba(int x, int y) => data.getUint32((y * 20 + x) * 4);
+      expect(rgba(2, 2), 0xff0000ff);
+      expect(rgba(12, 2), 0x00ff00ff);
+      expect(rgba(2, 7), 0x0000ffff);
+      expect(rgba(12, 7), 0x00000000);
+    });
+
+    test('a canvas with no pixels gives data:,', () async {
+      expect(await UiCanvasElement(width: 0, height: 10).toDataURL(), 'data:,');
+      expect(
+        await UiCanvasElement(width: 10, height: 0).toDataURL('image/jpeg'),
+        'data:,',
+      );
+    });
+  });
 }

@@ -58,6 +58,10 @@ final class _Canvas implements HTMLCanvasElement, CanvasNode {
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+
+  @override
+  Future<String> toDataURL([String? type, Object? quality]) =>
+      throw UnimplementedError();
 }
 
 /// `document.createElement('div')` with the style `width` x `height`,

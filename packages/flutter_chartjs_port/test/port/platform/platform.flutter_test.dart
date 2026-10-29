@@ -26,6 +26,10 @@ final class _ForeignCanvas implements HTMLCanvasElement {
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+
+  @override
+  Future<String> toDataURL([String? type, Object? quality]) =>
+      throw UnimplementedError();
 }
 
 Widget _box(Widget child) => Directionality(

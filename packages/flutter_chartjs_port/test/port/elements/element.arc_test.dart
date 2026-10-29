@@ -75,6 +75,10 @@ final class _Canvas implements HTMLCanvasElement {
 
   @override
   void removeAttribute(String name) => throw UnimplementedError();
+
+  @override
+  Future<String> toDataURL([String? type, Object? quality]) =>
+      throw UnimplementedError();
 }
 
 /// A [MockContext] with a canvas. `clipSelf` reads `ctx.canvas.width` and

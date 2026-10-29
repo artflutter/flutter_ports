@@ -24,6 +24,10 @@ final class _Canvas implements HTMLCanvasElement {
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+
+  @override
+  Future<String> toDataURL([String? type, Object? quality]) =>
+      throw UnimplementedError();
 }
 
 final class _Context implements CanvasRenderingContext2D {

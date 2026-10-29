@@ -78,6 +78,10 @@ final class _Canvas implements HTMLCanvasElement {
 
   @override
   void removeAttribute(String name) {}
+
+  @override
+  Future<String> toDataURL([String? type, Object? quality]) =>
+      throw UnimplementedError();
 }
 
 /// The mock context of [_Canvas].

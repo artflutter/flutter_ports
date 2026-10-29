@@ -1940,19 +1940,19 @@ class Chart implements types.Chart {
     notifyPlugins('afterDestroy');
   }
 
-  /// core.controller.js:957 `toBase64Image(...args)`.
+  /// core.controller.js:957 `toBase64Image(...args)`: the data URL of the
+  /// bitmap at the call.
   ///
   /// Upstream returns `this.canvas.toDataURL(...args)`, a synchronous data
-  /// URL of the bitmap. `dart:ui` encodes an image only asynchronously, and
-  /// the canvas layer has no `toDataURL` (Chart.js ADR 0013). Thus the port
-  /// throws an [UnsupportedError]. The public API of phase 9 decides an
-  /// asynchronous form.
-  String toBase64Image([String? type, Object? quality]) {
-    // DIVERGES(chartjs): platform-to-base64-image, no synchronous toDataURL.
-    throw UnsupportedError(
-      'toBase64Image: the canvas layer has no synchronous toDataURL.',
-    );
-  }
+  /// URL. `dart:ui` encodes an image only asynchronously. Thus the port
+  /// returns a Future of the data URL of `HTMLCanvasElement.toDataURL`
+  /// (Chart.js ADR 0048, section 8). The Future holds the bitmap of the
+  /// call. Each [type] gives PNG, and [quality] has no effect. The method is
+  /// not `async`: a destroyed chart has no canvas and throws a [TypeError]
+  /// at the call, as upstream.
+  // DIVERGES(chartjs): platform-to-base64-image, a Future of the data URL.
+  Future<String> toBase64Image([String? type, Object? quality]) =>
+      canvas!.toDataURL(type, quality);
 
   /// core.controller.js:964 `bindEvents()`.
   /// @private

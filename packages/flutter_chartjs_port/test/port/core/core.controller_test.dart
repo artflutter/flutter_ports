@@ -2,6 +2,9 @@
 @TestOn('vm')
 library;
 
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/scheduler.dart';
@@ -124,6 +127,10 @@ final class _Canvas implements HTMLCanvasElement {
 
   @override
   void removeAttribute(String name) {}
+
+  @override
+  Future<String> toDataURL([String? type, Object? quality]) =>
+      throw UnimplementedError();
 }
 
 /// The dataset controller `test` of the generator: it places each point at
@@ -1663,10 +1670,81 @@ void main() {
   });
 
   group('platform-to-base64-image', () {
-    test('toBase64Image throws an UnsupportedError', () {
-      final chart = Chart(_Canvas(), <String, Object?>{});
+    // Chart.js ADR 0048, section 8: toBase64Image returns the Future of
+    // toDataURL of the canvas layer, a PNG data URL of the bitmap at the
+    // call. The chart is on a UiCanvasElement that no host shows: the
+    // BasicPlatform, with no animation. Its bitmap is red.
+    Chart redChart() {
+      final chart = Chart(
+        UiCanvasElement(width: 40, height: 20),
+        <String, Object?>{},
+      );
+      chart.ctx!
+        ..fillStyle = '#ff0000'
+        ..fillRect(0, 0, 40, 20);
+      return chart;
+    }
+
+    /// The bytes of the data URL [url].
+    Uint8List bytesOf(String url) => Uri.parse(url).data!.contentAsBytes();
+
+    /// The RGBA bytes of the PNG [png].
+    Future<ByteData> decode(Uint8List png) async {
+      final codec = await ui.instantiateImageCodec(png);
+      final frame = await codec.getNextFrame();
+      final data = (await frame.image.toByteData())!;
+      frame.image.dispose();
+      codec.dispose();
+      return data;
+    }
+
+    testWidgets('a PNG data URL of the bitmap at the call', (tester) async {
+      final chart = redChart();
       addTearDown(chart.destroy);
-      expect(chart.toBase64Image, throwsA(isA<UnsupportedError>()));
+      final canvas = chart.canvas!;
+      final pixels = await tester.runAsync(() async {
+        final url = chart.toBase64Image();
+        // A draw after the call is not in the result.
+        chart.ctx!
+          ..fillStyle = '#0000ff'
+          ..fillRect(0, 0, 40, 20);
+        final text = await url;
+        expect(text, startsWith('data:image/png;base64,'));
+        final png = bytesOf(text);
+        expect(png.sublist(0, 8), [137, 80, 78, 71, 13, 10, 26, 10]);
+        // The width and the height of the IHDR chunk are the canvas size.
+        final header = ByteData.sublistView(png, 16, 24);
+        expect(header.getUint32(0), canvas.width);
+        expect(header.getUint32(4), canvas.height);
+        return decode(png);
+      });
+      expect(pixels!.getUint32(0), 0xff0000ff);
+      final last = (canvas.width * canvas.height - 1) * 4;
+      expect(pixels.getUint32(last), 0xff0000ff);
+    });
+
+    testWidgets('each type gives PNG', (tester) async {
+      final chart = redChart();
+      addTearDown(chart.destroy);
+      final url = await tester.runAsync(
+        () => chart.toBase64Image('image/jpeg', 0.5),
+      );
+      expect(url, startsWith('data:image/png;base64,'));
+    });
+
+    testWidgets('a canvas with no pixels gives data:,', (tester) async {
+      final chart = redChart();
+      addTearDown(chart.destroy);
+      chart.canvas!.width = 0;
+      final url = await tester.runAsync(chart.toBase64Image);
+      expect(url, 'data:,');
+    });
+
+    test('a destroyed chart throws a TypeError at the call', () {
+      // core.controller.js:957-959: `this.canvas.toDataURL` of the null
+      // canvas of a destroyed chart (:948).
+      final chart = redChart()..destroy();
+      expect(chart.toBase64Image, throwsA(isA<TypeError>()));
     });
   });
 

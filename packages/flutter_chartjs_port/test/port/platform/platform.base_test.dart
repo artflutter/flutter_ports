@@ -22,6 +22,10 @@ final class _Canvas implements HTMLCanvasElement {
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+
+  @override
+  Future<String> toDataURL([String? type, Object? quality]) =>
+      throw UnimplementedError();
 }
 
 /// A chart object. The base platform reads none of its members.

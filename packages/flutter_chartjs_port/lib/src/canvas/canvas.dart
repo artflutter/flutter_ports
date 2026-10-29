@@ -360,6 +360,15 @@ abstract interface class HTMLCanvasElement {
   /// `removeAttribute(name)`. The removal of the `width` or `height`
   /// attribute gives the default size (300 x 150) and resets the context.
   void removeAttribute(String name);
+
+  /// `toDataURL(type, quality)`: a data URL of the bitmap at the call.
+  /// `toBase64Image` calls it (core.controller.js:957-959).
+  ///
+  /// The DOM returns a String. `dart:ui` encodes an image only
+  /// asynchronously, so the port returns a Future that holds the bitmap of
+  /// the call (`platform-to-base64-image`, Chart.js ADR 0048, section 8).
+  /// Each [type] gives PNG, and [quality] has no effect.
+  Future<String> toDataURL([String? type, Object? quality]);
 }
 
 /// lib.dom.d.ts `Node.parentNode` of a canvas element, as `helpers.dom`

@@ -70,6 +70,10 @@ final class _Canvas implements HTMLCanvasElement, CanvasNode {
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+
+  @override
+  Future<String> toDataURL([String? type, Object? quality]) =>
+      throw UnimplementedError();
 }
 
 /// A context that records its `setTransform` calls as the mock context
