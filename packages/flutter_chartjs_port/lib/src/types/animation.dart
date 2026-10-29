@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/types/animation.d.ts (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/types/animation.d.ts (MIT, Chart.js Contributors).
 
 /// The declarations of `src/types/animation.d.ts` (Chart.js ADR 0003,
 /// porting-flow.md 2.4).

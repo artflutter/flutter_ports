@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/helpers/helpers.easing.ts (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/helpers/helpers.easing.ts (MIT, Chart.js Contributors).
 // Upstream reassigns the parameter t in many effects, as in (t /= 0.5) < 1.
 // The port keeps these assignments, so the floating-point steps stay the same.
 // ignore_for_file: parameter_assignments

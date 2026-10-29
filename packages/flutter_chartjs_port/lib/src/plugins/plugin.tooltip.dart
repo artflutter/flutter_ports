@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/plugins/plugin.tooltip.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/plugins/plugin.tooltip.js (MIT, Chart.js Contributors).
 
 /// Port of `src/plugins/plugin.tooltip.js` (Chart.js ADR 0039).
 ///

@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/core/core.typedRegistry.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/core/core.typedRegistry.js (MIT, Chart.js Contributors).
 
 /// Port of `src/core/core.typedRegistry.js`: the registry of one type of
 /// chart component (Chart.js ADR 0020, section 5).

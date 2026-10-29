@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 test/fixtures/controller.scatter/showLine/changed.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 test/fixtures/controller.scatter/showLine/changed.js (MIT, Chart.js Contributors).
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 

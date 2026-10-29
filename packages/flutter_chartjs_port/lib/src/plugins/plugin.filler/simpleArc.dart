@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/plugins/plugin.filler/simpleArc.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/plugins/plugin.filler/simpleArc.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
 
 /// Port of `src/plugins/plugin.filler/simpleArc.js`.

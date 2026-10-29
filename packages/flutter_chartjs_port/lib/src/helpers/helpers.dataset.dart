@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/helpers/helpers.dataset.ts (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/helpers/helpers.dataset.ts (MIT, Chart.js Contributors).
 
 /// Port of `src/helpers/helpers.dataset.ts`.
 ///

@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/elements/index.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/elements/index.js (MIT, Chart.js Contributors).
 
 /// Port of `src/elements/index.js`: the element classes that upstream
 /// exports as `Chart.elements`.

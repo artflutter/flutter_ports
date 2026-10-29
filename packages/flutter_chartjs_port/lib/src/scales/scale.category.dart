@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/scales/scale.category.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/scales/scale.category.js (MIT, Chart.js Contributors).
 
 /// Port of `src/scales/scale.category.js`.
 ///

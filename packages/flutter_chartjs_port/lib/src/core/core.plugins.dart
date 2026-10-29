@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/core/core.plugins.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/core/core.plugins.js (MIT, Chart.js Contributors).
 
 /// Port of `src/core/core.plugins.js`: the plugin service of a chart
 /// (Chart.js ADR 0020, section 7).

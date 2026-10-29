@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 test/fixtures/controller.polarArea/polar-area-animation-scale.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 test/fixtures/controller.polarArea/polar-area-animation-scale.js (MIT, Chart.js Contributors).
 // ignore_for_file: file_names
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;

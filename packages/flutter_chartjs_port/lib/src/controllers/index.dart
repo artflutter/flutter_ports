@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/controllers/index.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/controllers/index.js (MIT, Chart.js Contributors).
 
 /// Port of `src/controllers/index.js`: the controller classes that upstream
 /// exports as `Chart.controllers`.

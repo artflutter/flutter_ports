@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/core/core.registry.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/core/core.registry.js (MIT, Chart.js Contributors).
 
 /// Port of `src/core/core.registry.js`: the registry of the controllers,
 /// the elements, the plugins and the scales (Chart.js ADR 0020, section 5).

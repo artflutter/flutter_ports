@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 docs/charts/doughnut.md (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 docs/charts/doughnut.md (MIT, Chart.js Contributors).
 
 // The package exports nothing from lib/src yet; the public API comes in
 // phase 9. The gallery imports the ported files directly.

@@ -1,4 +1,4 @@
-// Ported from Chart.js v4.5.1+7169e651 src/plugins/index.js (MIT, Chart.js Contributors).
+// Ported from Chart.js v4.6.1 src/plugins/index.js (MIT, Chart.js Contributors).
 
 /// Port of `src/plugins/index.js`: the plugins that upstream exports as
 /// `Chart.plugins` (Chart.js ADR 0038, section 2).
