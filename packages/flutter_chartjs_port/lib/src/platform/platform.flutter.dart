@@ -43,6 +43,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart'
     show getMaximumSize;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show throttled;
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
@@ -415,6 +416,21 @@ void Function(NativeEvent) createProxyAndListen(
 class FlutterPlatform extends BasePlatform {
   /// platform.dom.js:260 the implicit constructor.
   FlutterPlatform();
+
+  /// platform.dom.js:260 `class DomPlatform` as a value, as the Flutter
+  /// platform (Chart.js ADR 0037, section 1, and Chart.js ADR 0048, section
+  /// 7).
+  ///
+  /// It extends [BasePlatform.jsClass] and has no statics, as
+  /// `BasicPlatform.jsClass`. Its name is `FlutterPlatform`. The key
+  /// `DomPlatform` of `Chart.platforms` (`lib/src/index.umd.dart`) gives it
+  /// (`platform-umd-dom-platform`).
+  // DIVERGES(chartjs): platform-umd-dom-platform, the class of DomPlatform.
+  static final JsClass jsClass = JsClass(
+    'FlutterPlatform',
+    superclass: BasePlatform.jsClass,
+    construct: (newTarget, args) => FlutterPlatform(),
+  );
 
   /// The canvas of the last [acquireContext] call, whose host gives
   /// [getDevicePixelRatio].

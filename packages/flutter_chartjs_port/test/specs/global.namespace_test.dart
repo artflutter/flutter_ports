@@ -2,9 +2,12 @@
 @TestOn('vm')
 library;
 
-// The spec reads Chart of flutter_chartjs_port, which does not export
-// lib/src yet.
+// The spec reads the UMD entry of lib/src, which no public library exports
+// (Chart.js ADR 0048, section 1).
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/index.umd.dart';
+import 'package:flutter_chartjs_port/src/js/js_function.dart';
+import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The namespace spec has no chart: each case is a `test()` case. It runs on
@@ -14,11 +17,19 @@ import 'package:flutter_test/flutter_test.dart';
 //
 // `Chart instanceof Function` (:4) is the constructor tear-off of the Dart
 // class: `Chart.new` is a Function. The other cases read the statics that
-// the UMD entry writes on `Chart` (src/index.umd.ts:30-47): `Chart.helpers`,
-// `Chart.Animation`, `Chart.platforms`, `Chart.elements` and the others.
-// src/index.umd.ts is not ported (phase 9), so these cases skip as
-// 'blocked: index.umd'. The stale-block check of tool 5 keeps them valid
-// while the row src/index.umd.ts is not `ported`.
+// the UMD entry writes on `Chart` (src/index.umd.ts:30-47). The specs run on
+// the UMD bundle (karma.conf.cjs:110). Thus `Chart` of these cases is
+// `chartUmd` of lib/src/index.umd.dart, the class value of `Chart` after the
+// body of the module. `x instanceof Function` is `jsIsFunction(x)`, true for
+// a class value. `x instanceof Object` is `_isObject(x)`.
+
+/// `value instanceof Object`: a value that is not null with the `typeof`
+/// `object` or `function`.
+bool _isObject(Object? value) {
+  if (value == null) return false;
+  final type = jsTypeof(value);
+  return type == 'object' || type == 'function';
+}
 
 void main() {
   // global.namespace.tests.js:1
@@ -31,27 +42,44 @@ void main() {
       });
 
       // :6-22
-      test(
-        'should define "core" properties',
-        () {},
-        skip: 'blocked: index.umd',
-      );
+      test('should define "core" properties', () {
+        expect(jsIsFunction(chartUmd), isTrue);
+        expect(_isObject(jsGet(chartUmd, 'Animation')), isTrue);
+        expect(_isObject(jsGet(chartUmd, 'Animations')), isTrue);
+        expect(_isObject(jsGet(chartUmd, 'defaults')), isTrue);
+        expect(_isObject(jsGet(chartUmd, 'Element')), isTrue);
+        expect(_isObject(jsGet(chartUmd, 'Interaction')), isTrue);
+        expect(_isObject(jsGet(chartUmd, 'layouts')), isTrue);
+
+        final platforms = jsGet(chartUmd, 'platforms');
+        expect(jsIsFunction(jsGet(platforms, 'BasePlatform')), isTrue);
+        expect(jsIsFunction(jsGet(platforms, 'BasicPlatform')), isTrue);
+        expect(jsIsFunction(jsGet(platforms, 'DomPlatform')), isTrue);
+
+        expect(_isObject(jsGet(chartUmd, 'registry')), isTrue);
+        expect(_isObject(jsGet(chartUmd, 'Scale')), isTrue);
+        expect(_isObject(jsGet(chartUmd, 'Ticks')), isTrue);
+      });
     });
 
     // :25
     group('Chart.elements', () {
       // :26-31
-      test(
-        'should contains "elements" classes',
-        () {},
-        skip: 'blocked: index.umd',
-      );
+      test('should contains "elements" classes', () {
+        final elements = jsGet(chartUmd, 'elements');
+        expect(jsIsFunction(jsGet(elements, 'ArcElement')), isTrue);
+        expect(jsIsFunction(jsGet(elements, 'BarElement')), isTrue);
+        expect(jsIsFunction(jsGet(elements, 'LineElement')), isTrue);
+        expect(jsIsFunction(jsGet(elements, 'PointElement')), isTrue);
+      });
     });
 
     // :34
     group('Chart.helpers', () {
       // :35-37
-      test('should be an object', () {}, skip: 'blocked: index.umd');
+      test('should be an object', () {
+        expect(_isObject(jsGet(chartUmd, 'helpers')), isTrue);
+      });
     });
   });
 }

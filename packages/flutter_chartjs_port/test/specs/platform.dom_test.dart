@@ -4,10 +4,11 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
+// The spec builds charts of flutter_chartjs_port and reads the UMD entry of
+// lib/src, which no public library exports (Chart.js ADR 0048, section 1).
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/index.umd.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
@@ -20,10 +21,12 @@ import 'package:flutter_test/flutter_test.dart';
 // Chart.js ADR 0022. The spec runs on the VM: a chart reaches the chart host
 // and dart:ui.
 //
-// :1 `const DomPlatform = Chart.platforms.DomPlatform`: `FlutterPlatform`
+// :1 `const DomPlatform = Chart.platforms.DomPlatform` reads `chartUmd` of
+// lib/src/index.umd.dart, the `Chart` of the UMD bundle that the specs run
+// on. The key `DomPlatform` gives the class value of `FlutterPlatform`, which
 // replaces `DomPlatform` for a canvas that a chart host shows
-// (`platform-detect-host`). `Chart.platforms` of src/index.umd.ts waits for
-// phase 9. `window.document.body` is `document.body` of the harness.
+// (`platform-umd-dom-platform`, `platform-detect-host`).
+// `window.document.body` is `document.body` of the harness.
 //
 // The beforeEach of 'context acquisition' appends a canvas to the document.
 // Upstream runs it in the task of the case. Thus it is a local function that
@@ -40,6 +43,9 @@ import 'package:flutter_test/flutter_test.dart';
 // test the Flutter platform and the chart host without a chart.
 
 void main() {
+  // :1
+  final domPlatform = jsGet(jsGet(chartUmd, 'platforms'), 'DomPlatform');
+
   group('Platform.dom', () {
     group('context acquisition', () {
       const canvasId = 'chartjs-canvas';
@@ -58,6 +64,9 @@ void main() {
         beforeEach();
         final chart = acquireChart(<String, Object?>{'type': 'line'});
 
+        // `toBeInstanceOf(Chart.platforms.DomPlatform)`: the class value is
+        // the one of FlutterPlatform, and the platform is a FlutterPlatform.
+        expect(domPlatform, same(FlutterPlatform.jsClass));
         expect(chart.platform, isA<FlutterPlatform>());
 
         chart.destroy();

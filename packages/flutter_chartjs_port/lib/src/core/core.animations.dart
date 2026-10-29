@@ -29,6 +29,7 @@ import 'package:flutter_chartjs_port/src/elements/element_options.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray, isObject;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -44,6 +45,21 @@ class Animations {
   Animations(types.Chart chart, Object? config) : _chart = chart {
     configure(config);
   }
+
+  /// core.animations.js:6 `class Animations` as a value (Chart.js ADR 0020,
+  /// section 3, and Chart.js ADR 0048, section 2).
+  ///
+  /// It has no statics. Its `construct` gives `Animations(chart, config)`,
+  /// with [undefined] for an absent argument. A chart that is not a
+  /// `types.Chart` throws a [TypeError] at the cast. `src/index.umd.ts:33`
+  /// keeps the class as `Chart.Animations`.
+  static final JsClass jsClass = JsClass(
+    'Animations',
+    construct: (newTarget, args) => Animations(
+      (args.isNotEmpty ? args[0] : undefined)! as types.Chart,
+      args.length > 1 ? args[1] : undefined,
+    ),
+  );
 
   /// core.animations.js:8 `_chart`.
   final types.Chart _chart;

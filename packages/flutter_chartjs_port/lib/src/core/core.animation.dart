@@ -40,6 +40,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
     show effects;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show resolve;
+import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
@@ -195,6 +196,26 @@ class Animation implements types.Animation {
     // DIVERGES(chartjs): adapt-animation-number-path, two double fields.
     _retarget();
   }
+
+  /// core.animation.js:27 `class Animation` as a value (Chart.js ADR 0020,
+  /// section 3, and Chart.js ADR 0048, section 2).
+  ///
+  /// It has no statics. Its `construct` gives `Animation(cfg, target, prop,
+  /// to)`, with [undefined] for an absent argument. An argument of another
+  /// type throws a [TypeError] at the cast. `src/index.umd.ts:32` keeps the
+  /// class as `Chart.Animation`.
+  static final JsClass jsClass = JsClass(
+    'Animation',
+    construct: (newTarget, args) {
+      Object? argument(int i) => i < args.length ? args[i] : undefined;
+      return Animation(
+        argument(0)! as AnyObject,
+        argument(1)!,
+        argument(2)! as String,
+        argument(3),
+      );
+    },
+  );
 
   /// core.animation.js:34 `_active`.
   bool _active = false;

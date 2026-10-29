@@ -194,6 +194,9 @@ void main() {
             'the points in a PointElement instead.',
       );
     },
+    // The resolution of each file of lib/ takes 25 to 30 s alone on an
+    // M3 Max, and more beside the other test files of `melos run test`.
+    timeout: const Timeout(Duration(minutes: 3)),
   );
 
   test('SimpleArc does not implement types.LineElement', () {

@@ -717,6 +717,33 @@ class Chart implements types.Chart {
     _invalidatePlugins();
   }
 
+  /// core.controller.js:103 `class Chart` as a value (Chart.js ADR 0020,
+  /// section 3, and Chart.js ADR 0048, section 2).
+  ///
+  /// Its statics are the statics of :105-120 in their order: [defaults],
+  /// [instances], [overrides], [registry], [version], [getChart], [register]
+  /// and [unregister], the same objects as the Dart statics. Its `construct`
+  /// gives `Chart(item, userConfig)`, with [undefined] for an absent
+  /// argument. The UMD entry (`lib/src/index.umd.dart`) writes the statics
+  /// of `src/index.umd.ts:30-47` into it at the first read of `chartUmd`.
+  static final JsClass jsClass = JsClass(
+    'Chart',
+    statics: {
+      'defaults': defaults,
+      'instances': instances,
+      'overrides': overrides,
+      'registry': registry,
+      'version': version,
+      'getChart': getChart,
+      'register': register,
+      'unregister': unregister,
+    },
+    construct: (newTarget, args) => Chart(
+      args.isNotEmpty ? args[0] : undefined,
+      args.length > 1 ? args[1] : undefined,
+    ),
+  );
+
   /// core.controller.js:124 `config`: the `Config` of the configuration.
   @override
   final Config config;
