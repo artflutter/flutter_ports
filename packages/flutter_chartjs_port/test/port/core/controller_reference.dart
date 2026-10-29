@@ -158,7 +158,7 @@ chartArea: 44,42,287,111.6
 scale type error: Error: "nope" is not a registered scale.
 controller type error: Error: "nope" is not a registered controller.''',
   'statics': '''
-version: 4.5.1
+version: 4.6.1
 register forms: Error: class does not have id: [object Object]
 cache after register: undefined
 late plugin: start() afterDraw()

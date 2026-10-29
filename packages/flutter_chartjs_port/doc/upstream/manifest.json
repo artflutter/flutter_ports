@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "source": {"project":"Chart.js","version":"4.5.1","commit":"7169e65147a47f3720957a6f156a33c838ab9f57"},
+  "source": {"project":"Chart.js","version":"4.6.1","commit":"76d8cf895a7485dc838c90ef37e2bc9d9e388fcb"},
   "summary": {"specFiles":54,"cases":1036,"loopCases":163,"chartCases":707,"nonChartCases":329,"pendingCases":0,"suffixedNames":10,"describeErrors":0,"fixtures":667,"dataFixtures":517,"fixtureOrphans":0,"fixturesWithoutSpec":0,"defaultsSites":73,"builtinSites":519},
   "specs": [
     {

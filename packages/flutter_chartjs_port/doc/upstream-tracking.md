@@ -112,6 +112,12 @@ Result (2026-10-20): phases 4 to 6 ported from v4.5.1, and the rows of the range
 It ports #12130, #12142, #12155 and #12238 into the started modules. It absorbs #12283, #12321
 and #12328 and the parts of #12238 for `controller.doughnut` and `controller.polarArea`.
 
+Result (2026-10-29): the tags v4.6.0 and v4.6.1 (2026-10-22) ended the commit pin. The range
+`7169e651..v4.6.1` has two commits: the version bumps #12354 and #12355. They change
+`package.json`, `pnpm-lock.yaml` and a release workflow, and no file of `src/`, `test/` or
+`docs/`. Thus the bump to v4.6.1 at the start of phase 9 ported no hunk. The headers name
+`v4.6.1`, and `chartJsVersion` is `4.6.1`.
+
 ### 2.5 Text changes in other files
 
 These changes land after the acceptance of ADR 0004 (2026-10-18), unless a row names a later PR.

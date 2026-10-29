@@ -35,7 +35,7 @@ the `differences.md` schema.
    - When two Dart forms give the upstream behavior, choose the faster form (1.1).
 
    ```dart
-   // Ported from Chart.js v4.5.1+7169e651 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).
+   // Ported from Chart.js v4.6.1 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).
    import 'dart:math' as math;
 
    import 'package:flutter_chartjs_port/src/js/js_math.dart';

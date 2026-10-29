@@ -261,7 +261,7 @@ void main() {
   });
 
   test('the library exports the names of src/core/index.ts', () {
-    expect(Chart.version, '4.5.1');
+    expect(Chart.version, '4.6.1');
     expect(registry, same(Chart.registry));
     expect(defaults, same(Chart.defaults));
     expect(animator, isNotNull);

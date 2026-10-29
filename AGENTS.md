@@ -1,7 +1,7 @@
 # Agent onboarding
 
 Dart pub workspace + Melos 8 monorepo of native Dart/Flutter ports of JavaScript chart
-libraries. First port: Chart.js v4.5.1+7169e651 (a commit pin after v4.5.1) →
+libraries. First port: Chart.js v4.6.1 →
 `packages/flutter_chartjs_port`. Second port: D3 v7.9.0 →
 `packages/flutter_d3_port`, in phase 0 (scaffold and design, no ported code). Third port: Apache
 ECharts 6.1.0 with its renderer zrender 6.1.0 → `packages/flutter_echarts_port`, in phase 0
@@ -551,7 +551,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     yet. `test --no-select` runs its tests.
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
-  - Shallow git submodules: `Chart.js` at the commit pin `7169e651` after `v4.5.1`
+  - Shallow git submodules: `Chart.js` at the tag `v4.6.1`
     (`packages/flutter_chartjs_port/doc/upstream-tracking.md` §2.4), and `kurkle-color` (`v0.3.2`) and
     `chartjs-test-utils` (`v0.4.0`) at release tags. The last two come from Chart.js ADR 0035.
   - The 34 D3 submodules, also shallow at release tags (D3 ADR 0001): `d3` (`v7.9.0`), the 30
@@ -578,7 +578,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 2. **Mirror upstream structure.** Same module split and names (Dart-cased), so upstream releases can
    be diffed and replayed. Each ported file starts with a header naming its source, license and
    holder, `// Ported from <project> <version> <path> (<SPDX license>, <copyright holder>).`, e.g.
-   `// Ported from Chart.js v4.5.1+7169e651 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).`
+   `// Ported from Chart.js v4.6.1 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).`
    Under a commit pin, the version is `v<last version>+<sha8>`. A file with no upstream source
    starts with the port-only marker `// Original code, not ported from Chart.js: <reason>.`
    instead. All files under `test/port/` and `tool/` are port-only. `check:headers` enforces

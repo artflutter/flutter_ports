@@ -6,10 +6,10 @@ translated to Dart and drawn with Flutter's own canvas. No WebView, no JavaScrip
 Why this approach, and what already exists: [prior art](prior-art/README.md) and
 [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
 
-- **Upstream:** Chart.js **v4.5.1+7169e651**, MIT, pinned as the git submodule
-  `third_party/Chart.js` ([ADR 0005](../../../docs/adr/0005-pin-upstream-sources.md)). This is a
-  commit pin of 2026-10-20 ([upstream-tracking.md](upstream-tracking.md) §2.4): the `master`
-  commit `7169e651` (2026-10-03), after the release v4.5.1 (2025-10-13).
+- **Upstream:** Chart.js **v4.6.1**, MIT, pinned as the git submodule
+  `third_party/Chart.js` ([ADR 0005](../../../docs/adr/0005-pin-upstream-sources.md)). The tag
+  (2026-10-22) ended the commit pin `v4.5.1+7169e651` of 2026-10-20
+  ([upstream-tracking.md](upstream-tracking.md) §2.4). Its `src/` is the `src/` of that pin.
   `melos run upstream` checks it out. Backports and commit pins follow
   [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md).
 - **Progress:** [parity.md](parity.md), one row per upstream source file and spec.
@@ -114,7 +114,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 
 ## What gets ported
 
-| Upstream | Files | Lines (v4.5.1+7169e651) |
+| Upstream | Files | Lines (v4.6.1) |
 |---|---:|---:|
 | `src/` implementation (helpers, core, elements, scales, controllers, plugins, platform) | 83 | 20,251 |
 | `src/types` declarations (shape of the public options API) | 7 | 4,119 |
@@ -131,7 +131,7 @@ Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the lockfile of the pin), whic
    upstream structure and names (Dart-cased) so upstream releases can be diffed and
    replayed file by file.
 2. Start the Dart file with a header naming its source, license and holder, for example
-   `// Ported from Chart.js v4.5.1+7169e651 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).`
+   `// Ported from Chart.js v4.6.1 src/helpers/helpers.math.ts (MIT, Chart.js Contributors).`
    Code from another project (such as `@kurkle/color`) also adds that project's notice to the
    package LICENSE and `REUSE.toml` ([AGENTS.md](../../../AGENTS.md#licensing)).
 3. Port the matching spec from `test/specs` next to it.

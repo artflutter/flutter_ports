@@ -7,9 +7,9 @@ gives the rules for all ports. Phase 1 added these rows by hand from
 upstream-tracking.md §6. At each module start, the porter adds the new rows (upstream-tracking.md
 §4.3). Do not put a pipe in a cell, because the status script will parse a strict grammar.
 
-Pinned: v4.5.1+7169e651 (7169e651). Watching: master. Last synced: 7169e651 (2026-10-03).
+Pinned: v4.6.1 (76d8cf89). Watching: master. Last synced: 71d44219 (2026-10-23).
 
-The pin is a commit pin (upstream-tracking.md §2.4). The maintainer decided it on 2026-10-20. `7169e651` is the newest `master` commit with green upstream CI. The next tag ends the commit pin.
+The pin is the tag v4.6.1 (2026-10-22). It ended the commit pin of 2026-10-20 (upstream-tracking.md §2.4) on 2026-10-29. The maintainer approved the bump on 2026-10-29.
 
 Exception: the maintainer decided on 2026-10-20 that phase 6 ports from the v4.5.1 pin without a commit pin. This is an exception to ADR 0006 rule 5. The rows stay `deferred`.
 
@@ -17,10 +17,18 @@ The commit pin of 2026-10-20 ends that exception. The section `v4.5.1 → v4.5.1
 
 Signals: #12302 (milestone 4.6.0, core.ticks). #12286 (milestone 4.6.0, helpers.core). #12268 (fix for the security report #12265). #12205 (theming.md §9, legend crash after a font change). #11910 (theming.md §9, scale color defaults do not update). #12151 (report of the #12097 regression). #12269 (report of the #12097 regression). #7738 (touch tooltips never hide. Chart.js ADR 0037 keeps the Chrome result). Chart.js ADR 0040 Open 1 (upstream draws no stacked fill above a line with segment styles or with an x that goes back; the port keeps it; reference cases `stack above a line with segment styles` and `stack above a line whose x goes back`).
 
-## After v4.5.1+7169e651
+## After v4.6.1
 
 | SHA | PR | Title | Paths | Modules | Kind | Action | Status | Ref | Note |
 |---|---|---|---|---|---|---|---|---|---|
+| 71d44219 | #12356 | ci: deploy docs with a GitHub App token instead of a PAT | build | | n/a | skip | not-applicable | | CI workflows and `scripts/deploy-docs.sh`. No label |
+
+## v4.5.1+7169e651 → v4.6.1 (the bump of 2026-10-29)
+
+| SHA | PR | Title | Paths | Modules | Kind | Action | Status | Ref | Note |
+|---|---|---|---|---|---|---|---|---|---|
+| 4e5443d6 | #12354 | chore: version bump to 4.6.0 to prepare for release | build | | n/a | skip | not-applicable | | `package.json` version 4.6.0 and the docs scripts. The tag v4.6.0. No label |
+| 76d8cf89 | #12355 | fix: trusted publishing fix + version 4.6.1 bump | build | | n/a | skip | not-applicable | | `package.json` version 4.6.1, `pnpm-lock.yaml` (no change of the lock versions of @kurkle/color and chartjs-test-utils) and the release workflow. The tag v4.6.1. No label |
 
 ## v4.5.1 → v4.5.1+7169e651
 

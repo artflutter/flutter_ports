@@ -35,8 +35,8 @@
 
 prose:
   intro:
-    - "One row per upstream source file of [Chart.js v4.5.1+7169e651](https://github.com/chartjs/Chart.js/tree/7169e65147a47f3720957a6f156a33c838ab9f57),"
-    - "the commit pin after v4.5.1 ([upstream-tracking.md](upstream-tracking.md) §2.4)"
+    - "One row per upstream source file of [Chart.js v4.6.1](https://github.com/chartjs/Chart.js/tree/v4.6.1),"
+    - "the tag that ended the commit pin v4.5.1+7169e651 ([upstream-tracking.md](upstream-tracking.md) §2.4)"
     - "(the pinned `third_party/Chart.js` submodule; run `melos run upstream` to check it out)."
     - "Tool 6 ([porting-flow.md](porting-flow.md) §4) writes this file. Port work edits `doc/status.yaml` in the same PR as the code."
     - ""
@@ -461,7 +461,7 @@ port-only:
     contents: "Tool 4 of [porting-flow.md](porting-flow.md) §4: the dev-time Node.js generator of the upstream manifest (`upstream:manifest`). It needs Node.js 22.18 or later, and gives the same bytes on every architecture"
     tests: "`tool/upstream_manifest/test/upstream_manifest.test.mjs` (`node --test`), CI job `upstream-manifest`"
   - file: "`doc/upstream/manifest.json`, `doc/upstream/fixtures.json`"
-    contents: "Generated data of tool 4: the spec cases, fixtures, defaults inventory and JS builtin sites of the pinned Chart.js (v4.5.1+7169e651), and the pure-data fixture configs. See [`doc/upstream/README.md`](upstream/README.md)"
+    contents: "Generated data of tool 4: the spec cases, fixtures, defaults inventory and JS builtin sites of the pinned Chart.js (v4.6.1), and the pure-data fixture configs. See [`doc/upstream/README.md`](upstream/README.md)"
     tests: "written by `tool/upstream_manifest/upstream_manifest.mjs`"
   - file: "`tool/spec_cases.dart`"
     contents: "The command of tool 5 of [porting-flow.md](porting-flow.md) §4: spec-case tracking (`test:cases`). Its code is `tool/src/spec_cases.dart`"

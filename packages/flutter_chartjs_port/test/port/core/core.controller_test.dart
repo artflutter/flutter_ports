@@ -1549,7 +1549,7 @@ void main() {
     test('the statics are the objects of the modules', () {
       expect(Chart.defaults, same(core_defaults.defaults));
       expect(Chart.overrides, same(core_defaults.overrides));
-      expect(Chart.version, '4.5.1');
+      expect(Chart.version, '4.6.1');
     });
 
     test('a List of items registers each item in its order', () {

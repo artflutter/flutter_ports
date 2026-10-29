@@ -5,7 +5,7 @@ the JSON files by hand. Tool 4 writes them from the pinned `third_party/Chart.js
 
 | File | Contents |
 |---|---|
-| `manifest.json` | The spec cases, the image fixtures, the defaults inventory and the JS builtin sites of the pinned Chart.js (the commit pin v4.5.1+7169e651) |
+| `manifest.json` | The spec cases, the image fixtures, the defaults inventory and the JS builtin sites of the pinned Chart.js (the tag v4.6.1) |
 | `fixtures.json` | The fixture configs that are pure data, by fixture path |
 
 ## Make the files again
@@ -54,7 +54,7 @@ Each spec file also has `fixtureGroups`: the `describe` blocks whose body is
 
 ## Counts at the pin
 
-The tool prints these counts. Tool 4 found at the commit pin v4.5.1+7169e651:
+The tool prints these counts. Tool 4 found at the tag v4.6.1 (the same counts as at the commit pin v4.5.1+7169e651):
 - 54 spec files and 1,036 cases. 707 cases are `chart` and 329 cases are `non-chart`. No case is
   `pending`. 10 cases have a ` #2` name. v4.5.1 had 1,022 cases (701 `chart`, 321 `non-chart`).
   The commit pin adds 3 `chart` cases to `core.scale`, 8 `non-chart` cases to `element.arc`, 1
