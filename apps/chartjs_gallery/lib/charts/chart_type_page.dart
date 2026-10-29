@@ -1,31 +1,21 @@
 // Original code, not ported from Chart.js: the page of one chart type.
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The gallery imports the ported files directly.
-// ignore_for_file: implementation_imports
-
 import 'package:chartjs_gallery/charts/chart_types.dart';
-import 'package:chartjs_gallery/demo/chart_canvas.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show chartJsVersion;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The page of one chart type: the variant line, the chart, the readout
 /// and the help text (Chart.js ADR 0031 sections 1 and 10).
 ///
-/// The chart is a `Chart` of `core.controller` with the config of a docs
-/// block. The host has no height: it gets an unbounded height in the
-/// scroll view, and the platform gives the height from the width and the
-/// aspect ratio of the type (Chart.js ADR 0037). Thus the chart has the
-/// aspect of the docs: 2, or 1 for doughnut, pie, polar area and radar.
+/// The chart is the `ChartView` of the app library with the config of a
+/// docs block (Chart.js ADRs 0048 and 0049). The view has no height: it
+/// gets an unbounded height in the scroll view, and the platform gives the
+/// height from the width and the aspect ratio of the type (Chart.js ADR
+/// 0049, section 5). Thus the chart has the aspect of the docs: 2, or 1 for
+/// doughnut, pie, polar area and radar.
 ///
 /// The gallery registers `registerables`, with the seven plugins, as the
 /// docs do (`docs/scripts/register.js:6`). The docs blocks set no plugin
@@ -58,6 +48,11 @@ class ChartTypePageState extends State<ChartTypePage> {
   int _variant = 0;
   Chart? _chart;
   final ValueNotifier<int> _readout = ValueNotifier(0);
+
+  /// The config of the variant. The page makes it once for each variant,
+  /// so that a rebuild of the page gives the `ChartView` the same Map: no
+  /// update (Chart.js ADR 0049, section 4).
+  late Map<String, Object?> _config = _makeConfig();
 
   /// The chart, once it exists. For the tests.
   @visibleForTesting
@@ -104,13 +99,16 @@ class ChartTypePageState extends State<ChartTypePage> {
 
   ChartTypeVariant get _current => widget.entry.variants[_variant];
 
-  Chart _create(UiCanvasElement canvas) {
+  /// The config of the current variant, with the option `onHover` and the
+  /// inline plugin of the readout. The components are registered first.
+  Map<String, Object?> _makeConfig() {
     registerGalleryComponents();
     final config = _current.config();
-    final options = (config['options'] ??= <String, Object?>{}) as AnyObject;
+    final options =
+        (config['options'] ??= <String, Object?>{}) as Map<String, Object?>;
     options['onHover'] = (event, active, chart) => _readout.value++;
     config['plugins'] = <Object?>[_mouseoutPlugin];
-    return Chart(canvas, config);
+    return config;
   }
 
   /// The inline plugin `typeReadout`: it rebuilds the readout after a
@@ -120,10 +118,11 @@ class ChartTypePageState extends State<ChartTypePage> {
   /// (core.controller.js:1250-1252). The tooltip also clears on a
   /// `mouseout` event, in its hook `afterEvent`
   /// (plugin.tooltip.js:1186-1188).
-  late final AnyObject _mouseoutPlugin = {
+  late final Map<String, Object?> _mouseoutPlugin = {
     'id': 'typeReadout',
     'afterEvent': (Object? chart, Object? args, Object? options) {
-      final event = jsGet(args, 'event')! as types.ChartEvent;
+      // The hook arguments are a Map (core.controller.js:1164-1169).
+      final event = (args! as Map<String, Object?>)['event']! as ChartEvent;
       if (event.type == 'mouseout') _readout.value++;
     },
   };
@@ -137,8 +136,9 @@ class ChartTypePageState extends State<ChartTypePage> {
     if (variant == _variant) return;
     setState(() {
       _variant = variant;
-      // The old host unmounts and destroys its chart. The new host makes
-      // the chart of the variant after its first frame.
+      _config = _makeConfig();
+      // The old view unmounts and destroys its chart. The new view starts
+      // the chart of the variant in its first layout.
       _chart = null;
     });
     _readout.value++;
@@ -178,10 +178,10 @@ class ChartTypePageState extends State<ChartTypePage> {
             ),
           KeyedSubtree(
             key: ValueKey(_variant),
-            child: ChartCanvas(
+            child: ChartView(
               key: ValueKey('type.$stem.host'),
-              create: _create,
-              onChart: _onChart,
+              config: _config,
+              onChartCreated: _onChart,
             ),
           ),
           ValueListenableBuilder<int>(

@@ -1,9 +1,5 @@
 // Original code, not ported from Chart.js: the chart types of the gallery.
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The gallery imports the ported files directly.
-// ignore_for_file: implementation_imports
-
 import 'package:chartjs_gallery/docs/charts/bar.dart';
 import 'package:chartjs_gallery/docs/charts/bubble.dart';
 import 'package:chartjs_gallery/docs/charts/doughnut.dart';
@@ -13,7 +9,6 @@ import 'package:chartjs_gallery/docs/charts/polar.dart';
 import 'package:chartjs_gallery/docs/charts/radar.dart';
 import 'package:chartjs_gallery/docs/charts/scatter.dart';
 import 'package:chartjs_gallery/docs/samples/area/line_boundaries.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// One variant of a chart type page: a `chart-editor` block of the docs.
 ///
@@ -26,7 +21,7 @@ typedef ChartTypeVariant = ({
   String key,
   String text,
   String source,
-  AnyObject Function() config,
+  Map<String, Object?> Function() config,
 });
 
 /// One entry of the home list: the page of `docs/charts/<stem>.md`.

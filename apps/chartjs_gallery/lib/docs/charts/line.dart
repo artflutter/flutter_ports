@@ -1,17 +1,11 @@
 // Ported from Chart.js v4.6.1 docs/charts/line.md (MIT, Chart.js Contributors).
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The gallery imports the ported files directly.
-// ignore_for_file: implementation_imports
-
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-
 /// The line chart of `docs/charts/line.md:5-31`.
 ///
 /// The labels are the strings of `Utils.months({count: 7})`
 /// (`docs/scripts/utils.js:91-104`). Each other key and value is the docs
 /// block.
-AnyObject lineConfig() => <String, Object?>{
+Map<String, Object?> lineConfig() => <String, Object?>{
   'type': 'line',
   'data': <String, Object?>{
     'labels': <Object?>[
@@ -40,7 +34,7 @@ AnyObject lineConfig() => <String, Object?>{
 /// The labels are the strings of `Utils.months({count: 7})`
 /// (`docs/scripts/utils.js:91-104`). Each other key and value is the docs
 /// block.
-AnyObject lineVerticalConfig() => <String, Object?>{
+Map<String, Object?> lineVerticalConfig() => <String, Object?>{
   'type': 'line',
   'data': <String, Object?>{
     'labels': <Object?>[

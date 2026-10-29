@@ -1,25 +1,12 @@
 // Original code, not ported from Chart.js: the gallery demo of phase 6.
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
-// ignore_for_file: implementation_imports
-
 import 'dart:math' as math;
 
-import 'package:chartjs_gallery/demo/chart_canvas.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The scale types of the x axis of the Axes tab.
 const List<String> axesDemoXTypes = [
@@ -96,9 +83,10 @@ _datasetStyles = [
 /// The scales of phase 6 in a real chart: the chart of the Core tab with an
 /// x axis and a y axis.
 ///
-/// The chart is a `Chart` of `core.controller` on a `UiCanvasElement` of a
-/// chart host. Its type is `line`, the ported `LineController` (Chart.js
-/// ADR 0031, section 4): each point gets the pixels of
+/// The chart is the `ChartView` of the app library (Chart.js ADR 0049): a
+/// `Chart` of `core.controller` on the canvas of the view. Its type is
+/// `line`, the ported `LineController` (Chart.js ADR 0031, section 4): each
+/// point gets the pixels of
 /// `iScale.getPixelForValue` and `vScale.getPixelForValue`. The x axis is a
 /// `LinearScale`, a `LogarithmicScale`, a `CategoryScale` or a `TimeScale`,
 /// and the y axis is a `LinearScale` or a `LogarithmicScale`.
@@ -181,11 +169,11 @@ class AxesDemoState extends State<AxesDemo> {
   ];
 
   /// The datasets of the chart. [_fillData] gives them their data.
-  late final List<AnyObject> _datasets = [
+  late final List<Map<String, Object?>> _datasets = [
     for (final style in _datasetStyles)
       <String, Object?>{
         'label': style.label,
-        'data': <AnyObject>[],
+        'data': <Map<String, Object?>>[],
         'parsing': true,
         'backgroundColor': style.background,
         'borderColor': style.border,
@@ -194,13 +182,13 @@ class AxesDemoState extends State<AxesDemo> {
   ];
 
   /// The data of the chart: `labels` and `datasets`.
-  late final AnyObject _data = {
+  late final Map<String, Object?> _data = {
     'labels': <Object?>[],
     'datasets': _datasets,
   };
 
   // The user options. A control writes into them, then calls update().
-  late final AnyObject _options = {
+  late final Map<String, Object?> _options = {
     'maintainAspectRatio': false,
     'animation': false,
     'locale': _locale,
@@ -219,10 +207,11 @@ class AxesDemoState extends State<AxesDemo> {
   /// canvas, also outside the chart area, from the hook `afterEvent`. The
   /// option `onHover` gets only the events in the chart area
   /// (core.controller.js:1213).
-  late final AnyObject _pointerPlugin = {
+  late final Map<String, Object?> _pointerPlugin = {
     'id': 'axesPointer',
     'afterEvent': (Object? chart, Object? args, Object? options) {
-      final event = jsGet(args, 'event')! as types.ChartEvent;
+      // The hook arguments are a Map (core.controller.js:1164-1169).
+      final event = (args! as Map<String, Object?>)['event']! as ChartEvent;
       final x = event.x;
       final y = event.y;
       _pointer = event.type == 'mouseout' || x == null || y == null
@@ -238,8 +227,8 @@ class AxesDemoState extends State<AxesDemo> {
 
   /// The data objects of the dataset [index].
   @visibleForTesting
-  List<AnyObject> dataOf(int index) =>
-      (_datasets[index]['data']! as List<Object?>).cast<AnyObject>();
+  List<Map<String, Object?>> dataOf(int index) =>
+      (_datasets[index]['data']! as List<Object?>).cast<Map<String, Object?>>();
 
   /// The rows of the readout: name and value.
   @visibleForTesting
@@ -268,6 +257,7 @@ class AxesDemoState extends State<AxesDemo> {
   @override
   void initState() {
     super.initState();
+    registerGalleryComponents();
     _fillData();
   }
 
@@ -302,7 +292,7 @@ class AxesDemoState extends State<AxesDemo> {
       ? math.pow(10, fraction * 4).toDouble()
       : 10 + fraction * 90;
 
-  AnyObject _item(int i, double fraction) => <String, Object?>{
+  Map<String, Object?> _item(int i, double fraction) => <String, Object?>{
     'x': _xValue(i),
     'y': _yValue(fraction),
   };
@@ -312,7 +302,7 @@ class AxesDemoState extends State<AxesDemo> {
   void _fillData() {
     for (var d = 0; d < _datasets.length; d++) {
       final fractions = _fractions[d];
-      _datasets[d]['data'] = <AnyObject>[
+      _datasets[d]['data'] = <Map<String, Object?>>[
         for (var i = 0; i < fractions.length; i++) _item(i, fractions[i]),
       ];
     }
@@ -324,12 +314,12 @@ class AxesDemoState extends State<AxesDemo> {
 
   // Options.
 
-  AnyObject _scales() => <String, Object?>{
+  Map<String, Object?> _scales() => <String, Object?>{
     'x': _scale('x', _xType, _xPosition),
     'y': _scale('y', _yType, _yPosition),
   };
 
-  AnyObject _scale(String axis, String type, String position) =>
+  Map<String, Object?> _scale(String axis, String type, String position) =>
       <String, Object?>{
         'type': type,
         'position': position,
@@ -357,15 +347,15 @@ class AxesDemoState extends State<AxesDemo> {
         },
       };
 
-  Chart _create(UiCanvasElement canvas) {
-    registerGalleryComponents();
-    return Chart(canvas, <String, Object?>{
-      'type': 'line',
-      'data': _data,
-      'options': _options,
-      'plugins': <Object?>[_pointerPlugin],
-    });
-  }
+  /// The config of the `ChartView`, made once: a rebuild of the tab gives
+  /// the view the same Map, thus no update (Chart.js ADR 0049, section 4).
+  /// A control writes into the user options and calls `update()`.
+  late final Map<String, Object?> _config = <String, Object?>{
+    'type': 'line',
+    'data': _data,
+    'options': _options,
+    'plugins': <Object?>[_pointerPlugin],
+  };
 
   void _onChart(Chart chart) {
     _chart = chart;
@@ -461,7 +451,9 @@ class AxesDemoState extends State<AxesDemo> {
   static String _scaleText(Scale? scale) {
     if (scale == null) return '-';
     final ticks = scale.ticks?.length ?? 0;
-    final rotation = jsToNumber(scale.labelRotation);
+    // `labelRotation` holds a JS value: `undefined` before the first fit.
+    final raw = scale.labelRotation;
+    final rotation = raw is num ? raw.toDouble() : double.nan;
     return '${scale.type} · '
         '${_labelText(scale.getLabelForValue(scale.min))} to '
         '${_labelText(scale.getLabelForValue(scale.max))} · '
@@ -619,7 +611,8 @@ class AxesDemoState extends State<AxesDemo> {
         DemoCard(
           title: 'Chart',
           source:
-              'core.controller: buildOrUpdateScales, update() · scales: '
+              'ChartView · core.controller: buildOrUpdateScales, update() · '
+              'scales: '
               'LinearScale, LogarithmicScale, CategoryScale, TimeScale · '
               'core.adapters: the default date adapter · LineController: '
               'getPixelForValue · options.scales[id]: type, position, '
@@ -658,12 +651,13 @@ class AxesDemoState extends State<AxesDemo> {
                 data: true,
               ),
               const SizedBox(height: 12),
+              // The options have `maintainAspectRatio: false`: the view
+              // takes the height of the box (Chart.js ADR 0049, section 5).
               LayoutBuilder(
-                builder: (context, constraints) => ChartCanvas(
+                builder: (context, constraints) => SizedBox(
                   key: const ValueKey('axes.host'),
                   height: constraints.maxWidth >= 560 ? 360 : 300,
-                  create: _create,
-                  onChart: _onChart,
+                  child: ChartView(config: _config, onChartCreated: _onChart),
                 ),
               ),
               const SizedBox(height: 12),

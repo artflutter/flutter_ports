@@ -5,8 +5,12 @@ import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+// Not public: UiCanvasElement and UiImageSource of the canvas layer.
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
+    show UiCanvasElement, UiImageSource;
+// Not public: ChartHost, the internal host of ChartView (a white-box test).
+import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
+    show ChartHost;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'stress_controls.dart';

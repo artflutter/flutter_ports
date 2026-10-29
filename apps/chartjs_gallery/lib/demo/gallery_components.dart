@@ -1,12 +1,7 @@
 // Original code, not ported from Chart.js: the gallery chart components.
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The gallery imports the ported files directly.
-// ignore_for_file: implementation_imports
-
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/index.dart' show registerables;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show Chart, registerables;
 
 bool _registered = false;
 
@@ -25,7 +20,7 @@ void registerGalleryComponents() {
 /// y has user bounds: `getMinMax` does not read the data
 /// (core.scale.js:307-309). [hideTicks] adds `ticks: {display: false}`,
 /// which skips the auto skip of a hidden scale (core.scale.js:457).
-AnyObject unitScales({bool hideTicks = false}) => <String, Object?>{
+Map<String, Object?> unitScales({bool hideTicks = false}) => <String, Object?>{
   'x': <String, Object?>{
     'type': 'linear',
     'display': false,

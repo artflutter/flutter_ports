@@ -8,13 +8,9 @@ import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/controllers/index.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+// Not public: jsToNumber, the JS ToNumber of a raw chart value.
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
-import 'package:flutter_chartjs_port/src/scales/index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'stress_controls.dart';

@@ -8,6 +8,11 @@ Area page has the fill actions `origin`, `start`, `end` and `false` of the Area 
 variants. The page "Phase 3: canvas and host" has the canvas, element, core and scale demos and the
 stress tests.
 
+The type pages and the core and scale demos show their chart in the public widget `ChartView` and
+import `package:flutter_chartjs_port/flutter_chartjs_port.dart`. The demos that draw without a
+chart, the stress host `HOST=canvas` and the white-box tests also import files of `lib/src/`: the
+comment above each such import gives the reason.
+
 From the repository root:
 
 ```sh

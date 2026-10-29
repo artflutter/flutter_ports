@@ -7,19 +7,24 @@ import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter/material.dart' hide Tooltip;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+// Not public: jsGet, the JS property read of the chart values.
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+// Not public: the DOM listeners of the internal chart host.
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show
         addCanvasEventListener,
         hasCanvasEventListener,
         removeCanvasEventListener;
+// Not public: NativeEvent, the stand-in of the DOM event.
 import 'package:flutter_chartjs_port/src/platform/native_event.dart'
     show NativeEvent;
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
-    show FlutterPlatform;
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
+// Not public: Legend, the element class of plugin.legend (hit boxes).
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
+    show Legend;
+// Not public: Tooltip, the element class of plugin.tooltip.
+import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
+    show Tooltip;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'stress_controls.dart';

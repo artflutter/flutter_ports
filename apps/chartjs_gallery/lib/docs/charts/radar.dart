@@ -1,11 +1,5 @@
 // Ported from Chart.js v4.6.1 docs/charts/radar.md (MIT, Chart.js Contributors).
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The gallery imports the ported files directly.
-// ignore_for_file: implementation_imports
-
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-
 /// The radar chart of `docs/charts/radar.md:7-61`, with each key and value
 /// of the docs block.
 ///
@@ -13,7 +7,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// registers the filler plugin of `registerables`. Thus the chart fills the
 /// area of each dataset, and `initialize` prints no `fill` warning
 /// (core.datasetController.js:287-289).
-AnyObject radarConfig() => <String, Object?>{
+Map<String, Object?> radarConfig() => <String, Object?>{
   'type': 'radar',
   'data': <String, Object?>{
     'labels': <Object?>[

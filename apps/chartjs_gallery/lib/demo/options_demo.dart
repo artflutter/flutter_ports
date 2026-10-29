@@ -1,16 +1,14 @@
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show toFontString;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/helpers.dart'
+    show ParsedFont, toFont, toFontString, toPadding;
+// Not public: _createResolver and _attachContext, upstream `_` helpers.
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show attachContext, createResolver;
 
 /// One dataset scope of the three-state table.
 typedef _Scope = ({String label, Map<String, Object?> scope});
@@ -202,7 +200,7 @@ class OptionsDemo extends StatelessWidget {
     return [
       label,
       for (final v in [p.top, p.right, p.bottom, p.left, p.width, p.height])
-        jsNumberToString(v),
+        jsNumberText(v),
     ];
   }
 

@@ -1,5 +1,4 @@
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'dart:math' as math;
@@ -25,23 +24,18 @@ import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-// The typed options of Chart.js ADR 0018. The prefix keeps them apart from
-// the PointOptions of demo_chart.dart, which the primitives mode uses.
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/helpers.dart'
+    show ParsedFont, drawPoint, renderText, requestAnimFrame, toFont;
+// Not public: the typed options of Chart.js ADR 0018. The prefix keeps them
+// apart from the PointOptions of demo_chart.dart (the primitives mode).
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     as element_options;
-import 'package:flutter_chartjs_port/src/elements/index.dart';
-import 'package:flutter_chartjs_port/src/helpers/index.dart'
-    show ParsedFont, drawPoint, renderText, requestAnimFrame, toFont;
+// Not public: NativeEvent, the DOM event that the scenes give the chart.
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+// Not public: fromNativeEvent, the chart event of a NativeEvent.
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
     show fromNativeEvent;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show ChartArea;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 
 export 'package:chartjs_gallery/demo/stress_chart_config.dart'
     show StressChartType, stressAnimateMs, stressArcCounts, stressPointCounts;
@@ -358,8 +352,8 @@ ChartBenchCase stressPluginBenchCase(
 /// the platform of the benchmark (`config.platform`). Thus the chart fills
 /// its host, and it gets the `FlutterPlatform`, which keeps the option
 /// `animation`, as the DOM platform does. The other keys stay.
-AnyObject stressHostConfig(AnyObject config) {
-  final options = config['options']! as AnyObject;
+Map<String, Object?> stressHostConfig(Map<String, Object?> config) {
+  final options = config['options']! as Map<String, Object?>;
   chartBenchOptions.keys.forEach(options.remove);
   options['maintainAspectRatio'] = false;
   config.remove('platform');
@@ -733,7 +727,7 @@ class StressDemoState extends State<StressDemo> {
   // [_viewKey], the meter of its plugins, and the meter of each chart that a
   // ChartView made.
   Object? _viewKey;
-  AnyObject? _viewConfig;
+  Map<String, Object?>? _viewConfig;
   late _PluginMeter _viewMeter;
   final Expando<_StressMeter> _viewMeters = Expando('stress meters');
   List<Object?> _chartData = const [];
@@ -815,7 +809,7 @@ class StressDemoState extends State<StressDemo> {
   /// The elements that the frames draw: the point elements and the line,
   /// the bars, or the arcs. Empty in the mode [StressMode.primitives].
   @visibleForTesting
-  List<types.VisualElement> get debugElements => [
+  List<VisualElement> get debugElements => [
     ..._pointElements,
     ?_lineElement,
     ..._bars,
@@ -1133,7 +1127,7 @@ class StressDemoState extends State<StressDemo> {
   /// The inline plugin `stressLabels` draws the M labels and the title in
   /// its `afterDraw` hook, as the other modes draw them after their items.
   /// The plugin of [StressChartTiming] times the parts.
-  AnyObject _chartConfig() {
+  Map<String, Object?> _chartConfig() {
     registerGalleryComponents();
     final scene = _chartScene = StressChartScene(_type, _n, _field);
     _chartData = scene.data;
@@ -1149,7 +1143,7 @@ class StressDemoState extends State<StressDemo> {
   /// The config of `new Chart(canvas, config)` of the mode
   /// [StressMode.axes]: a `LineController` chart on the scales of
   /// `stressAxesConfig`, and the timing plugin of [StressChartTiming].
-  AnyObject _axesChartConfig() {
+  Map<String, Object?> _axesChartConfig() {
     registerGalleryComponents();
     final scene = _axesScene = StressAxesScene(
       _n,
@@ -1172,7 +1166,7 @@ class StressDemoState extends State<StressDemo> {
   /// timing plugins of the case: the four parts of `StressChartTiming`, and
   /// the part `tooltipDraw` in the tooltip scenes. The inline plugin
   /// `stressLabels` comes first, as in the mode [StressMode.chart].
-  AnyObject _pluginChartConfig() {
+  Map<String, Object?> _pluginChartConfig() {
     registerGalleryComponents();
     final scene = _pluginScene = stressPluginBenchCase(
       _pluginCase,
@@ -1196,7 +1190,7 @@ class StressDemoState extends State<StressDemo> {
     required Object hostKey,
     required String key,
     required double height,
-    required AnyObject Function() config,
+    required Map<String, Object?> Function() config,
     required ValueChanged<Chart> onChart,
   }) {
     if (widget.host == StressHost.canvas) {
@@ -1255,7 +1249,7 @@ class StressDemoState extends State<StressDemo> {
 
   /// The inline plugin `stressLabels`: the M labels and the title, after the
   /// draw of the chart.
-  AnyObject get _labelsPlugin => <String, Object?>{
+  Map<String, Object?> get _labelsPlugin => <String, Object?>{
     'id': 'stressLabels',
     'afterDraw': (Object? chart, Object? args, Object? options) {
       final stressChart = chart! as Chart;
@@ -2526,7 +2520,7 @@ final class _PluginMeter with _TickMark implements _StressMeter {
   int? _drawStart;
 
   /// The first inline plugin of the chart.
-  late final AnyObject first = <String, Object?>{
+  late final Map<String, Object?> first = <String, Object?>{
     'id': 'stressDrawStart',
     'beforeDraw': (Object? chart, Object? args, Object? options) {
       _takeMark();
@@ -2535,7 +2529,7 @@ final class _PluginMeter with _TickMark implements _StressMeter {
   };
 
   /// The last inline plugin of the chart.
-  late final AnyObject last = <String, Object?>{
+  late final Map<String, Object?> last = <String, Object?>{
     'id': 'stressDrawEnd',
     'afterDraw': (Object? chart, Object? args, Object? options) {
       final start = _drawStart;

@@ -1,5 +1,4 @@
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'dart:math' as math;
@@ -10,17 +9,14 @@ import 'package:chartjs_gallery/demo/demo_chart.dart' hide PointOptions;
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/core/core.element.dart' as core;
+import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/helpers.dart' show getHoverColor;
+// Not public: the typed element options of Chart.js ADR 0018.
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ArcOptions, BarOptions, LineOptions, PointOptions;
-import 'package:flutter_chartjs_port/src/elements/index.dart';
-import 'package:flutter_chartjs_port/src/helpers/index.dart' show getHoverColor;
+// Not public: jsOrZero, the JS `value || 0` (Chart.js ADR 0017, section 8).
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsOrZero;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show ChartArea;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The event types of the elements chart: the Chart.js default `events`
 /// option (`core.defaults`): `mousemove`, `mouseout`, `click`, `touchstart`
@@ -540,12 +536,12 @@ class ElementsDemoState extends State<ElementsDemo> {
   /// elements on top (`drawActiveElementsOnTop`).
   static void _drawElements(
     CanvasRenderingContext2D ctx,
-    List<types.VisualElement> elements,
+    List<VisualElement> elements,
     ChartArea? area,
   ) {
-    final active = <types.VisualElement>[];
+    final active = <VisualElement>[];
     for (final element in elements) {
-      if ((element as core.Element).active) {
+      if ((element as chartjs.Element).active) {
         active.add(element);
       } else {
         element.draw(ctx, area);
@@ -573,7 +569,7 @@ class ElementsDemoState extends State<ElementsDemo> {
     return null;
   }
 
-  core.Element _elementOf(_Hit hit) => switch (hit.kind) {
+  chartjs.Element _elementOf(_Hit hit) => switch (hit.kind) {
     _Kind.bar => _bars[hit.index],
     _Kind.point => _points[hit.index],
     _Kind.arc => _arcs[hit.index],
@@ -623,7 +619,7 @@ class ElementsDemoState extends State<ElementsDemo> {
     _readout.value++;
   }
 
-  void _onEvent(types.ChartEvent event) {
+  void _onEvent(ChartEvent event) {
     final x = event.x;
     final y = event.y;
     _event = event.native?.type ?? event.type;

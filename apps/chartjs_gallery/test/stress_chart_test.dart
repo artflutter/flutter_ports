@@ -12,17 +12,19 @@ import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/controllers/index.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+// Not public: UiCanvasElement, the canvas of the internal host.
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
+    show UiCanvasElement;
+// Not public: the typed element options of Chart.js ADR 0018.
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+    show PointOptions;
+// Not public: jsGet and jsObjectIsFrozen, the JS reads of the values.
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsObjectIsFrozen;
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
+// Not public: Legend, the element class of plugin.legend (hit boxes).
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
+    show Legend;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'stress_controls.dart';
@@ -491,12 +493,14 @@ void main() {
 
   test('stressChartConfig: the options of each type', () {
     final field = StressPointField(3);
-    AnyObject config(StressChartType type, {bool showLine = false}) =>
-        stressChartConfig(
-          scene: StressChartScene(type, 3, field),
-          scriptable: false,
-          showLine: showLine,
-        );
+    Map<String, Object?> config(
+      StressChartType type, {
+      bool showLine = false,
+    }) => stressChartConfig(
+      scene: StressChartScene(type, 3, field),
+      scriptable: false,
+      showLine: showLine,
+    );
     for (final type in StressChartType.values) {
       final c = config(type);
       final options = c['options']! as Map<String, Object?>;

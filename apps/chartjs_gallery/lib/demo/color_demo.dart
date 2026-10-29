@@ -1,11 +1,10 @@
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
-    show getHoverColor;
+import 'package:flutter_chartjs_port/helpers.dart' show getHoverColor;
+// Not public: the Color class of the @kurkle/color port, the demo subject.
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kc;
 
 /// The CSS colors that the tab parses: names, hex, functional notations.

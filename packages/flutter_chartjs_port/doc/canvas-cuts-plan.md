@@ -615,6 +615,23 @@ Changes to the cited files:
   (`POINT_STYLE`, the arc scenario and the baselines of §6.3) does not change. No library file
   that this plan cites changed. The references, the inventory (§1.1), the tests of §2.6 and §3.5
   and the estimates do not change. No trigger occurred.
+- 2026-10-29, the gallery on the public libraries of
+  [Chart.js ADR 0048](adr/0048-entry-points-and-public-library.md) and on `ChartView` (Chart.js
+  ADR 0049; phase 9, unit 7). The type pages and the Core and Axes tabs show their chart in
+  `ChartView`. The gallery files of A3 change in their imports only: `stress_demo.dart`,
+  `lib/bench/chart_bench.dart`, `stress_chart_config.dart`, `stress_axes.dart` and
+  `stress_timing.dart` import the app library and `helpers.dart`, and keep one `src/` import, with
+  its reason, for each name that the public libraries do not export. The type `AnyObject` is
+  written `Map<String, Object?>`. `stressAxesTicks` reads `labelRotation` with a type test in place
+  of `jsToNumber`, after the timed window; the scriptable option of case (c) keeps its JS reads.
+  `main_stress.dart` and `main_bench.dart` do not change. The modes, the defines, the `STRESS` and
+  `BENCH` keys and the timed code do not change, so the figures of phases 4 to 9 stay comparable.
+  `apps/chartjs_gallery/lib/demo/chart_canvas.dart` changes its imports and its doc only: it stays
+  the host of `HOST=canvas`, the side A of A-N1, until the night record. `canvas_demo.dart` gets
+  new import lines: `UiCanvasElement(width: 32, height: 32)` moves from line 124 to line 125, and
+  §3.1 gives the new line. No library file that this plan cites changed. The references, the
+  inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No trigger
+  occurred.
 
 ## 1. Why
 
@@ -1009,10 +1026,10 @@ lines of that commit. §3.10 gives the code after C2.
 `platform-dom-computed-style` stay valid.
 
 Users outside the package: `apps/chartjs_gallery/lib/demo/demo_chart.dart` (`DemoChart` with a
-default `UiCanvasElement()`, responsive only) and `apps/chartjs_gallery/lib/demo/canvas_demo.dart:124`
+default `UiCanvasElement()`, responsive only) and `apps/chartjs_gallery/lib/demo/canvas_demo.dart:125`
 (`UiCanvasElement(width: 32, height: 32)` for `toImageSource`). This line number is the line of
-2026-10-21. At 69f9d97, the line is 125. No gallery code reads `devicePixelRatio`, `logicalSize`
-or `chartSize`.
+2026-10-29 (the gallery on the public libraries). On 2026-10-21 the line was 124, and at 69f9d97
+it was 125. No gallery code reads `devicePixelRatio`, `logicalSize` or `chartSize`.
 
 ### 3.2 Why Flutter layout does not replace the Chart.js sizing
 

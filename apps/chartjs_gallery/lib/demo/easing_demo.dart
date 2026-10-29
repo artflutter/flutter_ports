@@ -1,12 +1,8 @@
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
-// ignore_for_file: implementation_imports
-
 import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart';
+import 'package:flutter_chartjs_port/helpers.dart' show easingEffects;
 
 /// The lowest value that the curve plots show. `easeInElastic` and
 /// `easeInBack` dip below 0.

@@ -1,5 +1,4 @@
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'dart:math' as math;
@@ -10,23 +9,24 @@ import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/helpers/index.dart'
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/helpers.dart'
     show
         LongestTextCache,
         ParsedFont,
         clipArea,
         drawPoint,
         getRtlAdapter,
-        longestText,
         overrideTextDirection,
         prevTextDirectionOf,
         renderText,
         restoreTextDirection,
         toFont,
         unclipArea;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
+// Not public: UiCanvasElement, a canvas with no chart (Chart.js ADR 0048).
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+// Not public: _longestText, an upstream `_` helper (Chart.js ADR 0048).
+import 'package:flutter_chartjs_port/src/helpers/index.dart' show longestText;
 
 /// The `textAlign` values of the canvas.
 const List<String> textAligns = ['left', 'center', 'right', 'start', 'end'];
@@ -264,7 +264,7 @@ class _TextDemoState extends State<TextDemo> {
     });
     drawCaption(
       ctx,
-      'rtlHelper.x(x) = ${jsNumberToString(rtlHelper.x(12))} for x = 12',
+      'rtlHelper.x(x) = ${jsNumberText(rtlHelper.x(12))} for x = 12',
       chart.width / 2,
       chart.height - 4,
     );

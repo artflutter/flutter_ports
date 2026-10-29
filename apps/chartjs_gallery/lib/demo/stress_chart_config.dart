@@ -1,16 +1,16 @@
 // Original code, not ported from Chart.js: the chart of the stress mode chart.
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:chartjs_gallery/demo/gallery_components.dart';
+// Not public: jsToNumber of case (c), kept for the series before phase 9.
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
+// Not public: jsGet of case (c), kept for the series before phase 9.
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The duration of the looping animation of the call `animate` of the
 /// stress mode chart, in ms.
@@ -27,7 +27,10 @@ const String stressChartBackgroundOdd = 'rgba(255, 99, 132, 0.45)';
 /// The scriptable `backgroundColor` of case (c). It reads the data index of
 /// its context, as the scriptable option of a user does. The option needs
 /// the context. Thus the resolver gives `$shared` false, and each update
-/// resolves the options of each point (core.config.js:355-356).
+/// resolves the options of each point (core.config.js:355-356). The
+/// dataset context has no `dataIndex`: `ToNumber(undefined) % 2` is NaN,
+/// and the dataset gets the odd color. The JS reads stay, so that the
+/// figures of case (c) stay comparable with the series before phase 9.
 Object? stressScriptableBackground(Object? context) =>
     jsToNumber(jsGet(context, 'dataIndex')) % 2 == 0
     ? stressChartBackground
@@ -92,12 +95,12 @@ final class StressPointField {
   }
 
   /// The data objects `{x, y}` of the first [n] points, at their positions.
-  List<AnyObject> data(int n) => [
+  List<Map<String, Object?>> data(int n) => [
     for (var i = 0; i < n; i++) <String, Object?>{'x': x[i], 'y': y[i]},
   ];
 
   /// Writes the positions of the points into the data objects [data].
-  void write(List<AnyObject> data) {
+  void write(List<Map<String, Object?>> data) {
     for (var i = 0; i < data.length; i++) {
       data[i]
         ..['x'] = x[i]
@@ -228,7 +231,7 @@ final class StressChartScene {
     final y = field.y;
     if (type.points || type == StressChartType.bubble) {
       for (var i = 0; i < n; i++) {
-        (data[i]! as AnyObject)
+        (data[i]! as Map<String, Object?>)
           ..['x'] = x[i]
           ..['y'] = y[i];
       }
@@ -269,21 +272,26 @@ final class StressChartScene {
 /// default `fill: false` (element.line.js:258).
 ///
 /// Each call gives a new Map: the chart can write into its options.
-AnyObject stressPluginOptions() => <String, Object?>{'legend': false};
+Map<String, Object?> stressPluginOptions() => <String, Object?>{
+  'legend': false,
+};
 
 /// A hidden scale with user bounds (Chart.js ADR 0031 section 5).
-AnyObject stressHiddenScale(String type, {double? min, double? max}) =>
-    <String, Object?>{
-      'type': type,
-      'display': false,
-      'ticks': <String, Object?>{'display': false},
-      'min': ?min,
-      'max': ?max,
-    };
+Map<String, Object?> stressHiddenScale(
+  String type, {
+  double? min,
+  double? max,
+}) => <String, Object?>{
+  'type': type,
+  'display': false,
+  'ticks': <String, Object?>{'display': false},
+  'min': ?min,
+  'max': ?max,
+};
 
 /// The scales of a type of the stress mode `chart` (Chart.js ADR 0031
 /// sections 3 and 5), or Dart `null` for no `scales` option.
-AnyObject? _stressScales(StressChartType type) => switch (type) {
+Map<String, Object?>? _stressScales(StressChartType type) => switch (type) {
   StressChartType.line || StressChartType.scatter => unitScales(
     hideTicks: true,
   ),
@@ -339,12 +347,12 @@ AnyObject? _stressScales(StressChartType type) => switch (type) {
 /// defaults (section 5): the dataset option `radius` is also the `radius`
 /// of the doughnut and pie controller (controller.doughnut.js:229), and a
 /// value of 3 makes each arc 3 px.
-AnyObject stressChartConfig({
+Map<String, Object?> stressChartConfig({
   required StressChartScene scene,
   required bool scriptable,
   bool showLine = false,
   bool animate = false,
-  AnyObject options = const {},
+  Map<String, Object?> options = const {},
   List<Object?> plugins = const [],
 }) {
   final type = scene.type;

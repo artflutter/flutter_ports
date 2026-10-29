@@ -1,5 +1,4 @@
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'package:chartjs_gallery/demo/canvas_demo.dart'
@@ -8,17 +7,16 @@ import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/helpers/index.dart'
-    show drawPoint, getParentNode, getRelativePosition, renderText, toFont;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/helpers.dart'
+    show drawPoint, getRelativePosition, renderText, toFont;
+// Not public: _getParentNode, an upstream `_` helper (Chart.js ADR 0048).
+import 'package:flutter_chartjs_port/src/helpers/index.dart' show getParentNode;
+// Not public: the DOM listeners of the internal chart host.
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show addCanvasEventListener, removeCanvasEventListener;
-import 'package:flutter_chartjs_port/src/platform/index.dart'
-    show BasicPlatform, FlutterPlatform;
+// Not public: NativeEvent, the stand-in of the DOM event.
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The event types of the demo chart: the Chart.js default `events` option
 /// (`core.defaults`), plus `mousedown`, `mouseup`, `touchend` and `wheel`.
@@ -104,7 +102,7 @@ class _EventsDemoState extends State<EventsDemo> {
     _domEvents++;
   }
 
-  void _onEvent(types.ChartEvent event) {
+  void _onEvent(ChartEvent event) {
     final chart = _chart;
     final native = event.native;
     if (chart == null || native == null) {
@@ -164,7 +162,7 @@ class _EventsDemoState extends State<EventsDemo> {
     renderText(
       ctx,
       [
-        'chart ${jsNumberToString(w)} x ${jsNumberToString(h)}',
+        'chart ${jsNumberText(w)} x ${jsNumberText(h)}',
         'canvas ${chart.canvas?.width} x ${chart.canvas?.height} px',
       ],
       8,
@@ -218,7 +216,7 @@ class _EventsDemoState extends State<EventsDemo> {
     final right = hit.dx > w - 120;
     renderText(
       ctx,
-      '(${jsNumberToString(hit.dx)}, ${jsNumberToString(hit.dy)})',
+      '(${jsNumberText(hit.dx)}, ${jsNumberText(hit.dy)})',
       hit.dx + (right ? -16 : 16),
       hit.dy - 12,
       toFont(<String, Object?>{'size': 13, 'weight': 'bold'}),
@@ -243,8 +241,8 @@ class _EventsDemoState extends State<EventsDemo> {
   /// One row of the log. Below 400 px, the name columns are narrower and
   /// the position has no `x=` and `y=` labels.
   static Widget _logRow(_LogEntry e, {required bool narrow}) {
-    final x = jsNumberToString(e.x);
-    final y = jsNumberToString(e.y);
+    final x = jsNumberText(e.x);
+    final y = jsNumberText(e.y);
     return SizedBox(
       height: 20,
       child: Row(
@@ -267,9 +265,9 @@ class _EventsDemoState extends State<EventsDemo> {
   /// A device pixel ratio with at most 4 decimals: the web engine gives a
   /// float32 value such as 2.6249998807907104.
   static String _ratio(double v) =>
-      jsNumberToString(double.parse(v.toStringAsFixed(4)));
+      jsNumberText(double.parse(v.toStringAsFixed(4)));
 
-  String _size(double v) => v.isFinite ? jsNumberToString(v) : 'Infinity';
+  String _size(double v) => v.isFinite ? jsNumberText(v) : 'Infinity';
 
   Widget _buildReadout(BuildContext context) {
     final chart = _chart;
@@ -325,16 +323,16 @@ class _EventsDemoState extends State<EventsDemo> {
               'chart.width x height',
               chart == null
                   ? '-'
-                  : '${jsNumberToString(chart.width)} x '
-                        '${jsNumberToString(chart.height)}',
+                  : '${jsNumberText(chart.width)} x '
+                        '${jsNumberText(chart.height)}',
             ),
             (
               'crosshair',
               switch (_hit) {
                 null => 'none',
                 final hit =>
-                  '(${jsNumberToString(hit.dx)}, '
-                      '${jsNumberToString(hit.dy)})',
+                  '(${jsNumberText(hit.dx)}, '
+                      '${jsNumberText(hit.dy)})',
               },
             ),
           ],

@@ -1,11 +1,5 @@
 // Original code, not ported from Chart.js: the timing parts of a chart.
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
-// ignore_for_file: implementation_imports
-
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-
 /// The time of four parts of the chart path, from the hooks of an inline
 /// plugin ([plugin]), in the ticks of a `Stopwatch` (Chart.js ADR 0031
 /// section 6).
@@ -63,7 +57,7 @@ final class StressChartTiming {
 
   /// The inline plugin `stressChartTiming`. A hook returns Dart `null`
   /// (JS `undefined`): it cancels nothing.
-  late final AnyObject plugin = <String, Object?>{
+  late final Map<String, Object?> plugin = <String, Object?>{
     'id': 'stressChartTiming',
     'beforeElementsUpdate': (Object? chart, Object? args, Object? options) {
       _elementsStart = _watch.elapsedTicks;

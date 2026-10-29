@@ -1,9 +1,5 @@
 // Original code, not ported from Chart.js: the chart of the stress mode axes.
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
-// ignore_for_file: implementation_imports
-
 /// The chart of the stress mode `axes` and of the `axes` cases of the chart
 /// benchmark: the points of the stress mode `chart` on real scales of phase
 /// 6.
@@ -21,9 +17,7 @@ library;
 import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Chart;
 
 /// The scale types of the stress mode `axes`.
 ///
@@ -109,7 +103,7 @@ final class StressAxesScene {
   final List<Object?> labels;
 
   /// The data objects `{x, y}`.
-  final List<AnyObject> data;
+  final List<Map<String, Object?>> data;
 
   /// The x of the point [i] of [n] points: it increases with [i].
   static double _xValue(StressAxisType type, int i, int n) => switch (type) {
@@ -155,10 +149,10 @@ final class StressAxesScene {
 /// without it draws N rotated labels in each frame. [options] adds chart
 /// options (a `plugins` key replaces [stressPluginOptions]), and [plugins]
 /// are the inline plugins.
-AnyObject stressAxesConfig({
+Map<String, Object?> stressAxesConfig({
   required StressAxesScene scene,
   required bool autoSkip,
-  AnyObject options = const {},
+  Map<String, Object?> options = const {},
   List<Object?> plugins = const [],
 }) => <String, Object?>{
   'type': 'line',
@@ -205,8 +199,11 @@ AnyObject stressAxesConfig({
   final scale = chart.scales['x'];
   final ticks = scale?.ticks;
   if (scale == null || ticks == null) return null;
+  // `labelRotation` holds a JS value: `undefined` before the first fit, a
+  // number after it.
+  final rotation = scale.labelRotation;
   return (
     ticks: ticks.length,
-    rotation: jsToNumber(scale.labelRotation),
+    rotation: rotation is num ? rotation.toDouble() : double.nan,
   );
 }

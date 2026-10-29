@@ -1,29 +1,21 @@
 // Original code, not ported from Chart.js: the gallery demo of phase 5.
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'dart:math' as math;
 
-import 'package:chartjs_gallery/demo/chart_canvas.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+// Not public: the typed options of Chart.js ADR 0018 in the readout.
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show PointOptions;
-import 'package:flutter_chartjs_port/src/elements/index.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
+// Not public: the frozen state of the options (Chart.js ADR 0021, §5).
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsObjectIsFrozen;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+    show jsObjectIsFrozen;
 
 /// The interaction modes of the selector: the keys of `Interaction.modes`
 /// (core.interaction.js:257), in their order.
@@ -73,8 +65,9 @@ _datasetStyles = [
 
 /// The core modules of phase 5 in a real chart: `new Chart(canvas, config)`.
 ///
-/// The chart is a `Chart` of `core.controller` on a `UiCanvasElement` of a
-/// chart host, with the `FlutterPlatform`. Its type is `line`, the ported
+/// The chart is the `ChartView` of the app library (Chart.js ADR 0049): a
+/// `Chart` of `core.controller` on the canvas of the view, with the
+/// `FlutterPlatform`. Its type is `line`, the ported
 /// `LineController` (Chart.js ADR 0031, section 4). Two hidden linear
 /// scales of the fractions 0 to 1 (`unitScales`) put each point at its `x`
 /// and `y` as fractions of the chart area.
@@ -131,7 +124,7 @@ class CoreDemoState extends State<CoreDemo> {
   bool _animation = true;
 
   /// The data of each dataset: the objects `{x, y}` of the controller.
-  late final List<List<AnyObject>> _data = [
+  late final List<List<Map<String, Object?>>> _data = [
     for (var d = 0; d < _datasetStyles.length; d++)
       [
         for (var i = 0; i < _startCount; i++)
@@ -140,18 +133,20 @@ class CoreDemoState extends State<CoreDemo> {
   ];
 
   // The user options. A control writes into them, then calls update().
-  late final AnyObject _interaction = {
+  late final Map<String, Object?> _interaction = {
     'mode': _mode,
     'intersect': _intersect,
     'axis': _axis,
   };
-  late final AnyObject _animationOptions = {
+  late final Map<String, Object?> _animationOptions = {
     'duration': _duration,
     'onProgress': (Object? context) => _readout.value++,
     'onComplete': (Object? context) => _readout.value++,
   };
-  late final AnyObject _activeAnimation = {'duration': _hoverDuration};
-  late final AnyObject _options = {
+  late final Map<String, Object?> _activeAnimation = {
+    'duration': _hoverDuration,
+  };
+  late final Map<String, Object?> _options = {
     'maintainAspectRatio': false,
     'layout': <String, Object?>{'padding': 20.0},
     'scales': unitScales(),
@@ -169,7 +164,7 @@ class CoreDemoState extends State<CoreDemo> {
       },
     },
     'onHover': (Object? event, Object? active, Object? chart) {
-      _event = (event! as types.ChartEvent).type;
+      _event = (event! as ChartEvent).type;
       _readout.value++;
     },
   };
@@ -180,7 +175,7 @@ class CoreDemoState extends State<CoreDemo> {
 
   /// The data of the dataset [index].
   @visibleForTesting
-  List<AnyObject> dataOf(int index) => _data[index];
+  List<Map<String, Object?>> dataOf(int index) => _data[index];
 
   /// The active elements, as `d<dataset>#<index>`, or `none`.
   @visibleForTesting
@@ -205,40 +200,48 @@ class CoreDemoState extends State<CoreDemo> {
   /// A random `y` in the upper 80 % of the chart area.
   double _value() => 0.1 + _random.nextDouble() * 0.8;
 
-  Chart _create(UiCanvasElement canvas) {
+  @override
+  void initState() {
+    super.initState();
     registerGalleryComponents();
-    return Chart(canvas, <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          for (var d = 0; d < _datasetStyles.length; d++)
-            <String, Object?>{
-              'label': _datasetStyles[d].label,
-              'data': _data[d],
-              'backgroundColor': _datasetStyles[d].background,
-              'borderColor': _datasetStyles[d].border,
-              'pointStyle': _datasetStyles[d].style,
-            },
-        ],
-      },
-      'options': _options,
-      'plugins': <Object?>[
-        <String, Object?>{
-          'id': 'galleryValueLines',
-          'beforeDatasetsDraw': (Object? chart, Object? args, Object? options) {
-            _drawValueLines(chart! as Chart);
-          },
-          // The registered plugins come before the inline plugins
-          // (core.plugins.js:125-144). Thus the legend has handled a click
-          // when this hook runs. A replayed event of `update` is not new
-          // input (core.controller.js:528-534).
-          'afterEvent': (Object? chart, Object? args, Object? options) {
-            if (jsGet(args, 'replay') != true) _readout.value++;
-          },
-        },
-      ],
-    });
   }
+
+  /// The config of the `ChartView`, made once: a rebuild of the tab gives
+  /// the view the same Map, thus no update (Chart.js ADR 0049, section 4).
+  /// A control writes into the user options and calls `update()`.
+  late final Map<String, Object?> _config = <String, Object?>{
+    'type': 'line',
+    'data': <String, Object?>{
+      'datasets': <Object?>[
+        for (var d = 0; d < _datasetStyles.length; d++)
+          <String, Object?>{
+            'label': _datasetStyles[d].label,
+            'data': _data[d],
+            'backgroundColor': _datasetStyles[d].background,
+            'borderColor': _datasetStyles[d].border,
+            'pointStyle': _datasetStyles[d].style,
+          },
+      ],
+    },
+    'options': _options,
+    'plugins': <Object?>[
+      <String, Object?>{
+        'id': 'galleryValueLines',
+        'beforeDatasetsDraw': (Object? chart, Object? args, Object? options) {
+          _drawValueLines(chart! as Chart);
+        },
+        // The registered plugins come before the inline plugins
+        // (core.plugins.js:125-144). Thus the legend has handled a click
+        // when this hook runs. A replayed event of `update` is not new
+        // input (core.controller.js:528-534).
+        'afterEvent': (Object? chart, Object? args, Object? options) {
+          // The hook arguments are a Map (core.controller.js:1164-1169).
+          final replay = (args! as Map<String, Object?>)['replay'];
+          if (replay != true) _readout.value++;
+        },
+      },
+    ],
+  };
 
   /// Five value lines over the chart area, with no scale.
   static void _drawValueLines(Chart chart) {
@@ -330,7 +333,7 @@ class CoreDemoState extends State<CoreDemo> {
   // Readout.
 
   /// The options of the first active element, or `null`.
-  AnyObject? get _activeOptions {
+  Map<String, Object?>? get _activeOptions {
     final active = _chart?.getActiveElements() ?? const [];
     if (active.isEmpty) return null;
     return (active.first.element as PointElement?)?.options;
@@ -457,8 +460,8 @@ class CoreDemoState extends State<CoreDemo> {
         DemoCard(
           title: 'Chart',
           source:
-              'core.controller: new Chart(canvas, config), update(), '
-              'hide(i), show(i) · LineController · core.interaction: '
+              'ChartView · core.controller: new Chart(canvas, config), '
+              'update(), hide(i), show(i) · LineController · core.interaction: '
               'Interaction.modes · options: interaction, '
               'transitions.active.animation, animation · core.animations · '
               'core.animator · core.plugins: an inline plugin · '
@@ -505,12 +508,13 @@ class CoreDemoState extends State<CoreDemo> {
                 onChanged: (v) => _change(() => _duration = v),
               ),
               const SizedBox(height: 12),
+              // The options have `maintainAspectRatio: false`: the view
+              // takes the height of the box (Chart.js ADR 0049, section 5).
               LayoutBuilder(
-                builder: (context, constraints) => ChartCanvas(
+                builder: (context, constraints) => SizedBox(
                   key: const ValueKey('core.host'),
                   height: constraints.maxWidth >= 560 ? 320 : 280,
-                  create: _create,
-                  onChart: _onChart,
+                  child: ChartView(config: _config, onChartCreated: _onChart),
                 ),
               ),
               const SizedBox(height: 12),

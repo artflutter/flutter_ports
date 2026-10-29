@@ -1,13 +1,14 @@
 // Original code, not ported from Chart.js: the host of a gallery Chart.
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show Chart, animator;
+// Not public: UiCanvasElement, the canvas of the host (Chart.js ADR 0048).
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+// Not public: ChartHost, the internal host of ChartView (Chart.js ADR 0048).
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 
 /// Makes the chart of a [ChartCanvas] on its [canvas]: `new Chart(canvas,
@@ -15,6 +16,12 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 typedef ChartFactory = Chart Function(UiCanvasElement canvas);
 
 /// A [ChartHost] that shows a real `Chart` of `core.controller` (phase 5).
+///
+/// The public widget is `ChartView` (Chart.js ADR 0049): the type pages
+/// and the Core and Axes tabs use it. This host stays for the stress host
+/// `HOST=canvas`, the side A of the night series A-N1 (the overhead of
+/// `ChartView`), and for a chart class that times its own draws. It goes
+/// after the night record (spec-a, section 6).
 ///
 /// The widget owns a `UiCanvasElement`. It makes the chart with [create]
 /// after the first frame, once the host shows the canvas, so that
@@ -25,7 +32,7 @@ typedef ChartFactory = Chart Function(UiCanvasElement canvas);
 /// The widget is the owner of the chart. Thus it connects
 /// `ChartHost.onTickerModeChanged` to `animator.mute` and `animator.unmute`
 /// (Chart.js ADR 0016, decision 7), and it mutes a chart that it makes under
-/// `TickerMode(enabled: false)`. The phase 9 widget does the same.
+/// `TickerMode(enabled: false)`. `ChartView` does the same.
 ///
 /// With a [height], the host has that height. Without one, the host takes
 /// the height of its constraints.

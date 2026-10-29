@@ -8,16 +8,16 @@ import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show chartJsVersion;
-import 'package:flutter_chartjs_port/src/controllers/index.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+// Not public: jsGet, the JS property read of the chart values.
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+// Not public: FillerSource, the source of `meta.$filler`.
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
     show FillerSource;
+// Not public: Legend, the element class of plugin.legend (hit boxes).
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
     show Legend;
+// Not public: Title, the element class of plugin.title.
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart'
     as title_plugin;
 import 'package:flutter_test/flutter_test.dart';
@@ -326,8 +326,9 @@ void main() {
         await tester.scrollUntilVisible(tile, 100);
         await tester.pump();
         await tester.tap(tile);
-        // The route, then the first frame of the page: the host makes the
-        // chart in a post-frame callback.
+        // The route, then the first frame of the page: the ChartView starts
+        // the chart in its first layout and calls `onChartCreated` after
+        // the frame (Chart.js ADR 0049, section 2).
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 400));
         await tester.pump();

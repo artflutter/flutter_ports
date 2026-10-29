@@ -1,7 +1,6 @@
 // Original code, not ported from Chart.js: the frameless chart benchmark.
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The benchmark imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 /// The cases and the timing loop of the frameless chart benchmark
@@ -56,19 +55,19 @@ import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+// Not public: UiCanvasElement, the canvas of a chart with no host.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+// Not public: FilterCallback, the filter of the notifyPlugins override.
 import 'package:flutter_chartjs_port/src/core/core.plugins.dart'
     show FilterCallback;
-import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
+// Not public: jsDateNow, the Date.now() of the chart (a test clock sets it).
 import 'package:flutter_chartjs_port/src/js/js_date.dart' show jsDateNow;
+// Not public: NativeEvent, the DOM event that the cases give the chart.
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
+// Not public: fromNativeEvent, the chart event of a NativeEvent.
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
     show fromNativeEvent;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The width of the bitmap of the benchmark canvas, in device pixels.
 const int chartBenchWidth = 800;
@@ -82,7 +81,7 @@ const double chartBenchStep = 1 / 60;
 
 /// The chart options that a benchmark chart adds to the options of its
 /// case: no resize observer and a fixed device pixel ratio.
-const AnyObject chartBenchOptions = {
+const Map<String, Object?> chartBenchOptions = {
   'responsive': false,
   'devicePixelRatio': 1.0,
 };
@@ -160,7 +159,7 @@ final class ChartBenchScene {
   });
 
   /// The config of `new Chart(canvas, config)`.
-  final AnyObject config;
+  final Map<String, Object?> config;
 
   /// Brings the new chart into the state of the case, outside the timing,
   /// before the warm-up: for example a hover and the end of the
@@ -433,23 +432,26 @@ final class _BenchSeries {
 /// The dataset `k` with the [data], the label `Dataset <k + 1>`, a color
 /// of [_benchBorders] and [_benchFills], `borderWidth` 1 and the options
 /// [more].
-AnyObject _benchDataset(int k, List<Object?> data, [AnyObject? more]) =>
-    <String, Object?>{
-      'label': 'Dataset ${k + 1}',
-      'data': data,
-      'borderColor': _benchBorders[k % _benchBorders.length],
-      'backgroundColor': _benchFills[k % _benchFills.length],
-      'borderWidth': 1.0,
-      ...?more,
-    };
+Map<String, Object?> _benchDataset(
+  int k,
+  List<Object?> data, [
+  Map<String, Object?>? more,
+]) => <String, Object?>{
+  'label': 'Dataset ${k + 1}',
+  'data': data,
+  'borderColor': _benchBorders[k % _benchBorders.length],
+  'backgroundColor': _benchFills[k % _benchFills.length],
+  'borderWidth': 1.0,
+  ...?more,
+};
 
 /// The config of a chart of [type] with the labels of [series], the
 /// [datasets], [chartBenchOptions] and the chart options [options].
-AnyObject _benchConfig(
+Map<String, Object?> _benchConfig(
   String type,
   _BenchSeries series, {
   required List<Object?> datasets,
-  required AnyObject options,
+  required Map<String, Object?> options,
   List<Object?> plugins = const [],
 }) => <String, Object?>{
   'type': type,
@@ -461,7 +463,7 @@ AnyObject _benchConfig(
 /// The hidden category x axis and linear y axis of the plugin and fill
 /// cases, with the user bounds [min] and [max] of y (Chart.js ADR 0031,
 /// section 5). [stacked] stacks the y values.
-AnyObject _benchHiddenScales({
+Map<String, Object?> _benchHiddenScales({
   required double min,
   required double max,
   bool stacked = false,
@@ -536,7 +538,7 @@ ChartBenchCase _pluginCase(
 /// The plugin options of config A of Chart.js ADR 0038, section 10, item
 /// 1: each plugin of `registerables` with its least work. The tooltip has
 /// no option: the chart listens to no event.
-AnyObject _leastWorkPlugins() => <String, Object?>{
+Map<String, Object?> _leastWorkPlugins() => <String, Object?>{
   'legend': <String, Object?>{'display': false},
   'title': <String, Object?>{'display': false},
   'subtitle': <String, Object?>{'display': false},
@@ -663,7 +665,7 @@ final class _AnimatedPlatform extends BasicPlatform {
   );
 
   @override
-  void updateConfig(types.ChartConfiguration config) {
+  void updateConfig(ChartConfiguration config) {
     // no-op
   }
 }
@@ -858,7 +860,7 @@ ChartBenchCase _fillCase(String name, ChartBenchCall call) => _pluginCase(
       'gaps' => _BenchSeries(3, n, scale: 2, offset: -1, gapEvery: 12),
       _ => _BenchSeries(3, n),
     };
-    final AnyObject scales;
+    final Map<String, Object?> scales;
     final List<Object?> fills;
     switch (name) {
       case 'gaps':
@@ -1024,7 +1026,7 @@ ChartBenchCase _motionCase(StressChartType type) => ChartBenchCase(
       plugins: [timing.plugin],
     );
     // The default animations: no option `animation: false`.
-    (config['options']! as AnyObject).remove('animation');
+    (config['options']! as Map<String, Object?>).remove('animation');
     config['platform'] = _AnimatedPlatform.jsClass;
     return ChartBenchScene(
       config: config,
@@ -1152,7 +1154,11 @@ final class _BenchChart extends Chart {
   }
 
   @override
-  bool? notifyPlugins(String hook, [AnyObject? args, FilterCallback? filter]) {
+  bool? notifyPlugins(
+    String hook, [
+    Map<String, Object?>? args,
+    FilterCallback? filter,
+  ]) {
     notifies++;
     return super.notifyPlugins(hook, args, filter);
   }

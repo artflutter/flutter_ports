@@ -1,5 +1,4 @@
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'dart:math' as math;
@@ -8,20 +7,22 @@ import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/helpers/index.dart'
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/helpers.dart'
     show
         addRoundedRectPath,
-        bezierCurveTo,
         clipArea,
         drawPoint,
         drawPointLegend,
         renderText,
         splineCurveMonotone,
-        steppedLineTo,
         toFont,
         unclipArea;
+// Not public: UiCanvasElement, a canvas with no chart (Chart.js ADR 0048).
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+// Not public: the upstream `_` helpers _bezierCurveTo and _steppedLineTo.
+import 'package:flutter_chartjs_port/src/helpers/index.dart'
+    show bezierCurveTo, steppedLineTo;
 
 /// The Chart.js sample colors.
 const List<String> chartColors = [

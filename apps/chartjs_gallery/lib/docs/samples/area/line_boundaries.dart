@@ -1,13 +1,6 @@
 // Ported from Chart.js v4.6.1 docs/samples/area/line-boundaries.md (MIT, Chart.js Contributors).
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The gallery imports the ported files directly.
-// ignore_for_file: implementation_imports
-
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsAdd;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Chart;
 
 /// The area chart of `docs/samples/area/line-boundaries.md:3-120` at the
 /// fill `'origin'`: the action `Fill: origin` of `:48-56`.
@@ -30,26 +23,26 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// The options are those of `:95-113`. The gallery registers
 /// `registerables`, with the filler and the title: the chart fills the
 /// area to the origin, and the title is `Fill: origin`.
-AnyObject areaOriginConfig() => _config('origin');
+Map<String, Object?> areaOriginConfig() => _config('origin');
 
 /// The config of the action `Fill: start` (`line-boundaries.md:57-65`):
 /// the chart fills the area to the bottom of the value scale
 /// (`src/plugins/plugin.filler/filler.options.js:82-83`).
-AnyObject areaStartConfig() => _config('start');
+Map<String, Object?> areaStartConfig() => _config('start');
 
 /// The config of the action `Fill: end` (`line-boundaries.md:66-74`): the
 /// chart fills the area to the top of the value scale
 /// (`src/plugins/plugin.filler/filler.options.js:84-85`).
-AnyObject areaEndConfig() => _config('end');
+Map<String, Object?> areaEndConfig() => _config('end');
 
 /// The config of the action `Fill: false (default)`
 /// (`line-boundaries.md:39-47`), the first state of the sample (`:29`):
 /// the chart draws the line with no fill.
-AnyObject areaFalseConfig() => _config(false);
+Map<String, Object?> areaFalseConfig() => _config(false);
 
 /// The config of `line-boundaries.md:95-113` with the data of `:20-33`,
 /// where the dataset has the fill value [fill] of an action.
-AnyObject _config(Object fill) => <String, Object?>{
+Map<String, Object?> _config(Object fill) => <String, Object?>{
   'type': 'line',
   'data': <String, Object?>{
     'labels': <Object?>[
@@ -91,9 +84,12 @@ AnyObject _config(Object fill) => <String, Object?>{
 };
 
 /// `(ctx) => 'Fill: ' + ctx.chart.data.datasets[0].fill`
-/// (`line-boundaries.md:106`).
+/// (`line-boundaries.md:106`). The context is a Map, and the fill of each
+/// variant is a string or `false`: the interpolation gives the text of the
+/// JS `+`.
 Object _titleText(Object? ctx) {
-  final chart = jsGet(ctx, 'chart')! as Chart;
-  final dataset = jsGet(jsGet(chart.data, 'datasets'), 0);
-  return jsAdd('Fill: ', jsGet(dataset, 'fill'));
+  final chart = (ctx! as Map<String, Object?>)['chart']! as Chart;
+  final datasets = chart.data['datasets']! as List<Object?>;
+  final dataset = datasets.first! as Map<String, Object?>;
+  return 'Fill: ${dataset['fill']}';
 }

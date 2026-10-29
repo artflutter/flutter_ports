@@ -1,14 +1,8 @@
 // Ported from Chart.js v4.6.1 docs/charts/polar.md (MIT, Chart.js Contributors).
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The gallery imports the ported files directly.
-// ignore_for_file: implementation_imports
-
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-
 /// The polar area chart of `docs/charts/polar.md:7-43`, with each key and
 /// value of the docs block.
-AnyObject polarAreaConfig() => <String, Object?>{
+Map<String, Object?> polarAreaConfig() => <String, Object?>{
   'type': 'polarArea',
   'data': <String, Object?>{
     'labels': <Object?>['Red', 'Green', 'Yellow', 'Grey', 'Blue'],

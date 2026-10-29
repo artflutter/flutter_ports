@@ -1,18 +1,26 @@
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    hide Chart, ChartMeta, Scale;
+import 'package:flutter_chartjs_port/helpers.dart'
+    show DrawPointOptions, clearCanvas, retinaScale;
+// Not public: UiCanvasElement, a canvas with no chart (Chart.js ADR 0048).
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+// Not public: _isPointInArea, an upstream `_` helper (Chart.js ADR 0048).
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     as helpers
     show isPointInArea;
-import 'package:flutter_chartjs_port/src/helpers/index.dart'
-    show DrawPointOptions, clearCanvas, retinaScale;
+// Not public: ChartHost, the host of a canvas with no chart.
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/platform/index.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
+// Not public: _detectPlatform, an upstream `_` export (Chart.js ADR 0048).
+import 'package:flutter_chartjs_port/src/platform/index.dart'
+    show detectPlatform;
+// Not exported: RoundedRect, SplinePoint, TRBLCorners (Chart.js ADR 0048 §5).
+import 'package:flutter_chartjs_port/src/types/geometric.dart'
+    show RoundedRect, SplinePoint, TRBLCorners;
+// Not public: the interfaces types.Chart and others that DemoChart implements.
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// Draws one frame of a [DemoChart] on its context. The transform is the

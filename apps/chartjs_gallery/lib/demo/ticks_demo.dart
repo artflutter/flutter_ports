@@ -1,15 +1,17 @@
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show ticks;
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show Tick, ticks;
+// Not public: JsFunction and jsCall, the call of a formatter with a `this`.
+import 'package:flutter_chartjs_port/src/js/js_function.dart'
+    show JsFunction, jsCall;
+// Not public: the interfaces types.Chart and types.Scale of the stand-ins.
+import 'package:flutter_chartjs_port/src/types/index.dart' show Chart, Scale;
 
 /// The locales of the locale menu.
 const List<String> tickLocales = ['en-US', 'de-DE', 'fr-FR', 'ru-RU', 'ja-JP'];
@@ -226,7 +228,7 @@ class _TickLabels extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      jsNumberToString(ticks[i].value),
+                      jsNumberText(ticks[i].value),
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),

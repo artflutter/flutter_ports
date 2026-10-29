@@ -1,13 +1,15 @@
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The demo imports the ported files directly.
+// The reason of each import of lib/src is the comment above it.
 // ignore_for_file: implementation_imports
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+// Not public: _updateBezierControlPoints, an upstream `_` helper.
+import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
+    show updateBezierControlPoints;
+// Not exported: SplinePoint, not in the list of Chart.js ADR 0048 §5.
+import 'package:flutter_chartjs_port/src/types/geometric.dart' show SplinePoint;
 
 /// A point `{x, y}` whose control points the curve helpers write, as the
 /// port tests of `helpers.curve` pass it.
@@ -192,7 +194,7 @@ class _SplineDemoState extends State<SplineDemo> {
               ? 'updateBezierControlPoints(points, {cubicInterpolationMode: '
                     "'monotone'}, …) → splineCurveMonotone"
               : 'updateBezierControlPoints(points, {tension: '
-                    '${jsNumberToString(_tension)}}, …) → splineCurve',
+                    '${jsNumberText(_tension)}}, …) → splineCurve',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

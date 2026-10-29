@@ -1,17 +1,11 @@
 // Ported from Chart.js v4.6.1 docs/charts/bar.md (MIT, Chart.js Contributors).
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The gallery imports the ported files directly.
-// ignore_for_file: implementation_imports
-
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-
 /// The vertical bar chart of `docs/charts/bar.md:5-54`.
 ///
 /// The labels are the strings of `Utils.months({count: 7})`
 /// (`docs/scripts/utils.js:91-104`). Each other key and value is the docs
 /// block.
-AnyObject barVerticalConfig() => <String, Object?>{
+Map<String, Object?> barVerticalConfig() => <String, Object?>{
   'type': 'bar',
   'data': <String, Object?>{
     'labels': <Object?>[
@@ -61,7 +55,7 @@ AnyObject barVerticalConfig() => <String, Object?>{
 /// The labels are the strings of `Utils.months({count: 7})`
 /// (`docs/scripts/utils.js:91-104`). Each other key and value is the docs
 /// block.
-AnyObject barHorizontalConfig() => <String, Object?>{
+Map<String, Object?> barHorizontalConfig() => <String, Object?>{
   'type': 'bar',
   'data': <String, Object?>{
     'labels': <Object?>[

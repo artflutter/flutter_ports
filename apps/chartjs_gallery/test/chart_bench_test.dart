@@ -7,18 +7,22 @@ import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/main_bench.dart';
 import 'package:flutter/material.dart' hide Title, Tooltip;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/controllers/index.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+// Not public: UiCanvasElement, the canvas of the internal host.
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
+    show UiCanvasElement;
+// Not public: jsToNumber, the JS ToNumber of a raw chart value.
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
+// Not public: jsGet, the JS property read of the chart values.
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
-import 'package:flutter_chartjs_port/src/scales/index.dart';
+// Not public: Legend, the element class of plugin.legend (hit boxes).
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
+    show Legend;
+// Not public: Title, the element class of plugin.title.
+import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
+// Not public: Tooltip, the element class of plugin.tooltip.
+import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
+    show Tooltip;
 import 'package:flutter_test/flutter_test.dart';
 
 /// The timing of these tests: one short batch after a short warm-up.

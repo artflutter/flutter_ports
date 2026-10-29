@@ -1,14 +1,8 @@
 // Ported from Chart.js v4.6.1 docs/charts/bubble.md (MIT, Chart.js Contributors).
 
-// The package exports nothing from lib/src yet; the public API comes in
-// phase 9. The gallery imports the ported files directly.
-// ignore_for_file: implementation_imports
-
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-
 /// The bubble chart of `docs/charts/bubble.md:5-36`, with each key and
 /// value of the docs block.
-AnyObject bubbleConfig() => <String, Object?>{
+Map<String, Object?> bubbleConfig() => <String, Object?>{
   'type': 'bubble',
   'data': <String, Object?>{
     'datasets': <Object?>[
