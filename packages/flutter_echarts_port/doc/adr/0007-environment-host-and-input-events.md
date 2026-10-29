@@ -9,8 +9,10 @@
   `EChartsContainer`, `EChartsHost` and `init(dom)`, because phase 5 ports `core/echarts.ts`.
 - Related: [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (new generic
   runtime goes into `js_semantics`, no dependency on another port),
-  [Chart.js ADR 0014](../../../flutter_chartjs_port/doc/adr/0014-input-events-and-chart-host.md) (the
-  chart host, the event table and the arena rule of the Chart.js port),
+  [Chart.js ADR 0037](../../../flutter_chartjs_port/doc/adr/0037-legend-and-tooltip-input-path.md)
+  (the chart host and the arena rule of the Chart.js port; it supersedes
+  [Chart.js ADR 0014](../../../flutter_chartjs_port/doc/adr/0014-input-events-and-chart-host.md),
+  the precedent of the Context),
   [Chart.js ADR 0016](../../../flutter_chartjs_port/doc/adr/0016-frame-scheduling.md) (the `Timer`
   rule and the `TickerMode` mute),
   [Chart.js ADR 0032](../../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) (accepted
@@ -472,7 +474,7 @@ stylus, as Chart.js ADR 0014 §6.
 ### 11. The gesture arena (gate 3)
 
 The rule: when ECharts stops an event, the host claims that pointer. Else the host stays out of
-the arena, as Chart.js ADR 0014 §7.
+the arena, as Chart.js ADR 0037 §10.
 
 1. At each `PointerDownEvent` in the box, the host adds one port-only `GestureArenaMember` for the
    pointer. It adds the member in `handleEvent`, before `GestureBinding` closes the arena.
@@ -632,9 +634,9 @@ uses the internal host.
   false, that function gives 0. Without the capture path, `globalout` fires at the exit of the
   box, not at the release. The pointer branch of IE11 and old Edge is dead code.
 - **Always claim the arena.** Rejected. A pan or drag recognizer takes the drags of parent
-  scrollables (fl_chart #202, Chart.js ADR 0014 Context). A chart with no roam then blocks the
+  scrollables (fl_chart #202, Chart.js ADR 0037 Alternatives). A chart with no roam then blocks the
   page scroll.
-- **A `Listener`-only host with no arena member, as Chart.js ADR 0014 §7.** Rejected. A roam, a
+- **A `Listener`-only host with no arena member, as Chart.js ADR 0037 §10.** Rejected. A roam, a
   slider, a brush or a wheel zoom then also scrolls the parent. Upstream prevents the default
   action at 9 sites. Chart.js listeners are passive. zrender listeners are not passive.
 - **A `TapGestureRecognizer` for `click`, as Chart.js ADR 0014 §7.** Rejected. It takes the tap
@@ -642,13 +644,13 @@ uses the internal host.
   itself.
 - **A `DoubleTapGestureRecognizer` for `dblclick`.** Rejected. It delays each single tap. It also
   claims the arena.
-- **A `ResizeObserver` stand-in, as Chart.js ADR 0014 §4.** Rejected. ECharts has no observer.
+- **A `ResizeObserver` stand-in, as Chart.js ADR 0037 §4.** Rejected. ECharts has no observer.
   The host calls the upstream `resize()` directly. A throttled observer adds one frame at the old
   size.
 - **A `resize()` in a post-frame callback.** Rejected. One frame then paints at the old size.
 - **The fractional host size as `clientWidth`.** Rejected. The DOM gives integers. Fractional
   client sizes give values that no browser gives to the layout.
-- **The size 300 x 150 for unbounded constraints, as Chart.js ADR 0014 §5.** Rejected. 300 x 150
+- **The size 300 x 150 for unbounded constraints, as Chart.js ADR 0037 §5.** Rejected. 300 x 150
   is the default of a `canvas`. The ECharts container is a `div`. A `div` has no default size.
 - **A constant module DPR of 1.** Rejected. The segment skip of `PathProxy.ts:176-183` then drops
   other segments than a browser at the same DPR. The hit test of a line can then change.
@@ -698,6 +700,11 @@ uses the internal host.
 - `domBelongToZr` for the HTML tooltip overlay. The later overlay ADR of ECharts ADR 0009 decides
   it.
 - A DPR change on a real device is not tested.
+- The pointer kinds of the event table. Chart.js ADR 0037 §6 makes the stylus and the inverted
+  stylus touch-like: Chrome on Android gives them the touch sequence, and the compatibility events
+  of a stylus tap are at the up position. Section 7 and item 7.6 of this ADR still class them as
+  mouse-like, as the superseded Chart.js ADR 0014 §6. The ECharts lead decides the split before
+  ECharts phase 3.
 
 ## Evidence
 

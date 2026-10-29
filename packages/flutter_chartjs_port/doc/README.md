@@ -30,14 +30,17 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043 are accepted, except Chart.js ADR 0037 of
-  phase 8, which is proposed. The porting lead accepted Chart.js ADRs 0038-0043 on 2026-10-23.
-  Eleven accepted ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js
-  ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR 0004, Chart.js
-  ADR 0016 supersedes Chart.js ADR 0007, Chart.js ADR 0026 supersedes Chart.js ADR 0008, Chart.js
-  ADR 0032 supersedes Chart.js ADR 0010, Chart.js ADR 0034 supersedes Chart.js ADR 0009, Chart.js
-  ADR 0035 supersedes Chart.js ADR 0011, Chart.js ADR 0036 supersedes Chart.js ADR 0027, Chart.js
-  ADR 0042 supersedes Chart.js ADR 0001, and Chart.js ADR 0043 supersedes Chart.js ADR 0006.
+  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043 and 0046 are accepted. Chart.js ADR 0044 is
+  rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. Chart.js
+  ADR 0045 is proposed. The porting lead accepted
+  Chart.js ADRs 0038-0043 on 2026-10-23, and Chart.js ADRs 0037 and 0046 on 2026-10-29. Twelve accepted
+  ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
+  supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR 0004, Chart.js ADR 0016
+  supersedes Chart.js ADR 0007, Chart.js ADR 0026 supersedes Chart.js ADR 0008, Chart.js ADR 0032
+  supersedes Chart.js ADR 0010, Chart.js ADR 0034 supersedes Chart.js ADR 0009, Chart.js ADR 0035
+  supersedes Chart.js ADR 0011, Chart.js ADR 0036 supersedes Chart.js ADR 0027, Chart.js ADR 0037
+  supersedes Chart.js ADR 0014, Chart.js ADR 0042 supersedes Chart.js ADR 0001, and Chart.js ADR
+  0043 supersedes Chart.js ADR 0006.
   Chart.js ADR 0033 supersedes the `xCenter` and `yCenter` bullet of Chart.js ADR 0025 §5. The
   list:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md) (superseded by Chart.js ADR 0042)
@@ -64,7 +67,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
     0004)
   - [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md)
   - [Chart.js ADR 0014: Input events and the chart host](adr/0014-input-events-and-chart-host.md)
-    (Chart.js ADR 0037 supersedes it on acceptance)
+    (superseded by Chart.js ADR 0037)
   - [Chart.js ADR 0015: Text](adr/0015-text.md)
   - [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (it supersedes Chart.js ADR
     0007)
@@ -97,7 +100,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0036: Parsed data in the controllers](adr/0036-parsed-data.md) (it supersedes
     Chart.js ADR 0027)
   - [Chart.js ADR 0037: Legend and tooltip input path](adr/0037-legend-and-tooltip-input-path.md)
-    (proposed; it supersedes Chart.js ADR 0014 on acceptance)
+    (it supersedes Chart.js ADR 0014)
   - [Chart.js ADR 0038: Plugin modules, class values and interfaces](adr/0038-plugin-modules-class-values-and-interfaces.md)
   - [Chart.js ADR 0039: Tooltip model and animation](adr/0039-tooltip-model-and-animation.md)
   - [Chart.js ADR 0040: Filler targets and plain points](adr/0040-filler-targets-and-plain-points.md)
@@ -105,6 +108,9 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0042: Theming](adr/0042-theming.md) (it supersedes Chart.js ADR 0001)
   - [Chart.js ADR 0043: Options representation and resolver](adr/0043-options-representation-and-resolver.md)
     (it supersedes Chart.js ADR 0006)
+  - [Chart.js ADR 0044: Stack fill search](adr/0044-stack-fill-search.md) (rejected)
+  - [Chart.js ADR 0045: Reference engine on arm64](adr/0045-reference-engine-arm64.md) (proposed)
+  - [Chart.js ADR 0046: Stack fill search, the result of the code A/B](adr/0046-stack-fill-search-result.md)
 
 ## What gets ported
 
@@ -209,8 +215,7 @@ options representation of Chart.js ADR 0006, now in
 - **Text.** Decided in [Chart.js ADR 0015](adr/0015-text.md): a parser for the CSS font
   shorthand, `ui.Paragraph` with LRU caches, and Liberation Sans as the test font.
 - **Input events.** Decided in [Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md)
-  (proposed; it supersedes [Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md) on
-  acceptance): the DOM event names of Chrome from Flutter pointer events, an internal chart host
+  (it supersedes [Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md)): the DOM event names of Chrome from Flutter pointer events, an internal chart host
   that sizes the chart before the first paint, no claim in the gesture arena, and the compatibility
   mouse events of a touch tap.
 - **Animation.** `requestAnimationFrame` maps onto `SchedulerBinding.scheduleFrameCallback`.

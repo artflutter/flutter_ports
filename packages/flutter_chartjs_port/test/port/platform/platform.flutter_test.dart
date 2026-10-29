@@ -14,7 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'fake_chart.dart';
 
 // platform.flutter.dart replaces src/platform/platform.dom.js (Chart.js ADR
-// 0014). test/specs/platform.dom_test.dart waits for core.controller. These
+// 0037). test/specs/platform.dom_test.dart waits for core.controller. These
 // tests cover the platform with a FakeChart, which makes the platform calls
 // of core.controller.js. chart_host_test.dart covers the input mapping.
 

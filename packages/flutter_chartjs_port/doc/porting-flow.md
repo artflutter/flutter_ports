@@ -199,8 +199,8 @@ animation (0039), the filler targets and the plain points (0040), the plugin tes
 the theming (0042) and the options representation with a `helpers.merge` into an element target
 (0043). The porting lead accepted Chart.js ADRs 0038-0043 at the end of step 7 of phase 8
 (2026-10-23). Chart.js ADR 0042 supersedes Chart.js ADR 0001, and Chart.js ADR 0043 supersedes
-Chart.js ADR 0006. Chart.js ADR 0037 stays proposed until the device check of step 8. It
-supersedes Chart.js ADR 0014 on acceptance. Their subsections are 2.1 (Chart.js ADR 0043), 2.7
+Chart.js ADR 0006. The porting lead accepted Chart.js ADR 0037 after the device check of step 8
+(2026-10-29). It supersedes Chart.js ADR 0014. Their subsections are 2.1 (Chart.js ADR 0043), 2.7
 (Chart.js ADR 0037), 2.11 (Chart.js ADR 0042) and 2.24 (Chart.js ADRs 0038-0041). The other
 subsections stay proposals in this document until their ADR files exist.
 
@@ -214,7 +214,7 @@ subsections stay proposals in this document until their ADR files exist.
 | 2.3, number formatting | [Chart.js ADR 0026: Number formatting on package:intl](adr/0026-number-formatting-on-package-intl.md), which supersedes Chart.js ADR 0008 | 2 |
 | 2.2, 2.3, 2.6, 2.10 | [Chart.js ADR 0034: No display-only JS exactness](adr/0034-no-display-only-js-exactness.md), which supersedes Chart.js ADR 0009 | 2 |
 | 2.2 | [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md) | 3 |
-| 2.7 | [Chart.js ADR 0037: Legend and tooltip input path](adr/0037-legend-and-tooltip-input-path.md) (proposed), which supersedes Chart.js ADR 0014 on acceptance | 3 |
+| 2.7 | [Chart.js ADR 0037: Legend and tooltip input path](adr/0037-legend-and-tooltip-input-path.md), which supersedes Chart.js ADR 0014 | 3 |
 | 2.8 | [Chart.js ADR 0015: Text](adr/0015-text.md) | 3 |
 | 2.11 | [Chart.js ADR 0042: Theming](adr/0042-theming.md), which supersedes Chart.js ADR 0001 | 1 for the four invariants, else 5 |
 | 2.9, `helpers.extras` and the animator frame source | [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md), which supersedes Chart.js ADR 0007 | 2 |
@@ -345,8 +345,8 @@ Flutter goldens of the port test only Flutter behavior.
 
 ### 2.7 Chart.js ADR 0037: Legend and tooltip input path (gate 3)
 
-[Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md) (proposed) holds the decision,
-its evidence and the items that stay open. In short:
+[Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md) (accepted 2026-10-29) holds the
+decision, its evidence and the items that stay open. In short:
 - `platform.flutter.dart` replaces `platform.dom.js` with the upstream names. The port-only
   `NativeEvent` stands in for the DOM event. `detectPlatform` tests for a chart host.
 - The internal chart host (`ChartHost`, `RenderChartHost`) sizes the chart in its first layout,
@@ -389,7 +389,7 @@ mute: the mute and the skip of a muted chart. Its third row is the promise check
 Chart.js ADR 0016 (accepted 2026-10-21) supersedes Chart.js ADR 0007. It states the complete
 scheduling decision again and changes decision 9 of Chart.js ADR 0007. The first layout of the
 chart host reports the attach at once, inside `performLayout`
-([Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md), section 3). A canvas swap reports
+([Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md), section 3). A canvas swap reports
 the detach of the old canvas at once, during the build. Chart.js ADR 0016 keeps the other eleven
 decisions with their numbers.
 
@@ -411,7 +411,7 @@ decision, its evidence and the items that stay open. In short:
   chart. It skips as `'blocked: controller.bar'`.
 - The specs with a `done` callback are `testWidgets` cases. They wait with `setTimeout` and
   `waitForDone` of the harness (section 3, "Frames in tests").
-- The chart host owns no chart (Chart.js ADR 0014 §2). It reports the ticker state through
+- The chart host owns no chart (Chart.js ADR 0037 §2). It reports the ticker state through
   `ChartHost.onTickerModeChanged`. The owner of a chart connects it to `animator.mute` and
   `animator.unmute`. The owner also mutes a chart that it creates under
   `TickerMode(enabled: false)`. The gallery `ChartCanvas` does this. The phase 9 widget does it
@@ -1335,8 +1335,8 @@ stays in the list as closed.
   7/5,909 inputs.
   [Chart.js ADR 0032](adr/0032-js-numeric-semantics.md) keeps fdlibm for now. V8 `main` moved
   `Math.log10` to a correctly rounded libm on 2026-05-11.
-- Tooltip after touch lift: Chart.js ADR 0037 (proposed) keeps the Chrome result (#7738). The
-  device check of its Open 1 closes the question.
+- Tooltip after touch lift: Chart.js ADR 0037 (accepted 2026-10-29) keeps the Chrome result
+  (#7738). The device check of its Open 1 closed the question on Android (its Evidence E8 to E11).
 - Research evidence: commit the archive of the 2026-10-16 probes under `tool/research/`, or keep it
   outside the repository?
 

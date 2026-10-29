@@ -139,7 +139,7 @@ rules 1 and 6 and the backport sentence of rule 2. porting-flow.md §6 links her
   2. PRs that fix public security reports: #12268 (for #12265).
   3. A watch list of items that a design document or ADR names: #12205 and #11910
      (theming.md §9), #12151 and #12269 (reports of the #12097 regression), #7738
-     ([Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md), proposed).
+     ([Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md)).
 - **Docs, website and CI commits** get `not-applicable` rows and nothing else.
 
 ## 3. Triage vocabulary

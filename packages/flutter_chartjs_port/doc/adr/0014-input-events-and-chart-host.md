@@ -1,6 +1,7 @@
 # Chart.js ADR 0014: Input events and the chart host
 
 - Status: accepted (2026-10-21)
+- Superseded by: [Chart.js ADR 0037](0037-legend-and-tooltip-input-path.md) (2026-10-29)
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0007](0007-frame-scheduling.md) (the scheduling of the host),
   [Chart.js ADR 0016](0016-frame-scheduling.md) (the scheduling of the host, with the first

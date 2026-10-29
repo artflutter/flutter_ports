@@ -8,8 +8,8 @@
   [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) (the method of a
   shared package, no dependency on another port),
   [Chart.js ADR 0013](../../../flutter_chartjs_port/doc/adr/0013-canvas-model.md) (the canvas layer),
-  [Chart.js ADR 0014](../../../flutter_chartjs_port/doc/adr/0014-input-events-and-chart-host.md) (the
-  chart host), [Chart.js ADR 0015](../../../flutter_chartjs_port/doc/adr/0015-text.md) (text),
+  [Chart.js ADR 0037](../../../flutter_chartjs_port/doc/adr/0037-legend-and-tooltip-input-path.md)
+  (the chart host), [Chart.js ADR 0015](../../../flutter_chartjs_port/doc/adr/0015-text.md) (text),
   [Chart.js ADR 0016](../../../flutter_chartjs_port/doc/adr/0016-frame-scheduling.md) (frames and
   `TickerMode`), [Chart.js ADR 0019](../../../flutter_chartjs_port/doc/adr/0019-animation.md) (the
   animation clock),
@@ -219,7 +219,7 @@ lines. Chart.js ADR 0013 states its model:
 - the path rules, dashes, gradients, patterns, composite modes and images of §6-7
 - the context ignores an invalid value, as the DOM does (§7)
 - text on a single-line `ui.Paragraph` with LRU caches (Chart.js ADR 0015 §2-3)
-- a host for one canvas (Chart.js ADR 0014) and frames on `scheduleFrameCallback` (Chart.js ADR
+- a host for one canvas (Chart.js ADR 0037) and frames on `scheduleFrameCallback` (Chart.js ADR
   0016 item 1)
 
 The layer has seven gaps for zrender and ECharts:

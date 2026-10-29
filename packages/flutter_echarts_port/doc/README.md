@@ -183,7 +183,9 @@ it takes from them:
 - ECharts ADR 0004 takes Chart.js ADRs 0006, 0020 and 0021 and D3 ADR 0006.
 - ECharts ADR 0005 takes Chart.js ADRs 0022, 0029, 0030, 0032 and 0034 and D3 ADR 0004.
 - ECharts ADR 0006 takes Chart.js ADRs 0013, 0015, 0016 and 0019 and D3 ADR 0005.
-- ECharts ADR 0007 takes Chart.js ADRs 0014 and 0016.
+- ECharts ADR 0007 takes Chart.js ADRs 0016 and 0037 (Chart.js ADR 0037 supersedes Chart.js ADR
+  0014). Its event table keeps the stylus kinds of Chart.js ADR 0014 §6 until the ECharts lead
+  decides (ECharts ADR 0007, Open).
 - ECharts ADR 0008 takes Chart.js ADR 0024 and the D3 decision on dates and time zones. Chart.js
   ADR 0026 does not apply, because ECharts has no `Intl` call.
 - ECharts ADR 0009 takes the four theming invariants of Chart.js ADR 0001 and the gallery layout

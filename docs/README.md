@@ -41,7 +41,8 @@ package.
     port follows Chart.js fixes and improvements after the pinned tag.
   - [Upstream ledger](../packages/flutter_chartjs_port/doc/upstream-ledger.md): the upstream commits
     after the pinned tag, with their triage.
-  - Decisions (all accepted):
+  - Decisions (all accepted, except Chart.js ADR 0044, which is rejected, and Chart.js ADR 0045,
+    which is proposed):
     [Chart.js ADR 0001: Theming](../packages/flutter_chartjs_port/doc/adr/0001-theming.md)
     (superseded by Chart.js ADR 0042),
     [Chart.js ADR 0002: JS numeric semantics](../packages/flutter_chartjs_port/doc/adr/0002-js-numeric-semantics.md)
@@ -66,7 +67,8 @@ package.
     [Chart.js ADR 0012: Dart file naming](../packages/flutter_chartjs_port/doc/adr/0012-dart-file-naming.md)
     (it supersedes Chart.js ADR 0004),
     [Chart.js ADR 0013: Canvas model](../packages/flutter_chartjs_port/doc/adr/0013-canvas-model.md),
-    [Chart.js ADR 0014: Input events and the chart host](../packages/flutter_chartjs_port/doc/adr/0014-input-events-and-chart-host.md),
+    [Chart.js ADR 0014: Input events and the chart host](../packages/flutter_chartjs_port/doc/adr/0014-input-events-and-chart-host.md)
+    (superseded by Chart.js ADR 0037),
     [Chart.js ADR 0015: Text](../packages/flutter_chartjs_port/doc/adr/0015-text.md),
     [Chart.js ADR 0016: Frame scheduling](../packages/flutter_chartjs_port/doc/adr/0016-frame-scheduling.md)
     (it supersedes Chart.js ADR 0007),
@@ -98,6 +100,8 @@ package.
     (it supersedes Chart.js ADR 0011),
     [Chart.js ADR 0036: Parsed data in the controllers](../packages/flutter_chartjs_port/doc/adr/0036-parsed-data.md)
     (it supersedes Chart.js ADR 0027),
+    [Chart.js ADR 0037: Legend and tooltip input path](../packages/flutter_chartjs_port/doc/adr/0037-legend-and-tooltip-input-path.md)
+    (it supersedes Chart.js ADR 0014),
     [Chart.js ADR 0038: Plugin modules, class values and interfaces](../packages/flutter_chartjs_port/doc/adr/0038-plugin-modules-class-values-and-interfaces.md),
     [Chart.js ADR 0039: Tooltip model and animation](../packages/flutter_chartjs_port/doc/adr/0039-tooltip-model-and-animation.md),
     [Chart.js ADR 0040: Filler targets and plain points](../packages/flutter_chartjs_port/doc/adr/0040-filler-targets-and-plain-points.md),
@@ -105,10 +109,12 @@ package.
     [Chart.js ADR 0042: Theming](../packages/flutter_chartjs_port/doc/adr/0042-theming.md)
     (it supersedes Chart.js ADR 0001),
     [Chart.js ADR 0043: Options representation and resolver](../packages/flutter_chartjs_port/doc/adr/0043-options-representation-and-resolver.md)
-    (it supersedes Chart.js ADR 0006).
-  - Proposed decision (phase 8):
-    [Chart.js ADR 0037: Legend and tooltip input path](../packages/flutter_chartjs_port/doc/adr/0037-legend-and-tooltip-input-path.md)
-    (it supersedes Chart.js ADR 0014 on acceptance).
+    (it supersedes Chart.js ADR 0006),
+    [Chart.js ADR 0044: Stack fill search](../packages/flutter_chartjs_port/doc/adr/0044-stack-fill-search.md)
+    (rejected),
+    [Chart.js ADR 0045: Reference engine on arm64](../packages/flutter_chartjs_port/doc/adr/0045-reference-engine-arm64.md)
+    (proposed),
+    [Chart.js ADR 0046: Stack fill search, the result of the code A/B](../packages/flutter_chartjs_port/doc/adr/0046-stack-fill-search-result.md).
   - Prior art: [overview](../packages/flutter_chartjs_port/doc/prior-art/README.md),
     [Chart.js packages](../packages/flutter_chartjs_port/doc/prior-art/chartjs-packages.md),
     [running real Chart.js without a WebView](../packages/flutter_chartjs_port/doc/prior-art/js-runtimes.md),

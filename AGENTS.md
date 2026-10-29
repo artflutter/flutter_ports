@@ -367,7 +367,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0043. Eleven of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0046. Twelve of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR
       0012 supersedes Chart.js ADR 0004, and Chart.js ADR 0026 supersedes Chart.js ADR 0008.
       Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0033 supersedes Chart.js ADR
@@ -379,13 +379,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `parseObjectData`, and supersedes it. Chart.js ADR 0042 (theming) states the complete
       decision of Chart.js ADR 0001 with the palette of the theme map, and supersedes it. Chart.js
       ADR 0043 (options representation and resolver) states the complete decision of Chart.js ADR
-      0006 with `helpers.merge` into an element target, and supersedes it. The porting lead
-      accepted Chart.js ADRs 0032, 0034, 0035 and 0036 on 2026-10-21, and Chart.js ADRs 0038-0043
-      on 2026-10-23. Docs and code cite them for the current rules. The porting lead (the agent
-      that runs the phase) owns the ADR statuses (the maintainer, 2026-10-21). It accepts an ADR
-      when the decision is implemented and its gates are green. A changed decision still gets a
-      new ADR that supersedes the old one. Chart.js ADR 0037 of phase 8 is proposed until the
-      device check of step 8. The other ADRs are accepted. Docs name them "Chart.js ADR NNNN".
+      0006 with `helpers.merge` into an element target, and supersedes it. Chart.js ADR 0037
+      supersedes Chart.js ADR 0014 (2026-10-29). The porting lead accepted Chart.js ADRs 0032,
+      0034, 0035 and 0036 on 2026-10-21, Chart.js ADRs 0038-0043 on 2026-10-23, and Chart.js ADRs
+      0037 and 0046 on 2026-10-29. Chart.js ADR 0037 waited for the device check of step 8. Docs and code cite them for the current
+      rules. The porting lead (the agent that runs the phase) owns the ADR statuses (the
+      maintainer, 2026-10-21). It accepts an ADR when the decision is implemented and its gates are
+      green. A changed decision still gets a new ADR that supersedes the old one. Chart.js ADR 0044
+      (the stack fill search) is rejected: its code A/B rejected the change, and Chart.js ADR 0046
+      records the result. Chart.js ADR 0045 (the reference engine on arm64) is proposed. The other
+      ADRs are accepted. Docs name them "Chart.js ADR NNNN".
       "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. An accepted ADR does not change. A changed decision

@@ -235,7 +235,9 @@ states the rules that it takes. The ECharts ADRs cite the current Chart.js numbe
   tests (ECharts ADR 0005).
 - Chart.js ADRs 0013, 0015, 0016 and 0019: the canvas model, the text, the frames and the
   animation clock (ECharts ADR 0006).
-- Chart.js ADR 0014: the input events and the chart host (ECharts ADR 0007).
+- Chart.js ADR 0037: the input events and the chart host (ECharts ADR 0007). It supersedes
+  Chart.js ADR 0014. The event table of ECharts ADR 0007 keeps the stylus kinds of Chart.js ADR
+  0014 §6 until the ECharts lead decides (ECharts ADR 0007, Open).
 - Chart.js ADRs 0024 and 0026: the dates and the number formatting (ECharts ADR 0008). Chart.js
   ADR 0026 does not apply to ECharts (2.10).
 - Chart.js ADRs 0001 and 0031: the theming invariants and the gallery layout rule (ECharts ADR
@@ -490,7 +492,7 @@ In short:
   It keeps the `Eventful` contract and the event names.
 - When zrender calls `eventTool.stop` (`zrender src/core/event.ts:296-299`), the host claims the
   pointer in the gesture arena. A stopped wheel registers with `pointerSignalResolver`. Without
-  `stop`, the host stays out of the arena (Chart.js ADR 0014).
+  `stop`, the host stays out of the arena (Chart.js ADR 0037).
 - `EChartsContainer` is the pure stand-in for the `init(dom)` element (phase 5). `EChartsHost` is
   the internal render object. It sizes in the first layout and calls `chart.resize()` on a size
   change.

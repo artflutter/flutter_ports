@@ -49,7 +49,7 @@ registerBuiltins(C);
 
 // The platform of the charts. The Dart harness gives each chart the
 // platform of platform.flutter.dart, the port of platform.dom.js (Chart.js
-// ADR 0014). Its updateConfig is the no-op of platform.base.js:80. The fake
+// ADR 0037). Its updateConfig is the no-op of platform.base.js:80. The fake
 // canvas of makeChart gives the BasicPlatform, whose updateConfig writes
 // `options.animation = false` (platform.basic.js:20-22). Thus this
 // generator gives the BasicPlatform the no-op of the BasePlatform: a case

@@ -3,9 +3,10 @@
 - Status: proposed, deferred
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (accepted),
-  [Chart.js ADR 0013](adr/0013-canvas-model.md), [Chart.js ADR 0014](adr/0014-input-events-and-chart-host.md),
-  [Chart.js ADR 0015](adr/0015-text.md), [Chart.js ADR 0016](adr/0016-frame-scheduling.md) (all
-  accepted), [performance.md](performance.md), [porting-flow.md](porting-flow.md) §2.2
+  [Chart.js ADR 0013](adr/0013-canvas-model.md), [Chart.js ADR 0015](adr/0015-text.md),
+  [Chart.js ADR 0016](adr/0016-frame-scheduling.md),
+  [Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md) (all accepted),
+  [performance.md](performance.md), [porting-flow.md](porting-flow.md) §2.2
 
 This plan removes code of the phase 3 canvas layer and of the chart host where Dart or Flutter
 already gives the function. It has three cuts and nine work packages. Each work package has one
@@ -473,6 +474,29 @@ Changes to the cited files:
   datasets is longer than the paragraph cache of 512 entries. The variants V1 and V2 of the fade
   frames (`canvas_ui.dart`) were not applied. The references, the inventory (§1.1), the tests of
   §2.6 and §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-29, the acceptance of [Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md)
+  after the device round g1 (its Evidence E11). Chart.js ADR 0037 is accepted and supersedes
+  Chart.js ADR 0014. `doc/adr/0014-input-events-and-chart-host.md` gets only a "Superseded by"
+  line after its status line, so its lines from line 4 move by +1. §3.7 gives the new line numbers
+  of Chart.js ADR 0014. The references to the current host decision move to Chart.js ADR 0037: the
+  Related line, the evidence base of §3.3 (section 4), the rule of §3.7 for a later change of the
+  host rules, and the Open item of §6.4 (Open 8). §3.5 no longer calls Chart.js ADR 0037 proposed.
+  The records of C2 in §3.7, §5 and the entries above keep Chart.js ADR 0014. porting-flow.md
+  changes the paragraph and the row 2.7 of the §2 table, two citations of §2.9, the first sentence
+  of §2.7 and one open question of §7 in place: no line moves. The first sentence of §2.7 no
+  longer calls Chart.js ADR 0037 proposed. The other text of §2.7 and the text of §2.2 and of the
+  cited rows of the harness table of §3 do not change. No library file, test or gallery file
+  changes, except the comment of `test/port/platform/platform.flutter_test.dart` in place. The
+  `parity.md` rows that this plan cites do not change. The inventory (§1.1), the tests of §2.6 and
+  §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-29, the night series of step 8 of phase 8 (the code A/B of Chart.js ADR 0044, P3, P5
+  and P6). `doc/performance.md` changes §14.7 and §14.8 in place and gets §14.9 at its end: no
+  cited section number changes. Chart.js ADR 0044 is rejected, and Chart.js ADR 0046 records the
+  result: its change of `helpers.segment.dart`, `element.line.dart` and
+  `filler.target.stack.dart` did not land. No P6 variant is accepted: `canvas_ui.dart` does not
+  change. No library file, test or gallery file that this plan cites changes. The references,
+  the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No trigger
+  occurred in phase 8. The revisit point of this plan (after phase 8, before phase 9) is now.
 
 ## 1. Why
 
@@ -931,7 +955,7 @@ Rejected options:
 - **A size listener on `UiCanvasElement` in place of the microtask and the paint fall-back.** A
   `markNeedsLayout` from chart code that runs inside the layout of another render object (for
   example a `LayoutBuilder`) trips the layout assertions of Flutter. The microtask design is the
-  evidence base of Chart.js ADR 0014 §4 and Chart.js ADR 0016.
+  evidence base of Chart.js ADR 0037 §4 and Chart.js ADR 0016.
 
 ### 3.4 Change list
 
@@ -967,7 +991,7 @@ C2 ran in phase 5 without W (Deferral, trigger 1). The line numbers below are th
 
 Tests that pin the current behavior (run them before and after):
 - `test/port/platform/chart_host_test.dart`: 40 tests, 41 after C2, 50 after Chart.js ADR
-  0022 and 73 after Chart.js ADR 0037 (proposed). The tests are "first layout" (2) and the group
+  0022 and 73 after Chart.js ADR 0037. The tests are "first layout" (2) and the group
   "resize". The group "resize" tests the throttle, a DPR change, content drawn before the host
   at the display size, the clip and a later resize that keeps the ratio. Then come the group
   "display size and bitmap stretch" (7, from work package A2, 8 after C2), "unbounded
@@ -1116,20 +1140,24 @@ new `differences.md` row. No skip reason changes now, because every affected cas
 
 Chart.js ADR 0013 and Chart.js ADR 0014 were proposed in phase 5, so work package C2 edited them
 in place. The porting lead accepted them on 2026-10-21. Thus a later change of these decisions
-gets a new ADR that supersedes the old ADR. Chart.js ADR 0034 and Chart.js ADR 0016 do not change.
+gets a new ADR that supersedes the old ADR. Chart.js ADR 0037 supersedes Chart.js ADR 0014
+(2026-10-29) and keeps the host rules of its sections 2 and 5. Thus a later change of the host
+rules gets a new ADR that supersedes Chart.js ADR 0037. Chart.js ADR 0034 and Chart.js ADR 0016
+do not change.
 
 Work package C2 made these changes in phase 5, except the `performance.md` figures. These figures
-are for work package P. The line numbers below are the lines after C2. The porting-flow.md line
-numbers are the lines of 2026-10-21, after the toolchain change.
+are for work package P. The line numbers below are the lines after C2. The lines of Chart.js ADR
+0014 are the lines after its status line of 2026-10-29 (the lines after C2, plus 1). The
+porting-flow.md line numbers are the lines of 2026-10-21, after the toolchain change.
 - **Chart.js ADR 0014:**
-  - §2 (lines 86-93): "the display size of the canvas" is the px styles that `retinaScale` writes,
+  - §2 (lines 87-94): "the display size of the canvas" is the px styles that `retinaScale` writes,
     else the render size.
-  - §5 (lines 146-170): the display size rule, "paint maps the bitmap to the display size with one
+  - §5 (lines 147-171): the display size rule, "paint maps the bitmap to the display size with one
     scale, exactly 1 / DPR within 1e-3" in place of the stretch bullet, why the stretch stays
     (`options.devicePixelRatio`), and the attribute model.
-  - Alternatives (lines 288-299): add option B, the paint at `1 / dpr` only, and the host size
+  - Alternatives (lines 289-300): add option B, the paint at `1 / dpr` only, and the host size
     from Flutter layout, with the reasons of §3.3.
-  - Evidence (lines 319-369): the new tests and their counts.
+  - Evidence (lines 320-370): the new tests and their counts.
 - **Chart.js ADR 0013:** §2 (lines 81-87): the `devicePixelRatio` and `logicalSize` bullet becomes
   the attributes bullet. §4 (lines 119-120): the `paint` signature. §5 (lines 128-146): `paint`
   applies the scale that the host gives. Delete the bullet on the `UiCanvasElement.devicePixelRatio`
@@ -1439,5 +1467,5 @@ the direct path. C2 changes only the transform of the host paint.
 - **Memory:** a `rectRounded` stress scene for 60 seconds. The heap stays flat.
 - **Cut 2:** browser zoom at 90 %, 110 % and 125 % (fractional DPR), and a move of the window from
   a Retina display to a non-Retina display. Check the Events tab readout (`canvas.width x height`
-  against the display size), no blur, and the sizes. This also closes the Chart.js ADR 0014 Open
-  item "A DPR change on a real device is not verified".
+  against the display size), no blur, and the sizes. This also closes the Chart.js ADR 0037 Open
+  item 8, "A DPR change on a real device is not verified".

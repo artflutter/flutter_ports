@@ -14,8 +14,9 @@
   date figures of phase 6 ([Chart.js ADR 0024](adr/0024-dates.md)). Section 13 has the controller
   figures of phase 7, and section 13.6 the figures of step 7 on the phones. Section 14 has the
   plugin figures of phase 8 ([Chart.js ADR 0040](adr/0040-filler-targets-and-plain-points.md)),
-  and section 14.5 the cost of the theme palette and the plugin tokens
-  ([Chart.js ADR 0042](adr/0042-theming.md)).
+  section 14.5 the cost of the theme palette and the plugin tokens
+  ([Chart.js ADR 0042](adr/0042-theming.md)), section 14.7 the figures of step 8 and section 14.9
+  the night series after the step 8 record (Chart.js ADR 0044, P3, P5 and P6).
 - Date: 2026-10-22
 - Related: [Chart.js ADR 0016](adr/0016-frame-scheduling.md) (frame scheduling),
   [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (no display-only JS exactness).
@@ -3397,10 +3398,12 @@ device figures come from the dispatch series on the Pixel 8a when the phone is f
 
 ### 14.7 The figures of step 8
 
-Step 8 of phase 8 measured the plugin paths from 2026-10-23 to 2026-10-24. The protocols, the
+Step 8 of phase 8 measured the plugin paths from 2026-10-23 to 2026-10-24. The night of
+2026-10-28 to 2026-10-29 ran the series that
+had no data in that time, and the A/B of Chart.js ADR 0044 (section 14.9). The protocols, the
 raw data, the scripts and the recomputes are working files of phase 8, not committed. Each
 protocol was written before its first run, and no decision rule changed after the data. This
-section gives the figures and the decisions.
+section gives the figures and the decisions of 2026-10-23 to 2026-10-24.
 
 **Method.**
 
@@ -3447,14 +3450,16 @@ What ran (runs that count):
 | Topic | Pixel 8a | iPhone 17 Pro | macOS | VS Code browser (Chromium, dart2wasm) |
 |---|---|---|---|---|
 | Dispatch, CT stage 1 | 24 (12 pairs) | 24 (12 pairs) | 11 of 12 (5 valid pairs) | 12 (6 pairs) |
-| Dispatch, CT stage 2 (P5) | not measured (no phone run) | not measured (no phone run) | not measured (night ended) | not measured (night ended) |
+| Dispatch, CT stage 2 (P5) | not measured (no phone run) | not measured (no phone run) | 2026-10-24: not measured (night ended); then section 14.9 | 2026-10-24: not measured (night ended); then section 14.9 |
 | Tooltip (a), (b), (c) | 46 of 48 (2 with user input) | 24 (6 pairs of each group) | 24 (6 pairs of each group) | 22 of 24 (2 hung) |
-| Tooltip P6 (V1, V2) | not measured (no phone run) | not measured (no phone run) | not measured (night ended) | not measured (night ended) |
+| Tooltip P6 (V1, V2) | not measured (no phone run) | not measured (no phone run) | 2026-10-24: not measured (night ended); then section 14.9 | 2026-10-24: not measured (night ended); then section 14.9 |
 | Legend and title | not measured (stopped after 9 runs: incomplete, not used) | 24 (12 pairs) | 24 (12 pairs) | 24 (12 pairs) |
 | Fill | not measured (thermal gate, then no phone run) | 12 (6 runs of each group) | 12 | 12, and 3 upstream runs |
+| Fill, the A/B of Chart.js ADR 0044 | not measured (no phone run, ADR 0044 Open 1) | not measured (no phone run) | section 14.9 | section 14.9 |
 | Stress S-a, S-b | 48 (12 before, 36 after) | 12 (1 run each, after) | 36 (after) | 36 (after) |
 | Stress S-c (plugin scenes) | not measured (not in the night task) | 10 (1 run each) | 30 | 30 |
-| Upstream comparison (P3) | not measured (thermal gate) | not measured (no phone run) | - | not measured (tab hidden) |
+| Upstream comparison (P3) | not measured (thermal gate) | not measured (no phone run) | - | 2026-10-24: not measured (tab hidden); then section 14.9 |
+| Input check of Chart.js ADR 0037 (no timing) | 32 rows in rounds f1 and f2 (after r1 to r3); STN10 again in round g1 | - | - | - |
 | Fixture registry | - | - | 24 (12 pairs) | - |
 
 **The hook dispatch: CT stage 1 (Chart.js ADR 0038 §10).** The benchmark cell `plugins.line`
@@ -3496,10 +3501,11 @@ the other three platforms, so stage 2 started. Variant B (a descriptor list for 
 SHA-256 before any stage 2 run, with the primary cells R2, R3 and R4 in config A and the guards
 `chart.a` N 1000 and R1. With no phone run, macOS replaced the Pixel 8a as a platform of the decision. The
 screen of the Mac stayed locked from before the first run to 08:00, so no stage 2 run occurred
-on macOS or in the VS Code browser: **no data**. CT is not adopted. A calculation, not a
-decision: the gain of CT cannot be larger than the stage 1 cost A - B, and R3 has an upper end of
-+0.0564 ms on macOS and +0.0738 ms in the VS Code browser. Thus rule 2 (a gain of 0.1 ms or more
-in each primary cell) is almost certainly false on these two platforms.
+on macOS or in the VS Code browser in that night. A calculation, not a decision: the gain of CT
+cannot be larger than the stage 1 cost A - B, and R3 has an upper end of +0.0564 ms on macOS and
++0.0738 ms in the VS Code browser. Thus rule 2 (a gain of 0.1 ms or more in each primary cell) is
+almost certainly false on these two platforms. Section 14.9 has the stage 2 series of
+2026-10-29 and the decision.
 
 **The tooltip (Chart.js ADR 0039 Open 1 and 2).** The cells `tooltip.hover` (a), `tooltip.still`
 (b) and `tooltip.fade` (c) of section 6, with 3 or 10 datasets of N points (P1 = 3 datasets and N
@@ -3601,8 +3607,10 @@ composite alpha of a fill text to a step of 1/64, and the rounded color is the k
 paragraph cache (an error of at most 1/128 in alpha). V2 caches an opaque paragraph and draws it
 in a `saveLayer` with the global alpha. The A/B of each variant (primary cells: the whole frame of
 (c) at N 1000) was to run on macOS and in the VS Code browser. The task started after 08:00, so
-**no P6 run occurred: not measured (night ended)**. The raster check of V2 names a stress record
-on the Pixel 8a, which the schedule did not permit. The fade frames keep the present cache.
+no P6 run occurred in that night. The raster check of V2 named a stress record on the Pixel 8a,
+which the schedule did not permit. Before the first P6 run of section 14.9, an amendment of the
+protocol named the stress scene `fade` (the mode `plugins`, 10 datasets, N 1000) on macOS in
+its place. Section 14.9 has the P6 series and the decision.
 
 **The legend and the title.** The cells `legend.line` and `title.line` (section 6): 3 datasets.
 X has no legend and no title, Y1 has the legend, Y2 has the title. d_L = Y1 - X and d_T = Y2 - X,
@@ -3656,9 +3664,11 @@ Open 3 compares the port draw of `fill.stack`, call `draw`, N 1000 (the median o
 of `drawMedianMs`) with the upstream draw of the same cell (the median of the run medians of 3
 runs of the pinned build in the VS Code browser, a new tab for each run). Port 36.755 ms
 (36.601-36.913), upstream 19.862 ms (the run medians 20.163, 19.862 and 19.678 ms): **R = 1.85**
-(1.85 with `draw+end`, an upper bound). R is 1.5 or more, so Open 3 goes to a design panel and a
-new ADR. Step 8 does not change `interpolate`. On macOS the port draw is 31.151 ms. The Pixel 8a
-has no fill figure and no upstream figure.
+(1.85 with `draw+end`, an upper bound). R is 1.5 or more, so Open 3 went to a design panel. The
+panel wrote [Chart.js ADR 0044](adr/0044-stack-fill-search.md) (the stack fill search): the loop
+of `_boundSegment` with direct calls and an `int` index, and a window search in the stack line.
+Section 14.9 has its A/B and the ratio R after the change. On macOS the port draw is 31.151 ms.
+The Pixel 8a has no fill figure and no upstream figure.
 
 **The stress frames.** `lib/main_stress.dart`, the 7-s window, the means after the first 30
 frames. S-a is the line chart and S-b the radar chart of the mode `chart` (the legend off, the
@@ -3727,13 +3737,33 @@ Pro has 1 run of each scene; fps differences are in FPS):
   only (`main_stress.dart` writes `last?.rasterMaxMs`), not of the run. This section gives no
   maximum.
 
-**The upstream comparison (P3).** Not measured on any platform. The Pixel 8a series stopped at
-the thermal gate before it. The Safari runs on the iPhone 17 Pro stopped with the end of the
-iPhone runs and are not data. In the VS Code browser the screen of the Mac locked after the
-quiet-Mac block, the tab stayed hidden for 10 minutes, and no page loaded: not measured (tab
-hidden). Thus the excess over upstream of each plugin cell is not known, and the fix candidates
-of a plugin path (an excess of 0.1 ms or more on the Pixel 8a and a CPU profile) have no data.
-The only upstream figure of step 8 is the `fill.stack` draw for Open 3 above.
+**The upstream comparison (P3).** Not measured in the series of 2026-10-23 to 2026-10-24. The
+Pixel 8a series stopped at the thermal gate before it. The Safari runs on the iPhone 17 Pro
+stopped with the end of the iPhone runs and are not data. In the VS Code browser the screen of the
+Mac locked after the quiet-Mac block, the tab stayed hidden for 10 minutes, and no page loaded:
+not measured (tab hidden). Section 14.9 has the VS Code browser series of
+2026-10-29. The Pixel 8a and the iPhone 17 Pro have no upstream
+figure. Thus the fix candidates of a plugin path (an excess of 0.1 ms or more on the Pixel 8a and
+a CPU profile) have no data.
+
+**The input check of Chart.js ADR 0037 (no timing).** The device check compares the DOM events,
+the chart events and the chart state of the port on the Pixel 8a with Chrome on the same phone
+(the pinned build through `adb reverse`), for each gesture row. Rounds r1 to r3 (2026-10-23)
+found the five differences of Evidence E8 of the ADR. The fix `78129b8` changed the touch path of
+the host (section 14.6). The re-check (rounds f1 and f2, build F at `363f28d`, Chrome 155) gave
+the Chrome result in 31 of 32 rows. T15, a fast drag, differs only in the positions of three move
+events (the frame coalescing of Chrome, ADR Open 10), which the protocol allows. STN10, a stylus
+tap with a move inside the stylus slop, failed: Chrome gives the compatibility events and `click`
+at the up position, and the port gave them at the down position. The fix `102634b` puts the tap
+of a stylus at the up position (Evidence E10). Round g1 ran STN10 and the regression rows ST1,
+STN14, S04, S07, SN08, T01, T02 and T05 again with the fixed host (2026-10-29, build G at
+`1d271cd`): all 9 rows pass. In STN10 the port now gives the compatibility events and `click` at
+the up position, as Chrome does. Three optional stylus rows also pass on both sides: STLP (a long
+press: the compatibility events at the down position, no `click`), STO10 (a tap outside the chart
+area) and STE10 (a lift outside the box of the host: no `click`). No row had a difference, so no
+further round ran. Not checked: the rows with a finger (H01-H03, a
+person at the phone), the mouse rows (M01, M02: no mouse), a platform cancel (rows 4 and 8 of
+section 6 of the ADR) and the epsilon 0.05 of the slop limit (`adb` gives whole pixels).
 
 **The fixture registry on a quiet Mac (Chart.js ADR 0029 Open 2).** Section 14.4 flagged its
 figures: the Mac was busy. The same method ran again on 2026-10-24 at night, at `ce340ca`. W
@@ -3751,37 +3781,52 @@ This confirms section 14.4.
 | Rule | Platforms | Result | Consequence |
 |---|---|---|---|
 | CT rule 1 (Chart.js ADR 0038 §10 item 5) | Pixel 8a, iPhone 17 Pro, macOS, VS Code browser | fail: R2, R3, R4 on the Pixel 8a; R4 on the other three | stage 2 (P5) starts; Chart.js ADR 0020 Open 1 does not close by rule 1 |
-| CT rule 2 (item 7, P5) | macOS and VS Code browser (in place of the Pixel 8a: no phone run) | no data (night ended) | CT is not adopted; Chart.js ADR 0038 Open 1 and Chart.js ADR 0020 Open 1 stay open |
+| CT rule 2 (item 7, P5) | macOS and VS Code browser (in place of the Pixel 8a: no phone run) | 2026-10-24: no data (night ended); 2026-10-29 (section 14.9): rule 2 (a) false on both platforms, (c) false in the VS Code browser | CT is not adopted; Chart.js ADR 0038 Open 1 and Chart.js ADR 0020 Open 1 close with this figure |
 | Tooltip T1 (Chart.js ADR 0039 Open 1) | Pixel 8a (5 cells), VS Code browser (4 cells) | fires | the design panel keeps Chart.js ADR 0039 §7; no candidate, no code A/B |
 | Tooltip T2 | Pixel 8a, VS Code browser | does not apply (T1 fires) | no CPU profile |
 | Tooltip F (Chart.js ADR 0039 Open 2) | Pixel 8a (4 cells), VS Code browser (2 cells) | P6 runs | V1 and V2 frozen |
-| P6, V1 and V2 | macOS and VS Code browser (in place of the Pixel 8a) | not measured (night ended); the V2 raster check not measured (its platform, the Pixel 8a, had no run in the schedule) | no variant accepted or rejected; Chart.js ADR 0039 Open 2 stays open |
+| P6, V1 and V2 | macOS and VS Code browser (in place of the Pixel 8a) | 2026-10-24: not measured (night ended); 2026-10-29 (section 14.9): V1 and V2 REJECT on macOS and ACCEPT in the VS Code browser; the V2 raster check on macOS fails (+0.16 ms `rasterMs`) | no variant lands; the present paragraph cache stays; Chart.js ADR 0039 Open 2 closes |
 | Fill, Open 2 (frame, draw and raster figures) | iPhone 17 Pro, macOS, VS Code browser (raster: iPhone 17 Pro and macOS) | done for these platforms; the Pixel 8a not measured (the thermal gate, then no phone run) | Chart.js ADR 0040 Open 2 stays open for the Pixel 8a |
-| Fill, Open 3 (R of `fill.stack`) | VS Code browser (dart2wasm against V8) | R = 1.85, 1.5 or more | a design panel and a new ADR for `interpolate`; the Pixel 8a part has no data |
-| Fix candidates of a plugin path | Pixel 8a | no data (no upstream comparison) | none |
+| Fill, Open 3 (R of `fill.stack`) | VS Code browser (dart2wasm against V8) | R = 1.85, 1.5 or more | a design panel: Chart.js ADR 0044 (proposed); the Pixel 8a part has no data |
+| The A/B of Chart.js ADR 0044 (§6) | macOS, VS Code browser | ACCEPT on macOS; REJECT in the VS Code browser (the guard `fill.radar` wholly above 0, h = 9); R_B = 0.056 | the change goes out of the tree, and Chart.js ADR 0046 records the result; Chart.js ADR 0044 is rejected; Chart.js ADR 0040 Open 3 stays open |
+| Upstream comparison (P3) | VS Code browser (V8 against dart2wasm) | done (2026-10-29); the largest excess of a plugin cell: `fill.stack` update N 1000, +19.598 ms (1.90 times upstream) | figures only: no profile in the browser, so no fix candidate |
+| Fix candidates of a plugin path | Pixel 8a | no data (no upstream comparison on the Pixel 8a) | none |
+| Input check of Chart.js ADR 0037 (protocol §6) | Pixel 8a (no timing) | f1 and f2: 31 of 32 rows pass, STN10 fails; fix `102634b`; round g1 (2026-10-29): all 9 rows and the 3 optional stylus rows pass | the device part of the acceptance condition holds: rows 5, 6, 7, 9 and 13 of section 6 of the ADR are confirmed |
 | Legend, title, stress | all | no rule reads them | figures only |
 | Registry (Chart.js ADR 0029 Open 2) | macOS, quiet | does not fire (upper end +1.882 s) | one registry stays |
 
 ### 14.8 Open: the plugins
 
-1. **CT stage 2 (P5).** The variant and its cells are frozen. A run needs a quiet Mac with an
-   unlocked screen: macOS pairs 1-6, then the VS Code browser pairs 1-6, then stage 2 where its
-   condition is true. Until then Chart.js ADR 0020 Open 1 and Chart.js ADR 0038 Open 1 stay open.
-2. **P6.** V1 and V2 are frozen. A run needs the same quiet Mac. Before any P6 data, the porting
-   lead names the platform of the raster check of V2 (the protocol names the Pixel 8a), for
-   example the stress scene `fade` on macOS. Until then Chart.js ADR 0039 Open 2 stays open.
-3. **`interpolate` and the quadratic stack** (Chart.js ADR 0040 Open 3): a design panel and a new
-   ADR (R = 1.85 in the VS Code browser).
-4. **The Pixel 8a** has no fill, legend, title, S-c or upstream figure (the battery gate, then
-   the schedule). Chart.js ADR 0040 Open 2 stays open for it.
-5. **The upstream comparison (P3)** has no figure on any platform. The page, the plan and the
-   summary script are ready. A run needs an unlocked Mac and a visible tab for about 80 minutes.
-6. **The paragraph build of new tooltip lines** (rule T1) is a cost of the canvas layer:
+Step 8 (sections 14.7 and 14.9) measured or decided each item. Each item has a status, as in
+section 13.7: **measured**, **decided** or **open**.
+
+1. **CT, the typed hook slots** (Chart.js ADR 0038 §10 and Open 1, Chart.js ADR 0020 Open 1):
+   decided. Rule 1 of stage 1 failed on each platform (section 14.7). Stage 2 (P5) on macOS and in
+   the VS Code browser: rule 2 (a) is false on both platforms (section 14.9), so CT is not
+   adopted. The two Open items close with these figures.
+2. **P6, the fade frames** (Chart.js ADR 0039 Open 2): decided. V1 and V2 on macOS and in the
+   VS Code browser, and the raster check of V2 on macOS: the rule rejects V1 and V2 on macOS and
+   accepts them in the VS Code browser, and V2 fails the raster check (section 14.9). Thus no
+   variant is accepted, the present paragraph cache stays, and Chart.js ADR 0039 Open 2 closes
+   with these figures.
+3. **`interpolate` and the quadratic stack** (Chart.js ADR 0040 Open 3): open. The code A/B of
+   Chart.js ADR 0044 (the stack fill search) gave ACCEPT on macOS and REJECT in the VS Code
+   browser (section 14.9). Thus the change goes out of the tree, and Chart.js ADR 0046 records the
+   result. The stack fill stays quadratic, as upstream, and R stays 1.85 in the VS Code browser.
+   With the change, R was 0.056, but the draw of the radar fill (the guard G2) was 5.5 % slower,
+   and 9 control cells were slower in the VS Code browser. A new candidate needs a new design and
+   a new code A/B.
+4. **The Pixel 8a**: open. It has no fill, legend, title, S-c, upstream or ADR 0044 figure (the
+   battery gate, then the schedule). Chart.js ADR 0040 Open 2 stays open for it.
+5. **The upstream comparison (P3)**: measured in the VS Code browser (section 14.9). The
+   Pixel 8a and the iPhone 17 Pro have no upstream figure: open. The fix candidates of a plugin
+   path need the excess on the Pixel 8a and a CPU profile, so none exists.
+6. **The paragraph build of new tooltip lines** (rule T1): open. It is a cost of the canvas layer:
    57-65 µs for each new line on the Pixel 8a. A change of the paragraph cache must not use (a) at
    N 100 as its primary cell: a cache of more than about 1150 entries makes the bench cycle all
    hits, a false gain. The facts go to the revisit of
    [canvas-cuts-plan.md](canvas-cuts-plan.md) ("after phase 8, before phase 9").
-7. **An exact memo of the tooltip option reads** stays specified, with a reference
+7. **An exact memo of the tooltip option reads**: open. It stays specified, with a reference
    implementation, for a later trigger: a device figure where the option reads of one tooltip draw
    cost 0.1 ms or more (about 30-70 body items), or a change of the threshold of Chart.js ADR 0020
    §13. It needs a `DIVERGES` marker and an `adapt` row.
@@ -3791,3 +3836,240 @@ This confirms section 14.4.
    can show the cause.
 9. **The sampler of the Pixel 8a** gives about 2 samples a second. A later protocol that keeps
    the 10 % rule of a window must take the sample rate into account.
+10. **Decided in step 8:** the tooltip option reads (Chart.js ADR 0039 Open 1: T1 fired, and the
+    design panel kept §7 of the ADR, section 14.7); the fixture registry (Chart.js ADR 0029 Open
+    2 does not fire on a quiet Mac, section 14.7); the legend opt-out of the stress and benchmark
+    charts (section 14.3); the filler frame, draw and raster figures on the iPhone 17 Pro, macOS
+    and the VS Code browser (Chart.js ADR 0040 Open 2, section 14.7); a second implementer of the
+    point interfaces in the stress and benchmark closures (Chart.js ADR 0040 Open 4): none, by a
+    check of the closures before the runs.
+
+### 14.9 The night series after the step 8 record
+
+The record of section 14.7 left P3, P5 and P6 with no data, and the design panel of Chart.js
+ADR 0040 Open 3 wrote Chart.js ADR 0044, which lands only after a code A/B (porting-flow.md
+§1.1). These series ran in the night of 2026-10-28 to 2026-10-29 on macOS and in the VS Code
+browser (Chromium, dart2wasm). The protocols, the raw data, the scripts and the
+recomputes are working files of phase 8, not committed. Each protocol was written before its
+first run. The amendments before the data: on 2026-10-28, the side A of each A/B series at
+`1d271cd` (the ADR 0044 A/B, P5 and P6), the P6 patches rebased to `1d271cd` with their SHA-256
+values, macOS in place of the Pixel 8a as a deciding platform of P6, the VS Code browser as the
+platform of the choice rule of P6, and macOS as the platform of the raster check of V2 (P6); on
+2026-10-29 at 03:39 CET, before the pilot of P3, the source of the port runs of group 2 (a port series
+of the same night in the same tab, P3); on 2026-10-29 at 02:40 CET, the iPhone 17 Pro as an added
+platform that does not decide (the ADR 0044 A/B, P5 and P6; the iPhone series stopped before its
+first run, because the app launch failed). No decision rule changed after the data.
+
+**Method.**
+
+- Platforms. macOS: Apple M3 Max, macOS 27.0.1, AC power, the gate of the quiet Mac of section
+  14.7. VS Code browser: Chromium 150.0.7871.250 in Electron 43.7.7, VS Code 1.143.1, a dart2wasm
+  profile build at the root of its own port with COOP and COEP headers, one own tab for each
+  series with `about:blank` before and after each run, a run only in a visible tab, the macOS gate
+  before each run. `caffeinate -dimsu` held the display and the Mac awake for the whole block, so
+  the screen did not lock and the tab stayed visible: no run found a locked screen or a hidden
+  tab. No phone ran these series: the follow-up A/B series run on macOS and in the VS Code browser
+  (a decision of the porting lead, section 14.7).
+- Builds. Flutter 3.47.7 (Dart 3.13.5), profile builds of `lib/main_bench.dart` (P3 also the
+  upstream page of the pinned build), one at a time, in worktrees outside the main checkout. Each
+  B side is its A side with one frozen patch: `git apply --check` passed first, and the SHA-256 of
+  `git diff` of the B worktree equals the SHA-256 of the patch.
+- Sides.
+  - Chart.js ADR 0044: A is `1d271cd`, where `helpers.segment.dart`,
+    `element.line.dart` and `filler.target.stack.dart` are byte-equal to `363f28d`. B is A with
+    the change of the ADR (one patch of the three files, 507 lines, SHA-256
+    `456d3b0be62b8e696699005f8be5f8cf7848ae0a195ded522882f450b8187a2f`).
+  - P5: A is `1d271cd`, B is A with the descriptor lists of section 14.7 (SHA-256
+    `82bd01d20f1b6da9c9755bb28e394e49ce5b70f53b712975c3281f998f45b403`). From `ce340ca` to
+    `1d271cd`, the library and the gallery change only `chart_host.dart`, which the benchmark
+    does not use. Thus the measured code is the code of `ce340ca`.
+  - P6: A is `1d271cd`, B is A with V1 or V2. The variants were frozen on 2026-10-24 at `ce340ca`
+    (SHA-256 `35cafb3edcd3ce083bf1567335e87f17660612f7e84184b841d151d451561a25` and
+    `9078718fe8c2f517ca05f6702747d672821babf9a8d70043f5c5ccdf9fe0fc9d`). The patches of the series
+    are rebased to `1d271cd`: only the entry of `canvas-cuts-plan.md` moves, and the code and test
+    hunks are byte-equal (SHA-256 `fc652d8e091700fbfcca079c010f6a1b4d59abdd69a04a0d894a0f37074ecda2`
+    and `24d307e89ed9bf00d7e6630733ec608f21104b79488fd5d594229b02c0b3fc76`). V1 ran first.
+  - P3: the pinned build of Chart.js with the plugins against the port at `ce340ca` (group 1:
+    4 builds, `chart.*`; group 2: 6 builds of the plugin selectors `plugins`, `tooltip` at N 100,
+    `tooltip` at N 1000, `legend,title`, `fill.gaps,fill.radar` and `fill.stack`, 3 runs of each
+    in the same tab and the same night).
+- Statistics. As section 14.7: ABBA, 6 pairs, and 6 more pairs when the stage 2 condition of
+  the protocol is true; the mean of the pair differences of the run medians, with a 95 %
+  percentile bootstrap interval (20000 resamples, seed 20261023).
+- The rule of a code A/B, for each platform after its last stage. ACCEPT when the upper end of
+  each primary interval is below 0 (or meets the stricter threshold of the topic rule), no guard
+  interval lies wholly above 0, the control screen passes and no large control hit is confirmed.
+  REJECT when a primary or a guard interval lies wholly above 0, the control screen fails or a
+  large control hit is confirmed. Else INCONCLUSIVE. The control screen counts the control cells
+  whose interval lies wholly above 0 (h) and passes when h is below h*, the limit of a binomial
+  test at 0.05 for K control cells. A large control hit (a lower end of 0.1 ms or more and of 5 %
+  or more of the A mean) starts a confirmation series of 6 pairs with the selector of that case.
+- Recompute. An independent agent computed all figures and decisions again from the raw files
+  with its own scripts: all figures agree (means within 0.001 ms, interval ends within 0.01 ms;
+  the largest difference is below 1e-12 ms), and all decisions agree. The recompute used exact
+  integer arithmetic. It confirms that the lower end of the macOS interval of G2 of the ADR 0044
+  A/B is exactly 0 (a float sum of the resamples gives 1.85e-17 ms). It also found that the macOS
+  ACCEPT of that A/B depends on one excluded pair (see below). That dependence does not change the
+  result of the A/B.
+
+**The stack fill search (Chart.js ADR 0044 §6).** Groups `f1` (`fill.gaps`, `fill.radar`) and
+`f2` (`fill.stack`), 3 datasets, as in section 14.7. Primary: P1 and P2, the whole frame of
+`fill.stack` at N 1000 with the calls `draw` and `update`. Guards: G1 `fill.gaps` and G2
+`fill.radar` (call `draw`, N 1000), G3 `fill.stack` (call `draw`, N 100). 37 control cells, h* =
+4. B - A, whole frame, ms:
+
+| Cell | Platform | Pairs | A | B | Mean B - A | 95 % interval | Rel. |
+|---|---|---:|---:|---:|---:|---|---:|
+| P1 `fill.stack` draw N 1000 | macOS | 9 | 31.222 | 1.126 | -29.9979 | -30.1282 .. -29.8468 | -96.4 % |
+| P2 `fill.stack` update N 1000 | macOS | 9 | 36.331 | 4.405 | -31.9189 | -32.0337 .. -31.8049 | -87.9 % |
+| G1 `fill.gaps` draw N 1000 | macOS | 9 | 5.163 | 2.990 | -2.1839 | -2.2141 .. -2.1573 | -42.2 % |
+| G2 `fill.radar` draw N 1000 | macOS | 9 | 0.407 | 0.409 | +0.0023 | 0 .. +0.0049 | +0.6 % |
+| G3 `fill.stack` draw N 100 | macOS | 9 | 0.434 | 0.129 | -0.3051 | -0.3060 .. -0.3042 | -70.3 % |
+| P1 | VS Code browser | 6 | 35.692 | 1.118 | -34.5790 | -34.6368 .. -34.5240 | -96.9 % |
+| P2 | VS Code browser | 6 | 40.412 | 5.003 | -35.4873 | -35.6263 .. -35.3533 | -87.7 % |
+| G1 | VS Code browser | 5 | 5.821 | 2.928 | -2.9032 | -2.9262 .. -2.8878 | -49.8 % |
+| G2 | VS Code browser | 5 | 0.484 | 0.509 | +0.0266 | +0.0230 .. +0.0302 | +5.5 % |
+| G3 | VS Code browser | 6 | 0.488 | 0.127 | -0.3605 | -0.3625 .. -0.3580 | -74.0 % |
+
+Valid pairs. macOS: 12 pairs ran, because after pairs 1-6 each primary cell had only 3 valid
+pairs (stage 2). 9 pairs of each group are valid. In group `f1` pairs 1, 3 and 4 are not valid,
+and in group `f2` pairs 1, 3 and 5: in pair 1 the front-app sampler of the driver read no sample
+on macOS 27.0.1 (a fault of the script); in pair 3 the app was in front in less than 90 % of the
+samples; in pair 4 a driver stopped during a run, and a second driver made a duplicate run; in
+pair 5 of `f2` a second benchmark process ran during the B run (a decision of the porting lead
+from the overlap facts only). VS Code browser: 6 pairs, with no stage 2 (each
+primary cell had 6 valid pairs, and no primary interval included 0); pair 1 of `f1` is not valid
+(the 1-minute load after its B run was 9.74, above 8).
+
+Control screen: h = 0 on macOS and 9 in the VS Code browser (h* = 4). The 9 control cells above 0
+in the VS Code browser are the update cells of `fill.gaps` and `fill.radar` and the draw of
+`fill.radar` at N 1000. No large control hit. On macOS the lower end of G2 is exactly 0, so the
+interval includes 0. With pair 1 of `f1` (excluded only by the sampler fault), G2 on macOS is
++0.0025 (+0.0004 .. +0.0048), wholly above 0, and macOS gives REJECT too (a check of the
+independent recompute, information only). The decision: **ACCEPT on macOS** and **REJECT in the
+VS Code browser** (G2 lies wholly above 0, and the control screen fails).
+
+The ratio after the change (Chart.js ADR 0040 Open 3): the median of `drawMedianMs` of the B runs of
+`fill.stack`, call `draw`, N 1000, in the VS Code browser is 1.116 ms over the upstream 19.862 ms of
+section 14.7: **R_B = 0.056** (0.056 with `draw+end`, an upper bound). The A runs give R_A = 1.80
+(35.687 ms), a check against R = 1.85 of section 14.7. For comparison (information only): the
+benchmark of the design judge gave a stack build of dataset 2 at N 1000 of 13.886 to 0.248 ms on AOT
+and 22.351 to 0.286 ms on dart2wasm in Node.js (Chart.js ADR 0044, Evidence E3), and the protocol
+expected a macOS draw of P1 of about 3 ms. The macOS B draw of P1 is 1.126 ms.
+
+Consequence (Chart.js ADR 0044 §6): the A/B rejects the change in the VS Code browser. Thus the
+change goes out of the tree, and [Chart.js ADR 0046](adr/0046-stack-fill-search-result.md)
+records the result. Chart.js ADR 0044 is rejected, and Chart.js ADR 0040 Open 3 stays open. R_B is
+below 1.5, but section 6 of Chart.js ADR 0044 needs ACCEPT on both platforms.
+
+**CT stage 2 (P5, Chart.js ADR 0038 §10 item 7).** Selector `CASES=plugins,chart.a`. Primary: R2,
+R3 and R4 in config A (whole frame). Guards: G1 `chart.a` N 1000 and G2 R1 in config A
+(`draw+end`). 32 control cells, h* = 3. Rule 2 adopts CT only when (a) on at least one of the
+two platforms the gain A - B of each primary cell has a lower end of 0.1 ms or more, (b) on
+neither platform a guard interval of B - A lies wholly above 0, (c) on neither platform the
+control screen fails, and (d) no large control hit is confirmed. Else CT stays closed, and
+Chart.js ADR 0020 Open 1 closes with the figures. B - A, whole frame, ms:
+
+| Cell | Platform | Pairs | A | B | Mean B - A | 95 % interval | Rel. |
+|---|---|---:|---:|---:|---:|---|---:|
+| R2, 3 datasets, update | macOS | 6 | 2.297 | 2.204 | -0.0925 | -0.0990 .. -0.0863 | -4.0 % |
+| R3, 100 datasets, draw | macOS | 6 | 2.321 | 2.290 | -0.0330 | -0.0418 .. -0.0267 | -1.4 % |
+| R4, 100 datasets, update | macOS | 6 | 12.508 | 12.172 | -0.3532 | -0.4218 .. -0.2897 | -2.8 % |
+| G1 `chart.a` N 1000 | macOS | 6 | 0.213 | 0.212 | -0.0010 | -0.0020 .. -0.0002 | -0.5 % |
+| G2 R1 | macOS | 6 | 0.637 | 0.630 | -0.0067 | -0.0090 .. -0.0042 | -1.0 % |
+| R2 | VS Code browser | 12 | 2.633 | 2.624 | -0.0008 | -0.0128 .. +0.0112 | -0.0 % |
+| R3 | VS Code browser | 12 | 3.104 | 3.098 | -0.0060 | -0.0135 .. +0.0022 | -0.2 % |
+| R4 | VS Code browser | 12 | 12.418 | 12.281 | -0.1374 | -0.2821 .. -0.0008 | -1.1 % |
+| G1 | VS Code browser | 12 | 0.221 | 0.220 | -0.0008 | -0.0022 .. +0.0005 | -0.4 % |
+| G2 | VS Code browser | 12 | 0.730 | 0.726 | -0.0049 | -0.0110 .. +0.0015 | -0.7 % |
+
+macOS: 6 pairs, all valid; the stage 2 condition was not met (no primary interval included 0
+or -0.1 ms). VS Code browser: 12 pairs, all valid; stage 2 ran, because after pairs 1-6 the
+intervals of R2, R3 and R4 included 0. Control screen: h = 1 on macOS and 4 in the VS Code browser
+(h* = 3). The 4 control cells above 0 in the VS Code browser are cells of config B, whose work the
+patch does not change. No guard interval lies wholly above 0, and no large control hit occurred.
+Rule 2: (a) is false on both platforms (on macOS only R4 has a gain with a lower end of 0.1 ms or
+more; in the VS Code browser no primary cell has), (b) is true on both platforms, (c) is true on
+macOS and false in the VS Code browser, and (d) is true. The decision: **CT not adopted**.
+Chart.js ADR 0038 Open 1 and Chart.js ADR 0020 Open 1 close with this figure: the gain of CT is
+below 0.1 ms in R2 and R3 on both platforms (the largest gain, R4 on macOS, is 0.35 ms in an update
+of 100 datasets).
+
+**P6, the fade frames (Chart.js ADR 0039 Open 2).** Selector
+`CASES=tooltip,title`, `N=1000`, 12 cells. Primary: the whole frame of (c) with 3 and with 10
+datasets. Guards: G1 (b) on, 10 datasets, `draw+end`; G2 (a) off, 10 datasets,
+`update+draw+end`; G3 `title.line` `draw` and `draw+end`. 38 control cells, h* = 4. A variant is
+accepted when the rule accepts it on both platforms, and V2 also needs the raster check: 3 stress
+runs of each side, A B A B A B; V2 fails when the median `rasterMs` of B is more than 0.1 ms above
+A, or the median FPS of B is more than 1 FPS below A. When both variants are accepted, the choice
+rule takes the larger mean gain of the primary cell at 10 datasets in the VS Code browser (the
+platform where rule F fired, in place of the Pixel 8a); when the two intervals overlap
+and the means differ by less than 10 %, it takes the patch with fewer changed lines. When no
+variant is accepted, the present cache stays, and Chart.js ADR 0039 Open 2 closes with the
+figures. B - A, whole frame, ms:
+
+| Variant | Cell | Platform | Pairs | A | B | Mean B - A | 95 % interval | Rel. |
+|---|---|---|---:|---:|---:|---:|---|---:|
+| V1 | (c) 3 datasets | macOS | 6 | 0.983 | 0.951 | -0.0335 | -0.0380 .. -0.0295 | -3.4 % |
+| V1 | (c) 10 datasets | macOS | 6 | 2.931 | 2.911 | -0.0223 | -0.0347 .. -0.0078 | -0.8 % |
+| V1 | (c) 3 datasets | VS Code browser | 6 | 1.259 | 1.175 | -0.0842 | -0.0935 .. -0.0752 | -6.7 % |
+| V1 | (c) 10 datasets | VS Code browser | 6 | 3.998 | 3.899 | -0.1043 | -0.1460 .. -0.0695 | -2.6 % |
+| V2 | (c) 3 datasets | macOS | 6 | 0.991 | 0.953 | -0.0382 | -0.0427 .. -0.0340 | -3.9 % |
+| V2 | (c) 10 datasets | macOS | 6 | 2.951 | 2.848 | -0.1015 | -0.1092 .. -0.0912 | -3.4 % |
+| V2 | (c) 3 datasets | VS Code browser | 6 | 1.244 | 1.172 | -0.0677 | -0.0763 .. -0.0590 | -5.4 % |
+| V2 | (c) 10 datasets | VS Code browser | 6 | 3.974 | 3.781 | -0.1802 | -0.1920 .. -0.1683 | -4.5 % |
+
+All runs are valid, and no stage 2 ran (each primary cell had 6 valid pairs, and no primary
+interval included 0). Guards and control screen: V1 on macOS: G1 (+0.0240, +0.0132 .. +0.0342) and
+G3 (+0.0035, +0.0010 .. +0.0060) wholly above 0, h = 12. V1 in the VS Code browser: no guard above
+0, h = 0. V2 on macOS: G1 (+0.0203, +0.0060 .. +0.0353), G2 (+0.0188, +0.0078 .. +0.0327) and G3
+(+0.0057, +0.0042 .. +0.0072) wholly above 0, h = 18. V2 in the VS Code browser: no guard above 0,
+h = 1. No large control hit. Both patches change `_drawText`, which also draws the tick labels
+and the title: the slower guard and control cells on macOS are text draws. The raster check of V2
+on macOS, the stress scene `fade` (the mode `plugins`, 10 datasets, N 1000, 7 s for each run, A B
+A B A B): the median `rasterMs` is 1.44 ms for A and 1.60 ms for B (+0.16 ms; the limit is
+0.1 ms), and the median FPS is 60.11 for A and 60.06 for B (-0.05 FPS; the limit is 1 FPS): V2
+fails. A raster output check of V2 before the night (no timing, 63 images) found no wrong output:
+each pixel difference is a rounding of the alpha. The decision: **V1 rejected (REJECT on macOS,
+ACCEPT in the VS Code browser); V2 rejected (REJECT on macOS, ACCEPT in the VS Code browser, and
+the raster check fails); the choice rule does not apply**. The present paragraph cache stays,
+and Chart.js ADR 0039 Open 2 closes with these figures.
+
+**The upstream comparison (P3), VS Code browser.** The pinned build of Chart.js with the plugins
+(V8) against the port (dart2wasm) in the same browser: 11 upstream groups in 3 rounds, and 10
+port groups with 3 runs each (4 groups of the chart cells and 6 groups of the plugin cells), after
+a pilot of 11 runs whose figures are not used. The excess is the port frame (update + draw +
+end) minus the upstream frame, in ms for each frame. The browser gives no frequency of the main
+thread, so no window rule applies on either side. The plugin cells with the largest excess:
+
+| Cell | Port frame | Upstream frame | Excess | Port / upstream |
+|---|---:|---:|---:|---:|
+| `fill.stack` update, 3 datasets, N 1000 | 41.394 | 21.796 | +19.598 | 1.90 |
+| `fill.stack` draw, 3 datasets, N 1000 | 36.117 | 18.388 | +17.729 | 1.96 |
+| `plugins.line` update, config A, 100 datasets, N 100 | 12.621 | 5.913 | +6.708 | 2.13 |
+| `plugins.line` update, config B, 100 datasets, N 100 | 11.758 | 5.508 | +6.250 | 2.13 |
+| `fill.gaps` update, 3 datasets, N 1000 | 8.156 | 3.814 | +4.342 | 2.14 |
+| `fill.gaps` draw, 3 datasets, N 1000 | 5.827 | 3.124 | +2.703 | 1.86 |
+
+No run was excluded: 33 of 33 upstream runs and 30 of 30 port runs are valid, and each cell has 3
+valid run values on each side. 86 of the 100 cells have an excess of 0.1 ms or more: 43 of the 48
+cells of phase 7 and 43 of the 52 plugin cells. The median ratio of the port frame to the upstream
+frame is 1.93 (phase 7 cells 2.08, plugin cells 1.82). The largest excess of all cells is `chart.c`
+update, N 20000 (+49.771 ms, 2.07 times upstream). The port is faster than upstream only in
+`chart.bar` draw at N 5000 (-0.123 ms) and N 20000 (-0.537 ms). The port tree `ce340ca` does not
+have the change of Chart.js ADR 0044, which did not land. In this series the upstream draw of
+`fill.stack` at N 1000 is 18.388 ms; R uses the 19.862 ms of section 14.7. The protocol takes no CPU
+profile in the browser (the profile method of the port does not exist for dart2wasm), and the fix
+candidates of a plugin path read the Pixel 8a only. Thus this series gives figures and an order of
+the cells, and no fix candidate.
+
+**The rule decisions of the night.**
+
+| Rule | Platforms | Result | Consequence |
+|---|---|---|---|
+| Chart.js ADR 0044 §6, the code A/B | macOS, VS Code browser | ACCEPT on macOS; REJECT in the VS Code browser (G2 wholly above 0, h = 9) | the change goes out of the tree, and Chart.js ADR 0046 records the result; Chart.js ADR 0044 is rejected |
+| Chart.js ADR 0040 Open 3 with R_B | VS Code browser | R_B = 0.056, below 1.5; the A/B rejects the change | stays open |
+| CT rule 2 (P5) | macOS, VS Code browser | (a) false on both platforms; (b) true on both platforms; (c) true on macOS, false in the VS Code browser (h = 4); (d) true | CT is not adopted; Chart.js ADR 0038 Open 1 and Chart.js ADR 0020 Open 1 close with these figures |
+| P6, V1 | macOS, VS Code browser | REJECT on macOS (G1 and G3 wholly above 0, h = 12); ACCEPT in the VS Code browser | not accepted |
+| P6, V2 and its raster check | macOS, VS Code browser; raster: macOS | REJECT on macOS (G1, G2 and G3 wholly above 0, h = 18); ACCEPT in the VS Code browser; the raster check fails (+0.16 ms `rasterMs`) | not accepted; the present paragraph cache stays; Chart.js ADR 0039 Open 2 closes with these figures |
+| P3, the excess | VS Code browser | measured (2026-10-29) | figures only |

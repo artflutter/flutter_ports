@@ -1,10 +1,11 @@
 # Chart.js ADR 0037: Legend and tooltip input path
 
-- Status: proposed
+- Status: accepted (2026-10-29)
 - Date: 2026-10-22
 - Revised: 2026-10-23, after the device check of Open 1 (Evidence E8 and E9); 2026-10-24, after
-  the device re-check of the input fix (Evidence E10, row STN10)
-- Supersedes: [Chart.js ADR 0014](0014-input-events-and-chart-host.md) on acceptance
+  the device re-check of the input fix (Evidence E10, row STN10); 2026-10-29, after the device
+  round g1 (Evidence E11)
+- Supersedes: [Chart.js ADR 0014](0014-input-events-and-chart-host.md)
 - Related: [Chart.js ADR 0016](0016-frame-scheduling.md) (the scheduling of the host; it
   supersedes Chart.js ADR 0007),
   [Chart.js ADR 0013](0013-canvas-model.md) (the canvas layer),
@@ -367,7 +368,7 @@ kinds.
 - The compatibility `mouse*` events and the `click` of a tap have the tap point of the pointer:
   the down position for a touch and the kind `unknown` (Evidence E8, D4), and the up position for
   a stylus and an inverted stylus, as Chrome gives a pen and an eraser no touch adjustment
-  (Evidence E10, row STN10). The `mouseover`, `mouseenter` and `mousemove` of a long press have
+  (Evidence E10, row STN10, and Evidence E11). The `mouseover`, `mouseenter` and `mousemove` of a long press have
   the down position for each kind. The host converts the point to its own coordinates at the
   time of the event, as Chromium hit-tests the screen point of the tap when it sends the tap. A
   tap point outside the host box gives the host no compatibility event and no `click`. That tap
@@ -759,12 +760,12 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
    differences D1 to D5 changed sections 6 to 10 and the model of the reference generator. These
    parts are NOT CHECKED, with their reason:
    - the mouse rows of section 6 (a move or hover, a cancel, a scroll, an enter and an exit of a
-     mouse-like pointer): no mouse in the run;
+     mouse-like pointer, rows M01 and M02): no mouse in the runs;
    - the platform cancel of a touch-like pointer: no gesture of the check gives one (Open 17);
-   - a tap outside while a finger is already down outside (the second part of Open 6): it needs a
-     person;
+   - a tap outside while a finger is already down outside (the second part of Open 6, row H03):
+     it needs a person;
    - the rule of the second touch-like pointer of section 8 (a two-finger tap, and a tap with a
-     second finger down outside, Open 11): it needs a person (Open 14);
+     second finger down outside, Open 11, rows H01 and H02): it needs a person (Open 14);
    - the epsilon of 0.05 of the slop limit (section 8): the first `touchmove` of Chrome came 8.03
      to 8.73 px from the down, and a limit of 8.0 gives the same rows. `adb` gives whole
      physical pixels: 21 px is 8.000 px and 22 px is 8.381 px on the Pixel 8a, with the same
@@ -774,16 +775,19 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
      stylus move of 9.9 to 10.3 px gave a tap (STN10) and a move of 14.1 px the pan (STN14), on
      both sides. Thus the stylus limit of Chrome is between 10.3 and 14.1 px. This agrees with
      12.05 px. `adb` cannot show the exact factor;
-   - the tap point of a stylus (section 6): the re-check found it (STN10). The host of this
-     revision does not run on the device yet. The long press of a stylus (the down position, from
-     the Chromium source), a stylus tap outside, a stylus tap that lifts outside the box of its
-     host, and the inverted stylus have no device row.
+   - the inverted stylus (section 6): no device row.
    The device re-run of 2026-10-23 (Evidence E10) ran the rows of the check with the host of the
    input fix. It also ran a hold of 600 ms and then a drag of 30 px (LPD, Open 15), a stylus move
    of 10 and 14 px (STN10, STN14), and a touch move of 8 and 9 px (SN08, SN09). All rows but STN10
    gave the Chrome result (T15 with a difference in the moves only, Open 10). STN10 changed section
-   6. Before the ADR goes to accepted, the independent recompute of Evidence E8 and E10 agrees with
-   them, and the row STN10 runs again on the device with the host of this revision.
+   6. The independent recompute of Evidence E8 and E10 agrees with them. The device round g1 of
+   2026-10-29 (Evidence E11) ran STN10 again with the host of this revision, and the rows ST1,
+   STN14, S04, S07, SN08, T01, T02 and T05 with it. All 9 rows gave the Chrome result. Thus the
+   device gives the tap point of a stylus at the up position (section 6). Round g1 also ran three
+   stylus rows: a long press at the down position with no `click` (STLP), a stylus tap outside
+   that gives `mouseout` and `mouseleave` (STO10), and a stylus tap that lifts outside the box of
+   its host and gives `mouseout` and `mouseleave` with no `click` (STE10). They gave the Chrome
+   result too. The gate of this ADR is met.
 2. **iOS.** Safari keeps the tooltip at a tap outside. The port gives the Chrome result on iOS
    too. A later ADR can change this for each platform if a user asks for it.
 3. **`touch-action`.** Closed by the device check (D3): the host cancels the pointers at the pan
@@ -1011,8 +1015,8 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
   `AndroidTouchProcessor.java:404-437` (the pressure and the radii of an Android touch) and
   `:382` (the pointer id 0 of each event), and
   `lib/ui/window/pointer_data_packet_converter.cc:157-179` (a hover keeps that id, section 6).
-- **E10, the device re-check of the input fix** (2026-10-23, 22:07 to 22:14 UTC; `result-fix.md`
-  of the handover, not recomputed yet). The Pixel 8a and the Chrome of E8, and a profile build of
+- **E10, the device re-check of the input fix** (2026-10-23, 22:07 to 22:14 UTC; `result-fix.md`,
+  a working file of phase 8, not committed; the independent recompute agrees). The Pixel 8a and the Chrome of E8, and a profile build of
   the port at commit `363f28d` (the host of the input fix, D1 to D5). The rows of E8 ran again,
   and five new rows: LPD (a hold of 600 ms, then a drag of 30 px), SN08 and SN09 (a touch move of
   21 and 24 physical px, 8.000 and 9.14 px), STN10 and STN14 (an `adb shell input stylus swipe`
@@ -1040,6 +1044,29 @@ The plugins read only chart events. Nothing in the plugins, in `core.controller`
     single tap at the up event) and `:531` (the long press at the down event);
     `gesture_provider.cc:693-700` (the tap gesture at the point of its event) and `:705-722` (the
     tap area at the down point).
+- **E11, the device round g1** (2026-10-29, 00:52 to 00:59 CET; `result-fix.md` and the raw logs of
+  round g1, working files of phase 8, not committed). The Pixel 8a of E8 with Chrome
+  155.0.8059.84, and build G of the port. Build G contains commit `102634b` (the stylus tap at the
+  up position, section 6). The SHA-256 of the installed `base.apk` is
+  `4d1cb08fc441f8c61cc80b66b9e2dd28d4388facff8e5bc81ab71c6295a7be1e`. The Chrome side of the 9
+  rows is the record of the rounds r1, f1 and f2 on the same phone (Evidence E8 and E10). Chrome
+  ran again for the 3 optional rows. Results:
+  - The 9 rows STN10, ST1, STN14, S04, S07, SN08, T01, T02 and T05 pass check 1 (Chrome against
+    the model) and check 2 (the port against Chrome). In STN10 both sides give the compatibility
+    events and `click` at the up position (148, 132), no active element and tooltip opacity 0.
+    The other 8 rows stay equal to Chrome.
+  - The 3 optional stylus rows pass both checks: STLP (a long press, at the down position, no
+    `click`), STO10 (a stylus tap outside gives `mouseout` and `mouseleave`) and STE10 (the stylus
+    lifts above the canvas at (180, -6), then `mouseout` and `mouseleave`, no `click`).
+    `pointerType` is `pen` on both sides in each stylus row.
+  - An independent recompute agrees with all rows.
+  - The finger rows H01 to H03 and the mouse rows M01 and M02 did not run: no person was at the
+    phone, and no mouse was connected. They stay NOT CHECKED (Open 1). The inverted stylus has no
+    device row.
+  - Notes of the recompute, with no effect on a rule: Chrome logs the pointer type `mouse` for the
+    compatibility events, and no rule reads it. The `long_press_timeout` of the phone is 400 ms,
+    and the port uses 500 ms (Open 18). Round g1 cannot show this difference, because STLP holds
+    600 ms.
 - **E7, the host tests of Chart.js ADR 0014** stay valid for sections 1 to 5, 11 and 12:
   `test/port/platform/chart_host_test.dart` (the groups 'first layout', 'resize', 'display size
   and bitmap stretch', 'unbounded constraints', 'dry layout', 'TickerMode', 'attach and detach',
