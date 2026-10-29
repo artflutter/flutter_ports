@@ -5,8 +5,9 @@
 /// DOM parts of `platform.dom.js` that the host stands in for.
 ///
 /// - [ChartHost] is a `LeafRenderObjectWidget`, and [RenderChartHost] its
-///   `RenderBox`. The library is not exported. The public widget of phase 9
-///   builds on it.
+///   `RenderBox`. The library is not exported. The public widget `ChartView`
+///   builds on it: it starts its chart in [ChartHost.onFirstLayout]
+///   (Chart.js ADR 0049, section 2).
 /// - The host is the parent node of its canvas (`CanvasNode.parentNode`)
 ///   and its container ([CanvasContainer]): the container size is the max
 ///   size of its incoming constraints.
@@ -290,6 +291,7 @@ class ChartHost extends LeafRenderObjectWidget {
   const ChartHost({
     required this.canvas,
     this.onTickerModeChanged,
+    this.onFirstLayout,
     super.key,
   });
 
@@ -300,6 +302,13 @@ class ChartHost extends LeafRenderObjectWidget {
   /// `enabled` value. `core.animator` mutes the chart while it is false
   /// (Chart.js ADR 0016, decision 7).
   final ValueChanged<bool>? onTickerModeChanged;
+
+  /// Called in the first layout of the host, after the host is laid out and
+  /// reports its attach, before the host takes its size. It is called again
+  /// after a canvas swap. The owner starts its chart here: the chart then
+  /// attaches in its constructor and takes its size in this layout. A
+  /// listener must not call `setState` (Chart.js ADR 0016, ADR 0049).
+  final VoidCallback? onFirstLayout;
 
   static double _devicePixelRatio(BuildContext context) =>
       MediaQuery.maybeDevicePixelRatioOf(context) ??
@@ -314,6 +323,7 @@ class ChartHost extends LeafRenderObjectWidget {
       tickerEnabled: TickerMode.valuesOf(context).enabled,
       gestureSettings: MediaQuery.maybeGestureSettingsOf(context),
       onTickerModeChanged: onTickerModeChanged,
+      onFirstLayout: onFirstLayout,
     );
   }
 
@@ -322,6 +332,7 @@ class ChartHost extends LeafRenderObjectWidget {
     renderObject
       ..canvas = canvas
       ..onTickerModeChanged = onTickerModeChanged
+      ..onFirstLayout = onFirstLayout
       ..devicePixelRatio = _devicePixelRatio(context)
       ..tickerEnabled = TickerMode.valuesOf(context).enabled
       ..gestureSettings = MediaQuery.maybeGestureSettingsOf(context);
@@ -340,6 +351,7 @@ class RenderChartHost extends RenderBox
     bool tickerEnabled = true,
     this.gestureSettings,
     this.onTickerModeChanged,
+    this.onFirstLayout,
   }) : _canvas = canvas,
        // The field has a setter with side effects.
        // ignore: prefer_initializing_formals
@@ -403,6 +415,11 @@ class RenderChartHost extends RenderBox
 
   /// Called when [tickerEnabled] changes.
   ValueChanged<bool>? onTickerModeChanged;
+
+  /// Called in the first layout of the host with its current canvas, after
+  /// the attach report and before the host takes its size (see
+  /// [ChartHost.onFirstLayout]).
+  VoidCallback? onFirstLayout;
 
   void _show(UiCanvasElement canvas) {
     final previous = canvas.parentNode;
@@ -638,6 +655,9 @@ class RenderChartHost extends RenderBox
       final before = List.of(_resizeObservers);
       _laidOut = true;
       _reportConnection();
+      // The owner starts its chart attached: the chart takes its size in
+      // this layout (Chart.js ADR 0049, section 2).
+      onFirstLayout?.call();
       for (final observer in before) {
         if (_resizeObservers.contains(observer)) {
           observer.onResize(width, height);

@@ -5,6 +5,7 @@ library;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart'
     show ClipRectLayer, RenderRepaintBoundary;
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
@@ -164,6 +165,92 @@ void main() {
       await tester.pump();
       expect(_host(tester).size, const Size(400, 300));
       chart.destroy();
+    });
+  });
+
+  group('onFirstLayout', () {
+    // Chart.js ADR 0049, section 2: the owner starts its chart in the first
+    // layout of the host.
+    testWidgets('one call in the first layout, with isConnected true', (
+      tester,
+    ) async {
+      final canvas = UiCanvasElement();
+      final calls = <(SchedulerPhase, bool, Size?)>[];
+      void onFirstLayout() {
+        final host = canvas.parentNode! as RenderChartHost;
+        calls.add((
+          SchedulerBinding.instance.schedulerPhase,
+          host.isConnected,
+          host.hasSize ? host.size : null,
+        ));
+      }
+
+      await tester.pumpWidget(
+        _box(ChartHost(canvas: canvas, onFirstLayout: onFirstLayout)),
+      );
+      // In the layout, before the host takes its size.
+      expect(calls, [(SchedulerPhase.persistentCallbacks, true, null)]);
+      await tester.pumpWidget(
+        _box(
+          ChartHost(canvas: canvas, onFirstLayout: onFirstLayout),
+          width: 300,
+        ),
+      );
+      await tester.pump();
+      expect(calls, hasLength(1));
+    });
+
+    testWidgets('a second call after a canvas swap', (tester) async {
+      final first = UiCanvasElement();
+      final second = UiCanvasElement();
+      final calls = <UiCanvasElement>[];
+      Widget build(UiCanvasElement canvas) => _box(
+        ChartHost(canvas: canvas, onFirstLayout: () => calls.add(canvas)),
+      );
+      await tester.pumpWidget(build(first));
+      final host = _host(tester);
+      await tester.pumpWidget(build(second));
+      expect(_host(tester), same(host));
+      expect(calls, [first, second]);
+    });
+
+    testWidgets('no call after a GlobalKey move', (tester) async {
+      final canvas = UiCanvasElement();
+      final key = GlobalKey();
+      var calls = 0;
+      void onFirstLayout() => calls++;
+      Widget build({required bool left}) => _box(
+        Row(
+          children: [
+            SizedBox(
+              width: 200,
+              child: left
+                  ? ChartHost(
+                      key: key,
+                      canvas: canvas,
+                      onFirstLayout: onFirstLayout,
+                    )
+                  : null,
+            ),
+            SizedBox(
+              width: 200,
+              child: left
+                  ? null
+                  : ChartHost(
+                      key: key,
+                      canvas: canvas,
+                      onFirstLayout: onFirstLayout,
+                    ),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpWidget(build(left: true));
+      final host = _host(tester);
+      await tester.pumpWidget(build(left: false));
+      await tester.pump();
+      expect(_host(tester), same(host));
+      expect(calls, 1);
     });
   });
 

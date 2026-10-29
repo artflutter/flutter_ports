@@ -642,6 +642,39 @@ void main() {
     ]);
   });
 
+  test('keeps the components out of lib/src/widgets/', () {
+    tree
+      ..write('lib/src/core/core.controller.dart', [_ported])
+      ..write('lib/src/index.dart', [_ported])
+      ..write('lib/src/index.umd.dart', [_ported])
+      ..write('lib/src/controllers/controller.line.dart', [_ported])
+      ..write('lib/src/scales/scale.linear.dart', [_ported])
+      ..write('lib/src/elements/element.point.dart', [_ported])
+      ..write('lib/src/plugins/plugin.legend.dart', [_ported])
+      ..write('lib/src/widgets/chart_view.dart', [
+        _portOnly,
+        "import 'package:flutter/widgets.dart';",
+        "import 'package:flutter_chartjs_port/src/core/core.controller.dart';",
+        "import '../controllers/controller.line.dart';",
+        "import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';",
+        "import '../elements/element.point.dart';",
+        "import '../plugins/plugin.legend.dart';",
+        "import '../index.dart';",
+        "export 'package:flutter_chartjs_port/src/index.umd.dart';",
+      ]);
+    String finding(int line, String target) =>
+        'error: lib/src/widgets/chart_view.dart:$line: imports $target, but '
+        'the widget registers no component (Chart.js ADR 0048 §3).';
+    expect(run(), [
+      equals(finding(4, 'lib/src/controllers/controller.line.dart')),
+      equals(finding(5, 'lib/src/scales/scale.linear.dart')),
+      equals(finding(6, 'lib/src/elements/element.point.dart')),
+      equals(finding(7, 'lib/src/plugins/plugin.legend.dart')),
+      equals(finding(8, 'lib/src/index.dart')),
+      equals(finding(9, 'lib/src/index.umd.dart')),
+    ]);
+  });
+
   test('keeps Material, Cupertino and forui out of lib/src/theme/', () {
     tree.write('lib/src/theme/chart_theme.dart', [
       _portOnly,

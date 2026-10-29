@@ -585,6 +585,20 @@ Changes to the cited files:
   `doc/parity.md` changes rows in place and gets four port-only rows at its end: the rows that this
   plan cites (lines 378-422) do not move. The references, the inventory (§1.1), the tests of §2.6
   and §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-29, the widget `ChartView` of [Chart.js ADR 0049](adr/0049-chart-view-widget.md)
+  (proposed). `lib/src/platform/chart_host.dart` gets the internal parameter `onFirstLayout` of
+  `ChartHost` and `RenderChartHost` (section 2): the first-layout branch of `_performLayout`
+  calls it after `_reportConnection()`, before the observers that the host took over get their
+  size. The library doc gets one line, and the lines after it move by +1 to +20 (the file has
+  1496 lines). §1.1 gives the new line numbers of `chart_host.dart`. The pinned behavior does not
+  change: the first layout still reports the attach at once and sizes the chart before the first
+  paint, and a host without the callback works as before. The new file
+  `lib/src/widgets/chart_view.dart` starts its chart in the callback; this plan does not cite it.
+  `test/port/platform/chart_host_test.dart` gets the group 'onFirstLayout' (3 tests, 111 tests in
+  all), and §3.5 gives the count. `doc/parity.md` changes the rows of `chart_host.dart`, of its
+  test and of `lib/flutter_chartjs_port.dart` in place and gets the port-only rows of the widget
+  and its two test files (tool 6). The inventory (§1.1) changes only in its line numbers. The
+  tests of §2.6 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 
@@ -627,16 +641,16 @@ the estimate (§3.9).
 | The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill`, `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:403-410`, `:558-594`, `:1264-1266`, `:1321-1341`, `:1346-1380`, `:1422-1426` | 109 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
 | `CircleBatch` | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
 | Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1710-1731` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
-| `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:541-554` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
+| `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:558-571` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
 | `UiCanvasElement.devicePixelRatio` and `logicalSize` | removed (`canvas_ui.dart:142`, `:175-192` at 69f9d97) | 0 | The host gives the paint scale | **Done** (C2): removed |
-| The paint mapping: display / bitmap for each axis, exactly 1 / DPR within 1e-3 | `chart_host.dart:691-695`, `:718-729` | 17 | `Canvas.scale` in `UiCanvasContext.paint` | **Done** (C2): the one mapping from the bitmap to the display size |
+| The paint mapping: display / bitmap for each axis, exactly 1 / DPR within 1e-3 | `chart_host.dart:711-715`, `:738-749` | 17 | `Canvas.scale` in `UiCanvasContext.paint` | **Done** (C2): the one mapping from the bitmap to the display size |
 | `initCanvas` over the attributes (`getAttribute`) | `lib/src/platform/platform.flutter.dart:110-179` | 70 | A small attribute model on `UiCanvasElement` | **Done** (C2): line by line |
 | `releaseContext` over the attributes (`removeAttribute`, `setAttribute`) and `_Initial[prop]` | `platform.flutter.dart:474-509`, `:86-87` | 38 | The same attribute model | **Done** (C2): line by line |
 | The attribute model: `UiCanvasElement({int? width, int? height})`, `getAttribute`, `setAttribute`, `removeAttribute`, `_setSize`, and the 3 members of `HTMLCanvasElement` | `canvas_ui.dart:235-328`, `canvas.dart:350-362` | 107 | None. `dart:ui` has no attributes. | **Added** (C2). Chart.js ADR 0022 §4 adds the `style` attribute and the string attributes. |
 | The reflection of the `style` attribute in `UiCssStyleDeclaration`: `cssText`, `styleAttribute`, the declaration parser and the serialization after a CSSOM write | `canvas_ui.dart:97-223` | ~95 | None. `dart:ui` has no CSS. | **Added** (Chart.js ADR 0022 §4): `acquireChart` sets the canvas attributes with `setAttribute` |
 | `getMaximumSize`, `retinaScale`, `readUsedSize` (ported, with `DIVERGES` rows) | `lib/src/helpers/helpers.dom.dart` | — | None. `AspectRatio` and `SizedBox` give other sizes than upstream. | **Keep**, no change |
-| The first `ResizeObserver` notification at the next layout (`_pendingFirstResize`) and the mutation checkpoint (`flushCanvasMutations`, `_pendingConnectionChecks`) | `chart_host.dart:213-229`, `:273`, `:421-422`, `:473-490`, `:515-530`, `:634-658`, `:675-684` | ~60 | None. Flutter layout has no rendering step for observers and no microtask checkpoint for the tree. | **Added** (Chart.js ADR 0022 §10): the harness gives the specs the DOM timing |
-| Host attach at the first layout, resize observers, host follows the chart size, unbounded rule, clip | `chart_host.dart:159-276`, `:439-526`, `:556-716`; `platform.flutter.dart:575-627` | ~340 | None. Flutter layout cannot know the size that Chart.js picks. | **Keep** |
+| The first `ResizeObserver` notification at the next layout (`_pendingFirstResize`) and the mutation checkpoint (`flushCanvasMutations`, `_pendingConnectionChecks`) | `chart_host.dart:214-230`, `:274`, `:438-439`, `:490-507`, `:532-547`, `:651-678`, `:695-704` | ~60 | None. Flutter layout has no rendering step for observers and no microtask checkpoint for the tree. | **Added** (Chart.js ADR 0022 §10): the harness gives the specs the DOM timing |
+| Host attach at the first layout, resize observers, host follows the chart size, unbounded rule, clip | `chart_host.dart:160-277`, `:456-543`, `:573-736`; `platform.flutter.dart:575-627` | ~340 | None. Flutter layout cannot know the size that Chart.js picks. | **Keep** |
 
 ## 2. Cut 1: arcs and transforms on dart:ui
 
@@ -1079,8 +1093,8 @@ C2 ran in phase 5 without W (Deferral, trigger 1). The line numbers below are th
 
 Tests that pin the current behavior (run them before and after):
 - `test/port/platform/chart_host_test.dart`: 40 tests, 41 after C2, 50 after Chart.js ADR
-  0022 and 73 after Chart.js ADR 0037. The tests are "first layout" (2) and the group
-  "resize". The group "resize" tests the throttle, a DPR change, content drawn before the host
+  0022, 73 after Chart.js ADR 0037 and 111 after Chart.js ADR 0049. The tests are "first
+  layout" (2), "onFirstLayout" (3, Chart.js ADR 0049) and the group "resize". The group "resize" tests the throttle, a DPR change, content drawn before the host
   at the display size, the clip and a later resize that keeps the ratio. Then come the group
   "display size and bitmap stretch" (7, from work package A2, 8 after C2), "unbounded
   constraints" (4), "dry layout" and the group "attach and detach".

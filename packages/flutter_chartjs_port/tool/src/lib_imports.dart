@@ -9,6 +9,9 @@
 ///   test imports use only pure layers, `package:test` and
 ///   `package:chartjs_test_utils/pure.dart`.
 /// - Ported files do not import `lib/src/theme/` (Chart.js ADR 0042).
+/// - A file of `lib/src/widgets/` imports no component and no index of the
+///   components: the widget registers no component (Chart.js ADR 0048,
+///   section 3).
 /// - `lib/` imports `package:collection/collection.dart` only with
 ///   `show mergeSort` (Chart.js ADR 0045, Sort).
 /// - The `lib/pure.dart` closure of the harness package `chartjs_test_utils`
@@ -165,6 +168,22 @@ const Set<String> webTestLibraries = {
 
 /// The directory that ported files never import.
 const String themeDirectory = 'lib/src/theme/';
+
+/// The directory of the public widgets (Chart.js ADR 0049).
+const String widgetsDirectory = 'lib/src/widgets/';
+
+/// The files that a file of [widgetsDirectory] never imports: the
+/// controllers, the scales, the elements, the plugins and the two indexes
+/// that register them (Chart.js ADR 0048, section 3). An entry that ends
+/// with `/` is a directory.
+const List<String> widgetForbiddenTargets = [
+  'lib/src/controllers/',
+  'lib/src/scales/',
+  'lib/src/elements/',
+  'lib/src/plugins/',
+  'lib/src/index.dart',
+  'lib/src/index.umd.dart',
+];
 
 /// The pure-layer root of the harness package (porting-flow.md 3).
 const String harnessPureRoot = 'lib/pure.dart';
@@ -329,6 +348,27 @@ final class _Edge {
           edge.line,
           'imports ${edge.target}, but ported files never import '
           '$themeDirectory (Chart.js ADR 0042).',
+        );
+      }
+    }
+  }
+
+  // The widgets and the components.
+  for (final library in libraries.values) {
+    if (!library.path.startsWith(widgetsDirectory)) continue;
+    for (final edge in library.edges) {
+      final target = edge.target;
+      if (target == null) continue;
+      final forbidden = widgetForbiddenTargets.any(
+        (entry) =>
+            entry.endsWith('/') ? target.startsWith(entry) : target == entry,
+      );
+      if (forbidden) {
+        report(
+          library,
+          edge.line,
+          'imports $target, but the widget registers no component '
+          '(Chart.js ADR 0048 §3).',
         );
       }
     }
