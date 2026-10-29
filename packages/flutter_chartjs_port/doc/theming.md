@@ -303,9 +303,13 @@ and both getters.
 
 ### 3.6 Scale copy-in and option caches
 
-`mergeScaleConfig` copies the defaults into `options.scales.<id>` once (#11910, open). `update()`
-merges into that copy (`core.config.js:115-120, 197-201`). H1 puts the theme into the copy. A theme
-switch therefore needs fresh user options. Without them, the prototype kept the old `x` ticks.
+`initOptions` writes `options.scales = mergeScaleConfig(config, options)` into the user options
+(`core.config.js:115-120`), and each `update()` runs it again (`:197-201`). `mergeScaleConfig`
+builds each scale in a new object and merges the defaults and, with H1, the theme into it
+(`:71-112`, #11910, open). Thus the user `scales` object never changes, and after the first update
+`options.scales` holds the merged copy with the old theme. A later merge into that copy keeps the
+old theme keys, because `mergeIf` writes only absent keys. Without a reset, a switch kept the old
+`x` ticks (probe F-P4, form F0 of [Chart.js ADR 0050](adr/0050-public-theme-api.md)).
 
 The caches need no hunk. `chart.update()` clears or rebuilds every option cache
 (`core.controller.js:478-488, 653-655`). `keyCache` holds keys only (`core.config.js:138-149`).
@@ -314,55 +318,74 @@ The caches need no hunk. `chart.update()` clears or rebuilds every option cache
 
 ### 3.7 Runtime theme switch
 
-Port-only code in the phase 9 widget does the switch. The widget keeps a shallow copy of the input
-datasets.
+Port-only code of the widget does the switch ([Chart.js ADR 0050](adr/0050-public-theme-api.md),
+"Runtime switch"): `ChartThemeSwitch` of `lib/src/widgets/chart_theme_switch.dart`, fed by the
+inline plugin `$chartView` of `lib/src/widgets/chart_view_plugin.dart`. `ChartView` runs it in
+its post-frame update callback ([Chart.js ADR 0049](adr/0049-chart-view-widget.md) §4), not in
+`didUpdateWidget`: the update replays the last event (`core.controller.js:529-532`), which calls
+`onHover`, and an `onHover` with `setState` throws during the build. The steps:
 
-```dart
-    // #11910: mergeScaleConfig copied the old theme into options.scales.
-    final options = widget.config['options'];
-    chart.options = options is Map<String, Object?>
-        ? copyJsonLike(options)
-        : <String, Object?>{};
-    // The colors plugin wrote the old palette into the datasets.
-    restorePaletteKeys(chart.datasets, _inputDatasets());
-    chart.update(_mode(scope));
-```
-
-Before this code, equal themes return early. The compiled map then replaces or removes `$theme`.
-`restorePaletteKeys` resets in place only `borderColor` and `backgroundColor`, the keys that the
-plugin writes (`plugin.colors.ts:36-37, 43, 49`). Dataset identity must survive, because metasets
-use the dataset object as their key (`core.controller.js:832`). In the prototype, fresh dataset
-copies showed a hidden dataset again, rebuilt the controller and replayed the entry animation (bar
-`y` 272 → 192). The in-place restore kept all three. Data arrays and decimation state
-(`plugin.decimation.js:249-265`) stay unchanged.
-
-Update modes: `'theme'` animates (section 3.8). Reduced motion
-(`MediaQuery.maybeDisableAnimationsOf`) uses `'themeFrame'`, with zero duration. Theme removal
-uses `'default'`, as any upstream option change does. The widget never uses `'none'`, because the
-elements then keep their old colors. It never uses `'resize'`, because that mode skips the radar
-line options (`controller.radar.js:61-62`).
+1. The effective theme is `widget.theme ?? ChartTheme.maybeOf(context)`. `build` compares it with
+   the theme of the last switch (`==`) and asks for the callback when it differs. In the
+   callback, an equal theme gives no work. Else the widget compiles it (the memo of
+   `compileThemeData`). When the old and the new theme both compile to Dart `null` (no theme and
+   `const ChartThemeData()`), the widget does no work.
+2. The widget writes the compiled map under `$theme` of its root config, or removes the key. The
+   root config is the shallow copy of the app config of Chart.js ADR 0049 §4: `data` and `options`
+   keep the identity of the app Maps. In debug mode, an app value under `$theme` fails an assert
+   (row `theme-H0`).
+3. The widget puts the recorded user `scales` object back into `options['scales']`, or removes the
+   key when the app had none (section 3.6). It records the object before `new Chart` and at each
+   new `options` object. The next `update()` merges it with the new theme. Other imperative edits
+   of `chart.options` stay, and `chart.config.options` keeps its identity. An edit inside
+   `chart.options.scales.<id>` goes (form F2 of the probe F-P4).
+4. The palette keys. The colors plugin writes `borderColor` and `backgroundColor` into the
+   datasets (`plugin.colors.ts:36-37, 43, 49`), and it skips all datasets when one dataset holds a
+   color (`:113-121`). The `beforeUpdate` hook of `$chartView` records the two keys of each
+   dataset object (value or absent). Its `beforeLayout` runs after the `beforeLayout` of the
+   registered colors plugin (registered plugins come first, `core.plugins.js:124-144`). It records
+   each key that changed in this update as written, with the value before the first write. A key
+   that changes again from its written value keeps that first value (`forceOverride` writes in
+   each update). At a switch, the widget restores a key in place only when the dataset still holds
+   the written value, and then clears the records. Thus an app edit of a dataset color stays, and
+   a dataset that the plugin colors after the start gets the new palette too. Dataset identity
+   survives, because the metasets use the dataset object as their key (`core.controller.js:832`).
+   Fresh dataset copies showed a hidden dataset again, rebuilt the controller and replayed the
+   entry animation (bar `y` 272 → 192, prototype of Chart.js ADR 0042). The in-place restore keeps
+   all three. Data arrays and decimation state (`plugin.decimation.js:249-265`) stay unchanged.
+5. One `chart.update(mode)`: `'theme'` for a new theme, `'themeFrame'` under reduced motion and
+   `'default'` at a removal, as any upstream option change. When the same callback also applies a
+   new config, the one update takes the theme mode, not `updateMode`. The widget never uses
+   `'none'`, because the elements then keep their old colors. It never uses `'resize'`, because
+   that mode skips the radar line options (`controller.radar.js:61-62`).
 
 The modes `'theme'` and `'themeFrame'` need no code in the animation files. The resolver reads the
-emitted `transitions` keys (section 3.8). [Chart.js ADR 0019](adr/0019-animation.md) §10
-(proposed) leaves the reduced-motion policy to the phase 9 widget. The core, the animator and the
-chart host have no reduced-motion code. The Open section of that ADR lists these candidates:
-- `animation: false` in a port-only scope of the widget while the preference is on. The user
-  `onComplete` and `onProgress` callbacks then stop.
-- A flag for each chart that `_createAnimations` reads one time. It keeps the user callbacks. It
-  also stops the animation of a theme removal.
-- `'themeFrame'` for theme switches only, as above. Theme removal then needs a mode with the
-  duration 0 and without the theme scope.
+emitted `transitions` keys (section 3.8). [Chart.js ADR 0019](adr/0019-animation.md) §10 (accepted)
+leaves the reduced-motion policy to the widget. [Chart.js ADR 0049](adr/0049-chart-view-widget.md)
+§7 decides it: a flag keyed by the canvas that `_createAnimations` reads. With the flag, the
+`'themeFrame'` switch and the `'default'` removal both end at once, and the user `onComplete` runs.
+The widget reads the preference with that flag. Until it lands, `ChartView` gives the switch no
+reduced motion: the switch selects `'themeFrame'` already, and the pending case of
+`test/port/widgets/chart_theme_switch_test.dart` waits for the flag.
 
-The phase 9 decision does not write `defaults.animation`, because `defaults` is global.
+Neither the switch nor the reduced-motion flag writes `defaults`, `overrides` or
+`defaults.animation`, because they are global.
 
 ### 3.8 Animation of a theme change
 
 The compiler emits `transitions.theme` with 200 ms and `'linear'`, the values of forui's
-`FThemeMotion` (`forui/0.27.6:forui/lib/src/theme/theme.dart:283-291`). The resolver reads it
+`FThemeMotion` (`forui/0.27.6:forui/lib/src/theme/theme.dart:283-291`), and
+`transitions.themeFrame` with the duration 0 (`compile.dart:498-508`). The resolver reads them
 through `datasetAnimationScopeKeys` (`core.config.js:229-242`). The `colors` animation covers
 `color`, `borderColor` and `backgroundColor` (`core.animations.defaults.js:2, 22-31`). Scales,
-legend, title and tooltip switch at once, as upstream does for any option change. In 0.1.0 the
-duration and the easing are fixed.
+legend, title and tooltip switch at once, as upstream does for any option change.
+
+0.1.0 has no public transition API ([Chart.js ADR 0050](adr/0050-public-theme-api.md),
+"Transitions"): the duration and the easing are fixed. A later public transition takes `easing` as
+a `String` key of `effects` (`helpers.easing.ts:12-124`), with a debug assert on these keys,
+because `core.animation.js:36` reads `effects[cfg.easing] || effects.linear`.
+`ChartThemeTransition.frames` does not exist. A later ADR can add it only on an app request, and
+only when its benchmark passes (rule F of Chart.js ADR 0050).
 
 ## 4. Token mapping
 
@@ -655,10 +678,19 @@ Required in phase 9:
    `test/port/theme/theme_data_test.dart` has the value parts, the diagnostics, the conversion,
    the oracle of test 3, the presets and the groups `B3: the token allowlist` and
    `B11: no touch sizes`. `test/port/theme/chart_theme_test.dart` has `ChartTheme` and
-   `InheritedTheme.capture`. The update count waits for the theme switch of the widget (test 8).
+   `InheritedTheme.capture`. The update count is in test 8: an equal theme and
+   `const ChartThemeData()` against no theme give no `chart.update`.
 8. **Theme switch.** A switch updates elements, scales and the palette. A hidden dataset stays
    hidden. Controllers, data arrays and decimated data stay. Removal restores the upstream colors.
-   Reduced motion uses `'themeFrame'`.
+   Reduced motion uses `'themeFrame'`. `test/port/widgets/chart_theme_switch_test.dart` (VM only)
+   has these cases on `ChartView`: the forms F0 to F3 of the probe F-P4 (F2 is the widget), the
+   element, scale and palette colors of bar, line and radar charts, the hidden dataset and the
+   identities, the decimated data, the removal with `'default'`, the 200 ms `'linear'` animation,
+   no update for equal themes, the palette of a pushed dataset, an app edit of a dataset color,
+   `forceOverride`, one update with the theme mode for a theme change and a config change, the
+   inherited theme, the plugin `$chartView` and the asserts of the config. The case under
+   `MediaQuery(disableAnimations: true)` waits for the reduced-motion flag of
+   [Chart.js ADR 0049](adr/0049-chart-view-widget.md) §7 (section 3.7).
 9. **Goldens.** One golden per public preset on one chart type, on the pinned runner
    (porting-flow.md, section 3).
 
@@ -879,23 +911,30 @@ Risks:
 - For emitted keys, a theme beats app code that changes `Chart.defaults`.
 - Chart-type overrides beat the theme. A future upstream color in `overrides[type]` hides the theme
   value. No test fails until a SHADOWED check exists.
-- A theme switch discards imperative `chart.options` edits.
+- A theme switch discards the imperative edits of `chart.options.scales` (section 3.7, step 3).
+  Other imperative `chart.options` edits stay ([Chart.js ADR 0050](adr/0050-public-theme-api.md)).
+- After a switch, a dataset that the app colored keeps its color. Then the colors plugin colors no
+  dataset, as for a new chart with that dataset color (`plugin.colors.ts:113-121`).
+- With `plugins.$chartView: false`, the widget records no palette key. A switch then keeps the old
+  palette in the datasets.
 - A `'themeFrame'` update during an animation retargets that animation. The animation then ends on
   its own schedule (`core.animation.js:51-64`).
-- Theme removal under reduced motion animates for 1000 ms, the default duration.
-  [Chart.js ADR 0019](adr/0019-animation.md) §10 (proposed) leaves the reduced-motion policy to the
-  phase 9 widget (section 3.7). porting-flow.md, decision 2.9, lists this item.
+- Theme removal under reduced motion animated for 1000 ms, the default duration. The flag of
+  [Chart.js ADR 0049](adr/0049-chart-view-widget.md) §7 ends it at once, with no transitions-only
+  scope (Chart.js ADR 0050, change 6). The risk closes when the flag lands in `ChartView`. Until
+  then, `ChartView` reads no reduced-motion preference (section 3.7).
 - It is possible that `$theme` and the palette keys collide with future upstream keys. The coverage
-  test flags any `$` key in the inventory.
+  test flags any `$` key in the inventory. `$chartView` is a reserved plugin id.
 
-Open questions, to decide in phase 9:
+Open questions:
 
-1. Touch values (hit radius 8, hover radius 6, font 14), and whether touch changes `interaction`
-   (proposed: no). A new ADR that supersedes Chart.js ADR 0042 decides them, together with ADR:
-   Input events and interaction state. porting-flow.md, decision 2.7, must list this item.
-2. `easing` as a string (proposed) or an enum
-   ([Chart.js ADR 0043](adr/0043-options-representation-and-resolver.md)).
-3. Does `frames` exist at all if its benchmark fails?
+1. Closed by [Chart.js ADR 0050](adr/0050-public-theme-api.md), "No touch sizes": the theme never
+   carries touch sizes, and touch never changes `interaction`. An app that wants larger targets
+   sets `elements.point.hitRadius` and `hoverRadius` in its options.
+2. Closed by Chart.js ADR 0050, "Transitions": a later public transition takes `easing` as a
+   `String` key of `effects`, with a debug assert.
+3. Closed by Chart.js ADR 0050, "Transitions": `frames` does not exist. A later ADR can add it only
+   on an app request, and only when its benchmark passes (rule F).
 4. Typed component styles: generated option classes, or `raw` only (section 5.1)? ADR: Typed
    options API decides this question after 0.1.0.
 

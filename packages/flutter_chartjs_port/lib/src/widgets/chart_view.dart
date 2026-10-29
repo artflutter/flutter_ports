@@ -6,12 +6,17 @@
 /// internal chart host and starts its chart in the first layout of the host
 /// (Chart.js ADR 0049, section 2). It gives the chart a root Map that it
 /// owns, and it applies a new config in one post-frame callback (section
-/// 4). The theme of Chart.js ADR 0050 and the input of Chart.js ADR 0051
-/// build on the root Map and on that callback.
+/// 4). The theme of Chart.js ADR 0050 builds on the root Map and on that
+/// callback: the widget writes the compiled theme under `$theme` of the
+/// root Map, and it switches the theme in the same callback
+/// (`chart_theme_switch.dart`) with its inline plugin `$chartView`
+/// (`chart_view_plugin.dart`). The input of Chart.js ADR 0051 builds on
+/// them too.
 ///
 /// The widget registers no component (Chart.js ADR 0048, section 3): no
 /// file of `lib/src/widgets/` imports a controller, a scale, an element, a
-/// plugin or an index of them. It never writes `defaults` or `overrides`.
+/// plugin or an index of them. It never writes `defaults` or `overrides`,
+/// also not for the theme (Chart.js ADR 0050).
 library;
 
 import 'package:flutter/foundation.dart';
@@ -19,10 +24,16 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
+import 'package:flutter_chartjs_port/src/core/core.config.dart'
+    show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
+import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
+import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 
 /// Shows one Chart.js chart: `new Chart(canvas, config)` on a canvas that the
 /// widget owns. Register the components first: `Chart.register(registerables)`.
@@ -39,12 +50,22 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// update and the first `onResize`) run in the layout of the host: there, a
 /// callback must not call `setState`, and it calls
 /// `WidgetsBinding.instance.addPostFrameCallback` instead.
+///
+/// Theme: [theme], or the [ChartTheme] above, themes the chart (Chart.js
+/// ADR 0050). Chart.js options beat each key of the theme. A new theme
+/// switches the chart after the frame: the element colors animate for
+/// 200 ms, and the scales, the legend, the title and the tooltip switch at
+/// once. A switch keeps the chart, its datasets, its hidden datasets and
+/// the imperative edits of `chart.options`, except an edit inside
+/// `chart.options.scales`. The widget owns the config key `$theme` and the
+/// inline plugin id `$chartView`.
 class ChartView extends StatefulWidget {
   /// Creates a widget that shows the chart of [config].
   const ChartView({
     required this.config,
     this.updateMode,
     this.onChartCreated,
+    this.theme,
     super.key,
   });
 
@@ -64,16 +85,25 @@ class ChartView extends StatefulWidget {
   /// a post-frame callback, never from `build`. A change of a data List in
   /// place also calls `notifyArrayListeners` for `push`, `pop`, `shift`,
   /// `splice` and `unshift`. An imperative `chart.options` edit lasts until
-  /// the next new `options` object.
+  /// the next new `options` object. A theme switch keeps it, except an edit
+  /// inside `chart.options.scales`.
+  ///
+  /// The key `$theme` belongs to the widget: in debug mode, a config with
+  /// it fails an assert. A `plugins` value is a List.
   final Map<String, Object?> config;
 
   /// The mode of the `chart.update` call for a new [config]. Null is the
-  /// default mode.
+  /// default mode. When the same frame also switches the theme, the one
+  /// update takes the mode of the theme switch.
   final String? updateMode;
 
   /// Called after the frame in which the widget starts a chart, and again
   /// after a new `platform` replaces the chart.
   final ValueChanged<Chart>? onChartCreated;
+
+  /// The theme of this chart. Null reads [ChartTheme.maybeOf].
+  /// `const ChartThemeData()` turns theming off for this chart.
+  final ChartThemeData? theme;
 
   @override
   State<ChartView> createState() => _ChartViewState();
@@ -91,6 +121,9 @@ class ChartView extends StatefulWidget {
           datasets is List ? datasets.length : null,
           defaultValue: null,
         ),
+      )
+      ..add(
+        DiagnosticsProperty<ChartThemeData>('theme', theme, defaultValue: null),
       )
       ..add(StringProperty('updateMode', updateMode, defaultValue: null))
       ..add(
@@ -128,6 +161,22 @@ class _ChartViewState extends State<ChartView> {
   /// Whether a post-frame update is pending.
   bool _updatePending = false;
 
+  /// The effective theme of the last build: [ChartView.theme], else the
+  /// theme of the [ChartTheme] above (Chart.js ADR 0050, step 1).
+  ChartThemeData? _theme;
+
+  /// The theme state of the chart (Chart.js ADR 0050, "Runtime switch").
+  final ChartThemeSwitch _themeSwitch = ChartThemeSwitch();
+
+  /// The inline plugin of the widget, last in the root `plugins`.
+  late final AnyObject _viewPlugin = createChartViewPlugin(_themeSwitch);
+
+  /// The reduced-motion preference (Chart.js ADR 0049, section 7). False
+  /// until the flag of that section lands; then it reads the preference of
+  /// the last build, and a theme switch under it updates with
+  /// `'themeFrame'` (Chart.js ADR 0050, step 5).
+  bool get _reducedMotion => false;
+
   @override
   void didUpdateWidget(ChartView oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -162,9 +211,28 @@ class _ChartViewState extends State<ChartView> {
   /// else after the frame.
   void _start({required bool notify}) {
     final config = _applied = widget.config;
+    _themeSwitch.recordUserScales(config['options']);
     final root = _root = Map<String, Object?>.of(config);
     root['plugins'] = _rootPlugins(jsGet(config, 'plugins'));
+    _themeSwitch.start(root, _theme);
     _create(notify: notify);
+  }
+
+  /// The debug checks of the app config [config]: no value under `$theme`
+  /// (row `theme-H0`, Chart.js ADR 0050, step 2) and a `plugins` value that
+  /// is a List, so that the widget plugin can join it.
+  static void _debugCheckConfig(Map<String, Object?> config) {
+    assert(
+      !config.containsKey(themeConfigKey),
+      'The key $themeConfigKey of a ChartView config belongs to the widget. '
+      'Give the theme as ChartView.theme or with a ChartTheme above '
+      '(Chart.js ADR 0050).',
+    );
+    assert(
+      config['plugins'] == null || config['plugins'] is List,
+      'The plugins of a ChartView config are a List of plugin Maps, not '
+      '${config['plugins'].runtimeType}.',
+    );
   }
 
   /// `new Chart(canvas, root)`. An exception goes to
@@ -174,6 +242,7 @@ class _ChartViewState extends State<ChartView> {
   void _create({required bool notify}) {
     final Chart chart;
     try {
+      _debugCheckConfig(_applied);
       chart = Chart(_canvas, _root);
     } on Object catch (error, stack) {
       FlutterError.reportError(
@@ -210,9 +279,12 @@ class _ChartViewState extends State<ChartView> {
   }
 
   /// The `plugins` of the root Map for the app value [app]: a new List with
-  /// the inline plugins of the app (a List, else none) and the entries of
-  /// the widget. Chart.js ADRs 0050 and 0051 add the widget entries.
-  static List<Object?> _rootPlugins(Object? app) => [if (app is List) ...app];
+  /// the inline plugins of the app (a List, else none) and the inline plugin
+  /// of the widget (Chart.js ADRs 0050 and 0051).
+  List<Object?> _rootPlugins(Object? app) => [
+    if (app is List) ...app,
+    _viewPlugin,
+  ];
 
   /// Schedules one post-frame update, none when one is pending (Chart.js
   /// ADR 0049, section 4).
@@ -225,9 +297,12 @@ class _ChartViewState extends State<ChartView> {
   }
 
   /// The update of Chart.js ADR 0049, section 4: the values of the last
-  /// config that are new objects go to the chart, then one `chart.update`.
-  /// It runs after the frame, so every hook of the update, also the replay
-  /// of the last event (core.controller.js:529-532), runs outside the build.
+  /// config that are new objects go to the chart, then the theme switch of
+  /// Chart.js ADR 0050 (steps 1 to 4), then one `chart.update`: with the
+  /// mode of the theme switch when the theme changed, else with
+  /// [ChartView.updateMode]. It runs after the frame, so every hook of the
+  /// update, also the replay of the last event (core.controller.js:529-532),
+  /// runs outside the build.
   void _update(Duration _) {
     _updatePending = false;
     // The first layout starts the chart with the last config.
@@ -241,9 +316,57 @@ class _ChartViewState extends State<ChartView> {
     }
     final config = widget.config;
     final applied = _applied;
-    if (identical(config, applied)) return;
-    _applied = config;
+    final configChanged = !identical(config, applied);
+    if (!configChanged && _theme == _themeSwitch.applied) return;
     final root = _root!;
+    if (configChanged) _applyConfig(chart, root, config, applied);
+    // Chart.js ADR 0050, steps 1 to 4, also before a new chart of a new
+    // platform: the root, the user scales and the palette keys then have
+    // the new theme.
+    final themeMode = _themeSwitch.apply(
+      chart,
+      root,
+      _theme,
+      reducedMotion: _reducedMotion,
+    );
+    if (configChanged && !identical(config['platform'], applied['platform'])) {
+      // The constructor reads `platform` once (core.controller.js:136).
+      if (config.containsKey('platform')) {
+        root['platform'] = config['platform'];
+      } else {
+        root.remove('platform');
+      }
+      _chart = null;
+      chart.destroy();
+      _create(notify: true);
+      return;
+    }
+    if (themeMode != null) {
+      // Step 5: the mode of the theme switch wins over updateMode.
+      chart.update(themeMode);
+      return;
+    }
+    if (!configChanged) return;
+    final mode = widget.updateMode;
+    if (mode == null) {
+      chart.update();
+    } else {
+      chart.update(mode);
+    }
+  }
+
+  /// Steps 1 to 4 of the update of Chart.js ADR 0049, section 4: the values
+  /// of [config] that are not the values of [applied] go to [chart] and to
+  /// [root]. A new options object records its user `scales` first (Chart.js
+  /// ADR 0050, step 3).
+  void _applyConfig(
+    Chart chart,
+    AnyObject root,
+    Map<String, Object?> config,
+    Map<String, Object?> applied,
+  ) {
+    _debugCheckConfig(config);
+    _applied = config;
     final type = jsGet(config, 'type');
     if (!identical(type, jsGet(applied, 'type'))) {
       // core.config.js:173 `set type(type)`.
@@ -256,6 +379,7 @@ class _ChartViewState extends State<ChartView> {
     }
     final options = jsGet(config, 'options');
     if (!identical(options, jsGet(applied, 'options'))) {
+      _themeSwitch.recordUserScales(options);
       // core.controller.js:225 `set options(options)`.
       chart.options = options;
     }
@@ -265,24 +389,6 @@ class _ChartViewState extends State<ChartView> {
       // (core.plugins.js:101-106) and calls `stop` and `start` for each id
       // that left or came (:113-119).
       root['plugins'] = _rootPlugins(plugins);
-    }
-    if (!identical(config['platform'], applied['platform'])) {
-      // The constructor reads `platform` once (core.controller.js:136).
-      if (config.containsKey('platform')) {
-        root['platform'] = config['platform'];
-      } else {
-        root.remove('platform');
-      }
-      _chart = null;
-      chart.destroy();
-      _create(notify: true);
-      return;
-    }
-    final mode = widget.updateMode;
-    if (mode == null) {
-      chart.update();
-    } else {
-      chart.update(mode);
     }
   }
 
@@ -302,6 +408,10 @@ class _ChartViewState extends State<ChartView> {
   @override
   Widget build(BuildContext context) {
     _tickerEnabled = TickerMode.valuesOf(context).enabled;
+    final theme = _theme = widget.theme ?? ChartTheme.maybeOf(context);
+    // A new theme after the start switches in the update callback (Chart.js
+    // ADR 0050, step 1). The start reads the theme of the last build.
+    if (_laidOut && theme != _themeSwitch.applied) _scheduleUpdate();
     return ChartHost(
       canvas: _canvas,
       onTickerModeChanged: _onTickerModeChanged,

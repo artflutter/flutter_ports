@@ -632,6 +632,19 @@ Changes to the cited files:
   §3.1 gives the new line. No library file that this plan cites changed. The references, the
   inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No trigger
   occurred.
+- 2026-10-29, the runtime theme switch of [Chart.js ADR 0050](adr/0050-public-theme-api.md)
+  (proposed, phase 9). `lib/src/widgets/chart_view.dart` gets the parameter `theme`, and the new
+  port-only files `lib/src/widgets/chart_theme_switch.dart` and `chart_view_plugin.dart` switch
+  the theme in the post-frame update callback of the widget; this plan cites none of them.
+  `test/port/widgets/chart_theme_switch_test.dart` is new, and `test/port/theme/coverage_test.dart`
+  changes two reasons. The root `plugins` of a `ChartView` end with the widget plugin
+  `$chartView` (no draw hook), so `apps/chartjs_gallery/test/stress_chart_test.dart` expects
+  `stressDrawEnd` before it; this plan cites no line of that test. `doc/parity.md` changes the
+  rows of `chart_view.dart` (line 371) and of `coverage_test.dart` (line 538) in place and gets
+  three port-only rows at its end (lines 613 to 615): the rows that this plan cites do not move.
+  No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart` or
+  a test of §2.6 and §3.5 changes. The references, the inventory (§1.1), the tests of §2.6 and
+  §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

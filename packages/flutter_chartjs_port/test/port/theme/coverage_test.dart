@@ -91,7 +91,7 @@ const Map<String, String> _notThemed = {
       '(core.scale.defaults.js:35)',
   'scale.ticks.textStrokeColor':
       "'': no text stroke by default (core.scale.defaults.js:67); "
-      'an app sets it through raw (theming.md §5.1)',
+      'an app sets it in the chart options (Chart.js ADR 0050)',
   'scales.radialLinear.pointLabels.backdropColor':
       'undefined: no point-label backdrop by default '
       '(scale.radialLinear.js:374)',
@@ -115,8 +115,8 @@ const Map<String, String> _notThemed = {
       'global font.weight; the light preset has no weight',
   'plugins.tooltip.borderColor':
       "'rgba(0,0,0,0)': no tooltip border by default "
-      '(plugin.tooltip.js:1308); an app sets it through raw '
-      '(theming.md §5.1)',
+      '(plugin.tooltip.js:1308); an app sets it in the chart options '
+      '(Chart.js ADR 0050)',
   'plugins.tooltip.callbacks.labelColor':
       'a function that reads the style of the element '
       '(plugin.tooltip.js:404-415)',
