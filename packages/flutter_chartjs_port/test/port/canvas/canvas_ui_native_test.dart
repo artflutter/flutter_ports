@@ -222,4 +222,87 @@ void main() {
       expect(data.getUint32((99 * 100 + 99) * 4), 0xFF0000FF);
     });
   });
+
+  group('N2: no draw call for a fill with no area', () {
+    test('a rectangle with no width or no height draws nothing', () async {
+      var changes = 0;
+      late bool empty;
+      final port = await renderContext((ctx) {
+        ctx
+          ..onChanged = (() => changes++)
+          ..fillStyle = '#ff0000'
+          ..beginPath()
+          ..rect(10, 10, 0, 50)
+          ..fill()
+          ..beginPath()
+          ..rect(10, 10, 50, 0)
+          ..fill('evenodd')
+          ..beginPath()
+          ..roundRect(20, 20, 0, 40, 4)
+          ..fill();
+        // The fills still count as drawn content, as before.
+        empty = ctx.isEmpty;
+      });
+      expect(port.ink, 0);
+      expect(empty, isFalse);
+      expect(changes, 1);
+    });
+
+    test('the border ring and the inner fill of a narrow bar', () async {
+      // A bar of 0.6 pixels with borders of 1 pixel: parseBorderWidth
+      // clamps the borders, and the inner rectangle has a width of 0
+      // (element.bar.js:188-198). Only the border ring has pixels.
+      void bar(UiCanvasContext ctx, double x) {
+        ctx
+          ..save()
+          ..beginPath()
+          ..rect(x, 20, 0.6, 100)
+          ..rect(x + 0.3, 21, 0, 98)
+          ..fillStyle = '#36a2eb'
+          ..fill('evenodd')
+          ..beginPath()
+          ..rect(x + 0.3, 21, 0, 98)
+          ..fillStyle = '#ff0000'
+          ..fill()
+          ..restore();
+      }
+
+      final port = await renderContext((ctx) {
+        for (var i = 0; i < 40; i++) {
+          bar(ctx, 10 + i * 3.4);
+        }
+      });
+      final reference = await renderContext((ctx) {
+        ctx.fillStyle = '#36a2eb';
+        for (var i = 0; i < 40; i++) {
+          ctx.fillRect(10 + i * 3.4, 20, 0.6, 100);
+        }
+      });
+      final diff = comparePixels(port, reference);
+      expect(diff.differing, 0, reason: '$diff');
+      expect(port.ink, greaterThan(40 * 0.6 * 100 * 0.9));
+    });
+
+    test('a fill with no area between two draws keeps their order', () async {
+      final port = await renderContext((ctx) {
+        ctx
+          ..fillStyle = '#ff0000'
+          ..fillRect(0, 0, 80, 80)
+          ..beginPath()
+          ..rect(40, 40, 0, 80)
+          ..fill()
+          ..fillStyle = '#0000ff'
+          ..fillRect(40, 40, 80, 80);
+      });
+      final reference = await _renderUi((canvas) {
+        canvas
+          ..drawRect(const ui.Rect.fromLTRB(0, 0, 80, 80), _fill(0xFFFF0000))
+          ..drawRect(
+            const ui.Rect.fromLTRB(40, 40, 120, 120),
+            _fill(0xFF0000FF),
+          );
+      });
+      expect(comparePixels(port, reference).differing, 0);
+    });
+  });
 }

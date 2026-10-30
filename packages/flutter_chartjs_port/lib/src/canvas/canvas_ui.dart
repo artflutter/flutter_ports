@@ -1327,11 +1327,15 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
       )) {
         return;
       }
+      final canvas = _c;
       final rect = _path.singleRect;
+      // A rectangle or a rounded rectangle with no area has no pixels, so it
+      // gets no draw call (canvas-cuts-plan.md §7, N2): for example the
+      // inner rectangle of a bar that is narrower than its two borders.
       if (rect != null) {
-        _c.drawRect(rect, _fillPaint);
+        if (!rect.isEmpty) canvas.drawRect(rect, _fillPaint);
       } else if (circle != null) {
-        _c.drawCircle(
+        canvas.drawCircle(
           ui.Offset(circle.x, circle.y),
           circle.radius,
           _fillPaint,
@@ -1344,17 +1348,19 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
             ? _ring(pair)
             : null;
         if (rrect != null) {
-          _c.drawRRect(rrect, _fillPaint);
+          if (!rrect.isEmpty) canvas.drawRRect(rrect, _fillPaint);
         } else if (sole != null) {
-          if (sole.isRect) {
-            _c.drawRect(sole.outerRect, _fillPaint);
-          } else {
-            _c.drawRRect(sole, _fillPaint);
+          if (!sole.isEmpty) {
+            if (sole.isRect) {
+              canvas.drawRect(sole.outerRect, _fillPaint);
+            } else {
+              canvas.drawRRect(sole, _fillPaint);
+            }
           }
         } else if (ring != null) {
-          _c.drawDRRect(ring.outer, ring.inner, _fillPaint);
+          canvas.drawDRRect(ring.outer, ring.inner, _fillPaint);
         } else {
-          _c.drawPath(_path.path..fillType = fillType, _fillPaint);
+          canvas.drawPath(_path.path..fillType = fillType, _fillPaint);
         }
       }
     }
