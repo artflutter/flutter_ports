@@ -1078,7 +1078,9 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   `test/port/js/*_reference.dart`, `test/port/helpers/draw_point_reference.dart`,
   `test/port/elements/*_reference.dart` (point, line, bar and arc),
   `test/port/core/*_reference.dart` (animation, interaction, layouts, scale, scale autoskip, dataset
-  controller, registry, controller and date adapter), `test/port/scales/*_reference.dart` (the scale
+  controller, registry, controller, date adapter and the resolver trace, D2 of Chart.js ADR 0053:
+  `resolver_trace_reference.mjs` runs the dist with a fixed `Date.now()` and an animator frame
+  that never runs), `test/port/scales/*_reference.dart` (the scale
   chart harness and the seven scales of phase 6), `test/port/theme/*_reference.dart` (light and
   precedence), `test/port/controllers/controller_<snake>_reference.dart` (the eight controllers of
   phase 7), `test/port/plugins/*_reference.dart` and

@@ -1280,3 +1280,24 @@ ${widths}];
   execFileSync('dart', ['format', outPath], {stdio: 'inherit'});
   console.log(`Wrote ${cases.length} cases and ${measured.size} widths to ${outPath}`);
 }
+
+/**
+ * The Dart literal of the JS value [v] (the literal of writeReference), for
+ * a generator that writes its own data file (resolver_trace_reference.mjs).
+ * [state.undefined] becomes true when the literal has the sentinel
+ * `undefined`.
+ */
+export function dartLiteral(v, state = {undefined: false}) {
+  return dart(v, state);
+}
+
+/**
+ * The facts of the loaded build for the header of a generator that writes
+ * its own data file: the pin version without its "v", the commit of the
+ * build, and the count of the texts that a LiberationContext measured.
+ * loadChartJs() must run first.
+ */
+export function referenceBuild() {
+  loaded();
+  return {version: PIN.version, commit: buildCommit, measured: measured.size};
+}
