@@ -8,9 +8,11 @@ import 'package:flutter/rendering.dart'
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/index.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_chart.dart';
@@ -2661,6 +2663,106 @@ void main() {
       }
       expect(_owner, isNull);
       expect(_globalRoutes(tester), routes);
+    });
+  });
+
+  group('ADR 0051 §9: two mouse models', () {
+    // Chart.js ADR 0051, section 9: the real mouse keeps the MouseTracker
+    // path, and the route of the compatibility mouse ignores the mouse-like
+    // kinds. A browser has one compatibility mouse for both (Chart.js ADR
+    // 0037:85-87). This pin holds the model of today. The device round of
+    // Chart.js ADR 0051 Open 1 decides it: a row with another active set or
+    // another tooltip than Chrome starts an ADR that supersedes Chart.js ADR
+    // 0037. Real line charts (flutter_test_config.dart registers the
+    // built-in components) show the tooltips.
+    setUp(() => expect(_owner, isNull));
+
+    testWidgets('a touch tap on host A, then a mouse hover on host B: A '
+        'keeps its tooltip and the compatibility mouse, and B gets the '
+        'mouse rows', (tester) async {
+      final a = UiCanvasElement();
+      final b = UiCanvasElement();
+      final log = <NativeEvent>[];
+      _record(a, log);
+      _record(b, log);
+      await tester.pumpWidget(
+        _box(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(width: 200, child: ChartHost(canvas: a)),
+              SizedBox(width: 200, child: ChartHost(canvas: b)),
+            ],
+          ),
+        ),
+      );
+      Map<String, Object?> config() => <String, Object?>{
+        'type': 'line',
+        'data': <String, Object?>{
+          'labels': <Object?>['a', 'b', 'c'],
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[1, 3, 2],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'animation': false,
+          'maintainAspectRatio': false,
+          'plugins': <String, Object?>{
+            'legend': <String, Object?>{'display': false},
+          },
+        },
+      };
+      final chartA = Chart(a, config());
+      final chartB = Chart(b, config());
+      await tester.pump();
+      List<String> items(List<types.ActiveElement> active) => [
+        for (final item in active) '${item.datasetIndex}:${item.index}',
+      ];
+      Offset point(Chart chart, double left) {
+        final element = chart.getDatasetMeta(0).data[1];
+        return Offset(left + element.x, element.y);
+      }
+
+      final routes = _globalRoutes(tester);
+      await tester.tapAt(point(chartA, 0));
+      await tester.pump();
+      expect(items(chartA.tooltip!.getActiveElements()), ['0.0:1.0']);
+      expect(_owner!.canvas, same(a));
+      expect(_globalRoutes(tester), routes + 1);
+
+      log.clear();
+      final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      addTearDown(mouse.removePointer);
+      await mouse.addPointer(location: const Offset(600, 500));
+      await mouse.moveTo(point(chartB, 200));
+      await tester.pump();
+      // B gets the enter and move rows of a mouse (Chart.js ADR 0037,
+      // section 6). A gets no mouseout: its compatibility mouse stays.
+      expect(
+        [
+          for (final event in log)
+            '${identical(event.target, a) ? 'A' : 'B'} ${event.type}',
+        ],
+        [
+          'B pointerover',
+          'B pointerenter',
+          'B mouseover',
+          'B mouseenter',
+          'B pointermove',
+          'B mousemove',
+        ],
+      );
+      expect(log.last.source, isA<PointerHoverEvent>());
+      expect(items(chartB.getActiveElements()), ['0.0:1.0']);
+      expect(items(chartB.tooltip!.getActiveElements()), ['0.0:1.0']);
+      expect(items(chartA.getActiveElements()), ['0.0:1.0']);
+      expect(items(chartA.tooltip!.getActiveElements()), ['0.0:1.0']);
+      expect(_owner!.canvas, same(a));
+      expect(_globalRoutes(tester), routes + 1);
+      chartA.destroy();
+      chartB.destroy();
     });
   });
 

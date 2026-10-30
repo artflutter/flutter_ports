@@ -678,6 +678,16 @@ Changes to the cited files:
   `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart` or a test of
   §2.6 and §3.5 changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
   estimates do not change. No trigger occurred.
+- 2026-10-30, the pin of the two mouse models ([Chart.js ADR
+  0051](adr/0051-input-events-and-interaction-state.md) §9, proposed, phase 9).
+  `test/port/platform/chart_host_test.dart`, a test of §3.5, gets the group 'ADR 0051 §9: two
+  mouse models' (1 test, 112 tests in all) before its last group 'canvas event target', and
+  imports `core.controller.dart` and the types for two real line charts. The lines above the new
+  group do not move, and §3.5 gives the count. The pinned behavior does not change: a touch tap
+  makes host A the owner of the compatibility mouse, and a real mouse over host B keeps the
+  `MouseTracker` path. `doc/parity.md` changes the row of `chart_host_test.dart` (line 426) in
+  place: no row moves. No library file changes. The references, the inventory (§1.1), the tests
+  of §2.6 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 
@@ -1172,11 +1182,13 @@ C2 ran in phase 5 without W (Deferral, trigger 1). The line numbers below are th
 
 Tests that pin the current behavior (run them before and after):
 - `test/port/platform/chart_host_test.dart`: 40 tests, 41 after C2, 50 after Chart.js ADR
-  0022, 73 after Chart.js ADR 0037 and 111 after Chart.js ADR 0049. The tests are "first
-  layout" (2), "onFirstLayout" (3, Chart.js ADR 0049) and the group "resize". The group "resize" tests the throttle, a DPR change, content drawn before the host
+  0022, 73 after Chart.js ADR 0037, 111 after Chart.js ADR 0049 and 112 after Chart.js ADR 0051.
+  The tests are "first layout" (2), "onFirstLayout" (3, Chart.js ADR 0049) and the group
+  "resize". The group "resize" tests the throttle, a DPR change, content drawn before the host
   at the display size, the clip and a later resize that keeps the ratio. Then come the group
   "display size and bitmap stretch" (7, from work package A2, 8 after C2), "unbounded
-  constraints" (4), "dry layout" and the group "attach and detach".
+  constraints" (4), "dry layout" and the group "attach and detach". The group "ADR 0051 §9: two
+  mouse models" (1, Chart.js ADR 0051) comes before the last group of the file.
 - `test/port/platform/platform.flutter_test.dart` (18 tests, 21 after C2): `initCanvas` (5, 7
   after C2), "acquireContext initializes the canvas", "releaseContext restores the canvas",
   "releaseContext restores the initial attributes" (after C2), `getDevicePixelRatio`,
