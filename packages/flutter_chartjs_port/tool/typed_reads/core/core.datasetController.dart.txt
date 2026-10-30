@@ -1,5 +1,26 @@
-jsGet 33
-jsGetKey 21
-stringIndex 25
+# The by-name reads and writes that stay (lane L1, Chart.js ADR 0054).
+# jsGet: the dataset object of the user (xAxisID, yAxisID, rAxisID, data in
+#   _dataCheck, stack, data in getContext), the data object of the user
+#   (chart.data.datasets in getDataset), dataset.data.length in onDataPush
+#   (2), the `_stacks` of a class value or a primitive data item
+#   (stacksOf), the id of an element type value that is not a class value
+#   (_idOf), and a user object in `defaults.elements` (the element step).
+jsGet 12
+# jsGetKey: the user data items of `parsing: false` and their `_stacks`
+#   objects: parsedValueOf, axisStackOf, _stackValueOf and visualValuesOf.
+jsGetKey 4
+# stringIndex: the write `dataset.data = []` into the dataset of the user,
+#   `item._stacks = {}` into a Map item and a class value item, the read
+#   `item._stacks` of a Map item (stacksOf), the statics datasetElementType
+#   and dataElementType of a class value (Chart.js ADR 0020), and
+#   `element.$context` (2) with the writes of getContext into an element
+#   context that user code put into `$context` (6): these 8 go with the
+#   typed `$context` of lane L3.
+stringIndex 14
+# jsCall: the draw of the dataset element with JS arity: a line takes
+#   start and count, another element class ignores them.
 jsCall 1
+# jsObjectKeys: Object.keys of the object data of the user, of
+#   chart.scales (user scale ids, getFirstScaleId), and of a user object in
+#   `defaults.elements`.
 jsObjectKeys 3

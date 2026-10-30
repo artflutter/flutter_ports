@@ -1,3 +1,8 @@
-jsGet 9
-jsGetKey 6
-stringIndex 5
+# The by-name reads that stay (lane L1, Chart.js ADR 0054).
+# jsGet: the data object and the dataset object of the user:
+#   chart.data.labels (getLabelAndValue) and `_dataset.data` (the `raw` of a
+#   point with segments).
+jsGet 2
+# jsGetKey: `_dataset._decimated`, the property that the decimation plugin
+#   writes into the dataset object of the user.
+jsGetKey 1

@@ -1,4 +1,15 @@
-jsGet 29
-jsGetKey 31
-stringIndex 15
+# The by-name reads and writes that stay (lane L1, Chart.js ADR 0054).
+# jsGet: the dataset object of the user (stack in initialize, xAxisID or
+#   yAxisID in _indexAxisIdOf) and the data object of the user
+#   (chart.data.datasets in _getAxis).
+jsGet 3
+# jsGetKey: the user data items of `parsing: false`: `_custom` (_customOf),
+#   the keys of a user `_custom` object (_userCustomValue), and `_top` and
+#   `_bottom` of a user `_stacks` object (_stackTop, _stackBottom).
+jsGetKey 4
+# stringIndex: `scale._cache.$bar` (read and write), the scale cache of
+#   lane L2.
+stringIndex 2
+# jsObjectKeys: Object.keys of chart.scales (user scale ids) and of the
+#   axis ids of the datasets (_getAxis): the JS key order.
 jsObjectKeys 2

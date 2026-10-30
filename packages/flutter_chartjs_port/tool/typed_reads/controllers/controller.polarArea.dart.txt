@@ -1,4 +1,7 @@
-jsGet 21
-jsGetKey 4
-stringIndex 6
-jsCall 1
+# The by-name reads that stay (lane L1, Chart.js ADR 0054).
+# jsGet: the data object of the user: chart.data.labels (getLabelAndValue,
+#   _generateLabels), chart.data.datasets (_generateLabels), `length` of a
+#   value that is not a List or a String (_lengthOf); and legendItem.index
+#   of a legend item (a Map item of the legend plugin or a user object,
+#   _onClick).
+jsGet 5

@@ -1,3 +1,6 @@
-jsGet 7
-jsGetKey 7
-stringIndex 10
+# The by-name reads that stay (lane L1, Chart.js ADR 0054).
+# jsGet: chart.data.labels, the data object of the user.
+jsGet 1
+# jsGetKey: the user data items: `_custom` of an item of `parsing: false`
+#   (_customOf) and `item.r` of a data item that is not a TypedDataItem.
+jsGetKey 2
