@@ -23,6 +23,10 @@
 /// This library is a pure layer.
 library;
 
+import 'dart:collection' show MapBase;
+
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -34,7 +38,15 @@ export 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
 
 /// A typed option scope: the fields of its kind, the own-key order and the
 /// extras (Chart.js ADR 0054 §3).
-abstract base class OptionScope implements OptionObject {
+///
+/// It implements [JsObjectFace], the face by name. During the migration it
+/// also extends `MapBase<String, Object?>` (the scaffolding of Chart.js ADR
+/// 0054 §5), so that the readers by name of today read it as a Map: the
+/// Map members follow the Map rules (`operator []` gives Dart `null` for an
+/// absent key, as a Map read) over the same own keys. The close step of the
+/// migration removes the scaffolding.
+abstract base class OptionScope extends MapBase<String, Object?>
+    implements OptionObject, JsObjectFace {
   /// An empty scope.
   OptionScope();
 
@@ -145,11 +157,36 @@ abstract base class OptionScope implements OptionObject {
   /// The count of the own keys.
   int get ownKeyCount => _order.length;
 
-  /// The own key names in their order (`Object.keys`).
-  List<String> jsKeys() => [
-    for (final key in _order)
-      if (key is OptionKey) key.jsName else key as String,
-  ];
+  /// The own key names in their order (`Object.keys`): the array-index
+  /// names first, in ascending order, then the other names in their
+  /// insertion order, as JS orders the own keys of an object.
+  @override
+  List<String> jsKeys() {
+    final names = [
+      for (final key in _order)
+        if (key is OptionKey) key.jsName else key as String,
+    ];
+    final extras = _extraNames;
+    if (extras == null || !extras.any((name) => jsArrayIndex(name) != null)) {
+      return names;
+    }
+    final indices = [
+      for (final name in names)
+        if (jsArrayIndex(name) case final int index) (index, name),
+    ]..sort((a, b) => a.$1.compareTo(b.$1));
+    return [
+      for (final (_, name) in indices) name,
+      for (final name in names)
+        if (jsArrayIndex(name) == null) name,
+    ];
+  }
+
+  /// The kind of a nested scope under the name [name]: the `scope` atom of
+  /// a declared key, else the `scope` atom of `others`, else Dart `null`.
+  ScopeKind? childKindFor(String name) {
+    final k = keyOf(name);
+    return k is OptionKey ? kind.childKind(k) : kind.othersKind;
+  }
 
   /// The cell of the raw JS value [raw] for the name [name] in this scope:
   /// by the shape of a declared key, else by the shape `others` of the kind.
@@ -160,21 +197,65 @@ abstract base class OptionScope implements OptionObject {
 
   /// `object[name]` (`[[Get]]`): the JS value of [name], or [undefined]
   /// when the scope does not own it.
+  @override
   Object? jsRead(String name) {
     final cell = lookup(name);
     return cell == null ? undefined : cell.raw;
   }
 
   /// `object[name] = value` (`[[Set]]`): stores the cell of [value].
+  @override
   void jsWrite(String name, Object? value) {
     store(name, classifyName(name, value));
   }
 
   /// `name in object` for an own key (`hasOwnProperty`).
+  @override
   bool jsHas(String name) => owns(name);
 
   /// `delete object[name]`. Returns whether the scope owned it.
+  @override
   bool jsDelete(String name) => delete(name);
+
+  // The Map scaffolding of Chart.js ADR 0054 §5.
+
+  /// The Map read: the JS value of an own key ([undefined] for an own key
+  /// with the value `undefined`), else Dart `null`.
+  @override
+  Object? operator [](Object? key) => key is String ? lookup(key)?.raw : null;
+
+  /// The Map write: [jsWrite].
+  @override
+  void operator []=(String key, Object? value) => jsWrite(key, value);
+
+  /// The own keys ([jsKeys]).
+  @override
+  Iterable<String> get keys => jsKeys();
+
+  @override
+  int get length => _order.length;
+
+  @override
+  bool get isEmpty => _order.isEmpty;
+
+  @override
+  bool get isNotEmpty => _order.isNotEmpty;
+
+  @override
+  bool containsKey(Object? key) => key is String && owns(key);
+
+  /// Deletes [key] and returns its value, or Dart `null` for an absent key.
+  @override
+  Object? remove(Object? key) {
+    if (key is! String) return null;
+    final value = this[key];
+    delete(key);
+    return value;
+  }
+
+  /// Deletes each own key.
+  @override
+  void clear() => ownKeys.forEach(delete);
 
   /// A new scope of the same kind with each own key in the same order. A
   /// nested typed scope is cloned, a nested raw Map and an array are copied

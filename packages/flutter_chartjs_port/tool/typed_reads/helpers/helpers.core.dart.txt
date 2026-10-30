@@ -1,4 +1,4 @@
-jsGet 4
+jsGet 5
 jsCall 4
-jsObjectKeys 3
+jsObjectKeys 4
 extendsMapBase 1

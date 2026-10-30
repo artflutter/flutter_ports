@@ -196,7 +196,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `OptUndefined`, `OptNull`, `OptForeign`) and the classification of a raw JS value for a key of
     a shape. `option_scope.dart` has `OptionScope`, the base of the typed scopes: the own-key
     order of JS, the extras (the keys that its kind does not declare) and the face by name
-    (`jsRead`, `jsWrite`, `jsHas`, `jsDelete`, `jsKeys`). The generated files have `OptionKey`
+    (`jsRead`, `jsWrite`, `jsHas`, `jsDelete`, `jsKeys`): it implements `JsObjectFace` of
+    `js_object.dart`, and during the migration it also extends `MapBase` (the scaffolding of
+    Chart.js ADR 0054 §5, with the Map read rules). `raw_scope.dart` has `RawScope`, an extension
+    type over a user Map: the walk reads a user Map through it. `jsGet`, `jsObjectKeys`,
+    `isObject`, `clone`, `merge` and `mergeIf` take a typed scope; a `merge` into a typed scope
+    makes typed children (`_cloneToScope` of `helpers.core`). The generated files have `OptionKey`
     (one entry for each distinct key name, `optionKeyOf`), `ScopeKind` (one entry for each kind
     of the schema) and one class `<Kind>Scope` for each kind, with a field of an `Opt` cell for
     each key (`<key>Cell`) and a typed setter. A kind takes the name of its `index.d.ts`

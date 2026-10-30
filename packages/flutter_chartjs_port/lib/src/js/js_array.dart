@@ -13,6 +13,7 @@ library;
 import 'dart:collection' show ListBase;
 
 import 'package:collection/collection.dart' show mergeSort;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 
 /// `array.sort(compare)`: sorts [list] in place with a stable sort and
 /// returns it, as `Array.prototype.sort` does.
@@ -104,6 +105,7 @@ void jsSetIndex<T>(List<T> list, int index, T value) {
 /// JavaScript does.
 List<String> jsObjectKeys(Map<String, Object?> object) {
   if (object is JsProxyObject) return object.objectKeys();
+  if (object case final JsObjectFace face) return face.jsKeys();
   final indices = <(int, String)>[];
   final others = <String>[];
   for (final key in object.keys) {

@@ -13,6 +13,36 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
+/// The face by name of a typed object of the typed internal model
+/// (Chart.js ADR 0054 §5): the typed option scopes, and later the resolved
+/// options, the views, the contexts, the props, the parsed items, the
+/// plugins and the hook arguments.
+///
+/// The face is the cold API for user code, the raw boundary and the tests.
+/// It is never in a hot path. The JS runtime reads a face by name: [jsGet],
+/// [jsGetKey], `jsObjectKeys` and `jsOwnPropertyNames` take it.
+///
+/// The members have JS semantics. During the migration the typed objects
+/// also extend `MapBase` (the scaffolding of Chart.js ADR 0054 §5), whose
+/// `operator []` keeps the Map semantics (Dart `null` for an absent key).
+abstract interface class JsObjectFace {
+  /// `object[name]` (`[[Get]]`): the value of [name], or [undefined] when
+  /// the object has no such property.
+  Object? jsRead(String name);
+
+  /// `object[name] = value` (`[[Set]]`).
+  void jsWrite(String name, Object? value);
+
+  /// `Object.keys(object)`: the own enumerable keys in their order.
+  List<String> jsKeys();
+
+  /// `Object.prototype.hasOwnProperty.call(object, name)`.
+  bool jsHas(String name);
+
+  /// `delete object[name]`. Returns whether the object owned [name].
+  bool jsDelete(String name);
+}
+
 /// `object[key]`: the value of the property [key] of [object].
 ///
 /// A key that is not a `String` is its `ToString` ([jsToString]), as the
@@ -20,6 +50,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 ///
 /// - A [JsProxyObject] (a resolver of `helpers.config`): its `get` trap,
 ///   `operator []`. Its `has` trap does not know the prefixed keys.
+/// - A [JsObjectFace] (a typed object of Chart.js ADR 0054):
+///   [JsObjectFace.jsRead].
 /// - Another `Map`: the value of [key], or [undefined] for a key that the
 ///   Map does not contain. A Map that answers `operator []` for a key that
 ///   it does not contain models an inherited property.
@@ -42,6 +74,8 @@ Object? jsGet(Object? object, Object? key) {
       throw TypeError();
     case final JsProxyObject proxy:
       return proxy[name];
+    case final JsObjectFace face:
+      return face.jsRead(name);
     // `<dynamic, dynamic>` matches the same values as `<Object?, Object?>`,
     // but dart2wasm tests it without a compare of the type arguments, which
     // is about 10 ns for each read. Do not change it back.

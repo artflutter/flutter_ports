@@ -223,3 +223,14 @@ Opt<Object> classifyUnion(Object? raw, int mask) {
     _ => OptForeign<Object>(value),
   };
 }
+
+/// The cell of [raw] for a key of the shape bits [mask] ([ShapeBits]): the
+/// classification of [classifyNumber], [classifyBool], [classifyString] or
+/// [classifyScope] for a shape of one atom, else [classifyUnion].
+Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
+  ShapeBits.number => classifyNumber(raw),
+  ShapeBits.boolean => classifyBool(raw),
+  ShapeBits.string => classifyString(raw),
+  ShapeBits.scope => classifyScope<Object>(raw),
+  _ => classifyUnion(raw, mask),
+};

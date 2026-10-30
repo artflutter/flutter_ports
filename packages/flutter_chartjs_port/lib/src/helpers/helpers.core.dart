@@ -28,6 +28,8 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionScope, ScopeKind;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
@@ -95,8 +97,12 @@ bool isArray(Object? value) {
 /// - A Map with a narrower value type, for example `Map<String, int>`, is an
 ///   object. A [merge] into it throws a [TypeError] when it writes a value of
 ///   another type.
+///
+/// A typed option scope of Chart.js ADR 0054 (`OptionScope`) is an object
+/// too (§5, the leaf rule).
 bool isObject(Object? value) {
-  return value != null && value is Map<String, Object?>;
+  return value != null &&
+      (value is Map<String, Object?> || value is OptionScope);
 }
 
 /// helpers.core.ts:61 `isNumberFinite`: whether [value] is a finite number.
@@ -266,6 +272,8 @@ bool elementsEqual(List<ActiveDataPoint>? a0, List<ActiveDataPoint>? a1) {
 /// `'__proto__'` key becomes an own key, as here. Any other value is the
 /// result.
 Object? clone(Object? source) {
+  // A typed scope gives a typed copy (Chart.js ADR 0054 §3).
+  if (source is OptionScope) return source.cloneScope();
   if (isArray(source)) {
     final array = source! as List;
     // Array.prototype.map(clone). clone(v) is v for each number of a typed
@@ -330,8 +338,40 @@ void merger(
     // DIVERGES(chartjs): adapt-merge-element-target, a by-name target.
     merge(tval, sval, options);
   } else {
-    target[key] = clone(sval);
+    target[key] = _cloneFor(target, key, sval);
   }
+}
+
+/// `clone(sval)` for the key [key] of [target]. Into a typed scope, an
+/// object under a key of a nested kind gives a typed copy of that kind
+/// (Chart.js ADR 0054 §3): the same keys and values in the same order as
+/// the plain copy of [clone].
+Object? _cloneFor(AnyObject target, String key, Object? sval) {
+  if (target is OptionScope && isObject(sval)) {
+    final kind = target.childKindFor(key);
+    if (kind != null) return _cloneToScope(kind, sval!);
+  }
+  return clone(sval);
+}
+
+/// The deep copy of the object [source] as a typed scope of [kind]: each
+/// own key of [source] in the [jsObjectKeys] order, an object under a key of
+/// a nested kind as a typed scope of that kind, any other value as [clone]
+/// gives it (Chart.js ADR 0054 §3).
+OptionScope _cloneToScope(ScopeKind kind, Object source) {
+  final scope = kind.create();
+  final object = source as AnyObject;
+  for (final key in jsObjectKeys(object)) {
+    final value = jsGet(object, key);
+    final child = scope.childKindFor(key);
+    scope.jsWrite(
+      key,
+      child != null && isObject(value)
+          ? _cloneToScope(child, value!)
+          : clone(value),
+    );
+  }
+  return scope;
 }
 
 /// helpers.core.ts:237 the type of `MergeOptions.merger`: merges `source[key]`
@@ -468,7 +508,7 @@ void mergerIf(
   if (isObject(tval) && isObject(sval)) {
     mergeIf(tval, sval);
   } else if (!target.containsKey(key)) {
-    target[key] = clone(sval);
+    target[key] = _cloneFor(target, key, sval);
   }
 }
 
