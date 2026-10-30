@@ -486,6 +486,12 @@ imports neither forui nor Material.
 - All packages of the workspace and the gallery have the floor `sdk: ^3.13.0` and
   `flutter: ">=3.47.0"`. The root `pubspec.yaml` has `sdk: ^3.13.0`. Phase 9 sets the published
   floor.
+- Phase 9 (the porting lead, 2026-10-30): the published floor of 0.1.0 is the workspace floor,
+  `sdk: ^3.13.0` and `flutter: ">=3.47.0"`. Theming did not raise it. The pin does not move, so
+  AGENTS.md, CONTRIBUTING.md and README.md keep their toolchain lines, and trigger 3 of the canvas
+  cuts plan does not fire. pana 0.23.19 on the release archive of `d9011b5` gives 20 of 20 points
+  for "Compatible with dependency constraint lower bounds" (a `dart pub downgrade` and an
+  analysis) and 10 of 10 for "Package supports latest stable Dart and Flutter SDKs".
 - No CI `floor` job. A job on 3.44.9 cannot resolve a `^3.13.0` floor.
 - The gallery takes the deployment targets of the 3.47.7 app templates: iOS 15.0 and macOS 12.0.
 - A test constraint (a dependency or a dev_dependency) that matches a pin of the Flutter SDK

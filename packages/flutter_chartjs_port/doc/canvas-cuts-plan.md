@@ -784,6 +784,12 @@ Changes to the cited files:
   `helpers.dom.dart` or a test of §2.6 and §3.5 changes. The text of §2.2, of §2.7 and of the
   cited harness rows does not change. The references, the inventory (§1.1), the tests of §2.6 and
   §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-30, the published floor of phase 9 (unit 9). `porting-flow.md` §2.12 gets one bullet of
+  six lines: the published floor of 0.1.0 is the workspace floor, and the pin does not move, so
+  trigger 3 of this plan does not fire. The harness rows of §3 move from lines 824-825 to lines
+  830-831, and §3.7 gives the new lines; §2.2 (lines 266-267) and §2.7 (lines 361-364) do not
+  move. The text of the cited rows does not change. `doc/README.md` changes one sentence. No library
+  file, test or estimate changes. No trigger occurred.
 
 ## 1. Why
 
@@ -1455,7 +1461,7 @@ porting-flow.md line numbers are the lines of 2026-10-30, after the docs of phas
 - **`porting-flow.md`** (proposed): §2.2 (lines 266-267), "`paint` applies
   `scale(1 / devicePixelRatio)`" becomes "`paint` maps the bitmap pixels with the scale of the
   host". §2.7 (lines 361-364): one bullet on the canvas attributes. §3, harness table (lines
-  824-825), `acquireChart`: 512 x 512 as attributes (`UiCanvasElement(width: 512, height: 512)`),
+  830-831), `acquireChart`: 512 x 512 as attributes (`UiCanvasElement(width: 512, height: 512)`),
   the `canvas.style` option fills the inline style, a wrapper style becomes a `SizedBox`,
   `ConstrainedBox` or `Padding`, and the default wrapper is a box of the canvas display size. `toBeChartOfSize`: the display size rule of
   Chart.js ADR 0022 §9 (the inline px styles, else the render size, with the CSS rule for one
