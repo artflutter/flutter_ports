@@ -1319,6 +1319,9 @@ abstract interface class BasePlatform {
 /// `updateConfig`. Its `options` getter returns the options object of the
 /// configuration, which `initOptions` always creates
 /// (core.config.js:115-120).
+///
+/// The typed config of the app library, `ChartConfig` (Chart.js ADR 0052),
+/// is another type: it lowers to the Maps of a Chart.js config.
 abstract interface class ChartConfiguration {
   /// index.d.ts:3921 `options?: ChartOptions<TType>`. A Map
   /// (Chart.js ADR 0043).

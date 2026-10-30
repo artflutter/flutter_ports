@@ -790,6 +790,17 @@ Changes to the cited files:
   830-831, and §3.7 gives the new lines; §2.2 (lines 266-267) and §2.7 (lines 361-364) do not
   move. The text of the cited rows does not change. `doc/README.md` changes one sentence. No library
   file, test or estimate changes. No trigger occurred.
+- 2026-10-30, the typed API of [Chart.js ADR 0052](adr/0052-typed-public-api.md) (proposed, phase
+  10, the value types, the datasets, the axes, the groups and `ChartConfig`). `doc/parity.md` gets
+  18 port-only rows of `lib/src/typed/` and `test/port/typed/` above the canvas rows: the rows that
+  this plan cites move by +18 from their lines of 2026-10-30 before phase 10 (`canvas_ui.dart`
+  from line 382 to line 400, `canvas_ui_path.dart` from 383 to 401, `chart_host.dart` from 390 to
+  408, `chart_host_test.dart` from 426 to 444), and their text does not change.
+  `lib/src/types/index.dart` gets one dartdoc paragraph on `ChartConfiguration`, and
+  `tool/src/lib_imports.dart` gets the allowlist of `lib/src/typed/`; this plan cites no line of
+  these files. No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`,
+  `helpers.dom.dart` or a test of §2.6 and §3.5 changes. The references, the inventory (§1.1), the
+  tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

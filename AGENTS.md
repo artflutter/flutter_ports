@@ -40,8 +40,9 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
     the web legs compile. It also fails when a ported file imports `lib/src/theme/`, and when a
     file of `lib/src/widgets/` imports a file of `controllers/`, `scales/`, `elements/` or
     `plugins/`, or `lib/src/index.dart` or `lib/src/index.umd.dart`: the widget registers no
-    component (Chart.js ADR 0048 §3). It keeps the `lib/pure.dart` closure of
-    `packages/chartjs_test_utils` a pure layer.
+    component (Chart.js ADR 0048 §3). It fails when a ported file imports `lib/src/typed/`, and
+    when a file of `lib/src/typed/` imports a library outside the allowlist of Chart.js ADR 0052
+    §8. It keeps the `lib/pure.dart` closure of `packages/chartjs_test_utils` a pure layer.
   - `check:headers`: the line-1 header of each Dart file in `lib/`, `test/` and `tool/` of
     `flutter_chartjs_port` and `chartjs_test_utils`. It compares the project, license and holder with
     `packages/flutter_chartjs_port/tool/port_sources.yaml`, the `LICENSE` of the package that contains

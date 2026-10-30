@@ -12,6 +12,9 @@
 /// - A file of `lib/src/widgets/` imports no component and no index of the
 ///   components: the widget registers no component (Chart.js ADR 0048,
 ///   section 3).
+/// - A file of `lib/src/typed/` imports only the allowlist of the typed API,
+///   and ported files do not import `lib/src/typed/` (Chart.js ADR 0052,
+///   section 8).
 /// - `lib/` imports `package:collection/collection.dart` only with
 ///   `show mergeSort` (Chart.js ADR 0045, Sort).
 /// - The `lib/pure.dart` closure of the harness package `chartjs_test_utils`
@@ -187,6 +190,41 @@ const List<String> widgetForbiddenTargets = [
   'lib/src/index.umd.dart',
 ];
 
+/// The directory of the typed API (Chart.js ADR 0052). Ported files never
+/// import it.
+const String typedDirectory = 'lib/src/typed/';
+
+/// The libraries that a file of [typedDirectory] can import (Chart.js ADR
+/// 0052, section 8).
+const Set<String> typedLibraries = {
+  'dart:ui',
+  'package:flutter/foundation.dart',
+  'package:flutter/painting.dart',
+  'package:meta/meta.dart',
+};
+
+/// The files of the package that a file of [typedDirectory] can import
+/// (Chart.js ADR 0052, section 8). An entry that ends with `/` is a
+/// directory.
+///
+/// The typed API writes option keys, not components: no file of
+/// [typedDirectory] imports a controller, a scale, an element or a plugin,
+/// so the tree shaking of Chart.js ADR 0048, section 3, stays. It reads
+/// `Chart` of `core.controller`, `Scale` of `core.scale`, `TimeUnit` of
+/// `core.adapters`, the types of `lib/src/types/`, three files of the JS
+/// runtime and the conversions of `css.dart`.
+const List<String> typedTargets = [
+  typedDirectory,
+  'lib/src/types/',
+  'lib/src/core/core.adapters.dart',
+  'lib/src/core/core.controller.dart',
+  'lib/src/core/core.scale.dart',
+  'lib/src/js/js_function.dart',
+  'lib/src/js/js_number.dart',
+  'lib/src/js/js_undefined.dart',
+  'lib/src/theme/css.dart',
+];
+
 /// The pure-layer root of the harness package (porting-flow.md 3).
 const String harnessPureRoot = 'lib/pure.dart';
 
@@ -340,7 +378,7 @@ final class _Edge {
     }
   }
 
-  // Ported files and the theme.
+  // Ported files, the theme and the typed API.
   for (final library in libraries.values) {
     if (library.header.kind != HeaderKind.ported) continue;
     for (final edge in library.edges) {
@@ -350,6 +388,37 @@ final class _Edge {
           edge.line,
           'imports ${edge.target}, but ported files never import '
           '$themeDirectory (Chart.js ADR 0050).',
+        );
+      }
+      if (edge.target?.startsWith(typedDirectory) ?? false) {
+        report(
+          library,
+          edge.line,
+          'imports ${edge.target}, but ported files never import '
+          '$typedDirectory (Chart.js ADR 0052 §8).',
+        );
+      }
+    }
+  }
+
+  // The allowlist of the typed API.
+  for (final library in libraries.values) {
+    if (!library.path.startsWith(typedDirectory)) continue;
+    for (final edge in library.edges) {
+      final target = edge.target;
+      final allowed = target == null
+          ? typedLibraries.contains(edge.uri)
+          : typedTargets.any(
+              (entry) => entry.endsWith('/')
+                  ? target.startsWith(entry)
+                  : target == entry,
+            );
+      if (!allowed) {
+        report(
+          library,
+          edge.line,
+          'imports ${target ?? edge.uri}, which is not on the allowlist of '
+          '$typedDirectory (Chart.js ADR 0052 §8).',
         );
       }
     }

@@ -89,7 +89,10 @@ ActiveDataPoint
 ActiveElement
 Animations
 ArcElement
+AxisGrid
 AxisTickInfo
+AxisTicks
+AxisTitle
 BackdropOptions
 BarController
 BarDataset
@@ -105,10 +108,15 @@ CanvasImageSource
 CanvasPath
 CanvasPattern
 CanvasRenderingContext2D
+CategoryAxis
 CategoryScale
 Chart
 ChartAlign
+ChartAnimation
+ChartAnimationDetails
 ChartArea
+ChartAxis
+ChartConfig
 ChartConfiguration
 ChartContext
 ChartEasing
@@ -116,8 +124,10 @@ ChartEvent
 ChartEventDetails
 ChartFill
 ChartHit
+ChartInteraction
 ChartInteractionMode
 ChartKind
+ChartLegend
 ChartLegendEventDetails
 ChartLegendItem
 ChartLength
@@ -128,6 +138,8 @@ ChartPosition
 ChartScript
 ChartTheme
 ChartThemeData
+ChartTitle
+ChartTooltip
 ChartTooltipItem
 ChartView
 DataPoint
@@ -148,7 +160,9 @@ LegendElement
 LineController
 LineDataset
 LineElement
+LinearAxis
 LinearScale
+LogarithmicAxis
 LogarithmicScale
 Path2D
 PieController
@@ -159,6 +173,7 @@ PolarAreaController
 PolarAreaDataset
 RadarController
 RadarDataset
+RadialLinearAxis
 RadialLinearScale
 RenderTextOpts
 Scale
@@ -168,7 +183,9 @@ Segment
 TRBL
 TextMetrics
 Tick
+TimeAxis
 TimeScale
+TimeSeriesAxis
 TimeSeriesScale
 TimeUnit
 TooltipModel

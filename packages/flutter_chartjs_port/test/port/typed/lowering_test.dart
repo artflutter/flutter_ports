@@ -2,12 +2,17 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui' show Color;
+import 'dart:ui' show Color, FontWeight;
 
 import 'package:flutter/foundation.dart' show ValueKey;
+import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
+import 'package:flutter_chartjs_port/src/js/js_function.dart'
+    show JsFunction, jsCall;
+import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'twin.dart';
@@ -17,7 +22,9 @@ import 'twin.dart';
 // twin, the form of the Chart.js docs, with the same keys in the same order
 // (`jsObjectKeys`). A typed object with all its fields lowers to the twin
 // with all keys, in parameter order. The chart reads only the Maps, so equal
-// Maps give equal charts.
+// Maps give equal charts. The datasets, the axes, the option groups and the
+// config each have a group. A callback lowers to a function; the chart
+// cases of callbacks_test.dart call the functions.
 //
 // VM only: the typed files import dart:ui and the painting library.
 
@@ -332,6 +339,540 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
   'cutout, pixels': (_arcs(cutout: const .pixels(20)), {'cutout': 20}),
   'radius, a percent': (_arcs(radius: const .percent(90)), {'radius': '90%'}),
   'radius, pixels': (_arcs(radius: const .pixels(100)), {'radius': 100}),
+};
+
+/// A font and its `FontSpec` Map.
+const TextStyle _font = TextStyle(
+  fontFamily: 'Arial',
+  fontSize: 14,
+  fontWeight: FontWeight.w700,
+);
+const Map<String, Object?> _fontValue = {
+  'family': "'Arial'",
+  'size': 14,
+  'weight': 700,
+};
+
+/// The times of the time axes.
+final DateTime _start = DateTime.utc(2020);
+final DateTime _end = DateTime.utc(2021);
+
+/// The function of a twin: the lowered value is a function too.
+Object? _function([Object? a, Object? b, Object? c]) => null;
+
+/// A tick format.
+String? _format(AxisTickInfo tick) => '${tick.value}';
+
+/// A legend handler.
+void _onLegend(ChartLegendEventDetails details) {}
+
+/// A tooltip text of the items.
+String? _title2(List<ChartTooltipItem> items) => 'T';
+
+/// A tooltip text of one item.
+String? _label(ChartTooltipItem item) => 'L';
+
+/// An animation callback.
+void _onAnimation(ChartAnimationDetails details) {}
+
+/// A chart callback.
+void _onEvent(ChartEventDetails details) {}
+
+/// The options Map of the root Map of [config].
+Map<String, Object?> _options(ChartConfig config) =>
+    ChartConfigLowering(config).lower()['options']! as Map<String, Object?>;
+
+/// The 6 axis classes, each without a parameter, with its scale type.
+const List<(ChartAxis, String)> _axes = [
+  (CategoryAxis(), 'category'),
+  (LinearAxis(), 'linear'),
+  (LogarithmicAxis(), 'logarithmic'),
+  (TimeAxis(), 'time'),
+  (TimeSeriesAxis(), 'timeseries'),
+  (RadialLinearAxis(), 'radialLinear'),
+];
+
+/// The cases of the parameters of [ChartAxis]: a function that sets one
+/// parameter with `copyWith`, and the raw twin without its `type`.
+final Map<String, (ChartAxis Function(ChartAxis), Map<String, Object?>)>
+_axisCommon = {
+  'display': ((a) => a.copyWith(display: false), {'display': false}),
+  'position': ((a) => a.copyWith(position: .left), {'position': 'left'}),
+  'position, center': (
+    (a) => a.copyWith(position: .center),
+    {'position': 'center'},
+  ),
+  'reverse': ((a) => a.copyWith(reverse: true), {'reverse': true}),
+  'stacked': ((a) => a.copyWith(stacked: true), {'stacked': true}),
+  'ticks': (
+    (a) => a.copyWith(ticks: const AxisTicks(display: false)),
+    {
+      'ticks': {'display': false},
+    },
+  ),
+  'grid': (
+    (a) => a.copyWith(grid: const AxisGrid(display: false)),
+    {
+      'grid': {'display': false},
+    },
+  ),
+  'title': (
+    (a) => a.copyWith(title: const AxisTitle(text: 'T')),
+    {
+      'title': {'text': 'T'},
+    },
+  ),
+  'extra': ((a) => a.copyWith(extra: {'grace': '5%'}), {'grace': '5%'}),
+};
+
+/// The cases of the parameters of the axis classes: the typed axes with
+/// one parameter and the raw twin without its `type`.
+final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
+    {
+      'min of a category axis': (
+        const [(CategoryAxis(min: 'b'), 'category')],
+        {'min': 'b'},
+      ),
+      'max of a category axis': (
+        const [(CategoryAxis(max: 'c'), 'category')],
+        {'max': 'c'},
+      ),
+      'min': (
+        const [
+          (LinearAxis(min: -1), 'linear'),
+          (LogarithmicAxis(min: -1), 'logarithmic'),
+          (RadialLinearAxis(min: -1), 'radialLinear'),
+        ],
+        {'min': -1},
+      ),
+      'max': (
+        const [
+          (LinearAxis(max: 9), 'linear'),
+          (LogarithmicAxis(max: 9), 'logarithmic'),
+          (RadialLinearAxis(max: 9), 'radialLinear'),
+        ],
+        {'max': 9},
+      ),
+      'suggestedMin': (
+        const [
+          (LinearAxis(suggestedMin: 2), 'linear'),
+          (LogarithmicAxis(suggestedMin: 2), 'logarithmic'),
+        ],
+        {'suggestedMin': 2},
+      ),
+      'suggestedMax': (
+        const [
+          (LinearAxis(suggestedMax: 8), 'linear'),
+          (LogarithmicAxis(suggestedMax: 8), 'logarithmic'),
+        ],
+        {'suggestedMax': 8},
+      ),
+      'beginAtZero': (
+        const [
+          (LinearAxis(beginAtZero: true), 'linear'),
+          (RadialLinearAxis(beginAtZero: true), 'radialLinear'),
+        ],
+        {'beginAtZero': true},
+      ),
+      'min of a time axis': (
+        [
+          (TimeAxis(min: _start), 'time'),
+          (TimeSeriesAxis(min: _start), 'timeseries'),
+        ],
+        {'min': _start},
+      ),
+      'max of a time axis': (
+        [
+          (TimeAxis(max: _end), 'time'),
+          (TimeSeriesAxis(max: _end), 'timeseries'),
+        ],
+        {'max': _end},
+      ),
+      'unit': (
+        const [
+          (TimeAxis(unit: 'day'), 'time'),
+          (TimeSeriesAxis(unit: 'day'), 'timeseries'),
+        ],
+        {
+          'time': {'unit': 'day'},
+        },
+      ),
+      'tooltipFormat': (
+        const [
+          (TimeAxis(tooltipFormat: 'yyyy'), 'time'),
+          (TimeSeriesAxis(tooltipFormat: 'yyyy'), 'timeseries'),
+        ],
+        {
+          'time': {'tooltipFormat': 'yyyy'},
+        },
+      ),
+      'startAngle': (
+        const [(RadialLinearAxis(startAngle: 45), 'radialLinear')],
+        {'startAngle': 45},
+      ),
+      'pointLabelsDisplay': (
+        const [(RadialLinearAxis(pointLabelsDisplay: false), 'radialLinear')],
+        {
+          'pointLabels': {'display': false},
+        },
+      ),
+      'pointLabelsFont': (
+        const [(RadialLinearAxis(pointLabelsFont: _font), 'radialLinear')],
+        {
+          'pointLabels': {'font': _fontValue},
+        },
+      ),
+      'angleLinesColor': (
+        const [(RadialLinearAxis(angleLinesColor: _red), 'radialLinear')],
+        {
+          'angleLines': {'color': _redValue},
+        },
+      ),
+    };
+
+/// The cases of the parameters of [AxisTicks] and the twin `ticks` Map.
+const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
+  'display': (AxisTicks(display: false), {'display': false}),
+  'color': (AxisTicks(color: _red), {'color': _redValue}),
+  'font': (AxisTicks(font: _font), {'font': _fontValue}),
+  'padding': (AxisTicks(padding: 6), {'padding': 6}),
+  'stepSize': (AxisTicks(stepSize: 5), {'stepSize': 5}),
+  'maxRotation': (AxisTicks(maxRotation: 0), {'maxRotation': 0}),
+  'autoSkip': (AxisTicks(autoSkip: false), {'autoSkip': false}),
+  'extra': (AxisTicks(extra: {'precision': 0}), {'precision': 0}),
+};
+
+/// The cases of the parameters of [AxisGrid] and the twin `grid` Map.
+const Map<String, (AxisGrid, Map<String, Object?>)> _grid = {
+  'display': (AxisGrid(display: false), {'display': false}),
+  'color': (AxisGrid(color: _blue), {'color': _blueValue}),
+  'lineWidth': (AxisGrid(lineWidth: 2), {'lineWidth': 2}),
+  'drawOnChartArea': (
+    AxisGrid(drawOnChartArea: false),
+    {'drawOnChartArea': false},
+  ),
+  'drawTicks': (AxisGrid(drawTicks: false), {'drawTicks': false}),
+  'offset': (AxisGrid(offset: true), {'offset': true}),
+  'extra': (AxisGrid(extra: {'tickLength': 4}), {'tickLength': 4}),
+};
+
+/// The cases of the parameters of [AxisTitle] and the twin `title` Map.
+const Map<String, (AxisTitle, Map<String, Object?>)> _axisTitle = {
+  'display': (AxisTitle(display: true), {'display': true}),
+  'text': (AxisTitle(text: 'Month'), {'text': 'Month'}),
+  'color': (AxisTitle(color: _red), {'color': _redValue}),
+  'font': (AxisTitle(font: _font), {'font': _fontValue}),
+  'align': (AxisTitle(align: .end), {'align': 'end'}),
+  'padding': (
+    AxisTitle(padding: EdgeInsets.symmetric(vertical: 4)),
+    {
+      'padding': {'top': 4, 'right': 0, 'bottom': 4, 'left': 0},
+    },
+  ),
+  'extra': (AxisTitle(extra: {'strokeWidth': 1}), {'strokeWidth': 1}),
+};
+
+/// The cases of the parameters of [ChartLegend] and the twin `legend` Map.
+const Map<String, (ChartLegend, Map<String, Object?>)> _legend = {
+  'display': (ChartLegend(display: false), {'display': false}),
+  'position': (ChartLegend(position: .chartArea), {'position': 'chartArea'}),
+  'align': (ChartLegend(align: .start), {'align': 'start'}),
+  'reverse': (ChartLegend(reverse: true), {'reverse': true}),
+  'labelColor': (
+    ChartLegend(labelColor: _red),
+    {
+      'labels': {'color': _redValue},
+    },
+  ),
+  'labelFont': (
+    ChartLegend(labelFont: _font),
+    {
+      'labels': {'font': _fontValue},
+    },
+  ),
+  'boxWidth': (
+    ChartLegend(boxWidth: 12),
+    {
+      'labels': {'boxWidth': 12},
+    },
+  ),
+  'boxHeight': (
+    ChartLegend(boxHeight: 6),
+    {
+      'labels': {'boxHeight': 6},
+    },
+  ),
+  'labelPadding': (
+    ChartLegend(labelPadding: 3),
+    {
+      'labels': {'padding': 3},
+    },
+  ),
+  'usePointStyle': (
+    ChartLegend(usePointStyle: true),
+    {
+      'labels': {'usePointStyle': true},
+    },
+  ),
+  'onClick': (ChartLegend(onClick: _onLegend), {'onClick': _function}),
+  'onHover': (ChartLegend(onHover: _onLegend), {'onHover': _function}),
+  'onLeave': (ChartLegend(onLeave: _onLegend), {'onLeave': _function}),
+  'extra': (ChartLegend(extra: {'maxHeight': 50}), {'maxHeight': 50}),
+};
+
+/// The cases of the parameters of [ChartTitle] and the twin Map.
+const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
+  'display': (ChartTitle(display: true), {'display': true}),
+  'text': (ChartTitle(text: 'Votes'), {'text': 'Votes'}),
+  'color': (ChartTitle(color: _blue), {'color': _blueValue}),
+  'font': (ChartTitle(font: _font), {'font': _fontValue}),
+  'align': (ChartTitle(align: .start), {'align': 'start'}),
+  'position': (ChartTitle(position: .bottom), {'position': 'bottom'}),
+  'padding': (
+    ChartTitle(padding: EdgeInsets.only(top: 10, bottom: 30)),
+    {
+      'padding': {'top': 10, 'right': 0, 'bottom': 30, 'left': 0},
+    },
+  ),
+  'fullSize': (ChartTitle(fullSize: false), {'fullSize': false}),
+  'extra': (
+    ChartTitle(
+      extra: {
+        'text': ['A', 'B'],
+      },
+    ),
+    {
+      'text': ['A', 'B'],
+    },
+  ),
+};
+
+/// The cases of the parameters of [ChartTooltip] and the twin Map.
+const Map<String, (ChartTooltip, Map<String, Object?>)> _tooltip = {
+  'enabled': (ChartTooltip(enabled: false), {'enabled': false}),
+  'mode': (ChartTooltip(mode: .index), {'mode': 'index'}),
+  'intersect': (ChartTooltip(intersect: false), {'intersect': false}),
+  'backgroundColor': (
+    ChartTooltip(backgroundColor: _red),
+    {'backgroundColor': _redValue},
+  ),
+  'titleColor': (ChartTooltip(titleColor: _red), {'titleColor': _redValue}),
+  'titleFont': (ChartTooltip(titleFont: _font), {'titleFont': _fontValue}),
+  'bodyColor': (ChartTooltip(bodyColor: _blue), {'bodyColor': _blueValue}),
+  'bodyFont': (ChartTooltip(bodyFont: _font), {'bodyFont': _fontValue}),
+  'footerColor': (
+    ChartTooltip(footerColor: _blue),
+    {'footerColor': _blueValue},
+  ),
+  'footerFont': (ChartTooltip(footerFont: _font), {'footerFont': _fontValue}),
+  'padding': (
+    ChartTooltip(padding: EdgeInsets.all(10)),
+    {
+      'padding': {'top': 10, 'right': 10, 'bottom': 10, 'left': 10},
+    },
+  ),
+  'cornerRadius': (ChartTooltip(cornerRadius: 0), {'cornerRadius': 0}),
+  'displayColors': (
+    ChartTooltip(displayColors: false),
+    {'displayColors': false},
+  ),
+  'titleText': (
+    ChartTooltip(titleText: _title2),
+    {
+      'callbacks': {'title': _function},
+    },
+  ),
+  'labelText': (
+    ChartTooltip(labelText: _label),
+    {
+      'callbacks': {'label': _function},
+    },
+  ),
+  'footerText': (
+    ChartTooltip(footerText: _title2),
+    {
+      'callbacks': {'footer': _function},
+    },
+  ),
+  'extra': (
+    ChartTooltip(extra: {'position': 'nearest'}),
+    {'position': 'nearest'},
+  ),
+};
+
+/// The cases of the parameters of [ChartInteraction] and the twin Map.
+const Map<String, (ChartInteraction, Map<String, Object?>)> _interaction = {
+  'mode': (ChartInteraction(mode: .x), {'mode': 'x'}),
+  'mode, a custom mode': (
+    ChartInteraction(mode: ChartInteractionMode('myMode')),
+    {'mode': 'myMode'},
+  ),
+  'intersect': (ChartInteraction(intersect: false), {'intersect': false}),
+  'includeInvisible': (
+    ChartInteraction(includeInvisible: true),
+    {'includeInvisible': true},
+  ),
+  'extra': (ChartInteraction(extra: {'axis': 'xy'}), {'axis': 'xy'}),
+};
+
+/// The cases of the parameters of [ChartAnimation] and the twin value.
+const Map<String, (ChartAnimation, Object)> _animation = {
+  'none': (ChartAnimation.none, false),
+  'duration': (
+    ChartAnimation(duration: Duration(milliseconds: 400)),
+    {'duration': 400},
+  ),
+  'duration, a fraction of a millisecond': (
+    ChartAnimation(duration: Duration(microseconds: 1500)),
+    {'duration': 1.5},
+  ),
+  'delay': (ChartAnimation(delay: Duration(seconds: 1)), {'delay': 1000}),
+  'easing': (
+    ChartAnimation(easing: .easeInOutBack),
+    {'easing': 'easeInOutBack'},
+  ),
+  'loop': (ChartAnimation(loop: true), {'loop': true}),
+  'onProgress': (
+    ChartAnimation(onProgress: _onAnimation),
+    {'onProgress': _function},
+  ),
+  'onComplete': (
+    ChartAnimation(onComplete: _onAnimation),
+    {'onComplete': _function},
+  ),
+  'extra': (
+    ChartAnimation(extra: {'animateScale': true}),
+    {'animateScale': true},
+  ),
+};
+
+/// The cases of the option parameters of [ChartConfig] and the twin
+/// options Map.
+const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
+  'scales': (
+    ChartConfig(
+      type: .bar,
+      datasets: [],
+      scales: {'y': LinearAxis(beginAtZero: true)},
+    ),
+    {
+      'scales': {
+        'y': {'type': 'linear', 'beginAtZero': true},
+      },
+    },
+  ),
+  'indexAxis': (
+    ChartConfig(type: .bar, datasets: [], indexAxis: .y),
+    {'indexAxis': 'y'},
+  ),
+  'responsive': (
+    ChartConfig(type: .bar, datasets: [], responsive: false),
+    {'responsive': false},
+  ),
+  'maintainAspectRatio': (
+    ChartConfig(type: .bar, datasets: [], maintainAspectRatio: false),
+    {'maintainAspectRatio': false},
+  ),
+  'aspectRatio': (
+    ChartConfig(type: .bar, datasets: [], aspectRatio: 1.5),
+    {'aspectRatio': 1.5},
+  ),
+  'padding': (
+    ChartConfig(type: .bar, datasets: [], padding: EdgeInsets.all(20)),
+    {
+      'layout': {
+        'padding': {'top': 20, 'right': 20, 'bottom': 20, 'left': 20},
+      },
+    },
+  ),
+  'legend': (
+    ChartConfig(type: .bar, datasets: [], legend: ChartLegend()),
+    {
+      'plugins': {'legend': <String, Object?>{}},
+    },
+  ),
+  'title': (
+    ChartConfig(type: .bar, datasets: [], title: ChartTitle()),
+    {
+      'plugins': {'title': <String, Object?>{}},
+    },
+  ),
+  'subtitle': (
+    ChartConfig(type: .bar, datasets: [], subtitle: ChartTitle()),
+    {
+      'plugins': {'subtitle': <String, Object?>{}},
+    },
+  ),
+  'tooltip': (
+    ChartConfig(type: .bar, datasets: [], tooltip: ChartTooltip()),
+    {
+      'plugins': {'tooltip': <String, Object?>{}},
+    },
+  ),
+  'interaction': (
+    ChartConfig(type: .bar, datasets: [], interaction: ChartInteraction()),
+    {'interaction': <String, Object?>{}},
+  ),
+  'animation': (
+    ChartConfig(type: .bar, datasets: [], animation: ChartAnimation()),
+    {'animation': <String, Object?>{}},
+  ),
+  'onClick': (
+    ChartConfig(type: .bar, datasets: [], onClick: _onEvent),
+    {'onClick': _function},
+  ),
+  'onHover': (
+    ChartConfig(type: .bar, datasets: [], onHover: _onEvent),
+    {'onHover': _function},
+  ),
+  'extra': (
+    ChartConfig(type: .bar, datasets: [], extra: {'locale': 'de-DE'}),
+    {'locale': 'de-DE'},
+  ),
+  'all options, in parameter order': (
+    ChartConfig(
+      type: .bar,
+      datasets: [],
+      scales: {'x': CategoryAxis()},
+      indexAxis: .x,
+      responsive: true,
+      maintainAspectRatio: true,
+      aspectRatio: 2,
+      padding: EdgeInsets.all(1),
+      legend: ChartLegend(display: true),
+      title: ChartTitle(display: true),
+      subtitle: ChartTitle(display: false),
+      tooltip: ChartTooltip(enabled: true),
+      interaction: ChartInteraction(intersect: true),
+      animation: ChartAnimation.none,
+      onClick: _onEvent,
+      onHover: _onEvent,
+      extra: {'locale': 'en-US'},
+    ),
+    {
+      'scales': {
+        'x': {'type': 'category'},
+      },
+      'indexAxis': 'x',
+      'responsive': true,
+      'maintainAspectRatio': true,
+      'aspectRatio': 2,
+      'layout': {
+        'padding': {'top': 1, 'right': 1, 'bottom': 1, 'left': 1},
+      },
+      'plugins': {
+        'legend': {'display': true},
+        'title': {'display': true},
+        'subtitle': {'display': false},
+        'tooltip': {'enabled': true},
+      },
+      'interaction': {'intersect': true},
+      'animation': false,
+      'onClick': _function,
+      'onHover': _function,
+      'locale': 'en-US',
+    },
+  ),
 };
 
 void main() {
@@ -921,6 +1462,668 @@ void main() {
           'clip': 5,
         });
       });
+    });
+  });
+
+  group('the axes', () {
+    group('each parameter of ChartAxis, in each axis class', () {
+      for (final MapEntry(key: name, value: (set, twin))
+          in _axisCommon.entries) {
+        test(name, () {
+          for (final (axis, type) in _axes) {
+            expectTwin(lowerAxis(set(axis)), {'type': type, ...twin});
+          }
+        });
+      }
+    });
+
+    group('each parameter of the axis classes', () {
+      for (final MapEntry(key: name, value: (axes, twin)) in _axisOwn.entries) {
+        test(name, () {
+          for (final (axis, type) in axes) {
+            expectTwin(lowerAxis(axis), {'type': type, ...twin});
+          }
+        });
+      }
+    });
+
+    test('the labels of a category axis go by reference', () {
+      final labels = <Object>['a', 'b'];
+      final lowered = lowerAxis(CategoryAxis(labels: labels));
+      expectTwin(lowered, {'type': 'category', 'labels': labels});
+      expect(lowered['labels'], same(labels));
+    });
+
+    group('each parameter of AxisTicks', () {
+      for (final MapEntry(key: name, value: (ticks, twin)) in _ticks.entries) {
+        test(name, () {
+          expectTwin(lowerAxis(LinearAxis(ticks: ticks)), {
+            'type': 'linear',
+            'ticks': twin,
+          });
+        });
+      }
+
+      test('format, a JsFunction', () {
+        final lowered = lowerAxis(
+          const LinearAxis(ticks: AxisTicks(format: _format)),
+        );
+        final ticks = lowered['ticks']! as Map<String, Object?>;
+        expect(ticks.keys, ['callback']);
+        expect(ticks['callback'], isA<JsFunction>());
+      });
+    });
+
+    group('each parameter of AxisGrid', () {
+      for (final MapEntry(key: name, value: (grid, twin)) in _grid.entries) {
+        test(name, () {
+          expectTwin(lowerAxis(LinearAxis(grid: grid)), {
+            'type': 'linear',
+            'grid': twin,
+          });
+        });
+      }
+    });
+
+    group('each parameter of AxisTitle', () {
+      for (final MapEntry(key: name, value: (title, twin))
+          in _axisTitle.entries) {
+        test(name, () {
+          expectTwin(lowerAxis(LinearAxis(title: title)), {
+            'type': 'linear',
+            'title': twin,
+          });
+        });
+      }
+    });
+
+    test('extra merges into the Map of a part', () {
+      expectTwin(
+        lowerAxis(
+          const LinearAxis(
+            grid: AxisGrid(color: _red),
+            extra: {
+              'grid': {'tickLength': 4},
+              'grace': '5%',
+            },
+          ),
+        ),
+        {
+          'type': 'linear',
+          'grid': {'color': _redValue, 'tickLength': 4},
+          'grace': '5%',
+        },
+      );
+    });
+
+    test('each axis class with all its parameters, in parameter order', () {
+      const ticks = AxisTicks(display: true, color: _red);
+      const grid = AxisGrid(display: false);
+      const title = AxisTitle(display: true, text: 'T');
+      const tail = <String, Object?>{
+        'ticks': {'display': true, 'color': _redValue},
+        'grid': {'display': false},
+        'title': {'display': true, 'text': 'T'},
+        'grace': 1,
+      };
+      const head = <String, Object?>{
+        'display': true,
+        'position': 'right',
+        'reverse': true,
+        'stacked': true,
+      };
+      final labels = <Object>['a'];
+      final cases = <(ChartAxis, Map<String, Object?>)>[
+        (
+          CategoryAxis(
+            display: true,
+            position: .right,
+            reverse: true,
+            stacked: true,
+            labels: labels,
+            min: 'a',
+            max: 'b',
+            ticks: ticks,
+            grid: grid,
+            title: title,
+            extra: const {'grace': 1},
+          ),
+          {
+            'type': 'category',
+            ...head,
+            'labels': labels,
+            'min': 'a',
+            'max': 'b',
+            ...tail,
+          },
+        ),
+        (
+          const LinearAxis(
+            display: true,
+            position: .right,
+            reverse: true,
+            stacked: true,
+            min: 0,
+            max: 10,
+            suggestedMin: 1,
+            suggestedMax: 9,
+            beginAtZero: true,
+            ticks: ticks,
+            grid: grid,
+            title: title,
+            extra: {'grace': 1},
+          ),
+          {
+            'type': 'linear',
+            ...head,
+            'min': 0,
+            'max': 10,
+            'suggestedMin': 1,
+            'suggestedMax': 9,
+            'beginAtZero': true,
+            ...tail,
+          },
+        ),
+        (
+          const LogarithmicAxis(
+            display: true,
+            position: .right,
+            reverse: true,
+            stacked: true,
+            min: 1,
+            max: 1000,
+            suggestedMin: 10,
+            suggestedMax: 100,
+            ticks: ticks,
+            grid: grid,
+            title: title,
+            extra: {'grace': 1},
+          ),
+          {
+            'type': 'logarithmic',
+            ...head,
+            'min': 1,
+            'max': 1000,
+            'suggestedMin': 10,
+            'suggestedMax': 100,
+            ...tail,
+          },
+        ),
+        for (final (axis, type) in [
+          (
+            TimeAxis(
+              display: true,
+              position: .right,
+              reverse: true,
+              stacked: true,
+              min: _start,
+              max: _end,
+              unit: 'month',
+              tooltipFormat: 'yyyy-MM',
+              ticks: ticks,
+              grid: grid,
+              title: title,
+              extra: const {'grace': 1},
+            ),
+            'time',
+          ),
+          (
+            TimeSeriesAxis(
+              display: true,
+              position: .right,
+              reverse: true,
+              stacked: true,
+              min: _start,
+              max: _end,
+              unit: 'month',
+              tooltipFormat: 'yyyy-MM',
+              ticks: ticks,
+              grid: grid,
+              title: title,
+              extra: const {'grace': 1},
+            ),
+            'timeseries',
+          ),
+        ])
+          (
+            axis,
+            {
+              'type': type,
+              ...head,
+              'min': _start,
+              'max': _end,
+              'time': {'unit': 'month', 'tooltipFormat': 'yyyy-MM'},
+              ...tail,
+            },
+          ),
+        (
+          const RadialLinearAxis(
+            display: true,
+            position: .right,
+            reverse: true,
+            stacked: true,
+            min: 0,
+            max: 10,
+            beginAtZero: true,
+            startAngle: 90,
+            pointLabelsDisplay: true,
+            pointLabelsFont: _font,
+            angleLinesColor: _blue,
+            ticks: ticks,
+            grid: grid,
+            title: title,
+            extra: {'grace': 1},
+          ),
+          {
+            'type': 'radialLinear',
+            ...head,
+            'min': 0,
+            'max': 10,
+            'beginAtZero': true,
+            'startAngle': 90,
+            'pointLabels': {'display': true, 'font': _fontValue},
+            'angleLines': {'color': _blueValue},
+            ...tail,
+          },
+        ),
+      ];
+      for (final (axis, twin) in cases) {
+        expectTwin(lowerAxis(axis), twin);
+      }
+    });
+  });
+
+  group('the option groups', () {
+    group('each parameter of ChartLegend', () {
+      for (final MapEntry(key: name, value: (legend, twin))
+          in _legend.entries) {
+        test(name, () {
+          expectTwin(
+            _options(
+              ChartConfig(type: .bar, datasets: const [], legend: legend),
+            ),
+            {
+              'plugins': {'legend': twin},
+            },
+          );
+        });
+      }
+    });
+
+    group('each parameter of ChartTitle, as the title and the subtitle', () {
+      for (final MapEntry(key: name, value: (title, twin)) in _title.entries) {
+        test(name, () {
+          expectTwin(
+            _options(
+              ChartConfig(
+                type: .bar,
+                datasets: const [],
+                title: title,
+                subtitle: title,
+              ),
+            ),
+            {
+              'plugins': {'title': twin, 'subtitle': twin},
+            },
+          );
+        });
+      }
+    });
+
+    group('each parameter of ChartTooltip', () {
+      for (final MapEntry(key: name, value: (tooltip, twin))
+          in _tooltip.entries) {
+        test(name, () {
+          expectTwin(
+            _options(
+              ChartConfig(type: .bar, datasets: const [], tooltip: tooltip),
+            ),
+            {
+              'plugins': {'tooltip': twin},
+            },
+          );
+        });
+      }
+    });
+
+    group('each parameter of ChartInteraction', () {
+      for (final MapEntry(key: name, value: (interaction, twin))
+          in _interaction.entries) {
+        test(name, () {
+          expectTwin(
+            _options(
+              ChartConfig(
+                type: .bar,
+                datasets: const [],
+                interaction: interaction,
+              ),
+            ),
+            {'interaction': twin},
+          );
+        });
+      }
+    });
+
+    group('each parameter of ChartAnimation', () {
+      for (final MapEntry(key: name, value: (animation, twin))
+          in _animation.entries) {
+        test(name, () {
+          expectTwin(
+            _options(
+              ChartConfig(type: .bar, datasets: const [], animation: animation),
+            ),
+            {'animation': twin},
+          );
+        });
+      }
+    });
+
+    test('each group with all its parameters, in parameter order', () {
+      final options = _options(
+        const ChartConfig(
+          type: .bar,
+          datasets: [],
+          legend: ChartLegend(
+            display: true,
+            position: .bottom,
+            align: .start,
+            reverse: true,
+            labelColor: _red,
+            labelFont: _font,
+            boxWidth: 20,
+            boxHeight: 10,
+            labelPadding: 4,
+            usePointStyle: true,
+            onClick: _onLegend,
+            onHover: _onLegend,
+            onLeave: _onLegend,
+            extra: {'fullSize': false},
+          ),
+          title: ChartTitle(
+            display: true,
+            text: 'T',
+            color: _red,
+            font: _font,
+            align: .end,
+            position: .left,
+            padding: EdgeInsets.fromLTRB(1, 2, 3, 4),
+            fullSize: false,
+            extra: {'weight': 1},
+          ),
+          tooltip: ChartTooltip(
+            enabled: true,
+            mode: .index,
+            intersect: false,
+            backgroundColor: _red,
+            titleColor: _blue,
+            titleFont: _font,
+            bodyColor: _red,
+            bodyFont: _font,
+            footerColor: _blue,
+            footerFont: _font,
+            padding: EdgeInsets.all(8),
+            cornerRadius: 3,
+            displayColors: false,
+            titleText: _title2,
+            labelText: _label,
+            footerText: _title2,
+            extra: {'position': 'nearest'},
+          ),
+          interaction: ChartInteraction(
+            mode: .nearest,
+            intersect: false,
+            includeInvisible: true,
+            extra: {'axis': 'x'},
+          ),
+          animation: ChartAnimation(
+            duration: Duration(milliseconds: 500),
+            delay: Duration(milliseconds: 20),
+            easing: .linear,
+            loop: false,
+            onProgress: _onAnimation,
+            onComplete: _onAnimation,
+            extra: {'animateRotate': false},
+          ),
+        ),
+      );
+      expectTwin(options, {
+        'plugins': {
+          'legend': {
+            'display': true,
+            'position': 'bottom',
+            'align': 'start',
+            'reverse': true,
+            'labels': {
+              'color': _redValue,
+              'font': _fontValue,
+              'boxWidth': 20,
+              'boxHeight': 10,
+              'padding': 4,
+              'usePointStyle': true,
+            },
+            'onClick': _function,
+            'onHover': _function,
+            'onLeave': _function,
+            'fullSize': false,
+          },
+          'title': {
+            'display': true,
+            'text': 'T',
+            'color': _redValue,
+            'font': _fontValue,
+            'align': 'end',
+            'position': 'left',
+            'padding': {'top': 2, 'right': 3, 'bottom': 4, 'left': 1},
+            'fullSize': false,
+            'weight': 1,
+          },
+          'tooltip': {
+            'enabled': true,
+            'mode': 'index',
+            'intersect': false,
+            'backgroundColor': _redValue,
+            'titleColor': _blueValue,
+            'titleFont': _fontValue,
+            'bodyColor': _redValue,
+            'bodyFont': _fontValue,
+            'footerColor': _blueValue,
+            'footerFont': _fontValue,
+            'padding': {'top': 8, 'right': 8, 'bottom': 8, 'left': 8},
+            'cornerRadius': 3,
+            'displayColors': false,
+            'callbacks': {
+              'title': _function,
+              'label': _function,
+              'footer': _function,
+            },
+            'position': 'nearest',
+          },
+        },
+        'interaction': {
+          'mode': 'nearest',
+          'intersect': false,
+          'includeInvisible': true,
+          'axis': 'x',
+        },
+        'animation': {
+          'duration': 500,
+          'delay': 20,
+          'easing': 'linear',
+          'loop': false,
+          'onProgress': _function,
+          'onComplete': _function,
+          'animateRotate': false,
+        },
+      });
+    });
+  });
+
+  group('the config', () {
+    test('a config with the required parameters', () {
+      expectTwin(
+        ChartConfigLowering(const ChartConfig(type: .bar, datasets: []))
+            .lower(),
+        {
+          'type': 'bar',
+          'data': {'datasets': <Object?>[]},
+          'options': <String, Object?>{},
+        },
+      );
+    });
+
+    group('each parameter of ChartConfig', () {
+      for (final MapEntry(key: name, value: (config, twin))
+          in _config.entries) {
+        test(name, () {
+          expectTwin(_options(config), twin);
+        });
+      }
+    });
+
+    test('the datasets lower with the type of the chart', () {
+      final data = <num?>[1, 2];
+      final labels = <Object>['a', 'b'];
+      final lowered = ChartConfigLowering(
+        ChartConfig(
+          type: .bar,
+          labels: labels,
+          datasets: [
+            BarDataset(label: 'A', data: data),
+            LineDataset(label: 'B', data: data),
+          ],
+        ),
+      ).lower();
+      expectTwin(lowered, {
+        'type': 'bar',
+        'data': {
+          'labels': labels,
+          'datasets': [
+            {'label': 'A', 'data': data},
+            {'type': 'line', 'label': 'B', 'data': data},
+          ],
+        },
+        'options': <String, Object?>{},
+      });
+      expect(
+        (lowered['data']! as Map<String, Object?>)['labels'],
+        same(labels),
+      );
+    });
+
+    test('the inline plugins go by reference', () {
+      final plugin = <String, Object?>{'id': 'p'};
+      final plugins = [plugin];
+      final lowered = ChartConfigLowering(
+        ChartConfig(type: .line, datasets: const [], plugins: plugins),
+      ).lower();
+      expect(lowered.keys, ['type', 'data', 'options', 'plugins']);
+      expect(lowered['plugins'], same(plugins));
+    });
+
+    test('the order of the scales is the order of the Map', () {
+      final options = _options(
+        const ChartConfig(
+          type: .line,
+          datasets: [],
+          scales: {
+            'y2': LinearAxis(position: .right),
+            'x': CategoryAxis(),
+            'y': LinearAxis(),
+          },
+        ),
+      );
+      expect((options['scales']! as Map<String, Object?>).keys, [
+        'y2',
+        'x',
+        'y',
+      ]);
+    });
+
+    test('extra merges into options, into a group and wins', () {
+      expectTwin(
+        _options(
+          const ChartConfig(
+            type: .bar,
+            datasets: [],
+            responsive: true,
+            legend: ChartLegend(display: true),
+            extra: {
+              'responsive': false,
+              'plugins': {
+                'legend': {
+                  'display': false,
+                  'title': {'display': true},
+                },
+                'decimation': {'enabled': true},
+              },
+              'locale': 'de-DE',
+            },
+          ),
+        ),
+        {
+          'responsive': false,
+          'plugins': {
+            'legend': {
+              'display': false,
+              'title': {'display': true},
+            },
+            'decimation': {'enabled': true},
+          },
+          'locale': 'de-DE',
+        },
+      );
+    });
+
+    test('a const config lowers to new Maps at each call', () {
+      const config = ChartConfig(
+        type: .bar,
+        datasets: [
+          BarDataset(data: [1]),
+        ],
+        legend: ChartLegend(display: false),
+      );
+      final a = ChartConfigLowering(config).lower();
+      final b = ChartConfigLowering(config).lower();
+      expect(a, isNot(same(b)));
+      expect(a['options'], isNot(same(b['options'])));
+      expectTwin(a, b);
+    });
+
+    test('a trampoline calls the callback of the newest config', () {
+      final calls = <String>[];
+      final lowering = ChartConfigLowering(
+        ChartConfig(
+          type: .bar,
+          datasets: const [],
+          tooltip: ChartTooltip(
+            labelText: (item) {
+              calls.add('first');
+              return 'first';
+            },
+          ),
+        ),
+      );
+      final options = lowering.lower()['options']! as Map<String, Object?>;
+      final label =
+          ((options['plugins']! as Map<String, Object?>)['tooltip']!
+                  as Map<String, Object?>)['callbacks']!
+              as Map<String, Object?>;
+      final item = <String, Object?>{'label': 'a'};
+      expect(jsCall(label['label'], [item]), 'first');
+      lowering.config = ChartConfig(
+        type: .bar,
+        datasets: const [],
+        tooltip: ChartTooltip(
+          labelText: (item) {
+            calls.add('second');
+            return null;
+          },
+        ),
+      );
+      expect(identical(jsCall(label['label'], [item]), undefined), isTrue);
+      lowering.config = const ChartConfig(type: .bar, datasets: []);
+      expect(identical(jsCall(label['label'], [item]), undefined), isTrue);
+      expect(calls, ['first', 'second']);
     });
   });
 }

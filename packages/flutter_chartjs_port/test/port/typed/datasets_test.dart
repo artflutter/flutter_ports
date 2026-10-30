@@ -8,6 +8,8 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0052, section 3: a `DataPoint` is the Map of the object form
@@ -167,6 +169,34 @@ void main() {
       );
       final parsed = chart.getDatasetMeta(0).controller!.getParsed(0)! as Map;
       expect(parsed['x'], DateTime.utc(2020).millisecondsSinceEpoch);
+    });
+
+    testWidgets('an unknown label throws for a const labels List', (
+      tester,
+    ) async {
+      // Chart.js ADR 0052, section 3: the category scale adds the label to
+      // `data.labels` (row `js-semantics-narrow-labels`), and a `const`
+      // List cannot grow.
+      final config = ChartConfigLowering(
+        ChartConfig(
+          type: .line,
+          labels: const ['a', 'b'],
+          datasets: [
+            LineDataset(points: [DataPoint.label('c', 2)]),
+          ],
+          animation: ChartAnimation.none,
+        ),
+      ).lower();
+      expect(
+        () => acquireChart(config),
+        throwsA(
+          isA<UnsupportedError>().having(
+            (error) => error.message,
+            'message',
+            'Cannot add to an unmodifiable list',
+          ),
+        ),
+      );
     });
 
     testWidgets('an unknown label becomes a new label of the chart', (

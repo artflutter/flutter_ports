@@ -9,9 +9,22 @@
 /// `lib/chartjs.dart` does not export the typed API.
 library;
 
+export 'package:flutter_chartjs_port/src/typed/axes.dart'
+    show
+        AxisGrid,
+        AxisTicks,
+        AxisTitle,
+        CategoryAxis,
+        ChartAxis,
+        LinearAxis,
+        LogarithmicAxis,
+        RadialLinearAxis,
+        TimeAxis,
+        TimeSeriesAxis;
 export 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show
         AxisTickInfo,
+        ChartAnimationDetails,
         ChartContext,
         ChartEventDetails,
         ChartHit,
@@ -20,7 +33,7 @@ export 'package:flutter_chartjs_port/src/typed/callbacks.dart'
         ChartScript,
         ChartTooltipItem;
 export 'package:flutter_chartjs_port/src/typed/config.dart'
-    show ChartKind, IndexAxis;
+    show ChartConfig, ChartKind, IndexAxis;
 export 'package:flutter_chartjs_port/src/typed/datasets.dart'
     show
         BarDataset,
@@ -33,6 +46,13 @@ export 'package:flutter_chartjs_port/src/typed/datasets.dart'
         PolarAreaDataset,
         RadarDataset,
         ScatterDataset;
+export 'package:flutter_chartjs_port/src/typed/groups.dart'
+    show
+        ChartAnimation,
+        ChartInteraction,
+        ChartLegend,
+        ChartTitle,
+        ChartTooltip;
 export 'package:flutter_chartjs_port/src/typed/values.dart'
     show
         ChartAlign,

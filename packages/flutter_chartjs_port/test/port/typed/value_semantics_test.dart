@@ -5,15 +5,17 @@ library;
 import 'dart:ui' show Color;
 
 import 'package:flutter/foundation.dart'
-    show DiagnosticLevel, DiagnosticsNode, ValueKey;
+    show DiagnosticLevel, Diagnosticable, DiagnosticsNode, ValueKey;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0052, sections 1 and 9: each config class is immutable, with
 // a `const` constructor, `==`, `hashCode`, `copyWith` and the diagnostics
 // from one property list. `==` compares the Lists of the app by identity
-// (`data`, `points`), the small style Lists by their items, a function with
-// Dart `==` and the `extra` Maps by their entries.
+// (`data`, `points`, `labels`, `plugins`), the small style Lists and the
+// datasets by their items, the `scales` and the `extra` Maps by their
+// entries, a function with Dart `==`, and a callback behind a trampoline
+// by its presence.
 //
 // VM only: the typed files import dart:ui and the painting library.
 
@@ -25,6 +27,9 @@ Color _colorFor(ChartContext context) => _red;
 
 /// Another scriptable color.
 Color _otherFor(ChartContext context) => _blue;
+
+/// A tick format.
+String? _format(AxisTickInfo tick) => null;
 
 /// The parameter names of [Dataset] after `data` and `points`.
 const List<String> _style = [
@@ -390,6 +395,276 @@ void main() {
       expect(
         () => ScatterDataset(data: const [1], points: [DataPoint(1, 2)]),
         throwsAssertionError,
+      );
+    });
+  });
+
+  group('the config, the axes and the groups', () {
+    test('a const config is canonical', () {
+      const a = ChartConfig(
+        type: .bar,
+        datasets: [
+          BarDataset(data: [1]),
+        ],
+        scales: {'y': LinearAxis(beginAtZero: true)},
+        legend: ChartLegend(display: false),
+      );
+      const b = ChartConfig(
+        type: .bar,
+        datasets: [
+          BarDataset(data: [1]),
+        ],
+        scales: {'y': LinearAxis(beginAtZero: true)},
+        legend: ChartLegend(display: false),
+      );
+      expect(identical(a, b), isTrue);
+    });
+
+    test('a config built twice is ==, with new Lists of datasets', () {
+      final data = <num?>[1, 2];
+      final labels = <Object>['a', 'b'];
+      ChartConfig build() => ChartConfig(
+        type: .bar,
+        labels: labels,
+        datasets: [
+          BarDataset(data: data, backgroundColors: _runtime([_red])),
+        ],
+        scales: {
+          'x': _runtime(const CategoryAxis()),
+          'y': LinearAxis(min: _runtime(0)),
+        },
+        legend: ChartLegend(onClick: (details) {}),
+        tooltip: ChartTooltip(labelText: (item) => null),
+        animation: ChartAnimation(onComplete: (details) {}),
+        onClick: (details) {},
+        extra: {
+          'plugins': {
+            'decimation': {'enabled': _runtime(true)},
+          },
+        },
+      );
+      _expectEqual(build(), build());
+    });
+
+    test('the Lists of the app compare by identity', () {
+      expect(
+        ChartConfig(type: .bar, datasets: const [], labels: _runtime(['a'])),
+        isNot(
+          ChartConfig(type: .bar, datasets: const [], labels: _runtime(['a'])),
+        ),
+      );
+      expect(
+        ChartConfig(
+          type: .bar,
+          datasets: const [],
+          plugins: _runtime([<String, Object?>{}]),
+        ),
+        isNot(
+          ChartConfig(
+            type: .bar,
+            datasets: const [],
+            plugins: _runtime([<String, Object?>{}]),
+          ),
+        ),
+      );
+    });
+
+    test('the scales compare by their entries, in key order', () {
+      expect(
+        const ChartConfig(
+          type: .bar,
+          datasets: [],
+          scales: {'x': CategoryAxis(), 'y': LinearAxis()},
+        ),
+        isNot(
+          const ChartConfig(
+            type: .bar,
+            datasets: [],
+            scales: {'y': LinearAxis(), 'x': CategoryAxis()},
+          ),
+        ),
+      );
+    });
+
+    test('a callback behind a trampoline compares by its presence', () {
+      _expectEqual(
+        ChartConfig(type: .bar, datasets: const [], onClick: (details) {}),
+        ChartConfig(type: .bar, datasets: const [], onClick: (details) {}),
+      );
+      expect(
+        ChartConfig(type: .bar, datasets: const [], onHover: (details) {}),
+        isNot(const ChartConfig(type: .bar, datasets: [])),
+      );
+      _expectEqual(
+        ChartLegend(onLeave: (details) {}),
+        ChartLegend(onLeave: (details) {}),
+      );
+      _expectEqual(
+        ChartTooltip(footerText: (items) => 'a'),
+        ChartTooltip(footerText: (items) => 'b'),
+      );
+      _expectEqual(
+        ChartAnimation(onProgress: (details) {}),
+        ChartAnimation(onProgress: (details) {}),
+      );
+      expect(
+        ChartAnimation(onProgress: (details) {}),
+        isNot(const ChartAnimation()),
+      );
+    });
+
+    test('a tick format compares with ==', () {
+      _expectEqual(
+        const AxisTicks(format: _format),
+        const AxisTicks(format: _format),
+      );
+      expect(
+        AxisTicks(format: (tick) => null),
+        isNot(AxisTicks(format: (tick) => null)),
+      );
+    });
+
+    test('ChartAnimation.none is not an empty animation', () {
+      expect(ChartAnimation.none, isNot(const ChartAnimation()));
+      expect(ChartAnimation.none.copyWith(), same(ChartAnimation.none));
+      expect(
+        ChartAnimation.none.copyWith(duration: Duration.zero),
+        same(ChartAnimation.none),
+      );
+    });
+
+    test('copyWith() gives an == object, and a parameter changes', () {
+      for (final axis in const <ChartAxis>[
+        CategoryAxis(),
+        LinearAxis(),
+        LogarithmicAxis(),
+        TimeAxis(),
+        TimeSeriesAxis(),
+        RadialLinearAxis(),
+      ]) {
+        _expectEqual(axis.copyWith(), axis);
+        final changed = axis.copyWith(reverse: true);
+        expect(changed.runtimeType, axis.runtimeType);
+        expect(changed.reverse, isTrue);
+        expect(changed, isNot(axis));
+      }
+      const config = ChartConfig(type: .bar, datasets: []);
+      _expectEqual(config.copyWith(), config);
+      expect(config.copyWith(type: .line).type, ChartKind.line);
+      for (final (object, copy, changed) in <(Object, Object, Object)>[
+        (
+          const AxisTicks(),
+          const AxisTicks().copyWith(),
+          const AxisTicks().copyWith(display: false),
+        ),
+        (
+          const AxisGrid(),
+          const AxisGrid().copyWith(),
+          const AxisGrid().copyWith(offset: true),
+        ),
+        (
+          const AxisTitle(),
+          const AxisTitle().copyWith(),
+          const AxisTitle().copyWith(text: 'T'),
+        ),
+        (
+          const ChartLegend(),
+          const ChartLegend().copyWith(),
+          const ChartLegend().copyWith(reverse: true),
+        ),
+        (
+          const ChartTitle(),
+          const ChartTitle().copyWith(),
+          const ChartTitle().copyWith(text: 'T'),
+        ),
+        (
+          const ChartTooltip(),
+          const ChartTooltip().copyWith(),
+          const ChartTooltip().copyWith(enabled: false),
+        ),
+        (
+          const ChartInteraction(),
+          const ChartInteraction().copyWith(),
+          const ChartInteraction().copyWith(intersect: false),
+        ),
+        (
+          const ChartAnimation(),
+          const ChartAnimation().copyWith(),
+          const ChartAnimation().copyWith(loop: true),
+        ),
+      ]) {
+        _expectEqual(copy, object);
+        expect(changed, isNot(object));
+      }
+    });
+
+    test('the diagnostics name each parameter in parameter order', () {
+      List<String> names(Diagnosticable object) => [
+        for (final property in object.toDiagnosticsNode().getProperties())
+          property.name!,
+      ];
+      expect(names(const ChartConfig(type: .bar, datasets: [])), [
+        'type',
+        'datasets',
+        'labels',
+        'scales',
+        'indexAxis',
+        'responsive',
+        'maintainAspectRatio',
+        'aspectRatio',
+        'padding',
+        'legend',
+        'title',
+        'subtitle',
+        'tooltip',
+        'interaction',
+        'animation',
+        'onClick',
+        'onHover',
+        'plugins',
+        'extra',
+      ]);
+      expect(names(const RadialLinearAxis()), [
+        'display',
+        'position',
+        'reverse',
+        'stacked',
+        'min',
+        'max',
+        'beginAtZero',
+        'startAngle',
+        'pointLabelsDisplay',
+        'pointLabelsFont',
+        'angleLinesColor',
+        'ticks',
+        'grid',
+        'title',
+        'extra',
+      ]);
+      expect(names(const ChartLegend()), [
+        'display',
+        'position',
+        'align',
+        'reverse',
+        'labelColor',
+        'labelFont',
+        'boxWidth',
+        'boxHeight',
+        'labelPadding',
+        'usePointStyle',
+        'onClick',
+        'onHover',
+        'onLeave',
+        'extra',
+      ]);
+      expect(names(ChartAnimation.none).first, 'none');
+      expect(
+        ChartConfig(
+          type: .bar,
+          datasets: const [],
+          onClick: (details) {},
+        ).toString(),
+        contains('onClick: set'),
       );
     });
   });

@@ -182,9 +182,10 @@ final class BarDataset extends Dataset {
     `bodyColor`, `bodyFont`, `footerColor`, `footerFont`, `padding`, `cornerRadius`,
     `displayColors`, `titleText` and `footerText` (`String? Function(List<ChartTooltipItem>)`),
     `labelText` (`String? Function(ChartTooltipItem)`), `extra`.
-  - `ChartInteraction`: `mode`, `intersect`, `includeInvisible`.
+  - `ChartInteraction`: `mode`, `intersect`, `includeInvisible`, `extra`.
   - `ChartAnimation`: `duration`, `delay` (`Duration`), `easing`, `loop`, `onProgress`,
-    `onComplete` (`ValueChanged<Chart>?`). `static const none` lowers to `false`.
+    `onComplete` (`ValueChanged<ChartAnimationDetails>?`), `extra`. `static const none` lowers to
+    `false`, and a copy of `none` is `none`.
 - Every config class is `@immutable` and `final`, with a `const` constructor and named parameters.
   `==`, `hashCode` and `debugFillProperties` come from one private `_props` list of each class
   (`props.dart`), so no `build_runner` runs. Each class has `copyWith`. `Dataset.copyWith` takes
@@ -201,10 +202,10 @@ The files, all port-only (`// Original code, not ported from Chart.js: <reason>.
 | `lib/src/typed/typed.dart` | the export list of the typed API: `show` the names of section 8 |
 | `lib/src/typed/config.dart` | `ChartConfig`, `ChartKind`, `IndexAxis` |
 | `lib/src/typed/datasets.dart` | `Dataset`, the 8 dataset classes, `DataPoint` and the internal `lowerDataset`, in one library, because `abstract final` needs it |
-| `lib/src/typed/axes.dart` | `ChartAxis`, the 6 axes, `AxisTicks`, `AxisGrid`, `AxisTitle` |
-| `lib/src/typed/groups.dart` | `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartInteraction`, `ChartAnimation` |
+| `lib/src/typed/axes.dart` | `ChartAxis`, the 6 axes, `AxisTicks`, `AxisGrid`, `AxisTitle` and the internal `lowerAxis` |
+| `lib/src/typed/groups.dart` | `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartInteraction`, `ChartAnimation` and their internal lowering functions |
 | `lib/src/typed/values.dart` | `ChartPosition`, `ChartAlign`, `ChartInteractionMode`, `ChartEasing`, `ChartPointStyle`, `ChartFill`, `ChartLength` |
-| `lib/src/typed/callbacks.dart` | `ChartEventDetails`, `ChartLegendEventDetails`, `AxisTickInfo`, `ChartHit`, `ChartContext`, `ChartTooltipItem`, `ChartLegendItem`, `ChartScript` |
+| `lib/src/typed/callbacks.dart` | `ChartEventDetails`, `ChartLegendEventDetails`, `ChartAnimationDetails`, `AxisTickInfo`, `ChartHit`, `ChartContext`, `ChartTooltipItem`, `ChartLegendItem`, `ChartScript` |
 | `lib/src/typed/lower.dart` | internal: the conversions of the lowering, the `extra` merge, the reconcile (`ChartConfigLowering`), the trampolines. The lowering of each class is a function of its library, which reads the private members of the class |
 | `lib/src/typed/props.dart` | internal: `==`, `hashCode` and the diagnostics from the `_props` list of each class, with the compare forms of section 9 |
 | `lib/src/theme/css.dart` | internal: `rawColorOf`, `colorToRgba` and `fontSpecOf`, moved from `theme_data.dart` with no change |
@@ -231,8 +232,10 @@ in a frame. The resolver does not change, and no ported file changes for the low
    memo of the last `Color`.
 6. The event callbacks (`onClick`, `onHover`, the 3 legend handlers, `onProgress`, `onComplete`)
    and the tooltip text callbacks lower to trampolines. A trampoline reads the newest
-   `ChartConfig` of the `State` at the call. A trampoline is present only when the newest config
-   has that callback.
+   `ChartConfig` of the `State` at the call: the field `config` of `ChartConfigLowering`, which the
+   `State` keeps. A trampoline is present only when the newest config has that callback. When the
+   newest config has no such callback at the call, a trampoline does nothing, and a tooltip
+   trampoline gives `undefined`.
 7. A tooltip text callback that gives Dart `null` lowers to `undefined`: the tooltip then shows the
    default text (`U/src/plugins/plugin.tooltip.js:447-455`). `AxisTicks.format` lowers to a
    `JsFunction`, so the scale is the `this` of `U/src/core/core.scale.js:574`.
@@ -337,9 +340,17 @@ details object is additive. A new upstream argument does not break a callback.
   and the `this` of the upstream tick callback (`U/src/core/core.scale.js:574`): `value`
   (`double`), `index` (`int`), `ticks` (`List<Tick>`) and `scale` (`Scale`). `null` hides the
   label, as upstream.
-- `ChartAnimation.onProgress` and `onComplete` are `ValueChanged<Chart>?`.
-- `ChartEventDetails`, `ChartLegendEventDetails` and `AxisTickInfo` are `@immutable` `final`
-  classes with `const` constructors.
+- `ChartAnimation.onProgress` and `onComplete` are `ValueChanged<ChartAnimationDetails>?`.
+  `ChartAnimationDetails` has the fields of the upstream argument, the `AnimationEvent`
+  `{chart, initial, numSteps, currentStep}` (`U/src/types/animation.d.ts:13-18`,
+  `U/src/core/core.animator.js:27-32`): `chart` (`Chart`), `initial` (`bool`, `false` for the JS
+  `undefined`), `numSteps` and `currentStep` (`double?`, Dart `null` in the `onComplete` of a chart
+  that draws with no animation, `U/src/core/core.controller.js:694`). The docs read
+  `currentStep / numSteps` in `onProgress` (`U/docs/configuration/animations.md:277-278`,
+  `U/docs/samples/advanced/progress-bar.md:109-113`), so a `ValueChanged<Chart>` loses the use of
+  the docs. This correction of the implementation adds the 44th name of section 8.
+- `ChartEventDetails`, `ChartLegendEventDetails`, `ChartAnimationDetails` and `AxisTickInfo` are
+  `@immutable` `final` classes with `const` constructors.
 - The views are extension types over the port objects, with zero allocation:
   - `ChartHit` over `ActiveElement`, and it implements `ActiveElement`. It redeclares
     `datasetIndex` and `index` as `int`. `element` comes from `ActiveElement`. A `List<ChartHit>`
@@ -397,7 +408,7 @@ details object is additive. A new upstream argument does not break a callback.
 
 ### 8. Names and libraries
 
-The typed API adds 43 public names, all exported by `lib/flutter_chartjs_port.dart`:
+The typed API adds 44 public names, all exported by `lib/flutter_chartjs_port.dart`:
 - Config (3): `ChartConfig`, `ChartKind`, `IndexAxis`.
 - Datasets (10): `Dataset`, `BarDataset`, `LineDataset`, `ScatterDataset`, `BubbleDataset`,
   `PieDataset`, `DoughnutDataset`, `PolarAreaDataset`, `RadarDataset`, `DataPoint`.
@@ -406,8 +417,12 @@ The typed API adds 43 public names, all exported by `lib/flutter_chartjs_port.da
 - Groups (5): `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartInteraction`, `ChartAnimation`.
 - Values (7): `ChartPosition`, `ChartAlign`, `ChartInteractionMode`, `ChartEasing`,
   `ChartPointStyle`, `ChartFill`, `ChartLength`.
-- Callbacks and views (8): `ChartEventDetails`, `ChartLegendEventDetails`, `AxisTickInfo`,
-  `ChartHit`, `ChartContext`, `ChartTooltipItem`, `ChartLegendItem`, `ChartScript`.
+- Callbacks and views (9): `ChartEventDetails`, `ChartLegendEventDetails`,
+  `ChartAnimationDetails`, `AxisTickInfo`, `ChartHit`, `ChartContext`, `ChartTooltipItem`,
+  `ChartLegendItem`, `ChartScript`.
+
+Probe J5 checked the first 43 names. `test/port/typed/names_test.dart` checks the rules over all
+44.
 
 `ChartView` changes (section 9). Every name of `doc/public_api.txt` stays.
 
@@ -434,7 +449,8 @@ The libraries:
 - `check:lib-imports` gets an allowlist for `lib/src/typed/`: `dart:ui`,
   `package:flutter/foundation.dart`, `package:flutter/painting.dart`, `package:meta/meta.dart`,
   `lib/src/types/` (also `Tick`), `lib/src/core/core.controller.dart` (`Chart`),
-  `lib/src/core/core.scale.dart` (`Scale`), `lib/src/js/js_function.dart`,
+  `lib/src/core/core.scale.dart` (`Scale`), `lib/src/core/core.adapters.dart` (`TimeUnit`, the
+  type of `TimeAxis.unit`), `lib/src/js/js_function.dart`,
   `lib/src/js/js_number.dart` (`jsNumberToString`), `lib/src/js/js_undefined.dart` and
   `lib/src/theme/css.dart`. No file of `lib/src/typed/` imports `controllers/`, `scales/`,
   `elements/` or `plugins/`: the typed API writes keys, not components, so the tree shaking of
@@ -460,7 +476,8 @@ final Map<String, Object?>? rawConfig;  // the raw config, every rule of Chart.j
   trampolines. It schedules the post-frame update of Chart.js ADR 0049 §4 only when
   `oldWidget.config != widget.config`, or when the form changed (typed or raw).
 - `ChartConfig ==` compares each field by `==`; `data`, `points`, `labels` and `plugins` by
-  identity; the small style Lists by value; the `extra` Maps by their entries in key order, with a
+  identity; the small style Lists and the `datasets` List by value (item by item); the `scales`
+  Map by its entries in key order; the `extra` Maps by their entries in key order, with a
   Map value by its entries and a List by identity (the lowering copies the Maps of `extra` and
   passes its Lists by reference); `...For` and `AxisTicks.format` by Dart `==` (identity for a
   closure, equality for a tear-off of one method of one object); the trampoline callbacks by
@@ -514,7 +531,7 @@ typed path with dart2wasm through the example and one gallery page (section 13).
 | `test/port/typed/config_test.dart` | `ChartKind` and `IndexAxis`; later the `ChartConfig` lowering |
 | `test/port/typed/datasets_test.dart` | `DataPoint` (its Map, its getters, a chart reads it); later the dataset lowering |
 | `test/port/typed/callbacks_test.dart` | the views and the details over the objects of a real chart: `int` indexes, the `undefined` rule, `List<ActiveElement>` as `List<ChartHit>`; later `onClick`, `onHover` and the legend handlers through `triggerMouseEvent`, tooltip `labelText` null gives the default text, `AxisTicks.format` gets the scale, `backgroundColorFor` gives the element colors of a raw closure with the same strings |
-| `test/port/typed/names_test.dart` | the name rules of section 8 over the 43 names and the exports of `typed.dart`: the upstream names from the `exports` of `doc/upstream/manifest.json`, the Flutter and port names through an analyzer resolve |
+| `test/port/typed/names_test.dart` | the name rules of section 8 over the 44 names and the exports of `typed.dart`: the upstream names from the `exports` of `doc/upstream/manifest.json`, the Flutter and port names through an analyzer resolve |
 | `test/port/typed/lowering_test.dart` | for each typed field, a config with that field alone lowers to the expected key path and value form, with the key order (`jsObjectKeys`). It covers `borderRadius`, `ChartLength`, `Duration`, `EdgeInsets`, `TextStyle`, `Color`, the name types, `extra` (deep merge, wins) and the dataset `type` rule |
 | `test/port/typed/docs_twins_test.dart` | the 11 docs configs of `apps/chartjs_gallery/lib/docs/charts/` and `lib/docs/samples/area/line_boundaries.dart`, and one chart of each of the 8 types, written typed: equal draw calls (`drawCalls`, colors in parsed form), equal resolved options and element properties, equal hits on a grid. Also under `ChartThemeData.light()` |
 | `test/port/typed/reconcile_test.dart` | J2a and J2b as `ChartView` tests; the hidden state, the meta and the elements kept, the first frame near the old value; a removed typed key leaves the live Map; a colors-plugin key stays; a class change at an index gives a new meta; append and remove; a theme switch and a data change in one frame; the decimation plugin (through `extra`) with a new `data` List |
@@ -663,7 +680,7 @@ Each part below replaces the cited text on acceptance.
 
 - No ported file changes for the typed API, except the index parameters of section 10. The raw
   path keeps every rule of Chart.js ADRs 0043 and 0049.
-- The app library gets 43 new names. After 0.1.0, each one is a commitment (Chart.js ADR 0048).
+- The app library gets 44 new names. After 0.1.0, each one is a commitment (Chart.js ADR 0048).
   The `final` classes, the named parameters, the open name sets and the details objects make each
   later change additive.
 - The README and the example show the typed API first.

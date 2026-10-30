@@ -675,6 +675,82 @@ void main() {
     ]);
   });
 
+  test('keeps lib/src/typed/ on its allowlist', () {
+    tree
+      ..write('lib/src/core/core.controller.dart', [_ported])
+      ..write('lib/src/core/core.scale.dart', [_ported])
+      ..write('lib/src/core/core.adapters.dart', [_ported])
+      ..write('lib/src/js/js_function.dart', [_portOnly])
+      ..write('lib/src/js/js_number.dart', [_portOnly])
+      ..write('lib/src/js/js_undefined.dart', [_portOnly])
+      ..write('lib/src/theme/css.dart', [_portOnly])
+      ..write('lib/src/theme/compile.dart', [_portOnly])
+      ..write('lib/src/controllers/controller.line.dart', [_ported])
+      ..write('lib/src/scales/scale.linear.dart', [_ported])
+      ..write('lib/src/elements/element.point.dart', [_ported])
+      ..write('lib/src/plugins/plugin.legend.dart', [_ported])
+      ..write('lib/src/typed/values.dart', [_portOnly])
+      ..write('lib/src/typed/config.dart', [
+        _portOnly,
+        "import 'dart:ui' show Color;",
+        "import 'package:flutter/foundation.dart';",
+        "import 'package:flutter/painting.dart';",
+        "import 'package:meta/meta.dart';",
+        "import 'values.dart';",
+        "import '../types/geometric.dart';",
+        "import 'package:flutter_chartjs_port/src/core/core.controller.dart';",
+        "import '../core/core.scale.dart';",
+        "import '../core/core.adapters.dart';",
+        "import '../js/js_function.dart';",
+        "import '../js/js_number.dart';",
+        "import '../js/js_undefined.dart';",
+        "import '../theme/css.dart';",
+        "import 'package:flutter/widgets.dart';",
+        "import 'dart:math';",
+        "import '../controllers/controller.line.dart';",
+        "import '../scales/scale.linear.dart';",
+        "import '../elements/element.point.dart';",
+        "import '../plugins/plugin.legend.dart';",
+        "import '../helpers/helpers.math.dart';",
+        "import '../js/js_math.dart';",
+        "import '../theme/compile.dart';",
+      ]);
+    String finding(int line, String target) =>
+        'error: lib/src/typed/config.dart:$line: imports $target, which is '
+        'not on the allowlist of lib/src/typed/ (Chart.js ADR 0052 §8).';
+    expect(run(), [
+      equals(finding(15, 'package:flutter/widgets.dart')),
+      equals(finding(16, 'dart:math')),
+      equals(finding(17, 'lib/src/controllers/controller.line.dart')),
+      equals(finding(18, 'lib/src/scales/scale.linear.dart')),
+      equals(finding(19, 'lib/src/elements/element.point.dart')),
+      equals(finding(20, 'lib/src/plugins/plugin.legend.dart')),
+      equals(finding(21, 'lib/src/helpers/helpers.math.dart')),
+      equals(finding(22, 'lib/src/js/js_math.dart')),
+      equals(finding(23, 'lib/src/theme/compile.dart')),
+    ]);
+  });
+
+  test('keeps ported files away from lib/src/typed/', () {
+    tree
+      ..write('lib/src/typed/config.dart', [_portOnly])
+      ..write('lib/src/helpers/helpers.math.dart', [
+        _ported,
+        "import '../typed/config.dart';",
+      ])
+      ..write('lib/src/widget.dart', [
+        _portOnly,
+        "import 'package:flutter_chartjs_port/src/typed/config.dart';",
+      ]);
+    expect(run(), [
+      equals(
+        'error: lib/src/helpers/helpers.math.dart:2: imports '
+        'lib/src/typed/config.dart, but ported files never import '
+        'lib/src/typed/ (Chart.js ADR 0052 §8).',
+      ),
+    ]);
+  });
+
   test('keeps Material, Cupertino and forui out of lib/src/theme/', () {
     tree.write('lib/src/theme/chart_theme.dart', [
       _portOnly,

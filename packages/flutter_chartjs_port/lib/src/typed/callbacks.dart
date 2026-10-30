@@ -2,9 +2,9 @@
 
 /// The callback types of the typed API (Chart.js ADR 0052, section 6).
 ///
-/// - The details objects [ChartEventDetails], [ChartLegendEventDetails] and
-///   [AxisTickInfo] hold the arguments of one call. A new field is an
-///   addition that breaks no callback.
+/// - The details objects [ChartEventDetails], [ChartLegendEventDetails],
+///   [ChartAnimationDetails] and [AxisTickInfo] hold the arguments of one
+///   call. A new field is an addition that breaks no callback.
 /// - The views [ChartHit], [ChartContext], [ChartTooltipItem] and
 ///   [ChartLegendItem] are extension types over the objects of the chart,
 ///   with no copy. Their indexes are `int`: Chart.js gives a JS number,
@@ -76,6 +76,40 @@ final class ChartLegendEventDetails {
 
   /// The legend box.
   final LegendElement legend;
+}
+
+/// The arguments of the animation callbacks `onProgress` and `onComplete`
+/// of a chart (`options.animation.onProgress`; `AnimationEvent`,
+/// `animation.d.ts:13-18`; `core.animator.js:27-32`).
+///
+/// For example, a progress bar shows `currentStep / numSteps` in
+/// `onProgress` (`docs/configuration/animations.md`, "Animation
+/// Callbacks").
+@immutable
+final class ChartAnimationDetails {
+  /// The details of one animation step.
+  const ChartAnimationDetails({
+    required this.chart,
+    required this.initial,
+    this.numSteps,
+    this.currentStep,
+  });
+
+  /// The chart of the animation.
+  final Chart chart;
+
+  /// Whether the animation is the first animation of the chart, from its
+  /// start. `false` after the first `onComplete`.
+  final bool initial;
+
+  /// The duration of the animations of the chart in milliseconds. `null`
+  /// in the `onComplete` of a chart that draws with no animation.
+  final double? numSteps;
+
+  /// The milliseconds since the start of the animations, at most
+  /// [numSteps]. `null` in the `onComplete` of a chart that draws with no
+  /// animation.
+  final double? currentStep;
 }
 
 /// The arguments of the tick label callback of an axis: the arguments
