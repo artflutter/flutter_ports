@@ -4,16 +4,18 @@
 ///
 /// [Title] is the layout box of the chart title. [title] is the plugin
 /// object, the default export of the upstream file and `Title` of
-/// `src/plugins/index.js:6` (Chart.js ADR 0038, section 1). It is a mutable
-/// Map with the upstream keys in the upstream order: `id`, `_element`,
-/// `start`, `stop`, `beforeUpdate`, `defaults`, `defaultRoutes` and
-/// `descriptors`.
+/// `src/plugins/index.js:6` (Chart.js ADR 0038, section 1). It is a typed
+/// `Plugin` (Chart.js ADR 0054 §12) with the upstream keys in the upstream
+/// order: `id`, `_element`, `start`, `stop`, `beforeUpdate`, `defaults`,
+/// `defaultRoutes` and `descriptors`.
 ///
-/// Each hook is a closure with the upstream parameter count and the typed
-/// parameters `(types.Chart chart, AnyObject args, AnyObject options)`
-/// (Chart.js ADR 0038, section 3). `chart.titleBlock` is a field of
-/// `types.Chart`: Dart `null` stands for JS `undefined` and for the
-/// `delete` of `plugin.title.js:136`.
+/// Each hook is a private function of the hook type `(types.Chart chart,
+/// AnyObject args, AnyObject options)` (Chart.js ADR 0054 §12, in place of
+/// the upstream parameter counts of Chart.js ADR 0038, section 3). The box
+/// reads its options through the facade `TitleOptions` of
+/// `plugin_options.dart`. `chart.titleBlock` is a field of `types.Chart`:
+/// Dart `null` stands for JS `undefined` and for the `delete` of
+/// `plugin.title.js:136`.
 ///
 /// The fields of the box start as the fields of `Scale` start: NaN for the
 /// edges, the `undefined` sentinel for `position` and `weight`, and `false`
@@ -40,10 +42,13 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DescriptorsScope, FontSpecScope, TitleOptionsScope;
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show TitleOptions;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
 /// plugin.title.js:7 `class Title extends Element`.
 ///
@@ -150,12 +155,12 @@ class Title extends Element implements LayoutItem {
   /// margins, and the title ignores them (Chart.js ADR 0038, section 7).
   @override
   void update(double maxWidth, double maxHeight, [TRBL? margins]) {
-    final opts = options;
+    final opts = TitleOptions(options);
 
     left = 0;
     top = 0;
 
-    if (!jsTruthy(jsGet(opts, 'display'))) {
+    if (!jsTruthy(opts.display)) {
       width = height = right = bottom = 0;
       return;
     }
@@ -163,11 +168,10 @@ class Title extends Element implements LayoutItem {
     width = right = maxWidth;
     height = bottom = maxHeight;
 
-    final text = jsGet(opts, 'text');
+    final text = opts.text;
     final lineCount = isArray(text) ? (text! as List<Object?>).length : 1;
-    final padding = _padding = toPadding(jsGet(opts, 'padding'));
-    final textSize =
-        lineCount * toFont(jsGet(opts, 'font')).lineHeight + padding.height;
+    final padding = _padding = toPadding(opts.padding);
+    final textSize = lineCount * toFont(opts.font).lineHeight + padding.height;
 
     if (isHorizontal()) {
       height = textSize;
@@ -179,7 +183,7 @@ class Title extends Element implements LayoutItem {
   /// plugin.title.js:54 `isHorizontal()`.
   @override
   bool isHorizontal() {
-    final pos = jsGet(options, 'position');
+    final pos = TitleOptions(options).position;
     return pos == 'top' || pos == 'bottom';
   }
 
@@ -190,8 +194,9 @@ class Title extends Element implements LayoutItem {
   ({double titleX, double titleY, double maxWidth, double rotation}) _drawArgs(
     double offset,
   ) {
-    final Title(:top, :left, :bottom, :right, :options) = this;
-    final alignName = _alignName(jsGet(options, 'align'));
+    final Title(:top, :left, :bottom, :right) = this;
+    final options = TitleOptions(this.options);
+    final alignName = _alignName(options.align);
     var rotation = 0.0;
     double maxWidth;
     double titleX;
@@ -202,7 +207,7 @@ class Title extends Element implements LayoutItem {
       titleY = top + offset;
       maxWidth = right - left;
     } else {
-      if (jsGet(options, 'position') == 'left') {
+      if (options.position == 'left') {
         titleX = left + offset;
         titleY = alignStartEnd(alignName, bottom, top);
         rotation = pi * -0.5;
@@ -235,24 +240,24 @@ class Title extends Element implements LayoutItem {
   @override
   void draw([ChartArea? chartArea]) {
     final ctx = this.ctx;
-    final opts = options;
+    final opts = TitleOptions(options);
 
-    if (!jsTruthy(jsGet(opts, 'display'))) {
+    if (!jsTruthy(opts.display)) {
       return;
     }
 
-    final fontOpts = toFont(jsGet(opts, 'font'));
+    final fontOpts = toFont(opts.font);
     final lineHeight = fontOpts.lineHeight;
     final offset = lineHeight / 2 + _padding!.top;
     final (:titleX, :titleY, :maxWidth, :rotation) = _drawArgs(offset);
 
     // The arguments of renderText, in the upstream order of their reads.
-    final text = jsGet(opts, 'text');
+    final text = opts.text;
     final textOpts = _TitleTextOpts(
-      color: jsGet(opts, 'color'),
+      color: opts.color,
       maxWidth: maxWidth,
       rotation: rotation,
-      textAlign: toLeftRightCenter(_alignName(jsGet(opts, 'align'))),
+      textAlign: toLeftRightCenter(_alignName(opts.align)),
       textBaseline: 'middle',
       translation: (titleX, titleY),
     );
@@ -349,46 +354,48 @@ void _createTitle(types.Chart chart, AnyObject titleOpts) {
   chart.titleBlock = title;
 }
 
+/// plugin.title.js:129 `start(chart, _args, options)`.
+void _start(types.Chart chart, AnyObject _, AnyObject options) {
+  _createTitle(chart, options);
+}
+
+/// plugin.title.js:133 `stop(chart)`. Dart `null` stands for the
+/// `undefined` of a chart without a title block: `removeBox` then changes
+/// nothing (core.layouts.js:318-323). `delete chart.titleBlock` is the write
+/// of Dart `null`.
+void _stop(types.Chart chart, AnyObject _, AnyObject _) {
+  final titleBlock = chart.titleBlock;
+  layouts.removeBox(chart, titleBlock);
+  chart.titleBlock = null;
+}
+
+/// plugin.title.js:139 `beforeUpdate(chart, _args, options)`. Without a
+/// title block, the null check throws the TypeError of the write into
+/// `undefined` in `layouts.configure` (core.layouts.js:332).
+void _beforeUpdate(types.Chart chart, AnyObject _, AnyObject options) {
+  final title = chart.titleBlock! as Title;
+  layouts.configure(chart, title, options);
+  title.options = options;
+}
+
 /// plugin.title.js:120 the default export, `Title` of
 /// `src/plugins/index.js:6` (Chart.js ADR 0038, section 1).
 ///
-/// A mutable Map with the upstream keys in the upstream order. The hooks
-/// are closures with the upstream parameter count (Chart.js ADR 0038,
-/// section 3).
-final AnyObject title = <String, Object?>{
-  'id': 'title',
-
+/// A typed [Plugin] (Chart.js ADR 0054 §12) with the upstream keys in the
+/// upstream order. Each hook is a private function of the hook type
+/// `(chart, args, options)`: the hooks of the title read no args, so they
+/// take any args object.
+final Plugin title = Plugin()
+  ..id = 'title'
   // For tests
   // @private
-  '_element': Title.jsClass,
-
-  // plugin.title.js:129 `start(chart, _args, options)`.
-  'start': (types.Chart chart, AnyObject _, AnyObject options) {
-    _createTitle(chart, options);
-  },
-
-  // plugin.title.js:133 `stop(chart)`. Dart `null` stands for the
-  // `undefined` of a chart without a title block: `removeBox` then changes
-  // nothing (core.layouts.js:318-323). `delete chart.titleBlock` is the
-  // write of Dart `null`.
-  'stop': (types.Chart chart) {
-    final titleBlock = chart.titleBlock;
-    layouts.removeBox(chart, titleBlock);
-    chart.titleBlock = null;
-  },
-
-  // plugin.title.js:139 `beforeUpdate(chart, _args, options)`. Without a
-  // title block, the null check throws the TypeError of the write into
-  // `undefined` in `layouts.configure` (core.layouts.js:332).
-  'beforeUpdate': (types.Chart chart, AnyObject _, AnyObject options) {
-    final title = chart.titleBlock! as Title;
-    layouts.configure(chart, title, options);
-    title.options = options;
-  },
-
+  ..jsWrite('_element', Title.jsClass)
+  ..start = _start
+  ..stop = _stop
+  ..beforeUpdate = _beforeUpdate
   // plugin.title.js:145-156. A typed scope of the kind `TitleOptions`
   // (Chart.js ADR 0054 §3).
-  'defaults': TitleOptionsScope()
+  ..defaults = (TitleOptionsScope()
     ..align = 'center'
     ..display = false
     ..font = (FontSpecScope()..weight = 'bold')
@@ -397,13 +404,10 @@ final AnyObject title = <String, Object?>{
     ..position = 'top'
     ..text = ''
     // by default greater than legend (1000) to be above
-    ..weight = 2000.0,
-
+    ..weight = 2000.0)
   // plugin.title.js:158-160.
-  'defaultRoutes': <String, Object?>{'color': 'color'},
-
+  ..defaultRoutes = <String, Object?>{'color': 'color'}
   // plugin.title.js:162-165. A typed scope of the kind `Descriptors`.
-  'descriptors': DescriptorsScope()
+  ..descriptors = (DescriptorsScope()
     ..descScriptable = true
-    ..descIndexable = false,
-};
+    ..descIndexable = false);

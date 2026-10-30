@@ -4,13 +4,18 @@
 ///
 /// [colors] is the plugin object, the default export of the upstream file
 /// and `Colors` of `src/plugins/index.js:1` (Chart.js ADR 0038, section 1).
-/// It is a mutable Map with the upstream keys in the upstream order: `id`,
-/// `defaults` and the hook `beforeLayout`.
+/// It is a typed `Plugin` (Chart.js ADR 0054 §12) with the upstream keys in
+/// the upstream order: `id`, `defaults` and the hook `beforeLayout`.
 ///
-/// The TypeScript interfaces `ColorsPluginOptions` (`plugin.colors.ts:4-7`)
-/// and `ColorsDescriptor` (`:9-12`) are types only. The options of the
-/// plugin are a resolver of `core.plugins.js:175-188`, and the descriptors
-/// are raw option objects.
+/// The TypeScript interface `ColorsPluginOptions` (`plugin.colors.ts:4-7`)
+/// is the facade `ColorsPluginOptions` of `plugin_options.dart` over the
+/// resolver of `core.plugins.js:175-188`. `ColorsDescriptor` (`:9-12`) is a
+/// type only: the descriptors are the datasets and the element options of
+/// the user, read by name.
+///
+/// The colorizers write the colors into the dataset of the user: a typed
+/// field for a typed dataset scope, a write by name for a Map of the user
+/// (Chart.js ADR 0054 §5).
 ///
 /// Four marked hunks add the theme palette (Chart.js ADR 0050, theming.md
 /// §3.5): H4a (the palette keys, two library variables and their reader),
@@ -37,10 +42,15 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionKey, OptionScope;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ColorsOptionsScope;
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show ColorsPluginOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:meta/meta.dart';
 
 /// plugin.colors.ts:14 `BORDER_COLORS`.
@@ -115,23 +125,34 @@ Object? _getBackgroundColor(int i) {
   return _backgroundColors[i % _backgroundColors.length];
 }
 
+/// The write `dataset[key] = value` of a colorizer into the dataset
+/// [dataset] of `chart.config.data.datasets`: the typed field of a typed
+/// dataset scope (Chart.js ADR 0054 §5), else the write by name into the
+/// Map of the user. A dataset that is not a Map throws a [TypeError], as
+/// the property write into `null` or `undefined` does upstream.
+///
+/// A Map with a narrow value type, for example `Map<String, List<int>>` for
+/// `{'data': [1, 2, 3]}`, throws a [TypeError] at the write of a color
+/// String. An unmodifiable Map throws an [UnsupportedError]. JavaScript sets
+/// the properties in both cases (differences.md row
+/// `js-semantics-narrow-datasets`). The three colorizers have this
+/// difference.
+void _writeColor(Object? dataset, OptionKey key, Object? value) {
+  switch (dataset) {
+    case final OptionScope scope when scope.hasField(key):
+      scope.store(key, scope.classify(key, value));
+    default:
+      // DIVERGES(chartjs): js-semantics-narrow-datasets, a narrow or fixed Map.
+      (dataset! as AnyObject)[key.jsName] = value;
+  }
+}
+
 /// plugin.colors.ts:35 `colorizeDefaultDataset(dataset, i)`.
 ///
-/// [dataset] is the raw dataset of `chart.config.data.datasets`. A dataset
-/// that is not a Map throws a [TypeError], as the property write into
-/// `null` or `undefined` does upstream.
-///
-/// The writes go into the Map of the user. A Map with a narrow value type,
-/// for example `Map<String, List<int>>` for `{'data': [1, 2, 3]}`, throws a
-/// [TypeError] at the write of a color String. An unmodifiable Map throws an
-/// [UnsupportedError]. JavaScript sets the properties in both cases
-/// (differences.md row `js-semantics-narrow-datasets`). The three
-/// colorizers have this difference.
+/// The writes go through [_writeColor].
 int _colorizeDefaultDataset(Object? dataset, int i) {
-  final target = dataset! as AnyObject;
-  // DIVERGES(chartjs): js-semantics-narrow-datasets, a narrow or fixed Map.
-  target['borderColor'] = _getBorderColor(i);
-  target['backgroundColor'] = _getBackgroundColor(i);
+  _writeColor(dataset, OptionKey.borderColor, _getBorderColor(i));
+  _writeColor(dataset, OptionKey.backgroundColor, _getBackgroundColor(i));
 
   // The upstream form writes the parameter.
   // ignore: parameter_assignments
@@ -141,6 +162,9 @@ int _colorizeDefaultDataset(Object? dataset, int i) {
 /// The `dataset.data` of a doughnut or polar area colorizer, for the call
 /// `dataset.data.map(...)`: a [List], else a [TypeError], as the call of
 /// the `undefined` member `map` of a string or an object throws upstream.
+///
+/// The read of the dataset of the user is a read by name: a Map of the
+/// user, or the face of a typed dataset scope.
 List<Object?> _mapTarget(Object? dataset) {
   final data = jsGet(dataset, 'data');
   if (data is! List<Object?>) {
@@ -154,13 +178,18 @@ List<Object?> _mapTarget(Object? dataset) {
 ///
 /// `Array.prototype.map` calls the callback one time for each item, in
 /// order, over the length at the start of the call. [List.generate] does
-/// the same. The write has the difference of [_colorizeDefaultDataset].
+/// the same. The write goes through [_writeColor].
 int _colorizeDoughnutDataset(Object? dataset, int i) {
   final data = _mapTarget(dataset);
-  // DIVERGES(chartjs): js-semantics-narrow-datasets, a narrow or fixed Map.
-  (dataset! as AnyObject)['backgroundColor'] = List<Object?>.generate(
-    data.length,
-    (_) => _getBorderColor(i++),
+  _writeColor(
+    dataset,
+    OptionKey.backgroundColor,
+    List<Object?>.generate(
+      data.length,
+      // The upstream form writes the parameter.
+      // ignore: parameter_assignments
+      (_) => _getBorderColor(i++),
+    ),
   );
 
   return i;
@@ -168,13 +197,18 @@ int _colorizeDoughnutDataset(Object? dataset, int i) {
 
 /// plugin.colors.ts:48 `colorizePolarAreaDataset(dataset, i)`.
 ///
-/// The write has the difference of [_colorizeDefaultDataset].
+/// The write goes through [_writeColor].
 int _colorizePolarAreaDataset(Object? dataset, int i) {
   final data = _mapTarget(dataset);
-  // DIVERGES(chartjs): js-semantics-narrow-datasets, a narrow or fixed Map.
-  (dataset! as AnyObject)['backgroundColor'] = List<Object?>.generate(
-    data.length,
-    (_) => _getBackgroundColor(i++),
+  _writeColor(
+    dataset,
+    OptionKey.backgroundColor,
+    List<Object?>.generate(
+      data.length,
+      // The upstream form writes the parameter.
+      // ignore: parameter_assignments
+      (_) => _getBackgroundColor(i++),
+    ),
   );
 
   return i;
@@ -206,6 +240,9 @@ void Function(Object? dataset, int datasetIndex) _getColorizer(
 /// The values `descriptors[k]` of the loop `for (k in descriptors)` of
 /// plugin.colors.ts:75, in the order of the loop.
 ///
+/// The descriptors are option objects of the user (the datasets, the
+/// `elements` of the options): a Map is read by name.
+///
 /// A List or a String gives its items at the indices. A Map gives the
 /// values of its keys in the order of `Object.keys`: a plain Map has no
 /// inherited enumerable key. `null`, `undefined` and the other values give
@@ -233,8 +270,8 @@ Iterable<Object?> _forInValues(Object? descriptors) sync* {
 /// property read does upstream.
 bool _containsColorsDefinitions(Object? descriptors) {
   for (final descriptor in _forInValues(descriptors)) {
-    if (jsTruthy(jsGet(descriptor, 'borderColor')) ||
-        jsTruthy(jsGet(descriptor, 'backgroundColor'))) {
+    if (jsTruthy(optionOf(descriptor, OptionKey.borderColor)) ||
+        jsTruthy(optionOf(descriptor, OptionKey.backgroundColor))) {
       return true;
     }
   }
@@ -248,60 +285,67 @@ bool _containsColorsDefinitions(Object? descriptors) {
 /// tests its truthiness. Thus this function gives that truthiness.
 bool _containsColorsDefinition(Object? descriptor) {
   return jsTruthy(descriptor) &&
-      (jsTruthy(jsGet(descriptor, 'borderColor')) ||
-          jsTruthy(jsGet(descriptor, 'backgroundColor')));
+      (jsTruthy(optionOf(descriptor, OptionKey.borderColor)) ||
+          jsTruthy(optionOf(descriptor, OptionKey.backgroundColor)));
 }
 
 /// plugin.colors.ts:90 `containsDefaultColorsDefenitions()`. The strict
-/// inequality of a value and a string is the Dart `!=`.
+/// inequality of a value and a string is the Dart `!=`. The reads are the
+/// typed reads of the keys of `defaults` (with their routes).
 bool _containsDefaultColorsDefenitions() {
-  return defaults['borderColor'] != 'rgba(0,0,0,0.1)' ||
-      defaults['backgroundColor'] != 'rgba(0,0,0,0.1)';
+  return defaults.lookup(OptionKey.borderColor)?.raw != 'rgba(0,0,0,0.1)' ||
+      defaults.lookup(OptionKey.backgroundColor)?.raw != 'rgba(0,0,0,0.1)';
+}
+
+/// plugin.colors.ts:102 `beforeLayout(chart, _args, options)`.
+///
+/// `chart.config.data.datasets` is a read of the data of the user, by name.
+/// The options of the config are read through their typed keys
+/// ([optionOf]), by name for a Map of the user.
+void _beforeLayout(types.Chart chart, AnyObject _, AnyObject options) {
+  final opts = ColorsPluginOptions(options);
+  if (!jsTruthy(opts.enabled)) {
+    return;
+  }
+
+  final config = chart.config;
+  final datasets = jsGet(config.data, 'datasets');
+  final chartOptions = config.options;
+  final elements = optionOf(chartOptions, OptionKey.elements);
+
+  final containsColorDefenition =
+      _containsColorsDefinitions(datasets) ||
+      _containsColorsDefinition(chartOptions) ||
+      (jsTruthy(elements) && _containsColorsDefinitions(elements)) ||
+      _containsDefaultColorsDefenitions();
+
+  if (!jsTruthy(opts.forceOverride) && containsColorDefenition) {
+    return;
+  }
+
+  // DIVERGES(chartjs): theme-H5, the palette of the chart theme for this run.
+  final theme = chartThemeOf(config);
+  _themeBorderColors = _themePalette(theme, themeBorderColorsKey);
+  _themeBackgroundColors = _themePalette(theme, themeBackgroundColorsKey);
+
+  final colorizer = _getColorizer(chart);
+
+  // `datasets.forEach(colorizer)`: a value that is not an array throws a
+  // TypeError. forEach visits the indices below the length at its start.
+  final list = datasets! as List<Object?>;
+  for (var k = 0, length = list.length; k < length; k++) {
+    colorizer(list[k], k);
+  }
 }
 
 /// plugin.colors.ts:94 the default export, `Colors` of
 /// src/plugins/index.js:1.
-final AnyObject colors = <String, Object?>{
-  'id': 'colors',
-
+///
+/// A typed [Plugin] with the upstream keys in the upstream order.
+final Plugin colors = Plugin()
+  ..id = 'colors'
   // A typed scope of the kind `ColorsOptions` (Chart.js ADR 0054 §3).
-  'defaults': ColorsOptionsScope()
+  ..defaults = (ColorsOptionsScope()
     ..enabled = true
-    ..forceOverride = false,
-
-  /// plugin.colors.ts:102 `beforeLayout(chart, _args, options)`.
-  'beforeLayout': (types.Chart chart, AnyObject _, AnyObject options) {
-    if (!jsTruthy(jsGet(options, 'enabled'))) {
-      return;
-    }
-
-    final config = chart.config;
-    final datasets = jsGet(config.data, 'datasets');
-    final chartOptions = config.options;
-    final elements = jsGet(chartOptions, 'elements');
-
-    final containsColorDefenition =
-        _containsColorsDefinitions(datasets) ||
-        _containsColorsDefinition(chartOptions) ||
-        (jsTruthy(elements) && _containsColorsDefinitions(elements)) ||
-        _containsDefaultColorsDefenitions();
-
-    if (!jsTruthy(jsGet(options, 'forceOverride')) && containsColorDefenition) {
-      return;
-    }
-
-    // DIVERGES(chartjs): theme-H5, the palette of the chart theme for this run.
-    final theme = chartThemeOf(config);
-    _themeBorderColors = _themePalette(theme, themeBorderColorsKey);
-    _themeBackgroundColors = _themePalette(theme, themeBackgroundColorsKey);
-
-    final colorizer = _getColorizer(chart);
-
-    // `datasets.forEach(colorizer)`: a value that is not an array throws a
-    // TypeError. forEach visits the indices below the length at its start.
-    final list = datasets! as List<Object?>;
-    for (var k = 0, length = list.length; k < length; k++) {
-      colorizer(list[k], k);
-    }
-  },
-};
+    ..forceOverride = false)
+  ..beforeLayout = _beforeLayout;

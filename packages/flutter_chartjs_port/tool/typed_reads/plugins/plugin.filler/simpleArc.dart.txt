@@ -1,2 +1,3 @@
+# L4: jsGet 1: the bounds of the opts object of pathSegment, a Map of the
+# interface types.LineElement.pathSegment (base types).
 jsGet 1
-stringIndex 1

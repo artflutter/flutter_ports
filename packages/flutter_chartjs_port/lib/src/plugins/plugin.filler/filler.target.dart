@@ -23,7 +23,7 @@ import 'package:flutter_chartjs_port/src/elements/element.point.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFinite;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dart'
     show createBoundaryLine;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart'
@@ -34,6 +34,8 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
     show FillerSource;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart'
     show SimpleArc;
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show optionOf;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// filler.target.js:13 `_getTarget(source)`.
@@ -122,11 +124,15 @@ Object _computeCircularBoundary(
   final fill = source.fill;
   final options = scale.options;
   final length = scale.getLabels().length;
-  final start = jsTruthy(jsGet(options, 'reverse')) ? scale.max : scale.min;
+  final start = jsTruthy(optionOf(options, OptionKey.reverse))
+      ? scale.max
+      : scale.min;
   final value = getTargetValue(fill, scale, start);
   final target = <types.PointElement>[];
 
-  if (jsTruthy(jsGet(jsGet(options, 'grid'), 'circular'))) {
+  if (jsTruthy(
+    optionOf(optionOf(options, OptionKey.grid), OptionKey.circular),
+  )) {
     final center = scale.getPointPositionForValue(0, start);
     return SimpleArc(
       x: center.x,

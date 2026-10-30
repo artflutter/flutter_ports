@@ -4,10 +4,13 @@
 ///
 /// [decimation] is the plugin object, the default export of the upstream
 /// file and `Decimation` of `src/plugins/index.js:2` (Chart.js ADR 0038,
-/// section 1). It is a mutable Map with the upstream keys in the upstream
-/// order: `id`, `defaults`, `beforeElementsUpdate` and `destroy`. Each hook
-/// is a closure with the upstream parameter count (Chart.js ADR 0038,
-/// section 3).
+/// section 1). It is a typed `Plugin` (Chart.js ADR 0054 §12) with the
+/// upstream keys in the upstream order: `id`, `defaults`,
+/// `beforeElementsUpdate` and `destroy`. The hook `beforeElementsUpdate` is
+/// a private function of the hook type `(chart, args, options)`. `destroy`
+/// is no hook of the plugin service: it stays an extra key with the
+/// upstream parameter count. The options are read through the facade
+/// `DecimationOptions` of `plugin_options.dart`.
 ///
 /// The data of a dataset: upstream replaces the own property `data` of a
 /// decimated dataset with an accessor (`plugin.decimation.js:249-265`). A
@@ -15,7 +18,10 @@
 /// that holds the value of the upstream getter, and an `Expando` marks the
 /// datasets that have the accessor. A sync turns a user write of `data`
 /// into the setter write (Chart.js ADR 0038, section 8; differences.md row
-/// `adapt-decimation-data-accessor`).
+/// `adapt-decimation-data-accessor`). The dataset is the object of the
+/// user ([_Dataset]): a Map of the user, read and written by name, or a
+/// typed dataset scope, read and written through its face (Chart.js ADR
+/// 0054 §5).
 ///
 /// The two algorithms read the data items with the JavaScript operators:
 /// `+=` with [jsAdd], the arithmetic through [jsToNumber], `|` through
@@ -43,10 +49,15 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionKey, OptionScope;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DecimationOptionsScope;
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show DecimationOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:meta/meta.dart';
 
 /// plugin.decimation.js:3 `lttbDecimation(data, start, count,
@@ -64,8 +75,10 @@ import 'package:meta/meta.dart';
 /// `@internal` for the tests of the algorithm (Chart.js ADR 0012).
 ///
 /// [data] is the raw data of the dataset. [options] is the option object
-/// of the plugin: the function reads `options.samples`. An index past the
-/// end, a `null` or an `undefined` item throws a [TypeError] at the read of
+/// of the plugin: the function reads `options.samples` through the facade
+/// [DecimationOptions]. The data items are the items of the user
+/// (`parsing: false`): their reads are by name ([jsGetKey]). An index past
+/// the end, a `null` or an `undefined` item throws a [TypeError] at the read of
 /// its `x`, as the destructuring of `:50` and the reads of `:40-41` and
 /// `:61-62` do.
 @internal
@@ -76,7 +89,7 @@ List<Object?> lttbDecimation(
   double availableWidth,
   Object? options,
 ) {
-  final samplesOption = jsGet(options, 'samples');
+  final samplesOption = DecimationOptions(options).samples;
   // `samples` reaches only numeric operators (`>=`, `-`, `/`, `<`), which
   // apply ToNumber to it.
   final samples = jsToNumber(
@@ -298,6 +311,60 @@ List<Object?> _slice(List<Object?> list, double begin, double end) {
   return from < to ? list.sublist(from, to) : <Object?>[];
 }
 
+/// A dataset of `chart.data.datasets`, the object of the user (Chart.js ADR
+/// 0054 §5): a typed dataset scope, read and written through its typed keys
+/// (the decimation pair `_data` and `_decimated` of the dataset scope kinds,
+/// `data` and `indexAxis`), or a Map of the user, read and written by name.
+/// A value that is neither has no own key, and a write into it throws the
+/// [TypeError] of the cast, as the property write into a primitive of
+/// strict mode does.
+///
+/// The writes into a Map of the user keep the difference of the row
+/// `js-semantics-narrow-datasets`: a narrow or unmodifiable Map throws.
+extension type const _Dataset(Object? object) {
+  /// `Object.hasOwn(dataset, key)`.
+  bool owns(OptionKey key) => switch (object) {
+    final OptionScope scope => scope.owns(key),
+    final AnyObject map => map.containsKey(key.jsName),
+    _ => false,
+  };
+
+  /// `dataset[key]`: [undefined] for a key that the dataset does not own.
+  /// `null` and `undefined` throw the [TypeError] of the read.
+  Object? read(OptionKey key) {
+    final dataset = object;
+    if (dataset is OptionScope) {
+      final cell = dataset.lookup(key);
+      return cell == null ? undefined : cell.raw;
+    }
+    // A dataset of the user: the read by name.
+    return jsGet(dataset, key.jsName);
+  }
+
+  /// `dataset[key] = value`.
+  void write(OptionKey key, Object? value) {
+    switch (object) {
+      case final OptionScope scope when scope.hasField(key):
+        scope.store(key, scope.classify(key, value));
+      case final OptionScope scope:
+        scope.jsWrite(key.jsName, value);
+      default:
+        // DIVERGES(chartjs): js-semantics-narrow-datasets, a narrow Map throws.
+        (object! as AnyObject)[key.jsName] = value;
+    }
+  }
+
+  /// `delete dataset[key]`.
+  void delete(OptionKey key) {
+    switch (object) {
+      case final OptionScope scope:
+        scope.delete(key);
+      default:
+        (object! as AnyObject).remove(key.jsName);
+    }
+  }
+}
+
 /// The accessor of plugin.decimation.js:255-264 on one dataset: [written] is
 /// the last value that the plugin wrote into the plain entry `data`.
 final class _DataAccessor {
@@ -313,6 +380,11 @@ final Expando<_DataAccessor> _dataAccessor = Expando<_DataAccessor>(
   'decimation data accessor',
 );
 
+/// Whether [dataset] can hold the accessor: a Map of the user or a typed
+/// dataset scope. Another value never has it.
+bool _isDatasetObject(Object? dataset) =>
+    dataset is OptionScope || dataset is AnyObject;
+
 // DIVERGES(chartjs): adapt-decimation-data-accessor, a Map has no accessor.
 /// The setter of plugin.decimation.js:261-263, applied before each use of
 /// the dataset.
@@ -321,26 +393,26 @@ final Expando<_DataAccessor> _dataAccessor = Expando<_DataAccessor>(
 /// wrote is a user write since the last hook: it goes to `_data`. Then
 /// `data` gets the getter value (`_decimated`, :258-260). Thus a user write
 /// or delete of `_decimated` changes `data` and not `_data`, as the getter
-/// does. The getter value comes from [jsGet], so an absent `_decimated`
-/// gives [undefined]. A `delete dataset.data` of the user removes the
-/// accessor upstream: an absent key `data` clears the mark. A dataset that
-/// is not a Map never has the accessor.
+/// does. The getter value is the read of `_decimated`, so an absent
+/// `_decimated` gives [undefined]. A `delete dataset.data` of the user
+/// removes the accessor upstream: an absent key `data` clears the mark. A
+/// dataset that is not an object never has the accessor.
 void _syncDataAccessor(Object? dataset) {
-  if (dataset is! AnyObject) return;
-  final accessor = _dataAccessor[dataset];
+  if (!_isDatasetObject(dataset)) return;
+  final accessor = _dataAccessor[dataset!];
   if (accessor == null) return;
-  if (!dataset.containsKey('data')) {
+  final target = _Dataset(dataset);
+  if (!target.owns(OptionKey.data)) {
     _dataAccessor[dataset] = null;
     return;
   }
-  final data = dataset['data'];
+  final data = target.read(OptionKey.data);
   if (!identical(data, accessor.written)) {
-    // DIVERGES(chartjs): js-semantics-narrow-datasets, a narrow or fixed Map.
-    dataset['_data'] = data;
+    target.write(OptionKey.descData, data);
   }
-  final getterValue = jsGet(dataset, '_decimated');
+  final getterValue = target.read(OptionKey.descDecimated);
   if (!identical(data, getterValue)) {
-    dataset['data'] = getterValue;
+    target.write(OptionKey.data, getterValue);
   }
   accessor.written = getterValue;
 }
@@ -352,15 +424,14 @@ void _syncDataAccessor(Object? dataset) {
 /// key does, and adds the key at the end when the user removed it.
 void _cleanDecimatedDataset(Object? dataset) {
   _syncDataAccessor(dataset);
-  if (jsTruthy(jsGet(dataset, '_decimated'))) {
-    final target = dataset! as AnyObject;
-    final data = jsGet(target, '_data');
-    // DIVERGES(chartjs): js-semantics-narrow-datasets, a narrow or fixed Map.
+  final target = _Dataset(dataset);
+  if (jsTruthy(target.read(OptionKey.descDecimated))) {
+    final data = target.read(OptionKey.descData);
     target
-      ..remove('_decimated')
-      ..remove('_data')
-      ..['data'] = data;
-    _dataAccessor[target] = null;
+      ..delete(OptionKey.descDecimated)
+      ..delete(OptionKey.descData)
+      ..write(OptionKey.data, data);
+    _dataAccessor[dataset!] = null;
   }
 }
 
@@ -374,8 +445,8 @@ void _cleanDecimatedData(types.Chart chart) {
   }
 }
 
-/// `chart.data.datasets`: a value that is not an array throws a
-/// [TypeError] at the call of `forEach`.
+/// `chart.data.datasets`, a read of the data of the user: a value that is
+/// not an array throws a [TypeError] at the call of `forEach`.
 List<Object?> _datasets(types.Chart chart) =>
     jsGet(chart.data, 'datasets')! as List<Object?>;
 
@@ -423,12 +494,17 @@ List<Object?> _datasets(types.Chart chart) =>
 }
 
 /// plugin.decimation.js:205 `beforeElementsUpdate(chart, args, options)`.
+///
+/// The options are read through the facade [DecimationOptions], and the
+/// chart options through their typed reads ([optionOf]). The reads of the
+/// datasets of the user are reads by name ([_Dataset]).
 void _beforeElementsUpdate(
   types.Chart chart,
   AnyObject args,
   AnyObject options,
 ) {
-  if (!jsTruthy(jsGet(options, 'enabled'))) {
+  final opts = DecimationOptions(options);
+  if (!jsTruthy(opts.enabled)) {
     // The decimation plugin may have been previously enabled. Need to remove
     // old `dataset._data` handlers
     _cleanDecimatedData(chart);
@@ -448,12 +524,14 @@ void _beforeElementsUpdate(
     final dataset = datasets[datasetIndex];
     // DIVERGES(chartjs): adapt-decimation-data-accessor, the setter first.
     _syncDataAccessor(dataset);
-    final dataOwn = jsGet(dataset, '_data');
-    final indexAxis = jsGet(dataset, 'indexAxis');
+    final target = _Dataset(dataset);
+    final dataOwn = target.read(OptionKey.descData);
+    final indexAxis = target.read(OptionKey.indexAxis);
     final meta = chart.getDatasetMeta(datasetIndex.toDouble());
-    final data = jsTruthy(dataOwn) ? dataOwn : jsGet(dataset, 'data');
+    final data = jsTruthy(dataOwn) ? dataOwn : target.read(OptionKey.data);
 
-    if (resolve([indexAxis, jsGet(chart.options, 'indexAxis')]) == 'y') {
+    if (resolve([indexAxis, optionOf(chart.options, OptionKey.indexAxis)]) ==
+        'y') {
       // Decimation is only supported for lines that have an X indexAxis
       continue;
     }
@@ -469,7 +547,7 @@ void _beforeElementsUpdate(
       continue;
     }
 
-    if (jsTruthy(jsGet(chart.options, 'parsing'))) {
+    if (jsTruthy(optionOf(chart.options, OptionKey.parsing))) {
       // Plugin only supports data that does not need parsing
       continue;
     }
@@ -478,7 +556,7 @@ void _beforeElementsUpdate(
       meta,
       data,
     );
-    final threshold = jsGet(options, 'threshold');
+    final threshold = opts.threshold;
     // `count <= threshold` applies ToNumber to the threshold, because
     // `count` is a number.
     if (count <=
@@ -488,23 +566,22 @@ void _beforeElementsUpdate(
       continue;
     }
 
-    final target = dataset! as AnyObject;
     if (isNullOrUndef(dataOwn)) {
       // First time we are seeing this dataset
       // We override the 'data' property with a setter that stores the
       // raw data in _data, but reads the decimated data from _decimated
-      // DIVERGES(chartjs): js-semantics-narrow-datasets, a narrow or fixed Map.
-      target['_data'] = data;
-      target.remove('data');
+      target
+        ..write(OptionKey.descData, data)
+        ..delete(OptionKey.data);
       // DIVERGES(chartjs): adapt-decimation-data-accessor, the getter value.
-      final getterValue = jsGet(target, '_decimated');
-      target['data'] = getterValue;
-      _dataAccessor[target] = _DataAccessor(getterValue);
+      final getterValue = target.read(OptionKey.descDecimated);
+      target.write(OptionKey.data, getterValue);
+      _dataAccessor[dataset!] = _DataAccessor(getterValue);
     }
 
     // Point the chart to the decimated data
     final List<Object?> decimated;
-    final algorithm = jsGet(options, 'algorithm');
+    final algorithm = opts.algorithm;
     switch (algorithm) {
       case 'lttb':
         decimated = lttbDecimation(
@@ -528,31 +605,33 @@ void _beforeElementsUpdate(
         );
     }
 
-    // DIVERGES(chartjs): js-semantics-narrow-datasets, a narrow or fixed Map.
-    target['_decimated'] = decimated;
-    final accessor = _dataAccessor[target];
+    target.write(OptionKey.descDecimated, decimated);
+    final accessor = _dataAccessor[dataset!];
     if (accessor != null) {
       // DIVERGES(chartjs): adapt-decimation-data-accessor, the getter value.
-      target['data'] = decimated;
+      target.write(OptionKey.data, decimated);
       accessor.written = decimated;
     }
   }
 }
 
+/// plugin.decimation.js:284 `destroy(chart)`: the body is the call of
+/// `cleanDecimatedData(chart)`. The plugin service has no hook `destroy`,
+/// so the key stays an extra of the plugin with the upstream parameter
+/// count.
+void _destroy(types.Chart chart) {
+  _cleanDecimatedData(chart);
+}
+
 /// plugin.decimation.js:197 the default export, `Decimation` of
 /// src/plugins/index.js:2.
-final AnyObject decimation = <String, Object?>{
-  'id': 'decimation',
-
+///
+/// A typed [Plugin] with the upstream keys in the upstream order.
+final Plugin decimation = Plugin()
+  ..id = 'decimation'
   // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
-  'defaults': DecimationOptionsScope()
+  ..defaults = (DecimationOptionsScope()
     ..algorithm = 'min-max'
-    ..enabled = false,
-
-  /// plugin.decimation.js:205 `beforeElementsUpdate(chart, args, options)`.
-  'beforeElementsUpdate': _beforeElementsUpdate,
-
-  /// plugin.decimation.js:284 `destroy(chart)`: the body is the call of
-  /// `cleanDecimatedData(chart)`, and both take one parameter.
-  'destroy': _cleanDecimatedData,
-};
+    ..enabled = false)
+  ..beforeElementsUpdate = _beforeElementsUpdate
+  ..jsWrite('destroy', _destroy);

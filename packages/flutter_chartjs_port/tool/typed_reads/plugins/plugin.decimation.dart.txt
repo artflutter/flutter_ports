@@ -1,4 +1,9 @@
-jsGet 15
+# L4 allowlist (Chart.js ADR 0054 §5): the data of the user. jsGet 3: the
+# spread of a data item ({...item, x}), the read of a dataset Map of the
+# user (_Dataset.read; a typed dataset scope reads its typed keys) and
+# chart.data.datasets. jsGetKey 10: the x and y of the data items of the
+# user (parsing: false) in lttbDecimation and minMaxDecimation.
+# jsObjectKeys 1: the spread of a data item.
+jsGet 3
 jsGetKey 10
-stringIndex 8
 jsObjectKeys 1

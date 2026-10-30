@@ -1,2 +1,3 @@
-jsGet 8
-stringIndex 4
+# L4 allowlist (Chart.js ADR 0054 §5): jsGet 2: chart.data.datasets and its
+# length, the data of the user.
+jsGet 2

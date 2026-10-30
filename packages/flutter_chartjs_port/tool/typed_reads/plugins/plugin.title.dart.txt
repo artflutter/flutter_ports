@@ -1,1 +1,3 @@
-jsGet 15
+# L4 allowlist (Chart.js ADR 0054 §5): jsGet 3: the config argument of
+# new Title(config) through the class value.
+jsGet 3

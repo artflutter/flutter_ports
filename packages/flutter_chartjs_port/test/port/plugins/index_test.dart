@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show PluginHook, PluginHookFunction;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../scales/scale_chart_harness.dart';
@@ -27,13 +29,18 @@ import 'plugin_dispatch_reference.dart';
 // registers them here.
 //
 // The group `plugin objects` compares the keys of each plugin object of the
-// namespace `plugins` and the registry order. A hook key gives its count of
-// positional parameters: the `length` of the JS function and the count that
-// the Dart closure takes (Chart.js ADR 0038, section 3).
+// namespace `plugins` and the registry order. A function key gives its count
+// of positional parameters: the `length` of the JS function and the count
+// that the Dart function takes. A hook of the `Plugin` interface is a typed
+// hook function `(chart, args, options)` (Chart.js ADR 0054 §12, which
+// supersedes the upstream parameter counts of the hooks of Chart.js ADR
+// 0038, section 3): both sides give it as `<key>(hook)`, the Dart side for a
+// function of the hook type with 3 parameters ([_hookText]).
 //
 // The group `dispatch` builds the chart of each case with acquireChart and
 // runs its steps. Each hook of each plugin object is a recording closure
-// with the same count of parameters for the test (`calls`). The inline
+// (`calls`) that records the args of the hook as the generator does for the
+// upstream count of parameters of the hook ([_upstreamCounts]). The inline
 // plugin `recorder`, the last plugin of each notify, records the hooks that
 // the plugin service gives it (`notifies`). A hook text has the details of
 // `detail` of the generator ([_detail]). The steps `hover` and `mouseout`
@@ -145,19 +152,78 @@ List<int> _counts(Function f) => [
 /// `keyText(plugin, key)` of the generator: `<key>(<count>)` for a closure,
 /// `<key>: class` for a class value, else the key. A closure that takes
 /// more than one count gives the counts with `|`, and fails the comparison.
+/// A hook of the `Plugin` interface gives `<key>(hook)` for a typed hook
+/// function ([_hookText]).
 String _keyText(AnyObject plugin, String key) => switch (plugin[key]) {
   final JsClass _ => '$key: class',
+  final Function f when PluginHook.of(key) != null => _hookText(key, f),
   final Function f => '$key(${_counts(f).join('|')})',
   _ => key,
 };
+
+/// The text of the hook [key] with the function [f]: `<key>(hook)` for a
+/// function of the hook type `(chart, args, options)` that takes exactly 3
+/// arguments (Chart.js ADR 0054 §12), else the counts of [f].
+String _hookText(String key, Function f) =>
+    f is PluginHookFunction<Never> && _counts(f).join('|') == '3'
+    ? '$key(hook)'
+    : '$key(${_counts(f).join('|')})';
+
+/// The reference text of a key: `<key>(hook)` for a hook of the `Plugin`
+/// interface (the JS `length` of the hook is no behavior of Chart.js:
+/// Chart.js ADR 0054 §12), else the text of the generator.
+String _referenceKeyText(String text) {
+  final open = text.indexOf('(');
+  if (open < 0 || !text.endsWith(')')) return text;
+  final key = text.substring(0, open);
+  return PluginHook.of(key) != null ? '$key(hook)' : text;
+}
+
+/// The upstream count of parameters of each function key of each plugin of
+/// the reference, by plugin id and key: the `length` of the JS function.
+Map<String, Map<String, int>> _upstreamCounts() {
+  final counts = <String, Map<String, int>>{};
+  final plugins =
+      pluginDispatchReference.first.expected['plugins']! as List<Object?>;
+  for (final plugin in plugins) {
+    final map = plugin! as Map<String, Object?>;
+    final id = map['id']! as String;
+    for (final text in map['keys']! as List<Object?>) {
+      final match = RegExp(r'^(\w+)\((\d+)\)$').firstMatch(text! as String);
+      if (match == null) continue;
+      (counts[id] ??= {})[match[1]!] = int.parse(match[2]!);
+    }
+  }
+  return counts;
+}
 
 /// A recording closure for the hook [key] of the plugin [id]: it adds the
 /// hook text to [calls] and calls [f] with the same arguments. It takes the
 /// count of positional arguments of [f]. The generator gives `{}` as the
 /// args of a hook with one parameter, as `_notify` gives `args || {}`.
-Function _recording(String id, String key, Function f, List<String> calls) {
+///
+/// A typed hook function (Chart.js ADR 0054 §12) takes the 3 arguments of
+/// the hook type: its recording closure takes them too, and records the
+/// args as the generator does for the upstream count [upstream] of the
+/// hook.
+Function _recording(
+  String id,
+  String key,
+  Function f,
+  List<String> calls,
+  int? upstream,
+) {
   final counts = _counts(f);
   expect(counts, hasLength(1), reason: 'the parameters of $id.$key');
+  if (f is PluginHookFunction<Never> && PluginHook.of(key) != null) {
+    expect(upstream, isNotNull, reason: 'the upstream count of $id.$key');
+    return (Object? chart, Object? args, Object? options) {
+      calls.add(
+        '$id.${_detail(key, upstream == 1 ? const <String, Object?>{} : args)}',
+      );
+      return Function.apply(f, [chart, args, options]);
+    };
+  }
   return switch (counts.single) {
     1 => (Object? chart) {
       calls.add('$id.${_detail(key, const <String, Object?>{})}');
@@ -178,6 +244,7 @@ Function _recording(String id, String key, Function f, List<String> calls) {
 /// Replaces each hook of each plugin object of the namespace `plugins` with
 /// a [_recording] closure, and restores the hooks with `addTearDown`.
 void _recordHooks(List<String> calls) {
+  final upstream = _upstreamCounts();
   for (final name in jsObjectKeys(plugins)) {
     final plugin = plugins[name]! as AnyObject;
     final id = plugin['id']! as String;
@@ -186,7 +253,7 @@ void _recordHooks(List<String> calls) {
       if (value is! Function) {
         continue;
       }
-      plugin[key] = _recording(id, key, value, calls);
+      plugin[key] = _recording(id, key, value, calls, upstream[id]?[key]);
       addTearDown(() => plugin[key] = value);
     }
   }
@@ -237,7 +304,22 @@ void main() {
           },
       ];
       for (final c in pluginDispatchReference) {
-        expect(keys, c.expected['plugins'], reason: c.name);
+        expect(
+          keys,
+          [
+            for (final plugin
+                in (c.expected['plugins']! as List<Object?>)
+                    .cast<Map<String, Object?>>())
+              <String, Object?>{
+                'id': plugin['id'],
+                'keys': [
+                  for (final text in plugin['keys']! as List<Object?>)
+                    _referenceKeyText(text! as String),
+                ],
+              },
+          ],
+          reason: c.name,
+        );
       }
     });
 

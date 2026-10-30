@@ -149,7 +149,7 @@ AnyObject _startOptions(String text) => <String, Object?>{
   'fullSize': true,
 };
 
-/// `plugin.<hook>(chart, {}, options)` through the plugin Map.
+/// `plugin.<hook>(chart, {}, options)` through the face of the plugin.
 void _hook(String hook, Chart chart, [AnyObject? options]) {
   jsCall(subTitle[hook], [
     chart,
@@ -212,20 +212,19 @@ void main() {
       expect(subTitle.containsKey('_element'), isFalse);
     });
 
-    test('the registry gives the plugin Map', () {
+    test('the registry gives the plugin object', () {
       expect(registry.getPlugin('subtitle'), same(subTitle));
     });
 
-    test('the hooks have the upstream parameter counts', () {
+    test('the hooks are typed hook functions', () {
       // The probe output `hookLengths`: start 3, stop 1, beforeUpdate 3.
-      // jsCall gives a closure as many arguments as it takes, so the
-      // closure arity is the JS `length` (Chart.js ADR 0038, section 3).
-      // A closure with more optional parameters also matches the shorter
-      // function type. The `Never` parameter type of the `isNot` matcher
-      // rejects each closure with one more parameter.
-      expect(subTitle['stop'], isA<void Function(types.Chart)>());
-      expect(subTitle['stop'], isNot(isA<void Function(types.Chart, Never)>()));
-      for (final hook in ['start', 'beforeUpdate']) {
+      // Chart.js ADR 0054 §12 makes each hook a function of the hook type
+      // `(chart, args, options)`, in place of the upstream parameter counts
+      // of Chart.js ADR 0038, section 3: `fn.length` of a hook changes no
+      // behavior of Chart.js. The hooks of the subtitle read no args, so
+      // they take any args object. The `Never` parameter type of the
+      // `isNot` matcher rejects each function with one more parameter.
+      for (final hook in ['start', 'stop', 'beforeUpdate']) {
         expect(
           subTitle[hook],
           isA<void Function(types.Chart, AnyObject, AnyObject)>(),

@@ -24,12 +24,15 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart' show canvasStyle;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.segment.dart'
     show findSegmentEnd, getBounds, segments;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart'
     show getTarget;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
     show FillerSource;
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show FillTargetOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -54,16 +57,16 @@ void drawfill(
   final scale = source.scale;
   final axis = source.axis;
   final lineOpts = line.options;
-  final fillOption = jsGet(lineOpts, 'fill');
-  final color = jsGet(lineOpts, 'backgroundColor');
+  final fillOption = optionOf(lineOpts, OptionKey.fill);
+  final color = optionOf(lineOpts, OptionKey.backgroundColor);
   // `{above = color, below = color} = fillOption || {}`: the defaults apply
   // only to `undefined`.
   final above = _orDefault(
-    jsTruthy(fillOption) ? jsGet(fillOption, 'above') : undefined,
+    jsTruthy(fillOption) ? FillTargetOptions(fillOption).above : undefined,
     color,
   );
   final below = _orDefault(
-    jsTruthy(fillOption) ? jsGet(fillOption, 'below') : undefined,
+    jsTruthy(fillOption) ? FillTargetOptions(fillOption).below : undefined,
     color,
   );
   final meta = chart.getDatasetMeta(index);

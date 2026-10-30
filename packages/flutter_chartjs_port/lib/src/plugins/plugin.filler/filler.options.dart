@@ -6,7 +6,10 @@
 /// `false`, `true`, a number, a String, an option object (`{value}`,
 /// `{target, above, below}`), Dart `null` for JS `null`, or the
 /// `undefined` sentinel. The JS operators keep their JS meaning through the
-/// runtime of `lib/src/js/` (`jsTruthy`, `jsParseFloat`, `jsGet`).
+/// runtime of `lib/src/js/` (`jsTruthy`, `jsParseFloat`). The line options
+/// (the typed `LineOptions`) and the scale options are read through their
+/// typed reads (`optionOf`), and the option objects through the facade
+/// `FillTargetOptions` (Chart.js ADR 0054 §4).
 ///
 /// This library is a pure layer (Chart.js ADR 0038, section 9).
 library;
@@ -15,11 +18,13 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFinite, isObject, valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsParseFloat, jsToNumber, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
     show FillerSource;
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show FillTargetOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// filler.options.js:10 `_resolveTarget(sources, index, propagate)`.
@@ -79,13 +84,13 @@ Object decodeFill(types.LineElement line, double index, double count) {
   final fill = _parseFillOption(line);
 
   if (isObject(fill)) {
-    return jsToNumber(jsGet(fill, 'value')).isNaN ? false : fill;
+    return jsToNumber(FillTargetOptions(fill).value).isNaN ? false : fill;
   }
 
   final target = jsParseFloat(fill);
 
   if (target.isFinite && target.floorToDouble() == target) {
-    return _decodeTargetIndex(jsGet(fill, '0'), index, target, count);
+    return _decodeTargetIndex(_firstChar(fill), index, target, count);
   }
 
   // `indexOf(fill) >= 0 && fill`: the mode itself, or `false`.
@@ -93,6 +98,11 @@ Object decodeFill(types.LineElement line, double index, double count) {
       ? fill
       : false;
 }
+
+/// `fill[0]` (filler.options.js:58): the first code unit of a non-empty
+/// String, else `undefined` (a number has no index property).
+Object? _firstChar(Object? fill) =>
+    fill is String && fill.isNotEmpty ? fill[0] : undefined;
 
 /// filler.options.js:63 `decodeTargetIndex(firstCh, index, target, count)`.
 /// [firstCh] is `fill[0]`: the first character of a String, else
@@ -133,7 +143,7 @@ double? getTargetPixel(Object fill, types.Scale? scale) {
   } else if (fill == 'end') {
     pixel = scale?.top;
   } else if (isObject(fill)) {
-    pixel = scale!.getPixelForValue(jsGet(fill, 'value'));
+    pixel = scale!.getPixelForValue(FillTargetOptions(fill).value);
   } else if (scale != null) {
     pixel = scale.getBasePixel();
   }
@@ -154,9 +164,11 @@ Object? getTargetValue(Object fill, types.Scale scale, double startValue) {
   if (fill == 'start') {
     value = startValue;
   } else if (fill == 'end') {
-    value = jsTruthy(jsGet(scale.options, 'reverse')) ? scale.min : scale.max;
+    value = jsTruthy(optionOf(scale.options, OptionKey.reverse))
+        ? scale.min
+        : scale.max;
   } else if (isObject(fill)) {
-    value = jsGet(fill, 'value');
+    value = FillTargetOptions(fill).value;
   } else {
     value = scale.getBaseValue();
   }
@@ -171,14 +183,14 @@ Object? getTargetValue(Object fill, types.Scale scale, double startValue) {
 /// only. `valueOrDefault` takes the option itself for `undefined`.
 Object _parseFillOption(types.LineElement line) {
   final options = line.options;
-  final fillOption = jsGet(options, 'fill');
+  final fillOption = optionOf(options, OptionKey.fill);
   var fill = valueOrDefault(
-    jsTruthy(fillOption) ? jsGet(fillOption, 'target') : fillOption,
+    jsTruthy(fillOption) ? FillTargetOptions(fillOption).target : fillOption,
     fillOption,
   );
 
   if (identical(fill, undefined)) {
-    fill = jsTruthy(jsGet(options, 'backgroundColor'));
+    fill = jsTruthy(optionOf(options, OptionKey.backgroundColor));
   }
 
   if (fill == false || fill == null) {

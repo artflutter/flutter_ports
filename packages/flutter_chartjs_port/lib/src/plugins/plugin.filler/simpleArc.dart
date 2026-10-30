@@ -59,13 +59,16 @@ final class SimpleArc implements types.SimpleArc {
 
   /// simpleArc.js:18 `interpolate(point)`.
   ///
-  /// `point.angle` is the read by name of `PointElementProperty`: NaN for
-  /// the `undefined` state, as `Math.cos(undefined)` is NaN. The upstream
+  /// `point.angle` is the typed `angle` of a radar point
+  /// ([types.RadialPointElement]): NaN for the `undefined` state and for a
+  /// point without an angle, as `Math.cos(undefined)` is NaN. The upstream
   /// result also has `angle`. Its only reader reads `x` and `y`
   /// (filler.drawing.js:203).
   @override
   InterpolatedPoint interpolate(types.PointElement point) {
-    final angle = point['angle'];
+    final angle = point is types.RadialPointElement
+        ? (point.angle ?? double.nan)
+        : double.nan;
     return InterpolatedPoint(
       // js-ok: display only, the value reaches ctx.lineTo (Chart.js ADR 0034).
       x + math.cos(angle) * radius,

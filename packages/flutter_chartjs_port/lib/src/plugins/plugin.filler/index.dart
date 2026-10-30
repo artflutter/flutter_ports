@@ -8,15 +8,18 @@
 ///
 /// [filler] is the plugin object, the default export of the upstream file
 /// and `Filler` of `src/plugins/index.js:3` (Chart.js ADR 0038, section 1).
-/// It is a mutable Map with the upstream keys in the upstream order. The
-/// hooks are closures with the upstream parameter count (Chart.js ADR 0038,
-/// section 3).
+/// It is a typed `Plugin` (Chart.js ADR 0054 §12) with the upstream keys in
+/// the upstream order. Each hook is a private function of the hook type
+/// `(chart, args, options)`. The options are read through the facade
+/// `FillerOptions` of `plugin_options.dart`. `beforeDatasetDraw` reads the
+/// typed `meta` of its [DatasetDrawHookArgs].
 ///
 /// [FillerSource] is the source object of `index.js:26-34`. The other
 /// filler files import it with `show FillerSource`: the Dart form of the
 /// JSDoc type of their `source` parameters (Chart.js ADR 0040, section 6).
-/// `meta.$filler` is an extra property of the meta, through the access by
-/// name of `types.PropertyAccess`.
+/// `meta.$filler` is the typed field of the port-only interface
+/// `types.ChartMetaFiller`, which the meta of `core.controller.dart`
+/// implements (the access by name of the meta reads and writes it too).
 ///
 /// This library is a pure layer (Chart.js ADR 0038, section 9).
 library;
@@ -27,6 +30,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToNumber, jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show FillerOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.drawing.dart'
@@ -35,8 +39,12 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dar
     show shouldApplyFill;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart'
     show decodeFill, resolveTarget;
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show FillerOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show DatasetDrawHookArgs, Plugin;
 
 /// index.js:26-34, the source object of a dataset. The fields keep the
 /// upstream key order. `index.js:47` writes [fill].
@@ -90,107 +98,119 @@ String? _axisArgument(Object? axis) => switch (axis) {
   _ => jsToString(axis),
 };
 
-/// index.js:12 the default export, `Filler` of `src/plugins/index.js:3`
-/// (Chart.js ADR 0038, section 1).
-final AnyObject filler = <String, Object?>{
-  'id': 'filler',
+/// index.js:15 `afterDatasetsUpdate(chart, _args, options)`.
+///
+/// `chart.data.datasets` is the data of the user, read by name.
+void _afterDatasetsUpdate(types.Chart chart, AnyObject _, AnyObject options) {
+  final datasets = jsGet(chart.data, 'datasets');
+  final count = jsTruthy(datasets)
+      ? jsToNumber(jsGet(datasets, 'length'))
+      : 0.0;
+  final sources = <FillerSource?>[];
 
-  // index.js:15 `afterDatasetsUpdate(chart, _args, options)`.
-  'afterDatasetsUpdate': (types.Chart chart, AnyObject _, AnyObject options) {
-    final datasets = jsGet(chart.data, 'datasets');
-    final count = jsTruthy(datasets)
-        ? jsToNumber(jsGet(datasets, 'length'))
-        : 0.0;
-    final sources = <FillerSource?>[];
+  for (var i = 0; i < count; ++i) {
+    final index = i.toDouble();
+    final meta = chart.getDatasetMeta(index);
+    final line = meta.dataset;
+    FillerSource? source;
 
-    for (var i = 0; i < count; ++i) {
-      final index = i.toDouble();
-      final meta = chart.getDatasetMeta(index);
-      final line = meta.dataset;
-      FillerSource? source;
-
-      if (line != null && jsTruthy(line.options) && line is LineElement) {
-        source = FillerSource(
-          visible: chart.isDatasetVisible(index),
-          index: index,
-          fill: decodeFill(line, index, count),
-          chart: chart,
-          axis: jsGet(meta.controller!.options, 'indexAxis'),
-          scale: meta.vScale,
-          line: line,
-        );
-      }
-
-      (meta as types.PropertyAccess)[r'$filler'] = source;
-      sources.add(source);
-    }
-
-    for (var i = 0; i < count; ++i) {
-      final source = sources[i];
-      if (source == null || source.fill == false) {
-        continue;
-      }
-
-      source.fill = resolveTarget(
-        sources,
-        i,
-        jsTruthy(jsGet(options, 'propagate')),
+    if (line != null && jsTruthy(line.options) && line is LineElement) {
+      source = FillerSource(
+        visible: chart.isDatasetVisible(index),
+        index: index,
+        fill: decodeFill(line, index, count),
+        chart: chart,
+        axis: optionOf(meta.controller!.options, OptionKey.indexAxis),
+        scale: meta.vScale,
+        line: line,
       );
     }
-  },
 
-  // index.js:51 `beforeDraw(chart, _args, options)`. `if (!source)` is the
-  // type test: the port writes only Dart `null` and a [FillerSource], and an
-  // absent property reads `undefined` (Chart.js ADR 0040, section 6).
-  'beforeDraw': (types.Chart chart, AnyObject _, AnyObject options) {
-    final draw = jsGet(options, 'drawTime') == 'beforeDraw';
-    final metasets = chart.getSortedVisibleDatasetMetas();
-    final area = chart.chartArea;
-    for (var i = metasets.length - 1; i >= 0; --i) {
-      final source = (metasets[i] as types.PropertyAccess)[r'$filler'];
-      if (source is! FillerSource) {
-        continue;
-      }
+    (meta as types.ChartMetaFiller).$filler = source;
+    sources.add(source);
+  }
 
-      source.line.updateControlPoints(area, _axisArgument(source.axis));
-      if (draw && jsTruthy(source.fill)) {
-        drawfill(chart.ctx!, source, area);
-      }
-    }
-  },
-
-  // index.js:68 `beforeDatasetsDraw(chart, _args, options)`.
-  'beforeDatasetsDraw': (types.Chart chart, AnyObject _, AnyObject options) {
-    if (jsGet(options, 'drawTime') != 'beforeDatasetsDraw') {
-      return;
+  for (var i = 0; i < count; ++i) {
+    final source = sources[i];
+    if (source == null || source.fill == false) {
+      continue;
     }
 
-    final metasets = chart.getSortedVisibleDatasetMetas();
-    for (var i = metasets.length - 1; i >= 0; --i) {
-      final source = (metasets[i] as types.PropertyAccess)[r'$filler'];
+    source.fill = resolveTarget(
+      sources,
+      i,
+      jsTruthy(FillerOptions(options).propagate),
+    );
+  }
+}
 
-      if (shouldApplyFill(source)) {
-        drawfill(chart.ctx!, source! as FillerSource, chart.chartArea);
-      }
+/// index.js:51 `beforeDraw(chart, _args, options)`. `if (!source)` is the
+/// type test: the port writes only Dart `null` and a [FillerSource], and an
+/// absent property reads `undefined` (Chart.js ADR 0040, section 6).
+void _beforeDraw(types.Chart chart, AnyObject _, AnyObject options) {
+  final draw = FillerOptions(options).drawTime == 'beforeDraw';
+  final metasets = chart.getSortedVisibleDatasetMetas();
+  final area = chart.chartArea;
+  for (var i = metasets.length - 1; i >= 0; --i) {
+    final source = (metasets[i] as types.ChartMetaFiller).$filler;
+    if (source is! FillerSource) {
+      continue;
     }
-  },
 
-  // index.js:83 `beforeDatasetDraw(chart, args, options)`. `args.meta` is
-  // the meta of the dataset (core.controller.js:785-789).
-  'beforeDatasetDraw': (types.Chart chart, AnyObject args, AnyObject options) {
-    final source = (jsGet(args, 'meta')! as types.PropertyAccess)[r'$filler'];
-
-    if (!shouldApplyFill(source) ||
-        jsGet(options, 'drawTime') != 'beforeDatasetDraw') {
-      return;
+    source.line.updateControlPoints(area, _axisArgument(source.axis));
+    if (draw && jsTruthy(source.fill)) {
+      drawfill(chart.ctx!, source, area);
     }
+  }
+}
 
-    drawfill(chart.ctx!, source! as FillerSource, chart.chartArea);
-  },
+/// index.js:68 `beforeDatasetsDraw(chart, _args, options)`.
+void _beforeDatasetsDraw(types.Chart chart, AnyObject _, AnyObject options) {
+  if (FillerOptions(options).drawTime != 'beforeDatasetsDraw') {
+    return;
+  }
 
+  final metasets = chart.getSortedVisibleDatasetMetas();
+  for (var i = metasets.length - 1; i >= 0; --i) {
+    final source = (metasets[i] as types.ChartMetaFiller).$filler;
+
+    if (shouldApplyFill(source)) {
+      drawfill(chart.ctx!, source! as FillerSource, chart.chartArea);
+    }
+  }
+}
+
+/// index.js:83 `beforeDatasetDraw(chart, args, options)`. `args.meta` is
+/// the meta of the dataset (core.controller.js:785-789), a typed field of
+/// [DatasetDrawHookArgs]. A meta of Dart `null` throws the [TypeError] of
+/// the read of `undefined.$filler`.
+void _beforeDatasetDraw(
+  types.Chart chart,
+  DatasetDrawHookArgs args,
+  AnyObject options,
+) {
+  final source = (args.meta! as types.ChartMetaFiller).$filler;
+
+  if (!shouldApplyFill(source) ||
+      FillerOptions(options).drawTime != 'beforeDatasetDraw') {
+    return;
+  }
+
+  drawfill(chart.ctx!, source! as FillerSource, chart.chartArea);
+}
+
+/// index.js:12 the default export, `Filler` of `src/plugins/index.js:3`
+/// (Chart.js ADR 0038, section 1).
+///
+/// A typed [Plugin] with the upstream keys in the upstream order.
+final Plugin filler = Plugin()
+  ..id = 'filler'
+  ..afterDatasetsUpdate = _afterDatasetsUpdate
+  ..beforeDraw = _beforeDraw
+  ..beforeDatasetsDraw = _beforeDatasetsDraw
+  ..beforeDatasetDraw = _beforeDatasetDraw
   // index.js:93-96. A typed scope of the kind `FillerOptions` (Chart.js ADR
   // 0054 §3).
-  'defaults': FillerOptionsScope()
+  ..defaults = (FillerOptionsScope()
     ..propagate = true
-    ..drawTime = 'beforeDatasetDraw',
-};
+    ..drawTime = 'beforeDatasetDraw');

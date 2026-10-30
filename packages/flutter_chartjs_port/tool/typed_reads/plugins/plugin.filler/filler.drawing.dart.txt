@@ -1,1 +1,3 @@
-jsGet 5
+# L4: jsGet 1: the backgroundColor of a segment style, until the typed
+# segment style of lane L3 (SegmentStyle) is merged.
+jsGet 1
