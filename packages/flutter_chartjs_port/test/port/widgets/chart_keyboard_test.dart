@@ -225,6 +225,16 @@ final class _Charts {
     await triggerMouseEvent(mouse, type, _at(mouse, target));
   }
 
+  /// [key] on the keyboard chart, then a `mouseout` at (-1, -1), outside the
+  /// oracle chart: a real mouse that leaves the canvas (section 3).
+  Future<void> leave(WidgetTester tester, LogicalKeyboardKey key) async {
+    await _key(tester, key);
+    await triggerMouseEvent(mouse, 'mouseout', <String, Object?>{
+      'x': -1.0,
+      'y': -1.0,
+    });
+  }
+
   Map<String, Object?> get keysState => _state(keys, keysLog);
   Map<String, Object?> get mouseState => _state(mouse, mouseLog);
 }
@@ -282,13 +292,10 @@ void main() {
             expect(keys['active'], isNotEmpty, reason: '$key to $target');
           }
         }
-        // Escape: `mouseout` at the target.
-        await charts.both(
-          tester,
-          LogicalKeyboardKey.escape,
-          'mouseout',
-          _moves.last.$2,
-        );
+        // Escape on legend item 0: `mouseout` outside the canvas, and the
+        // legend calls `onLeave`.
+        await charts.leave(tester, LogicalKeyboardKey.escape);
+        expect(charts.keysLog.last, startsWith('leave mouseout'));
         expect(charts.keysState, charts.mouseState);
       });
     }
@@ -574,7 +581,7 @@ void main() {
       );
       expect(charts.keys.getActiveElements(), isNotEmpty);
       expect(charts.keys.tooltip!.getActiveElements(), isNotEmpty);
-      await charts.both(tester, LogicalKeyboardKey.escape, 'mouseout', (0, 0));
+      await charts.leave(tester, LogicalKeyboardKey.escape);
       expect(charts.keys.getActiveElements(), isEmpty);
       expect(charts.keys.tooltip!.getActiveElements(), isEmpty);
       expect(charts.keysState, charts.mouseState);
@@ -599,6 +606,28 @@ void main() {
       charts.node.requestFocus();
       await tester.pump();
       expect(await _key(tester, LogicalKeyboardKey.arrowUp), isFalse);
+    });
+
+    testWidgets('the focus loss on a legend item calls the legend onLeave', (
+      tester,
+    ) async {
+      final charts = _Charts('line');
+      await charts.pump(tester);
+      await charts.both(
+        tester,
+        LogicalKeyboardKey.arrowDown,
+        'mousemove',
+        (_legend, 0),
+      );
+      expect(charts.keysLog.last, startsWith('hover mousemove'));
+      charts.node.unfocus();
+      await tester.pump();
+      await triggerMouseEvent(charts.mouse, 'mouseout', <String, Object?>{
+        'x': -1.0,
+        'y': -1.0,
+      });
+      expect(charts.keysLog.last, startsWith('leave mouseout'));
+      expect(charts.keysState, charts.mouseState);
     });
 
     testWidgets('with no target, Left, Up, Home, End, Enter, Space and Escape '

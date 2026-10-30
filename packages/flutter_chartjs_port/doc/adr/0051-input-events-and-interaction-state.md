@@ -131,13 +131,17 @@ The handler reads `KeyDownEvent` and `KeyRepeatEvent`:
 | Down, Up | first target of the first group / ignored | the same index in the next / previous group (the last item when the group is shorter); ignored at the ends |
 | Home, End | ignored | first / last target of the group |
 | Enter, Space (down only) | ignored | `mousedown`, `mouseup`, `click` at the target |
-| Escape (down only) | ignored (an ancestor `DismissIntent` acts) | `mouseout` at the target; the target clears |
-| focus loss | nothing | `mouseout` at the target; the target clears |
+| Escape (down only) | ignored (an ancestor `DismissIntent` acts) | `mouseout` at (-1, -1), outside the canvas; the target clears |
+| focus loss | nothing | `mouseout` at (-1, -1), outside the canvas; the target clears |
 
 A repeat of Enter, Space or Escape gives `handled` with no event when a target exists, else
 `ignored`. A `KeyUpEvent` gives `ignored`. The table has no key with a modifier: a key with
 Shift, Control, Alt or Meta gives `ignored`, so that the shortcuts of the app and of the browser
 keep it.
+
+Escape and a focus loss send the `mouseout` at (-1, -1), a point outside the canvas. A real mouse
+gives its `mouseout` where it leaves the canvas, outside each legend item. At the target point, the
+legend keeps its hovered item and calls no `onLeave` (`plugin.legend.js:537-544`).
 
 ### 4. The virtual mouse
 

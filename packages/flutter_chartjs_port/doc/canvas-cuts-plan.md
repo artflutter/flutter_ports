@@ -688,6 +688,15 @@ Changes to the cited files:
   `MouseTracker` path. `doc/parity.md` changes the row of `chart_host_test.dart` (line 426) in
   place: no row moves. No library file changes. The references, the inventory (§1.1), the tests
   of §2.6 and the estimates do not change. No trigger occurred.
+- 2026-10-30, the `mouseout` of Escape and of a focus loss ([Chart.js ADR
+  0051](adr/0051-input-events-and-interaction-state.md) §3, proposed, phase 9).
+  `lib/src/widgets/chart_keyboard.dart` sends this `mouseout` at (-1, -1), outside the canvas, so
+  that the legend calls `onLeave` as for a real mouse; this plan does not cite it.
+  `test/port/widgets/chart_keyboard_test.dart` gets one test. `doc/parity.md` changes the rows of
+  `chart_keyboard.dart` and `chart_keyboard_test.dart` (lines 617 and 618) in place: no row moves.
+  No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart` or
+  a test of §2.6 and §3.5 changes. The references, the inventory (§1.1), the tests of §2.6 and
+  §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

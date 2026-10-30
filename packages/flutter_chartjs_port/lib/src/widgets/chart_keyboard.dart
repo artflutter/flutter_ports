@@ -41,6 +41,12 @@ typedef _Point = ({double x, double y});
 /// A rectangle of the focus ring.
 typedef _Rect = ({double left, double top, double width, double height});
 
+/// The point of the `mouseout` of Escape and of a focus loss: outside the
+/// canvas, as the exit point of the `mouseout` of a real mouse (Chart.js ADR
+/// 0051, section 3). At the target point, the legend keeps its hovered item
+/// and calls no `onLeave` (`plugin.legend.js:537-544`).
+const _Point _outside = (x: -1.0, y: -1.0);
+
 /// The number value of a hit box key, else NaN.
 double _num(Object? value) => value is num ? value.toDouble() : double.nan;
 
@@ -91,8 +97,9 @@ final class ChartKeyboard {
     return result;
   }
 
-  /// The `Focus.onFocusChange` handler: a focus loss sends `mouseout` at the
-  /// target and clears it. Each change calls `chart.render()` (section 6).
+  /// The `Focus.onFocusChange` handler: with a target, a focus loss sends
+  /// `mouseout` at [_outside] and clears the target. Each change calls
+  /// `chart.render()` (section 6).
   // The signature of `Focus.onFocusChange`.
   // ignore: avoid_positional_boolean_parameters
   void onFocusChange(bool focused) {
@@ -105,7 +112,7 @@ final class ChartKeyboard {
     if (!focused) {
       final point = _targetPoint(chart);
       _group = null;
-      if (point != null) _dispatch('mouseout', point, null);
+      if (point != null) _dispatch('mouseout', _outside, null);
     }
     chart.render();
   }
@@ -198,7 +205,7 @@ final class ChartKeyboard {
         if (!hasTarget) return KeyEventResult.ignored;
         if (event is KeyDownEvent) {
           _group = null;
-          _dispatch('mouseout', points![_item], event);
+          _dispatch('mouseout', _outside, event);
         }
         return KeyEventResult.handled;
     }
