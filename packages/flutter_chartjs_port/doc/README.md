@@ -26,11 +26,13 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   on macOS, in Chrome and on an Android phone, two baselines (plain Flutter and the Chrome
   canvas), and the changes that the builds caused, for example the circle batch.
 - **Canvas and host cuts:** [canvas-cuts-plan.md](canvas-cuts-plan.md) (proposed), the plan that
-  replaces arc math and host sizing code of the port with `dart:ui` and Flutter layout.
+  replaces arc math and host sizing code of the port with `dart:ui` and Flutter layout. Its §7, the
+  native draw path of phase 10, came forward on 2026-10-30 (Chart.js ADR 0055).
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043 and 0045-0052 are accepted. Chart.js ADR 0053 is rejected (the maintainer chose a typed internal model). Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
+  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043 and 0045-0052 are accepted.
+  Chart.js ADRs 0054 and 0055 are proposed. Chart.js ADR 0053 is rejected (the maintainer chose a typed internal model). Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
   lead accepted Chart.js ADRs 0038-0043 on 2026-10-23, Chart.js ADRs 0037, 0045 and 0046 on
   2026-10-29, and Chart.js ADRs 0048, 0049 and 0050 on 2026-10-30, and Chart.js ADRs 0051 and 0052 on
   2026-10-31. Fourteen accepted ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
@@ -124,6 +126,9 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0054: The typed internal model](adr/0054-typed-internal-model.md) (proposed; on
     acceptance, it supersedes Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017,
     0036 and 0038)
+  - [Chart.js ADR 0055: The native draw path of the canvas layer](adr/0055-native-draw-path.md)
+    (proposed; it waits for the night series CV of canvas-cuts-plan.md §7.6; on acceptance, it
+    supersedes Chart.js ADR 0013)
 
 ## What gets ported
 

@@ -1,6 +1,7 @@
 # Canvas and host cuts plan
 
-- Status: proposed, deferred; the native draw path of §7 is brought forward (2026-10-30)
+- Status: proposed, deferred; the native draw path of §7 is brought forward (2026-10-30), and
+  [Chart.js ADR 0055](adr/0055-native-draw-path.md) (proposed) states its decision
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (accepted),
   [Chart.js ADR 0013](adr/0013-canvas-model.md), [Chart.js ADR 0015](adr/0015-text.md),
@@ -810,6 +811,7 @@ Changes to the cited files:
   `tool/src/lib_imports.dart` gets the allowlist of `lib/src/typed/`; this plan cites no line of
   these files. No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`,
   `helpers.dom.dart` or a test of §2.6 and §3.5 changes. The references, the inventory (§1.1), the
+  tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 - 2026-10-30, the common part of [Chart.js ADR 0053](adr/0053-resolver-fast-paths.md) (phase 10:
   the switch of the fast paths, the differential test, the resolver trace reference, the bench
   cells and the upstream page of P3). `doc/parity.md` gets five port-only rows, at lines 421, 458
@@ -914,6 +916,15 @@ Changes to the cited files:
   `canvas_ui_batch.dart` and the new test file in place: no row of `doc/parity.md` moves. The tests
   of §2.6, among them the group "circle batch" of `canvas_ui_test.dart`, and the estimates do not
   change. No trigger occurred.
+- 2026-10-30, Chart.js ADR 0055 (proposed), the native draw path. The new
+  `doc/adr/0055-native-draw-path.md` states the complete decision of Chart.js ADR 0013 with the
+  forms N1 to N5 and the rejected forms of §7.2. It waits for the night of §7.6, and on acceptance
+  it supersedes Chart.js ADR 0013. The status line and §7.7 of this plan name it.
+  porting-flow.md §5.1 records the trigger of 2026-10-30 in the row of this plan, in place: no line
+  of porting-flow.md moves. `doc/README.md` and AGENTS.md list the ADR. The entry of the typed API
+  of 2026-10-30 above gets the end of its last sentence. No library file, test or row of
+  `doc/parity.md` changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and
+  the estimates do not change. No trigger occurred.
 
 ## 1. Why
 
@@ -2112,11 +2123,12 @@ The rule follows judge-r §5.1-§5.2 and the rule of the typed series of phase 1
 - Chart.js ADR 0013 is accepted. N1 changes the flush points of its §8.1 (a `save()` and a
   `restore()` with no clip of their own are no flush points), N5 changes the run of §8.1 (a short
   run takes several colors), and N3 and N4 add to its §6 and §8 (the buffer of the path builder
-  and the sector fill). A new ADR states the complete decision and supersedes Chart.js ADR 0013.
-  The porting lead writes it: this work edits only the canvas files, their tests, this plan and the
-  rows of `doc/status.yaml`.
-- `performance.md` gets the figures of the night, and porting-flow.md §5.1 records the trigger
-  (the porting lead).
+  and the sector fill). [Chart.js ADR 0055](adr/0055-native-draw-path.md) (proposed) states the
+  complete decision. It waits for the night of §7.6, and on acceptance it supersedes Chart.js ADR
+  0013. A form that the night rejects goes out of the tree and out of the ADR before the
+  acceptance.
+- porting-flow.md §5.1 records the trigger. `performance.md` gets the figures of the night (the
+  porting lead).
 - `differences.md` gets no row: the canvas calls of the ported code do not change, as for
   `bar-ring-zero-inner`.
 

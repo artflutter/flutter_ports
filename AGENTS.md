@@ -661,7 +661,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0054. Fourteen of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0055. Fourteen of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR
       0012 supersedes Chart.js ADR 0004, and Chart.js ADR 0026 supersedes Chart.js ADR 0008.
       Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0033 supersedes Chart.js ADR
@@ -700,7 +700,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       parts of Chart.js ADRs 0017, 0036, 0038 (also §3, the hook parameter counts) and 0050 (the
       form of the compiled theme and its memo, its §18), as its §17 states. It decides the
       artifacts of Chart.js ADR 0053: the fast-path switch, D1 and `test:nofast` are gone; D2, the
-      bench cells and the P3 page stay. The other ADRs are accepted. Docs name them
+      bench cells and the P3 page stay. Chart.js ADR 0055 (the native draw path of the canvas
+      layer) is proposed: it waits for the night series CV of `canvas-cuts-plan.md` §7.6. On
+      acceptance, it supersedes Chart.js ADR 0013. The other ADRs are accepted. Docs name them
       "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of
