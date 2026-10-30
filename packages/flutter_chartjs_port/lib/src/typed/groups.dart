@@ -1,8 +1,9 @@
 // Original code, not ported from Chart.js: the option groups of the typed API.
 
 /// The option groups of the typed API (Chart.js ADR 0052, sections 1 and
-/// 6): the plugins [ChartLegend], [ChartTitle] and [ChartTooltip], and the
-/// options [ChartInteraction] and [ChartAnimation] of `ChartConfig`.
+/// 6): the plugins [ChartLegend], [ChartTitle], [ChartTooltip] and
+/// [ChartFiller], and the options [ChartInteraction] and [ChartAnimation]
+/// of `ChartConfig`.
 ///
 /// The callbacks of a group get one details object. The chart calls the
 /// callback of the newest config: `==` of a group compares a callback only
@@ -601,6 +602,60 @@ Map<String, Object?> lowerInteraction(ChartInteraction interaction) =>
       'intersect': ?interaction.intersect,
       'includeInvisible': ?interaction.includeInvisible,
     }, interaction.extra);
+
+/// The filler: the options of the filler plugin, `options.plugins.filler`
+/// (`docs/charts/area.md`, "Configuration").
+///
+/// The filler plugin fills the area of a dataset with a `fill`, for
+/// example `LineDataset.fill`.
+@immutable
+final class ChartFiller with Diagnosticable {
+  /// The filler options.
+  const ChartFiller({this.propagate, this.extra});
+
+  /// Whether the fill of a dataset whose target dataset is hidden goes on
+  /// to the next visible target: `propagate`. The default is `true`. With
+  /// `false`, the dataset has no fill when its target is hidden.
+  final bool? propagate;
+
+  /// The Chart.js filler options that have no parameter, for example
+  /// `{'drawTime': 'beforeDraw'}`. The rules of [ChartLegend.extra] apply.
+  final Map<String, Object?>? extra;
+
+  /// A copy of these filler options with the given parameters. A parameter
+  /// that is `null` keeps its value.
+  ChartFiller copyWith({bool? propagate, Map<String, Object?>? extra}) =>
+      ChartFiller(
+        propagate: propagate ?? this.propagate,
+        extra: extra ?? this.extra,
+      );
+
+  List<TypedProperty> get _props => [
+    ('propagate', propagate),
+    ('extra', byEntries(extra)),
+  ];
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ChartFiller && propsEqual(_props, other._props);
+
+  @override
+  int get hashCode => propsHash(_props);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    addProps(properties, _props);
+  }
+}
+
+/// The `filler` Map of [filler].
+@internal
+Map<String, Object?> lowerFiller(ChartFiller filler) => mergeExtra(
+  <String, Object?>{'propagate': ?filler.propagate},
+  filler.extra,
+);
 
 /// The animation of the chart: `options.animation`
 /// (`docs/configuration/animations.md`).

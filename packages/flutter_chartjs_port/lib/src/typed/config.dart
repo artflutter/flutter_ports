@@ -12,9 +12,12 @@ import 'package:flutter_chartjs_port/src/typed/axes.dart' show ChartAxis;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show ChartEventDetails;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show Dataset;
+import 'package:flutter_chartjs_port/src/typed/elements.dart'
+    show ChartElements;
 import 'package:flutter_chartjs_port/src/typed/groups.dart'
     show
         ChartAnimation,
+        ChartFiller,
         ChartInteraction,
         ChartLegend,
         ChartTitle,
@@ -45,9 +48,10 @@ import 'package:meta/meta.dart' show internal;
 /// another type than [type] makes a mixed chart (`docs/charts/mixed.md`).
 ///
 /// A config is immutable. `==` compares the parameters: the Lists of the
-/// app by identity, the [datasets] by their items, the [scales] and the
-/// `extra` Maps by their entries, and the callbacks [onClick] and
-/// [onHover] only by their presence. The chart calls the callback of the
+/// app by identity, the [datasets] by their items, the [plugins] by the
+/// identity of their items, the [scales] and the `extra` Maps by their
+/// entries, and the callbacks [onClick] and [onHover] only by their
+/// presence. The chart calls the callback of the
 /// newest config. Thus a new config that is `==` to the last one does not
 /// update the chart. For new data, give a new List. Or change the List and
 /// call `chart.update()`.
@@ -71,8 +75,10 @@ final class ChartConfig with Diagnosticable {
     this.title,
     this.subtitle,
     this.tooltip,
+    this.filler,
     this.interaction,
     this.animation,
+    this.elements,
     this.onClick,
     this.onHover,
     this.plugins,
@@ -135,12 +141,21 @@ final class ChartConfig with Diagnosticable {
   /// The tooltip: `options.plugins.tooltip`.
   final ChartTooltip? tooltip;
 
+  /// The filler, the plugin that fills the area of a dataset with a `fill`:
+  /// `options.plugins.filler`.
+  final ChartFiller? filler;
+
   /// The elements that an event hits: `options.interaction`.
   final ChartInteraction? interaction;
 
   /// The animation: `options.animation`. [ChartAnimation.none] turns it
   /// off.
   final ChartAnimation? animation;
+
+  /// The options of the element types, a default of all datasets of the
+  /// chart: `options.elements`, for example
+  /// `ChartElements(line: LineElementStyle(borderWidth: 3))`.
+  final ChartElements? elements;
 
   /// The function of a click on the chart: `options.onClick`. The details
   /// give the elements under the pointer, with `int` indexes
@@ -153,6 +168,10 @@ final class ChartConfig with Diagnosticable {
   /// The inline plugins of the chart: `plugins`, each a plugin Map with an
   /// `id` and its hooks (`docs/developers/plugins.md`). The List goes to
   /// the chart by reference.
+  ///
+  /// `==` compares the plugins one by one by identity. Thus
+  /// `plugins: [plugin]` in each build gives no update while `plugin` is
+  /// the same object, for example a field or a top-level constant.
   final List<Map<String, Object?>>? plugins;
 
   /// The Chart.js options that have no parameter, for example
@@ -180,8 +199,10 @@ final class ChartConfig with Diagnosticable {
     ChartTitle? title,
     ChartTitle? subtitle,
     ChartTooltip? tooltip,
+    ChartFiller? filler,
     ChartInteraction? interaction,
     ChartAnimation? animation,
+    ChartElements? elements,
     ValueChanged<ChartEventDetails>? onClick,
     ValueChanged<ChartEventDetails>? onHover,
     List<Map<String, Object?>>? plugins,
@@ -200,8 +221,10 @@ final class ChartConfig with Diagnosticable {
     title: title ?? this.title,
     subtitle: subtitle ?? this.subtitle,
     tooltip: tooltip ?? this.tooltip,
+    filler: filler ?? this.filler,
     interaction: interaction ?? this.interaction,
     animation: animation ?? this.animation,
+    elements: elements ?? this.elements,
     onClick: onClick ?? this.onClick,
     onHover: onHover ?? this.onHover,
     plugins: plugins ?? this.plugins,
@@ -230,14 +253,16 @@ final class ChartConfig with Diagnosticable {
     ('title', title),
     ('subtitle', subtitle),
     ('tooltip', tooltip),
+    ('filler', filler),
     ('interaction', interaction),
     ('animation', animation),
+    ('elements', elements),
     ('onClick', byPresence(onClick)),
     ('onHover', byPresence(onHover)),
   ];
 
   /// The property of [plugins].
-  TypedProperty get _pluginsProp => ('plugins', plugins);
+  TypedProperty get _pluginsProp => ('plugins', byIdentityItems(plugins));
 
   /// The property of [extra], which lowers into `options` too.
   TypedProperty get _extraProp => ('extra', byEntries(extra));

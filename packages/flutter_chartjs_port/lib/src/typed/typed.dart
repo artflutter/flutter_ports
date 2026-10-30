@@ -46,9 +46,17 @@ export 'package:flutter_chartjs_port/src/typed/datasets.dart'
         PolarAreaDataset,
         RadarDataset,
         ScatterDataset;
+export 'package:flutter_chartjs_port/src/typed/elements.dart'
+    show
+        ArcElementStyle,
+        BarElementStyle,
+        ChartElements,
+        LineElementStyle,
+        PointElementStyle;
 export 'package:flutter_chartjs_port/src/typed/groups.dart'
     show
         ChartAnimation,
+        ChartFiller,
         ChartInteraction,
         ChartLegend,
         ChartTitle,

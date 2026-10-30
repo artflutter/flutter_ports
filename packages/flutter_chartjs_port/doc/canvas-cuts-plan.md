@@ -829,6 +829,15 @@ Changes to the cited files:
   gets one port-only row after the rows that this plan cites (lines 402-446): they do not move.
   The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change.
   No trigger occurred.
+- 2026-10-30, the typed keys of the docs examples (Chart.js ADR 0052, phase 10). `doc/parity.md`
+  gets the port-only row of `lib/src/typed/elements.dart` above the canvas rows: the rows that this
+  plan cites move by +1 (`canvas_ui.dart` from line 402 to line 403, `canvas_ui_path.dart` from
+  403 to 404, `chart_host.dart` from 410 to 411, `chart_host_test.dart` from 446 to 447), and
+  their text does not change. `lib/src/core/core.adapters.dart` changes the type `TimeUnit`; this
+  plan cites no line of it. No file of `lib/src/canvas/`, `chart_host.dart`,
+  `platform.flutter.dart`, `helpers.dom.dart` or a test of §2.6 and §3.5 changes. The references,
+  the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No trigger
+  occurred.
 
 ## 1. Why
 

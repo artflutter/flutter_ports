@@ -625,7 +625,8 @@ final class TimeSeriesAxis extends ChartAxis with _TimeOptions {
 /// A radial linear axis: the scale type `radialLinear` (`docs/axes/radial/
 /// linear.md`), the axis `r` of a polar area and a radar chart.
 ///
-/// The labels of the chart are the point labels around the axis.
+/// The labels of the chart are the point labels around the axis. The angle
+/// lines go from the center to the point labels.
 final class RadialLinearAxis extends ChartAxis {
   /// A radial linear axis.
   const RadialLinearAxis({
@@ -635,11 +636,17 @@ final class RadialLinearAxis extends ChartAxis {
     super.stacked,
     this.min,
     this.max,
+    this.suggestedMin,
+    this.suggestedMax,
     this.beginAtZero,
     this.startAngle,
     this.pointLabelsDisplay,
+    this.pointLabelsColor,
     this.pointLabelsFont,
+    this.pointLabelsPadding,
+    this.angleLinesDisplay,
     this.angleLinesColor,
+    this.angleLinesLineWidth,
     super.ticks,
     super.grid,
     super.title,
@@ -652,6 +659,12 @@ final class RadialLinearAxis extends ChartAxis {
   /// {@macro flutter_chartjs_port.typed.axisMax}
   final double? max;
 
+  /// {@macro flutter_chartjs_port.typed.suggestedMin}
+  final double? suggestedMin;
+
+  /// {@macro flutter_chartjs_port.typed.suggestedMax}
+  final double? suggestedMax;
+
   /// {@macro flutter_chartjs_port.typed.beginAtZero}
   final bool? beginAtZero;
 
@@ -662,14 +675,28 @@ final class RadialLinearAxis extends ChartAxis {
   /// Whether the chart shows the point labels: `pointLabels.display`.
   final bool? pointLabelsDisplay;
 
+  /// The color of the point labels: `pointLabels.color`.
+  final Color? pointLabelsColor;
+
   /// The font of the point labels: `pointLabels.font`. The color of the
-  /// font is not read. Set the color through [extra]:
-  /// `{'pointLabels': {'color': ...}}`.
+  /// font is not read: set [pointLabelsColor].
   final TextStyle? pointLabelsFont;
+
+  /// The space between the chart area and the point labels, in pixels:
+  /// `pointLabels.padding`. The default is 5.
+  final double? pointLabelsPadding;
+
+  /// Whether the chart shows the lines from the center to the point labels:
+  /// `angleLines.display`.
+  final bool? angleLinesDisplay;
 
   /// The color of the lines from the center to the point labels:
   /// `angleLines.color`.
   final Color? angleLinesColor;
+
+  /// The width of the lines from the center to the point labels, in pixels:
+  /// `angleLines.lineWidth`. The default is 1.
+  final double? angleLinesLineWidth;
 
   @override
   RadialLinearAxis copyWith({
@@ -679,11 +706,17 @@ final class RadialLinearAxis extends ChartAxis {
     bool? stacked,
     double? min,
     double? max,
+    double? suggestedMin,
+    double? suggestedMax,
     bool? beginAtZero,
     double? startAngle,
     bool? pointLabelsDisplay,
+    Color? pointLabelsColor,
     TextStyle? pointLabelsFont,
+    double? pointLabelsPadding,
+    bool? angleLinesDisplay,
     Color? angleLinesColor,
+    double? angleLinesLineWidth,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisTitle? title,
@@ -695,11 +728,17 @@ final class RadialLinearAxis extends ChartAxis {
     stacked: stacked ?? this.stacked,
     min: min ?? this.min,
     max: max ?? this.max,
+    suggestedMin: suggestedMin ?? this.suggestedMin,
+    suggestedMax: suggestedMax ?? this.suggestedMax,
     beginAtZero: beginAtZero ?? this.beginAtZero,
     startAngle: startAngle ?? this.startAngle,
     pointLabelsDisplay: pointLabelsDisplay ?? this.pointLabelsDisplay,
+    pointLabelsColor: pointLabelsColor ?? this.pointLabelsColor,
     pointLabelsFont: pointLabelsFont ?? this.pointLabelsFont,
+    pointLabelsPadding: pointLabelsPadding ?? this.pointLabelsPadding,
+    angleLinesDisplay: angleLinesDisplay ?? this.angleLinesDisplay,
     angleLinesColor: angleLinesColor ?? this.angleLinesColor,
+    angleLinesLineWidth: angleLinesLineWidth ?? this.angleLinesLineWidth,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
     title: title ?? this.title,
@@ -713,16 +752,24 @@ final class RadialLinearAxis extends ChartAxis {
   void _lowerOwn(Map<String, Object?> map) {
     final pointLabels = <String, Object?>{
       'display': ?pointLabelsDisplay,
+      'color': ?colorValue(pointLabelsColor),
       'font': ?fontSpecOf(pointLabelsFont),
+      'padding': ?pointLabelsPadding,
+    };
+    final angleLines = <String, Object?>{
+      'display': ?angleLinesDisplay,
+      'color': ?colorValue(angleLinesColor),
+      'lineWidth': ?angleLinesLineWidth,
     };
     map.addAll({
       'min': ?min,
       'max': ?max,
+      'suggestedMin': ?suggestedMin,
+      'suggestedMax': ?suggestedMax,
       'beginAtZero': ?beginAtZero,
       'startAngle': ?startAngle,
       if (pointLabels.isNotEmpty) 'pointLabels': pointLabels,
-      if (angleLinesColor != null)
-        'angleLines': <String, Object?>{'color': colorValue(angleLinesColor)},
+      if (angleLines.isNotEmpty) 'angleLines': angleLines,
     });
   }
 
@@ -731,11 +778,17 @@ final class RadialLinearAxis extends ChartAxis {
     ..._headProps,
     ('min', min),
     ('max', max),
+    ('suggestedMin', suggestedMin),
+    ('suggestedMax', suggestedMax),
     ('beginAtZero', beginAtZero),
     ('startAngle', startAngle),
     ('pointLabelsDisplay', pointLabelsDisplay),
+    ('pointLabelsColor', pointLabelsColor),
     ('pointLabelsFont', pointLabelsFont),
+    ('pointLabelsPadding', pointLabelsPadding),
+    ('angleLinesDisplay', angleLinesDisplay),
     ('angleLinesColor', angleLinesColor),
+    ('angleLinesLineWidth', angleLinesLineWidth),
     ..._tailProps,
   ];
 }

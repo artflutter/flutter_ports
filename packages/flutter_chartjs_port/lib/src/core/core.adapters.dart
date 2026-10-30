@@ -46,9 +46,39 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// core.adapters.ts:10 `TimeUnit`: `'millisecond' | 'second' | 'minute' |
 /// 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year'`.
 ///
-/// Dart has no union of string literals. A time unit is one of these
-/// strings.
-typedef TimeUnit = String;
+/// Dart has no union of string literals. A time unit is an extension type
+/// over its string, and it is a `String`: the members of a date adapter
+/// and the options get the string. The constants name the 9 units of the
+/// union. The constructor names another unit, for example a unit of a
+/// custom date adapter (Chart.js ADR 0052, section 7).
+extension type const TimeUnit(String name) implements String {
+  /// `'millisecond'`.
+  static const TimeUnit millisecond = TimeUnit('millisecond');
+
+  /// `'second'`.
+  static const TimeUnit second = TimeUnit('second');
+
+  /// `'minute'`.
+  static const TimeUnit minute = TimeUnit('minute');
+
+  /// `'hour'`.
+  static const TimeUnit hour = TimeUnit('hour');
+
+  /// `'day'`.
+  static const TimeUnit day = TimeUnit('day');
+
+  /// `'week'`.
+  static const TimeUnit week = TimeUnit('week');
+
+  /// `'month'`.
+  static const TimeUnit month = TimeUnit('month');
+
+  /// `'quarter'`.
+  static const TimeUnit quarter = TimeUnit('quarter');
+
+  /// `'year'`.
+  static const TimeUnit year = TimeUnit('year');
+}
 
 /// core.adapters.ts:12 `DateAdapter`.
 ///

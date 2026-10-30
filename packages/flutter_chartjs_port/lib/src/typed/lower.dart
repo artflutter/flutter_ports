@@ -56,9 +56,12 @@ import 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartConfig, ChartKind, optionFieldsEqual, pluginsEqual;
 import 'package:flutter_chartjs_port/src/typed/datasets.dart'
     show Dataset, lowerDataset;
+import 'package:flutter_chartjs_port/src/typed/elements.dart'
+    show lowerElements;
 import 'package:flutter_chartjs_port/src/typed/groups.dart'
     show
         lowerAnimation,
+        lowerFiller,
         lowerInteraction,
         lowerLegend,
         lowerTitle,
@@ -99,10 +102,6 @@ final class ChartConfigLowering {
 
   /// The live dataset Maps of [_lowered], in dataset order.
   List<_LiveDataset> _datasets = const [];
-
-  /// The config of the live Maps: the config of the last [lower] or
-  /// [apply], or Dart `null` before the first.
-  ChartConfig? get lowered => _lowered;
 
   /// The root Map of [config]: a new Map at each call, with the keys
   /// `type`, `data` (`labels` by reference and a new `datasets` List),
@@ -241,6 +240,7 @@ final class ChartConfigLowering {
         'subtitle': lowerTitle(subtitle),
       if (config.tooltip case final tooltip?)
         'tooltip': lowerTooltip(tooltip, this),
+      if (config.filler case final filler?) 'filler': lowerFiller(filler),
     };
     final options = <String, Object?>{
       if (config.scales case final scales?)
@@ -259,6 +259,8 @@ final class ChartConfigLowering {
         'interaction': lowerInteraction(interaction),
       if (config.animation case final animation?)
         'animation': lowerAnimation(animation, this),
+      if (config.elements case final elements?)
+        'elements': lowerElements(elements),
       if (config.onClick != null)
         'onClick': eventTrampoline(() => this.config.onClick),
       if (config.onHover != null)
@@ -474,7 +476,9 @@ List<Object?>? numberList(List<double>? list) =>
 /// copy. A List or another value replaces the value by reference. Each Map
 /// of the result is a new `<String, Object?>` Map: Chart.js writes into the
 /// option Maps, and a `const` Map of the app would throw. The keys of a Map
-/// of [extra] are Strings, as the keys of a JS object.
+/// of [extra] are Strings, as the keys of a JS object: in debug mode, a key
+/// of a nested Map that is not a `String` fails an assert that names the
+/// key.
 Map<String, Object?> mergeExtra(
   Map<String, Object?> map,
   Map<String, Object?>? extra,
@@ -486,7 +490,7 @@ Map<String, Object?> mergeExtra(
 /// Merges [source] into [target], a Map that the lowering made.
 void _merge(Map<String, Object?> target, Map<Object?, Object?> source) {
   for (final MapEntry(:key, :value) in source.entries) {
-    final name = key! as String;
+    final name = _key(key);
     if (value is Map<Object?, Object?>) {
       final current = target[name];
       if (current is Map<String, Object?>) {
@@ -504,5 +508,16 @@ void _merge(Map<String, Object?> target, Map<Object?, Object?> source) {
 /// value and the other values by reference.
 Map<String, Object?> _copy(Map<Object?, Object?> map) => <String, Object?>{
   for (final MapEntry(:key, :value) in map.entries)
-    key! as String: value is Map<Object?, Object?> ? _copy(value) : value,
+    _key(key): value is Map<Object?, Object?> ? _copy(value) : value,
 };
+
+/// [key], a key of a Map of `extra`, as a `String`.
+String _key(Object? key) {
+  assert(
+    key is String,
+    'The key $key of an extra Map is a ${key.runtimeType}, not a String. '
+    'Chart.js options are objects with String keys: write the key as '
+    "'$key'.",
+  );
+  return key! as String;
+}

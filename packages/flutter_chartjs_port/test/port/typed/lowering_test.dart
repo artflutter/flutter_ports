@@ -126,6 +126,8 @@ List<Dataset> _lineStyle({
   Color? pointBackgroundColor,
   Color? pointBorderColor,
   double? pointBorderWidth,
+  Color? pointHoverBackgroundColor,
+  Color? pointHoverBorderColor,
 }) => [
   LineDataset(
     fill: fill,
@@ -140,6 +142,8 @@ List<Dataset> _lineStyle({
     pointBackgroundColor: pointBackgroundColor,
     pointBorderColor: pointBorderColor,
     pointBorderWidth: pointBorderWidth,
+    pointHoverBackgroundColor: pointHoverBackgroundColor,
+    pointHoverBorderColor: pointHoverBorderColor,
   ),
   ScatterDataset(
     fill: fill,
@@ -154,6 +158,8 @@ List<Dataset> _lineStyle({
     pointBackgroundColor: pointBackgroundColor,
     pointBorderColor: pointBorderColor,
     pointBorderWidth: pointBorderWidth,
+    pointHoverBackgroundColor: pointHoverBackgroundColor,
+    pointHoverBorderColor: pointHoverBorderColor,
   ),
   RadarDataset(
     fill: fill,
@@ -168,6 +174,8 @@ List<Dataset> _lineStyle({
     pointBackgroundColor: pointBackgroundColor,
     pointBorderColor: pointBorderColor,
     pointBorderWidth: pointBorderWidth,
+    pointHoverBackgroundColor: pointHoverBackgroundColor,
+    pointHoverBorderColor: pointHoverBorderColor,
   ),
 ];
 
@@ -327,6 +335,14 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
     _lineStyle(pointBorderWidth: 2),
     {'pointBorderWidth': 2},
   ),
+  'pointHoverBackgroundColor': (
+    _lineStyle(pointHoverBackgroundColor: _red),
+    {'pointHoverBackgroundColor': _redValue},
+  ),
+  'pointHoverBorderColor': (
+    _lineStyle(pointHoverBorderColor: _blue),
+    {'pointHoverBorderColor': _blueValue},
+  ),
   'radius of a bubble': (const [BubbleDataset(radius: 7)], {'radius': 7}),
   'hoverRadius': (const [BubbleDataset(hoverRadius: 2)], {'hoverRadius': 2}),
   'offset': (_arcs(offset: 4), {'offset': 4}),
@@ -457,6 +473,7 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
         const [
           (LinearAxis(suggestedMin: 2), 'linear'),
           (LogarithmicAxis(suggestedMin: 2), 'logarithmic'),
+          (RadialLinearAxis(suggestedMin: 2), 'radialLinear'),
         ],
         {'suggestedMin': 2},
       ),
@@ -464,6 +481,7 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
         const [
           (LinearAxis(suggestedMax: 8), 'linear'),
           (LogarithmicAxis(suggestedMax: 8), 'logarithmic'),
+          (RadialLinearAxis(suggestedMax: 8), 'radialLinear'),
         ],
         {'suggestedMax': 8},
       ),
@@ -490,11 +508,20 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
       ),
       'unit': (
         const [
-          (TimeAxis(unit: 'day'), 'time'),
-          (TimeSeriesAxis(unit: 'day'), 'timeseries'),
+          (TimeAxis(unit: .day), 'time'),
+          (TimeSeriesAxis(unit: .day), 'timeseries'),
         ],
         {
           'time': {'unit': 'day'},
+        },
+      ),
+      'unit, a custom name': (
+        const [
+          (TimeAxis(unit: TimeUnit('fortnight')), 'time'),
+          (TimeSeriesAxis(unit: TimeUnit('fortnight')), 'timeseries'),
+        ],
+        {
+          'time': {'unit': 'fortnight'},
         },
       ),
       'tooltipFormat': (
@@ -522,10 +549,34 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
           'pointLabels': {'font': _fontValue},
         },
       ),
+      'pointLabelsColor': (
+        const [(RadialLinearAxis(pointLabelsColor: _blue), 'radialLinear')],
+        {
+          'pointLabels': {'color': _blueValue},
+        },
+      ),
+      'pointLabelsPadding': (
+        const [(RadialLinearAxis(pointLabelsPadding: 8), 'radialLinear')],
+        {
+          'pointLabels': {'padding': 8},
+        },
+      ),
+      'angleLinesDisplay': (
+        const [(RadialLinearAxis(angleLinesDisplay: false), 'radialLinear')],
+        {
+          'angleLines': {'display': false},
+        },
+      ),
       'angleLinesColor': (
         const [(RadialLinearAxis(angleLinesColor: _red), 'radialLinear')],
         {
           'angleLines': {'color': _redValue},
+        },
+      ),
+      'angleLinesLineWidth': (
+        const [(RadialLinearAxis(angleLinesLineWidth: 2), 'radialLinear')],
+        {
+          'angleLines': {'lineWidth': 2},
         },
       ),
     };
@@ -570,6 +621,210 @@ const Map<String, (AxisTitle, Map<String, Object?>)> _axisTitle = {
     },
   ),
   'extra': (AxisTitle(extra: {'strokeWidth': 1}), {'strokeWidth': 1}),
+};
+
+/// The cases of the parameters of [ChartFiller] and the twin `filler` Map.
+const Map<String, (ChartFiller, Map<String, Object?>)> _filler = {
+  'propagate': (ChartFiller(propagate: false), {'propagate': false}),
+  'extra': (
+    ChartFiller(extra: {'drawTime': 'beforeDraw'}),
+    {'drawTime': 'beforeDraw'},
+  ),
+};
+
+/// The cases of the parameters of [ChartElements] and of the element
+/// styles, with the twin `elements` Map.
+const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
+  'point.radius': (
+    ChartElements(point: PointElementStyle(radius: 0)),
+    {
+      'point': {'radius': 0},
+    },
+  ),
+  'point.pointStyle': (
+    ChartElements(point: PointElementStyle(pointStyle: .rect)),
+    {
+      'point': {'pointStyle': 'rect'},
+    },
+  ),
+  'point.backgroundColor': (
+    ChartElements(point: PointElementStyle(backgroundColor: _red)),
+    {
+      'point': {'backgroundColor': _redValue},
+    },
+  ),
+  'point.borderColor': (
+    ChartElements(point: PointElementStyle(borderColor: _blue)),
+    {
+      'point': {'borderColor': _blueValue},
+    },
+  ),
+  'point.borderWidth': (
+    ChartElements(point: PointElementStyle(borderWidth: 2)),
+    {
+      'point': {'borderWidth': 2},
+    },
+  ),
+  'point.hitRadius': (
+    ChartElements(point: PointElementStyle(hitRadius: 5)),
+    {
+      'point': {'hitRadius': 5},
+    },
+  ),
+  'point.hoverRadius': (
+    ChartElements(point: PointElementStyle(hoverRadius: 6)),
+    {
+      'point': {'hoverRadius': 6},
+    },
+  ),
+  'point.extra': (
+    ChartElements(point: PointElementStyle(extra: {'rotation': 45})),
+    {
+      'point': {'rotation': 45},
+    },
+  ),
+  'line.tension': (
+    ChartElements(line: LineElementStyle(tension: 0.4)),
+    {
+      'line': {'tension': 0.4},
+    },
+  ),
+  'line.backgroundColor': (
+    ChartElements(line: LineElementStyle(backgroundColor: _red)),
+    {
+      'line': {'backgroundColor': _redValue},
+    },
+  ),
+  'line.borderColor': (
+    ChartElements(line: LineElementStyle(borderColor: _blue)),
+    {
+      'line': {'borderColor': _blueValue},
+    },
+  ),
+  'line.borderWidth, the radar docs': (
+    ChartElements(line: LineElementStyle(borderWidth: 3)),
+    {
+      'line': {'borderWidth': 3},
+    },
+  ),
+  'line.borderDash': (
+    ChartElements(line: LineElementStyle(borderDash: [4, 2])),
+    {
+      'line': {
+        'borderDash': [4, 2],
+      },
+    },
+  ),
+  'line.fill': (
+    ChartElements(line: LineElementStyle(fill: .origin)),
+    {
+      'line': {'fill': 'origin'},
+    },
+  ),
+  'line.stepped': (
+    ChartElements(line: LineElementStyle(stepped: true)),
+    {
+      'line': {'stepped': true},
+    },
+  ),
+  'line.extra': (
+    ChartElements(
+      line: LineElementStyle(extra: {'cubicInterpolationMode': 'monotone'}),
+    ),
+    {
+      'line': {'cubicInterpolationMode': 'monotone'},
+    },
+  ),
+  'bar.backgroundColor': (
+    ChartElements(bar: BarElementStyle(backgroundColor: _red)),
+    {
+      'bar': {'backgroundColor': _redValue},
+    },
+  ),
+  'bar.borderColor': (
+    ChartElements(bar: BarElementStyle(borderColor: _blue)),
+    {
+      'bar': {'borderColor': _blueValue},
+    },
+  ),
+  'bar.borderWidth': (
+    ChartElements(bar: BarElementStyle(borderWidth: 2)),
+    {
+      'bar': {'borderWidth': 2},
+    },
+  ),
+  'bar.borderRadius': (
+    ChartElements(bar: BarElementStyle(borderRadius: 4)),
+    {
+      'bar': {'borderRadius': 4},
+    },
+  ),
+  'bar.extra': (
+    ChartElements(bar: BarElementStyle(extra: {'borderSkipped': false})),
+    {
+      'bar': {'borderSkipped': false},
+    },
+  ),
+  'arc.backgroundColor': (
+    ChartElements(arc: ArcElementStyle(backgroundColor: _red)),
+    {
+      'arc': {'backgroundColor': _redValue},
+    },
+  ),
+  'arc.borderColor': (
+    ChartElements(arc: ArcElementStyle(borderColor: _blue)),
+    {
+      'arc': {'borderColor': _blueValue},
+    },
+  ),
+  'arc.borderWidth': (
+    ChartElements(arc: ArcElementStyle(borderWidth: 0)),
+    {
+      'arc': {'borderWidth': 0},
+    },
+  ),
+  'arc.offset': (
+    ChartElements(arc: ArcElementStyle(offset: 4)),
+    {
+      'arc': {'offset': 4},
+    },
+  ),
+  'arc.spacing': (
+    ChartElements(arc: ArcElementStyle(spacing: 2)),
+    {
+      'arc': {'spacing': 2},
+    },
+  ),
+  'arc.extra': (
+    ChartElements(arc: ArcElementStyle(extra: {'borderAlign': 'inner'})),
+    {
+      'arc': {'borderAlign': 'inner'},
+    },
+  ),
+  'extra': (
+    ChartElements(
+      extra: {
+        'line': {'borderWidth': 1},
+      },
+    ),
+    {
+      'line': {'borderWidth': 1},
+    },
+  ),
+  'the four styles, in parameter order': (
+    ChartElements(
+      arc: ArcElementStyle(offset: 1),
+      bar: BarElementStyle(borderWidth: 1),
+      line: LineElementStyle(tension: 1),
+      point: PointElementStyle(radius: 1),
+    ),
+    {
+      'point': {'radius': 1},
+      'line': {'tension': 1},
+      'bar': {'borderWidth': 1},
+      'arc': {'offset': 1},
+    },
+  ),
 };
 
 /// The cases of the parameters of [ChartLegend] and the twin `legend` Map.
@@ -809,6 +1064,12 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
       'plugins': {'tooltip': <String, Object?>{}},
     },
   ),
+  'filler': (
+    ChartConfig(type: .bar, datasets: [], filler: ChartFiller()),
+    {
+      'plugins': {'filler': <String, Object?>{}},
+    },
+  ),
   'interaction': (
     ChartConfig(type: .bar, datasets: [], interaction: ChartInteraction()),
     {'interaction': <String, Object?>{}},
@@ -816,6 +1077,10 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
   'animation': (
     ChartConfig(type: .bar, datasets: [], animation: ChartAnimation()),
     {'animation': <String, Object?>{}},
+  ),
+  'elements': (
+    ChartConfig(type: .bar, datasets: [], elements: ChartElements()),
+    {'elements': <String, Object?>{}},
   ),
   'onClick': (
     ChartConfig(type: .bar, datasets: [], onClick: _onEvent),
@@ -997,6 +1262,29 @@ void main() {
     });
 
     group('extra', () {
+      test('a key of a nested Map that is not a String fails the debug '
+          'assert with the key', () {
+        expect(
+          () => _lower(
+            const BarDataset(
+              extra: {
+                'datalabels': {1: 'one'},
+              },
+            ),
+          ),
+          throwsA(
+            isA<AssertionError>().having(
+              (error) => '${error.message}',
+              'message',
+              allOf(
+                contains('The key 1 of an extra Map is a int, not a String.'),
+                contains("write the key as '1'"),
+              ),
+            ),
+          ),
+        );
+      });
+
       test('an entry wins over a parameter, in the place of the key', () {
         expectTwin(
           _lower(
@@ -1160,6 +1448,8 @@ void main() {
         'pointBackgroundColor': _redValue,
         'pointBorderColor': _blueValue,
         'pointBorderWidth': 1,
+        'pointHoverBackgroundColor': _blueValue,
+        'pointHoverBorderColor': _redValue,
       };
 
       test('LineDataset', () {
@@ -1191,6 +1481,8 @@ void main() {
             pointBackgroundColor: _red,
             pointBorderColor: _blue,
             pointBorderWidth: 1,
+            pointHoverBackgroundColor: _blue,
+            pointHoverBorderColor: _red,
             extra: const {'clip': 5},
           ),
         );
@@ -1242,6 +1534,8 @@ void main() {
             pointBackgroundColor: _red,
             pointBorderColor: _blue,
             pointBorderWidth: 1,
+            pointHoverBackgroundColor: _blue,
+            pointHoverBorderColor: _red,
             extra: const {'clip': 5},
           ),
         );
@@ -1444,6 +1738,8 @@ void main() {
             pointBackgroundColor: _red,
             pointBorderColor: _blue,
             pointBorderWidth: 1,
+            pointHoverBackgroundColor: _blue,
+            pointHoverBorderColor: _red,
             extra: const {'clip': 5},
           ),
         );
@@ -1658,7 +1954,7 @@ void main() {
               stacked: true,
               min: _start,
               max: _end,
-              unit: 'month',
+              unit: .month,
               tooltipFormat: 'yyyy-MM',
               ticks: ticks,
               grid: grid,
@@ -1675,7 +1971,7 @@ void main() {
               stacked: true,
               min: _start,
               max: _end,
-              unit: 'month',
+              unit: .month,
               tooltipFormat: 'yyyy-MM',
               ticks: ticks,
               grid: grid,
@@ -1704,11 +2000,17 @@ void main() {
             stacked: true,
             min: 0,
             max: 10,
+            suggestedMin: 1,
+            suggestedMax: 9,
             beginAtZero: true,
             startAngle: 90,
             pointLabelsDisplay: true,
+            pointLabelsColor: _red,
             pointLabelsFont: _font,
+            pointLabelsPadding: 4,
+            angleLinesDisplay: true,
             angleLinesColor: _blue,
+            angleLinesLineWidth: 2,
             ticks: ticks,
             grid: grid,
             title: title,
@@ -1719,10 +2021,21 @@ void main() {
             ...head,
             'min': 0,
             'max': 10,
+            'suggestedMin': 1,
+            'suggestedMax': 9,
             'beginAtZero': true,
             'startAngle': 90,
-            'pointLabels': {'display': true, 'font': _fontValue},
-            'angleLines': {'color': _blueValue},
+            'pointLabels': {
+              'display': true,
+              'color': _redValue,
+              'font': _fontValue,
+              'padding': 4,
+            },
+            'angleLines': {
+              'display': true,
+              'color': _blueValue,
+              'lineWidth': 2,
+            },
             ...tail,
           },
         ),
@@ -1799,6 +2112,36 @@ void main() {
               ),
             ),
             {'interaction': twin},
+          );
+        });
+      }
+    });
+
+    group('each parameter of ChartFiller', () {
+      for (final MapEntry(key: name, value: (filler, twin))
+          in _filler.entries) {
+        test(name, () {
+          expectTwin(
+            _options(
+              ChartConfig(type: .line, datasets: const [], filler: filler),
+            ),
+            {
+              'plugins': {'filler': twin},
+            },
+          );
+        });
+      }
+    });
+
+    group('each parameter of ChartElements and of the element styles', () {
+      for (final MapEntry(key: name, value: (elements, twin))
+          in _elements.entries) {
+        test(name, () {
+          expectTwin(
+            _options(
+              ChartConfig(type: .line, datasets: const [], elements: elements),
+            ),
+            {'elements': twin},
           );
         });
       }

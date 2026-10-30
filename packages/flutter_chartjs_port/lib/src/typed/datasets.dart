@@ -496,6 +496,8 @@ base mixin _LineStyle on Dataset {
   Color? get pointBackgroundColor;
   Color? get pointBorderColor;
   double? get pointBorderWidth;
+  Color? get pointHoverBackgroundColor;
+  Color? get pointHoverBorderColor;
 
   /// Adds the keys of the line style to [map].
   void _lowerLine(Map<String, Object?> map) => map.addAll({
@@ -511,6 +513,8 @@ base mixin _LineStyle on Dataset {
     'pointBackgroundColor': ?colorValue(pointBackgroundColor),
     'pointBorderColor': ?colorValue(pointBorderColor),
     'pointBorderWidth': ?pointBorderWidth,
+    'pointHoverBackgroundColor': ?colorValue(pointHoverBackgroundColor),
+    'pointHoverBorderColor': ?colorValue(pointHoverBorderColor),
   });
 
   /// The properties of the line style, in parameter order.
@@ -527,6 +531,8 @@ base mixin _LineStyle on Dataset {
     ('pointBackgroundColor', pointBackgroundColor),
     ('pointBorderColor', pointBorderColor),
     ('pointBorderWidth', pointBorderWidth),
+    ('pointHoverBackgroundColor', pointHoverBackgroundColor),
+    ('pointHoverBorderColor', pointHoverBorderColor),
   ];
 }
 
@@ -570,6 +576,8 @@ final class LineDataset extends Dataset with _LineStyle {
     this.pointBackgroundColor,
     this.pointBorderColor,
     this.pointBorderWidth,
+    this.pointHoverBackgroundColor,
+    this.pointHoverBorderColor,
     super.extra,
   }) : assert(data == null || points == null, 'Give data or points.');
 
@@ -671,6 +679,19 @@ final class LineDataset extends Dataset with _LineStyle {
   @override
   final double? pointBorderWidth;
 
+  /// {@template flutter_chartjs_port.typed.pointHoverBackgroundColor}
+  /// The fill color of a point under the pointer:
+  /// `pointHoverBackgroundColor`.
+  /// {@endtemplate}
+  @override
+  final Color? pointHoverBackgroundColor;
+
+  /// {@template flutter_chartjs_port.typed.pointHoverBorderColor}
+  /// The border color of a point under the pointer: `pointHoverBorderColor`.
+  /// {@endtemplate}
+  @override
+  final Color? pointHoverBorderColor;
+
   @override
   LineDataset copyWith({
     Key? key,
@@ -705,6 +726,8 @@ final class LineDataset extends Dataset with _LineStyle {
     Color? pointBackgroundColor,
     Color? pointBorderColor,
     double? pointBorderWidth,
+    Color? pointHoverBackgroundColor,
+    Color? pointHoverBorderColor,
     Map<String, Object?>? extra,
   }) => LineDataset(
     key: key ?? this.key,
@@ -739,6 +762,9 @@ final class LineDataset extends Dataset with _LineStyle {
     pointBackgroundColor: pointBackgroundColor ?? this.pointBackgroundColor,
     pointBorderColor: pointBorderColor ?? this.pointBorderColor,
     pointBorderWidth: pointBorderWidth ?? this.pointBorderWidth,
+    pointHoverBackgroundColor:
+        pointHoverBackgroundColor ?? this.pointHoverBackgroundColor,
+    pointHoverBorderColor: pointHoverBorderColor ?? this.pointHoverBorderColor,
     extra: extra ?? this.extra,
   );
 
@@ -814,6 +840,8 @@ final class ScatterDataset extends Dataset with _LineStyle {
     this.pointBackgroundColor,
     this.pointBorderColor,
     this.pointBorderWidth,
+    this.pointHoverBackgroundColor,
+    this.pointHoverBorderColor,
     super.extra,
   }) : assert(data == null || points == null, 'Give data or points.');
 
@@ -882,6 +910,14 @@ final class ScatterDataset extends Dataset with _LineStyle {
   @override
   final double? pointBorderWidth;
 
+  /// {@macro flutter_chartjs_port.typed.pointHoverBackgroundColor}
+  @override
+  final Color? pointHoverBackgroundColor;
+
+  /// {@macro flutter_chartjs_port.typed.pointHoverBorderColor}
+  @override
+  final Color? pointHoverBorderColor;
+
   @override
   ScatterDataset copyWith({
     Key? key,
@@ -915,6 +951,8 @@ final class ScatterDataset extends Dataset with _LineStyle {
     Color? pointBackgroundColor,
     Color? pointBorderColor,
     double? pointBorderWidth,
+    Color? pointHoverBackgroundColor,
+    Color? pointHoverBorderColor,
     Map<String, Object?>? extra,
   }) => ScatterDataset(
     key: key ?? this.key,
@@ -948,6 +986,9 @@ final class ScatterDataset extends Dataset with _LineStyle {
     pointBackgroundColor: pointBackgroundColor ?? this.pointBackgroundColor,
     pointBorderColor: pointBorderColor ?? this.pointBorderColor,
     pointBorderWidth: pointBorderWidth ?? this.pointBorderWidth,
+    pointHoverBackgroundColor:
+        pointHoverBackgroundColor ?? this.pointHoverBackgroundColor,
+    pointHoverBorderColor: pointHoverBorderColor ?? this.pointHoverBorderColor,
     extra: extra ?? this.extra,
   );
 
@@ -1606,6 +1647,8 @@ final class RadarDataset extends Dataset with _LineStyle {
     this.pointBackgroundColor,
     this.pointBorderColor,
     this.pointBorderWidth,
+    this.pointHoverBackgroundColor,
+    this.pointHoverBorderColor,
     super.extra,
   });
 
@@ -1660,6 +1703,14 @@ final class RadarDataset extends Dataset with _LineStyle {
   @override
   final double? pointBorderWidth;
 
+  /// {@macro flutter_chartjs_port.typed.pointHoverBackgroundColor}
+  @override
+  final Color? pointHoverBackgroundColor;
+
+  /// {@macro flutter_chartjs_port.typed.pointHoverBorderColor}
+  @override
+  final Color? pointHoverBorderColor;
+
   @override
   RadarDataset copyWith({
     Key? key,
@@ -1689,6 +1740,8 @@ final class RadarDataset extends Dataset with _LineStyle {
     Color? pointBackgroundColor,
     Color? pointBorderColor,
     double? pointBorderWidth,
+    Color? pointHoverBackgroundColor,
+    Color? pointHoverBorderColor,
     Map<String, Object?>? extra,
   }) => RadarDataset(
     key: key ?? this.key,
@@ -1718,6 +1771,9 @@ final class RadarDataset extends Dataset with _LineStyle {
     pointBackgroundColor: pointBackgroundColor ?? this.pointBackgroundColor,
     pointBorderColor: pointBorderColor ?? this.pointBorderColor,
     pointBorderWidth: pointBorderWidth ?? this.pointBorderWidth,
+    pointHoverBackgroundColor:
+        pointHoverBackgroundColor ?? this.pointHoverBackgroundColor,
+    pointHoverBorderColor: pointHoverBorderColor ?? this.pointHoverBorderColor,
     extra: extra ?? this.extra,
   );
 

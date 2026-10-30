@@ -14,10 +14,12 @@ import 'package:test/test.dart';
 
 import '../../../tool/src/js_semantics.dart' show dartSdkPath;
 
-// The name rules of Chart.js ADR 0052, section 8, over the 44 names of the
+// The name rules of Chart.js ADR 0052, section 8, over the 50 names of the
 // typed API (probe J5 of the design panel checked 43 of them; the details
-// class ChartAnimationDetails came with the typed animation callbacks). The
-// list holds each name of the ADR, also the names that a later commit adds.
+// class ChartAnimationDetails came with the typed animation callbacks, and
+// the 6 names of the filler and the element options with the keys of the
+// docs examples). The list holds each name of the ADR, also the names that
+// a later commit adds.
 // The test resolves the libraries with package:analyzer, as
 // test/tool/public_api_test.dart does.
 //
@@ -37,7 +39,7 @@ import '../../../tool/src/js_semantics.dart' show dartSdkPath;
 // library exports it. A new typed name thus joins the list and passes the
 // rules.
 
-/// The 44 public names of the typed API (Chart.js ADR 0052, section 8).
+/// The 50 public names of the typed API (Chart.js ADR 0052, section 8).
 const List<String> _typedNames = [
   // Config.
   'ChartConfig', 'ChartKind', 'IndexAxis',
@@ -49,8 +51,11 @@ const List<String> _typedNames = [
   'ChartAxis', 'CategoryAxis', 'LinearAxis', 'LogarithmicAxis', 'TimeAxis',
   'TimeSeriesAxis', 'RadialLinearAxis', 'AxisTicks', 'AxisGrid', 'AxisTitle',
   // Groups.
-  'ChartLegend', 'ChartTitle', 'ChartTooltip', 'ChartInteraction',
-  'ChartAnimation',
+  'ChartLegend', 'ChartTitle', 'ChartTooltip', 'ChartFiller',
+  'ChartInteraction', 'ChartAnimation',
+  // Elements.
+  'ChartElements', 'PointElementStyle', 'LineElementStyle', 'BarElementStyle',
+  'ArcElementStyle',
   // Values.
   'ChartPosition', 'ChartAlign', 'ChartInteractionMode', 'ChartEasing',
   'ChartPointStyle', 'ChartFill', 'ChartLength',
@@ -115,8 +120,8 @@ void main() {
 
   tearDownAll(() => _collection.dispose());
 
-  test('the list has 44 distinct names', () {
-    expect(_typedNames.toSet(), hasLength(44));
+  test('the list has 50 distinct names', () {
+    expect(_typedNames.toSet(), hasLength(50));
   });
 
   test(

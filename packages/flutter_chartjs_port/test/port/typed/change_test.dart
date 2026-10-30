@@ -223,6 +223,43 @@ void main() {
       );
     });
 
+    testWidgets('plugins: [plugin] in each build gives no update while the '
+        'plugin is the same object; another plugin gives one', (
+      tester,
+    ) async {
+      final modes = _spyOnUpdates();
+      final starts = <String>[];
+      Map<String, Object?> plugin(String id) => <String, Object?>{
+        'id': id,
+        'start': (Object? chart, Object? args, Object? options) {
+          starts.add(id);
+        },
+      };
+      final first = plugin('first');
+      Widget view(Map<String, Object?> plugin) => _box(
+        ChartView(
+          config: ChartConfig(
+            type: .bar,
+            labels: const ['a'],
+            datasets: const [
+              BarDataset(data: [1]),
+            ],
+            animation: ChartAnimation.none,
+            plugins: [plugin],
+          ),
+        ),
+      );
+      await tester.pumpWidget(view(first));
+      await tester.pumpWidget(view(first));
+      await tester.pumpWidget(view(first));
+      expect(modes, hasLength(1));
+      expect(starts, ['first']);
+
+      await tester.pumpWidget(view(plugin('second')));
+      expect(modes, hasLength(2));
+      expect(starts, ['first', 'second']);
+    });
+
     testWidgets('ChartView.raw keeps the identity test', (tester) async {
       final modes = _spyOnUpdates();
       Map<String, Object?> config() => <String, Object?>{

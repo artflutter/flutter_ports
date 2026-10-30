@@ -61,6 +61,8 @@ const List<String> _lineStyle = [
   'pointBackgroundColor',
   'pointBorderColor',
   'pointBorderWidth',
+  'pointHoverBackgroundColor',
+  'pointHoverBorderColor',
 ];
 
 /// The parameter names of the pie and the doughnut arcs.
@@ -469,6 +471,48 @@ void main() {
       );
     });
 
+    test('the plugins compare by the identity of their items', () {
+      final plugin = <String, Object?>{'id': 'p'};
+      ChartConfig config(List<Map<String, Object?>> plugins) =>
+          ChartConfig(type: .bar, datasets: const [], plugins: plugins);
+      _expectEqual(config(_runtime([plugin])), config(_runtime([plugin])));
+      expect(
+        config(_runtime([plugin])),
+        isNot(
+          config(
+            _runtime([
+              <String, Object?>{'id': 'p'},
+            ]),
+          ),
+        ),
+      );
+      expect(
+        config(_runtime([plugin])),
+        isNot(config(_runtime([plugin, plugin]))),
+      );
+      expect(
+        config(_runtime([plugin])),
+        isNot(const ChartConfig(type: .bar, datasets: [])),
+      );
+    });
+
+    test('the element styles compare by value, a borderDash by its items', () {
+      _expectEqual(
+        ChartElements(
+          line: LineElementStyle(borderDash: _runtime([4.0, 2.0])),
+          point: PointElementStyle(radius: _runtime(0)),
+        ),
+        ChartElements(
+          line: LineElementStyle(borderDash: _runtime([4.0, 2.0])),
+          point: PointElementStyle(radius: _runtime(0)),
+        ),
+      );
+      expect(
+        const ChartElements(bar: BarElementStyle(borderWidth: 1)),
+        isNot(const ChartElements(arc: ArcElementStyle(borderWidth: 1))),
+      );
+    });
+
     test('the scales compare by their entries, in key order', () {
       expect(
         const ChartConfig(
@@ -592,6 +636,36 @@ void main() {
           const ChartAnimation().copyWith(),
           const ChartAnimation().copyWith(loop: true),
         ),
+        (
+          const ChartFiller(),
+          const ChartFiller().copyWith(),
+          const ChartFiller().copyWith(propagate: false),
+        ),
+        (
+          const ChartElements(),
+          const ChartElements().copyWith(),
+          const ChartElements().copyWith(line: const LineElementStyle()),
+        ),
+        (
+          const PointElementStyle(),
+          const PointElementStyle().copyWith(),
+          const PointElementStyle().copyWith(radius: 0),
+        ),
+        (
+          const LineElementStyle(),
+          const LineElementStyle().copyWith(),
+          const LineElementStyle().copyWith(borderWidth: 3),
+        ),
+        (
+          const BarElementStyle(),
+          const BarElementStyle().copyWith(),
+          const BarElementStyle().copyWith(borderRadius: 4),
+        ),
+        (
+          const ArcElementStyle(),
+          const ArcElementStyle().copyWith(),
+          const ArcElementStyle().copyWith(spacing: 2),
+        ),
       ]) {
         _expectEqual(copy, object);
         expect(changed, isNot(object));
@@ -617,8 +691,10 @@ void main() {
         'title',
         'subtitle',
         'tooltip',
+        'filler',
         'interaction',
         'animation',
+        'elements',
         'onClick',
         'onHover',
         'plugins',
@@ -631,11 +707,17 @@ void main() {
         'stacked',
         'min',
         'max',
+        'suggestedMin',
+        'suggestedMax',
         'beginAtZero',
         'startAngle',
         'pointLabelsDisplay',
+        'pointLabelsColor',
         'pointLabelsFont',
+        'pointLabelsPadding',
+        'angleLinesDisplay',
         'angleLinesColor',
+        'angleLinesLineWidth',
         'ticks',
         'grid',
         'title',

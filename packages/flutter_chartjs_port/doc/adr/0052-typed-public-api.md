@@ -101,10 +101,12 @@ final class ChartConfig with Diagnosticable {
     this.responsive, this.maintainAspectRatio, this.aspectRatio,
     this.padding,             // EdgeInsets?: 'options.layout.padding'
     this.legend, this.title, this.subtitle, this.tooltip,  // 'options.plugins.*'
+    this.filler,              // ChartFiller?: 'options.plugins.filler'
     this.interaction,         // ChartInteraction?: 'options.interaction'
     this.animation,           // ChartAnimation?: 'options.animation'
+    this.elements,            // ChartElements?: 'options.elements'
     this.onClick, this.onHover,  // ValueChanged<ChartEventDetails>?
-    this.plugins,             // List<Map<String, Object?>>?: inline plugins, by identity
+    this.plugins,             // List<Map<String, Object?>>?: inline plugins, by reference
     this.extra,               // Map<String, Object?>?: deep-merged last into 'options'
   });
 }
@@ -156,7 +158,8 @@ final class BarDataset extends Dataset {
   - `LineDataset`, `ScatterDataset`: `data`, `points`, the axis ids, `stack`, `indexAxis` (line),
     `fill` (`ChartFill`), `tension`, `borderDash` (`List<double>`, compared by value), `spanGaps`,
     `showLine`, `stepped` (`bool`), `pointRadius`, `pointHoverRadius`, `pointStyle`,
-    `pointBackgroundColor`, `pointBorderColor`, `pointBorderWidth`.
+    `pointBackgroundColor`, `pointBorderColor`, `pointBorderWidth`, `pointHoverBackgroundColor`,
+    `pointHoverBorderColor`.
   - `RadarDataset`: `data` and the line style keys without the axis ids.
   - `BubbleDataset`: `points`, the axis ids, `radius`, `hoverRadius`, `pointStyle`.
   - `PieDataset`, `DoughnutDataset`: `data`, `offset`, `hoverOffset`, `spacing`, `weight`,
@@ -167,8 +170,9 @@ final class BarDataset extends Dataset {
     `suggestedMin`, `suggestedMax`, `beginAtZero`. `LogarithmicAxis`: `min`, `max`,
     `suggestedMin`, `suggestedMax`. `CategoryAxis`: `labels`, `min`, `max` (`String?`).
     `TimeAxis`, `TimeSeriesAxis`: `min`, `max` (`DateTime?`), `unit` (`TimeUnit?`),
-    `tooltipFormat`. `RadialLinearAxis`: `min`, `max`, `beginAtZero`, `startAngle`,
-    `pointLabelsDisplay`, `pointLabelsFont`, `angleLinesColor`.
+    `tooltipFormat`. `RadialLinearAxis`: `min`, `max`, `suggestedMin`, `suggestedMax`,
+    `beginAtZero`, `startAngle`, `pointLabelsDisplay`, `pointLabelsColor`, `pointLabelsFont`,
+    `pointLabelsPadding`, `angleLinesDisplay`, `angleLinesColor`, `angleLinesLineWidth`.
   - `AxisTicks`: `display`, `color`, `font`, `padding`, `stepSize`, `maxRotation`, `autoSkip`,
     `format` (`String? Function(AxisTickInfo)`). `AxisGrid`: `display`, `color`, `lineWidth`,
     `drawOnChartArea`, `drawTicks`, `offset`. `AxisTitle`: `display`, `text`, `color`, `font`,
@@ -186,6 +190,13 @@ final class BarDataset extends Dataset {
   - `ChartAnimation`: `duration`, `delay` (`Duration`), `easing`, `loop`, `onProgress`,
     `onComplete` (`ValueChanged<ChartAnimationDetails>?`), `extra`. `static const none` lowers to
     `false`, and a copy of `none` is `none`.
+  - `ChartFiller` (the filler plugin): `propagate`, `extra`.
+  - `ChartElements` (`options.elements`): `point`, `line`, `bar`, `arc`, `extra`.
+    `PointElementStyle`: `radius`, `pointStyle`, `backgroundColor`, `borderColor`, `borderWidth`,
+    `hitRadius`, `hoverRadius`. `LineElementStyle`: `tension`, `backgroundColor`, `borderColor`,
+    `borderWidth`, `borderDash`, `fill`, `stepped`. `BarElementStyle`: `backgroundColor`,
+    `borderColor`, `borderWidth`, `borderRadius` (`double`). `ArcElementStyle`:
+    `backgroundColor`, `borderColor`, `borderWidth`, `offset`, `spacing`. Each has `extra`.
 - Every config class is `@immutable` and `final`, with a `const` constructor and named parameters.
   `==`, `hashCode` and `debugFillProperties` come from one private `_props` list of each class
   (`props.dart`), so no `build_runner` runs. Each class has `copyWith`. `Dataset.copyWith` takes
@@ -203,7 +214,8 @@ The files, all port-only (`// Original code, not ported from Chart.js: <reason>.
 | `lib/src/typed/config.dart` | `ChartConfig`, `ChartKind`, `IndexAxis` |
 | `lib/src/typed/datasets.dart` | `Dataset`, the 8 dataset classes, `DataPoint` and the internal `lowerDataset`, in one library, because `abstract final` needs it |
 | `lib/src/typed/axes.dart` | `ChartAxis`, the 6 axes, `AxisTicks`, `AxisGrid`, `AxisTitle` and the internal `lowerAxis` |
-| `lib/src/typed/groups.dart` | `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartInteraction`, `ChartAnimation` and their internal lowering functions |
+| `lib/src/typed/groups.dart` | `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`, `ChartInteraction`, `ChartAnimation` and their internal lowering functions |
+| `lib/src/typed/elements.dart` | `ChartElements`, `PointElementStyle`, `LineElementStyle`, `BarElementStyle`, `ArcElementStyle` and the internal `lowerElements` |
 | `lib/src/typed/values.dart` | `ChartPosition`, `ChartAlign`, `ChartInteractionMode`, `ChartEasing`, `ChartPointStyle`, `ChartFill`, `ChartLength` |
 | `lib/src/typed/callbacks.dart` | `ChartEventDetails`, `ChartLegendEventDetails`, `ChartAnimationDetails`, `AxisTickInfo`, `ChartHit`, `ChartContext`, `ChartTooltipItem`, `ChartLegendItem`, `ChartScript` |
 | `lib/src/typed/lower.dart` | internal: the conversions of the lowering, the `extra` merge, the reconcile (`ChartConfigLowering`), the trampolines. The lowering of each class is a function of its library, which reads the private members of the class |
@@ -265,7 +277,8 @@ Data:
   `CategoryAxis(min: 'x')` with an unknown label do. The dartdoc of `labels` states this.
 
 Update. A new `ChartConfig` that is not `==` to the last one reconciles with the live chart:
-- The change test is `ChartConfig ==` (section 9). Lists compare by identity, so the cost is
+- The change test is `ChartConfig ==` (section 9). Lists compare by identity (the `plugins` List
+  by the identity of its items), so the cost is
   O(fields + datasets).
 - The match rule: a new dataset with a `key` takes the live Map of the old dataset with an equal
   key and the same class. A new dataset without a key takes the live Map at its index when the old
@@ -282,9 +295,11 @@ Update. A new `ChartConfig` that is not `==` to the last one reconciles with the
 
 ### 4. Coverage and `extra`
 
-- The typed set of 0.1.0 has about 155 key paths: the keys of section 1. The rule: a key is typed
-  when (R1) its value is a CSS value or an index, or (R2) 2 or more of the 91 upstream doc files
-  use it, or (R3) the 9 chart types of the gallery need it. Four corrections of the judge apply:
+- The typed set of 0.1.0 has the keys of section 1: about 155 key paths in the panel, 196 lowered
+  key paths in the configs of the key check (section 13) with the keys of the docs examples
+  below. The rule: a key is typed when (R1) its value is a CSS value or an index, or (R2) 2 or
+  more of the 91 upstream doc files use it, or (R3) the 9 chart types of the gallery need it.
+  Four corrections of the judge apply:
   1. The bar `borderRadius` is a `double`, not a `BorderRadius` (t-b P5). The docs sample uses the
      number (`U/docs/samples/bar/border-radius.md:32`, `:41`).
   2. The `cutout` and `radius` of pie and doughnut take `ChartLength`
@@ -295,9 +310,23 @@ Update. A new `ChartConfig` that is not `==` to the last one reconciles with the
   4. Each dataset has `Key? key` (section 3). It does not lower.
 - Each typed class has `final Map<String, Object?>? extra`, with the merge of section 2 rule 9.
   `ChartView.raw` stays the full escape hatch (section 9).
-- Out of 0.1.0, through `extra` or `ChartView.raw`: `elements` defaults (each docs use has a
-  form for each dataset), `segment`, `animations`, `transitions`, tooltip `external`, gradients and
-  patterns, floating bars, custom parsing keys.
+- The keys of the docs examples of the gallery (`apps/chartjs_gallery/lib/docs/`) are typed, so no
+  docs example needs `extra`: the radar `pointHoverBackgroundColor` and `pointHoverBorderColor`,
+  `elements.line` (`U/docs/charts/radar.md`, with the groups `point`, `bar` and `arc` that 2 or
+  more docs files use) and `plugins.filler.propagate`
+  (`U/docs/samples/area/line-boundaries.md`). The `RadialLinearAxis` keys `suggestedMin`,
+  `suggestedMax`, `angleLines` and `pointLabels` come from `U/docs/axes/radial/linear.md`.
+- The horizontal bar block of `U/docs/charts/bar.md:310` and the vertical line block of
+  `U/docs/charts/line.md:239` set `axis: 'y'` in the dataset, and the bar block sets
+  `fill: false` in a bar dataset. Chart.js 4.6.1 reads no `axis` key of a dataset (no read in
+  `U/src/`), and the filler reads `fill` only for a dataset with a line element. The typed API
+  has no such key: a typed key that upstream does not read has no effect (section 13). The typed
+  twin of each block leaves the two keys out and gives the same chart.
+- The title text of `U/docs/samples/area/line-boundaries.md:106` is a function of the context.
+  `ChartTitle.text` is a `String`: the text of each fill variant is a constant.
+- Out of 0.1.0, through `extra` or `ChartView.raw`: `segment`, `animations`, `transitions`,
+  tooltip `external`, gradients and patterns, floating bars, custom parsing keys, and the
+  element keys that section 1 does not list.
 - `parsing: false`, `normalized` and the decimation plugin come as one group, the first additive
   change after 0.1.0: the decimation plugin needs `parsing: false`.
 - Each later key is an additive named parameter on a `final` class.
@@ -392,6 +421,7 @@ details object is additive. A new upstream argument does not break a callback.
 | Point style | `ChartPointStyle` | the 10 names of `U/src/types/index.d.ts:2040-2050`, and `none` for `false` |
 | Fill | `ChartFill` | `origin`, `start`, `end`, `stack`, `shape`, `none` (`false`), `ChartFill.dataset(int)` (the index), `ChartFill.relative(int)` (`'+1'`, `'-1'`), `ChartFill.value(num)` (`{value: n}`) (`U/src/types/index.d.ts:2300`, `U/src/plugins/plugin.filler/filler.options.js:120-137`) |
 | Index axis | `enum IndexAxis { x, y }` | the `name` |
+| Time unit | `TimeUnit` of `core.adapters.dart` | the string: an extension type over `String` that implements `String`, with the 9 constants of `U/src/core/core.adapters.ts:10` and a public constructor for the unit of a custom date adapter. It replaces the typedef `TimeUnit = String` in place, so `chartjs.dart` exports the one name, and a date adapter member gets the string |
 
 - The name sets are extension types with `const` constants, so a dot shorthand works
   (`type: .bar`, `easing: .easeOutQuart`) and a new constant is additive. `ChartKind`,
@@ -408,13 +438,16 @@ details object is additive. A new upstream argument does not break a callback.
 
 ### 8. Names and libraries
 
-The typed API adds 44 public names, all exported by `lib/flutter_chartjs_port.dart`:
+The typed API adds 50 public names, all exported by `lib/flutter_chartjs_port.dart`:
 - Config (3): `ChartConfig`, `ChartKind`, `IndexAxis`.
 - Datasets (10): `Dataset`, `BarDataset`, `LineDataset`, `ScatterDataset`, `BubbleDataset`,
   `PieDataset`, `DoughnutDataset`, `PolarAreaDataset`, `RadarDataset`, `DataPoint`.
 - Axes (10): `ChartAxis`, `CategoryAxis`, `LinearAxis`, `LogarithmicAxis`, `TimeAxis`,
   `TimeSeriesAxis`, `RadialLinearAxis`, `AxisTicks`, `AxisGrid`, `AxisTitle`.
-- Groups (5): `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartInteraction`, `ChartAnimation`.
+- Groups (6): `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`, `ChartInteraction`,
+  `ChartAnimation`.
+- Elements (5): `ChartElements`, `PointElementStyle`, `LineElementStyle`, `BarElementStyle`,
+  `ArcElementStyle`.
 - Values (7): `ChartPosition`, `ChartAlign`, `ChartInteractionMode`, `ChartEasing`,
   `ChartPointStyle`, `ChartFill`, `ChartLength`.
 - Callbacks and views (9): `ChartEventDetails`, `ChartLegendEventDetails`,
@@ -422,7 +455,7 @@ The typed API adds 44 public names, all exported by `lib/flutter_chartjs_port.da
   `ChartLegendItem`, `ChartScript`.
 
 Probe J5 checked the first 43 names. `test/port/typed/names_test.dart` checks the rules over all
-44.
+50.
 
 `ChartView` changes (section 9). Every name of `doc/public_api.txt` stays.
 
@@ -475,14 +508,18 @@ final Map<String, Object?>? rawConfig;  // the raw config, every rule of Chart.j
 - The typed path, in `didUpdateWidget`: the `State` stores the newest typed config for the
   trampolines. It schedules the post-frame update of Chart.js ADR 0049 §4 only when
   `oldWidget.config != widget.config`, or when the form changed (typed or raw).
-- `ChartConfig ==` compares each field by `==`; `data`, `points`, `labels` and `plugins` by
-  identity; the small style Lists and the `datasets` List by value (item by item); the `scales`
-  Map by its entries in key order; the `extra` Maps by their entries in key order, with a
-  Map value by its entries and a List by identity (the lowering copies the Maps of `extra` and
-  passes its Lists by reference); `...For` and `AxisTicks.format` by Dart `==` (identity for a
-  closure, equality for a tear-off of one method of one object); the trampoline callbacks by
-  presence (null or not). Thus a parent that rebuilds with an equal
-  config gives no update. Chart.js ADR 0049 rejected an O(points) equality (0049:325-326).
+- `ChartConfig ==` compares each field by `==`; `data`, `points` and `labels` by identity; the
+  `plugins` List item by item, each plugin by identity (so `plugins: [plugin]` in `build` is the
+  same value while `plugin` is the same object); the small style Lists and the `datasets` List
+  by value (item by item); the `scales` Map by its entries in key order; the `extra` Maps by
+  their entries in key order, with a Map value by its entries and a List by identity (the
+  lowering copies the Maps of `extra` and passes its Lists by reference); `...For` and
+  `AxisTicks.format` by Dart `==` (identity for a closure, equality for a tear-off of one method
+  of one object); the trampoline callbacks by presence (null or not). Thus a parent that
+  rebuilds with an equal config gives no update. Chart.js ADR 0049 rejected an O(points)
+  equality (0049:325-326).
+- A key of a nested Map of `extra` that is not a `String` fails a debug assert that names the
+  key: Chart.js options are objects with string keys.
 - The post-frame update lowers through `ChartConfigLowering.apply(newConfig)` and gives the app
   Map to the unchanged steps 1-6. `ChartConfigLowering` keeps the live Maps of its last lowering:
   the root Map, the `data` and `options` Maps, and each dataset Map with the entries that the
@@ -549,7 +586,7 @@ typed path with dart2wasm through the example and one gallery page (section 13).
 | `test/port/typed/config_test.dart` | `ChartKind` and `IndexAxis`; later the `ChartConfig` lowering |
 | `test/port/typed/datasets_test.dart` | `DataPoint` (its Map, its getters, a chart reads it); later the dataset lowering |
 | `test/port/typed/callbacks_test.dart` | the views and the details over the objects of a real chart: `int` indexes, the `undefined` rule, `List<ActiveElement>` as `List<ChartHit>`; later `onClick`, `onHover` and the legend handlers through `triggerMouseEvent`, tooltip `labelText` null gives the default text, `AxisTicks.format` gets the scale, `backgroundColorFor` gives the element colors of a raw closure with the same strings |
-| `test/port/typed/names_test.dart` | the name rules of section 8 over the 44 names and the exports of `typed.dart`: the upstream names from the `exports` of `doc/upstream/manifest.json`, the Flutter and port names through an analyzer resolve |
+| `test/port/typed/names_test.dart` | the name rules of section 8 over the 50 names and the exports of `typed.dart`: the upstream names from the `exports` of `doc/upstream/manifest.json`, the Flutter and port names through an analyzer resolve |
 | `test/port/typed/lowering_test.dart` | for each typed field, a config with that field alone lowers to the expected key path and value form, with the key order (`jsObjectKeys`). It covers `borderRadius`, `ChartLength`, `Duration`, `EdgeInsets`, `TextStyle`, `Color`, the name types, `extra` (deep merge, wins) and the dataset `type` rule |
 | `test/port/typed/docs_twins_test.dart` | the 11 docs configs of `apps/chartjs_gallery/lib/docs/charts/` and `lib/docs/samples/area/line_boundaries.dart`, and one chart of each of the 8 types, written typed: equal draw calls (`drawCalls`, colors in parsed form), equal resolved options and element properties, equal hits on a grid. Also under `ChartThemeData.light()` |
 | `test/port/typed/reconcile_test.dart` | J2a and J2b as `ChartView` tests; the hidden state, the meta and the elements kept, the first frame near the old value; a removed typed key leaves the live Map; a colors-plugin key stays; a class change at an index gives a new meta; a new key; append and remove; a keyed reorder; the debug assert of two datasets with one key; the `data` and `options` Maps (step 4 and 5); a new type gives the axes of a new chart; a theme switch and a data change in one frame; the decimation plugin (through `extra`) with a new `data` List |
@@ -698,7 +735,7 @@ Each part below replaces the cited text on acceptance.
 
 - No ported file changes for the typed API, except the index parameters of section 10. The raw
   path keeps every rule of Chart.js ADRs 0043 and 0049.
-- The app library gets 44 new names. After 0.1.0, each one is a commitment (Chart.js ADR 0048).
+- The app library gets 50 new names. After 0.1.0, each one is a commitment (Chart.js ADR 0048).
   The `final` classes, the named parameters, the open name sets and the details objects make each
   later change additive.
 - The README and the example show the typed API first.

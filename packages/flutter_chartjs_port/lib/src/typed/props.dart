@@ -10,7 +10,7 @@
 /// the value that the class puts in the list:
 /// - a field value: `==`. A List and a Map of the app compare by identity,
 ///   because Dart `==` of a List or a Map is identity. Thus `data`,
-///   `points`, `labels` and `plugins` compare by identity. A function
+///   `points` and `labels` compare by identity. A function
 ///   compares with Dart `==`: a tear-off of a method of one object is `==`
 ///   to the same tear-off.
 /// - [byItems]: the items of a List compare by `==`, in order. The small
@@ -20,6 +20,9 @@
 ///   value that is a Map compares by its entries too. The `scales` Map and
 ///   the `extra` Maps use it. Lists in the Map compare by identity, as the
 ///   lowering passes them by reference.
+/// - [byIdentityItems]: the items of a List compare by identity, in order.
+///   The `plugins` List uses it: `plugins: [plugin]` in each build is the
+///   same value while `plugin` is the same object.
 /// - [byPresence]: only `null` or not. The callbacks that the lowering
 ///   wraps in a trampoline use it: the trampoline reads the newest callback
 ///   at each call.
@@ -68,6 +71,12 @@ void addProps(
 /// The value of [list] that compares its items by `==`, or `null`.
 Object? byItems(List<Object?>? list) => list == null ? null : _Items(list);
 
+/// The value of [list] that compares its items by identity, in order, or
+/// `null`. The `plugins` List of `ChartConfig` uses it: a plugin is a Map,
+/// and a new List of the same plugin objects is the same value.
+Object? byIdentityItems(List<Object?>? list) =>
+    list == null ? null : _IdentityItems(list);
+
 /// The value of [map] that compares its entries by `==` in key order, or
 /// `null`. A value that is a Map compares by its entries too.
 Object? byEntries(Map<Object?, Object?>? map) =>
@@ -102,6 +111,33 @@ final class _Items {
 
   @override
   int get hashCode => Object.hashAll(list);
+
+  @override
+  String toString() => list.toString();
+}
+
+/// A List that compares its items by identity.
+@immutable
+final class _IdentityItems {
+  const _IdentityItems(this.list);
+
+  final List<Object?> list;
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! _IdentityItems) return false;
+    final a = list;
+    final b = other.list;
+    if (identical(a, b)) return true;
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (!identical(a[i], b[i])) return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode => Object.hashAll(list.map(identityHashCode));
 
   @override
   String toString() => list.toString();

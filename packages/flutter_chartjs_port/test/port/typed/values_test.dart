@@ -221,4 +221,39 @@ void main() {
       expect(percent, isNot(const ChartLength.pixels(50)));
     });
   });
+
+  group('TimeUnit', () {
+    // core.adapters.ts:10: the 9 units of the union, in its order.
+    test('the constants name the 9 units of the union', () {
+      const units = <TimeUnit>[
+        .millisecond,
+        .second,
+        .minute,
+        .hour,
+        .day,
+        .week,
+        .month,
+        .quarter,
+        .year,
+      ];
+      expect(units, [
+        'millisecond',
+        'second',
+        'minute',
+        'hour',
+        'day',
+        'week',
+        'month',
+        'quarter',
+        'year',
+      ]);
+    });
+
+    test('a unit is its String, also a custom unit', () {
+      const String day = TimeUnit.day;
+      expect(day, 'day');
+      expect(const TimeUnit('fortnight').name, 'fortnight');
+      expect(TimeUnit(_runtime('day')), TimeUnit.day);
+    });
+  });
 }
