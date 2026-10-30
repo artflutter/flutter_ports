@@ -740,6 +740,15 @@ Changes to the cited files:
   move. No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart`
   or a test of §2.6 and §3.5 changes. The references, the inventory (§1.1), the tests of §2.6 and
   §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-30, the figures of night 1 of phase 9 (the series A-N1 and A-N3 of [Chart.js ADR
+  0049](adr/0049-chart-view-widget.md)). `doc/performance.md` gets section 15 at its end and one
+  sentence in its scope list: no cited section number changes. A-N1 compares the gallery host
+  `ChartCanvas` with `ChartView` and gives PASS on each deciding platform.
+  `apps/chartjs_gallery/lib/demo/chart_canvas.dart` stays as the side A of the open record run of
+  the Pixel 8a; this plan does not cite it. `doc/differences.md` changes the row
+  `platform-reduced-motion` in place, and Chart.js ADR 0049 gets the results. No library file, test
+  or gallery file changes, and `doc/parity.md` does not change. The references, the inventory
+  (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

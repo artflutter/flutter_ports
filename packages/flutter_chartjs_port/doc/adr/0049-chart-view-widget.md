@@ -266,6 +266,14 @@ keyed by the canvas.**
   when the upper end of each interval of B − A is below 0.1 ms on the Pixel 8a, macOS and Chrome
   with dart2wasm. Else a port-only `bool` field of `UiCanvasElement`, read through a type test,
   lands by the same rule. Else the porting lead opens this section again with the figures.
+- The result of A-N3 (night 1, [performance.md](../performance.md) §15.3): by its rule, the
+  `Expando` read did not land on any deciding platform. Each platform has primary upper ends
+  above 0.1 ms, and macOS has h = 4 control hits of 2 to 9 µs (h* = 3). But no
+  primary interval lies wholly above 0 on any platform, and the bound of 0.1 ms is 0.02 to 0.06 %
+  of the A mean at N 20000, below the noise of the night. The field of `UiCanvasElement` was not
+  built. Thus the porting lead opened this section again (2026-10-30) and kept the `Expando`
+  read: it is one `Expando` lookup in each `_createAnimations` call, and the field changes a
+  canvas class for a gain that no night can resolve. This is the decision of this section.
 
 ### 8. Parts that Chart.js ADRs 0050 and 0051 decide
 
@@ -291,7 +299,8 @@ section 4, and the host of section 2.
   `platform-reduced-motion` of `test/port/core/core.animations_test.dart` pins the hunk. All
   animation specs and the 8 controller reference files pass unchanged.
 - The gate of this ADR: the tests pass, and the figures of A-N1 (the widget overhead) and A-N3
-  (the read of the flag) are in `performance.md`.
+  (the read of the flag) are in `performance.md`. Night 1 recorded both figures in
+  [performance.md](../performance.md) §15.
 
 ## Alternatives considered
 
@@ -341,6 +350,15 @@ section 4, and the host of section 2.
   the references of the plan.
 - The gallery uses `ChartView` on its type pages. `ChartCanvas` stays as the side A of A-N1 until
   the night record.
+- A-N1 (night 1, [performance.md](../performance.md) §15.2) gives PASS on macOS, the Pixel 8a and
+  the VS Code browser, and on the added iPhone 17 Pro: no interval of B − A of `buildP50Ms` or
+  `rasterP50Ms` lies wholly above 0.1 ms. The largest lower end is +0.0744 ms (Pixel 8a,
+  `line-1000`, raster, with a mean of +0.27 ms). That cell is fragile: without pair 1 or pair 6 of
+  its 9 pairs, or without the pairs after a battery gate with `pass=0`, its interval lies wholly
+  above 0.1 ms. The porting lead ruled that those pairs stay valid (the night protocol §5.3, the
+  precedent of performance.md §13.6). Each Pixel 8a run had the semantics on (an accessibility
+  service of the phone), so the Pixel 8a effect cannot be separated from the semantics work. A
+  record run with the service off is open.
 
 ## Open
 
@@ -351,7 +369,8 @@ section 4, and the host of section 2.
 2. **A controller object and typed widget callbacks.** Both are later additions. Trigger: an app
    request.
 3. **The read of the flag.** A-N3 decides between the `Expando` and the field of `UiCanvasElement`
-   (section 7).
+   (section 7). Closed on 2026-10-30: A-N3 did not land the `Expando` read by its rule, and the
+   porting lead kept it by the fallback of the rule ([performance.md](../performance.md) §15.3).
 4. **Unverified start facts.** An error of the start is reported and the host keeps a size, and a
    start in the layout also starts a chart in an offstage overlay entry
    (`widgets/overlay.dart:980-982`). The tests of section 9 check both.
@@ -377,4 +396,5 @@ The working files of phase 9 in `.handover/phase9/panel/` (not committed):
   `widgets/media_query.dart:2026` (`maybeDisableAnimationsOf`),
   `animation/animation_controller.dart:651`.
 - The night series A-N1 to A-N6: protocols written before the first run, figures in
-  `performance.md` (phase 9).
+  `performance.md` (phase 9). Night 1 (2026-10-29 to 2026-10-30) ran A-N1 and A-N3:
+  [performance.md](../performance.md) §15.

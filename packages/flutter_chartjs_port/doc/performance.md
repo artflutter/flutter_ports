@@ -16,7 +16,9 @@
   plugin figures of phase 8 ([Chart.js ADR 0040](adr/0040-filler-targets-and-plain-points.md)),
   section 14.5 the cost of the theme palette and the plugin tokens
   ([Chart.js ADR 0042](adr/0042-theming.md)), section 14.7 the figures of step 8 and section 14.9
-  the night series after the step 8 record (Chart.js ADR 0044, P3, P5 and P6).
+  the night series after the step 8 record (Chart.js ADR 0044, P3, P5 and P6). Section 15 has the
+  widget figures of phase 9: night 1, with the series A-N1 and A-N3 of
+  [Chart.js ADR 0049](adr/0049-chart-view-widget.md).
 - Date: 2026-10-22
 - Related: [Chart.js ADR 0016](adr/0016-frame-scheduling.md) (frame scheduling),
   [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (no display-only JS exactness).
@@ -4121,3 +4123,253 @@ The results for this platform:
 | P6, V2 and its raster check | macOS, VS Code browser; raster: macOS | REJECT on macOS (G1, G2 and G3 wholly above 0, h = 18); ACCEPT in the VS Code browser; the raster check fails (+0.16 ms `rasterMs`) | not accepted; the present paragraph cache stays; Chart.js ADR 0039 Open 2 closes with these figures |
 | P3, the excess | VS Code browser | measured (2026-10-29) | figures only |
 | The added platform (stage 1) | iPhone 17 Pro (2026-10-29, day) | the ADR 0044 A/B ACCEPT; P5 CT not adopted; P6-V1 ACCEPT; P6-V2 REJECT | figures only; no decision changes |
+
+## 15. The widget (phase 9)
+
+Phase 9 adds the public widget `ChartView` ([Chart.js ADR 0049](adr/0049-chart-view-widget.md)).
+The design panel of phase 9 wrote six night series, A-N1 to A-N6. The gate of Chart.js ADR 0049
+needs the figures of two of them: A-N1, the overhead of the widget, and A-N3, the read of the
+reduced-motion flag (§7 of the ADR). Night 1 ran both. Section 15.1 has its method, section 15.2
+the figures of A-N1, section 15.3 the figures of A-N3, section 15.4 the observations and section
+15.5 the decisions. The protocol, the raw data, the scripts and the recompute are working files of
+phase 9, not committed.
+
+### 15.1 Night 1: the method
+
+Night 1 ran from 2026-10-29 22:00 to 2026-10-30 08:00 CET. The protocol was written before the
+first timed run. No decision rule changed after the data. The amendments:
+- 2026-10-29 18:05, before the first run: the maintainer paused the Mac at 17:40. Thus the macOS
+  and the browser series did not start at 22:00. The Pixel 8a was the only deciding platform of
+  that time, and the iPhone 17 Pro became an added platform that does not decide.
+- 2026-10-30 01:30: the maintainer freed the Mac at 01:24. A late Mac thread ran the macOS and the
+  browser series from 01:38 with the same drivers, the same rules and the same night end. Thus
+  the three deciding platforms of the method decide: macOS, the Pixel 8a and the VS Code browser.
+  The run of A-N3 pair 2, side A, of the motion build on the Pixel 8a is not valid: at 01:07
+  another app came to the front, and the phone recorded user input.
+- 2026-10-30 02:15: the maintainer wired the iPhone. The iPhone thread ran from 02:16 to 04:07,
+  next to the Mac thread. Each iPhone run installed its app through `devicectl`, which gave the
+  Mac a short load. The ABBA order gives this load to both sides.
+
+**Method.**
+
+- Trees. The base is `main` at `223e70c`. A-N1: side A is `lib/main_stress.dart` with
+  `HOST=canvas` (the gallery host `ChartCanvas`), and side B is the same source with `HOST=view`
+  (`ChartView`). A-N3: side A is `223e70c` with no hunk, and side B is A with the patch of side B
+  of Chart.js ADR 0049 §7 (the `Expando` read keyed by the canvas). The patch was frozen on
+  `901b46f` (SHA-256 `72fb46e0b10fd32dfa7ce92383bd35d0ed90c877ad89a85c9ec4023c35fee496`, 187
+  lines). On `223e70c`, the diff of the B worktree has the SHA-256
+  `4cf074a902cd301ae8932c335e48f4af0887519948567d75cd132eb3eb603c20`: only the two `index` lines
+  and two hunk headers differ. Without these lines, both patches have the SHA-256
+  `7dffe785d1e0e01158f4f8b1a22892b7e73731e62c4bbb86a1a5becf3d8f86e4`. The hunk of
+  `core.animations.dart` and the file `reduced_motion.dart` that landed are the code of this
+  patch. Side C (a `bool` field of `UiCanvasElement`) was not built.
+- Builds. Profile builds, also for A-N3: one build mode with section 14.9, a decision of the
+  porting lead in place of the release builds of the A-N3 design. Flutter 3.47.7 (Dart 3.13.5),
+  one build at a time, in worktrees outside the main checkout. Each define is a compile-time
+  constant, so each cell, side and platform has its own build: 18 builds on each platform. Each
+  driver compared the SHA-256 of the binary with the build list before each run.
+- Platforms.
+  - macOS: Apple M3 Max, macOS 27.0.1, AC power. The gate of the quiet Mac before each run: the
+    1-minute load at 4.0 or less, at most 10 minutes. A fresh process for each run, with the app
+    window in front.
+  - Pixel 8a: `4B071JEKB17363`, Android 17 (`CP3A.260905.009`), AC power. The gate before each
+    pair: the battery at 33.0 °C or less and `cpu8` at 2.8 GHz or more, at most 10 minutes. After
+    10 minutes, the pair starts with `pass=0` in its headers (protocol §5.3). A-N3 has the window
+    rule of section 13.6: a case window with more than 10 % of its UI-core samples below 2.5 GHz
+    is not valid. A-N1, the stress entry, has no window rule, as in section 13.6.
+  - VS Code browser: Chromium 150.0.7871.250 in Electron 43.7.7, VS Code 1.143.1. Each dart2wasm
+    profile build is at the root of its own port with COOP and COEP headers. Each series has one
+    own tab, with `about:blank` before and after each run, and the gate of the quiet Mac before
+    each run. All 216 runs had a visible page of 719 x 562 CSS px at DPR 2.5, cross-origin
+    isolated.
+  - iPhone 17 Pro, an added platform: iOS 26.6.2, on the cable, unlocked before and after each
+    run, one warm-up run of each side before its series. It has no temperature gate, because
+    `devicectl` gives no thermal state.
+- Statistics. ABBA: pair i runs A then B when i is odd, and B then A when i is even. Stage 1 has
+  6 pairs. Stage 2 adds 6 pairs by the condition of each series (sections 15.2 and 15.3). The run
+  value is the median of 15 batches. The cell value is the mean of the pair differences B - A,
+  with a 95 % percentile bootstrap interval (20000 resamples, seed 20261023).
+- Recompute. An independent agent computed all figures and decisions again from the raw files
+  with its own script. The 5681 run values and their validity, the 441 windows of the Pixel 8a
+  and all 241 cells agree with the summary of the night. The largest difference is 7.1e-15 ms.
+
+### 15.2 A-N1: the overhead of `ChartView` (Chart.js ADR 0049 gate)
+
+Cells, 7 on each platform: `MODE=chart`, `CALL=draw` (one `chart.draw()` in each frame and no
+widget rebuild), the types `line`, `bar` and `doughnut` at `SCENARIO=1000x0` and `20000x0`; and
+`hover-1000`: `MODE=plugins`, `SCENE=hover`, `CALL=frame` (one `mousemove` through the event
+handler in each frame), 10 datasets, N 1000. The stress entry runs `SECONDS=15` with
+`BATCHES=15`. Figures: `buildP50Ms` (primary, the UI thread: build, layout and paint) and
+`rasterP50Ms`, each the median of the p50 of the `FrameTiming` durations of the 15 batches.
+`buildP90Ms`, `rasterP90Ms` and FPS are recorded and do not decide. Side B times its draws with
+two inline plugins, about 1-2 µs for each frame: a bias against B.
+
+The rule, written before the first run: **PASS** when no interval of B - A of `buildP50Ms` or
+`rasterP50Ms` lies wholly above 0.1 ms on a deciding platform. Else **DEFECT**: the porting lead
+finds the cause before 0.1.0. Stage 2 runs on a platform when a p50 interval includes 0.1 ms, or
+when a cell has fewer than 6 valid pairs.
+
+B - A, ms (A is the mean of the A runs):
+
+| Platform | Cell | Pairs | Build A | Build B - A (95 % interval) | Raster A | Raster B - A (95 % interval) |
+|---|---|---:|---:|---|---:|---|
+| macOS | `line-1000` | 12 | 1.456 | -0.0017 (-0.0183 .. +0.0142) | 1.185 | +0.0050 (-0.0050 .. +0.0158) |
+| macOS | `line-20000` | 12 | 4.817 | +0.0183 (-0.0083 .. +0.0458) | 0.505 | +0.0017 (-0.0092 .. +0.0125) |
+| macOS | `bar-1000` | 11 | 6.254 | +0.0691 (-0.0118 .. +0.1682) | 3.883 | +0.0927 (-0.0091 .. +0.2236) |
+| macOS | `bar-20000` | 11 | 74.140 | -0.0718 (-0.2600 .. +0.1136) | 8.666 | +0.0245 (-0.0827 .. +0.1300) |
+| macOS | `doughnut-1000` | 11 | 3.245 | -0.0073 (-0.0182 .. +0.0027) | 1.722 | +0.0164 (+0.0027 .. +0.0309) |
+| macOS | `doughnut-20000` | 12 | 95.631 | +0.0667 (-0.1592 .. +0.3108) | 26.256 | -0.1817 (-0.5675 .. +0.1800) |
+| macOS | `hover-1000` | 12 | 3.797 | +0.0008 (-0.0067 .. +0.0075) | 1.081 | -0.0025 (-0.0083 .. +0.0050) |
+| Pixel 8a | `line-1000` | 9 | 5.381 | +0.2789 (+0.0733 .. +0.4500) | 5.468 | +0.2711 (+0.0744 .. +0.4811) |
+| Pixel 8a | `line-20000` | 8 | 11.518 | -0.3800 (-1.0062 .. +0.2462) | 9.011 | -0.1350 (-0.3588 .. +0.0350) |
+| Pixel 8a | `bar-1000` | 9 | 13.340 | +0.3622 (-2.0611 .. +2.7300) | 9.416 | +0.8556 (-0.8522 .. +2.3911) |
+| Pixel 8a | `bar-20000` | 9 | 130.830 | -3.0911 (-9.2600 .. +4.1333) | 56.903 | -0.5622 (-1.7678 .. +0.8756) |
+| Pixel 8a | `doughnut-1000` | 9 | 12.709 | -0.0656 (-0.3722 .. +0.2411) | 15.507 | -0.2278 (-0.6478 .. +0.1222) |
+| Pixel 8a | `doughnut-20000` | 8 | 247.689 | +4.2200 (-4.3675 .. +13.1063) | 138.821 | +9.5950 (-6.5988 .. +35.2400) |
+| Pixel 8a | `hover-1000` | 8 | 0.917 | +0.0137 (+0.0050 .. +0.0237) | 9.961 | -0.0337 (-0.1537 .. +0.0725) |
+| VS Code browser | `line-1000` | 12 | 1.038 | +0.0050 (-0.0225 .. +0.0325) | 0.710 | -0.0042 (-0.0200 .. +0.0125) |
+| VS Code browser | `line-20000` | 12 | 6.125 | -0.0108 (-0.0817 .. +0.0533) | 1.187 | -0.0017 (-0.0108 .. +0.0075) |
+| VS Code browser | `bar-1000` | 12 | 1.866 | +0.0375 (-0.0275 .. +0.1117) | 1.150 | +0.0133 (-0.0158 .. +0.0425) |
+| VS Code browser | `bar-20000` | 12 | 23.152 | -0.3067 (-0.6300 .. +0.0300) | 23.107 | -0.3325 (-0.6675 .. +0.0150) |
+| VS Code browser | `doughnut-1000` | 12 | 3.822 | +0.0250 (+0.0017 .. +0.0450) | 3.088 | -0.0008 (-0.0142 .. +0.0117) |
+| VS Code browser | `doughnut-20000` | 12 | 75.229 | -3.4467 (-4.1300 .. -2.8467) | 71.712 | -1.5542 (-1.9817 .. -1.1383) |
+| VS Code browser | `hover-1000` | 12 | 6.872 | -0.2792 (-1.9142 .. +1.3592) | 482.978 | +1.2133 (-0.4642 .. +3.0617) |
+| iPhone 17 Pro | `line-1000` | 12 | 1.716 | +0.0042 (-0.0017 .. +0.0108) | 1.111 | -0.0042 (-0.0083 .. +0.0000) |
+| iPhone 17 Pro | `line-20000` | 12 | 5.923 | +0.0933 (-1.1350 .. +1.3283) | 0.764 | +0.0150 (-0.1633 .. +0.1933) |
+| iPhone 17 Pro | `bar-1000` | 12 | 3.243 | -0.0092 (-0.0192 .. +0.0017) | 0.443 | +0.0000 (-0.0042 .. +0.0042) |
+| iPhone 17 Pro | `bar-20000` | 12 | 84.462 | -1.7083 (-8.0717 .. +4.4942) | 8.586 | -0.2900 (-0.9725 .. +0.3733) |
+| iPhone 17 Pro | `doughnut-1000` | 12 | 2.269 | +0.0167 (-0.0058 .. +0.0442) | 1.483 | +0.0133 (-0.0058 .. +0.0342) |
+| iPhone 17 Pro | `doughnut-20000` | 12 | 127.164 | -2.4450 (-4.6433 .. -0.4850) | 43.706 | -0.3442 (-1.0775 .. +0.4467) |
+| iPhone 17 Pro | `hover-1000` | 12 | 0.060 | +0.0008 (+0.0000 .. +0.0025) | 1.076 | +0.0000 (-0.0042 .. +0.0050) |
+
+Valid pairs. macOS: 12 pairs. Stage 2 ran, because after pair 6 the intervals of `bar-20000`
+(raster) and `doughnut-20000` (build and raster) included 0.1 ms. Five runs of pair 9 are not
+valid (`bar-1000` A and B, `bar-20000` A and B, `doughnut-1000` A): the Mac recorded user input,
+and in two of them the app was in front in less than 90 % of the samples. VS Code browser: 12
+pairs, all valid. Stage 2 ran, because the intervals of `bar-1000` (build) and `hover-1000`
+(build and raster) included 0.1 ms. Pixel 8a: stage 2 ran, because 10 intervals included 0.1 ms
+and `line-20000` had 5 valid pairs. The night end cut stage 2: pairs 7 and 8 ran, pair 9 ran for
+5 of the 7 cells, and pairs 10 to 12 were not measured. Run A of `line-20000` pair 1 is not
+valid (user input). iPhone 17 Pro: 12 pairs, all valid.
+
+The result: **PASS** on each deciding platform. No interval lies wholly above 0.1 ms. The largest
+lower end is +0.0027 ms on macOS (`doughnut-1000`, raster), +0.0017 ms in the VS Code browser
+(`doughnut-1000`, build) and +0.0744 ms on the Pixel 8a (`line-1000`, raster). The added iPhone
+17 Pro also gives PASS (the largest lower end is 0.0000 ms).
+
+Caveats:
+- **The Pixel 8a `line-1000` cell is fragile.** Its lower ends are +0.0733 ms (build) and
+  +0.0744 ms (raster). The means are +0.2789 and +0.2711 ms, about 5 % of the A means. Without
+  pair 6 (build), or without pair 1 or pair 6 (raster), the interval lies wholly above 0.1 ms:
+  for example +0.2275 .. +0.4875 ms (build, the pairs without pair 6). Five other seeds of the
+  bootstrap give lower ends of 0.070 to 0.077 ms. The effect is on the Pixel 8a only: on macOS,
+  in the VS Code browser and on the iPhone, the mean of `line-1000` is within 0.005 ms of 0.
+- **The pairs after a gate with `pass=0` stay valid** (a ruling of the porting lead). The battery
+  was at 32.8 to 35.9 °C at the gates, and `cpu8` was at 2.914 GHz at each gate. The gate did not
+  pass in its 10 minutes before 23 of the 61 cell pairs of A-N1 and before 6 of the 16 cell pairs
+  of A-N3. Protocol §5.3 starts such a pair with `pass=0`, and section 13.6 has the precedent (S1
+  p2 A' stays in). With these pairs excluded, `line-1000` keeps 3 pairs (7 to 9), and both its
+  intervals lie wholly above 0.1 ms (build +0.2400 .. +0.6400 ms, raster +0.2600 .. +0.5800 ms).
+  That reading would give DEFECT on the Pixel 8a. The ruling keeps the protocol as written.
+- **The night end cut the stage 2 of the Pixel 8a** (see the valid pairs above). Thus the Pixel
+  8a cells have 8 or 9 pairs, not 12.
+- **The semantics were on in each Pixel 8a run.** The accessibility service of the TeamViewer
+  Universal Add-On was on, so Flutter built the semantics tree in each run, on both sides. The
+  pairs stay paired. But the absolute Pixel 8a figures include the semantics work, and the
+  `line-1000` effect of the Pixel 8a cannot be separated from it. A record run with the service
+  off is open.
+
+### 15.3 A-N3: the read of the reduced-motion flag (Chart.js ADR 0049 §7)
+
+Primary cells: the frameless benchmark (`lib/main_bench.dart`, `CASES=motion`), the cases
+`motion.line` and `motion.bar` at N 1000 and 20000, with the flag off. Each iteration calls
+`chart.stop()` (not timed) and then `chart.update()` in the default mode, on the
+`_AnimatedPlatform`. The figure is `update`, the median of 15 batches of the update and its
+render. Control cells: the `chart.*` cases of section 6 at N 1000 (`CASES=chart`), with the
+figures `update` (the update cases) and `draw` (all cases): 25 control cells, h* = 3. h is the
+count of control cells whose interval lies wholly above 0. A large control hit has a lower end of
+0.1 ms or more and of 5 % or more of the A mean.
+
+The rule, written before the first run: side B lands when, on each deciding platform, the upper
+end of each primary interval of B - A is below 0.1 ms, h is below h*, and no large control hit is
+confirmed. Else side C lands by the same rule against A. Else the porting lead opens the item A11
+(Chart.js ADR 0049 §7) again with the figures. Side C was not built in night 1. Thus the rule
+sends the decision to the porting lead when side B does not land.
+
+B - A, `update`, ms. The last column gives 0.1 ms as a share of the A mean:
+
+| Platform | Cell | Pairs | A | B | Mean B - A | 95 % interval | Rel. | 0.1 ms of A |
+|---|---|---:|---:|---:|---:|---|---:|---:|
+| macOS | `motion.line` N 1000 | 12 | 7.769 | 7.771 | +0.0020 | -0.0277 .. +0.0310 | +0.03 % | 1.29 % |
+| macOS | `motion.line` N 20000 | 12 | 157.737 | 157.878 | +0.1412 | -0.4666 .. +0.6946 | +0.09 % | 0.063 % |
+| macOS | `motion.bar` N 1000 | 12 | 11.136 | 11.148 | +0.0119 | -0.0385 .. +0.0623 | +0.11 % | 0.90 % |
+| macOS | `motion.bar` N 20000 | 12 | 235.963 | 236.161 | +0.1977 | -1.5096 .. +1.8798 | +0.08 % | 0.042 % |
+| Pixel 8a | `motion.line` N 1000 | 2 | 14.233 | 15.241 | +1.0070 | -0.2010 .. +2.2150 | +7.07 % | 0.70 % |
+| Pixel 8a | `motion.line` N 20000 | 5 | 305.190 | 309.894 | +4.7048 | -1.0960 .. +10.5056 | +1.54 % | 0.033 % |
+| Pixel 8a | `motion.bar` N 1000 | 5 | 24.406 | 24.723 | +0.3170 | -0.4822 .. +1.1162 | +1.30 % | 0.41 % |
+| Pixel 8a | `motion.bar` N 20000 | 6 | 519.703 | 522.163 | +2.4605 | -11.8863 .. +16.5572 | +0.47 % | 0.019 % |
+| VS Code browser | `motion.line` N 1000 | 12 | 8.016 | 8.004 | -0.0124 | -0.1049 .. +0.0702 | -0.15 % | 1.25 % |
+| VS Code browser | `motion.line` N 20000 | 12 | 158.322 | 156.723 | -1.5997 | -2.8254 .. -0.4102 | -1.01 % | 0.063 % |
+| VS Code browser | `motion.bar` N 1000 | 12 | 11.197 | 11.218 | +0.0216 | -0.1276 .. +0.1730 | +0.19 % | 0.89 % |
+| VS Code browser | `motion.bar` N 20000 | 12 | 227.772 | 226.820 | -0.9520 | -2.6416 .. +0.6999 | -0.42 % | 0.044 % |
+| iPhone 17 Pro | `motion.line` N 1000 | 12 | 7.720 | 7.786 | +0.0658 | -0.5919 .. +0.7165 | +0.85 % | 1.30 % |
+| iPhone 17 Pro | `motion.line` N 20000 | 12 | 162.405 | 164.498 | +2.0928 | -12.0936 .. +16.4039 | +1.29 % | 0.062 % |
+| iPhone 17 Pro | `motion.bar` N 1000 | 12 | 11.868 | 12.011 | +0.1434 | -0.8836 .. +1.1733 | +1.21 % | 0.84 % |
+| iPhone 17 Pro | `motion.bar` N 20000 | 12 | 278.471 | 277.775 | -0.6958 | -11.5797 .. +9.7715 | -0.25 % | 0.036 % |
+
+Valid pairs and stage 2. macOS, the VS Code browser and the iPhone: 12 pairs, all valid. Stage 2
+ran on each of them. Pixel 8a: pairs 1 to 8 ran, and the night end cut pairs 9 to 12. The window
+rule and the user input of pair 2 leave 2 to 6 pairs in each primary cell. Only 10 of the 25
+control cells have a valid pair.
+
+Control screen: h = 4 on macOS, 0 in the VS Code browser, 1 on the Pixel 8a (one pair) and 2 on
+the iPhone 17 Pro (h* = 3). The 4 hits of macOS are in the update cases: the `draw` figure of
+`chart.b.line.update`, `chart.b.scatter.update` and `chart.bar.update`, and the `update` figure
+of `chart.b.scatter.update`. Their means are 2.2 to 8.9 µs, and their lower ends are 0.9 to
+4.6 µs. No platform has a large control hit, so no confirmation series ran.
+
+The result of the rule: **side B does not land on any deciding platform.** On macOS, the upper
+ends at N 20000 (+0.6946 and +1.8798 ms) are above 0.1 ms, and h = 4 is not below h* = 3. In the
+VS Code browser, the upper ends of `motion.bar` (+0.1730 and +0.6999 ms) are above 0.1 ms. On the
+Pixel 8a, each upper end is above 0.1 ms. The iPhone 17 Pro, an added platform, gives the same
+result. But no primary interval lies wholly above 0 on any platform. The bound of 0.1 ms is 0.02
+to 0.06 % of the A mean at N 20000, and the intervals at N 20000 are 1.2 to 28.5 ms wide. Thus
+the rule asks for a resolution that the noise of the night does not give.
+
+**The decision of the porting lead (2026-10-30).** The fallback of the rule sends the item A11
+back to the porting lead. The porting lead opened A11 again and kept side B, the `Expando` read
+of `reduced_motion.dart`. The reasons:
+- The read is one `Expando` lookup in each `_createAnimations` call: a constant cost next to the
+  loop over the keys of the call.
+- No primary interval lies wholly above 0 on any platform.
+- Side C changes a canvas class (a port-only field of `UiCanvasElement`, read through a type
+  test) for a gain that no night can resolve.
+
+The commit `feat(flutter_chartjs_port): honor reduced motion` landed side B. Chart.js ADR 0049 §7
+and its Open 3 give the decision.
+
+### 15.4 Observations of night 1
+
+These facts do not change a decision.
+- **The A-N3 data of the Pixel 8a.** The window rule kept few windows of the second run of each
+  pair. In the control build (about 65 s for each run), the first run of a pair kept 7 to 16 of
+  its 16 case windows, and the second run kept 0 to 5. The motion build holds the UI thread for a
+  whole case. The system reported the focus ANR of protocol §5.4 ("Input dispatching timed out")
+  in 13 of the 16 motion runs: in 12 of the 15 runs that gave `BENCH done`, and in the run that
+  died. The rule keeps a run with an ANR. With each run with an ANR not valid (`runs-noanr.csv`
+  of the protocol), no primary cell has a pair.
+- **The VS Code browser, `hover-1000`.** `rasterP50Ms` is about 483 ms on both sides (A 482.978
+  ms, B 484.192 ms), at 60.1 FPS. Thus this figure is not the raster time of one frame. The cause
+  is not known. B - A is +1.2133 ms (-0.4642 .. +3.0617).
+- **The VS Code browser, `doughnut-20000`.** B is faster in the p50 figures (build -3.4467 ms,
+  raster -1.5542 ms) and gives 0.80 more frames each second (+0.6592 .. +0.9658). But
+  `rasterP90Ms` of B is +43.1725 ms (+28.3642 .. +56.6833) above A (87.434 ms). Thus the two
+  sides draw at a different frame cadence in this cell. The p90 figures do not decide.
+
+### 15.5 The decisions of night 1
+
+| Rule | Deciding platforms | Result | Consequence |
+|---|---|---|---|
+| A-N1, the overhead of `ChartView` (Chart.js ADR 0049 gate) | macOS, Pixel 8a, VS Code browser | PASS on each; the largest lower end is +0.0744 ms (Pixel 8a, `line-1000`, raster) | the gate figure of A-N1 is recorded; the caveats of section 15.2 stay, and a record run of the Pixel 8a without the accessibility service is open |
+| A-N3, the read of the reduced-motion flag (Chart.js ADR 0049 §7) | macOS, Pixel 8a, VS Code browser | side B does not land on any platform (upper ends above 0.1 ms; h = 4 on macOS); side C not built; no primary interval wholly above 0 | the porting lead opened A11 again and kept side B (2026-10-30) |
+| The added platform | iPhone 17 Pro | A-N1 PASS; A-N3 side B does not land (upper ends above 0.1 ms; h = 2) | figures only; no decision changes |
