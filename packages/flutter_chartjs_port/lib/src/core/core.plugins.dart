@@ -13,10 +13,15 @@
 /// at each call, as upstream reads `plugin[hook]`.
 ///
 /// The dispatch is typed (Chart.js ADR 0054 §12): a hook name of the
-/// `Plugin` interface is a [PluginHook]. A typed [Plugin] gives the value of
-/// its hook field, and a Map plugin is a [MapPlugin] (`map[hook]`). The
-/// built-in plugins stay Maps until lane L4. A hook without arguments gets a
-/// new [PluginHookArgs], the `{}` of upstream.
+/// `Plugin` interface is a [PluginHook]. A typed [Plugin] (the seven
+/// built-in plugins) gives the value of its hook field, and a Map plugin is
+/// a [MapPlugin] (`map[hook]`). A hook without arguments gets a new
+/// [PluginHookArgs], the `{}` of upstream. The `id` and the `defaults` of a
+/// typed plugin are its typed fields ([_idOf], [_defaultsOf]), and the
+/// `cancelable` of the typed args is their typed field ([_cancelable]).
+/// The other plugin objects (a Map or a class value of user code), the
+/// inline plugins of the config and the plugin options of the user are read
+/// by name, as upstream.
 ///
 /// The chart is a `types.Chart` (Chart.js ADR 0003). The file reads
 /// `chart.config` as the `Config` of `core.config.dart`, as the dataset
@@ -28,7 +33,7 @@ library;
 import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show DescriptorDefaults;
+    show DescriptorDefaults, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show callback, isNullOrUndef, valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -36,6 +41,8 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToNumber, jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
@@ -178,11 +185,12 @@ final class PluginService {
           if (method == null || !jsIsFunction(method)) continue;
           result = MapPlugin(map).invokeHook(method, chart, args, options);
         default:
+          // A plugin object of another kind (a class value of user code).
           final method = jsGet(plugin, hookName);
           if (!jsIsFunction(method)) continue;
           result = callback(method, [chart, args, options], plugin);
       }
-      if (identical(result, false) && jsTruthy(args['cancelable'])) {
+      if (identical(result, false) && _cancelable(args)) {
         return false;
       }
     }
@@ -231,8 +239,10 @@ final class PluginService {
     // `config.options && config.options.plugins`: the getter gives a Map,
     // which is truthy.
     // DIVERGES(chartjs): adapt-config-objects, the options getter casts.
+    // The options of the config of the user: the typed read of the key, by
+    // name for a Map of the user.
     final options = valueOrDefault<Object?>(
-      jsGet(config.options, 'plugins'),
+      readOption(config.options, OptionKey.plugins),
       <String, Object?>{},
     );
     final plugins = _allPlugins(config);
@@ -257,11 +267,7 @@ final class PluginService {
       List<PluginDescriptor> a,
       List<PluginDescriptor> b,
     ) => a
-        .where(
-          (x) => !b.any(
-            (y) => jsGet(x.plugin, 'id') == jsGet(y.plugin, 'id'),
-          ),
-        )
+        .where((x) => !b.any((y) => _idOf(x.plugin) == _idOf(y.plugin)))
         .toList();
     _notify(diff(previousDescriptors, descriptors), chart, PluginHook.stop);
     _notify(diff(descriptors, previousDescriptors), chart, PluginHook.start);
@@ -289,6 +295,7 @@ final class PluginService {
     plugins.add(registry.getPlugin(keys[i]));
   }
 
+  // The inline plugins of the config of the user, read by index.
   final local = _or(config.plugins, const <Object?>[]);
   final length = jsToNumber(jsGet(local, 'length'));
   for (var i = 0; i < length; i++) {
@@ -297,7 +304,7 @@ final class PluginService {
     if (!plugins.any((p) => identical(p, plugin))) {
       // A JavaScript TypeError at `plugin.id` below for null.
       plugins.add(plugin ?? (throw TypeError()));
-      localIds[_propertyKey(jsGet(plugin, 'id'))] = true;
+      localIds[_propertyKey(_idOf(plugin))] = true;
     }
   }
 
@@ -335,7 +342,8 @@ List<PluginDescriptor> createDescriptors(
   final context = chart.getContext();
 
   for (final plugin in plugins) {
-    final id = jsGet(plugin, 'id');
+    final id = _idOf(plugin);
+    // The plugin options of the user, read by the plugin id.
     final opts = _getOpts(jsGet(options, id), all);
     if (opts == null) {
       continue;
@@ -367,10 +375,10 @@ AnyObject _pluginOpts(
   final (:plugin, :local) = pluginAndLocal;
   final keys = config.pluginScopeKeys(plugin);
   final scopes = config.getOptionScopes(opts, keys);
-  if (local && jsTruthy(jsGet(plugin, 'defaults'))) {
+  if (local && jsTruthy(_defaultsOf(plugin))) {
     // make sure plugin defaults are in scopes for local (not registered)
     // plugins
-    scopes.add(jsGet(plugin, 'defaults'));
+    scopes.add(_defaultsOf(plugin));
   }
   return config.createResolver(
     scopes,
@@ -384,6 +392,30 @@ AnyObject _pluginOpts(
     ),
   );
 }
+
+/// `plugin.id`: the typed field of a [Plugin], else the read by name of a
+/// plugin object of user code (a Map or a class value). `null` and
+/// `undefined` throw the [TypeError] of the read.
+Object? _idOf(Object? plugin) =>
+    plugin is Plugin ? plugin.id : jsGet(plugin, 'id');
+
+/// `plugin.defaults`: the typed field of a [Plugin], else the read by name
+/// of a plugin object of user code.
+Object? _defaultsOf(Object? plugin) =>
+    plugin is Plugin ? plugin.defaults : jsGet(plugin, 'defaults');
+
+/// `args.cancelable` with ToBoolean (core.plugins.js:66): the typed field of
+/// a hook argument class, else the read by name of an args object of user
+/// code (the public `notifyPlugins`).
+bool _cancelable(AnyObject args) => switch (args) {
+  final CancelableHookArgs typed => typed.cancelable,
+  final UpdateHookArgs typed => typed.cancelable,
+  final DatasetUpdateHookArgs typed => typed.cancelable,
+  final DatasetDrawHookArgs typed => typed.cancelable,
+  final EventHookArgs typed => typed.cancelable,
+  final TooltipDrawHookArgs typed => typed.cancelable,
+  _ => jsTruthy(jsGet(args, 'cancelable')),
+};
 
 /// `value || other`: [value] when it is truthy, else [other].
 Object? _or(Object? value, Object? other) => jsTruthy(value) ? value : other;
