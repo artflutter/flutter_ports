@@ -1788,21 +1788,21 @@ class DatasetController
           element,
         );
       }
-      final parsed = getParsed(index);
-      // `dataset.data[index]`: the data of the dataset object of the user.
-      final raw = jsGetIndex(jsGet(dataset, 'data'), index);
+      // `dataset.data[index]`: the data of the dataset object of the user,
+      // read after the write of `parsed`, as upstream.
+      Object? raw() => jsGetIndex(jsGet(dataset, 'data'), index);
       if (elementContext is ScriptableContext) {
         return elementContext
-          ..parsed = parsed
-          ..raw = raw
+          ..parsed = getParsed(index)
+          ..raw = raw()
           ..dataIndex = index
           ..index = index
           ..active = jsTruthy(active)
           ..mode = mode ?? undefined;
       }
       return (elementContext! as AnyObject)
-        ..['parsed'] = parsed
-        ..['raw'] = raw
+        ..['parsed'] = getParsed(index)
+        ..['raw'] = raw()
         ..['dataIndex'] = index
         ..['index'] = index
         ..['active'] = jsTruthy(active)
