@@ -504,8 +504,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       the night cells T1-T4. On acceptance, it supersedes the item "Raw configs in 0.1.0" and Open 1
       of Chart.js ADR 0043, the export list of the app library of Chart.js ADR 0048 §5, and of
       Chart.js ADR 0049 §1 (the type of `config`), the two §4 bullets of the typed path and Open 2.
-      Chart.js ADR 0053 (the resolver fast paths) is proposed: each of its changes lands only after
-      its night A/B. The other ADRs are accepted. Docs name them
+      Chart.js ADR 0053 (the resolver fast paths) is rejected: the maintainer rejected the memo and
+      fast-path layers, and a typed internal model replaces them. The other ADRs are accepted. Docs name them
       "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. An accepted ADR does not change. A changed decision

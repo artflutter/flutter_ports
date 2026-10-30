@@ -1,6 +1,11 @@
 # Chart.js ADR 0053: The resolver fast paths
 
-- Status: proposed
+- Status: rejected (2026-10-30). The maintainer rejected the memo and fast-path layers over the
+  Map-based option model: "remove all your memo shit, every fucking shit should be typed". A
+  typed internal model replaces them, with its own ADR. None of the changes of this ADR landed:
+  the patches of §4 stay outside the tree. The measurement parts that landed with the proposal
+  (the switch, the D1 and D2 tests, `test:nofast`, the bench cells, the P3 page) stay until the
+  ADR of the typed model decides on them.
 - Date: 2026-10-30
 - Related: [Chart.js ADR 0043](0043-options-representation-and-resolver.md) (the options
   representation and the resolver; the resolver classes stay line-by-line ports),
