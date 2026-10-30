@@ -156,6 +156,7 @@ const Set<String> reviewedForeignPairs = {
   'ArcOptions\tspacingMode\tobject',
   'ArcOptions\tspacingMode\tundefined',
   'DescriptorsScope\t_rootDesc\tboolean',
+  'FontSpecScope\tsize\tstring',
   'LineControllerDatasetOptionsScope\tborderWidth\tstring',
   'LineOptions\tborderCapStyle\tarray',
   'LineOptions\tborderCapStyle\tboolean',
@@ -199,6 +200,7 @@ const Set<String> reviewedForeignPairs = {
   'LineOptions\ttension\tobject',
   'LineOptions\ttension\tstring',
   'LineOptions\ttension\tundefined',
+  'PointLabelOptionsScope\tpadding\tstring',
   'PointOptions\tborderWidth\tarray',
   'PointOptions\tborderWidth\tboolean',
   'PointOptions\tborderWidth\tnull',
@@ -239,5 +241,6 @@ const Set<String> reviewedForeignPairs = {
   'PointOptionsScope\tradius\tstring',
   'ScaleOptionsByIdScope\tx\tstring',
   'ScaleOptionsScope\taxis\tnumber',
+  'ScaleOptionsScope\tstartAngle\tstring',
   'TickOptionsScope\tmirror\tstring',
 };
