@@ -21,7 +21,18 @@ export 'package:flutter_chartjs_port/src/typed/callbacks.dart'
         ChartTooltipItem;
 export 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartKind, IndexAxis;
-export 'package:flutter_chartjs_port/src/typed/datasets.dart' show DataPoint;
+export 'package:flutter_chartjs_port/src/typed/datasets.dart'
+    show
+        BarDataset,
+        BubbleDataset,
+        DataPoint,
+        Dataset,
+        DoughnutDataset,
+        LineDataset,
+        PieDataset,
+        PolarAreaDataset,
+        RadarDataset,
+        ScatterDataset;
 export 'package:flutter_chartjs_port/src/typed/values.dart'
     show
         ChartAlign,

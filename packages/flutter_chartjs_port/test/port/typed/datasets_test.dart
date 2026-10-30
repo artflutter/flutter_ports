@@ -2,9 +2,12 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' show Color;
+
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0052, section 3: a `DataPoint` is the Map of the object form
@@ -13,7 +16,45 @@ import 'package:flutter_test/flutter_test.dart';
 // the app: the chart does not write into it. A label that is not in
 // `data.labels` becomes a new label (row `js-semantics-narrow-labels`).
 //
+// Sections 1, 2 and 5: a lowered dataset drives the chart as its raw twin.
+// A plain color keeps the option sharing of the data elements, and a List
+// or a function turns it off, as the raw twin does (probe J3a). A dataset
+// of another class than the chart type gets its own controller. The
+// lowering of each field is in lowering_test.dart.
+//
 // VM only: the chart cases are `testWidgets` cases of the harness.
+
+const Color _red = Color(0xFFFF6384);
+const Color _blue = Color(0xFF36A2EB);
+const String _redValue = 'rgba(255, 99, 132, 1)';
+const String _blueValue = 'rgba(54, 162, 235, 1)';
+
+/// A scriptable color: blue at the data index 1, else red.
+Color _colorFor(ChartContext context) => context.dataIndex == 1 ? _blue : _red;
+
+/// A chart of [type] with the dataset Maps [datasets] and three labels,
+/// with no animation.
+Map<String, Object?> _chartOf(String type, List<Object?> datasets) =>
+    <String, Object?>{
+      'type': type,
+      'data': <String, Object?>{
+        'labels': <Object?>['a', 'b', 'c'],
+        'datasets': datasets,
+      },
+      'options': <String, Object?>{'animation': false},
+    };
+
+/// The option sharing of the data elements of dataset 0 of [chart]: the
+/// `$shared` flag of element 0, whether elements 0 and 1 have one options
+/// object, and the background color of each element.
+List<Object?> _sharing(Chart chart) {
+  final elements = chart.getDatasetMeta(0).data.cast<chartjs.Element>();
+  return [
+    elements[0].options?[r'$shared'],
+    identical(elements[0].options, elements[1].options),
+    [for (final element in elements) element.options?['backgroundColor']],
+  ];
+}
 
 /// The Map of [point] at run time.
 Map<String, Object?> _map(DataPoint point) => point as Map<String, Object?>;
@@ -140,6 +181,136 @@ void main() {
       );
       expect(labels, ['a', 'b', 'c']);
       expect([for (final e in chart.getDatasetMeta(0).data) e.y], hasLength(2));
+    });
+  });
+
+  group('a lowered dataset in a chart', () {
+    testWidgets('a plain color shares the options, as the raw twin', (
+      tester,
+    ) async {
+      final typed = acquireChart(
+        _chartOf('bar', [
+          lowerDataset(
+            const BarDataset(data: [1, 2, 3], backgroundColor: _red),
+            .bar,
+          ),
+        ]),
+      );
+      final twin = acquireChart(
+        _chartOf('bar', <Object?>[
+          <String, Object?>{
+            'data': <Object?>[1, 2, 3],
+            'backgroundColor': _redValue,
+          },
+        ]),
+      );
+      expect(_sharing(typed), _sharing(twin));
+      expect(_sharing(typed), [
+        true,
+        true,
+        [_redValue, _redValue, _redValue],
+      ]);
+    });
+
+    testWidgets('a List of colors does not share, as the raw twin', (
+      tester,
+    ) async {
+      final typed = acquireChart(
+        _chartOf('bar', [
+          lowerDataset(
+            const BarDataset(data: [1, 2, 3], backgroundColors: [_red, _blue]),
+            .bar,
+          ),
+        ]),
+      );
+      final twin = acquireChart(
+        _chartOf('bar', <Object?>[
+          <String, Object?>{
+            'data': <Object?>[1, 2, 3],
+            'backgroundColor': <Object?>[_redValue, _blueValue],
+          },
+        ]),
+      );
+      expect(_sharing(typed), _sharing(twin));
+      expect(_sharing(typed), [
+        false,
+        false,
+        [_redValue, _blueValue, _redValue],
+      ]);
+    });
+
+    testWidgets('a scriptable color does not share, as a raw closure', (
+      tester,
+    ) async {
+      final typed = acquireChart(
+        _chartOf('bar', [
+          lowerDataset(
+            const BarDataset(data: [1, 2, 3], backgroundColorFor: _colorFor),
+            .bar,
+          ),
+        ]),
+      );
+      final twin = acquireChart(
+        _chartOf('bar', <Object?>[
+          <String, Object?>{
+            'data': <Object?>[1, 2, 3],
+            'backgroundColor': (Object? context) =>
+                (context! as Map<String, Object?>)['dataIndex'] == 1
+                ? _blueValue
+                : _redValue,
+          },
+        ]),
+      );
+      expect(_sharing(typed), _sharing(twin));
+      expect(_sharing(typed), [
+        false,
+        false,
+        [_redValue, _blueValue, _redValue],
+      ]);
+    });
+
+    testWidgets('a line dataset in a bar chart gets the line controller', (
+      tester,
+    ) async {
+      final chart = acquireChart(
+        _chartOf('bar', [
+          lowerDataset(const BarDataset(data: [1, 2, 3]), .bar),
+          lowerDataset(const LineDataset(data: [3, 2, 1]), .bar),
+        ]),
+      );
+      expect(chart.getDatasetMeta(0).type, 'bar');
+      expect(chart.getDatasetMeta(1).type, 'line');
+      expect(chart.getDatasetMeta(1).controller, isA<LineController>());
+    });
+
+    testWidgets('a doughnut dataset in a pie chart has the doughnut cutout', (
+      tester,
+    ) async {
+      /// The inner radius of element 0 of dataset 0 of [chart].
+      Object? innerRadius(Chart chart) =>
+          (chart.getDatasetMeta(0).data[0] as chartjs.Element)['innerRadius'];
+
+      final pie = acquireChart(
+        _chartOf('pie', [
+          lowerDataset(const PieDataset(data: [1, 2, 3]), .pie),
+        ]),
+      );
+      final doughnut = acquireChart(
+        _chartOf('pie', [
+          lowerDataset(const DoughnutDataset(data: [1, 2, 3]), .pie),
+        ]),
+      );
+      final twin = acquireChart(
+        _chartOf('pie', <Object?>[
+          <String, Object?>{
+            'type': 'doughnut',
+            'data': <Object?>[1, 2, 3],
+          },
+        ]),
+      );
+      expect(innerRadius(pie), 0);
+      expect(innerRadius(doughnut), greaterThan(0));
+      expect(innerRadius(doughnut), innerRadius(twin));
     });
   });
 }

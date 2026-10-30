@@ -186,8 +186,11 @@ final class BarDataset extends Dataset {
   - `ChartAnimation`: `duration`, `delay` (`Duration`), `easing`, `loop`, `onProgress`,
     `onComplete` (`ValueChanged<Chart>?`). `static const none` lowers to `false`.
 - Every config class is `@immutable` and `final`, with a `const` constructor and named parameters.
-  `==`, `hashCode` and `debugFillProperties` come from one private `_props` list of each class, so
-  no `build_runner` runs. Each class has `copyWith`.
+  `==`, `hashCode` and `debugFillProperties` come from one private `_props` list of each class
+  (`props.dart`), so no `build_runner` runs. Each class has `copyWith`. `Dataset.copyWith` takes
+  the parameters of `Dataset`, and each dataset class overrides it with all its parameters.
+- A typed object cannot be the key of a `const` Map or an item of a `const` Set: its class
+  overrides `==`. A `const` typed object as a value is canonical.
 - Dart `null` in a parameter means "not set": the lowering writes no key (Chart.js ADR
   0043:47-48). The JS `null` of a key goes through `extra`.
 
@@ -197,12 +200,13 @@ The files, all port-only (`// Original code, not ported from Chart.js: <reason>.
 |---|---|
 | `lib/src/typed/typed.dart` | the export list of the typed API: `show` the names of section 8 |
 | `lib/src/typed/config.dart` | `ChartConfig`, `ChartKind`, `IndexAxis` |
-| `lib/src/typed/datasets.dart` | `Dataset`, the 8 dataset classes and `DataPoint`, in one library, because `abstract final` needs it |
+| `lib/src/typed/datasets.dart` | `Dataset`, the 8 dataset classes, `DataPoint` and the internal `lowerDataset`, in one library, because `abstract final` needs it |
 | `lib/src/typed/axes.dart` | `ChartAxis`, the 6 axes, `AxisTicks`, `AxisGrid`, `AxisTitle` |
 | `lib/src/typed/groups.dart` | `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartInteraction`, `ChartAnimation` |
 | `lib/src/typed/values.dart` | `ChartPosition`, `ChartAlign`, `ChartInteractionMode`, `ChartEasing`, `ChartPointStyle`, `ChartFill`, `ChartLength` |
 | `lib/src/typed/callbacks.dart` | `ChartEventDetails`, `ChartLegendEventDetails`, `AxisTickInfo`, `ChartHit`, `ChartContext`, `ChartTooltipItem`, `ChartLegendItem`, `ChartScript` |
-| `lib/src/typed/lower.dart` | internal: the lowering, the `extra` merge, the reconcile (`ChartConfigLowering`), the trampolines |
+| `lib/src/typed/lower.dart` | internal: the conversions of the lowering, the `extra` merge, the reconcile (`ChartConfigLowering`), the trampolines. The lowering of each class is a function of its library, which reads the private members of the class |
+| `lib/src/typed/props.dart` | internal: `==`, `hashCode` and the diagnostics from the `_props` list of each class, with the compare forms of section 9 |
 | `lib/src/theme/css.dart` | internal: `rawColorOf`, `colorToRgba` and `fontSpecOf`, moved from `theme_data.dart` with no change |
 | `lib/src/widgets/chart_view.dart` | the typed entry of section 9 |
 
@@ -456,8 +460,11 @@ final Map<String, Object?>? rawConfig;  // the raw config, every rule of Chart.j
   trampolines. It schedules the post-frame update of Chart.js ADR 0049 §4 only when
   `oldWidget.config != widget.config`, or when the form changed (typed or raw).
 - `ChartConfig ==` compares each field by `==`; `data`, `points`, `labels` and `plugins` by
-  identity; the small style Lists by value; `...For` and `AxisTicks.format` by identity; the
-  trampoline callbacks by presence (null or not). Thus a parent that rebuilds with an equal
+  identity; the small style Lists by value; the `extra` Maps by their entries in key order, with a
+  Map value by its entries and a List by identity (the lowering copies the Maps of `extra` and
+  passes its Lists by reference); `...For` and `AxisTicks.format` by Dart `==` (identity for a
+  closure, equality for a tear-off of one method of one object); the trampoline callbacks by
+  presence (null or not). Thus a parent that rebuilds with an equal
   config gives no update. Chart.js ADR 0049 rejected an O(points) equality (0049:325-326).
 - The post-frame update lowers through `ChartConfigLowering.apply(newConfig)` and gives the app
   Map to the unchanged steps 1-6:
