@@ -360,8 +360,10 @@ List<ParsedItem> _parseArrayOrPrimitive(
 Object? _customOf(Object? parsed) =>
     parsed is ParsedItem ? parsed.custom : jsGetKey(parsed, '_custom');
 
-/// `custom[key]` of the `_custom` object of a data item of `parsing: false`:
-/// a user object, read by name. A [FloatingBar] reads typed at each site.
+/// `custom[key]` of the `_custom` object of a data item of `parsing: false`
+/// (a user object), or of a [FloatingBar] that holds a value that user code
+/// wrote by name: the raw value, read by name. A [FloatingBar] of the
+/// parse reads typed at each site.
 Object? _userCustomValue(Object? custom, String key) => jsGetKey(custom, key);
 
 /// controller.bar.js:170 `isFloatBar(custom)`.
@@ -1175,9 +1177,11 @@ class BarController extends DatasetController {
     if (floating) {
       // `custom.barStart` and `custom.barEnd`, each read once: the reads of
       // an object have no side effect.
+      // A FloatingBar with a value that user code wrote by name reads its
+      // raw values, as a user object does.
       final Object? barStart;
       final Object? barEnd;
-      if (custom is FloatingBar) {
+      if (custom is FloatingBar && !custom.hasForeign) {
         barStart = custom.barStart;
         barEnd = custom.barEnd;
       } else {

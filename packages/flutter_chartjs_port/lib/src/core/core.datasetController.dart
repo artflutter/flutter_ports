@@ -520,9 +520,9 @@ Object _itemStacksOf(Object? item) {
 /// A parsed item is any value (`unknown[]`, index.d.ts:503): a [ParsedItem]
 /// of the parse functions, or a data item of `parsing: false`.
 /// `item._stacks = {}` is [_itemStacksOf]. A `_stacks` object that user
-/// code gave a data item of `parsing: false` takes the stack by name.
-/// `stack._visualValues` that user code changed to a value of another
-/// class is replaced (Chart.js ADR 0054 §8).
+/// code gave a data item of `parsing: false` takes the stack by name, and
+/// so does a truthy `stack._visualValues` of another class that user code
+/// wrote (Chart.js ADR 0054 §8).
 void _updateStacks(DatasetController controller, List<Object?> parsed) {
   final chart = controller.chart;
   final meta = controller.cachedMeta;
@@ -557,11 +557,24 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
       ..top = _getLastIndexInStack(stack, vScale, true, meta.type)
       ..bottom = _getLastIndexInStack(stack, vScale, false, meta.type);
 
-    _setIndexValue(
-      stack.visualValues ??= IndexValues(),
-      datasetIndex,
-      value,
-    );
+    // `stack._visualValues || (stack._visualValues = {})`.
+    final visualValues = stack.visualValues;
+    if (visualValues != null) {
+      _setIndexValue(visualValues, datasetIndex, value);
+    } else {
+      // A truthy value of another class that user code wrote takes the
+      // write by name, as upstream.
+      final other = stack.jsRead('_visualValues');
+      if (jsTruthy(other)) {
+        setStackValue(other, datasetIndex, value);
+      } else {
+        _setIndexValue(
+          stack.visualValues = IndexValues(),
+          datasetIndex,
+          value,
+        );
+      }
+    }
   }
 }
 
