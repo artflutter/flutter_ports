@@ -491,6 +491,20 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
   }
 
   @override
+  Object? valueOf(OptionKey key) => switch (key) {
+    OptionKey.borderWidth => borderWidthValue,
+    OptionKey.hitRadius => hitRadiusValue,
+    OptionKey.hoverBorderWidth => hoverBorderWidthValue,
+    OptionKey.hoverRadius => hoverRadiusValue,
+    OptionKey.pointStyle => pointStyleValue,
+    OptionKey.radius => radiusValue,
+    OptionKey.rotation => rotationValue,
+    OptionKey.backgroundColor => backgroundColorValue,
+    OptionKey.borderColor => borderColorValue,
+    _ => super.valueOf(key),
+  };
+
+  @override
   bool isPresent(OptionKey key) => switch (key) {
     OptionKey.borderWidth => _present & 1 != 0,
     OptionKey.hitRadius => _present & 2 != 0,
@@ -1149,6 +1163,25 @@ final class LineOptions extends ElementOptions {
   }
 
   @override
+  Object? valueOf(OptionKey key) => switch (key) {
+    OptionKey.borderCapStyle => borderCapStyleValue,
+    OptionKey.borderDash => borderDashValue,
+    OptionKey.borderDashOffset => borderDashOffsetValue,
+    OptionKey.borderJoinStyle => borderJoinStyleValue,
+    OptionKey.borderWidth => borderWidthValue,
+    OptionKey.capBezierPoints => capBezierPointsValue,
+    OptionKey.cubicInterpolationMode => cubicInterpolationModeValue,
+    OptionKey.fill => fillValue,
+    OptionKey.spanGaps => spanGapsValue,
+    OptionKey.stepped => steppedValue,
+    OptionKey.tension => tensionValue,
+    OptionKey.backgroundColor => backgroundColorValue,
+    OptionKey.borderColor => borderColorValue,
+    OptionKey.segment => segmentValue,
+    _ => super.valueOf(key),
+  };
+
+  @override
   bool isPresent(OptionKey key) => switch (key) {
     OptionKey.borderCapStyle => _present & 1 != 0,
     OptionKey.borderDash => _present & 2 != 0,
@@ -1515,6 +1548,18 @@ final class BarOptions extends ElementOptions {
     }
     super.storeKey(key, raw);
   }
+
+  @override
+  Object? valueOf(OptionKey key) => switch (key) {
+    OptionKey.borderSkipped => borderSkippedValue,
+    OptionKey.borderWidth => borderWidthValue,
+    OptionKey.borderRadius => borderRadiusValue,
+    OptionKey.inflateAmount => inflateAmountValue,
+    OptionKey.pointStyle => pointStyleValue,
+    OptionKey.backgroundColor => backgroundColorValue,
+    OptionKey.borderColor => borderColorValue,
+    _ => super.valueOf(key),
+  };
 
   @override
   bool isPresent(OptionKey key) => switch (key) {
@@ -2203,6 +2248,25 @@ final class ArcOptions extends ElementOptions {
     }
     super.storeKey(key, raw);
   }
+
+  @override
+  Object? valueOf(OptionKey key) => switch (key) {
+    OptionKey.borderAlign => borderAlignValue,
+    OptionKey.borderColor => borderColorValue,
+    OptionKey.borderDash => borderDashValue,
+    OptionKey.borderDashOffset => borderDashOffsetValue,
+    OptionKey.borderJoinStyle => borderJoinStyleValue,
+    OptionKey.borderRadius => borderRadiusValue,
+    OptionKey.borderWidth => borderWidthValue,
+    OptionKey.offset => offsetValue,
+    OptionKey.spacing => spacingValue,
+    OptionKey.spacingMode => spacingModeValue,
+    OptionKey.angle => angleValue,
+    OptionKey.circular => circularValue,
+    OptionKey.selfJoin => selfJoinValue,
+    OptionKey.backgroundColor => backgroundColorValue,
+    _ => super.valueOf(key),
+  };
 
   @override
   bool isPresent(OptionKey key) => switch (key) {

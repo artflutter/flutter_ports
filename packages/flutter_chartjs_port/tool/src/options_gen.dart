@@ -557,6 +557,14 @@ String _resolved(Schema schema) {
       ..write('      }\n    }\n')
       ..write('    super.storeKey(key, raw);\n  }\n')
       ..write('\n  @override\n')
+      ..write('  Object? valueOf(OptionKey key) => switch (key) {\n');
+    for (final key in typed) {
+      final id = keyIdentifier(key);
+      out.write('    OptionKey.$id => ${id}Value,\n');
+    }
+    out
+      ..write('    _ => super.valueOf(key),\n  };\n')
+      ..write('\n  @override\n')
       ..write('  bool isPresent(OptionKey key) => switch (key) {\n');
     for (final (slot, key) in typed.indexed) {
       out.write(

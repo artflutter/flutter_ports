@@ -70,6 +70,8 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
+    show ElementOptions;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
@@ -513,11 +515,13 @@ final class OptionResolver extends MapBase<String, Object?>
 /// module (Chart.js ADR 0054 §4): `readKey` of an [OptionView] or an
 /// [OptionResolver], else the JS property read [jsGet]. The chart options,
 /// the scale options, the plugin options and the dataset options are
-/// views; a test can give a raw Map. Upstream reads the property by name.
-/// Port-only.
+/// views; a test can give a raw Map. The style object of a controller is a
+/// typed [ElementOptions]: its [ElementOptions.valueOf]. Upstream reads the
+/// property by name. Port-only.
 Object? readOption(Object? options, OptionKey key) => switch (options) {
   final OptionView view => view.readKey(key),
   final OptionResolver resolver => resolver.readKey(key),
+  final ElementOptions elementOptions => elementOptions.valueOf(key),
   _ => jsGet(options, key.jsName),
 };
 

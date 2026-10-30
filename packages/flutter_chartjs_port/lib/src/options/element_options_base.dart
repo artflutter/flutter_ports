@@ -321,6 +321,17 @@ abstract class ElementOptions extends MapBase<String, Object?>
     _ => false,
   };
 
+  /// The raw resolved value of [key]: the foreign value when the foreign bit
+  /// is set, and [undefined] when the options do not own the key. It is the
+  /// result of `jsGet(options, key.jsName)`. A generated subclass reads its
+  /// fields; this base, and thus [GenericElementOptions], reads the Map
+  /// protocol.
+  Object? valueOf(OptionKey key) {
+    final name = key.jsName;
+    final value = this[name];
+    return value == null && !containsKey(name) ? undefined : value;
+  }
+
   /// Whether the value of the declared key [key] is outside the type of its
   /// field (Chart.js ADR 0054 §6): the field holds the JS conversion, and
   /// [foreignOf] gives the raw value.
