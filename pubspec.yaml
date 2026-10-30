@@ -29,9 +29,9 @@ melos:
       run: dart analyze --fatal-infos
       description: Analyze the whole workspace.
     test:
-      description: Run the tests of every package that has a test/ directory, without the fixture smoke tests (the tag fixtures, Chart.js ADR 0029). Options go after "--" and go to each flutter test call, for example "dart run melos run test --no-select -- --experimental-faster-testing --total-shards=3 --shard-index=0" (one compiled test app for each package, and the first of three shards, as in CI).
+      description: Run the tests of every package that has a test/ directory, without the fixture smoke tests (the tag fixtures, Chart.js ADR 0029) and the theme goldens (the tag golden, Chart.js ADR 0050). Options go after "--" and go to each flutter test call, for example "dart run melos run test --no-select -- --experimental-faster-testing --total-shards=3 --shard-index=0" (one compiled test app for each package, and the first of three shards, as in CI).
       exec:
-        command: flutter test --exclude-tags fixtures
+        command: flutter test --exclude-tags fixtures,golden
         concurrency: 1
         failFast: true
       packageFilters:
@@ -39,6 +39,9 @@ melos:
     test:web:
       run: cd packages/flutter_chartjs_port && dart test -p chrome -c dart2js -c dart2wasm && cd ../chartjs_test_utils && dart test -p chrome -c dart2js -c dart2wasm
       description: Run the flutter_chartjs_port and chartjs_test_utils tests that are not @TestOn('vm') in Chrome, compiled with dart2js and with dart2wasm.
+    test:goldens:
+      run: cd packages/flutter_chartjs_port && flutter test --tags golden test/port/theme/goldens_test.dart
+      description: Run the theme goldens of flutter_chartjs_port (Chart.js ADR 0050). They skip unless CHART_GOLDENS=1. Only the CI job fixtures on ubuntu-24.04 sets it. Options go after "--", for example "dart run melos run test:goldens -- --update-goldens" (write the golden files; only the workflow_dispatch run of CI with update_goldens does this).
 
     # The per-module tools of packages/flutter_chartjs_port/doc/porting-flow.md section 4.
     check:lib-imports:

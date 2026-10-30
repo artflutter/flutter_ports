@@ -14,9 +14,9 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos โ
 - `flutter pub get`: resolve the whole workspace (single root `pubspec.lock`).
 - `dart run melos run format` / `format:check`
 - `dart run melos run analyze`: `dart analyze --fatal-infos` over the workspace.
-- `dart run melos run test --no-select`: `flutter test --exclude-tags fixtures` in every package
-  with a `test/` dir. `--no-select` skips the interactive package picker. Options after `--` go to
-  each `flutter test` call, for example
+- `dart run melos run test --no-select`: `flutter test --exclude-tags fixtures,golden` in every
+  package with a `test/` dir. `--no-select` skips the interactive package picker. Options after
+  `--` go to each `flutter test` call, for example
   `dart run melos run test --no-select -- --experimental-faster-testing --total-shards=3 --shard-index=0`.
   Without `--`, melos stops with an error. The CI job `test` runs this command with the shard
   indexes 0, 1 and 2 on each OS, in bash. `--experimental-faster-testing` compiles the test files of a package into one test app and runs
@@ -70,6 +70,14 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos โ
   manifest. Without the submodule, each fixture skips with `'n/a: the submodule third_party/Chart.js
   is not checked out'`. With `FIXTURES_REQUIRED=1`, it fails. The CI job `fixtures` makes a shallow
   checkout of `third_party/Chart.js` and sets `FIXTURES_REQUIRED=1`.
+- `dart run melos run test:goldens`: the theme goldens of `flutter_chartjs_port`
+  (`test/port/theme/goldens_test.dart`, the tag `golden`, theming.md ยง8 test 9, Chart.js ADR 0050).
+  They skip unless `CHART_GOLDENS=1`. Their pinned runner is the CI job `fixtures` on
+  `ubuntu-24.04`, because the font manager of the platform rasterizes the text. A local Mac never
+  writes the golden files. Only a `workflow_dispatch` run of CI with the input `update_goldens`
+  writes them (`-- --update-goldens`). That run uploads them as the artifact `theme-goldens`. The
+  input `flutter_version` writes `.fvmrc` first, for a move to a new Flutter. The tree has no
+  golden file yet. Thus the job `fixtures` does not compare the goldens yet.
 - `dart run melos run parity`: tool 6. It writes `packages/flutter_chartjs_port/doc/parity.md` from
   `doc/status.yaml`, the files of the pinned `third_party/` copies, the rule-2 headers, the spec
   case results of tool 5 and `doc/differences.md`. It runs the spec tests and needs the
@@ -1068,8 +1076,10 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
     `Signed-off-by` trailer;
   - CI `dco` job: checks the sign-off on every pull-request commit.
 - CI jobs (`.github/workflows/ci.yaml`): `format`, `analyze`, `test` (ubuntu, macOS, Windows),
-  `test-web`, `fixtures`, `port-checks`, `upstream-manifest`, `gallery-web`, `gallery-android`,
-  `gallery-ios`, `upstream-pin`, `reuse` and `dco`.
+  `test-web`, `fixtures` (on `ubuntu-24.04`, also the runner of the theme goldens),
+  `port-checks`, `upstream-manifest`, `gallery-web`, `gallery-android`, `gallery-ios`,
+  `upstream-pin`, `reuse` and `dco`. A `workflow_dispatch` run has the inputs `update_goldens` and
+  `flutter_version` (`test:goldens`).
 - Toolchain: Flutter 3.47.7 (Dart 3.13.5), pinned in `.fvmrc`; CI reads the same file. All
   packages and the gallery have the floor `sdk: ^3.13.0` and `flutter: ">=3.47.0"`
   (`packages/flutter_chartjs_port/doc/porting-flow.md` ยง2.12).

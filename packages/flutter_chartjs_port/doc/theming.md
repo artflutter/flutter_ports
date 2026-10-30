@@ -692,7 +692,18 @@ Required in phase 9:
    `MediaQuery(disableAnimations: true)` waits for the reduced-motion flag of
    [Chart.js ADR 0049](adr/0049-chart-view-widget.md) §7 (section 3.7).
 9. **Goldens.** One golden per public preset on one chart type, on the pinned runner
-   (porting-flow.md, section 3).
+   (porting-flow.md, section 3). `test/port/theme/goldens_test.dart` (VM only, the tag `golden`)
+   compares `goldens/bar_light.png` and `goldens/bar_dark.png`
+   ([Chart.js ADR 0050](adr/0050-public-theme-api.md), "Goldens"). The chart is a `ChartView` bar
+   chart of 800 x 600 at DPR 1 over the `surface` of the preset. It has two datasets, the colors
+   plugin on, the title, the subtitle, the legend with its title, the two scale titles, the
+   tooltip of index 2 and `animation: false`. A third case checks that each `font` of the draw
+   calls names a family of the test font (Liberation Sans 2.1.5, Chart.js ADR 0015). The tests
+   skip unless `CHART_GOLDENS=1`. The melos script `test` excludes the tag, and `test:goldens`
+   runs the file. The pinned runner is the CI job `fixtures` on `ubuntu-24.04`. Only a
+   `workflow_dispatch` run with `update_goldens` writes the files and uploads them as the artifact
+   `theme-goldens`. A local Mac never writes them (CoreText). The first golden files and the
+   compare step of the job come from the first such run.
 
 Only a regression adds more: SHADOWED and INCONSISTENT coverage classes, randomized themes, or
 goldens for each chart type.

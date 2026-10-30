@@ -645,6 +645,16 @@ Changes to the cited files:
   No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart` or
   a test of §2.6 and §3.5 changes. The references, the inventory (§1.1), the tests of §2.6 and
   §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-29, the theme goldens of [Chart.js ADR 0050](adr/0050-public-theme-api.md) (proposed,
+  phase 9): the new `test/port/theme/goldens_test.dart` (the tag `golden`, skipped unless
+  `CHART_GOLDENS=1`), the tag in `dart_test.yaml`, the melos script `test:goldens`, the
+  exclusion of the tag in the script `test`, and the CI job `fixtures` on `ubuntu-24.04` with a
+  `workflow_dispatch` path that writes the golden files. The test reads the draw calls through
+  `drawCalls` of `test/port/scales/scale_chart_harness.dart`, which does not change. No golden
+  file is committed. `doc/parity.md` gets one port-only row at its end (line 616): the rows that
+  this plan cites do not move. No library file, test or gallery file that this plan cites
+  changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do
+  not change. No trigger occurred.
 
 ## 1. Why
 

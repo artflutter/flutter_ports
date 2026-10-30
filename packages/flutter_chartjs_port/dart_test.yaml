@@ -1,4 +1,8 @@
 # The fixture smoke tests of tool 7 (Chart.js ADR 0029). The melos script
 # `test` excludes them. `test:fixtures` runs them.
+#
+# The goldens of theming.md §8 test 9 (Chart.js ADR 0050). The melos script
+# `test` excludes them. `test:goldens` runs them on the pinned runner.
 tags:
   fixtures:
+  golden:
