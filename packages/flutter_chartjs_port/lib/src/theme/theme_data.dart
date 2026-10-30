@@ -17,6 +17,8 @@ import 'dart:ui' show Color, FontStyle, lerpDouble;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show ColorProperty, TextStyle;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/css.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -363,7 +365,7 @@ List<Color>? _lerpPalette(List<Color>? a, List<Color>? b, double t) {
   return [for (var i = 0; i < a.length; i++) Color.lerp(a[i], b[i], t)!];
 }
 
-/// The compiled theme map of [data] for `themeConfigKey`
+/// The compiled theme scope of [data] for `themeConfigKey`
 /// (`compileChartTheme` of `compile.dart` over [themeDataToRaw]), or Dart
 /// `null`. Dart `null` and a theme without tokens, for example
 /// `const ChartThemeData()`, give Dart `null`.
@@ -372,7 +374,7 @@ List<Color>? _lerpPalette(List<Color>? a, List<Color>? b, double t) {
 /// The theme switch of `ChartView` keeps the compiled theme of its current
 /// theme and compiles again only for a new theme.
 @internal
-AnyObject? compileThemeData(ChartThemeData? data) {
+ChartOptionsScope? compileThemeData(ChartThemeData? data) {
   if (data == null) return null;
   return compileChartTheme(themeDataToRaw(data));
 }

@@ -15,7 +15,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey, OptionScope;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartConfigurationScope;
+    show ChartConfigurationScope, ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -97,7 +97,7 @@ final class ChartThemeSwitch {
   /// The switch compiles a theme once, when it becomes the applied theme
   /// (judge-c §3.9: the state keeps the compiled theme of its current theme,
   /// with no memo).
-  AnyObject? _compiled;
+  ChartOptionsScope? _compiled;
 
   /// The user `scales` object of the options, or [_absent].
   Object? _scales = _absent;
@@ -235,7 +235,7 @@ final class ChartThemeSwitch {
   /// Writes [compiled] under `$theme` of [root], or removes the key.
   static void _writeTheme(
     ChartConfigurationScope root,
-    AnyObject? compiled,
+    ChartOptionsScope? compiled,
   ) {
     if (compiled == null) {
       root.dollarThemeCell = null;

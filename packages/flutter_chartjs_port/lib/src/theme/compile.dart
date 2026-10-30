@@ -2,11 +2,13 @@
 
 /// The theme compiler of Chart.js ADR 0050 (theming.md §3.3), a pure layer.
 ///
-/// [compileChartTheme] turns a raw Map theme into one frozen Map with the key
-/// shape of `Chart.defaults`. The chart puts that Map into the raw
-/// configuration under `themeConfigKey` of `core.config.dart`. The resolver
-/// reads it as the option scope between `overrides[type]` and `defaults`
-/// (hunks H0-H3, theming.md §3.1).
+/// [compileChartTheme] turns a raw Map theme into one frozen typed scope with
+/// the key shape of `Chart.defaults`: a `ChartOptionsScope` (Chart.js ADR
+/// 0054 §3), the kind of `Chart.defaults`. The chart puts that scope into
+/// its root configuration under `themeConfigKey` of `core.config.dart`. The
+/// resolver reads it as the option scope between `overrides[type]` and
+/// `defaults` (hunks H0-H3, theming.md §3.1), with the typed reads of a
+/// typed scope.
 ///
 /// The input is a raw Map theme. The public `ChartThemeData` of
 /// `theme_data.dart` (Chart.js ADR 0050) converts to one with
@@ -45,6 +47,10 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsFreezable, jsObjectFreeze;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionScope;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// A color token of a raw Map theme: the sRGB components of the `dart:ui`
@@ -507,8 +513,9 @@ const Map<String, Object?> _transitions = {
   },
 };
 
-/// The compiled theme of [theme] (theming.md §3.3): one frozen Map with the
-/// key shape of `Chart.defaults`, or Dart `null`.
+/// The compiled theme of [theme] (theming.md §3.3): one frozen typed scope
+/// with the key shape of `Chart.defaults` (a `ChartOptionsScope`, Chart.js
+/// ADR 0054 §3), or Dart `null`.
 ///
 /// - Dart `null` gives `null`. A theme that emits no key other than
 ///   `transitions` keys also gives `null`, for example `ChartThemes.none`.
@@ -528,21 +535,24 @@ const Map<String, Object?> _transitions = {
 ///   mode, it fails an assert. A `raw` List with such an item is left out as
 ///   a whole.
 /// - The `transitions` keys of theming.md §3.8 come only beside other keys.
-/// - The result is frozen deeply: each Map and each List is a [JsFreezable]
-///   after [jsObjectFreeze]. A write throws a [TypeError]. Thus a write of
-///   the set trap of a resolver into a theme scope throws, instead of a leak
-///   into other charts (`helpers.config.ts:101-106`).
+/// - The result is a typed scope tree ([_typed]): each object under a key
+///   of a nested kind is a typed scope of that kind, and an object under a
+///   key with no kind a frozen Map. It is frozen deeply: each scope, Map and
+///   List is a [JsFreezable] after [jsObjectFreeze]. A write throws a
+///   [TypeError]. Thus a write of the set trap of a resolver into a theme
+///   scope throws, instead of a leak into other charts
+///   (`helpers.config.ts:101-106`).
 ///
 /// Each call compiles [theme] and gives a new result: no memo (judge-c
 /// §3.9, Chart.js ADR 0054 §4). The theme switch of `ChartView` keeps the
 /// compiled theme of its current theme.
-AnyObject? compileChartTheme(AnyObject? theme) {
+ChartOptionsScope? compileChartTheme(AnyObject? theme) {
   if (theme == null) return null;
   return _compile(theme);
 }
 
 /// The [compileChartTheme] of [theme].
-AnyObject? _compile(AnyObject theme) {
+ChartOptionsScope? _compile(AnyObject theme) {
   assert(
     theme.keys.every(_themeFields.contains),
     'Unknown raw theme fields: '
@@ -644,7 +654,27 @@ AnyObject? _compile(AnyObject theme) {
   } else {
     keys['transitions'] = _transitions;
   }
-  return _freeze(keys)! as AnyObject;
+  return _typed(ChartOptionsScope(), keys);
+}
+
+/// The frozen typed copy of the emitted [map] in [scope] (Chart.js ADR 0054
+/// §3): each key of [map] in its order. An object under a key of a nested
+/// kind of [scope] becomes a frozen typed scope of that kind; any other
+/// value is [_freeze] of it. A value outside the shape of its key is a
+/// foreign cell, as in any typed scope. The keys go in the insertion order
+/// of [map]; the scope gives them in the `Object.keys` order (array-index
+/// names first), as `jsObjectKeys` of [map] does.
+T _typed<T extends OptionScope>(T scope, AnyObject map) {
+  for (final MapEntry(:key, :value) in map.entries) {
+    final kind = scope.childKindFor(key);
+    scope.jsWrite(
+      key,
+      kind != null && value is AnyObject && value is! OptionScope
+          ? _typed(kind.create(), value)
+          : _freeze(value),
+    );
+  }
+  return jsObjectFreeze(scope);
 }
 
 /// The Map of the field [name] of [theme]. An absent field and Dart `null`
