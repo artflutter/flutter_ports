@@ -46,6 +46,8 @@ import 'package:flutter_chartjs_port/src/core/core.plugins.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart'
     as core_registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show
         callback,
@@ -77,8 +79,10 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex;
+    show JsObjectFace, jsGet, jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionKey, OptionScope;
 import 'package:flutter_chartjs_port/src/platform/index.dart'
     show BasePlatform, detectPlatform;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -205,19 +209,21 @@ Object? _canvasOf(Object? item) => switch (item) {
 /// [Chart.id].
 ///
 /// The ids grow. Thus the insertion order of the Map is the `Object.keys`
-/// order of the integer keys.
+/// order of the integer keys, and its values are in the order of
+/// `Object.values`.
 final Map<String, Chart> _instances = <String, Chart>{};
 
 /// core.controller.js:67 `getChart(key)`.
 ///
-/// `Object.values(instances)` gives the charts in the `Object.keys` order.
-/// `filter(...).pop()` gives the last match. Dart `null` stands for the
-/// `undefined` of no match. `c.canvas === canvas` is [identical].
+/// `Object.values(instances)` gives the charts in the `Object.keys` order:
+/// the order of the values of [_instances]. `filter(...).pop()` gives the
+/// last match. Dart `null` stands for the `undefined` of no match.
+/// `c.canvas === canvas` is [identical].
 Chart? _getChart(Object? key) {
   final canvas = _getCanvas(key);
-  final keys = jsObjectKeys(_instances);
-  for (var i = keys.length - 1; i >= 0; i--) {
-    final chart = _instances[keys[i]]!;
+  final charts = _instances.values.toList();
+  for (var i = charts.length - 1; i >= 0; i--) {
+    final chart = charts[i];
     if (identical(chart.canvas, canvas)) {
       return chart;
     }
@@ -636,10 +642,12 @@ class Chart implements types.Chart {
       );
     }
 
+    // The chart context is an object: the resolver is a view
+    // (`_attachContext`, Chart.js ADR 0054 §4).
     final options = config.createResolver(
       config.chartOptionScopes(),
       getContext(),
-    );
+    ) as OptionView;
 
     // `new (config.platform || _detectPlatform(initialCanvas))()`. A class
     // value of another role throws a TypeError at the cast. Upstream throws
@@ -652,7 +660,7 @@ class Chart implements types.Chart {
 
     final context = platform.acquireContext(
       initialCanvas,
-      _numberOrNull(options['aspectRatio']),
+      _numberOrNull(options.readKey(OptionKey.aspectRatio)),
     );
     final canvas = context?.canvas;
     // `canvas && canvas.height`: 0 stands for the JS `null` of a chart
@@ -673,7 +681,10 @@ class Chart implements types.Chart {
     // :154-172: the fields with a start value get it before the body. The
     // reset of `$context` (:172) stays here: `getContext()` above made one.
     $context = null;
-    _doResize = debounce<Object?>(update, jsOrZero(options['resizeDelay']));
+    _doResize = debounce<Object?>(
+      update,
+      jsOrZero(options.readKey(OptionKey.resizeDelay)),
+    );
 
     // Add the chart instance to the global namespace
     instances[jsNumberToString(id)] = this;
@@ -798,8 +809,10 @@ class Chart implements types.Chart {
   @override
   late double height;
 
-  /// core.controller.js:149 `_options`: the resolver of the chart options.
-  late AnyObject _options;
+  /// core.controller.js:149 `_options`: the resolver of the chart options,
+  /// a view with the chart context. The reads of this file are typed
+  /// (`readKey`, Chart.js ADR 0054 §4).
+  late OptionView _options;
 
   /// core.controller.js:153 `_aspectRatio`. Dart `null` stands for the JS
   /// `null` of [aspectRatio].
@@ -934,9 +947,9 @@ class Chart implements types.Chart {
   /// The `aspectRatio` option gives its `ToNumber`: the readers divide by
   /// it (helpers.dom.ts:191). Dart `null` stands for the JS `null` result.
   double? get aspectRatio {
-    final options = this.options;
-    final aspectRatio = options['aspectRatio'];
-    final maintainAspectRatio = options['maintainAspectRatio'];
+    final options = _options;
+    final aspectRatio = options.readKey(OptionKey.aspectRatio);
+    final maintainAspectRatio = options.readKey(OptionKey.maintainAspectRatio);
     final width = this.width;
     final height = this.height;
     final aspectRatioBefore = _aspectRatio;
@@ -989,10 +1002,14 @@ class Chart implements types.Chart {
     // Before init plugin notification
     notifyPlugins('beforeInit');
 
-    if (jsTruthy(options['responsive'])) {
+    final options = _options;
+    if (jsTruthy(options.readKey(OptionKey.responsive))) {
       resize();
     } else {
-      retinaScale(this, _numberOrNull(options['devicePixelRatio']));
+      retinaScale(
+        this,
+        _numberOrNull(options.readKey(OptionKey.devicePixelRatio)),
+      );
     }
 
     bindEvents();
@@ -1049,9 +1066,9 @@ class Chart implements types.Chart {
   /// for a falsy option. `newSize` is the record of `getMaximumSize`. The
   /// hook `resize` and `onResize` get it as `size`.
   void _resize(double? width, double? height) {
-    final options = this.options;
+    final options = _options;
     final canvas = this.canvas;
-    final aspectRatio = jsTruthy(options['maintainAspectRatio'])
+    final aspectRatio = jsTruthy(options.readKey(OptionKey.maintainAspectRatio))
         ? this.aspectRatio
         : null;
     final newSize = platform.getMaximumSize(
@@ -1060,7 +1077,7 @@ class Chart implements types.Chart {
       height,
       aspectRatio,
     );
-    final devicePixelRatio = options['devicePixelRatio'];
+    final devicePixelRatio = options.readKey(OptionKey.devicePixelRatio);
     final newRatio = jsTruthy(devicePixelRatio)
         ? jsToNumber(devicePixelRatio)
         : platform.getDevicePixelRatio();
@@ -1076,7 +1093,7 @@ class Chart implements types.Chart {
     // DIVERGES(chartjs): adapt-typed-plugins, the typed hook arguments.
     notifyPlugins('resize', ResizeHookArgs(size: newSize));
 
-    callback(options['onResize'], [this, newSize], this);
+    callback(options.readKey(OptionKey.onResize), [this, newSize], this);
 
     if (attached) {
       if (_doResize(mode) != 0) {
@@ -1087,12 +1104,19 @@ class Chart implements types.Chart {
   }
 
   /// core.controller.js:304 `ensureScalesHaveIDs()`.
+  ///
+  /// `axisOptions.id = axisID` is the `set` trap of the view of the scale
+  /// options: the face write `jsWrite` (Chart.js ADR 0054 §5). It writes the
+  /// first scope, the typed scale scope of `mergeScaleConfig`.
   void ensureScalesHaveIDs() {
-    final options = this.options;
-    final scalesOptions = _or(options['scales'], <String, Object?>{});
+    final options = _options;
+    final scalesOptions = _or(
+      options.readKey(OptionKey.scales),
+      <String, Object?>{},
+    );
 
     each(scalesOptions, (Object? axisOptions, Object? axisID) {
-      (axisOptions! as AnyObject)['id'] = axisID;
+      (axisOptions! as JsObjectFace).jsWrite(OptionKey.id.jsName, axisID);
     });
   }
 
@@ -1102,22 +1126,29 @@ class Chart implements types.Chart {
   ///
   /// The items of :333-337 are records. `id in scales` is
   /// [Map.containsKey]. `delete scales[id]` is [Map.remove].
+  ///
+  /// The scale options are views (Chart.js ADR 0054 §4): `options.scales`
+  /// resolves the typed `ScaleOptionsByIdScope` of `mergeScaleConfig`
+  /// (`initOptions` writes it at each update), and each of its values is a
+  /// typed scale scope. Thus `scaleOptions.id`, `.type` and `.position` are
+  /// typed reads (`readKey`), and `Object.keys(scaleOptionsById)` is the
+  /// `ownKeys` result of the view (`jsKeys`). The write of `position` is the
+  /// `set` trap of the view (`jsWrite`). The keys of `updated` are the ids of
+  /// [scales]: the loop of :375-379 removes the ids that are not updated, in
+  /// any order, so the order of `Object.keys(scales)` does not matter.
   void buildOrUpdateScales() {
-    final options = this.options;
-    final scaleOpts = options['scales'];
+    final options = _options;
+    final scaleOpts = options.readKey(OptionKey.scales);
     final scales = this.scales;
-    final updated = jsObjectKeys(scales).fold(<String, Object?>{}, (obj, id) {
-      obj[id] = false;
-      return obj;
-    });
-    var items = <({AnyObject options, String dposition, String dtype})>[];
+    final updated = <String, bool>{for (final id in scales.keys) id: false};
+    var items = <({OptionView options, String dposition, String dtype})>[];
 
     if (jsTruthy(scaleOpts)) {
-      final scaleOptionsById = scaleOpts! as AnyObject;
+      final scaleOptionsById = scaleOpts! as OptionView;
       items = [
         ...items,
-        ...jsObjectKeys(scaleOptionsById).map((id) {
-          final scaleOptions = scaleOptionsById[id]! as AnyObject;
+        ...scaleOptionsById.jsKeys().map((id) {
+          final scaleOptions = scaleOptionsById.jsRead(id)! as OptionView;
           final axis = determineAxis(id, [scaleOptions]);
           final isRadial = axis == 'r';
           final isHorizontal = axis == 'x';
@@ -1139,20 +1170,23 @@ class Chart implements types.Chart {
     }
 
     each(items, (
-      ({AnyObject options, String dposition, String dtype}) item,
+      ({OptionView options, String dposition, String dtype}) item,
     ) {
       final scaleOptions = item.options;
-      final id = scaleOptions['id']! as String;
+      final id = scaleOptions.readKey(OptionKey.id)! as String;
       final axis = determineAxis(id, [scaleOptions]);
       final scaleType = valueOrDefault<Object?>(
-        scaleOptions['type'],
+        scaleOptions.readKey(OptionKey.type),
         item.dtype,
       );
 
-      if (identical(scaleOptions['position'], undefined) ||
-          _positionIsHorizontal(scaleOptions['position'], axis) !=
+      if (identical(scaleOptions.readKey(OptionKey.position), undefined) ||
+          _positionIsHorizontal(
+                scaleOptions.readKey(OptionKey.position),
+                axis,
+              ) !=
               _positionIsHorizontal(item.dposition)) {
-        scaleOptions['position'] = item.dposition;
+        scaleOptions.jsWrite(OptionKey.position.jsName, item.dposition);
       }
 
       updated[id] = true;
@@ -1274,9 +1308,18 @@ class Chart implements types.Chart {
           ..linkScales();
       } else {
         final controllerClass = registry.getController(type);
-        final datasetDefaults = jsGet(defaults['datasets'], type);
-        final datasetElementType = jsGet(datasetDefaults, 'datasetElementType');
-        final dataElementType = jsGet(datasetDefaults, 'dataElementType');
+        final datasetDefaults = _defaultsValue(
+          _defaultsValue(defaults, OptionKey.datasets),
+          type is String ? type : jsToString(type),
+        );
+        final datasetElementType = _defaultsValue(
+          datasetDefaults,
+          OptionKey.datasetElementType,
+        );
+        final dataElementType = _defaultsValue(
+          datasetDefaults,
+          OptionKey.dataElementType,
+        );
         jsAssign(controllerClass, {
           'dataElementType': registry.getElement(dataElementType),
           'datasetElementType': jsTruthy(datasetElementType)
@@ -1325,8 +1368,10 @@ class Chart implements types.Chart {
     final options = _options = config.createResolver(
       config.chartOptionScopes(),
       getContext(),
+    ) as OptionView;
+    final animsDisabled = animationsDisabled = !jsTruthy(
+      options.readKey(OptionKey.animation),
     );
-    final animsDisabled = animationsDisabled = !jsTruthy(options['animation']);
 
     _updateScales();
     _checkEventBindings();
@@ -1361,7 +1406,8 @@ class Chart implements types.Chart {
       controller!.buildOrUpdateElements(reset);
       minPadding = jsMax(jsToNumber(controller.getMaxOverflow()), minPadding);
     }
-    minPadding = _minPadding = jsTruthy(jsGet(options['layout'], 'autoPadding'))
+    minPadding = _minPadding =
+        jsTruthy(jsGet(options.readKey(OptionKey.layout), 'autoPadding'))
         ? minPadding
         : 0;
     _updateLayout(minPadding);
@@ -1418,12 +1464,13 @@ class Chart implements types.Chart {
   /// options.responsive` is `!=`: a `bool` is not equal to a value of
   /// another type, as for `!==`.
   void _checkEventBindings() {
-    final options = this.options;
-    final existingEvents = Set<Object?>.of(jsObjectKeys(_listeners));
-    final newEvents = _setOf(options['events']);
+    final options = _options;
+    final existingEvents = Set<Object?>.of(_listeners.keys);
+    final newEvents = _setOf(options.readKey(OptionKey.events));
 
     if (!setsEqual(existingEvents, newEvents) ||
-        (_responsiveListeners != null) != options['responsive']) {
+        (_responsiveListeners != null) !=
+            options.readKey(OptionKey.responsive)) {
       // The configured events have changed. Rebind.
       unbindEvents();
       bindEvents();
@@ -2001,7 +2048,7 @@ class Chart implements types.Chart {
   /// @private
   void bindEvents() {
     bindUserEvents();
-    if (jsTruthy(options['responsive'])) {
+    if (jsTruthy(_options.readKey(OptionKey.responsive))) {
       bindResponsiveEvents();
     } else {
       attached = true;
@@ -2030,7 +2077,7 @@ class Chart implements types.Chart {
       eventHandler(e);
     }
 
-    each(options['events'], (Object? type) {
+    each(_options.readKey(OptionKey.events), (Object? type) {
       add(type is String ? type : jsToString(type), listener);
     });
   }
@@ -2251,7 +2298,7 @@ class Chart implements types.Chart {
     List<types.ActiveElement> lastActive, [
     bool? replay,
   ]) {
-    final hoverOptions = options['hover'];
+    final hoverOptions = _options.readKey(OptionKey.hover);
     List<types.ActiveElement> diff(
       List<types.ActiveElement> a,
       List<types.ActiveElement> b,
@@ -2303,7 +2350,7 @@ class Chart implements types.Chart {
       inChartArea: isPointInArea(e),
     );
     bool eventFilter(PluginDescriptor plugin) => _includes(
-      _or(jsGet(plugin.options, 'events'), options['events']),
+      _or(jsGet(plugin.options, 'events'), _options.readKey(OptionKey.events)),
       e.native!.type,
     );
 
@@ -2342,7 +2389,7 @@ class Chart implements types.Chart {
     Object? inChartArea,
   ]) {
     final lastActive = this.active;
-    final options = this.options;
+    final options = _options;
 
     // If the event is replayed from `update`, we should evaluate with the
     // final positions.
@@ -2381,10 +2428,10 @@ class Chart implements types.Chart {
       this.lastEvent = null;
 
       // Invoke onHover hook
-      callback(options['onHover'], [e, active, this], this);
+      callback(options.readKey(OptionKey.onHover), [e, active, this], this);
 
       if (isClick) {
-        callback(options['onClick'], [e, active, this], this);
+        callback(options.readKey(OptionKey.onClick), [e, active, this], this);
       }
     }
 
@@ -2427,7 +2474,7 @@ class Chart implements types.Chart {
       return lastActive;
     }
 
-    final hoverOptions = options['hover'];
+    final hoverOptions = _options.readKey(OptionKey.hover);
     return getElementsAtEventForMode(
       e,
       jsGet(hoverOptions, 'mode'),
@@ -2455,6 +2502,20 @@ types.Element? _elementAt(List<types.Element> data, double index) {
     return data[index.toInt()];
   }
   return null;
+}
+
+/// `object[key]` of an object of the typed defaults (Chart.js ADR 0054 §3):
+/// the value of the cell of [key] (an [OptionKey] or a name) of a typed
+/// scope, or [undefined] for a key that the scope does not own.
+/// `defaults.datasets` and its dataset types are typed scopes. Another value
+/// is a value of the user in the defaults, read by name as upstream
+/// (`defaults.datasets[type]` of :443).
+Object? _defaultsValue(Object? object, Object key) {
+  if (object is OptionScope) {
+    final cell = object.lookup(key);
+    return cell == null ? undefined : cell.raw;
+  }
+  return jsGet(object, key is OptionKey ? key.jsName : key);
 }
 
 /// `value || other`: [value] when it is truthy, else [other].

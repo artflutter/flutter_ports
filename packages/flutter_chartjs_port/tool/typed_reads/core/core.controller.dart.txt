@@ -1,4 +1,4 @@
-jsGet 24
-stringIndex 32
+jsGet 22
+stringIndex 3
 jsCall 1
-jsObjectKeys 5
+jsObjectKeys 1
