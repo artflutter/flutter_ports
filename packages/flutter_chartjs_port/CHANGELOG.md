@@ -13,10 +13,25 @@ The first release: a native Dart port of Chart.js v4.6.1 for Flutter.
   (colors, decimation, filler, legend, subtitle, title and tooltip), the core (the configuration
   and the option resolver, the registry, the animations, the interaction modes, the layout and the
   events) and the public helpers. The color parser is a port of @kurkle/color 0.3.2.
-- **`ChartView`.** The widget of one chart. It takes the Chart.js configuration as a Dart `Map`,
-  starts the chart in its first layout, applies a new configuration after the frame, and takes
-  its size from the constraints and the options `responsive`, `maintainAspectRatio` and
-  `aspectRatio`.
+- **`ChartView`.** The widget of one chart. `ChartView(config: ChartConfig(...))` takes the typed
+  config, and `ChartView.raw(config: {...})` takes the Chart.js configuration as a Dart `Map`
+  (also `jsonDecode` output). The widget starts the chart in its first layout, applies a new
+  configuration after the frame, and takes its size from the constraints and the options
+  `responsive`, `maintainAspectRatio` and `aspectRatio`.
+- **Typed API.** `ChartConfig` with the chart type (`ChartKind`), one dataset class for each
+  chart type (`BarDataset`, `LineDataset`, `ScatterDataset`, `BubbleDataset`, `PieDataset`,
+  `DoughnutDataset`, `PolarAreaDataset` and `RadarDataset`), `DataPoint`, the axes
+  (`CategoryAxis`, `LinearAxis`, `LogarithmicAxis`, `TimeAxis`, `TimeSeriesAxis` and
+  `RadialLinearAxis`), the option groups (`ChartLegend`, `ChartTitle`, `ChartTooltip`,
+  `ChartFiller`, `ChartInteraction`, `ChartAnimation` and `ChartElements`), Flutter values for
+  the options (`Color`, `TextStyle`, `Duration` and `EdgeInsets`), and callbacks that get a
+  details object with `int` indexes. A typed config can be `const`. An equal config gives no
+  update. A new config updates the chart with the animations of Chart.js, and each dataset keeps
+  its state by its `key` or by its index. The `extra` Map of each class takes the Chart.js options
+  that have no parameter.
+- **`int` indexes.** `Chart.getDatasetMeta`, `isDatasetVisible`, `setDatasetVisibility`,
+  `getDataVisibility`, `hide` and `show` take a `num` index, so the `int` index of a callback
+  works.
 - **Theming.** `ChartTheme` and `ChartThemeData`, with the presets `ChartThemeData.light()` (the
   Chart.js defaults) and `ChartThemeData.dark()`, and a theme switch at run time. A theme never
   changes `Chart.defaults`.
@@ -26,11 +41,12 @@ The first release: a native Dart port of Chart.js v4.6.1 for Flutter.
   nothing.
 - **Dates.** A built-in date adapter with the rules of chartjs-adapter-moment 1.0.1 and ICU
   format patterns, in local time or in UTC (`setDefaultDateZone`).
-- **Libraries.** `flutter_chartjs_port.dart` for apps, `chartjs.dart` for code that extends
-  Chart.js (plugins, controllers and scales), and `helpers.dart` for the Chart.js helpers.
+- **Libraries.** `flutter_chartjs_port.dart` for apps, with the typed API, `chartjs.dart` for
+  code that extends Chart.js (plugins, controllers and scales), and `helpers.dart` for the
+  Chart.js helpers.
 - **Differences.** The README lists the differences from Chart.js that an app can see: the date
-  formats, the Dart collection types of a configuration, the data array changes and the missing
-  DOM.
+  formats, the Dart collection types of a raw configuration, the data array changes and the
+  missing DOM.
 
 ## 0.0.1
 

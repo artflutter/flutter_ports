@@ -1,6 +1,8 @@
 // Original code, not ported from Chart.js: the example app of the package.
 
-/// A small app with one bar chart (Chart.js ADR 0047, decision 5).
+/// A small app with one bar chart (Chart.js ADR 0047, decision 5): the typed
+/// config of Chart.js ADR 0052, a data update with `setState` and a click
+/// callback with `int` indexes.
 ///
 /// Run it from a Flutter app of your own: copy this file to `lib/main.dart`
 /// and add `flutter_chartjs_port` to the dependencies.
@@ -46,51 +48,22 @@ class VotesPage extends StatefulWidget {
 class _VotesPageState extends State<VotesPage> {
   final Random _random = Random();
 
-  /// The data of the chart. The chart reads this List, and the button
-  /// changes its items in place.
-  final List<double> _votes = [12, 19, 3, 5, 2, 3];
+  /// The data of the chart. The chart reads this List with no copy.
+  List<double> _votes = [12, 19, 3, 5, 2, 3];
 
-  /// The Chart.js configuration. It is made once and is not `const`:
-  /// Chart.js writes into its `data` and `options` Maps. A nested Map has
-  /// the type `<String, Object?>`, because Chart.js also writes into the
-  /// dataset Maps (for example the colors of the `colors` plugin).
-  late final Map<String, Object?> _config = {
-    'type': 'bar',
-    'data': <String, Object?>{
-      'labels': ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      'datasets': [
-        <String, Object?>{
-          'label': '# of Votes',
-          'data': _votes,
-          'borderWidth': 1,
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'scales': <String, Object?>{
-        'y': <String, Object?>{'beginAtZero': true},
-      },
-      'onClick': (ChartEvent event, List<ActiveElement> elements, Chart chart) {
-        if (elements.isNotEmpty) {
-          // A Chart.js index is a JavaScript number: a double.
-          final index = elements.first.index.toInt();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${_votes[index].round()} votes')),
-          );
-        }
-      },
-    },
-  };
+  /// New votes in a new List: the next build gives the chart a new config,
+  /// and the bars animate to the new values.
+  void _shuffle() => setState(() {
+    _votes = [for (final _ in _votes) _random.nextInt(20).toDouble()];
+  });
 
-  /// The chart, from `onChartCreated`.
-  Chart? _chart;
-
-  void _shuffle() {
-    for (var i = 0; i < _votes.length; i++) {
-      _votes[i] = _random.nextInt(20).toDouble();
-    }
-    // A change in place needs an explicit update, as in Chart.js.
-    _chart?.update();
+  /// A click on a bar shows its votes. The indexes of a hit are `int`s.
+  void _onClick(ChartEventDetails details) {
+    final hit = details.hits.firstOrNull;
+    if (hit == null) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${_votes[hit.index].round()} votes')),
+    );
   }
 
   @override
@@ -101,15 +74,30 @@ class _VotesPageState extends State<VotesPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // In a scroll view, the width and the aspect ratio of the options
-          // (2 for a bar chart) give the height.
-          ChartView.raw(
-            config: _config,
+          // In a scroll view, the width and the aspect ratio of the chart (2
+          // for a bar chart) give the height. A build with the same votes
+          // gives an equal config and no update.
+          ChartView(
+            config: ChartConfig(
+              type: .bar,
+              labels: const [
+                'Red',
+                'Blue',
+                'Yellow',
+                'Green',
+                'Purple',
+                'Orange',
+              ],
+              datasets: [
+                BarDataset(label: '# of Votes', data: _votes, borderWidth: 1),
+              ],
+              scales: const {'y': LinearAxis(beginAtZero: true)},
+              onClick: _onClick,
+            ),
             theme: dark
                 ? const ChartThemeData.dark()
                 : const ChartThemeData.light(),
             semanticLabel: 'Bar chart of the votes for six colors',
-            onChartCreated: (chart) => _chart = chart,
           ),
           const SizedBox(height: 16),
           Center(

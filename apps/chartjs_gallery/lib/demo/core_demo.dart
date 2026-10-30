@@ -47,21 +47,30 @@ const Map<String, String> _modeText = {
 const int _startCount = 12;
 
 /// The datasets of the chart: the label, the colors and the point style.
-const List<({String label, String background, String border, String style})>
+const List<
+  ({String label, Color background, Color border, ChartPointStyle style})
+>
 _datasetStyles = [
   (
     label: 'A',
-    background: 'rgba(54, 162, 235, 0.5)',
-    border: '#36A2EB',
-    style: 'circle',
+    background: Color.fromRGBO(54, 162, 235, 0.5),
+    border: Color(0xFF36A2EB),
+    style: ChartPointStyle.circle,
   ),
   (
     label: 'B',
-    background: 'rgba(255, 99, 132, 0.5)',
-    border: '#FF6384',
-    style: 'rectRot',
+    background: Color.fromRGBO(255, 99, 132, 0.5),
+    border: Color(0xFFFF6384),
+    style: ChartPointStyle.rectRot,
   ),
 ];
+
+/// The two hidden linear axes of the fractions 0 to 1: the typed form of
+/// `unitScales()`.
+const Map<String, ChartAxis> _unitAxes = {
+  'x': LinearAxis(display: false, suggestedMin: 0, suggestedMax: 1),
+  'y': LinearAxis(display: false, min: 0, max: 1),
+};
 
 /// The core modules of phase 5 in a real chart: `new Chart(canvas, config)`.
 ///
@@ -69,8 +78,17 @@ _datasetStyles = [
 /// `Chart` of `core.controller` on the canvas of the view, with the
 /// `FlutterPlatform`. Its type is `line`, the ported
 /// `LineController` (Chart.js ADR 0031, section 4). Two hidden linear
-/// scales of the fractions 0 to 1 (`unitScales`) put each point at its `x`
-/// and `y` as fractions of the chart area.
+/// scales of the fractions 0 to 1 (`_unitAxes`, the typed form of
+/// `unitScales`) put each point at its `x` and `y` as fractions of the
+/// chart area.
+///
+/// The config is the typed config of Chart.js ADR 0052 (section 13): `build`
+/// makes a `ChartConfig` from the control values and the data Lists. A
+/// control changes a value in `setState`, and a data command gives new
+/// Lists: the new config updates the chart after the frame. An equal config
+/// gives no update. Three options have no typed parameter and go through
+/// `extra`: `interaction.axis`, `elements.point.hoverBorderWidth` and
+/// `transitions.active.animation.duration`.
 ///
 /// The ported code does the work:
 /// - `core.config` resolves the options: the typed `PointOptions` of
@@ -123,51 +141,15 @@ class CoreDemoState extends State<CoreDemo> {
   double _duration = 1000;
   bool _animation = true;
 
-  /// The data of each dataset: the objects `{x, y}` of the controller.
-  late final List<List<Map<String, Object?>>> _data = [
+  /// The data of each dataset: the points `{x, y}` of the controller. A
+  /// data command replaces the Lists.
+  late List<List<DataPoint>> _data = [
     for (var d = 0; d < _datasetStyles.length; d++)
       [
         for (var i = 0; i < _startCount; i++)
-          <String, Object?>{'x': _spread(i, _startCount), 'y': _value()},
+          DataPoint(_spread(i, _startCount), _value()),
       ],
   ];
-
-  // The user options. A control writes into them, then calls update().
-  late final Map<String, Object?> _interaction = {
-    'mode': _mode,
-    'intersect': _intersect,
-    'axis': _axis,
-  };
-  late final Map<String, Object?> _animationOptions = {
-    'duration': _duration,
-    'onProgress': (Object? context) => _readout.value++,
-    'onComplete': (Object? context) => _readout.value++,
-  };
-  late final Map<String, Object?> _activeAnimation = {
-    'duration': _hoverDuration,
-  };
-  late final Map<String, Object?> _options = {
-    'maintainAspectRatio': false,
-    'layout': <String, Object?>{'padding': 20.0},
-    'scales': unitScales(),
-    'interaction': _interaction,
-    'animation': _animationOptions,
-    'transitions': <String, Object?>{
-      'active': <String, Object?>{'animation': _activeAnimation},
-    },
-    'elements': <String, Object?>{
-      'point': <String, Object?>{
-        'radius': 6.0,
-        'hoverRadius': 12.0,
-        'borderWidth': 1.0,
-        'hoverBorderWidth': 3.0,
-      },
-    },
-    'onHover': (Object? event, Object? active, Object? chart) {
-      _event = (event! as ChartEvent).type;
-      _readout.value++;
-    },
-  };
 
   /// The chart, once it exists.
   @visibleForTesting
@@ -175,7 +157,7 @@ class CoreDemoState extends State<CoreDemo> {
 
   /// The data of the dataset [index].
   @visibleForTesting
-  List<Map<String, Object?>> dataOf(int index) => _data[index];
+  List<DataPoint> dataOf(int index) => _data[index];
 
   /// The active elements, as `d<dataset>#<index>`, or `none`.
   @visibleForTesting
@@ -206,42 +188,85 @@ class CoreDemoState extends State<CoreDemo> {
     registerGalleryComponents();
   }
 
-  /// The config of the `ChartView`, made once: a rebuild of the tab gives
-  /// the view the same Map, thus no update (Chart.js ADR 0049, section 4).
-  /// A control writes into the user options and calls `update()`.
-  late final Map<String, Object?> _config = <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        for (var d = 0; d < _datasetStyles.length; d++)
-          <String, Object?>{
-            'label': _datasetStyles[d].label,
-            'data': _data[d],
-            'backgroundColor': _datasetStyles[d].background,
-            'borderColor': _datasetStyles[d].border,
-            'pointStyle': _datasetStyles[d].style,
-          },
-      ],
+  /// The inline plugin of the chart, made once: the same plugin in each
+  /// config keeps the configs equal.
+  late final Map<String, Object?> _valueLines = <String, Object?>{
+    'id': 'galleryValueLines',
+    'beforeDatasetsDraw': (Object? chart, Object? args, Object? options) {
+      _drawValueLines(chart! as Chart);
     },
-    'options': _options,
-    'plugins': <Object?>[
-      <String, Object?>{
-        'id': 'galleryValueLines',
-        'beforeDatasetsDraw': (Object? chart, Object? args, Object? options) {
-          _drawValueLines(chart! as Chart);
-        },
-        // The registered plugins come before the inline plugins
-        // (core.plugins.js:125-144). Thus the legend has handled a click
-        // when this hook runs. A replayed event of `update` is not new
-        // input (core.controller.js:528-534).
-        'afterEvent': (Object? chart, Object? args, Object? options) {
-          // The hook arguments are a Map (core.controller.js:1164-1169).
-          final replay = (args! as Map<String, Object?>)['replay'];
-          if (replay != true) _readout.value++;
+    // The registered plugins come before the inline plugins
+    // (core.plugins.js:125-144). Thus the legend has handled a click
+    // when this hook runs. A replayed event of `update` is not new
+    // input (core.controller.js:528-534).
+    'afterEvent': (Object? chart, Object? args, Object? options) {
+      // The hook arguments are a Map (core.controller.js:1164-1169).
+      final replay = (args! as Map<String, Object?>)['replay'];
+      if (replay != true) _readout.value++;
+    },
+  };
+
+  /// The typed config of the `ChartView` from the control values and the
+  /// data Lists. A rebuild with the same values gives an equal config, thus
+  /// no update (Chart.js ADR 0052, section 9).
+  ChartConfig _config() => ChartConfig(
+    type: .line,
+    datasets: [
+      for (var d = 0; d < _datasetStyles.length; d++)
+        LineDataset(
+          label: _datasetStyles[d].label,
+          points: _data[d],
+          backgroundColor: _datasetStyles[d].background,
+          borderColor: _datasetStyles[d].border,
+          pointStyle: _datasetStyles[d].style,
+        ),
+    ],
+    scales: _unitAxes,
+    maintainAspectRatio: false,
+    padding: const EdgeInsets.all(20),
+    interaction: ChartInteraction(
+      mode: ChartInteractionMode(_mode),
+      intersect: _intersect,
+      // `interaction.axis` has no typed parameter.
+      extra: {'axis': _axis},
+    ),
+    animation: _animation
+        ? ChartAnimation(
+            duration: Duration(milliseconds: _duration.round()),
+            onProgress: _onAnimationFrame,
+            onComplete: _onAnimationFrame,
+          )
+        : ChartAnimation.none,
+    elements: const ChartElements(
+      point: PointElementStyle(
+        radius: 6,
+        hoverRadius: 12,
+        borderWidth: 1,
+        // `elements.point.hoverBorderWidth` has no typed parameter.
+        extra: {'hoverBorderWidth': 3.0},
+      ),
+    ),
+    onHover: _onHover,
+    plugins: [_valueLines],
+    // `transitions` has no typed parameter: the duration of the hover
+    // transition goes into `options` through `extra`.
+    extra: {
+      'transitions': <String, Object?>{
+        'active': <String, Object?>{
+          'animation': <String, Object?>{'duration': _hoverDuration},
         },
       },
-    ],
-  };
+    },
+  );
+
+  /// The `onHover` of the chart: the readout shows the event type.
+  void _onHover(ChartEventDetails details) {
+    _event = details.event.type;
+    _readout.value++;
+  }
+
+  /// The `onProgress` and `onComplete` of the animation.
+  void _onAnimationFrame(ChartAnimationDetails details) => _readout.value++;
 
   /// Five value lines over the chart area, with no scale.
   static void _drawValueLines(Chart chart) {
@@ -269,63 +294,53 @@ class CoreDemoState extends State<CoreDemo> {
     _readout.value++;
   }
 
-  /// Changes a control value. The chart reads the user options again in
-  /// `update()`, as after `chart.options.interaction.mode = 'x'` upstream.
+  /// Changes a control value. The next build gives the view a new config,
+  /// and the view updates the chart after the frame, as
+  /// `chart.options.interaction.mode = 'x'` and `update()` do upstream.
   void _change(VoidCallback change) {
     setState(change);
-    _interaction
-      ..['mode'] = _mode
-      ..['intersect'] = _intersect
-      ..['axis'] = _axis;
-    _activeAnimation['duration'] = _hoverDuration;
-    _animationOptions['duration'] = _duration;
-    _options['animation'] = _animation ? _animationOptions : false;
-    _chart?.update();
     _readout.value++;
   }
 
-  /// New `y` values in place: `update()` animates the points to them.
-  void _randomize() {
-    for (final data in _data) {
-      for (final item in data) {
-        item['y'] = _value();
-      }
-    }
-    _chart?.update();
-  }
+  /// New `y` values in new Lists: the update animates the points to them.
+  void _randomize() => setState(() {
+    _data = [
+      for (final data in _data)
+        [for (final item in data) DataPoint(item.x as double, _value())],
+    ];
+  });
 
-  /// `data.push(item)`, or `data.pop()`, in each dataset. The data array
-  /// listeners of the controller get the change (`notifyArrayListeners`,
-  /// differences.md `platform-array-events`). The points spread again over
-  /// the width.
+  /// One point more or one point less in each dataset, in new Lists. The
+  /// points spread again over the width. A dataset keeps at least one
+  /// point.
   void _resize({required bool add}) {
-    for (final data in _data) {
-      if (add) {
-        final item = <String, Object?>{'x': 1.0, 'y': _value()};
-        data.add(item);
-        notifyArrayListeners(data, 'push', [item]);
-      } else if (data.length > 1) {
-        data.removeLast();
-        notifyArrayListeners(data, 'pop', const []);
-      }
-      for (var i = 0; i < data.length; i++) {
-        data[i]['x'] = _spread(i, data.length);
-      }
-    }
-    _chart?.update();
+    setState(() {
+      _data = [
+        for (final data in _data)
+          _spreadPoints(
+            [for (final item in data) item.y, if (add) _value()],
+            add ? data.length + 1 : math.max(data.length - 1, 1),
+          ),
+      ];
+    });
     _readout.value++;
   }
+
+  /// [count] points with the first [count] values of [values], spread over
+  /// the width.
+  static List<DataPoint> _spreadPoints(List<num?> values, int count) => [
+    for (var i = 0; i < count; i++) DataPoint(_spread(i, count), values[i]),
+  ];
 
   /// `chart.hide(i)` or `chart.show(i)`: the `hide` and `show` transitions.
   void _toggleDataset(int index) {
     final chart = _chart;
     if (chart == null) return;
-    final i = index.toDouble();
     setState(() {
-      if (chart.isDatasetVisible(i)) {
-        chart.hide(i);
+      if (chart.isDatasetVisible(index)) {
+        chart.hide(index);
       } else {
-        chart.show(i);
+        chart.show(index);
       }
     });
   }
@@ -514,8 +529,8 @@ class CoreDemoState extends State<CoreDemo> {
                 builder: (context, constraints) => SizedBox(
                   key: const ValueKey('core.host'),
                   height: constraints.maxWidth >= 560 ? 320 : 280,
-                  child: ChartView.raw(
-                    config: _config,
+                  child: ChartView(
+                    config: _config(),
                     onChartCreated: _onChart,
                   ),
                 ),
