@@ -1,4 +1,4 @@
-// Original code, not ported from Chart.js: the differential test of the fast paths (Chart.js ADR 0053, D1).
+// Original code, not ported from Chart.js: the observation oracle O1 (Chart.js ADR 0054).
 // The header text names the test and the ADR, and has no URI.
 // ignore_for_file: lines_longer_than_80_chars
 @TestOn('vm')
@@ -15,9 +15,9 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
     show effects;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
+import 'package:flutter_chartjs_port/src/js/js_array.dart'
+    show JsProxyObject, jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_fast_paths.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -30,217 +30,313 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../fixtures/index.dart' show handFixtures;
-import '../scales/scale_chart_harness.dart' show drawCalls;
+import '../core/resolver_trace_cases.dart'
+    show resolverTraceFunctions, resolverTraceSetups;
+import '../core/resolver_trace_reference.dart' show resolverTraceReference;
+import '../scales/scale_chart_harness.dart' show copyReference, drawCalls;
+import 'observation_digests.dart';
 
-// D1 of Chart.js ADR 0053: each fast path gives the result of the ported
-// form. For each config of the corpus, one testWidgets case builds the chart
-// with the switch off ([debugFastPaths] false, the ported forms) and with the
-// switch on, runs the same steps, and compares a canonical text of the
-// observations. A second pair of runs wraps each function value of the
-// config in a recorder and compares the ordered trace of the user calls too.
-// The unwrapped pair keeps the runtime function types of the config, which
-// a typed call of `jsCall` tests.
+// The observation oracle O1 of Chart.js ADR 0054: it pins the JS-observable
+// behavior of the option model as one SHA-256 digest for each run of a
+// config. A later change of the Dart representation of the options (typed
+// classes in place of Maps, `double` in place of `int`) keeps each digest.
+// Thus the canonical text has only JS-observable facts: a number is its JS
+// string, a Map is its keys and values in the order of `Object.keys`, and no
+// line names the Dart class of an options object.
+//
+// The corpus: the hand fixtures of test/fixtures/index.dart, the pure data
+// configs of doc/upstream/fixtures.json, the bench and focused configs of the
+// differential test D1 and the cases of the resolver trace D2
+// (test/port/core/resolver_trace_reference.dart). Each case has two tests:
+// `(plain)` runs the config as given, and `(trace)` wraps each function value
+// of the config in a recorder and adds the ordered user calls to the text.
+// The defaults restore of the harness runs between the two tests.
 //
 // Run it alone:
-//   flutter test test/port/js/js_fast_paths_test.dart
-// A failure names the case, the run kind, the line number and the two lines
-// of the first difference.
+//   flutter test test/port/options/observation_test.dart
+// Write the digests again (macOS only):
+//   O1_UPDATE=1 flutter test test/port/options/observation_test.dart
+// Write the texts into a folder (one file for each test):
+//   O1_DUMP=<folder> flutter test test/port/options/observation_test.dart
+// Write the texts of a base commit and of the current tree, and list the
+// files that differ:
+//   tool/observation_diff.sh <base commit>
+//
+// The digests are the digests of the macOS VM: the transcendental functions
+// and the text metrics can differ in the last bits on another OS. Thus the
+// tests compare the digests only on macOS. On another OS, each test still
+// runs its case, so a throw of the observation code fails there too.
 
 /// The fixed `Date.now()` of each run: the `start` of each animation is
 /// `Date.now() + delay` (core.animation.js:37).
 final DateTime _now = DateTime.utc(2026, 10, 31);
 
-/// Whether the define `PORT_FAST_PATHS=false` turns the fast paths off.
-const bool _defineOff = !bool.fromEnvironment(
-  'PORT_FAST_PATHS',
-  defaultValue: true,
-);
+/// Whether the run writes observation_digests.dart (`O1_UPDATE=1`).
+final bool _update = Platform.environment['O1_UPDATE'] == '1';
+
+/// The folder of the environment variable `O1_DUMP`: when it is set, each
+/// test writes its text there.
+final String? _dumpFolder = Platform.environment['O1_DUMP'];
+
+/// The path of the digests, relative to the package root (the working
+/// directory of `flutter test`).
+const String _digestsPath = 'test/port/options/observation_digests.dart';
+
+/// The digests of the tests of this run, for [_update].
+final Map<String, String> _collected = {};
+
+/// The input of one run: the config and the options of `acquireChart`.
+typedef _Input = ({Map<String, Object?> config, Map<String, Object?>? options});
 
 /// One config of the corpus: `make` gives a new config and the options of
 /// `acquireChart` at each call. `cleanup` undoes a change of the global
 /// scopes after a run.
 typedef _Case = ({
   String name,
-  ({Map<String, Object?> config, Map<String, Object?>? options}) Function()
-  make,
+  _Input Function() make,
   void Function()? cleanup,
 });
 
 void main() {
-  group('switch', () {
-    test('the getter follows the define and the test switch', () {
-      addTearDown(() => debugFastPaths = true);
-      debugFastPaths = true;
-      expect(portFastPaths, !_defineOff);
-      debugFastPaths = false;
-      expect(portFastPaths, isFalse);
-      debugFastPaths = true;
-      expect(portFastPaths, !_defineOff);
-    });
-
-    test(
-      'the test switch turns the paths on and off',
-      () {
-        addTearDown(() => debugFastPaths = true);
-        debugFastPaths = false;
-        expect(portFastPaths, isFalse);
-        debugFastPaths = true;
-        expect(portFastPaths, isTrue);
-      },
-      skip: _defineOff
-          ? 'n/a: the define PORT_FAST_PATHS=false turns every fast path off'
-          : false,
-    );
-
-    test('the hit counter counts in a run with assertions', () {
-      debugFastPathHits.clear();
-      addTearDown(debugFastPathHits.clear);
-      var asserts = false;
-      assert(asserts = true, 'only a run with assertions sets it');
-      assert(debugFastPathHit('test'), 'debugFastPathHit returns true');
-      assert(debugFastPathHit('test'), 'debugFastPathHit returns true');
-      expect(debugFastPathHits, asserts ? {'test': 2} : isEmpty);
-    });
-  });
-
-  group('fixtures', () {
-    for (final MapEntry(key: path, value: hand) in handFixtures.entries) {
-      _testCase((
-        name: path,
-        make: () {
-          final json = hand.load();
-          final config = json['config']! as Map<String, Object?>;
-          final options =
-              (jsTruthy(config['options'])
-                      ? config['options']
-                      : (config['options'] = <String, Object?>{}))!
-                  as Map<String, Object?>;
-          // The plugin rule of specFromFixture (fixture.js:45-48).
-          if (!path.contains('plugin') &&
-              identical(jsGet(config, 'plugins'), undefined)) {
-            options['plugins'] = jsTruthy(options['plugins'])
-                ? options['plugins']
-                : false;
-          }
-          return (
-            config: config,
-            options: json['options'] as Map<String, Object?>?,
-          );
-        },
-        cleanup: null,
-      ));
-    }
-  });
-
-  group('bench', () => _benchCases.forEach(_testCase));
-
-  group('focused', () => _focusedCases.forEach(_testCase));
-
-  group('pins', () {
-    // The probe of judge-r.md §2.3: a scriptable `pointBorderWidth` writes
-    // `radius` through its second argument (the sub-resolver) at dataIndex
-    // 2. `radius` comes after `borderWidth` in the names, so the later read
-    // of the same element and of the next elements gets 9.
-    testWidgets('a write through the sub-resolver reaches a later name', (
-      tester,
-    ) async {
-      addTearDown(() => debugFastPaths = true);
-      for (final fast in [false, true]) {
-        debugFastPaths = fast;
-        final chart = acquireChart(_hazardConfig());
-        final meta = chart.getDatasetMeta(0);
-        expect(
-          [
-            for (var i = 0; i < 5; i++)
-              jsGet((meta.data[i] as Element).options, 'radius'),
-          ],
-          [3.0, 3.0, 9.0, 9.0, 9.0],
-          reason: 'fast paths: $fast',
-        );
-        releaseChart(chart);
+  final cases = _cases();
+  final names = <String>[];
+  final stems = <String>{};
+  for (final c in cases) {
+    for (final kind in const ['plain', 'trace']) {
+      final name = '${c.name} ($kind)';
+      // The dump file of a test is its sanitized name: two tests must not
+      // share it. This also makes the case names unique.
+      if (!stems.add(_stem(name))) {
+        throw StateError('Two tests share the dump file name of $name.');
       }
+      names.add(name);
+    }
+  }
+
+  for (final c in cases) {
+    for (final wrap in const [false, true]) {
+      final name = '${c.name} (${wrap ? 'trace' : 'plain'})';
+      testWidgets(name, (tester) async {
+        final text = _run(c, wrap: wrap);
+        // The animator of an animated case asked for a frame. The charts are
+        // released, so the frame runs no chart.
+        await tester.pump();
+        _dump(name, text);
+        _check(name, text);
+      });
+    }
+  }
+
+  if (_update) {
+    tearDownAll(() {
+      if (!Platform.isMacOS) return;
+      // A run of a part of the tests keeps the stored digests of the other
+      // tests. A name that is not a test of this file goes.
+      File(_digestsPath).writeAsStringSync(
+        _digestsSource({
+          for (final name in names)
+            name: ?(_collected[name] ?? observationDigests[name]),
+        }),
+      );
     });
-  });
+  }
 }
 
 // ---------------------------------------------------------------------------
-// The test of one case.
+// The corpus.
 
-void _testCase(_Case c) {
-  testWidgets(c.name, (tester) async {
-    addTearDown(() => debugFastPaths = true);
-    for (final wrap in [false, true]) {
-      final off = _run(c, fast: false, wrap: wrap);
-      final on = _run(c, fast: true, wrap: wrap);
-      _dump(c.name, wrap, off, on);
-      if (on != off) {
-        fail(_firstDifference(c.name, wrap, off, on));
-      }
-    }
-    // The animator of an animated case asked for a frame. The charts are
-    // released, so the frame runs no chart.
-    await tester.pump();
-  });
+/// The cases of the oracle, in the order of their tests.
+List<_Case> _cases() => [
+  for (final MapEntry(key: path, value: hand) in handFixtures.entries)
+    (
+      name: 'fixture $path',
+      make: () => _fixtureInput(path, hand.load()),
+      cleanup: null,
+    ),
+  for (final path in _dataFixtures.keys)
+    (
+      name: 'fixture $path',
+      make: () => _fixtureInput(
+        path,
+        _copyJson(_dataFixtures[path])! as Map<String, Object?>,
+      ),
+      cleanup: null,
+    ),
+  for (final c in _benchCases)
+    (name: 'bench ${c.name}', make: c.make, cleanup: c.cleanup),
+  for (final c in _focusedCases)
+    (name: 'focused ${c.name}', make: c.make, cleanup: c.cleanup),
+  for (final c in resolverTraceReference)
+    (
+      name: 'trace ${c.name}',
+      make: () {
+        // The functions record into a list that no one reads: the recorder
+        // of a trace run records the calls.
+        final functions = resolverTraceFunctions(<Object?>[]);
+        if (c.setup case final setup?) resolverTraceSetups[setup]!(functions);
+        return (
+          config: copyReference(c.config, functions)! as Map<String, Object?>,
+          options: null,
+        );
+      },
+      cleanup: null,
+    ),
+];
+
+/// The pure data configs of doc/upstream/fixtures.json, by fixture path,
+/// decoded once. A run takes a deep copy ([_copyJson]): the chart writes
+/// into its config.
+final Map<String, Object?> _dataFixtures =
+    jsonDecode(File('doc/upstream/fixtures.json').readAsStringSync())!
+        as Map<String, Object?>;
+
+/// A deep copy of the decoded JSON [value].
+Object? _copyJson(Object? value) => switch (value) {
+  final Map<String, Object?> map => <String, Object?>{
+    for (final MapEntry(:key, :value) in map.entries) key: _copyJson(value),
+  },
+  final List<Object?> list => <Object?>[
+    for (final item in list) _copyJson(item),
+  ],
+  _ => value,
+};
+
+/// The input of the fixture [path] from its loaded [json] `{config,
+/// options}`: the `options` default and the plugin rule of specFromFixture
+/// (fixture.js:43-48).
+_Input _fixtureInput(String path, Map<String, Object?> json) {
+  final config = json['config']! as Map<String, Object?>;
+  final options =
+      (jsTruthy(config['options'])
+              ? config['options']
+              : (config['options'] = <String, Object?>{}))!
+          as Map<String, Object?>;
+  // plugins are disabled by default, except if the path contains 'plugin'
+  // or there are instance plugins
+  if (!path.contains('plugin') &&
+      identical(jsGet(config, 'plugins'), undefined)) {
+    options['plugins'] = jsTruthy(options['plugins'])
+        ? options['plugins']
+        : false;
+  }
+  return (config: config, options: json['options'] as Map<String, Object?>?);
 }
 
-/// The folder of the environment variable `D1_DUMP`: when it is set, each
-/// case writes its two texts there (`<case>.<run kind>.off.txt` and
-/// `.on.txt`), for a diff by hand.
-final String? _dumpFolder = Platform.environment['D1_DUMP'];
+// ---------------------------------------------------------------------------
+// The digests.
 
-/// Writes the texts of one case into [_dumpFolder].
-void _dump(String name, bool wrap, String off, String on) {
+/// The name of the dump file of the test [name], without `.txt`.
+String _stem(String name) => name.replaceAll(RegExp('[^A-Za-z0-9.]+'), '_');
+
+/// Writes [text] into [_dumpFolder].
+void _dump(String name, String text) {
   final folder = _dumpFolder;
   if (folder == null) return;
-  final stem = name.replaceAll(RegExp('[^A-Za-z0-9.]+'), '_');
-  final kind = wrap ? 'trace' : 'plain';
-  File('$folder/$stem.$kind.off.txt')
+  File('$folder/${_stem(name)}.txt')
     ..createSync(recursive: true)
-    ..writeAsStringSync(off);
-  File('$folder/$stem.$kind.on.txt').writeAsStringSync(on);
+    ..writeAsStringSync(text);
 }
 
-/// The message of the first line where [off] and [on] differ.
-String _firstDifference(String name, bool wrap, String off, String on) {
-  final a = const LineSplitter().convert(off);
-  final b = const LineSplitter().convert(on);
-  var i = 0;
-  while (i < a.length && i < b.length && a[i] == b[i]) {
-    i++;
+/// Compares the digest of [text] with the stored digest of the test [name],
+/// or collects it for [_update].
+void _check(String name, String text) {
+  final digest = sha256Hex(utf8.encode(text));
+  if (_update) {
+    if (!Platform.isMacOS) {
+      fail('O1_UPDATE=1 writes the digests of the macOS VM: run it on macOS.');
+    }
+    _collected[name] = digest;
+    return;
   }
-  String line(List<String> lines) =>
-      i < lines.length ? lines[i] : '<end of text>';
-  return '$name (${wrap ? 'with the user-call trace' : 'unwrapped'}): the '
-      'fast paths differ at line ${i + 1}\n'
-      '  off: ${line(a)}\n'
-      '  on:  ${line(b)}';
+  final stored = observationDigests[name];
+  if (stored == null) {
+    fail(
+      '$name: $_digestsPath has no digest of this test. Run O1_UPDATE=1 '
+      'flutter test test/port/options/observation_test.dart on macOS.',
+    );
+  }
+  if (Platform.isMacOS && stored != digest) {
+    fail(
+      '$name: the observations changed (digest $digest, stored $stored). '
+      'Run tool/observation_diff.sh <base commit> to write the texts of both '
+      'trees.',
+    );
+  }
 }
+
+/// The source of observation_digests.dart with [digests], sorted by name,
+/// in the form of `dart format`.
+String _digestsSource(Map<String, String> digests) {
+  final out = StringBuffer()
+    ..writeln(
+      '// Original code, not ported from Chart.js: the digests of the '
+      'observation oracle O1.',
+    )
+    ..writeln(
+      '// Generated by test/port/options/observation_test.dart with '
+      'O1_UPDATE=1. Do not edit.',
+    )
+    ..writeln('// ignore_for_file: lines_longer_than_80_chars')
+    ..writeln()
+    ..writeln(
+      '/// The SHA-256 of the canonical text of each test of the observation '
+      'oracle',
+    )
+    ..writeln('/// O1, by test name, on the macOS VM.');
+  if (digests.isEmpty) {
+    out.writeln('const Map<String, String> observationDigests = {};');
+    return out.toString();
+  }
+  out.writeln('const Map<String, String> observationDigests = {');
+  for (final name in digests.keys.toList()..sort()) {
+    out
+      ..writeln('  ${_dartString(name)}:')
+      ..writeln("      '${digests[name]}',");
+  }
+  out.writeln('};');
+  return out.toString();
+}
+
+/// [s] as a single-quoted Dart string literal.
+String _dartString(String s) {
+  final escaped = s
+      .replaceAll(r'\', r'\\')
+      .replaceAll(r'$', r'\$')
+      .replaceAll("'", r"\'");
+  return "'$escaped'";
+}
+
+// ---------------------------------------------------------------------------
+// The run of one case.
 
 /// One run of [c]: the canonical text of the observations after the
-/// construction and after each step, then the user-call trace.
-String _run(_Case c, {required bool fast, required bool wrap}) {
-  debugFastPaths = fast;
+/// construction and after each step, then, with [wrap], the user-call trace.
+String _run(_Case c, {required bool wrap}) {
   final out = StringBuffer();
   final trace = <String>[];
   final input = c.make();
   if (wrap) _wrapFunctions(input.config, 'config', trace);
   try {
     withClock(Clock.fixed(_now), () {
+      trace.add('== construct');
       final Chart chart;
       try {
         chart = acquireChart(input.config, input.options);
       } on Object catch (e) {
-        out.writeln('construct throws ${e.runtimeType}: $e');
+        out.writeln('construct throws ${_throwText(e)}');
         return;
       }
       try {
+        trace.add('== observe construct');
         _observe(chart, 'construct', out, draw: true);
         for (final (name, step, draw) in _steps) {
+          trace.add('== $name');
           try {
             step(chart);
           } on Object catch (e) {
-            out.writeln('$name throws ${e.runtimeType}: $e');
+            out.writeln('$name throws ${_throwText(e)}');
           }
+          trace.add('== observe $name');
           _observe(chart, name, out, draw: draw);
         }
       } finally {
@@ -250,8 +346,11 @@ String _run(_Case c, {required bool fast, required bool wrap}) {
   } finally {
     c.cleanup?.call();
   }
-  out.writeln('trace (${trace.length} calls):');
-  trace.forEach(out.writeln);
+  if (wrap) {
+    final calls = trace.where((line) => !line.startsWith('== ')).length;
+    out.writeln('trace ($calls calls):');
+    trace.forEach(out.writeln);
+  }
   return out.toString();
 }
 
@@ -288,8 +387,8 @@ void _hover(Chart chart) {
   final datasets = jsGet(chart.data, 'datasets');
   final count = datasets is List<Object?> ? datasets.length : 0;
   for (var i = 0; i < count; i++) {
-    if (!chart.isDatasetVisible(i.toDouble())) continue;
-    final data = chart.getDatasetMeta(i.toDouble()).data;
+    if (!chart.isDatasetVisible(i)) continue;
+    final data = chart.getDatasetMeta(i).data;
     if (data.isEmpty) continue;
     final point = (data.first as Element).tooltipPosition(false);
     if (point.x.isFinite && point.y.isFinite) {
@@ -337,6 +436,20 @@ const List<String> _properties = [
   'hidden',
 ];
 
+/// The names of the `getProps(names, true)` read of each element.
+const List<String> _propNames = [
+  'x',
+  'y',
+  'base',
+  'width',
+  'height',
+  'startAngle',
+  'endAngle',
+  'innerRadius',
+  'outerRadius',
+  'circumference',
+];
+
 /// The keys of a context that the observation and the trace read.
 const List<String> _contextKeys = [
   'type',
@@ -358,23 +471,41 @@ void _observe(
   final datasets = jsGet(chart.data, 'datasets');
   final count = datasets is List<Object?> ? datasets.length : 0;
   for (var i = 0; i < count; i++) {
-    final meta = chart.getDatasetMeta(i.toDouble());
+    final meta = chart.getDatasetMeta(i);
     out.writeln(
       'dataset $i type ${_canon(meta['type'])} visible '
-      '${chart.isDatasetVisible(i.toDouble())}',
+      '${chart.isDatasetVisible(i)}',
     );
-    if (meta.dataset case final types.Element dataset) {
+    final dataset = meta.dataset;
+    if (dataset != null) {
       _observeElement('  dataset element', dataset, out);
     }
     for (var k = 0; k < meta.data.length; k++) {
       _observeElement('  data $k', meta.data[k], out);
+      if (k > 0) {
+        // JS `===` of the options of two neighbor elements: the shared
+        // options of core.datasetController.js:804-831 and :885-891.
+        final previous = meta.data[k - 1] as types.ElementPropertyRead;
+        final current = meta.data[k] as types.ElementPropertyRead;
+        out.writeln(
+          '    same-options-as-previous '
+          '${identical(current['options'], previous['options'])}',
+        );
+      }
     }
     if (meta.controller case final controller?) {
-      out
-        ..writeln(
-          '  cachedDataOpts keys ${_canon(jsObjectKeys(controller.cachedDataOpts))}',
-        )
-        ..writeln('  sharedOptions ${_canon(controller.sharedOptions)}');
+      if (meta.data.isNotEmpty) {
+        out.writeln(
+          '  resolveDataElementOptions(0, active) '
+          '${_guarded(() => _canon(controller.resolveDataElementOptions(0, 'active')))}',
+        );
+      }
+      if (dataset != null) {
+        out.writeln(
+          '  resolveDatasetElementOptions(active) '
+          '${_guarded(() => _canon(controller.resolveDatasetElementOptions('active')))}',
+        );
+      }
     }
   }
   out.writeln(
@@ -383,7 +514,14 @@ void _observe(
     ])}',
   );
   if (draw) {
-    out.writeln('draw ${_guarded(() => _canon(drawCalls(chart), 0, 12))}');
+    out.writeln('draw');
+    try {
+      for (final call in drawCalls(chart)) {
+        out.writeln('  ${_canon(call, 0, 12)}');
+      }
+    } on Object catch (e) {
+      out.writeln('  <throws ${_throwText(e)}>');
+    }
   }
 }
 
@@ -400,20 +538,22 @@ void _observeElement(String label, types.Element element, StringBuffer out) {
   for (final name in _properties) {
     out.writeln('    $name ${_guarded(() => _canon(read[name]))}');
   }
+  out.writeln('    getProps ${_guarded(() => _props(element))}');
   final context = read[r'$context'];
   if (context is Map<String, Object?>) {
     out.writeln(
-      '    \$context keys ${_canon(context.keys.toList())} '
-      '${[for (final key in _contextKeys) '$key=${_canon(jsGet(context, key), 0, 1)}'].join(' ')}',
+      '    \$context keys ${_canon(jsObjectKeys(context))} '
+      '${[for (final key in _contextKeys) '$key=${_guarded(() => _canon(jsGet(context, key), 0, 1))}'].join(' ')}',
     );
   } else {
     out.writeln('    \$context ${_canon(context)}');
   }
   final animations = read[r'$animations'];
   if (animations is Map<String, types.Animation>) {
-    out.writeln('    \$animations ${_canon(animations.keys.toList())}');
-    for (final MapEntry(:key, :value) in animations.entries) {
-      final animation = value as Animation;
+    final keys = jsObjectKeys(animations);
+    out.writeln('    \$animations ${_canon(keys)}');
+    for (final key in keys) {
+      final animation = animations[key]! as Animation;
       final easing = effects.entries
           .where((e) => identical(e.value, animation.easing))
           .map((e) => e.key)
@@ -430,55 +570,90 @@ void _observeElement(String label, types.Element element, StringBuffer out) {
   }
 }
 
+/// The text of `element.getProps(_propNames, true)`: `self` when the result
+/// is the element (core.element.ts:35-37), else `object`, then the value of
+/// each name.
+String _props(types.Element element) {
+  final props = (element as Element).getProps(_propNames, true);
+  final kind = identical(props, element) ? 'self' : 'object';
+  return '$kind {${[for (final name in _propNames) '${jsonEncode(name)}: ${_guarded(() => _canon(props[name]))}'].join(', ')}}';
+}
+
 /// [text], or the throw of [text] as a line.
 String _guarded(String Function() text) {
   try {
     return text();
   } on Object catch (e) {
-    return '<throws ${e.runtimeType}: $e>';
+    return '<throws ${_throwText(e)}>';
   }
 }
 
-/// The class of a Map literal `<String, Object?>{}`: the canonical text
-/// leaves out its name.
-final Type _plainMap = <String, Object?>{}.runtimeType;
+/// The JS kind of the throw [e]: a Dart [TypeError] or [NoSuchMethodError]
+/// is a JS `TypeError`, a [StateError] is a JS `Error` with its message, and
+/// a [RangeError] is a JS `RangeError`. Another throw gives its Dart class.
+/// No line has the message of a [TypeError], which names Dart classes.
+String _throwText(Object e) => switch (e) {
+  TypeError() || NoSuchMethodError() => 'TypeError',
+  StateError(:final message) => 'Error ${jsonEncode(message)}',
+  RangeError() => 'RangeError',
+  _ => '${e.runtimeType}',
+};
 
-/// The canonical text of [value]. The key order of a Map stays
-/// (`jsObjectKeys`). NaN, -0.0, `undefined`, `null`, an `int` and a
-/// `double` each have their own text. A function is `<fn>`. Another object
-/// is its class name. A value deeper than [maxDepth] is its class name.
+/// The canonical text of [value]: JS kinds only, never the Dart class of an
+/// object.
+///
+/// - `undefined`, `null`, `true` and `false`; a number is its JS string
+///   `String(n)` ([jsNumberToString]), so 3 and 3.0 give one text; a string
+///   is its JSON text. -0 gives `0`, as `String(-0)` does. On the Map
+///   model, a negative zero reaches only the canvas arguments of
+///   `translate` and `fillText`. The negation of a `double` option 0 gives
+///   -0 where an `int` option 0 gave 0 (JavaScript gives -0 too). A sign
+///   of zero that reaches a division or `atan2` changes other values of the
+///   text.
+/// - A function is `<fn>`, a class value is `<class Name>`, a `DateTime` is
+///   `Date(<time value>)` and an element is `<element Class>`.
+/// - A List is `[a, b]`. A `Map<String, Object?>` is `{"k": v}` with the
+///   keys of `Object.keys` ([jsObjectKeys]) and the values of the JS
+///   property read ([jsGet]). Another Map is `{k: v}` over its entries.
+/// - Another object is `<object>`. A List or a Map deeper than [maxDepth]
+///   is `<list>`, `<object>` or `<map>`.
 String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
   if (identical(value, undefined)) return 'undefined';
   switch (value) {
     case null:
       return 'null';
-    case final double d:
-      if (d.isNaN) return 'NaN';
-      if (d == 0 && d.isNegative) return '-0.0';
-      return d.toString();
-    case final int i:
-      return '${i}i';
     case final bool b:
       return '$b';
+    case final num n:
+      return jsNumberToString(n);
     case final String s:
       return jsonEncode(s);
     case Function() || JsFunction():
       return '<fn>';
     case final JsClass c:
       return '<class ${c.name}>';
+    case final DateTime d:
+      return 'Date(${d.millisecondsSinceEpoch})';
+    case final types.Element e:
+      return '<element ${e.runtimeType}>';
   }
-  if (depth >= maxDepth) return '<${value.runtimeType}>';
+  if (depth >= maxDepth) {
+    return switch (value) {
+      List<Object?>() => '<list>',
+      Map<String, Object?>() => '<object>',
+      Map<Object?, Object?>() => '<map>',
+      _ => '<object>',
+    };
+  }
   switch (value) {
     case final List<Object?> list:
       return '[${[for (final item in list) _canon(item, depth + 1, maxDepth)].join(', ')}]';
     case final Map<String, Object?> map:
-      final keys = jsObjectKeys(map);
-      final type = map.runtimeType == _plainMap ? '' : '${map.runtimeType}';
-      return '$type{${[for (final key in keys) '${jsonEncode(key)}: ${_guarded(() => _canon(jsGet(map, key), depth + 1, maxDepth))}'].join(', ')}}';
+      return '{${[for (final key in jsObjectKeys(map)) '${jsonEncode(key)}: ${_guarded(() => _canon(jsGet(map, key), depth + 1, maxDepth))}'].join(', ')}}';
     case final Map<Object?, Object?> map:
-      return '${map.runtimeType}{${[for (final MapEntry(:key, :value) in map.entries) '${_canon(key, depth + 1, maxDepth)}: ${_canon(value, depth + 1, maxDepth)}'].join(', ')}}';
+      return '{${[for (final MapEntry(:key, :value) in map.entries) '${_canon(key, depth + 1, maxDepth)}: ${_canon(value, depth + 1, maxDepth)}'].join(', ')}}';
   }
-  return '<${value.runtimeType}>';
+  return '<object>';
 }
 
 // ---------------------------------------------------------------------------
@@ -596,7 +771,8 @@ Function _recorder(
 }
 
 /// One line of the trace: the path, the context keys of the first argument
-/// (or its text) and the class of the second argument.
+/// (or its text) and the JS kind of the second argument ([_argKind]), or
+/// `-` for a function without a second parameter.
 String _traceLine(String path, List<Object?> args) {
   final first = args.isEmpty ? undefined : args[0];
   final String head;
@@ -611,12 +787,24 @@ String _traceLine(String path, List<Object?> args) {
   } else {
     head = _canon(first, 0, 2);
   }
-  final second = args.length > 1 ? args[1].runtimeType.toString() : '-';
+  final second = args.length > 1 ? _argKind(args[1]) : '-';
   return '$path | $head | $second';
 }
 
+/// The kind of the second argument of a user function: `absent` for the
+/// [undefined] sentinel (an argument that the caller does not give),
+/// `resolver` for a resolver proxy, `object` for another Map, else the
+/// `typeof` name.
+String _argKind(Object? value) => identical(value, undefined)
+    ? 'absent'
+    : value is JsProxyObject
+    ? 'resolver'
+    : value is Map
+    ? 'object'
+    : jsTypeof(value);
+
 // ---------------------------------------------------------------------------
-// The bench-like configs (stressChartConfig of the gallery at N 50).
+// The bench-like configs of D1 (stressChartConfig of the gallery at N 50).
 
 const int _n = 50;
 
@@ -799,7 +987,7 @@ final List<_Case> _benchCases = [
 ];
 
 // ---------------------------------------------------------------------------
-// The focused configs.
+// The focused configs of D1.
 
 /// A line chart of [n] points with the labels `a`, `b`, ... and the
 /// datasets [datasets].
@@ -821,7 +1009,9 @@ List<Object?> _values(int n, [int seed = 0]) => <Object?>[
   for (var i = 0; i < n; i++) (((i + seed) * 7) % 11).toDouble(),
 ];
 
-/// The config of the probe of judge-r.md §2.3.
+/// The config of the probe of judge-r.md §2.3: a scriptable
+/// `pointBorderWidth` writes `radius` through its second argument (the
+/// sub-resolver) at dataIndex 2.
 Map<String, Object?> _hazardConfig() => _line(
   [
     <String, Object?>{

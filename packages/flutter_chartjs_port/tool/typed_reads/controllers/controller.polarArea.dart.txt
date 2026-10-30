@@ -1,0 +1,4 @@
+jsGet 21
+jsGetKey 4
+stringIndex 6
+jsCall 1

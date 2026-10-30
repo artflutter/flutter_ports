@@ -1,0 +1,2 @@
+jsGet 2
+stringIndex 5

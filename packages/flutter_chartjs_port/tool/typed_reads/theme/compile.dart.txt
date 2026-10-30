@@ -1,0 +1,3 @@
+stringIndex 6
+jsObjectKeys 4
+extendsMapBase 1

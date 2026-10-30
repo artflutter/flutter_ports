@@ -1,0 +1,3 @@
+jsGet 9
+jsGetKey 6
+stringIndex 5

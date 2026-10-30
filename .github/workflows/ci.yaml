@@ -150,26 +150,10 @@ jobs:
             packages/flutter_chartjs_port/test/port/theme/failures/
           if-no-files-found: ${{ inputs.update_goldens && 'error' || 'ignore' }}
 
-  test-nofast:
-    # The tests of packages/flutter_chartjs_port with every fast path of
-    # Chart.js ADR 0053 off (--dart-define=PORT_FAST_PATHS=false): the spec,
-    # fixture and reference suites run on the ported forms only. One shard:
-    # the run takes about one minute on a 16-core Mac. The fixtures compare
-    # the SHA-256 of each upstream fixture file, so the job checks out the
-    # Chart.js submodules, and FIXTURES_REQUIRED=1 makes a missing file fail.
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Check out the Chart.js submodules
-        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils
-      - uses: ./.github/actions/setup
-      - run: dart run melos run test:nofast
-        env:
-          FIXTURES_REQUIRED: "1"
-
   port-checks:
-    # Tools 1-3 and the checks of tools 6 and 8 of
-    # packages/flutter_chartjs_port/doc/porting-flow.md section 4. parity:check
+    # Tools 1-3, the checks of tools 6 and 8 of
+    # packages/flutter_chartjs_port/doc/porting-flow.md section 4 and tool 9
+    # (check:typed-reads, Chart.js ADR 0054). parity:check
     # runs the spec tests of flutter_chartjs_port for the case counts.
     # Shallow submodules, so that the header check compares each header path
     # and each "files" entry of tool/port_sources.yaml with the pinned tree.
@@ -185,6 +169,7 @@ jobs:
       - run: dart run melos run check:js-semantics
       - run: dart run melos run port:next:check
       - run: dart run melos run parity:check
+      - run: dart run melos run check:typed-reads
 
   upstream-manifest:
     # Tool 4 of packages/flutter_chartjs_port/doc/porting-flow.md section 4. The

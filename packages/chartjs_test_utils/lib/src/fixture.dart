@@ -38,6 +38,9 @@
 ///   each CRLF changed to LF. A checkout with `core.autocrlf=true` (the
 ///   default of Git for Windows) has CRLF line ends: the submodule has no
 ///   `.gitattributes`, and the root `.gitattributes` does not apply to it.
+/// - [sha256Hex]: the SHA-256 of the check above, without a dependency on
+///   package:crypto. The observation oracle O1 of flutter_chartjs_port also
+///   uses it (Chart.js ADR 0054).
 ///
 /// This library is not a pure layer: it imports `flutter_test` and
 /// `dart:io`. A test that imports it needs `@TestOn('vm')`.
@@ -297,8 +300,8 @@ FixtureLoad _checked(FixtureItem item, FixtureSource source, FixtureLoad load) {
       );
     }
     final bytes = file.readAsBytesSync();
-    final actual = _sha256(bytes);
-    if (actual != item.sha256 && _sha256(_lf(bytes)) != item.sha256) {
+    final actual = sha256Hex(bytes);
+    if (actual != item.sha256 && sha256Hex(_lf(bytes)) != item.sha256) {
       fail(
         'the config of ${item.path} is stale: the SHA-256 of the upstream '
         'file is $actual, and ${source.manifest} has ${item.sha256} (the '
@@ -392,8 +395,9 @@ Future<void> _settle(Future<Object?> future) async {
   if (error case final e?) Error.throwWithStackTrace(e, stackTrace!);
 }
 
-// The SHA-256 of FIPS 180-4, for the check of the upstream files. The
-// harness has no dependency on package:crypto.
+// The SHA-256 of FIPS 180-4, for the check of the upstream files and for the
+// digests of the observation oracle O1 (Chart.js ADR 0054). The harness has
+// no dependency on package:crypto.
 
 const int _mask = 0xffffffff;
 
@@ -426,8 +430,12 @@ Uint8List _lf(Uint8List bytes) {
 
 int _rotr(int x, int n) => ((x >> n) | (x << (32 - n))) & _mask;
 
-/// The SHA-256 of [message] as 64 lower-case hex digits.
-String _sha256(Uint8List message) {
+/// The SHA-256 of [message] as 64 lower-case hex digits (FIPS 180-4).
+///
+/// The runner checks the upstream fixture files with it. It is public for
+/// the digests of the observation oracle O1 of flutter_chartjs_port
+/// (`test/port/options/observation_test.dart`, Chart.js ADR 0054).
+String sha256Hex(Uint8List message) {
   final length = message.length;
   final padded = Uint8List(((length + 72) >> 6) << 6)
     ..setRange(0, length, message);

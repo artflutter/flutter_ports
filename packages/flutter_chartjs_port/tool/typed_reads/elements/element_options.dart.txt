@@ -1,0 +1,2 @@
+jsObjectKeys 1
+extendsMapBase 1

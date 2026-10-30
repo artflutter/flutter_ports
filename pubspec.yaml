@@ -43,9 +43,6 @@ melos:
     test:goldens:
       run: cd packages/flutter_chartjs_port && flutter test --tags golden test/port/theme/goldens_test.dart
       description: Run the theme goldens of flutter_chartjs_port (Chart.js ADR 0050). They skip unless CHART_GOLDENS=1. Only the CI job fixtures on ubuntu-24.04 sets it. Options go after "--", for example "dart run melos run test:goldens -- --update-goldens" (write the golden files; only the workflow_dispatch run of CI with update_goldens does this).
-    test:nofast:
-      run: cd packages/flutter_chartjs_port && flutter test --exclude-tags golden --dart-define=PORT_FAST_PATHS=false
-      description: Run the tests of flutter_chartjs_port with every fast path of Chart.js ADR 0053 off (the define PORT_FAST_PATHS=false), the spec, fixture and reference suites included. The fixtures need the submodule third_party/Chart.js (melos run upstream). Without it, each fixture skips; with FIXTURES_REQUIRED=1, it fails. Options go after "--" and go to the flutter test call.
 
     # The per-module tools of packages/flutter_chartjs_port/doc/porting-flow.md section 4.
     check:lib-imports:
@@ -60,6 +57,9 @@ melos:
     port:next:check:
       run: dart run packages/flutter_chartjs_port/tool/port_order.dart --check
       description: Fail when tool 8 cannot read a module of third_party/Chart.js/src, a header line of lib/ or a parity.md status, or when an import does not resolve.
+    check:typed-reads:
+      run: dart run packages/flutter_chartjs_port/tool/check_typed_reads.dart
+      description: Fail when a count of the by-name forms (jsGet, jsGetKey, string index, jsCall, jsObjectKeys, extends MapBase, with MapMixin, implements Map) in a flutter_chartjs_port lib/src file outside lib/src/js/ and lib/src/options/ is above its baseline in tool/typed_reads/, or when a baseline is stale (tool 9). Options go after "--", for example "dart run melos run check:typed-reads -- --update" (write the baselines from the current tree).
     check:port:
       steps:
         - check:lib-imports
@@ -67,7 +67,8 @@ melos:
         - check:js-semantics
         - port:next:check
         - parity:check
-      description: Run check:lib-imports, check:headers, check:js-semantics, port:next:check and parity:check.
+        - check:typed-reads
+      description: Run check:lib-imports, check:headers, check:js-semantics, port:next:check, parity:check and check:typed-reads.
     test:fixtures:
       run: dart run packages/flutter_chartjs_port/tool/spec_cases.dart --fixtures
       description: Run the fixture smoke tests of flutter_chartjs_port (tool 7) and report each fixture as passed, failed, skipped or missing. Fail on a failed, missing or unknown fixture and on a bad skip reason. Without the submodule third_party/Chart.js, each fixture skips; with FIXTURES_REQUIRED=1, it fails.

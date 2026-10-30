@@ -18,8 +18,10 @@
 /// - The fixture smoke runner of chartjs-test-utils `src/fixture.js`
 ///   (Chart.js ADR 0029): `specsFromFixtures`, `specFromFixture`,
 ///   `FixtureSource`, `FixtureItem`, `FixtureInputs`, `FixtureLoad`,
-///   `HandFixture`, `fixturesTag`, `fixturesRequiredVariable` and
-///   `noSubmoduleReason`.
+///   `HandFixture`, `fixturesTag`, `fixturesRequiredVariable`,
+///   `noSubmoduleReason` and `sha256Hex` (the SHA-256 of the check of the
+///   upstream files, also for the observation oracle O1 of
+///   flutter_chartjs_port).
 ///
 /// The pure part of the harness is `package:chartjs_test_utils/pure.dart`.
 /// This library is not a pure layer: a test that imports it needs
@@ -57,6 +59,7 @@ export 'src/index.dart'
         noSubmoduleReason,
         releaseChart,
         releaseCharts,
+        sha256Hex,
         specFromFixture,
         specsFromFixtures,
         triggerMouseEvent,

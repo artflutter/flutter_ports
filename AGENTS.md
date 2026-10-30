@@ -35,9 +35,9 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   `@TestOn('vm')`, in Chrome, compiled with dart2js and with dart2wasm. It needs a local Google
   Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the port checks of
-  `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1-3 and the checks of tools 6 and 8),
-  as melos steps. The CI job `port-checks` runs the five checks with a shallow checkout of the
-  three Chart.js submodules.
+  `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1-3 and the checks of tools 6 and 8)
+  and tool 9, as melos steps. The CI job `port-checks` runs the six checks with a shallow checkout
+  of the three Chart.js submodules.
   Each check can also run alone:
   - `check:lib-imports`: the import allowlists of `lib/`, of the pure layers and of the tests that
     the web legs compile. It also fails when a ported file imports `lib/src/theme/`, and when a
@@ -59,6 +59,15 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
     `jsDateNow`.
   - `port:next:check`: the check mode of tool 8 (`port:next`, below).
   - `parity:check`: the check mode of tool 6 (`parity`, below).
+  - `check:typed-reads`: tool 9, the ratchet of the by-name forms (Chart.js ADR 0054). For each
+    file of `packages/flutter_chartjs_port/lib/src` outside `lib/src/js/` and
+    `lib/src/options/`, it counts in the code (not in comments or strings) `jsGet(`, `jsGetKey(`,
+    an index with one string literal (read or write), a call of `jsCall*`, `jsObjectKeys(`,
+    `extends MapBase`, `with MapMixin` and `Map` in an `implements` clause. `jsGetIndex` does not
+    count. It fails when a count is above its baseline in `tool/typed_reads/<path>.txt` (one file
+    for each source file, one line `<form> <count>` for each form; no file means 0), and on a
+    stale or bad baseline. A lower count passes with a note. `-- --update` writes the baselines
+    from the tree. A lane lowers its own baselines; it never raises one.
 - `dart run melos run test:cases`: tool 5. It runs `test/specs/` and reports each upstream case of
   `doc/upstream/manifest.json` as passed, failed, skipped or missing. It fails on an unknown test
   name, a bad skip reason and a missing case of a `ported` module. CI runs it in the ubuntu `test`
@@ -77,10 +86,6 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   manifest. Without the submodule, each fixture skips with `'n/a: the submodule third_party/Chart.js
   is not checked out'`. With `FIXTURES_REQUIRED=1`, it fails. The CI job `fixtures` makes a shallow
   checkout of `third_party/Chart.js` and sets `FIXTURES_REQUIRED=1`.
-- `dart run melos run test:nofast`: the tests of `flutter_chartjs_port`, the spec, fixture and
-  reference suites included, with every fast path of Chart.js ADR 0053 off
-  (`--dart-define=PORT_FAST_PATHS=false`). The fixtures need the submodule `third_party/Chart.js`.
-  With `FIXTURES_REQUIRED=1`, a missing fixture file fails.
 - `dart run melos run test:goldens`: the theme goldens of `flutter_chartjs_port`
   (`test/port/theme/goldens_test.dart`, the tag `golden`, theming.md §8 test 9, Chart.js ADR 0050).
   They skip unless `CHART_GOLDENS=1`. Their pinned runner is the CI job `fixtures` on
@@ -138,7 +143,7 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   gallery the way CI does (web with WebAssembly, debug APK, iOS without code signing).
 
 Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `test:cases`,
-`test:fixtures`, `test:nofast` and `check:port`.
+`test:fixtures` and `check:port`.
 
 ## Layout
 
@@ -469,9 +474,19 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     each test file of the package ([Tests](#tests)).
   - `test/specs/`: ported upstream specs. `test/kurkle_color/`: the ported `@kurkle/color` tests.
     `test/port/`: port-only tests, at the path of the `lib/src/` file that they test.
-    `test/port/js/js_fast_paths_test.dart` is D1 of Chart.js ADR 0053: it builds each config of its
-    corpus (the hand fixtures, bench-like configs and focused configs) with the fast paths off and
-    on, and compares the observations and the user-call trace.
+    `test/port/options/` has the oracles of the typed internal model (Chart.js ADR 0054). O1,
+    `observation_test.dart`, runs 727 configs (the hand fixtures, the pure data fixtures of
+    `doc/upstream/fixtures.json`, the benchmark and focused configs and the configs of the D2
+    trace) twice, as given and with a recorder of each user function. After the construction and
+    after each of 8 steps it writes a text of JS kinds only (no Dart class name of an option
+    object, no `int` marker, a number through `jsNumberToString`): the resolved options with
+    their key order, `$shared`, the element properties, `getProps`, the contexts, the animations,
+    the active-mode options, the active elements, the draw calls and the user calls. It compares
+    the SHA-256 of each text with `observation_digests.dart` on macOS. `O1_UPDATE=1` writes the
+    digests, only after a reviewed behavior change; `O1_DUMP=<dir>` writes the texts;
+    `tool/observation_diff.sh <base>` writes the texts of a base commit and of the tree and lists
+    the files that differ. `key_census_suite.tsv` and `key_census_fixtures.tsv` are the key
+    census of the raw configs on the Map model (O2, the input of the option schema).
     `test/port/scales/scale_chart_harness.dart` and `scale_time_harness.dart` are helper libraries
     of the scale tests, not test files. `test/port/controllers/` has the controller reference tests
     and their harness `controller_chart_harness.dart` (a library). `controller.<name>_test.dart`
@@ -509,7 +524,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0053. Fourteen of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0054. Fourteen of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR
       0012 supersedes Chart.js ADR 0004, and Chart.js ADR 0026 supersedes Chart.js ADR 0008.
       Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0033 supersedes Chart.js ADR
@@ -540,7 +555,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       of Chart.js ADR 0043, the export list of the app library of Chart.js ADR 0048 §5, and of
       Chart.js ADR 0049 §1 (the type of `config`), the two §4 bullets of the typed path and Open 2.
       Chart.js ADR 0053 (the resolver fast paths) is rejected: the maintainer rejected the memo and
-      fast-path layers, and a typed internal model replaces them. The other ADRs are accepted. Docs name them
+      fast-path layers, and a typed internal model replaces them. Chart.js ADR 0054 (the typed
+      internal model) is proposed: it waits for the base step, the five lanes, the close step and
+      one night with no block. On acceptance, it supersedes Chart.js ADRs 0043, 0018 and 0021, and
+      parts of Chart.js ADRs 0017, 0036 and 0038 (its §5.2). It decides the artifacts of Chart.js
+      ADR 0053: the fast-path switch, D1 and `test:nofast` are gone; D2, the bench cells and the
+      P3 page stay. The other ADRs are accepted. Docs name them
       "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of
@@ -1185,9 +1205,10 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `test/port/js/*_reference.dart`, `test/port/helpers/draw_point_reference.dart`,
   `test/port/elements/*_reference.dart` (point, line, bar and arc),
   `test/port/core/*_reference.dart` (animation, interaction, layouts, scale, scale autoskip, dataset
-  controller, registry, controller, date adapter and the resolver trace, D2 of Chart.js ADR 0053:
-  `resolver_trace_reference.mjs` runs the dist with a fixed `Date.now()` and an animator frame
-  that never runs), `test/port/scales/*_reference.dart` (the scale
+  controller, registry, controller, date adapter and the resolver trace, D2 of Chart.js ADR 0053,
+  kept by Chart.js ADR 0054: `resolver_trace_reference.mjs` runs the dist with a fixed
+  `Date.now()` and an animator frame that never runs; `test/port/core/resolver_trace_cases.dart`
+  has the user functions and the setups of its cases), `test/port/scales/*_reference.dart` (the scale
   chart harness and the seven scales of phase 6), `test/port/theme/*_reference.dart` (light and
   precedence), `test/port/controllers/controller_<snake>_reference.dart` (the eight controllers of
   phase 7), `test/port/plugins/*_reference.dart` and
@@ -1330,7 +1351,7 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   - CI `dco` job: checks the sign-off on every pull-request commit.
 - CI jobs (`.github/workflows/ci.yaml`): `format`, `analyze`, `test` (ubuntu, macOS, Windows),
   `test-web`, `fixtures` (on `ubuntu-24.04`, also the runner of the theme goldens),
-  `test-nofast` (`test:nofast`), `port-checks`, `upstream-manifest`, `gallery-web`,
+  `port-checks`, `upstream-manifest`, `gallery-web`,
   `gallery-android`, `gallery-ios`, `upstream-pin`, `reuse` and `dco`. A `workflow_dispatch` run has the inputs `update_goldens` and
   `flutter_version` (`test:goldens`).
 - Toolchain: Flutter 3.47.7 (Dart 3.13.5), pinned in `.fvmrc`; CI reads the same file. All

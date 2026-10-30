@@ -1,0 +1,2 @@
+stringIndex 2
+jsObjectKeys 1

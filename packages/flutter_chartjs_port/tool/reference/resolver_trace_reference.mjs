@@ -20,6 +20,19 @@
 // name in a direct `resolveNamedOptions` call, and the animation options of
 // an update in the default mode, of `hide` and of `show`.
 //
+// The cases after them come from B0 of the typed core (Chart.js ADR 0054):
+// a plugin that writes the dataset colors in `beforeLayout`, a scriptable
+// option that writes the Map of another dataset, a write of
+// `chart.options.plugins.legend.position` before an update, a change of
+// `Chart.defaults.borderColor` between two updates (element, scale and
+// legend items), a scriptable grid `lineWidth` with a context for each tick,
+// a scriptable legend label color, a string `pointRadius` with a hit test,
+// the write through the sub-resolver in the active mode, a user scale class,
+// a user element class as the data element of the bar controller, and a
+// delete of `defaults.elements.point.rotation`. The cases that change the
+// global scopes for the cases after them come last, and each step that
+// writes `Chart.defaults` puts the old value back after its case.
+//
 // The user functions. Each function of a config is a named function (the
 // string 'fn:<name>' in the data). The Dart test has a function of the same
 // name with the same body. Each call records one trace entry: `fn` (the
@@ -181,6 +194,21 @@ const F = {
     if (ctx.dataIndex === 1) delete defaults.animation.easing;
     return 'red';
   }),
+  writeOtherDataset: fn('writeOtherDataset', (ctx) => {
+    if (ctx.dataIndex === 0) ctx.chart.data.datasets[1].pointRadius = 8;
+    return 'red';
+  }),
+  gridWidth: fn('gridWidth', (ctx) => (ctx.index % 2 === 0 ? 2 : 1)),
+  legendColor: fn('legendColor', () => '#00ff00'),
+  writeRadiusActive: fn('writeRadiusActive', (ctx, options) => {
+    if (ctx.active && ctx.dataIndex === 2) options.radius = 9;
+    return 2;
+  }),
+  // A plugin hook: it records no call. The Dart test has the same body.
+  writeColors: named('writeColors', (chart) => {
+    chart.data.datasets[0].backgroundColor = 'green';
+    chart.data.datasets[0].borderColor = 'blue';
+  }),
 };
 
 // ---------------------------------------------------------------------------
@@ -228,6 +256,33 @@ const SETUPS = {
     scope._fallback = F.animationFallback;
     return () => {
       scope._fallback = old;
+    };
+  },
+  userScale() {
+    // A user scale class (Chart.js ADR 0054, B0): a subclass of LinearScale
+    // with its own id and one more default key.
+    class MyScale extends C.LinearScale {
+      static id = 'myScale';
+      static defaults = {myScaleOption: 3};
+    }
+    C.Chart.register(MyScale);
+    return () => C.Chart.unregister(MyScale);
+  },
+  userBar() {
+    // A user element class (Chart.js ADR 0054, B0): a subclass of BarElement
+    // with its own id, as the data element of the bar controller. Its
+    // defaults merge over the defaults of elements.bar (registerDefaults).
+    class MyBar extends C.BarElement {
+      static id = 'myBar';
+      static defaults = {borderWidth: 2, myOption: 7};
+    }
+    C.Chart.register(MyBar);
+    const bar = defaults.datasets.bar;
+    const old = bar.dataElementType;
+    bar.dataElementType = 'myBar';
+    return () => {
+      bar.dataElementType = old;
+      C.Chart.unregister(MyBar);
     };
   },
   deleteEasing() {
@@ -378,10 +433,76 @@ function applyStep(chart, step) {
     }
     case 'readOption':
       return valueOf(chart.options[args[0]], 0);
+    case 'setOption': {
+      // chart.options.<path> = value: the set trap of the resolver.
+      const [path, value] = args;
+      const {object, key} = parentOf(chart.options, path);
+      object[key] = value;
+      return undefined;
+    }
+    case 'setDefault': {
+      // Chart.defaults.<path> = value; the old value comes back after the
+      // case.
+      const [path, value] = args;
+      const {object, key} = parentOf(defaults, path);
+      const had = Object.hasOwn(object, key);
+      const old = object[key];
+      undo.push(() => {
+        if (had) object[key] = old;
+        else delete object[key];
+      });
+      object[key] = value;
+      return undefined;
+    }
+    case 'deleteDefault': {
+      // delete Chart.defaults.<path>; the key comes back at the end of the
+      // keys after the case (the case is the last one).
+      const {object, key} = parentOf(defaults, args[0]);
+      const old = object[key];
+      undo.push(() => {
+        object[key] = old;
+      });
+      delete object[key];
+      return undefined;
+    }
+    case 'readScale':
+      return valueOf(readPath(chart.scales[args[0]].options, args[1]), 0);
+    case 'readLegend':
+      return valueOf(readPath(chart.legend.options, args[0]), 0);
+    case 'legendItems':
+      return chart.legend.legendItems.map((item) => valueOf(item[args[0]], 1));
+    case 'hitNear': {
+      // The items of the mode 'point' at the data element [d, i] moved by
+      // (dx, dy), with the event of the hit queries of the controller
+      // generators.
+      const [d, i, dx, dy] = args;
+      const element = chart.getDatasetMeta(d).data[i];
+      const e = {type: 'mousemove', native: null, x: element.x + dx, y: element.y + dy};
+      return chart
+        .getElementsAtEventForMode(e, 'point', {intersect: true}, false)
+        .map((item) => [item.datasetIndex, item.index]);
+    }
     default:
       throw new Error(`Not a step: ${JSON.stringify(step)}`);
   }
 }
+
+/** The value at the dotted [path] under [root], read key by key. */
+function readPath(root, path) {
+  let value = root;
+  for (const key of path.split('.')) value = value[key];
+  return value;
+}
+
+/** The object that holds the last key of the dotted [path] under [root]. */
+function parentOf(root, path) {
+  const keys = path.split('.');
+  const key = keys.pop();
+  return {object: keys.length ? readPath(root, keys.join('.')) : root, key};
+}
+
+/** The undo functions of the steps of the current case, in step order. */
+let undo = [];
 
 /** The name of the class of the thrown value [e]. */
 function errorName(e) {
@@ -435,6 +556,8 @@ function runCase(name, config, {setup = null, steps = [], animations = false} = 
     }
   } finally {
     chart?.destroy();
+    for (const f of undo.reverse()) f();
+    undo = [];
     cleanup?.();
     trace = [];
   }
@@ -633,6 +756,109 @@ const cases = [
     line({pointBackgroundColor: F.deleteEasing}, {animation: {...ANIMATION}}),
     {setup: 'deleteEasing', animations: true, steps: [['update']]},
   ),
+  // The cases of B0 of the typed core (Chart.js ADR 0054).
+  runCase(
+    'plugin: an inline plugin writes the dataset colors in beforeLayout',
+    {...bar(), plugins: [{id: 'writer', beforeLayout: F.writeColors}]},
+    {steps: [['update']]},
+  ),
+  runCase(
+    'write: a scriptable option writes the Map of another dataset',
+    {
+      type: 'line',
+      data: {
+        labels: LABELS.slice(0, 3),
+        datasets: [
+          {data: VALUES.slice(0, 3), pointBackgroundColor: F.writeOtherDataset},
+          {data: VALUES.slice(1, 4)},
+        ],
+      },
+      options: baseOptions(),
+    },
+    {steps: [['update']]},
+  ),
+  runCase(
+    'options: a write of plugins.legend.position through chart.options',
+    line({}, {plugins: {legend: {display: false}, tooltip: false}}),
+    {
+      steps: [
+        ['readLegend', 'position'],
+        ['setOption', 'plugins.legend.position', 'left'],
+        ['readLegend', 'position'],
+        ['update'],
+        ['readLegend', 'position'],
+      ],
+    },
+  ),
+  runCase(
+    'defaults: Chart.defaults.borderColor changes between two updates',
+    bar({}, {plugins: {legend: {display: false}, tooltip: false}}),
+    {
+      steps: [
+        ['readScale', 'x', 'grid.color'],
+        ['legendItems', 'strokeStyle'],
+        ['setDefault', 'borderColor', '#123456'],
+        ['update'],
+        ['readScale', 'x', 'grid.color'],
+        ['legendItems', 'strokeStyle'],
+      ],
+    },
+  ),
+  runCase(
+    'scale: a scriptable grid lineWidth with a context for each tick',
+    line(
+      {},
+      {
+        scales: {
+          x: {display: true, ticks: {display: false}, grid: {lineWidth: F.gridWidth}},
+          y: {display: false, ticks: {display: false}},
+        },
+      },
+    ),
+    {steps: [['update'], ['readScale', 'x', 'grid.lineWidth']]},
+  ),
+  runCase(
+    'plugin: a scriptable legend label color',
+    line({}, {plugins: {legend: {display: false, labels: {color: F.legendColor}}, tooltip: false}}),
+    {steps: [['update'], ['readLegend', 'labels.color'], ['legendItems', 'fontColor']]},
+  ),
+  runCase('hit: a string pointRadius and the mode point', line({pointRadius: '5'}), {
+    steps: [
+      ['hitNear', 0, 1, 10, 0],
+      ['hitNear', 0, 1, 20, 0],
+    ],
+  }),
+  runCase(
+    'write: a hover option writes radius in the active mode',
+    line({pointHoverBorderWidth: F.writeRadiusActive}, {}, 5),
+    {steps: [['setActive', [[0, 2]]], ['update']]},
+  ),
+  runCase(
+    'scale: a user scale class as the value scale',
+    line(
+      {},
+      {
+        scales: {
+          x: {display: false, ticks: {display: false}},
+          y: {type: 'myScale', display: false, ticks: {display: false}},
+        },
+      },
+    ),
+    {
+      setup: 'userScale',
+      steps: [['update'], ['readScale', 'y', 'myScaleOption'], ['readScale', 'y', 'type']],
+    },
+  ),
+  runCase(
+    'element: a user element class as the bar data element',
+    bar(),
+    {setup: 'userBar', steps: [['update']]},
+  ),
+  // Last: the delete moves `rotation` to the end of the keys of
+  // defaults.elements.point for the rest of the run.
+  runCase('defaults: a delete of defaults.elements.point.rotation', line(), {
+    steps: [['deleteDefault', 'elements.point.rotation'], ['update']],
+  }),
 ];
 
 // ---------------------------------------------------------------------------

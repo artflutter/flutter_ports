@@ -1,0 +1,5 @@
+jsGet 37
+stringIndex 16
+jsCall 6
+jsObjectKeys 2
+extendsMapBase 2

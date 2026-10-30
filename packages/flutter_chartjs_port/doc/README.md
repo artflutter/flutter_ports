@@ -121,6 +121,9 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0052: The typed public API](adr/0052-typed-public-api.md) (proposed; on
     acceptance, it supersedes parts of Chart.js ADRs 0043, 0048 and 0049)
   - [Chart.js ADR 0053: The resolver fast paths](adr/0053-resolver-fast-paths.md) (rejected)
+  - [Chart.js ADR 0054: The typed internal model](adr/0054-typed-internal-model.md) (proposed; on
+    acceptance, it supersedes Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017,
+    0036 and 0038)
 
 ## What gets ported
 
