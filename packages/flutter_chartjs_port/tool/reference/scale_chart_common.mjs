@@ -83,15 +83,18 @@
 // because the lockfile of the commit has rollup 3.30.0 (3.20.2 at v4.5.1).
 // Its code is the code of v4.5.1 with the upstream changes of the range.
 //
-// The build of phase 7 (2026-10-20, on macOS with the darwin-x64 Node.js
-// under Rosetta) used these files. Compare them to find a changed input:
-// - node-v24.12.0-darwin-x64.tar.gz from https://nodejs.org/dist/v24.12.0/,
-//   SHA-256 b82ea4c62fd08e250cab59d625e75d77cc5b0a3d60c6698ebee4545c88a169c5
+// The data at the tag v4.6.1 (2026-10-29, on macOS with the darwin-arm64
+// Node.js, Chart.js ADR 0045) came from these files. Compare them to find a
+// changed input:
+// - node-v24.22.1-darwin-arm64.tar.gz from https://nodejs.org/dist/v24.22.1/,
+//   SHA-256 89c682593d76cd44233fa53b1563264e7de9cbb189cad169135c5b4fadfbc0a7
 //   (the line of SHASUMS256.txt in the same folder).
 // - dist/chart.js, SHA-256
-//   bc550e26bbb4efa6dcc19fe8ec942327930306a9ef8b63f0ec44d650a7745e17.
+//   5a059a341daded15d6333d1bda10f5d990c9458c4ef7f222a5b11c45913cd0df.
 // - dist/chunks/index.js, SHA-256
-//   87b29e4c0d409eff30f9d9108feba6291c080e23641382e91fbf5fc125ff1977.
+//   7f8e207fc91dada433bd757fba6c551bc347305f2fddc9e3fdb4232edb8890cd.
+// The build of phase 7 (2026-10-20) ran the darwin-x64 Node.js v24.12.0
+// under Rosetta at the commit pin. Chart.js ADR 0045 replaced that engine.
 // The fsevents build error of `pnpm install` on macOS comes from an optional
 // package. It does not change the build.
 //

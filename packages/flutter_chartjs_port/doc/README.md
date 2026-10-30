@@ -151,7 +151,8 @@ Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the lockfile of the pin), whic
 The new ADRs and design documents use the revised phase numbers of porting-flow.md §5 (4 =
 Elements, 5 = Core), not the numbers of the table below.
 
-**Status (2026-10-22).** Phases 0 to 7 of porting-flow.md §5 are done. Phase 2 ported the
+**Status (2026-10-30).** Phases 0 to 8 of porting-flow.md §5 are done. Phase 9 (Flutter API and
+release) is in progress. Phase 2 ported the
 rest of the JS runtime, 14 helper files, the `core.defaults` closure and `@kurkle/color` 0.3.2
 ([parity.md](parity.md)). Phase 3 added the canvas layer over `dart:ui`
 ([Chart.js ADR 0013](adr/0013-canvas-model.md)), the internal chart host and `src/platform`
@@ -169,9 +170,26 @@ adapter ([Chart.js ADR 0024](adr/0024-dates.md)). Phase 7 ported the eight datas
 the fixture smoke runner ([Chart.js ADR 0029](adr/0029-fixture-smoke-runner.md)) and the gallery
 pages of the nine chart types ([Chart.js ADR 0031](adr/0031-gallery-chart-types.md)). At its end,
 831 spec cases pass, 0 fail and 111 skip in the 45 ported spec files, and 457 of the 529 upstream
-fixtures pass. The rows of porting-flow.md §5 give the results of each phase. Phase 8 (plugins)
-is in progress: the seven plugins of `src/plugins/` are ported, and `registerables` registers
-them (2026-10-23).
+fixtures pass. The rows of porting-flow.md §5 give the results of each phase. Phase 8 ported the
+seven plugins of `src/plugins/` with the theme hunks H4a-H4c and H5, and the input path of the
+legend and the tooltip ([Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md)). At its
+end (2026-10-29), 955 spec cases pass, 0 fail and 81 skip in the 53 ported spec files, and 628 of
+the 667 upstream fixtures pass. The other 39 skip as `diverges: adapt-date-moment-format`.
+
+At the start of phase 9 (2026-10-29), the pin moved to the tag v4.6.1, and the reference engine
+moved to arm64 ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)). Phase 9 ported
+`src/index.umd.ts` and `src/types.ts` and added the three public libraries
+([Chart.js ADR 0048](adr/0048-entry-points-and-public-library.md)), the widget `ChartView` with
+reduced motion ([Chart.js ADR 0049](adr/0049-chart-view-widget.md)), the public theme API with
+the presets, the runtime theme switch and the goldens
+([Chart.js ADR 0050](adr/0050-public-theme-api.md)), and the keyboard, the focus and the
+semantics node of `ChartView`
+([Chart.js ADR 0051](adr/0051-input-events-and-interaction-state.md)). The gallery uses
+`ChartView` and the public libraries. The package has its README for pub.dev, the example
+`example/main.dart` and the published archive of
+[Chart.js ADR 0047](adr/0047-published-archive.md). On 2026-10-30, 958 spec cases pass, 0 fail
+and 78 skip, no case is missing, and the counts of the fixtures did not change. The published
+floor (porting-flow.md §2.12) and the release of 0.1.0 are open.
 
 The order follows upstream's own layering:
 - `helpers` depend only on `core.defaults` (and a type-only import of the chart controller).
@@ -199,8 +217,8 @@ elements and scales lands (phases 5-7).
 | 5. Elements | done (phase 4 of porting-flow.md §5); point, line, bar, arc | element spec cases pass |
 | 6. Scales | done (phase 6 of porting-flow.md §5); linear base, linear, category, logarithmic, time, timeseries, radial linear | scale spec cases pass |
 | 7. Controllers | done (phase 7 of porting-flow.md §5); line, scatter, bar, bubble, doughnut, pie, polar area, radar | controller specs and the remaining chart-level cases pass; gallery shows every type |
-| 8. Plugins | title, subtitle, legend, tooltip, filler, decimation, colors | plugin specs pass |
-| 9. Flutter API and release | public widget, semantics, docs, pana, first publish | `flutter_chartjs_port` 0.1.0 on pub.dev |
+| 8. Plugins | done; title, subtitle, legend, tooltip, filler, decimation, colors | plugin specs pass |
+| 9. Flutter API and release | in progress; public widget, semantics, docs, pana, first publish | `flutter_chartjs_port` 0.1.0 on pub.dev |
 
 ## Open questions (ADRs before phase 2)
 

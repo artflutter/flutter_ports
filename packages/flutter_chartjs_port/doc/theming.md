@@ -364,9 +364,9 @@ emitted `transitions` keys (section 3.8). [Chart.js ADR 0019](adr/0019-animation
 leaves the reduced-motion policy to the widget. [Chart.js ADR 0049](adr/0049-chart-view-widget.md)
 §7 decides it: a flag keyed by the canvas that `_createAnimations` reads. With the flag, the
 `'themeFrame'` switch and the `'default'` removal both end at once, and the user `onComplete` runs.
-The widget reads the preference with that flag. Until it lands, `ChartView` gives the switch no
-reduced motion: the switch selects `'themeFrame'` already, and the pending case of
-`test/port/widgets/chart_theme_switch_test.dart` waits for the flag.
+`ChartView` sets the flag from `MediaQuery.maybeDisableAnimationsOf` (row
+`platform-reduced-motion`). The group `under MediaQuery(disableAnimations: true)` of
+`test/port/widgets/chart_theme_switch_test.dart` pins the switch and the removal.
 
 Neither the switch nor the reduced-motion flag writes `defaults`, `overrides` or
 `defaults.animation`, because they are global.
@@ -689,7 +689,7 @@ Required in phase 9:
    no update for equal themes, the palette of a pushed dataset, an app edit of a dataset color,
    `forceOverride`, one update with the theme mode for a theme change and a config change, the
    inherited theme, the plugin `$chartView` and the asserts of the config. The case under
-   `MediaQuery(disableAnimations: true)` waits for the reduced-motion flag of
+   `MediaQuery(disableAnimations: true)` pins the reduced-motion flag of
    [Chart.js ADR 0049](adr/0049-chart-view-widget.md) §7 (section 3.7).
 9. **Goldens.** One golden per public preset on one chart type, on the pinned runner
    (porting-flow.md, section 3). `test/port/theme/goldens_test.dart` (VM only, the tag `golden`)
@@ -765,8 +765,11 @@ theming work in each phase.
   use raw Map themes, and they write `defaults` and `overrides` directly. They also pin the derived
   hover color of section 3.2.
 - `lib/src/theme/compile.dart`: `compileChartTheme` over raw Map themes, the emission guard and the
-  deep freeze. Until phase 9, a theme is a raw Map theme with the fields `colors`, `typography` and
-  `raw`. A color token is a `RawThemeColor` record of sRGB components from 0 to 1.
+  deep freeze. In phase 5, a theme is a raw Map theme with the fields `colors`, `typography` and
+  `raw`. Phase 8 adds the field `palette`. A color token is a `RawThemeColor` record of sRGB
+  components from 0 to 1. In phase 9, `themeDataToRaw` of `theme_data.dart` converts the public
+  `ChartThemeData` to a raw Map theme (section 5.1). Only the tests give a raw Map theme with
+  `raw`.
 - `lib/src/theme/presets.dart`: the internal `ChartThemes.light` and `ChartThemes.none`. The light
   preset holds `colors.color`, `colors.borderColor`, `colors.backgroundColor`, `colors.surface`
   and `typography.font`.
@@ -930,10 +933,10 @@ Risks:
   palette in the datasets.
 - A `'themeFrame'` update during an animation retargets that animation. The animation then ends on
   its own schedule (`core.animation.js:51-64`).
-- Theme removal under reduced motion animated for 1000 ms, the default duration. The flag of
-  [Chart.js ADR 0049](adr/0049-chart-view-widget.md) §7 ends it at once, with no transitions-only
-  scope (Chart.js ADR 0050, change 6). The risk closes when the flag lands in `ChartView`. Until
-  then, `ChartView` reads no reduced-motion preference (section 3.7).
+- Theme removal under reduced motion animated for 1000 ms, the default duration. Closed: the flag
+  of [Chart.js ADR 0049](adr/0049-chart-view-widget.md) §7 ends it at once, with no
+  transitions-only scope (Chart.js ADR 0050, change 6). `ChartView` sets the flag from the
+  preference (section 3.7).
 - It is possible that `$theme` and the palette keys collide with future upstream keys. The coverage
   test flags any `$` key in the inventory. `$chartView` is a reserved plugin id.
 

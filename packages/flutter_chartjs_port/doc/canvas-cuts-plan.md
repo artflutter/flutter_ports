@@ -749,6 +749,16 @@ Changes to the cited files:
   `platform-reduced-motion` in place, and Chart.js ADR 0049 gets the results. No library file, test
   or gallery file changes, and `doc/parity.md` does not change. The references, the inventory
   (§1.1), the tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-30, the docs of phase 9 (the package README, `example/main.dart`, `doc/README.md`).
+  `doc/porting-flow.md` §2.7 gets one bullet after the bullet of the canvas attributes: the items
+  of phase 9 and the closed touch item. The lines after it move by +9. Changes after the entry of
+  wave 1 of phase 8 (2026-10-22) had moved the cited lines by +18 (§2.2 and §2.7) and +52 (the
+  harness rows) without an entry here. Thus §3.7 now gives the lines of the current
+  porting-flow.md: §2.2 at lines 266-267, §2.7 at lines 361-364 and the harness rows
+  at lines 824-825. The text of §2.2, of §2.7 and of the cited rows does not change.
+  `doc/theming.md` and `tool/reference/scale_chart_common.mjs` change text that this plan does not
+  cite. No library file, test or gallery file changes. The references, the inventory (§1.1), the
+  tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 
@@ -1402,7 +1412,7 @@ do not change.
 Work package C2 made these changes in phase 5, except the `performance.md` figures. These figures
 are for work package P. The line numbers below are the lines after C2. The lines of Chart.js ADR
 0014 are the lines after its status line of 2026-10-29 (the lines after C2, plus 1). The
-porting-flow.md line numbers are the lines of 2026-10-21, after the toolchain change.
+porting-flow.md line numbers are the lines of 2026-10-30, after the docs of phase 9.
 - **Chart.js ADR 0014:**
   - §2 (lines 87-94): "the display size of the canvas" is the px styles that `retinaScale` writes,
     else the render size.
@@ -1417,10 +1427,10 @@ porting-flow.md line numbers are the lines of 2026-10-21, after the toolchain ch
   applies the scale that the host gives. Delete the bullet on the `UiCanvasElement.devicePixelRatio`
   write. "The content keeps bitmap pixels across a DPR change" stays. The stretch bullet points to
   Chart.js ADR 0014 §5. Evidence: the test names.
-- **`porting-flow.md`** (proposed): §2.2 (lines 248-249), "`paint` applies
+- **`porting-flow.md`** (proposed): §2.2 (lines 266-267), "`paint` applies
   `scale(1 / devicePixelRatio)`" becomes "`paint` maps the bitmap pixels with the scale of the
-  host". §2.7 (lines 343-346): one bullet on the canvas attributes. §3, harness table (lines
-  763-764), `acquireChart`: 512 x 512 as attributes (`UiCanvasElement(width: 512, height: 512)`),
+  host". §2.7 (lines 361-364): one bullet on the canvas attributes. §3, harness table (lines
+  824-825), `acquireChart`: 512 x 512 as attributes (`UiCanvasElement(width: 512, height: 512)`),
   the `canvas.style` option fills the inline style, a wrapper style becomes a `SizedBox`,
   `ConstrainedBox` or `Padding`, and the default wrapper is a box of the canvas display size. `toBeChartOfSize`: the display size rule of
   Chart.js ADR 0022 §9 (the inline px styles, else the render size, with the CSS rule for one

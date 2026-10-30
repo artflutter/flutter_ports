@@ -362,6 +362,15 @@ decision, its evidence and the items that stay open. In short:
   `releaseContext` read and restore them line by line. Thus the default spec canvas of
   `acquireChart` is 512 x 512. Paint maps the bitmap to the display size with one scale for each
   axis.
+- Phase 9 decides the items of §16 of that ADR. The public widget `ChartView` of
+  [Chart.js ADR 0049](adr/0049-chart-view-widget.md) builds on the host.
+  [Chart.js ADR 0051](adr/0051-input-events-and-interaction-state.md) (proposed) decides the
+  keys, the focus, the semantics and Open 4 of Chart.js ADR 0037 (a mouse and a touch screen on
+  one device). The touch item (the hit radius 8, the hover radius 6 and the font size 14 of
+  [theming.md](theming.md) §11 question 1) is closed: the theme never carries touch sizes, and
+  touch never changes `interaction` ([Chart.js ADR 0050](adr/0050-public-theme-api.md), "No touch
+  sizes"). An app that wants larger targets sets `elements.point.hitRadius` and `hoverRadius` in
+  its options.
 
 ### 2.8 Chart.js ADR 0015: Text (gate 3)
 
