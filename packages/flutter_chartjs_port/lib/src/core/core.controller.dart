@@ -451,6 +451,12 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
   /// meta. The [undefined] sentinel is the absent property.
   Object? _animations = undefined;
 
+  /// plugin.filler/index.js:37 `meta.$filler`: the source of the filler
+  /// plugin (its `FillerSource`), or the [undefined] sentinel, the absent
+  /// property. The access by name reads and writes it ([operator []],
+  /// [operator []=]), because the specs read `meta[r'$filler']`.
+  Object? $filler = undefined;
+
   /// The extra properties of the access by name. Dart `null` until the
   /// first write of such a property.
   Map<String, Object?>? _extras;
@@ -492,6 +498,7 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
     '_clip' => _clip ?? undefined,
     'total' => total ?? undefined,
     r'$animations' => _animations,
+    r'$filler' => $filler,
     _ => _extra(prop),
   };
 
@@ -518,6 +525,8 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
         visible = value;
       case r'$animations':
         _animations = value;
+      case r'$filler':
+        $filler = value;
       case 'type':
         _type = value;
       case 'label':
