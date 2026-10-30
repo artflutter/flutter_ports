@@ -10,7 +10,8 @@
 ///
 /// The names end in `Properties`, the name of the upstream variable:
 /// `PointProps` (element.point.ts:18) and `ArcProps` (element.arc.ts:365)
-/// are the property types of the element classes.
+/// are the property types of the element classes. [BorderSkipped] is the
+/// `borderSkipped` object of a bar (`setBorderSkipped`).
 ///
 /// A `double` field is NaN when absent, a `bool` field false; a getter of
 /// an `Object?` field gives [undefined] when absent, and a getter of a Map
@@ -705,6 +706,120 @@ final class LineProperties extends TypedRecord {
         _loop = false;
       default:
         _fullLoop = false;
+    }
+  }
+}
+
+/// The object `res` of `setBorderSkipped` (U `controller.bar.js:202-232`),
+/// the `borderSkipped` of [BarProperties]: the skipped edges of a bar.
+///
+/// The edges `top`, `right`, `bottom` and `left` are `bool` fields (false
+/// when absent). A write by name of another value keeps it in the foreign
+/// slot, with its truthiness in the field. Another edge name (a user
+/// `borderSkipped: 'foo'` gives `res.foo = true`) is an extra.
+final class BorderSkipped extends TypedRecord {
+  /// An object without own keys: the `{}` of upstream.
+  BorderSkipped();
+
+  /// `{top: true, right: true, bottom: true, left: true}` of
+  /// `borderSkipped: true` (U `controller.bar.js:211-213`).
+  BorderSkipped.all() {
+    this
+      ..top = true
+      ..right = true
+      ..bottom = true
+      ..left = true;
+  }
+
+  static const List<String> _fieldNames = ['top', 'right', 'bottom', 'left'];
+
+  @override
+  List<String> get fieldNames => _fieldNames;
+
+  @override
+  int slotOf(String name) => switch (name) {
+    'top' => 0,
+    'right' => 1,
+    'bottom' => 2,
+    'left' => 3,
+    _ => -1,
+  };
+
+  bool _top = false;
+
+  bool _right = false;
+
+  bool _bottom = false;
+
+  bool _left = false;
+
+  /// `top`.
+  bool get top => _top;
+
+  set top(bool value) {
+    _top = value;
+    touchSlot(0);
+  }
+
+  /// `right`.
+  bool get right => _right;
+
+  set right(bool value) {
+    _right = value;
+    touchSlot(1);
+  }
+
+  /// `bottom`.
+  bool get bottom => _bottom;
+
+  set bottom(bool value) {
+    _bottom = value;
+    touchSlot(2);
+  }
+
+  /// `left`.
+  bool get left => _left;
+
+  set left(bool value) {
+    _left = value;
+    touchSlot(3);
+  }
+
+  @override
+  Object? readSlot(int slot) => switch (slot) {
+    0 => _top,
+    1 => _right,
+    2 => _bottom,
+    _ => _left,
+  };
+
+  @override
+  bool writeSlot(int slot, Object? value) {
+    final flag = value is bool ? value : jsTruthy(value);
+    switch (slot) {
+      case 0:
+        _top = flag;
+      case 1:
+        _right = flag;
+      case 2:
+        _bottom = flag;
+      default:
+        _left = flag;
+    }
+    return value is bool;
+  }
+
+  @override
+  void clearSlot(int slot) {
+    switch (slot) {
+      case 0:
+        _top = false;
+      case 1:
+        _right = false;
+      case 2:
+        _bottom = false;
+      default:
+        _left = false;
     }
   }
 }
