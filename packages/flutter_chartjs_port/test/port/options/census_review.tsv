@@ -1,0 +1,128 @@
+# The reviewed exceptions of the key census (O2 of Chart.js ADR 0054), read by schema_test.dart.
+# extra<TAB><path>[<TAB><reason>]: a census path (and its subpaths) that maps to no schema key: an
+#   extra of its scope (a test-only key, a custom plugin, controller or element id, a key that a
+#   plugin writes into a dataset, a key of Chart.js v2).
+# foreign<TAB><path><TAB><kind>[<TAB><reason>]: a JS value outside the shape of its key, kept as a
+#   foreign cell (Chart.js ADR 0054 §6).
+# write<TAB><key>: a key written through a resolver that is not a schema key.
+extra	data.datasets[]._data	plugin.decimation.js:157-280 writes the original data into the dataset
+extra	data.datasets[]._decimated	plugin.decimation.js:157-280 writes the flag into the dataset
+extra	data.datasets[].animation.test	core.datasetController.tests.js:1088, a bogus animation entry
+extra	data.datasets[].datasets	core.config.js:309 also looks up datasets.<type>.elements.<element> on the dataset (core.config_test.dart, tbar)
+extra	data.datasets[].elements.tbar	a custom element type (GenericElementOptions)
+extra	data.datasets[].foo	a test-only dataset key
+extra	data.datasets[].id	a test-only dataset key
+extra	data.datasets[].labels	a test-only dataset key
+extra	data.datasets[].legendHidden	a test-only dataset key
+extra	data.datasets[].sharing	a test-only dataset key
+extra	data.datasets[].size	a test-only dataset key
+extra	data.datasets[].tooltipHidden	a test-only dataset key
+extra	data.datasets[].xAxisId	core.scale.tests.js, the spelling with a lower-case d; Chart.js reads xAxisID
+extra	data.datasets[].yAxisId	core.scale.tests.js, the spelling with a lower-case d; Chart.js reads yAxisID
+extra	data.fill	a test-only key of the data object
+extra	options._jasmineCheck	a test-only chart key
+extra	options.datasets.polarAreaSharing	the test subclass of the polar area controller with its own id
+extra	options.datasets.tbar	a custom controller type
+extra	options.elements.tbar	a custom element type
+extra	options.k	a test-only chart key
+extra	options.legend	a key of Chart.js v2
+extra	options.myList	the resolver trace case "array of objects"
+extra	options.plugins.a	a custom plugin id
+extra	options.plugins.b	a custom plugin id
+extra	options.plugins.c	a custom plugin id
+extra	options.plugins.datalabels	the third-party plugin chartjs-plugin-datalabels of a fixture
+extra	options.plugins.foo	a custom plugin id
+extra	options.plugins.pfn	a custom plugin id
+extra	options.plugins.plocal	a custom plugin id
+extra	options.plugins.popt	a custom plugin id
+extra	options.plugins.test	a custom plugin id
+extra	options.plugins.themeProbe	a custom plugin id
+extra	options.plugins.tp	a custom plugin id
+extra	options.plugins.writer	a custom plugin id
+extra	options.radiusFallback	the resolver trace cases of _fallback
+extra	options.scales.*._jasmineCheck	a test-only scale key
+extra	options.scales.*._jasmineCheckA	a test-only scale key
+extra	options.scales.*._jasmineCheckB	a test-only scale key
+extra	options.scales.*._jasmineCheckC	a test-only scale key
+extra	options.scales.*._jasmineCheckD	a test-only scale key
+extra	options.scales.*._jasmineCheckE	a test-only scale key
+extra	options.scales.*.a	a test-only scale key
+extra	options.scales.*.cat	a test-only scale key
+extra	options.scales.*.extra	a test-only scale key
+extra	options.scales.*.grid.borderWidth	a key of Chart.js v3
+extra	options.scales.*.grid.width	a test-only grid key
+extra	options.scales.*.lin	a test-only scale key
+extra	options.scales.*.tc	a test-only scale key
+extra	options.scales.*.ticks.beginAtZero	a key of Chart.js v2
+extra	options.scales.*.ticks.max	a key of Chart.js v2
+extra	options.scales.*.ticks.min	a key of Chart.js v2
+extra	options.scales.*.time.stepSize	a key of Chart.js v2
+extra	options.scales.*.title.lineHeight	a test-only title key
+extra	options.scales.*.title.test	a test-only title key
+extra	options.scales.*[]	scales given as an array (a spec of a v2 config)
+extra	options.scales[]	scales given as an array (a spec of a v2 config)
+extra	options.title	a key of Chart.js v2
+extra	options.tooltip	a key of Chart.js v2
+extra	options.transitions.show.x	a test-only transition key
+extra	parsing	a test-only key of the root config
+extra	scales	a test-only key of the root config
+foreign	data	String
+foreign	data.datasets	Map
+foreign	data.datasets[]	double
+foreign	data.datasets[].angle[]	Map
+foreign	data.datasets[].base	String
+foreign	data.datasets[].base	bool
+foreign	data.datasets[].borderWidth	String
+foreign	data.datasets[].data	Map
+foreign	data.datasets[].data	String
+foreign	data.datasets[].indexAxis	double
+foreign	data.datasets[].inflateAmount	bool
+foreign	data.datasets[].label	int
+foreign	data.datasets[].maxBarThickness	String
+foreign	data.datasets[].minBarLength	String
+foreign	data.datasets[].parsing.key	double
+foreign	data.datasets[].parsing.xAxisKey	double
+foreign	data.datasets[].parsing.yAxisKey	double
+foreign	data.datasets[].spanGaps	String
+foreign	data.datasets[].xAxisID	double
+foreign	data.labels	double
+foreign	options	String
+foreign	options.datasets.line.borderWidth	String
+foreign	options.hover	bool
+foreign	options.interaction	bool
+foreign	options.parsing.xAxisKey	double
+foreign	options.parsing.yAxisKey	double
+foreign	options.plugins	bool
+foreign	options.plugins.legend.labels	bool
+foreign	options.plugins.legend.labels.boxWidth	String
+foreign	options.plugins.legend.labels.padding	String
+foreign	options.plugins.legend.rtl	String
+foreign	options.plugins.position	String
+foreign	options.plugins.title	double
+foreign	options.plugins.title.text	double
+foreign	options.scales	String
+foreign	options.scales.*	String
+foreign	options.scales.*	double
+foreign	options.scales.*.beginAtZero	String
+foreign	options.scales.*.grid.lineWidth[]	bool
+foreign	options.scales.*.offset	String
+foreign	options.scales.*.pointLabels.padding	String
+foreign	options.scales.*.position.x	String
+foreign	options.scales.*.startAngle	String
+foreign	options.scales.*.ticks.count	String
+foreign	options.scales.*.ticks.font.size	String
+foreign	options.scales.*.ticks.includeBounds	double
+foreign	options.scales.*.ticks.maxTicksLimit	String
+foreign	options.scales.*.ticks.minRotation	String
+foreign	options.scales.*.ticks.precision	String
+foreign	options.scales.*.ticks.stepSize	String
+foreign	options.scales.*.time	bool
+foreign	options.scales.*.time.isoWeekday	String
+foreign	plugins	Map
+write	a
+write	b
+write	plugin
+write	r2
+write	test
+write	write
+foreign	options.plugins.a	double

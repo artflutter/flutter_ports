@@ -1,0 +1,1083 @@
+# Original code, not ported from Chart.js: the option schema of the typed internal model.
+#
+# The hand-written schema of Chart.js ADR 0054 section 2. tool/options_gen.dart reads it and
+# writes one typed scope class for each kind (`<Kind>Scope`), the `enum OptionKey` of all the
+# distinct key names and the `enum ScopeKind`. The reader is tool/src/mini_yaml.dart: block
+# mappings, `#` comments and one-line plain scalars. Every scalar is a string.
+#
+# Each kind under `kinds` has:
+# - `doc`: the index.d.ts interface (or the upstream source) and what the scope holds.
+# - `element`: only for the element kinds, the element type id (`point`, `line`, `bar`, `arc`,
+#   or `generic` for GenericElementOptions).
+# - `others`: optional, the shape of a key that `keys` does not list (a dictionary, for example
+#   the scale ids under `scales`). Without `others`, an unknown key keeps any value (an extra).
+# - `keys`: each JS property name with its shape, or the scalar `none`. The order is the
+#   index.d.ts declaration order, the interfaces of an `extends` chain base first, then the hover
+#   interfaces, then the keys that upstream code reads and index.d.ts misses (with the reading
+#   line in a comment).
+#
+# A shape is one atom or several atoms joined by ` | `: `number`, `bool`, `string`, `fn` (a
+# plain function value), `list` (a plain array value), `any` (any JS value: a color, a point
+# style, an object that is not an option scope) or `scope <Kind>` (a nested option object of
+# that kind). A shape describes the plain value only: a function (a scriptable option), an
+# array (an indexable option), `undefined` and `null` are allowed for every key.
+#
+# To add a key: add it here at its index.d.ts position, then run `dart run melos run options:gen`
+# and commit the generated files of lib/src/options/.
+kinds:
+  # ---------------------------------------------------------------------------------------------
+  # The chart level.
+  # ---------------------------------------------------------------------------------------------
+  ChartConfiguration:
+    doc: Port-only kind for index.d.ts:3914 ChartConfiguration, the raw root config of a chart.
+    keys:
+      type: string
+      data: scope ChartData
+      options: scope ChartOptions
+      plugins: list
+      platform: any
+      $theme: any  # the compiled theme of Chart.js ADR 0050, read at core.config.dart chartThemeOf
+  ChartData:
+    doc: index.d.ts:3892 ChartData, the `data` object of the config.
+    keys:
+      labels: list
+      xLabels: list
+      yLabels: list
+      datasets: list
+  ChartOptions:
+    doc: index.d.ts:3843 ChartOptions (index.d.ts:1629 CoreChartOptions with ParsingOptions and AnimationOptions, ElementChartOptions, PluginChartOptions, DatasetChartOptions, ScaleChartOptions and the chart options of each controller), the root options and Chart.defaults (index.d.ts:706 Defaults).
+    keys:
+      parsing: bool | scope ParsingOptions
+      normalized: bool
+      animation: bool | scope AnimationOptions
+      animations: bool | scope AnimationsSpec
+      transitions: scope TransitionsSpec
+      datasets: scope DatasetOptionsByType
+      indexAxis: string
+      clip: number | bool | scope ChartArea
+      color: any
+      backgroundColor: any
+      hoverBackgroundColor: any
+      borderColor: any
+      hoverBorderColor: any
+      font: scope FontSpec
+      responsive: bool
+      maintainAspectRatio: bool
+      resizeDelay: number
+      aspectRatio: number
+      locale: string
+      onResize: fn
+      devicePixelRatio: number
+      interaction: scope InteractionOptions
+      hover: scope InteractionOptions
+      events: list
+      onHover: fn
+      onClick: fn
+      layout: scope LayoutOptions
+      elements: scope ElementOptionsByType
+      plugins: scope PluginOptionsByType
+      scales: scope ScaleOptionsById
+      skipNull: bool  # index.d.ts:149 BarControllerChartOptions
+      spanGaps: bool | number  # index.d.ts:216 LineControllerChartOptions
+      showLine: bool
+      circumference: number  # index.d.ts:307 DoughnutControllerChartOptions
+      cutout: number | string
+      offset: number
+      radius: number | string
+      rotation: number
+      spacing: number
+      spacingMode: string
+      startAngle: number  # index.d.ts:400 PolarAreaControllerChartOptions
+      scale: scope ScaleOptions  # index.d.ts:708 Defaults, only Chart.defaults has it
+      hoverColor: any  # core.defaults.js:64
+      drawActiveElementsOnTop: bool  # core.defaults.js:80
+      # The keys of the dataset kinds that are not chart keys above, in the order of
+      # DatasetOptionsByType: the dataset, element and animation resolution read the root options
+      # as the scope '' (core.config.js:214, :229 and :252), and the chart options read
+      # defaults.datasets.<type> (core.config.js:337).
+      label: string
+      order: number
+      stack: string
+      hidden: bool
+      base: number
+      borderSkipped: string | bool
+      borderRadius: number | scope BorderRadius
+      inflateAmount: number | string
+      borderWidth: number | scope Padding
+      hoverBorderWidth: number
+      xAxisID: string
+      yAxisID: string
+      barPercentage: number
+      categoryPercentage: number
+      barThickness: number | string
+      maxBarThickness: number
+      minBarLength: number
+      pointStyle: any
+      grouped: bool
+      tooltip: scope TooltipDatasetOptions
+      type: string
+      data: list
+      hoverBorderRadius: number | scope BorderRadius
+      rAxisID: string
+      fill: number | string | bool | scope FillTarget
+      datasetElementType: string | bool
+      dataElementType: string | bool
+      pointBackgroundColor: any
+      pointBorderColor: any
+      pointBorderWidth: number
+      pointHitRadius: number
+      pointRadius: number
+      pointRotation: number
+      pointHoverBackgroundColor: any
+      pointHoverBorderColor: any
+      pointHoverBorderWidth: number
+      pointHoverRadius: number
+      borderCapStyle: string
+      borderDash: list
+      borderDashOffset: number
+      borderJoinStyle: string
+      capBezierPoints: bool
+      cubicInterpolationMode: string
+      tension: number
+      stepped: string | bool
+      segment: scope SegmentOptions
+      hoverBorderCapStyle: string
+      hoverBorderDash: list
+      hoverBorderDashOffset: number
+      hoverBorderJoinStyle: string
+      hitRadius: number
+      hoverRadius: number
+      selfJoin: bool
+      borderAlign: string
+      circular: bool
+      hoverOffset: number
+      weight: number
+      angle: number
+      cutoutPercentage: number
+  PluginOptionsByType:
+    doc: index.d.ts:3029 PluginOptionsByType, the scope `plugins` (by plugin id). A plugin entry can be `false` (the plugin is off).
+    others: bool | scope GenericPluginOptions
+    keys:
+      colors: bool | scope ColorsOptions
+      decimation: bool | scope DecimationOptions
+      filler: bool | scope FillerOptions
+      legend: bool | scope LegendOptions
+      subtitle: bool | scope TitleOptions
+      title: bool | scope TitleOptions
+      tooltip: bool | scope TooltipOptions
+  ElementOptionsByType:
+    doc: index.d.ts:2201 ElementOptionsByType, the scope `elements` (by element type id).
+    others: scope GenericElementOptions
+    keys:
+      arc: scope ArcOptions
+      bar: scope BarOptions
+      line: scope LineOptions
+      point: scope PointOptions
+  DatasetOptionsByType:
+    doc: Port-only kind for index.d.ts:1631 CoreChartOptions `datasets` and index.d.ts:3831 DatasetChartOptions, the scope `datasets` (by chart type, index.d.ts:3755 ChartTypeRegistry order).
+    others: scope GenericDatasetOptions
+    keys:
+      bar: scope BarControllerDatasetOptions
+      line: scope LineControllerDatasetOptions
+      scatter: scope LineControllerDatasetOptions
+      bubble: scope BubbleControllerDatasetOptions
+      pie: scope DoughnutControllerDatasetOptions
+      doughnut: scope DoughnutControllerDatasetOptions
+      polarArea: scope PolarAreaControllerDatasetOptions
+      radar: scope RadarControllerDatasetOptions
+  OverridesByType:
+    doc: Port-only kind for index.d.ts:740 Overrides, Chart.overrides (core.defaults.js:7, by chart type).
+    others: scope ChartOptions
+    keys:
+      bar: scope ChartOptions
+      line: scope ChartOptions
+      scatter: scope ChartOptions
+      bubble: scope ChartOptions
+      pie: scope ChartOptions
+      doughnut: scope ChartOptions
+      polarArea: scope ChartOptions
+      radar: scope ChartOptions
+  ScaleOptionsById:
+    doc: Port-only kind for index.d.ts:3837 ScaleChartOptions `scales`, the scope `scales` (by scale id in the options and the overrides, by scale type in Chart.defaults.scales).
+    others: scope ScaleOptions
+    keys: none
+  AnimationsSpec:
+    doc: index.d.ts:1766 AnimationsSpec, the scope `animations` (by animation name). An entry can be `false`.
+    others: bool | scope AnimationOptions
+    keys:
+      colors: bool | scope AnimationOptions  # core.animations.defaults.js:22
+      numbers: bool | scope AnimationOptions
+      visible: bool | scope AnimationOptions  # core.animations.defaults.js:53 and :64, the transitions show and hide
+      opacity: bool | scope AnimationOptions  # plugin.tooltip.js:1319 defaults
+  TransitionsSpec:
+    doc: index.d.ts:1793 TransitionsSpec, the scope `transitions` (by update mode).
+    others: scope TransitionOptions
+    keys:
+      active: scope TransitionOptions  # core.animations.defaults.js:37
+      resize: scope TransitionOptions
+      show: scope TransitionOptions
+      hide: scope TransitionOptions
+      reset: scope TransitionOptions  # the update mode of core.datasetController.js:346
+  TransitionOptions:
+    doc: Port-only name for index.d.ts:1788 TransitionSpec, the options of one transition mode.
+    keys:
+      animation: bool | scope AnimationOptions
+      animations: bool | scope AnimationsSpec
+  AnimationOptions:
+    doc: Port-only name over index.d.ts:1741 AnimationSpec, the entry keys of index.d.ts:1766 AnimationsSpec, the callbacks of index.d.ts:1797 AnimationOptions `animation` and index.d.ts:293 DoughnutAnimationOptions, the scope `animation` and each entry of `animations`.
+    keys:
+      duration: number
+      easing: string
+      delay: number
+      loop: bool
+      properties: list
+      type: string
+      fn: fn
+      from: any
+      to: any
+      onProgress: fn
+      onComplete: fn
+      animateRotate: bool
+      animateScale: bool
+  FontSpec:
+    doc: index.d.ts:1812 FontSpec, a font object (read by toFont, helpers.options.ts).
+    keys:
+      family: string
+      size: number
+      style: string
+      weight: number | string
+      lineHeight: number | string
+  Padding:
+    doc: Port-only kind for geometric.d.ts Padding (TRBL and Point), the padding object of toPadding and toTRBL (helpers.options.ts).
+    keys:
+      top: number
+      right: number
+      bottom: number
+      left: number
+      x: number
+      y: number
+  LayoutOptions:
+    doc: Port-only name for index.d.ts:1735 CoreChartOptions `layout`, the scope `layout`.
+    keys:
+      autoPadding: bool
+      padding: number | scope Padding
+  InteractionOptions:
+    doc: index.d.ts:751 InteractionOptions and index.d.ts:1605 CoreInteractionOptions, the scopes `interaction` and `hover`.
+    keys:
+      mode: string
+      intersect: bool
+      axis: string
+      includeInvisible: bool
+  ParsingOptions:
+    doc: Port-only name for the object form of index.d.ts:54 ParsingOptions `parsing`, the keys of the parsed data (core.datasetController.js:561, controller.doughnut.js:158, helpers.config.ts:444).
+    keys:
+      key: string
+      xAxisKey: string
+      yAxisKey: string
+  ChartArea:
+    doc: Port-only name for the object form of index.d.ts:75 `clip` (index.d.ts:463 ChartMetaClip), the clip of each side.
+    keys:
+      left: number | bool
+      top: number | bool
+      right: number | bool
+      bottom: number | bool
+  # ---------------------------------------------------------------------------------------------
+  # The elements.
+  # ---------------------------------------------------------------------------------------------
+  PointOptions:
+    doc: index.d.ts:2055 PointOptions and index.d.ts:2083 PointHoverOptions, the options of a point element.
+    element: point
+    keys:
+      borderWidth: number
+      borderColor: any
+      backgroundColor: any
+      radius: number
+      hitRadius: number
+      pointStyle: any
+      rotation: number
+      drawActiveElementsOnTop: bool
+      hoverBorderWidth: number
+      hoverBorderColor: any
+      hoverBackgroundColor: any
+      hoverRadius: number
+      $shared: bool  # written at core.config.js:352 and core.datasetController.js:826
+      $animations: any  # written at core.animations.js:71 and :159
+  LineOptions:
+    doc: index.d.ts:1954 LineOptions and index.d.ts:2015 LineHoverOptions, the options of a line element.
+    element: line
+    keys:
+      borderWidth: number
+      borderColor: any
+      backgroundColor: any
+      borderCapStyle: string
+      borderDash: list
+      borderDashOffset: number
+      borderJoinStyle: string
+      capBezierPoints: bool
+      cubicInterpolationMode: string
+      tension: number
+      stepped: string | bool
+      fill: number | string | bool | scope FillTarget
+      spanGaps: bool | number
+      segment: scope SegmentOptions
+      hoverBorderWidth: number
+      hoverBorderColor: any
+      hoverBackgroundColor: any
+      hoverBorderCapStyle: string
+      hoverBorderDash: list
+      hoverBorderDashOffset: number
+      hoverBorderJoinStyle: string
+      $shared: bool  # written at core.config.js:352 and core.datasetController.js:826
+      $animations: any  # written at core.animations.js:71 and :159
+  BarOptions:
+    doc: index.d.ts:2148 BarOptions and index.d.ts:2187 BarHoverOptions, the options of a bar element.
+    element: bar
+    keys:
+      borderColor: any
+      backgroundColor: any
+      base: number
+      borderSkipped: string | bool
+      borderRadius: number | scope BorderRadius
+      inflateAmount: number | string
+      borderWidth: number | scope Padding
+      hoverBorderWidth: number
+      hoverBorderColor: any
+      hoverBackgroundColor: any
+      hoverBorderRadius: number | scope BorderRadius
+      pointStyle: any  # element.bar.js:153 defaults
+      $shared: bool  # written at core.config.js:352 and core.datasetController.js:826
+      $animations: any  # written at core.animations.js:71 and :159
+  ArcOptions:
+    doc: index.d.ts:1882 ArcOptions and index.d.ts:1944 ArcHoverOptions, the options of an arc element.
+    element: arc
+    keys:
+      borderWidth: number
+      borderColor: any
+      backgroundColor: any
+      selfJoin: bool
+      borderAlign: string
+      borderDash: list
+      borderDashOffset: number
+      borderJoinStyle: string
+      borderRadius: number | scope BorderRadius
+      offset: number
+      circular: bool
+      spacing: number
+      spacingMode: string
+      hoverBorderWidth: number
+      hoverBorderColor: any
+      hoverBackgroundColor: any
+      hoverBorderDash: list
+      hoverBorderDashOffset: number
+      hoverOffset: number
+      angle: number  # element.arc.ts:388 defaults
+      $shared: bool  # written at core.config.js:352 and core.datasetController.js:826
+      $animations: any  # written at core.animations.js:71 and :159
+  GenericElementOptions:
+    doc: Port-only kind (Chart.js ADR 0021 section 2), the options of a custom element type or of an element subclass with its own id.
+    element: generic
+    keys: none
+  BorderRadius:
+    doc: Port-only kind for index.d.ts:2180 BorderRadius (bar) and index.d.ts:1873 ArcBorderRadius (arc), the radius of each corner.
+    keys:
+      topLeft: number
+      topRight: number
+      bottomLeft: number
+      bottomRight: number
+      outerStart: number
+      outerEnd: number
+      innerStart: number
+      innerEnd: number
+  FillTarget:
+    doc: index.d.ts:2302 ComplexFillTarget and the object `{value}` of index.d.ts:2300 FillTarget, the object form of `fill`.
+    keys:
+      target: number | string | bool | scope FillTarget
+      above: any
+      below: any
+      value: number
+  SegmentOptions:
+    doc: Port-only name for index.d.ts:2004 LineOptions `segment`, the scriptable styles of a line segment.
+    keys:
+      backgroundColor: any
+      borderColor: any
+      borderCapStyle: string
+      borderDash: list
+      borderDashOffset: number
+      borderJoinStyle: string
+      borderWidth: number
+  # ---------------------------------------------------------------------------------------------
+  # The datasets. Each kind also holds the chart options of its controller, which live in
+  # `defaults.datasets.<type>`, and the keys that core code reads for each dataset: the axis ids
+  # (core.datasetController.js:306-308, core.config.js:63 and :100), `fill`
+  # (core.datasetController.js:287), `drawActiveElementsOnTop` (core.datasetController.js:721),
+  # the animation keys (core.config.js:229), `elements` (core.config.js:252) and the element
+  # types (core.controller.js:443).
+  # ---------------------------------------------------------------------------------------------
+  BarControllerDatasetOptions:
+    doc: index.d.ts:96 BarControllerDatasetOptions (index.d.ts:66 ControllerDatasetOptions, BarOptions, CommonHoverOptions, AnimationOptions) with index.d.ts:149 BarControllerChartOptions, a bar dataset and `datasets.bar`.
+    keys:
+      parsing: bool | scope ParsingOptions
+      normalized: bool
+      indexAxis: string
+      clip: number | bool | scope ChartArea
+      label: string
+      order: number
+      stack: string
+      hidden: bool
+      borderColor: any
+      backgroundColor: any
+      base: number
+      borderSkipped: string | bool
+      borderRadius: number | scope BorderRadius
+      inflateAmount: number | string
+      borderWidth: number | scope Padding
+      hoverBorderWidth: number
+      hoverBorderColor: any
+      hoverBackgroundColor: any
+      animation: bool | scope AnimationOptions
+      animations: bool | scope AnimationsSpec
+      transitions: scope TransitionsSpec
+      xAxisID: string
+      yAxisID: string
+      barPercentage: number
+      categoryPercentage: number
+      barThickness: number | string
+      maxBarThickness: number
+      minBarLength: number
+      pointStyle: any
+      grouped: bool
+      tooltip: scope TooltipDatasetOptions  # index.d.ts:3025 PluginDatasetOptionsByType
+      type: string  # index.d.ts:3859 ChartDatasetProperties
+      data: list
+      skipNull: bool  # index.d.ts:149 BarControllerChartOptions
+      hoverBorderRadius: number | scope BorderRadius  # index.d.ts:2187 BarHoverOptions, the hover prefix of core.datasetController.js:815
+      rAxisID: string  # read at core.datasetController.js:308
+      fill: number | string | bool | scope FillTarget  # read at core.datasetController.js:287
+      drawActiveElementsOnTop: bool  # read at core.datasetController.js:721
+      elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
+      datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
+      dataElementType: string | bool
+  LineControllerDatasetOptions:
+    doc: index.d.ts:189 LineControllerDatasetOptions (index.d.ts:66 ControllerDatasetOptions, PointPrefixedOptions, PointPrefixedHoverOptions, LineOptions, LineHoverOptions, AnimationOptions) with index.d.ts:2317 FillerControllerDatasetOptions and index.d.ts:216 LineControllerChartOptions, a line or scatter dataset and `datasets.line`, `datasets.scatter`.
+    keys:
+      parsing: bool | scope ParsingOptions
+      normalized: bool
+      indexAxis: string
+      clip: number | bool | scope ChartArea
+      label: string
+      order: number
+      stack: string
+      hidden: bool
+      pointBackgroundColor: any
+      pointBorderColor: any
+      pointBorderWidth: number
+      pointHitRadius: number
+      pointRadius: number
+      pointRotation: number
+      pointStyle: any
+      pointHoverBackgroundColor: any
+      pointHoverBorderColor: any
+      pointHoverBorderWidth: number
+      pointHoverRadius: number
+      borderCapStyle: string
+      borderDash: list
+      borderDashOffset: number
+      borderJoinStyle: string
+      capBezierPoints: bool
+      cubicInterpolationMode: string
+      tension: number
+      stepped: string | bool
+      fill: number | string | bool | scope FillTarget
+      spanGaps: bool | number
+      segment: scope SegmentOptions
+      borderWidth: number
+      borderColor: any
+      backgroundColor: any
+      hoverBorderCapStyle: string
+      hoverBorderDash: list
+      hoverBorderDashOffset: number
+      hoverBorderJoinStyle: string
+      hoverBorderWidth: number
+      hoverBorderColor: any
+      hoverBackgroundColor: any
+      animation: bool | scope AnimationOptions
+      animations: bool | scope AnimationsSpec
+      transitions: scope TransitionsSpec
+      xAxisID: string
+      yAxisID: string
+      showLine: bool
+      tooltip: scope TooltipDatasetOptions  # index.d.ts:3025 PluginDatasetOptionsByType
+      type: string  # index.d.ts:3859 ChartDatasetProperties
+      data: list
+      rAxisID: string  # read at core.datasetController.js:308
+      drawActiveElementsOnTop: bool  # read at core.datasetController.js:721
+      elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
+      datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
+      dataElementType: string | bool
+  BubbleControllerDatasetOptions:
+    doc: index.d.ts:162 BubbleControllerDatasetOptions (index.d.ts:66 ControllerDatasetOptions, PointOptions, PointHoverOptions), a bubble dataset and `datasets.bubble`.
+    keys:
+      parsing: bool | scope ParsingOptions
+      normalized: bool
+      indexAxis: string
+      clip: number | bool | scope ChartArea
+      label: string
+      order: number
+      stack: string
+      hidden: bool
+      borderWidth: number
+      borderColor: any
+      backgroundColor: any
+      radius: number
+      hitRadius: number
+      pointStyle: any
+      rotation: number
+      drawActiveElementsOnTop: bool
+      hoverBorderWidth: number
+      hoverBorderColor: any
+      hoverBackgroundColor: any
+      hoverRadius: number
+      xAxisID: string
+      yAxisID: string
+      tooltip: scope TooltipDatasetOptions  # index.d.ts:3025 PluginDatasetOptionsByType
+      type: string  # index.d.ts:3859 ChartDatasetProperties
+      data: list
+      animation: bool | scope AnimationOptions  # read through core.config.js:229, controller.bubble.js:11 defaults
+      animations: bool | scope AnimationsSpec
+      transitions: scope TransitionsSpec
+      rAxisID: string  # read at core.datasetController.js:308
+      fill: number | string | bool | scope FillTarget  # read at core.datasetController.js:287
+      elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
+      datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
+      dataElementType: string | bool
+  DoughnutControllerDatasetOptions:
+    doc: index.d.ts:247 DoughnutControllerDatasetOptions (index.d.ts:66 ControllerDatasetOptions, ArcOptions, ArcHoverOptions, AnimationOptions) with index.d.ts:307 DoughnutControllerChartOptions, a doughnut or pie dataset and `datasets.doughnut`, `datasets.pie`.
+    keys:
+      parsing: bool | scope ParsingOptions
+      normalized: bool
+      indexAxis: string
+      clip: number | bool | scope ChartArea
+      label: string
+      order: number
+      stack: string
+      hidden: bool
+      borderWidth: number
+      borderColor: any
+      backgroundColor: any
+      selfJoin: bool
+      borderAlign: string
+      borderDash: list
+      borderDashOffset: number
+      borderJoinStyle: string
+      borderRadius: number | scope BorderRadius
+      offset: number
+      circular: bool
+      spacing: number
+      spacingMode: string
+      hoverBorderWidth: number
+      hoverBorderColor: any
+      hoverBackgroundColor: any
+      hoverBorderDash: list
+      hoverBorderDashOffset: number
+      hoverOffset: number
+      animation: bool | scope AnimationOptions
+      animations: bool | scope AnimationsSpec
+      transitions: scope TransitionsSpec
+      circumference: number
+      rotation: number
+      weight: number
+      tooltip: scope TooltipDatasetOptions  # index.d.ts:3025 PluginDatasetOptionsByType
+      type: string  # index.d.ts:3859 ChartDatasetProperties
+      data: list
+      cutout: number | string  # index.d.ts:307 DoughnutControllerChartOptions
+      radius: number | string
+      xAxisID: string  # read at core.datasetController.js:306
+      yAxisID: string  # read at core.datasetController.js:307
+      rAxisID: string  # read at core.datasetController.js:308
+      fill: number | string | bool | scope FillTarget  # read at core.datasetController.js:287
+      drawActiveElementsOnTop: bool  # read at core.datasetController.js:721
+      elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
+      datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
+      dataElementType: string | bool
+  PolarAreaControllerDatasetOptions:
+    doc: index.d.ts:390 PolarAreaControllerDatasetOptions (index.d.ts:247 DoughnutControllerDatasetOptions and `angle`) with index.d.ts:400 PolarAreaControllerChartOptions, a polar area dataset and `datasets.polarArea`.
+    keys:
+      parsing: bool | scope ParsingOptions
+      normalized: bool
+      indexAxis: string
+      clip: number | bool | scope ChartArea
+      label: string
+      order: number
+      stack: string
+      hidden: bool
+      borderWidth: number
+      borderColor: any
+      backgroundColor: any
+      selfJoin: bool
+      borderAlign: string
+      borderDash: list
+      borderDashOffset: number
+      borderJoinStyle: string
+      borderRadius: number | scope BorderRadius
+      offset: number
+      circular: bool
+      spacing: number
+      spacingMode: string
+      hoverBorderWidth: number
+      hoverBorderColor: any
+      hoverBackgroundColor: any
+      hoverBorderDash: list
+      hoverBorderDashOffset: number
+      hoverOffset: number
+      animation: bool | scope AnimationOptions
+      animations: bool | scope AnimationsSpec
+      transitions: scope TransitionsSpec
+      circumference: number
+      rotation: number
+      weight: number
+      angle: number
+      tooltip: scope TooltipDatasetOptions  # index.d.ts:3025 PluginDatasetOptionsByType
+      type: string  # index.d.ts:3859 ChartDatasetProperties
+      data: list
+      startAngle: number  # index.d.ts:400 PolarAreaControllerChartOptions
+      cutoutPercentage: number  # read from the chart options at controller.polarArea.js:154
+      xAxisID: string  # read at core.datasetController.js:306
+      yAxisID: string  # read at core.datasetController.js:307
+      rAxisID: string  # read at core.datasetController.js:308
+      fill: number | string | bool | scope FillTarget  # read at core.datasetController.js:287
+      drawActiveElementsOnTop: bool  # read at core.datasetController.js:721
+      elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
+      datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
+      dataElementType: string | bool
+  RadarControllerDatasetOptions:
+    doc: index.d.ts:430 RadarControllerDatasetOptions (index.d.ts:66 ControllerDatasetOptions, the point options with the prefixed and hover ones, LineOptions, LineHoverOptions, AnimationOptions) with index.d.ts:2317 FillerControllerDatasetOptions, a radar dataset and `datasets.radar`.
+    keys:
+      parsing: bool | scope ParsingOptions
+      normalized: bool
+      indexAxis: string
+      clip: number | bool | scope ChartArea
+      label: string
+      order: number
+      stack: string
+      hidden: bool
+      borderWidth: number
+      borderColor: any
+      backgroundColor: any
+      radius: number
+      hitRadius: number
+      pointStyle: any
+      rotation: number
+      drawActiveElementsOnTop: bool
+      hoverBorderWidth: number
+      hoverBorderColor: any
+      hoverBackgroundColor: any
+      hoverRadius: number
+      pointBackgroundColor: any
+      pointBorderColor: any
+      pointBorderWidth: number
+      pointHitRadius: number
+      pointRadius: number
+      pointRotation: number
+      pointHoverBackgroundColor: any
+      pointHoverBorderColor: any
+      pointHoverBorderWidth: number
+      pointHoverRadius: number
+      borderCapStyle: string
+      borderDash: list
+      borderDashOffset: number
+      borderJoinStyle: string
+      capBezierPoints: bool
+      cubicInterpolationMode: string
+      tension: number
+      stepped: string | bool
+      fill: number | string | bool | scope FillTarget
+      spanGaps: bool | number
+      segment: scope SegmentOptions
+      hoverBorderCapStyle: string
+      hoverBorderDash: list
+      hoverBorderDashOffset: number
+      hoverBorderJoinStyle: string
+      animation: bool | scope AnimationOptions
+      animations: bool | scope AnimationsSpec
+      transitions: scope TransitionsSpec
+      xAxisID: string
+      yAxisID: string
+      showLine: bool
+      tooltip: scope TooltipDatasetOptions  # index.d.ts:3025 PluginDatasetOptionsByType
+      type: string  # index.d.ts:3859 ChartDatasetProperties
+      data: list
+      rAxisID: string  # read at core.datasetController.js:308
+      elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, controller.radar.js defaults
+      datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
+      dataElementType: string | bool
+  GenericDatasetOptions:
+    doc: index.d.ts:66 ControllerDatasetOptions with index.d.ts:3859 ChartDatasetProperties and the keys that core code reads for each dataset, a dataset of a chart type without a dataset kind and `datasets.<custom type>`.
+    others: any
+    keys:
+      parsing: bool | scope ParsingOptions
+      normalized: bool
+      indexAxis: string
+      clip: number | bool | scope ChartArea
+      label: string
+      order: number
+      stack: string
+      hidden: bool
+      tooltip: scope TooltipDatasetOptions  # index.d.ts:3025 PluginDatasetOptionsByType
+      type: string  # index.d.ts:3859 ChartDatasetProperties
+      data: list
+      xAxisID: string  # read at core.datasetController.js:306
+      yAxisID: string  # read at core.datasetController.js:307
+      rAxisID: string  # read at core.datasetController.js:308
+      fill: number | string | bool | scope FillTarget  # read at core.datasetController.js:287
+      drawActiveElementsOnTop: bool  # read at core.datasetController.js:721
+      animation: bool | scope AnimationOptions  # read through core.config.js:229
+      animations: bool | scope AnimationsSpec
+      transitions: scope TransitionsSpec
+      elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
+      datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
+      dataElementType: string | bool
+  # ---------------------------------------------------------------------------------------------
+  # The scales. One kind for every scale type.
+  # ---------------------------------------------------------------------------------------------
+  ScaleOptions:
+    doc: index.d.ts:3829 ScaleOptions, the union of index.d.ts:1200 CoreScaleOptions, :3257 CartesianScaleOptions, :3344 CategoryScaleOptions, :3356 LinearScaleOptions, :3405 LogarithmicScaleOptions, :3484 TimeScaleOptions and :3563 RadialLinearScaleOptions, one scale and Chart.defaults.scale.
+    keys:
+      display: bool | string
+      alignToPixels: bool
+      backgroundColor: any
+      reverse: bool
+      clip: bool
+      weight: number
+      min: any
+      max: any
+      suggestedMin: any
+      suggestedMax: any
+      beforeUpdate: fn
+      beforeSetDimensions: fn
+      afterSetDimensions: fn
+      beforeDataLimits: fn
+      afterDataLimits: fn
+      beforeBuildTicks: fn
+      afterBuildTicks: fn
+      beforeTickToLabelConversion: fn
+      afterTickToLabelConversion: fn
+      beforeCalculateLabelRotation: fn
+      afterCalculateLabelRotation: fn
+      beforeFit: fn
+      afterFit: fn
+      afterUpdate: fn
+      bounds: string
+      position: string | scope ScalePosition
+      stack: string
+      stackWeight: number
+      axis: string
+      offset: bool
+      grid: scope GridLineOptions
+      border: scope BorderOptions
+      title: scope ScaleTitleOptions
+      stacked: bool | string
+      ticks: scope TickOptions
+      labels: list
+      beginAtZero: bool
+      grace: number | string
+      offsetAfterAutoskip: bool
+      adapters: any
+      time: scope TimeScaleTimeOptions
+      animate: bool
+      startAngle: number
+      angleLines: scope AngleLineOptions
+      pointLabels: scope PointLabelOptions
+      type: string  # index.d.ts:3825 ScaleOptionsByType
+      id: string  # written at core.controller.js:309, read at :344
+      fullSize: bool  # read at core.scale.js:768 and core.layouts.js:332
+  ScalePosition:
+    doc: Port-only kind for the object form of index.d.ts:3270 CartesianScaleOptions `position` (layout.d.ts LayoutPosition), the value on the scale of each id.
+    others: number
+    keys: none
+  TickOptions:
+    doc: The union of index.d.ts:3115 TickOptions, :3179 CartesianTickOptions, the linear ticks of :3376, the logarithmic ticks of :3415, :3466 TimeScaleTickOptions and :3535 RadialTickOptions, the scope `ticks` of a scale.
+    keys:
+      backdropColor: any
+      backdropPadding: number | scope Padding
+      callback: fn | bool
+      display: bool
+      color: any
+      font: scope FontSpec
+      padding: number
+      showLabelBackdrop: bool
+      textStrokeColor: any
+      textStrokeWidth: number
+      z: number
+      major: scope MajorTickOptions
+      sampleSize: number
+      align: string
+      autoSkip: bool
+      autoSkipPadding: number
+      crossAlign: string
+      includeBounds: bool
+      labelOffset: number
+      minRotation: number
+      maxRotation: number
+      mirror: bool
+      maxTicksLimit: number
+      format: any
+      precision: number
+      stepSize: number
+      count: number
+      source: string
+      minor: scope MinorTickOptions  # core.scale.defaults.js:75 defaults
+  MajorTickOptions:
+    doc: Port-only name for index.d.ts:3170 TickOptions `major`, the major ticks (read at core.scale.autoskip.js:21 and scale.time.js).
+    keys:
+      enabled: bool
+  MinorTickOptions:
+    doc: Port-only kind for core.scale.defaults.js:75 `ticks.minor`, an empty object that no upstream code reads.
+    keys: none
+  GridLineOptions:
+    doc: index.d.ts:3060 GridLineOptions, the scope `grid` of a scale.
+    keys:
+      display: bool
+      circular: bool
+      color: any
+      lineWidth: number
+      drawOnChartArea: bool
+      drawTicks: bool
+      tickBorderDash: list
+      tickBorderDashOffset: number
+      tickColor: any
+      tickLength: number
+      tickWidth: number
+      offset: bool
+      z: number
+  BorderOptions:
+    doc: index.d.ts:3042 BorderOptions, the scope `border` of a scale.
+    keys:
+      display: bool
+      dash: list
+      dashOffset: number
+      color: any
+      width: number
+      z: number
+  ScaleTitleOptions:
+    doc: Port-only name for index.d.ts:3309 CartesianScaleOptions `title`, the title of a scale.
+    keys:
+      display: bool
+      align: string
+      text: string | list
+      color: any
+      strokeColor: any
+      strokeWidth: number
+      font: scope FontSpec
+      padding: number | scope Padding
+  TimeScaleTimeOptions:
+    doc: index.d.ts:3429 TimeScaleTimeOptions, the scope `time` of a time scale.
+    keys:
+      parser: string | fn | bool
+      round: string | bool
+      isoWeekday: bool | number
+      displayFormats: scope DisplayFormats
+      tooltipFormat: string
+      unit: string | bool
+      minUnit: string
+  DisplayFormats:
+    doc: Port-only name for index.d.ts:3447 TimeScaleTimeOptions `displayFormats`, the format of each time unit (the keys of core.adapters.ts:22 formats).
+    others: string
+    keys:
+      datetime: string
+      millisecond: string
+      second: string
+      minute: string
+      hour: string
+      day: string
+      week: string
+      month: string
+      quarter: string
+      year: string
+  AngleLineOptions:
+    doc: Port-only name for index.d.ts:3568 RadialLinearScaleOptions `angleLines`, the angle lines of a radial scale.
+    keys:
+      display: bool
+      color: any
+      lineWidth: number
+      borderDash: list
+      borderDashOffset: number
+  PointLabelOptions:
+    doc: Port-only name for index.d.ts:3613 RadialLinearScaleOptions `pointLabels`, the point labels of a radial scale.
+    keys:
+      backdropColor: any
+      backdropPadding: number | scope Padding
+      borderRadius: number | scope BorderRadius
+      display: bool | string
+      color: any
+      font: scope FontSpec
+      callback: fn
+      padding: number
+      centerPointLabels: bool
+  # ---------------------------------------------------------------------------------------------
+  # The plugins. `events` of each plugin is read at core.controller.js:1170.
+  # ---------------------------------------------------------------------------------------------
+  LegendOptions:
+    doc: index.d.ts:2422 LegendOptions, the scope `plugins.legend`.
+    keys:
+      display: bool
+      position: string | scope ScalePosition
+      align: string
+      maxHeight: number
+      maxWidth: number
+      fullSize: bool
+      reverse: bool
+      onClick: fn
+      onHover: fn
+      onLeave: fn
+      labels: scope LegendLabelOptions
+      rtl: bool
+      textDirection: string
+      title: scope LegendTitleOptions
+      weight: number  # plugin.legend.js:642 defaults, read at core.layouts.js:334
+      events: list  # read at core.controller.js:1170
+  LegendLabelOptions:
+    doc: Port-only name for index.d.ts:2469 LegendOptions `labels`, the labels of the legend.
+    keys:
+      boxWidth: number
+      boxHeight: number
+      color: any
+      font: scope FontSpec
+      padding: number
+      pointStyleWidth: number
+      generateLabels: fn
+      filter: fn
+      sort: fn
+      pointStyle: any
+      textAlign: string
+      usePointStyle: bool
+      useBorderRadius: bool
+      borderRadius: number
+  LegendTitleOptions:
+    doc: Port-only name for index.d.ts:2552 LegendOptions `title`, the title of the legend.
+    keys:
+      display: bool
+      color: any
+      font: scope FontSpec
+      position: string
+      padding: number | scope Padding
+      text: string
+  TitleOptions:
+    doc: index.d.ts:2579 TitleOptions, the scopes `plugins.title` and `plugins.subtitle`.
+    keys:
+      align: string
+      display: bool
+      position: string
+      color: any
+      font: scope FontSpec
+      fullSize: bool
+      padding: number | scope Padding
+      text: string | list
+      weight: number  # plugin.title.js:155 and plugin.subtitle.js:42 defaults, read at core.layouts.js:334
+      events: list  # read at core.controller.js:1170
+  TooltipOptions:
+    doc: index.d.ts:2795 TooltipOptions (index.d.ts:1605 CoreInteractionOptions), the scope `plugins.tooltip`.
+    keys:
+      mode: string
+      intersect: bool
+      axis: string
+      includeInvisible: bool
+      enabled: bool
+      external: fn
+      position: string
+      xAlign: string
+      yAlign: string
+      itemSort: fn
+      filter: fn
+      backgroundColor: any
+      boxPadding: number
+      titleColor: any
+      titleFont: scope FontSpec
+      titleSpacing: number
+      titleMarginBottom: number
+      titleAlign: string
+      bodySpacing: number
+      bodyColor: any
+      bodyFont: scope FontSpec
+      bodyAlign: string
+      footerSpacing: number
+      footerMarginTop: number
+      footerColor: any
+      footerFont: scope FontSpec
+      footerAlign: string
+      padding: number | scope Padding
+      caretPadding: number
+      caretSize: number
+      cornerRadius: number | scope BorderRadius
+      multiKeyBackground: any
+      displayColors: bool
+      boxWidth: number
+      boxHeight: number
+      usePointStyle: bool
+      borderColor: any
+      borderWidth: number
+      rtl: bool
+      textDirection: string
+      animation: bool | scope AnimationOptions
+      animations: bool | scope AnimationsSpec
+      callbacks: scope TooltipCallbacks
+      reverse: bool  # read at plugin.tooltip.js:1202
+      events: list  # read at core.controller.js:1170
+  TooltipCallbacks:
+    doc: index.d.ts:2739 TooltipCallbacks (index.d.ts:2726 TooltipDatasetCallbacks), the scope `callbacks` of the tooltip and of a dataset tooltip.
+    keys:
+      beforeLabel: fn
+      label: fn
+      afterLabel: fn
+      labelColor: fn
+      labelTextColor: fn
+      labelPointStyle: fn
+      beforeTitle: fn
+      title: fn
+      afterTitle: fn
+      beforeBody: fn
+      afterBody: fn
+      beforeFooter: fn
+      footer: fn
+      afterFooter: fn
+  TooltipDatasetOptions:
+    doc: index.d.ts:2974 TooltipDatasetOptions, the `tooltip` object of a dataset (read at plugin.tooltip.js:357).
+    keys:
+      callbacks: scope TooltipCallbacks
+  FillerOptions:
+    doc: index.d.ts:2295 FillerOptions, the scope `plugins.filler`.
+    keys:
+      drawTime: string
+      propagate: bool
+      events: list  # read at core.controller.js:1170
+  DecimationOptions:
+    doc: index.d.ts:2292 DecimationOptions (the union of index.d.ts:2283 LttbDecimationOptions and :2288 MinMaxDecimationOptions), the scope `plugins.decimation`.
+    keys:
+      enabled: bool
+      threshold: number
+      algorithm: string
+      samples: number
+      events: list  # read at core.controller.js:1170
+  ColorsOptions:
+    doc: plugin.colors.ts:4 ColorsPluginOptions, the scope `plugins.colors`.
+    keys:
+      enabled: bool
+      forceOverride: bool
+      events: list  # read at core.controller.js:1170
+      $borderColors: list  # port-only theme palette (Chart.js ADR 0050, hunk H4a of plugin.colors.dart)
+      $backgroundColors: list  # port-only theme palette (Chart.js ADR 0050, hunk H4a of plugin.colors.dart)
+  GenericPluginOptions:
+    doc: Port-only kind, the options of a plugin without a plugin kind (an inline or a registered user plugin).
+    others: any
+    keys:
+      events: list  # read at core.controller.js:1170
+  # ---------------------------------------------------------------------------------------------
+  # The descriptors.
+  # ---------------------------------------------------------------------------------------------
+  Descriptors:
+    doc: Port-only kind for the descriptor tree of Chart.defaults.describe (core.defaults.js:165-175) and the `descriptors` statics, by option scope path.
+    others: scope Descriptors
+    keys:
+      _scriptable: any
+      _indexable: any
+      _fallback: any
+      _allKeys: any

@@ -57,6 +57,12 @@ melos:
     port:next:check:
       run: dart run packages/flutter_chartjs_port/tool/port_order.dart --check
       description: Fail when tool 8 cannot read a module of third_party/Chart.js/src, a header line of lib/ or a parity.md status, or when an import does not resolve.
+    options:gen:
+      run: dart run packages/flutter_chartjs_port/tool/options_gen.dart
+      description: Write the typed option scopes of flutter_chartjs_port (lib/src/options/*.g.dart) from tool/options_schema.yaml, formatted (Chart.js ADR 0054).
+    options:gen:check:
+      run: dart run packages/flutter_chartjs_port/tool/options_gen.dart --check
+      description: Fail when a generated file of flutter_chartjs_port lib/src/options/ differs from the output of tool/options_schema.yaml, or when that folder has a .g.dart file that the generator does not write.
     check:typed-reads:
       run: dart run packages/flutter_chartjs_port/tool/check_typed_reads.dart
       description: Fail when a count of the by-name forms (jsGet, jsGetKey, string index, jsCall, jsObjectKeys, extends MapBase, with MapMixin, implements Map) in a flutter_chartjs_port lib/src file outside lib/src/js/ and lib/src/options/ is above its baseline in tool/typed_reads/, or when a baseline is stale (tool 9). Options go after "--", for example "dart run melos run check:typed-reads -- --update" (write the baselines from the current tree).
@@ -68,7 +74,8 @@ melos:
         - port:next:check
         - parity:check
         - check:typed-reads
-      description: Run check:lib-imports, check:headers, check:js-semantics, port:next:check, parity:check and check:typed-reads.
+        - options:gen:check
+      description: Run check:lib-imports, check:headers, check:js-semantics, port:next:check, parity:check, check:typed-reads and options:gen:check.
     test:fixtures:
       run: dart run packages/flutter_chartjs_port/tool/spec_cases.dart --fixtures
       description: Run the fixture smoke tests of flutter_chartjs_port (tool 7) and report each fixture as passed, failed, skipped or missing. Fail on a failed, missing or unknown fixture and on a bad skip reason. Without the submodule third_party/Chart.js, each fixture skips; with FIXTURES_REQUIRED=1, it fails.

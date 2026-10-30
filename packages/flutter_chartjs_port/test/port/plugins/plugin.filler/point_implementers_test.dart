@@ -56,8 +56,12 @@ String _normalized(String path) {
 Future<List<(String, String)>> pointImplementers(String root) async {
   final dir = _normalized(root);
   final files = [
+    // The analysis options exclude the generated `*.g.dart` files of
+    // lib/src/options/ (Chart.js ADR 0054): they have no analysis context.
     for (final entity in Directory(dir).listSync(recursive: true))
-      if (entity is File && entity.path.endsWith('.dart'))
+      if (entity is File &&
+          entity.path.endsWith('.dart') &&
+          !entity.path.endsWith('.g.dart'))
         _normalized(entity.path),
   ]..sort();
   final collection = AnalysisContextCollection(

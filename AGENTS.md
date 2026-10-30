@@ -36,8 +36,8 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos โ
   Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the port checks of
   `packages/flutter_chartjs_port/doc/porting-flow.md` ยง4 (tools 1-3 and the checks of tools 6 and 8)
-  and tool 9, as melos steps. The CI job `port-checks` runs the six checks with a shallow checkout
-  of the three Chart.js submodules.
+  and tool 9, and `options:gen:check`, as melos steps. The CI job `port-checks` runs the seven
+  checks with a shallow checkout of the three Chart.js submodules.
   Each check can also run alone:
   - `check:lib-imports`: the import allowlists of `lib/`, of the pure layers and of the tests that
     the web legs compile. It also fails when a ported file imports `lib/src/theme/`, and when a
@@ -68,6 +68,14 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos โ
     for each source file, one line `<form> <count>` for each form; no file means 0), and on a
     stale or bad baseline. A lower count passes with a note. `-- --update` writes the baselines
     from the tree. A lane lowers its own baselines; it never raises one.
+  - `options:gen:check`: the check mode of `options:gen` (below).
+- `dart run melos run options:gen`: writes the typed option scopes of `flutter_chartjs_port`
+  (`lib/src/options/option_keys.g.dart`, `scope_kinds.g.dart` and `scopes.g.dart`) from the
+  hand-written schema `tool/options_schema.yaml` through `tool/options_gen.dart`, formatted
+  (Chart.js ADR 0054 ยง2). Edit the schema, never a `.g.dart` file. `options:gen:check` generates
+  into `.dart_tool/options_gen_check/` and fails when a committed file differs or when
+  `lib/src/options/` has a `.g.dart` file that the generator does not write. The analyzer
+  excludes `**/*.g.dart`.
 - `dart run melos run test:cases`: tool 5. It runs `test/specs/` and reports each upstream case of
   `doc/upstream/manifest.json` as passed, failed, skipped or missing. It fails on an unknown test
   name, a bad skip reason and a missing case of a `ported` module. CI runs it in the ubuntu `test`
@@ -183,6 +191,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     conversions of the Canvas 2D setters. `js_class.dart` has the JS class values (Chart.js ADR
     0020). `js_date.dart`, `js_map.dart` and `js_promise.dart` have `Date.now()`, the `Map`
     iteration and the promise jobs (Chart.js ADRs 0019 and 0045).
+  - `lib/src/options/` (Chart.js ADR 0054, port-only, pure layers): the typed internal model.
+    `opt.dart` has the option cell `Opt<T>` (`OptValue`, `OptFunction`, `OptList`, `OptScope`,
+    `OptUndefined`, `OptNull`, `OptForeign`) and the classification of a raw JS value for a key of
+    a shape. `option_scope.dart` has `OptionScope`, the base of the typed scopes: the own-key
+    order of JS, the extras (the keys that its kind does not declare) and the face by name
+    (`jsRead`, `jsWrite`, `jsHas`, `jsDelete`, `jsKeys`). The generated files have `OptionKey`
+    (one entry for each distinct key name, `optionKeyOf`), `ScopeKind` (one entry for each kind
+    of the schema) and one class `<Kind>Scope` for each kind, with a field of an `Opt` cell for
+    each key (`<key>Cell`) and a typed setter. A kind takes the name of its `index.d.ts`
+    interface; its class adds `Scope`.
   - `lib/src/core/core.element.dart` and `lib/src/elements/` (Chart.js ADR 0017): the port of
     `core.element.ts`, and the four elements (`element.point.dart`, `element.line.dart`,
     `element.bar.dart`, `element.arc.dart`) with `index.dart`. The port-only `element_options.dart`
@@ -487,6 +505,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `tool/observation_diff.sh <base>` writes the texts of a base commit and of the tree and lists
     the files that differ. `key_census_suite.tsv` and `key_census_fixtures.tsv` are the key
     census of the raw configs on the Map model (O2, the input of the option schema).
+    `schema_test.dart` is the schema drift test: each path of the defaults inventory of
+    `doc/upstream/manifest.json` maps to a declared key and fits its shape, and each census path
+    maps to a key or to a reviewed extra of `census_review.tsv` (each recorded kind in the shape
+    or a reviewed foreign pair). `opt_test.dart` and `option_scope_test.dart` test the cells and
+    the scopes on the VM, dart2js and dart2wasm.
     `test/port/scales/scale_chart_harness.dart` and `scale_time_harness.dart` are helper libraries
     of the scale tests, not test files. `test/port/controllers/` has the controller reference tests
     and their harness `controller_chart_harness.dart` (a library). `controller.<name>_test.dart`
