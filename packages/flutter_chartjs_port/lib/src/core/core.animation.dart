@@ -12,14 +12,21 @@
 /// an [AnimationSpec] with a field read, and the value of another Map with
 /// `jsGet` (Chart.js ADR 0019, section 3).
 ///
+/// The property of an animation is an [AnimatedProp] (Chart.js ADR 0054
+/// §10): `Animations` gives the key of its typed table, and the public
+/// constructor maps the name with [AnimatedProp.of].
+///
 /// The port has three hunks for performance (Chart.js ADR 0019, sections 5
-/// and 6):
+/// and 6, with Chart.js ADR 0054 §10):
 /// - An animation with the built-in `number` interpolator and two `double`
 ///   values ticks on two `double` fields (`adapt-animation-number-path`).
+///   It writes an `Element` through `Element.writeNumber`, the typed setter
+///   of the property.
 /// - A color animation keeps the parsed colors of its last call
 ///   (`adapt-animation-color-cache`).
-/// - The constructor resolves the interpolator one time. A user `fn` gets
-///   one closure that calls it with [jsCall].
+/// - The constructor resolves the interpolator one time, with no list and
+///   no lookup by name. A user `fn` gets one closure that calls it with
+///   [jsCall].
 ///
 /// The promises of [Animation.wait] settle in a job of `js_promise.dart`
 /// (`platform-animation-promise-checkpoint`, Chart.js ADR 0019, section 7).
@@ -38,8 +45,6 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' show color;
 import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
     show effects;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show resolve;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_date.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
@@ -50,6 +55,8 @@ import 'package:flutter_chartjs_port/src/js/js_promise.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart'
     show Color;
+import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
+    show AnimatedProp;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -99,11 +106,22 @@ Object? _number(Object? from, Object? to, double factor) {
   return jsToNumber(from) + (jsToNumber(to) - jsToNumber(from)) * factor;
 }
 
-/// core.animation.js:6 `interpolators`, by the name of the property type.
-const Map<String, Interpolator> _interpolators = {
-  'boolean': _boolean,
-  'color': _color,
-  'number': _number,
+/// core.animation.js:6 `interpolators[name]`: the interpolator of the
+/// property type [name], or Dart `null` where upstream gives `undefined`.
+Interpolator? _interpolatorNamed(String name) => switch (name) {
+  'boolean' => _boolean,
+  'color' => _color,
+  'number' => _number,
+  _ => null,
+};
+
+/// core.animation.js:35 `interpolators[typeof from]`: `typeof` gives
+/// `'number'` for a number and `'boolean'` for a boolean ([jsTypeof]). No
+/// other `typeof` names an interpolator.
+Interpolator? _interpolatorOf(Object? from) => switch (from) {
+  num() => _number,
+  bool() => _boolean,
+  _ => null,
 };
 
 /// core.animation.js:15-21 `interpolators.color` with one parse of each
@@ -157,35 +175,59 @@ class Animation implements types.Animation {
   ///
   /// [cfg] is the animation configuration: an [AnimationSpec] or another
   /// Map. [to] is the [undefined] sentinel when the caller passes no target
-  /// value.
+  /// value. [prop] is the property name: [Animation.typed] with its
+  /// [AnimatedProp].
+  Animation(
+    AnyObject cfg,
+    Object target,
+    String prop, [
+    Object? to = undefined,
+  ]) : this.typed(cfg, target, AnimatedProp.of(prop), to);
+
+  /// core.animation.js:28 `constructor(cfg, target, prop, to)` for the key
+  /// [prop] of the typed table of `Animations` (Chart.js ADR 0054 §10).
   ///
   /// The constructor resolves the interpolator one time (Chart.js ADR 0019,
   /// section 5). A truthy `cfg.fn` gets a closure that calls it through
   /// [jsCall], with the animation as `this`. Else the interpolator of
   /// `cfg.type || typeof from` is the built-in function, or Dart `null`
   /// where upstream gives `undefined`. Then the first interpolation throws a
-  /// [TypeError], as in JavaScript.
-  Animation(AnyObject cfg, Object target, String prop, [Object? to = undefined])
-    : _target = target,
-      _prop = prop,
-      // DIVERGES(chartjs): adapt-animation-number-path, two double fields.
-      _xy = target is Element ? (prop == 'x' ? 1 : (prop == 'y' ? 2 : 0)) : 0,
-      _element = target is Element ? target : null {
-    final currentValue = readProperty(target, prop);
+  /// [TypeError], as in JavaScript. `resolve([...])` of upstream is the
+  /// first value that is not [undefined], with no list (helpers.options.ts:
+  /// 154 without a context and an index).
+  @internal
+  Animation.typed(
+    AnyObject cfg,
+    Object target,
+    AnimatedProp prop, [
+    Object? to = undefined,
+  ]) : _target = target,
+       _key = prop,
+       _element = target is Element ? target : null {
+    final currentValue = readProperty(target, prop.name);
 
+    // `resolve([cfg.to, to, currentValue, cfg.from])`.
+    final cfgTo = _cfgTo(cfg);
+    final cfgFrom = _cfgFrom(cfg);
     // Upstream assigns the parameter `to` (core.animation.js:31).
     // ignore: parameter_assignments
-    to = resolve([_cfgTo(cfg), to, currentValue, _cfgFrom(cfg)]);
-    final from = resolve([_cfgFrom(cfg), currentValue, to]);
+    to = _firstDefined(cfgTo, to, currentValue, cfgFrom);
+    // `resolve([cfg.from, currentValue, to])`.
+    final from = _firstDefined(_cfgFrom(cfg), currentValue, to);
 
     _active = true;
     final fn = _cfgFn(cfg);
-    final type = _cfgType(cfg);
-    _fn = jsTruthy(fn)
-        ? (f, t, x) => jsCall(fn, [f, t, x], thisArg: this)
-        : _interpolators[jsTruthy(type) ? jsToString(type) : jsTypeof(from)];
+    if (jsTruthy(fn)) {
+      _fn = (f, t, x) => jsCall(fn, [f, t, x], thisArg: this);
+    } else {
+      final type = _cfgType(cfg);
+      _fn = jsTruthy(type)
+          ? _interpolatorNamed(jsToString(type))
+          : _interpolatorOf(from);
+    }
     // DIVERGES(chartjs): adapt-animation-color-cache, one parse of each color.
     if (identical(_fn, _color)) _fn = _ColorInterpolator().call;
+    // `effects` is a mutable object: a user can add or replace an easing.
     _easing = effects[_cfgEasing(cfg)] ?? effects['linear']!;
     _start = (jsDateNow() + jsOrZero(_cfgDelay(cfg))).floorToDouble();
     _duration = _total = jsToNumber(_cfgDuration(cfg)).floorToDouble();
@@ -242,8 +284,11 @@ class Animation implements types.Animation {
   /// core.animation.js:40 `_target`.
   final Object _target;
 
-  /// core.animation.js:41 `_prop`.
-  final String _prop;
+  /// core.animation.js:41 `_prop`, as its key (Chart.js ADR 0054 §10).
+  final AnimatedProp _key;
+
+  /// core.animation.js:41 `_prop`: the property name.
+  String get _prop => _key.name;
 
   /// core.animation.js:42 `_from`.
   Object? _from;
@@ -265,14 +310,11 @@ class Animation implements types.Animation {
   /// [_to] on the number path.
   double _toNumber = 0;
 
-  /// 1 for the property `x` of an [Element], 2 for its `y`, else 0. The
-  /// number path writes 1 and 2 through the setters `Element.x` and
-  /// `Element.y` (core.element.ts:11-12).
-  final int _xy;
-
-  /// [_target] when it is an [Element], else Dart `null`. The typed field
-  /// spares the number path a cast in each write: 20000 points x 2 tick
-  /// 0.03 to 0.07 ms faster on AOT and 0.02 to 0.04 ms on wasm.
+  /// [_target] when it is an [Element], else Dart `null`. The number path
+  /// writes it through `Element.writeNumber`, the typed setter of [_key]
+  /// (Chart.js ADR 0054 §10). The typed field spares the number path a cast
+  /// in each write: 20000 points x 2 tick 0.03 to 0.07 ms faster on AOT and
+  /// 0.02 to 0.04 ms on wasm.
   final Element? _element;
 
   /// core.animation.js:37 `_start`, the start time in milliseconds. The
@@ -346,8 +388,12 @@ class Animation implements types.Animation {
       _duration = jsMax(remain, jsToNumber(_cfgDuration(cfg))).floorToDouble();
       _total += elapsed;
       _loop = jsTruthy(_cfgLoop(cfg));
-      _to = resolve([_cfgTo(cfg), to, currentValue, _cfgFrom(cfg)]);
-      _from = resolve([_cfgFrom(cfg), currentValue, to]);
+      // `resolve([cfg.to, to, currentValue, cfg.from])` and
+      // `resolve([cfg.from, currentValue, to])`.
+      final cfgTo = _cfgTo(cfg);
+      final cfgFrom = _cfgFrom(cfg);
+      _to = _firstDefined(cfgTo, to, currentValue, cfgFrom);
+      _from = _firstDefined(_cfgFrom(cfg), currentValue, to);
       // DIVERGES(chartjs): adapt-animation-number-path, two double fields.
       _retarget();
     }
@@ -496,54 +542,73 @@ class Animation implements types.Animation {
     _writeNumber(from + (to - from) * factor);
   }
 
-  /// `this._target[prop] = value` on the number path.
+  /// `this._target[prop] = value` on the number path: the typed setter of
+  /// an [Element] (`Element.writeNumber`), else the write by name.
   @pragma('vm:prefer-inline')
   @pragma('dart2js:prefer-inline')
   @pragma('wasm:prefer-inline')
   void _writeNumber(double value) {
-    switch (_xy) {
-      case 1:
-        _element!.x = value;
-      case 2:
-        _element!.y = value;
-      default:
-        writeProperty(_target, _prop, value);
+    final element = _element;
+    if (element != null) {
+      element.writeNumber(_key, value);
+    } else {
+      writeProperty(_target, _prop, value);
     }
   }
 }
 
+/// `resolve(inputs)` (helpers.options.ts:154) of three or four values with
+/// no context and no index: the first value that is not [undefined], else
+/// [undefined].
+Object? _firstDefined(
+  Object? a,
+  Object? b,
+  Object? c, [
+  Object? d = undefined,
+]) {
+  if (!identical(a, undefined)) return a;
+  if (!identical(b, undefined)) return b;
+  if (!identical(c, undefined)) return c;
+  return d;
+}
+
+/// `cfg[name]` of a `cfg` that is not an [AnimationSpec]: the read by name
+/// of a plain object, the `cfg` of `new Chart.Animation(cfg, ...)` of user
+/// code and of the specs. It gives [undefined] for an absent key.
+Object? _cfgRead(AnyObject cfg, String name) => jsGet(cfg, name);
+
 /// `cfg.delay` (core.animation.js:37): the field of an [AnimationSpec], else
-/// `jsGet`. Both give [undefined] for an absent key.
+/// [_cfgRead]. Both give [undefined] for an absent key.
 Object? _cfgDelay(AnyObject cfg) =>
-    cfg is AnimationSpec ? cfg.delayValue : jsGet(cfg, 'delay');
+    cfg is AnimationSpec ? cfg.delayValue : _cfgRead(cfg, 'delay');
 
 /// `cfg.duration` (core.animation.js:38, :59).
 Object? _cfgDuration(AnyObject cfg) =>
-    cfg is AnimationSpec ? cfg.durationValue : jsGet(cfg, 'duration');
+    cfg is AnimationSpec ? cfg.durationValue : _cfgRead(cfg, 'duration');
 
 /// `cfg.easing` (core.animation.js:36).
 Object? _cfgEasing(AnyObject cfg) =>
-    cfg is AnimationSpec ? cfg.easingValue : jsGet(cfg, 'easing');
+    cfg is AnimationSpec ? cfg.easingValue : _cfgRead(cfg, 'easing');
 
 /// `cfg.fn` (core.animation.js:35).
 Object? _cfgFn(AnyObject cfg) =>
-    cfg is AnimationSpec ? cfg.fnValue : jsGet(cfg, 'fn');
+    cfg is AnimationSpec ? cfg.fnValue : _cfgRead(cfg, 'fn');
 
 /// `cfg.from` (core.animation.js:31-32, :62-63).
 Object? _cfgFrom(AnyObject cfg) =>
-    cfg is AnimationSpec ? cfg.fromValue : jsGet(cfg, 'from');
+    cfg is AnimationSpec ? cfg.fromValue : _cfgRead(cfg, 'from');
 
 /// `cfg.loop` (core.animation.js:39, :61).
 Object? _cfgLoop(AnyObject cfg) =>
-    cfg is AnimationSpec ? cfg.loopValue : jsGet(cfg, 'loop');
+    cfg is AnimationSpec ? cfg.loopValue : _cfgRead(cfg, 'loop');
 
 /// `cfg.to` (core.animation.js:31, :62).
 Object? _cfgTo(AnyObject cfg) =>
-    cfg is AnimationSpec ? cfg.toValue : jsGet(cfg, 'to');
+    cfg is AnimationSpec ? cfg.toValue : _cfgRead(cfg, 'to');
 
 /// `cfg.type` (core.animation.js:35).
 Object? _cfgType(AnyObject cfg) =>
-    cfg is AnimationSpec ? cfg.typeValue : jsGet(cfg, 'type');
+    cfg is AnimationSpec ? cfg.typeValue : _cfgRead(cfg, 'type');
 
 /// The JS property read `target[prop]` of an animation target (Chart.js ADR
 /// 0019, section 2).

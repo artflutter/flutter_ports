@@ -18,6 +18,7 @@ library;
 import 'dart:collection';
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The type of [_absent].
@@ -175,6 +176,36 @@ final class AnimationSpec extends MapBase<String, Object?> {
         return false;
     }
     return true;
+  }
+
+  /// Writes [value] for [key], an [OptionKey] or a name: the typed write of
+  /// `Animations.configure` (core.animations.js:28, Chart.js ADR 0054 §10).
+  ///
+  /// The [OptionKey] of a known key writes its field with no name lookup.
+  /// Another key writes through [operator []=]: an extra key.
+  void storeKey(Object key, Object? value) {
+    switch (key) {
+      case OptionKey.delay:
+        _delay = value;
+      case OptionKey.duration:
+        _duration = value;
+      case OptionKey.easing:
+        _easing = value;
+      case OptionKey.fn:
+        _fn = value;
+      case OptionKey.from:
+        _from = value;
+      case OptionKey.loop:
+        _loop = value;
+      case OptionKey.to:
+        _to = value;
+      case OptionKey.type:
+        _type = value;
+      case final OptionKey other:
+        this[other.jsName] = value;
+      default:
+        this[key as String] = value;
+    }
   }
 
   /// The value of [key], or Dart `null` for an absent key, as the read of a

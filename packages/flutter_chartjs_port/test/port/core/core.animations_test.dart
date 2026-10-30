@@ -9,10 +9,15 @@ import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
+import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/animated_prop.dart';
+import 'package:flutter_chartjs_port/src/options/props.dart';
+import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
@@ -409,6 +414,114 @@ void main() {
         expect(animator.has(chart), isTrue);
         animator.remove(chart);
       }
+    });
+  });
+
+  // Chart.js ADR 0054 §10: the typed keys of a property object of a
+  // controller, and the same results as the object by name.
+  group('typed keys', () {
+    test('animatedPropOf names the key of each field', () {
+      final classes = <(TypedRecord Function(), List<String>)>[
+        (
+          PointProperties.new,
+          ['x', 'y', 'skip', 'stop', 'parsed', 'raw', 'options', 'angle'],
+        ),
+        (
+          BarProperties.new,
+          [
+            'horizontal',
+            'base',
+            'enableBorderRadius',
+            'x',
+            'y',
+            'height',
+            'width',
+            'options',
+            'borderSkipped',
+            'inflateAmount',
+          ],
+        ),
+        (
+          ArcProperties.new,
+          [
+            'x',
+            'y',
+            'startAngle',
+            'endAngle',
+            'circumference',
+            'outerRadius',
+            'innerRadius',
+            'options',
+          ],
+        ),
+        (LineProperties.new, ['animated', 'options', '_loop', '_fullLoop']),
+      ];
+      for (final (make, names) in classes) {
+        for (final name in names) {
+          final record = make()..[name] = 1;
+          expect(record.slotAt(0), greaterThanOrEqualTo(0), reason: name);
+          expect(record.keyAt(0), name);
+          expect(animatedPropOf(record, 0).name, name);
+          // A built-in name gives its constant, as AnimatedProp.of does.
+          final builtIn = AnimatedProp.of(name);
+          if (!builtIn.isCustom) {
+            expect(animatedPropOf(record, 0), same(builtIn), reason: name);
+          }
+        }
+      }
+      final extra = PointProperties()..['other'] = 1;
+      expect(animatedPropOf(extra, 0).name, 'other');
+      expect(animatedPropOf(extra, 0).isCustom, isTrue);
+    });
+
+    test('a property object animates as the same object by name', () {
+      final chart = _Chart();
+      final typedPoint = PointElement()
+        ..x = 0
+        ..y = 0;
+      final plainPoint = PointElement()
+        ..x = 0
+        ..y = 0;
+      final options = PointOptions()..['radius'] = 3;
+      final typed = PointProperties()
+        ..y = 20
+        ..x = 10
+        ..skip = false
+        ..options = options;
+      final plain = <String, Object?>{
+        'y': 20.0,
+        'x': 10.0,
+        'skip': false,
+        'options': options,
+      };
+      expect(Animations(chart, _xConfig()).update(typedPoint, typed), isTrue);
+      expect(Animations(chart, _xConfig()).update(plainPoint, plain), isTrue);
+      for (final point in [typedPoint, plainPoint]) {
+        // The keys from the last: options, skip, x, y.
+        expect(point.$animations!.keys, ['x', 'y']);
+        expect(point.skip, isFalse);
+        expect(point.options, same(options));
+        expect(point.x, 0.0);
+        expect(point.$animations!['x']!.to, 10.0);
+        expect(point.$animations!['y']!.to, 20.0);
+      }
+      animator.remove(chart);
+    });
+
+    test('with no animated key, assign takes the typed setters', () {
+      final chart = _Chart();
+      final bar = BarElement();
+      final typed = BarProperties()
+        ..horizontal = false
+        ..base = 100
+        ..x = 5
+        ..width = 2;
+      expect(Animations(chart, <String, Object?>{}).update(bar, typed), isNull);
+      expect(bar['horizontal'], isFalse);
+      expect(bar['base'], 100.0);
+      expect(bar['x'], 5.0);
+      expect(bar['width'], 2.0);
+      expect(bar['height'], same(undefined));
     });
   });
 }
