@@ -874,6 +874,22 @@ Changes to the cited files:
   all). `doc/status.yaml` changes the rows of `canvas_ui.dart` and of the new test file in place:
   no row of `doc/parity.md` moves. The tests of §2.6 and §3.5 and the estimates do not change. No
   trigger occurred.
+- 2026-10-30, form N3 of §7. `UiPathBuilder` of `lib/src/canvas/canvas_ui_path.dart` keeps the
+  first 32 commands of a path in a buffer and builds the `ui.Path` at the first read of `path` or
+  at the 33rd command, with the calls of the eager build in the same order and with the same values.
+  `_materializeCircle` becomes `_deferCircle`. The current point and the subpath start are two
+  `_PathPoint`s: a point on an arc keeps its arc and gets its cosine and sine at the first read
+  (the DOM `arcTo`). `_nativeArc` takes the center and the radii in place of an oval. `reset`
+  resets the `ui.Path` only when it has commands. The file gets the import of `package:meta` and
+  `debugBuilt`, and has 1340 lines (267 lines more). Each line after line 31 moves: §1.1, §2.1 and
+  §2.5 give the new line numbers. The inventory gets the row of N3, and the row of the current
+  point names `_PathPoint`. `_addArc`, `_nativeArc` and `_bezierArc` have fewer lines, so the
+  inventory rows of cut 1 change their line counts (54 to 53, 31 to 23, 18 to 10 and 41 to 37) and
+  the code that cut 1 removes is 76 lines in place of 85. The estimates of §2.10 stay: cut 1 and
+  §7 change the same lines, and the owner of C1 measures them again.
+  `test/port/canvas/canvas_ui_native_test.dart` gets the group of N3 (7 tests, 15 tests in all).
+  `doc/status.yaml` changes the rows of `canvas_ui_path.dart` and of the new test file in place: no
+  row of `doc/parity.md` moves. The tests of §2.6 and §3.5 do not change. No trigger occurred.
 
 ## 1. Why
 
@@ -899,19 +915,20 @@ the estimate (§3.9).
 
 | Part | File:lines | Lines | Flutter API that replaces it | Verdict |
 |---|---|---:|---|---|
-| `UiPathBuilder._bezierArc` (cubic Béziers for a skew, a non-uniform scale with rotation, a rotated ellipse) | `lib/src/canvas/canvas_ui_path.dart:882-935` | 54 | `ui.Path.arcTo` in user space, then `extendWithPath(arc, Offset.zero, matrix4: m)` | **Remove** (cut 1) |
-| `_addArc`, axis-aligned branch with the reflection cases `a < 0`, `d < 0` and both | `canvas_ui_path.dart:806-836` | 31 | The same matrix path | **Remove** (cut 1) |
-| `_addArc`, similarity branch (rotation, uniform scale, mirror) | `canvas_ui_path.dart:788-805` | 18 | It already calls `ui.Path.arcTo` in bitmap space | **Keep**. It is the hot path: `retinaScale` and `translate` give a similarity. |
-| `_nativeArc` (half arcs for a sweep over pi, sweep 0, `forceMoveTo`) | `canvas_ui_path.dart:840-880` | 41 | None. A sweep of `2 * pi - 1e-12` rounds to 360 degrees and `arcTo` adds nothing. | **Keep**. The matrix path shares its half split. |
-| `canvasArcSweep` (Chromium `AdjustEndAngle`) | `canvas_ui_path.dart:243-258` | 16 | None. Skia takes the sweep modulo 360 degrees. | **Keep**. The full sweeps change behavior. |
-| `UiTransform` (a-f, the operations, `mapX`/`mapY`, the flags, the matrix writers) | `canvas_ui_path.dart:41-241` | 201 | None. `dart:ui` has no affine type. `Canvas.getTransform` needs a live recording and allocates. `vector_math` `Matrix4` is 4 x 4 and not a dependency. | **Keep** |
-| Current point and subpath start (`_lastX`, `_startX`, `hasSubpath`) | `canvas_ui_path.dart:298-305`, `:385-422` | ~25 | None. `ui.Path` has no current point. | **Keep** |
-| DOM `arcTo` (tangent arc) math | `canvas_ui_path.dart:705-768` | ~60 | None. `ui.Path.arcToPoint` is the SVG end-point arc. | **Keep**. It calls `_addArc`. |
-| `rect()` with four mapped corners | `canvas_ui_path.dart:490-523` | 33 | None. `addRect` sorts the corners and changes the winding when `w < 0` or `h < 0`. | **Keep** |
-| Pending full circle (`singleCircle`, `_materializeCircle`) | `canvas_ui_path.dart:278-296`, `:353-383`, `:649-671` | ~50 | None | **Keep** (cut 3) |
-| `roundRect` of the path builder: `UiPathBuilder.roundRect` (one `addRRect` under an axis-aligned transform, else the HTML segments through `_addArc`), `_mappedRRect`, `_roundRectSegments` | `canvas_ui_path.dart:525-625` | 101 | None. `ui.Path.addRRect` has no direction and no Canvas 2D checks, flips, scale or subpath at (x, y). | **Keep**. A performance addition (porting-flow.md §1.1), not a cut. |
-| The shape tracking of the fast paths (`singleRRect`, `shapePair`, `_trackShape`, the fields `_rrect`, `_shape0`, `_shape1`) | `canvas_ui_path.dart:306-311`, `:321-351` | 37 | None. `ui.Path` does not tell its shapes. | **Keep**. A performance addition (porting-flow.md §1.1). |
-| `rrectContains` and `_cornerContains` (the inner rounded rectangle is inside the outer one) | `canvas_ui_path.dart:938-1049` | 112 | None. `RRect.contains` tests one point. | **Keep**. A performance addition (porting-flow.md §1.1): the condition of `drawDRRect`. |
+| `UiPathBuilder._bezierArc` (cubic Béziers for a skew, a non-uniform scale with rotation, a rotated ellipse) | `lib/src/canvas/canvas_ui_path.dart:1150-1202` | 53 | `ui.Path.arcTo` in user space, then `extendWithPath(arc, Offset.zero, matrix4: m)` | **Remove** (cut 1) |
+| `_addArc`, axis-aligned branch with the reflection cases `a < 0`, `d < 0` and both | `canvas_ui_path.dart:1086-1108` | 23 | The same matrix path | **Remove** (cut 1) |
+| `_addArc`, similarity branch (rotation, uniform scale, mirror) | `canvas_ui_path.dart:1076-1085` | 10 | It already calls `ui.Path.arcTo` in bitmap space | **Keep**. It is the hot path: `retinaScale` and `translate` give a similarity. |
+| `_nativeArc` (half arcs for a sweep over pi, sweep 0, `forceMoveTo`) | `canvas_ui_path.dart:1112-1148` | 37 | None. A sweep of `2 * pi - 1e-12` rounds to 360 degrees and `arcTo` adds nothing. | **Keep**. The matrix path shares its half split. |
+| `canvasArcSweep` (Chromium `AdjustEndAngle`) | `canvas_ui_path.dart:253-268` | 16 | None. Skia takes the sweep modulo 360 degrees. | **Keep**. The full sweeps change behavior. |
+| `UiTransform` (a-f, the operations, `mapX`/`mapY`, the flags, the matrix writers) | `canvas_ui_path.dart:51-251` | 201 | None. `dart:ui` has no affine type. `Canvas.getTransform` needs a live recording and allocates. `vector_math` `Matrix4` is 4 x 4 and not a dependency. | **Keep** |
+| Current point and subpath start (`_PathPoint`, `_last`, `_start`, `hasSubpath`; a point on an arc keeps its arc, N3 of §7) | `canvas_ui_path.dart:289-347`, `:577-582`, `:681-716` | ~100 | None. `ui.Path` has no current point. | **Keep** |
+| DOM `arcTo` (tangent arc) math | `canvas_ui_path.dart:993-1056` | ~60 | None. `ui.Path.arcToPoint` is the SVG end-point arc. | **Keep**. It calls `_addArc`. |
+| `rect()` with four mapped corners | `canvas_ui_path.dart:782-814` | 33 | None. `addRect` sorts the corners and changes the winding when `w < 0` or `h < 0`. | **Keep** |
+| Pending full circle (`singleCircle`, `_deferCircle`) | `canvas_ui_path.dart:564-575`, `:631-679`, `:940-959` | ~50 | None | **Keep** (cut 3) |
+| `roundRect` of the path builder: `UiPathBuilder.roundRect` (one `addRRect` under an axis-aligned transform, else the HTML segments through `_addArc`), `_mappedRRect`, `_roundRectSegments` | `canvas_ui_path.dart:816-916` | 101 | None. `ui.Path.addRRect` has no direction and no Canvas 2D checks, flips, scale or subpath at (x, y). | **Keep**. A performance addition (porting-flow.md §1.1), not a cut. |
+| The shape tracking of the fast paths (`singleRRect`, `shapePair`, `_trackShape`, the fields `_rrect`, `_shape0`, `_shape1`) | `canvas_ui_path.dart:584-589`, `:599-629` | 37 | None. `ui.Path` does not tell its shapes. | **Keep**. A performance addition (porting-flow.md §1.1). |
+| `rrectContains` and `_cornerContains` (the inner rounded rectangle is inside the outer one) | `canvas_ui_path.dart:1205-1316` | 112 | None. `RRect.contains` tests one point. | **Keep**. A performance addition (porting-flow.md §1.1): the condition of `drawDRRect`. |
+| N3 of §7: the deferred commands of the path builder (`deferredPathCommands`, the command codes, `_codes`, `_numbers`, `_rrects`, `path`, `debugBuilt`, `_build`, `_replay`, `_direct` and the `_path` writers) | `canvas_ui_path.dart:270-287`, `:363-562` | ~220 | None. `ui.Path` builds each command at once. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
 | `roundRect` of the interface: `CanvasPath.roundRect`, `RoundRectGeometry`, `roundRectGeometry` (the HTML steps 1 to 11), `Path2D.roundRect`, `RoundRectCommand` | `lib/src/canvas/canvas.dart:92-104`, `:107-253`, `:707-722`, `:970-992` | 199 | None. The pure layer has no `dart:ui`. | **Keep**. A performance addition (porting-flow.md §1.1). |
 | The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill` (with no draw call for a shape with no area, N2 of §7), `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:403-410`, `:563-599`, `:1282-1284`, `:1343-1365`, `:1370-1404`, `:1446-1450` | 115 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
 | N1 of §7: the save of the recording canvas only for a state with a clip of its own (`_begin`, `_ownsClips`, `save`, `restore`, the first save in `clip`), and `debugPendingCircles` | `canvas_ui.dart:558-561`, `:677-700`, `:987-1010`, `:1454-1461` | ~60 | None. A `ui.Canvas` has no state stack without its saves. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
@@ -932,26 +949,27 @@ the estimate (§3.9).
 
 ### 2.1 Current code
 
-`lib/src/canvas/canvas_ui_path.dart` has 1073 lines.
+`lib/src/canvas/canvas_ui_path.dart` has 1340 lines.
 
-- 1-31: the library doc. It says that arcs become cubic Béziers under other transforms.
-- 41-241: `UiTransform`. The flags are `isAxisAligned` (68), `isSimilarity` (73), `scaleFactor`
-  (76), `angle` (79), `isReflected` (82), `isInvertible` (85) and `isTranslation` (88).
-  `writeMatrix4` is at 192-204 and `writeInverseMatrix4` is at 208-221.
-- 243-258: `canvasArcSweep`.
-- 266-936: `UiPathBuilder`.
-  - 306-311 and 321-351: the shape tracking of the rounded rectangle fast paths (`singleRRect`,
+- 1-40: the library doc. It says that arcs become cubic Béziers under other transforms.
+- 51-251: `UiTransform`. The flags are `isAxisAligned` (78), `isSimilarity` (83), `scaleFactor`
+  (86), `angle` (89), `isReflected` (92), `isInvertible` (95) and `isTranslation` (98).
+  `writeMatrix4` is at 202-214 and `writeInverseMatrix4` is at 218-231.
+- 253-268: `canvasArcSweep`.
+- 270-347: the deferred commands and `_PathPoint` (§7, N3).
+- 355-1203: `UiPathBuilder`. The deferred commands are 363-562.
+  - 584-589 and 599-629: the shape tracking of the rounded rectangle fast paths (`singleRRect`,
     `shapePair`).
-  - 525-625: `roundRect`, `_mappedRRect` and `_roundRectSegments`. The segments call `_addArc`.
-  - 628-674: `arc`, with the full-circle fast path at 649-671.
-  - 677-703: `ellipse`.
-  - 706-768: `arcTo` (the DOM tangent arc).
-  - 774-838: `_addArc`. The similarity branch is 788-805. The axis-aligned branch with the
-    reflection cases is 806-836. The Bézier fall-back is 837.
-  - 844-880: `_nativeArc`.
-  - 884-935: `_bezierArc`.
-- 938-1049: `rrectContains` and `_cornerContains`.
-- 1051-1073: `_CachedPath` and `uiPathOf`.
+  - 816-916: `roundRect`, `_mappedRRect` and `_roundRectSegments`. The segments call `_addArc`.
+  - 918-962: `arc`, with the full-circle fast path at 940-959.
+  - 965-991: `ellipse`.
+  - 994-1056: `arcTo` (the DOM tangent arc).
+  - 1062-1110: `_addArc`. The similarity branch is 1076-1085. The axis-aligned branch with the
+    reflection cases is 1086-1108. The Bézier fall-back is 1109.
+  - 1117-1148: `_nativeArc`.
+  - 1152-1202: `_bezierArc`.
+- 1205-1316: `rrectContains` and `_cornerContains`.
+- 1318-1340: `_CachedPath` and `uiPathOf`.
 
 `lib/src/canvas/canvas_ui.dart` uses `UiTransform` for the state (275, 299), the shared matrix
 buffer `_m4` (370), the transform setters (836-874), the shader matrix (637-641), the strokes
@@ -1050,10 +1068,10 @@ Do step 0 in work package W. Do steps 1 to 6 in work package C1.
    it from `_nativeArc` and from `_matrixArc`.
 2. In `_addArc`, keep the zero-radius case and the similarity branch. Send every other case to
    `_matrixArc`.
-3. Delete the axis-aligned branch (`:806-836`) and `_bezierArc` (`:882-935`).
+3. Delete the axis-aligned branch (`:1086-1108`) and `_bezierArc` (`:1150-1202`).
 4. Do not change `arc`, `ellipse`, `arcTo`, the pending circle, `UiTransform`, `canvas_ui.dart`
    or `canvas_ui_batch.dart`.
-5. Update the library doc (`canvas_ui_path.dart:1-31`) and the doc of `_addArc`: the direct path,
+5. Update the library doc (`canvas_ui_path.dart:1-40`) and the doc of `_addArc`: the direct path,
    the matrix path, and the rule of §2.2 (a new path and a new matrix for each call).
 6. If a threshold of the new test file (work package A1) fails only on antialiased edges, adjust
    the threshold in the same commit and say why in the commit message.

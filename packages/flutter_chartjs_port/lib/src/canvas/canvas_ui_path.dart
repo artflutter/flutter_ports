@@ -28,6 +28,15 @@
 /// The arc and ellipse curves are `dart:ui` arcs when the transform keeps
 /// them circular or axis-aligned, else cubic Bézier curves. The layer has no
 /// Chromium-exact arc math (Chart.js ADR 0034).
+///
+/// [UiPathBuilder] keeps the first [deferredPathCommands] commands of a path
+/// and builds its `ui.Path` only when a reader needs it
+/// (canvas-cuts-plan.md §7, N3). The build makes the `ui.Path` calls of an
+/// eager build, in the same order and with the same values. Thus a path that
+/// a fast path of the context draws (a rectangle, a rounded rectangle, a
+/// ring, a circle) makes no `ui.Path` call. The current point and the start
+/// of a subpath on an arc keep the arc, and get their coordinates at the
+/// first read.
 library;
 
 import 'dart:math' as math;
@@ -35,6 +44,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:meta/meta.dart';
 
 const double _tau = 2 * math.pi;
 
@@ -257,6 +267,85 @@ double canvasArcSweep(double startAngle, double endAngle, bool ccw) {
   return endAngle - startAngle;
 }
 
+/// The count of commands that [UiPathBuilder] keeps before it builds its
+/// `ui.Path` (canvas-cuts-plan.md §7, N3). A longer path, for example the
+/// polyline of a line chart, builds its `ui.Path` at the next command and
+/// sends the later commands to it directly.
+const int deferredPathCommands = 32;
+
+// The codes of the deferred commands. The numbers of each command follow in
+// UiPathBuilder._numbers, in bitmap space.
+const int _moveCode = 0; // x, y
+const int _lineCode = 1; // x, y
+const int _quadCode = 2; // x1, y1, x2, y2
+const int _cubicCode = 3; // x1, y1, x2, y2, x3, y3
+const int _arcCode = 4; // cx, cy, rx, ry, start, sweep, forceMoveTo (1 or 0)
+const int _rrectCode = 5; // the ui.RRect in UiPathBuilder._rrects
+const int _closeCode = 6;
+
+/// The most numbers of one deferred command: an arc.
+const int _maxCommandNumbers = 7;
+
+/// A point of [UiPathBuilder] in bitmap space: the current point or the
+/// start of the subpath. A point on an arc keeps its arc, and gets its
+/// coordinates at the first read of [x] or [y], with the expressions of an
+/// eager build: most arcs never need them, and each takes a cosine and a
+/// sine.
+final class _PathPoint {
+  double _x = 0;
+  double _y = 0;
+  bool _onArc = false;
+  double _cx = 0;
+  double _cy = 0;
+  double _rx = 0;
+  double _ry = 0;
+  double _angle = 0;
+
+  double get x {
+    if (_onArc) _resolve();
+    return _x;
+  }
+
+  double get y {
+    if (_onArc) _resolve();
+    return _y;
+  }
+
+  void _resolve() {
+    _onArc = false;
+    _x = _cx + _rx * math.cos(_angle);
+    _y = _cy + _ry * math.sin(_angle);
+  }
+
+  void set(double x, double y) {
+    _x = x;
+    _y = y;
+    _onArc = false;
+  }
+
+  /// The point at the parametric [angle] of the ellipse at ([cx], [cy]) with
+  /// the radii [rx] and [ry].
+  void setOnArc(double cx, double cy, double rx, double ry, double angle) {
+    _cx = cx;
+    _cy = cy;
+    _rx = rx;
+    _ry = ry;
+    _angle = angle;
+    _onArc = true;
+  }
+
+  void copyFrom(_PathPoint other) {
+    _x = other._x;
+    _y = other._y;
+    _onArc = other._onArc;
+    _cx = other._cx;
+    _cy = other._cy;
+    _rx = other._rx;
+    _ry = other._ry;
+    _angle = other._angle;
+  }
+}
+
 /// A [CanvasPath] that builds a `ui.Path` in the space of the canvas bitmap,
 /// through [transform].
 ///
@@ -273,13 +362,203 @@ final class UiPathBuilder implements CanvasPath {
 
   final ui.Path _path = ui.Path();
 
+  // The deferred commands (canvas-cuts-plan.md §7, N3): the code of each
+  // command, the numbers of the commands in order, and the rounded rectangle
+  // of each `addRRect`. [_path] gets them at the first read of [path], or
+  // when the buffer is full.
+  final Uint8List _codes = Uint8List(deferredPathCommands);
+  final Float64List _numbers = Float64List(
+    deferredPathCommands * _maxCommandNumbers,
+  );
+  final List<ui.RRect?> _rrects = List<ui.RRect?>.filled(
+    deferredPathCommands,
+    null,
+  );
+  int _deferred = 0;
+  int _numberCount = 0;
+
+  // Whether [_path] has the commands of the path so far: then a new command
+  // goes to it directly. Only then does [_path] have commands.
+  bool _built = false;
+
   /// The built path.
   ///
-  /// A pending full circle (see [singleCircle]) becomes part of the path at
-  /// the first read.
+  /// The first read builds it from the deferred commands and the pending
+  /// full circle (see [singleCircle]). The later commands of the path go to
+  /// it directly.
   ui.Path get path {
-    if (_circle) _materializeCircle();
+    if (!_built) _build();
     return _path;
+  }
+
+  /// Whether the `ui.Path` of the path is built, for tests: a path that a
+  /// fast path of the context draws never builds it.
+  @visibleForTesting
+  bool get debugBuilt => _built;
+
+  void _build() {
+    if (_circle) _deferCircle();
+    _replay();
+    _built = true;
+  }
+
+  /// Gives the deferred commands to [_path], in order.
+  void _replay() {
+    final p = _path;
+    final n = _numbers;
+    var j = 0;
+    for (var i = 0; i < _deferred; i++) {
+      switch (_codes[i]) {
+        case _moveCode:
+          p.moveTo(n[j], n[j + 1]);
+          j += 2;
+        case _lineCode:
+          p.lineTo(n[j], n[j + 1]);
+          j += 2;
+        case _quadCode:
+          p.quadraticBezierTo(n[j], n[j + 1], n[j + 2], n[j + 3]);
+          j += 4;
+        case _cubicCode:
+          p.cubicTo(n[j], n[j + 1], n[j + 2], n[j + 3], n[j + 4], n[j + 5]);
+          j += 6;
+        case _arcCode:
+          final cx = n[j];
+          final cy = n[j + 1];
+          final rx = n[j + 2];
+          final ry = n[j + 3];
+          // The oval of an eager build: Rect.fromCircle(center, r) gives the
+          // same four values as fromLTRB(cx - r, cy - r, cx + r, cy + r).
+          p.arcTo(
+            ui.Rect.fromLTRB(cx - rx, cy - ry, cx + rx, cy + ry),
+            n[j + 4],
+            n[j + 5],
+            n[j + 6] != 0,
+          );
+          j += 7;
+        case _rrectCode:
+          p.addRRect(_rrects[i]!);
+        case _closeCode:
+          p.close();
+      }
+    }
+    _deferred = 0;
+    _numberCount = 0;
+  }
+
+  /// Whether the next command goes to [_path] directly: the path is built,
+  /// or the buffer is full, which builds it. A pending circle becomes
+  /// deferred commands first.
+  bool _direct() {
+    if (_circle) _deferCircle();
+    if (_built) return true;
+    if (_deferred < deferredPathCommands) return false;
+    _build();
+    return true;
+  }
+
+  void _pathMoveTo(double x, double y) {
+    if (_direct()) {
+      _path.moveTo(x, y);
+      return;
+    }
+    _codes[_deferred++] = _moveCode;
+    _numbers
+      ..[_numberCount++] = x
+      ..[_numberCount++] = y;
+  }
+
+  void _pathLineTo(double x, double y) {
+    if (_direct()) {
+      _path.lineTo(x, y);
+      return;
+    }
+    _codes[_deferred++] = _lineCode;
+    _numbers
+      ..[_numberCount++] = x
+      ..[_numberCount++] = y;
+  }
+
+  void _pathQuadraticTo(double x1, double y1, double x2, double y2) {
+    if (_direct()) {
+      _path.quadraticBezierTo(x1, y1, x2, y2);
+      return;
+    }
+    _codes[_deferred++] = _quadCode;
+    _numbers
+      ..[_numberCount++] = x1
+      ..[_numberCount++] = y1
+      ..[_numberCount++] = x2
+      ..[_numberCount++] = y2;
+  }
+
+  void _pathCubicTo(
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    double x3,
+    double y3,
+  ) {
+    if (_direct()) {
+      _path.cubicTo(x1, y1, x2, y2, x3, y3);
+      return;
+    }
+    _codes[_deferred++] = _cubicCode;
+    _numbers
+      ..[_numberCount++] = x1
+      ..[_numberCount++] = y1
+      ..[_numberCount++] = x2
+      ..[_numberCount++] = y2
+      ..[_numberCount++] = x3
+      ..[_numberCount++] = y3;
+  }
+
+  /// `ui.Path.arcTo` on the oval at ([cx], [cy]) with the radii [rx] and
+  /// [ry].
+  void _pathArcTo(
+    double cx,
+    double cy,
+    double rx,
+    double ry,
+    double start,
+    double sweep, {
+    required bool forceMoveTo,
+  }) {
+    if (_direct()) {
+      _path.arcTo(
+        ui.Rect.fromLTRB(cx - rx, cy - ry, cx + rx, cy + ry),
+        start,
+        sweep,
+        forceMoveTo,
+      );
+      return;
+    }
+    _codes[_deferred++] = _arcCode;
+    _numbers
+      ..[_numberCount++] = cx
+      ..[_numberCount++] = cy
+      ..[_numberCount++] = rx
+      ..[_numberCount++] = ry
+      ..[_numberCount++] = start
+      ..[_numberCount++] = sweep
+      ..[_numberCount++] = forceMoveTo ? 1 : 0;
+  }
+
+  void _pathAddRRect(ui.RRect rrect) {
+    if (_direct()) {
+      _path.addRRect(rrect);
+      return;
+    }
+    _rrects[_deferred] = rrect;
+    _codes[_deferred++] = _rrectCode;
+  }
+
+  void _pathClose() {
+    if (_direct()) {
+      _path.close();
+      return;
+    }
+    _codes[_deferred++] = _closeCode;
   }
 
   // A full circle that `arc` added to an empty path, in bitmap space. It
@@ -298,10 +577,9 @@ final class UiPathBuilder implements CanvasPath {
   /// The path has a subpath: a current point exists.
   bool hasSubpath = false;
 
-  double _lastX = 0;
-  double _lastY = 0;
-  double _startX = 0;
-  double _startY = 0;
+  // The current point and the start of the subpath.
+  final _PathPoint _last = _PathPoint();
+  final _PathPoint _start = _PathPoint();
   int _ops = 0;
   ui.Rect? _rect;
   ui.RRect? _rrect;
@@ -356,9 +634,15 @@ final class UiPathBuilder implements CanvasPath {
   ({double x, double y, double radius})? get singleCircle =>
       _circle ? (x: _circleX, y: _circleY, radius: _circleR) : null;
 
-  /// `beginPath()`: empties the path.
+  /// `beginPath()`: empties the path. The `ui.Path` resets only when it has
+  /// commands.
   void reset() {
-    _path.reset();
+    if (_built) {
+      _path.reset();
+      _built = false;
+    }
+    _deferred = 0;
+    _numberCount = 0;
     hasSubpath = false;
     _ops = 0;
     _rect = null;
@@ -368,31 +652,42 @@ final class UiPathBuilder implements CanvasPath {
     _circle = false;
   }
 
-  /// Adds the pending circle to [_path], as [_nativeArc] adds a full sweep.
-  void _materializeCircle() {
+  /// Adds the pending circle to the commands, as [_nativeArc] adds a full
+  /// sweep. It is the first command of the path, so the buffer has room.
+  void _deferCircle() {
     _circle = false;
-    final oval = ui.Rect.fromCircle(
-      center: ui.Offset(_circleX, _circleY),
-      radius: _circleR,
-    );
     final half = _circleSweep / 2;
-    _path
-      ..arcTo(oval, _circleStart, half, true)
-      ..arcTo(oval, _circleStart + half, half, false);
-    if (_circleClosed) _path.close();
+    _pathArcTo(
+      _circleX,
+      _circleY,
+      _circleR,
+      _circleR,
+      _circleStart,
+      half,
+      forceMoveTo: true,
+    );
+    _pathArcTo(
+      _circleX,
+      _circleY,
+      _circleR,
+      _circleR,
+      _circleStart + half,
+      half,
+      forceMoveTo: false,
+    );
+    if (_circleClosed) _pathClose();
   }
 
   void _moveToMapped(double px, double py) {
-    path.moveTo(px, py);
-    _startX = _lastX = px;
-    _startY = _lastY = py;
+    _pathMoveTo(px, py);
+    _start.set(px, py);
+    _last.set(px, py);
     hasSubpath = true;
   }
 
   void _lineToMapped(double px, double py) {
-    path.lineTo(px, py);
-    _lastX = px;
-    _lastY = py;
+    _pathLineTo(px, py);
+    _last.set(px, py);
   }
 
   /// A line to the user point (x, y), or a move to it when the path has no
@@ -414,10 +709,9 @@ final class UiPathBuilder implements CanvasPath {
     if (_circle && !_circleClosed) {
       _circleClosed = true;
     } else {
-      path.close();
+      _pathClose();
     }
-    _lastX = _startX;
-    _lastY = _startY;
+    _last.copyFrom(_start);
     _ops++;
   }
 
@@ -451,9 +745,8 @@ final class UiPathBuilder implements CanvasPath {
     if (!hasSubpath) _moveToMapped(pcx, pcy);
     final px = t.mapX(x, y);
     final py = t.mapY(x, y);
-    path.quadraticBezierTo(pcx, pcy, px, py);
-    _lastX = px;
-    _lastY = py;
+    _pathQuadraticTo(pcx, pcy, px, py);
+    _last.set(px, py);
     _ops++;
   }
 
@@ -481,9 +774,8 @@ final class UiPathBuilder implements CanvasPath {
     if (!hasSubpath) _moveToMapped(p1x, p1y);
     final px = t.mapX(x, y);
     final py = t.mapY(x, y);
-    path.cubicTo(p1x, p1y, t.mapX(cp2x, cp2y), t.mapY(cp2x, cp2y), px, py);
-    _lastX = px;
-    _lastY = py;
+    _pathCubicTo(p1x, p1y, t.mapX(cp2x, cp2y), t.mapY(cp2x, cp2y), px, py);
+    _last.set(px, py);
     _ops++;
   }
 
@@ -504,11 +796,10 @@ final class UiPathBuilder implements CanvasPath {
     _moveToMapped(x0, y0);
     // The DOM order of the corners: the direction counts for the nonzero
     // rule when rectangles overlap.
-    path
-      ..lineTo(t.mapX(x + w, y), t.mapY(x + w, y))
-      ..lineTo(x2, y2)
-      ..lineTo(t.mapX(x, y + h), t.mapY(x, y + h))
-      ..close();
+    _pathLineTo(t.mapX(x + w, y), t.mapY(x + w, y));
+    _pathLineTo(x2, y2);
+    _pathLineTo(t.mapX(x, y + h), t.mapY(x, y + h));
+    _pathClose();
     _rect = t.isAxisAligned
         ? ui.Rect.fromLTRB(
             math.min(x0, x2),
@@ -541,7 +832,7 @@ final class UiPathBuilder implements CanvasPath {
     if (t.isAxisAligned) {
       rrect = _mappedRRect(g);
       if (g.clockwise != t.isReflected) {
-        path.addRRect(rrect);
+        _pathAddRRect(rrect);
       } else {
         _roundRectSegments(g);
       }
@@ -621,7 +912,7 @@ final class UiPathBuilder implements CanvasPath {
       _addArc(r - lr, b - lr, lr, lr, 0, quarter, -quarter);
       _addArc(r - ur, tp + ur, ur, ur, 0, 0, -quarter);
     }
-    path.close();
+    _pathClose();
   }
 
   @override
@@ -660,11 +951,8 @@ final class UiPathBuilder implements CanvasPath {
       _circleR = r;
       _circleStart = a0;
       _circleSweep = t.isReflected ? -sweep : sweep;
-      final end = a0 + _circleSweep;
-      _startX = pcx + r * math.cos(a0);
-      _startY = pcy + r * math.sin(a0);
-      _lastX = pcx + r * math.cos(end);
-      _lastY = pcy + r * math.sin(end);
+      _start.setOnArc(pcx, pcy, r, r, a0);
+      _last.setOnArc(pcx, pcy, r, r, a0 + _circleSweep);
       hasSubpath = true;
       _ops++;
       return;
@@ -722,8 +1010,8 @@ final class UiPathBuilder implements CanvasPath {
     }
     // The current point, back in user space.
     final det = t.determinant;
-    final lx = _lastX - t.e;
-    final ly = _lastY - t.f;
+    final lx = _last.x - t.e;
+    final ly = _last.y - t.f;
     final x0 = (t.d * lx - t.c * ly) / det;
     final y0 = (t.a * ly - t.b * lx) / det;
     final v1x = x0 - x1;
@@ -792,15 +1080,7 @@ final class UiPathBuilder implements CanvasPath {
       final a0 = t.isReflected
           ? t.angle - (start + rotation)
           : t.angle + start + rotation;
-      _nativeArc(
-        ui.Rect.fromCircle(center: ui.Offset(pcx, pcy), radius: r),
-        pcx,
-        pcy,
-        r,
-        r,
-        a0,
-        t.isReflected ? -sweep : sweep,
-      );
+      _nativeArc(pcx, pcy, r, r, a0, t.isReflected ? -sweep : sweep);
       return;
     }
     if (rotation == 0 && t.isAxisAligned) {
@@ -823,26 +1103,18 @@ final class UiPathBuilder implements CanvasPath {
         a0 = start;
         sw = sweep;
       }
-      _nativeArc(
-        ui.Rect.fromLTRB(pcx - hx, pcy - hy, pcx + hx, pcy + hy),
-        pcx,
-        pcy,
-        hx,
-        hy,
-        a0,
-        sw,
-      );
+      _nativeArc(pcx, pcy, hx, hy, a0, sw);
       return;
     }
     _bezierArc(cx, cy, rx, ry, rotation, start, sweep);
   }
 
-  /// A `ui.Path.arcTo` in bitmap space. A sweep of more than half a turn
-  /// is two half arcs: `arcTo` takes the sweep in float degrees, and a
-  /// sweep that rounds to 360 degrees adds only a point. Chromium draws a
-  /// circle for it.
+  /// A `ui.Path.arcTo` in bitmap space, on the oval at ([cx], [cy]) with the
+  /// radii [rx] and [ry]. A sweep of more than half a turn is two half arcs:
+  /// `arcTo` takes the sweep in float degrees, and a sweep that rounds to 360
+  /// degrees adds only a point. Chromium draws a circle for it. The current
+  /// point and a new subpath start stay on the arc ([_PathPoint]).
   void _nativeArc(
-    ui.Rect oval,
     double cx,
     double cy,
     double rx,
@@ -850,9 +1122,9 @@ final class UiPathBuilder implements CanvasPath {
     double start,
     double sweep,
   ) {
-    final sx = cx + rx * math.cos(start);
-    final sy = cy + ry * math.sin(start);
     if (sweep == 0) {
+      final sx = cx + rx * math.cos(start);
+      final sy = cy + ry * math.sin(start);
       if (hasSubpath) {
         _lineToMapped(sx, sy);
       } else {
@@ -862,21 +1134,17 @@ final class UiPathBuilder implements CanvasPath {
     }
     final forceMoveTo = !hasSubpath;
     if (forceMoveTo) {
-      _startX = sx;
-      _startY = sy;
+      _start.setOnArc(cx, cy, rx, ry, start);
       hasSubpath = true;
     }
     if (sweep.abs() > math.pi) {
       final half = sweep / 2;
-      path
-        ..arcTo(oval, start, half, forceMoveTo)
-        ..arcTo(oval, start + half, half, false);
+      _pathArcTo(cx, cy, rx, ry, start, half, forceMoveTo: forceMoveTo);
+      _pathArcTo(cx, cy, rx, ry, start + half, half, forceMoveTo: false);
     } else {
-      path.arcTo(oval, start, sweep, forceMoveTo);
+      _pathArcTo(cx, cy, rx, ry, start, sweep, forceMoveTo: forceMoveTo);
     }
-    final end = start + sweep;
-    _lastX = cx + rx * math.cos(end);
-    _lastY = cy + ry * math.sin(end);
+    _last.setOnArc(cx, cy, rx, ry, start + sweep);
   }
 
   /// The arc as cubic Bézier curves of at most 90 degrees each, for a
@@ -917,7 +1185,7 @@ final class UiPathBuilder implements CanvasPath {
       final c2y = y1 - k * d1y;
       final px = t.mapX(x1, y1);
       final py = t.mapY(x1, y1);
-      path.cubicTo(
+      _pathCubicTo(
         t.mapX(c1x, c1y),
         t.mapY(c1x, c1y),
         t.mapX(c2x, c2y),
@@ -925,8 +1193,7 @@ final class UiPathBuilder implements CanvasPath {
         px,
         py,
       );
-      _lastX = px;
-      _lastY = py;
+      _last.set(px, py);
       x0 = x1;
       y0 = y1;
       cosP = cos1;
