@@ -554,8 +554,14 @@ void main() {
         ]),
         throwsA(isA<TypeError>()),
       );
+      // The typed hook takes `(chart, args, options)` (Chart.js ADR 0054
+      // §12): the TypeError comes from the cast of the legend.
       expect(
-        () => jsCall(legend['afterUpdate'], [chart, <String, Object?>{}]),
+        () => jsCall(legend['afterUpdate'], [
+          chart,
+          <String, Object?>{},
+          <String, Object?>{},
+        ]),
         throwsA(isA<TypeError>()),
       );
       chart.legend = null;

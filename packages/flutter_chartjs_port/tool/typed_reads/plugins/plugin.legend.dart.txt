@@ -1,3 +1,9 @@
-jsGet 116
-stringIndex 21
+# L4 allowlist (Chart.js ADR 0054 §5, §12): the reads by name of objects of
+# user code. jsGet 10: the length of the text lines of an item (3), the
+# config argument of new Legend(config) through the class value (3), the
+# chart of a context of another class (_chartColor), chart.data.datasets and
+# the label of a dataset (the data of the user), and the item of a
+# generateLabels of user code or of a controller (_readItem). jsCall 2: the
+# filter and sort callbacks of the user, with JS arity.
+jsGet 10
 jsCall 2

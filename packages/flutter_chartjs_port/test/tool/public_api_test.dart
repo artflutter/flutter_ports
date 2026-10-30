@@ -132,6 +132,7 @@ const Map<String, String> _notExported = {
   // facades, the legend and tooltip items): internal in 0.1.0.
   'DecimationOptions': 'an internal typed plugin type of Chart.js ADR 0054',
   'FillerOptions': 'an internal typed plugin type of Chart.js ADR 0054',
+  'LegendItem': 'an internal typed plugin type of Chart.js ADR 0054',
   'LegendOptions': 'an internal typed plugin type of Chart.js ADR 0054',
   'TitleOptions': 'an internal typed plugin type of Chart.js ADR 0054',
   'TooltipOptions': 'an internal typed plugin type of Chart.js ADR 0054',

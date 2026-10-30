@@ -4,28 +4,36 @@
 ///
 /// [Legend] is the layout box of the chart legend. [legend] is the plugin
 /// object, the default export of the upstream file and `Legend` of
-/// `src/plugins/index.js:4` (Chart.js ADR 0038, section 1). It is a mutable
-/// Map with the upstream keys in the upstream order: `id`, `_element`,
-/// `start`, `stop`, `beforeUpdate`, `afterUpdate`, `afterEvent`, `defaults`
-/// and `descriptors`.
+/// `src/plugins/index.js:4` (Chart.js ADR 0038, section 1). It is a typed
+/// `Plugin` (Chart.js ADR 0054 §12) with the upstream keys in the upstream
+/// order: `id`, `_element`, `start`, `stop`, `beforeUpdate`, `afterUpdate`,
+/// `afterEvent`, `defaults` and `descriptors`.
 ///
-/// Each hook is a closure with the upstream parameter count and the typed
-/// parameters `(types.Chart chart, AnyObject args, AnyObject options)`
-/// (Chart.js ADR 0038, section 3). `chart.legend` is a field of
-/// `types.Chart`: Dart `null` stands for JS `undefined` and for the
-/// `delete` of `plugin.legend.js:609`.
+/// Each hook is a private function of the hook type `(types.Chart chart,
+/// args, AnyObject options)` (Chart.js ADR 0054 §12, in place of the
+/// upstream parameter counts of Chart.js ADR 0038, section 3): `afterEvent`
+/// takes the typed [EventHookArgs], the other hooks read no args and take
+/// any args object. `chart.legend` is a field of `types.Chart`: Dart `null`
+/// stands for JS `undefined` and for the `delete` of `plugin.legend.js:609`.
+///
+/// The box reads its options through the facades [LegendOptions],
+/// [LegendLabelOptions] and `LegendTitleOptions` of `plugin_options.dart`
+/// (Chart.js ADR 0054 §4), in the upstream order of the reads.
 ///
 /// The fields of the box start as the fields of `Scale` start: NaN for the
 /// edges, `maxWidth` and `maxHeight`, the `undefined` sentinel for
 /// `position` and `weight`, and `false` for `fullSize` (Chart.js ADR 0038,
 /// section 7).
 ///
-/// The legend items, the hit boxes and the column sizes are plain Maps with
-/// the upstream keys, as upstream. A user callback, a spec and a fixture
+/// The legend items of the built-in `generateLabels`, the hit boxes and the
+/// column sizes are typed classes with the upstream keys in the upstream
+/// order: [LegendItem], [LegendHitBox] and [LegendColumnSize] (Chart.js ADR
+/// 0054 §12). Each has the face, so a user callback, a spec and a fixture
 /// read them by name (`plugin.legend.tests.js:502-507`,
-/// `test/fixtures/plugin.legend/horizontal-rtl-hitbox.js:37-38`). The hit
-/// test reads at most one hit box for each item of an event, so a typed
-/// class gives no gain that a frame can show (Chart.js ADR 0037, Open 9).
+/// `test/fixtures/plugin.legend/horizontal-rtl-hitbox.js:37-38`), and the
+/// extras of a key that user code adds. An item of a `generateLabels` of
+/// user code (or of a controller) can be any object: the legend reads a
+/// [LegendItem] through its fields and another item by name ([_Item]).
 ///
 /// Not a pure layer: it imports `helpers.extras`.
 library;
@@ -49,7 +57,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isBetween;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ParsedFont, toFont, toPadding, toTRBLCorners;
+    show ParsedFont, ScriptableChartContext, toFont, toPadding, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart'
     show getRtlAdapter, overrideTextDirection, restoreTextDirection;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
@@ -63,16 +71,22 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
     show canvasKeyword, canvasLineDash, canvasNumber, canvasStyle;
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optNull;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         DescriptorsScope,
         LegendLabelOptionsScope,
         LegendOptionsScope,
         LegendTitleOptionsScope;
+import 'package:flutter_chartjs_port/src/options/typed_record.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show LegendLabelOptions, LegendOptions, optionOf;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show EventHookArgs, Plugin;
 
 /// `Math.SQRT2`.
 const double _sqrt2 = 1.4142135623730951;
@@ -85,12 +99,12 @@ const double _sqrt2 = 1.4142135623730951;
 /// string joins in the `+` of upstream (:174, :400), and the port adds its
 /// number (differences.md `adapt-legend-number-options`).
 ({double boxWidth, double boxHeight, double itemHeight}) _getBoxSize(
-  Object? labelOpts,
+  LegendLabelOptions labelOpts,
   double fontSize,
 ) {
   // DIVERGES(chartjs): adapt-legend-number-options, a box size is a number.
-  final rawHeight = jsGet(labelOpts, 'boxHeight');
-  final rawWidth = jsGet(labelOpts, 'boxWidth');
+  final rawHeight = labelOpts.boxHeight;
+  final rawWidth = labelOpts.boxWidth;
   var boxHeight = identical(rawHeight, undefined)
       ? fontSize
       : jsToNumber(rawHeight);
@@ -98,9 +112,9 @@ const double _sqrt2 = 1.4142135623730951;
       ? fontSize
       : jsToNumber(rawWidth);
 
-  if (jsTruthy(jsGet(labelOpts, 'usePointStyle'))) {
+  if (jsTruthy(labelOpts.usePointStyle)) {
     boxHeight = jsMin(boxHeight, fontSize);
-    final pointStyleWidth = jsGet(labelOpts, 'pointStyleWidth');
+    final pointStyleWidth = labelOpts.pointStyleWidth;
     boxWidth = jsTruthy(pointStyleWidth)
         ? jsToNumber(pointStyleWidth)
         : jsMin(boxWidth, fontSize);
@@ -121,17 +135,17 @@ const double _sqrt2 = 1.4142135623730951;
 bool _itemsEqual(Object? a, Object? b) =>
     a != null &&
     b != null &&
-    _strictEquals(jsGet(a, 'datasetIndex'), jsGet(b, 'datasetIndex')) &&
-    _strictEquals(jsGet(a, 'index'), jsGet(b, 'index'));
+    _strictEquals(_Item(a).datasetIndex, _Item(b).datasetIndex) &&
+    _strictEquals(_Item(a).index, _Item(b).index);
 
 /// The `padding` label option (`options.labels.padding`, :161, :192, :235,
 /// :289) as a number. index.d.ts types it as a number. A string joins in
 /// the `+` of upstream (for example :165, :185 and :209; :197 starts
 /// `totalWidth` with the raw value), and the port adds its `ToNumber`
 /// (differences.md `adapt-legend-number-options`).
-double _labelPadding(Object? labelOpts) =>
+double _labelPadding(LegendLabelOptions labelOpts) =>
     // DIVERGES(chartjs): adapt-legend-number-options, the padding is a number.
-    jsToNumber(jsGet(labelOpts, 'padding'));
+    jsToNumber(labelOpts.padding);
 
 /// The JS operator `===` on two raw values: two numbers compare by value
 /// (NaN is not equal to itself, and -0 equals +0), two strings by their code
@@ -141,11 +155,6 @@ bool _strictEquals(Object? a, Object? b) {
   if (a is String && b is String) return a == b;
   return identical(a, b);
 }
-
-/// A number of a legend Map (a hit box or a column size), as an arithmetic
-/// read of upstream gives it: the value itself for a `double`, else its
-/// `ToNumber`.
-double _num(Object? value) => value is double ? value : jsToNumber(value);
 
 /// The `align` option or the title `position` as the `String` of the helpers
 /// of helpers.extras.ts: `_alignStartEnd`, `_textX` and `_toLeftRightCenter`
@@ -198,14 +207,14 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// plugin.legend.js:52 `legendHitBoxes`: contains hit boxes for each
   /// dataset (in dataset order).
   ///
-  /// Each hit box is a Map with the upstream keys: `left`, `top`, `row`,
-  /// `width` and `height` for a horizontal legend (:183), `left`, `top`,
-  /// `col`, `width` and `height` for a vertical legend (:217).
+  /// Each hit box is a [LegendHitBox] with the upstream keys: `left`, `top`,
+  /// `row`, `width` and `height` for a horizontal legend (:183), `left`,
+  /// `top`, `col`, `width` and `height` for a vertical legend (:217).
   /// `index.d.ts` does not declare it. It implements the port-only member
   /// [types.LegendElement.legendHitBoxes], which the keyboard of `ChartView`
   /// reads (Chart.js ADR 0051, section 2).
   @override
-  List<AnyObject> legendHitBoxes = [];
+  List<LegendHitBox> legendHitBoxes = [];
 
   /// plugin.legend.js:57 `_hoveredItem`. Dart `null` stands for JS `null`.
   Object? _hoveredItem;
@@ -226,14 +235,16 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// plugin.legend.js:65 `legendItems`. Dart `null` stands for JS
   /// `undefined`, the value before the first [buildLabels].
   ///
-  /// The items are the values of `generateLabels`, as upstream. Each read
-  /// of an item member is a [jsGet].
+  /// The items are the values of `generateLabels`, as upstream: a
+  /// [LegendItem] of the built-in `generateLabels`, or any object of user
+  /// code, read through [_Item].
   @override
   List<Object?>? legendItems;
 
   /// plugin.legend.js:66 `columnSizes`: `{width, height}` of each column of
-  /// a vertical legend. Dart `null` stands for JS `undefined`.
-  List<AnyObject>? columnSizes;
+  /// a vertical legend, a [LegendColumnSize]. Dart `null` stands for JS
+  /// `undefined`.
+  List<LegendColumnSize>? columnSizes;
 
   /// plugin.legend.js:67 `lineWidths`: the width of each line of a
   /// horizontal legend. Dart `null` stands for JS `undefined`.
@@ -347,9 +358,10 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// goes to the end and never reaches `sort`, as in
   /// `Array.prototype.sort`. `reverse` reverses the List in place.
   void buildLabels() {
-    final labels = jsGet(options, 'labels');
+    final opts = LegendOptions(options);
+    final labels = opts.labelsValue;
     final labelOpts = jsTruthy(labels) ? labels : <String, Object?>{};
-    final generated = callback(jsGet(labelOpts, 'generateLabels'), [
+    final generated = callback(LegendLabelOptions(labelOpts).generateLabels, [
       chart,
     ], this);
     // DIVERGES(chartjs): adapt-legend-items-list, the items are a List.
@@ -357,7 +369,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         ? generated! as List<Object?>
         : <Object?>[];
 
-    final filter = jsGet(labelOpts, 'filter');
+    final filter = LegendLabelOptions(labelOpts).filter;
     if (jsTruthy(filter)) {
       legendItems = [
         for (final item in legendItems)
@@ -368,7 +380,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       ];
     }
 
-    final sort = jsGet(labelOpts, 'sort');
+    final sort = LegendLabelOptions(labelOpts).sort;
     if (jsTruthy(sort)) {
       legendItems = jsSort(legendItems, (a, b) {
         // SortCompare of Array.prototype.sort: an undefined element goes
@@ -382,7 +394,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       });
     }
 
-    if (jsTruthy(jsGet(options, 'reverse'))) {
+    if (jsTruthy(opts.reverse)) {
       _reverseInPlace(legendItems);
     }
 
@@ -396,16 +408,16 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// displayed, there are no guarantees that the options are correctly
   /// formatted so we need to bail out as early as possible.
   void fit() {
-    final options = this.options;
+    final options = LegendOptions(this.options);
     final ctx = this.ctx;
 
-    if (!jsTruthy(jsGet(options, 'display'))) {
+    if (!jsTruthy(options.display)) {
       this.width = this.height = 0;
       return;
     }
 
-    final labelOpts = jsGet(options, 'labels');
-    final labelFont = toFont(jsGet(labelOpts, 'font'));
+    final labelOpts = options.labels;
+    final labelFont = toFont(labelOpts.font);
     final fontSize = labelFont.size ?? double.nan;
     final titleHeight = _computeTitleHeight();
     final (:boxWidth, :boxHeight, :itemHeight) = _getBoxSize(
@@ -426,8 +438,8 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       width = _fitCols(titleHeight, labelFont, boxWidth, itemHeight) + 10;
     }
 
-    final maxWidthOption = jsGet(options, 'maxWidth');
-    final maxHeightOption = jsGet(options, 'maxHeight');
+    final maxWidthOption = options.maxWidth;
+    final maxHeightOption = options.maxHeight;
     this.width = jsMin(
       width,
       jsTruthy(maxWidthOption) ? jsToNumber(maxWidthOption) : maxWidth,
@@ -450,7 +462,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   ) {
     final ctx = this.ctx!;
     final maxWidth = this.maxWidth;
-    final padding = _labelPadding(jsGet(options, 'labels'));
+    final padding = _labelPadding(LegendOptions(options).labels);
     final hitboxes = legendHitBoxes = [];
     // Width of each line of legend boxes. Labels wrap onto multiple lines
     // when there are too many to fit on one
@@ -470,7 +482,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       final itemWidth =
           boxWidth +
           (fontSize / 2) +
-          ctx.measureText(jsToString(jsGet(legendItem, 'text'))).width;
+          ctx.measureText(jsToString(_Item(legendItem).text)).width;
 
       if (i == 0 || lineWidths.last + itemWidth + 2 * padding > maxWidth) {
         totalHeight += lineHeight;
@@ -483,13 +495,15 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         row++;
       }
 
-      hitboxes.add(<String, Object?>{
-        'left': 0.0,
-        'top': top,
-        'row': row,
-        'width': itemWidth,
-        'height': itemHeight,
-      });
+      hitboxes.add(
+        LegendHitBox.row(
+          left: 0,
+          top: top,
+          row: row,
+          width: itemWidth,
+          height: itemHeight,
+        ),
+      );
 
       lineWidths[lineWidths.length - 1] += itemWidth + padding;
     }
@@ -507,7 +521,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   ) {
     final ctx = this.ctx!;
     final maxHeight = this.maxHeight;
-    final padding = _labelPadding(jsGet(options, 'labels'));
+    final padding = _labelPadding(LegendOptions(options).labels);
     final hitboxes = legendHitBoxes = [];
     final columnSizes = this.columnSizes = [];
     final heightLimit = maxHeight - titleHeight;
@@ -534,10 +548,9 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       if (i > 0 && currentColHeight + itemHeight + 2 * padding > heightLimit) {
         totalWidth += currentColWidth + padding;
         // previous column size
-        columnSizes.add(<String, Object?>{
-          'width': currentColWidth,
-          'height': currentColHeight,
-        });
+        columnSizes.add(
+          LegendColumnSize(width: currentColWidth, height: currentColHeight),
+        );
         left += currentColWidth + padding;
         col++;
         currentColWidth = currentColHeight = 0;
@@ -545,13 +558,15 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 
       // Store the hitbox width and height here. Final position will be
       // updated in `draw`
-      hitboxes.add(<String, Object?>{
-        'left': left,
-        'top': currentColHeight,
-        'col': col,
-        'width': itemWidth,
-        'height': itemHeight,
-      });
+      hitboxes.add(
+        LegendHitBox.col(
+          left: left,
+          top: currentColHeight,
+          col: col,
+          width: itemWidth,
+          height: itemHeight,
+        ),
+      );
 
       // Get max width
       currentColWidth = jsMax(currentColWidth, itemWidth);
@@ -560,25 +575,24 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 
     totalWidth += currentColWidth;
     // previous column size
-    columnSizes.add(<String, Object?>{
-      'width': currentColWidth,
-      'height': currentColHeight,
-    });
+    columnSizes.add(
+      LegendColumnSize(width: currentColWidth, height: currentColHeight),
+    );
 
     return totalWidth;
   }
 
   /// plugin.legend.js:230 `adjustHitBoxes()`.
   void adjustHitBoxes() {
-    final options = this.options;
-    if (!jsTruthy(jsGet(options, 'display'))) {
+    final options = LegendOptions(this.options);
+    if (!jsTruthy(options.display)) {
       return;
     }
     final titleHeight = _computeTitleHeight();
     final hitboxes = legendHitBoxes;
-    final align = _alignName(jsGet(options, 'align'));
-    final padding = _labelPadding(jsGet(options, 'labels'));
-    final rtlHelper = getRtlAdapter(jsGet(options, 'rtl'), left, width);
+    final align = _alignName(options.align);
+    final padding = _labelPadding(options.labels);
+    final rtlHelper = getRtlAdapter(options.rtl, left, width);
     if (isHorizontal()) {
       var row = 0.0;
       var left = alignStartEnd(
@@ -587,7 +601,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         right - _lineWidthAt(row),
       );
       for (final hitbox in hitboxes) {
-        final hitboxRow = _num(hitbox['row']);
+        final hitboxRow = hitbox.row;
         if (row != hitboxRow) {
           row = hitboxRow;
           left = alignStartEnd(
@@ -596,11 +610,12 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
             right - _lineWidthAt(row),
           );
         }
-        final hitboxWidth = _num(hitbox['width']);
+        final hitboxWidth = hitbox.width;
         // `hitbox.top += this.top + titleHeight + padding`: the right side
         // adds first.
-        hitbox['top'] = _num(hitbox['top']) + (top + titleHeight + padding);
-        hitbox['left'] = rtlHelper.leftForLtr(rtlHelper.x(left), hitboxWidth);
+        hitbox
+          ..top = hitbox.top + (top + titleHeight + padding)
+          ..left = rtlHelper.leftForLtr(rtlHelper.x(left), hitboxWidth);
         left += hitboxWidth + padding;
       }
     } else {
@@ -611,7 +626,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         bottom - _columnHeightAt(col),
       );
       for (final hitbox in hitboxes) {
-        final hitboxCol = _num(hitbox['col']);
+        final hitboxCol = hitbox.col;
         if (hitboxCol != col) {
           col = hitboxCol;
           top = alignStartEnd(
@@ -620,15 +635,13 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
             bottom - _columnHeightAt(col),
           );
         }
-        hitbox['top'] = top;
-        final hitboxWidth = _num(hitbox['width']);
+        hitbox.top = top;
+        final hitboxWidth = hitbox.width;
         // `hitbox.left += this.left + padding`: the right side adds first.
-        hitbox['left'] = _num(hitbox['left']) + (left + padding);
-        hitbox['left'] = rtlHelper.leftForLtr(
-          rtlHelper.x(_num(hitbox['left'])),
-          hitboxWidth,
-        );
-        top += _num(hitbox['height']) + padding;
+        hitbox
+          ..left = hitbox.left + (left + padding)
+          ..left = rtlHelper.leftForLtr(rtlHelper.x(hitbox.left), hitboxWidth);
+        top += hitbox.height + padding;
       }
     }
   }
@@ -640,13 +653,24 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 
   /// `this.columnSizes[col].height` as a number. An absent column throws the
   /// [TypeError] of the read of `height` of `undefined`, as upstream.
-  double _columnHeightAt(double col) =>
-      _num(jsGet(jsGetIndex(columnSizes ?? undefined, col), 'height'));
+  double _columnHeightAt(double col) => _columnAt(col).height;
+
+  /// `this.columnSizes[col]`. Without column sizes, the read throws a
+  /// [TypeError], as upstream. An absent column (`undefined`) throws the
+  /// [TypeError] of the next property read, as upstream.
+  LegendColumnSize _columnAt(double col) {
+    final column = jsGetIndex(columnSizes ?? undefined, col);
+    if (column is! LegendColumnSize) {
+      // A JavaScript TypeError: a property read of undefined.
+      throw TypeError();
+    }
+    return column;
+  }
 
   /// plugin.legend.js:265 `isHorizontal()`.
   @override
   bool isHorizontal() {
-    final position = jsGet(options, 'position');
+    final position = LegendOptions(options).position;
     return position == 'top' || position == 'bottom';
   }
 
@@ -657,7 +681,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// (Chart.js ADR 0038, section 7).
   @override
   void draw([ChartArea? chartArea]) {
-    if (jsTruthy(jsGet(options, 'display'))) {
+    if (jsTruthy(LegendOptions(options).display)) {
       final ctx = this.ctx!;
       clipArea(ctx, this);
 
@@ -669,16 +693,16 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
 
   /// plugin.legend.js:283 `_draw()`.
   void _draw() {
-    final opts = options;
-    final columnSizes = this.columnSizes;
+    final opts = LegendOptions(options);
     final lineWidths = this.lineWidths;
     final ctx = this.ctx!;
-    final align = _alignName(jsGet(opts, 'align'));
-    final labelOpts = jsGet(opts, 'labels');
-    // The singleton read of `defaults.color` (:286).
-    final defaultColor = defaults['color'];
-    final rtlHelper = getRtlAdapter(jsGet(opts, 'rtl'), left, width);
-    final labelFont = toFont(jsGet(labelOpts, 'font'));
+    final align = _alignName(opts.align);
+    final labelOpts = opts.labels;
+    // The singleton read of `defaults.color` (:286): the typed read of the
+    // key, with the result of the Map read of the defaults.
+    final defaultColor = defaults.lookup(OptionKey.color)?.raw;
+    final rtlHelper = getRtlAdapter(opts.rtl, left, width);
+    final labelFont = toFont(labelOpts.font);
     final padding = _labelPadding(labelOpts);
     final fontSize = labelFont.size ?? double.nan;
     final halfFontSize = fontSize / 2;
@@ -699,7 +723,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     );
 
     // current position
-    void drawLegendBox(double x, double y, Object? legendItem) {
+    void drawLegendBox(double x, double y, _Item legendItem) {
       if (boxWidth.isNaN || boxWidth <= 0 || boxHeight.isNaN || boxHeight < 0) {
         return;
       }
@@ -707,37 +731,33 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       // Set the ctx for the box
       ctx.save();
 
-      final lineWidth = valueOrDefault(jsGet(legendItem, 'lineWidth'), 1);
+      final lineWidth = valueOrDefault(legendItem.lineWidth, 1);
       ctx
         ..fillStyle = canvasStyle(
-          valueOrDefault(jsGet(legendItem, 'fillStyle'), defaultColor),
+          valueOrDefault(legendItem.fillStyle, defaultColor),
         )
-        ..lineCap = canvasKeyword(
-          valueOrDefault(jsGet(legendItem, 'lineCap'), 'butt'),
-        )
+        ..lineCap = canvasKeyword(valueOrDefault(legendItem.lineCap, 'butt'))
         ..lineDashOffset = canvasNumber(
-          valueOrDefault(jsGet(legendItem, 'lineDashOffset'), 0),
+          valueOrDefault(legendItem.lineDashOffset, 0),
         )
         ..lineJoin = canvasKeyword(
-          valueOrDefault(jsGet(legendItem, 'lineJoin'), 'miter'),
+          valueOrDefault(legendItem.lineJoin, 'miter'),
         )
         ..lineWidth = canvasNumber(lineWidth)
         ..strokeStyle = canvasStyle(
-          valueOrDefault(jsGet(legendItem, 'strokeStyle'), defaultColor),
+          valueOrDefault(legendItem.strokeStyle, defaultColor),
         )
         ..setLineDash(
-          canvasLineDash(
-            valueOrDefault(jsGet(legendItem, 'lineDash'), <Object?>[]),
-          ),
+          canvasLineDash(valueOrDefault(legendItem.lineDash, <Object?>[])),
         );
 
-      if (jsTruthy(jsGet(labelOpts, 'usePointStyle'))) {
+      if (jsTruthy(labelOpts.usePointStyle)) {
         // Recalculate x and y for drawPoint() because its expecting
         // x and y to be center of figure (instead of top left)
         final drawOptions = _LegendPointOptions(
           radius: boxHeight * _sqrt2 / 2,
-          pointStyle: jsGet(legendItem, 'pointStyle'),
-          rotation: _rotationOf(jsGet(legendItem, 'rotation')),
+          pointStyle: legendItem.pointStyle,
+          rotation: _rotationOf(legendItem.rotation),
           borderWidth: jsToNumber(lineWidth),
         );
         final centerX = rtlHelper.xPlus(x, boxWidth / 2);
@@ -751,14 +771,14 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
           centerY,
           // `labelOpts.pointStyleWidth && boxWidth`: a falsy value draws the
           // style with the radius alone, as Dart `null` does.
-          jsTruthy(jsGet(labelOpts, 'pointStyleWidth')) ? boxWidth : null,
+          jsTruthy(labelOpts.pointStyleWidth) ? boxWidth : null,
         );
       } else {
         // Draw box as legend symbol
         // Adjust position when boxHeight < fontSize (want it centered)
         final yBoxTop = y + jsMax((fontSize - boxHeight) / 2, 0);
         final xBoxLeft = rtlHelper.leftForLtr(x, boxWidth);
-        final borderRadius = toTRBLCorners(jsGet(legendItem, 'borderRadius'));
+        final borderRadius = toTRBLCorners(legendItem.borderRadius);
 
         ctx.beginPath();
 
@@ -791,18 +811,16 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       ctx.restore();
     }
 
-    void fillText(double x, double y, Object? legendItem) {
+    void fillText(double x, double y, _Item legendItem) {
       renderText(
         ctx,
-        jsGet(legendItem, 'text'),
+        legendItem.text,
         x,
         y + (itemHeight / 2),
         labelFont,
         _LegendTextOpts(
-          strikethrough: jsTruthy(jsGet(legendItem, 'hidden')),
-          textAlign: _textAlignOf(
-            rtlHelper.textAlign(jsGet(legendItem, 'textAlign')),
-          ),
+          strikethrough: jsTruthy(legendItem.hidden),
+          textAlign: _textAlignOf(rtlHelper.textAlign(legendItem.textAlign)),
         ),
       );
     }
@@ -826,36 +844,29 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         y: alignStartEnd(
           align,
           top + titleHeight + padding,
-          bottom -
-              _num(jsGet(jsGetIndex(columnSizes ?? undefined, 0), 'height')),
+          bottom - _columnAt(0).height,
         ),
         line: 0,
       );
     }
 
-    overrideTextDirection(ctx, jsGet(opts, 'textDirection'));
+    overrideTextDirection(ctx, opts.textDirection);
 
     final lineHeight = itemHeight + padding;
     final legendItems = this.legendItems!;
     for (var i = 0; i < legendItems.length; i++) {
-      final legendItem = legendItems[i];
-      final fontColor = canvasStyle(jsGet(legendItem, 'fontColor'));
+      final legendItem = _Item(legendItems[i]);
+      final fontColor = canvasStyle(legendItem.fontColor);
       ctx
         ..strokeStyle =
             fontColor // for strikethrough effect
         ..fillStyle = fontColor; // render in correct colour
 
-      final textWidth = ctx
-          .measureText(jsToString(jsGet(legendItem, 'text')))
-          .width;
-      var itemAlign = jsGet(legendItem, 'textAlign');
+      final textWidth = ctx.measureText(jsToString(legendItem.text)).width;
+      var itemAlign = legendItem.textAlign;
       if (!jsTruthy(itemAlign)) {
-        itemAlign = jsGet(labelOpts, 'textAlign');
-        // A write into an item that is not an object throws a TypeError, as
-        // the write of strict mode does. A narrow or unmodifiable Map throws
-        // too (differences.md `js-semantics-legend-items`).
-        // DIVERGES(chartjs): js-semantics-legend-items, a narrow or fixed Map.
-        (legendItem! as Map<String, Object?>)['textAlign'] = itemAlign;
+        itemAlign = labelOpts.textAlign;
+        legendItem.textAlign = itemAlign;
       }
       final textAlign = rtlHelper.textAlign(itemAlign);
       final width = boxWidth + halfFontSize + textWidth;
@@ -876,18 +887,12 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
           cursor = (x: x, y: y, line: line);
         }
       } else if (i > 0 && y + lineHeight > bottom) {
-        x =
-            x +
-            _num(
-              jsGet(jsGetIndex(columnSizes ?? undefined, cursor.line), 'width'),
-            ) +
-            padding;
+        x = x + _columnAt(cursor.line).width + padding;
         final line = cursor.line + 1;
         y = alignStartEnd(
           align,
           top + titleHeight + padding,
-          bottom -
-              _num(jsGet(jsGetIndex(columnSizes ?? undefined, line), 'height')),
+          bottom - _columnAt(line).height,
         );
         cursor = (x: x, y: y, line: line);
       }
@@ -900,7 +905,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
         _alignName(textAlign),
         x + boxWidth + halfFontSize,
         isHorizontal ? x + width : right,
-        jsTruthy(jsGet(opts, 'rtl')),
+        jsTruthy(opts.rtl),
       );
 
       // Fill the actual label
@@ -912,13 +917,13 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
           y: cursor.y,
           line: cursor.line,
         );
-      } else if (jsGet(legendItem, 'text') is! String) {
+      } else if (legendItem.text is! String) {
         final fontLineHeight = labelFont.lineHeight;
         cursor = (
           x: cursor.x,
           y:
               cursor.y +
-              (_calculateLegendItemHeight(legendItem, fontLineHeight) +
+              (_calculateLegendItemHeight(legendItem.item, fontLineHeight) +
                   padding),
           line: cursor.line,
         );
@@ -927,25 +932,25 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       }
     }
 
-    restoreTextDirection(ctx, jsGet(opts, 'textDirection'));
+    restoreTextDirection(ctx, opts.textDirection);
   }
 
   /// plugin.legend.js:443 `drawTitle()`.
   ///
   /// @protected
   void drawTitle() {
-    final opts = options;
-    final titleOpts = jsGet(opts, 'title');
-    final titleFont = toFont(jsGet(titleOpts, 'font'));
-    final titlePadding = toPadding(jsGet(titleOpts, 'padding'));
+    final opts = LegendOptions(options);
+    final titleOpts = opts.title;
+    final titleFont = toFont(titleOpts.font);
+    final titlePadding = toPadding(titleOpts.padding);
 
-    if (!jsTruthy(jsGet(titleOpts, 'display'))) {
+    if (!jsTruthy(titleOpts.display)) {
       return;
     }
 
-    final rtlHelper = getRtlAdapter(jsGet(opts, 'rtl'), this.left, width);
+    final rtlHelper = getRtlAdapter(opts.rtl, this.left, width);
     final ctx = this.ctx!;
-    final position = _alignName(jsGet(titleOpts, 'position'));
+    final position = _alignName(titleOpts.position);
     final halfFontSize = (titleFont.size ?? double.nan) / 2;
     final topPaddingPlusHalfFontSize = titlePadding.top + halfFontSize;
     double y;
@@ -959,26 +964,22 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       // Move left / right so that the title is above the legend lines
       maxWidth = lineWidths!.fold(double.negativeInfinity, jsMax);
       y = top + topPaddingPlusHalfFontSize;
-      left = alignStartEnd(
-        _alignName(jsGet(opts, 'align')),
-        left,
-        right - maxWidth,
-      );
+      left = alignStartEnd(_alignName(opts.align), left, right - maxWidth);
     } else {
       // Move down so that the title is above the legend stack in every
       // alignment
       final maxHeight = columnSizes!.fold<double>(
         0,
-        (acc, size) => jsMax(acc, _num(jsGet(size, 'height'))),
+        (acc, size) => jsMax(acc, size.height),
       );
       y =
           topPaddingPlusHalfFontSize +
           alignStartEnd(
-            _alignName(jsGet(opts, 'align')),
+            _alignName(opts.align),
             top,
             bottom -
                 maxHeight -
-                jsToNumber(jsGet(jsGet(opts, 'labels'), 'padding')) -
+                jsToNumber(opts.labels.padding) -
                 _computeTitleHeight(),
           );
     }
@@ -988,7 +989,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
     final x = alignStartEnd(position, left, left + maxWidth);
 
     // Canvas setup
-    final color = canvasStyle(jsGet(titleOpts, 'color'));
+    final color = canvasStyle(titleOpts.color);
     ctx
       ..textAlign = _textAlignOf(
         rtlHelper.textAlign(toLeftRightCenter(position)),
@@ -998,15 +999,15 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       ..fillStyle = color
       ..font = titleFont.string;
 
-    renderText(ctx, jsGet(titleOpts, 'text'), x, y, titleFont);
+    renderText(ctx, titleOpts.text, x, y, titleFont);
   }
 
   /// plugin.legend.js:493 `_computeTitleHeight()`.
   double _computeTitleHeight() {
-    final titleOpts = jsGet(options, 'title');
-    final titleFont = toFont(jsGet(titleOpts, 'font'));
-    final titlePadding = toPadding(jsGet(titleOpts, 'padding'));
-    return jsTruthy(jsGet(titleOpts, 'display'))
+    final titleOpts = LegendOptions(options).title;
+    final titleFont = toFont(titleOpts.font);
+    final titlePadding = toPadding(titleOpts.padding);
+    return jsTruthy(titleOpts.display)
         ? titleFont.lineHeight + titlePadding.height
         : 0;
   }
@@ -1026,11 +1027,11 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       final lh = legendHitBoxes;
       for (var i = 0; i < lh.length; ++i) {
         final hitBox = lh[i];
-        final hitLeft = _num(hitBox['left']);
-        final hitTop = _num(hitBox['top']);
+        final hitLeft = hitBox.left;
+        final hitTop = hitBox.top;
 
-        if (isBetween(px, hitLeft, hitLeft + _num(hitBox['width'])) &&
-            isBetween(py, hitTop, hitTop + _num(hitBox['height']))) {
+        if (isBetween(px, hitLeft, hitLeft + hitBox.width) &&
+            isBetween(py, hitTop, hitTop + hitBox.height)) {
           // Touching an element
           return jsGetIndex(legendItems ?? undefined, i.toDouble());
         }
@@ -1045,7 +1046,7 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// Handle an event
   /// @param {ChartEvent} e - The event to handle
   void handleEvent(types.ChartEvent e) {
-    final opts = options;
+    final opts = LegendOptions(options);
     if (!_isListened(e.type, opts)) {
       return;
     }
@@ -1057,16 +1058,16 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
       final previous = _hoveredItem;
       final sameItem = _itemsEqual(previous, hoveredItem);
       if (jsTruthy(previous) && !sameItem) {
-        callback(jsGet(opts, 'onLeave'), [e, previous, this], this);
+        callback(opts.onLeave, [e, previous, this], this);
       }
 
       _hoveredItem = hoveredItem;
 
       if (jsTruthy(hoveredItem) && !sameItem) {
-        callback(jsGet(opts, 'onHover'), [e, hoveredItem, this], this);
+        callback(opts.onHover, [e, hoveredItem, this], this);
       }
     } else if (jsTruthy(hoveredItem)) {
-      callback(jsGet(opts, 'onClick'), [e, hoveredItem, this], this);
+      callback(opts.onClick, [e, hoveredItem, this], this);
     }
   }
 }
@@ -1121,7 +1122,7 @@ double _calculateItemWidth(
   ParsedFont labelFont,
   CanvasRenderingContext2D ctx,
 ) {
-  var legendItemText = jsGet(legendItem, 'text');
+  var legendItemText = _Item(legendItem).text;
   if (jsTruthy(legendItemText) && legendItemText is! String) {
     final list = legendItemText! as List<Object?>;
     // plugin.legend.js:564 `[].reduce(fn)` with no initial value throws a
@@ -1129,6 +1130,7 @@ double _calculateItemWidth(
     if (list.isEmpty) {
       throw TypeError();
     }
+    // The lines of the text of the user: any value, read by name.
     legendItemText = list.reduce(
       (a, b) => jsLessThan(jsGet(b, 'length'), jsGet(a, 'length')) ? a : b,
     );
@@ -1146,7 +1148,7 @@ double _calculateItemHeight(
   double fontLineHeight,
 ) {
   var itemHeight = itemHeight0;
-  if (jsGet(legendItem, 'text') is! String) {
+  if (_Item(legendItem).text is! String) {
     itemHeight = _calculateLegendItemHeight(legendItem, fontLineHeight);
   }
   return itemHeight;
@@ -1155,19 +1157,19 @@ double _calculateItemHeight(
 /// plugin.legend.js:577 `calculateLegendItemHeight(legendItem,
 /// fontLineHeight)`.
 double _calculateLegendItemHeight(Object? legendItem, double fontLineHeight) {
-  final text = jsGet(legendItem, 'text');
+  final text = _Item(legendItem).text;
+  // The text of the user: an array or another value, read by name.
   final labelHeight = jsTruthy(text) ? jsToNumber(jsGet(text, 'length')) : 0;
   return fontLineHeight * labelHeight;
 }
 
 /// plugin.legend.js:582 `isListened(type, opts)`.
-bool _isListened(String type, Object? opts) {
+bool _isListened(String type, LegendOptions opts) {
   if ((type == 'mousemove' || type == 'mouseout') &&
-      (jsTruthy(jsGet(opts, 'onHover')) || jsTruthy(jsGet(opts, 'onLeave')))) {
+      (jsTruthy(opts.onHover) || jsTruthy(opts.onLeave))) {
     return true;
   }
-  if (jsTruthy(jsGet(opts, 'onClick')) &&
-      (type == 'click' || type == 'mouseup')) {
+  if (jsTruthy(opts.onClick) && (type == 'click' || type == 'mouseup')) {
     return true;
   }
   return false;
@@ -1299,16 +1301,15 @@ Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 /// `js-semantics-legend-items`).
 // DIVERGES(chartjs): adapt-legend-dataset-index, the index is a number.
 void _onClick(Object? e, Object? legendItem, types.LegendElement legend) {
-  final index = _datasetIndexKey(jsGet(legendItem, 'datasetIndex'));
+  final item = _Item(legendItem);
+  final index = _datasetIndexKey(item.datasetIndex);
   final ci = legend.chart;
   if (ci.isDatasetVisible(index)) {
     ci.hide(index);
-    // DIVERGES(chartjs): js-semantics-legend-items, a narrow or fixed Map.
-    (legendItem! as Map<String, Object?>)['hidden'] = true;
+    item.hidden = true;
   } else {
     ci.show(index);
-    // DIVERGES(chartjs): js-semantics-legend-items, a narrow or fixed Map.
-    (legendItem! as Map<String, Object?>)['hidden'] = false;
+    item.hidden = false;
   }
 }
 
@@ -1330,8 +1331,17 @@ double _datasetIndexKey(Object? value) {
 }
 
 /// plugin.legend.js:661 and :707 `color: (ctx) => ctx.chart.options.color`.
-Object? _chartColor(Object? ctx) =>
-    jsGet((jsGet(ctx, 'chart')! as types.Chart).options, 'color');
+///
+/// A chart context gives its typed `chart`, and another context its read
+/// by name (a child context reads the chart of its parent). The chart
+/// options give their typed read of `color`.
+Object? _chartColor(Object? ctx) {
+  final chart = ctx is ScriptableChartContext
+      ? ctx.chart
+      // A context of another class: the read by name of user code.
+      : jsGet(ctx, 'chart');
+  return optionOf((chart! as types.Chart).options, OptionKey.color);
+}
 
 /// plugin.legend.js:675 `generateLabels(chart)`: generates labels shown in
 /// the legend.
@@ -1347,18 +1357,19 @@ Object? _chartColor(Object? ctx) =>
 /// lineJoin :
 /// lineWidth :
 ///
-/// Each style value is a read [jsGet]: an absent key gives [undefined]. The
-/// upstream call `_getSortedDatasetMetas()` has no argument, a falsy
-/// `filterVisible`.
+/// Each style value is the read of its key ([optionOf]): an absent key
+/// gives [undefined]. The upstream call `_getSortedDatasetMetas()` has no
+/// argument, a falsy `filterVisible`. The items are [LegendItem]s. The
+/// datasets of the user are read by name.
 List<Object?> _generateLabels(types.Chart chart) {
   final datasets = jsGet(chart.data, 'datasets');
-  final labels = jsGet(chart.legend!.options, 'labels');
-  final usePointStyle = jsGet(labels, 'usePointStyle');
-  final pointStyle = jsGet(labels, 'pointStyle');
-  final textAlign = jsGet(labels, 'textAlign');
-  final color = jsGet(labels, 'color');
-  final useBorderRadius = jsGet(labels, 'useBorderRadius');
-  final borderRadius = jsGet(labels, 'borderRadius');
+  final labels = LegendOptions(chart.legend!.options).labels;
+  final usePointStyle = labels.usePointStyle;
+  final pointStyle = labels.pointStyle;
+  final textAlign = labels.textAlign;
+  final color = labels.color;
+  final useBorderRadius = labels.useBorderRadius;
+  final borderRadius = labels.borderRadius;
 
   return [
     for (final meta in chart.getSortedDatasetMetas(false))
@@ -1375,9 +1386,11 @@ List<Object?> _generateLabels(types.Chart chart) {
   ];
 }
 
-/// The item of [meta] of `generateLabels` (:680-701), in the upstream key
-/// order.
-AnyObject _datasetItem(
+/// The item of [meta] of `generateLabels` (:680-701), a [LegendItem] with
+/// the upstream key order. The reads of the style keep the upstream order:
+/// the destructuring of :678 first, then the object literal. The label is
+/// a read of the dataset of the user, by name.
+LegendItem _datasetItem(
   Object? datasets,
   types.ChartMeta meta,
   Map<String, Object?> style,
@@ -1387,104 +1400,106 @@ AnyObject _datasetItem(
   Object? useBorderRadius,
   Object? borderRadius,
 ) {
-  final borderWidth = toPadding(jsGet(style, 'borderWidth'));
-  final stylePointStyle = jsGet(style, 'pointStyle');
-  final styleTextAlign = jsGet(style, 'textAlign');
+  final borderWidth = toPadding(optionOf(style, OptionKey.borderWidth));
+  final stylePointStyle = optionOf(style, OptionKey.pointStyle);
+  final styleTextAlign = optionOf(style, OptionKey.textAlign);
 
-  return <String, Object?>{
-    'text': jsGet(jsGetIndex(datasets, meta.index), 'label'),
-    'fillStyle': jsGet(style, 'backgroundColor'),
-    'fontColor': color,
-    'hidden': !jsTruthy(meta.visible),
-    'lineCap': jsGet(style, 'borderCapStyle'),
-    'lineDash': jsGet(style, 'borderDash'),
-    'lineDashOffset': jsGet(style, 'borderDashOffset'),
-    'lineJoin': jsGet(style, 'borderJoinStyle'),
-    'lineWidth': (borderWidth.width + borderWidth.height) / 4,
-    'strokeStyle': jsGet(style, 'borderColor'),
-    'pointStyle': jsTruthy(pointStyle) ? pointStyle : stylePointStyle,
-    'rotation': jsGet(style, 'rotation'),
-    'textAlign': jsTruthy(textAlign) ? textAlign : styleTextAlign,
+  return LegendItem()
+    ..text = jsGet(jsGetIndex(datasets, meta.index), 'label')
+    ..fillStyle = optionOf(style, OptionKey.backgroundColor)
+    ..fontColor = color
+    ..hidden = !jsTruthy(meta.visible)
+    ..lineCap = optionOf(style, OptionKey.borderCapStyle)
+    ..lineDash = optionOf(style, OptionKey.borderDash)
+    ..lineDashOffset = optionOf(style, OptionKey.borderDashOffset)
+    ..lineJoin = optionOf(style, OptionKey.borderJoinStyle)
+    ..lineWidth = (borderWidth.width + borderWidth.height) / 4
+    ..strokeStyle = optionOf(style, OptionKey.borderColor)
+    ..pointStyle = jsTruthy(pointStyle) ? pointStyle : stylePointStyle
+    ..rotation = optionOf(style, OptionKey.rotation)
+    ..textAlign = jsTruthy(textAlign) ? textAlign : styleTextAlign
     // `useBorderRadius && (borderRadius || style.borderRadius)`
-    'borderRadius': jsTruthy(useBorderRadius)
-        ? (jsTruthy(borderRadius) ? borderRadius : jsGet(style, 'borderRadius'))
-        : useBorderRadius,
-
+    ..borderRadius = jsTruthy(useBorderRadius)
+        ? (jsTruthy(borderRadius)
+              ? borderRadius
+              : optionOf(style, OptionKey.borderRadius))
+        : useBorderRadius
     // Below is extra data used for toggling the datasets
-    'datasetIndex': meta.index,
-  };
+    ..datasetIndex = meta.index;
+}
+
+/// plugin.legend.js:601 `start(chart, _args, options)`.
+void _start(types.Chart chart, AnyObject _, AnyObject options) {
+  final legend = Legend((ctx: chart.ctx, options: options, chart: chart));
+  chart.legend = legend;
+  layouts
+    ..configure(chart, legend, options)
+    ..addBox(chart, legend);
+}
+
+/// plugin.legend.js:607 `stop(chart)`. core.layouts.js:318-323 compares
+/// identities only. A value that is not a LayoutItem is never in
+/// chart.boxes. `delete chart.legend` is the write of Dart `null`.
+void _stop(types.Chart chart, AnyObject _, AnyObject _) {
+  final legend = chart.legend;
+  layouts.removeBox(chart, switch (legend) {
+    final LayoutItem item => item,
+    _ => null,
+  });
+  chart.legend = null;
+}
+
+/// plugin.legend.js:615 `beforeUpdate(chart, _args, options)`. During the
+/// beforeUpdate step, the layout configuration needs to run. This ensures
+/// that if the legend position changes (via an option update) the layout
+/// system respects the change. See
+/// https://github.com/chartjs/Chart.js/issues/7527
+///
+/// A legend that is not a Legend throws the TypeError of the cast. Upstream
+/// throws a TypeError in the same update, at `buildLabels` of afterUpdate
+/// (Chart.js ADR 0038, section 6).
+void _beforeUpdate(types.Chart chart, AnyObject _, AnyObject options) {
+  final legend = chart.legend! as Legend;
+  layouts.configure(chart, legend, options);
+  legend.options = options;
+}
+
+/// plugin.legend.js:623 `afterUpdate(chart)`. The labels need to be built
+/// after datasets are updated to ensure that colors and other styling are
+/// correct. See https://github.com/chartjs/Chart.js/issues/6968
+void _afterUpdate(types.Chart chart, AnyObject _, AnyObject _) {
+  (chart.legend! as Legend)
+    ..buildLabels()
+    ..adjustHitBoxes();
+}
+
+/// plugin.legend.js:630 `afterEvent(chart, args)`: the typed `replay` and
+/// `event` of [EventHookArgs]. An event of Dart `null` throws the
+/// [TypeError] of the null check, as `handleEvent` throws at `e.type` of
+/// `undefined` upstream.
+void _afterEvent(types.Chart chart, EventHookArgs args, AnyObject _) {
+  if (!jsTruthy(args.replay)) {
+    (chart.legend! as Legend).handleEvent(args.event!);
+  }
 }
 
 /// plugin.legend.js:592 the default export, `Legend` of
 /// `src/plugins/index.js:4` (Chart.js ADR 0038, section 1).
 ///
-/// A mutable Map with the upstream keys in the upstream order. The hooks
-/// are closures with the upstream parameter count (Chart.js ADR 0038,
-/// section 3).
-final AnyObject legend = <String, Object?>{
-  'id': 'legend',
-
+/// A typed [Plugin] with the upstream keys in the upstream order.
+final Plugin legend = Plugin()
+  ..id = 'legend'
   // For tests
   // @private
-  '_element': Legend.jsClass,
-
-  // plugin.legend.js:601 `start(chart, _args, options)`.
-  'start': (types.Chart chart, AnyObject _, AnyObject options) {
-    final legend = Legend((ctx: chart.ctx, options: options, chart: chart));
-    chart.legend = legend;
-    layouts
-      ..configure(chart, legend, options)
-      ..addBox(chart, legend);
-  },
-
-  // plugin.legend.js:607 `stop(chart)`. core.layouts.js:318-323 compares
-  // identities only. A value that is not a LayoutItem is never in
-  // chart.boxes. `delete chart.legend` is the write of Dart `null`.
-  'stop': (types.Chart chart) {
-    final legend = chart.legend;
-    layouts.removeBox(chart, switch (legend) {
-      final LayoutItem item => item,
-      _ => null,
-    });
-    chart.legend = null;
-  },
-
-  // plugin.legend.js:615 `beforeUpdate(chart, _args, options)`. During the
-  // beforeUpdate step, the layout configuration needs to run. This ensures
-  // that if the legend position changes (via an option update) the layout
-  // system respects the change. See
-  // https://github.com/chartjs/Chart.js/issues/7527
-  //
-  // A legend that is not a Legend throws the TypeError of the cast. Upstream
-  // throws a TypeError in the same update, at `buildLabels` of afterUpdate
-  // (Chart.js ADR 0038, section 6).
-  'beforeUpdate': (types.Chart chart, AnyObject _, AnyObject options) {
-    final legend = chart.legend! as Legend;
-    layouts.configure(chart, legend, options);
-    legend.options = options;
-  },
-
-  // plugin.legend.js:623 `afterUpdate(chart)`. The labels need to be built
-  // after datasets are updated to ensure that colors and other styling are
-  // correct. See https://github.com/chartjs/Chart.js/issues/6968
-  'afterUpdate': (types.Chart chart) {
-    (chart.legend! as Legend)
-      ..buildLabels()
-      ..adjustHitBoxes();
-  },
-
-  // plugin.legend.js:630 `afterEvent(chart, args)`.
-  'afterEvent': (types.Chart chart, AnyObject args) {
-    if (!jsTruthy(jsGet(args, 'replay'))) {
-      (chart.legend! as Legend).handleEvent(
-        jsGet(args, 'event')! as types.ChartEvent,
-      );
-    }
-  },
-
+  ..jsWrite('_element', Legend.jsClass)
+  ..start = _start
+  ..stop = _stop
+  ..beforeUpdate = _beforeUpdate
+  ..afterUpdate = _afterUpdate
+  ..afterEvent = _afterEvent
   // plugin.legend.js:636-712. A typed scope of the kind `LegendOptions`
   // (Chart.js ADR 0054 §3).
-  'defaults': LegendOptionsScope()
+  ..defaults = (LegendOptionsScope()
     ..display = true
     ..position = 'top'
     ..align = 'center'
@@ -1505,16 +1520,14 @@ final AnyObject legend = <String, Object?>{
       ..color = _chartColor
       ..display = false
       ..position = 'center'
-      ..text = ''),
-
+      ..text = ''))
   // plugin.legend.js:714-719. A typed scope of the kind `Descriptors`.
-  'descriptors': DescriptorsScope()
+  ..descriptors = (DescriptorsScope()
     ..descScriptable = _scriptableDescriptor
     ..jsWrite(
       'labels',
       DescriptorsScope()..descScriptable = _labelsScriptableDescriptor,
-    ),
-};
+    ));
 
 /// plugin.legend.js:715 the `_scriptable` descriptor of the plugin.
 bool _scriptableDescriptor(String name) => !name.startsWith('on');
@@ -1522,3 +1535,708 @@ bool _scriptableDescriptor(String name) => !name.startsWith('on');
 /// plugin.legend.js:717 the `_scriptable` descriptor of `labels`.
 bool _labelsScriptableDescriptor(String name) =>
     !const ['generateLabels', 'filter', 'sort'].contains(name);
+
+/// A legend item of any class: a [LegendItem] gives its fields, and another
+/// item (an object of a `generateLabels` of user code or of a controller)
+/// gives the reads and writes by name of upstream ([_readItem]).
+extension type const _Item(Object? item) {
+  /// `item.text`.
+  Object? get text => switch (item) {
+    final LegendItem typed => typed.text,
+    _ => _readItem(item, 'text'),
+  };
+
+  /// `item.fillStyle`.
+  Object? get fillStyle => switch (item) {
+    final LegendItem typed => typed.fillStyle,
+    _ => _readItem(item, 'fillStyle'),
+  };
+
+  /// `item.fontColor`.
+  Object? get fontColor => switch (item) {
+    final LegendItem typed => typed.fontColor,
+    _ => _readItem(item, 'fontColor'),
+  };
+
+  /// `item.hidden`.
+  Object? get hidden => switch (item) {
+    final LegendItem typed => typed.hidden,
+    _ => _readItem(item, 'hidden'),
+  };
+
+  /// `item.hidden = value`.
+  set hidden(Object? value) {
+    switch (item) {
+      case final LegendItem typed:
+        typed.hidden = value;
+      default:
+        _writeItem(item, 'hidden', value);
+    }
+  }
+
+  /// `item.lineCap`.
+  Object? get lineCap => switch (item) {
+    final LegendItem typed => typed.lineCap,
+    _ => _readItem(item, 'lineCap'),
+  };
+
+  /// `item.lineDash`.
+  Object? get lineDash => switch (item) {
+    final LegendItem typed => typed.lineDash,
+    _ => _readItem(item, 'lineDash'),
+  };
+
+  /// `item.lineDashOffset`.
+  Object? get lineDashOffset => switch (item) {
+    final LegendItem typed => typed.lineDashOffset,
+    _ => _readItem(item, 'lineDashOffset'),
+  };
+
+  /// `item.lineJoin`.
+  Object? get lineJoin => switch (item) {
+    final LegendItem typed => typed.lineJoin,
+    _ => _readItem(item, 'lineJoin'),
+  };
+
+  /// `item.lineWidth`.
+  Object? get lineWidth => switch (item) {
+    final LegendItem typed => typed.lineWidth,
+    _ => _readItem(item, 'lineWidth'),
+  };
+
+  /// `item.strokeStyle`.
+  Object? get strokeStyle => switch (item) {
+    final LegendItem typed => typed.strokeStyle,
+    _ => _readItem(item, 'strokeStyle'),
+  };
+
+  /// `item.pointStyle`.
+  Object? get pointStyle => switch (item) {
+    final LegendItem typed => typed.pointStyle,
+    _ => _readItem(item, 'pointStyle'),
+  };
+
+  /// `item.rotation`.
+  Object? get rotation => switch (item) {
+    final LegendItem typed => typed.rotation,
+    _ => _readItem(item, 'rotation'),
+  };
+
+  /// `item.textAlign`.
+  Object? get textAlign => switch (item) {
+    final LegendItem typed => typed.textAlign,
+    _ => _readItem(item, 'textAlign'),
+  };
+
+  /// `item.textAlign = value`.
+  set textAlign(Object? value) {
+    switch (item) {
+      case final LegendItem typed:
+        typed.textAlign = value;
+      default:
+        _writeItem(item, 'textAlign', value);
+    }
+  }
+
+  /// `item.borderRadius`.
+  Object? get borderRadius => switch (item) {
+    final LegendItem typed => typed.borderRadius,
+    _ => _readItem(item, 'borderRadius'),
+  };
+
+  /// `item.datasetIndex`.
+  Object? get datasetIndex => switch (item) {
+    final LegendItem typed => typed.datasetIndex,
+    _ => _readItem(item, 'datasetIndex'),
+  };
+
+  /// `item.index`.
+  Object? get index => switch (item) {
+    final LegendItem typed => typed.index,
+    _ => _readItem(item, 'index'),
+  };
+}
+
+/// The read by name `item[name]` of a legend item of user code: [jsGet].
+/// An item of `undefined` or JS `null` throws its [TypeError], as upstream.
+Object? _readItem(Object? item, String name) => jsGet(item, name);
+
+/// The write by name `item[name] = value` of a legend item of user code. A
+/// write into an item that is not an object throws a [TypeError], as the
+/// write of strict mode does. A narrow or unmodifiable Map throws too
+/// (differences.md `js-semantics-legend-items`).
+void _writeItem(Object? item, String name, Object? value) {
+  // DIVERGES(chartjs): js-semantics-legend-items, a narrow or fixed Map.
+  (item! as Map<String, Object?>)[name] = value;
+}
+
+/// `LegendItem` (`index.d.ts`): an item of the legend, the object of the
+/// built-in `generateLabels` (plugin.legend.js:680-701), with the upstream
+/// keys in the upstream key order. `index` is the key of the items of the
+/// doughnut and polar area controllers (`index.d.ts` `LegendItem.index`).
+///
+/// Each field holds any JS value: a user callback (`filter`, `sort`,
+/// `onClick`) reads and writes the item by name through the face, and a key
+/// that user code adds is an extra (Chart.js ADR 0054 §12).
+final class LegendItem extends TypedRecord {
+  /// An object without own keys.
+  LegendItem();
+
+  static const List<String> _fieldNames = [
+    'text',
+    'fillStyle',
+    'fontColor',
+    'hidden',
+    'lineCap',
+    'lineDash',
+    'lineDashOffset',
+    'lineJoin',
+    'lineWidth',
+    'strokeStyle',
+    'pointStyle',
+    'rotation',
+    'textAlign',
+    'borderRadius',
+    'datasetIndex',
+    'index',
+  ];
+
+  @override
+  List<String> get fieldNames => _fieldNames;
+
+  @override
+  int slotOf(String name) => switch (name) {
+    'text' => 0,
+    'fillStyle' => 1,
+    'fontColor' => 2,
+    'hidden' => 3,
+    'lineCap' => 4,
+    'lineDash' => 5,
+    'lineDashOffset' => 6,
+    'lineJoin' => 7,
+    'lineWidth' => 8,
+    'strokeStyle' => 9,
+    'pointStyle' => 10,
+    'rotation' => 11,
+    'textAlign' => 12,
+    'borderRadius' => 13,
+    'datasetIndex' => 14,
+    'index' => 15,
+    _ => -1,
+  };
+
+  Object? _text;
+
+  Object? _fillStyle;
+
+  Object? _fontColor;
+
+  Object? _hidden;
+
+  Object? _lineCap;
+
+  Object? _lineDash;
+
+  Object? _lineDashOffset;
+
+  Object? _lineJoin;
+
+  Object? _lineWidth;
+
+  Object? _strokeStyle;
+
+  Object? _pointStyle;
+
+  Object? _rotation;
+
+  Object? _textAlign;
+
+  Object? _borderRadius;
+
+  Object? _datasetIndex;
+
+  Object? _index;
+
+  /// `text`, or [undefined] when absent.
+  Object? get text => hasSlot(0) ? _text : undefined;
+
+  set text(Object? value) {
+    _text = value;
+    touchSlot(0);
+  }
+
+  /// `fillStyle`, or [undefined] when absent.
+  Object? get fillStyle => hasSlot(1) ? _fillStyle : undefined;
+
+  set fillStyle(Object? value) {
+    _fillStyle = value;
+    touchSlot(1);
+  }
+
+  /// `fontColor`, or [undefined] when absent.
+  Object? get fontColor => hasSlot(2) ? _fontColor : undefined;
+
+  set fontColor(Object? value) {
+    _fontColor = value;
+    touchSlot(2);
+  }
+
+  /// `hidden`, or [undefined] when absent.
+  Object? get hidden => hasSlot(3) ? _hidden : undefined;
+
+  set hidden(Object? value) {
+    _hidden = value;
+    touchSlot(3);
+  }
+
+  /// `lineCap`, or [undefined] when absent.
+  Object? get lineCap => hasSlot(4) ? _lineCap : undefined;
+
+  set lineCap(Object? value) {
+    _lineCap = value;
+    touchSlot(4);
+  }
+
+  /// `lineDash`, or [undefined] when absent.
+  Object? get lineDash => hasSlot(5) ? _lineDash : undefined;
+
+  set lineDash(Object? value) {
+    _lineDash = value;
+    touchSlot(5);
+  }
+
+  /// `lineDashOffset`, or [undefined] when absent.
+  Object? get lineDashOffset => hasSlot(6) ? _lineDashOffset : undefined;
+
+  set lineDashOffset(Object? value) {
+    _lineDashOffset = value;
+    touchSlot(6);
+  }
+
+  /// `lineJoin`, or [undefined] when absent.
+  Object? get lineJoin => hasSlot(7) ? _lineJoin : undefined;
+
+  set lineJoin(Object? value) {
+    _lineJoin = value;
+    touchSlot(7);
+  }
+
+  /// `lineWidth`, or [undefined] when absent.
+  Object? get lineWidth => hasSlot(8) ? _lineWidth : undefined;
+
+  set lineWidth(Object? value) {
+    _lineWidth = value;
+    touchSlot(8);
+  }
+
+  /// `strokeStyle`, or [undefined] when absent.
+  Object? get strokeStyle => hasSlot(9) ? _strokeStyle : undefined;
+
+  set strokeStyle(Object? value) {
+    _strokeStyle = value;
+    touchSlot(9);
+  }
+
+  /// `pointStyle`, or [undefined] when absent.
+  Object? get pointStyle => hasSlot(10) ? _pointStyle : undefined;
+
+  set pointStyle(Object? value) {
+    _pointStyle = value;
+    touchSlot(10);
+  }
+
+  /// `rotation`, or [undefined] when absent.
+  Object? get rotation => hasSlot(11) ? _rotation : undefined;
+
+  set rotation(Object? value) {
+    _rotation = value;
+    touchSlot(11);
+  }
+
+  /// `textAlign`, or [undefined] when absent.
+  Object? get textAlign => hasSlot(12) ? _textAlign : undefined;
+
+  set textAlign(Object? value) {
+    _textAlign = value;
+    touchSlot(12);
+  }
+
+  /// `borderRadius`, or [undefined] when absent.
+  Object? get borderRadius => hasSlot(13) ? _borderRadius : undefined;
+
+  set borderRadius(Object? value) {
+    _borderRadius = value;
+    touchSlot(13);
+  }
+
+  /// `datasetIndex`, or [undefined] when absent.
+  Object? get datasetIndex => hasSlot(14) ? _datasetIndex : undefined;
+
+  set datasetIndex(Object? value) {
+    _datasetIndex = value;
+    touchSlot(14);
+  }
+
+  /// `index`, or [undefined] when absent.
+  Object? get index => hasSlot(15) ? _index : undefined;
+
+  set index(Object? value) {
+    _index = value;
+    touchSlot(15);
+  }
+
+  @override
+  Object? readSlot(int slot) => switch (slot) {
+    0 => _text,
+    1 => _fillStyle,
+    2 => _fontColor,
+    3 => _hidden,
+    4 => _lineCap,
+    5 => _lineDash,
+    6 => _lineDashOffset,
+    7 => _lineJoin,
+    8 => _lineWidth,
+    9 => _strokeStyle,
+    10 => _pointStyle,
+    11 => _rotation,
+    12 => _textAlign,
+    13 => _borderRadius,
+    14 => _datasetIndex,
+    _ => _index,
+  };
+
+  @override
+  bool writeSlot(int slot, Object? value) {
+    switch (slot) {
+      case 0:
+        _text = value;
+      case 1:
+        _fillStyle = value;
+      case 2:
+        _fontColor = value;
+      case 3:
+        _hidden = value;
+      case 4:
+        _lineCap = value;
+      case 5:
+        _lineDash = value;
+      case 6:
+        _lineDashOffset = value;
+      case 7:
+        _lineJoin = value;
+      case 8:
+        _lineWidth = value;
+      case 9:
+        _strokeStyle = value;
+      case 10:
+        _pointStyle = value;
+      case 11:
+        _rotation = value;
+      case 12:
+        _textAlign = value;
+      case 13:
+        _borderRadius = value;
+      case 14:
+        _datasetIndex = value;
+      default:
+        _index = value;
+    }
+    return true;
+  }
+
+  @override
+  void clearSlot(int slot) {
+    switch (slot) {
+      case 0:
+        _text = null;
+      case 1:
+        _fillStyle = null;
+      case 2:
+        _fontColor = null;
+      case 3:
+        _hidden = null;
+      case 4:
+        _lineCap = null;
+      case 5:
+        _lineDash = null;
+      case 6:
+        _lineDashOffset = null;
+      case 7:
+        _lineJoin = null;
+      case 8:
+        _lineWidth = null;
+      case 9:
+        _strokeStyle = null;
+      case 10:
+        _pointStyle = null;
+      case 11:
+        _rotation = null;
+      case 12:
+        _textAlign = null;
+      case 13:
+        _borderRadius = null;
+      case 14:
+        _datasetIndex = null;
+      default:
+        _index = null;
+    }
+  }
+}
+
+/// A hit box of a legend item (plugin.legend.js:183 and :217): `{left,
+/// top, row, width, height}` of a horizontal legend and `{left, top, col,
+/// width, height}` of a vertical legend, in this key order. `index.d.ts`
+/// does not declare it.
+///
+/// The fields are numbers. A write by name of another value keeps the raw
+/// value for the face and its `ToNumber` in the field, the number that each
+/// arithmetic read of upstream gives (Chart.js ADR 0054 §6).
+final class LegendHitBox extends TypedRecord {
+  /// The hit box `{left, top, row, width, height}` of a horizontal legend
+  /// (:183).
+  LegendHitBox.row({
+    required double left,
+    required double top,
+    required double row,
+    required double width,
+    required double height,
+  }) {
+    this
+      ..left = left
+      ..top = top
+      ..row = row
+      ..width = width
+      ..height = height;
+  }
+
+  /// The hit box `{left, top, col, width, height}` of a vertical legend
+  /// (:217).
+  LegendHitBox.col({
+    required double left,
+    required double top,
+    required double col,
+    required double width,
+    required double height,
+  }) {
+    this
+      ..left = left
+      ..top = top
+      ..col = col
+      ..width = width
+      ..height = height;
+  }
+
+  static const List<String> _fieldNames = [
+    'left',
+    'top',
+    'row',
+    'col',
+    'width',
+    'height',
+  ];
+
+  @override
+  List<String> get fieldNames => _fieldNames;
+
+  @override
+  int slotOf(String name) => switch (name) {
+    'left' => 0,
+    'top' => 1,
+    'row' => 2,
+    'col' => 3,
+    'width' => 4,
+    'height' => 5,
+    _ => -1,
+  };
+
+  double _left = double.nan;
+
+  double _top = double.nan;
+
+  double _row = double.nan;
+
+  double _col = double.nan;
+
+  double _width = double.nan;
+
+  double _height = double.nan;
+
+  /// `left`: NaN when absent, the `ToNumber` of a value that is not a
+  /// number.
+  double get left => _left;
+
+  set left(double value) {
+    _left = value;
+    touchSlot(0);
+  }
+
+  /// `top`: NaN when absent, the `ToNumber` of a value that is not a
+  /// number.
+  double get top => _top;
+
+  set top(double value) {
+    _top = value;
+    touchSlot(1);
+  }
+
+  /// `row`: NaN when absent, the `ToNumber` of a value that is not a
+  /// number.
+  double get row => _row;
+
+  set row(double value) {
+    _row = value;
+    touchSlot(2);
+  }
+
+  /// `col`: NaN when absent, the `ToNumber` of a value that is not a
+  /// number.
+  double get col => _col;
+
+  set col(double value) {
+    _col = value;
+    touchSlot(3);
+  }
+
+  /// `width`: NaN when absent, the `ToNumber` of a value that is not a
+  /// number.
+  double get width => _width;
+
+  set width(double value) {
+    _width = value;
+    touchSlot(4);
+  }
+
+  /// `height`: NaN when absent, the `ToNumber` of a value that is not a
+  /// number.
+  double get height => _height;
+
+  set height(double value) {
+    _height = value;
+    touchSlot(5);
+  }
+
+  @override
+  Object? readSlot(int slot) => switch (slot) {
+    0 => _left,
+    1 => _top,
+    2 => _row,
+    3 => _col,
+    4 => _width,
+    _ => _height,
+  };
+
+  @override
+  bool writeSlot(int slot, Object? value) {
+    final number = value is double ? value : jsToNumber(value);
+    switch (slot) {
+      case 0:
+        _left = number;
+      case 1:
+        _top = number;
+      case 2:
+        _row = number;
+      case 3:
+        _col = number;
+      case 4:
+        _width = number;
+      default:
+        _height = number;
+    }
+    return value is double;
+  }
+
+  @override
+  void clearSlot(int slot) {
+    switch (slot) {
+      case 0:
+        _left = double.nan;
+      case 1:
+        _top = double.nan;
+      case 2:
+        _row = double.nan;
+      case 3:
+        _col = double.nan;
+      case 4:
+        _width = double.nan;
+      default:
+        _height = double.nan;
+    }
+  }
+}
+
+/// The size `{width, height}` of a column of a vertical legend
+/// (plugin.legend.js:209 and :224). The fields are numbers, as in
+/// [LegendHitBox].
+final class LegendColumnSize extends TypedRecord {
+  /// The column size `{width, height}`.
+  LegendColumnSize({required double width, required double height}) {
+    this
+      ..width = width
+      ..height = height;
+  }
+
+  static const List<String> _fieldNames = [
+    'width',
+    'height',
+  ];
+
+  @override
+  List<String> get fieldNames => _fieldNames;
+
+  @override
+  int slotOf(String name) => switch (name) {
+    'width' => 0,
+    'height' => 1,
+    _ => -1,
+  };
+
+  double _width = double.nan;
+
+  double _height = double.nan;
+
+  /// `width`: NaN when absent, the `ToNumber` of a value that is not a
+  /// number.
+  double get width => _width;
+
+  set width(double value) {
+    _width = value;
+    touchSlot(0);
+  }
+
+  /// `height`: NaN when absent, the `ToNumber` of a value that is not a
+  /// number.
+  double get height => _height;
+
+  set height(double value) {
+    _height = value;
+    touchSlot(1);
+  }
+
+  @override
+  Object? readSlot(int slot) => switch (slot) {
+    0 => _width,
+    _ => _height,
+  };
+
+  @override
+  bool writeSlot(int slot, Object? value) {
+    final number = value is double ? value : jsToNumber(value);
+    switch (slot) {
+      case 0:
+        _width = number;
+      default:
+        _height = number;
+    }
+    return value is double;
+  }
+
+  @override
+  void clearSlot(int slot) {
+    switch (slot) {
+      case 0:
+        _width = double.nan;
+      default:
+        _height = double.nan;
+    }
+  }
+}
