@@ -212,27 +212,31 @@ final class _RenderTextOpts implements types.RenderTextOpts {
 /// gives the font itself when it is falsy. The font size is a raw option
 /// value: a string size joins the padding height (`'12' + 4` gives
 /// `'124'`, [jsAdd]). The three callers divide the result. Thus the
-/// function gives the [jsToNumber] of the sum. `defaults.font` reads the
-/// cell of the typed root `defaults` with its key.
+/// function gives the [jsToNumber] of the sum.
 double _getTickBackdropHeight(CoreScaleOptions opts) {
   final tickOpts = opts.ticks;
 
   if (jsTruthy(tickOpts.display) && jsTruthy(opts.display)) {
     final padding = toPadding(tickOpts.backdropPadding);
     final font = tickOpts.font;
-    final defaultFont = defaults.lookup(OptionKey.font);
     return jsToNumber(
       jsAdd(
         valueOrDefault<Object?>(
           jsTruthy(font) ? FontSpecOptions(font).size : font,
-          FontSpecOptions(defaultFont == null ? undefined : defaultFont.raw)
-              .size,
+          _defaultFontSize(),
         ),
         padding.height,
       ),
     );
   }
   return 0;
+}
+
+/// `defaults.font.size` of scale.radialLinear.js:14: the cell of the key `font`
+/// of the typed root `defaults`, then its size.
+Object? _defaultFontSize() {
+  final font = defaults.lookup(OptionKey.font);
+  return FontSpecOptions(font == null ? undefined : font.raw).size;
 }
 
 /// scale.radialLinear.js:19 `measureLabelSize(ctx, font, label)`.
