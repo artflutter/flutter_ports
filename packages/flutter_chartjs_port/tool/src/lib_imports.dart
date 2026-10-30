@@ -216,11 +216,18 @@ const Set<String> typedLibraries = {
 /// [typedDirectory] imports a controller, a scale, an element or a plugin,
 /// so the tree shaking of Chart.js ADR 0048, section 3, stays. It reads
 /// `Chart` of `core.controller`, `Scale` of `core.scale`, `TimeUnit` of
-/// `core.adapters`, the types of `lib/src/types/`, three files of the JS
-/// runtime and the conversions of `css.dart`.
+/// `core.adapters`, the types of `lib/src/types/`, the typed option scopes
+/// of `lib/src/options/` (the lowering writes typed scopes, Chart.js ADR
+/// 0054 §7) and the typed contexts of `helpers.options.dart` (the view
+/// `ChartContext`, Chart.js ADR 0054 §11), three files of the JS runtime and
+/// the conversions of `css.dart`. `helpers.options.dart` imports
+/// `core.defaults`, `helpers.canvas`, `helpers.core`, the JS runtime and
+/// `lib/src/types/`, no component.
 const List<String> typedTargets = [
   typedDirectory,
   'lib/src/types/',
+  'lib/src/options/',
+  'lib/src/helpers/helpers.options.dart',
   'lib/src/core/core.adapters.dart',
   'lib/src/core/core.controller.dart',
   'lib/src/core/core.scale.dart',
