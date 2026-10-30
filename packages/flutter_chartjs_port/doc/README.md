@@ -30,16 +30,17 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043, 0045 and 0046 are accepted. Chart.js ADRs
-  0047-0051 are proposed. Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
-  lead accepted Chart.js ADRs 0038-0043 on 2026-10-23, and Chart.js ADRs 0037, 0045 and 0046 on
-  2026-10-29. Thirteen accepted ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
+  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043, 0045, 0046 and 0048-0050 are accepted.
+  Chart.js ADRs 0047 and 0051 are proposed. Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
+  lead accepted Chart.js ADRs 0038-0043 on 2026-10-23, Chart.js ADRs 0037, 0045 and 0046 on
+  2026-10-29, and Chart.js ADRs 0048, 0049 and 0050 on 2026-10-30. Fourteen accepted ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
   supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR 0004, Chart.js ADR 0016
   supersedes Chart.js ADR 0007, Chart.js ADR 0026 supersedes Chart.js ADR 0008, Chart.js ADR 0032
   supersedes Chart.js ADR 0010, Chart.js ADR 0034 supersedes Chart.js ADR 0009, Chart.js ADR 0035
   supersedes Chart.js ADR 0011, Chart.js ADR 0036 supersedes Chart.js ADR 0027, Chart.js ADR 0037
   supersedes Chart.js ADR 0014, Chart.js ADR 0042 supersedes Chart.js ADR 0001, Chart.js ADR
-  0043 supersedes Chart.js ADR 0006, and Chart.js ADR 0045 supersedes Chart.js ADR 0032.
+  0043 supersedes Chart.js ADR 0006, Chart.js ADR 0045 supersedes Chart.js ADR 0032, and
+  Chart.js ADR 0050 supersedes Chart.js ADR 0042.
   Chart.js ADR 0033 supersedes the `xCenter` and `yCenter` bullet of Chart.js ADR 0025 §5. The
   list:
   - [Chart.js ADR 0001: Theming](adr/0001-theming.md) (superseded by Chart.js ADR 0042)
@@ -104,7 +105,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0039: Tooltip model and animation](adr/0039-tooltip-model-and-animation.md)
   - [Chart.js ADR 0040: Filler targets and plain points](adr/0040-filler-targets-and-plain-points.md)
   - [Chart.js ADR 0041: Plugin test strategy](adr/0041-plugin-test-strategy.md)
-  - [Chart.js ADR 0042: Theming](adr/0042-theming.md) (it supersedes Chart.js ADR 0001)
+  - [Chart.js ADR 0042: Theming](adr/0042-theming.md) (superseded by Chart.js ADR 0050)
   - [Chart.js ADR 0043: Options representation and resolver](adr/0043-options-representation-and-resolver.md)
     (it supersedes Chart.js ADR 0006)
   - [Chart.js ADR 0044: Stack fill search](adr/0044-stack-fill-search.md) (rejected)
@@ -112,10 +113,10 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
     supersedes Chart.js ADR 0032)
   - [Chart.js ADR 0046: Stack fill search, the result of the code A/B](adr/0046-stack-fill-search-result.md)
   - [Chart.js ADR 0047: The published archive](adr/0047-published-archive.md) (proposed)
-  - [Chart.js ADR 0048: Entry points and the public library](adr/0048-entry-points-and-public-library.md) (proposed)
-  - [Chart.js ADR 0049: The ChartView widget and reduced motion](adr/0049-chart-view-widget.md) (proposed)
-  - [Chart.js ADR 0050: The public theme API](adr/0050-public-theme-api.md) (proposed; it supersedes
-    Chart.js ADR 0042 on acceptance)
+  - [Chart.js ADR 0048: Entry points and the public library](adr/0048-entry-points-and-public-library.md)
+  - [Chart.js ADR 0049: The ChartView widget and reduced motion](adr/0049-chart-view-widget.md)
+  - [Chart.js ADR 0050: The public theme API](adr/0050-public-theme-api.md) (it supersedes
+    Chart.js ADR 0042)
   - [Chart.js ADR 0051: Input events and interaction state](adr/0051-input-events-and-interaction-state.md) (proposed)
 
 ## What gets ported
@@ -224,8 +225,9 @@ elements and scales lands (phases 5-7).
 
 [porting-flow.md](porting-flow.md) section 2 gives a recommended decision for each question below
 and adds new ones. Each decision there has a gate phase. Only the gate 1 and gate 2 decisions come
-before phase 2. [Chart.js ADR 0042](adr/0042-theming.md) holds the theming decision. It
-supersedes Chart.js ADR 0001. [theming.md](theming.md) gives the design. Chart.js ADRs 0003 and
+before phase 2. [Chart.js ADR 0050](adr/0050-public-theme-api.md) holds the theming decision. It
+supersedes Chart.js ADR 0042, which superseded Chart.js ADR 0001. [theming.md](theming.md) gives
+the design. Chart.js ADRs 0003 and
 0006 to 0012 held the gate 1 and gate 2 decisions. All of them are accepted. An example is the
 options representation of Chart.js ADR 0006, now in
 [Chart.js ADR 0043](adr/0043-options-representation-and-resolver.md).
@@ -245,7 +247,8 @@ options representation of Chart.js ADR 0006, now in
 - **Animation.** `requestAnimationFrame` maps onto `SchedulerBinding.scheduleFrameCallback`.
   `core.animator.js` stays one module-level animator on `requestAnimFrame`
   ([Chart.js ADR 0016](adr/0016-frame-scheduling.md)). [Chart.js ADR 0019](adr/0019-animation.md)
-  decides reduced motion, the theme-change modes and the `core.animator` tests.
+  decides the theme-change modes and the `core.animator` tests.
+  [Chart.js ADR 0049](adr/0049-chart-view-widget.md) §7 decides reduced motion.
 - **Dates.** Time scales need a date adapter, and upstream ships none. Decided in
   [Chart.js ADR 0024](adr/0024-dates.md): a default adapter with the rules of
   chartjs-adapter-moment 1.0.1 on moment 2.29.4. Its calendar works on wall milliseconds with

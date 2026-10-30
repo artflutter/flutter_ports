@@ -1,6 +1,7 @@
 # Chart.js ADR 0042: Theming
 
 - Status: accepted (2026-10-23)
+- Superseded by: [Chart.js ADR 0050](0050-public-theme-api.md) (2026-10-30)
 - Date: 2026-10-22
 - Supersedes: [Chart.js ADR 0001](0001-theming.md)
 - Related: [theming.md](../theming.md) (the design),

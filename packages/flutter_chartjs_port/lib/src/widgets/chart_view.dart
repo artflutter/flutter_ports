@@ -114,7 +114,8 @@ class ChartView extends StatefulWidget {
   /// The raw configuration `{type, data, options, plugins, platform}`
   /// (`jsonDecode` output works). The chart writes into its `data` and
   /// `options` Maps, as `initConfig` does. A nested Map literal needs the
-  /// type `<String, Object?>`.
+  /// type `<String, Object?>`, and the config is never `const`: a `const`
+  /// config fails the start. Build it in a variable, a field or a function.
   ///
   /// A new Map updates the chart after the frame; the same Map gives no
   /// update. The update sets `type`, `data` and `options` when they are new

@@ -8,8 +8,8 @@
   [Chart.js ADR 0022](0022-chart-test-harness.md) §5 (`triggerMouseEvent`),
   [Chart.js ADR 0034](0034-no-display-only-js-exactness.md) (the protected behavior),
   [Chart.js ADR 0049](0049-chart-view-widget.md) (the widget `ChartView`, its update callback and
-  its `setState` table, proposed), [Chart.js ADR 0050](0050-public-theme-api.md) (the theme API and
-  the inline plugin of the widget, proposed),
+  its `setState` table), [Chart.js ADR 0050](0050-public-theme-api.md) (the theme API and the
+  inline plugin of the widget),
   [theming.md](../theming.md) §6 (a focus ring is a port-only plugin),
   [porting-flow.md](../porting-flow.md) §1.1 (the performance rule)
 

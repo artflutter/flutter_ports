@@ -1,6 +1,6 @@
 # Chart.js ADR 0048: Entry points and the public library
 
-- Status: proposed
+- Status: accepted (2026-10-30)
 - Date: 2026-10-29
 - Related: [Chart.js ADR 0012](0012-dart-file-naming.md) (names, `_` exports and `_` members),
   [Chart.js ADR 0013](0013-canvas-model.md) (a canvas member arrives with its caller),
@@ -278,6 +278,19 @@ The gate of this ADR: the 3 `blocked: index.umd` cases pass, `test:cases` report
 the public API test passes, and a release web build of the public library with the line set has no
 marker of another component (dart2js and dart2wasm).
 
+The result of the gate (2026-10-30, `lib/` of `ec7d85c`): the 4 cases of `global.namespace`
+pass, and `test:cases` reports 958 passed, 0 failed, 78 skipped and 0 missing cases in 53 spec
+files. The public API test passes in `test --no-select`. Two release web builds of the gallery (Flutter
+3.47.7) import the app library, show one line chart in a `ChartView` and differ only in the
+registration. The markers are the string literals that only one component file holds:
+`doughnut`, `polarArea`, `bubble`, `labelTextColor`, `lttb`, `min-max`, `propagate` and
+`subtitle`.
+
+| Build | dart2js `main.dart.js` | dart2wasm `main.dart.wasm` | Markers |
+|---|---|---|---|
+| The line set | 1,448,881 B | 1,424,126 B | none |
+| `registerables` (the control) | 1,651,831 B | 1,646,300 B | each marker |
+
 ## Alternatives considered
 
 - **Statics on the Dart class `Chart`.** Dart adds no static at run time. `Chart.Chart` is not
@@ -343,10 +356,14 @@ marker of another component (dart2js and dart2wasm).
 2. **`toImageSync`.** A later addition on the canvas or on a controller object. Trigger: a frame
    path or an app request.
 3. **The `src/` imports of the gallery that stay.** Phase 9 unit 7 moves the gallery to the public
-   libraries and records a reason for each `src/` import that stays.
+   libraries and records a reason for each `src/` import that stays. Resolved (2026-10-30): unit 7
+   (`7426e81`) moved the gallery. 15 files of `apps/chartjs_gallery/lib/` keep 38 imports of
+   `src/`, and 11 test files keep 36. A reason line stands above each import.
 4. **The `_` names of the helpers.** The drafts give different counts (144, about 160, 51 or 44
    `_` names). A regex count of the judge gives 121 runtime exports with 47 `_` names (unverified).
-   The reference test of `index.umd.dart` gives the list.
+   The reference test of `index.umd.dart` gives the list. Resolved (2026-10-30):
+   `test/port/index_umd_reference.dart` gives 122 runtime exports of `src/helpers/index.ts`, with
+   47 `_` names. The hide list of `lib/helpers.dart` has 47 names.
 5. **The import rule of section 3 and the input ADR.** Resolved (2026-10-29): Chart.js ADR 0051
    reads `legendHitBoxes` through a new port-only member of `types.LegendElement`. The rule of
    section 3 keeps no exception.

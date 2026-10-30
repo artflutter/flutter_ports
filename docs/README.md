@@ -36,13 +36,13 @@ package.
     module port, the decisions and their gate phases, the test harness, the tools and a revised
     phase plan.
   - [Theming](../packages/flutter_chartjs_port/doc/theming.md) (proposed): the design behind Chart.js
-    ADR 0042.
+    ADR 0050.
   - [Upstream tracking](../packages/flutter_chartjs_port/doc/upstream-tracking.md) (proposed): how the
     port follows Chart.js fixes and improvements after the pinned tag.
   - [Upstream ledger](../packages/flutter_chartjs_port/doc/upstream-ledger.md): the upstream commits
     after the pinned tag, with their triage.
-  - Decisions (all accepted, except Chart.js ADR 0044, which is rejected, and Chart.js ADRs 0047-0051,
-    which are proposed):
+  - Decisions (all accepted, except Chart.js ADR 0044, which is rejected, and Chart.js ADRs 0047 and
+    0051, which are proposed):
     [Chart.js ADR 0001: Theming](../packages/flutter_chartjs_port/doc/adr/0001-theming.md)
     (superseded by Chart.js ADR 0042),
     [Chart.js ADR 0002: JS numeric semantics](../packages/flutter_chartjs_port/doc/adr/0002-js-numeric-semantics.md)
@@ -107,7 +107,7 @@ package.
     [Chart.js ADR 0040: Filler targets and plain points](../packages/flutter_chartjs_port/doc/adr/0040-filler-targets-and-plain-points.md),
     [Chart.js ADR 0041: Plugin test strategy](../packages/flutter_chartjs_port/doc/adr/0041-plugin-test-strategy.md),
     [Chart.js ADR 0042: Theming](../packages/flutter_chartjs_port/doc/adr/0042-theming.md)
-    (it supersedes Chart.js ADR 0001),
+    (superseded by Chart.js ADR 0050),
     [Chart.js ADR 0043: Options representation and resolver](../packages/flutter_chartjs_port/doc/adr/0043-options-representation-and-resolver.md)
     (it supersedes Chart.js ADR 0006),
     [Chart.js ADR 0044: Stack fill search](../packages/flutter_chartjs_port/doc/adr/0044-stack-fill-search.md)
@@ -117,12 +117,10 @@ package.
     [Chart.js ADR 0046: Stack fill search, the result of the code A/B](../packages/flutter_chartjs_port/doc/adr/0046-stack-fill-search-result.md),
     [Chart.js ADR 0047: The published archive](../packages/flutter_chartjs_port/doc/adr/0047-published-archive.md)
     (proposed),
-    [Chart.js ADR 0048: Entry points and the public library](../packages/flutter_chartjs_port/doc/adr/0048-entry-points-and-public-library.md)
-    (proposed),
-    [Chart.js ADR 0049: The ChartView widget and reduced motion](../packages/flutter_chartjs_port/doc/adr/0049-chart-view-widget.md)
-    (proposed),
+    [Chart.js ADR 0048: Entry points and the public library](../packages/flutter_chartjs_port/doc/adr/0048-entry-points-and-public-library.md),
+    [Chart.js ADR 0049: The ChartView widget and reduced motion](../packages/flutter_chartjs_port/doc/adr/0049-chart-view-widget.md),
     [Chart.js ADR 0050: The public theme API](../packages/flutter_chartjs_port/doc/adr/0050-public-theme-api.md)
-    (proposed),
+    (it supersedes Chart.js ADR 0042),
     [Chart.js ADR 0051: Input events and interaction state](../packages/flutter_chartjs_port/doc/adr/0051-input-events-and-interaction-state.md)
     (proposed).
   - Prior art: [overview](../packages/flutter_chartjs_port/doc/prior-art/README.md),

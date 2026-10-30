@@ -216,7 +216,7 @@ subsections stay proposals in this document until their ADR files exist.
 | 2.2 | [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md) | 3 |
 | 2.7 | [Chart.js ADR 0037: Legend and tooltip input path](adr/0037-legend-and-tooltip-input-path.md), which supersedes Chart.js ADR 0014 | 3 |
 | 2.8 | [Chart.js ADR 0015: Text](adr/0015-text.md) | 3 |
-| 2.11 | [Chart.js ADR 0042: Theming](adr/0042-theming.md), which supersedes Chart.js ADR 0001 | 1 for the four invariants, else 5 |
+| 2.11 | [Chart.js ADR 0050: The public theme API](adr/0050-public-theme-api.md), which supersedes Chart.js ADR 0042 | 1 for the four invariants, else 5 |
 | 2.9, `helpers.extras` and the animator frame source | [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md), which supersedes Chart.js ADR 0007 | 2 |
 | 2.14 | [Chart.js ADR 0017: Element properties](adr/0017-element-properties.md) | 4 |
 | 2.15 | [Chart.js ADR 0018: Typed element options](adr/0018-typed-element-options.md) | 4 |
@@ -471,13 +471,13 @@ Its license is not detected, its repository returns 404, and it has no verified 
 5. support for `code_assets` 2.x
 6. a verified publisher, a public repository and a stable 1.0
 
-### 2.11 Chart.js ADR 0042: Theming (gate 1 for its four invariants, else 5)
+### 2.11 Chart.js ADR 0050: Theming (gate 1 for its four invariants, else 5)
 
-[Chart.js ADR 0042](adr/0042-theming.md) and [theming.md](theming.md) own this decision. Chart.js
-ADR 0042 restates Chart.js ADR 0001 with the palette of the theme map, and supersedes it. The flow
-has three conditions. The theme hooks H0-H3 in `core.config` and H4a-H4c and H5 in
-`plugin.colors` are `DIVERGES` hunks. The harness runs with no theme and with the colors plugin
-disabled. `lib/` imports neither forui nor Material.
+[Chart.js ADR 0050](adr/0050-public-theme-api.md) and [theming.md](theming.md) own this decision.
+It restates Chart.js ADR 0042 with the public API and supersedes it (2026-10-30). The flow has
+three conditions. The theme hooks H0-H3 in `core.config` and H4a-H4c and H5 in `plugin.colors`
+are `DIVERGES` hunks. The harness runs with no theme and with the colors plugin disabled. `lib/`
+imports neither forui nor Material.
 
 ### 2.12 ADR: Toolchain pin and library floor (gate: the change that moves `.fvmrc` to 3.47.7)
 

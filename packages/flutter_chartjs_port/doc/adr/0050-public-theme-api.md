@@ -1,8 +1,8 @@
 # Chart.js ADR 0050: The public theme API, the presets, the theme switch and the touch sizes
 
-- Status: proposed
+- Status: accepted (2026-10-30)
 - Date: 2026-10-29
-- Supersedes: [Chart.js ADR 0042](0042-theming.md) on acceptance
+- Supersedes: [Chart.js ADR 0042](0042-theming.md)
 - Related: [theming.md](../theming.md) (the design), [Chart.js ADR 0001](0001-theming.md),
   [Chart.js ADR 0030](0030-controller-test-strategy.md) §8, §11 and Open 5 (test 3, the blue
   screen), [Chart.js ADR 0034](0034-no-display-only-js-exactness.md) (the protected behavior,
@@ -13,7 +13,7 @@
   [Chart.js ADR 0048](0048-entry-points-and-public-library.md) (the public libraries),
   [Chart.js ADR 0049](0049-chart-view-widget.md) (the widget, its update callback, reduced motion)
   and [Chart.js ADR 0051](0051-input-events-and-interaction-state.md) (input events, the widget
-  plugin), all proposed, [ADR 0007](../../../../docs/adr/0007-package-names.md),
+  plugin, proposed), [ADR 0007](../../../../docs/adr/0007-package-names.md),
   [porting-flow.md](../porting-flow.md) §1.1 and §3 (goldens on one pinned runner)
 
 ## Context
@@ -266,8 +266,10 @@ The theme is one more option scope for the ported resolver. The design is in
     an app can give `textTheme.bodySmall`. A `px` line height, `'oblique'` and `'lighter'` stay
     in the chart options.
   - `lerp` returns `a` for `identical(a, b)`, as `ThemeData.lerp`. A token lerps only when both
-    ends are non-null; else it switches at `t = 0.5`. Two palettes of the same length lerp
-    pairwise; else they switch at `t = 0.5`.
+    ends are non-null; else it switches at `t = 0.5`. Two fonts also switch at `t = 0.5` when one
+    of them sets `fontSize`, `fontWeight` or `height` and the other does not, because
+    `TextStyle.lerp` fills the missing field. Two palettes of the same length lerp pairwise; else
+    they switch at `t = 0.5`. `paletteBackgroundAlpha` lerps and stays in [0, 1].
   - The compiled map of an instance is memoized per instance (an `Expando`). Thus the palette list
     must not change after the construction. A debug assert checks `paletteBackgroundAlpha` in
     [0, 1]. `paletteBackgroundAlpha` has no effect without `palette`. The colors plugin colors only
@@ -369,7 +371,10 @@ The theme is one more option scope for the ported resolver. The design is in
   The porting lead accepts this ADR when the public classes, the presets, the switch and the tests
   land, and these gates are green: tests 7, 8 and 9 of theming.md §8, the 16 active cases of the
   blue screen, the light identity on the three OS, and the `fixtures` job with the goldens.
-  Chart.js ADR 0042 then gets only the line "Superseded by Chart.js ADR 0050".
+  Chart.js ADR 0042 then gets only the line "Superseded by Chart.js ADR 0050". The result
+  (2026-10-30): tests 7 and 8, the 16 active cases of the blue screen and the light identity pass
+  in `test --no-select`. CI run 41021651401 at `ec7d85c` passes the job `test` on the three OS
+  and the job `fixtures`, with its step "Compare the theme goldens" (test 9).
 
 ## Changes from Chart.js ADR 0042
 

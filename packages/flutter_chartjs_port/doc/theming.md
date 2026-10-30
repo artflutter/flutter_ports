@@ -2,15 +2,16 @@
 
 - Status: proposed ([Chart.js ADR 0042](adr/0042-theming.md), accepted (2026-10-23), restates
   [Chart.js ADR 0001](adr/0001-theming.md) with the palette change and supersedes it.
-  [Chart.js ADR 0050](adr/0050-public-theme-api.md), proposed, restates Chart.js ADR 0042 with
-  the public API and supersedes it on acceptance)
+  [Chart.js ADR 0050](adr/0050-public-theme-api.md), accepted (2026-10-30), restates Chart.js ADR
+  0042 with the public API and supersedes it)
 - Date: 2026-10-16
 - Related: [forui theming survey](prior-art/forui-theming.md), [porting flow](porting-flow.md),
   [upstream tracking](upstream-tracking.md),
   [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md)
 
-This document gives the design behind Chart.js ADR 0042. That ADR decides the mechanism in
-section 3. Section 5 gives the public API of Chart.js ADR 0050 (phase 9).
+This document gives the design behind Chart.js ADR 0050, which states the complete decision of
+Chart.js ADR 0042 with the public API. Chart.js ADR 0042 decided the mechanism of section 3.
+Section 5 gives the public API of Chart.js ADR 0050 (phase 9).
 
 Upstream paths are relative to `third_party/Chart.js` (v4.5.1, `9c5cf9f`). forui citations use
 the form `forui/0.27.6:<path>:<line>` of the [survey](prior-art/forui-theming.md).
@@ -917,6 +918,24 @@ These parts wait:
 Chart.js ADR 0042 restates Chart.js ADR 0001 with the palette change of §3.5. The porting lead
 accepted it after the adversarial review of phase 8, with all gates green (2026-10-23). It
 supersedes Chart.js ADR 0001.
+
+**Phase 9 state.** These parts exist, in addition to the parts of phase 8 ([Chart.js ADR
+0050](adr/0050-public-theme-api.md)):
+- The public classes `ChartThemeData` (`lib/src/theme/theme_data.dart`) and `ChartTheme`
+  (`lib/src/theme/chart_theme.dart`), with the presets `.light()` and `.dark()` (section 5.1).
+  The app library exports both names.
+- The runtime switch of section 3.7 in `ChartView`: `chart_theme_switch.dart` and the inline
+  plugin `$chartView` of `chart_view_plugin.dart`.
+- Test 7 (`theme_data_test.dart`, `chart_theme_test.dart`), test 8
+  (`test/port/widgets/chart_theme_switch_test.dart`) and test 9 (`goldens_test.dart`, compared
+  in the CI job `fixtures`). The blue screen has the 16 cases with an active element, and
+  `light_pixels_test.dart` checks the light identity (section 8, items 3 and 6). The three parts
+  of phase 8 that waited are closed: the active blue screen, the layout keys (no public input
+  reaches them, Chart.js ADR 0050, change 3) and the public palette type.
+
+Chart.js ADR 0050 restates Chart.js ADR 0042 with the public API, the presets, the switch and the
+touch sizes. The porting lead accepted it with its gates green (2026-10-30). It supersedes
+Chart.js ADR 0042.
 
 ## 11. Risks, open questions and alternatives
 

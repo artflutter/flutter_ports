@@ -759,6 +759,14 @@ Changes to the cited files:
   `doc/theming.md` and `tool/reference/scale_chart_common.mjs` change text that this plan does not
   cite. No library file, test or gallery file changes. The references, the inventory (§1.1), the
   tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-30, the acceptance of [Chart.js ADRs 0048](adr/0048-entry-points-and-public-library.md),
+  [0049](adr/0049-chart-view-widget.md) and [0050](adr/0050-public-theme-api.md). Chart.js ADR
+  0050 supersedes Chart.js ADR 0042. `doc/porting-flow.md` changes the row 2.11 of the §2 table
+  and §2.11 in place: no line moves. The text of §2.2, of §2.7 and of the cited rows does not
+  change. `lib/src/widgets/chart_view.dart` gets one dartdoc line (the `const` rule of Chart.js ADR
+  0049 §4); this plan does not cite it. The `parity.md` rows that this plan cites do not change.
+  The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not
+  change. No trigger occurred.
 
 ## 1. Why
 

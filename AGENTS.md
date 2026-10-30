@@ -184,7 +184,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     polar area controllers write it into a new element as `undefined`.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
-      ADR 0042) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).
+      ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).
       `core.adapters.dart` has `DateAdapter` and `DateAdapterBase`. `DateAdapterBase.jsClass` is the
       `_date` of `adapters`. Both files are pure layers.
     - `date_adapter.dart`, `date_calendar.dart`, `date_zone.dart`, `date_parse.dart` and
@@ -301,7 +301,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       singleton `registry` (row `adapt-chart-registry-getter`). Its `updateElements` keeps the
       parsed values only inside one pass (the 3-read form, as the line). `delete meta.dataset` is
       `meta.dataset = null`. It has no `draw` override, as upstream.
-  - `lib/src/plugins/` (Chart.js ADRs 0038-0042): the seven plugins of phase 8.
+  - `lib/src/plugins/` (Chart.js ADRs 0038-0041 and 0050): the seven plugins of phase 8.
     `index.dart` (the port of `src/plugins/index.js`) exports the plugin objects `colors`,
     `decimation`, `filler`, `legend`, `subTitle`, `title` and `tooltip`, with the export names in
     lowerCamelCase. Each plugin object is a mutable Map with the upstream keys in the upstream
@@ -311,7 +311,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `plugin.legend` and `plugin.subtitle` reach `helpers.extras`, `plugin.tooltip` imports
     `core.animations`, and `plugin.colors` imports the controllers.
     - `plugin.colors.dart`: the plugin `colors` with the theme hunks H4a-H4c and H5 (Chart.js ADR
-      0042). H5 reads the palette from the theme map of the chart through `chartThemeOf` of
+      0050). H5 reads the palette from the theme map of the chart through `chartThemeOf` of
       `core.config.dart`. The doughnut and polar area colorizers throw a `TypeError` for a `data`
       that is not a List. The colorizers write into the dataset Map of the user: a Map with a narrow
       value type or an unmodifiable Map throws (differences.md row `js-semantics-narrow-datasets`).
@@ -379,7 +379,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     it (Chart.js ADR 0049 §2). The keyboard of `ChartView` sends its events through
     `dispatchCanvasEvent` (`canvas.dispatchEvent`).
     `native_event.dart` is the stand-in for the DOM event, a pure layer.
-  - `lib/src/theme/` (Chart.js ADR 0042, port-only): `compile.dart` has `compileChartTheme` over
+  - `lib/src/theme/` (Chart.js ADR 0050, port-only): `compile.dart` has `compileChartTheme` over
     raw Map themes, the emission guard and the deep freeze. `presets.dart` has the internal
     `ChartThemes.light` and `ChartThemes.none`. Both files are pure layers. `theme_data.dart` has
     the public `ChartThemeData` (Chart.js ADR 0050): 6 `Color?` tokens, 2 `TextStyle?` fonts,
@@ -462,7 +462,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     data).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0051. Thirteen of them are superseded: Chart.js ADR 0010
+    - `doc/adr/`: Chart.js ADRs 0001-0051. Fourteen of them are superseded: Chart.js ADR 0010
       supersedes Chart.js ADR 0002, Chart.js ADR 0011 supersedes Chart.js ADR 0005, Chart.js ADR
       0012 supersedes Chart.js ADR 0004, and Chart.js ADR 0026 supersedes Chart.js ADR 0008.
       Chart.js ADR 0016 supersedes Chart.js ADR 0007, and Chart.js ADR 0033 supersedes Chart.js ADR
@@ -477,18 +477,20 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       0006 with `helpers.merge` into an element target, and supersedes it. Chart.js ADR 0037
       supersedes Chart.js ADR 0014 (2026-10-29). Chart.js ADR 0045 (the reference engine on arm64)
       states the complete decision of Chart.js ADR 0032 with the arm64 engine, and supersedes it
-      (2026-10-29). The porting lead accepted Chart.js ADRs 0032, 0034, 0035 and 0036 on
-      2026-10-21, Chart.js ADRs 0038-0043 on 2026-10-23, and Chart.js ADRs 0037, 0045 and 0046 on
-      2026-10-29. Chart.js ADR 0037 waited for the device check of step 8. Docs and code cite them for the current
-      rules. The porting lead (the agent that runs the phase) owns the ADR statuses (the
-      maintainer, 2026-10-21). It accepts an ADR when the decision is implemented and its gates are
-      green. A changed decision still gets a new ADR that supersedes the old one. Chart.js ADR 0044
-      (the stack fill search) is rejected: its code A/B rejected the change, and Chart.js ADR 0046
-      records the result. Chart.js ADRs 0047 (the published archive), 0048 (the entry points and the
-      public library), 0049 (the ChartView widget and reduced motion), 0050 (the public theme API,
-      which supersedes Chart.js ADR 0042 on acceptance) and 0051 (input events and interaction
-      state) are proposed. The other ADRs are accepted. Docs name them "Chart.js ADR NNNN".
-      "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
+      (2026-10-29). Chart.js ADR 0050 (the public theme API) states the complete decision of
+      Chart.js ADR 0042 with the public classes, the presets, the theme switch and the touch sizes,
+      and supersedes it (2026-10-30). The porting lead accepted Chart.js ADRs 0032, 0034, 0035 and
+      0036 on 2026-10-21, Chart.js ADRs 0038-0043 on 2026-10-23, Chart.js ADRs 0037, 0045 and 0046
+      on 2026-10-29, and Chart.js ADRs 0048, 0049 and 0050 on 2026-10-30. Chart.js ADR 0037 waited
+      for the device check of step 8. Docs and code cite them for the current rules. The porting
+      lead (the agent that runs the phase) owns the ADR statuses (the maintainer, 2026-10-21). It
+      accepts an ADR when the decision is implemented and its gates are green. A changed decision
+      still gets a new ADR that supersedes the old one. Chart.js ADR 0044 (the stack fill search)
+      is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result.
+      Chart.js ADRs 0047 (the published archive) and 0051 (input events and interaction state) are
+      proposed. Chart.js ADR 0047 waits for the publish dry run of the release, and Chart.js ADR
+      0051 for the night series B-N1. The other ADRs are accepted. Docs name them "Chart.js ADR
+      NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. An accepted ADR does not change. A changed decision
       gets a new ADR that states the complete decision and supersedes the old ADR.
@@ -835,7 +837,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   version and the architecture of its data. Never take reference values from a browser.
 - The four theming invariants (specs run unthemed, no forui or Material in `lib/`, no
   `Chart.defaults` writes for theming, no `lib/src/theme/` import in ported files): Chart.js ADR
-  0042. `check:lib-imports` already fails on the two import invariants.
+  0050. `check:lib-imports` already fails on the two import invariants.
 
 The D3 port applies the rules above with these changes. The D3 ADRs are proposed. The doc paths
 are relative to `packages/flutter_d3_port/doc/`.

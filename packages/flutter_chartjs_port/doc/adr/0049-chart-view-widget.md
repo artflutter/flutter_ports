@@ -1,6 +1,6 @@
 # Chart.js ADR 0049: The ChartView widget and reduced motion
 
-- Status: proposed
+- Status: accepted (2026-10-30)
 - Date: 2026-10-29
 - Related: [Chart.js ADR 0016](0016-frame-scheduling.md) (frame scheduling, the `setState` rule of
   the host layout), [Chart.js ADR 0019](0019-animation.md) §10 and Open "Reduced motion",
@@ -177,6 +177,11 @@ rule of Chart.js ADR 0016:348 then also covers the start hooks (section 6).
   - keep the dataset Maps to keep the metas, the hidden datasets and the animations; new dataset
     Maps give new metas, as upstream;
   - a nested Map literal of a config needs the type `<String, Object?>`: the chart writes into it;
+  - a config is never `const`: `initConfig` writes into `data` and `options`
+    (`src/core/core.config.js@v4.6.1:115-126`), so a `const` config fails the start with an
+    `UnsupportedError`. The lint `prefer_const_literals_to_create_immutables` asks for `const` on
+    a Map literal in `ChartView(config: {...})`. Thus the app builds the Map in a variable, a
+    field or a function;
   - a parent that rebuilds in each frame keeps its config in its `State`, or uses
     `updateMode: 'none'`;
   - an `onHover` that calls `setState` compares the value first;
@@ -373,7 +378,12 @@ section 4, and the host of section 2.
    porting lead kept it by the fallback of the rule ([performance.md](../performance.md) §15.3).
 4. **Unverified start facts.** An error of the start is reported and the host keeps a size, and a
    start in the layout also starts a chart in an offstage overlay entry
-   (`widgets/overlay.dart:980-982`). The tests of section 9 check both.
+   (`widgets/overlay.dart:980-982`). The tests of section 9 check both. Closed on 2026-10-30 by
+   the group `start` of `test/port/widgets/chart_view_test.dart`. An error in a plugin `install`
+   hook is reported, the host keeps a size, and a new config starts the chart. The second fact
+   does not hold: the theater of an `Overlay` builds an offstage entry but does not lay it out.
+   Thus a chart in an offstage entry starts at the first layout of its host, when the entry comes
+   on stage.
 
 ## Evidence
 
