@@ -1,1 +1,5 @@
+# - stringIndex 13: the views ChartTooltipItem (9) and ChartLegendItem (4)
+#   read the tooltip items and the legend items, Maps of the tooltip and
+#   legend plugins of lane L4 today. Open: they become views over the typed
+#   items of L4 (Chart.js ADR 0054 §12) at the rebase of L5 on L4.
 stringIndex 13
