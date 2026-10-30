@@ -135,7 +135,9 @@ The handler reads `KeyDownEvent` and `KeyRepeatEvent`:
 | focus loss | nothing | `mouseout` at the target; the target clears |
 
 A repeat of Enter, Space or Escape gives `handled` with no event when a target exists, else
-`ignored`. A `KeyUpEvent` gives `ignored`.
+`ignored`. A `KeyUpEvent` gives `ignored`. The table has no key with a modifier: a key with
+Shift, Control, Alt or Meta gives `ignored`, so that the shortcuts of the app and of the browser
+keep it.
 
 ### 4. The virtual mouse
 

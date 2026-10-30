@@ -655,6 +655,20 @@ Changes to the cited files:
   this plan cites do not move. No library file, test or gallery file that this plan cites
   changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do
   not change. No trigger occurred.
+- 2026-10-30, the keyboard and the focus of `ChartView` ([Chart.js ADR
+  0051](adr/0051-input-events-and-interaction-state.md), proposed, phase 9). The new port-only
+  file `lib/src/widgets/chart_keyboard.dart` moves a virtual mouse: it sends `NativeEvent`s
+  through `dispatchCanvasEvent` of `chart_host.dart`, as the test harness does, and reads
+  `hasCanvasEventListener`. `chart_view.dart` wraps the host in one `Focus`, and the widget plugin
+  of `chart_view_plugin.dart` draws the focus ring in `afterDraw`, after the draw meter of the
+  stress charts. `lib/src/types/index.dart` gets the port-only member
+  `LegendElement.legendHitBoxes`, and `native_event.dart` gets doc lines for the key events. This
+  plan cites none of these files. `doc/parity.md` changes 6 rows in place (lines 151, 173, 371,
+  388, 541 and 614) and gets two port-only rows at its end (lines 617 and 618): the rows that
+  this plan cites do not move. No file of `lib/src/canvas/`, `chart_host.dart`,
+  `platform.flutter.dart`, `helpers.dom.dart` or a test of §2.6 and §3.5 changes. The
+  references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change.
+  No trigger occurred.
 
 ## 1. Why
 

@@ -194,9 +194,10 @@ class Legend extends Element implements types.LegendElement, LayoutItem, TRBL {
   /// Each hit box is a Map with the upstream keys: `left`, `top`, `row`,
   /// `width` and `height` for a horizontal legend (:183), `left`, `top`,
   /// `col`, `width` and `height` for a vertical legend (:217).
-  /// `index.d.ts` does not declare it, so it is not a member of
-  /// `types.LegendElement`: a reader casts to [Legend] (Chart.js ADR 0038,
-  /// section 6).
+  /// `index.d.ts` does not declare it. It implements the port-only member
+  /// [types.LegendElement.legendHitBoxes], which the keyboard of `ChartView`
+  /// reads (Chart.js ADR 0051, section 2).
+  @override
   List<AnyObject> legendHitBoxes = [];
 
   /// plugin.legend.js:57 `_hoveredItem`. Dart `null` stands for JS `null`.

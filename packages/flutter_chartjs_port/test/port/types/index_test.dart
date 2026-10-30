@@ -85,6 +85,14 @@ void main() {
       // `chart.legend instanceof Legend` is true.
       expect(t.legend, isA<Legend>());
       expect(t.legend, same(chart.legend));
+      // The port-only member `legendHitBoxes` (plugin.legend.js:52, Chart.js
+      // ADR 0051, section 2) reads the field of the legend: one hit box for
+      // the one dataset.
+      expect(
+        t.legend!.legendHitBoxes,
+        same((chart.legend! as Legend).legendHitBoxes),
+      );
+      expect(t.legend!.legendHitBoxes, hasLength(1));
       // The interface reads the field: after `chart.legend = null`, it gives
       // Dart null (probe: null). The update below needs the legend again
       // (plugin.legend.js:615-618), so the test puts it back.

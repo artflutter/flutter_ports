@@ -1176,6 +1176,13 @@ abstract interface class LegendElement {
 
   /// index.d.ts:2418 `options`, the resolver of the legend options.
   Map<String, Object?> get options;
+
+  /// plugin.legend.js:52 `legendHitBoxes`: the hit box of each legend item,
+  /// a plain object with the keys `left`, `top`, `width` and `height`.
+  /// `index.d.ts` does not declare it. The keyboard of `ChartView` reads it,
+  /// so that no file of `lib/src/widgets/` imports a plugin (Chart.js ADR
+  /// 0051, section 2).
+  List<AnyObject> get legendHitBoxes;
 }
 
 /// index.d.ts:2648 `TooltipModel`, with the members of Chart.js ADR 0039,

@@ -591,7 +591,7 @@ The adapter change also does these items:
 |---|---|---|
 | default | mode `'default'`, prefixes `[type, '']` | token keys |
 | active (hover, touch, `setActiveElements`) | mode `'active'`, prefixes `[typeHover, 'hover', type, '']`, `context.active`, 400 ms (`core.datasetController.js:804-835, 919-935`, `core.animations.defaults.js:38-42`) | upstream `getHoverColor` (`helpers.color.ts:28-32`) over the themed base. Hover strategies wait (section 5.2) |
-| pressed, focused, disabled, selected, hidden legend item | none | not modeled. A focus ring is a port-only plugin (ADR: Input events and interaction state) |
+| pressed, focused, disabled, selected, hidden legend item | none | not modeled. A focus ring is the `$chartView` plugin of [Chart.js ADR 0051](adr/0051-input-events-and-interaction-state.md), in the resolved `options.color` |
 | platform | none | none: the theme carries no touch sizes (Chart.js ADR 0050, section 5.2) |
 | brightness | declined (#8658) | The app picks the theme. Nothing reads the platform brightness |
 

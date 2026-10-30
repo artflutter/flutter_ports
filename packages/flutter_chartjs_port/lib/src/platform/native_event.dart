@@ -30,19 +30,24 @@ typedef NativeTouch = ({int identifier, double x, double y});
 ///   `pointerout`, `pointerleave`), a `touch*` name (`touchstart`,
 ///   `touchmove`, `touchend`, `touchcancel`), a `mouse*` name (`mouseover`,
 ///   `mouseenter`, `mousemove`, `mousedown`, `mouseup`, `mouseout`,
-///   `mouseleave`), `click` or `wheel`. `fromNativeEvent` maps it with
-///   `EVENT_TYPES`.
+///   `mouseleave`), `click` or `wheel`. The keyboard of `ChartView` also
+///   gives `keydown`, `keypress` and `keyup` (Chart.js ADR 0051, section 5).
+///   `fromNativeEvent` maps it with `EVENT_TYPES`.
 /// - [offsetX] and [offsetY] are the DOM `offsetX` and `offsetY`: the
 ///   position in the logical pixels of the chart, from its top left corner.
 ///   A `touch*` event has NaN for both, as the upstream `TouchEvent` has no
 ///   offset. Its position comes from [touches]. Thus a `touchend` after the
-///   last finger lifts has NaN coordinates (`helpers.dom.ts:81-93`).
+///   last finger lifts has NaN coordinates (`helpers.dom.ts:81-93`). A key
+///   event has NaN for both, as the upstream `KeyboardEvent` gives a NaN
+///   position (`helpers.dom.ts:65-95`).
 /// - [touches] stands for the DOM `TouchEvent.touches`, but holds only the
 ///   touch pointers that went down on the chart host (the DOM
 ///   `targetTouches`), sorted by pointer id, for a `touch*` event (Chart.js
 ///   ADR 0037, Open 11). Other events have an empty list.
 /// - [target] is the DOM `event.target`: the canvas element.
-/// - [source] is the Flutter `PointerEvent` (or `null` in tests).
+/// - [source] is the Flutter `PointerEvent`, the Flutter `KeyEvent` of the
+///   keyboard of `ChartView`, or `null` (in tests, and for the `mouseout`
+///   of a focus loss).
 final class NativeEvent {
   /// Creates a native event of the DOM event name [type].
   NativeEvent({
@@ -57,10 +62,12 @@ final class NativeEvent {
   /// The DOM event name, for example `'mousemove'`.
   final String type;
 
-  /// The DOM `offsetX`, in logical pixels. NaN for a `touch*` event.
+  /// The DOM `offsetX`, in logical pixels. NaN for a `touch*` event and for
+  /// a key event.
   final double offsetX;
 
-  /// The DOM `offsetY`, in logical pixels. NaN for a `touch*` event.
+  /// The DOM `offsetY`, in logical pixels. NaN for a `touch*` event and for
+  /// a key event.
   final double offsetY;
 
   /// The touch pointers that went down on the chart host, sorted by pointer

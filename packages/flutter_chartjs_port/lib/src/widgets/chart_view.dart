@@ -10,8 +10,10 @@
 /// callback: the widget writes the compiled theme under `$theme` of the
 /// root Map, and it switches the theme in the same callback
 /// (`chart_theme_switch.dart`) with its inline plugin `$chartView`
-/// (`chart_view_plugin.dart`). The input of Chart.js ADR 0051 builds on
-/// them too.
+/// (`chart_view_plugin.dart`). The keyboard of Chart.js ADR 0051
+/// (`chart_keyboard.dart`) builds on them too: one `Focus` around the host
+/// moves a virtual mouse over the legend items and the data elements, and
+/// the widget plugin draws the focus ring.
 ///
 /// The widget registers no component (Chart.js ADR 0048, section 3): no
 /// file of `lib/src/widgets/` imports a controller, a scale, an element, a
@@ -32,6 +34,7 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/widgets/chart_keyboard.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 
@@ -59,6 +62,20 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 /// the imperative edits of `chart.options`, except an edit inside
 /// `chart.options.scales`. The widget owns the config key `$theme` and the
 /// inline plugin id `$chartView`.
+///
+/// Keyboard: the chart is one focus stop (Chart.js ADR 0051). With the
+/// focus, the arrow keys move a virtual mouse over the legend items and the
+/// data elements: Right and Left move in a group, Down and Up move to the
+/// next or the previous group (the legend, then each visible dataset), Home
+/// and End move to the ends of the group. Enter and Space click at the
+/// target, and Escape clears the hover. Each move is a `mousemove` at the
+/// target: the hover mode, the tooltip, `onHover`, `onClick`, the legend
+/// callbacks and `options.events` give the result of a mouse at that point.
+/// An arrow at an end, and a key with a modifier, go on to the ancestors:
+/// the focus moves on, or a web page scrolls. With `options.events` that
+/// lists `keydown`, `keypress` or `keyup`, the chart also gets these
+/// events, with NaN coordinates. A focus ring shows the focus in the
+/// traditional highlight mode, in the color `options.color`.
 class ChartView extends StatefulWidget {
   /// Creates a widget that shows the chart of [config].
   const ChartView({
@@ -66,6 +83,8 @@ class ChartView extends StatefulWidget {
     this.updateMode,
     this.onChartCreated,
     this.theme,
+    this.focusNode,
+    this.autofocus = false,
     super.key,
   });
 
@@ -105,6 +124,15 @@ class ChartView extends StatefulWidget {
   /// `const ChartThemeData()` turns theming off for this chart.
   final ChartThemeData? theme;
 
+  /// The focus node of the chart. Null: the widget owns one. The chart is one
+  /// focus stop: the arrow keys move a virtual mouse over the legend items and
+  /// the data elements, Enter and Space click there, Escape clears the hover.
+  /// Wrap the chart in ExcludeFocus to remove the stop.
+  final FocusNode? focusNode;
+
+  /// Whether the chart takes the focus at its first build.
+  final bool autofocus;
+
   @override
   State<ChartView> createState() => _ChartViewState();
 
@@ -131,7 +159,15 @@ class ChartView extends StatefulWidget {
           'onChartCreated',
           onChartCreated,
         ),
-      );
+      )
+      ..add(
+        DiagnosticsProperty<FocusNode>(
+          'focusNode',
+          focusNode,
+          defaultValue: null,
+        ),
+      )
+      ..add(FlagProperty('autofocus', value: autofocus, ifTrue: 'autofocus'));
   }
 }
 
@@ -168,8 +204,17 @@ class _ChartViewState extends State<ChartView> {
   /// The theme state of the chart (Chart.js ADR 0050, "Runtime switch").
   final ChartThemeSwitch _themeSwitch = ChartThemeSwitch();
 
+  /// The keyboard of the chart (Chart.js ADR 0051).
+  late final ChartKeyboard _keyboard = ChartKeyboard(
+    canvas: _canvas,
+    chart: () => _chart,
+  );
+
   /// The inline plugin of the widget, last in the root `plugins`.
-  late final AnyObject _viewPlugin = createChartViewPlugin(_themeSwitch);
+  late final AnyObject _viewPlugin = createChartViewPlugin(
+    _themeSwitch,
+    _keyboard,
+  );
 
   /// The reduced-motion preference (Chart.js ADR 0049, section 7). False
   /// until the flag of that section lands; then it reads the preference of
@@ -185,6 +230,7 @@ class _ChartViewState extends State<ChartView> {
 
   @override
   void dispose() {
+    _keyboard.dispose();
     // A partial chart of a failed start is in `Chart.instances` too.
     final chart = _chart ?? Chart.getChart(_canvas);
     _chart = null;
@@ -240,6 +286,8 @@ class _ChartViewState extends State<ChartView> {
   /// partial chart that `Chart.instances` keeps (core.controller.js:177),
   /// so that the next new config can start the chart.
   void _create({required bool notify}) {
+    // A new chart has no keyboard target (Chart.js ADR 0051, section 2).
+    _keyboard.reset();
     final Chart chart;
     try {
       _debugCheckConfig(_applied);
@@ -412,10 +460,19 @@ class _ChartViewState extends State<ChartView> {
     // A new theme after the start switches in the update callback (Chart.js
     // ADR 0050, step 1). The start reads the theme of the last build.
     if (_laidOut && theme != _themeSwitch.applied) _scheduleUpdate();
-    return ChartHost(
-      canvas: _canvas,
-      onTickerModeChanged: _onTickerModeChanged,
-      onFirstLayout: _onFirstLayout,
+    // Chart.js ADR 0051, section 1: one focus stop with no Shortcuts and no
+    // Actions, so that a key that the chart does not use goes on to the
+    // ancestors.
+    return Focus(
+      focusNode: widget.focusNode,
+      autofocus: widget.autofocus,
+      onKeyEvent: _keyboard.onKeyEvent,
+      onFocusChange: _keyboard.onFocusChange,
+      child: ChartHost(
+        canvas: _canvas,
+        onTickerModeChanged: _onTickerModeChanged,
+        onFirstLayout: _onFirstLayout,
+      ),
     );
   }
 
