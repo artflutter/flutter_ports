@@ -73,6 +73,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:meta/meta.dart';
@@ -1292,13 +1293,15 @@ List<String> _resolveKeysFromAllScopes(List<Object?> scopes) {
 /// (`lib/src/js/js_function.dart`). Its closure takes `this` (a
 /// [DatasetController]), `meta` (a [ChartMeta]), `data` (a `List<Object?>`),
 /// `start` and `count` (`double`s). Call it with [jsCall] and the controller
-/// as `thisArg`. It returns a `List<Map<String, Object?>>` of `{r}` objects.
+/// as `thisArg`. It returns a `List<ParsedItem>`: each item is the object
+/// `{r}` of upstream, a typed parsed item (Chart.js ADR 0054 §8) with the
+/// one key `r`.
 const JsFunction parseObjectDataRadialScale = JsFunction(
   _parseObjectDataRadialScale,
 );
 
 /// The closure of [parseObjectDataRadialScale].
-List<Map<String, Object?>> _parseObjectDataRadialScale(
+List<ParsedItem> _parseObjectDataRadialScale(
   DatasetController self,
   ChartMeta meta,
   List<Object?> data,
@@ -1308,14 +1311,15 @@ List<Map<String, Object?>> _parseObjectDataRadialScale(
   final iScale = meta.iScale;
   final parsingKey = jsGet(self.parsing, 'key');
   final key = identical(parsingKey, undefined) ? 'r' : parsingKey;
-  final parsed = <Map<String, Object?>>[];
+  final parsed = <ParsedItem>[];
 
   for (var i = 0.0, ilen = count; i < ilen; ++i) {
     final index = i + start;
     final item = jsGetIndex(data, index);
-    parsed.add({
-      'r': iScale!.parse(resolveObjectKey(item, key! as String), index),
-    });
+    parsed.add(
+      ParsedItem()
+        ..r = iScale!.parse(resolveObjectKey(item, key! as String), index),
+    );
   }
   return parsed;
 }
