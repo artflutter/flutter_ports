@@ -76,8 +76,9 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos â
   `ubuntu-24.04`, because the font manager of the platform rasterizes the text. A local Mac never
   writes the golden files. Only a `workflow_dispatch` run of CI with the input `update_goldens`
   writes them (`-- --update-goldens`). That run uploads them as the artifact `theme-goldens`. The
-  input `flutter_version` writes `.fvmrc` first, for a move to a new Flutter. The tree has no
-  golden file yet. Thus the job `fixtures` does not compare the goldens yet.
+  input `flutter_version` writes `.fvmrc` first, for a move to a new Flutter. The golden files are
+  `test/port/theme/goldens/bar_light.png` and `bar_dark.png`. On each other run, the job `fixtures`
+  compares them after `test:fixtures`. A failed compare uploads the `failures/` images.
 - `dart run melos run parity`: tool 6. It writes `packages/flutter_chartjs_port/doc/parity.md` from
   `doc/status.yaml`, the files of the pinned `third_party/` copies, the rule-2 headers, the spec
   case results of tool 5 and `doc/differences.md`. It runs the spec tests and needs the

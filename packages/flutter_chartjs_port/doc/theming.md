@@ -702,8 +702,8 @@ Required in phase 9:
    skip unless `CHART_GOLDENS=1`. The melos script `test` excludes the tag, and `test:goldens`
    runs the file. The pinned runner is the CI job `fixtures` on `ubuntu-24.04`. Only a
    `workflow_dispatch` run with `update_goldens` writes the files and uploads them as the artifact
-   `theme-goldens`. A local Mac never writes them (CoreText). The first golden files and the
-   compare step of the job come from the first such run.
+   `theme-goldens`. A local Mac never writes them (CoreText). The first golden files come from the
+   dispatch run 41001061748 at `6c461f3`. Each other run of the job compares them.
 
 Only a regression adds more: SHADOWED and INCONSISTENT coverage classes, randomized themes, or
 goldens for each chart type.

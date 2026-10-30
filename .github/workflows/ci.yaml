@@ -124,6 +124,11 @@ jobs:
         run: dart run melos run test:fixtures
         env:
           FIXTURES_REQUIRED: "1"
+      - name: Compare the theme goldens
+        if: ${{ !inputs.update_goldens }}
+        run: dart run melos run test:goldens
+        env:
+          CHART_GOLDENS: "1"
       - name: Write the theme goldens
         if: ${{ inputs.update_goldens }}
         run: dart run melos run test:goldens -- --update-goldens
