@@ -15,12 +15,17 @@
 /// corner object `{topLeft, topRight, bottomLeft, bottomRight}` is a
 /// [TRBLCorners].
 ///
-/// The options of a bar are a [BarOptions] or a plain Map (Chart.js ADR
-/// 0043). Each option read goes through one small function for each option,
-/// for example `_borderWidth`, which gives [BarOptions.borderWidthValue] or
-/// `jsGet(options, 'borderWidth')` (Chart.js ADR 0018, section 4). Both give
-/// JS `undefined` for an absent key, and `jsGet` throws the [TypeError] of a
-/// property read of `undefined` options.
+/// The options of a bar are a [BarOptions] or a plain Map of user code or of
+/// a spec. Each option read goes through one small function for each
+/// option, for example `_borderWidth`, which gives the typed field of a
+/// [BarOptions] with its presence bit (`rawOption`, Chart.js ADR 0054 §6) or
+/// the read by name of a plain Map (`_byName`). Both give JS `undefined` for
+/// an absent key, and the read by name throws the [TypeError] of a property
+/// read of `undefined` options.
+///
+/// The skipped edges of a bar are a [BorderSkipped] of the bar controller,
+/// read through its typed fields, or a plain object, read by name
+/// (`_edges`).
 ///
 /// This library is a pure layer (Chart.js ADR 0017, section 10). It imports
 /// neither `dart:ui` nor `package:flutter`.
@@ -29,7 +34,7 @@ library;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show BarOptions;
+    show BarOptions, rawOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show addRoundedRectPath;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -37,7 +42,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isBetween, limitValue;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show toTRBL, toTRBLCorners;
+    show ScriptableContext, toTRBL, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -47,7 +52,9 @@ import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
-import 'package:flutter_chartjs_port/src/options/props.dart' show BarProperties;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/options/props.dart'
+    show BarProperties, BorderSkipped;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show BarOptionsScope;
 import 'package:flutter_chartjs_port/src/options/typed_record.dart'
@@ -57,34 +64,62 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
-/// The option `borderWidth` of [options]: [BarOptions.borderWidthValue] for
-/// typed options, else `jsGet(options, 'borderWidth')` (Chart.js ADR 0018,
-/// section 4).
-///
-/// Both give JS `undefined` for an absent key. `jsGet` throws a [TypeError]
-/// for Dart `null`, the `undefined` state of the options. The other option
-/// functions of this file work in the same way.
+/// `object[name]` of an object that is not typed: the read by name of a
+/// plain object of user code or of a spec (the face, Chart.js ADR 0054 §5),
+/// the options of a bar or its skipped edges. It gives JS `undefined` for
+/// an absent key, and throws a [TypeError] for Dart `null`, the `undefined`
+/// state.
+Object? _byName(Object? object, String name) => jsGet(object, name);
+
+/// The option `borderWidth` of [options]: the typed field of a [BarOptions]
+/// with its presence bit, else the read by name. Both give JS `undefined`
+/// for an absent key. The other option functions of this file work in the
+/// same way.
 Object? _borderWidth(Object? options) => options is BarOptions
-    ? options.borderWidthValue
-    : jsGet(options, 'borderWidth');
+    ? rawOption(options, OptionKey.borderWidth, options.borderWidth)
+    : _byName(options, 'borderWidth');
 
 /// The option `borderRadius` of [options], as [_borderWidth] reads
 /// `borderWidth`.
 Object? _borderRadius(Object? options) => options is BarOptions
-    ? options.borderRadiusValue
-    : jsGet(options, 'borderRadius');
+    ? rawOption(options, OptionKey.borderRadius, options.borderRadius)
+    : _byName(options, 'borderRadius');
 
 /// The option `borderColor` of [options], as [_borderWidth] reads
 /// `borderWidth`.
 Object? _borderColor(Object? options) => options is BarOptions
-    ? options.borderColorValue
-    : jsGet(options, 'borderColor');
+    ? rawOption(options, OptionKey.borderColor, options.borderColor)
+    : _byName(options, 'borderColor');
 
 /// The option `backgroundColor` of [options], as [_borderWidth] reads
 /// `borderWidth`.
 Object? _backgroundColor(Object? options) => options is BarOptions
-    ? options.backgroundColorValue
-    : jsGet(options, 'backgroundColor');
+    ? rawOption(options, OptionKey.backgroundColor, options.backgroundColor)
+    : _byName(options, 'backgroundColor');
+
+/// The `ToBoolean` of the edges `skip.top`, `skip.right`, `skip.bottom` and
+/// `skip.left` of the skipped edges [skip] (element.bar.js:43-50, :59-63).
+///
+/// A [BorderSkipped] keeps the `ToBoolean` of each edge in its field: false
+/// for an absent edge, as for `undefined`. Another object reads each edge by
+/// name. Dart `null`, the `undefined` state of `borderSkipped`, throws a
+/// [TypeError], as the upstream property read does.
+({bool top, bool right, bool bottom, bool left}) _edges(Object? skip) {
+  if (skip is BorderSkipped) {
+    return (
+      top: skip.top,
+      right: skip.right,
+      bottom: skip.bottom,
+      left: skip.left,
+    );
+  }
+  return (
+    top: jsTruthy(_byName(skip, 'top')),
+    right: jsTruthy(_byName(skip, 'right')),
+    bottom: jsTruthy(_byName(skip, 'bottom')),
+    left: jsTruthy(_byName(skip, 'left')),
+  );
+}
 
 /// element.bar.js:34 the bounds literal `{left, top, right, bottom}` of
 /// `getBarBounds`.
@@ -162,18 +197,19 @@ double _skipOrLimit(bool skip, double value, double min, double max) {
 /// element.bar.js:41 `parseBorderWidth`.
 ///
 /// `bar.options.borderWidth` and `skip.<edge>` are property reads
-/// ([_borderWidth] and [jsGet]). Thus an element without `options` or
+/// ([_borderWidth] and [_edges]). Thus an element without `options` or
 /// without `borderSkipped` throws a [TypeError], as upstream does.
 _BorderWidths _parseBorderWidth(BarElement bar, double maxW, double maxH) {
   final value = _borderWidth(bar.options);
   final skip = bar.borderSkipped;
   final o = toTRBL(value);
+  final edges = _edges(skip);
 
   return (
-    t: _skipOrLimit(jsTruthy(jsGet(skip, 'top')), o.top, 0, maxH),
-    r: _skipOrLimit(jsTruthy(jsGet(skip, 'right')), o.right, 0, maxW),
-    b: _skipOrLimit(jsTruthy(jsGet(skip, 'bottom')), o.bottom, 0, maxH),
-    l: _skipOrLimit(jsTruthy(jsGet(skip, 'left')), o.left, 0, maxW),
+    t: _skipOrLimit(edges.top, o.top, 0, maxH),
+    r: _skipOrLimit(edges.right, o.right, 0, maxW),
+    b: _skipOrLimit(edges.bottom, o.bottom, 0, maxH),
+    l: _skipOrLimit(edges.left, o.left, 0, maxW),
   );
 }
 
@@ -194,36 +230,30 @@ TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
   // If the value is an object, assume the user knows what they are doing
   // and apply as directed.
   final enableBorder = enableBorderRadius || isObject(value);
+  // The `||` of upstream reads the edges only when `enableBorder` is true.
+  // An object of skipped edges has no getters: the reads have no effect,
+  // and parseBorderWidth read the same edges before (element.bar.js:76-77).
+  if (!enableBorder) {
+    return _Corners(
+      topLeft: _skipOrLimit(true, o.topLeft, 0, maxR),
+      topRight: _skipOrLimit(true, o.topRight, 0, maxR),
+      bottomLeft: _skipOrLimit(true, o.bottomLeft, 0, maxR),
+      bottomRight: _skipOrLimit(true, o.bottomRight, 0, maxR),
+    );
+  }
+  final edges = _edges(skip);
 
   return _Corners(
-    topLeft: _skipOrLimit(
-      !enableBorder ||
-          jsTruthy(jsGet(skip, 'top')) ||
-          jsTruthy(jsGet(skip, 'left')),
-      o.topLeft,
-      0,
-      maxR,
-    ),
-    topRight: _skipOrLimit(
-      !enableBorder ||
-          jsTruthy(jsGet(skip, 'top')) ||
-          jsTruthy(jsGet(skip, 'right')),
-      o.topRight,
-      0,
-      maxR,
-    ),
+    topLeft: _skipOrLimit(edges.top || edges.left, o.topLeft, 0, maxR),
+    topRight: _skipOrLimit(edges.top || edges.right, o.topRight, 0, maxR),
     bottomLeft: _skipOrLimit(
-      !enableBorder ||
-          jsTruthy(jsGet(skip, 'bottom')) ||
-          jsTruthy(jsGet(skip, 'left')),
+      edges.bottom || edges.left,
       o.bottomLeft,
       0,
       maxR,
     ),
     bottomRight: _skipOrLimit(
-      !enableBorder ||
-          jsTruthy(jsGet(skip, 'bottom')) ||
-          jsTruthy(jsGet(skip, 'right')),
+      edges.bottom || edges.right,
       o.bottomRight,
       0,
       maxR,
@@ -560,6 +590,18 @@ class BarElement extends Element implements types.VisualElementRange {
     animatedPropHeight => _undefinedBits & _heightBit != 0,
     _ => super.isUndefined(prop),
   };
+
+  /// core.datasetController.js:767-768 `element.$context`, the data context
+  /// of the element: [Element.$context] narrowed to a [ScriptableContext]
+  /// (Chart.js ADR 0054 §9). Another value gives Dart `null`.
+  @override
+  ScriptableContext? get $context => switch (super.$context) {
+    final ScriptableContext context => context,
+    _ => null,
+  };
+
+  @override
+  set $context(covariant ScriptableContext? value) => super.$context = value;
 
   /// Whether the element is of the class [BarElement] itself, not of a user
   /// subclass: the typed writes are for this class only (Chart.js ADR 0054

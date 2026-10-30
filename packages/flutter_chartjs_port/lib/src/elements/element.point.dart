@@ -2,21 +2,22 @@
 
 /// Port of `src/elements/element.point.ts`.
 ///
-/// [PointElement] follows the element design of Chart.js ADR 0017: typed
-/// properties with the `undefined` state, the access by name of
-/// `operator []` and `operator []=`, and the options as a Map.
+/// [PointElement] follows the element design of Chart.js ADR 0017 with the
+/// storage of Chart.js ADR 0054 §9: typed properties with the `undefined`
+/// state, the access by name of `operator []` and `operator []=`, and the
+/// options as a Map.
 ///
-/// The options Map is the resolved options object of the point (Chart.js
-/// ADR 0043). It is a [PointOptions] or a plain Map. The methods read each
-/// option through one small function, for example `_radius`, which gives
-/// [PointOptions.radiusValue] or `jsGet(options, 'radius')` (Chart.js ADR
-/// 0018, section 4). Both give the upstream value: JS `undefined` for an
-/// absent key. Thus the methods read the options as upstream reads the
-/// object:
-/// - A numeric option in arithmetic or in a comparison is read with
-///   `jsToNumber`, where an absent key (JS `undefined`) gives NaN and JS
-///   `null` gives 0. The read also throws the `TypeError` of a property read
-///   of `undefined` options.
+/// The options are the resolved options of the point: a [PointOptions], or
+/// a plain Map of user code or of a spec. The methods read a [PointOptions]
+/// through its typed fields with the presence bit and the foreign slot
+/// (`numberOption`, `rawOption` and `plainOption` of `element_options.dart`,
+/// Chart.js ADR 0054 §6), and a plain Map by name (`_byName`). Both give the
+/// upstream value:
+/// - A numeric option in arithmetic or in a comparison is its `ToNumber`
+///   ([_number]): an absent key (JS `undefined`) gives NaN and JS `null`
+///   gives 0. The read also throws the `TypeError` of a property read of
+///   `undefined` options.
+/// - The JS `+` of two options ([_sum]) adds two numbers and joins a string.
 /// - The `|| 0` reads of [PointElement.size] give 0 for JS `undefined` and
 ///   for JS `null` (Chart.js ADR 0017, section 8).
 ///
@@ -28,9 +29,11 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasRenderingContext2D;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show PointOptions;
+    show PointOptions, numberOption, plainOption, rawOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show DrawPointOptions, drawPoint, isPointInArea;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsSquare;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -39,6 +42,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -71,42 +75,50 @@ bool _inRange(
   // `options.radius + options.hitRadius` is the JS `+`: a string option
   // joins (`'07' + 1` is `'071'`). The `<` applies `ToNumber` to the sum.
   return ((pos ?? 0) - value).abs() <
-      jsToNumber(jsAdd(_radius(options), _hitRadius(options)));
+      _sum(options, OptionKey.radius, OptionKey.hitRadius);
 }
 
-/// The option `radius` of [options]: [PointOptions.radiusValue] for typed
-/// options, else `jsGet(options, 'radius')` (Chart.js ADR 0018, section 4).
-///
-/// Both give JS `undefined` for an absent key. `jsGet` throws a [TypeError]
-/// for Dart `null`, the `undefined` state of the options. The other option
-/// functions of this file work in the same way.
-Object? _radius(Object? options) =>
-    options is PointOptions ? options.radiusValue : jsGet(options, 'radius');
+/// `options[key]` of options that are not a [PointOptions]: the read by
+/// name of a plain object of user code or of a spec (the face, Chart.js ADR
+/// 0054 §5). It gives JS `undefined` for an absent key, and throws a
+/// [TypeError] for Dart `null`, the `undefined` state of the options.
+Object? _byName(Object? options, OptionKey key) => jsGet(options, key.jsName);
 
-/// The option `hitRadius` of [options], as [_radius] reads `radius`.
-Object? _hitRadius(Object? options) => options is PointOptions
-    ? options.hitRadiusValue
-    : jsGet(options, 'hitRadius');
+/// The typed `double` field of the numeric option [key] of [options]:
+/// `radius`, `hitRadius`, `hoverRadius` or `borderWidth`.
+double _numberField(PointOptions options, OptionKey key) => switch (key) {
+  OptionKey.radius => options.radius,
+  OptionKey.hitRadius => options.hitRadius,
+  OptionKey.hoverRadius => options.hoverRadius,
+  _ => options.borderWidth,
+};
 
-/// The option `hoverRadius` of [options], as [_radius] reads `radius`.
-Object? _hoverRadius(Object? options) => options is PointOptions
-    ? options.hoverRadiusValue
-    : jsGet(options, 'hoverRadius');
+/// `options[key]`, the raw JS value of the numeric option [key]: JS
+/// `undefined` for an absent key, a foreign value as it is.
+Object? _raw(Object? options, OptionKey key) => options is PointOptions
+    ? rawOption(options, key, _numberField(options, key))
+    : _byName(options, key);
 
-/// The option `borderWidth` of [options], as [_radius] reads `radius`.
-Object? _borderWidth(Object? options) => options is PointOptions
-    ? options.borderWidthValue
-    : jsGet(options, 'borderWidth');
+/// `ToNumber(options[key])` of the numeric option [key]: NaN for an absent
+/// key.
+double _number(Object? options, OptionKey key) => options is PointOptions
+    ? numberOption(options, key, _numberField(options, key))
+    : jsToNumber(_byName(options, key));
 
-/// The option `borderColor` of [options], as [_radius] reads `radius`.
-Object? _borderColor(Object? options) => options is PointOptions
-    ? options.borderColorValue
-    : jsGet(options, 'borderColor');
+/// `ToNumber(options[a] + options[b])` with the JS `+` ([jsAdd]): two
+/// numbers add, and a string option joins (`'07' + 1` is `'071'`). Two
+/// typed fields with their values add with no box.
+double _sum(Object? options, OptionKey a, OptionKey b) {
+  if (options is PointOptions &&
+      plainOption(options, a) &&
+      plainOption(options, b)) {
+    return _numberField(options, a) + _numberField(options, b);
+  }
+  return jsToNumber(jsAdd(_raw(options, a), _raw(options, b)));
+}
 
-/// The option `backgroundColor` of [options], as [_radius] reads `radius`.
-Object? _backgroundColor(Object? options) => options is PointOptions
-    ? options.backgroundColorValue
-    : jsGet(options, 'backgroundColor');
+/// The truthiness of a number with no foreign value: not 0 and not NaN.
+bool _truthy(double value) => value != 0 && !value.isNaN;
 
 /// element.point.ts:18 `PointProps = Point`, the animated properties of a
 /// point element.
@@ -344,6 +356,18 @@ class PointElement extends Element
     return number;
   }
 
+  /// core.datasetController.js:767-768 `element.$context`, the data context
+  /// of the element: [Element.$context] narrowed to a [ScriptableContext]
+  /// (Chart.js ADR 0054 §9). Another value gives Dart `null`.
+  @override
+  ScriptableContext? get $context => switch (super.$context) {
+    final ScriptableContext context => context,
+    _ => null,
+  };
+
+  @override
+  set $context(covariant ScriptableContext? value) => super.$context = value;
+
   /// Whether the element is of the class [PointElement] itself, not of a user
   /// subclass: the typed writes are for this class only (Chart.js ADR 0054
   /// §9).
@@ -477,7 +501,7 @@ class PointElement extends Element
     // joins (`1 + '07'` is `'107'`). `Math.pow` applies `ToNumber` to the
     // sum.
     return (jsSquare((mouseX ?? 0) - x) + jsSquare((mouseY ?? 0) - y)) <
-        jsSquare(jsToNumber(jsAdd(_hitRadius(options), _radius(options))));
+        jsSquare(_sum(options, OptionKey.hitRadius, OptionKey.radius));
   }
 
   /// element.point.ts:68 `inXRange(mouseX, useFinalPosition?)`.
@@ -528,14 +552,31 @@ class PointElement extends Element
     // Upstream reassigns its parameter.
     // ignore: parameter_assignments
     options = options ?? this.options ?? const <String, Object?>{};
+    if (options is PointOptions &&
+        plainOption(options, OptionKey.radius) &&
+        plainOption(options, OptionKey.hoverRadius) &&
+        plainOption(options, OptionKey.borderWidth)) {
+      // The typed fields hold the raw numbers: the `||` and `&&` of
+      // upstream on numbers, with no box.
+      final value = options.radius;
+      final r = _truthy(value) ? value : 0.0;
+      final hoverRadius = options.hoverRadius;
+      final radius = jsMax(
+        r,
+        _truthy(r) && _truthy(hoverRadius) ? hoverRadius : 0,
+      );
+      final width = options.borderWidth;
+      final borderWidth = _truthy(radius) && _truthy(width) ? width : 0.0;
+      return (radius + borderWidth) * 2;
+    }
     // `options.radius || 0` keeps the raw option value, and `radius &&`
     // tests it before the `ToNumber` of `Math.max`: a truthy value whose
     // number is 0, such as '0', still adds the hover radius.
-    final rawRadius = _radius(options);
+    final rawRadius = _raw(options, OptionKey.radius);
     final rawTruthy = jsTruthy(rawRadius);
     final radius = jsMax(
       rawTruthy ? jsToNumber(rawRadius) : 0,
-      rawTruthy ? jsOrZero(_hoverRadius(options)) : 0,
+      rawTruthy ? jsOrZero(_raw(options, OptionKey.hoverRadius)) : 0,
     );
     // `radius && options.borderWidth || 0` keeps the raw option value, and
     // `(radius + borderWidth) * 2` is the JS `+` ([jsAdd]): a string
@@ -543,7 +584,7 @@ class PointElement extends Element
     // `ToNumber`.
     final Object? borderWidth;
     if (jsTruthy(radius)) {
-      final value = _borderWidth(options);
+      final value = _raw(options, OptionKey.borderWidth);
       borderWidth = jsTruthy(value) ? value : 0.0;
     } else {
       borderWidth = 0.0;
@@ -573,17 +614,28 @@ class PointElement extends Element
     final options = this.options;
 
     if (skip == true ||
-        jsToNumber(_radius(options)) < 0.1 ||
+        _number(options, OptionKey.radius) < 0.1 ||
         !isPointInArea(this, area, size(options) / 2)) {
       return;
     }
 
-    // _radius threw a TypeError above when options is null.
+    // _number threw a TypeError above when options is null.
     final opts = options!;
-    ctx
-      ..strokeStyle = canvasStyle(_borderColor(opts))
-      ..lineWidth = canvasNumber(_borderWidth(opts))
-      ..fillStyle = canvasStyle(_backgroundColor(opts));
+    if (opts is PointOptions) {
+      // A color field holds the raw value: Dart `null` for an absent key,
+      // which the canvas ignores as it ignores `undefined`.
+      ctx
+        ..strokeStyle = canvasStyle(opts.borderColor)
+        ..lineWidth = plainOption(opts, OptionKey.borderWidth)
+            ? opts.borderWidth
+            : canvasNumber(_raw(opts, OptionKey.borderWidth))
+        ..fillStyle = canvasStyle(opts.backgroundColor);
+    } else {
+      ctx
+        ..strokeStyle = canvasStyle(_byName(opts, OptionKey.borderColor))
+        ..lineWidth = canvasNumber(_byName(opts, OptionKey.borderWidth))
+        ..fillStyle = canvasStyle(_byName(opts, OptionKey.backgroundColor));
+    }
     drawPoint(ctx, _drawPointOptionsOf(opts), x, y);
   }
 
@@ -598,8 +650,16 @@ class PointElement extends Element
   @override
   Object getRange([String? axis]) {
     final options = this.options ?? const <String, Object?>{};
+    if (options is PointOptions &&
+        plainOption(options, OptionKey.radius) &&
+        plainOption(options, OptionKey.hitRadius)) {
+      return options.radius + options.hitRadius;
+    }
     // @ts-expect-error Fallbacks should never be hit in practice
-    return jsAdd(_radius(options), _hitRadius(options));
+    return jsAdd(
+      _raw(options, OptionKey.radius),
+      _raw(options, OptionKey.hitRadius),
+    );
   }
 
   /// The [DrawPointOptions] of [options]: [options] itself for a
@@ -617,12 +677,10 @@ class PointElement extends Element
 /// a [DrawPointOptions], for plain Map options (Chart.js ADR 0017, section
 /// 8). [PointOptions] implements [DrawPointOptions] with the same results.
 ///
-/// Each member reads [options] at the call, as upstream reads the object.
-/// The reads are typed Map reads, because they give the upstream result
-/// also for an absent key. An absent key reads as Dart `null`, whose
-/// `ToNumber` is 0, where upstream reads `undefined`, whose `ToNumber` is
-/// NaN. `drawPointLegend` treats 0 and NaN alike for these three numbers:
-/// `rotation || 0` (helpers.canvas.ts:178) and `!rotation` (:238),
+/// Each member reads [options] by name at the call ([_byName]), as upstream
+/// reads the object. An absent key reads as `undefined`, whose `ToNumber`
+/// is NaN. `drawPointLegend` treats 0 and NaN alike for these three
+/// numbers: `rotation || 0` (helpers.canvas.ts:178) and `!rotation` (:238),
 /// `isNaN(radius) || radius <= 0` (:192), and `borderWidth > 0` (:305).
 final class _MapPointOptions implements DrawPointOptions {
   _MapPointOptions(this.options);
@@ -632,17 +690,17 @@ final class _MapPointOptions implements DrawPointOptions {
 
   /// helpers.canvas.ts:150 `pointStyle`, the value as it is.
   @override
-  Object? get pointStyle => options['pointStyle'];
+  Object? get pointStyle => _byName(options, OptionKey.pointStyle);
 
   /// helpers.canvas.ts:151 `rotation`, in degrees: its `ToNumber`.
   @override
-  double get rotation => jsToNumber(options['rotation']);
+  double get rotation => jsToNumber(_byName(options, OptionKey.rotation));
 
   /// helpers.canvas.ts:152 `radius`: its `ToNumber`.
   @override
-  double get radius => jsToNumber(options['radius']);
+  double get radius => jsToNumber(_byName(options, OptionKey.radius));
 
   /// helpers.canvas.ts:153 `borderWidth`: its `ToNumber`.
   @override
-  double get borderWidth => jsToNumber(options['borderWidth']);
+  double get borderWidth => jsToNumber(_byName(options, OptionKey.borderWidth));
 }

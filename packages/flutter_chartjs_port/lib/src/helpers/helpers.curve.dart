@@ -16,11 +16,13 @@ import 'dart:math' as math;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show isPointInArea;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show almostEquals, distanceBetweenPoints, sign;
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 
 /// helpers.curve.ts:6 `EPSILON`. `Number.EPSILON` is truthy, so the
@@ -287,9 +289,12 @@ void _capBezierPoints(List<SplinePoint> points, ChartArea? area) {
 ///
 /// @private
 ///
-/// [options] is an option object (Chart.js ADR 0043). `options.tension`
-/// goes to the parameter `t` of [splineCurve] through `ToNumber`, as the
-/// upstream `t * s01` does: undefined gives NaN, and JS `null` gives 0.
+/// [options] is an option object: the resolved options of a line, or a
+/// plain Map. Its reads go through [readOption] (Chart.js ADR 0054 §4): the
+/// typed fields of resolved element options, else the read by name.
+/// `options.tension` goes to the parameter `t` of [splineCurve] through
+/// `ToNumber`, as the upstream `t * s01` does: undefined gives NaN, and JS
+/// `null` gives 0.
 /// Dart `null` for [area] is JS `undefined` (see [_capBezierPoints]).
 void updateBezierControlPoints(
   List<SplinePoint> points,
@@ -301,13 +306,13 @@ void updateBezierControlPoints(
   String indexAxis,
 ) {
   // Only consider points that are drawn in case the spanGaps option is used
-  if (jsTruthy(jsGet(options, 'spanGaps'))) {
+  if (jsTruthy(readOption(options, OptionKey.spanGaps))) {
     // Upstream reassigns its parameter.
     // ignore: parameter_assignments
     points = points.where((pt) => !(pt.skip ?? false)).toList();
   }
 
-  if (jsGet(options, 'cubicInterpolationMode') == 'monotone') {
+  if (readOption(options, OptionKey.cubicInterpolationMode) == 'monotone') {
     splineCurveMonotone(points, indexAxis);
   } else {
     // `points[0]` of an empty array is undefined. The loop does not run then.
@@ -316,7 +321,7 @@ void updateBezierControlPoints(
         : loop
         ? points[points.length - 1]
         : points[0];
-    final tension = jsToNumber(jsGet(options, 'tension'));
+    final tension = jsToNumber(readOption(options, OptionKey.tension));
     for (var i = 0, ilen = points.length; i < ilen; ++i) {
       final point = points[i];
       // The indexes are list indexes: non-negative integers.
@@ -335,7 +340,7 @@ void updateBezierControlPoints(
     }
   }
 
-  if (jsTruthy(jsGet(options, 'capBezierPoints'))) {
+  if (jsTruthy(readOption(options, OptionKey.capBezierPoints))) {
     _capBezierPoints(points, area);
   }
 }

@@ -1,2 +1,3 @@
-jsGet 13
-stringIndex 17
+# The face: _byName reads the options of an arc that are not an ArcOptions
+# (a plain Map of user code or of a spec).
+jsGet 1

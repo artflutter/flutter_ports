@@ -25,9 +25,12 @@
 library;
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions, GenericElementOptions;
@@ -53,6 +56,45 @@ ElementOptions createElementOptions(Object? elementType) =>
       _ => GenericElementOptions(),
     };
 
+// The typed reads of the element classes (Chart.js ADR 0054 §6 and §9).
+//
+// A typed field of resolved options holds the raw value of its key when the
+// key is present and its value is in the type of the field. A `double`
+// field holds the `ToNumber` of a foreign value too. An absent key (a user
+// `delete` of a default) gives 0, Dart `null` or false, where upstream reads
+// `undefined`. These functions give the upstream value from the field, the
+// presence bit and the foreign slot. Each takes the typed field of the key,
+// so that the element code reads the field of its class.
+
+/// Whether the typed field of [key] holds the raw value of [options]: the
+/// key is present and its value is not foreign.
+@internal
+@pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
+bool plainOption(ElementOptions options, OptionKey key) =>
+    options.isPresent(key) && !options.isForeign(key);
+
+/// `ToNumber(options[key])` for the `double` field [field] of [key]: the
+/// field, or NaN, the `ToNumber` of `undefined`, for an absent key. A
+/// foreign value has its `ToNumber` in the field.
+@internal
+@pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
+double numberOption(ElementOptions options, OptionKey key, double field) =>
+    options.isPresent(key) ? field : double.nan;
+
+/// `options[key]`, the raw JS value of [key] with the typed field [field]:
+/// [undefined] for an absent key, the foreign value, else [field]. A
+/// `double` field gives a `double` for an `int` value: the JS number is the
+/// same.
+@internal
+Object? rawOption(ElementOptions options, OptionKey key, Object? field) {
+  if (!options.isPresent(key)) return undefined;
+  return options.isForeign(key) ? options.foreignOf(key) : field;
+}
+
 /// `Object.assign({}, options)` for an options object (Chart.js ADR 0021,
 /// section 3): `cloneIfNotShared` (core.datasetController.js:230),
 /// `getSharedOptions` (:871), `resolveTargetOptions` (core.animations.js:159)
@@ -65,4 +107,5 @@ ElementOptions createElementOptions(Object? elementType) =>
 // DIVERGES(chartjs): adapt-typed-element-options, the copy keeps the class.
 AnyObject copyOptions(AnyObject options) => options is ElementOptions
     ? options.clone()
+    // The face: `Object.assign` of a plain options object of user code.
     : {for (final key in jsObjectKeys(options)) key: options[key]};

@@ -1,2 +1,3 @@
-jsGet 6
-stringIndex 8
+# The face: _byName reads the options of a point that are not a
+# PointOptions (a plain Map of user code or of a spec).
+jsGet 1

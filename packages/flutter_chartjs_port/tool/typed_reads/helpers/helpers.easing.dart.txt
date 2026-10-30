@@ -1,1 +1,4 @@
+# The mutable effects object of user easings: easeInBounce and
+# easeInOutBounce read effects.easeOutBounce and effects.easeInBounce when
+# they run (helpers.easing.ts:100, :118-119).
 stringIndex 3

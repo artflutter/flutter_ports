@@ -34,7 +34,7 @@ library;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isNumber;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext;
+    show ContextObject;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -78,10 +78,11 @@ import 'package:meta/meta.dart';
 /// - [hidden] is not an upstream property of the class. Upstream code adds
 ///   it to a data element, and the types give it no type. Thus it holds any
 ///   value, as an extra property does.
-/// - `$context`, the data context that a dataset controller adds
-///   (core.datasetController.js:767-768), is a typed member too: the typed
-///   read [$context] gives the [ScriptableContext], and the access by name
-///   keeps any value.
+/// - `$context`, the context that a dataset controller adds to a data
+///   element (core.datasetController.js:767-768), is a typed member too: the
+///   typed read [$context] gives the [ContextObject], and the access by name
+///   keeps any value. The data element classes narrow it to the
+///   `ScriptableContext` of a data context.
 ///
 /// ## Access by name
 ///
@@ -250,20 +251,23 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
     _undefinedXY &= ~_yBit;
   }
 
-  /// core.datasetController.js:767-768 `element.$context`, the data context
-  /// of the element, as a typed read (Chart.js ADR 0054 §9).
+  /// `this.$context`, the scriptable context of the element, as a typed
+  /// member (Chart.js ADR 0054 §9): the data context of a data element
+  /// (core.datasetController.js:767-768), the context of a scale
+  /// (core.scale.js:249) or of the tooltip (plugin.tooltip.js:528).
   ///
-  /// core.element.ts does not declare it: a dataset controller adds it. It
-  /// gives the context when the property holds a [ScriptableContext], else
-  /// Dart `null`: the `undefined` start state, or another value that a
-  /// write by name stored. `this[r'$context']` gives the stored value as it
-  /// is.
-  ScriptableContext? get $context => switch (_context) {
-    final ScriptableContext context => context,
+  /// core.element.ts does not declare it. The getter gives the context when
+  /// the property holds a [ContextObject], else Dart `null`: the `undefined`
+  /// start state, or another value that a write by name stored.
+  /// `this[r'$context']` gives the stored value as it is. A subclass narrows
+  /// the type of its context: the setter is `covariant`. Dart `null` for the
+  /// setter writes `undefined`.
+  ContextObject? get $context => switch (_context) {
+    final ContextObject context => context,
     _ => null,
   };
 
-  set $context(ScriptableContext value) => _context = value;
+  set $context(covariant ContextObject? value) => _context = value ?? undefined;
 
   /// core.element.ts:13 `active = false`.
   ///

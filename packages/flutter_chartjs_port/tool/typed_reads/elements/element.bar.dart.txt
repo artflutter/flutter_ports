@@ -1,2 +1,4 @@
-jsGet 16
-stringIndex 10
+# The face: _byName reads the options of a bar that are not a BarOptions and
+# skipped edges that are not a BorderSkipped (plain Maps of user code or of
+# a spec).
+jsGet 1

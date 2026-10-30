@@ -1,7 +1,8 @@
 // Original code, not ported from Chart.js: core.element cases with no spec.
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext;
+    show ScriptableContext, ScriptableScaleContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart';
@@ -117,7 +118,7 @@ void main() {
   });
 
   group(r'$context', () {
-    test('the typed read gives a ScriptableContext only', () {
+    test('the typed read gives a context object only', () {
       final context = ScriptableContext(null)..['type'] = 'data';
       final elem = Element();
       expect(elem.$context, isNull);
@@ -129,6 +130,21 @@ void main() {
       expect(elem[r'$context'], 'ctx');
       elem[r'$context'] = undefined;
       expect(elem[r'$context'], _isUndefined);
+      elem
+        ..$context = context
+        ..$context = null;
+      expect(elem[r'$context'], _isUndefined);
+    });
+
+    test('a data element narrows it to a ScriptableContext', () {
+      final scale = ScriptableScaleContext(null)..['type'] = 'scale';
+      final data = ScriptableContext(null)..['type'] = 'data';
+      final point = PointElement()..[r'$context'] = scale;
+      expect(point.$context, isNull);
+      expect(point[r'$context'], same(scale));
+      point.$context = data;
+      expect(point.$context, same(data));
+      expect((point as Element).$context, same(data));
     });
   });
 

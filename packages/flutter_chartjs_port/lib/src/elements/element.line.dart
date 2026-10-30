@@ -27,12 +27,15 @@
 /// with `toInt()`. Each index comes from a list length or from a segment of
 /// the same points, so it is finite. JS `%` is Dart `remainder`.
 ///
-/// `line.options` is an option object (Chart.js ADR 0043): a [LineOptions]
-/// or a plain Map. Each read goes through one small function for each
-/// option, for example `_stepped`, which gives [LineOptions.steppedValue] or
-/// `jsGet(options, 'stepped')` (Chart.js ADR 0018, section 4). Both give JS
-/// `undefined` for an absent key. [jsGet] throws a [TypeError] for the
-/// `undefined` state, as a JavaScript property read of `undefined` does.
+/// `line.options` is an option object: a [LineOptions], or a plain Map of
+/// user code or of a spec. Each read goes through one small function for
+/// each option, for example `_stepped`, which gives the typed field of a
+/// [LineOptions] with its presence bit and foreign slot (`rawOption` and
+/// `plainOption`, Chart.js ADR 0054 §6), the typed field of a
+/// [SegmentStyle], or the read by name of a plain Map (`_byName`). Each gives
+/// JS `undefined` for an absent key. The read by name throws a [TypeError]
+/// for the `undefined` state, as a JavaScript property read of `undefined`
+/// does.
 ///
 /// This library is a pure layer (Chart.js ADR 0017, section 10). It imports
 /// neither `dart:ui` nor `package:flutter`.
@@ -41,7 +44,7 @@ library;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show LineOptions;
+    show LineOptions, plainOption, rawOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show bezierCurveTo, steppedLineTo;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -54,8 +57,10 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart'
         bezierInterpolation,
         pointInLine,
         steppedInterpolation;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableContext;
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
-    show boundSegments, computeSegments;
+    show SegmentStyle, boundSegments, computeSegments;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -64,6 +69,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/props.dart'
     show LineProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -75,73 +81,126 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
-/// The option `borderCapStyle` of [options]: [LineOptions.borderCapStyleValue]
-/// for typed options, else `jsGet(options, 'borderCapStyle')` (Chart.js ADR
-/// 0018, section 4).
-///
-/// Both give JS `undefined` for an absent key. `jsGet` throws a [TypeError]
-/// for Dart `null`, the `undefined` state of the options. [options] can also
-/// be the style of a segment, a plain Map. The other option functions of
-/// this file work in the same way.
-Object? _borderCapStyle(Object? options) => options is LineOptions
-    ? options.borderCapStyleValue
-    : jsGet(options, 'borderCapStyle');
+/// `object[name]` of an object that is not typed: the read by name of a
+/// plain object of user code or of a spec (the face, Chart.js ADR 0054 §5).
+/// It gives JS `undefined` for an absent key, and throws a [TypeError] for
+/// Dart `null`, the `undefined` state of the options.
+Object? _byName(Object? object, String name) => jsGet(object, name);
+
+/// The option `borderCapStyle` of [options], its raw JS value: the typed
+/// field of a [LineOptions] with its presence bit and foreign slot, the
+/// field of a [SegmentStyle], else the read by name. Each gives JS
+/// `undefined` for an absent key. The other option functions of this file
+/// work in the same way.
+Object? _borderCapStyle(Object? options) => switch (options) {
+  final LineOptions o => rawOption(
+    o,
+    OptionKey.borderCapStyle,
+    o.borderCapStyle,
+  ),
+  final SegmentStyle style => style.borderCapStyle,
+  _ => _byName(options, 'borderCapStyle'),
+};
 
 /// The option `borderDash` of [options], as [_borderCapStyle] reads
 /// `borderCapStyle`.
-Object? _borderDash(Object? options) => options is LineOptions
-    ? options.borderDashValue
-    : jsGet(options, 'borderDash');
+Object? _borderDash(Object? options) => switch (options) {
+  final LineOptions o => rawOption(o, OptionKey.borderDash, o.borderDash),
+  final SegmentStyle style => style.borderDash,
+  _ => _byName(options, 'borderDash'),
+};
 
 /// The option `borderDashOffset` of [options], as [_borderCapStyle] reads
 /// `borderCapStyle`.
-Object? _borderDashOffset(Object? options) => options is LineOptions
-    ? options.borderDashOffsetValue
-    : jsGet(options, 'borderDashOffset');
+Object? _borderDashOffset(Object? options) => switch (options) {
+  final LineOptions o => rawOption(
+    o,
+    OptionKey.borderDashOffset,
+    o.borderDashOffset,
+  ),
+  final SegmentStyle style => style.borderDashOffset,
+  _ => _byName(options, 'borderDashOffset'),
+};
 
 /// The option `borderJoinStyle` of [options], as [_borderCapStyle] reads
 /// `borderCapStyle`.
-Object? _borderJoinStyle(Object? options) => options is LineOptions
-    ? options.borderJoinStyleValue
-    : jsGet(options, 'borderJoinStyle');
+Object? _borderJoinStyle(Object? options) => switch (options) {
+  final LineOptions o => rawOption(
+    o,
+    OptionKey.borderJoinStyle,
+    o.borderJoinStyle,
+  ),
+  final SegmentStyle style => style.borderJoinStyle,
+  _ => _byName(options, 'borderJoinStyle'),
+};
 
 /// The option `borderWidth` of [options], as [_borderCapStyle] reads
 /// `borderCapStyle`.
-Object? _borderWidth(Object? options) => options is LineOptions
-    ? options.borderWidthValue
-    : jsGet(options, 'borderWidth');
+Object? _borderWidth(Object? options) => switch (options) {
+  final LineOptions o => rawOption(o, OptionKey.borderWidth, o.borderWidth),
+  final SegmentStyle style => style.borderWidth,
+  _ => _byName(options, 'borderWidth'),
+};
 
 /// The option `borderColor` of [options], as [_borderCapStyle] reads
 /// `borderCapStyle`.
-Object? _borderColor(Object? options) => options is LineOptions
-    ? options.borderColorValue
-    : jsGet(options, 'borderColor');
+Object? _borderColor(Object? options) => switch (options) {
+  final LineOptions o => rawOption(o, OptionKey.borderColor, o.borderColor),
+  final SegmentStyle style => style.borderColor,
+  _ => _byName(options, 'borderColor'),
+};
 
 /// The option `cubicInterpolationMode` of [options], as [_borderCapStyle]
 /// reads `borderCapStyle`.
 Object? _cubicInterpolationMode(Object? options) => options is LineOptions
-    ? options.cubicInterpolationModeValue
-    : jsGet(options, 'cubicInterpolationMode');
+    ? rawOption(
+        options,
+        OptionKey.cubicInterpolationMode,
+        options.cubicInterpolationMode,
+      )
+    : _byName(options, 'cubicInterpolationMode');
 
 /// The option `spanGaps` of [options], as [_borderCapStyle] reads
 /// `borderCapStyle`.
-Object? _spanGaps(Object? options) =>
-    options is LineOptions ? options.spanGapsValue : jsGet(options, 'spanGaps');
+Object? _spanGaps(Object? options) => options is LineOptions
+    ? rawOption(options, OptionKey.spanGaps, options.spanGaps)
+    : _byName(options, 'spanGaps');
 
 /// The option `stepped` of [options], as [_borderCapStyle] reads
 /// `borderCapStyle`.
-Object? _stepped(Object? options) =>
-    options is LineOptions ? options.steppedValue : jsGet(options, 'stepped');
+Object? _stepped(Object? options) => options is LineOptions
+    ? rawOption(options, OptionKey.stepped, options.stepped)
+    : _byName(options, 'stepped');
 
-/// The option `tension` of [options], as [_borderCapStyle] reads
-/// `borderCapStyle`.
-Object? _tension(Object? options) =>
-    options is LineOptions ? options.tensionValue : jsGet(options, 'tension');
+/// The `ToBoolean` of the option `tension` of [options]: a typed field with
+/// its value tests the number with no box.
+bool _tensionTruthy(Object? options) {
+  if (options is LineOptions && plainOption(options, OptionKey.tension)) {
+    final tension = options.tension;
+    return tension != 0 && !tension.isNaN;
+  }
+  return jsTruthy(
+    options is LineOptions
+        ? rawOption(options, OptionKey.tension, options.tension)
+        : _byName(options, 'tension'),
+  );
+}
+
+/// The `ToBoolean` of the option `borderWidth` of [options], as
+/// [_tensionTruthy] tests `tension`.
+bool _borderWidthTruthy(Object? options) {
+  if (options is LineOptions && plainOption(options, OptionKey.borderWidth)) {
+    final width = options.borderWidth;
+    return width != 0 && !width.isNaN;
+  }
+  return jsTruthy(_borderWidth(options));
+}
 
 /// The option `segment` of [options], which the line controller writes
 /// (controller.line.js:66), as [_borderCapStyle] reads `borderCapStyle`.
-Object? _segment(Object? options) =>
-    options is LineOptions ? options.segmentValue : jsGet(options, 'segment');
+Object? _segment(Object? options) => options is LineOptions
+    ? rawOption(options, OptionKey.segment, options.segment)
+    : _byName(options, 'segment');
 
 /// element.line.js:12 `setStyle(ctx, options, style = options)`.
 ///
@@ -158,6 +217,23 @@ void _setStyle(
   Object? options, [
   Object? style,
 ]) {
+  if (style == null && options is LineOptions) {
+    // `style = options`: `valueOrDefault(options.x, options.x)` is the value
+    // of `options.x`. The typed fields give the raw values; a double field
+    // with its value goes to the canvas with no box.
+    ctx
+      ..lineCap = canvasKeyword(_borderCapStyle(options))
+      ..setLineDash(canvasLineDash(_borderDash(options)))
+      ..lineDashOffset = plainOption(options, OptionKey.borderDashOffset)
+          ? options.borderDashOffset
+          : canvasNumber(_borderDashOffset(options))
+      ..lineJoin = canvasKeyword(_borderJoinStyle(options))
+      ..lineWidth = plainOption(options, OptionKey.borderWidth)
+          ? options.borderWidth
+          : canvasNumber(_borderWidth(options))
+      ..strokeStyle = canvasStyle(_borderColor(options));
+    return;
+  }
   final s = style ?? options;
   ctx
     ..lineCap = canvasKeyword(
@@ -230,7 +306,7 @@ _getLineMethod(Object? options) {
     return steppedLineTo;
   }
 
-  if (jsTruthy(_tension(options)) ||
+  if (_tensionTruthy(options) ||
       _cubicInterpolationMode(options) == 'monotone') {
     return _bezierCurveTo;
   }
@@ -265,14 +341,15 @@ _PathParams _pathParams(AnyObject? params) {
   if (params == null) {
     return _noParams;
   }
-  final start = jsGet(params, 'start');
-  final end = jsGet(params, 'end');
-  final move = jsGet(params, 'move');
+  // The params object of the caller (the filler), read by name.
+  final start = _byName(params, 'start');
+  final end = _byName(params, 'end');
+  final move = _byName(params, 'move');
   return (
     start: identical(start, undefined) ? null : jsToNumber(start),
     end: identical(end, undefined) ? null : jsToNumber(end),
     move: identical(move, undefined) ? null : jsTruthy(move),
-    reverse: jsTruthy(jsGet(params, 'reverse')),
+    reverse: jsTruthy(_byName(params, 'reverse')),
   );
 }
 
@@ -501,13 +578,17 @@ bool? Function(
 _getSegmentMethod(LineElement line) {
   final opts = line.options;
   final borderDash = _borderDash(opts);
-  final dashLength = jsTruthy(borderDash)
-      ? jsGet(borderDash, 'length')
-      : borderDash;
+  // `borderDash && borderDash.length`: the length of a list, else the read
+  // by name of the value of user code.
+  final dashLength = !jsTruthy(borderDash)
+      ? borderDash
+      : borderDash is List<Object?>
+      ? borderDash.length.toDouble()
+      : _byName(borderDash, 'length');
   final useFastPath =
       !line.decimated &&
       !(line.loop ?? false) &&
-      !jsTruthy(_tension(opts)) &&
+      !_tensionTruthy(opts) &&
       _cubicInterpolationMode(opts) != 'monotone' &&
       !jsTruthy(_stepped(opts)) &&
       !jsTruthy(dashLength);
@@ -531,7 +612,7 @@ _getInterpolationMethod(Object? options) {
     return steppedInterpolation;
   }
 
-  if (jsTruthy(_tension(options)) ||
+  if (_tensionTruthy(options) ||
       _cubicInterpolationMode(options) == 'monotone') {
     return bezierInterpolation;
   }
@@ -819,7 +900,7 @@ class LineElement extends Element
   @override
   void updateControlPoints(ChartArea? chartArea, [String? indexAxis]) {
     final options = this.options;
-    if ((jsTruthy(_tension(options)) ||
+    if ((_tensionTruthy(options) ||
             _cubicInterpolationMode(options) == 'monotone') &&
         !jsTruthy(_stepped(options)) &&
         !_pointsUpdated) {
@@ -1064,7 +1145,7 @@ class LineElement extends Element
     final options = this.options ?? const <String, Object?>{};
     final points = _points ?? const <types.PointElement>[];
 
-    if (points.isNotEmpty && jsTruthy(_borderWidth(options))) {
+    if (points.isNotEmpty && _borderWidthTruthy(options)) {
       ctx.save();
 
       _draw(ctx, this, start, count);
@@ -1127,6 +1208,18 @@ class LineElement extends Element
     this,
     Invocation.method(#getCenterPoint, [useFinalPosition]),
   );
+
+  /// core.datasetController.js:767-768 `element.$context`, the data context
+  /// of the element: [Element.$context] narrowed to a [ScriptableContext]
+  /// (Chart.js ADR 0054 §9). Another value gives Dart `null`.
+  @override
+  ScriptableContext? get $context => switch (super.$context) {
+    final ScriptableContext context => context,
+    _ => null,
+  };
+
+  @override
+  set $context(covariant ScriptableContext? value) => super.$context = value;
 
   /// Whether the element is of the class [LineElement] itself, not of a user
   /// subclass: the typed writes are for this class only (Chart.js ADR 0054
