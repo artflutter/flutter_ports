@@ -1,5 +1,5 @@
 jsGet 13
-stringIndex 10
+stringIndex 11
 jsCall 1
 jsObjectKeys 2
 extendsMapBase 1

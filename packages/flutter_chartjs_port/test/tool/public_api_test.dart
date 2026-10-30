@@ -117,6 +117,14 @@ const Map<String, String> _notExported = {
   'SplinePoint': 'not in the ADR 0048 export list',
   'TRBLCorners': 'not in the ADR 0048 export list',
   'TypedRegistry': 'not in the ADR 0048 export list',
+  // The typed contexts of Chart.js ADR 0054 section 11: internal, a context
+  // is a ContextObject of lib/helpers.dart.
+  'ScriptableChartContext': 'a typed context of ADR 0054',
+  'ScriptableContext': 'a typed context of ADR 0054',
+  'ScriptableLineSegmentContext': 'a typed context of ADR 0054',
+  'ScriptableScaleContext': 'a typed context of ADR 0054',
+  'ScriptableScalePointLabelContext': 'a typed context of ADR 0054',
+  'ScriptableTooltipContext': 'a typed context of ADR 0054',
 };
 
 /// The members of an exported concrete class whose `_` doc name is not the

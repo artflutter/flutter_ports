@@ -46,6 +46,10 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
+    show ElementOptions;
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -736,6 +740,52 @@ class Config implements types.ChartConfiguration {
     return result;
   }
 
+  /// core.config.js:351 `resolveNamedOptions` for the element step of
+  /// `_resolveElementOptions` (Chart.js ADR 0054 §4).
+  ///
+  /// [keys] are the own keys of `defaults.elements[elementType]` in their
+  /// order: an [OptionKey], or the name of an extra. [into] is the new typed
+  /// options object of the element type. The reads and the writes are typed
+  /// for a key of the schema: `readKey` of the resolver or of the view, and
+  /// `storeKey` of the options. The order of the user calls and the results
+  /// are the ones of [resolveNamedOptions].
+  // DIVERGES(chartjs): adapt-typed-options, the typed element step.
+  ElementOptions resolveElementNamedOptions(
+    List<Object?> scopes,
+    List<Object> keys,
+    AnyObject Function() context,
+    List<String> prefixes,
+    ElementOptions into,
+  ) {
+    into.storeKey(OptionKey.dollarShared, true);
+    final (:resolver, :subPrefixes) = _getResolver(
+      _resolverCache,
+      scopes,
+      prefixes,
+    );
+    helpers.OptionView? view;
+    if (_needContextKeys(resolver, keys)) {
+      into.storeKey(OptionKey.dollarShared, false);
+      final ctx = context();
+      // subResolver is passed to scriptable options. It should not resolve to
+      // hover options.
+      final subResolver = createResolver(scopes, ctx, subPrefixes);
+      view = helpers.attachContext(resolver, ctx, subResolver);
+    }
+
+    for (final key in keys) {
+      final Object? value;
+      if (key is OptionKey) {
+        value = view == null ? resolver.readKey(key) : view.readKey(key);
+      } else {
+        final name = key as String;
+        value = view == null ? resolver[name] : view[name];
+      }
+      into.storeKey(key, value);
+    }
+    return into;
+  }
+
   /// core.config.js:375 `createResolver`.
   ///
   /// @param {object[]} scopes
@@ -827,6 +877,27 @@ bool _needContext(helpers.Resolver proxy, List<String> names) {
     final scriptable = descriptors.isScriptable(prop);
     final indexable = descriptors.isIndexable(prop);
     final value = (indexable || scriptable) ? proxy[prop] : false;
+    if ((scriptable && (isFunction(value) || _hasFunction(value))) ||
+        (indexable && isArray(value))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/// core.config.js:405 `needContext` over the typed keys of the element
+/// step: the result of `needContext` for their names, with the typed read
+/// `readKey` of a key of the schema.
+bool _needContextKeys(helpers.OptionResolver proxy, List<Object> keys) {
+  final descriptors = helpers.descriptors(proxy);
+
+  for (final key in keys) {
+    final prop = key is OptionKey ? key.jsName : key as String;
+    final scriptable = descriptors.isScriptable(prop);
+    final indexable = descriptors.isIndexable(prop);
+    final value = (indexable || scriptable)
+        ? (key is OptionKey ? proxy.readKey(key) : proxy[prop])
+        : false;
     if ((scriptable && (isFunction(value) || _hasFunction(value))) ||
         (indexable && isArray(value))) {
       return true;

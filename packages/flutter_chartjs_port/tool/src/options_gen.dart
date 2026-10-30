@@ -99,7 +99,15 @@ final class Shape {
 /// One kind of the schema.
 final class Kind {
   /// A kind.
-  Kind(this.name, this.doc, this.element, this.others, this.keys);
+  Kind(
+    this.name,
+    this.doc,
+    this.element,
+    this.others,
+    this.keys, {
+    this.resolved,
+    this.implementsName,
+  });
 
   /// The kind name: the index.d.ts interface name or a port-only name.
   final String name;
@@ -115,6 +123,13 @@ final class Kind {
 
   /// The declared keys and their shapes, in schema order.
   final Map<String, Shape> keys;
+
+  /// The known keys of the resolved options class of an element kind, in
+  /// the key order of Chart.js ADR 0018 §3, or null.
+  final List<String>? resolved;
+
+  /// The interface of the resolved options class, or null.
+  final String? implementsName;
 
   /// The Dart name of the scope class.
   String get className => '${name}Scope';
@@ -159,7 +174,14 @@ Schema readSchema(String text) {
       throw FormatException('kind $name: a mapping');
     }
     for (final field in node.keys) {
-      if (!const {'doc', 'element', 'others', 'keys'}.contains(field)) {
+      if (!const {
+        'doc',
+        'element',
+        'others',
+        'keys',
+        'resolved',
+        'implements',
+      }.contains(field)) {
         throw FormatException('kind $name: unknown field $field');
       }
     }
@@ -181,6 +203,16 @@ Schema readSchema(String text) {
     } else if (keysNode != 'none') {
       throw FormatException('kind $name: keys is a mapping or "none"');
     }
+    final resolvedNode = node['resolved'];
+    final List<String>? resolved;
+    if (resolvedNode == null) {
+      resolved = null;
+    } else if (resolvedNode is List<Object?> &&
+        resolvedNode.every((k) => k is String && keys.containsKey(k))) {
+      resolved = resolvedNode.cast<String>();
+    } else {
+      throw FormatException('kind $name: resolved is a list of its keys');
+    }
     kinds.add(
       Kind(
         name,
@@ -190,6 +222,8 @@ Schema readSchema(String text) {
             ? null
             : Shape.parse(othersText, 'kind $name others'),
         keys,
+        resolved: resolved,
+        implementsName: node['implements'] as String?,
       ),
     );
   }
@@ -285,7 +319,265 @@ Map<String, String> generate(Schema schema) => {
   'option_keys.g.dart': _optionKeys(schema),
   'scope_kinds.g.dart': _scopeKinds(schema),
   'scopes.g.dart': _scopes(schema),
+  'resolved.g.dart': _resolved(schema),
 };
+
+/// The new foreign slot List of [length] slots.
+String _filled(int length) => 'List<Object?>.filled($length, null)';
+
+/// The branch of the raw read of a `double` field for an `int` raw value.
+String _intRead(int bit, String id) =>
+    ': _int & $bit != 0\n      ? _$id.toInt()\n      ';
+
+/// The Dart type of the typed field of a resolved key of [shape].
+String _fieldType(Shape shape) {
+  if (shape.mask == shapeAtoms['number']) return 'double';
+  if (shape.mask == shapeAtoms['bool']) return 'bool';
+  if (shape.mask == shapeAtoms['string']) return 'String?';
+  return 'Object?';
+}
+
+/// The value of a typed field of [type] for an absent key: the JS
+/// conversion of the Map read (Dart `null`).
+String _absentValue(String type) => switch (type) {
+  'double' => '0',
+  'bool' => 'false',
+  _ => 'null',
+};
+
+String _resolved(Schema schema) {
+  final out = StringBuffer()
+    ..write(_header)
+    ..write(_generated)
+    ..write('\n')
+    ..write(
+      '/// The resolved options of the element kinds (Chart.js ADR 0054 §9):\n'
+      '/// one class for each kind of `tool/options_schema.yaml` with\n'
+      '/// `resolved`. Each known key has a typed field (`double`, `bool`,\n'
+      '/// `String?` or `Object?`), a bit of `_present` and, for a value\n'
+      '/// outside the type of the field, a bit of `_foreign` and the raw value\n'
+      '/// in `_foreignRaw` (§6). The typed getter gives the JS conversion of\n'
+      '/// the Map read (Dart `null` for an absent key); `<key>Value` gives the\n'
+      '/// raw value, or `undefined` for an absent key. `ElementOptions` keeps\n'
+      '/// `\$shared`, `\$animations`, the extras, the frozen state and the\n'
+      '/// Map protocol.\n'
+      '///\n'
+      '/// This library is a pure layer.\n'
+      'library;\n\n'
+      "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'\n"
+      '    show DrawPointOptions;\n'
+      "import 'package:flutter_chartjs_port/src/js/js_number.dart'\n"
+      '    show jsToNumber, jsTruthy;\n'
+      "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n"
+      "import 'package:flutter_chartjs_port/src/options/element_options_base.dart';\n"
+      "import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';\n"
+      "import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';\n",
+    );
+  for (final kind in schema.kinds) {
+    final resolved = kind.resolved;
+    if (resolved == null) continue;
+    final name = kind.name;
+    final typed = [
+      for (final key in resolved)
+        if (key != r'$shared' && key != r'$animations') key,
+    ];
+    final impl = kind.implementsName == null
+        ? ''
+        : ' implements ${kind.implementsName}';
+    out
+      ..write('\n')
+      ..write(docLines(kind.doc, ''))
+      ..write('final class $name extends ElementOptions$impl {\n')
+      ..write(
+        '  /// Options with the entries of [source], in its key order.\n'
+        '  $name([super.source]);\n\n'
+        '  /// The copy of [source] for [clone].\n'
+        '  $name._copy($name super.source)\n'
+        '    : _present = source._present,\n'
+        '      _foreign = source._foreign,\n'
+        '      _int = source._int,\n'
+        '      _foreignRaw = source._foreignRaw == null\n'
+        '          ? null\n'
+        '          : List<Object?>.of(source._foreignRaw!),\n',
+      );
+    for (final key in typed) {
+      final id = keyIdentifier(key);
+      out.write('      _$id = source._$id,\n');
+    }
+    out
+      ..write('      super.copyFrom();\n\n')
+      ..write(
+        '  /// The known keys, in the key order of Chart.js ADR 0018 §3.\n'
+        '  static const List<String> knownKeys = [\n',
+      );
+    for (final key in resolved) {
+      out.write('    ${dartString(key)},\n');
+    }
+    out
+      ..write('  ];\n\n')
+      ..write('  @override\n')
+      ..write('  List<String> get knownKeyList => knownKeys;\n\n')
+      ..write('  /// `Object.assign({}, options)` in the same class.\n')
+      ..write('  @override\n')
+      ..write('  $name clone() => $name._copy(this);\n\n')
+      ..write('  /// The bits of the present keys.\n')
+      ..write('  int _present = 0;\n\n')
+      ..write('  /// The bits of the foreign keys.\n')
+      ..write('  int _foreign = 0;\n\n')
+      ..write('  /// The raw values of the foreign keys, by slot.\n')
+      ..write('  List<Object?>? _foreignRaw;\n\n')
+      ..write(
+        '  /// The bits of the `double` keys whose raw value is a Dart `int`:\n'
+        '  /// the Map read gives the `int` back.\n',
+      )
+      ..write('  int _int = 0;\n\n')
+      ..write(
+        '  void _setForeign(int slot, int bit, Object? raw) {\n'
+        '    _foreign |= bit;\n'
+        '    (_foreignRaw ??= ${_filled(typed.length)})[slot] =\n'
+        '        raw;\n'
+        '  }\n\n'
+        '  void _clearForeign(int slot, int bit) {\n'
+        '    if (_foreign & bit != 0) {\n'
+        '      _foreign &= ~bit;\n'
+        '      _foreignRaw![slot] = null;\n'
+        '    }\n'
+        '  }\n',
+      );
+    for (final (slot, key) in typed.indexed) {
+      final id = keyIdentifier(key);
+      final type = _fieldType(kind.keys[key]!);
+      final bit = 1 << slot;
+      out
+        ..write('\n  $type _$id = ${_absentValue(type)};\n\n')
+        ..write(
+          '  /// `$key`: the JS conversion of the Map read of the key.\n',
+        )
+        ..write('  $type get $id => _$id;\n\n')
+        ..write(
+          '  /// `$key`: the raw value, or [undefined] for an absent key.\n',
+        )
+        ..write(
+          '  Object? get ${id}Value =>\n'
+          '      _present & $bit == 0 ? undefined : _raw$slot();\n\n',
+        )
+        ..write(
+          '  Object? _raw$slot() => _present & $bit == 0\n'
+          '      ? elementOptionAbsent\n'
+          '      : _foreign & $bit != 0\n'
+          '      ? _foreignRaw![$slot]\n'
+          '      ${type == 'double' ? _intRead(bit, id) : ''}: _$id;\n\n',
+        )
+        ..write('  void _store$slot(Object? raw) {\n')
+        ..write('    if (identical(raw, elementOptionAbsent)) {\n')
+        ..write('      _present &= ~$bit;\n')
+        ..write('      _clearForeign($slot, $bit);\n')
+        ..write('      _$id = ${_absentValue(type)};\n')
+        ..write('      return;\n')
+        ..write('    }\n')
+        ..write('    _present |= $bit;\n');
+      switch (type) {
+        case 'double':
+          out.write(
+            '    if (raw is double) {\n'
+            '      _$id = raw;\n'
+            '      _int &= ~$bit;\n'
+            '      _clearForeign($slot, $bit);\n'
+            '    } else if (raw is int) {\n'
+            '      _$id = raw.toDouble();\n'
+            '      _int |= $bit;\n'
+            '      _clearForeign($slot, $bit);\n'
+            '    } else {\n'
+            '      _$id = jsToNumber(raw);\n'
+            '      _int &= ~$bit;\n'
+            '      _setForeign($slot, $bit, raw);\n'
+            "      assert(auditForeign('$name', ${dartString(key)}, raw));\n"
+            '    }\n',
+          );
+        case 'bool':
+          out.write(
+            '    if (raw is bool) {\n'
+            '      _$id = raw;\n'
+            '      _clearForeign($slot, $bit);\n'
+            '    } else {\n'
+            '      _$id = jsTruthy(raw);\n'
+            '      _setForeign($slot, $bit, raw);\n'
+            "      assert(auditForeign('$name', ${dartString(key)}, raw));\n"
+            '    }\n',
+          );
+        case 'String?':
+          out.write(
+            '    if (raw is String) {\n'
+            '      _$id = raw;\n'
+            '      _clearForeign($slot, $bit);\n'
+            '    } else {\n'
+            '      _$id = null;\n'
+            '      _setForeign($slot, $bit, raw);\n'
+            "      assert(auditForeign('$name', ${dartString(key)}, raw));\n"
+            '    }\n',
+          );
+        default:
+          out.write('    _$id = raw;\n');
+      }
+      out.write('  }\n');
+    }
+    // rawOf
+    out
+      ..write('\n  @override\n')
+      ..write('  Object? rawOf(String key) => switch (key) {\n');
+    for (final (slot, key) in typed.indexed) {
+      out.write('    ${dartString(key)} => _raw$slot(),\n');
+    }
+    out
+      ..write('    _ => super.rawOf(key),\n  };\n')
+      ..write('\n  @override\n')
+      ..write('  bool storeRaw(String key, Object? raw) {\n')
+      ..write('    switch (key) {\n');
+    for (final (slot, key) in typed.indexed) {
+      out
+        ..write('      case ${dartString(key)}:\n')
+        ..write('        _store$slot(raw);\n');
+    }
+    out
+      ..write('      default:\n')
+      ..write('        return super.storeRaw(key, raw);\n')
+      ..write('    }\n    return true;\n  }\n')
+      ..write('\n  @override\n')
+      ..write('  void storeKey(Object key, Object? raw) {\n')
+      ..write('    if (key is OptionKey && !isFrozen) {\n')
+      ..write('      switch (key) {\n');
+    for (final (slot, key) in typed.indexed) {
+      out
+        ..write('        case OptionKey.${keyIdentifier(key)}:\n')
+        ..write('          _store$slot(raw);\n')
+        ..write('          return;\n');
+    }
+    out
+      ..write('        default:\n')
+      ..write('      }\n    }\n')
+      ..write('    super.storeKey(key, raw);\n  }\n')
+      ..write('\n  @override\n')
+      ..write('  bool isForeign(OptionKey key) => switch (key) {\n');
+    for (final (slot, key) in typed.indexed) {
+      out.write(
+        '    OptionKey.${keyIdentifier(key)} => '
+        '_foreign & ${1 << slot} != 0,\n',
+      );
+    }
+    out
+      ..write('    _ => false,\n  };\n')
+      ..write('\n  @override\n')
+      ..write('  Object? foreignOf(OptionKey key) => switch (key) {\n');
+    for (final (slot, key) in typed.indexed) {
+      out.write(
+        '    OptionKey.${keyIdentifier(key)} => '
+        '_foreign & ${1 << slot} != 0 ? _foreignRaw![$slot] : null,\n',
+      );
+    }
+    out.write('    _ => null,\n  };\n}\n');
+  }
+  return out.toString();
+}
 
 String _optionKeys(Schema schema) {
   final out = StringBuffer()

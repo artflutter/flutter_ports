@@ -153,11 +153,14 @@ and for the typed public API of Chart.js ADR 0052.
 - `core.config.dart` ports `getOptionScopes`, `chartOptionScopes`, `createResolver`,
   `getResolver`, `resolveNamedOptions` and `needContext` in typed form.
 - The element step (`_resolveElementOptions` with `resolveNamedOptions`, U
-  `core.datasetController.js:804-835`, `core.config.js:351-367`) is one typed function for each of
-  the four element types. It reads the names of `defaults.elements.<type>` at each call, applies
-  `needContext`, and stores each resolved value into a typed field. The sub view (the second
-  argument of a scriptable option) comes at the first user call of the element. The unreachable
-  `options` proxy of U `core.config.js:360` is not built.
+  `core.datasetController.js:804-835`, `core.config.js:351-367`) is one typed function,
+  `Config.resolveElementNamedOptions`, for the four element types and for a custom element type.
+  It reads the own keys of the typed scope `defaults.elements.<type>` at each call (an
+  `OptionKey`, or the name of an extra), applies `needContext`, reads each key with the typed read
+  `readKey` of the resolver or of the view, and stores it into the typed field of the resolved
+  class of the type (`ElementOptions.storeKey`, §9). The sub view (the second argument of a
+  scriptable option) is the one of upstream: `createResolver(scopes, context, subPrefixes)` before
+  the first read. A sub view that comes at the first user call of the element is Open 3.
 - The animation options (`_resolveAnimations`), the chart, scale and plugin options are typed
   views. `setContext` for each tick makes a new view, as upstream. The plugin options keep
   `{scriptable: false, indexable: false, allKeys: true}` (U `core.plugins.js:175-187`).
@@ -167,7 +170,8 @@ and for the typed public API of Chart.js ADR 0052.
   caches and the `WeakMap` of the subtitle. No memo or cache of our own. The bar index memo, the
   animations memo of Chart.js ADR 0053 and the theme compile memos are not allowed.
 - No second (generic) resolver stays. During the migration, the Map resolver of Chart.js ADR 0043
-  moves to `test/support/legacy/` as the reference of O3 (§15). The close step deletes it.
+  is the frozen file `test/support/legacy/helpers_config_map.dart`, the reference of O3 (§15). The
+  close step deletes it.
 
 ### 5. The raw boundary and the face
 
@@ -280,10 +284,15 @@ and for the typed public API of Chart.js ADR 0052.
 
 - Final classes with the `index.d.ts` names: `ScriptableChartContext`, `ScriptableContext` (the
   dataset and the data contexts), `ScriptableScaleContext`, `ScriptableScalePointLabelContext`,
-  `ScriptableTooltipContext` and `ScriptableLineSegmentContext`.
-- A child reads the members of its parent through `parent` (the prototype chain of
-  `createContext`). A write by name of another key goes to its own extras and shadows the parent.
-  The own-key order is the order of the upstream object literal.
+  `ScriptableTooltipContext` and `ScriptableLineSegmentContext`. They extend `ContextObject`, the
+  base class of `createContext` (`lib/src/helpers/helpers.options.dart`), which also stays the
+  class of a context of another `type`. `createContext` gives the class of the `type` of its
+  object literal. The classes are internal: `lib/helpers.dart` exports `ContextObject` only.
+- Each member of the literal is a typed field with a getter that reads the parent when the
+  context does not own the member. A child reads the members of its parent through `prototype`
+  (the prototype chain of `createContext`). A write by name of another key goes to its own extras
+  and shadows the parent. The own-key order is the insertion order (the order of the upstream
+  object literal); `Object.keys` gives the array-index keys first. The face (§5) has JS rules.
 
 ### 12. Plugins
 
@@ -352,13 +361,25 @@ and `adapt-typed-contexts`.
   on macOS. The digests were made on the Map model (B0). O1 stays after the close step as a
   permanent regression oracle; a bump writes it again after the reviewed diff.
 - O2, the foreign-value audit. B0 records the key census of the raw configs on the Map model
-  (`test/port/options/key_census_*.tsv`). From B4 on, a debug-only hook (inside `assert`) counts
-  each (key, kind) pair that lands in a foreign slot during the suites.
-  `test/port/options/foreign_audit.tsv` pins the reviewed set. A new pair fails until its lane
-  reviews the readers of that key.
-- O3, the legacy resolver against the typed resolver (`test/port/options/legacy_resolver_test.dart`,
-  B4 to the close step): for each O1 config and each element, scale, plugin and chart, each known
-  key resolves to the same value, key order and user-call trace.
+  (`test/port/options/key_census_*.tsv`). From B4 on, a debug-only hook (`foreignAudit` of
+  `lib/src/options/foreign_audit.dart`, called inside `assert`) gets each (owner, key, kind) of a
+  value that lands in a foreign slot: the owner is the Dart name of the scope class or of the
+  resolved options class, the kind is the JS kind of the value. `test/flutter_test_config.dart`
+  collects the pairs of each test file of the suites and fails the file on a pair that the reviewed
+  set does not list. The reviewed set is `reviewedForeignPairs` of
+  `test/port/options/foreign_audit.dart`, one TSV line for each pair. It is a Dart file, because the
+  test config also runs in Chrome without `dart:io`. A new pair fails until its lane reviews the
+  readers of that key and adds the pair. `--dart-define=O2_COLLECT=true` prints the pairs.
+- O3, the legacy resolver against the typed resolver (the test `(O3)` of each case of
+  `test/port/options/observation_test.dart`, B4 to the close step). It shares the corpus of O1. It
+  builds the chart of each case twice, once for each implementation, because a walk can write
+  empty objects into the first scope (`subGetTarget`). It makes the resolvers of the chart options,
+  of each dataset, its animations, its dataset and data element options in the modes `default`
+  and `active`, and of each registered plugin from the scope lists of the chart config, and their
+  views with the context of the chart code. It writes the keys of `Object.getOwnPropertyNames` (a
+  mark for each key that `Object.keys` leaves out) with their values to a depth of 4, and the user
+  calls. The two texts are equal. The scale options are in the tree of the chart options, under
+  the chart context.
 - D2, the resolver trace of Chart.js ADR 0053 against Node.js, stays, with 11 new cases (B0).
 - Tool 9, `check:typed-reads` (`tool/check_typed_reads.dart`, in `check:port`): the counts of the
   by-name forms in each file of `lib/src` outside `lib/src/js/` and `lib/src/options/` must not
@@ -446,6 +467,8 @@ and `adapt-typed-contexts`.
 2. Typed public plugin API, the `parsing: false` group of Chart.js ADR 0052 Open 4, `Paint` from a
    `Color` with no CSS string, `Float64List` doughnut values and typed theme component styles come
    after 0.1.0.
+3. The sub view of the element step at the first user call of the element (§4). B4 keeps the
+   upstream form. L3 can measure the lazy form; the results, the user calls and O3 stay.
 
 ## Evidence
 

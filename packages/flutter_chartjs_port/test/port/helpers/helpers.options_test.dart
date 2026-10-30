@@ -594,6 +594,106 @@ void main() {
     });
   });
 
+  // createContext: the typed class of the type (Chart.js ADR 0054 §11).
+  group('adapt-typed-contexts', () {
+    test('gives the class of the type', () {
+      ContextObject make(String type) =>
+          createContext(null, <String, Object?>{'type': type});
+      expect(make('chart'), isA<ScriptableChartContext>());
+      expect(make('dataset'), isA<ScriptableContext>());
+      expect(make('data'), isA<ScriptableContext>());
+      expect(make('scale'), isA<ScriptableScaleContext>());
+      expect(make('tick'), isA<ScriptableScaleContext>());
+      expect(make('pointLabel'), isA<ScriptableScalePointLabelContext>());
+      expect(make('tooltip'), isA<ScriptableTooltipContext>());
+      expect(make('segment'), isA<ScriptableLineSegmentContext>());
+      final other = make('custom');
+      expect(other.runtimeType, ContextObject);
+      final none = createContext(null, <String, Object?>{'a': 1.0});
+      expect(none.runtimeType, ContextObject);
+    });
+    test('keeps the order of the literal, with fields and extras', () {
+      // core.datasetController.js:196-205, then an extra and a field write.
+      final chart = createContext(null, <String, Object?>{
+        'chart': 'c',
+        'type': 'chart',
+      });
+      final dataset = createContext(chart, <String, Object?>{
+        'active': false,
+        'dataset': undefined,
+        'datasetIndex': 0.0,
+        'index': 0.0,
+        'mode': 'default',
+        'type': 'dataset',
+      });
+      final data =
+          (createContext(dataset, <String, Object?>{
+              'active': false,
+              'dataIndex': 2.0,
+              'parsed': undefined,
+              'raw': undefined,
+              'element': 'e',
+              'index': 2.0,
+              'mode': 'default',
+              'type': 'data',
+            }) as ScriptableContext)
+            ..['extra'] = 'x'
+            ..['raw'] = 7.0;
+      expect(jsObjectKeys(data), [
+        'active',
+        'dataIndex',
+        'parsed',
+        'raw',
+        'element',
+        'index',
+        'mode',
+        'type',
+        'extra',
+      ]);
+      expect(
+        [data.raw, data.dataIndex, data.parsed, data['extra']],
+        [7.0, 2.0, same(undefined), 'x'],
+      );
+      // The members of the parents: the dataset and the chart context.
+      expect(data.datasetIndex, 0.0);
+      expect(data['chart'], 'c');
+      expect((chart as ScriptableChartContext).chart, 'c');
+      expect(data.hasOwnProperty('datasetIndex'), isFalse);
+    });
+    test('a delete of a field reads the parent again', () {
+      final parent = createContext(null, <String, Object?>{
+        'index': 1.0,
+        'type': 'scale',
+      });
+      final tick = createContext(parent, <String, Object?>{
+        'tick': 't',
+        'index': 2.0,
+        'type': 'tick',
+      }) as ScriptableScaleContext;
+      expect([tick.index, tick.tick, tick.type], [2.0, 't', 'tick']);
+      expect(tick.remove('index'), 2.0);
+      expect(tick.index, 1.0);
+      expect(jsObjectKeys(tick), ['tick', 'type']);
+      tick['index'] = 3.0;
+      expect(jsObjectKeys(tick), ['tick', 'type', 'index']);
+      expect(tick.index, 3.0);
+    });
+    test('the face reads with JS rules', () {
+      final context = createContext(
+        createContext(null, <String, Object?>{'n': null, 'type': 'chart'}),
+        <String, Object?>{'p0': 'a', 'type': 'segment', '1': 'one'},
+      );
+      expect(context.jsRead('p0'), 'a');
+      expect(context.jsRead('n'), isNull);
+      expect(context.jsRead('missing'), same(undefined));
+      expect(context.jsKeys(), ['1', 'p0', 'type']);
+      expect(context.jsHas('n'), isFalse);
+      expect(context.jsDelete('p0'), isTrue);
+      expect(context.jsDelete('p0'), isFalse);
+      expect(context.jsRead('p0'), same(undefined));
+    });
+  });
+
   // The typed results of toTRBL, toPadding and toFont.
   group('adapt-options-typed-results', () {
     test('converts the font members to the types of CanvasFontSpec', () {

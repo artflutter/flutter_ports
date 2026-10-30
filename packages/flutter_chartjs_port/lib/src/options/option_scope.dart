@@ -28,6 +28,7 @@ import 'dart:collection' show MapBase;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
@@ -244,6 +245,18 @@ abstract base class OptionScope extends MapBase<String, Object?>
   /// The count of the own keys.
   int get ownKeyCount => _order.length;
 
+  /// The own keys in the order of `Object.keys` ([jsKeys]): an
+  /// [OptionKey] for a declared key, a `String` for an extra. The typed form
+  /// of the names of `defaults.elements.<type>` for the element step
+  /// (Chart.js ADR 0054 §4).
+  List<Object> jsOwnKeys() {
+    final extras = _extraNames;
+    if (extras == null || !extras.any((name) => jsArrayIndex(name) != null)) {
+      return List<Object>.of(_order);
+    }
+    return [for (final name in jsKeys()) keyOf(name)];
+  }
+
   /// The own key names in their order (`Object.keys`): the array-index
   /// names first, in ascending order, then the other names in their
   /// insertion order, as JS orders the own keys of an object.
@@ -279,7 +292,12 @@ abstract base class OptionScope extends MapBase<String, Object?>
   /// by the shape of a declared key, else by the shape `others` of the kind.
   Opt<Object?> classifyName(String name, Object? raw) {
     final k = keyOf(name);
-    return k is OptionKey ? classify(k, raw) : kind.classifyOther(raw);
+    final cell = k is OptionKey ? classify(k, raw) : kind.classifyOther(raw);
+    assert(
+      cell is! OptForeign || auditForeign('${kind.typeName}Scope', name, raw),
+      'the audit hook of the oracle O2',
+    );
+    return cell;
   }
 
   /// `object[name]` (`[[Get]]`): the JS value of [name], or [undefined]

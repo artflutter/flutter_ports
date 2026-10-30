@@ -1,17 +1,31 @@
 // Ported from Chart.js v4.6.1 src/helpers/helpers.config.ts (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-options, typed resolvers of Chart.js ADR 0054.
 
 /// Port of `src/helpers/helpers.config.ts`: the option resolvers.
 ///
 /// Upstream builds the resolvers as `Proxy` objects over a cache object.
-/// Dart has no `Proxy`. Chart.js ADR 0043 replaces them with the classes
-/// [Resolver] (`_createResolver`) and [ContextResolver] (`_attachContext`).
-/// Both classes are a `Map<String, Object?>`, so that `Element.options`,
-/// `Scale.options` and `Chart.options` can hold them. They map the traps to
-/// the members of [Map]:
+/// Dart has no `Proxy`. Chart.js ADR 0054 §4 makes them typed classes:
+/// [OptionResolver] (the target of `_createResolver`) and [OptionView] (the
+/// target of `_attachContext`). Their fields are the slots of the upstream
+/// cache object (`_scopes`, `_rootScopes`, `_fallback`, `_getTarget`,
+/// `override`; `_proxy`, `_context`, `_subProxy`, `_stack`, `_descriptors`,
+/// `setContext`), and the cached option values are a typed table by
+/// `OptionKey` (a `String` for a name that is not a key of the schema). The
+/// functions of this file are the upstream functions, in the upstream order,
+/// over these typed targets. A scope list is a `List<Object?>` of typed
+/// scopes (`OptionScope`), raw Maps and the other values that
+/// `createSubResolver` adds; the walk reads a typed scope with
+/// `OptionScope.lookup` and any other scope with [jsGet].
+///
+/// [Resolver] and [ContextResolver] are the names of the two classes for the
+/// code of today. Both classes are a [JsProxyObject] and, during the
+/// migration, a `Map<String, Object?>` (the scaffolding of Chart.js ADR 0054
+/// §5), so that `Element.options`, `Scale.options` and `Chart.options` can
+/// hold them. They map the traps to the members of [Map]:
 ///
 /// | Trap | Dart member |
 /// |---|---|
-/// | `get` | `operator []` |
+/// | `get` | `operator []`, and the typed read `readKey` |
 /// | `set` | `operator []=` |
 /// | `deleteProperty` | [Map.remove] |
 /// | `has` (`in`) | [Map.containsKey] |
@@ -19,32 +33,21 @@
 /// | `getOwnPropertyDescriptor` (`hasOwnProperty`) | `hasOwnProperty` |
 /// | `getPrototypeOf` | none: a Map has no prototype |
 ///
-/// Both classes are a [JsProxyObject]. `Object.keys` of a resolver is its
-/// `objectKeys()`: [Map.keys] without the keys that `hasOwnProperty`
-/// rejects, as the JavaScript engine filters the `ownKeys` result through the
-/// `getOwnPropertyDescriptor` trap. [jsObjectKeys] gives that result. Thus
-/// `each`, `clone` and `merge` of `helpers.core` see the upstream keys.
-/// [Map.forEach], [Map.entries], [Map.values], [Map.length] and [Map.of] use
-/// [Map.keys], the `ownKeys` trap. Ported code that enumerates a resolver
-/// with `Object.keys`, `for-in`, `Object.assign` or the object spread calls
-/// [jsObjectKeys].
+/// `Object.keys` of a resolver is its `objectKeys()`: [Map.keys] without
+/// the keys that `hasOwnProperty` rejects, as the JavaScript engine filters
+/// the `ownKeys` result through the `getOwnPropertyDescriptor` trap.
+/// [jsObjectKeys] gives that result.
 ///
 /// A write through a resolver (the `set` traps and `subGetTarget`) goes into
-/// a Map of the scopes. That Map takes the value only if its value type
-/// allows it. A nested Map literal can have a narrow inferred type, for
-/// example `Map<String, int>` for `{'a': 1}`. A write of a `String` into it
-/// throws a [TypeError]. JavaScript sets the property. A scope that takes
-/// writes has the runtime type `Map<String, Object?>`.
+/// an object of the scopes: a typed scope classifies the value; a raw Map
+/// takes the value only if its value type allows it. A nested Map literal
+/// can have a narrow inferred type, for example `Map<String, int>` for
+/// `{'a': 1}`. A write of a `String` into it throws a [TypeError].
+/// JavaScript sets the property. A scope that takes writes has the runtime
+/// type `Map<String, Object?>` or is a typed scope.
 ///
-/// The cache object of a proxy is a plain Map. The traps and the private
-/// functions read it as upstream reads `target`. The other upstream reads of
-/// `proxy._scopes`, `resolver._getTarget()` and others go through
-/// `operator []`, as they go through the `get` trap upstream. The typed
-/// getters ([Resolver.scopes], [ContextResolver.proxy] and the others) read
-/// the same keys through `operator []`.
-///
-/// The three JS states of an option key stay apart (Chart.js ADR 0043): an
-/// absent key, the [undefined] sentinel and Dart `null` (JS `null`). The
+/// The three JS states of an option key stay apart (Chart.js ADR 0054 §1):
+/// an absent key, the [undefined] sentinel and Dart `null` (JS `null`). The
 /// resolution goes to the next scope on an absent key and on the sentinel.
 /// `null` is a value. A resolver gives the [undefined] sentinel for a key
 /// that it does not resolve. The cache keeps a resolved [undefined] as an
@@ -53,10 +56,6 @@
 /// A scriptable option is a function value of `lib/src/js/js_function.dart`.
 /// The resolver calls it through [jsCall] with the context and the
 /// sub-resolver.
-///
-/// A scope list is a `List<Object?>`: `createSubResolver` also adds the
-/// arrays, functions and other truthy values that a key gives. A JS
-/// property read of such a value has the results of [jsGet].
 library;
 
 import 'dart:collection';
@@ -71,11 +70,77 @@ import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
+
+/// The name [Resolver] of the code of today for [OptionResolver].
+typedef Resolver = OptionResolver;
+
+/// The name [ContextResolver] of the code of today for [OptionView].
+typedef ContextResolver = OptionView;
+
+/// The type of [_absent].
+final class _Absent {
+  const _Absent();
+}
+
+/// The marker of a property that a target does not own.
+const Object _absent = _Absent();
+
+/// The key of the option name [name] in a cache: its [OptionKey], or [name]
+/// for a name that is not a key of the schema.
+Object _keyOf(String name) => optionKeyOf(name) ?? name;
+
+/// The cached option values of a target, by key (an [OptionKey] or a
+/// `String`), in the order of their first write: the typed form of the own
+/// properties of the upstream cache object. A small table: a target caches
+/// few keys, and a key compares by identity.
+final class _Cache {
+  List<Object>? _keys;
+  List<Object?>? _values;
+
+  int _index(Object key) {
+    final keys = _keys;
+    if (keys == null) return -1;
+    for (var i = 0; i < keys.length; i++) {
+      final k = keys[i];
+      if (identical(k, key) || (key is String && k == key)) return i;
+    }
+    return -1;
+  }
+
+  /// The value of [key], or [_absent].
+  Object? get(Object key) {
+    final index = _index(key);
+    return index < 0 ? _absent : _values![index];
+  }
+
+  void set(Object key, Object? value) {
+    final index = _index(key);
+    if (index >= 0) {
+      _values![index] = value;
+    } else {
+      (_keys ??= <Object>[]).add(key);
+      (_values ??= <Object?>[]).add(value);
+    }
+  }
+
+  void remove(Object key) {
+    final index = _index(key);
+    if (index < 0) return;
+    _keys!.removeAt(index);
+    _values!.removeAt(index);
+  }
+
+  /// The names of the cached keys, in their order.
+  Iterable<String> get names => (_keys ?? const <Object>[]).map(
+    (k) => k is OptionKey ? k.jsName : k as String,
+  );
+}
 
 /// helpers.config.ts:27 `_createResolver`.
 ///
@@ -92,7 +157,7 @@ export 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
 /// stands for JS `undefined` there: JS `null` never reaches them. The
 /// default of [fallback] is the [undefined] sentinel, because a JS `null`
 /// fallback is a value (`typeof fallback === 'undefined'` at :38).
-Resolver createResolver(
+OptionResolver createResolver(
   List<Object?> scopes, [
   List<String> prefixes = const [''],
   List<Object?>? rootScopes,
@@ -108,43 +173,144 @@ Resolver createResolver(
   }
   // Upstream also sets `[Symbol.toStringTag]: 'Object'`. A Dart Map is an
   // object for isObject without it.
-  final cache = <String, Object?>{
-    '_cacheable': true,
-    '_scopes': scopes,
-    '_rootScopes': finalRootScopes,
-    '_fallback': fallback,
-    '_getTarget': target,
-    'override': (AnyObject scope) => createResolver(
-      [scope, ...scopes],
-      prefixes,
-      finalRootScopes,
-      fallback,
-    ),
-  };
-  return Resolver._(cache, scopes, prefixes, target);
+  return OptionResolver._(scopes, prefixes, finalRootScopes, fallback, target);
 }
 
-/// The `Proxy` of `_createResolver` (helpers.config.ts:50-107), as a
-/// `Map<String, Object?>` (Chart.js ADR 0043).
+/// The target of `_createResolver` (helpers.config.ts:41-49) and its
+/// `Proxy` (helpers.config.ts:50-107), as one typed class (Chart.js ADR 0054
+/// §4).
 ///
-/// The library documentation lists the trap of each member. A
-/// [Resolver] gives the [undefined] sentinel for a key that it does not
-/// resolve, and Dart `null` for a JS `null` value.
-final class Resolver extends MapBase<String, Object?>
+/// The slots of the cache object are fields. The cached option values are a
+/// typed table. A write by the `set` trap or a delete by the
+/// `deleteProperty` trap of a slot name changes the own property of that
+/// name, as upstream does on its cache object. A [OptionResolver] gives the
+/// [undefined] sentinel for a key that it does not resolve, and Dart `null`
+/// for a JS `null` value. It is a `MapBase` during the migration (the
+/// scaffolding of Chart.js ADR 0054 §5).
+final class OptionResolver extends MapBase<String, Object?>
     implements ResolverProxy, JsProxyObject {
-  Resolver._(this._target, this._scopes, this._prefixes, this._getTarget);
+  OptionResolver._(
+    this._scopes,
+    this._prefixes,
+    this._rootScopes,
+    this._fallback,
+    this._getTarget,
+  );
 
-  /// The cache object, `target` of the traps.
-  final AnyObject _target;
-
-  /// The `scopes` parameter of `_createResolver`.
+  /// The `scopes` parameter of `_createResolver`: `_scopes` of the target.
   final List<Object?> _scopes;
 
   /// The `prefixes` parameter of `_createResolver`.
   final List<String> _prefixes;
 
-  /// The `getTarget` parameter of `_createResolver`.
+  /// `_rootScopes` of the target.
+  final List<Object?> _rootScopes;
+
+  /// `_fallback` of the target.
+  final Object? _fallback;
+
+  /// The `getTarget` parameter of `_createResolver`: `_getTarget` of the
+  /// target.
   final Object? Function() _getTarget;
+
+  /// `override` of the target (helpers.config.ts:48).
+  // One function value for each target, as the upstream cache object
+  // holds one.
+  // ignore: prefer_function_declarations_over_variables
+  late final OptionResolver Function(AnyObject scope) _override = (scope) =>
+      createResolver(
+        [scope, ..._scopes],
+        _prefixes,
+        _rootScopes,
+        _fallback,
+      );
+
+  /// The cached option values, and the own properties of the slot names
+  /// that the `set` trap writes.
+  final _Cache _cache = _Cache();
+
+  /// `_keys` of the target (helpers.config.ts:419-425), or Dart `null`.
+  List<String>? _keys;
+
+  /// `_storage` of the target (helpers.config.ts:103), or [_absent].
+  Object? _storage = _absent;
+
+  /// The slot names that the `deleteProperty` trap removed. Dart `null`
+  /// before the first such delete.
+  Set<String>? _deletedSlots;
+
+  /// Whether a `set` or a `delete` touched a slot name: then each read of a
+  /// slot goes through [_own].
+  bool _slotsTouched = false;
+
+  /// The own property [name] of the target, or [_absent]: a cached or set
+  /// value, else a slot (helpers.config.ts:41-49, `_keys`, `_storage`).
+  Object? _own(String name) {
+    final cached = _cache.get(_keyOf(name));
+    if (!identical(cached, _absent)) return cached;
+    if (_deletedSlots?.contains(name) ?? false) return _absent;
+    return switch (name) {
+      '_cacheable' => true,
+      '_scopes' => _scopes,
+      '_rootScopes' => _rootScopes,
+      '_fallback' => _fallback,
+      '_getTarget' => _getTarget,
+      'override' => _override,
+      '_keys' => _keys ?? _absent,
+      '_storage' => _storage,
+      _ => _absent,
+    };
+  }
+
+  /// `target._scopes`, read as `jsGet(target, '_scopes')` upstream.
+  Object? get _targetScopes =>
+      _slotsTouched ? _ownOrUndefined('_scopes') : _scopes;
+
+  /// `target._rootScopes`.
+  Object? get _targetRootScopes =>
+      _slotsTouched ? _ownOrUndefined('_rootScopes') : _rootScopes;
+
+  /// `target._fallback`.
+  Object? get _targetFallback =>
+      _slotsTouched ? _ownOrUndefined('_fallback') : _fallback;
+
+  /// `target._getTarget`.
+  Object? get _targetGetTarget =>
+      _slotsTouched ? _ownOrUndefined('_getTarget') : _getTarget;
+
+  /// [_own], with [undefined] for a property that the target does not own:
+  /// the result of `jsGet(target, name)`.
+  Object? _ownOrUndefined(String name) {
+    final value = _own(name);
+    return identical(value, _absent) ? undefined : value;
+  }
+
+  /// helpers.config.ts:64 the `get` trap for the option name [prop]:
+  /// `_cached(target, prop, () => _resolveWithPrefixes(...))`.
+  Object? _get(String prop) {
+    final own = _own(prop);
+    if (!identical(own, _absent)) return own;
+    if (prop == 'constructor') {
+      // DIVERGES(chartjs): js-semantics-resolver-objects, no constructor.
+      return undefined;
+    }
+    final value = _resolveWithPrefixes(prop, _prefixes, _scopes, this);
+    // cache the resolved value
+    _cache.set(_keyOf(prop), value);
+    return value;
+  }
+
+  /// The `get` trap for the key [key]: the typed read of the element step
+  /// (Chart.js ADR 0054 §4). It gives the result of `this[key.jsName]`.
+  Object? readKey(OptionKey key) {
+    final cached = _cache.get(key);
+    if (!identical(cached, _absent)) return cached;
+    final name = key.jsName;
+    if (name.startsWith('_') || _slotsTouched) return _get(name);
+    final value = _resolveWithPrefixes(name, _prefixes, _scopes, this);
+    _cache.set(key, value);
+    return value;
+  }
 
   /// helpers.config.ts:54 the `deleteProperty` trap.
   ///
@@ -154,28 +320,40 @@ final class Resolver extends MapBase<String, Object?>
   @core.override
   Object? remove(Object? key) {
     if (key is! String) return null;
-    _target
-      ..remove(key) // remove from cache
-      ..remove('_keys'); // remove cached keys
+    // remove from cache
+    _removeOwn(key);
+    // remove cached keys
+    _removeOwn('_keys');
     _deleteProperty(_first(_scopes), key); // remove from top level scope
     return null;
+  }
+
+  /// `delete target[name]` of the cache object.
+  void _removeOwn(String name) {
+    _cache.remove(_keyOf(name));
+    switch (name) {
+      case '_keys':
+        _keys = null;
+      case '_storage':
+        _storage = _absent;
+      case '_cacheable' ||
+          '_scopes' ||
+          '_rootScopes' ||
+          '_fallback' ||
+          '_getTarget' ||
+          'override':
+        (_deletedSlots ??= <String>{}).add(name);
+        _slotsTouched = true;
+    }
   }
 
   /// helpers.config.ts:64 the `get` trap.
   ///
   /// A trap for getting property values.
-  ///
-  /// A cached value that is not Dart `null` is owned, and [_cached] returns
-  /// it. Thus the trap returns it with one lookup. Else [_cached] gets the
-  /// arrow function of upstream as [_resolveResolver] and this resolver, so
-  /// a read makes no closure.
   @core.override
   Object? operator [](Object? key) {
     if (key is! String) return undefined;
-    // DIVERGES(chartjs): adapt-resolver-cached-read, one lookup for a hit.
-    final cached = _target[key];
-    if (cached != null) return cached;
-    return _cached(_target, key, this, _resolveResolver);
+    return _get(key);
   }
 
   /// helpers.config.ts:73 the `getOwnPropertyDescriptor` trap: whether the
@@ -188,7 +366,7 @@ final class Resolver extends MapBase<String, Object?>
   /// only whether it exists: `Object.prototype.hasOwnProperty.call(resolver,
   /// key)` is `resolver.hasOwnProperty(key)`.
   bool hasOwnProperty(String key) {
-    return _getOwnProperty(jsGet(jsGet(_target, '_scopes'), '0'), key);
+    return _getOwnProperty(jsGet(_targetScopes, '0'), key);
   }
 
   // helpers.config.ts:80 the `getPrototypeOf` trap has no Dart form.
@@ -199,14 +377,14 @@ final class Resolver extends MapBase<String, Object?>
   /// A trap for the in operator.
   @core.override
   bool containsKey(Object? key) {
-    return key is String && _getKeysFromAllScopes(_target).contains(key);
+    return key is String && _getKeysFromAllScopes(this).contains(key);
   }
 
   /// helpers.config.ts:94 the `ownKeys` trap.
   ///
   /// A trap for Object.getOwnPropertyNames and Object.getOwnPropertySymbols.
   @core.override
-  Iterable<String> get keys => _getKeysFromAllScopes(_target);
+  Iterable<String> get keys => _getKeysFromAllScopes(this);
 
   /// `Object.keys(resolver)`: the `ownKeys` result filtered through the
   /// `getOwnPropertyDescriptor` trap ([hasOwnProperty]), in the trap order.
@@ -221,14 +399,22 @@ final class Resolver extends MapBase<String, Object?>
   /// A trap for setting property values.
   @core.override
   void operator []=(String key, Object? value) {
-    final current = jsGet(_target, '_storage');
-    final storage = jsTruthy(current)
-        ? current
-        : (_target['_storage'] = _getTarget());
+    final current = _ownOrUndefined('_storage');
+    final Object? storage;
+    if (jsTruthy(current)) {
+      storage = current;
+    } else {
+      storage = _storage = _getTarget();
+      _cache.remove(_keyOf('_storage'));
+    }
     // set to top level scope + cache
     _set(storage, key, value);
-    _target[key] = value;
-    _target.remove('_keys'); // remove cached keys
+    _cache.set(_keyOf(key), value);
+    if (key.startsWith('_') || key == 'override') {
+      _deletedSlots?.remove(key);
+      _slotsTouched = true;
+    }
+    _removeOwn('_keys'); // remove cached keys
   }
 
   /// [Map.clear]. Upstream has no counterpart. It deletes each key of
@@ -267,14 +453,32 @@ final class Resolver extends MapBase<String, Object?>
   /// helpers.config.ts:48 `override(scope)`: a resolver with [scope] in
   /// front of the scopes.
   @core.override
-  Resolver override(AnyObject scope) {
-    return (this['override']! as Resolver Function(AnyObject))(scope);
+  OptionResolver override(AnyObject scope) {
+    return (this['override']! as OptionResolver Function(AnyObject))(scope);
+  }
+
+  /// The names of the own properties of the cache object, in their order.
+  Iterable<String> get _targetNames sync* {
+    final deleted = _deletedSlots;
+    for (final name in const [
+      '_cacheable',
+      '_scopes',
+      '_rootScopes',
+      '_fallback',
+      '_getTarget',
+      'override',
+    ]) {
+      if (deleted == null || !deleted.contains(name)) yield name;
+    }
+    if (_keys != null) yield '_keys';
+    if (!identical(_storage, _absent)) yield '_storage';
+    yield* _cache.names;
   }
 
   /// A description that resolves no option. Upstream has no counterpart.
   /// `String(resolver)` is `jsToString`, which gives `'[object Object]'`.
   @core.override
-  String toString() => 'Resolver(cache: ${_target.keys.join(', ')})';
+  String toString() => 'Resolver(cache: ${_targetNames.join(', ')})';
 }
 
 /// helpers.config.ts:118 `_attachContext`.
@@ -290,44 +494,141 @@ final class Resolver extends MapBase<String, Object?>
 /// `createSubResolver`, and `_resolveWithContext` a value that a caller has
 /// set. The default of [subProxy] is the [undefined] sentinel. A null
 /// [descriptorDefaults] is an absent argument: JS `null` never reaches it.
-ContextResolver attachContext(
+OptionView attachContext(
   Object? proxy,
   AnyObject context, [
   Object? subProxy = undefined,
   DescriptorDefaults? descriptorDefaults,
 ]) {
-  final cache = <String, Object?>{
-    '_cacheable': false,
-    '_proxy': proxy,
-    '_context': context,
-    '_subProxy': subProxy,
-    '_stack': <String>{},
-    '_descriptors': descriptors(proxy, descriptorDefaults),
-    'setContext': (AnyObject ctx) =>
-        attachContext(proxy, ctx, subProxy, descriptorDefaults),
-    'override': (AnyObject scope) => attachContext(
-      jsCall(jsGet(proxy, 'override'), [scope], thisArg: proxy),
-      context,
-      subProxy,
-      descriptorDefaults,
-    ),
-  };
-  return ContextResolver._(cache, proxy);
+  return OptionView._(
+    proxy,
+    context,
+    subProxy,
+    descriptors(proxy, descriptorDefaults),
+    descriptorDefaults,
+  );
 }
 
-/// The `Proxy` of `_attachContext` (helpers.config.ts:137-194), as a
-/// `Map<String, Object?>` (Chart.js ADR 0043).
+/// The target of `_attachContext` (helpers.config.ts:127-136) and its
+/// `Proxy` (helpers.config.ts:137-194), as one typed class (Chart.js ADR
+/// 0054 §4).
 ///
-/// The library documentation lists the trap of each member.
-final class ContextResolver extends MapBase<String, Object?>
+/// The slots of the cache object are fields. The cached option values are a
+/// typed table. The library documentation lists the trap of each member.
+final class OptionView extends MapBase<String, Object?>
     implements ContextProxy, JsProxyObject {
-  ContextResolver._(this._target, this._proxy);
+  OptionView._(
+    this._proxy,
+    this._context,
+    this._subProxy,
+    this._descriptors,
+    this._descriptorDefaults,
+  );
 
-  /// The cache object, `target` of the traps.
-  final AnyObject _target;
-
-  /// The `proxy` parameter of `_attachContext`.
+  /// The `proxy` parameter of `_attachContext`: `_proxy` of the target.
   final Object? _proxy;
+
+  /// `_context` of the target.
+  final AnyObject _context;
+
+  /// `_subProxy` of the target.
+  final Object? _subProxy;
+
+  /// `_stack` of the target.
+  final Set<String> _stack = <String>{};
+
+  /// `_descriptors` of the target.
+  final Descriptor _descriptors;
+
+  /// The `descriptorDefaults` parameter of `_attachContext`.
+  final DescriptorDefaults? _descriptorDefaults;
+
+  /// `setContext` of the target (helpers.config.ts:134).
+  // One function value for each target, as the upstream cache object
+  // holds one.
+  // ignore: prefer_function_declarations_over_variables
+  late final OptionView Function(AnyObject ctx) _setContext = (ctx) =>
+      attachContext(_proxy, ctx, _subProxy, _descriptorDefaults);
+
+  /// `override` of the target (helpers.config.ts:135).
+  // One function value for each target, as the upstream cache object
+  // holds one.
+  // ignore: prefer_function_declarations_over_variables
+  late final OptionView Function(AnyObject scope) _override = (scope) =>
+      attachContext(
+        jsCall(jsGet(_proxy, 'override'), [scope], thisArg: _proxy),
+        _context,
+        _subProxy,
+        _descriptorDefaults,
+      );
+
+  /// The cached option values.
+  final _Cache _cache = _Cache();
+
+  /// The slot names that the `set` or `deleteProperty` trap removed from
+  /// the cache object. Dart `null` before the first one.
+  Set<String>? _removedSlots;
+
+  /// The own property [name] of the target, or [_absent].
+  Object? _own(String name) {
+    final cached = _cache.get(_keyOf(name));
+    if (!identical(cached, _absent)) return cached;
+    if (_removedSlots?.contains(name) ?? false) return _absent;
+    return switch (name) {
+      '_cacheable' => false,
+      '_proxy' => _proxy,
+      '_context' => _context,
+      '_subProxy' => _subProxy,
+      '_stack' => _stack,
+      '_descriptors' => _descriptors,
+      'setContext' => _setContext,
+      'override' => _override,
+      _ => _absent,
+    };
+  }
+
+  /// `jsGet(target, name)` of a slot name.
+  Object? _slot(String name) {
+    if (_removedSlots == null) {
+      return switch (name) {
+        '_proxy' => _proxy,
+        '_context' => _context,
+        '_subProxy' => _subProxy,
+        '_stack' => _stack,
+        '_descriptors' => _descriptors,
+        _ => _own(name),
+      };
+    }
+    final value = _own(name);
+    return identical(value, _absent) ? undefined : value;
+  }
+
+  /// helpers.config.ts:150 the `get` trap for the option name [prop]. The
+  /// receiver is this view.
+  Object? _get(String prop) {
+    final own = _own(prop);
+    if (!identical(own, _absent)) return own;
+    if (prop == 'constructor') {
+      // DIVERGES(chartjs): js-semantics-resolver-objects, no constructor.
+      return undefined;
+    }
+    final value = _resolveWithContext(this, prop, null);
+    // cache the resolved value
+    _cache.set(_keyOf(prop), value);
+    return value;
+  }
+
+  /// The `get` trap for the key [key]: the typed read of the element step
+  /// (Chart.js ADR 0054 §4). It gives the result of `this[key.jsName]`.
+  Object? readKey(OptionKey key) {
+    final cached = _cache.get(key);
+    if (!identical(cached, _absent)) return cached;
+    final name = key.jsName;
+    if (name.startsWith('_')) return _get(name);
+    final value = _resolveWithContext(this, name, key);
+    _cache.set(key, value);
+    return value;
+  }
 
   /// helpers.config.ts:141 the `deleteProperty` trap.
   ///
@@ -337,26 +638,34 @@ final class ContextResolver extends MapBase<String, Object?>
   @core.override
   Object? remove(Object? key) {
     if (key is! String) return null;
-    _target.remove(key); // remove from cache
+    _removeOwn(key); // remove from cache
     _deleteProperty(_proxy, key); // remove from proxy
     return null;
+  }
+
+  /// `delete target[name]` of the cache object.
+  void _removeOwn(String name) {
+    _cache.remove(_keyOf(name));
+    switch (name) {
+      case '_cacheable' ||
+          '_proxy' ||
+          '_context' ||
+          '_subProxy' ||
+          '_stack' ||
+          '_descriptors' ||
+          'setContext' ||
+          'override':
+        (_removedSlots ??= <String>{}).add(name);
+    }
   }
 
   /// helpers.config.ts:150 the `get` trap. The receiver is this resolver.
   ///
   /// A trap for getting property values.
-  ///
-  /// A cached value that is not Dart `null` is owned, and [_cached] returns
-  /// it. Thus the trap returns it with one lookup. Else [_cached] gets the
-  /// arrow function of upstream as [_resolveContext] and this resolver, so a
-  /// read makes no closure.
   @core.override
   Object? operator [](Object? key) {
     if (key is! String) return undefined;
-    // DIVERGES(chartjs): adapt-resolver-cached-read, one lookup for a hit.
-    final cached = _target[key];
-    if (cached != null) return cached;
-    return _cached(_target, key, this, _resolveContext);
+    return _get(key);
   }
 
   /// helpers.config.ts:159 the `getOwnPropertyDescriptor` trap: whether a
@@ -365,7 +674,7 @@ final class ContextResolver extends MapBase<String, Object?>
   /// A trap for Object.getOwnPropertyDescriptor.
   /// Also used by Object.hasOwnProperty.
   bool hasOwnProperty(String key) {
-    final descriptors = jsGet(_target, '_descriptors')! as Descriptor;
+    final descriptors = _slot('_descriptors')! as Descriptor;
     return jsTruthy(descriptors.allKeys)
         ? _has(_proxy, key)
         : _getOwnProperty(_proxy, key);
@@ -402,7 +711,7 @@ final class ContextResolver extends MapBase<String, Object?>
   @core.override
   void operator []=(String key, Object? value) {
     _set(_proxy, key, value); // set to proxy
-    _target.remove(key); // remove from cache
+    _removeOwn(key); // remove from cache
   }
 
   /// [Map.clear]. Upstream has no counterpart. It deletes each key of
@@ -445,21 +754,39 @@ final class ContextResolver extends MapBase<String, Object?>
   /// helpers.config.ts:134 `setContext(ctx)`: a resolver over the same
   /// proxy with the context [ctx].
   @core.override
-  ContextResolver setContext(AnyObject ctx) {
-    return (this['setContext']! as ContextResolver Function(AnyObject))(ctx);
+  OptionView setContext(AnyObject ctx) {
+    return (this['setContext']! as OptionView Function(AnyObject))(ctx);
   }
 
   /// helpers.config.ts:135 `override(scope)`: a resolver with [scope] in
   /// front of the scopes.
   @core.override
-  ContextResolver override(AnyObject scope) {
-    return (this['override']! as ContextResolver Function(AnyObject))(scope);
+  OptionView override(AnyObject scope) {
+    return (this['override']! as OptionView Function(AnyObject))(scope);
+  }
+
+  /// The names of the own properties of the cache object, in their order.
+  Iterable<String> get _targetNames sync* {
+    final removed = _removedSlots;
+    for (final name in const [
+      '_cacheable',
+      '_proxy',
+      '_context',
+      '_subProxy',
+      '_stack',
+      '_descriptors',
+      'setContext',
+      'override',
+    ]) {
+      if (removed == null || !removed.contains(name)) yield name;
+    }
+    yield* _cache.names;
   }
 
   /// A description that resolves no option. Upstream has no counterpart.
   /// `String(resolver)` is `jsToString`, which gives `'[object Object]'`.
   @core.override
-  String toString() => 'ContextResolver(cache: ${_target.keys.join(', ')})';
+  String toString() => 'ContextResolver(cache: ${_targetNames.join(', ')})';
 }
 
 /// helpers.config.ts:200 `_descriptors`.
@@ -535,76 +862,35 @@ String _readKey(String prefix, String name) =>
 /// helpers.config.ts:215 `needsSubResolver`.
 ///
 /// Upstream also requires `Object.getPrototypeOf(value) === null ||
-/// value.constructor === Object`. [isObject] is true only for a Map, and a
-/// Map stands for a plain object (Chart.js ADR 0043). A resolver is a Map
-/// too: upstream finds `Object` as its constructor through `_cached`.
+/// value.constructor === Object`. [isObject] is true only for a Map and a
+/// typed scope, and both stand for a plain object (Chart.js ADR 0054 §5). A
+/// resolver is a Map too: upstream finds `Object` as its constructor
+/// through `_cached`.
 bool _needsSubResolver(String prop, Object? value) =>
     isObject(value) && prop != 'adapters';
 
-/// The arrow function of the `get` trap of `_createResolver`
-/// (helpers.config.ts:66) for [resolver] and [prop].
-Object? _resolveResolver(Resolver resolver, String prop) =>
-    _resolveWithPrefixes(
-      prop,
-      resolver._prefixes,
-      resolver._scopes,
-      resolver._target,
-    );
-
-/// The arrow function of the `get` trap of `_attachContext`
-/// (helpers.config.ts:152) for [resolver] and [prop]. The receiver is
-/// [resolver].
-Object? _resolveContext(ContextResolver resolver, String prop) =>
-    _resolveWithContext(resolver._target, prop, resolver);
-
-/// helpers.config.ts:218 `_cached`.
-///
-/// [target] is the cache object of a resolver. An owned key gives its value,
-/// also an owned [undefined] sentinel.
-///
-/// Upstream gets `resolve` as a new arrow function for each read. The port
-/// gets the [resolver] and a top-level [resolve] function, and calls
-/// `resolve(resolver, prop)` for a key that the cache does not own. Thus a
-/// read makes no closure. The calls and the results are the same.
-Object? _cached<R>(
-  AnyObject target,
-  String prop,
-  R resolver,
-  Object? Function(R resolver, String prop) resolve,
-) {
-  if (target.containsKey(prop) || prop == 'constructor') {
-    // DIVERGES(chartjs): js-semantics-resolver-objects, no Object constructor.
-    return jsGet(target, prop);
-  }
-
-  // DIVERGES(chartjs): adapt-resolver-cached-read, no closure for a read.
-  final value = resolve(resolver, prop);
-  // cache the resolved value
-  target[prop] = value;
-  return value;
-}
-
-/// helpers.config.ts:233 `_resolveWithContext`.
-Object? _resolveWithContext(
-  AnyObject target,
-  String prop,
-  AnyObject receiver,
-) {
-  final proxy = jsGet(target, '_proxy');
-  final context = jsGet(target, '_context');
-  final subProxy = jsGet(target, '_subProxy');
-  final descriptors = jsGet(target, '_descriptors')! as Descriptor;
-  var value = jsGet(proxy, prop); // resolve from proxy
+/// helpers.config.ts:233 `_resolveWithContext`. The receiver is [view].
+/// [key] is the [OptionKey] of [prop] for the typed read of the proxy, or
+/// Dart `null`.
+Object? _resolveWithContext(OptionView view, String prop, OptionKey? key) {
+  final proxy = view._slot('_proxy');
+  final context = view._slot('_context');
+  final subProxy = view._slot('_subProxy');
+  final descriptors = view._slot('_descriptors')! as Descriptor;
+  // resolve from proxy
+  var value = key != null && proxy is OptionResolver
+      ? proxy.readKey(key)
+      : jsGet(proxy, prop);
 
   // resolve with context
   if (isFunction(value) && _isScriptableMethod(descriptors, prop)) {
-    value = _resolveScriptable(prop, value, target, receiver);
+    value = _resolveScriptable(prop, value, view, view);
   }
   if (isArray(value) && (value! as List<Object?>).isNotEmpty) {
     value = _resolveArray(
       prop,
       value as List<Object?>,
-      target,
+      view,
       descriptors.isIndexable,
     );
   }
@@ -642,13 +928,13 @@ bool _isScriptableMethod(Descriptor descriptors, String prop) {
 Object? _resolveScriptable(
   String prop,
   Object? getValue,
-  AnyObject target,
-  AnyObject receiver,
+  OptionView target,
+  OptionView receiver,
 ) {
-  final proxy = jsGet(target, '_proxy');
-  final context = jsGet(target, '_context');
-  final subProxy = jsGet(target, '_subProxy');
-  final stack = jsGet(target, '_stack')! as Set<String>;
+  final proxy = target._slot('_proxy');
+  final context = target._slot('_context');
+  final subProxy = target._slot('_subProxy');
+  final stack = target._slot('_stack')! as Set<String>;
   if (stack.contains(prop)) {
     throw StateError('Recursion detected: ${stack.join('->')}->$prop');
   }
@@ -678,13 +964,13 @@ Object? _resolveScriptable(
 Object? _resolveArray(
   String prop,
   List<Object?> value,
-  AnyObject target,
+  OptionView target,
   bool Function(String key) isIndexable,
 ) {
-  final proxy = jsGet(target, '_proxy');
-  final context = jsGet(target, '_context');
-  final subProxy = jsGet(target, '_subProxy');
-  final descriptors = jsGet(target, '_descriptors')! as Descriptor;
+  final proxy = target._slot('_proxy');
+  final context = target._slot('_context');
+  final subProxy = target._slot('_subProxy');
+  final descriptors = target._slot('_descriptors')! as Descriptor;
 
   final index = jsGet(context, 'index');
   if (!identical(index, undefined) && isIndexable(prop)) {
@@ -763,17 +1049,37 @@ ResolverObjectKey _addScopes(
   return false;
 }
 
+/// The own property [name] of the target of the resolver [resolver]: a
+/// field of an [OptionResolver], else the result of [jsGet] (the target of
+/// upstream is the cache object, helpers.config.ts:66).
+Object? _targetGet(Object? resolver, String name) {
+  if (resolver is OptionResolver) {
+    return switch (name) {
+      '_rootScopes' => resolver._targetRootScopes,
+      '_fallback' => resolver._targetFallback,
+      '_getTarget' => resolver._targetGetTarget,
+      '_scopes' => resolver._targetScopes,
+      _ => resolver._ownOrUndefined(name),
+    };
+  }
+  return jsGet(resolver, name);
+}
+
 /// helpers.config.ts:335 `createSubResolver`.
 ///
-/// It returns a [Resolver], or `false`.
+/// It returns an [OptionResolver], or `false`.
 Object _createSubResolver(
   List<Object?> parentScopes,
   Object? resolver,
   String prop,
   Object? value,
 ) {
-  final rootScopes = jsGet(resolver, '_rootScopes')! as List<Object?>;
-  final fallback = _resolveFallback(jsGet(resolver, '_fallback'), prop, value);
+  final rootScopes = _targetGet(resolver, '_rootScopes')! as List<Object?>;
+  final fallback = _resolveFallback(
+    _targetGet(resolver, '_fallback'),
+    prop,
+    value,
+  );
   final allScopes = [...parentScopes, ...rootScopes];
   final set = <Object?>{value};
   var key = _addScopesFromKey(
@@ -817,11 +1123,14 @@ ResolverObjectKey _addScopesFromKey(
 }
 
 /// helpers.config.ts:373 `subGetTarget`.
+///
+/// A new nested object of a typed scope is a typed scope of the kind of
+/// [prop] (Chart.js ADR 0054 §3); another one is the `{}` of upstream.
 Object? _subGetTarget(Object? resolver, String prop, Object? value) {
   // The port's own `_getTarget` closure reads neither `this` nor arguments.
-  final parent = (jsGet(resolver, '_getTarget')! as Object? Function())();
+  final parent = (_targetGet(resolver, '_getTarget')! as Object? Function())();
   if (!_has(parent, prop)) {
-    _set(parent, prop, <String, Object?>{});
+    _set(parent, prop, _newObject(parent, prop));
   }
   final target = jsGet(parent, prop);
   if (isArray(target) && isObject(value)) {
@@ -830,6 +1139,12 @@ Object? _subGetTarget(Object? resolver, String prop, Object? value) {
   }
   return jsTruthy(target) ? target : <String, Object?>{};
 }
+
+/// A new empty object under [prop] of [parent]: a typed scope of the kind
+/// of [prop] for a typed [parent] with one, else a raw Map.
+Object _newObject(Object? parent, String prop) =>
+    (parent is OptionScope ? parent.childKindFor(prop)?.create() : null) ??
+    <String, Object?>{};
 
 /// helpers.config.ts:390 `_resolveWithPrefixes`.
 Object? _resolveWithPrefixes(
@@ -853,13 +1168,21 @@ Object? _resolveWithPrefixes(
 /// helpers.config.ts:407 `_resolve`.
 ///
 /// An absent key and the [undefined] sentinel go to the next scope. Dart
-/// `null` (JS `null`) is the result.
+/// `null` (JS `null`) is the result. A typed scope is read by the typed
+/// lookup of its kind (Chart.js ADR 0054 §4); any other scope with [jsGet].
 Object? _resolve(String key, List<Object?> scopes) {
+  Object? scopeKey;
   for (final scope in scopes) {
     if (!jsTruthy(scope)) {
       continue;
     }
-    final value = jsGet(scope, key);
+    final Object? value;
+    if (scope is OptionScope) {
+      final cell = scope.lookup(scopeKey ??= _keyOf(key));
+      value = cell == null ? undefined : cell.raw;
+    } else {
+      value = jsGet(scope, key);
+    }
     if (!identical(value, undefined)) {
       return value;
     }
@@ -868,11 +1191,11 @@ Object? _resolve(String key, List<Object?> scopes) {
 }
 
 /// helpers.config.ts:419 `getKeysFromAllScopes`.
-List<String> _getKeysFromAllScopes(AnyObject target) {
-  var keys = jsGet(target, '_keys');
+List<String> _getKeysFromAllScopes(OptionResolver target) {
+  var keys = target._ownOrUndefined('_keys');
   if (!jsTruthy(keys)) {
-    keys = target['_keys'] = _resolveKeysFromAllScopes(
-      jsGet(target, '_scopes')! as List<Object?>,
+    keys = target._keys = _resolveKeysFromAllScopes(
+      target._targetScopes! as List<Object?>,
     );
   }
   return keys! as List<String>;

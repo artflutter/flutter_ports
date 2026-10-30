@@ -61,6 +61,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey, jsObjectFreeze;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionScope;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show GenericDatasetOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -1572,16 +1574,21 @@ class DatasetController
         ? ['${typeName}Hover', 'hover', typeName, '']
         : [typeName, ''];
     final scopes = config.getOptionScopes(getDataset(), scopeKeys);
-    final names = jsObjectKeys(
-      jsGet(core_defaults.defaults['elements'], elementType)! as AnyObject,
+    // The names are the own keys of the typed scope (Chart.js ADR 0054 §4).
+    final elementDefaults = jsGet(
+      core_defaults.defaults['elements'],
+      elementType,
     );
+    final keys = elementDefaults is OptionScope
+        ? elementDefaults.jsOwnKeys()
+        : <Object>[...jsObjectKeys(elementDefaults! as AnyObject)];
     // context is provided as a function, and is called only if needed,
     // so we don't create a context for each element if not needed.
     AnyObject context() => getContext(index, active, resolvedMode);
     // DIVERGES(chartjs): adapt-typed-element-options, a typed result object.
-    final values = config.resolveNamedOptions(
+    final values = config.resolveElementNamedOptions(
       scopes,
-      names,
+      keys,
       context,
       prefixes,
       createElementOptions(elementType),

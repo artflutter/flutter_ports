@@ -13,10 +13,12 @@ import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart' as typed;
 import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
     show effects;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show JsProxyObject, jsObjectKeys;
+    show JsProxyObject, jsObjectKeys, jsOwnPropertyNames;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -30,6 +32,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../fixtures/index.dart' show handFixtures;
+import '../../support/legacy/helpers_config_map.dart' as legacy;
 import '../core/resolver_trace_cases.dart'
     show resolverTraceFunctions, resolverTraceSetups;
 import '../core/resolver_trace_reference.dart' show resolverTraceReference;
@@ -66,6 +69,19 @@ import 'observation_digests.dart';
 // and the text metrics can differ in the last bits on another OS. Thus the
 // tests compare the digests only on macOS. On another OS, each test still
 // runs its case, so a throw of the observation code fails there too.
+//
+// The oracle O3 of Chart.js ADR 0054 runs on the same corpus: the test
+// `(O3)` of each case compares the typed resolvers of helpers.config.dart
+// with the Map resolvers of before the typed model
+// (test/support/legacy/helpers_config_map.dart). It builds the chart of the
+// case two times. After each construction, it makes the resolvers of the
+// chart options, of each dataset, its elements and its animations, and of
+// each registered plugin, from the scope lists of the chart config, with
+// one of the two implementations. It writes the keys and values of each
+// resolver and of its view with the context of the chart code, and the user
+// calls of the function values of the config. The two texts are equal. A
+// walk can write empty objects into the first scope, as `_subGetTarget`
+// does. Thus each implementation walks its own chart.
 
 /// The fixed `Date.now()` of each run: the `start` of each animation is
 /// `Date.now() + delay` (core.animation.js:37).
@@ -125,6 +141,18 @@ void main() {
         _check(name, text);
       });
     }
+  }
+
+  for (final c in cases) {
+    testWidgets('${c.name} (O3)', (tester) async {
+      final typedText = _resolverRun(c, legacy: false);
+      final legacyText = _resolverRun(c, legacy: true);
+      // The animator of an animated case asked for a frame.
+      await tester.pump();
+      _dump('${c.name} (O3)', typedText);
+      final difference = _firstDifference(typedText, legacyText);
+      if (difference != null) fail(difference);
+    });
   }
 
   if (_update) {
@@ -352,6 +380,212 @@ String _run(_Case c, {required bool wrap}) {
     trace.forEach(out.writeln);
   }
   return out.toString();
+}
+
+// ---------------------------------------------------------------------------
+// The oracle O3.
+
+/// One resolver of the oracle O3: the label, the scope list, the prefixes,
+/// the function that gives the context of the view, and the descriptor
+/// defaults of the view. `getContext` of a controller writes into the
+/// context object that it gives. Thus the run takes the context just before
+/// the view.
+typedef _ResolverInput = (
+  String label,
+  List<Object?> scopes,
+  List<String> prefixes,
+  Map<String, Object?> Function() context,
+  typed.DescriptorDefaults? defaults,
+);
+
+/// The text of the oracle O3 for the case [c], with the Map resolvers of
+/// before the typed model ([legacy]) or with the typed resolvers.
+String _resolverRun(_Case c, {required bool legacy}) {
+  final out = StringBuffer();
+  final trace = <String>[];
+  final input = c.make();
+  _wrapFunctions(input.config, 'config', trace);
+  try {
+    withClock(Clock.fixed(_now), () {
+      final Chart chart;
+      try {
+        chart = acquireChart(input.config, input.options);
+      } on Object catch (e) {
+        out.writeln('construct throws ${_throwText(e)}');
+        return;
+      }
+      try {
+        final inputs = _resolverInputs(chart);
+        // The calls of the construction run the typed resolvers on both
+        // sides.
+        trace.clear();
+        for (final (label, scopes, prefixes, context, defaults) in inputs) {
+          out.writeln('== $label');
+          final resolver = legacy
+              ? _legacyResolver(scopes, prefixes)
+              : typed.createResolver(scopes, prefixes);
+          out.writeln('resolver ${_guarded(() => _resolverText(resolver))}');
+          final view = legacy
+              ? _legacyView(resolver, context(), defaults)
+              : typed.attachContext(resolver, context(), undefined, defaults);
+          out
+            ..writeln('view ${_guarded(() => _resolverText(view))}')
+            ..writeln('calls ${trace.length}');
+          trace
+            ..forEach(out.writeln)
+            ..clear();
+        }
+      } finally {
+        releaseChart(chart);
+      }
+    });
+  } finally {
+    c.cleanup?.call();
+  }
+  return out.toString();
+}
+
+/// The text of [value] for the oracle O3: a resolver is its keys of
+/// `Object.getOwnPropertyNames` (the `ownKeys` trap: the keys of all its
+/// scopes) with their values; a key that `Object.keys` leaves out has the
+/// mark `~`. Another value is its [_canon] text.
+String _resolverText(Object? value, [int depth = 0]) {
+  if (value is JsProxyObject && depth < 4) {
+    final map = value as Map<String, Object?>;
+    final enumerable = jsObjectKeys(map).toSet();
+    final entries = <String>[];
+    for (final key in jsOwnPropertyNames(map)) {
+      final mark = enumerable.contains(key) ? '' : '~';
+      final text = _guarded(() => _resolverText(jsGet(map, key), depth + 1));
+      entries.add('$mark${jsonEncode(key)}: $text');
+    }
+    return '{${entries.join(', ')}}';
+  }
+  return _canon(value, depth);
+}
+
+/// `_createResolver(scopes, prefixes)` of the Map model.
+Object _legacyResolver(List<Object?> scopes, List<String> prefixes) =>
+    legacy.createResolver(scopes, prefixes);
+
+/// `_attachContext(proxy, context, undefined, defaults)` of the Map model.
+Object _legacyView(
+  Object resolver,
+  Map<String, Object?> context,
+  typed.DescriptorDefaults? defaults,
+) => legacy.attachContext(resolver, context, undefined, defaults);
+
+/// The resolvers of the oracle O3 for [chart]: the chart options
+/// (core.controller.js:283), the dataset options (core.datasetController.js
+/// :438), the element options of each dataset in the modes `default` and
+/// `active` (core.datasetController.js:804), the animation options
+/// (core.datasetController.js:845) and the options of each registered
+/// plugin (core.plugins.js:175).
+List<_ResolverInput> _resolverInputs(Chart chart) {
+  final config = chart.config;
+  final inputs = <_ResolverInput>[
+    ('chart', config.chartOptionScopes(), const [''], chart.getContext, null),
+  ];
+  final datasets = jsGet(chart.data, 'datasets');
+  final count = datasets is List ? datasets.length : 0;
+  for (var i = 0; i < count; i++) {
+    final meta = chart.getDatasetMeta(i);
+    final controller = meta.controller;
+    if (controller == null) continue;
+    final dataset = controller.getDataset();
+    inputs
+      ..add((
+        'dataset $i',
+        config.getOptionScopes(dataset, config.datasetScopeKeys(meta.type)),
+        const [''],
+        controller.getContext,
+        null,
+      ))
+      ..add((
+        'animations $i',
+        config.getOptionScopes(
+          dataset,
+          config.datasetAnimationScopeKeys(meta.type, undefined),
+        ),
+        const [''],
+        controller.getContext,
+        null,
+      ));
+    for (final (kind, elementClass) in [
+      ('dataset', controller.datasetElementType),
+      ('data', controller.dataElementType),
+    ]) {
+      if (elementClass == null || identical(elementClass, undefined)) continue;
+      final id = jsGet(elementClass, 'id');
+      if (id is! String) continue;
+      final scopes = config.getOptionScopes(
+        dataset,
+        config.datasetElementScopeKeys(meta.type, id),
+      );
+      final index = kind == 'data' && meta.data.isNotEmpty ? 0.0 : null;
+      for (final active in const [false, true]) {
+        final prefixes = active ? ['${id}Hover', 'hover', id, ''] : [id, ''];
+        inputs.add((
+          '$kind $id $i${active ? ' active' : ''}',
+          scopes,
+          prefixes,
+          () => controller.getContext(
+            index,
+            active,
+            active ? 'active' : 'default',
+          ),
+          null,
+        ));
+      }
+    }
+  }
+  final pluginOptions = jsGet(config.options, 'plugins');
+  for (final plugin in List.of(registry.plugins.items.values)) {
+    final id = jsGet(plugin, 'id');
+    if (id is! String) continue;
+    var opts = isNullOrUndefined(pluginOptions)
+        ? undefined
+        : jsGet(pluginOptions, id);
+    if (identical(opts, false)) continue;
+    if (identical(opts, true)) opts = <String, Object?>{};
+    inputs.add((
+      'plugin $id',
+      config.getOptionScopes(opts, config.pluginScopeKeys(plugin)),
+      const [''],
+      chart.getContext,
+      const typed.DescriptorDefaults(
+        scriptable: false,
+        indexable: false,
+        allKeys: true,
+      ),
+    ));
+  }
+  return inputs;
+}
+
+/// Whether [value] is `null` or `undefined`.
+bool isNullOrUndefined(Object? value) =>
+    value == null || identical(value, undefined);
+
+/// The first line where [actual] and [expected] differ, with the label of
+/// its resolver, or Dart `null` when the texts are equal.
+String? _firstDifference(String actual, String expected) {
+  if (actual == expected) return null;
+  final a = actual.split('\n');
+  final b = expected.split('\n');
+  var label = '';
+  for (var i = 0; i < a.length || i < b.length; i++) {
+    final x = i < a.length ? a[i] : '<end>';
+    final y = i < b.length ? b[i] : '<end>';
+    if (x.startsWith('== ')) label = x;
+    if (x != y) {
+      String cut(String line) =>
+          line.length > 2000 ? '${line.substring(0, 2000)}...' : line;
+      return 'O3: the typed resolvers differ from the Map resolvers at line '
+          '${i + 1} ($label).\ntyped: ${cut(x)}\nMap:   ${cut(y)}';
+    }
+  }
+  return 'O3: the texts differ.';
 }
 
 /// The steps after the construction: the name, the call, and whether the

@@ -11,6 +11,10 @@
 #   or `generic` for GenericElementOptions).
 # - `others`: optional, the shape of a key that `keys` does not list (a dictionary, for example
 #   the scale ids under `scales`). Without `others`, an unknown key keeps any value (an extra).
+# - `resolved`: only for the four element kinds: the known keys of the resolved options class
+#   (`resolved.g.dart`, Chart.js ADR 0054 §9) in the key order of Chart.js ADR 0018 §3: `$shared`,
+#   the keys of the element defaults, the keys of its defaultRoutes, `$animations`.
+# - `implements`: an interface of the resolved options class (`DrawPointOptions`).
 # - `keys`: each JS property name with its shape, or the scalar `none`. The order is the
 #   index.d.ts declaration order, the interfaces of an `extends` chain base first, then the hover
 #   interfaces, then the keys that upstream code reads and index.d.ts misses (with the reading
@@ -287,6 +291,19 @@ kinds:
   PointOptions:
     doc: index.d.ts:2055 PointOptions and index.d.ts:2083 PointHoverOptions, the options of a point element.
     element: point
+    resolved:
+      - $shared
+      - borderWidth
+      - hitRadius
+      - hoverBorderWidth
+      - hoverRadius
+      - pointStyle
+      - radius
+      - rotation
+      - backgroundColor
+      - borderColor
+      - $animations
+    implements: DrawPointOptions
     keys:
       borderWidth: number
       borderColor: any
@@ -305,6 +322,23 @@ kinds:
   LineOptions:
     doc: index.d.ts:1954 LineOptions and index.d.ts:2015 LineHoverOptions, the options of a line element.
     element: line
+    resolved:
+      - $shared
+      - borderCapStyle
+      - borderDash
+      - borderDashOffset
+      - borderJoinStyle
+      - borderWidth
+      - capBezierPoints
+      - cubicInterpolationMode
+      - fill
+      - spanGaps
+      - stepped
+      - tension
+      - backgroundColor
+      - borderColor
+      - segment
+      - $animations
     keys:
       borderWidth: number
       borderColor: any
@@ -332,6 +366,16 @@ kinds:
   BarOptions:
     doc: index.d.ts:2148 BarOptions and index.d.ts:2187 BarHoverOptions, the options of a bar element.
     element: bar
+    resolved:
+      - $shared
+      - borderSkipped
+      - borderWidth
+      - borderRadius
+      - inflateAmount
+      - pointStyle
+      - backgroundColor
+      - borderColor
+      - $animations
     keys:
       borderColor: any
       backgroundColor: any
@@ -350,6 +394,23 @@ kinds:
   ArcOptions:
     doc: index.d.ts:1882 ArcOptions and index.d.ts:1944 ArcHoverOptions, the options of an arc element.
     element: arc
+    resolved:
+      - $shared
+      - borderAlign
+      - borderColor
+      - borderDash
+      - borderDashOffset
+      - borderJoinStyle
+      - borderRadius
+      - borderWidth
+      - offset
+      - spacing
+      - spacingMode
+      - angle
+      - circular
+      - selfJoin
+      - backgroundColor
+      - $animations
     keys:
       borderWidth: number
       borderColor: any

@@ -8,12 +8,26 @@
 /// names of the upstream `_` exports, for example `angleDiff` of
 /// `_angleDiff`, stay internal (Chart.js ADR 0048, section 6).
 ///
+/// The typed resolver classes of Chart.js ADR 0054 keep their names of
+/// today, `Resolver` and `ContextResolver`; their class names
+/// `OptionResolver` and `OptionView` stay internal. The typed context
+/// classes (`ScriptableContext` and the others) stay internal too: a
+/// context is a `ContextObject`.
+///
 /// Next to `package:flutter_chartjs_port/chartjs.dart`, import it with a
 /// prefix, as `src/index.umd.ts` keeps the helpers in `Chart.helpers`.
 library;
 
 export 'package:flutter_chartjs_port/src/helpers/index.dart'
     hide
+        OptionResolver,
+        OptionView,
+        ScriptableChartContext,
+        ScriptableContext,
+        ScriptableLineSegmentContext,
+        ScriptableScaleContext,
+        ScriptableScalePointLabelContext,
+        ScriptableTooltipContext,
         addGrace,
         alignPixel,
         alignStartEnd,

@@ -41,8 +41,12 @@ import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
 // components. flutter_chartjs_port does not export lib/src/index.dart yet.
 import 'package:flutter_chartjs_port/src/index.dart'
     show Chart, controllers, defaults, elements, plugins, scales;
+import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
+    show foreignAudit;
 import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_test/flutter_test.dart';
+
+import 'port/options/foreign_audit.dart';
 
 /// The `devicePixelRatio` of the test view (index.js:3-5).
 const double _devicePixelRatio = 1;
@@ -145,6 +149,14 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
 
   // DIVERGES(chartjs): harness-test-font, Liberation Sans for Arial/Helvetica.
   await installTestFont();
+
+  // The oracle O2 of Chart.js ADR 0054: each foreign value of the file is a
+  // reviewed pair of test/port/options/foreign_audit.dart. Upstream has no
+  // typed option objects.
+  // DIVERGES(chartjs): harness-foreign-audit, the oracle O2 of the typed model.
+  final audit = ForeignAuditCollector();
+  foreignAudit = audit.record;
+  tearDownAll(audit.check);
 
   await testMain();
 }

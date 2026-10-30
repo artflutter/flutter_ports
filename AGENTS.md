@@ -70,7 +70,8 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
     from the tree. A lane lowers its own baselines; it never raises one.
   - `options:gen:check`: the check mode of `options:gen` (below).
 - `dart run melos run options:gen`: writes the typed option scopes of `flutter_chartjs_port`
-  (`lib/src/options/option_keys.g.dart`, `scope_kinds.g.dart` and `scopes.g.dart`) from the
+  (`lib/src/options/option_keys.g.dart`, `scope_kinds.g.dart` and `scopes.g.dart`) and the
+  resolved element options (`resolved.g.dart`) from the
   hand-written schema `tool/options_schema.yaml` through `tool/options_gen.dart`, formatted
   (Chart.js ADR 0054 §2). Edit the schema, never a `.g.dart` file. `options:gen:check` generates
   into `.dart_tool/options_gen_check/` and fails when a committed file differs or when
@@ -213,13 +214,33 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     0054 §3). `defaultRoutes` stays a table of route strings. `Defaults.route` of a typed scope
     is a typed route (`OptionScope.addRoute`). The face members are `jsRead` and `jsWrite` during
     the migration, because `MapBase` owns `operator []`; the close step forwards
-    `operator []` and `operator []=` to them with the JS rules.
+    `operator []` and `operator []=` to them with the JS rules. `resolved.g.dart` (generated from
+    the `resolved` lists of the schema) has the resolved options of the four elements:
+    `PointOptions`, `LineOptions`, `BarOptions` and `ArcOptions`, each key a typed field (`double`,
+    `bool`, `String?` or `Object?`) with a present bit and a foreign slot (`isForeign`,
+    `foreignOf`, Chart.js ADR 0054 §6 and §9). `element_options_base.dart` has their base
+    `ElementOptions` (the Map protocol, `$shared`, `$animations`, the extras, the frozen state,
+    `storeKey`) and `GenericElementOptions`. `foreign_audit.dart` has the hook `foreignAudit` of
+    the oracle O2: the typed classes call it inside `assert` for each value that they keep in a
+    foreign slot.
+  - `lib/src/helpers/helpers.config.dart` (Chart.js ADR 0054 §4): the typed resolvers
+    `OptionResolver` (the target of `_createResolver`) and `OptionView` (the target of
+    `_attachContext`), with the typed read `readKey(OptionKey)` and a cache by `OptionKey`.
+    `Resolver` and `ContextResolver` are their typedefs; `lib/helpers.dart` hides the class names.
+    The walk reads a typed scope with `OptionScope.lookup`. `Config.resolveElementNamedOptions` of
+    `core.config.dart` is the typed element step of `_resolveElementOptions`: it reads each own key
+    of `defaults.elements.<type>` with `readKey` and stores it into the resolved class of the type.
+    `createContext` of `helpers.options.dart` gives the typed context of its `type`
+    (`ScriptableChartContext`, `ScriptableContext`, `ScriptableScaleContext`,
+    `ScriptableScalePointLabelContext`, `ScriptableTooltipContext`,
+    `ScriptableLineSegmentContext`, Chart.js ADR 0054 §11), subclasses of `ContextObject`.
   - `lib/src/core/core.element.dart` and `lib/src/elements/` (Chart.js ADR 0017): the port of
     `core.element.ts`, and the four elements (`element.point.dart`, `element.line.dart`,
     `element.bar.dart`, `element.arc.dart`) with `index.dart`. The port-only `element_options.dart`
-    (Chart.js ADR 0018) has the typed element options: `PointOptions`, `LineOptions`, `BarOptions`
-    and `ArcOptions`, Maps with a field for each known key. It also has `GenericElementOptions`,
-    `clone`, the frozen state, `createElementOptions` and `copyOptions` (Chart.js ADR 0021). These
+    (Chart.js ADR 0018) exports the typed element options of `lib/src/options/resolved.g.dart`
+    and `element_options_base.dart`: `PointOptions`, `LineOptions`, `BarOptions`, `ArcOptions`
+    and `GenericElementOptions`, with `clone` and the frozen state. It keeps
+    `createElementOptions` and `copyOptions` (Chart.js ADR 0021). These
     files are pure layers. `Element` and each element class have a static `jsClass`, the class as a
     value (Chart.js ADR 0020). `PointElement` and `BarElement` implement `types.VisualElementRange`,
     the interface of `getRange`. `getRange` gives an `Object`: the `PointElement` result is the JS
@@ -525,7 +546,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `descriptors` equal the inventory in values and key order (a function default by its
     presence; each object is a typed scope). A bump edits the schema for keys and kinds and the
     component file for values; the test fails until both equal the new inventory. `opt_test.dart` and `option_scope_test.dart` test the cells and
-    the scopes on the VM, dart2js and dart2wasm.
+    the scopes on the VM, dart2js and dart2wasm. O3 is the test `(O3)` of each case of
+    `observation_test.dart`: the resolvers of the chart, the datasets, the animations, the
+    elements (modes `default` and `active`) and the plugins, and their views, compare with the
+    frozen Map resolver `test/support/legacy/helpers_config_map.dart` (keys of
+    `Object.getOwnPropertyNames`, values to a depth of 4, user calls). O2: `foreign_audit.dart`
+    has the reviewed set `reviewedForeignPairs` (one TSV line `owner<TAB>key<TAB>kind` for each
+    pair). `flutter_test_config.dart` sets the hook `foreignAudit` before each test file and fails
+    the file on a foreign pair that the set does not list (row `harness-foreign-audit`). A new pair
+    gets a review of the readers of its key, then a line in the set.
+    `--dart-define=O2_COLLECT=true` prints the pairs of each file and checks nothing.
     `test/port/scales/scale_chart_harness.dart` and `scale_time_harness.dart` are helper libraries
     of the scale tests, not test files. `test/port/controllers/` has the controller reference tests
     and their harness `controller_chart_harness.dart` (a library). `controller.<name>_test.dart`
@@ -1094,6 +1124,11 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   after a test calls `tester.view.reset()`. It restores `defaults`, `overrides` and `descriptors`
   after each test (`setUpDefaultsRestore()`, the row `harness-defaults-restore`). Thus a test that
   changes them does not change the next test.
+- `flutter_test_config.dart` also runs the oracle O2 (row `harness-foreign-audit`): after the last
+  test of each file, a foreign pair of the file that `reviewedForeignPairs` of
+  `test/port/options/foreign_audit.dart` does not list fails the file. A test that writes a value
+  of another type into a typed option object on purpose sets `foreignAudit` to its own function
+  and restores it with `addTearDown`, as `test/port/options/foreign_audit_test.dart` does.
 - `flutter_test_config.dart` sets the default date zone to UTC (`setDefaultDateZone('Etc/UTC')`,
   the port of `test/index.js:23`). `setUpSpecs()` does the same. A test that changes the zone or
   calls `DateAdapterBase.override` restores the old state with `addTearDown`.

@@ -83,12 +83,13 @@ void main() {
   });
 
   group('generate', () {
-    test('the three files, with the port-only header', () {
+    test('the four files, with the port-only header', () {
       final files = generate(readSchema(_schema));
       expect(files.keys, [
         'option_keys.g.dart',
         'scope_kinds.g.dart',
         'scopes.g.dart',
+        'resolved.g.dart',
       ]);
       for (final text in files.values) {
         expect(text, startsWith('// Original code, not ported from Chart.js:'));
