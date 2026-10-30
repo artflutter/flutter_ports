@@ -1,4 +1,21 @@
-jsGet 83
-stringIndex 93
+# L4 allowlist (Chart.js ADR 0054 §5, §12): the reads by name of objects of
+# user code in the place of a typed tooltip object. jsGet 26: an active item,
+# a position and its alignments of a user positioner (_elementOf, _readX,
+# _readY, _readAlign), the length of items and lines of user code (2), the
+# raw data value (2), the override member of a callbacks object of user
+# code, this.options of a callback called by user code, the data of a chart
+# value of user code, the labels and the dataset labels of the user (5), the
+# setContext of plain options of a spec, the _cacheable of an animations
+# object of user code, the positioners dictionary by the position name, the
+# values of a borderWidth object of user code, the items of
+# setActiveElements (2), chart.data.datasets, the config argument of
+# new Tooltip(config) (2) and the items, body items and label styles of user
+# code (_readByName). stringIndex 2: $animations by property name, until the
+# typed $animations of lane L3 is merged. jsCall 8: the callbacks (2), the
+# filter, itemSort and external callbacks, the positioners, setContext and
+# override of objects of user code, with JS arity. jsObjectKeys 1: the
+# values of a borderWidth object of user code.
+jsGet 26
+stringIndex 2
 jsCall 8
 jsObjectKeys 1

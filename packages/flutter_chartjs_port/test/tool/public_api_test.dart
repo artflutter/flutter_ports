@@ -135,7 +135,10 @@ const Map<String, String> _notExported = {
   'LegendItem': 'an internal typed plugin type of Chart.js ADR 0054',
   'LegendOptions': 'an internal typed plugin type of Chart.js ADR 0054',
   'TitleOptions': 'an internal typed plugin type of Chart.js ADR 0054',
+  'TooltipItem': 'an internal typed plugin type of Chart.js ADR 0054',
+  'TooltipLabelStyle': 'an internal typed plugin type of Chart.js ADR 0054',
   'TooltipOptions': 'an internal typed plugin type of Chart.js ADR 0054',
+  'TooltipPosition': 'an internal typed plugin type of Chart.js ADR 0054',
 };
 
 /// The members of an exported concrete class whose `_` doc name is not the

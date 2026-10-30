@@ -25,6 +25,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/color.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show optionKeyOf;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
@@ -1318,7 +1320,14 @@ void main() {
         ]) {
           final callbacks = <String, Object?>{name: value};
           userCalls = 0;
-          final helper = invokeCallbackWithFallback(callbacks, name, t, arg);
+          // The helper takes the typed key of the callback name (Chart.js
+          // ADR 0054 §4).
+          final helper = invokeCallbackWithFallback(
+            callbacks,
+            optionKeyOf(name)!,
+            t,
+            arg,
+          );
           final helperCalls = userCalls;
           userCalls = 0;
           final upstream = twoCalls(callbacks, name, arg);
