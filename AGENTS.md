@@ -503,7 +503,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the parts `elements`, `layout`, `datasetsUpdate` and `datasetsDraw`. `lib/main_stress.dart` is
     the profiling entry. Its defines `SEMANTICS` and `WINDOWS` serve the night series B-N1 of
     phase 9: `SEMANTICS=1` turns the semantics on, and `WINDOWS=1` prints a line
-    `STRESS_WINDOW {json}` for each window of 1 second. `lib/main_bench.dart` with
+    `STRESS_WINDOW {json}` for each window of 1 second. With `SEMANTICS` (0 or 1), the toolbar and
+    the readout of `StressDemo` are out of the semantics tree (`chartSemanticsOnly`), so that B-N1
+    measures the chart node. `lib/main_bench.dart` with
     `lib/bench/chart_bench.dart` is the frameless benchmark of the same cases
     (`packages/flutter_chartjs_port/doc/performance.md` §6). Its mode `theme` (`theme.switch`,
     `theme.anim` and `theme.equal`) runs the internal theme switch of `ChartView`.

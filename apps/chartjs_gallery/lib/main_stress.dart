@@ -914,6 +914,9 @@ class _StressProfileAppState extends State<StressProfileApp> {
           // the next one. N and M cannot tell two scenarios apart. The
           // figures after the timer do not reach the window either.
           onStats: (stats) => _onStats(index, stats),
+          // Protocol B-N1: with the define SEMANTICS (0 or 1), only the chart
+          // and the static text give semantics nodes.
+          chartSemanticsOnly: _semantics != null,
         ),
       ),
     );

@@ -625,6 +625,7 @@ class StressDemo extends StatefulWidget {
     this.autoStart = false,
     this.onStats,
     this.host = StressHost.canvas,
+    this.chartSemanticsOnly = false,
     super.key,
   });
 
@@ -682,6 +683,13 @@ class StressDemo extends StatefulWidget {
   /// [StressMode.axes] and [StressMode.plugins]. The other modes draw on the
   /// demo canvas.
   final StressHost host;
+
+  /// Whether the toolbar and the readout are out of the semantics tree
+  /// (`ExcludeSemantics`), so that only the chart and the static text give
+  /// semantics nodes. The stress entry sets it with the define `SEMANTICS`
+  /// (protocol B-N1 of phase 9): the readout changes twice a second, and its
+  /// semantics updates are not the cost of the chart node.
+  final bool chartSemanticsOnly;
 
   @override
   State<StressDemo> createState() => StressDemoState();
@@ -2280,7 +2288,10 @@ class StressDemoState extends State<StressDemo> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _toolbar(theme),
+              ExcludeSemantics(
+                excluding: widget.chartSemanticsOnly,
+                child: _toolbar(theme),
+              ),
               const SizedBox(height: 12),
               LayoutBuilder(
                 builder: (context, constraints) {
@@ -2353,55 +2364,58 @@ class StressDemoState extends State<StressDemo> {
               const SizedBox(height: 12),
               ValueListenableBuilder<StressStats>(
                 valueListenable: _stats,
-                builder: (context, stats, _) => ReadoutTable(
-                  key: const ValueKey('stress.stats'),
-                  rows: [
-                    ('FPS', stats.fps.toStringAsFixed(1)),
-                    ('frames', '${stats.frames}'),
-                    ('draw', '${ms(stats.drawMs)} ms'),
-                    if (stats.mode == StressMode.chart) ...[
-                      ('update', '${ms(stats.updateMs)} ms'),
-                      ('animator', '${ms(stats.animatorMs)} ms'),
-                      ('elements', '${ms(stats.elementsMs)} ms'),
-                      ('layout', '${ms(stats.layoutMs)} ms'),
-                      ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
-                      ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
-                      ('sharing', '${stats.sharing}'),
+                builder: (context, stats, _) => ExcludeSemantics(
+                  excluding: widget.chartSemanticsOnly,
+                  child: ReadoutTable(
+                    key: const ValueKey('stress.stats'),
+                    rows: [
+                      ('FPS', stats.fps.toStringAsFixed(1)),
+                      ('frames', '${stats.frames}'),
+                      ('draw', '${ms(stats.drawMs)} ms'),
+                      if (stats.mode == StressMode.chart) ...[
+                        ('update', '${ms(stats.updateMs)} ms'),
+                        ('animator', '${ms(stats.animatorMs)} ms'),
+                        ('elements', '${ms(stats.elementsMs)} ms'),
+                        ('layout', '${ms(stats.layoutMs)} ms'),
+                        ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
+                        ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
+                        ('sharing', '${stats.sharing}'),
+                      ],
+                      if (stats.mode == StressMode.axes) ...[
+                        ('update', '${ms(stats.updateMs)} ms'),
+                        ('elements', '${ms(stats.elementsMs)} ms'),
+                        ('layout', '${ms(stats.layoutMs)} ms'),
+                        ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
+                        ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
+                        ('x ticks', '${stats.ticks}'),
+                        ('rotation', stats.rotation.toStringAsFixed(1)),
+                      ],
+                      if (stats.mode == StressMode.plugins) ...[
+                        ('update', '${ms(stats.updateMs)} ms'),
+                        ('animator', '${ms(stats.animatorMs)} ms'),
+                        ('elements', '${ms(stats.elementsMs)} ms'),
+                        ('layout', '${ms(stats.layoutMs)} ms'),
+                        ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
+                        ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
+                        ('tooltip draw', '${ms(stats.tooltipDrawMs)} ms'),
+                      ],
+                      (
+                        'build avg/max',
+                        stats.timings == 0
+                            ? 'n/a'
+                            : '${ms(stats.buildMs)} / '
+                                  '${ms(stats.buildMaxMs)} ms',
+                      ),
+                      (
+                        'raster avg/max',
+                        stats.timings == 0
+                            ? 'n/a'
+                            : '${ms(stats.rasterMs)} / '
+                                  '${ms(stats.rasterMaxMs)} ms',
+                      ),
+                      ('timings', '${stats.timings} frames'),
                     ],
-                    if (stats.mode == StressMode.axes) ...[
-                      ('update', '${ms(stats.updateMs)} ms'),
-                      ('elements', '${ms(stats.elementsMs)} ms'),
-                      ('layout', '${ms(stats.layoutMs)} ms'),
-                      ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
-                      ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
-                      ('x ticks', '${stats.ticks}'),
-                      ('rotation', stats.rotation.toStringAsFixed(1)),
-                    ],
-                    if (stats.mode == StressMode.plugins) ...[
-                      ('update', '${ms(stats.updateMs)} ms'),
-                      ('animator', '${ms(stats.animatorMs)} ms'),
-                      ('elements', '${ms(stats.elementsMs)} ms'),
-                      ('layout', '${ms(stats.layoutMs)} ms'),
-                      ('datasets update', '${ms(stats.datasetsUpdateMs)} ms'),
-                      ('datasets draw', '${ms(stats.datasetsDrawMs)} ms'),
-                      ('tooltip draw', '${ms(stats.tooltipDrawMs)} ms'),
-                    ],
-                    (
-                      'build avg/max',
-                      stats.timings == 0
-                          ? 'n/a'
-                          : '${ms(stats.buildMs)} / '
-                                '${ms(stats.buildMaxMs)} ms',
-                    ),
-                    (
-                      'raster avg/max',
-                      stats.timings == 0
-                          ? 'n/a'
-                          : '${ms(stats.rasterMs)} / '
-                                '${ms(stats.rasterMaxMs)} ms',
-                    ),
-                    ('timings', '${stats.timings} frames'),
-                  ],
+                  ),
                 ),
               ),
               const SizedBox(height: 8),

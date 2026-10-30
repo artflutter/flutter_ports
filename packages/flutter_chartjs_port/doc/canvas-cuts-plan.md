@@ -719,6 +719,15 @@ Changes to the cited files:
   (`POINT_STYLE`, the arc scenario and the baselines of §6.3) does not change. No library file
   that this plan cites changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5
   and the estimates do not change. No trigger occurred.
+- 2026-10-30, the semantics scope of the night series B-N1 (phase 9). `stress_demo.dart` gets the
+  parameter `chartSemanticsOnly`: when it is true, its toolbar and its readout table are in
+  `ExcludeSemantics`. `main_stress.dart` sets it with the define `SEMANTICS` (0 or 1). The readout
+  changes twice a second, so with the semantics on, its updates would add to B - A in each cell of
+  B-N1, also in the controls. Without the define, the tree and the timed code do not change. The
+  modes, the defines, the `STRESS` and `BENCH` keys and the figures of phases 4 to 9 do not change.
+  `stress_chart_test.dart` gets one test; this plan cites no line of it. No library file that this
+  plan cites changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
+  estimates do not change. No trigger occurred.
 
 ## 1. Why
 

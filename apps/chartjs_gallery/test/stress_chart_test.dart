@@ -1090,6 +1090,36 @@ void main() {
     expect(stressWindows(const [], start: 5, end: 0), isEmpty);
   });
 
+  testWidgets('chartSemanticsOnly takes the toolbar and the readout out of '
+      'the semantics tree (B-N1)', (tester) async {
+    final semantics = tester.ensureSemantics();
+    for (final only in [false, true]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StressDemo(
+              key: ValueKey(only),
+              initialMode: StressMode.chart,
+              initialN: _n,
+              initialM: 10,
+              host: StressHost.view,
+              chartSemanticsOnly: only,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(
+        find.bySemanticsLabel(RegExp('FPS')),
+        only ? findsNothing : findsWidgets,
+        reason: 'chartSemanticsOnly: $only',
+      );
+      // The title of the card stays.
+      expect(find.bySemanticsLabel(RegExp('Stress test')), findsWidgets);
+    }
+    semantics.dispose();
+  });
+
   testWidgets('main_stress prints the windows with WINDOWS=1 and the key '
       'semantics with SEMANTICS', (tester) async {
     final semantics = tester.ensureSemantics();
