@@ -12,7 +12,7 @@ import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
 
-// theming.md §8 test 4, the coverage snapshot (Chart.js ADR 0042,
+// theming.md §8 test 4, the coverage snapshot (Chart.js ADR 0050,
 // Consequences). The test compares the compiled light preset with the
 // defaults inventory that tool 4 records in doc/upstream/manifest.json
 // (`defaults.values.defaults`, porting-flow.md §4).
@@ -148,7 +148,7 @@ const Map<String, Object?> _notThemedValues = {
 };
 
 /// The emitted paths that restate a module constant, not a default, each
-/// with the reason (Chart.js ADR 0042, Consequences). The manifest does not
+/// with the reason (Chart.js ADR 0050, Consequences). The manifest does not
 /// have them. Test 3 compares their values.
 const Map<String, String> _moduleConstants = {
   r'plugins.colors.$borderColors':
@@ -701,7 +701,7 @@ void main() {
 
     test('a module constant is not REMOVED', () {
       // plugin.colors.ts:14-25: the palette is a module constant, not a
-      // default. The manifest does not have it (Chart.js ADR 0042).
+      // default. The manifest does not have it (Chart.js ADR 0050).
       const palette = r'plugins.colors.$borderColors';
       final withPalette = <String, Object?>{
         ...emitted,

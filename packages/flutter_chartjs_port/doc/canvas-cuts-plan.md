@@ -774,6 +774,16 @@ Changes to the cited files:
   `AGENTS.md`, `doc/theming.md` and Chart.js ADR 0049 change text that this plan does not cite.
   The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not
   change. No trigger occurred.
+- 2026-10-30, the citations of [Chart.js ADR 0050](adr/0050-public-theme-api.md) for the theming
+  rules. The comments of the theme files, of `core.config.dart`, `plugin.colors.dart`,
+  `tool/src/lib_imports.dart` and of the theme tests, `doc/status.yaml`, `doc/differences.md` and
+  three lines of `doc/porting-flow.md` (§3, §4 and §6) cite Chart.js ADR 0050 in place of Chart.js
+  ADR 0042. Each change is in place: no line moves. `doc/parity.md` changes 11 rows in place
+  (lines 82, 141, 441, 443, 444, 454, 456, 458, 538, 539 and 541); the rows that this plan cites
+  do not change. No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`,
+  `helpers.dom.dart` or a test of §2.6 and §3.5 changes. The text of §2.2, of §2.7 and of the
+  cited harness rows does not change. The references, the inventory (§1.1), the tests of §2.6 and
+  §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

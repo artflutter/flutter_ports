@@ -35,7 +35,7 @@ import 'plugin_decimation_reference.dart';
 // the default plugin options (section 4 item 2). The observation has `boxes`
 // and `plugins.decimation` (the keys, the accessor state and the data of each
 // dataset), and the draw calls. The cases run two times: unthemed, and with the
-// light preset (theming.md section 8 test 3, Chart.js ADR 0042).
+// light preset (theming.md section 8 test 3, Chart.js ADR 0050).
 //
 // The group `adapt-decimation-data-accessor` pins the accessor of
 // plugin.decimation.js:249-265 on real charts (Chart.js ADR 0038, section

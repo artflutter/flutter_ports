@@ -10,7 +10,7 @@
 /// of `core.config.dart`.
 ///
 /// Not a pure layer: the file imports `dart:ui` and the painting library.
-/// Ported files never import it (Chart.js ADR 0042, invariant 4).
+/// Ported files never import it (Chart.js ADR 0050, invariant 4).
 library;
 
 import 'dart:ui' show Color, ColorSpace, FontStyle, lerpDouble;

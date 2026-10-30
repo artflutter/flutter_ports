@@ -850,7 +850,7 @@ Phase 3 added the file with DPR 1 and the first two rows. Phase 5 added the last
 - `harness-release-at-unmount`: `releaseCharts()` (`:34-36`) at the unmount of the harness body,
   with a `tearDown` as the fallback.
 
-The harness installs no theme ([Chart.js ADR 0042](adr/0042-theming.md)). Thus no ported spec
+The harness installs no theme ([Chart.js ADR 0050](adr/0050-public-theme-api.md)). Thus no ported spec
 depends on the platform that flutter_test reports (`TargetPlatform.android`).
 
 `dart test` does not read `flutter_test_config.dart`. Thus each pure-layer spec file calls the
@@ -1038,7 +1038,7 @@ and 8. Tool 1 uses allowlists:
 - Test files without `@TestOn('vm')`: pure layers, `package:test` and `pure.dart` only.
 - The harness: the closure of `packages/chartjs_test_utils/lib/pure.dart` is a pure layer. It
   imports only pure libraries, `package:test` and the pure layers of `flutter_chartjs_port`.
-- Ported files: no import of `lib/src/theme/` ([Chart.js ADR 0042](adr/0042-theming.md)). `lib/`
+- Ported files: no import of `lib/src/theme/` ([Chart.js ADR 0050](adr/0050-public-theme-api.md)). `lib/`
   never imports `material`, `cupertino`, `material_ui` or `forui`.
 
 **2. Header check** (`tool/check_port_headers.dart`, `check:headers`, phase 1). It examines
@@ -1264,7 +1264,7 @@ Keep each deferred plan current while the phases go on:
 - Rule 3: spec names, skip reasons, `@TestOn('vm')`, `package:test` for pure layers, fixtures,
   `test/port/`.
 - Rule 4: status vocabulary, tool 6. Rule 5: the tool 1 allowlist, the library floor and the four
-  invariants of Chart.js ADR 0042.
+  invariants of Chart.js ADR 0050.
 - New rule: JS numeric semantics.
 - Licensing: SunPro, OFL. Item 1 becomes "its notice in the `LICENSE` of the package that
   contains the code" (the harness for chartjs-test-utils, the adapter for forui code). Commands and

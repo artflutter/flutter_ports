@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the internal theme presets.
 
-/// The internal theme presets of Chart.js ADR 0042 (theming.md §5.1), as raw
+/// The internal theme presets of Chart.js ADR 0050 (theming.md §5.1), as raw
 /// Map themes of `compile.dart`, a pure layer.
 ///
 /// The public presets are `ChartThemeData.light()` and `.dark()` of
@@ -8,7 +8,7 @@
 /// the pure tests and for the oracle of test 3:
 /// `themeDataToRaw(const ChartThemeData.light())` equals [ChartThemes.light].
 /// The library exports no `ChartThemes`. Ported files never import this
-/// file (Chart.js ADR 0042, invariant 4).
+/// file (Chart.js ADR 0050, invariant 4).
 library;
 
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -45,7 +45,7 @@ abstract final class ChartThemes {
   ///   (`scale.radialLinear.js:383-385`).
   /// - `palette`: the 7 colors of `BORDER_COLORS` at alpha 1
   ///   (`plugin.colors.ts:14-22`) and the alpha 0.5 of `BACKGROUND_COLORS`
-  ///   (`plugin.colors.ts:25`), Chart.js ADR 0042. The compiled border
+  ///   (`plugin.colors.ts:25`), Chart.js ADR 0050. The compiled border
   ///   strings are `rgba(54, 162, 235, 1)`, which parse to the upstream
   ///   `rgb(54, 162, 235)`. The compiled background strings equal the
   ///   upstream strings, for example `rgba(54, 162, 235, 0.5)`.

@@ -30,7 +30,7 @@ import 'package:test/test.dart';
 // elements. The harness restores both after each test (setUpSpecs).
 //
 // The theme groups `theme-H0` to `theme-H3` pin the hunks of Chart.js ADR
-// 0042 (theming.md §3.1). Their expected values come from a JavaScript
+// 0050 (theming.md §3.1). Their expected values come from a JavaScript
 // prototype of the four hunks on a copy of core.config.js in the same
 // Node.js, beside the upstream file. The tests are theming.md §8 test 1 at
 // the config level (no extra scope without a theme, the §3.2 position of the
@@ -2103,7 +2103,7 @@ void main() {
       expect(jsObjectKeys(raw), [r'$theme', 'data', 'options']);
     });
 
-    // The public reader of Chart.js ADR 0042 for hunk H5 of plugin.colors.
+    // The public reader of Chart.js ADR 0050 for hunk H5 of plugin.colors.
     test('chartThemeOf gives the theme map of a Config', () {
       final theme = <String, Object?>{'color': 'T'};
       final config = Config(<String, Object?>{themeConfigKey: theme});

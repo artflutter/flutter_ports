@@ -17,9 +17,9 @@
 /// properties of these objects into an array or a function. An array `data`
 /// gives a new Map.
 ///
-/// Four hunks add the compiled theme of Chart.js ADR 0042 as an option scope
+/// Four hunks add the compiled theme of Chart.js ADR 0050 as an option scope
 /// (theming.md §3.1): H0 ([themeConfigKey], the private `_themeOf` and the
-/// public [chartThemeOf] of Chart.js ADR 0042), H1 (`mergeScaleConfig`), H2
+/// public [chartThemeOf] of Chart.js ADR 0050), H1 (`mergeScaleConfig`), H2
 /// ([Config.getOptionScopes]) and H3
 /// ([Config.chartOptionScopes]). The chart widget puts the theme into the raw
 /// configuration under [themeConfigKey]. Without a theme, the hunks add no
@@ -355,7 +355,7 @@ void _addIfFound(Set<Object?> set, Object? obj, String key) {
 }
 
 /// The key of the compiled theme in the raw chart configuration: `$theme`
-/// (Chart.js ADR 0042, theming.md §3.1, hunk H0).
+/// (Chart.js ADR 0050, theming.md §3.1, hunk H0).
 ///
 /// The chart widget puts the compiled theme map under this key. The theme is
 /// a frozen map with the key shape of `Chart.defaults`. [Config] reads it
@@ -372,7 +372,7 @@ AnyObject? _themeOf(AnyObject config) {
 
 /// The theme map of the chart configuration [config]: the value under
 /// [themeConfigKey] of its raw configuration when it is a Map, else Dart
-/// `null` (hunk H0, Chart.js ADR 0042). Hunk H5 of `plugin.colors` reads
+/// `null` (hunk H0, Chart.js ADR 0050). Hunk H5 of `plugin.colors` reads
 /// the palette from it. A configuration that is not a [Config] has no
 /// theme.
 AnyObject? chartThemeOf(types.ChartConfiguration config) =>

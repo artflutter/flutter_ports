@@ -35,7 +35,7 @@ import 'plugin_colors_reference.dart';
 // dataset after `beforeLayout`), and the draw calls.
 //
 // The cases run two times: unthemed, and with the light preset (theming.md
-// section 8 test 3, Chart.js ADR 0042). In the themed run, hunk H5 takes the
+// section 8 test 3, Chart.js ADR 0050). In the themed run, hunk H5 takes the
 // palette of the light preset, and the colors compare in their parsed form.
 //
 // The groups `plugin object`, `theme palette` and

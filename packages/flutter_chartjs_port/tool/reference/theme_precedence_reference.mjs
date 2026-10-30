@@ -23,9 +23,9 @@
 //   the upstream src/core/core.config.js and src/plugins/plugin.colors.ts.
 //   Upstream has no theme: it ignores the `$theme` key of the configuration.
 // - `prototype`: the same sources, with a JavaScript prototype of the hunks
-//   H0-H3 of Chart.js ADR 0042 (theming.md section 3.1) in
+//   H0-H3 of Chart.js ADR 0050 (theming.md section 3.1) in
 //   src/core/core.config.js, and of the hunks H4a, H4b, H4c and H5 of
-//   Chart.js ADR 0042 in src/plugins/plugin.colors.ts. A load hook adds the hunks to the source
+//   Chart.js ADR 0050 in src/plugins/plugin.colors.ts. A load hook adds the hunks to the source
 //   text in memory, at the lines of the Dart hunks of
 //   lib/src/core/core.config.dart and lib/src/plugins/plugin.colors.dart.
 //   The files on disk do not change.
@@ -319,7 +319,7 @@ export default class Config {`,
 
 /**
  * The JavaScript prototype of the hunks H4a, H4b, H4c and H5 (Chart.js ADR
- * 0042, theming.md section 3.5) on the source of plugin.colors.ts. Each hunk
+ * 0050, theming.md section 3.5) on the source of plugin.colors.ts. Each hunk
  * has the form of its Dart hunk in lib/src/plugins/plugin.colors.dart: the
  * upstream lines stay, and the hunks add lines only.
  */
@@ -1976,7 +1976,7 @@ scopes('scopes with a string theme', 'not a map');
 scopes('scopes with a theme', 'theme');
 
 // ---------------------------------------------------------------------------
-// The palette of plugin.colors (Chart.js ADR 0042; theming.md section 8,
+// The palette of plugin.colors (Chart.js ADR 0050; theming.md section 8,
 // the palette rows of test 2 and test 3).
 
 /** The theme palette P1: three border and three background sentinels. */
@@ -2318,7 +2318,7 @@ function writeDart(upstream, prototype) {
     run.scenarios.find((s) => s.name === name).lines.join('\n');
   // The palette rows 5 and 6: a palette key outside the theme, and a theme
   // palette that is not a List with at least one item, keep the upstream
-  // palette (Chart.js ADR 0042).
+  // palette (Chart.js ADR 0050).
   for (const {name} of upstream.scenarios) {
     if (!name.startsWith('hover ') && name !== 'palette 5' && name !== 'palette 6') {
       continue;

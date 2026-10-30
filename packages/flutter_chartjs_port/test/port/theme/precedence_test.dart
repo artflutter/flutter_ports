@@ -834,7 +834,7 @@ Future<List<String>> _hover(String type) async {
 }
 
 // ---------------------------------------------------------------------------
-// The palette of plugin.colors (Chart.js ADR 0042).
+// The palette of plugin.colors (Chart.js ADR 0050).
 
 /// The type of `observe` of a scenario: one line `<label>: <value>`.
 typedef _Observe = void Function(String label, Object? value);
@@ -1801,7 +1801,7 @@ void main() {
 
     group('palette', () {
       // The palette rows of theming.md §8 test 2 and the pins of the hunks
-      // H4a-H4c and H5 (Chart.js ADR 0042). The expected lines come from the
+      // H4a-H4c and H5 (Chart.js ADR 0050). The expected lines come from the
       // prototype run of the generator. A row without a theme also equals
       // the upstream run.
       testWidgets('the theme palette beats the theme element colors', (

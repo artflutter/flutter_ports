@@ -17,7 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'light_reference.dart';
 
-// theming.md §8 test 3, the plugin keys (Chart.js ADR 0042): the options of
+// theming.md §8 test 3, the plugin keys (Chart.js ADR 0050): the options of
 // the title, subtitle, legend and tooltip plugins of a chart with the light
 // preset equal the upstream options without a theme. The expected values
 // are `themeLightPlugins` of light_reference.dart. The generator

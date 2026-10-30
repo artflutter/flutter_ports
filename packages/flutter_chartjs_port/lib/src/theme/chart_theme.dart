@@ -3,7 +3,7 @@
 /// The inherited chart theme of Chart.js ADR 0050 (theming.md §5.1).
 ///
 /// Not a pure layer: the file imports the widgets library. Ported files never
-/// import it (Chart.js ADR 0042, invariant 4).
+/// import it (Chart.js ADR 0050, invariant 4).
 library;
 
 import 'package:flutter/foundation.dart';

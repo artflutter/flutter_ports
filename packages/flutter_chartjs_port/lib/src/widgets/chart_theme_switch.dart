@@ -5,7 +5,7 @@
 ///
 /// The widget runs the switch in its post-frame update callback (Chart.js
 /// ADR 0049, section 4). Not a pure layer: the file imports the theme data,
-/// which imports Flutter. Ported files never import it (Chart.js ADR 0042,
+/// which imports Flutter. Ported files never import it (Chart.js ADR 0050,
 /// invariant 4).
 library;
 

@@ -14,11 +14,11 @@ import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 import 'package:test/test.dart';
 
-// The theme compiler has no upstream counterpart (Chart.js ADR 0042). These
+// The theme compiler has no upstream counterpart (Chart.js ADR 0050). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
 // the emission guard, the rgba() form, the deep freeze and the memo), §3.4
 // and §4 (the token keys, the point-label font, the title, subtitle, legend
-// and tooltip keys and the palette of Chart.js ADR 0042), §8
+// and tooltip keys and the palette of Chart.js ADR 0050), §8
 // test 1 (no theme equals upstream: ChartThemes.none, no extra scope, the
 // scope position of a compiled theme, no dependence on the platform) and
 // the parts of §8 test 5 that need no chart. The expected scope lists follow
@@ -805,7 +805,7 @@ void main() {
   });
 
   group('the palette', () {
-    // Chart.js ADR 0042 and theming.md §4: the palette token emits the two
+    // Chart.js ADR 0050 and theming.md §4: the palette token emits the two
     // palette keys of plugins.colors. Hunk H5 of plugin.colors reads them
     // from the theme map of the chart.
     const border = r'plugins.colors.$borderColors';
@@ -1134,7 +1134,7 @@ void main() {
   });
 
   group('the subtitle and legend keys', () {
-    // theming.md §4 (Chart.js ADR 0042): the subtitle takes the color token
+    // theming.md §4 (Chart.js ADR 0050): the subtitle takes the color token
     // and the font token without weight, as the title. The legend takes the
     // whole font token into its two fonts and no color key.
     final serifBold = <String, Object?>{
@@ -1330,7 +1330,7 @@ void main() {
   });
 
   group('the tooltip keys', () {
-    // theming.md §4 (Chart.js ADR 0042): the token inverseSurface gives the
+    // theming.md §4 (Chart.js ADR 0050): the token inverseSurface gives the
     // tooltip background, the token onInverseSurface the four tooltip text
     // and key colors. The tooltip body font is the whole font token. The
     // title and footer fonts are the font token without weight.
@@ -1660,7 +1660,7 @@ void main() {
         ('scales.radial.angleLines.color', 'red', 'not a scale type'),
         // The fill, line, bar and scale keys change the fill target, the
         // segments, the dataset element, the bar geometry, the data range or
-        // the ticks (Chart.js ADR 0042).
+        // the ticks (Chart.js ADR 0050).
         ('elements.line.fill', 'origin', 'fill is a behavior key'),
         ('fill', 'origin', 'fill is a behavior key'),
         ('spanGaps', true, 'spanGaps is a behavior key'),
@@ -1716,7 +1716,7 @@ void main() {
         ('color', undefined, 'undefined is no value'),
         ('scale.ticks.callback', (Object? v) => v, 'a function'),
         // Rule 2b: the plugin behavior paths and the paths below them
-        // (Chart.js ADR 0042).
+        // (Chart.js ADR 0050).
         for (final path in themePluginBehaviorPaths)
           (path, 1.0, '$path is a behavior key'),
         ('plugins.title.text.0', 'a line', 'title.text is a behavior key'),
@@ -1765,10 +1765,12 @@ void main() {
         (r'plugins.colors.$backgroundColors', <Object?>['red']),
         (r'plugins.colors.$backgroundColors.0', 'red'),
         // Rule 2b holds paths, not flat names. The layout keys of a plugin
-        // box, its colors and the fonts move only the layout (Chart.js ADR
-        // 0042, Open 1). The draw order of the filler pass changes only the
-        // draw (Open 2). The labels key of the legend holds its colors and
-        // fonts: `labels` is not a flat behavior key.
+        // box, its colors and the fonts move only the layout, and the draw
+        // order of the filler pass changes only the draw. The guard passes
+        // them, and no public input reaches the box layout keys or the draw
+        // order (Chart.js ADR 0050, "No public `raw` in 0.1.0"). The labels
+        // key of the legend holds its colors and fonts: `labels` is not a
+        // flat behavior key.
         ('plugins.title', <String, Object?>{}),
         ('plugins.title.color', 'red'),
         ('plugins.title.font', <String, Object?>{}),
@@ -1889,7 +1891,7 @@ void main() {
       }
     });
 
-    test('the plugin behavior paths of Chart.js ADR 0042', () {
+    test('the plugin behavior paths of Chart.js ADR 0050', () {
       expect(themePluginBehaviorPaths, {
         'plugins.decimation.algorithm',
         'plugins.decimation.samples',
@@ -1956,7 +1958,8 @@ void main() {
         );
       }
       // The layout keys and the colors of the boxes pass. They move only the
-      // layout (Chart.js ADR 0042, Open 1).
+      // layout, and no public input reaches the layout keys (Chart.js ADR
+      // 0050, "No public `raw` in 0.1.0").
       final compiled = compileChartTheme({
         'raw': <String, Object?>{
           'plugins': <String, Object?>{

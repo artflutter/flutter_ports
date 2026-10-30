@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the theme compiler.
 
-/// The theme compiler of Chart.js ADR 0042 (theming.md §3.3), a pure layer.
+/// The theme compiler of Chart.js ADR 0050 (theming.md §3.3), a pure layer.
 ///
 /// [compileChartTheme] turns a raw Map theme into one frozen Map with the key
 /// shape of `Chart.defaults`. The chart puts that Map into the raw
@@ -19,7 +19,7 @@
 ///   value is a Map of the `FontSpec` fields `family`, `size`, `style`,
 ///   `weight` and `lineHeight`, or Dart `null`.
 /// - `palette`: a Map with the fields `colors`, a List of [RawThemeColor]
-///   values, and `backgroundAlpha`, a number (Chart.js ADR 0042, theming.md
+///   values, and `backgroundAlpha`, a number (Chart.js ADR 0050, theming.md
 ///   §3.5). It replaces the palette of the colors plugin.
 /// - `raw`: a Map of Chart.js keys without a token. Its keys beat the token
 ///   keys. Only the raw Map themes of the tests have it: `ChartThemeData`
@@ -33,7 +33,7 @@
 /// (theming.md §4). A debug assert rejects a field or a token that the
 /// compiler does not know.
 ///
-/// Ported files never import this file (Chart.js ADR 0042, invariant 4).
+/// Ported files never import this file (Chart.js ADR 0050, invariant 4).
 library;
 
 import 'dart:collection';
@@ -167,7 +167,7 @@ const Set<String> themeTooltipInteractionKeys = {
 };
 
 /// The key paths that change data, item order, a position or a discrete
-/// decision, and the content keys (Chart.js ADR 0042). The compiler never
+/// decision, and the content keys (Chart.js ADR 0050). The compiler never
 /// emits them. The set holds paths, because a flat name is wrong at other
 /// paths (`position` is also a layout key of a box, and `labels` of the
 /// legend holds its colors and fonts).
@@ -219,7 +219,7 @@ const Set<String> _paletteKeys = {r'$borderColors', r'$backgroundColors'};
 ///    key of [themeTooltipInteractionKeys] under `plugins.tooltip`.
 ///
 ///    2b. A prefix of 2 or more keys of the normalized path in
-///    [themePluginBehaviorPaths] (Chart.js ADR 0042). The normalized path
+///    [themePluginBehaviorPaths] (Chart.js ADR 0050). The normalized path
 ///    has `scale` in place of a leading `scales.<type>` of
 ///    [themeScaleTypes]. Thus `scales.linear.ticks.stepSize` matches
 ///    `scale.ticks.stepSize`. Rule 2b comes before rule 2 at each key, so
@@ -237,7 +237,7 @@ const Set<String> _paletteKeys = {r'$borderColors', r'$backgroundColors'};
 /// 8. A function, Dart `null` (a JS `null` is a value) and [undefined].
 /// 9. A palette key `plugins.colors.$borderColors` or
 ///    `plugins.colors.$backgroundColors` with a value that is not a List
-///    with at least one item (Chart.js ADR 0042). Hunk H5 of
+///    with at least one item (Chart.js ADR 0050). Hunk H5 of
 ///    `plugin.colors` ignores such a value, and an empty List would give
 ///    `i % 0`.
 ///
@@ -487,7 +487,7 @@ const Set<String> _themeFields = {'colors', 'typography', 'palette', 'raw'};
 /// The typography tokens.
 const Set<String> _typographyTokens = {'font', 'pointLabels'};
 
-/// The fields of the `palette` field of a raw Map theme (Chart.js ADR 0042,
+/// The fields of the `palette` field of a raw Map theme (Chart.js ADR 0050,
 /// theming.md §4).
 const Set<String> _paletteFields = {'colors', 'backgroundAlpha'};
 
@@ -527,7 +527,7 @@ const Object _noTheme = Object();
 ///   point-label font is the `font` Map without `size`, then the fields of
 ///   `pointLabels` over it (theming.md §3.4).
 /// - The `palette` emits the two palette keys of `plugins.colors` as Lists
-///   of [themeColorToRgba] strings (Chart.js ADR 0042, theming.md §4).
+///   of [themeColorToRgba] strings (Chart.js ADR 0050, theming.md §4).
 /// - The `raw` keys beat the token keys, key by key. Maps merge, and a Map
 ///   that holds no key after the guard is left out.
 /// - A key that [themeNeverEmittedReason] rejects is never emitted. In debug
@@ -683,7 +683,7 @@ RawThemeColor? _color(AnyObject colors, String token) {
 }
 
 /// Writes the palette keys of the `palette` field [palette] into [keys]
-/// (Chart.js ADR 0042, theming.md §4).
+/// (Chart.js ADR 0050, theming.md §4).
 ///
 /// `plugins.colors.$borderColors` gets the colors at their alpha.
 /// `plugins.colors.$backgroundColors` gets the same colors with the alpha

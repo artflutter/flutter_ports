@@ -21,7 +21,7 @@
 /// (`harness-release-at-unmount`, Chart.js ADR 0022, section 8). A
 /// pure-layer spec under `dart test` has neither of them.
 ///
-/// The harness installs no theme (Chart.js ADR 0042).
+/// The harness installs no theme (Chart.js ADR 0050).
 library;
 
 import 'dart:async';

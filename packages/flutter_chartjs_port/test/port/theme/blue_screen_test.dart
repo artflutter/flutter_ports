@@ -23,7 +23,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../scales/scale_chart_harness.dart' show drawCalls;
 
-// theming.md §8 test 6, the full blue screen (Chart.js ADR 0042, "The blue
+// theming.md §8 test 6, the full blue screen (Chart.js ADR 0050, "The blue
 // screen"; Chart.js ADR 0030, section 11): a theme that sets each color
 // token and the palette (alpha 1) to one blue, over a background of the
 // same blue, gives a bitmap with no other pixel. A pixel of another color
@@ -98,7 +98,7 @@ const AnyObject _blueColors = <String, Object?>{
 
 /// A raw Map theme that sets each color token and the palette to [_blue].
 /// The palette has `backgroundAlpha: 1.0`, so the background colors of the
-/// colors plugin are opaque (Chart.js ADR 0042, `plugin.colors.ts:25`).
+/// colors plugin are opaque (Chart.js ADR 0050, `plugin.colors.ts:25`).
 const AnyObject _blueTheme = <String, Object?>{
   'colors': _blueColors,
   'palette': <String, Object?>{
@@ -125,7 +125,7 @@ const List<String> _palettePaths = [
 
 /// The known leaks of the 8 default charts: chart type to the leaking
 /// setter values (`<setter> <value>`), each with its upstream file:line.
-/// Empty (Chart.js ADR 0042). The test fails when a set changes in either
+/// Empty (Chart.js ADR 0050). The test fails when a set changes in either
 /// direction.
 const Map<String, Set<String>> knownLeaks = {};
 
@@ -556,7 +556,7 @@ void main() {
   for (final type in ['bar', 'doughnut']) {
     testWidgets('a $type chart with a legend item without fillStyle and '
         'strokeStyle paints the singleton defaults.color', (tester) async {
-      // The pin case of Chart.js ADR 0042: a user `generateLabels` gives an
+      // The pin case of Chart.js ADR 0050: a user `generateLabels` gives an
       // item without `fillStyle`, `strokeStyle` and `fontColor`.
       final chart = await _acquireWithTooltip(
         tester,
