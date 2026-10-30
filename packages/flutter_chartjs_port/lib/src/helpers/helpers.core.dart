@@ -31,6 +31,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope, ScopeKind;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/data_item.dart'
+    show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// helpers.core.ts:11 `noop`.
@@ -100,7 +102,20 @@ bool isArray(Object? value) {
 ///
 /// A typed option scope of Chart.js ADR 0054 (`OptionScope`) is an object
 /// too (§5, the leaf rule).
+///
+/// A data item of the typed API (`TypedDataItem`, Chart.js ADR 0054 §7) is
+/// an object too: it stands for the plain object {x, y} of the docs. The
+/// readers read it by name through its face. [clone], [merge], [mergeIf]
+/// and their mergers keep it as a leaf, as an element: no copy into a Map,
+/// no merge into it.
 bool isObject(Object? value) {
+  return _isMapObject(value) || value is TypedDataItem;
+}
+
+/// The objects that [clone], [merge] and [mergeIf] copy and merge: a Map
+/// with `String` keys or a typed option scope. A [TypedDataItem] is a leaf
+/// there.
+bool _isMapObject(Object? value) {
   return value != null &&
       (value is Map<String, Object?> || value is OptionScope);
 }
@@ -224,11 +239,19 @@ void each(
       }
     }
   } else if (isObject(loopable)) {
-    final object = loopable! as AnyObject;
-    keys = jsObjectKeys(object);
+    // A typed data item is an object: its own keys through its face.
+    final Object? Function(String key) read;
+    if (loopable is TypedDataItem) {
+      keys = loopable.jsKeys();
+      read = loopable.jsRead;
+    } else {
+      final object = loopable! as AnyObject;
+      keys = jsObjectKeys(object);
+      read = (key) => jsGet(object, key);
+    }
     len = keys.length;
     for (i = 0; i < len; i++) {
-      jsCall(fn, [jsGet(object, keys[i]), keys[i]], thisArg: thisArg);
+      jsCall(fn, [read(keys[i]), keys[i]], thisArg: thisArg);
     }
   }
 }
@@ -282,7 +305,8 @@ Object? clone(Object? source) {
     return <Object?>[for (final value in array) clone(value)];
   }
 
-  if (isObject(source)) {
+  // A typed data item is a leaf ([isObject]).
+  if (_isMapObject(source)) {
     final object = source! as AnyObject;
     final target = <String, Object?>{};
     final keys = jsObjectKeys(object);
@@ -332,9 +356,9 @@ void merger(
   final tval = target[key];
   final sval = source[key];
 
-  if (isObject(tval) && isObject(sval)) {
+  if (_isMapObject(tval) && _isMapObject(sval)) {
     merge(tval, sval, options);
-  } else if (isObject(sval) && tval is PropertyAccess) {
+  } else if (_isMapObject(sval) && tval is PropertyAccess) {
     // DIVERGES(chartjs): adapt-merge-element-target, a by-name target.
     merge(tval, sval, options);
   } else {
@@ -347,7 +371,7 @@ void merger(
 /// (Chart.js ADR 0054 §3): the same keys and values in the same order as
 /// the plain copy of [clone].
 Object? _cloneFor(AnyObject target, String key, Object? sval) {
-  if (target is OptionScope && isObject(sval)) {
+  if (target is OptionScope && _isMapObject(sval)) {
     final kind = target.childKindFor(key);
     if (kind != null) return _cloneToScope(kind, sval!);
   }
@@ -366,7 +390,7 @@ OptionScope _cloneToScope(ScopeKind kind, Object source) {
     final child = scope.childKindFor(key);
     scope.jsWrite(
       key,
-      child != null && isObject(value)
+      child != null && _isMapObject(value)
           ? _cloneToScope(child, value!)
           : clone(value),
     );
@@ -426,7 +450,7 @@ Object? merge(
   final ilen = sources.length;
 
   final AnyObject object;
-  if (isObject(target)) {
+  if (_isMapObject(target)) {
     object = target! as AnyObject;
   } else if (target is PropertyAccess) {
     // DIVERGES(chartjs): adapt-merge-element-target, a by-name target.
@@ -442,7 +466,7 @@ Object? merge(
 
   for (var i = 0; i < ilen; ++i) {
     current = sources[i];
-    if (!isObject(current)) {
+    if (!_isMapObject(current)) {
       continue;
     }
 
@@ -474,7 +498,7 @@ Object? merge(
 /// returns a target that is not an object at once.
 Object? mergeIf(Object? target, [Object? source = undefined]) {
   // DIVERGES(chartjs): adapt-merge-element-target, no by-name target.
-  if (!isObject(target)) {
+  if (!_isMapObject(target)) {
     return target;
   }
   return merge(target, source, const MergeOptions(merger: mergerIf));
@@ -505,7 +529,7 @@ void mergerIf(
   final tval = target[key];
   final sval = source[key];
 
-  if (isObject(tval) && isObject(sval)) {
+  if (_isMapObject(tval) && _isMapObject(sval)) {
     mergeIf(tval, sval);
   } else if (!target.containsKey(key)) {
     target[key] = _cloneFor(target, key, sval);
