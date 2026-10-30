@@ -650,18 +650,22 @@ void main() {
       expect(jsonEncode(compiled), jsonEncode(oracle));
     });
 
-    test('the compile is kept for each instance', () {
+    test('each call compiles again (no memo, Chart.js ADR 0054 §4)', () {
       expect(
         identical(
           compileThemeData(const ChartThemeData.light()),
           compileThemeData(const ChartThemeData.light()),
         ),
-        isTrue,
+        isFalse,
+      );
+      expect(
+        compileThemeData(const ChartThemeData.light()),
+        compileThemeData(const ChartThemeData.light()),
       );
       final theme = ChartThemeData(color: _copy(_red));
       expect(
         identical(compileThemeData(theme), compileThemeData(theme)),
-        isTrue,
+        isFalse,
       );
       // An equal instance compiles to an equal Map of its own.
       final equal = theme.copyWith();

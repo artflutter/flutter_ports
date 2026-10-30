@@ -16,7 +16,7 @@ import 'package:test/test.dart';
 
 // The theme compiler has no upstream counterpart (Chart.js ADR 0050). These
 // tests cover theming.md §3.3 (the emitted keys, the never-emitted list as
-// the emission guard, the rgba() form, the deep freeze and the memo), §3.4
+// the emission guard, the rgba() form, the deep freeze and no memo), §3.4
 // and §4 (the token keys, the point-label font, the title, subtitle, legend
 // and tooltip keys and the palette of Chart.js ADR 0050), §8
 // test 1 (no theme equals upstream: ChartThemes.none, no extra scope, the
@@ -2123,16 +2123,18 @@ void main() {
     });
   });
 
-  group('the memo', () {
-    test('the same theme gives the same result', () {
+  group('no memo (Chart.js ADR 0054 §4)', () {
+    test('the same theme compiles again to an equal result', () {
       final theme = <String, Object?>{
         'colors': <String, Object?>{'color': _red},
       };
       final first = compileChartTheme(theme);
-      expect(compileChartTheme(theme), same(first));
+      final second = compileChartTheme(theme);
+      expect(second, isNot(same(first)));
+      expect(_json(second), _json(first));
       expect(
-        compileChartTheme(ChartThemes.light),
-        same(compileChartTheme(ChartThemes.light)),
+        _json(compileChartTheme(ChartThemes.light)),
+        _json(compileChartTheme(ChartThemes.light)),
       );
     });
 

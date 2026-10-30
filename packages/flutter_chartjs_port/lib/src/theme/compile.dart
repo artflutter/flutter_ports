@@ -507,12 +507,6 @@ const Map<String, Object?> _transitions = {
   },
 };
 
-/// The compiled theme of each raw Map theme, by identity, or [_noTheme].
-final Expando<Object> _compiled = Expando<Object>('compileChartTheme');
-
-/// The memo value of a theme that compiles to Dart `null`.
-const Object _noTheme = Object();
-
 /// The compiled theme of [theme] (theming.md §3.3): one frozen Map with the
 /// key shape of `Chart.defaults`, or Dart `null`.
 ///
@@ -539,21 +533,15 @@ const Object _noTheme = Object();
 ///   the set trap of a resolver into a theme scope throws, instead of a leak
 ///   into other charts (`helpers.config.ts:101-106`).
 ///
-/// The result is memoized per instance of [theme]: a second call with the
-/// same Map gives the same result. Thus [theme] must not change after its
-/// first compile, as the immutable `ChartThemeData`.
+/// Each call compiles [theme] and gives a new result: no memo (judge-c
+/// §3.9, Chart.js ADR 0054 §4). The theme switch of `ChartView` keeps the
+/// compiled theme of its current theme.
 AnyObject? compileChartTheme(AnyObject? theme) {
   if (theme == null) return null;
-  final memo = _compiled[theme];
-  if (memo != null) {
-    return identical(memo, _noTheme) ? null : memo as AnyObject;
-  }
-  final result = _compile(theme);
-  _compiled[theme] = result ?? _noTheme;
-  return result;
+  return _compile(theme);
 }
 
-/// The uncached [compileChartTheme] of [theme].
+/// The [compileChartTheme] of [theme].
 AnyObject? _compile(AnyObject theme) {
   assert(
     theme.keys.every(_themeFields.contains),

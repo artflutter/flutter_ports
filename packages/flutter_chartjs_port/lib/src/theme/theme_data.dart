@@ -363,30 +363,18 @@ List<Color>? _lerpPalette(List<Color>? a, List<Color>? b, double t) {
   return [for (var i = 0; i < a.length; i++) Color.lerp(a[i], b[i], t)!];
 }
 
-/// The compiled theme of each [ChartThemeData] instance, or [_noTheme].
-final Expando<Object> _compiled = Expando<Object>('compileThemeData');
-
-/// The memo value of a theme that compiles to Dart `null`.
-const Object _noTheme = Object();
-
 /// The compiled theme map of [data] for `themeConfigKey`
 /// (`compileChartTheme` of `compile.dart` over [themeDataToRaw]), or Dart
 /// `null`. Dart `null` and a theme without tokens, for example
 /// `const ChartThemeData()`, give Dart `null`.
 ///
-/// The result is kept for each instance of [data] in an [Expando]. Thus a
-/// const preset compiles one time, and the palette list of [data] must not
-/// change after its first compile.
+/// Each call compiles [data]: no memo (judge-c §3.9, Chart.js ADR 0054 §4).
+/// The theme switch of `ChartView` keeps the compiled theme of its current
+/// theme and compiles again only for a new theme.
 @internal
 AnyObject? compileThemeData(ChartThemeData? data) {
   if (data == null) return null;
-  final memo = _compiled[data];
-  if (memo != null) {
-    return identical(memo, _noTheme) ? null : memo as AnyObject;
-  }
-  final result = compileChartTheme(themeDataToRaw(data));
-  _compiled[data] = result ?? _noTheme;
-  return result;
+  return compileChartTheme(themeDataToRaw(data));
 }
 
 /// The raw Map theme of [data]: the input of `compileChartTheme`

@@ -15,8 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 // imports flutter_test, so it runs on the VM only. compile_test.dart checks
 // the same leaves on the VM, dart2js and dart2wasm.
 
-/// A new copy of the raw theme [theme], Map by Map. The memo of
-/// [compileChartTheme] keeps the instance, so each copy compiles again.
+/// A new copy of the raw theme [theme], Map by Map.
 Map<String, Object?> _copy(Map<String, Object?> theme) => {
   for (final MapEntry(:key, :value) in theme.entries)
     key: value is Map<String, Object?> ? _copy(value) : value,

@@ -11,6 +11,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' show color;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/kurkle_color/index.esm.dart' as kurkle;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartConfigurationScope;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
@@ -772,23 +774,29 @@ void main() {
     test("ChartThemeSwitch gives 'themeFrame' for a new theme and 'default' "
         'for a removal', () {
       final switcher = ChartThemeSwitch();
-      final root = <String, Object?>{
-        'options': <String, Object?>{},
-        'data': <String, Object?>{'datasets': <Object?>[]},
-      };
+      // The root of a ChartView is a typed root scope (Chart.js ADR 0054
+      // §7) with the Maps of the app.
+      final data = <String, Object?>{'datasets': <Object?>[]};
+      final root = ChartConfigurationScope()
+        ..jsWrite('options', <String, Object?>{})
+        ..jsWrite('data', data);
       switcher.start(root, null);
-      final chart = _FakeChart(root['data']! as AnyObject);
+      final chart = _FakeChart(data);
       expect(
         switcher.apply(chart, root, _themeA, reducedMotion: true),
         'themeFrame',
       );
-      expect(root[themeConfigKey], same(compileThemeData(_themeA)));
+      // No memo (Chart.js ADR 0054 §4): the switch compiles each new theme
+      // once and keeps it.
+      final compiledA = root.dollarThemeCell?.raw;
+      expect(compiledA, compileThemeData(_themeA));
+      expect(compiledA, isNot(same(compileThemeData(_themeA))));
       expect(
         switcher.apply(chart, root, _themeB, reducedMotion: false),
         'theme',
       );
       expect(switcher.apply(chart, root, null, reducedMotion: true), 'default');
-      expect(root.containsKey(themeConfigKey), isFalse);
+      expect(root.dollarThemeCell, isNull);
       expect(
         switcher.apply(
           chart,
