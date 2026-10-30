@@ -1,3 +1,19 @@
-jsGet 35
-stringIndex 28
+# Lane L2 (Chart.js ADR 0054). The reads by name that stay, with reasons:
+# - jsGet 1: `scaleOpts.adapters.date` (scale.time.js:269): `adapters` is a
+#   raw value (helpers.config.ts:215), and `date` is not a key of the schema.
+# - jsGet 1: `opts.normalized` of the chart options (scale.time.js:287): it
+#   moves to the shared readOption of helpers.config after the interface
+#   commit of the base.
+# - stringIndex 1: `scaleOpts.time = {}` (scale.time.js:267), the set trap of
+#   the view: a write into the options, as upstream.
+# - stringIndex 1: `adapters._date` (scale.time.js:269): `adapters` is the
+#   mutable object of core.adapters.ts:131 that user code can change.
+# - stringIndex 5: `this._cache.data` and `this._cache.labels`
+#   (scale.time.js:628-668): `_cache` is the plain object of
+#   core.scale.js:247 that core.scale resets and that controller.bar.js:8
+#   writes by name (`$bar`); `types.Scale.cache` is a Map.
+# - jsCall 1: `parser(value)` (scale.time.js:59), the call of the function
+#   of the user with JS arity.
+jsGet 2
+stringIndex 7
 jsCall 1

@@ -24,6 +24,7 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -235,6 +236,11 @@ class CategoryScale extends Scale {
     construct: (newTarget, args) => CategoryScale(scaleCfgArg(args)),
   );
 
+  /// The options of the scale, through the facade of the category scale
+  /// options (index.d.ts:3344).
+  @override
+  CategoryScaleOptions get options => CategoryScaleOptions(super.options);
+
   /// scale.category.js:51 `_startValue`, the value at the start of the
   /// range. NaN stands for JS `undefined`. [buildTicks] sets it.
   double _startValue = double.nan;
@@ -303,7 +309,7 @@ class CategoryScale extends Scale {
     final (:minDefined, :maxDefined, min: _, max: _) = getUserBounds();
     var (:min, :max) = getMinMax(true);
 
-    if (options['bounds'] == 'ticks') {
+    if (options.bounds == 'ticks') {
       if (!minDefined) {
         min = 0;
       }
@@ -323,7 +329,7 @@ class CategoryScale extends Scale {
   List<Tick> buildTicks() {
     final min = this.min;
     final max = this.max;
-    final offset = options['offset'];
+    final offset = options.offset;
     final ticks = <Tick>[];
     var labels = getLabels();
 

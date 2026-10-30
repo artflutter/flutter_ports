@@ -1,3 +1,16 @@
-jsGet 61
-stringIndex 98
+# Lane L2 (Chart.js ADR 0054). The reads by name that stay, with reasons:
+# - jsGet 1, jsObjectKeys 1: _positionAxis, `Object.keys(position)[0]` and
+#   `position[positionAxisID]` of an object position (core.scale.js:143-144):
+#   the key is the id of a scale that the user names, not a key of the schema.
+# - stringIndex 4: the constructor reads the object literal `cfg` of
+#   buildOrUpdateScales (core.controller.js:357-362) or of a user construct
+#   (core.scale.js:175-183).
+# - stringIndex 3: getLabels reads `data.xLabels`, `data.yLabels` and
+#   `data.labels` of the data object of the user (core.scale.js:359-362), a
+#   raw object of the user (Chart.js ADR 0054 §5).
+# - stringIndex 2: `chart.options.font` (core.scale.js:597, :652), an option
+#   of the chart view: it moves to the shared readOption of helpers.config
+#   after the interface commit of the base.
+jsGet 1
+stringIndex 9
 jsObjectKeys 1

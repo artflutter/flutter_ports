@@ -12,9 +12,10 @@
 /// 150, 200, ...: each power of ten after the first also has a tick at 1.5
 /// times that power. A tick at a power of ten is a major tick.
 ///
-/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
-///   scale reads an option with `options[key]` or [jsGet], and tests it
-///   with [jsTruthy].
+/// - Options are the typed resolver views of `helpers.config` (Chart.js ADR
+///   0054 §4), through the facade [LogarithmicScaleOptions]. The scale reads
+///   an option with a getter of the facade (`options.ticks.format`), and tests
+///   it with [jsTruthy].
 /// - Numbers are `double` (Chart.js ADR 0045). A property that starts JS
 ///   `undefined` and holds a number starts as NaN. `log10` is the fdlibm
 ///   port of helpers.math, which gives the bits of V8. `Math.pow` is
@@ -48,6 +49,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
+import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show finiteOrDefault, isFinite;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
@@ -220,6 +222,11 @@ class LogarithmicScale extends Scale {
     construct: (newTarget, args) => LogarithmicScale(scaleCfgArg(args)),
   );
 
+  /// The options of the scale, through the facade of the logarithmic scale
+  /// options (index.d.ts:3405).
+  @override
+  LogarithmicScaleOptions get options => LogarithmicScaleOptions(super.options);
+
   /// scale.logarithmic.js:95 `start`, the value at the start of the axis.
   /// NaN stands for JS `undefined`, the start value. [buildTicks] sets it.
   double start = double.nan;
@@ -271,7 +278,7 @@ class LogarithmicScale extends Scale {
     this.min = isFinite(min) ? jsMax(0, min) : double.nan;
     this.max = isFinite(max) ? jsMax(0, max) : double.nan;
 
-    if (jsTruthy(options['beginAtZero'])) {
+    if (jsTruthy(options.beginAtZero)) {
       _zero = true;
     }
 
@@ -333,11 +340,11 @@ class LogarithmicScale extends Scale {
 
     // At this point, we need to update our max and min given the tick values,
     // since we probably have expanded the range of the scale
-    if (opts['bounds'] == 'ticks') {
+    if (opts.bounds == 'ticks') {
       setMinAndMaxByKey(ticks, this, 'value');
     }
 
-    if (jsTruthy(opts['reverse'])) {
+    if (jsTruthy(opts.reverse)) {
       // `Array.prototype.reverse` reverses the list in place.
       ticks.setAll(0, ticks.reversed.toList());
 
@@ -372,7 +379,7 @@ class LogarithmicScale extends Scale {
     if (identical(value, undefined)) {
       return '0';
     }
-    final format = jsGet(options['ticks'], 'format');
+    final format = options.ticks.format;
     return formatNumber(
       jsToNumber(value),
       jsGet(chart.options, 'locale'),

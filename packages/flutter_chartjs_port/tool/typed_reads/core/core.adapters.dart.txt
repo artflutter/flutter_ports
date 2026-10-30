@@ -1,2 +1,10 @@
+# Lane L2 (Chart.js ADR 0054). The reads by name that stay, with reasons:
+# - stringIndex 8: each method of DateAdapterBase reads its member of
+#   `DateAdapterBase.prototype` by name (core.adapters.ts:100-128, row
+#   `adapt-date-adapter-prototype`): the prototype is the JS object that
+#   `override` (an adapter package, user code) writes by name
+#   (core.adapters.ts:88).
+# - jsCall 1: _callMember, the call of a member of another function type
+#   with JS arity and the adapter as `this` (Chart.js ADR 0024).
 stringIndex 8
 jsCall 1

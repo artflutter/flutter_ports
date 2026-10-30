@@ -7,9 +7,10 @@
 /// [LinearScaleBase]. It adds the data limits, the tick limit of the axis
 /// size and the linear pixel mapping.
 ///
-/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
-///   scale reads an option with `options[key]` or [jsGet], and applies
-///   [jsToNumber] before arithmetic.
+/// - Options are the typed resolver views of `helpers.config` (Chart.js ADR
+///   0054 §4), through the facade [LinearScaleOptions]. The scale reads an
+///   option with a getter of the facade (`options.ticks.minRotation`), and
+///   applies [jsToNumber] before arithmetic.
 /// - Numbers are `double` (Chart.js ADR 0045).
 /// - The value methods take any JS value (Chart.js ADR 0025).
 ///   [LinearScale.getPixelForValue] starts with the port-only fast path for
@@ -25,6 +26,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
+import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFinite;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -33,7 +35,6 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart'
     show jsCos, jsMin, jsSin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ScaleOptionsScope, TickOptionsScope;
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
@@ -75,6 +76,11 @@ class LinearScale extends LinearScaleBase {
     construct: (newTarget, args) => LinearScale(scaleCfgArg(args)),
   );
 
+  /// The options of the scale, through the facade of the linear scale
+  /// options (index.d.ts:3356).
+  @override
+  LinearScaleOptions get options => LinearScaleOptions(super.options);
+
   /// scale.linear.js:20 `determineDataLimits()`.
   ///
   /// A min that is not finite gives 0. A max that is not finite gives 1.
@@ -102,9 +108,7 @@ class LinearScale extends LinearScaleBase {
   double computeTickLimit() {
     final horizontal = isHorizontal();
     final length = horizontal ? width : height;
-    final minRotation = toRadians(
-      jsToNumber(jsGet(options['ticks'], 'minRotation')),
-    );
+    final minRotation = toRadians(jsToNumber(options.ticks.minRotation));
     final sinOrCos = horizontal ? jsSin(minRotation) : jsCos(minRotation);
     final ratio = jsTruthy(sinOrCos) ? sinOrCos : 0.001;
     final tickFont = resolveTickFontOptions(0);

@@ -19,17 +19,28 @@
 ///
 /// `core.scale.dart` imports `helpers.extras`. Thus this library is not a
 /// pure layer.
+///
+/// The options of a scale are a resolver view ([OptionView]). The library
+/// reads them through the facades of `scale_options.dart` (Chart.js ADR
+/// 0054 §4).
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Tick;
+import 'package:flutter_chartjs_port/src/core/scale_options.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show factorize;
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+
+/// `scale.options`: the resolver view of the options of [scale], through
+/// its facade.
+CoreScaleOptions _options(types.Scale scale) =>
+    CoreScaleOptions(scale.options as OptionView);
 
 /// core.scale.autoskip.js:17 `autoSkip`.
 ///
@@ -41,14 +52,14 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 ///
 /// The result is a new list of the same tick objects.
 List<Tick> autoSkip(types.Scale scale, List<Tick> ticks) {
-  final tickOpts = scale.options['ticks'];
+  final tickOpts = _options(scale).ticks;
   final determinedMaxTicks = _determineMaxTicks(scale);
-  final maxTicksLimit = jsGet(tickOpts, 'maxTicksLimit');
+  final maxTicksLimit = tickOpts.maxTicksLimit;
   final ticksLimit = jsMin(
     jsTruthy(maxTicksLimit) ? jsToNumber(maxTicksLimit) : determinedMaxTicks,
     determinedMaxTicks,
   );
-  final majorIndices = jsTruthy(jsGet(jsGet(tickOpts, 'major'), 'enabled'))
+  final majorIndices = jsTruthy(tickOpts.major.enabled)
       ? _getMajorIndices(ticks)
       : <double>[];
   final numMajorIndices = majorIndices.length;
@@ -96,7 +107,7 @@ List<Tick> autoSkip(types.Scale scale, List<Tick> ticks) {
 
 /// core.scale.autoskip.js:49 `determineMaxTicks`.
 double _determineMaxTicks(types.Scale scale) {
-  final offset = scale.options['offset'];
+  final offset = _options(scale).offset;
   final tickLength = scale.tickSize();
   final maxScale = scale.length / tickLength + (jsTruthy(offset) ? 0 : 1);
   final maxChart = scale.maxLength / tickLength;

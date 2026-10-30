@@ -8,9 +8,12 @@
 /// it, and it has no `id`. Thus the registry never registers it as a
 /// component.
 ///
-/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
-///   scale reads an option with `options[key]` or [jsGet], tests it with
-///   [jsTruthy], and applies [jsToNumber] before arithmetic.
+/// - Options are the typed resolver views of `helpers.config` (Chart.js ADR
+///   0054 §4). The scale reads an option with a getter of the facades of
+///   `scale_options.dart` (`options.ticks.stepSize`), tests it with
+///   [jsTruthy], and applies [jsToNumber] before arithmetic. The radial
+///   scale extends this class: [Scale.options] is a `CoreScaleOptions`,
+///   whose facade has `bounds` and the linear tick options.
 /// - Numbers are `double` (Chart.js ADR 0045). A property that starts JS
 ///   `undefined` and holds a number starts as NaN.
 /// - The `_` members that other modules read drop the underscore and carry
@@ -377,7 +380,7 @@ class LinearScaleBase extends Scale {
 
   /// scale.linearbase.js:181 `handleTickRangeOptions()`.
   void handleTickRangeOptions() {
-    final beginAtZero = options['beginAtZero'];
+    final beginAtZero = options.beginAtZero;
     final (:minDefined, :maxDefined, min: _, max: _) = getUserBounds();
     var min = this.min;
     var max = this.max;
@@ -414,10 +417,10 @@ class LinearScaleBase extends Scale {
   /// `maxTicksLimit` and `stepSize` are the raw option values. The
   /// arithmetic applies [jsToNumber].
   double getTickLimit() {
-    final tickOpts = options['ticks'];
+    final tickOpts = options.ticks;
     // eslint-disable-next-line prefer-const
-    var maxTicksLimit = jsGet(tickOpts, 'maxTicksLimit');
-    final stepSize = jsGet(tickOpts, 'stepSize');
+    var maxTicksLimit = tickOpts.maxTicksLimit;
+    final stepSize = tickOpts.stepSize;
     double maxTicks;
 
     if (jsTruthy(stepSize)) {
@@ -457,7 +460,7 @@ class LinearScaleBase extends Scale {
   @override
   List<Tick> buildTicks() {
     final opts = options;
-    final tickOpts = opts['ticks'];
+    final tickOpts = opts.ticks;
 
     // Figure out what the max number of ticks we can support it is based on
     // the size of the axis area. For now, we say that the minimum tick
@@ -469,27 +472,27 @@ class LinearScaleBase extends Scale {
 
     final numericGeneratorOptions = (
       maxTicks: maxTicks,
-      bounds: opts['bounds'],
-      min: opts['min'],
-      max: opts['max'],
-      precision: jsGet(tickOpts, 'precision'),
-      step: jsGet(tickOpts, 'stepSize'),
-      count: jsGet(tickOpts, 'count'),
+      bounds: opts.bounds,
+      min: opts.min,
+      max: opts.max,
+      precision: tickOpts.precision,
+      step: tickOpts.stepSize,
+      count: tickOpts.count,
       maxDigits: maxDigits(),
       horizontal: isHorizontal(),
-      minRotation: jsOrZero(jsGet(tickOpts, 'minRotation')),
-      includeBounds: jsGet(tickOpts, 'includeBounds') != false,
+      minRotation: jsOrZero(tickOpts.minRotation),
+      includeBounds: tickOpts.includeBounds != false,
     );
     final dataRange = range ?? (min: min, max: max);
     final ticks = _generateTicks(numericGeneratorOptions, dataRange);
 
     // At this point, we need to update our max and min given the tick values,
     // since we probably have expanded the range of the scale
-    if (opts['bounds'] == 'ticks') {
+    if (opts.bounds == 'ticks') {
       setMinAndMaxByKey(ticks, this, 'value');
     }
 
-    if (jsTruthy(opts['reverse'])) {
+    if (jsTruthy(opts.reverse)) {
       // `Array.prototype.reverse` reverses the list in place.
       ticks.setAll(0, ticks.reversed.toList());
 
@@ -519,7 +522,7 @@ class LinearScaleBase extends Scale {
 
     super.configure();
 
-    if (jsTruthy(options['offset']) && ticks!.isNotEmpty) {
+    if (jsTruthy(options.offset) && ticks!.isNotEmpty) {
       final offset = (end - start) / jsMax(ticks.length - 1.0, 1) / 2;
       start -= offset;
       end += offset;
@@ -544,7 +547,7 @@ class LinearScaleBase extends Scale {
   /// `new Intl.NumberFormat(locale, options)` reads no option from it.
   @override
   Object? getLabelForValue(Object? value) {
-    final format = jsGet(options['ticks'], 'format');
+    final format = options.ticks.format;
     return formatNumber(
       jsToNumber(value),
       jsGet(chart.options, 'locale'),

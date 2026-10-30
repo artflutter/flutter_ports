@@ -1,2 +1,5 @@
-jsGet 15
-stringIndex 45
+# Lane L2 (Chart.js ADR 0054). The reads by name that stay, with reasons:
+# - stringIndex 1: `Ticks.formatters.numeric` of the static defaults
+#   (scale.radialLinear.js:400): `formatters` is the mutable object of
+#   core.ticks.js:9 that user code can change.
+stringIndex 1

@@ -1,2 +1,5 @@
+# Lane L2 (Chart.js ADR 0054). The reads by name that stay, with reasons:
+# - jsGet 1: _labelAt, the JS read `labels[index]` of the label array with an
+#   index that is not a number (scale.category.js:26): a property key of a
+#   user array.
 jsGet 1
-stringIndex 2

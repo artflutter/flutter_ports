@@ -7,9 +7,15 @@
 /// draws the point labels, the angle lines and the grid lines around the
 /// center: circles, or polygons through the points of the labels.
 ///
-/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
-///   scale reads an option with `options[key]` or [jsGet], tests it with
-///   [jsTruthy], and applies [jsToNumber] before arithmetic.
+/// - Options are the typed resolver views of `helpers.config` (Chart.js ADR
+///   0054 §4), through the facade [RadialLinearScaleOptions]. The scale
+///   reads an option with a getter of the facade
+///   (`options.pointLabels.padding`), tests it with [jsTruthy], and applies
+///   [jsToNumber] before arithmetic. The `setContext` of a facade casts the
+///   option object to a `ContextProxy`: another value has no `setContext`,
+///   and JavaScript then throws a `TypeError` at the call. The callers give
+///   the context of a point label in the range of the labels, or of a tick:
+///   it is not Dart `null`.
 /// - Numbers are `double` (Chart.js ADR 0045). A property that starts JS
 ///   `undefined` and holds a number starts as NaN.
 /// - The value methods take any JS value (Chart.js ADR 0025, section 1).
@@ -32,10 +38,9 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
+import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show addRoundedRectPath, isPointInArea, longestText, renderText;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show ContextProxy;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show callback, isArray, isFinite, isNullOrUndef, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -46,9 +51,11 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart'
     show jsCos, jsMax, jsMin, jsRound, jsSin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         AngleLineOptionsScope,
@@ -193,33 +200,27 @@ final class _RenderTextOpts implements types.RenderTextOpts {
   bool? get underline => null;
 }
 
-/// The `setContext` of an option resolver: `options.setContext(context)`.
-///
-/// The option objects of a scale are `ContextProxy` resolvers. Another value
-/// has no `setContext`. JavaScript then throws a `TypeError` at the call.
-/// Here the cast throws it. The callers give the context of a point label
-/// in the range of the labels, or of a tick: [context] is not Dart `null`.
-ContextProxy _setContext(Object? options, AnyObject? context) =>
-    (options! as ContextProxy).setContext(context!);
-
 /// scale.radialLinear.js:9 `getTickBackdropHeight(opts)`.
 ///
 /// [opts] are the options of the scale. `tickOpts.font && tickOpts.font.size`
 /// gives the font itself when it is falsy. The font size is a raw option
 /// value: a string size joins the padding height (`'12' + 4` gives
 /// `'124'`, [jsAdd]). The three callers divide the result. Thus the
-/// function gives the [jsToNumber] of the sum.
-double _getTickBackdropHeight(Map<String, Object?> opts) {
-  final tickOpts = opts['ticks'];
+/// function gives the [jsToNumber] of the sum. `defaults.font` reads the
+/// cell of the typed root `defaults` with its key.
+double _getTickBackdropHeight(CoreScaleOptions opts) {
+  final tickOpts = opts.ticks;
 
-  if (jsTruthy(jsGet(tickOpts, 'display')) && jsTruthy(opts['display'])) {
-    final padding = toPadding(jsGet(tickOpts, 'backdropPadding'));
-    final font = jsGet(tickOpts, 'font');
+  if (jsTruthy(tickOpts.display) && jsTruthy(opts.display)) {
+    final padding = toPadding(tickOpts.backdropPadding);
+    final font = tickOpts.font;
+    final defaultFont = defaults.lookup(OptionKey.font);
     return jsToNumber(
       jsAdd(
         valueOrDefault<Object?>(
-          jsTruthy(font) ? jsGet(font, 'size') : font,
-          jsGet(defaults['font'], 'size'),
+          jsTruthy(font) ? FontSpecOptions(font).size : font,
+          FontSpecOptions(defaultFont == null ? undefined : defaultFont.raw)
+              .size,
         ),
         padding.height,
       ),
@@ -313,20 +314,20 @@ void _fitWithPointLabels(RadialLinearScale scale) {
   final labelSizes = <_LabelSize>[];
   final padding = <Object?>[];
   final valueCount = scale.pointLabels.length;
-  final pointLabelOpts = scale.options['pointLabels'];
-  final additionalAngle = jsTruthy(jsGet(pointLabelOpts, 'centerPointLabels'))
+  final pointLabelOpts = scale.options.pointLabels;
+  final additionalAngle = jsTruthy(pointLabelOpts.centerPointLabels)
       ? pi / valueCount
       : 0.0;
 
   for (var i = 0; i < valueCount; i++) {
-    final opts = _setContext(pointLabelOpts, scale.getPointLabelContext(i));
-    padding.add(opts['padding']);
+    final opts = pointLabelOpts.setContext(scale.getPointLabelContext(i)!);
+    padding.add(opts.padding);
     final pointPosition = scale.getPointPosition(
       i.toDouble(),
       jsToNumber(jsAdd(scale.drawingArea, padding[i])),
       additionalAngle,
     );
-    final plFont = toFont(opts['font']);
+    final plFont = toFont(opts.font);
     final textSize = _measureLabelSize(
       scale.ctx!,
       plFont,
@@ -464,9 +465,9 @@ List<PointLabelItem> _buildPointLabelItems(
   final items = <PointLabelItem>[];
   final valueCount = scale.pointLabels.length;
   final opts = scale.options;
-  final pointLabels = opts['pointLabels'];
-  final centerPointLabels = jsGet(pointLabels, 'centerPointLabels');
-  final display = jsGet(pointLabels, 'display');
+  final pointLabels = opts.pointLabels;
+  final centerPointLabels = pointLabels.centerPointLabels;
+  final display = pointLabels.display;
   final extra = _getTickBackdropHeight(opts) / 2;
   final additionalAngle = jsTruthy(centerPointLabels) ? pi / valueCount : 0.0;
   PointLabelItem? area;
@@ -536,15 +537,15 @@ double _yForAngle(double y, double h, double angle) {
 /// A NaN corner differs from 0, in Dart as in JavaScript.
 void _drawPointLabelBox(
   CanvasRenderingContext2D ctx,
-  Map<String, Object?> opts,
+  PointLabelOptions opts,
   PointLabelItem item,
 ) {
   final PointLabelItem(:left, :top, :right, :bottom) = item;
-  final backdropColor = opts['backdropColor'];
+  final backdropColor = opts.backdropColor;
 
   if (!isNullOrUndef(backdropColor)) {
-    final borderRadius = toTRBLCorners(opts['borderRadius']);
-    final padding = toPadding(opts['backdropPadding']);
+    final borderRadius = toTRBLCorners(opts.borderRadius);
+    final padding = toPadding(opts.backdropPadding);
     ctx.fillStyle = canvasStyle(backdropColor);
 
     final backdropLeft = left - padding.left;
@@ -577,7 +578,7 @@ void _drawPointLabelBox(
 /// scale.radialLinear.js:261 `drawPointLabels(scale, labelCount)`.
 void _drawPointLabels(RadialLinearScale scale, int labelCount) {
   final ctx = scale.ctx;
-  final pointLabels = scale.options['pointLabels'];
+  final pointLabels = scale.options.pointLabels;
 
   for (var i = labelCount - 1; i >= 0; i--) {
     final item = scale.pointLabelItems[i];
@@ -585,9 +586,9 @@ void _drawPointLabels(RadialLinearScale scale, int labelCount) {
       // overlapping
       continue;
     }
-    final optsAtIndex = _setContext(pointLabels, scale.getPointLabelContext(i));
+    final optsAtIndex = pointLabels.setContext(scale.getPointLabelContext(i)!);
     _drawPointLabelBox(ctx!, optsAtIndex, item);
-    final plFont = toFont(optsAtIndex['font']);
+    final plFont = toFont(optsAtIndex.font);
     final PointLabelItem(:x, :y, :textAlign) = item;
 
     renderText(
@@ -597,7 +598,7 @@ void _drawPointLabels(RadialLinearScale scale, int labelCount) {
       y + (plFont.lineHeight / 2),
       plFont,
       _RenderTextOpts(
-        color: optsAtIndex['color'],
+        color: optsAtIndex.color,
         textAlign: textAlign,
         textBaseline: 'middle',
       ),
@@ -643,16 +644,16 @@ void _pathRadiusLine(
 /// `circular`, `color` and `lineWidth` are option values: truthiness tests.
 void _drawRadiusLine(
   RadialLinearScale scale,
-  Map<String, Object?> gridLineOpts,
+  GridLineOptions gridLineOpts,
   double radius,
   int labelCount,
-  Map<String, Object?> borderOpts,
+  BorderOptions borderOpts,
 ) {
   final ctx = scale.ctx;
-  final circular = gridLineOpts['circular'];
+  final circular = gridLineOpts.circular;
 
-  final color = gridLineOpts['color'];
-  final lineWidth = gridLineOpts['lineWidth'];
+  final color = gridLineOpts.color;
+  final lineWidth = gridLineOpts.lineWidth;
 
   if ((!jsTruthy(circular) && labelCount == 0) ||
       !jsTruthy(color) ||
@@ -661,13 +662,13 @@ void _drawRadiusLine(
     return;
   }
 
-  final dash = borderOpts['dash'];
+  final dash = borderOpts.dash;
   ctx!
     ..save()
     ..strokeStyle = canvasStyle(color)
     ..lineWidth = canvasNumber(lineWidth)
     ..setLineDash(canvasLineDash(jsTruthy(dash) ? dash : <Object?>[]))
-    ..lineDashOffset = canvasNumber(borderOpts['dashOffset'])
+    ..lineDashOffset = canvasNumber(borderOpts.dashOffset)
     ..beginPath();
   _pathRadiusLine(scale, radius, circular, labelCount);
   ctx
@@ -828,6 +829,12 @@ class RadialLinearScale extends LinearScaleBase
     construct: (newTarget, args) => RadialLinearScale(scaleCfgArg(args)),
   );
 
+  /// The options of the scale, through the facade of the radial linear
+  /// scale options (index.d.ts:3563).
+  @override
+  RadialLinearScaleOptions get options =>
+      RadialLinearScaleOptions(super.options);
+
   /// scale.radialLinear.js:416 `xCenter`, the x of the center.
   ///
   /// Dart `null` stands for JS `undefined`, the start value. A controller
@@ -915,7 +922,7 @@ class RadialLinearScale extends LinearScaleBase
     final mapped = <Object?>[
       for (var index = 0; index < length; index++)
         _pointLabelOf(
-          callback(jsGet(options['pointLabels'], 'callback'), [
+          callback(options.pointLabels.callback, [
             labels[index],
             index.toDouble(),
           ], this),
@@ -936,8 +943,7 @@ class RadialLinearScale extends LinearScaleBase
   void fit() {
     final opts = options;
 
-    if (jsTruthy(opts['display']) &&
-        jsTruthy(jsGet(opts['pointLabels'], 'display'))) {
+    if (jsTruthy(opts.display) && jsTruthy(opts.pointLabels.display)) {
       _fitWithPointLabels(this);
     } else {
       setCenterPoint(0, 0, 0, 0);
@@ -975,7 +981,7 @@ class RadialLinearScale extends LinearScaleBase
   double getIndexAngle(double index) {
     final angleMultiplier =
         tau / (pointLabels.isEmpty ? 1 : pointLabels.length);
-    final startAngle = jsOrZero(options['startAngle']);
+    final startAngle = jsOrZero(options.startAngle);
 
     return normalizeAngle(index * angleMultiplier + toRadians(startAngle));
   }
@@ -992,7 +998,7 @@ class RadialLinearScale extends LinearScaleBase
 
     // Take into account half font size + the yPadding of the top value
     final scalingFactor = drawingArea / (max - min);
-    if (jsTruthy(options['reverse'])) {
+    if (jsTruthy(options.reverse)) {
       return (max - jsToNumber(value)) * scalingFactor;
     }
     return (jsToNumber(value) - min) * scalingFactor;
@@ -1008,7 +1014,7 @@ class RadialLinearScale extends LinearScaleBase
     }
 
     final scaledDistance = distance! / (drawingArea / (max - min));
-    return jsTruthy(options['reverse'])
+    return jsTruthy(options.reverse)
         ? max - scaledDistance
         : min + scaledDistance;
   }
@@ -1082,8 +1088,8 @@ class RadialLinearScale extends LinearScaleBase
   @override
   @protected
   void drawBackground() {
-    final backgroundColor = options['backgroundColor'];
-    final circular = jsGet(options['grid'], 'circular');
+    final backgroundColor = options.backgroundColor;
+    final circular = options.grid.circular;
     if (jsTruthy(backgroundColor)) {
       final ctx = this.ctx!
         ..save()
@@ -1113,24 +1119,24 @@ class RadialLinearScale extends LinearScaleBase
   void drawGrid([types.ChartArea? chartArea]) {
     final ctx = this.ctx;
     final opts = options;
-    final angleLines = opts['angleLines'];
-    final grid = opts['grid'];
-    final border = opts['border'];
+    final angleLines = opts.angleLines;
+    final grid = opts.grid;
+    final border = opts.border;
     final labelCount = pointLabels.length;
 
-    if (jsTruthy(jsGet(opts['pointLabels'], 'display'))) {
+    if (jsTruthy(opts.pointLabels.display)) {
       _drawPointLabels(this, labelCount);
     }
 
-    if (jsTruthy(jsGet(grid, 'display'))) {
+    if (jsTruthy(grid.display)) {
       final ticks = this.ticks!;
       for (var index = 0; index < ticks.length; index++) {
         final tick = ticks[index];
         if (index != 0 || (index == 0 && min < 0)) {
           final offset = getDistanceFromCenterForValue(tick.value);
           final context = getContext(index);
-          final optsAtIndex = _setContext(grid, context);
-          final optsAtIndexBorder = _setContext(border, context);
+          final optsAtIndex = grid.setContext(context);
+          final optsAtIndexBorder = border.setContext(context);
 
           _drawRadiusLine(
             this,
@@ -1143,13 +1149,13 @@ class RadialLinearScale extends LinearScaleBase
       }
     }
 
-    if (jsTruthy(jsGet(angleLines, 'display'))) {
+    if (jsTruthy(angleLines.display)) {
       ctx!.save();
 
       for (var i = labelCount - 1; i >= 0; i--) {
-        final optsAtIndex = _setContext(angleLines, getPointLabelContext(i));
-        final color = optsAtIndex['color'];
-        final lineWidth = optsAtIndex['lineWidth'];
+        final optsAtIndex = angleLines.setContext(getPointLabelContext(i)!);
+        final color = optsAtIndex.color;
+        final lineWidth = optsAtIndex.lineWidth;
 
         if (!jsTruthy(lineWidth) || !jsTruthy(color)) {
           continue;
@@ -1158,11 +1164,11 @@ class RadialLinearScale extends LinearScaleBase
         ctx
           ..lineWidth = canvasNumber(lineWidth)
           ..strokeStyle = canvasStyle(color)
-          ..setLineDash(canvasLineDash(optsAtIndex['borderDash']))
-          ..lineDashOffset = canvasNumber(optsAtIndex['borderDashOffset']);
+          ..setLineDash(canvasLineDash(optsAtIndex.borderDash))
+          ..lineDashOffset = canvasNumber(optsAtIndex.borderDashOffset);
 
         final offset = getDistanceFromCenterForValue(
-          jsTruthy(opts['reverse']) ? min : max,
+          jsTruthy(opts.reverse) ? min : max,
         );
         final position = getPointPosition(i.toDouble(), offset);
         ctx
@@ -1195,9 +1201,9 @@ class RadialLinearScale extends LinearScaleBase
   void drawLabels([types.ChartArea? chartArea]) {
     final ctx = this.ctx;
     final opts = options;
-    final tickOpts = opts['ticks'];
+    final tickOpts = opts.ticks;
 
-    if (!jsTruthy(jsGet(tickOpts, 'display'))) {
+    if (!jsTruthy(tickOpts.display)) {
       return;
     }
 
@@ -1213,20 +1219,20 @@ class RadialLinearScale extends LinearScaleBase
     final ticks = this.ticks!;
     for (var index = 0; index < ticks.length; index++) {
       final tick = ticks[index];
-      if ((index == 0 && min >= 0) && !jsTruthy(opts['reverse'])) {
+      if ((index == 0 && min >= 0) && !jsTruthy(opts.reverse)) {
         continue;
       }
 
-      final optsAtIndex = _setContext(tickOpts, getContext(index));
-      final tickFont = toFont(optsAtIndex['font']);
+      final optsAtIndex = tickOpts.setContext(getContext(index));
+      final tickFont = toFont(optsAtIndex.font);
       final offset = getDistanceFromCenterForValue(this.ticks![index].value);
 
-      if (jsTruthy(optsAtIndex['showLabelBackdrop'])) {
+      if (jsTruthy(optsAtIndex.showLabelBackdrop)) {
         ctx.font = tickFont.string;
         final width = ctx.measureText(jsToString(tick.label)).width;
-        ctx.fillStyle = canvasStyle(optsAtIndex['backdropColor']);
+        ctx.fillStyle = canvasStyle(optsAtIndex.backdropColor);
 
-        final padding = toPadding(optsAtIndex['backdropPadding']);
+        final padding = toPadding(optsAtIndex.backdropPadding);
         ctx.fillRect(
           -width / 2 - padding.left,
           -offset - jsToNumber(tickFont.size) / 2 - padding.top,
@@ -1242,9 +1248,9 @@ class RadialLinearScale extends LinearScaleBase
         -offset,
         tickFont,
         _RenderTextOpts(
-          color: optsAtIndex['color'],
-          strokeColor: optsAtIndex['textStrokeColor'],
-          strokeWidth: canvasNumber(optsAtIndex['textStrokeWidth']),
+          color: optsAtIndex.color,
+          strokeColor: optsAtIndex.textStrokeColor,
+          strokeWidth: canvasNumber(optsAtIndex.textStrokeWidth),
         ),
       );
     }

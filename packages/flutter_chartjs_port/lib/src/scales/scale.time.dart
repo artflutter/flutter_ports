@@ -8,10 +8,13 @@
 /// `date_adapter.dart` (Chart.js ADR 0024). A time is a number of
 /// milliseconds since the epoch.
 ///
-/// - Options are the resolvers of `helpers.config` (Chart.js ADR 0043). The
-///   scale reads an option with `options[key]` or [jsGet], tests it with
-///   [jsTruthy], and applies [jsToNumber] before arithmetic. The adapter
-///   gets the raw option values, as upstream gives them.
+/// - Options are the typed resolver views of `helpers.config` (Chart.js ADR
+///   0054 §4), through the facade [TimeScaleOptions]. The scale reads an
+///   option with a getter of the facade (`options.time.unit`), tests it
+///   with [jsTruthy], and applies [jsToNumber] before arithmetic. The
+///   adapter gets the raw option values, as upstream gives them. A display
+///   format of a unit that the scale computes reads with
+///   [DisplayFormats.formatOf].
 /// - Numbers are `double` (Chart.js ADR 0045). `+value` of an adapter
 ///   result is [jsToNumber]. `Date.now()` is [jsDateNow].
 /// - The value methods take any JS value (Chart.js ADR 0025).
@@ -38,8 +41,11 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show arrayUnique, filterBetween, lookup;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show callback, isFinite, isNullOrUndef, mergeIf, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -443,6 +449,11 @@ class TimeScale extends Scale {
     construct: (newTarget, args) => TimeScale(scaleCfgArg(args)),
   );
 
+  /// The options of the scale, through the facade of the time scale options
+  /// (index.d.ts:3484).
+  @override
+  TimeScaleOptions get options => TimeScaleOptions(super.options);
+
   /// scale.time.js:258 `_unit`. The spec reads it (scale.time.tests.js:115).
   ///
   /// The unit of the labels: a unit name, or the raw value of a truthy
@@ -489,25 +500,30 @@ class TimeScale extends Scale {
   @override
   void init(AnyObject options, [AnyObject? opts]) {
     final chartOptions = opts ?? <String, Object?>{};
-    final currentTime = options['time'];
-    final time = jsTruthy(currentTime)
-        ? currentTime
-        : (options['time'] = <String, Object?>{});
-    // scale.time.js:271 `adapter.init(opts)` is the cascade.
+    final scaleOpts = TimeScaleOptions(options as OptionView);
+    final currentTime = scaleOpts.time.raw;
+    final time = TimeScaleTimeOptions(
+      jsTruthy(currentTime)
+          ? currentTime
+          // The set trap of the view: a write into the options, as upstream.
+          : (options['time'] = <String, Object?>{}),
+    );
+    // scale.time.js:271 `adapter.init(opts)` is the cascade. `adapters` is a
+    // raw value (helpers.config.ts:215): its `date` reads by name.
     final adapter = this.adapter = (jsConstruct(adapters['_date'], [
-      jsGet(options['adapters'], 'date'),
+      jsGet(scaleOpts.adapters, 'date'),
     ]) as DateAdapter)..init(chartOptions);
 
     // Backward compatibility: before introducing adapter, `displayFormats`
     // was supposed to contain *all* unit/string pairs but this can't be
     // resolved when loading the scale (adapters are loaded afterward), so
     // let's populate missing formats on update
-    mergeIf(jsGet(time, 'displayFormats'), adapter.formats());
+    mergeIf(time.displayFormats.raw, adapter.formats());
 
     _parseOpts = (
-      parser: jsGet(time, 'parser'),
-      round: jsGet(time, 'round'),
-      isoWeekday: jsGet(time, 'isoWeekday'),
+      parser: time.parser,
+      round: time.round,
+      isoWeekday: time.isoWeekday,
     );
 
     super.init(options);
@@ -543,7 +559,7 @@ class TimeScale extends Scale {
   void determineDataLimits() {
     final options = this.options;
     final adapter = this.adapter;
-    final timeUnit = jsGet(options['time'], 'unit');
+    final timeUnit = options.time.unit;
     final unit = jsTruthy(timeUnit) ? timeUnit : 'day';
     // eslint-disable-next-line prefer-const
     var (:min, :max, :minDefined, :maxDefined) = getUserBounds();
@@ -569,8 +585,7 @@ class TimeScale extends Scale {
 
       // If `bounds` is `'ticks'` and `ticks.source` is `'labels'`,
       // data bounds are ignored (and don't need to be determined)
-      if (options['bounds'] != 'ticks' ||
-          jsGet(options['ticks'], 'source') != 'labels') {
+      if (options.bounds != 'ticks' || options.ticks.source != 'labels') {
         applyBounds(getMinMax(false));
       }
     }
@@ -612,13 +627,13 @@ class TimeScale extends Scale {
   @override
   List<Tick> buildTicks() {
     final options = this.options;
-    final timeOpts = options['time'];
-    final tickOpts = options['ticks'];
-    final timestamps = jsGet(tickOpts, 'source') == 'labels'
+    final timeOpts = options.time;
+    final tickOpts = options.ticks;
+    final timestamps = tickOpts.source == 'labels'
         ? getLabelTimestamps()
         : generate();
 
-    if (options['bounds'] == 'ticks' && timestamps.isNotEmpty) {
+    if (options.bounds == 'ticks' && timestamps.isNotEmpty) {
       // DIVERGES(chartjs): adapt-time-null-timestamp, a null bound is 0.
       this.min = jsToNumber(jsTruthy(userMin) ? userMin : timestamps[0]);
       this.max = jsToNumber(
@@ -635,12 +650,12 @@ class TimeScale extends Scale {
     // determineUnitForFormatting relies on the number of ticks so we don't
     // use it when autoSkip is enabled because we don't yet know what the
     // final number of ticks will be
-    final timeUnit = jsGet(timeOpts, 'unit');
+    final timeUnit = timeOpts.unit;
     unit = jsTruthy(timeUnit)
         ? timeUnit
-        : (jsTruthy(jsGet(tickOpts, 'autoSkip'))
+        : (jsTruthy(tickOpts.autoSkip)
               ? _determineUnitForAutoTicks(
-                  jsGet(timeOpts, 'minUnit'),
+                  timeOpts.minUnit,
                   this.min,
                   this.max,
                   _getLabelCapacity(min),
@@ -648,17 +663,16 @@ class TimeScale extends Scale {
               : _determineUnitForFormatting(
                   this,
                   ticks.length,
-                  jsGet(timeOpts, 'minUnit'),
+                  timeOpts.minUnit,
                   this.min,
                   this.max,
                 ));
-    _majorUnit =
-        !jsTruthy(jsGet(jsGet(tickOpts, 'major'), 'enabled')) || unit == 'year'
+    _majorUnit = !jsTruthy(tickOpts.major.enabled) || unit == 'year'
         ? null
         : _determineMajorUnit(unit);
     initOffsets(timestamps);
 
-    if (jsTruthy(options['reverse'])) {
+    if (jsTruthy(options.reverse)) {
       _reverse(ticks);
     }
 
@@ -673,7 +687,7 @@ class TimeScale extends Scale {
   void afterAutoSkip() {
     // Offsets for bar charts need to be handled with the auto skipped
     // ticks. Once ticks have been skipped, we re-compute the offsets.
-    if (jsTruthy(options['offsetAfterAutoskip'])) {
+    if (jsTruthy(options.offsetAfterAutoskip)) {
       initOffsets([for (final tick in ticks!) jsToNumber(_tickValue(tick))]);
     }
   }
@@ -695,7 +709,7 @@ class TimeScale extends Scale {
     double first;
     double last;
 
-    if (jsTruthy(options['offset']) && timestamps.isNotEmpty) {
+    if (jsTruthy(options.offset) && timestamps.isNotEmpty) {
       first = getDecimalForValue(timestamps[0]);
       if (timestamps.length == 1) {
         start = 1 - first;
@@ -743,22 +757,19 @@ class TimeScale extends Scale {
     final min = this.min;
     final max = this.max;
     final options = this.options;
-    final timeOpts = options['time'];
-    final timeUnit = jsGet(timeOpts, 'unit');
+    final timeOpts = options.time;
+    final timeUnit = timeOpts.unit;
     // @ts-ignore
     final minor = jsTruthy(timeUnit)
         ? timeUnit
         : _determineUnitForAutoTicks(
-            jsGet(timeOpts, 'minUnit'),
+            timeOpts.minUnit,
             min,
             max,
             _getLabelCapacity(min),
           );
-    final stepSize = valueOrDefault<Object?>(
-      jsGet(options['ticks'], 'stepSize'),
-      1.0,
-    );
-    final weekday = minor == 'week' ? jsGet(timeOpts, 'isoWeekday') : false;
+    final stepSize = valueOrDefault<Object?>(options.ticks.stepSize, 1.0);
+    final weekday = minor == 'week' ? timeOpts.isoWeekday : false;
     final hasWeekday = isNumber(weekday) || weekday == true;
     final ticks = <double, bool>{};
     var first = min;
@@ -783,7 +794,7 @@ class TimeScale extends Scale {
       );
     }
 
-    final timestamps = jsGet(options['ticks'], 'source') == 'data'
+    final timestamps = options.ticks.source == 'data'
         ? getDataTimestamps()
         : null;
     for (time = first; time < max; count++) {
@@ -799,7 +810,7 @@ class TimeScale extends Scale {
       time = next;
     }
 
-    if (time == max || options['bounds'] == 'ticks' || count == 1) {
+    if (time == max || options.bounds == 'ticks' || count == 1) {
       _addTick(ticks, time, timestamps);
     }
 
@@ -816,16 +827,13 @@ class TimeScale extends Scale {
   @override
   Object? getLabelForValue(Object? value) {
     final adapter = this.adapter;
-    final timeOpts = options['time'];
-    final tooltipFormat = jsGet(timeOpts, 'tooltipFormat');
+    final timeOpts = options.time;
+    final tooltipFormat = timeOpts.tooltipFormat;
 
     if (jsTruthy(tooltipFormat)) {
       return adapter.format(value, tooltipFormat);
     }
-    return adapter.format(
-      value,
-      jsGet(jsGet(timeOpts, 'displayFormats'), 'datetime'),
-    );
+    return adapter.format(value, timeOpts.displayFormats.datetime);
   }
 
   /// scale.time.js:510 `format(value, format)`.
@@ -834,9 +842,9 @@ class TimeScale extends Scale {
   /// Dart `null` for [format] stands for JS `undefined`.
   Object? format(Object? value, [Object? format]) {
     final options = this.options;
-    final formats = jsGet(options['time'], 'displayFormats');
+    final formats = options.time.displayFormats;
     final unit = this.unit;
-    final fmt = jsTruthy(format) ? format : jsGet(formats, unit);
+    final fmt = jsTruthy(format) ? format : formats.formatOf(unit);
     return adapter.format(value, fmt);
   }
 
@@ -855,18 +863,18 @@ class TimeScale extends Scale {
     Object? format,
   ]) {
     final options = this.options;
-    final formatter = jsGet(options['ticks'], 'callback');
+    final formatter = options.ticks.callback;
 
     if (jsTruthy(formatter)) {
       return callback(formatter, [time, index.toDouble(), ticks], this);
     }
 
-    final formats = jsGet(options['time'], 'displayFormats');
+    final formats = options.time.displayFormats;
     final unit = this.unit;
     final majorUnit = _majorUnit;
-    final minorFormat = jsTruthy(unit) ? jsGet(formats, unit) : unit;
+    final minorFormat = jsTruthy(unit) ? formats.formatOf(unit) : unit;
     final majorFormat = jsTruthy(majorUnit)
-        ? jsGet(formats, majorUnit)
+        ? formats.formatOf(majorUnit)
         : majorUnit;
     final tick = index >= 0 && index < ticks.length ? ticks[index] : null;
     final major =
@@ -951,13 +959,11 @@ class TimeScale extends Scale {
   /// The canvas measures the `ToString` of [label] in its current font, as
   /// upstream: the scale sets no font before the measure.
   ({double w, double h}) _getLabelSize(Object? label) {
-    final ticksOpts = options['ticks'];
+    final ticksOpts = options.ticks;
     final tickLabelWidth = ctx!.measureText(jsToString(label)).width;
     final angle = toRadians(
       jsToNumber(
-        isHorizontal()
-            ? jsGet(ticksOpts, 'maxRotation')
-            : jsGet(ticksOpts, 'minRotation'),
+        isHorizontal() ? ticksOpts.maxRotation : ticksOpts.minRotation,
       ),
     );
     final cosRotation = jsCos(angle);
@@ -975,14 +981,14 @@ class TimeScale extends Scale {
   /// The number of labels of the format of `time.unit` (or of the
   /// `millisecond` format) that the axis can hold, at least 1.
   double _getLabelCapacity(double exampleTime) {
-    final timeOpts = options['time'];
-    final displayFormats = jsGet(timeOpts, 'displayFormats');
+    final timeOpts = options.time;
+    final displayFormats = timeOpts.displayFormats;
 
     // pick the longest format (milliseconds) for guesstimation
-    final unitFormat = jsGet(displayFormats, jsGet(timeOpts, 'unit'));
+    final unitFormat = displayFormats.formatOf(timeOpts.unit);
     final format = jsTruthy(unitFormat)
         ? unitFormat
-        : jsGet(displayFormats, 'millisecond');
+        : displayFormats.millisecond;
     final exampleLabel = _tickFormatFunction(
       exampleTime,
       0,
