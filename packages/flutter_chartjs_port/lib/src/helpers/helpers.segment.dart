@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/helpers/helpers.segment.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-elements, typed styles of Chart.js ADR 0054.
 // Upstream reassigns the parameters start and loop of solidSegments, and s
 // and e of addStyle. The port keeps these assignments.
 // ignore_for_file: parameter_assignments

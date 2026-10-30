@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/core/core.animations.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-elements, typed keys of Chart.js ADR 0054.
 
 /// Port of `src/core/core.animations.js` (Chart.js ADR 0019, with the typed
 /// keys of Chart.js ADR 0054 §10).

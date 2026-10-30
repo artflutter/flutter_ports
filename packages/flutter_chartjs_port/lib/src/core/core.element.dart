@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/core/core.element.ts (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-elements, typed elements of Chart.js ADR 0054.
 
 /// Port of `src/core/core.element.ts`.
 ///

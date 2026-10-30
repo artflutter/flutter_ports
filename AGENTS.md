@@ -254,13 +254,24 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (Chart.js ADR 0018) exports the typed element options of `lib/src/options/resolved.g.dart`
     and `element_options_base.dart`: `PointOptions`, `LineOptions`, `BarOptions`, `ArcOptions`
     and `GenericElementOptions`, with `clone` and the frozen state. It keeps
-    `createElementOptions` and `copyOptions` (Chart.js ADR 0021). These
-    files are pure layers. `Element` and each element class have a static `jsClass`, the class as a
+    `createElementOptions` and `copyOptions` (Chart.js ADR 0021), and the typed reads
+    `plainOption`, `numberOption` and `rawOption` (Chart.js ADR 0054 §6). These
+    files are pure layers. Each numeric property of an element is a `double` field (NaN while
+    `undefined`) with a bit of an `int` mask of the `undefined` state; `markUndefined` and
+    `isUndefined` read and write the bit (Chart.js ADR 0054 §9). `Element.$context` is a
+    `ContextObject?` with a `covariant` setter, narrowed to `ScriptableContext?` in the four
+    element classes. `Element.assign` of a `*Properties` object of a controller takes the typed
+    setters for an element of the built-in class (`typedWrites`, the exact-class rule); a user
+    subclass, an extra key and a foreign value take the writes by name. The element classes read
+    resolved options through `plainOption`, `numberOption` and `rawOption`, and a plain Map by
+    name. `Element` and each element class have a static `jsClass`, the class as a
     value (Chart.js ADR 0020). `PointElement` and `BarElement` implement `types.VisualElementRange`,
     the interface of `getRange`. `getRange` gives an `Object`: the `PointElement` result is the JS
     `+` of `radius` and `hitRadius` (`jsAdd`), a `String` when an option is a string. The hit tests
     and `size` of `PointElement` and the `rAdjust` and `getCenterPoint` of `ArcElement` also add
-    their options with `jsAdd`. `LineElement.updateControlPoints` takes a `ChartArea?`: Dart `null`
+    their options: two plain typed fields add as numbers, and a foreign or absent value takes
+    `jsAdd`. The style of a segment of `helpers.segment.dart` is a `SegmentStyle`, a typed record
+    with the face. `LineElement.updateControlPoints` takes a `ChartArea?`: Dart `null`
     is the JS `undefined` of a chart without a layout. The `points` setter of `LineElement` takes
     `List<types.Element>` and copies a list that is not a `List<types.PointElement>` (Chart.js ADR
     0028). `lib/src/types/index.dart` also has `RadialLinearScale` and `LegendElement` (Chart.js ADR
@@ -286,7 +297,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `layouts.removeBox` takes a `LayoutItem?` (Dart `null` is the JS `undefined` of a stop hook).
     - `core.animation.dart` and the port-only `animation_spec.dart` (`AnimationSpec`, the typed
       animation config) are pure layers. `core.animations.dart` and `core.animator.dart` are not:
-      `core.animator` imports `helpers.extras` (Chart.js ADR 0019). `core.animator.dart` has
+      `core.animator` imports `helpers.extras` (Chart.js ADR 0019). `Animations` keeps
+      `_properties` in a table by `AnimatedProp` id, and `properties` builds the Map view for the
+      specs at each read. A property object animates by its typed keys, and the number path of
+      an `Animation` writes an element through `Element.writeNumber` (Chart.js ADR 0054 §10). `core.animator.dart` has
       `getAnims`, `update`, the `@internal` class `Anims` and the field `refresh` (Chart.js ADR
       0029 §6). A fixture replaces `refresh` on the singleton (`harness-method-fields`).
     - The port-only `reduced_motion.dart` (a pure layer) has the reduced-motion flag of a canvas,
