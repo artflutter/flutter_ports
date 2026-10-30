@@ -1,11 +1,12 @@
 # ADR 0008: Shared JS runtime and port tools
 
 - Status: proposed
-- Date: 2026-10-20
+- Date: 2026-10-20 (revised 2026-10-30, before acceptance: the add-on clause of item 1)
 - Gate: D3 phase 1 (item 9). Before the gate, this ADR changes no file.
 - Related: [ADR 0001](0001-native-ports-not-wrappers.md) (no JavaScript at runtime),
   [ADR 0006](0006-follow-upstream-between-releases.md) (the backport line),
   [ADR 0007](0007-package-names.md) (the names `js_semantics` and `port_tools`),
+  [ADR 0009](0009-add-on-ports.md) (add-on ports depend on their host port),
   [Chart.js ADR 0032](../../packages/flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md) (the JS
   runtime of the Chart.js port),
   [Chart.js ADR 0035](../../packages/flutter_chartjs_port/doc/adr/0035-third-party-sources.md) (the
@@ -114,8 +115,8 @@ changes Chart.js ADR 0032 §1. A changed decision needs a new ADR. The deferred 
 
 1. **End state.** One pure Dart workspace package, `js_semantics`
    ([ADR 0007](0007-package-names.md)), holds the JS runtime that two or more ports use. Each port
-   depends on it. No port depends on another port. Runtime code that only one port uses stays in
-   that port.
+   depends on it. No port depends on another port, except an add-on port on its host port
+   ([ADR 0009](0009-add-on-ports.md)). Runtime code that only one port uses stays in that port.
 2. **Package form.**
    - `packages/js_semantics` has no Flutter dependency. Its dependencies are `collection` and
      `clock`, with the constraints of `flutter_chartjs_port`. Its dev dependency is `test`. Thus the

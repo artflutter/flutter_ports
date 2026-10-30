@@ -16,6 +16,8 @@ For the ECharts packages, see the [ECharts prior-art survey](packages/flutter_ec
 > ported code.
 > The ECharts port is in phase 0: the package, the two pinned submodules (Apache ECharts and
 > zrender) and the design. It has no ported code.
+> The chartjs-plugin-zoom port is in phase 0: the package, the pinned submodule, the design and
+> the list of its connections to the Chart.js port. It has no ported code.
 
 ## Ports
 
@@ -24,6 +26,7 @@ For the ECharts packages, see the [ECharts prior-art survey](packages/flutter_ec
 | Chart.js | [chartjs/Chart.js](https://github.com/chartjs/Chart.js) v4.6.1 (MIT) | [`flutter_chartjs_port`](packages/flutter_chartjs_port) | [parity tracker](packages/flutter_chartjs_port/doc/parity.md) |
 | D3 | [d3/d3](https://github.com/d3/d3) v7.9.0 with its 30 modules, internmap, delaunator and robust-predicates (ISC, with d3-ease BSD-3-Clause and robust-predicates Unlicense) | [`flutter_d3_port`](packages/flutter_d3_port) | [parity tracker](packages/flutter_d3_port/doc/parity.md) |
 | Apache ECharts | [apache/echarts](https://github.com/apache/echarts) 6.1.0 (Apache-2.0) with its renderer [ecomfe/zrender](https://github.com/ecomfe/zrender) 6.1.0 (BSD-3-Clause) | [`flutter_echarts_port`](packages/flutter_echarts_port) | [parity tracker](packages/flutter_echarts_port/doc/parity.md) |
+| chartjs-plugin-zoom (a Chart.js plugin) | [chartjs/chartjs-plugin-zoom](https://github.com/chartjs/chartjs-plugin-zoom) 2.2.0+fb81d331, a commit after v2.2.0 (MIT) | [`flutter_chartjs_plugin_zoom_port`](packages/flutter_chartjs_plugin_zoom_port) | [parity tracker](packages/flutter_chartjs_plugin_zoom_port/doc/parity.md) |
 
 ## Layout
 
@@ -32,6 +35,8 @@ packages/flutter_chartjs_port   the Chart.js port (library)
 packages/flutter_d3_port   the D3 port (library, phase 0: no ported code yet)
 packages/flutter_echarts_port
                            the Apache ECharts port (library, phase 0: no ported code yet)
+packages/flutter_chartjs_plugin_zoom_port
+                           the chartjs-plugin-zoom port on the Chart.js port (library, phase 0)
 apps/chartjs_gallery       gallery and visual test bed (Android, iOS, web, macOS)
 third_party/Chart.js       pinned upstream source, git submodule (reference only, not shipped)
 third_party/d3, d3-*, ...  pinned D3 sources: d3, the 30 d3-* modules, internmap, delaunator and
@@ -39,6 +44,8 @@ third_party/d3, d3-*, ...  pinned D3 sources: d3, the 30 d3-* modules, internmap
 third_party/echarts, zrender
                            pinned Apache ECharts and zrender sources, 2 git submodules
                            (reference only, not shipped)
+third_party/chartjs-plugin-zoom
+                           pinned chartjs-plugin-zoom source, git submodule (reference only)
 docs/                      prior art, ADRs, per-port roadmap and parity tracker
 ```
 
@@ -50,7 +57,7 @@ Requires Flutter 3.47.7 with Dart 3.13.5 (`.fvmrc`).
 git clone https://github.com/artflutter/flutter_ports.git
 cd flutter_ports
 flutter pub get               # resolves the whole pub workspace
-dart run melos run upstream   # optional: check out the pinned Chart.js, D3 and ECharts sources
+dart run melos run upstream   # optional: check out the pinned Chart.js, D3, ECharts and zoom sources
 dart run melos run analyze
 dart run melos run test --no-select
 dart run melos run gallery          # Chrome
@@ -80,3 +87,7 @@ text, and its [NOTICE](packages/flutter_echarts_port/NOTICE) keeps the notice of
 zrender is BSD-3-Clause (Baidu Inc.). This project is also not affiliated with or endorsed by the
 Apache Software Foundation, the Apache ECharts project or Baidu. Apache ECharts and ECharts are
 trademarks of the Apache Software Foundation.
+
+The chartjs-plugin-zoom port is MIT, the license of chartjs-plugin-zoom. Its
+[packages/flutter_chartjs_plugin_zoom_port/LICENSE](packages/flutter_chartjs_plugin_zoom_port/LICENSE)
+keeps the notice of the chartjs-plugin-zoom contributors.

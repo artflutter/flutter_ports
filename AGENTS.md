@@ -5,7 +5,9 @@ libraries. First port: Chart.js v4.6.1 â†’
 `packages/flutter_chartjs_port`. Second port: D3 v7.9.0 â†’
 `packages/flutter_d3_port`, in phase 0 (scaffold and design, no ported code). Third port: Apache
 ECharts 6.1.0 with its renderer zrender 6.1.0 â†’ `packages/flutter_echarts_port`, in phase 0
-(scaffold and design, no ported code).
+(scaffold and design, no ported code). Fourth port: chartjs-plugin-zoom 2.2.0+fb81d331, an add-on
+of the Chart.js port (ADR 0009) â†’ `packages/flutter_chartjs_plugin_zoom_port`, in phase 0
+(scaffold, design and the list of its host seams, no ported code).
 
 ## Commands
 
@@ -25,9 +27,10 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos â
   Dart files into `build/isolate_spawning_tester/` of each package, and `format:check` fails on
   them. Delete these folders before `format:check`. package:test puts a part of the tests of each
   file in each shard, in the order of the file ([Tests](#tests)). A shard with no tests fails. On
-  ubuntu, CI also fetches the three Chart.js submodules, `third_party/d3` and the two ECharts
-  submodules by path in each shard, for the `test/upstream_test.dart` of `flutter_chartjs_port`,
-  `flutter_d3_port` and `flutter_echarts_port`.
+  ubuntu, CI also fetches the three Chart.js submodules, `third_party/d3`, the two ECharts
+  submodules and `third_party/chartjs-plugin-zoom` by path in each shard, for the
+  `test/upstream_test.dart` of `flutter_chartjs_port`, `flutter_d3_port`, `flutter_echarts_port`
+  and `flutter_chartjs_plugin_zoom_port`.
 - `dart run melos run test:web`: the `flutter_chartjs_port` and `chartjs_test_utils` tests without
   `@TestOn('vm')`, in Chrome, compiled with dart2js and with dart2wasm. It needs a local Google
   Chrome. CI job: `test-web`.
@@ -110,8 +113,8 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos â
   `parity.md` status. It also fails when an import does not resolve. `check:port` and the CI job
   `port-checks` run it.
 - `dart run melos run upstream`: check out the pinned reference sources (every `third_party/`
-  submodule, at depth 1). These are the three Chart.js submodules, the 34 D3 submodules and the
-  two ECharts submodules.
+  submodule, at depth 1). These are the three Chart.js submodules, the 34 D3 submodules, the
+  two ECharts submodules and the chartjs-plugin-zoom submodule.
 - `dart run melos run upstream:manifest`: tool 4. It writes
   `packages/flutter_chartjs_port/doc/upstream/` from `third_party/Chart.js`. It needs Node.js 22.18 or
   later. The CI job `upstream-manifest` fails when the committed files differ.
@@ -122,8 +125,12 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos â
   of its `ref` and equal its `commit` in `packages/flutter_d3_port/tool/port_sources.yaml`. It
   also fails unless `third_party/echarts` and `third_party/zrender` are at the tags
   `<echartsVersion>` and `<zrenderVersion>` (no `v` prefix) and equal their `commit` in
-  `packages/flutter_echarts_port/tool/port_sources.yaml`. The script reads the gitlinks from the index and the tags with `git ls-remote`. It needs no
-  submodule checkout. It also fails on a submodule of `.gitmodules` that no entry of a
+  `packages/flutter_echarts_port/tool/port_sources.yaml`. It also fails unless
+  `third_party/chartjs-plugin-zoom` is at the commit of `chartjsPluginZoomVersion`: for the commit
+  pin `<last version>+<sha8>`, a gitlink that starts with `<sha8>`, equals the `ref` and the
+  `commit` in `packages/flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml`, and is not the
+  commit of the tag `v<last version>`, which must exist. The script reads the gitlinks from the
+  index and the tags with `git ls-remote`. It needs no submodule checkout. It also fails on a submodule of `.gitmodules` that no entry of a
   `packages/*/tool/port_sources.yaml` pins.
 - `dart run melos run gallery` (Chrome) / `gallery:macos` / `gallery:device` (Android/iOS):
   run the gallery.
@@ -536,7 +543,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       fast-path layers, and a typed internal model replaces them. The other ADRs are accepted. Docs name them
       "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
-      `packages/flutter_echarts_port/doc/adr/`. An accepted ADR does not change. A changed decision
+      `packages/flutter_echarts_port/doc/adr/`. "Zoom ADR NNNN" is a file of
+      `packages/flutter_chartjs_plugin_zoom_port/doc/adr/`. An accepted ADR does not change. A changed decision
       gets a new ADR that states the complete decision and supersedes the old ADR.
     - `doc/differences.md`: one row for each `DIVERGES` difference.
     - `doc/status.yaml`: the hand-written parts of `parity.md`: the text outside the tables, the
@@ -729,6 +737,29 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       gate 6 and later gates.
   - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
     yet. `test --no-select` runs its tests.
+- `packages/flutter_chartjs_plugin_zoom_port`: the chartjs-plugin-zoom port (library,
+  `publish_to: none` until 0.1.0, MIT), the first add-on port (ADR 0009). Phase 0 has no ported
+  code. `doc/README.md` has the plan and the roadmap of phases 0-6.
+  - It depends on `flutter_chartjs_port` with a path dependency, and imports only its public
+    libraries (Zoom ADR 0003).
+  - `lib/flutter_chartjs_plugin_zoom_port.dart`: the public library. `lib/src/upstream.dart` has
+    `chartjsPluginZoomVersion` (`2.2.0+fb81d331`, a commit pin) and
+    `chartjsPluginZoomPackageVersion` (`2.2.0`). Both files are port-only.
+  - `test/upstream_test.dart` (`@TestOn('vm')`) compares `chartjsPluginZoomPackageVersion` with
+    `third_party/chartjs-plugin-zoom/package.json`, the entry of `tool/port_sources.yaml` with the
+    version and the gitlink with its `commit`. It fails on a submodule of `.gitmodules` that no
+    `packages/*/tool/port_sources.yaml` pins.
+  - `tool/port_sources.yaml`: the pin in the schema of the Chart.js file (Zoom ADR 0001). For the
+    commit pin, `ref` and `commit` are the full commit.
+  - `doc/`: all zoom port docs: `README.md` (overview, roadmap, decisions), `host-seams.md` (each
+    use of `chart.js` and of the DOM by the plugin, with the state of the host port: `connects`,
+    `zoom-side`, `gap` or `examine`), `parity.md`, `differences.md` and `upstream-ledger.md`. The
+    prior-art survey `prior-art/` comes in a later change.
+    - `doc/adr/`: Zoom ADRs 0001-0003, all proposed. Zoom ADR 0001 (upstream source, name and
+      license) has gate 0. Zoom ADR 0002 (file naming and layout) has gate 1. Zoom ADR 0003 (the
+      connection to the host port) has gates 1 and 2. Docs name them "Zoom ADR NNNN".
+  - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
+    yet. `test --no-select` runs its tests.
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
   - Shallow git submodules: `Chart.js` at the tag `v4.6.1`
@@ -741,6 +772,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (`6.1.0`) and `zrender` (`6.1.0`, the exact version that the ECharts `package.json` requires).
     The tags have no `v` prefix. `packages/flutter_echarts_port/tool/port_sources.yaml` gives the
     tag and the commit of each.
+  - `chartjs-plugin-zoom`, also shallow, at the commit `fb81d331` of `master`, 34 commits after the
+    tag `v2.2.0` (Zoom ADR 0001). `packages/flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml`
+    gives the commit.
   - `fdlibm/`: unchanged netlib fdlibm 5.3 files (`e_log.c`, `e_log10.c`, `e_atan2.c`, `s_atan.c`,
     `s_sin.c`, `s_cos.c`, `k_sin.c`, `k_cos.c`, `e_rem_pio2.c`, `k_rem_pio2.c`, `s_scalbn.c`) for
     `fdlibm_log.dart`, `fdlibm_atan.dart` and `fdlibm_trig.dart`. fdlibm has no git repository.
@@ -749,7 +783,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 - `docs/`: docs for all ports only. `docs/adr/`: decisions for all ports. `docs/prior-art/`: prior
   art for future ports. Docs for one port go in the `doc/` folder of its package.
   - ADR 0007 (package names) is accepted (2026-10-22). It supersedes ADR 0003. ADR 0008 (shared
-    JS runtime and port tools) is proposed. The gate of ADR 0008 is D3 phase 1.
+    JS runtime and port tools) is proposed. The gate of ADR 0008 is D3 phase 1. ADR 0009 (ports of
+    add-on libraries) is proposed. Its gate is zoom phase 0. An add-on port depends on its host
+    port and imports only the public libraries of the host. ADR 0008 item 1 has the clause for it.
 
 ## Porting rules
 
@@ -940,6 +976,33 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
 - Numbers and JS values follow ECharts ADRs 0003 and 0004 with the rules of Chart.js ADRs 0045
   and 0034. No port depends on another port (ADR 0008). Thus ECharts code never imports
   `package:flutter_chartjs_port` or `package:flutter_d3_port`.
+
+The chartjs-plugin-zoom port applies the rules of the Chart.js port with these changes. The zoom
+ADRs and ADR 0009 are proposed. The doc paths are relative to
+`packages/flutter_chartjs_plugin_zoom_port/doc/`.
+
+- Rule 1: read the upstream file in `third_party/chartjs-plugin-zoom` at the pinned commit. Never
+  port from the release `v2.2.0` (Hammer.js) or from another zoom package.
+- Rule 2: the header is
+  `// Ported from chartjs-plugin-zoom v2.2.0+fb81d331 <path> (MIT, chartjs-plugin-zoom contributors).`
+  The port-only marker is `// Original code, not ported from chartjs-plugin-zoom: <reason>.`
+  `src/<name>.ts` becomes `lib/src/<name>.dart`. A spec `test/specs/<name>.spec.js` and a unit
+  test `src/<name>.test.ts` become `test/specs/<name>_test.dart`. `test/index.js` becomes
+  `test/flutter_test_config.dart` (Zoom ADR 0002).
+- Rules 3 and 4: port the specs. Update the row of the file in `parity.md` in the same change. A
+  person writes `parity.md`. A file that waits for a host change has the status
+  `blocked: host <seam ids>`.
+- Rule 6: a bump moves the submodule, `chartjsPluginZoomVersion`,
+  `chartjsPluginZoomPackageVersion`, the entry in `tool/port_sources.yaml` and the headers (Zoom
+  ADR 0001 item 7). `upstream:check` and `test/upstream_test.dart` fail on a mismatch.
+- The host connection (ADR 0009, Zoom ADR 0003): the zoom port imports only
+  `package:flutter_chartjs_port/chartjs.dart`, `package:flutter_chartjs_port/helpers.dart` and
+  the app library, never `package:flutter_chartjs_port/src/`. A part of the host that the public
+  libraries do not give is a host change with a Chart.js ADR, first. `host-seams.md` lists each
+  use of the host with its state. A change that closes a seam updates its row.
+- A difference carries `// DIVERGES(zoom): <row id>, <reason>` and a row in `differences.md`.
+- The JS numeric rules of Chart.js ADRs 0045 and 0034 apply. The zoom port takes the JS runtime
+  from `js_semantics` (ADR 0008, seam H13). It does not copy `lib/src/js/` of the host.
 
 ## Tests
 
@@ -1195,6 +1258,10 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
 - The ECharts tests use `package:test` (ECharts ADR 0005). In phase 0, `test/upstream_test.dart`
   is the only ECharts test. It has `@TestOn('vm')`. Thus `test:web` does not run the ECharts
   package yet. The first pure ECharts test adds the package to `test:web`.
+- The chartjs-plugin-zoom tests use `package:test` in phase 0. `test/upstream_test.dart` is the
+  only zoom test. It has `@TestOn('vm')`. From phase 2, the specs that create a chart follow the
+  chart spec rules of the Chart.js port: `testWidgets`, `package:chartjs_test_utils/flutter.dart`
+  and `@TestOn('vm')`.
 
 ## Licensing
 
@@ -1215,6 +1282,11 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   zrender (BSD-3-Clause, `Baidu Inc.`), the d3 code in five ECharts files (BSD-3-Clause), and
   node-timsort, jsdiff and tween.js in zrender files. The change that ports the first file of a
   component adds that component by the three steps below.
+- chartjs-plugin-zoom is MIT. The code of the zoom port is MIT too.
+  `packages/flutter_chartjs_plugin_zoom_port/LICENSE` is the MIT text with
+  `Copyright (c) 2013-2024 chartjs-plugin-zoom contributors` and `Copyright (c) 2026 Vasiliy
+  Ditsyak`. The `packages/flutter_chartjs_plugin_zoom_port/**` table of `REUSE.toml` comes after
+  the ECharts table. The package ports no Chart.js code (Zoom ADR 0001).
 - Code taken from any other project needs three things in the same change:
   1. its notice in the `LICENSE` of the package that contains the code;
   2. a `REUSE.toml` annotation for the files, placed last because the last matching table wins
@@ -1238,8 +1310,9 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
 ## Conventions
 
 - Package names: ADR 0007. The library package of a port has the name `flutter_<library>_port`,
-  with the suffix `_port`: `flutter_chartjs_port`, `flutter_d3_port` and `flutter_echarts_port`.
-  A later port uses the same form. A harness package is `<library>_test_utils`, or the npm name
+  with the suffix `_port`: `flutter_chartjs_port`, `flutter_d3_port`, `flutter_echarts_port` and
+  `flutter_chartjs_plugin_zoom_port`. A later port uses the same form. An add-on port takes the
+  npm name of the add-on (ADR 0009 item 5). A harness package is `<library>_test_utils`, or the npm name
   of the upstream harness in snake case (`chartjs_test_utils`). A gallery app is
   `apps/<library>_gallery`. A design-system adapter is `<library package>_<system>`, for example
   `flutter_chartjs_port_forui`. The directory and the commit scope of a package are its name.
@@ -1249,7 +1322,8 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   `flutter_chartjs_port` includes the same rules (Chart.js ADR 0047). Public APIs are documented.
 - Commits: Conventional Commits, signed off (`git commit -s`, DCO), for example
   `feat(flutter_chartjs_port): port helpers.math`. The scope of the D3 port is `flutter_d3_port`.
-  The scope of the ECharts port is `flutter_echarts_port`. Checks:
+  The scope of the ECharts port is `flutter_echarts_port`. The scope of the zoom port is
+  `flutter_chartjs_plugin_zoom_port`. Checks:
   - lefthook â‰¥ 1.0 `commit-msg` hook (`lefthook install`): `commitlint_cli` checks the type, and
     the scope when one is given, against the list in `commitlint.yaml`; a second command requires a
     `Signed-off-by` trailer;

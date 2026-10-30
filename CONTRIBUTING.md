@@ -15,7 +15,8 @@ to people as much as to agents.
 - **Conventional Commits:** `type(scope): summary`. The scope is optional, but when given it must
   be listed in `commitlint.yaml` (for example `feat(flutter_chartjs_port): port helpers.math`). The
   lefthook `commit-msg` hook checks both. The scope of the D3 port is `flutter_d3_port`. The scope of the ECharts port is
-  `flutter_echarts_port`.
+  `flutter_echarts_port`. The scope of the chartjs-plugin-zoom port is
+  `flutter_chartjs_plugin_zoom_port`.
 - **Ported code:** translated from the pinned upstream source, with a header naming the upstream
   file, specs ported alongside, and the parity tracker updated
   ([packages/flutter_chartjs_port/doc/parity.md](packages/flutter_chartjs_port/doc/parity.md)). A file with
@@ -26,13 +27,18 @@ to people as much as to agents.
   In the ECharts port, the parity tracker is
   [packages/flutter_echarts_port/doc/parity.md](packages/flutter_echarts_port/doc/parity.md). The
   ECharts port-only marker is `// Original code, not ported from Apache ECharts: <reason>.`
+  In the chartjs-plugin-zoom port, the parity tracker is
+  [packages/flutter_chartjs_plugin_zoom_port/doc/parity.md](packages/flutter_chartjs_plugin_zoom_port/doc/parity.md).
+  Its port-only marker is `// Original code, not ported from chartjs-plugin-zoom: <reason>.` The
+  port imports only the public libraries of `flutter_chartjs_port` (ADR 0009).
 - **Licensing:** keep upstream notices. Code from another project also needs its notice in the
   package LICENSE, a `REUSE.toml` annotation and an entry in
   `packages/flutter_chartjs_port/tool/port_sources.yaml` (see [AGENTS.md](AGENTS.md#licensing);
   Chart.js ADR 0035). The D3 port is ISC. Its source list is
   `packages/flutter_d3_port/tool/port_sources.yaml` (D3 ADR 0001). The ECharts port is Apache-2.0,
   with a `NOTICE` file. Its source list is `packages/flutter_echarts_port/tool/port_sources.yaml`
-  (ECharts ADR 0001). Never
+  (ECharts ADR 0001). The chartjs-plugin-zoom port is MIT. Its source list is
+  `packages/flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml` (Zoom ADR 0001). Never
   copy code from GPL or otherwise incompatible projects (see
   [packages/flutter_chartjs_port/doc/prior-art](packages/flutter_chartjs_port/doc/prior-art/README.md)).
   `reuse lint` runs in CI.

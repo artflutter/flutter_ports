@@ -16,7 +16,8 @@ package.
 - [ADR 0007: Package names](adr/0007-package-names.md) (it supersedes ADR 0003)
 - Proposed decisions:
   [ADR 0008: Shared JS runtime and port tools](adr/0008-shared-js-runtime-and-port-tools.md)
-  (gate: D3 phase 1).
+  (gate: D3 phase 1),
+  [ADR 0009: Ports of add-on libraries](adr/0009-add-on-ports.md) (gate: zoom phase 0).
 
 ## Prior art for future ports
 
@@ -171,3 +172,18 @@ package.
     [ECharts ADR 0009: DOM-bound features, app hooks and theming](../packages/flutter_echarts_port/doc/adr/0009-dom-features-app-hooks-and-theming.md).
   - Prior art: [overview](../packages/flutter_echarts_port/doc/prior-art/README.md),
     [ECharts packages](../packages/flutter_echarts_port/doc/prior-art/echarts-packages.md).
+- chartjs-plugin-zoom, an add-on of the Chart.js port:
+  [`packages/flutter_chartjs_plugin_zoom_port/doc/`](../packages/flutter_chartjs_plugin_zoom_port/doc/README.md)
+  - [Overview and roadmap](../packages/flutter_chartjs_plugin_zoom_port/doc/README.md)
+  - [Host seams](../packages/flutter_chartjs_plugin_zoom_port/doc/host-seams.md): each use of
+    `chart.js` and of the DOM by the plugin, with the state of the Chart.js port.
+  - [Parity tracker](../packages/flutter_chartjs_plugin_zoom_port/doc/parity.md): one row for each
+    upstream file. All rows are "not started" in phase 0.
+  - [Differences](../packages/flutter_chartjs_plugin_zoom_port/doc/differences.md): one row for
+    each `DIVERGES` hunk. It has no rows in phase 0.
+  - [Upstream ledger](../packages/flutter_chartjs_plugin_zoom_port/doc/upstream-ledger.md): the
+    upstream commits after the pinned commit.
+  - Proposed decisions:
+    [Zoom ADR 0001: Upstream source, name and license](../packages/flutter_chartjs_plugin_zoom_port/doc/adr/0001-upstream-sources.md),
+    [Zoom ADR 0002: File naming and package layout](../packages/flutter_chartjs_plugin_zoom_port/doc/adr/0002-file-naming-and-layout.md),
+    [Zoom ADR 0003: The connection to the host port](../packages/flutter_chartjs_plugin_zoom_port/doc/adr/0003-host-connection.md).
