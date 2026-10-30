@@ -728,6 +728,18 @@ Changes to the cited files:
   `stress_chart_test.dart` gets one test; this plan cites no line of it. No library file that this
   plan cites changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
   estimates do not change. No trigger occurred.
+- 2026-10-30, the reduced-motion flag of [Chart.js ADR 0049](adr/0049-chart-view-widget.md) §7
+  (proposed, phase 9), side B of the night series A-N3. The new port-only file
+  `lib/src/core/reduced_motion.dart` keys the flag by the canvas in an `Expando`; it imports
+  nothing. `lib/src/core/core.animations.dart` gets one hunk in `_createAnimations` (the row
+  `platform-reduced-motion`), and `lib/src/widgets/chart_view.dart` sets the flag in `build`; this
+  plan cites none of these files. The canvas classes do not change: the porting lead kept side B,
+  not side C of A-N3 (a field of `UiCanvasElement`). `doc/parity.md` changes 5 rows in place (lines
+  80, 359, 371 and 372, and the row of `chart_theme_switch_test.dart`) and gets one port-only row at
+  line 440. The rows after line 439 move by +1. The rows that this plan cites (lines 378-422) do not
+  move. No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart`
+  or a test of §2.6 and §3.5 changes. The references, the inventory (§1.1), the tests of §2.6 and
+  §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

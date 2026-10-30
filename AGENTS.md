@@ -178,6 +178,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `core.animator` imports `helpers.extras` (Chart.js ADR 0019). `core.animator.dart` has
       `getAnims`, `update`, the `@internal` class `Anims` and the field `refresh` (Chart.js ADR
       0029 §6). A fixture replaces `refresh` on the singleton (`harness-method-fields`).
+    - The port-only `reduced_motion.dart` (a pure layer) has the reduced-motion flag of a canvas,
+      an `Expando` (Chart.js ADR 0049 §7). Only `ChartView` sets it, from
+      `MediaQuery.maybeDisableAnimationsOf`. `_createAnimations` of `core.animations.dart` reads
+      it: with the flag, it reads no animation config (row `platform-reduced-motion`). No spec and
+      no reference test sets it.
     - `core.scale.dart` has `Scale`, `Scale.jsClass` and the port-only `Tick` class of the typedef
       at `core.scale.js:15`. `core.scale.dart` and `core.scale.autoskip.dart` are not pure layers:
       `core.scale` imports `helpers.extras`, and `core.scale.autoskip` imports `core.scale`.
@@ -804,8 +809,8 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   `lib/src/elements/`, `plugin.decimation` and the files of `plugin.filler/` of `lib/src/plugins/`,
   and `platform.base`, `platform.basic` and `native_event` of `lib/src/platform/`. Of
   `lib/src/core/`, the roots are `core.defaults`, `core.element`, `core.config`, `core.adapters`,
-  `core.interaction`, `core.layouts`, `core.animation`, `animation_spec`, `core.typedRegistry` and
-  the port-only `date_*.dart`. Of `lib/src/theme/`, the roots are `compile.dart` and `presets.dart`.
+  `core.interaction`, `core.layouts`, `core.animation`, `animation_spec`, `reduced_motion`,
+  `core.typedRegistry` and the port-only `date_*.dart`. Of `lib/src/theme/`, the roots are `compile.dart` and `presets.dart`.
   The canvas interface `lib/src/canvas/canvas.dart` is pure, because `helpers.canvas` imports it.
 - Write the tests of pure layers with `package:test`, not `flutter_test`. These tests run on the
   VM (`test`) and in Chrome with dart2js and dart2wasm (`test:web`).

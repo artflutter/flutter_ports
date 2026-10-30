@@ -820,35 +820,28 @@ void main() {
       expect(_scaleOption(chart, 'y', ['ticks', 'color']), _rgba(_blue));
     });
 
-    group(
-      'under MediaQuery(disableAnimations: true)',
-      () {
-        testWidgets("a switch updates with 'themeFrame', a removal with "
-            "'default', and both end in one frame", (tester) async {
-          final modes = _spyOnUpdates();
-          final config = _config(animated: true);
-          Widget build(ChartThemeData? theme) => MediaQuery(
-            data: const MediaQueryData(disableAnimations: true),
-            child: _view(config, theme: theme),
-          );
-          await tester.pumpWidget(build(_themeA));
-          final chart = _chart(tester);
-          await tester.pump();
-          expect(animator.running(chart), isFalse);
-          await tester.pumpWidget(build(_themeB));
-          await tester.pump();
-          expect(animator.running(chart), isFalse);
-          await tester.pumpWidget(build(null));
-          await tester.pump();
-          expect(animator.running(chart), isFalse);
-          expect(modes, [undefined, 'themeFrame', 'default']);
-        });
-      },
-      skip:
-          'n/a: ChartView reads the reduced-motion preference with the flag '
-          'of Chart.js ADR 0049 section 7, which lands after the night run '
-          'A-N3',
-    );
+    group('under MediaQuery(disableAnimations: true)', () {
+      testWidgets("a switch updates with 'themeFrame', a removal with "
+          "'default', and both end in one frame", (tester) async {
+        final modes = _spyOnUpdates();
+        final config = _config(animated: true);
+        Widget build(ChartThemeData? theme) => MediaQuery(
+          data: const MediaQueryData(disableAnimations: true),
+          child: _view(config, theme: theme),
+        );
+        await tester.pumpWidget(build(_themeA));
+        final chart = _chart(tester);
+        await tester.pump();
+        expect(animator.running(chart), isFalse);
+        await tester.pumpWidget(build(_themeB));
+        await tester.pump();
+        expect(animator.running(chart), isFalse);
+        await tester.pumpWidget(build(null));
+        await tester.pump();
+        expect(animator.running(chart), isFalse);
+        expect(modes, [undefined, 'themeFrame', 'default']);
+      });
+    });
   });
 }
 

@@ -2,10 +2,13 @@
 @TestOn('vm')
 library;
 
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+    show HTMLCanvasElement;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
+import 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart';
@@ -25,7 +28,9 @@ import 'animation_reference.dart';
 // - an Animations with the duration 0, as the 'themeFrame' transition of a
 //   theme gives (Chart.js ADR 0019, section 10);
 // - the typed copy of `_resolveTargetOptions` (the row
-//   adapt-typed-element-options).
+//   adapt-typed-element-options);
+// - the reduced-motion flag of a canvas (the row platform-reduced-motion,
+//   Chart.js ADR 0049, section 7).
 // The expected colors come from src/core/core.animation.js at v4.5.1 in
 // Node.js v24.22.1 on arm64 (animation_reference.dart). The frames are pumps
 // of 16 ms: the fake clock of jsDateNow moves by 16 ms in each one.
@@ -33,6 +38,12 @@ import 'animation_reference.dart';
 /// A chart for the animator: it counts its draws. Its other members throw.
 final class _Chart implements types.Chart {
   int draws = 0;
+
+  // The chart object of the test has no canvas: JS `undefined`. The
+  // reduced-motion read of `_createAnimations` reads it (Chart.js ADR 0049,
+  // section 7).
+  @override
+  HTMLCanvasElement? get canvas => null;
 
   @override
   final Map<String, Object?> options = {};
@@ -45,6 +56,29 @@ final class _Chart implements types.Chart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
+
+/// A canvas for the reduced-motion flag. Its members throw.
+final class _Canvas implements HTMLCanvasElement {
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// A chart for the animator on the canvas [canvas].
+final class _CanvasChart extends _Chart {
+  _CanvasChart(this.canvas);
+
+  @override
+  final HTMLCanvasElement canvas;
+}
+
+/// The animation options of the properties `x` and `y`: 1000 ms, numbers.
+Map<String, Object?> _xConfig() => <String, Object?>{
+  'numbers': <String, Object?>{
+    'type': 'number',
+    'properties': ['x', 'y'],
+    'duration': 1000,
+  },
+};
 
 /// The animations of the transition [mode] of a line dataset: the
 /// `animations` of the resolver of `_resolveAnimations`
@@ -302,6 +336,79 @@ void main() {
       });
       expect(point.options, same(options));
       expect(options[r'$animations'], isA<Map<String, Animation>>());
+    });
+  });
+
+  group('platform-reduced-motion', () {
+    test('with the flag, update writes the values and starts no animation', () {
+      final canvas = _Canvas();
+      setReducedMotion(canvas, enabled: true);
+      final chart = _CanvasChart(canvas);
+      final target = <String, Object?>{'x': 0.0, 'y': 0.0};
+      expect(
+        Animations(chart, _xConfig()).update(target, {'x': 10.0, 'y': 20.0}),
+        isNull,
+      );
+      expect(target['x'], 10.0);
+      expect(target['y'], 20.0);
+      // `_createAnimations` still makes the running Map (:71).
+      expect(target[r'$animations'], isEmpty);
+      expect(animator.has(chart), isFalse);
+    });
+
+    test('with the flag, an options update writes the options at once', () {
+      final canvas = _Canvas();
+      setReducedMotion(canvas, enabled: true);
+      final anims = Animations(_CanvasChart(canvas), <String, Object?>{
+        'radius': <String, Object?>{'duration': 400},
+      });
+      final options = PointOptions()..['radius'] = 3.0;
+      final point = PointElement({'options': options});
+      expect(
+        anims.update(point, {
+          'options': <String, Object?>{'radius': 4.0},
+        }),
+        isNull,
+      );
+      expect(point.options, same(options));
+      expect(options['radius'], 4.0);
+      expect(options[r'$animations'], isEmpty);
+    });
+
+    test('a running animation ends at its target', () {
+      final canvas = _Canvas();
+      final chart = _CanvasChart(canvas);
+      final target = <String, Object?>{'x': 0.0};
+      expect(Animations(chart, _xConfig()).update(target, {'x': 10.0}), isTrue);
+      final running = target[r'$animations']! as Map<String, Object?>;
+      final animation = running['x']! as Animation;
+      expect(animation.active(), isTrue);
+
+      setReducedMotion(canvas, enabled: true);
+      expect(Animations(chart, _xConfig()).update(target, {'x': 20.0}), isNull);
+      // :94-97 cancel the animation, and :99-103 write the new value.
+      expect(animation.active(), isFalse);
+      expect(running['x'], same(animation));
+      expect(target['x'], 20.0);
+      animator.remove(chart);
+    });
+
+    test('without the flag, the upstream path', () {
+      final canvas = _Canvas();
+      setReducedMotion(canvas, enabled: true);
+      setReducedMotion(canvas, enabled: false);
+      for (final chart in [_CanvasChart(canvas), _Chart()]) {
+        final target = <String, Object?>{'x': 0.0};
+        expect(
+          Animations(chart, _xConfig()).update(target, {'x': 10.0}),
+          isTrue,
+        );
+        final running = target[r'$animations']! as Map<String, Object?>;
+        expect((running['x']! as Animation).active(), isTrue);
+        expect(target['x'], 0.0);
+        expect(animator.has(chart), isTrue);
+        animator.remove(chart);
+      }
     });
   });
 }

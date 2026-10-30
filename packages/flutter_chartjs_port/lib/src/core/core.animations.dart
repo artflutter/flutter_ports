@@ -24,6 +24,7 @@ import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show copyOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -160,6 +161,8 @@ class Animations {
     final runningObject = running! as Map<String, Object?>;
     final props = jsObjectKeys(values);
     final date = jsDateNow();
+    // DIVERGES(chartjs): platform-reduced-motion, no animation config.
+    final reduced = isReducedMotion(_chart.canvas);
     int i;
 
     for (i = props.length - 1; i >= 0; --i) {
@@ -174,7 +177,7 @@ class Animations {
       }
       final value = values[prop];
       var animation = runningObject[prop] as Animation?;
-      final cfg = animatedProps[prop];
+      final cfg = reduced ? null : animatedProps[prop];
 
       if (animation != null) {
         if (cfg != null && animation.active()) {

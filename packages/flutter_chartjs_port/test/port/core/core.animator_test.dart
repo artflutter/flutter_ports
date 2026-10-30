@@ -3,6 +3,8 @@
 library;
 
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+    show HTMLCanvasElement;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
@@ -32,6 +34,12 @@ final class _Chart implements types.Chart {
 
   final String name;
   int draws = 0;
+
+  // The chart object of the test has no canvas: JS `undefined`. The
+  // reduced-motion read of `_createAnimations` reads it (Chart.js ADR 0049,
+  // section 7).
+  @override
+  HTMLCanvasElement? get canvas => null;
 
   @override
   final Map<String, Object?> options = {};

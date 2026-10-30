@@ -108,7 +108,8 @@ const Map<String, String> forbiddenInLib = {
 ///
 /// `core.animation` and the port-only `animation_spec` are roots (Chart.js
 /// ADR 0019, section 1). `core.animations` and `core.animator` are not:
-/// `core.animator` imports `helpers.extras`.
+/// `core.animator` imports `helpers.extras`. The port-only
+/// `reduced_motion` is a root (Chart.js ADR 0049, section 7).
 ///
 /// `core.typedRegistry` is a root (Chart.js ADR 0020, section 10). It imports
 /// `core.defaults`, `helpers.core` and the JS runtime. `core.registry` and
@@ -141,6 +142,7 @@ const List<String> pureRoots = [
   'lib/src/core/core.layouts.dart',
   'lib/src/core/core.animation.dart',
   'lib/src/core/animation_spec.dart',
+  'lib/src/core/reduced_motion.dart',
   'lib/src/core/core.typedRegistry.dart',
   'lib/src/elements/**',
   'lib/src/plugins/plugin.decimation.dart',

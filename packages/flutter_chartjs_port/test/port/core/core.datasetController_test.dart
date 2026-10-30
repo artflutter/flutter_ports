@@ -536,6 +536,12 @@ final class _FakeChart implements types.Chart {
   @override
   final CanvasRenderingContext2D? ctx = createMockContext();
 
+  // The chart object of the test has no canvas: JS `undefined`. The
+  // reduced-motion read of `_createAnimations` reads it (Chart.js ADR 0049,
+  // section 7).
+  @override
+  HTMLCanvasElement? get canvas => null;
+
   @override
   AnyObject get data => config.data;
 

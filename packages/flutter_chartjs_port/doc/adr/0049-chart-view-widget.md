@@ -233,7 +233,7 @@ This section states the decision of the Open item "Reduced motion" of Chart.js A
 keyed by the canvas.**
 
 - `lib/src/core/reduced_motion.dart` (port-only, pure, `// Original code, not ported from
-  Chart.js: the reduced-motion flag of a chart canvas.`) declares
+  Chart.js: the reduced-motion flag.`) declares
   `void setReducedMotion(Object canvas, {required bool enabled})` and
   `bool isReducedMotion(Object? canvas)` on an `Expando<bool>`. No public library exports it.
 - One hunk in `Animations._createAnimations` of `lib/src/core/core.animations.dart`

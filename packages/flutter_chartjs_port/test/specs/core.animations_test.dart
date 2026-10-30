@@ -3,6 +3,8 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart' show setTimeout, waitForDone;
+import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+    show HTMLCanvasElement;
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -26,6 +28,12 @@ import 'package:flutter_test/flutter_test.dart';
 final class _Chart implements types.Chart {
   @override
   final Map<String, Object?> options = {};
+
+  // The chart object of the test has no canvas: JS `undefined`. The
+  // reduced-motion read of `_createAnimations` reads it (Chart.js ADR 0049,
+  // section 7).
+  @override
+  HTMLCanvasElement? get canvas => null;
 
   @override
   void draw() {}

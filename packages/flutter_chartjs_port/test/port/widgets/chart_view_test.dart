@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
+import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
@@ -24,7 +26,8 @@ import 'package:flutter_test/flutter_test.dart';
 // Chart.js ADR 0049: the widget starts its chart in the first layout of
 // the host (section 2), applies a new config in one post-frame callback
 // (section 4), takes its size from the constraints and the options
-// (section 5), and the callbacks follow the setState table (section 6).
+// (section 5), the callbacks follow the setState table (section 6), and
+// the reduced-motion preference sets the flag of the canvas (section 7).
 // flutter_test_config.dart registers the built-in components.
 
 /// A config of [type] with three values, `animation: false` unless
@@ -68,6 +71,12 @@ UiCanvasElement _canvas(WidgetTester tester) => _host(tester).canvas;
 
 /// The chart of the one ChartView of the tree.
 Chart? _chart(WidgetTester tester) => Chart.getChart(_canvas(tester));
+
+/// [child] under a `MediaQuery` with `disableAnimations: [reduced]`.
+Widget _motion(Widget child, {required bool reduced}) => MediaQuery(
+  data: MediaQueryData(disableAnimations: reduced),
+  child: child,
+);
 
 /// A plugin that counts the calls of [hook] in [counts].
 AnyObject _counter(String id, String hook, Map<String, int> counts) =>
@@ -871,6 +880,150 @@ void main() {
       await tester.pump();
       expect(tester.getSize(find.byType(ChartView)).height, 200);
       expect((chart.width, chart.height), (400.0, 200.0));
+    });
+  });
+
+  group('reduced motion', () {
+    testWidgets('a start under the preference makes no animator entry, '
+        'calls onComplete once and onProgress never', (tester) async {
+      var complete = 0;
+      var progress = 0;
+      final config = _config(
+        options: <String, Object?>{
+          'animation': <String, Object?>{
+            'onComplete': (Object? context) => complete++,
+            'onProgress': (Object? context) => progress++,
+          },
+        },
+      );
+      await tester.pumpWidget(
+        _motion(_box(ChartView(config: config)), reduced: true),
+      );
+      final chart = _chart(tester)!;
+      expect(animator.has(chart), isFalse);
+      expect((complete, progress), (1, 0));
+      for (var i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      expect(animator.has(chart), isFalse);
+      expect((complete, progress), (1, 0));
+      // The resolved options keep the durations (core.animations.js:68).
+      expect(jsGet(chart.options['animation'], 'duration'), 1000);
+      expect(
+        _properties(tester.state(find.byType(ChartView))),
+        contains('reduced motion'),
+      );
+    });
+
+    testWidgets('a change of the preference to on ends a loop: true '
+        'animation', (tester) async {
+      final counts = <String, int>{};
+      final config = _config(
+        options: <String, Object?>{
+          'animation': <String, Object?>{'loop': true},
+        },
+        plugins: [_counter('update', 'beforeUpdate', counts)],
+      );
+      Widget build({required bool reduced}) =>
+          _motion(_box(ChartView(config: config)), reduced: reduced);
+      await tester.pumpWidget(build(reduced: false));
+      final chart = _chart(tester)!;
+      for (var i = 0; i < 100; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      // The loop runs on after the 1000 ms of the animation.
+      expect(animator.running(chart), isTrue);
+      expect(counts['beforeUpdate'], 1);
+
+      // The post-frame callback of the frame calls chart.update(): each
+      // running animation ends at its target (core.animations.js:94-103).
+      await tester.pumpWidget(build(reduced: true));
+      expect(counts['beforeUpdate'], 2);
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(animator.running(chart), isFalse);
+      expect(animator.has(chart), isFalse);
+      for (var i = 0; i < 10; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      expect(animator.has(chart), isFalse);
+      expect(counts['beforeUpdate'], 2);
+    });
+
+    testWidgets('a change of the preference to off makes no update, and the '
+        'next update animates', (tester) async {
+      final counts = <String, int>{};
+      final config = _config(
+        options: <String, Object?>{'animation': <String, Object?>{}},
+        plugins: [_counter('update', 'beforeUpdate', counts)],
+      );
+      Widget build(Map<String, Object?> config, {required bool reduced}) =>
+          _motion(_box(ChartView(config: config)), reduced: reduced);
+      await tester.pumpWidget(build(config, reduced: true));
+      final chart = _chart(tester)!;
+      expect(animator.has(chart), isFalse);
+
+      await tester.pumpWidget(build(config, reduced: false));
+      await tester.pump();
+      expect(counts['beforeUpdate'], 1);
+      expect(animator.has(chart), isFalse);
+      expect(
+        _properties(tester.state(find.byType(ChartView))),
+        isNot(contains('reduced motion')),
+      );
+
+      await tester.pumpWidget(build(Map.of(config), reduced: false));
+      expect(counts['beforeUpdate'], 2);
+      expect(animator.has(chart), isTrue);
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pump();
+      expect(animator.has(chart), isFalse);
+    });
+
+    testWidgets('a theme switch and a theme removal draw once', (
+      tester,
+    ) async {
+      final counts = <String, int>{};
+      final config = _config(
+        options: <String, Object?>{'animation': <String, Object?>{}},
+        plugins: [_counter('draw', 'afterDraw', counts)],
+      );
+      const themeA = ChartThemeData(color: Color(0xFFFF0000));
+      const themeB = ChartThemeData(color: Color(0xFF0000FF));
+      Widget build(ChartThemeData? theme) => _motion(
+        _box(ChartView(config: config, theme: theme)),
+        reduced: true,
+      );
+      await tester.pumpWidget(build(themeA));
+      final chart = _chart(tester)!;
+      await tester.pump(const Duration(seconds: 2));
+      expect(counts['afterDraw'], 1);
+
+      await tester.pumpWidget(build(themeB));
+      expect(animator.has(chart), isFalse);
+      await tester.pump(const Duration(seconds: 2));
+      expect(counts['afterDraw'], 2);
+
+      await tester.pumpWidget(build(null));
+      expect(animator.has(chart), isFalse);
+      await tester.pump(const Duration(seconds: 2));
+      expect(counts['afterDraw'], 3);
+    });
+
+    testWidgets('defaults.animation stays unchanged', (tester) async {
+      final animation = defaults['animation']! as AnyObject;
+      final before = Map<String, Object?>.of(animation);
+      final config = _config(
+        options: <String, Object?>{'animation': <String, Object?>{}},
+      );
+      Widget build(Map<String, Object?> config, {required bool reduced}) =>
+          _motion(_box(ChartView(config: config)), reduced: reduced);
+      await tester.pumpWidget(build(config, reduced: true));
+      await tester.pumpWidget(build(Map.of(config), reduced: true));
+      await tester.pump();
+      expect(defaults['animation'], same(animation));
+      expect(animation, before);
+      // The widget writes no animation option into the app config.
+      expect(jsGet(config['options'], 'animation'), <String, Object?>{});
     });
   });
 

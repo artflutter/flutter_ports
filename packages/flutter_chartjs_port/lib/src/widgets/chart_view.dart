@@ -15,6 +15,12 @@
 /// moves a virtual mouse over the legend items and the data elements, and
 /// the widget plugin draws the focus ring.
 ///
+/// Reduced motion (Chart.js ADR 0049, section 7): `build` sets the
+/// reduced-motion flag of the canvas from
+/// `MediaQuery.maybeDisableAnimationsOf` (`reduced_motion.dart`). A chart on
+/// a canvas with the flag starts no animation (row
+/// `platform-reduced-motion`).
+///
 /// The widget registers no component (Chart.js ADR 0048, section 3): no
 /// file of `lib/src/widgets/` imports a controller, a scale, an element, a
 /// plugin or an index of them. It never writes `defaults` or `overrides`,
@@ -29,6 +35,7 @@ import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
@@ -81,6 +88,15 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 /// text of [semanticLabel], as a Chart.js canvas with `role="img"` and
 /// `aria-label` (Chart.js ADR 0051, section 8). The node does not change
 /// at a data update or in an animation frame.
+///
+/// Reduced motion: when `MediaQuery.disableAnimations` is true, the chart
+/// animates nothing (Chart.js ADR 0049, section 7). Each update, hover,
+/// tooltip and theme switch then goes to its end values at once. The
+/// resolved options stay, and `onComplete` runs once for each render. When
+/// the preference turns on, the chart updates after the frame, and a
+/// running animation ends at its target. When it turns off, the next update
+/// animates. For motion under the preference, wrap the chart in a
+/// `MediaQuery` with `disableAnimations: false`.
 class ChartView extends StatefulWidget {
   /// Creates a widget that shows the chart of [config].
   const ChartView({
@@ -240,11 +256,15 @@ class _ChartViewState extends State<ChartView> {
     _keyboard,
   );
 
-  /// The reduced-motion preference (Chart.js ADR 0049, section 7). False
-  /// until the flag of that section lands; then it reads the preference of
-  /// the last build, and a theme switch under it updates with
-  /// `'themeFrame'` (Chart.js ADR 0050, step 5).
-  bool get _reducedMotion => false;
+  /// The reduced-motion preference of the last build (Chart.js ADR 0049,
+  /// section 7). A theme switch under it updates with `'themeFrame'`
+  /// (Chart.js ADR 0050, step 5).
+  bool _reducedMotion = false;
+
+  /// Whether the preference turned on while the state had a chart: the
+  /// next post-frame update calls `chart.update()` in the default mode
+  /// (Chart.js ADR 0049, section 4, step 6).
+  bool _motionUpdate = false;
 
   @override
   void didUpdateWidget(ChartView oldWidget) {
@@ -371,12 +391,15 @@ class _ChartViewState extends State<ChartView> {
   /// The update of Chart.js ADR 0049, section 4: the values of the last
   /// config that are new objects go to the chart, then the theme switch of
   /// Chart.js ADR 0050 (steps 1 to 4), then one `chart.update`: with the
-  /// mode of the theme switch when the theme changed, else with
-  /// [ChartView.updateMode]. It runs after the frame, so every hook of the
-  /// update, also the replay of the last event (core.controller.js:529-532),
-  /// runs outside the build.
+  /// mode of the theme switch when the theme changed, else in the default
+  /// mode when the reduced-motion preference turned on (section 7), else
+  /// with [ChartView.updateMode]. It runs after the frame, so every hook of
+  /// the update, also the replay of the last event
+  /// (core.controller.js:529-532), runs outside the build.
   void _update(Duration _) {
     _updatePending = false;
+    final motionUpdate = _motionUpdate;
+    _motionUpdate = false;
     // The first layout starts the chart with the last config.
     if (!mounted || !_laidOut) return;
     final chart = _chart;
@@ -389,7 +412,9 @@ class _ChartViewState extends State<ChartView> {
     final config = widget.config;
     final applied = _applied;
     final configChanged = !identical(config, applied);
-    if (!configChanged && _theme == _themeSwitch.applied) return;
+    if (!configChanged && !motionUpdate && _theme == _themeSwitch.applied) {
+      return;
+    }
     final root = _root!;
     if (configChanged) _applyConfig(chart, root, config, applied);
     // Chart.js ADR 0050, steps 1 to 4, also before a new chart of a new
@@ -418,9 +443,11 @@ class _ChartViewState extends State<ChartView> {
       chart.update(themeMode);
       return;
     }
-    if (!configChanged) return;
+    if (!configChanged && !motionUpdate) return;
     final mode = widget.updateMode;
-    if (mode == null) {
+    // Step 6: the default mode also when the preference turned on
+    // (Chart.js ADR 0049, section 7): a running animation ends.
+    if (mode == null || motionUpdate) {
       chart.update();
     } else {
       chart.update(mode);
@@ -480,6 +507,17 @@ class _ChartViewState extends State<ChartView> {
   @override
   Widget build(BuildContext context) {
     _tickerEnabled = TickerMode.valuesOf(context).enabled;
+    // Chart.js ADR 0049, section 7: the flag of the canvas, before the
+    // start, so that the first update of the constructor reads it. When the
+    // preference turns on, a chart updates after the frame. When it turns
+    // off, the widget makes no update.
+    final reduced = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    setReducedMotion(_canvas, enabled: reduced);
+    if (reduced && !_reducedMotion && _chart != null) {
+      _motionUpdate = true;
+      _scheduleUpdate();
+    }
+    _reducedMotion = reduced;
     final theme = _theme = widget.theme ?? ChartTheme.maybeOf(context);
     // A new theme after the start switches in the update callback (Chart.js
     // ADR 0050, step 1). The start reads the theme of the last build.
@@ -537,6 +575,13 @@ class _ChartViewState extends State<ChartView> {
           'muted',
           value: chart != null && !_tickerEnabled,
           ifTrue: 'muted',
+        ),
+      )
+      ..add(
+        FlagProperty(
+          'reducedMotion',
+          value: _reducedMotion,
+          ifTrue: 'reduced motion',
         ),
       );
   }
