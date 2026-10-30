@@ -509,6 +509,18 @@ final class OptionResolver extends MapBase<String, Object?>
   String toString() => 'Resolver(cache: ${_targetNames.join(', ')})';
 }
 
+/// The typed read `options[key.jsName]` of an options object of another
+/// module (Chart.js ADR 0054 §4): `readKey` of an [OptionView] or an
+/// [OptionResolver], else the JS property read [jsGet]. The chart options,
+/// the scale options, the plugin options and the dataset options are
+/// views; a test can give a raw Map. Upstream reads the property by name.
+/// Port-only.
+Object? readOption(Object? options, OptionKey key) => switch (options) {
+  final OptionView view => view.readKey(key),
+  final OptionResolver resolver => resolver.readKey(key),
+  _ => jsGet(options, key.jsName),
+};
+
 /// helpers.config.ts:118 `_attachContext`.
 ///
 /// Returns an Proxy for resolving option values with context.

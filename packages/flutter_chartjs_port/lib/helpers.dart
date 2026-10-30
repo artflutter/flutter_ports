@@ -65,6 +65,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         normalizeAngle,
         parseObjectDataRadialScale,
         pointInLine,
+        readOption,
         readValueToProps,
         rlookupByKey,
         scaleRangesChanged,
