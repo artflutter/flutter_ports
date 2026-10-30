@@ -37,6 +37,8 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ColorsOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -262,10 +264,10 @@ bool _containsDefaultColorsDefenitions() {
 final AnyObject colors = <String, Object?>{
   'id': 'colors',
 
-  'defaults': <String, Object?>{
-    'enabled': true,
-    'forceOverride': false,
-  },
+  // A typed scope of the kind `ColorsOptions` (Chart.js ADR 0054 §3).
+  'defaults': ColorsOptionsScope()
+    ..enabled = true
+    ..forceOverride = false,
 
   /// plugin.colors.ts:102 `beforeLayout(chart, _args, options)`.
   'beforeLayout': (types.Chart chart, AnyObject _, AnyObject options) {

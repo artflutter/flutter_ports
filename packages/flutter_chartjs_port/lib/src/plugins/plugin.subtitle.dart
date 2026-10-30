@@ -23,6 +23,8 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show DescriptorsScope, FontSpecScope, TitleOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -70,22 +72,24 @@ final AnyObject subTitle = <String, Object?>{
     title.options = options;
   },
 
-  // plugin.subtitle.js:32-43.
-  'defaults': <String, Object?>{
-    'align': 'center',
-    'display': false,
-    'font': <String, Object?>{'weight': 'normal'},
-    'fullSize': true,
-    'padding': 0.0,
-    'position': 'top',
-    'text': '',
+  // plugin.subtitle.js:32-43. A typed scope of the kind `TitleOptions`
+  // (Chart.js ADR 0054 §3).
+  'defaults': TitleOptionsScope()
+    ..align = 'center'
+    ..display = false
+    ..font = (FontSpecScope()..weight = 'normal')
+    ..fullSize = true
+    ..padding = 0.0
+    ..position = 'top'
+    ..text = ''
     // by default greater than legend (1000) and smaller than title (2000)
-    'weight': 1500.0,
-  },
+    ..weight = 1500.0,
 
   // plugin.subtitle.js:45-47.
   'defaultRoutes': <String, Object?>{'color': 'color'},
 
-  // plugin.subtitle.js:49-52.
-  'descriptors': <String, Object?>{'_scriptable': true, '_indexable': false},
+  // plugin.subtitle.js:49-52. A typed scope of the kind `Descriptors`.
+  'descriptors': DescriptorsScope()
+    ..descScriptable = true
+    ..descIndexable = false,
 };

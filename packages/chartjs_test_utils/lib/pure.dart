@@ -40,6 +40,9 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 // ignore: implementation_imports
 import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
     show setDefaultDateZone;
+// The typed scopes of the defaults (Chart.js ADR 0054).
+// ignore: implementation_imports
+import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:test/test.dart';
 
 export 'src/context.dart' show ContextCall, MockContext, createMockContext;
@@ -136,11 +139,12 @@ void removeBuiltins() {
 ///
 /// The snapshot keeps the identity of each object and array in the scopes.
 /// The restore puts back the entries of each one in place, in key order. It
-/// keeps the `undefined` sentinel, Dart `null` and absent keys apart, and it
-/// puts back the routes of each [RoutedScope] and the [RoutedScope] that took
-/// the place of each plain object (`Defaults.route`). An object that a test
-/// adds leaves the scopes. An object that a test removes or replaces comes
-/// back.
+/// keeps the `undefined` sentinel, Dart `null` and absent keys apart. It
+/// puts back the key order, the cells and the routes of each typed scope of
+/// Chart.js ADR 0054 (`OptionScope.saveState`), the routes of each
+/// [RoutedScope] and the [RoutedScope] that took the place of each plain
+/// object (`Defaults.route`). An object that a test adds leaves the scopes.
+/// An object that a test removes or replaces comes back.
 void setUpDefaultsRestore() {
   late _Snapshot snapshot;
   setUpAll(() {
@@ -164,6 +168,12 @@ final class _Snapshot {
       final value = queue.removeFirst();
       if (value == null || !seen.add(value)) continue;
       switch (value) {
+        case final OptionScope scope:
+          final state = scope.saveState();
+          saved.add(_SavedScope(scope, state));
+          queue
+            ..addAll(state.values)
+            ..addAll(state.routeTargets);
         case final RoutedScope scope:
           final entries = scope.ownValues.entries.toList();
           final routes = Map.of(scope.routes);
@@ -201,6 +211,20 @@ final class _Snapshot {
 sealed class _Saved {
   /// Puts back the saved state, if it changed.
   void restore();
+}
+
+/// The key order, the cells and the routes of a typed scope (Chart.js ADR
+/// 0054).
+final class _SavedScope implements _Saved {
+  _SavedScope(this.scope, this.state);
+
+  final OptionScope scope;
+  final ScopeState state;
+
+  @override
+  void restore() {
+    if (!scope.hasState(state)) scope.restoreState(state);
+  }
 }
 
 /// The own values and routes of a [RoutedScope].

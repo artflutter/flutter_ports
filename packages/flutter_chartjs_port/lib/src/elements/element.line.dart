@@ -62,6 +62,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show DescriptorsScope, LineOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -647,20 +649,20 @@ class LineElement extends Element
   /// element.line.js:245 `static id = 'line'`.
   static const String id = 'line';
 
-  /// element.line.js:250 `static defaults`.
-  static final AnyObject defaults = {
-    'borderCapStyle': 'butt',
-    'borderDash': <Object?>[],
-    'borderDashOffset': 0.0,
-    'borderJoinStyle': 'miter',
-    'borderWidth': 3.0,
-    'capBezierPoints': true,
-    'cubicInterpolationMode': 'default',
-    'fill': false,
-    'spanGaps': false,
-    'stepped': false,
-    'tension': 0.0,
-  };
+  /// element.line.js:250 `static defaults`, a typed scope of the kind
+  /// `LineOptions` (Chart.js ADR 0054 §3).
+  static final LineOptionsScope defaults = LineOptionsScope()
+    ..borderCapStyle = 'butt'
+    ..borderDash = <Object?>[]
+    ..borderDashOffset = 0.0
+    ..borderJoinStyle = 'miter'
+    ..borderWidth = 3.0
+    ..capBezierPoints = true
+    ..cubicInterpolationMode = 'default'
+    ..fill = false
+    ..spanGaps = false
+    ..stepped = false
+    ..tension = 0.0;
 
   /// element.line.js:267 `static defaultRoutes`.
   static final AnyObject defaultRoutes = {
@@ -668,11 +670,15 @@ class LineElement extends Element
     'borderColor': 'borderColor',
   };
 
-  /// element.line.js:273 `static descriptors`.
-  static final AnyObject descriptors = {
-    '_scriptable': true,
-    '_indexable': (String name) => name != 'borderDash' && name != 'fill',
-  };
+  /// element.line.js:273 `static descriptors`, a typed scope of the kind
+  /// `Descriptors` (Chart.js ADR 0054 §3).
+  static final DescriptorsScope descriptors = DescriptorsScope()
+    ..descScriptable = true
+    ..descIndexable = _indexableDescriptor;
+
+  /// element.line.js:275 the `_indexable` descriptor.
+  static bool _indexableDescriptor(String name) =>
+      name != 'borderDash' && name != 'fill';
 
   /// element.line.js:243 `class LineElement extends Element` as a value
   /// (Chart.js ADR 0020, section 3).

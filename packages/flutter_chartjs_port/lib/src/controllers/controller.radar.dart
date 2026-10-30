@@ -38,6 +38,14 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        ChartOptionsScope,
+        ElementOptionsByTypeScope,
+        LineOptionsScope,
+        RadarControllerDatasetOptionsScope,
+        ScaleOptionsByIdScope,
+        ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -51,25 +59,23 @@ class RadarController extends DatasetController {
   /// controller.radar.js:6 `static id = 'radar'`.
   static const String id = 'radar';
 
-  /// controller.radar.js:11 `static defaults`.
-  static final AnyObject defaults = {
-    'datasetElementType': 'line',
-    'dataElementType': 'point',
-    'indexAxis': 'r',
-    'showLine': true,
-    'elements': <String, Object?>{
-      'line': <String, Object?>{'fill': 'start'},
-    },
-  };
+  /// controller.radar.js:11 `static defaults`, a typed scope of the kind
+  /// `RadarControllerDatasetOptions` (Chart.js ADR 0054 §3).
+  static final RadarControllerDatasetOptionsScope defaults =
+      RadarControllerDatasetOptionsScope()
+        ..datasetElementType = 'line'
+        ..dataElementType = 'point'
+        ..indexAxis = 'r'
+        ..showLine = true
+        ..elements = (ElementOptionsByTypeScope()
+          ..line = (LineOptionsScope()..fill = 'start'));
 
-  /// controller.radar.js:26 `static overrides`.
-  static final AnyObject overrides = {
-    'aspectRatio': 1.0,
-
-    'scales': <String, Object?>{
-      'r': <String, Object?>{'type': 'radialLinear'},
-    },
-  };
+  /// controller.radar.js:26 `static overrides`, a typed scope of the kind
+  /// `ChartOptions` (Chart.js ADR 0054 §3).
+  static final ChartOptionsScope overrides = ChartOptionsScope()
+    ..aspectRatio = 1.0
+    ..scales = (ScaleOptionsByIdScope()
+      ..jsWrite('r', ScaleOptionsScope()..type = 'radialLinear'));
 
   /// controller.radar.js:4 `class RadarController extends
   /// DatasetController` as a value (Chart.js ADR 0020, section 3).

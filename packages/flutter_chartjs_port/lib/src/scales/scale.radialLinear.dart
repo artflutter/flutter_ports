@@ -47,8 +47,17 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart'
     show jsCos, jsMax, jsMin, jsRound, jsSin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
+import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        AngleLineOptionsScope,
+        DescriptorsScope,
+        FontSpecScope,
+        GridLineOptionsScope,
+        PointLabelOptionsScope,
+        ScaleOptionsScope,
+        TickOptionsScope;
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' as types;
@@ -749,55 +758,43 @@ class RadialLinearScale extends LinearScaleBase
   // scale.radialLinear.js:340 `static id = 'radialLinear'`. Scale has the
   // instance field `id`. Thus the value is only in the statics of jsClass.
 
-  /// scale.radialLinear.js:345 `static defaults`.
-  static final AnyObject defaults = {
-    'display': true,
-
+  /// scale.radialLinear.js:345 `static defaults`, a typed scope of the kind
+  /// `ScaleOptions` (Chart.js ADR 0054 §3).
+  static final ScaleOptionsScope defaults = ScaleOptionsScope()
+    ..display = true
     // Boolean - Whether to animate scaling the chart from the centre
-    'animate': true,
-    'position': 'chartArea',
-
-    'angleLines': <String, Object?>{
-      'display': true,
-      'lineWidth': 1.0,
-      'borderDash': <Object?>[],
-      'borderDashOffset': 0.0,
-    },
-
-    'grid': <String, Object?>{'circular': false},
-
-    'startAngle': 0.0,
-
+    ..animate = true
+    ..position = 'chartArea'
+    ..angleLines = (AngleLineOptionsScope()
+      ..display = true
+      ..lineWidth = 1.0
+      ..borderDash = <Object?>[]
+      ..borderDashOffset = 0.0)
+    ..grid = (GridLineOptionsScope()..circular = false)
+    ..startAngle = 0.0
     // label settings
-    'ticks': <String, Object?>{
+    ..ticks = (TickOptionsScope()
       // Boolean - Show a backdrop to the scale label
-      'showLabelBackdrop': true,
-
-      'callback': formatters['numeric'],
-    },
-
-    'pointLabels': <String, Object?>{
-      'backdropColor': undefined,
-
+      ..showLabelBackdrop = true
+      ..callback = formatters['numeric']!)
+    ..pointLabels = (PointLabelOptionsScope()
+      ..backdropColorCell = optUndefined
       // Number - The backdrop padding above & below the label in pixels
-      'backdropPadding': 2.0,
-
+      ..backdropPadding = 2.0
       // Boolean - if true, show point labels
-      'display': true,
-
+      ..display = true
       // Number - Point label font size in pixels
-      'font': <String, Object?>{'size': 10.0},
-
+      ..font = (FontSpecScope()..size = 10.0)
       // Function - Used to convert point labels
-      'callback': (Object? label) => label,
-
+      ..callback = _pointLabelCallback
       // Number - Additionl padding between scale and pointLabel
-      'padding': 5.0,
-
+      ..padding = 5.0
       // Boolean - if true, center point labels to slices in polar chart
-      'centerPointLabels': false,
-    },
-  };
+      ..centerPointLabels = false);
+
+  /// scale.radialLinear.js:388 the point label `callback(label)`, which
+  /// returns `label`.
+  static Object? _pointLabelCallback(Object? label) => label;
 
   /// scale.radialLinear.js:400 `static defaultRoutes`.
   static final AnyObject defaultRoutes = {
@@ -806,10 +803,10 @@ class RadialLinearScale extends LinearScaleBase
     'ticks.color': 'color',
   };
 
-  /// scale.radialLinear.js:406 `static descriptors`.
-  static final AnyObject descriptors = {
-    'angleLines': <String, Object?>{'_fallback': 'grid'},
-  };
+  /// scale.radialLinear.js:406 `static descriptors`, a typed scope of the
+  /// kind `Descriptors` (Chart.js ADR 0054 §3).
+  static final DescriptorsScope descriptors = DescriptorsScope()
+    ..jsWrite('angleLines', DescriptorsScope()..descFallback = 'grid');
 
   /// scale.radialLinear.js:338 `class RadialLinearScale extends
   /// LinearScaleBase` as a value (Chart.js ADR 0020, section 3).

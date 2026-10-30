@@ -14,12 +14,26 @@ library;
 //   `key_census_suite.tsv` and `key_census_fixtures.tsv`) maps to a declared
 //   key or to a reviewed extra of `census_review.tsv`, and each recorded
 //   kind fits the shape or is a reviewed foreign pair. A review entry that no
-//   census row needs fails as stale.
+//   census row needs fails as stale;
+// - the built typed roots `defaults`, `overrides` and `descriptors` (with the
+//   components of `flutter_test_config.dart` registered) equal the defaults
+//   inventory in values and key order: each inventory path has its value
+//   (a function default compares by its presence), each leaf of the roots
+//   is an inventory path, each object of the roots is a typed scope, and the
+//   keys of each declaration site keep their order in their object.
 
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isObject;
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
+import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:test/test.dart';
 
 /// The dataset kinds: a census path under `data.datasets[]` maps when one
@@ -136,6 +150,96 @@ bool _skipped(String path) =>
     // The census writes each scale id of `options.scales` as a kind.
     path == 'options.scales.<id>';
 
+/// The value at the dot [path] under [root], read key by key with [jsGet].
+Object? _read(Object? root, String path) {
+  var value = root;
+  for (final key in path.split('.')) {
+    value = jsGet(value, key);
+  }
+  return value;
+}
+
+/// The keys of the object [value], or Dart `null` for another value.
+List<String>? _keysOf(Object? value) =>
+    isObject(value) ? jsObjectKeys(value! as AnyObject) : null;
+
+/// Whether [key] of the object [object] is routed (`Defaults.route`).
+bool _routed(Object? object, String key) => switch (object) {
+  final OptionScope scope => scope.routeOf(key) != null,
+  final RoutedScope scope => scope.routes.containsKey(key),
+  _ => false,
+};
+
+/// The mismatch of the runtime value [actual] with the inventory value
+/// [expected], or Dart `null` when they are equal. A function compares by
+/// its presence; a route compares the value read through the route.
+String? _mismatch(Object? actual, Object? expected) {
+  switch (expected) {
+    case null:
+      return actual == null ? null : 'not null: $actual';
+    case {'undefined': true}:
+      return identical(actual, undefined) ? null : 'not undefined: $actual';
+    case {'function': _}:
+      return jsIsFunction(actual) ? null : 'not a function: $actual';
+    case {'route': final Object? routed}:
+      return _mismatch(actual, routed);
+    case final num n:
+      return actual is num && actual == n ? null : '$actual != $n';
+    case final String _ || final bool _:
+      return actual == expected ? null : '$actual != $expected';
+    case final List<Object?> list:
+      if (actual is! List<Object?> || actual.length != list.length) {
+        return '$actual != $list';
+      }
+      for (var i = 0; i < list.length; i++) {
+        final item = _mismatch(actual[i], list[i]);
+        if (item != null) return '[$i] $item';
+      }
+      return null;
+    case final Map<String, Object?> map:
+      final keys = _keysOf(actual);
+      if (keys == null) return 'not an object: $actual';
+      if ((keys.toList()..sort()).join(',') !=
+          (map.keys.toList()..sort()).join(',')) {
+        return 'keys $keys != ${map.keys.toList()}';
+      }
+      for (final MapEntry(:key, :value) in map.entries) {
+        final item = _mismatch(jsGet(actual, key), value);
+        if (item != null) return '.$key $item';
+      }
+      return null;
+  }
+  return 'unknown inventory value $expected';
+}
+
+/// The leaf paths under [object] with the prefix [prefix]: a value that is
+/// not an object, an empty object, an array, or a routed key.
+void _leaves(Object? object, String prefix, List<String> out) {
+  for (final key in _keysOf(object)!) {
+    final path = prefix.isEmpty ? key : '$prefix.$key';
+    final value = jsGet(object, key);
+    final keys = _keysOf(value);
+    if (_routed(object, key) || keys == null || keys.isEmpty) {
+      out.add(path);
+    } else {
+      _leaves(value, path, out);
+    }
+  }
+}
+
+/// Each object under [object] that is not a typed scope, by path. A routed
+/// value is a new object of each read, as upstream: it is skipped.
+void _rawObjects(Object? object, String prefix, List<String> out) {
+  for (final key in _keysOf(object)!) {
+    if (_routed(object, key)) continue;
+    final path = prefix.isEmpty ? key : '$prefix.$key';
+    final value = jsGet(object, key);
+    if (!isObject(value)) continue;
+    if (value is! OptionScope) out.add(path);
+    _rawObjects(value, path, out);
+  }
+}
+
 void main() {
   final manifest = jsonDecode(
     File('doc/upstream/manifest.json').readAsStringSync(),
@@ -200,6 +304,128 @@ void main() {
         }
       }
       expect(problems, isEmpty);
+    });
+  });
+
+  group('the typed roots against the defaults inventory', () {
+    // flutter_test_config.dart turns off the colors plugin (test/index.js:25-28);
+    // the inventory has the upstream value. The defaults restore of the
+    // harness puts the test value back after each test.
+    void upstreamColors() {
+      final colors = _read(defaults, 'plugins.colors')! as AnyObject;
+      final enabled = colors['enabled'];
+      colors['enabled'] = true;
+      addTearDown(() => colors['enabled'] = enabled);
+    }
+
+    final roots = <(String, Object)>[
+      ('defaults', defaults),
+      ('overrides', overrides),
+      ('descriptors', descriptors),
+    ];
+
+    for (final (name, root) in roots) {
+      test('each $name path has its value', () {
+        upstreamColors();
+        final paths = values[name]! as Map<String, Object?>;
+        final problems = <String>[];
+        for (final MapEntry(key: path, value: expected) in paths.entries) {
+          final Object? actual;
+          try {
+            actual = _read(root, path);
+          } on Object catch (e) {
+            problems.add('$path: $e');
+            continue;
+          }
+          final mismatch = _mismatch(actual, expected);
+          if (mismatch != null) problems.add('$path: $mismatch');
+        }
+        expect(problems, isEmpty);
+      });
+
+      test('each leaf of $name is an inventory path', () {
+        final paths = (values[name]! as Map<String, Object?>).keys.toSet();
+        final leaves = <String>[];
+        _leaves(root, '', leaves);
+        expect(leaves.where((leaf) => !paths.contains(leaf)), isEmpty);
+      });
+
+      test('each object of $name is a typed scope', () {
+        expect(root, isA<OptionScope>());
+        final raw = <String>[];
+        _rawObjects(root, '', raw);
+        // `adapters` has the shape `any` (helpers.config.ts:215).
+        expect(raw.where((path) => !path.endsWith('.adapters')), isEmpty);
+      });
+    }
+
+    // A defaultRoutes site routes keys that the defaults already own: they
+    // keep their places (core.defaults.js:136-157), so it is not an order
+    // site. The values of its routes are inventory values (`{route}`).
+    test('the keys of each declaration site keep their order', () {
+      final sites = inventory['sites']! as List<Object?>;
+      const scopes = {
+        'elements': 'elements',
+        'controllers': 'datasets',
+        'scales': 'scales',
+        'plugins': 'plugins',
+      };
+      final problems = <String>[];
+      var checked = 0;
+      for (final site in sites.cast<Map<String, Object?>>()) {
+        final kind = site['kind']! as String;
+        final file = site['file']! as String;
+        final id = site['id'] as String?;
+        final folder = file.split('/')[1];
+        var keys = site['keys'] as List<Object?>?;
+        Object? object;
+        final args = site['args'];
+        if (args is List<Object?> &&
+            args.length == 2 &&
+            args[0] is String &&
+            args[1] is Map<String, Object?>) {
+          final path = args[0]! as String;
+          keys = (args[1]! as Map<String, Object?>)['keys'] as List<Object?>?;
+          object = switch (kind) {
+            'defaults.set' => _read(defaults, path),
+            'defaults.describe' => _read(descriptors, path),
+            _ => null,
+          };
+        } else if (kind == 'new Defaults' && args is List<Object?>) {
+          keys = (args[0]! as Map<String, Object?>)['keys'] as List<Object?>?;
+          object = descriptors;
+        } else if (kind == 'Defaults constructor') {
+          object = defaults;
+        } else if (id != null && scopes.containsKey(folder)) {
+          final scope = scopes[folder]!;
+          object = switch (kind) {
+            'static defaults' || 'field defaults' => _read(
+              defaults,
+              '$scope.$id',
+            ),
+            'static descriptors' || 'field descriptors' => _read(
+              descriptors,
+              '$scope.$id',
+            ),
+            'static overrides' => _read(overrides, id),
+            _ => null,
+          };
+        }
+        if (object == null || keys == null) continue;
+        final siteKeys = keys.cast<String>();
+        final actual = _keysOf(object);
+        if (actual == null) {
+          problems.add('$file:${site['line']} not an object');
+          continue;
+        }
+        checked++;
+        final ordered = actual.where(siteKeys.contains).toList();
+        if (ordered.join(',') != siteKeys.join(',')) {
+          problems.add('$file:${site['line']} $ordered != $siteKeys');
+        }
+      }
+      expect(problems, isEmpty);
+      expect(checked, greaterThan(40));
     });
   });
 

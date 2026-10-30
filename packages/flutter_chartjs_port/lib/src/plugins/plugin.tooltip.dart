@@ -54,6 +54,16 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
     show canvasKeyword, canvasLineDash, canvasNumber, canvasStyle;
+import 'package:flutter_chartjs_port/src/options/opt.dart'
+    show OptFunction, optNull;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        AnimationOptionsScope,
+        AnimationsSpecScope,
+        DescriptorsScope,
+        FontSpecScope,
+        TooltipCallbacksScope,
+        TooltipOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -725,32 +735,28 @@ AnyObject _defaultLabelPointStyle(Object? tooltipItem) {
 ///
 /// `title`, `label` and `labelTextColor` read `this`, so they are
 /// [JsFunction] values. The 9 `noop` entries are `noop` of helpers.core. The
-/// plugin `defaults` holds this Map under `callbacks` (:1324).
-final AnyObject _defaultCallbacks = <String, Object?>{
+/// plugin `defaults` holds this object under `callbacks` (:1324): a typed
+/// scope of the kind `TooltipCallbacks` (Chart.js ADR 0054 §3).
+final TooltipCallbacksScope _defaultCallbacks = TooltipCallbacksScope()
   // Args are: (tooltipItems, data)
-  'beforeTitle': noop,
-  'title': const JsFunction(_defaultTitle),
-  'afterTitle': noop,
-
+  ..beforeTitle = noop
+  ..title = const JsFunction(_defaultTitle)
+  ..afterTitle = noop
   // Args are: (tooltipItems, data)
-  'beforeBody': noop,
-
+  ..beforeBody = noop
   // Args are: (tooltipItem, data)
-  'beforeLabel': noop,
-  'label': const JsFunction(_defaultLabel),
-  'labelColor': _defaultLabelColor,
-  'labelTextColor': const JsFunction(_defaultLabelTextColor),
-  'labelPointStyle': _defaultLabelPointStyle,
-  'afterLabel': noop,
-
+  ..beforeLabel = noop
+  ..label = const JsFunction(_defaultLabel)
+  ..labelColor = _defaultLabelColor
+  ..labelTextColor = const JsFunction(_defaultLabelTextColor)
+  ..labelPointStyle = _defaultLabelPointStyle
+  ..afterLabel = noop
   // Args are: (tooltipItems, data)
-  'afterBody': noop,
-
+  ..afterBody = noop
   // Args are: (tooltipItems, data)
-  'beforeFooter': noop,
-  'footer': noop,
-  'afterFooter': noop,
-};
+  ..beforeFooter = noop
+  ..footer = noop
+  ..afterFooter = noop;
 
 /// plugin.tooltip.js:447 `invokeCallbackWithFallback(callbacks, name, ctx,
 /// arg)`.
@@ -2317,6 +2323,10 @@ Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 Object? _bodyFontSize(Object? ctx, Object? opts) =>
     jsGet(jsGet(opts, 'bodyFont'), 'size');
 
+/// plugin.tooltip.js:1334 the `_scriptable` descriptor of the plugin.
+bool _scriptableDescriptor(String name) =>
+    name != 'filter' && name != 'itemSort' && name != 'external';
+
 /// plugin.tooltip.js:1223 the default export, `Tooltip` of
 /// `src/plugins/index.js:7` (Chart.js ADR 0038, section 1).
 ///
@@ -2388,54 +2398,56 @@ final AnyObject tooltip = <String, Object?>{
     }
   },
 
-  // plugin.tooltip.js:1275-1325.
-  'defaults': <String, Object?>{
-    'enabled': true,
-    'external': null,
-    'position': 'average',
-    'backgroundColor': 'rgba(0,0,0,0.8)',
-    'titleColor': '#fff',
-    'titleFont': <String, Object?>{'weight': 'bold'},
-    'titleSpacing': 2.0,
-    'titleMarginBottom': 6.0,
-    'titleAlign': 'left',
-    'bodyColor': '#fff',
-    'bodySpacing': 2.0,
-    'bodyFont': <String, Object?>{},
-    'bodyAlign': 'left',
-    'footerColor': '#fff',
-    'footerSpacing': 2.0,
-    'footerMarginTop': 6.0,
-    'footerFont': <String, Object?>{'weight': 'bold'},
-    'footerAlign': 'left',
-    'padding': 6.0,
-    'caretPadding': 2.0,
-    'caretSize': 5.0,
-    'cornerRadius': 6.0,
-    'boxHeight': _bodyFontSize,
-    'boxWidth': _bodyFontSize,
-    'multiKeyBackground': '#fff',
-    'displayColors': true,
-    'boxPadding': 0.0,
-    'borderColor': 'rgba(0,0,0,0)',
-    'borderWidth': 0.0,
-    'animation': <String, Object?>{'duration': 400.0, 'easing': 'easeOutQuart'},
-    'animations': <String, Object?>{
-      'numbers': <String, Object?>{
-        'type': 'number',
-        'properties': <Object?>[
+  // plugin.tooltip.js:1275-1325. A typed scope of the kind `TooltipOptions`
+  // (Chart.js ADR 0054 §3).
+  'defaults': TooltipOptionsScope()
+    ..enabled = true
+    ..externalCell = optNull
+    ..position = 'average'
+    ..backgroundColor = 'rgba(0,0,0,0.8)'
+    ..titleColor = '#fff'
+    ..titleFont = (FontSpecScope()..weight = 'bold')
+    ..titleSpacing = 2.0
+    ..titleMarginBottom = 6.0
+    ..titleAlign = 'left'
+    ..bodyColor = '#fff'
+    ..bodySpacing = 2.0
+    ..bodyFont = FontSpecScope()
+    ..bodyAlign = 'left'
+    ..footerColor = '#fff'
+    ..footerSpacing = 2.0
+    ..footerMarginTop = 6.0
+    ..footerFont = (FontSpecScope()..weight = 'bold')
+    ..footerAlign = 'left'
+    ..padding = 6.0
+    ..caretPadding = 2.0
+    ..caretSize = 5.0
+    ..cornerRadius = 6.0
+    ..boxHeightCell = const OptFunction<double>(_bodyFontSize)
+    ..boxWidthCell = const OptFunction<double>(_bodyFontSize)
+    ..multiKeyBackground = '#fff'
+    ..displayColors = true
+    ..boxPadding = 0.0
+    ..borderColor = 'rgba(0,0,0,0)'
+    ..borderWidth = 0.0
+    ..animation = (AnimationOptionsScope()
+      ..duration = 400.0
+      ..easing = 'easeOutQuart')
+    ..animations = (AnimationsSpecScope()
+      ..numbers = (AnimationOptionsScope()
+        ..type = 'number'
+        ..properties = <Object?>[
           'x',
           'y',
           'width',
           'height',
           'caretX',
           'caretY',
-        ],
-      },
-      'opacity': <String, Object?>{'easing': 'linear', 'duration': 200.0},
-    },
-    'callbacks': _defaultCallbacks,
-  },
+        ])
+      ..opacity = (AnimationOptionsScope()
+        ..easing = 'linear'
+        ..duration = 200.0))
+    ..callbacks = _defaultCallbacks,
 
   // plugin.tooltip.js:1327-1331.
   'defaultRoutes': <String, Object?>{
@@ -2444,15 +2456,18 @@ final AnyObject tooltip = <String, Object?>{
     'titleFont': 'font',
   },
 
-  // plugin.tooltip.js:1333-1346.
-  'descriptors': <String, Object?>{
-    '_scriptable': (String name) =>
-        name != 'filter' && name != 'itemSort' && name != 'external',
-    '_indexable': false,
-    'callbacks': <String, Object?>{'_scriptable': false, '_indexable': false},
-    'animation': <String, Object?>{'_fallback': false},
-    'animations': <String, Object?>{'_fallback': 'animation'},
-  },
+  // plugin.tooltip.js:1333-1346. A typed scope of the kind `Descriptors`.
+  'descriptors': DescriptorsScope()
+    ..descScriptable = _scriptableDescriptor
+    ..descIndexable = false
+    ..jsWrite(
+      'callbacks',
+      DescriptorsScope()
+        ..descScriptable = false
+        ..descIndexable = false,
+    )
+    ..jsWrite('animation', DescriptorsScope()..descFallback = false)
+    ..jsWrite('animations', DescriptorsScope()..descFallback = 'animation'),
 
   // Resolve additionally from `interaction` options and defaults.
   'additionalOptionScopes': <Object?>['interaction'],

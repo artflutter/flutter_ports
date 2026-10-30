@@ -19,7 +19,7 @@ import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
 
 /// Port-only kind for index.d.ts:3914 ChartConfiguration, the raw root config
 /// of a chart.
-final class ChartConfigurationScope extends OptionScope {
+base class ChartConfigurationScope extends OptionScope {
   /// An empty scope.
   ChartConfigurationScope();
 
@@ -192,7 +192,7 @@ final class ChartConfigurationScope extends OptionScope {
 }
 
 /// index.d.ts:3892 ChartData, the `data` object of the config.
-final class ChartDataScope extends OptionScope {
+base class ChartDataScope extends OptionScope {
   /// An empty scope.
   ChartDataScope();
 
@@ -320,7 +320,7 @@ final class ChartDataScope extends OptionScope {
 /// PluginChartOptions, DatasetChartOptions, ScaleChartOptions and the chart
 /// options of each controller), the root options and Chart.defaults
 /// (index.d.ts:706 Defaults).
-final class ChartOptionsScope extends OptionScope {
+base class ChartOptionsScope extends OptionScope {
   /// An empty scope.
   ChartOptionsScope();
 
@@ -2732,7 +2732,7 @@ final class ChartOptionsScope extends OptionScope {
 
 /// index.d.ts:3029 PluginOptionsByType, the scope `plugins` (by plugin id). A
 /// plugin entry can be `false` (the plugin is off).
-final class PluginOptionsByTypeScope extends OptionScope {
+base class PluginOptionsByTypeScope extends OptionScope {
   /// An empty scope.
   PluginOptionsByTypeScope();
 
@@ -2930,7 +2930,7 @@ final class PluginOptionsByTypeScope extends OptionScope {
 
 /// index.d.ts:2201 ElementOptionsByType, the scope `elements` (by element type
 /// id).
-final class ElementOptionsByTypeScope extends OptionScope {
+base class ElementOptionsByTypeScope extends OptionScope {
   /// An empty scope.
   ElementOptionsByTypeScope();
 
@@ -3057,7 +3057,7 @@ final class ElementOptionsByTypeScope extends OptionScope {
 /// Port-only kind for index.d.ts:1631 CoreChartOptions `datasets` and
 /// index.d.ts:3831 DatasetChartOptions, the scope `datasets` (by chart type,
 /// index.d.ts:3755 ChartTypeRegistry order).
-final class DatasetOptionsByTypeScope extends OptionScope {
+base class DatasetOptionsByTypeScope extends OptionScope {
   /// An empty scope.
   DatasetOptionsByTypeScope();
 
@@ -3311,7 +3311,7 @@ final class DatasetOptionsByTypeScope extends OptionScope {
 
 /// Port-only kind for index.d.ts:740 Overrides, Chart.overrides
 /// (core.defaults.js:7, by chart type).
-final class OverridesByTypeScope extends OptionScope {
+base class OverridesByTypeScope extends OptionScope {
   /// An empty scope.
   OverridesByTypeScope();
 
@@ -3529,7 +3529,7 @@ final class OverridesByTypeScope extends OptionScope {
 /// Port-only kind for index.d.ts:3837 ScaleChartOptions `scales`, the scope
 /// `scales` (by scale id in the options and the overrides, by scale type in
 /// Chart.defaults.scales).
-final class ScaleOptionsByIdScope extends OptionScope {
+base class ScaleOptionsByIdScope extends OptionScope {
   /// An empty scope.
   ScaleOptionsByIdScope();
 
@@ -3553,7 +3553,7 @@ final class ScaleOptionsByIdScope extends OptionScope {
 
 /// index.d.ts:1766 AnimationsSpec, the scope `animations` (by animation name).
 /// An entry can be `false`.
-final class AnimationsSpecScope extends OptionScope {
+base class AnimationsSpecScope extends OptionScope {
   /// An empty scope.
   AnimationsSpecScope();
 
@@ -3677,7 +3677,7 @@ final class AnimationsSpecScope extends OptionScope {
 }
 
 /// index.d.ts:1793 TransitionsSpec, the scope `transitions` (by update mode).
-final class TransitionsSpecScope extends OptionScope {
+base class TransitionsSpecScope extends OptionScope {
   /// An empty scope.
   TransitionsSpecScope();
 
@@ -3825,7 +3825,7 @@ final class TransitionsSpecScope extends OptionScope {
 
 /// Port-only name for index.d.ts:1788 TransitionSpec, the options of one
 /// transition mode.
-final class TransitionOptionsScope extends OptionScope {
+base class TransitionOptionsScope extends OptionScope {
   /// An empty scope.
   TransitionOptionsScope();
 
@@ -3905,7 +3905,7 @@ final class TransitionOptionsScope extends OptionScope {
 /// index.d.ts:1766 AnimationsSpec, the callbacks of index.d.ts:1797
 /// AnimationOptions `animation` and index.d.ts:293 DoughnutAnimationOptions,
 /// the scope `animation` and each entry of `animations`.
-final class AnimationOptionsScope extends OptionScope {
+base class AnimationOptionsScope extends OptionScope {
   /// An empty scope.
   AnimationOptionsScope();
 
@@ -4231,7 +4231,7 @@ final class AnimationOptionsScope extends OptionScope {
 
 /// index.d.ts:1812 FontSpec, a font object (read by toFont,
 /// helpers.options.ts).
-final class FontSpecScope extends OptionScope {
+base class FontSpecScope extends OptionScope {
   /// An empty scope.
   FontSpecScope();
 
@@ -4376,7 +4376,7 @@ final class FontSpecScope extends OptionScope {
 
 /// Port-only kind for geometric.d.ts Padding (TRBL and Point), the padding
 /// object of toPadding and toTRBL (helpers.options.ts).
-final class PaddingScope extends OptionScope {
+base class PaddingScope extends OptionScope {
   /// An empty scope.
   PaddingScope();
 
@@ -4541,7 +4541,7 @@ final class PaddingScope extends OptionScope {
 
 /// Port-only name for index.d.ts:1735 CoreChartOptions `layout`, the scope
 /// `layout`.
-final class LayoutOptionsScope extends OptionScope {
+base class LayoutOptionsScope extends OptionScope {
   /// An empty scope.
   LayoutOptionsScope();
 
@@ -4619,7 +4619,7 @@ final class LayoutOptionsScope extends OptionScope {
 
 /// index.d.ts:751 InteractionOptions and index.d.ts:1605
 /// CoreInteractionOptions, the scopes `interaction` and `hover`.
-final class InteractionOptionsScope extends OptionScope {
+base class InteractionOptionsScope extends OptionScope {
   /// An empty scope.
   InteractionOptionsScope();
 
@@ -4747,7 +4747,7 @@ final class InteractionOptionsScope extends OptionScope {
 /// Port-only name for the object form of index.d.ts:54 ParsingOptions
 /// `parsing`, the keys of the parsed data (core.datasetController.js:561,
 /// controller.doughnut.js:158, helpers.config.ts:444).
-final class ParsingOptionsScope extends OptionScope {
+base class ParsingOptionsScope extends OptionScope {
   /// An empty scope.
   ParsingOptionsScope();
 
@@ -4846,7 +4846,7 @@ final class ParsingOptionsScope extends OptionScope {
 
 /// Port-only name for the object form of index.d.ts:75 `clip` (index.d.ts:463
 /// ChartMetaClip), the clip of each side.
-final class ChartAreaScope extends OptionScope {
+base class ChartAreaScope extends OptionScope {
   /// An empty scope.
   ChartAreaScope();
 
@@ -4970,7 +4970,7 @@ final class ChartAreaScope extends OptionScope {
 
 /// index.d.ts:2055 PointOptions and index.d.ts:2083 PointHoverOptions, the
 /// options of a point element.
-final class PointOptionsScope extends OptionScope {
+base class PointOptionsScope extends OptionScope {
   /// An empty scope.
   PointOptionsScope();
 
@@ -5332,7 +5332,7 @@ final class PointOptionsScope extends OptionScope {
 
 /// index.d.ts:1954 LineOptions and index.d.ts:2015 LineHoverOptions, the
 /// options of a line element.
-final class LineOptionsScope extends OptionScope {
+base class LineOptionsScope extends OptionScope {
   /// An empty scope.
   LineOptionsScope();
 
@@ -5904,7 +5904,7 @@ final class LineOptionsScope extends OptionScope {
 
 /// index.d.ts:2148 BarOptions and index.d.ts:2187 BarHoverOptions, the options
 /// of a bar element.
-final class BarOptionsScope extends OptionScope {
+base class BarOptionsScope extends OptionScope {
   /// An empty scope.
   BarOptionsScope();
 
@@ -6268,7 +6268,7 @@ final class BarOptionsScope extends OptionScope {
 
 /// index.d.ts:1882 ArcOptions and index.d.ts:1944 ArcHoverOptions, the options
 /// of an arc element.
-final class ArcOptionsScope extends OptionScope {
+base class ArcOptionsScope extends OptionScope {
   /// An empty scope.
   ArcOptionsScope();
 
@@ -6813,7 +6813,7 @@ final class ArcOptionsScope extends OptionScope {
 
 /// Port-only kind (Chart.js ADR 0021 section 2), the options of a custom
 /// element type or of an element subclass with its own id.
-final class GenericElementOptionsScope extends OptionScope {
+base class GenericElementOptionsScope extends OptionScope {
   /// An empty scope.
   GenericElementOptionsScope();
 
@@ -6837,7 +6837,7 @@ final class GenericElementOptionsScope extends OptionScope {
 
 /// Port-only kind for index.d.ts:2180 BorderRadius (bar) and index.d.ts:1873
 /// ArcBorderRadius (arc), the radius of each corner.
-final class BorderRadiusScope extends OptionScope {
+base class BorderRadiusScope extends OptionScope {
   /// An empty scope.
   BorderRadiusScope();
 
@@ -7054,7 +7054,7 @@ final class BorderRadiusScope extends OptionScope {
 
 /// index.d.ts:2302 ComplexFillTarget and the object `{value}` of
 /// index.d.ts:2300 FillTarget, the object form of `fill`.
-final class FillTargetScope extends OptionScope {
+base class FillTargetScope extends OptionScope {
   /// An empty scope.
   FillTargetScope();
 
@@ -7178,7 +7178,7 @@ final class FillTargetScope extends OptionScope {
 
 /// Port-only name for index.d.ts:2004 LineOptions `segment`, the scriptable
 /// styles of a line segment.
-final class SegmentOptionsScope extends OptionScope {
+base class SegmentOptionsScope extends OptionScope {
   /// An empty scope.
   SegmentOptionsScope();
 
@@ -7376,7 +7376,7 @@ final class SegmentOptionsScope extends OptionScope {
 /// ControllerDatasetOptions, BarOptions, CommonHoverOptions, AnimationOptions)
 /// with index.d.ts:149 BarControllerChartOptions, a bar dataset and
 /// `datasets.bar`.
-final class BarControllerDatasetOptionsScope extends OptionScope {
+base class BarControllerDatasetOptionsScope extends OptionScope {
   /// An empty scope.
   BarControllerDatasetOptionsScope();
 
@@ -8364,7 +8364,7 @@ final class BarControllerDatasetOptionsScope extends OptionScope {
 /// FillerControllerDatasetOptions and index.d.ts:216
 /// LineControllerChartOptions, a line or scatter dataset and `datasets.line`,
 /// `datasets.scatter`.
-final class LineControllerDatasetOptionsScope extends OptionScope {
+base class LineControllerDatasetOptionsScope extends OptionScope {
   /// An empty scope.
   LineControllerDatasetOptionsScope();
 
@@ -9661,7 +9661,7 @@ final class LineControllerDatasetOptionsScope extends OptionScope {
 /// index.d.ts:162 BubbleControllerDatasetOptions (index.d.ts:66
 /// ControllerDatasetOptions, PointOptions, PointHoverOptions), a bubble dataset
 /// and `datasets.bubble`.
-final class BubbleControllerDatasetOptionsScope extends OptionScope {
+base class BubbleControllerDatasetOptionsScope extends OptionScope {
   /// An empty scope.
   BubbleControllerDatasetOptionsScope();
 
@@ -10463,7 +10463,7 @@ final class BubbleControllerDatasetOptionsScope extends OptionScope {
 /// ControllerDatasetOptions, ArcOptions, ArcHoverOptions, AnimationOptions)
 /// with index.d.ts:307 DoughnutControllerChartOptions, a doughnut or pie
 /// dataset and `datasets.doughnut`, `datasets.pie`.
-final class DoughnutControllerDatasetOptionsScope extends OptionScope {
+base class DoughnutControllerDatasetOptionsScope extends OptionScope {
   /// An empty scope.
   DoughnutControllerDatasetOptionsScope();
 
@@ -11563,7 +11563,7 @@ final class DoughnutControllerDatasetOptionsScope extends OptionScope {
 /// DoughnutControllerDatasetOptions and `angle`) with index.d.ts:400
 /// PolarAreaControllerChartOptions, a polar area dataset and
 /// `datasets.polarArea`.
-final class PolarAreaControllerDatasetOptionsScope extends OptionScope {
+base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
   /// An empty scope.
   PolarAreaControllerDatasetOptionsScope();
 
@@ -12685,7 +12685,7 @@ final class PolarAreaControllerDatasetOptionsScope extends OptionScope {
 /// ControllerDatasetOptions, the point options with the prefixed and hover
 /// ones, LineOptions, LineHoverOptions, AnimationOptions) with index.d.ts:2317
 /// FillerControllerDatasetOptions, a radar dataset and `datasets.radar`.
-final class RadarControllerDatasetOptionsScope extends OptionScope {
+base class RadarControllerDatasetOptionsScope extends OptionScope {
   /// An empty scope.
   RadarControllerDatasetOptionsScope();
 
@@ -14073,7 +14073,7 @@ final class RadarControllerDatasetOptionsScope extends OptionScope {
 /// index.d.ts:66 ControllerDatasetOptions with index.d.ts:3859
 /// ChartDatasetProperties and the keys that core code reads for each dataset, a
 /// dataset of a chart type without a dataset kind and `datasets.<custom type>`.
-final class GenericDatasetOptionsScope extends OptionScope {
+base class GenericDatasetOptionsScope extends OptionScope {
   /// An empty scope.
   GenericDatasetOptionsScope();
 
@@ -14617,7 +14617,7 @@ final class GenericDatasetOptionsScope extends OptionScope {
 /// :3257 CartesianScaleOptions, :3344 CategoryScaleOptions, :3356
 /// LinearScaleOptions, :3405 LogarithmicScaleOptions, :3484 TimeScaleOptions
 /// and :3563 RadialLinearScaleOptions, one scale and Chart.defaults.scale.
-final class ScaleOptionsScope extends OptionScope {
+base class ScaleOptionsScope extends OptionScope {
   /// An empty scope.
   ScaleOptionsScope();
 
@@ -15779,7 +15779,7 @@ final class ScaleOptionsScope extends OptionScope {
 
 /// Port-only kind for the object form of index.d.ts:3270 CartesianScaleOptions
 /// `position` (layout.d.ts LayoutPosition), the value on the scale of each id.
-final class ScalePositionScope extends OptionScope {
+base class ScalePositionScope extends OptionScope {
   /// An empty scope.
   ScalePositionScope();
 
@@ -15805,7 +15805,7 @@ final class ScalePositionScope extends OptionScope {
 /// linear ticks of :3376, the logarithmic ticks of :3415, :3466
 /// TimeScaleTickOptions and :3535 RadialTickOptions, the scope `ticks` of a
 /// scale.
-final class TickOptionsScope extends OptionScope {
+base class TickOptionsScope extends OptionScope {
   /// An empty scope.
   TickOptionsScope();
 
@@ -16502,7 +16502,7 @@ final class TickOptionsScope extends OptionScope {
 
 /// Port-only name for index.d.ts:3170 TickOptions `major`, the major ticks
 /// (read at core.scale.autoskip.js:21 and scale.time.js).
-final class MajorTickOptionsScope extends OptionScope {
+base class MajorTickOptionsScope extends OptionScope {
   /// An empty scope.
   MajorTickOptionsScope();
 
@@ -16557,7 +16557,7 @@ final class MajorTickOptionsScope extends OptionScope {
 
 /// Port-only kind for core.scale.defaults.js:75 `ticks.minor`, an empty object
 /// that no upstream code reads.
-final class MinorTickOptionsScope extends OptionScope {
+base class MinorTickOptionsScope extends OptionScope {
   /// An empty scope.
   MinorTickOptionsScope();
 
@@ -16580,7 +16580,7 @@ final class MinorTickOptionsScope extends OptionScope {
 }
 
 /// index.d.ts:3060 GridLineOptions, the scope `grid` of a scale.
-final class GridLineOptionsScope extends OptionScope {
+base class GridLineOptionsScope extends OptionScope {
   /// An empty scope.
   GridLineOptionsScope();
 
@@ -16909,7 +16909,7 @@ final class GridLineOptionsScope extends OptionScope {
 }
 
 /// index.d.ts:3042 BorderOptions, the scope `border` of a scale.
-final class BorderOptionsScope extends OptionScope {
+base class BorderOptionsScope extends OptionScope {
   /// An empty scope.
   BorderOptionsScope();
 
@@ -17077,7 +17077,7 @@ final class BorderOptionsScope extends OptionScope {
 
 /// Port-only name for index.d.ts:3309 CartesianScaleOptions `title`, the title
 /// of a scale.
-final class ScaleTitleOptionsScope extends OptionScope {
+base class ScaleTitleOptionsScope extends OptionScope {
   /// An empty scope.
   ScaleTitleOptionsScope();
 
@@ -17291,7 +17291,7 @@ final class ScaleTitleOptionsScope extends OptionScope {
 }
 
 /// index.d.ts:3429 TimeScaleTimeOptions, the scope `time` of a time scale.
-final class TimeScaleTimeOptionsScope extends OptionScope {
+base class TimeScaleTimeOptionsScope extends OptionScope {
   /// An empty scope.
   TimeScaleTimeOptionsScope();
 
@@ -17489,7 +17489,7 @@ final class TimeScaleTimeOptionsScope extends OptionScope {
 
 /// Port-only name for index.d.ts:3447 TimeScaleTimeOptions `displayFormats`,
 /// the format of each time unit (the keys of core.adapters.ts:22 formats).
-final class DisplayFormatsScope extends OptionScope {
+base class DisplayFormatsScope extends OptionScope {
   /// An empty scope.
   DisplayFormatsScope();
 
@@ -17745,7 +17745,7 @@ final class DisplayFormatsScope extends OptionScope {
 
 /// Port-only name for index.d.ts:3568 RadialLinearScaleOptions `angleLines`,
 /// the angle lines of a radial scale.
-final class AngleLineOptionsScope extends OptionScope {
+base class AngleLineOptionsScope extends OptionScope {
   /// An empty scope.
   AngleLineOptionsScope();
 
@@ -17892,7 +17892,7 @@ final class AngleLineOptionsScope extends OptionScope {
 
 /// Port-only name for index.d.ts:3613 RadialLinearScaleOptions `pointLabels`,
 /// the point labels of a radial scale.
-final class PointLabelOptionsScope extends OptionScope {
+base class PointLabelOptionsScope extends OptionScope {
   /// An empty scope.
   PointLabelOptionsScope();
 
@@ -18133,7 +18133,7 @@ final class PointLabelOptionsScope extends OptionScope {
 }
 
 /// index.d.ts:2422 LegendOptions, the scope `plugins.legend`.
-final class LegendOptionsScope extends OptionScope {
+base class LegendOptionsScope extends OptionScope {
   /// An empty scope.
   LegendOptionsScope();
 
@@ -18528,7 +18528,7 @@ final class LegendOptionsScope extends OptionScope {
 
 /// Port-only name for index.d.ts:2469 LegendOptions `labels`, the labels of the
 /// legend.
-final class LegendLabelOptionsScope extends OptionScope {
+base class LegendLabelOptionsScope extends OptionScope {
   /// An empty scope.
   LegendLabelOptionsScope();
 
@@ -18889,7 +18889,7 @@ final class LegendLabelOptionsScope extends OptionScope {
 
 /// Port-only name for index.d.ts:2552 LegendOptions `title`, the title of the
 /// legend.
-final class LegendTitleOptionsScope extends OptionScope {
+base class LegendTitleOptionsScope extends OptionScope {
   /// An empty scope.
   LegendTitleOptionsScope();
 
@@ -19062,7 +19062,7 @@ final class LegendTitleOptionsScope extends OptionScope {
 
 /// index.d.ts:2579 TitleOptions, the scopes `plugins.title` and
 /// `plugins.subtitle`.
-final class TitleOptionsScope extends OptionScope {
+base class TitleOptionsScope extends OptionScope {
   /// An empty scope.
   TitleOptionsScope();
 
@@ -19321,7 +19321,7 @@ final class TitleOptionsScope extends OptionScope {
 
 /// index.d.ts:2795 TooltipOptions (index.d.ts:1605 CoreInteractionOptions), the
 /// scope `plugins.tooltip`.
-final class TooltipOptionsScope extends OptionScope {
+base class TooltipOptionsScope extends OptionScope {
   /// An empty scope.
   TooltipOptionsScope();
 
@@ -20386,7 +20386,7 @@ final class TooltipOptionsScope extends OptionScope {
 
 /// index.d.ts:2739 TooltipCallbacks (index.d.ts:2726 TooltipDatasetCallbacks),
 /// the scope `callbacks` of the tooltip and of a dataset tooltip.
-final class TooltipCallbacksScope extends OptionScope {
+base class TooltipCallbacksScope extends OptionScope {
   /// An empty scope.
   TooltipCallbacksScope();
 
@@ -20745,7 +20745,7 @@ final class TooltipCallbacksScope extends OptionScope {
 
 /// index.d.ts:2974 TooltipDatasetOptions, the `tooltip` object of a dataset
 /// (read at plugin.tooltip.js:357).
-final class TooltipDatasetOptionsScope extends OptionScope {
+base class TooltipDatasetOptionsScope extends OptionScope {
   /// An empty scope.
   TooltipDatasetOptionsScope();
 
@@ -20804,7 +20804,7 @@ final class TooltipDatasetOptionsScope extends OptionScope {
 }
 
 /// index.d.ts:2295 FillerOptions, the scope `plugins.filler`.
-final class FillerOptionsScope extends OptionScope {
+base class FillerOptionsScope extends OptionScope {
   /// An empty scope.
   FillerOptionsScope();
 
@@ -20905,7 +20905,7 @@ final class FillerOptionsScope extends OptionScope {
 /// index.d.ts:2292 DecimationOptions (the union of index.d.ts:2283
 /// LttbDecimationOptions and :2288 MinMaxDecimationOptions), the scope
 /// `plugins.decimation`.
-final class DecimationOptionsScope extends OptionScope {
+base class DecimationOptionsScope extends OptionScope {
   /// An empty scope.
   DecimationOptionsScope();
 
@@ -21051,7 +21051,7 @@ final class DecimationOptionsScope extends OptionScope {
 }
 
 /// plugin.colors.ts:4 ColorsPluginOptions, the scope `plugins.colors`.
-final class ColorsOptionsScope extends OptionScope {
+base class ColorsOptionsScope extends OptionScope {
   /// An empty scope.
   ColorsOptionsScope();
 
@@ -21205,7 +21205,7 @@ final class ColorsOptionsScope extends OptionScope {
 
 /// Port-only kind, the options of a plugin without a plugin kind (an inline or
 /// a registered user plugin).
-final class GenericPluginOptionsScope extends OptionScope {
+base class GenericPluginOptionsScope extends OptionScope {
   /// An empty scope.
   GenericPluginOptionsScope();
 
@@ -21266,7 +21266,7 @@ final class GenericPluginOptionsScope extends OptionScope {
 /// Port-only kind for the descriptor tree of Chart.defaults.describe
 /// (core.defaults.js:165-175) and the `descriptors` statics, by option scope
 /// path.
-final class DescriptorsScope extends OptionScope {
+base class DescriptorsScope extends OptionScope {
   /// An empty scope.
   DescriptorsScope();
 

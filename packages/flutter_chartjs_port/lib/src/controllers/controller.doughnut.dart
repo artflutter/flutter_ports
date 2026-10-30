@@ -51,7 +51,16 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        AnimationOptionsScope,
+        AnimationsSpecScope,
+        ChartOptionsScope,
+        DescriptorsScope,
+        DoughnutControllerDatasetOptionsScope,
+        LegendLabelOptionsScope,
+        LegendOptionsScope,
+        PluginOptionsByTypeScope;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// controller.doughnut.js:34 the object `{ratioX, ratioY, offsetX,
@@ -122,81 +131,77 @@ class DoughnutController extends DatasetController {
   /// controller.doughnut.js:39 `static id = 'doughnut'`.
   static const String id = 'doughnut';
 
-  /// controller.doughnut.js:44 `static defaults`.
-  static final AnyObject defaults = {
-    'datasetElementType': false,
-    'dataElementType': 'arc',
-    'animation': <String, Object?>{
-      // Boolean - Whether we animate the rotation of the Doughnut
-      'animateRotate': true,
-      // Boolean - Whether we animate scaling the Doughnut from the centre
-      'animateScale': false,
-    },
-    'animations': <String, Object?>{
-      'numbers': <String, Object?>{
-        'type': 'number',
-        'properties': <String>[
-          'circumference',
-          'endAngle',
-          'innerRadius',
-          'outerRadius',
-          'startAngle',
-          'x',
-          'y',
-          'offset',
-          'borderWidth',
-          'spacing',
-        ],
-      },
-    },
-    // The percentage of the chart that we cut out of the middle.
-    'cutout': '50%',
-
-    // The rotation of the chart, where the first data arc begins.
-    'rotation': 0.0,
-
-    // The total circumference of the chart.
-    'circumference': 360.0,
-
-    // The outer radius of the chart
-    'radius': '100%',
-
-    // Spacing between arcs
-    'spacing': 0.0,
-
-    // Geometry used to apply spacing between arcs
-    'spacingMode': 'angular',
-
-    'indexAxis': 'r',
-  };
+  /// controller.doughnut.js:44 `static defaults`, a typed scope of the kind
+  /// `DoughnutControllerDatasetOptions` (Chart.js ADR 0054 §3).
+  static final DoughnutControllerDatasetOptionsScope defaults =
+      DoughnutControllerDatasetOptionsScope()
+        ..datasetElementType = false
+        ..dataElementType = 'arc'
+        ..animation = (AnimationOptionsScope()
+          // Boolean - Whether we animate the rotation of the Doughnut
+          ..animateRotate = true
+          // Boolean - Whether we animate scaling the Doughnut from the centre
+          ..animateScale = false)
+        ..animations = (AnimationsSpecScope()
+          ..numbers = (AnimationOptionsScope()
+            ..type = 'number'
+            ..properties = <String>[
+              'circumference',
+              'endAngle',
+              'innerRadius',
+              'outerRadius',
+              'startAngle',
+              'x',
+              'y',
+              'offset',
+              'borderWidth',
+              'spacing',
+            ]))
+        // The percentage of the chart that we cut out of the middle.
+        ..cutout = '50%'
+        // The rotation of the chart, where the first data arc begins.
+        ..rotation = 0.0
+        // The total circumference of the chart.
+        ..circumference = 360.0
+        // The outer radius of the chart
+        ..radius = '100%'
+        // Spacing between arcs
+        ..spacing = 0.0
+        // Geometry used to apply spacing between arcs
+        ..spacingMode = 'angular'
+        ..indexAxis = 'r';
 
   /// controller.doughnut.js:80 `static descriptors`, in the form of
-  /// `core.defaults.dart` (Chart.js ADR 0028, section 6).
-  static final AnyObject descriptors = {
-    '_scriptable': (String name) => name != 'spacing' && name != 'spacingMode',
-    '_indexable': (String name) =>
-        name != 'spacing' &&
-        name != 'spacingMode' &&
-        !name.startsWith('borderDash') &&
-        !name.startsWith('hoverBorderDash'),
-  };
+  /// `core.defaults.dart` (Chart.js ADR 0028, section 6): a typed scope of
+  /// the kind `Descriptors` (Chart.js ADR 0054 §3).
+  static final DescriptorsScope descriptors = DescriptorsScope()
+    ..descScriptable = _scriptableDescriptor
+    ..descIndexable = _indexableDescriptor;
 
-  /// controller.doughnut.js:88 `static overrides`.
+  /// controller.doughnut.js:81 the `_scriptable` descriptor.
+  static bool _scriptableDescriptor(String name) =>
+      name != 'spacing' && name != 'spacingMode';
+
+  /// controller.doughnut.js:82 the `_indexable` descriptor.
+  static bool _indexableDescriptor(String name) =>
+      name != 'spacing' &&
+      name != 'spacingMode' &&
+      !name.startsWith('borderDash') &&
+      !name.startsWith('hoverBorderDash');
+
+  /// controller.doughnut.js:88 `static overrides`, a typed scope of the
+  /// kind `ChartOptions` (Chart.js ADR 0054 §3).
   ///
   /// The legend functions are the tear-offs of the top-level functions
   /// [_generateLabels] and [_onClick]: each read gives the same function
   /// (Chart.js ADR 0028, section 6).
-  static final AnyObject overrides = {
-    'aspectRatio': 1.0,
-
+  static final ChartOptionsScope overrides = ChartOptionsScope()
+    ..aspectRatio = 1.0
     // Need to override these to give a nice default
-    'plugins': <String, Object?>{
-      'legend': <String, Object?>{
-        'labels': <String, Object?>{'generateLabels': _generateLabels},
-        'onClick': _onClick,
-      },
-    },
-  };
+    ..plugins = (PluginOptionsByTypeScope()
+      ..legend = (LegendOptionsScope()
+        ..labels = (LegendLabelOptionsScope()..generateLabels = _generateLabels)
+        ..onClick = _onClick));
 
   /// controller.doughnut.js:37 `class DoughnutController extends
   /// DatasetController` as a value (Chart.js ADR 0020, section 3).

@@ -34,8 +34,9 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart'
     show jsCos, jsMin, jsSin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ScaleOptionsScope, TickOptionsScope;
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:meta/meta.dart';
 
 /// scale.linear.js:6 `LinearScale extends LinearScaleBase`.
@@ -55,10 +56,10 @@ class LinearScale extends LinearScaleBase {
   /// (core.ticks.js:28), `formatters['numeric']` of `core.ticks.dart`. A
   /// Dart `static final` gets its value at the first read, not at the load
   /// of the library. Thus the callback is the value of
-  /// `formatters['numeric']` at the first read of [defaults].
-  static final AnyObject defaults = {
-    'ticks': <String, Object?>{'callback': formatters['numeric']},
-  };
+  /// `formatters['numeric']` at the first read of [defaults]. The object is
+  /// a typed scope of the kind `ScaleOptions` (Chart.js ADR 0054 §3).
+  static final ScaleOptionsScope defaults = ScaleOptionsScope()
+    ..ticks = (TickOptionsScope()..callback = formatters['numeric']!);
 
   /// scale.linear.js:6 `class LinearScale extends LinearScaleBase` as a
   /// value (Chart.js ADR 0020, section 3).

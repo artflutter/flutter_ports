@@ -205,7 +205,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (one entry for each distinct key name, `optionKeyOf`), `ScopeKind` (one entry for each kind
     of the schema) and one class `<Kind>Scope` for each kind, with a field of an `Opt` cell for
     each key (`<key>Cell`) and a typed setter. A kind takes the name of its `index.d.ts`
-    interface; its class adds `Scope`.
+    interface; its class adds `Scope`. `defaults`, `overrides` and `descriptors` of
+    `core.defaults.dart` are typed roots, built at start from typed cascades of the component
+    files (the `Defaults` constructor, the values of `core.*.defaults.dart` and the `defaults`,
+    `overrides` and `descriptors` statics of the controllers, elements, scales and plugins), not
+    from generated values: a bump changes a default in the same file as upstream (Chart.js ADR
+    0054 §3). `defaultRoutes` stays a table of route strings. `Defaults.route` of a typed scope
+    is a typed route (`OptionScope.addRoute`). The face members are `jsRead` and `jsWrite` during
+    the migration, because `MapBase` owns `operator []`; the close step forwards
+    `operator []` and `operator []=` to them with the JS rules.
   - `lib/src/core/core.element.dart` and `lib/src/elements/` (Chart.js ADR 0017): the port of
     `core.element.ts`, and the four elements (`element.point.dart`, `element.line.dart`,
     `element.bar.dart`, `element.arc.dart`) with `index.dart`. The port-only `element_options.dart`
@@ -511,9 +519,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the files that differ. `key_census_suite.tsv` and `key_census_fixtures.tsv` are the key
     census of the raw configs on the Map model (O2, the input of the option schema).
     `schema_test.dart` is the schema drift test: each path of the defaults inventory of
-    `doc/upstream/manifest.json` maps to a declared key and fits its shape, and each census path
+    `doc/upstream/manifest.json` maps to a declared key and fits its shape, each census path
     maps to a key or to a reviewed extra of `census_review.tsv` (each recorded kind in the shape
-    or a reviewed foreign pair). `opt_test.dart` and `option_scope_test.dart` test the cells and
+    or a reviewed foreign pair), and the built typed roots `defaults`, `overrides` and
+    `descriptors` equal the inventory in values and key order (a function default by its
+    presence; each object is a typed scope). A bump edits the schema for keys and kinds and the
+    component file for values; the test fails until both equal the new inventory. `opt_test.dart` and `option_scope_test.dart` test the cells and
     the scopes on the VM, dart2js and dart2wasm.
     `test/port/scales/scale_chart_harness.dart` and `scale_time_harness.dart` are helper libraries
     of the scale tests, not test files. `test/port/controllers/` has the controller reference tests

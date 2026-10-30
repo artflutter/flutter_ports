@@ -37,6 +37,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show PointOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -137,16 +139,16 @@ class PointElement extends Element
   /// element.point.ts:22 `static id = 'point'`.
   static const String id = 'point';
 
-  /// element.point.ts:31 `static defaults`.
-  static final AnyObject defaults = {
-    'borderWidth': 1.0,
-    'hitRadius': 1.0,
-    'hoverBorderWidth': 1.0,
-    'hoverRadius': 4.0,
-    'pointStyle': 'circle',
-    'radius': 3.0,
-    'rotation': 0.0,
-  };
+  /// element.point.ts:31 `static defaults`, a typed scope of the kind
+  /// `PointOptions` (Chart.js ADR 0054 §3).
+  static final PointOptionsScope defaults = PointOptionsScope()
+    ..borderWidth = 1.0
+    ..hitRadius = 1.0
+    ..hoverBorderWidth = 1.0
+    ..hoverRadius = 4.0
+    ..pointStyle = 'circle'
+    ..radius = 3.0
+    ..rotation = 0.0;
 
   /// element.point.ts:44 `static defaultRoutes`.
   static final AnyObject defaultRoutes = {

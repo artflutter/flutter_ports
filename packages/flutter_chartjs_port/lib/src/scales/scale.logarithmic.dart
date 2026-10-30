@@ -60,9 +60,10 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show MajorTickOptionsScope, ScaleOptionsScope, TickOptionsScope;
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart'
     show LinearScaleBase;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:meta/meta.dart';
 
 /// scale.logarithmic.js:8 `log10Floor`.
@@ -198,13 +199,12 @@ class LogarithmicScale extends Scale {
   /// a function that reads `this`. A Dart `static final` gets its value at
   /// the first read, not at the load of the library. Thus the callback is
   /// the value of `formatters['logarithmic']` at the first read of
-  /// [defaults].
-  static final AnyObject defaults = {
-    'ticks': <String, Object?>{
-      'callback': formatters['logarithmic'],
-      'major': <String, Object?>{'enabled': true},
-    },
-  };
+  /// [defaults]. The object is a typed scope of the kind `ScaleOptions`
+  /// (Chart.js ADR 0054 §3).
+  static final ScaleOptionsScope defaults = ScaleOptionsScope()
+    ..ticks = (TickOptionsScope()
+      ..callback = formatters['logarithmic']!
+      ..major = (MajorTickOptionsScope()..enabled = true));
 
   /// scale.logarithmic.js:74 `class LogarithmicScale extends Scale` as a
   /// value (Chart.js ADR 0020, section 3).

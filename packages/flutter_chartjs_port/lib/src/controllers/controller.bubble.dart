@@ -42,6 +42,14 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        AnimationOptionsScope,
+        AnimationsSpecScope,
+        BubbleControllerDatasetOptionsScope,
+        ChartOptionsScope,
+        ScaleOptionsByIdScope,
+        ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -55,26 +63,23 @@ class BubbleController extends DatasetController {
   /// controller.bubble.js:6 `static id = 'bubble'`.
   static const String id = 'bubble';
 
-  /// controller.bubble.js:11 `static defaults`.
-  static final AnyObject defaults = {
-    'datasetElementType': false,
-    'dataElementType': 'point',
+  /// controller.bubble.js:11 `static defaults`, a typed scope of the kind
+  /// `BubbleControllerDatasetOptions` (Chart.js ADR 0054 §3).
+  static final BubbleControllerDatasetOptionsScope defaults =
+      BubbleControllerDatasetOptionsScope()
+        ..datasetElementType = false
+        ..dataElementType = 'point'
+        ..animations = (AnimationsSpecScope()
+          ..numbers = (AnimationOptionsScope()
+            ..type = 'number'
+            ..properties = <String>['x', 'y', 'borderWidth', 'radius']));
 
-    'animations': <String, Object?>{
-      'numbers': <String, Object?>{
-        'type': 'number',
-        'properties': <String>['x', 'y', 'borderWidth', 'radius'],
-      },
-    },
-  };
-
-  /// controller.bubble.js:26 `static overrides`.
-  static final AnyObject overrides = {
-    'scales': <String, Object?>{
-      'x': <String, Object?>{'type': 'linear'},
-      'y': <String, Object?>{'type': 'linear'},
-    },
-  };
+  /// controller.bubble.js:26 `static overrides`, a typed scope of the kind
+  /// `ChartOptions` (Chart.js ADR 0054 §3).
+  static final ChartOptionsScope overrides = ChartOptionsScope()
+    ..scales = (ScaleOptionsByIdScope()
+      ..jsWrite('x', ScaleOptionsScope()..type = 'linear')
+      ..jsWrite('y', ScaleOptionsScope()..type = 'linear'));
 
   /// controller.bubble.js:4 `class BubbleController extends
   /// DatasetController` as a value (Chart.js ADR 0020, section 3).

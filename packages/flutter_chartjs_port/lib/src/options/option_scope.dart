@@ -99,12 +99,86 @@ abstract base class OptionScope extends MapBase<String, Object?>
   int _extraIndex(String name) => _extraNames?.indexOf(name) ?? -1;
 
   /// The cell of [key] (an [OptionKey] or a name), or Dart `null` when the
-  /// scope does not own it.
+  /// scope does not own it. A routed key gives the cell of its routed value
+  /// ([addRoute]).
   Opt<Object?>? lookup(Object key) {
     final k = _normalize(key);
+    final own = _own(k);
+    final names = _routeNames;
+    if (names == null) return own;
+    final name = k is OptionKey ? k.jsName : k as String;
+    final index = names.indexOf(name);
+    if (index < 0) return own;
+    return classifyName(name, _routes![index].read(own?.raw ?? undefined));
+  }
+
+  /// The own cell of the normalized key [k], without its route.
+  Opt<Object?>? _own(Object k) {
     if (k is OptionKey) return cellOf(k);
     final index = _extraIndex(k as String);
     return index < 0 ? null : _extraCells![index];
+  }
+
+  /// The own cell of [key] (an [OptionKey] or a name), without its route:
+  /// the local value of a routed key (the hidden `_<name>` of
+  /// core.defaults.js:136-140).
+  Opt<Object?>? ownCell(Object key) => _own(_normalize(key));
+
+  /// The names of the routed keys. Dart `null` before the first route.
+  List<String>? _routeNames;
+
+  /// The routes, at the index of their name in [_routeNames].
+  List<ScopeRoute>? _routes;
+
+  /// The route of the key [name], or Dart `null`.
+  ScopeRoute? routeOf(String name) {
+    final index = _routeNames?.indexOf(name) ?? -1;
+    return index < 0 ? null : _routes![index];
+  }
+
+  /// core.defaults.js:130-157 `route`, on this scope object: the key [name]
+  /// reads [route] at each access (Chart.js ADR 0054 §3).
+  ///
+  /// The local value is the value of [name] at the call (also through an
+  /// earlier route), or `undefined` when the scope does not own it. It stays
+  /// the own cell of [name]: a set of [name] sets it, as the setter of the
+  /// routed property does. A name that the scope did not own goes to the end
+  /// of the keys. A name that already has a route that is not configurable
+  /// throws a [TypeError] (`Object.defineProperties`), after the local value
+  /// is stored, as `Defaults.route` does. A route of a name that the scope
+  /// did not own before its first route is not configurable.
+  void addRoute(String name, ScopeRoute route) {
+    final owned = owns(name);
+    final local = owned ? jsRead(name) : undefined;
+    final previous = routeOf(name);
+    store(name, classifyName(name, local));
+    if (previous != null && !previous.configurable) {
+      // A JavaScript TypeError: "Cannot redefine property".
+      throw TypeError();
+    }
+    final configured = ScopeRoute(
+      route.read,
+      targetScope: route.targetScope,
+      targetName: route.targetName,
+      configurable: previous?.configurable ?? owned,
+    );
+    final names = _routeNames ??= <String>[];
+    final routes = _routes ??= <ScopeRoute>[];
+    final index = names.indexOf(name);
+    if (index < 0) {
+      names.add(name);
+      routes.add(configured);
+    } else {
+      routes[index] = configured;
+    }
+  }
+
+  /// Removes the route of [name].
+  void _removeRoute(String name) {
+    final index = _routeNames?.indexOf(name) ?? -1;
+    if (index < 0) return;
+    _routeNames!.removeAt(index);
+    _routes!.removeAt(index);
   }
 
   /// Whether the scope owns [key] (an own property, also with the value
@@ -133,8 +207,21 @@ abstract base class OptionScope extends MapBase<String, Object?>
 
   /// Deletes [key] (an [OptionKey] or a name), as the JS `delete` does.
   /// Returns whether the scope owned it.
+  ///
+  /// A routed key that is not configurable throws a [TypeError] ("Cannot
+  /// delete property", strict mode). The delete of a configurable routed key
+  /// removes its route.
   bool delete(Object key) {
     final k = _normalize(key);
+    if (_routeNames != null) {
+      final name = k is OptionKey ? k.jsName : k as String;
+      final route = routeOf(name);
+      if (route != null) {
+        // A JavaScript TypeError: "Cannot delete property".
+        if (!route.configurable) throw TypeError();
+        _removeRoute(name);
+      }
+    }
     if (k is OptionKey) {
       if (cellOf(k) == null) return false;
       setCell(k, null);
@@ -269,8 +356,110 @@ abstract base class OptionScope extends MapBase<String, Object?>
     return copy;
   }
 
+  /// The state of the scope for the defaults restore of the test harness
+  /// (`setUpDefaultsRestore` of `chartjs_test_utils`): the key order, the
+  /// own cells and the routes.
+  ScopeState saveState() => ScopeState._(
+    List<Object>.of(_order),
+    [for (final key in _order) _own(key)!],
+    List<String>.of(_routeNames ?? const []),
+    List<ScopeRoute>.of(_routes ?? const []),
+  );
+
+  /// Whether the scope holds [state]: the same keys in the same order, the
+  /// same cells and the same routes.
+  bool hasState(ScopeState state) {
+    if (_order.length != state._order.length) return false;
+    for (var i = 0; i < _order.length; i++) {
+      if (_order[i] != state._order[i]) return false;
+      final cell = _own(_order[i]);
+      final saved = state._cells[i];
+      if (!identical(cell, saved) &&
+          !(cell.runtimeType == saved.runtimeType &&
+              identical(cell?.raw, saved.raw))) {
+        return false;
+      }
+    }
+    final names = _routeNames ?? const <String>[];
+    final routes = _routes ?? const <ScopeRoute>[];
+    if (names.length != state._routeNames.length) return false;
+    for (var i = 0; i < names.length; i++) {
+      if (names[i] != state._routeNames[i] ||
+          !identical(routes[i], state._routes[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /// Puts back [state] ([saveState]).
+  void restoreState(ScopeState state) {
+    for (final key in _order) {
+      if (key is OptionKey) setCell(key, null);
+    }
+    _order.clear();
+    _extraNames = null;
+    _extraCells = null;
+    for (var i = 0; i < state._order.length; i++) {
+      final key = state._order[i];
+      final cell = state._cells[i];
+      _order.add(key);
+      if (key is OptionKey) {
+        setCell(key, cell);
+      } else {
+        (_extraNames ??= <String>[]).add(key as String);
+        (_extraCells ??= <Opt<Object?>>[]).add(cell);
+      }
+    }
+    _routeNames = state._routeNames.isEmpty
+        ? null
+        : List<String>.of(state._routeNames);
+    _routes = state._routes.isEmpty ? null : List<ScopeRoute>.of(state._routes);
+  }
+
   @override
   String toString() => '${kind.typeName}Scope(${jsKeys().join(', ')})';
+}
+
+/// A route of a key of a typed scope (core.defaults.js:130-157).
+final class ScopeRoute {
+  /// A route that gives the routed value of a local value with [read].
+  const ScopeRoute(
+    this.read, {
+    required this.targetScope,
+    required this.targetName,
+    this.configurable = false,
+  });
+
+  /// The getter of the routed property: the routed value of the local
+  /// value (the local value, the target value, or a merge of both objects).
+  final Object? Function(Object? local) read;
+
+  /// The target scope object of the route.
+  final Object? targetScope;
+
+  /// The key of the target scope that the route reads.
+  final String targetName;
+
+  /// Whether the scope owned the key before its first route: then a delete
+  /// of the key removes the route. Else the delete throws.
+  final bool configurable;
+}
+
+/// The saved state of a typed scope ([OptionScope.saveState]).
+final class ScopeState {
+  ScopeState._(this._order, this._cells, this._routeNames, this._routes);
+
+  final List<Object> _order;
+  final List<Opt<Object?>> _cells;
+  final List<String> _routeNames;
+  final List<ScopeRoute> _routes;
+
+  /// The raw values of the own cells, for the walk of the snapshot.
+  Iterable<Object?> get values => _cells.map((cell) => cell.raw);
+
+  /// The target scopes of the routes, for the walk of the snapshot.
+  Iterable<Object?> get routeTargets => _routes.map((r) => r.targetScope);
 }
 
 /// [cell] as a cell of the type `T` of a field: [cell] itself when it is an

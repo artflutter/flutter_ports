@@ -29,8 +29,9 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/scales/scale.time.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:meta/meta.dart';
 
 /// An entry of the lookup table: `{time, pos}` (scale.timeseries.js:95-96,
@@ -107,8 +108,8 @@ class TimeSeriesScale extends TimeScale {
   // instance field `id`. Thus the value is only in the statics of jsClass.
 
   /// scale.timeseries.js:41 `static defaults = TimeScale.defaults`: the same
-  /// Map as [TimeScale.defaults].
-  static final AnyObject defaults = TimeScale.defaults;
+  /// typed scope as [TimeScale.defaults].
+  static final ScaleOptionsScope defaults = TimeScale.defaults;
 
   /// scale.timeseries.js:34 `class TimeSeriesScale extends TimeScale` as a
   /// value (Chart.js ADR 0020, section 3).

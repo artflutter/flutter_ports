@@ -48,6 +48,20 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        AngleLineOptionsScope,
+        AnimationOptionsScope,
+        AnimationsSpecScope,
+        ChartOptionsScope,
+        GridLineOptionsScope,
+        LegendLabelOptionsScope,
+        LegendOptionsScope,
+        PluginOptionsByTypeScope,
+        PointLabelOptionsScope,
+        PolarAreaControllerDatasetOptionsScope,
+        ScaleOptionsByIdScope,
+        ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -130,58 +144,52 @@ class PolarAreaController extends DatasetController {
   /// controller.polarArea.js:6 `static id = 'polarArea'`.
   static const String id = 'polarArea';
 
-  /// controller.polarArea.js:11 `static defaults`.
-  static final AnyObject defaults = {
-    'dataElementType': 'arc',
-    'animation': <String, Object?>{
-      'animateRotate': true,
-      'animateScale': true,
-    },
-    'animations': <String, Object?>{
-      'numbers': <String, Object?>{
-        'type': 'number',
-        'properties': <String>[
-          'x',
-          'y',
-          'startAngle',
-          'endAngle',
-          'innerRadius',
-          'outerRadius',
-        ],
-      },
-    },
-    'indexAxis': 'r',
-    'startAngle': 0.0,
-    'spacing': 0.0,
-    'spacingMode': 'proportional',
-  };
+  /// controller.polarArea.js:11 `static defaults`, a typed scope of the kind
+  /// `PolarAreaControllerDatasetOptions` (Chart.js ADR 0054 §3).
+  static final PolarAreaControllerDatasetOptionsScope defaults =
+      PolarAreaControllerDatasetOptionsScope()
+        ..dataElementType = 'arc'
+        ..animation = (AnimationOptionsScope()
+          ..animateRotate = true
+          ..animateScale = true)
+        ..animations = (AnimationsSpecScope()
+          ..numbers = (AnimationOptionsScope()
+            ..type = 'number'
+            ..properties = <String>[
+              'x',
+              'y',
+              'startAngle',
+              'endAngle',
+              'innerRadius',
+              'outerRadius',
+            ]))
+        ..indexAxis = 'r'
+        ..startAngle = 0.0
+        ..spacing = 0.0
+        ..spacingMode = 'proportional';
 
-  /// controller.polarArea.js:32 `static overrides`.
+  /// controller.polarArea.js:32 `static overrides`, a typed scope of the
+  /// kind `ChartOptions` (Chart.js ADR 0054 §3).
   ///
   /// The two legend functions are tear-offs of top-level functions: each
   /// read gives the same function (Chart.js ADR 0028, section 6).
-  static final AnyObject overrides = {
-    'aspectRatio': 1.0,
-
-    'plugins': <String, Object?>{
-      'legend': <String, Object?>{
-        'labels': <String, Object?>{'generateLabels': _generateLabels},
-
-        'onClick': _onClick,
-      },
-    },
-
-    'scales': <String, Object?>{
-      'r': <String, Object?>{
-        'type': 'radialLinear',
-        'angleLines': <String, Object?>{'display': false},
-        'beginAtZero': true,
-        'grid': <String, Object?>{'circular': true},
-        'pointLabels': <String, Object?>{'display': false},
-        'startAngle': 0.0,
-      },
-    },
-  };
+  static final ChartOptionsScope overrides = ChartOptionsScope()
+    ..aspectRatio = 1.0
+    ..plugins = (PluginOptionsByTypeScope()
+      ..legend = (LegendOptionsScope()
+        ..labels = (LegendLabelOptionsScope()..generateLabels = _generateLabels)
+        ..onClick = _onClick))
+    ..scales = (ScaleOptionsByIdScope()
+      ..jsWrite(
+        'r',
+        ScaleOptionsScope()
+          ..type = 'radialLinear'
+          ..angleLines = (AngleLineOptionsScope()..display = false)
+          ..beginAtZero = true
+          ..grid = (GridLineOptionsScope()..circular = true)
+          ..pointLabels = (PointLabelOptionsScope()..display = false)
+          ..startAngle = 0.0,
+      ));
 
   /// controller.polarArea.js:4 `class PolarAreaController extends
   /// DatasetController` as a value (Chart.js ADR 0020, section 3).

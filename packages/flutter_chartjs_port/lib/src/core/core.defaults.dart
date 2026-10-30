@@ -1,17 +1,25 @@
 // Ported from Chart.js v4.6.1 src/core/core.defaults.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-options, typed scopes of Chart.js ADR 0054.
 
 /// Port of `src/core/core.defaults.js`.
 ///
-/// Chart.js ADR 0043 ("Global scopes") decides the representation:
-/// [defaults], [overrides] and [descriptors] are `Map<String, Object?>`. The
-/// option keys of [Defaults] are Map keys, not Dart fields. A JS plain object
-/// is a `Map<String, Object?>`, `undefined` is the [undefined] sentinel and
-/// `null` is Dart `null`. Numbers are `double` (Chart.js ADR 0045). A function
-/// value is a Dart closure (`lib/src/js/js_function.dart`).
+/// Chart.js ADR 0054 §3 decides the representation: [defaults],
+/// [overrides] and [descriptors] are typed option scopes of
+/// `lib/src/options/` (the kinds `ChartOptions`, `OverridesByType` and
+/// `Descriptors` of `tool/options_schema.yaml`). Each nested object of the
+/// built-in defaults is a typed scope of its kind. A key that the kind does
+/// not declare is an extra. The typed scopes are also Maps by the
+/// scaffolding of Chart.js ADR 0054 §5, so the readers by name of today
+/// read them. `undefined` is the [undefined] sentinel and `null` is Dart
+/// `null`. Numbers are `double` (Chart.js ADR 0045). A function value is a
+/// Dart closure (`lib/src/js/js_function.dart`).
 ///
-/// `Object.defineProperties` has no Dart form. [Defaults.route] makes the
-/// scope a [RoutedScope], a `MapBase` that reads the route target when the
-/// local value is `undefined` (differences.md row `adapt-defaults-route`).
+/// `Object.defineProperties` has no Dart form. [Defaults.route] gives a typed
+/// scope a route of the key (`OptionScope.addRoute`): its read gives the
+/// local value, the target value or a merge of both objects at each access.
+/// A scope object that is a raw Map (a user object of the defaults) becomes
+/// a [RoutedScope], a `MapBase` that reads the route target when the local
+/// value is `undefined` (differences.md row `adapt-defaults-route`).
 library;
 
 import 'dart:collection';
@@ -27,6 +35,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -35,7 +45,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// JavaScript runs the module body at import, and the constructor of the
 /// default export fills [descriptors] and [overrides] then. Dart initializes
 /// [defaults] lazily. Thus the getter reads [defaults] first.
-AnyObject get overrides {
+OverridesByTypeScope get overrides {
   _loadModule();
   return _overrides;
 }
@@ -43,18 +53,18 @@ AnyObject get overrides {
 /// core.defaults.js:8 `descriptors`, `Object.create(null)`.
 ///
 /// The getter reads [defaults] first, as [overrides] does.
-AnyObject get descriptors {
+DescriptorsScope get descriptors {
   _loadModule();
   return _descriptors;
 }
 
 /// The object of [overrides]. The constructor of [Defaults] writes it before
 /// [defaults] has a value.
-final AnyObject _overrides = <String, Object?>{};
+final OverridesByTypeScope _overrides = OverridesByTypeScope();
 
 /// The object of [descriptors]. The constructor of [Defaults] writes it
 /// before [defaults] has a value.
-final AnyObject _descriptors = <String, Object?>{};
+final DescriptorsScope _descriptors = DescriptorsScope();
 
 /// Initializes [defaults], as the import of the JavaScript module does.
 void _loadModule() {
@@ -69,6 +79,10 @@ void _loadModule() {
 ///
 /// Each node on the path must be a Map. A node of another type throws a
 /// [TypeError] (differences.md row `adapt-defaults-scope-object`).
+///
+/// A new node of a typed scope is a typed scope of the kind of its key
+/// (`OptionScope.childKindFor`, Chart.js ADR 0054 §3); another new node is
+/// a raw Map, the `{}` of upstream.
 Object? _getScope(Object? root, String key) {
   var node = root;
   if (key.isEmpty) {
@@ -80,10 +94,17 @@ Object? _getScope(Object? root, String key) {
     // DIVERGES(chartjs): adapt-defaults-scope-object, a node is a Map.
     final object = node is AnyObject ? node : throw TypeError();
     final value = jsGet(object, k);
-    node = jsTruthy(value) ? value : (object[k] = <String, Object?>{});
+    node = jsTruthy(value) ? value : (object[k] = _newScope(object, k));
   }
   return node;
 }
+
+/// The new empty node [key] of [parent] for [_getScope]: a typed scope of
+/// the kind of [key] when [parent] is a typed scope with one, else a raw
+/// Map.
+Object _newScope(AnyObject parent, String key) =>
+    (parent is OptionScope ? parent.childKindFor(key)?.create() : null) ??
+    <String, Object?>{};
 
 /// core.defaults.js:27 `set`.
 ///
@@ -238,68 +259,69 @@ typedef DefaultsRoute = ({
 /// Please use the module's default export which provides a singleton instance
 /// Note: class is exported for typedoc
 ///
-/// The upstream fields are the Map keys of the instance (Chart.js ADR 0043,
-/// "Global scopes"). Read them as Map entries, for example
-/// `defaults['color']`.
-base class Defaults extends RoutedScope implements types.Defaults {
+/// The upstream fields are the keys of the typed scope `ChartOptionsScope`
+/// (Chart.js ADR 0054 §3), in the upstream order of the constructor. The
+/// typed setters write them; the readers by name read them as Map entries,
+/// for example `defaults['color']`.
+base class Defaults extends ChartOptionsScope implements types.Defaults {
   /// core.defaults.js:39 `constructor(_descriptors, _appliers)`.
   ///
   /// [descriptorValues] is `_descriptors`. [appliers] is `_appliers`.
   Defaults(Object? descriptorValues, List<void Function(Defaults)> appliers) {
-    this['animation'] = undefined;
-    this['backgroundColor'] = 'rgba(0,0,0,0.1)';
-    this['borderColor'] = 'rgba(0,0,0,0.1)';
-    this['color'] = '#666';
-    this['datasets'] = <String, Object?>{};
-    this['devicePixelRatio'] = _fn1(
-      (context) => (jsGet(context, 'chart')! as types.Chart).platform
-          .getDevicePixelRatio(),
+    animationCell = optUndefined;
+    backgroundColor = 'rgba(0,0,0,0.1)';
+    borderColor = 'rgba(0,0,0,0.1)';
+    this.color = '#666';
+    datasets = DatasetOptionsByTypeScope();
+    devicePixelRatioCell = OptFunction<double>(
+      _fn1(
+        (context) => (jsGet(context, 'chart')! as types.Chart).platform
+            .getDevicePixelRatio(),
+      ),
     );
-    this['elements'] = <String, Object?>{};
-    this['events'] = <Object?>[
+    elements = ElementOptionsByTypeScope();
+    events = <Object?>[
       'mousemove',
       'mouseout',
       'click',
       'touchstart',
       'touchmove',
     ];
-    this['font'] = <String, Object?>{
-      'family': "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif",
-      'size': 12.0,
-      'style': 'normal',
-      'lineHeight': 1.2,
-      'weight': null,
-    };
-    this['hover'] = <String, Object?>{};
+    font = FontSpecScope()
+      ..family = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
+      ..size = 12.0
+      ..style = 'normal'
+      ..lineHeight = 1.2
+      ..weightCell = optNull;
+    hover = InteractionOptionsScope();
     // getHoverColor gives Dart null for the JavaScript undefined of a color
     // that does not parse. `?? undefined` gives the sentinel back.
-    this['hoverBackgroundColor'] = _fn2(
+    hoverBackgroundColor = _fn2(
       (ctx, options) =>
           getHoverColor(jsGet(options, 'backgroundColor')) ?? undefined,
     );
-    this['hoverBorderColor'] = _fn2(
+    hoverBorderColor = _fn2(
       (ctx, options) =>
           getHoverColor(jsGet(options, 'borderColor')) ?? undefined,
     );
-    this['hoverColor'] = _fn2(
+    hoverColor = _fn2(
       (ctx, options) => getHoverColor(jsGet(options, 'color')) ?? undefined,
     );
-    this['indexAxis'] = 'x';
-    this['interaction'] = <String, Object?>{
-      'mode': 'nearest',
-      'intersect': true,
-      'includeInvisible': false,
-    };
-    this['maintainAspectRatio'] = true;
-    this['onHover'] = null;
-    this['onClick'] = null;
-    this['parsing'] = true;
-    this['plugins'] = <String, Object?>{};
-    this['responsive'] = true;
-    this['scale'] = undefined;
-    this['scales'] = <String, Object?>{};
-    this['showLine'] = true;
-    this['drawActiveElementsOnTop'] = true;
+    indexAxis = 'x';
+    interaction = InteractionOptionsScope()
+      ..mode = 'nearest'
+      ..intersect = true
+      ..includeInvisible = false;
+    maintainAspectRatio = true;
+    onHoverCell = optNull;
+    onClickCell = optNull;
+    parsing = true;
+    plugins = PluginOptionsByTypeScope();
+    responsive = true;
+    scaleCell = optUndefined;
+    scales = ScaleOptionsByIdScope();
+    showLine = true;
+    drawActiveElementsOnTop = true;
 
     describe(descriptorValues);
     apply(appliers);
@@ -364,10 +386,12 @@ base class Defaults extends RoutedScope implements types.Defaults {
   /// @param {string} targetName The target name in the target scope the
   /// property should be routed to.
   ///
-  /// The routed scope is a [RoutedScope]. A scope object that is a plain Map
-  /// becomes a [RoutedScope] over the same entries, in the object that owns
-  /// it. The route of a name that the scope already routes throws a
-  /// [TypeError] unless that name is configurable, as
+  /// A typed scope object gets a typed route of [name]
+  /// (`OptionScope.addRoute`, Chart.js ADR 0054 §3). A scope object that is
+  /// a raw Map (a user object) becomes a [RoutedScope] over the same
+  /// entries, in the object that owns it. The route of a name that the
+  /// scope already routes throws a [TypeError] unless that name is
+  /// configurable, as
   /// `Object.defineProperties` does. A scope object that is not a Map, for
   /// example an array, throws a [TypeError] after the target scope exists
   /// (differences.md row `adapt-defaults-scope-object`).
@@ -375,6 +399,26 @@ base class Defaults extends RoutedScope implements types.Defaults {
   void route(String scope, String name, String targetScope, String targetName) {
     final node = _getScope(this, scope);
     final targetScopeObject = _getScope(this, targetScope);
+    if (node is OptionScope) {
+      // The getter of core.defaults.js:144-151, read at each access.
+      Object? read(Object? local) {
+        final target = jsGet(_resolveScope(targetScopeObject), targetName);
+        if (isObject(local)) {
+          return _assign(<String, Object?>{}, [target, local]);
+        }
+        return valueOrDefault(local, target);
+      }
+
+      node.addRoute(
+        name,
+        ScopeRoute(
+          read,
+          targetScope: targetScopeObject,
+          targetName: targetName,
+        ),
+      );
+      return;
+    }
     // DIVERGES(chartjs): adapt-defaults-route, a RoutedScope for the scope.
     final scopeObject = _routedScope(scope, node);
     // The private property `'_' + name` is the local value in
@@ -458,19 +502,24 @@ base class Defaults extends RoutedScope implements types.Defaults {
 
 /// core.defaults.js:165 the default export: the singleton instance.
 final Defaults defaults = Defaults(
-  <String, Object?>{
-    '_scriptable': (String name) => !name.startsWith('on'),
-    '_indexable': (String name) => name != 'events',
-    'hover': <String, Object?>{
-      '_fallback': 'interaction',
-    },
-    'interaction': <String, Object?>{
-      '_scriptable': false,
-      '_indexable': false,
-    },
-  },
+  DescriptorsScope()
+    ..descScriptable = _scriptableDefault
+    ..descIndexable = _indexableDefault
+    ..jsWrite('hover', DescriptorsScope()..descFallback = 'interaction')
+    ..jsWrite(
+      'interaction',
+      DescriptorsScope()
+        ..descScriptable = false
+        ..descIndexable = false,
+    ),
   [applyAnimationsDefaults, applyLayoutsDefaults, applyScaleDefaults],
 );
+
+/// core.defaults.js:166 the `_scriptable` descriptor of the root.
+bool _scriptableDefault(String name) => !name.startsWith('on');
+
+/// core.defaults.js:167 the `_indexable` descriptor of the root.
+bool _indexableDefault(String name) => name != 'events';
 
 /// The target scope object of a route: the [RoutedScope] that took the
 /// place of a plain Map, else [scope].

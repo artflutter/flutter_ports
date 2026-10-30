@@ -43,6 +43,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show DecimationOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -542,10 +544,10 @@ void _beforeElementsUpdate(
 final AnyObject decimation = <String, Object?>{
   'id': 'decimation',
 
-  'defaults': <String, Object?>{
-    'algorithm': 'min-max',
-    'enabled': false,
-  },
+  // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
+  'defaults': DecimationOptionsScope()
+    ..algorithm = 'min-max'
+    ..enabled = false,
 
   /// plugin.decimation.js:205 `beforeElementsUpdate(chart, args, options)`.
   'beforeElementsUpdate': _beforeElementsUpdate,

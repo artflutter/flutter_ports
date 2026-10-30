@@ -61,6 +61,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey, jsObjectFreeze;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show GenericDatasetOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -655,8 +657,10 @@ class DatasetController
     initialize();
   }
 
-  /// core.datasetController.js:239 `static defaults = {}`.
-  static final AnyObject defaults = {};
+  /// core.datasetController.js:239 `static defaults = {}`, an empty typed
+  /// scope of the kind `GenericDatasetOptions` (Chart.js ADR 0054 §3).
+  static final GenericDatasetOptionsScope defaults =
+      GenericDatasetOptionsScope();
 
   /// core.datasetController.js:234 `class DatasetController` as a value
   /// (Chart.js ADR 0020, section 3).

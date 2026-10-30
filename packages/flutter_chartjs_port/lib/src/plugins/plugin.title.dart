@@ -38,6 +38,8 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show DescriptorsScope, FontSpecScope, TitleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -384,22 +386,24 @@ final AnyObject title = <String, Object?>{
     title.options = options;
   },
 
-  // plugin.title.js:145-156.
-  'defaults': <String, Object?>{
-    'align': 'center',
-    'display': false,
-    'font': <String, Object?>{'weight': 'bold'},
-    'fullSize': true,
-    'padding': 10.0,
-    'position': 'top',
-    'text': '',
+  // plugin.title.js:145-156. A typed scope of the kind `TitleOptions`
+  // (Chart.js ADR 0054 §3).
+  'defaults': TitleOptionsScope()
+    ..align = 'center'
+    ..display = false
+    ..font = (FontSpecScope()..weight = 'bold')
+    ..fullSize = true
+    ..padding = 10.0
+    ..position = 'top'
+    ..text = ''
     // by default greater than legend (1000) to be above
-    'weight': 2000.0,
-  },
+    ..weight = 2000.0,
 
   // plugin.title.js:158-160.
   'defaultRoutes': <String, Object?>{'color': 'color'},
 
-  // plugin.title.js:162-165.
-  'descriptors': <String, Object?>{'_scriptable': true, '_indexable': false},
+  // plugin.title.js:162-165. A typed scope of the kind `Descriptors`.
+  'descriptors': DescriptorsScope()
+    ..descScriptable = true
+    ..descIndexable = false,
 };

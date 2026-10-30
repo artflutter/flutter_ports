@@ -104,10 +104,24 @@ and for the typed public API of Chart.js ADR 0052.
 - Each scope class has the fields of its keys, typed setters, `lookup(key)`, `store(key, cell)`,
   `ownKeys` in insertion order, `extras` (an ordered list of the other names and their cells),
   `mergeIf`, `clone` and the face of §5.
-- `defaults`, `overrides` and `descriptors` are typed roots. The statics of the components
-  (`defaults`, `overrides`, `descriptors`, `defaultRoutes`) are typed scopes. `registerDefaults`
-  merges typed into typed. A user component with Map statics merges its known keys into fields and
-  the other keys into extras.
+- `defaults`, `overrides` and `descriptors` are typed roots (`ChartOptionsScope`,
+  `OverridesByTypeScope`, `DescriptorsScope`). They are built at start from the typed cascades of
+  the component files, not from generated `const` values: the `Defaults` constructor, the
+  `defaults.set` and `defaults.describe` values of `core.animations.defaults`,
+  `core.layouts.defaults` and `core.scale.defaults`, and the statics of the components
+  (`defaults`, `overrides` and `descriptors` of the controllers, elements, scales and plugins)
+  are typed cascades (`PointOptionsScope()..radius = 3.0 ...`) in the upstream order of the
+  declaration. Thus a bump that changes a default changes the same Dart file as upstream, and the
+  function defaults stay Dart code of their component. `defaultRoutes` stays a table of route
+  strings. `registerDefaults` merges typed into typed. A user component with Map statics merges
+  its known keys into fields and the other keys into extras. A `merge` into a typed scope makes
+  typed children of the kind of each key.
+- The schema drift test (`test/port/options/schema_test.dart`) compares the built typed roots,
+  with the components registered, with the defaults inventory of `doc/upstream/manifest.json`
+  (335 default paths, 29 override paths, 36 descriptor entries): each inventory path has its
+  value (a function default compares by its presence), each leaf of the roots is an inventory
+  path, each object of the roots is a typed scope, and the keys of each declaration site keep
+  their order.
 - A descriptor (`_scriptable`, `_indexable`, `_fallback`, `_allKeys`) is a cell of a descriptor
   scope. `ScriptableSpec` and `IndexableSpec` are sealed: a constant, a built-in predicate (an
   `enum` over a `const` table of the keys: the predicates of U `core.defaults.js:166-167`,
@@ -116,9 +130,11 @@ and for the typed public API of Chart.js ADR 0052.
   `plugin.tooltip.js:1334` are pure functions of the key), or a user function that the walk calls
   with the JS name in the upstream order. `FallbackSpec` is sealed: a key, self (`true`), none
   (`false`) or a user function.
-- `defaults.route` of the built-ins is a typed route of the scope: a read of the local cell that
-  gives `undefined` reads the target cell at each access; a local object merges over the target
-  object (U `core.defaults.js:130-157`). A user `route()` call routes by name.
+- `defaults.route` of a typed scope is a typed route of the scope (`OptionScope.addRoute`): a
+  read of the local cell that gives `undefined` reads the target cell at each access; a local
+  object merges over the target object (U `core.defaults.js:130-157`). A route of a raw Map node
+  (a user object in the defaults) keeps the `RoutedScope` of Chart.js ADR 0043 until the close
+  step.
 - A change of `Chart.defaults` reaches a chart at its next `update()`: `config.update()` drops the
   scope lists and the resolvers (U `core.config.js:197-206`). The scale options copy the defaults
   at the first init of a scale, as `mergeScaleConfig` does upstream (U `core.config.js:71-113`).
@@ -175,8 +191,11 @@ and for the typed public API of Chart.js ADR 0052.
   and the tests. It is never in a hot path.
 - `isObject` is true for a raw Map and for a typed scope (the leaf rule of Chart.js ADR 0043 in its
   new form).
-- During the migration the same objects also extend `MapBase` (scaffolding). The close step
-  removes it.
+- During the migration the same objects also extend `MapBase` (scaffolding). `MapBase` owns
+  `operator []` and `operator []=` with the Map rules (Dart `null` for an absent key). Thus the
+  face members are `jsRead` and `jsWrite` during the migration. The close step removes `MapBase`;
+  then `operator []` and `operator []=` of each face forward to `jsRead` and `jsWrite`, with the
+  JS rules (`undefined` for an absent key). This is an item of the close step (§16).
 
 ### 6. Values outside the type of a key
 
@@ -309,9 +328,11 @@ and `adapt-typed-contexts`.
    option, parse and stack parts of `src/core/core.datasetController.js`, the statics of each
    component and `src/types/index.d.ts`.
 2. Algorithm hunks: replay them into the typed function of the same name at the mapped path.
-3. Keys and defaults: run `upstream:manifest` (tool 4), edit `tool/options_schema.yaml`, run
-   `options:gen`. The schema drift test fails until the schema equals the new inventory (values and
-   key order).
+3. Keys and defaults: run `upstream:manifest` (tool 4). Edit `tool/options_schema.yaml` for a new
+   key or kind and run `options:gen`. Edit the typed cascade of the component file for a new or
+   changed default value or order (the same file as upstream). The schema drift test fails until
+   both equal the new inventory (the keys of the schema, and the values and the key order of the
+   built typed roots).
 4. Generate D2 and the other reference data again on the reference engine (Chart.js ADR 0045).
 5. Run O2: each new foreign (key, kind) pair gets a review of its readers.
 6. Run every suite. Write the O1 digests again only after the reviewed behavior diff of the bump
@@ -348,6 +369,10 @@ and `adapt-typed-contexts`.
 
 ### 16. The steps, the ownership and the night
 
+- The close step removes the scaffolding: `MapBase` of the typed classes (then `operator []`
+  and `operator []=` of each face forward to `jsRead` and `jsWrite` with the JS rules), the
+  legacy Map resolver and O3, `ContextObject`, `RoutedScope` and the Map protocol of the classes
+  of Chart.js ADR 0018.
 - The base step (one agent, commits B0-B6, each green with all suites), then five lanes in
   parallel worktrees (L1 controllers and parsed data, L2 scales, L3 elements, props and
   animations, L4 plugins, L5 chart level, raw boundary and the typed public API), then the close

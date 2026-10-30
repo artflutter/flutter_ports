@@ -35,6 +35,8 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsRound;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ScaleOptionsScope, TickOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:meta/meta.dart';
 
@@ -213,12 +215,11 @@ class CategoryScale extends Scale {
   /// scale.category.js:41 `static defaults`.
   ///
   /// The tick callback is `_getLabelForValue` (scale.category.js:25), a
-  /// function that reads `this`.
-  static final AnyObject defaults = {
-    'ticks': <String, Object?>{
-      'callback': const JsFunction(_getLabelForValue),
-    },
-  };
+  /// function that reads `this`. The object is a typed scope of the kind
+  /// `ScaleOptions` (Chart.js ADR 0054 §3).
+  static final ScaleOptionsScope defaults = ScaleOptionsScope()
+    ..ticks = (TickOptionsScope()
+      ..callback = const JsFunction(_getLabelForValue));
 
   /// scale.category.js:34 `class CategoryScale extends Scale` as a value
   /// (Chart.js ADR 0020, section 3).

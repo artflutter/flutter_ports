@@ -491,7 +491,7 @@ String _scopes(Schema schema) {
     out
       ..write('\n')
       ..write(docLines(kind.doc, ''))
-      ..write('final class ${kind.className} extends OptionScope {\n')
+      ..write('base class ${kind.className} extends OptionScope {\n')
       ..write('  /// An empty scope.\n')
       ..write('  ${kind.className}();\n\n')
       ..write('  @override\n')

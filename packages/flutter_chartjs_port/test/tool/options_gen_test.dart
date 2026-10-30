@@ -93,7 +93,7 @@ void main() {
       for (final text in files.values) {
         expect(text, startsWith('// Original code, not ported from Chart.js:'));
       }
-      expect(files['scopes.g.dart'], contains('final class FontSpecScope'));
+      expect(files['scopes.g.dart'], contains('base class FontSpecScope'));
       expect(
         files['option_keys.g.dart'],
         contains(r"dollarTheme(r'$theme')"),

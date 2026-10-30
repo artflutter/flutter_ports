@@ -45,6 +45,12 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        ChartOptionsScope,
+        LineControllerDatasetOptionsScope,
+        ScaleOptionsByIdScope,
+        ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -72,22 +78,21 @@ class LineController extends DatasetController {
   /// controller.line.js:8 `static id = 'line'`.
   static const String id = 'line';
 
-  /// controller.line.js:13 `static defaults`.
-  static final AnyObject defaults = {
-    'datasetElementType': 'line',
-    'dataElementType': 'point',
+  /// controller.line.js:13 `static defaults`, a typed scope of the kind
+  /// `LineControllerDatasetOptions` (Chart.js ADR 0054 §3).
+  static final LineControllerDatasetOptionsScope defaults =
+      LineControllerDatasetOptionsScope()
+        ..datasetElementType = 'line'
+        ..dataElementType = 'point'
+        ..showLine = true
+        ..spanGaps = false;
 
-    'showLine': true,
-    'spanGaps': false,
-  };
-
-  /// controller.line.js:24 `static overrides`.
-  static final AnyObject overrides = {
-    'scales': <String, Object?>{
-      '_index_': <String, Object?>{'type': 'category'},
-      '_value_': <String, Object?>{'type': 'linear'},
-    },
-  };
+  /// controller.line.js:24 `static overrides`, a typed scope of the kind
+  /// `ChartOptions` (Chart.js ADR 0054 §3).
+  static final ChartOptionsScope overrides = ChartOptionsScope()
+    ..scales = (ScaleOptionsByIdScope()
+      ..jsWrite('_index_', ScaleOptionsScope()..type = 'category')
+      ..jsWrite('_value_', ScaleOptionsScope()..type = 'linear'));
 
   /// controller.line.js:6 `class LineController extends DatasetController`
   /// as a value (Chart.js ADR 0020, section 3).

@@ -49,6 +49,15 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        AnimationOptionsScope,
+        AnimationsSpecScope,
+        BarControllerDatasetOptionsScope,
+        ChartOptionsScope,
+        GridLineOptionsScope,
+        ScaleOptionsByIdScope,
+        ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -487,34 +496,37 @@ class BarController extends DatasetController {
   /// controller.bar.js:260 `static id = 'bar'`.
   static const String id = 'bar';
 
-  /// controller.bar.js:265 `static defaults`.
-  static final AnyObject defaults = {
-    'datasetElementType': false,
-    'dataElementType': 'bar',
+  /// controller.bar.js:265 `static defaults`, a typed scope of the kind
+  /// `BarControllerDatasetOptions` (Chart.js ADR 0054 §3).
+  static final BarControllerDatasetOptionsScope defaults =
+      BarControllerDatasetOptionsScope()
+        ..datasetElementType = false
+        ..dataElementType = 'bar'
+        ..categoryPercentage = 0.8
+        ..barPercentage = 0.9
+        ..grouped = true
+        ..animations = (AnimationsSpecScope()
+          ..numbers = (AnimationOptionsScope()
+            ..type = 'number'
+            ..properties = <String>['x', 'y', 'base', 'width', 'height']));
 
-    'categoryPercentage': 0.8,
-    'barPercentage': 0.9,
-    'grouped': true,
-
-    'animations': <String, Object?>{
-      'numbers': <String, Object?>{
-        'type': 'number',
-        'properties': <String>['x', 'y', 'base', 'width', 'height'],
-      },
-    },
-  };
-
-  /// controller.bar.js:284 `static overrides`.
-  static final AnyObject overrides = {
-    'scales': <String, Object?>{
-      '_index_': <String, Object?>{
-        'type': 'category',
-        'offset': true,
-        'grid': <String, Object?>{'offset': true},
-      },
-      '_value_': <String, Object?>{'type': 'linear', 'beginAtZero': true},
-    },
-  };
+  /// controller.bar.js:284 `static overrides`, a typed scope of the kind
+  /// `ChartOptions` (Chart.js ADR 0054 §3).
+  static final ChartOptionsScope overrides = ChartOptionsScope()
+    ..scales = (ScaleOptionsByIdScope()
+      ..jsWrite(
+        '_index_',
+        ScaleOptionsScope()
+          ..type = 'category'
+          ..offset = true
+          ..grid = (GridLineOptionsScope()..offset = true),
+      )
+      ..jsWrite(
+        '_value_',
+        ScaleOptionsScope()
+          ..type = 'linear'
+          ..beginAtZero = true,
+      ));
 
   /// controller.bar.js:258 `class BarController extends DatasetController`
   /// as a value (Chart.js ADR 0020, section 3).

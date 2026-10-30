@@ -54,6 +54,13 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        DisplayFormatsScope,
+        MajorTickOptionsScope,
+        ScaleOptionsScope,
+        TickOptionsScope,
+        TimeScaleTimeOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:meta/meta.dart';
 
@@ -384,31 +391,31 @@ class TimeScale extends Scale {
 
   /// scale.time.js:206 `static defaults`.
   ///
-  /// `TimeSeriesScale.defaults` is the same Map (scale.timeseries.js:41).
-  static final AnyObject defaults = {
+  /// `TimeSeriesScale.defaults` is the same object (scale.timeseries.js:41),
+  /// a typed scope of the kind `ScaleOptions` (Chart.js ADR 0054 §3). The
+  /// `adapters` object is a raw Map: the schema gives the key no kind.
+  static final ScaleOptionsScope defaults = ScaleOptionsScope()
     // Scale boundary strategy (bypassed by min/max time options)
     // - `data`: make sure data are fully visible, ticks outside are removed
     // - `ticks`: make sure ticks are fully visible, data outside are
     //   truncated
     // @see https://github.com/chartjs/Chart.js/pull/4556
     // @since 2.7.0
-    'bounds': 'data',
-
-    'adapters': <String, Object?>{},
-    'time': <String, Object?>{
+    ..bounds = 'data'
+    ..adapters = <String, Object?>{}
+    ..time = (TimeScaleTimeOptionsScope()
       // false == a pattern string from or a custom callback that converts
       // its argument to a timestamp
-      'parser': false,
+      ..parser = false
       // false == automatic or override with week, month, year, etc.
-      'unit': false,
+      ..unit = false
       // none, or override with week, month, year, etc.
-      'round': false,
+      ..round = false
       // override week start day
-      'isoWeekday': false,
-      'minUnit': 'millisecond',
-      'displayFormats': <String, Object?>{},
-    },
-    'ticks': <String, Object?>{
+      ..isoWeekday = false
+      ..minUnit = 'millisecond'
+      ..displayFormats = DisplayFormatsScope())
+    ..ticks = (TickOptionsScope()
       // Ticks generation input values:
       // - 'auto': generates "optimal" ticks based on scale size and time
       //   options.
@@ -418,13 +425,9 @@ class TimeScale extends Scale {
       //   ONLY.
       // @see https://github.com/chartjs/Chart.js/pull/4507
       // @since 2.7.0
-      'source': 'auto',
-
-      'callback': false,
-
-      'major': <String, Object?>{'enabled': false},
-    },
-  };
+      ..source = 'auto'
+      ..callback = false
+      ..major = (MajorTickOptionsScope()..enabled = false));
 
   /// scale.time.js:199 `class TimeScale extends Scale` as a value (Chart.js
   /// ADR 0020, section 3).

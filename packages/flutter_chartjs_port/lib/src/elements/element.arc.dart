@@ -65,6 +65,9 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
+import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ArcOptionsScope, DescriptorsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -849,34 +852,37 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   /// element.arc.ts:375 `static id = 'arc'`.
   static const String id = 'arc';
 
-  /// element.arc.ts:377 `static defaults`, in the upstream key order.
-  static final AnyObject defaults = {
-    'borderAlign': 'center',
-    'borderColor': '#fff',
-    'borderDash': <Object?>[],
-    'borderDashOffset': 0.0,
-    'borderJoinStyle': undefined,
-    'borderRadius': 0.0,
-    'borderWidth': 2.0,
-    'offset': 0.0,
-    'spacing': 0.0,
-    'spacingMode': 'angular',
-    'angle': undefined,
-    'circular': true,
-    'selfJoin': false,
-  };
+  /// element.arc.ts:377 `static defaults`, in the upstream key order: a
+  /// typed scope of the kind `ArcOptions` (Chart.js ADR 0054 §3).
+  static final ArcOptionsScope defaults = ArcOptionsScope()
+    ..borderAlign = 'center'
+    ..borderColor = '#fff'
+    ..borderDash = <Object?>[]
+    ..borderDashOffset = 0.0
+    ..borderJoinStyleCell = optUndefined
+    ..borderRadius = 0.0
+    ..borderWidth = 2.0
+    ..offset = 0.0
+    ..spacing = 0.0
+    ..spacingMode = 'angular'
+    ..angleCell = optUndefined
+    ..circular = true
+    ..selfJoin = false;
 
   /// element.arc.ts:393 `static defaultRoutes`.
   static final AnyObject defaultRoutes = {
     'backgroundColor': 'backgroundColor',
   };
 
-  /// element.arc.ts:397 `static descriptors`. The `_indexable` function is
-  /// a Dart closure (Chart.js ADR 0043).
-  static final AnyObject descriptors = {
-    '_scriptable': true,
-    '_indexable': (String name) => name != 'borderDash',
-  };
+  /// element.arc.ts:397 `static descriptors`, a typed scope of the kind
+  /// `Descriptors` (Chart.js ADR 0054 §3). The `_indexable` function is a
+  /// Dart function (Chart.js ADR 0043).
+  static final DescriptorsScope descriptors = DescriptorsScope()
+    ..descScriptable = true
+    ..descIndexable = _indexableDescriptor;
+
+  /// element.arc.ts:399 the `_indexable` descriptor.
+  static bool _indexableDescriptor(String name) => name != 'borderDash';
 
   /// element.arc.ts:373 `class ArcElement extends Element` as a value (Chart.js
   /// ADR 0020, section 3).

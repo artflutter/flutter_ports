@@ -37,6 +37,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show GenericElementOptionsScope;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -156,8 +158,10 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// [active] starts false.
   Element();
 
-  /// core.element.ts:8 `static defaults = {}`.
-  static final AnyObject defaults = {};
+  /// core.element.ts:8 `static defaults = {}`, an empty typed scope of the
+  /// kind `GenericElementOptions` (Chart.js ADR 0054 §3).
+  static final GenericElementOptionsScope defaults =
+      GenericElementOptionsScope();
 
   /// core.element.ts:9 `static defaultRoutes = undefined`: the [undefined]
   /// sentinel.

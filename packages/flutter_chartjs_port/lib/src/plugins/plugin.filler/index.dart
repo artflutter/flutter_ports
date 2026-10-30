@@ -27,6 +27,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToNumber, jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show FillerOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.drawing.dart'
     show drawfill;
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dart'
@@ -186,9 +188,9 @@ final AnyObject filler = <String, Object?>{
     drawfill(chart.ctx!, source! as FillerSource, chart.chartArea);
   },
 
-  // index.js:93-96.
-  'defaults': <String, Object?>{
-    'propagate': true,
-    'drawTime': 'beforeDatasetDraw',
-  },
+  // index.js:93-96. A typed scope of the kind `FillerOptions` (Chart.js ADR
+  // 0054 §3).
+  'defaults': FillerOptionsScope()
+    ..propagate = true
+    ..drawTime = 'beforeDatasetDraw',
 };

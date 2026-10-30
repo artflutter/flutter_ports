@@ -26,6 +26,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString, jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// core.typedRegistry.js:8 `TypedRegistry`, the default export.
@@ -177,14 +179,22 @@ final class TypedRegistry {
 /// key, and its new keys follow.
 void _registerDefaults(Object item, String scope, String? parentScope) {
   // Inherit the parent's defaults and keep existing defaults
-  final itemDefaults = merge(<String, Object?>{}, [
+  final sources = [
     if (jsTruthy(parentScope))
       defaults.get(parentScope!)
     else
       <String, Object?>{},
     defaults.get(scope),
     jsGet(item, 'defaults'),
-  ]);
+  ];
+  // The object of upstream is a new typed scope of the kind of the scope
+  // node (Chart.js ADR 0054 §3), or a raw Map for a raw node.
+  // DIVERGES(chartjs): adapt-typed-options, a typed scope of the node kind.
+  final node = sources[1];
+  final itemDefaults = merge(
+    node is OptionScope ? node.kind.create() : <String, Object?>{},
+    sources,
+  );
 
   defaults.set(scope, itemDefaults);
 

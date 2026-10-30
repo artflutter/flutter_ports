@@ -48,6 +48,13 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        ChartOptionsScope,
+        InteractionOptionsScope,
+        LineControllerDatasetOptionsScope,
+        ScaleOptionsByIdScope,
+        ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -75,23 +82,23 @@ class ScatterController extends DatasetController {
   /// controller.scatter.js:8 `static id = 'scatter'`.
   static const String id = 'scatter';
 
-  /// controller.scatter.js:13 `static defaults`.
-  static final AnyObject defaults = {
-    'datasetElementType': false,
-    'dataElementType': 'point',
-    'showLine': false,
-    'fill': false,
-  };
+  /// controller.scatter.js:13 `static defaults`, a typed scope of the kind
+  /// `LineControllerDatasetOptions` (the kind of `datasets.scatter`,
+  /// Chart.js ADR 0054 §3).
+  static final LineControllerDatasetOptionsScope defaults =
+      LineControllerDatasetOptionsScope()
+        ..datasetElementType = false
+        ..dataElementType = 'point'
+        ..showLine = false
+        ..fill = false;
 
-  /// controller.scatter.js:23 `static overrides`.
-  static final AnyObject overrides = {
-    'interaction': <String, Object?>{'mode': 'point'},
-
-    'scales': <String, Object?>{
-      'x': <String, Object?>{'type': 'linear'},
-      'y': <String, Object?>{'type': 'linear'},
-    },
-  };
+  /// controller.scatter.js:23 `static overrides`, a typed scope of the kind
+  /// `ChartOptions` (Chart.js ADR 0054 §3).
+  static final ChartOptionsScope overrides = ChartOptionsScope()
+    ..interaction = (InteractionOptionsScope()..mode = 'point')
+    ..scales = (ScaleOptionsByIdScope()
+      ..jsWrite('x', ScaleOptionsScope()..type = 'linear')
+      ..jsWrite('y', ScaleOptionsScope()..type = 'linear'));
 
   /// controller.scatter.js:6 `class ScatterController extends
   /// DatasetController` as a value (Chart.js ADR 0020, section 3).

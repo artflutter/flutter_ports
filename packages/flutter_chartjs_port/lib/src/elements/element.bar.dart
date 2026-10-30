@@ -44,6 +44,9 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
+import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show BarOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -342,14 +345,14 @@ class BarElement extends Element implements types.VisualElementRange {
   /// element.bar.js:143 `static id = 'bar'`.
   static const String id = 'bar';
 
-  /// element.bar.js:148 `static defaults`, in the upstream key order.
-  static final AnyObject defaults = {
-    'borderSkipped': 'start',
-    'borderWidth': 0.0,
-    'borderRadius': 0.0,
-    'inflateAmount': 'auto',
-    'pointStyle': undefined,
-  };
+  /// element.bar.js:148 `static defaults`, in the upstream key order: a
+  /// typed scope of the kind `BarOptions` (Chart.js ADR 0054 §3).
+  static final BarOptionsScope defaults = BarOptionsScope()
+    ..borderSkipped = 'start'
+    ..borderWidth = 0.0
+    ..borderRadius = 0.0
+    ..inflateAmount = 'auto'
+    ..pointStyleCell = optUndefined;
 
   /// element.bar.js:159 `static defaultRoutes`, in the upstream key order.
   static final AnyObject defaultRoutes = {

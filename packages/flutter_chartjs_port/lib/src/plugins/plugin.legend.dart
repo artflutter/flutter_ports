@@ -62,6 +62,13 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
     show canvasKeyword, canvasLineDash, canvasNumber, canvasStyle;
+import 'package:flutter_chartjs_port/src/options/opt.dart' show optNull;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        DescriptorsScope,
+        LegendLabelOptionsScope,
+        LegendOptionsScope,
+        LegendTitleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -1475,43 +1482,43 @@ final AnyObject legend = <String, Object?>{
     }
   },
 
-  // plugin.legend.js:636-712.
-  'defaults': <String, Object?>{
-    'display': true,
-    'position': 'top',
-    'align': 'center',
-    'fullSize': true,
-    'reverse': false,
-    'weight': 1000.0,
-
+  // plugin.legend.js:636-712. A typed scope of the kind `LegendOptions`
+  // (Chart.js ADR 0054 §3).
+  'defaults': LegendOptionsScope()
+    ..display = true
+    ..position = 'top'
+    ..align = 'center'
+    ..fullSize = true
+    ..reverse = false
+    ..weight = 1000.0
     // a callback that will handle
-    'onClick': _onClick,
-
-    'onHover': null,
-    'onLeave': null,
-
-    'labels': <String, Object?>{
-      'color': _chartColor,
-      'boxWidth': 40.0,
-      'padding': 10.0,
+    ..onClick = _onClick
+    ..onHoverCell = optNull
+    ..onLeaveCell = optNull
+    ..labels = (LegendLabelOptionsScope()
+      ..color = _chartColor
+      ..boxWidth = 40.0
+      ..padding = 10.0
       // Generates labels shown in the legend
-      'generateLabels': _generateLabels,
-    },
+      ..generateLabels = _generateLabels)
+    ..title = (LegendTitleOptionsScope()
+      ..color = _chartColor
+      ..display = false
+      ..position = 'center'
+      ..text = ''),
 
-    'title': <String, Object?>{
-      'color': _chartColor,
-      'display': false,
-      'position': 'center',
-      'text': '',
-    },
-  },
-
-  // plugin.legend.js:714-719.
-  'descriptors': <String, Object?>{
-    '_scriptable': (String name) => !name.startsWith('on'),
-    'labels': <String, Object?>{
-      '_scriptable': (String name) =>
-          !const ['generateLabels', 'filter', 'sort'].contains(name),
-    },
-  },
+  // plugin.legend.js:714-719. A typed scope of the kind `Descriptors`.
+  'descriptors': DescriptorsScope()
+    ..descScriptable = _scriptableDescriptor
+    ..jsWrite(
+      'labels',
+      DescriptorsScope()..descScriptable = _labelsScriptableDescriptor,
+    ),
 };
+
+/// plugin.legend.js:715 the `_scriptable` descriptor of the plugin.
+bool _scriptableDescriptor(String name) => !name.startsWith('on');
+
+/// plugin.legend.js:717 the `_scriptable` descriptor of `labels`.
+bool _labelsScriptableDescriptor(String name) =>
+    !const ['generateLabels', 'filter', 'sort'].contains(name);
