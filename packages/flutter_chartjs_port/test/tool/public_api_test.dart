@@ -117,6 +117,9 @@ const Map<String, String> _notExported = {
   'SplinePoint': 'not in the ADR 0048 export list',
   'TRBLCorners': 'not in the ADR 0048 export list',
   'TypedRegistry': 'not in the ADR 0048 export list',
+  // The typed plugin of Chart.js ADR 0054 section 12: internal until the
+  // typed public plugin API (its Open 2); a plugin of user code is a Map.
+  'Plugin': 'the typed plugin of ADR 0054',
   // The typed contexts of Chart.js ADR 0054 section 11: internal, a context
   // is a ContextObject of lib/helpers.dart.
   'ScriptableChartContext': 'a typed context of ADR 0054',

@@ -1,0 +1,2 @@
+jsCall 2
+extendsMapBase 1

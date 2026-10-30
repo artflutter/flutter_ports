@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'registry_observe.dart';
@@ -497,6 +498,102 @@ false: TypeError
 false calls: 0
 null: TypeError
 null calls: 0''');
+    });
+  });
+
+  // The typed dispatch of Chart.js ADR 0054 §12 (differences.md row
+  // `adapt-typed-plugins`).
+  group('adapt-typed-plugins', () {
+    test('a typed plugin gets its hooks with the typed arguments', () {
+      final calls = <String>[];
+      final plugin = Plugin()
+        ..id = 'typed'
+        ..install = (chart, args, options) {
+          calls.add('install ${args.runtimeType}');
+          return null;
+        }
+        ..beforeUpdate = (chart, args, options) {
+          calls.add('beforeUpdate ${args.mode} ${args.cancelable}');
+          return false;
+        }
+        ..afterDatasetUpdate = (chart, args, options) {
+          calls.add('afterDatasetUpdate ${args.index} ${args.cancelable}');
+          return null;
+        };
+      final chart = _Chart(<String, Object?>{
+        'plugins': [plugin],
+      });
+      final service = PluginService();
+      expect(service.notify(chart, 'beforeInit'), isTrue);
+      final update = UpdateHookArgs(mode: 'resize', cancelable: true);
+      expect(service.notify(chart, 'beforeUpdate', update), isFalse);
+      // Not cancelable: the false result does not stop the notify.
+      expect(
+        service.notify(chart, 'beforeUpdate', UpdateHookArgs(mode: 'none')),
+        isTrue,
+      );
+      final dataset = DatasetUpdateHookArgs(
+        meta: null,
+        index: 2,
+        mode: 'm',
+        cancelable: false,
+      );
+      expect(service.notify(chart, 'afterDatasetUpdate', dataset), isTrue);
+      expect(calls, [
+        'install PluginHookArgs',
+        'beforeUpdate resize true',
+        'beforeUpdate none false',
+        'afterDatasetUpdate 2.0 false',
+      ]);
+      // A typed hook takes only its argument class: a call with other
+      // arguments throws a TypeError.
+      expect(
+        () => service.notify(chart, 'afterDatasetUpdate'),
+        throwsA(isA<TypeError>()),
+      );
+    });
+
+    test('a hook of another type has JS arity, with this the plugin', () {
+      final calls = <Object?>[];
+      final plugin = Plugin()..id = 'raw';
+      // One parameter: not the type of the hook.
+      plugin['afterInit'] = calls.add;
+      plugin['myHook'] = JsFunction(
+        (Object? self, Object? chart, Object? args) => calls.add(self),
+      );
+      final chart = _Chart(<String, Object?>{
+        'plugins': [plugin],
+      });
+      final service = PluginService()..notify(chart, 'beforeInit');
+      expect(plugin.afterInit, isNull);
+      expect(service.notify(chart, 'afterInit'), isTrue);
+      expect(service.notify(chart, 'myHook'), isTrue);
+      expect(calls, [same(chart), same(plugin)]);
+    });
+
+    test('a Map plugin reads map[hook] at each notify', () {
+      final calls = <String>[];
+      final map = <String, Object?>{'id': 'map'};
+      final chart = _Chart(<String, Object?>{
+        'plugins': [map],
+      });
+      final service = PluginService()..notify(chart, 'beforeInit');
+      expect(service.notify(chart, 'beforeDraw'), isTrue);
+      // A hook of three parameters, as a Map plugin of user code has.
+      // ignore: avoid_types_on_closure_parameters
+      map['beforeDraw'] = (Object? chart, Object? args, Object? options) {
+        calls.add('beforeDraw ${jsGet(args, 'cancelable')}');
+        return false;
+      };
+      expect(
+        service.notify(
+          chart,
+          'beforeDraw',
+          CancelableHookArgs(cancelable: true),
+        ),
+        isFalse,
+      );
+      expect(calls, ['beforeDraw true']);
     });
   });
 }

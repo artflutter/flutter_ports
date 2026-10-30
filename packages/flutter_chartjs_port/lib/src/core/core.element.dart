@@ -37,6 +37,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
+    show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show GenericElementOptionsScope;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
@@ -267,6 +269,19 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   bool hasValue() {
     return isNumber(x) && isNumber(y);
   }
+
+  /// Puts the property [prop] into the `undefined` state: the typed
+  /// property API of Chart.js ADR 0054 §9, with the typed setters of the
+  /// element classes (`x`, `y` and the others). Lane L3 changes the storage
+  /// of the properties; the signature stays. Today it is the write by name
+  /// `this[prop] = undefined`.
+  @internal
+  void markUndefined(AnimatedProp prop) => this[prop.name] = undefined;
+
+  /// Whether the property [prop] is in the `undefined` state, or the element
+  /// does not have it: `this[prop] === undefined`.
+  @internal
+  bool isUndefined(AnimatedProp prop) => identical(this[prop.name], undefined);
 
   /// core.element.ts:31-44 `getProps(props, final?)`.
   ///

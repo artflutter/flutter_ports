@@ -234,6 +234,17 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (`ScriptableChartContext`, `ScriptableContext`, `ScriptableScaleContext`,
     `ScriptableScalePointLabelContext`, `ScriptableTooltipContext`,
     `ScriptableLineSegmentContext`, Chart.js ADR 0054 §11), subclasses of `ContextObject`.
+  - The cross-lane types of Chart.js ADR 0054 (B5, pure layers; the lanes adopt them):
+    `lib/src/options/typed_record.dart` (`TypedRecord`: typed fields by slot, present and foreign
+    bits, extras, the JS key order, the face), `parsed.dart` (`ParsedItem`, `ItemStacks`,
+    `StackEntry`, `IndexValues`, `FloatingBar`, `AxisKey`), `props.dart` (`PointProperties`,
+    `BarProperties`, `ArcProperties`, `LineProperties`), `animated_prop.dart` (`AnimatedProp`),
+    `lib/src/types/data_item.dart` (`TypedDataItem`) and `lib/src/types/plugin.dart` (`Plugin`,
+    `PluginHook`, `PluginHookFunction`, the hook argument classes, `MapPlugin`).
+    `PluginService._notify` dispatches by `PluginHook`: a `Plugin` by its hook field, a Map plugin
+    through `MapPlugin`; the `notifyPlugins` call sites of `core.controller.dart` give the typed
+    argument classes (row `adapt-typed-plugins`). `Element.markUndefined(AnimatedProp)` and
+    `isUndefined` are the typed property API of the elements.
   - `lib/src/core/core.element.dart` and `lib/src/elements/` (Chart.js ADR 0017): the port of
     `core.element.ts`, and the four elements (`element.point.dart`, `element.line.dart`,
     `element.bar.dart`, `element.arc.dart`) with `index.dart`. The port-only `element_options.dart`

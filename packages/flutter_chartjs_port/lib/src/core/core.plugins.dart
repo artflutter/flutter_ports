@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/core/core.plugins.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-plugins, typed plugins of Chart.js ADR 0054.
 
 /// Port of `src/core/core.plugins.js`: the plugin service of a chart
 /// (Chart.js ADR 0020, section 7).
@@ -10,6 +11,12 @@
 /// value of `lib/src/js/js_function.dart`: a Dart `Function`, or a
 /// `JsFunction` when the hook reads `this`. [PluginService] reads the hook
 /// at each call, as upstream reads `plugin[hook]`.
+///
+/// The dispatch is typed (Chart.js ADR 0054 §12): a hook name of the
+/// `Plugin` interface is a [PluginHook]. A typed [Plugin] gives the value of
+/// its hook field, and a Map plugin is a [MapPlugin] (`map[hook]`). The
+/// built-in plugins stay Maps until lane L4. A hook without arguments gets a
+/// new [PluginHookArgs], the `{}` of upstream.
 ///
 /// The chart is a `types.Chart` (Chart.js ADR 0003). The file reads
 /// `chart.config` as the `Config` of `core.config.dart`, as the dataset
@@ -31,6 +38,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:meta/meta.dart';
 
 /// core.plugins.js:12 the descriptor `{plugin: object, options: object}`
@@ -100,9 +108,10 @@ final class PluginService {
     AnyObject? args,
     FilterCallback? filter,
   ]) {
-    if (hook == 'beforeInit') {
+    final pluginHook = PluginHook.of(hook);
+    if (pluginHook == PluginHook.beforeInit) {
       final init = _init = _createDescriptors(chart, true);
-      _notify(init, chart, 'install');
+      _notify(init, chart, PluginHook.install);
     }
 
     if (_init == null) {
@@ -113,11 +122,11 @@ final class PluginService {
     final descriptors = filter != null
         ? _descriptors(chart).where(filter).toList()
         : _descriptors(chart);
-    final result = _notify(descriptors, chart, hook, args);
+    final result = _notify(descriptors, chart, pluginHook, args, hook);
 
-    if (hook == 'afterDestroy') {
-      _notify(descriptors, chart, 'stop');
-      _notify(_init!, chart, 'uninstall');
+    if (pluginHook == PluginHook.afterDestroy) {
+      _notify(descriptors, chart, PluginHook.stop);
+      _notify(_init!, chart, PluginHook.uninstall);
       _init = null; // Do not trigger events after uninstall
     }
     return result;
@@ -126,32 +135,54 @@ final class PluginService {
   /// core.plugins.js:59 `_notify`.
   /// @private
   ///
-  /// Two lines differ from the upstream lines with the same result for each
-  /// input (Chart.js ADR 0020, sections 7 and 13). A Map plugin reads
-  /// `plugin[hook]` as a Map read: an absent key gives Dart `null`, which is
-  /// not a function, as `undefined` is not. The `params` list exists only
-  /// for a function value, where `callCallback` uses it
-  /// (helpers.core.ts:108-110). A `JsFunction` hook gets the plugin as
-  /// `this`: the Map, or the class value of a class plugin.
+  /// The lines differ from the upstream lines with the same result for each
+  /// input (Chart.js ADR 0020, sections 7 and 13, Chart.js ADR 0054 §12).
+  /// [hook] is the [PluginHook] of the name, or Dart `null` for another
+  /// [name] (the hook name of a user plugin), which reads the hook by name.
+  /// A typed [Plugin] gives the value of its hook field and calls a function
+  /// of the type of the hook with typed arguments ([Plugin.invokeHook]). A
+  /// Map plugin ([MapPlugin]) reads `plugin[hook]` as a Map read: an absent
+  /// key gives Dart `null`, which is not a function, as `undefined` is not.
+  /// The `params` list exists only for a function value, where
+  /// `callCallback` uses it (helpers.core.ts:108-110). A `JsFunction` hook
+  /// gets the plugin as `this`: the plugin object, the Map, or the class
+  /// value of a class plugin. A null [args] is the `{}` of upstream, a new
+  /// [PluginHookArgs].
   bool _notify(
     List<PluginDescriptor> descriptors,
     types.Chart chart,
-    String hook, [
+    PluginHook? hook, [
     AnyObject? args,
+    String? name,
   ]) {
-    args ??= <String, Object?>{};
+    final hookName = name ?? hook!.jsName;
+    args ??= PluginHookArgs();
     for (final descriptor in descriptors) {
       final plugin = descriptor.plugin;
-      // `<dynamic, dynamic>` is the type test of jsGet: on dart2wasm it costs
-      // about 33 ns less for each notify of 7 plugins than
-      // `<String, Object?>` (Chart.js ADR 0020, probe 8).
-      final Object? method = plugin is Map<dynamic, dynamic>
-          ? plugin[hook]
-          : jsGet(plugin, hook);
-      if (!jsIsFunction(method)) continue;
-      final params = [chart, args, descriptor.options];
-      if (identical(callback(method, params, plugin), false) &&
-          jsTruthy(args['cancelable'])) {
+      final options = descriptor.options;
+      final Object? result;
+      switch (plugin) {
+        case final Plugin typed:
+          final method = hook != null
+              ? typed.hookValue(hook)
+              : typed.jsRead(hookName);
+          if (method == null || !jsIsFunction(method)) continue;
+          result = hook != null
+              ? typed.invokeHook(hook, method, chart, args, options)
+              : callback(method, [chart, args, options], typed);
+        // `<dynamic, dynamic>` is the type test of jsGet: on dart2wasm it
+        // costs about 33 ns less for each notify of 7 plugins than
+        // `<String, Object?>` (Chart.js ADR 0020, probe 8).
+        case final Map<dynamic, dynamic> map:
+          final method = MapPlugin(map).hookValue(hookName);
+          if (method == null || !jsIsFunction(method)) continue;
+          result = MapPlugin(map).invokeHook(method, chart, args, options);
+        default:
+          final method = jsGet(plugin, hookName);
+          if (!jsIsFunction(method)) continue;
+          result = callback(method, [chart, args, options], plugin);
+      }
+      if (identical(result, false) && jsTruthy(args['cancelable'])) {
         return false;
       }
     }
@@ -232,8 +263,8 @@ final class PluginService {
           ),
         )
         .toList();
-    _notify(diff(previousDescriptors, descriptors), chart, 'stop');
-    _notify(diff(descriptors, previousDescriptors), chart, 'start');
+    _notify(diff(previousDescriptors, descriptors), chart, PluginHook.stop);
+    _notify(diff(descriptors, previousDescriptors), chart, PluginHook.start);
   }
 }
 

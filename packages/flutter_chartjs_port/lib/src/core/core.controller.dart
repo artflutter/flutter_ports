@@ -85,6 +85,14 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show LayoutItem, LayoutItemConfigure, LayoutLayer;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show
+        CancelableHookArgs,
+        DatasetDrawHookArgs,
+        DatasetUpdateHookArgs,
+        EventHookArgs,
+        ResizeHookArgs,
+        UpdateHookArgs;
 import 'package:flutter_chartjs_port/src/upstream.dart'
     show chartJsPackageVersion;
 import 'package:meta/meta.dart';
@@ -1054,7 +1062,8 @@ class Chart implements types.Chart {
       return;
     }
 
-    notifyPlugins('resize', {'size': newSize});
+    // DIVERGES(chartjs): adapt-typed-plugins, the typed hook arguments.
+    notifyPlugins('resize', ResizeHookArgs(size: newSize));
 
     callback(options['onResize'], [this, newSize], this);
 
@@ -1317,7 +1326,10 @@ class Chart implements types.Chart {
     // https://github.com/chartjs/Chart.js/issues/5111#issuecomment-355934167
     plugins.invalidate();
 
-    if (notifyPlugins('beforeUpdate', {'mode': mode, 'cancelable': true}) ==
+    if (notifyPlugins(
+          'beforeUpdate',
+          UpdateHookArgs(mode: mode, cancelable: true),
+        ) ==
         false) {
       return;
     }
@@ -1357,7 +1369,7 @@ class Chart implements types.Chart {
 
     // Do this before render so that any plugins that need final scale
     // updates can use it
-    notifyPlugins('afterUpdate', {'mode': mode});
+    notifyPlugins('afterUpdate', UpdateHookArgs(mode: mode));
 
     jsSort(
       _layers,
@@ -1472,7 +1484,8 @@ class Chart implements types.Chart {
   /// is the function of [LayoutItem.layers], which `layouts.addBox` always
   /// writes. `item._idx` is [LayoutLayer.idx].
   void _updateLayout(double minPadding) {
-    if (notifyPlugins('beforeLayout', {'cancelable': true}) == false) {
+    if (notifyPlugins('beforeLayout', CancelableHookArgs(cancelable: true)) ==
+        false) {
       return;
     }
 
@@ -1513,10 +1526,10 @@ class Chart implements types.Chart {
   ///
   /// `mode({datasetIndex: i})` is [jsCall] of the function value.
   void _updateDatasets(Object? mode) {
-    if (notifyPlugins('beforeDatasetsUpdate', {
-          'mode': mode,
-          'cancelable': true,
-        }) ==
+    if (notifyPlugins(
+          'beforeDatasetsUpdate',
+          UpdateHookArgs(mode: mode, cancelable: true),
+        ) ==
         false) {
       return;
     }
@@ -1536,7 +1549,7 @@ class Chart implements types.Chart {
       );
     }
 
-    notifyPlugins('afterDatasetsUpdate', {'mode': mode});
+    notifyPlugins('afterDatasetsUpdate', UpdateHookArgs(mode: mode));
   }
 
   /// core.controller.js:669 `_updateDataset(index, mode)`.
@@ -1550,12 +1563,12 @@ class Chart implements types.Chart {
   /// takes a `String`: [_modeArg] gives the falsy modes as Dart `null`.
   void _updateDataset(int index, Object? mode) {
     final meta = getDatasetMeta(index.toDouble());
-    final args = <String, Object?>{
-      'meta': meta,
-      'index': index.toDouble(),
-      'mode': mode,
-      'cancelable': true,
-    };
+    final args = DatasetUpdateHookArgs(
+      meta: meta,
+      index: index.toDouble(),
+      mode: mode,
+      cancelable: true,
+    );
 
     if (notifyPlugins('beforeDatasetUpdate', args) == false) {
       return;
@@ -1563,13 +1576,14 @@ class Chart implements types.Chart {
 
     meta.controller!.update_(_modeArg(mode));
 
-    args['cancelable'] = false;
+    args.cancelable = false;
     notifyPlugins('afterDatasetUpdate', args);
   }
 
   /// core.controller.js:683 `render()`.
   void render() {
-    if (notifyPlugins('beforeRender', {'cancelable': true}) == false) {
+    if (notifyPlugins('beforeRender', CancelableHookArgs(cancelable: true)) ==
+        false) {
       return;
     }
 
@@ -1601,7 +1615,8 @@ class Chart implements types.Chart {
       return;
     }
 
-    if (notifyPlugins('beforeDraw', {'cancelable': true}) == false) {
+    if (notifyPlugins('beforeDraw', CancelableHookArgs(cancelable: true)) ==
+        false) {
       return;
     }
 
@@ -1663,7 +1678,11 @@ class Chart implements types.Chart {
   /// `afterDatasetsDraw`.
   /// @private
   void _drawDatasets() {
-    if (notifyPlugins('beforeDatasetsDraw', {'cancelable': true}) == false) {
+    if (notifyPlugins(
+          'beforeDatasetsDraw',
+          CancelableHookArgs(cancelable: true),
+        ) ==
+        false) {
       return;
     }
 
@@ -1685,11 +1704,11 @@ class Chart implements types.Chart {
   /// `getDatasetClipArea` gives Dart `null` for the upstream `false`.
   void _drawDataset(ChartMeta meta) {
     final ctx = this.ctx;
-    final args = <String, Object?>{
-      'meta': meta,
-      'index': meta.index,
-      'cancelable': true,
-    };
+    final args = DatasetDrawHookArgs(
+      meta: meta,
+      index: meta.index,
+      cancelable: true,
+    );
     final clip = getDatasetClipArea(this, meta);
 
     if (notifyPlugins('beforeDatasetDraw', args) == false) {
@@ -1706,7 +1725,7 @@ class Chart implements types.Chart {
       unclipArea(ctx!);
     }
 
-    args['cancelable'] = false;
+    args.cancelable = false;
     notifyPlugins('afterDatasetDraw', args);
   }
 
@@ -2185,6 +2204,11 @@ class Chart implements types.Chart {
   ///
   /// Dart `null` for the result stands for the `undefined` of
   /// `PluginService.notify` before `install` and after `uninstall`.
+  ///
+  /// The plugin service maps a hook name of the `Plugin` interface to its
+  /// `PluginHook` and passes another name by name. [args] passes through by
+  /// identity: the call sites of this file give the typed argument classes
+  /// of `lib/src/types/plugin.dart` (Chart.js ADR 0054 §12).
   @override
   bool? notifyPlugins(String hook, [AnyObject? args, FilterCallback? filter]) {
     return plugins.notify(this, hook, args, filter);
@@ -2261,12 +2285,12 @@ class Chart implements types.Chart {
     types.ChartEvent e, [
     bool? replay,
   ]) {
-    final args = <String, Object?>{
-      'event': e,
-      'replay': replay ?? undefined,
-      'cancelable': true,
-      'inChartArea': isPointInArea(e),
-    };
+    final args = EventHookArgs(
+      event: e,
+      replay: replay ?? undefined,
+      cancelable: true,
+      inChartArea: isPointInArea(e),
+    );
     bool eventFilter(PluginDescriptor plugin) => _includes(
       _or(jsGet(plugin.options, 'events'), options['events']),
       e.native!.type,
@@ -2276,12 +2300,12 @@ class Chart implements types.Chart {
       return;
     }
 
-    final changed = handleEvent(e, replay, args['inChartArea']);
+    final changed = handleEvent(e, replay, args.inChartArea);
 
-    args['cancelable'] = false;
+    args.cancelable = false;
     notifyPlugins('afterEvent', args, eventFilter);
 
-    if (changed || jsTruthy(args['changed'])) {
+    if (changed || args.changed) {
       render();
     }
   }

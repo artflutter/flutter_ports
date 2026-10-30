@@ -2,6 +2,7 @@
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/animated_prop.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -83,6 +84,22 @@ final class _Box extends Element {
 final Matcher _isUndefined = same(undefined);
 
 void main() {
+  // The typed property API of Chart.js ADR 0054 §9.
+  group('markUndefined', () {
+    test('puts a property into the undefined state', () {
+      final element = Element()
+        ..x = 1
+        ..y = 2;
+      expect(element.isUndefined(AnimatedProp.x), isFalse);
+      element.markUndefined(AnimatedProp.x);
+      expect(element.isUndefined(AnimatedProp.x), isTrue);
+      expect(element['x'], same(undefined));
+      expect(element.x, isNaN);
+      expect(element.y, 2);
+      expect(element.isUndefined(const AnimatedProp.custom('foo')), isTrue);
+    });
+  });
+
   group('undefined state', () {
     test('a new element has the upstream start values', () {
       final elem = Element();

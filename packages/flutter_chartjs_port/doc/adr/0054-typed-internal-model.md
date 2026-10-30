@@ -242,8 +242,14 @@ and for the typed public API of Chart.js ADR 0052.
   (`ItemStacks`, the typed `_stacks`), the key order and an `extras` list for a key that user code
   writes. The hot read is `item.valueOf(AxisKey axis)` with `enum AxisKey { x, y, r, other }`.
 - An item of another class (the user data of `parsing: false`) reads with `jsGetKey`.
-- `StackEntry` (the object of `getOrCreateStack`) has typed `values` by dataset index, `top`,
-  `bottom` and `visualValues`.
+- `StackEntry` (the object of `getOrCreateStack`) has typed `datasetValues` by dataset index
+  (`IndexValues`: the canonical index names first in ascending order), `top`, `bottom` and
+  `visualValues`. `ItemStacks` (the `_stacks` of an item) has the stack objects of `x`, `y` and `r`
+  as fields and another axis as an extra. `FloatingBar` is the `_custom` of a floating bar.
+- The records of parsed data, of the properties and of the hook arguments extend `TypedRecord`
+  (`lib/src/options/typed_record.dart`): typed fields by slot, a present bit and a foreign slot for
+  each field, extras, the own-key order (up to 7 keys in 4-bit groups of one `int`, also on the
+  web, then a list), the face and, during the migration, the Map scaffolding.
 - Doughnut and pie keep `_parsed` as the upstream number List.
 - A `Float64List` is allowed only for an internal array of numbers that no user code reaches.
   `Float64List` columns of parsed items are rejected: they cannot keep the identity of an item or
@@ -256,19 +262,26 @@ and for the typed public API of Chart.js ADR 0052.
   of `int _undefined`. The typed getter gives the field. The typed setter stores and clears the
   bit. The face gives `undefined` for a set bit. A `double?` store boxes; it is not used.
 - `$context` is a typed field (`ScriptableContext?`).
-- `PointProps`, `BarProps`, `ArcProps` and `LineProps` (generated fields and key order) replace the
-  property Map literals of the controllers. `Element.assign(props)` and the direct writes of the
+- `PointProperties`, `BarProperties`, `ArcProperties` and `LineProperties`
+  (`lib/src/options/props.dart`: the fields and the key orders of the upstream literals) replace
+  the property Map literals of the controllers. The names end in `Properties`, the name of the
+  upstream variable, because `PointProps` (U `element.point.ts:18`) and `ArcProps` (U
+  `element.arc.ts:365`) are the property types of the element classes and keep their ports. `Element.assign(props)` and the direct writes of the
   line and scatter controllers use the typed setters only for an element of the exact built-in
   class (`identical(element.runtimeType, BarElement)`). A user element class gets the writes by
   name, in the same key order.
+- The typed property API of the elements: the typed setters of today (`set x(double)` and the
+  others), `Element.markUndefined(AnimatedProp)` and `Element.isUndefined(AnimatedProp)`. L3
+  changes the storage; the signatures stay.
 - `getProps` keeps its upstream signature for user code. Ported callers use typed forms that give
   the fields or the `to` of the running animations.
 
 ### 10. Animations
 
-- `AnimatedProp` (`name`, `id`) has `const` instances for the built-in names (U
-  `core.animations.defaults.js:1-2` and the element and controller defaults). A name from a raw
-  `properties` list maps through the generated `switch`. An unknown name gets
+- `AnimatedProp` (`name`, `id`, `lib/src/options/animated_prop.dart`) has `const` instances for
+  the 22 built-in names (U `core.animations.defaults.js:1-2` and its transitions, and the
+  `properties` of the controllers and of the tooltip). A name from a raw `properties` list maps
+  through the `switch` of `AnimatedProp.of`. An unknown name gets
   `AnimatedProp.custom(name)` and the path by name.
 - Each target class (an element, resolved options) reads and writes a key with a `switch` on `id`,
   and the face for an id that it does not declare.
@@ -304,13 +317,21 @@ and for the typed public API of Chart.js ADR 0052.
 - `PluginService._notify` takes `enum PluginHook`, reads the field, calls it with
   `(chart, args, options)` and stops on `false` for a cancelable hook (U `core.plugins.js:59-71`).
   The public `chart.notifyPlugins(String hook, Object? args)` maps a built-in name to the enum and
-  passes any other name by name. `args` passes through (identity).
+  passes any other name by name. `args` passes through (identity). `Plugin.hookValue(hook)` gives
+  the field value; `Plugin.invokeHook` calls a function of the type of the hook
+  (`PluginHookFunction<A>` of its argument class) with typed arguments and another function with
+  JS arity, `this` the plugin. A typed hook takes only its argument class.
+- The argument classes are `PluginHookArgs` (`{}`), `UpdateHookArgs`, `CancelableHookArgs`,
+  `ResizeHookArgs`, `DatasetUpdateHookArgs`, `DatasetDrawHookArgs`, `EventHookArgs` and
+  `TooltipDrawHookArgs`, with the keys of the upstream literals in their order. `Plugin` stays
+  internal (no public library exports it) until the typed public plugin API (Open 2).
 - The seven built-in plugins are `Plugin` instances whose fields hold the private top-level hook
   functions in the upstream key order. Their options are typed facades. The legend items, the hit
   boxes and the tooltip items are typed classes with extras and the face.
   `Tooltip.positioners` stays a dictionary by name (user positioners).
-- `MapPlugin` adapts a user Map plugin (inline or registered). It reads `map[hook]` at each notify
-  and calls it with `jsCall` (any arity, `this` is the Map), as upstream. A user Map plugin's
+- `MapPlugin`, an extension type over the Map, adapts a user Map plugin (inline or registered).
+  It reads `map[hook]` at each notify and calls it with `jsCall` (any arity, `this` is the Map), as
+  upstream. A user Map plugin's
   `defaults` is a raw scope copy (U `core.typedRegistry.js:86-90`).
 
 ### 13. Rule 2 for the typed layers
