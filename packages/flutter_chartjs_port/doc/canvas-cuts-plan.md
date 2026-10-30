@@ -1,6 +1,6 @@
 # Canvas and host cuts plan
 
-- Status: proposed, deferred
+- Status: proposed, deferred; the native draw path of §7 is brought forward (2026-10-30)
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (accepted),
   [Chart.js ADR 0013](adr/0013-canvas-model.md), [Chart.js ADR 0015](adr/0015-text.md),
@@ -9,7 +9,8 @@
   [performance.md](performance.md), [porting-flow.md](porting-flow.md) §2.2
 
 This plan removes code of the phase 3 canvas layer and of the chart host where Dart or Flutter
-already gives the function. It has three cuts and nine work packages. Each work package has one
+already gives the function. It has three cuts and nine work packages. §7 adds the native draw
+path of phase 10: native `dart:ui` forms for the slow draw cells. Each work package has one
 owner. An owner can take one work package without the history of this plan. All paths are
 relative to `packages/flutter_chartjs_port/` unless they start with `apps/` or `third_party/`. The line
 numbers are the line numbers on 2026-10-19. Read the file again before an edit, because other
@@ -58,6 +59,15 @@ Triggers that occurred:
   ([performance.md](performance.md) §9) decide the performance criterion. Decision: cut 2. Work
   package W stays deferred, because trigger 2 did not occur. C2 depended on W only because both
   edit `canvas_ui.dart`.
+- 2026-10-30, a decision of the maintainer in phase 10 brings the native draw path of §7 forward.
+  The typed internal model of phase 10 removes the update cost, but not the draw cost of the arcs,
+  of the circles with one paint for each item and of the end of the bar recording. The maintainer
+  wants the native forms of `dart:ui` for these draws, with no layer on top of a layer. A sixth
+  agent does §7 in `lib/src/canvas/` only, in parallel with the agents of the typed model, and §7.6
+  gives the A/B of the measurement night. Work packages A1, A3, I, W, C1, D and P stay deferred:
+  the forms of §7 do not reach the matrix path of cut 1 or the web defect of §2.3. This change edits
+  only the canvas files, their tests, this plan and the rows of `doc/status.yaml`. The porting lead
+  records the trigger in porting-flow.md §5.1.
 
 Changes to the cited files:
 - 2026-10-19, the rounded rectangle fast paths ([porting-flow.md](porting-flow.md) §1.1,
@@ -1812,3 +1822,221 @@ the direct path. C2 changes only the transform of the host paint.
   a Retina display to a non-Retina display. Check the Events tab readout (`canvas.width x height`
   against the display size), no blur, and the sizes. This also closes the Chart.js ADR 0037 Open
   item 8, "A DPR change on a real device is not verified".
+
+## 7. The native draw path (phase 10)
+
+The decision of the maintainer of 2026-10-30 brings this section forward (Deferral). It keeps the
+canvas calls of the ported code and changes only how `lib/src/canvas/` gives them to `dart:ui`.
+Thus the recorded draw calls of the reference tests do not change: they record the Canvas 2D calls
+above the layer. The pixels stay equivalent: they differ on antialiased edge pixels only, as for
+the fast paths of §1.1 (Chart.js ADR 0034).
+
+### 7.1 The draw cells
+
+The figures are those of [performance.md](performance.md) §13.6: Pixel 8a, ms for each call. The
+end is the end of the recording: `(draw + end) / upstream draw` times the upstream draw, minus the
+draw.
+
+| Cells | Port draw | Upstream draw | End | (draw + end) / upstream | Cost (performance.md §13.6, §13.7 item 11) |
+|---|---|---|---|---|---|
+| `chart.doughnut` draw at N 100 / 1000 / 5000 | 0.612 / 6.081 / 32.591 | 0.279 / 2.939 / 15.429 | 0.07 / 0.65 / 6.0 | 2.44 / 2.29 / 2.50 | at N 1000, the `drawPath` FFI 36.8 % and `_NativePath._arcTo` 24.2 % |
+| `chart.pie` draw | 0.517 / 5.270 / 28.632 | 0.261 / 2.560 / 13.560 | 0.05 / 1.03 / 17.6 | 2.16 / 2.46 / 3.41 | the same arc path |
+| `chart.polarArea` draw | 0.507 / 5.008 / 27.912 | 0.237 / 2.507 / 13.407 | 0.03 / 0.71 / 15.0 | 2.27 / 2.28 / 3.20 | the same arc path |
+| `chart.c`, the draw of the update call at N 1000 / 5000 / 20000 | 1.635 / 8.670 / 34.648 | 0.372 / 1.844 / 9.707 | 1.35 / 5.14 / 12.5 | 8.02 / 7.49 / 4.86 | two colors give runs of 2 circles: `CircleBatch._drawDirect` 6.07 ms at N 5000 |
+| `chart.bubble` draw at N 1000 / 5000 | 1.492 / 7.431 | 0.308 / 1.520 | 1.22 / 4.17 | 8.80 / 7.63 | a radius for each item: `_drawDirect` 5.43 ms at N 5000 |
+| `chart.bar` draw at N 1000 / 5000 / 20000, after `bar-ring-zero-inner` | 2.070 / 10.544 / 42.248 | 2.524 / 14.087 / 70.767 | 5.434 / 9.359 / 80.244 | 2.97 / 1.41 / 1.73 | before `bar-ring-zero-inner`: `UiCanvasContext.fill` 5.57 ms at N 5000, `_dropPictures` 2.08 ms in the bar update at N 5000 |
+
+The unit costs of §7.3 come from the same profile:
+- `drawPath`: 2.24 ms for 2000 calls in the doughnut draw at N 1000, 1.12 µs for each call.
+- `ui.Path.arcTo`: 1.47 ms for 8000 calls, 0.18 µs for each call.
+- `drawCircle`: 5.43 ms for 10000 calls in the bubble draw at N 5000, 0.54 µs for each call. §7.3
+  uses this cost for each draw of one shape with a paint (`drawArc`, `drawRect`).
+- A leaf FFI call (`Path.moveTo`, `lineTo`, `close`, `reset`, `Canvas.save`, `restore`): about
+  0.02 µs. This is an estimate: no profile gives it alone.
+
+### 7.2 The candidate forms
+
+| ID | Form | Native API | Cells | Semantics | Verdict |
+|---|---|---|---|---|---|
+| N1 | `save()` and `restore()` touch the `ui.Canvas` only for a state with a clip of its own. The first clip of a state makes its native save. A new recording replays only the levels with clips. | `Canvas.save`, `Canvas.restore` | arcs, bars, text, tooltip, legend | Exact. The layer applies the transform to the points (Chart.js ADR 0013 §6), so a native save and restore with no clip between them changes no pixel. A circle run goes on across them. | **Adopt** |
+| N2 | `fill()` of one `rect`, one `roundRect` or a sole shape with no area makes no draw call. | none | bars at N 1000 and more: the inner rectangle of each bar has a width of 0 | Exact. A fill of a shape with no area has no pixel in Chromium, Skia and Impeller. | **Adopt** |
+| N3 | The path builder keeps the first 32 commands of a path in a typed buffer. It builds the `ui.Path` only when a draw, a clip, a dash or a reader needs it, and then sends the later commands directly. The current point and the subpath start on an arc keep the arc, and get their coordinates at the first read. | `ui.Path` (fewer calls) | each fast path (rectangles, rounded rectangles, rings, circles, the sectors of N4) and each arc | Exact. The replay makes the calls of today, in the same order and with the same values. | **Adopt** |
+| N4 | `fill()` of a circular sector draws `drawArc`: a wedge with its center (`useCenter: true`), or a ring sector as a stroke with butt caps on the middle circle, with the width of the ring. | `Canvas.drawArc` | doughnut, pie and polar area fills | Exact region: the butt stroke of a circular arc covers the ring sector between its radii. The edges differ by antialiasing only. | **Adopt** |
+| N5 | A run of the circle batch with fewer than 16 circles that meets a fill or a stroke of another color goes on with a color for each instance: white sprites and `BlendMode.modulate`. A run of one color keeps the present code. | `drawRawAtlas` with `colors` | `chart.c`, `chart.c.indexable` | Exact color: white times the color is the color. The positions and the edges are those of the batch (§4.1). | **Adopt** |
+| R1 | The stroke of a sector as two arcs, two lines and four bevel triangles. | `drawArc`, `drawLine`, `drawVertices` | the arc borders | Not equivalent: an overlap doubles the alpha of a border color with an alpha below 1, and edges that touch give antialiasing seams. | Reject |
+| R2 | A cache of built paths across frames, keyed by their commands. | `ui.Path` | the `draw` cells only | A hit needs the same geometry. Each miss (an update, an animation) keeps a new native path for each element and frame: a layer on top, and an allocation for each item. | Reject |
+| R3 | Circles of any radius and color as triangles with feathered edges, in one call. | `drawVertices` | bubble, `chart.c` | No coverage antialiasing: the feather is an approximation. About 9 triangles for each segment of a circle: more data than the draws that it replaces. | Reject |
+| R4 | The fills of one color and radius with `drawPoints` and round caps. | `drawPoints` | `chart.a` | One paint for each call: the fills and the strokes of the points cannot alternate, so the paint order of overlapping points changes. The atlas keeps the order. | Reject |
+| R5 | Bubbles: an atlas of radius classes of 1/4 pixel in one image, for a run of one paint with several radii. | `drawRawAtlas` | `chart.bubble` | Display-only: a radius moves by at most 1/8 pixel. But the atlas is about 0.5 MB at a DPR of 1 and 1.3 to 5.4 MB at a DPR of 2.6 for the bubble radii of the benchmark (2 to 6 CSS pixels), and an animated radius makes a new atlas in each frame. | Deferred (§7.8) |
+| R6 | The bars as one atlas call of a white sprite, or as triangles. | `drawRawAtlas`, `drawVertices` | `chart.bar` | An `RSTransform` has one scale for both axes, and neither call antialiases the edges of a bar at a fractional pixel. | Reject |
+
+### 7.3 The expected gain
+
+Pixel 8a, with the figures and the unit costs of §7.1. A range gives the uncertain parts: the leaf
+calls, the cosines and sines that N3 does not compute, and the cost of the end of a recording for
+each operation of the picture.
+
+- **Doughnut** (N1, N3, N4). For each arc, the fill draws `drawArc` (+0.54 µs) in place of
+  `drawPath` (-1.12 µs), and its path makes no `arcTo` (-4 x 0.18 µs): -1.30 µs. The leaf calls (2
+  `lineTo`, `close`, one `reset`, `save`, `restore`) and the 32 cosines and sines of the 8 arcs
+  add -0.2 to -0.6 µs. Thus -1.5 to -1.9 µs for each arc: the draw at N 1000 goes from 6.08 to 4.2
+  to 4.6 ms (-24 to -31 %). The picture has 2 operations for each arc in place of 4, so the end
+  goes from 0.65 to 0.33 to 0.45 ms. (draw + end) / upstream goes from 2.29 to 1.5 to 1.7 at N
+  1000, from 2.50 to 1.7 to 1.9 at N 5000 and from 2.44 to 1.6 to 1.8 at N 100.
+- **Pie and polar area** (N1, N3, N4). The inner arcs of a wedge are not finite and add nothing
+  (`innerEnd / innerRadius` is NaN), so each path has 2 `arcTo`: -1.12 + 0.54 - 2 x 0.18 = -0.94
+  µs, and -0.15 to -0.35 µs of leaf calls and cosines, thus -1.1 to -1.3 µs for each arc. Pie at
+  N 1000: the draw goes from 5.27 to 4.0 to 4.2 ms, the end from 1.03 to 0.5 to 0.7 ms, and the
+  ratio from 2.46 to 1.75 to 1.9. Polar area at N 1000: the draw goes from 5.01 to 3.7 to 3.9 ms,
+  the end from 0.71 to 0.36 to 0.5 ms, and the ratio from 2.28 to 1.6 to 1.75.
+- **Bar** (N1, N2, N3). For each bar: no draw of the inner rectangle of width 0 (-0.54 µs) and no
+  path call: 2 `reset`, 2 x 5 calls of the two rectangles of the ring, 5 calls of the inner
+  rectangle, `save` and `restore` (19 leaf calls, -0.38 µs). Thus -0.9 µs for each bar: the draw
+  at N 1000 goes from 2.07 to about 1.15 ms (-44 %). The picture has 1 operation for each bar in
+  place of 4. When each operation costs the same at the end, the end goes from 5.43 to 1.4 ms; when
+  only the draw operations cost, to 2.7 ms. (draw + end) / upstream goes from 2.97 to 1.0 to 1.5
+  at N 1000, from 1.41 to 0.6 to 0.76 at N 5000 and from 1.73 to 0.6 to 0.9 at N 20000.
+- **`chart.c`** (N5, N3). The code A/B of `circle-batch-instance-colors` on the Pixel 8a
+  ([performance.md](performance.md) §13.6) gave the draw -76.4 / -74.4 / -73.1 %, the end -91.5 /
+  -89.1 / -80.0 % and the frame -25.0 / -23.3 / -17.5 % at N 1000 / 5000 / 20000. That candidate
+  also sent the runs of one color through the colors. N5 does not, so the runs of one color keep
+  their figures, and the cost of that candidate in `chart.a` (+1.9 to +5.3 %) does not apply.
+  (draw + end) / upstream goes from 8.02 / 7.49 / 4.86 to about 1.35 / 1.5 / 1.2.
+- **`chart.a`, `chart.b`, radar and the other point draws** (N3). The pending circle of each point
+  computes no cosine and sine (4 for each point). The other calls do not change. Expected: 0 to
+  -10 % of the draw. No figure gives the cost of a cosine on the phone.
+- **Bubble** (N3 only): 0 to -5 %. The bubble cells stay above 4 (R5).
+- **Text, tooltip and legend** (N1, N3): fewer native saves and path calls, 0 to -5 %.
+- **The browser** (P3, dart2wasm, skwasm). Each call that the forms remove goes from Dart through
+  JavaScript to the Wasm module of skwasm. No unit figure of these calls exists. The night of §7.6
+  measures them.
+- **The update cells** have the same draws in their frame and gain the same absolute times.
+
+### 7.4 The adopted forms
+
+- **N1** (`canvas_ui.dart`). The `ui.Canvas` has a save for a state only when that state has a
+  clip of its own: its clip list is not the list of the state below it. `clip()` draws the pending
+  circles, makes the native save of a state at its first clip, and applies the clip. `restore()` of
+  a state with a clip of its own draws the pending circles and restores the native canvas.
+  `save()`, and `restore()` of a state with no clip of its own, do not touch the native canvas and
+  do not draw the pending circles. A new recording replays a save and the clips only for the levels
+  with clips of their own.
+- **N2** (`canvas_ui.dart`). `fill()` of a `singleRect`, a `singleRRect` or a sole shape with no
+  area makes no draw call. It still starts the recording and marks the content as drawn, as
+  before.
+- **N3** (`canvas_ui_path.dart`). `UiPathBuilder` writes each `ui.Path` command (move, line,
+  quadratic, cubic, arc, rounded rectangle, close) into a buffer of 32 commands. The getter `path`
+  and a 33rd command replay the buffer into the `ui.Path`; the later commands of the path go
+  directly to it. `beginPath()` resets the native path only when it has commands. An arc command
+  keeps its center, its radii and its angles. The replay gives the oval of today:
+  `Rect.fromLTRB(cx - r, cy - r, cx + r, cy + r)` equals `Rect.fromCircle` of the radius r. The
+  current point and the subpath start on an arc keep the arc. Only the DOM `arcTo` reads them, and
+  then their cosine and sine come from the expressions of today.
+- **N4** (`canvas_ui_path.dart`, `canvas_ui.dart`). `UiPathBuilder.singleSector` reads the buffer
+  of one subpath: moves at the start only, lines, circular arcs and a close at the end only. It
+  merges the arcs that continue each other into one arc group. It drops each point within 1e-6
+  bitmap pixels of the end of the item before it or of the start of the arc after it. The result
+  is a sector when it is one of:
+  - one arc group and the center of its circle: a wedge;
+  - two arc groups on one center with two radii, where the second group starts at the end angle of
+    the first and goes back over the same sweep (each within 1e-9 radians): a ring sector.
+
+  The sweep of the first group is between 0 and 2π. `fill()` with the nonzero or the even-odd rule
+  draws a wedge with `drawArc(..., useCenter: true)`, and a ring sector with `drawArc(...,
+  useCenter: false)` and a stroke paint with butt caps, the width of the ring and the color or the
+  shader of the fill. `stroke()` and `clip()` keep the path.
+- **N5** (`canvas_ui_batch.dart`). `CircleBatch.accepts` takes a fill or a stroke of another color
+  when the run has fewer than `minAtlasRun` circles. `add` then writes the color of each instance
+  of the run, and the run takes each later color. `flush` draws such a run with white sprites, the
+  colors and `BlendMode.modulate`, or, below `minAtlasRun` circles, with `drawCircle` and the color
+  of each instance. A run of `minAtlasRun` circles or more of one color that meets another color
+  draws first, as before.
+
+### 7.5 Tests
+
+The new file `test/port/canvas/canvas_ui_native_test.dart` (`@TestOn('vm')`) pins the forms. Each
+pixel test compares a form with the same drawing on the path of today, for example a `Path2D` fill
+of the same commands, which takes `drawPath`. The thresholds are those of the fast paths
+(`test/port/helpers/helpers.canvas_ui_test.dart`): no pixel differs in area, the worst channel
+differs by at most 24 of 255, and the inked areas differ by less than 1 %. The tests of §2.6 stay
+green with no change, and so do the theme goldens of the CI runner, the text-metric probe and the
+reference tests.
+
+### 7.6 The night A/B (the rule is written now, 2026-10-30, before any run)
+
+The rule follows judge-r §5.1-§5.2 and the rule of the typed series of phase 10.
+- **Sides.** B is the tree of the night with the forms. A is the same tree with
+  `packages/flutter_chartjs_port/lib/src/canvas/` at commit `62b5477` (the base of §7). The A and B
+  worktrees differ only in `lib/src/canvas/`, and the SHA-256 of their diff equals that of the
+  frozen patch `git diff 62b5477 <the last commit of §7> -- packages/flutter_chartjs_port/lib/src/canvas`.
+  The benchmark files are the same on both sides.
+- **Builds.** Profile builds of `apps/chartjs_gallery/lib/main_bench.dart`, one at a time, with
+  `taskpolicy -b` and the SHA-256 of each binary before each run. The stress entry
+  `lib/main_stress.dart` for the raster check.
+- **Platforms.** Deciding: macOS AOT (Apple M3 Max, the gate of the quiet Mac) and the dedicated
+  Chrome with dart2wasm. Added: the Pixel 8a and the iPhone 17 Pro (stage 1).
+- **Method.** A fresh process (or a page load after `about:blank`) for each run; the run value is
+  the median of 15 batches; ABBA; stage 1 pairs 1-6, stage 2 pairs 7-12 when a primary interval
+  includes 0 or a cell has fewer than 6 valid pairs; the cell value is the mean of the pair
+  differences B - A with a 95 % percentile bootstrap (20000 resamples, seed 20261023); the warm-up
+  rule after a gate wait of more than 300 s.
+- **Selector.** `CASES=chart,chart.c.indexable,plugins,tooltip,fill,legend,title`: 103 cells (the
+  48 cells of `chart`, the 3 cells of `chart.c.indexable` and the 52 plugin cells of
+  [performance.md](performance.md) §14.9).
+- **Metric.** `draw+end` for a cell of the call `draw`; the frame sum `update+draw+end` for a cell
+  of the call `update`; the primary metric of the BENCH line for a plugin cell.
+- **Primary cells** (18): `chart.doughnut`, `chart.pie` and `chart.polarArea` draw at N 100, 1000
+  and 5000; `chart.bar` draw at N 1000, 5000 and 20000; `chart.c` and `chart.c.indexable` update at
+  N 1000, 5000 and 20000.
+- **Guard cells** (9): `chart.a` draw at N 1000, 5000 and 20000; `chart.bubble` draw at N 1000 and
+  5000; `chart.radar` draw at N 1000; `chart.b` line update at N 5000; `tooltip.still` with the
+  tooltip and 3 datasets at N 1000; `legend.line` draw with the legend at N 1000.
+- **Control cells:** the other 76 cells. h* = 5, the smallest h with P(X >= h) <= 0.05 for
+  X ~ Bin(76, 0.025).
+- **Classes** (each cell, each deciding platform, after its last stage): GAIN when the upper end of
+  the interval lies below 0; REGRESSION when the lower end lies above the larger of +0.1 ms and
+  +2 % of the A mean; else NEUTRAL.
+- **Decision** (each deciding platform): ACCEPT when each primary cell is GAIN, no guard cell is
+  REGRESSION, h < h* (h: the control cells with the interval wholly above 0), and no large control
+  hit (a lower end of 0.1 ms or more and of 5 % or more of the A mean) repeats in a 6-pair
+  confirmation series. REJECT when a primary or a guard cell is REGRESSION, h >= h* or a large
+  control hit repeats. Else OPEN. The forms stay when both deciding platforms give ACCEPT and the
+  raster check passes. After a REJECT or an OPEN, the forms stay in the tree for one more night.
+  That night runs the frozen patch of each form (N1 to N5, each alone on A) with this rule for the
+  cells that failed, and a form that the rule rejects goes out of the tree.
+- **Added platforms.** A primary or guard interval wholly above 0 starts a 6-pair confirmation. A
+  confirmed REGRESSION is a REJECT.
+- **Raster check** (the benchmark times the UI thread only). Stress builds of A and B on macOS
+  (the Pixel 8a added): `MODE=chart`, `CALL=draw`, `TYPE` doughnut, pie, polarArea and bar at
+  `SCENARIO=1000x0` and `5000x0`, and `TYPE=line`, `SCRIPTABLE=1`, `CALL=update` at `5000x0`. 3
+  fresh runs of each side, A B A B A B, 7 s each. The check fails when the median `rasterMs` of B
+  is more than the larger of 0.1 ms and 2 % above A, or the median FPS of B is more than 1 FPS
+  below A.
+- **Expected:** §7.3.
+- No rule changes after the first run. An independent agent recomputes each figure and decision
+  from the raw files in the morning.
+
+### 7.7 ADR and doc changes
+
+- Chart.js ADR 0013 is accepted. N1 changes the flush points of its §8.1 (a `save()` and a
+  `restore()` with no clip of their own are no flush points), N5 changes the run of §8.1 (a short
+  run takes several colors), and N3 and N4 add to its §6 and §8 (the buffer of the path builder
+  and the sector fill). A new ADR states the complete decision and supersedes Chart.js ADR 0013.
+  The porting lead writes it: this work edits only the canvas files, their tests, this plan and the
+  rows of `doc/status.yaml`.
+- `performance.md` gets the figures of the night, and porting-flow.md §5.1 records the trigger
+  (the porting lead).
+- `differences.md` gets no row: the canvas calls of the ported code do not change, as for
+  `bar-ring-zero-inner`.
+
+### 7.8 Open
+
+1. **Bubble** (R5). The bubble draw stays at about 7.6 times upstream. Measure first: the share of
+   `_drawDirect` at a DPR of 2.6, and the count of radius classes of real bubble charts.
+2. **The stroke of a sector** keeps `drawPath` (1.12 µs for each arc), because no native form
+   gives the bevel joins of the border with equivalent pixels (R1).
+3. **The end of the bar recording.** §7.3 gives a range, because no profile splits the end into
+   its operations. A profile of `chart.bar` draw on the Pixel 8a after the night tells it.
+4. **The web.** No repository suite runs the `dart:ui` layer on the web (§2.6). The forms use
+   `drawArc` and `drawRawAtlas` with colors, which skwasm and CanvasKit have. The browser runs of
+   the night check them.
