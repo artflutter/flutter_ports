@@ -557,6 +557,16 @@ String _resolved(Schema schema) {
       ..write('      }\n    }\n')
       ..write('    super.storeKey(key, raw);\n  }\n')
       ..write('\n  @override\n')
+      ..write('  bool isPresent(OptionKey key) => switch (key) {\n');
+    for (final (slot, key) in typed.indexed) {
+      out.write(
+        '    OptionKey.${keyIdentifier(key)} => '
+        '_present & ${1 << slot} != 0,\n',
+      );
+    }
+    out
+      ..write('    _ => super.isPresent(key),\n  };\n')
+      ..write('\n  @override\n')
       ..write('  bool isForeign(OptionKey key) => switch (key) {\n');
     for (final (slot, key) in typed.indexed) {
       out.write(

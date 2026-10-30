@@ -309,6 +309,18 @@ abstract class ElementOptions extends MapBase<String, Object?>
     this[key is OptionKey ? key.jsName : key as String] = raw;
   }
 
+  /// Whether the options own the declared key [key]. A typed field gives
+  /// 0, Dart `null` or false for an absent key, where upstream reads
+  /// `undefined` (for example after a user `delete` of a default). A reader
+  /// that must see `undefined` tests this bit first. Here `$shared` and
+  /// `$animations` are present when they have a value; every other key gives
+  /// false. A generated subclass gives the bits of its fields.
+  bool isPresent(OptionKey key) => switch (key) {
+    OptionKey.dollarShared => !identical(_shared, _absent),
+    OptionKey.dollarAnimations => !identical(_animations, _absent),
+    _ => false,
+  };
+
   /// Whether the value of the declared key [key] is outside the type of its
   /// field (Chart.js ADR 0054 §6): the field holds the JS conversion, and
   /// [foreignOf] gives the raw value.

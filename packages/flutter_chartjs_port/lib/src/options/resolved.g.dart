@@ -491,6 +491,20 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
   }
 
   @override
+  bool isPresent(OptionKey key) => switch (key) {
+    OptionKey.borderWidth => _present & 1 != 0,
+    OptionKey.hitRadius => _present & 2 != 0,
+    OptionKey.hoverBorderWidth => _present & 4 != 0,
+    OptionKey.hoverRadius => _present & 8 != 0,
+    OptionKey.pointStyle => _present & 16 != 0,
+    OptionKey.radius => _present & 32 != 0,
+    OptionKey.rotation => _present & 64 != 0,
+    OptionKey.backgroundColor => _present & 128 != 0,
+    OptionKey.borderColor => _present & 256 != 0,
+    _ => super.isPresent(key),
+  };
+
+  @override
   bool isForeign(OptionKey key) => switch (key) {
     OptionKey.borderWidth => _foreign & 1 != 0,
     OptionKey.hitRadius => _foreign & 2 != 0,
@@ -1135,6 +1149,25 @@ final class LineOptions extends ElementOptions {
   }
 
   @override
+  bool isPresent(OptionKey key) => switch (key) {
+    OptionKey.borderCapStyle => _present & 1 != 0,
+    OptionKey.borderDash => _present & 2 != 0,
+    OptionKey.borderDashOffset => _present & 4 != 0,
+    OptionKey.borderJoinStyle => _present & 8 != 0,
+    OptionKey.borderWidth => _present & 16 != 0,
+    OptionKey.capBezierPoints => _present & 32 != 0,
+    OptionKey.cubicInterpolationMode => _present & 64 != 0,
+    OptionKey.fill => _present & 128 != 0,
+    OptionKey.spanGaps => _present & 256 != 0,
+    OptionKey.stepped => _present & 512 != 0,
+    OptionKey.tension => _present & 1024 != 0,
+    OptionKey.backgroundColor => _present & 2048 != 0,
+    OptionKey.borderColor => _present & 4096 != 0,
+    OptionKey.segment => _present & 8192 != 0,
+    _ => super.isPresent(key),
+  };
+
+  @override
   bool isForeign(OptionKey key) => switch (key) {
     OptionKey.borderCapStyle => _foreign & 1 != 0,
     OptionKey.borderDash => _foreign & 2 != 0,
@@ -1482,6 +1515,18 @@ final class BarOptions extends ElementOptions {
     }
     super.storeKey(key, raw);
   }
+
+  @override
+  bool isPresent(OptionKey key) => switch (key) {
+    OptionKey.borderSkipped => _present & 1 != 0,
+    OptionKey.borderWidth => _present & 2 != 0,
+    OptionKey.borderRadius => _present & 4 != 0,
+    OptionKey.inflateAmount => _present & 8 != 0,
+    OptionKey.pointStyle => _present & 16 != 0,
+    OptionKey.backgroundColor => _present & 32 != 0,
+    OptionKey.borderColor => _present & 64 != 0,
+    _ => super.isPresent(key),
+  };
 
   @override
   bool isForeign(OptionKey key) => switch (key) {
@@ -2158,6 +2203,25 @@ final class ArcOptions extends ElementOptions {
     }
     super.storeKey(key, raw);
   }
+
+  @override
+  bool isPresent(OptionKey key) => switch (key) {
+    OptionKey.borderAlign => _present & 1 != 0,
+    OptionKey.borderColor => _present & 2 != 0,
+    OptionKey.borderDash => _present & 4 != 0,
+    OptionKey.borderDashOffset => _present & 8 != 0,
+    OptionKey.borderJoinStyle => _present & 16 != 0,
+    OptionKey.borderRadius => _present & 32 != 0,
+    OptionKey.borderWidth => _present & 64 != 0,
+    OptionKey.offset => _present & 128 != 0,
+    OptionKey.spacing => _present & 256 != 0,
+    OptionKey.spacingMode => _present & 512 != 0,
+    OptionKey.angle => _present & 1024 != 0,
+    OptionKey.circular => _present & 2048 != 0,
+    OptionKey.selfJoin => _present & 4096 != 0,
+    OptionKey.backgroundColor => _present & 8192 != 0,
+    _ => super.isPresent(key),
+  };
 
   @override
   bool isForeign(OptionKey key) => switch (key) {
