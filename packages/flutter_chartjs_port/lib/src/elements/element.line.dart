@@ -62,8 +62,14 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
+import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
+    show AnimatedProp;
+import 'package:flutter_chartjs_port/src/options/props.dart'
+    show LineProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DescriptorsScope, LineOptionsScope;
+import 'package:flutter_chartjs_port/src/options/typed_record.dart'
+    show TypedRecord;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -353,13 +359,13 @@ bool? _pathSegment(
   return loop;
 }
 
-/// Whether the property [prop] of [point] is in the JS `undefined` state.
+/// Whether the `y` of [point] is in the JS `undefined` state.
 ///
-/// The numeric getters give NaN for `undefined`. The read by name of an
-/// [Element] gives the [undefined] sentinel (Chart.js ADR 0017, section 5).
-/// Another implementation of [types.PointElement] has no `undefined` state.
-bool _isUndefined(types.PointElement point, String prop) => switch (point) {
-  final Element element => identical(element[prop], undefined),
+/// The numeric getters give NaN for `undefined`. An [Element] keeps the
+/// state in a bit ([Element.isUndefined], Chart.js ADR 0054 §9). Another
+/// implementation of [types.PointElement] has no `undefined` state.
+bool _isUndefinedY(types.PointElement point) => switch (point) {
+  final Element element => element.isUndefined(AnimatedProp.y),
   _ => false,
 };
 
@@ -468,7 +474,7 @@ bool? _fastPathSegment(
       // The getter gives NaN for an undefined y, but upstream keeps
       // `undefined`, and `undefined !== undefined` is false where
       // `NaN !== NaN` is true. Thus drawX draws nothing for such a group.
-      minY = maxY = y.isNaN && _isUndefined(point, 'y') ? null : y;
+      minY = maxY = y.isNaN && _isUndefinedY(point) ? null : y;
     }
     // Keep track of the last y-value in group. NaN and `undefined` both
     // make a lineTo that the DOM ignores.
@@ -742,8 +748,12 @@ class LineElement extends Element
   /// [updateControlPoints] has set the control points of [points].
   bool _pointsUpdated = false;
 
-  /// The value of [datasetIndex]. Dart `null` stands for JS `undefined`.
-  double? _datasetIndex;
+  /// The value of [datasetIndex]: NaN in the `undefined` state.
+  double _datasetIndex = double.nan;
+
+  /// Whether [datasetIndex] is in the `undefined` state, the start state
+  /// (Chart.js ADR 0054 §9).
+  bool _datasetIndexUndefined = true;
 
   /// element.line.js:284 `_chart`. Dart `null` stands for JS `undefined`,
   /// the start value. `controller.line.js:57` sets it. JS `null` never
@@ -784,10 +794,13 @@ class LineElement extends Element
   /// (helpers.segment.js:282, :321).
   @internal
   @override
-  double? get datasetIndex => _datasetIndex;
+  double? get datasetIndex => _datasetIndexUndefined ? null : _datasetIndex;
 
   @internal
-  set datasetIndex(double value) => _datasetIndex = value;
+  set datasetIndex(double value) {
+    _datasetIndex = value;
+    _datasetIndexUndefined = false;
+  }
 
   /// element.line.js:299 `updateControlPoints(chartArea, indexAxis)`.
   ///
@@ -1115,6 +1128,53 @@ class LineElement extends Element
     Invocation.method(#getCenterPoint, [useFinalPosition]),
   );
 
+  /// Whether the element is of the class [LineElement] itself, not of a user
+  /// subclass: the typed writes are for this class only (Chart.js ADR 0054
+  /// §9).
+  late final bool _builtIn = identical(runtimeType, LineElement);
+
+  /// [Element.takesProperties]: a [LineProperties], for an element of the
+  /// class [LineElement] itself.
+  @internal
+  @override
+  bool takesProperties(TypedRecord props) =>
+      props is LineProperties && _builtIn;
+
+  /// [Element.writePropertyAt] for a [LineProperties] (the literals of
+  /// controller.line.js:67-70, controller.scatter.js:87-90 and
+  /// controller.radar.js:68-74): the typed setter of the
+  /// key at [position]. An extra key, a foreign value
+  /// and a value that the setter does not take (JS `null` or `undefined`)
+  /// go by name ([assignKey]).
+  @internal
+  @override
+  void writePropertyAt(TypedRecord props, int position) {
+    final values = props as LineProperties;
+    final slot = values.slotAt(position);
+    if (slot < 0 || values.isForeignSlot(slot)) {
+      // An extra key, or a value outside the type of the field.
+      assignKey(values, position);
+      return;
+    }
+    switch (slot) {
+      case 0:
+        animated = values.animated;
+      case 1:
+        final value = values.options;
+        if (value == null) {
+          assignKey(values, position);
+        } else {
+          options = value;
+        }
+      case 2:
+        _loop = values.loop;
+      case 3:
+        _fullLoop = values.fullLoop;
+      default:
+        assignKey(values, position);
+    }
+  }
+
   /// The JS property read `line[prop]` (Chart.js ADR 0017, section 5).
   ///
   /// It handles the names of element.line.js:282-292 and the accessors
@@ -1133,7 +1193,7 @@ class LineElement extends Element
     'segments' => segments,
     '_decimated' => decimated,
     '_pointsUpdated' => _pointsUpdated,
-    '_datasetIndex' => _datasetIndex ?? undefined,
+    '_datasetIndex' => _datasetIndexUndefined ? undefined : _datasetIndex,
     _ => super[prop],
   };
 
@@ -1185,7 +1245,9 @@ class LineElement extends Element
       case '_pointsUpdated':
         _pointsUpdated = toDefinedBoolProp(prop, value);
       case '_datasetIndex':
-        _datasetIndex = toNumberProp(prop, value);
+        final number = toNumberProp(prop, value);
+        _datasetIndex = number ?? double.nan;
+        _datasetIndexUndefined = number == null;
       default:
         super[prop] = value;
     }

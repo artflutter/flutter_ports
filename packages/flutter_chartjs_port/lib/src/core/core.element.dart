@@ -33,6 +33,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isNumber;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -41,6 +43,8 @@ import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show GenericElementOptionsScope;
+import 'package:flutter_chartjs_port/src/options/typed_record.dart'
+    show TypedRecord;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -49,41 +53,47 @@ import 'package:meta/meta.dart';
 
 /// core.element.ts:6 `Element<T = AnyObject, O = AnyObject>`.
 ///
-/// The base class of the chart elements (Chart.js ADR 0017). The type
-/// parameters have no Dart form. `T`, the animated properties, are typed
-/// members and the access by name. `O`, the options, is the Map [options].
+/// The base class of the chart elements (Chart.js ADR 0017, with the
+/// storage of Chart.js ADR 0054 §9). The type parameters have no Dart form.
+/// `T`, the animated properties, are typed members and the access by name.
+/// `O`, the options, is the Map [options].
 ///
 /// ## Properties
 ///
 /// Each upstream property is a typed member with the upstream name. A
 /// number is a `double` (Chart.js ADR 0045).
 ///
-/// - A property that starts JS `undefined` has a nullable private field.
-///   Dart `null` stands for `undefined`. JS `null` never reaches these
-///   properties.
-/// - The getter of a numeric property returns `double`. It gives NaN, the
-///   `ToNumber` of `undefined`, in the `undefined` state. The getter of a
-///   boolean or object property returns the nullable type.
-/// - The setter takes the non-null type. Only a write by name stores
-///   `undefined` again.
-/// - A reader that must tell `undefined` from NaN reads the property by name
-///   or through [getProps].
+/// - A numeric property is a `double` field and a bit of an `int` mask of
+///   the `undefined` state (Chart.js ADR 0054 §9). The field holds NaN, the
+///   `ToNumber` of `undefined`, while the bit is set. Thus the getter gives
+///   the field, and a store makes no box.
+/// - A boolean or object property that starts JS `undefined` has a
+///   nullable private field. Dart `null` stands for `undefined`. JS `null`
+///   never reaches these properties.
+/// - The typed setter takes the non-null type: it stores the value and
+///   clears the bit. [markUndefined] and a write by name of [undefined] set
+///   the `undefined` state again.
+/// - A reader that must tell `undefined` from NaN reads the property by name,
+///   through [isUndefined] or through [getProps].
 /// - [hidden] is not an upstream property of the class. Upstream code adds
 ///   it to a data element, and the types give it no type. Thus it holds any
 ///   value, as an extra property does.
+/// - `$context`, the data context that a dataset controller adds
+///   (core.datasetController.js:767-768), is a typed member too: the typed
+///   read [$context] gives the [ScriptableContext], and the access by name
+///   keeps any value.
 ///
 /// ## Access by name
 ///
 /// [operator []] is the JS property read `element[prop]`. [operator []=] is
-/// the JS write `element[prop] = value`.
+/// the JS write `element[prop] = value`. It is the cold face of user code,
+/// of the specs and of the elements of user classes (Chart.js ADR 0054 §5).
 ///
 /// - The read gives the stored value. It gives the [undefined] sentinel for
 ///   a property in the `undefined` state and for an unknown name.
 /// - A JS object accepts any property. Thus a write of an unknown name goes
-///   to a Map of extra properties, for example the `$context` that a dataset
-///   controller adds (core.datasetController.js:767-768). The element
-///   creates the Map at the first such write. A read of an unknown name
-///   reads it.
+///   to a Map of extra properties. The element creates the Map at the first
+///   such write. A read of an unknown name reads it.
 /// - A numeric property accepts a `num`, which becomes a `double`, or
 ///   [undefined]. A boolean property accepts a `bool` or [undefined]. An
 ///   object property accepts its type or [undefined]. Another value is
@@ -95,8 +105,10 @@ import 'package:meta/meta.dart';
 /// An element class of `lib/src/elements/` extends [Element] and implements
 /// `types.VisualElement`. It follows this protocol:
 ///
-/// - It declares each property as a nullable private field with a public
-///   getter and setter, as [x] and [y] do.
+/// - It declares each numeric property as a `double` field with NaN as its
+///   start value and a bit of its own `int` mask, and each other property as
+///   a nullable private field, with a public getter and setter, as [x] and
+///   [y] do.
 /// - It overrides [operator []] with a `switch` over its own names, and
 ///   passes the other names to `super`. The names are the upstream
 ///   JavaScript names, also for a member whose Dart name drops the
@@ -104,6 +116,8 @@ import 'package:meta/meta.dart';
 /// - It overrides [operator []=] in the same way. It converts the value with
 ///   [toNumberProp], [toBoolProp], [toDefinedBoolProp] or [toObjectProp],
 ///   which also throw the [ArgumentError].
+/// - It overrides [markUndefined] and [isUndefined] for the [AnimatedProp]
+///   ids of its numeric properties, and passes the other ids to `super`.
 /// - Its constructor takes `[AnyObject? cfg]` and calls [assign] with it, as
 ///   upstream calls `Object.assign(this, cfg)` (element.point.ts:57-59).
 ///   The fields start in the `undefined` state. Thus the constructor sets
@@ -122,18 +136,22 @@ import 'package:meta/meta.dart';
 ///     if (cfg != null) assign(cfg);
 ///   }
 ///
-///   double? _width;
+///   double _width = double.nan;
+///   int _undefinedBits = 1;
 ///   bool? _horizontal;
 ///
-///   double get width => _width ?? double.nan;
-///   set width(double value) => _width = value;
+///   double get width => _width;
+///   set width(double value) {
+///     _width = value;
+///     _undefinedBits &= ~1;
+///   }
 ///
 ///   bool? get horizontal => _horizontal;
 ///   set horizontal(bool value) => _horizontal = value;
 ///
 ///   @override
 ///   Object? operator [](String prop) => switch (prop) {
-///     'width' => _width ?? undefined,
+///     'width' => _undefinedBits & 1 != 0 ? undefined : _width,
 ///     'horizontal' => _horizontal ?? undefined,
 ///     _ => super[prop],
 ///   };
@@ -142,7 +160,11 @@ import 'package:meta/meta.dart';
 ///   void operator []=(String prop, Object? value) {
 ///     switch (prop) {
 ///       case 'width':
-///         _width = toNumberProp(prop, value);
+///         final number = toNumberProp(prop, value);
+///         _width = number ?? double.nan;
+///         _undefinedBits = number == null
+///             ? _undefinedBits | 1
+///             : _undefinedBits & ~1;
 ///       case 'horizontal':
 ///         _horizontal = toBoolProp(prop, value);
 ///       default:
@@ -183,11 +205,24 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
     construct: (newTarget, args) => Element(),
   );
 
-  /// The value of [x]. Dart `null` stands for JS `undefined`.
-  double? _x;
+  /// The bit of [x] in [_undefinedXY].
+  static const int _xBit = 1;
 
-  /// The value of [y]. Dart `null` stands for JS `undefined`.
-  double? _y;
+  /// The bit of [y] in [_undefinedXY].
+  static const int _yBit = 2;
+
+  /// The value of [x]: NaN in the `undefined` state.
+  double _x = double.nan;
+
+  /// The value of [y]: NaN in the `undefined` state.
+  double _y = double.nan;
+
+  /// The bits of [x] and [y] in the `undefined` state (Chart.js ADR 0054
+  /// §9). Both start set.
+  int _undefinedXY = _xBit | _yBit;
+
+  /// The value of `$context` by name: any value, [undefined] at the start.
+  Object? _context = undefined;
 
   /// The extra properties of the access by name: the properties that the
   /// element class does not declare. Dart `null` until the first write of
@@ -199,15 +234,36 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// NaN in the `undefined` state, the start value. JS `null` never reaches
   /// it. `this['x']` gives [undefined] in that state.
   @override
-  double get x => _x ?? double.nan;
+  double get x => _x;
 
-  set x(double value) => _x = value;
+  set x(double value) {
+    _x = value;
+    _undefinedXY &= ~_xBit;
+  }
 
   /// core.element.ts:12 `y: number`. NaN in the `undefined` state, as [x].
   @override
-  double get y => _y ?? double.nan;
+  double get y => _y;
 
-  set y(double value) => _y = value;
+  set y(double value) {
+    _y = value;
+    _undefinedXY &= ~_yBit;
+  }
+
+  /// core.datasetController.js:767-768 `element.$context`, the data context
+  /// of the element, as a typed read (Chart.js ADR 0054 §9).
+  ///
+  /// core.element.ts does not declare it: a dataset controller adds it. It
+  /// gives the context when the property holds a [ScriptableContext], else
+  /// Dart `null`: the `undefined` start state, or another value that a
+  /// write by name stored. `this[r'$context']` gives the stored value as it
+  /// is.
+  ScriptableContext? get $context => switch (_context) {
+    final ScriptableContext context => context,
+    _ => null,
+  };
+
+  set $context(ScriptableContext value) => _context = value;
 
   /// core.element.ts:13 `active = false`.
   ///
@@ -258,8 +314,11 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
     // ignore: avoid_positional_boolean_parameters
     bool? useFinalPosition,
   ]) {
-    final props = getProps(const ['x', 'y'], useFinalPosition);
-    return ElementPoint(jsToNumber(props['x']), jsToNumber(props['y']));
+    // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
+    return ElementPoint(
+      finalNumber(AnimatedProp.x, x, useFinalPosition),
+      finalNumber(AnimatedProp.y, y, useFinalPosition),
+    );
   }
 
   /// core.element.ts:22 `hasValue()`.
@@ -272,16 +331,75 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
 
   /// Puts the property [prop] into the `undefined` state: the typed
   /// property API of Chart.js ADR 0054 §9, with the typed setters of the
-  /// element classes (`x`, `y` and the others). Lane L3 changes the storage
-  /// of the properties; the signature stays. Today it is the write by name
-  /// `this[prop] = undefined`.
+  /// element classes (`x`, `y` and the others).
+  ///
+  /// A numeric property gets NaN and its bit. A subclass handles the ids of
+  /// its own numeric properties and passes the other ids to `super`. Another
+  /// property is the write by name `this[prop] = undefined`.
   @internal
-  void markUndefined(AnimatedProp prop) => this[prop.name] = undefined;
+  void markUndefined(AnimatedProp prop) {
+    switch (prop.id) {
+      case animatedPropX:
+        _x = double.nan;
+        _undefinedXY |= _xBit;
+      case animatedPropY:
+        _y = double.nan;
+        _undefinedXY |= _yBit;
+      default:
+        this[prop.name] = undefined;
+    }
+  }
 
   /// Whether the property [prop] is in the `undefined` state, or the element
   /// does not have it: `this[prop] === undefined`.
+  ///
+  /// A numeric property gives its bit. A subclass handles the ids of its own
+  /// numeric properties and passes the other ids to `super`. Another
+  /// property is the read by name.
   @internal
-  bool isUndefined(AnimatedProp prop) => identical(this[prop.name], undefined);
+  bool isUndefined(AnimatedProp prop) => switch (prop.id) {
+    animatedPropX => _undefinedXY & _xBit != 0,
+    animatedPropY => _undefinedXY & _yBit != 0,
+    _ => identical(this[prop.name], undefined),
+  };
+
+  /// `getProps([prop], useFinalPosition)[prop]` for the numeric property
+  /// [prop] with the current value [current], through `ToNumber`: the typed
+  /// form of the ported callers of [getProps] (Chart.js ADR 0054 §9).
+  ///
+  /// When [useFinalPosition] is true and the element has `$animations`, an
+  /// active animation of [prop] gives the `ToNumber` of its target value
+  /// (core.element.ts:41). Else the result is [current], the typed getter
+  /// of [prop]: NaN in the `undefined` state is the `ToNumber` of the
+  /// `undefined` that upstream reads.
+  @internal
+  double finalNumber(
+    AnimatedProp prop,
+    double current,
+    // The upstream signature has a positional `useFinalPosition`.
+    // ignore: avoid_positional_boolean_parameters
+    bool? useFinalPosition,
+  ) {
+    if (useFinalPosition != true) return current;
+    final anim = $animations?[prop.name];
+    return anim != null && anim.active() ? jsToNumber(anim.to) : current;
+  }
+
+  /// `getProps([prop], useFinalPosition)[prop]` for the property [prop] with
+  /// the current value [current] (the value by name): as [finalNumber], with
+  /// the target value as it is.
+  @internal
+  Object? finalValue(
+    AnimatedProp prop,
+    Object? current,
+    // The upstream signature has a positional `useFinalPosition`.
+    // ignore: avoid_positional_boolean_parameters
+    bool? useFinalPosition,
+  ) {
+    if (useFinalPosition != true) return current;
+    final anim = $animations?[prop.name];
+    return anim != null && anim.active() ? anim.to : current;
+  }
 
   /// core.element.ts:31-44 `getProps(props, final?)`.
   ///
@@ -323,12 +441,13 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// `super`.
   @override
   Object? operator [](String prop) => switch (prop) {
-    'x' => _x ?? undefined,
-    'y' => _y ?? undefined,
+    'x' => _undefinedXY & _xBit != 0 ? undefined : _x,
+    'y' => _undefinedXY & _yBit != 0 ? undefined : _y,
     'active' => active,
     'options' => options ?? undefined,
     r'$animations' => $animations ?? undefined,
     'hidden' => hidden,
+    r'$context' => _context,
     _ => _extra(prop),
   };
 
@@ -341,7 +460,8 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// - `options` accepts a `Map<String, Object?>` or [undefined].
   /// - `$animations` accepts a `Map<String, types.Animation>` or
   ///   [undefined].
-  /// - `hidden` accepts any value, as an extra property does ([hidden]).
+  /// - `hidden` and `$context` accept any value, as an extra property does
+  ///   ([hidden], [$context]).
   /// - Another name stores [value] as it is in the Map of extra properties:
   ///   also Dart `null` for JS `null` and the [undefined] sentinel.
   ///
@@ -352,9 +472,19 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   void operator []=(String prop, Object? value) {
     switch (prop) {
       case 'x':
-        _x = toNumberProp(prop, value);
+        final number = toNumberProp(prop, value);
+        _x = number ?? double.nan;
+        _undefinedXY = number == null
+            ? _undefinedXY | _xBit
+            : _undefinedXY & ~_xBit;
       case 'y':
-        _y = toNumberProp(prop, value);
+        final number = toNumberProp(prop, value);
+        _y = number ?? double.nan;
+        _undefinedXY = number == null
+            ? _undefinedXY | _yBit
+            : _undefinedXY & ~_yBit;
+      case r'$context':
+        _context = value;
       case 'active':
         active = toDefinedBoolProp(prop, value);
       case 'options':
@@ -374,13 +504,74 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   /// element.line.js:295). `updateElement` calls it with the new properties
   /// (core.datasetController.js:900).
   ///
-  /// It writes each own key of [source] through [operator []=], in the
-  /// `Object.keys` order ([jsObjectKeys]). Thus an `int` becomes a `double`,
-  /// and a value outside the type of a declared property throws an
-  /// [ArgumentError] after the writes of the keys before it.
+  /// A property object of a controller (a [TypedRecord] of
+  /// `lib/src/options/props.dart`) that the element [takesProperties] goes
+  /// through the typed writes of [writePropertyAt], in its key order
+  /// (Chart.js ADR 0054 §9). Another object writes each own key of [source]
+  /// through [operator []=], in the `Object.keys` order ([jsObjectKeys]).
+  /// Thus an `int` becomes a `double`, and a value outside the type of a
+  /// declared property throws an [ArgumentError] after the writes of the
+  /// keys before it.
   void assign(AnyObject source) {
+    if (source is TypedRecord && takesProperties(source)) {
+      for (var i = 0, n = source.length; i < n; i++) {
+        writePropertyAt(source, i);
+      }
+      return;
+    }
+    // The face: `Object.assign` of a plain object reads each own key by
+    // name, in the `Object.keys` order.
     for (final key in jsObjectKeys(source)) {
       this[key] = source[key];
+    }
+  }
+
+  /// Whether the element takes the typed writes of [writePropertyAt] for
+  /// the property object [props] of a controller (Chart.js ADR 0054 §9).
+  ///
+  /// It is false when the element takes the writes by name: an element of
+  /// another class than the built-in class of [props] (a user class, so
+  /// that its `operator []=` sees each write, judge-r §2.5). [Element] has
+  /// no property object: it gives false. An element class gives true for
+  /// its own object. [writePropertyAt] writes an extra key and a foreign
+  /// value by name, at its position of the `Object.keys` order.
+  @internal
+  bool takesProperties(TypedRecord props) => false;
+
+  /// The typed write of the own key at [position] of [props], an object
+  /// that the element [takesProperties]: `this[key] = props[key]`
+  /// (Chart.js ADR 0054 §9). A key that the element class does not type
+  /// goes through [assignKey].
+  @internal
+  void writePropertyAt(TypedRecord props, int position) =>
+      assignKey(props, position);
+
+  /// The write by name of the own key at [position] of [props]:
+  /// `this[key] = props[key]`, for a key that [writePropertyAt] does not
+  /// type (an extra property of the element, or a value that the typed
+  /// setter does not take). It throws the [ArgumentError] of
+  /// [operator []=].
+  @protected
+  void assignKey(TypedRecord props, int position) {
+    final key = props.keyAt(position);
+    this[key] = props.jsRead(key);
+  }
+
+  /// The typed write `this[prop] = value` of the number [value]: the number
+  /// path of `core.animation` (Chart.js ADR 0054 §10).
+  ///
+  /// [x] and [y] take their setters. An element class handles the ids of its
+  /// own numeric properties and passes the other ids to `super`. Another
+  /// property is the write by name.
+  @internal
+  void writeNumber(AnimatedProp prop, double value) {
+    switch (prop.id) {
+      case animatedPropX:
+        x = value;
+      case animatedPropY:
+        y = value;
+      default:
+        this[prop.name] = value;
     }
   }
 
@@ -470,6 +661,52 @@ AnyObject? elementCfgArg(List<Object?> args) {
     _ => throw TypeError(),
   };
 }
+
+// The ids of the built-in names of `AnimatedProp` (animated_prop.dart) that
+// the element classes declare as numeric properties, for the `switch` of
+// `markUndefined`, `isUndefined` and the typed writes. A constant pattern
+// needs a constant, and `AnimatedProp.x.id` is not one.
+// test/port/core/core.element_test.dart checks each value.
+
+/// The id of [AnimatedProp.x].
+@internal
+const int animatedPropX = 0;
+
+/// The id of [AnimatedProp.y].
+@internal
+const int animatedPropY = 1;
+
+/// The id of [AnimatedProp.base].
+@internal
+const int animatedPropBase = 9;
+
+/// The id of [AnimatedProp.width].
+@internal
+const int animatedPropWidth = 10;
+
+/// The id of [AnimatedProp.height].
+@internal
+const int animatedPropHeight = 11;
+
+/// The id of [AnimatedProp.circumference].
+@internal
+const int animatedPropCircumference = 12;
+
+/// The id of [AnimatedProp.endAngle].
+@internal
+const int animatedPropEndAngle = 13;
+
+/// The id of [AnimatedProp.innerRadius].
+@internal
+const int animatedPropInnerRadius = 14;
+
+/// The id of [AnimatedProp.outerRadius].
+@internal
+const int animatedPropOuterRadius = 15;
+
+/// The id of [AnimatedProp.startAngle].
+@internal
+const int animatedPropStartAngle = 16;
 
 /// core.element.ts:31-33 the result type of `getProps`: `Pick<T, P[number]>`
 /// or `Partial<Record<P, unknown>>`, an object that the caller destructures.

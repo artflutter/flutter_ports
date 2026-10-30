@@ -37,18 +37,25 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
+import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
+    show AnimatedProp;
+import 'package:flutter_chartjs_port/src/options/props.dart'
+    show PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show PointOptionsScope;
+import 'package:flutter_chartjs_port/src/options/typed_record.dart'
+    show TypedRecord;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:meta/meta.dart';
 
 /// element.point.ts:11 `inRange`, the hit test of [el] on one [axis].
 ///
-/// [axis] is `'x'` or `'y'`. The value of the axis comes from
-/// [Element.getProps] through `ToNumber`, as the upstream subtraction
-/// applies it. Dart `null` for [pos] is JS `null`, which the subtraction
-/// reads as 0.
+/// [axis] is `'x'` or `'y'`. The value of the axis comes from the typed form
+/// of [Element.getProps] ([Element.finalNumber]), the `ToNumber` that the
+/// upstream subtraction applies. Dart `null` for [pos] is JS `null`, which
+/// the subtraction reads as 0.
 bool _inRange(
   PointElement el,
   double? pos,
@@ -56,7 +63,10 @@ bool _inRange(
   bool? useFinalPosition,
 ) {
   final options = el.options;
-  final value = jsToNumber(el.getProps([axis], useFinalPosition)[axis]);
+  // `getProps([axis], useFinalPosition)[axis]` in the typed form.
+  final value = axis == 'x'
+      ? el.finalNumber(AnimatedProp.x, el.x, useFinalPosition)
+      : el.finalNumber(AnimatedProp.y, el.y, useFinalPosition);
 
   // `options.radius + options.hitRadius` is the JS `+`: a string option
   // joins (`'07' + 1` is `'071'`). The `<` applies `ToNumber` to the sum.
@@ -179,20 +189,39 @@ class PointElement extends Element
   /// The value of [stop]. Dart `null` stands for JS `undefined`.
   bool? _stop;
 
-  /// The value of [cp1x]. Dart `null` stands for JS `undefined`.
-  double? _cp1x;
+  /// The bit of [cp1x] in [_undefinedBits].
+  static const int _cp1xBit = 1;
 
-  /// The value of [cp1y]. Dart `null` stands for JS `undefined`.
-  double? _cp1y;
+  /// The bit of [cp1y] in [_undefinedBits].
+  static const int _cp1yBit = 2;
 
-  /// The value of [cp2x]. Dart `null` stands for JS `undefined`.
-  double? _cp2x;
+  /// The bit of [cp2x] in [_undefinedBits].
+  static const int _cp2xBit = 4;
 
-  /// The value of [cp2y]. Dart `null` stands for JS `undefined`.
-  double? _cp2y;
+  /// The bit of [cp2y] in [_undefinedBits].
+  static const int _cp2yBit = 8;
 
-  /// The value of [angle]. Dart `null` stands for JS `undefined`.
-  double? _angle;
+  /// The bit of [angle] in [_undefinedBits].
+  static const int _angleBit = 16;
+
+  /// The value of [cp1x]: NaN in the `undefined` state.
+  double _cp1x = double.nan;
+
+  /// The value of [cp1y]: NaN in the `undefined` state.
+  double _cp1y = double.nan;
+
+  /// The value of [cp2x]: NaN in the `undefined` state.
+  double _cp2x = double.nan;
+
+  /// The value of [cp2y]: NaN in the `undefined` state.
+  double _cp2y = double.nan;
+
+  /// The value of [angle]: NaN in the `undefined` state.
+  double _angle = double.nan;
+
+  /// The bits of the numeric properties of the class in the `undefined`
+  /// state (Chart.js ADR 0054 §9). All start set.
+  int _undefinedBits = _cp1xBit | _cp1yBit | _cp2xBit | _cp2yBit | _angleBit;
 
   /// The [DrawPointOptions] of the last [draw] with plain Map options: an
   /// adapter over [options].
@@ -241,34 +270,46 @@ class PointElement extends Element
   /// NaN in the `undefined` state, the start value, as [SplinePoint.cp1x]
   /// states. `this['cp1x']` gives [undefined] in that state.
   @override
-  double get cp1x => _cp1x ?? double.nan;
+  double get cp1x => _cp1x;
 
   @override
-  set cp1x(double value) => _cp1x = value;
+  set cp1x(double value) {
+    _cp1x = value;
+    _undefinedBits &= ~_cp1xBit;
+  }
 
   /// geometric.d.ts:49 `cp1y?: number` of [SplinePoint]. NaN in the
   /// `undefined` state, as [cp1x].
   @override
-  double get cp1y => _cp1y ?? double.nan;
+  double get cp1y => _cp1y;
 
   @override
-  set cp1y(double value) => _cp1y = value;
+  set cp1y(double value) {
+    _cp1y = value;
+    _undefinedBits &= ~_cp1yBit;
+  }
 
   /// geometric.d.ts:50 `cp2x?: number` of [SplinePoint]. NaN in the
   /// `undefined` state, as [cp1x].
   @override
-  double get cp2x => _cp2x ?? double.nan;
+  double get cp2x => _cp2x;
 
   @override
-  set cp2x(double value) => _cp2x = value;
+  set cp2x(double value) {
+    _cp2x = value;
+    _undefinedBits &= ~_cp2xBit;
+  }
 
   /// geometric.d.ts:51 `cp2y?: number` of [SplinePoint]. NaN in the
   /// `undefined` state, as [cp1x].
   @override
-  double get cp2y => _cp2y ?? double.nan;
+  double get cp2y => _cp2y;
 
   @override
-  set cp2y(double value) => _cp2y = value;
+  set cp2y(double value) {
+    _cp2y = value;
+    _undefinedBits &= ~_cp2yBit;
+  }
 
   /// controller.radar.js:96 `angle: pointPosition.angle`, the angle of a
   /// radar point ([types.RadialPointElement.angle]).
@@ -276,9 +317,91 @@ class PointElement extends Element
   /// Dart `null` stands for JS `undefined`, the value of a point that the
   /// radar controller does not update. JS `null` never reaches it.
   @override
-  double? get angle => _angle;
+  double? get angle => _undefinedBits & _angleBit != 0 ? null : _angle;
 
-  set angle(double value) => _angle = value;
+  set angle(double value) {
+    _angle = value;
+    _undefinedBits &= ~_angleBit;
+  }
+
+  /// The read by name ([operator []]) of a numeric property with the bit
+  /// [bit] and the field value [value]: [undefined] while the bit is set,
+  /// else [value].
+  Object? _numberOf(int bit, double value) =>
+      _undefinedBits & bit != 0 ? undefined : value;
+
+  /// The write by name ([operator []=]) of [value] into the numeric
+  /// property [prop] with the bit [bit]: sets or clears the bit, and gives
+  /// the new field value, which the caller stores. [toNumberProp] converts
+  /// [value] and throws its [ArgumentError].
+  double _byNameNumber(int bit, String prop, Object? value) {
+    final number = toNumberProp(prop, value);
+    if (number == null) {
+      _undefinedBits |= bit;
+      return double.nan;
+    }
+    _undefinedBits &= ~bit;
+    return number;
+  }
+
+  /// Whether the element is of the class [PointElement] itself, not of a user
+  /// subclass: the typed writes are for this class only (Chart.js ADR 0054
+  /// §9).
+  late final bool _builtIn = identical(runtimeType, PointElement);
+
+  /// [Element.takesProperties]: a [PointProperties], for an element of the
+  /// class [PointElement] itself.
+  @internal
+  @override
+  bool takesProperties(TypedRecord props) =>
+      props is PointProperties && _builtIn;
+
+  /// [Element.writePropertyAt] for a [PointProperties] (the literals of
+  /// controller.line.js:91-111, controller.scatter.js:127-140,
+  /// controller.bubble.js:128-138 and controller.radar.js:93-99; `raw` is
+  /// an extra property of the element): the typed setter of the
+  /// key at [position]. An extra key, a foreign value
+  /// and a value that the setter does not take (JS `null` or `undefined`)
+  /// go by name ([assignKey]).
+  @internal
+  @override
+  void writePropertyAt(TypedRecord props, int position) {
+    final values = props as PointProperties;
+    final slot = values.slotAt(position);
+    if (slot < 0 || values.isForeignSlot(slot)) {
+      // An extra key, or a value outside the type of the field.
+      assignKey(values, position);
+      return;
+    }
+    switch (slot) {
+      case 0:
+        x = values.x;
+      case 1:
+        y = values.y;
+      case 2:
+        skip = values.skip;
+      case 3:
+        stop = values.stop;
+      case 4:
+        final value = values.parsed;
+        if (value == null || value is Undefined) {
+          assignKey(values, position);
+        } else {
+          parsed = value;
+        }
+      case 6:
+        final value = values.options;
+        if (value == null) {
+          assignKey(values, position);
+        } else {
+          options = value;
+        }
+      case 7:
+        angle = values.angle;
+      default:
+        assignKey(values, position);
+    }
+  }
 
   /// The JS property read `element[prop]` (Chart.js ADR 0017, section 5).
   ///
@@ -290,11 +413,11 @@ class PointElement extends Element
     'parsed' => _parsed ?? undefined,
     'skip' => _skip ?? undefined,
     'stop' => _stop ?? undefined,
-    'cp1x' => _cp1x ?? undefined,
-    'cp1y' => _cp1y ?? undefined,
-    'cp2x' => _cp2x ?? undefined,
-    'cp2y' => _cp2y ?? undefined,
-    'angle' => _angle ?? undefined,
+    'cp1x' => _numberOf(_cp1xBit, _cp1x),
+    'cp1y' => _numberOf(_cp1yBit, _cp1y),
+    'cp2x' => _numberOf(_cp2xBit, _cp2x),
+    'cp2y' => _numberOf(_cp2yBit, _cp2y),
+    'angle' => _numberOf(_angleBit, _angle),
     _ => super[prop],
   };
 
@@ -319,15 +442,15 @@ class PointElement extends Element
       case 'stop':
         _stop = toBoolProp(prop, value);
       case 'cp1x':
-        _cp1x = toNumberProp(prop, value);
+        _cp1x = _byNameNumber(_cp1xBit, prop, value);
       case 'cp1y':
-        _cp1y = toNumberProp(prop, value);
+        _cp1y = _byNameNumber(_cp1yBit, prop, value);
       case 'cp2x':
-        _cp2x = toNumberProp(prop, value);
+        _cp2x = _byNameNumber(_cp2xBit, prop, value);
       case 'cp2y':
-        _cp2y = toNumberProp(prop, value);
+        _cp2y = _byNameNumber(_cp2yBit, prop, value);
       case 'angle':
-        _angle = toNumberProp(prop, value);
+        _angle = _byNameNumber(_angleBit, prop, value);
       default:
         super[prop] = value;
     }
@@ -347,9 +470,9 @@ class PointElement extends Element
     bool? useFinalPosition,
   ]) {
     final options = this.options;
-    final props = getProps(const ['x', 'y'], useFinalPosition);
-    final x = jsToNumber(props['x']);
-    final y = jsToNumber(props['y']);
+    // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
+    final x = finalNumber(AnimatedProp.x, this.x, useFinalPosition);
+    final y = finalNumber(AnimatedProp.y, this.y, useFinalPosition);
     // `options.hitRadius + options.radius` is the JS `+`: a string option
     // joins (`1 + '07'` is `'107'`). `Math.pow` applies `ToNumber` to the
     // sum.
@@ -384,8 +507,11 @@ class PointElement extends Element
   ElementPoint getCenterPoint([
     bool? useFinalPosition,
   ]) {
-    final props = getProps(const ['x', 'y'], useFinalPosition);
-    return ElementPoint(jsToNumber(props['x']), jsToNumber(props['y']));
+    // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
+    return ElementPoint(
+      finalNumber(AnimatedProp.x, x, useFinalPosition),
+      finalNumber(AnimatedProp.y, y, useFinalPosition),
+    );
   }
 
   /// element.point.ts:81 `size(options?)`, the diameter of the point with

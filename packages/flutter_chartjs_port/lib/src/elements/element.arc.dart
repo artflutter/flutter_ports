@@ -65,12 +65,18 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
+import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
+    show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
+import 'package:flutter_chartjs_port/src/options/props.dart' show ArcProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ArcOptionsScope, DescriptorsScope;
+import 'package:flutter_chartjs_port/src/options/typed_record.dart'
+    show TypedRecord;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:meta/meta.dart';
 
 /// The option `borderAlign` of [options]: [ArcOptions.borderAlignValue] for
 /// typed options, else `jsGet(options, 'borderAlign')` (Chart.js ADR 0018,
@@ -903,26 +909,59 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     construct: (newTarget, args) => ArcElement(elementCfgArg(args)),
   );
 
-  /// The value of [circumference]. Dart `null` stands for JS `undefined`.
-  double? _circumference;
+  /// The bit of [circumference] in [_undefinedBits].
+  static const int _circumferenceBit = 1;
 
-  /// The value of [endAngle]. Dart `null` stands for JS `undefined`.
-  double? _endAngle;
+  /// The bit of [endAngle] in [_undefinedBits].
+  static const int _endAngleBit = 2;
 
-  /// The value of [fullCircles]. Dart `null` stands for JS `undefined`.
-  double? _fullCircles;
+  /// The bit of [fullCircles] in [_undefinedBits].
+  static const int _fullCirclesBit = 4;
 
-  /// The value of [innerRadius]. Dart `null` stands for JS `undefined`.
-  double? _innerRadius;
+  /// The bit of [innerRadius] in [_undefinedBits].
+  static const int _innerRadiusBit = 8;
 
-  /// The value of [outerRadius]. Dart `null` stands for JS `undefined`.
-  double? _outerRadius;
+  /// The bit of [outerRadius] in [_undefinedBits].
+  static const int _outerRadiusBit = 16;
 
-  /// The value of [pixelMargin]. Dart `null` stands for JS `undefined`.
-  double? _pixelMargin;
+  /// The bit of [pixelMargin] in [_undefinedBits].
+  static const int _pixelMarginBit = 32;
 
-  /// The value of [startAngle]. Dart `null` stands for JS `undefined`.
-  double? _startAngle;
+  /// The bit of [startAngle] in [_undefinedBits].
+  static const int _startAngleBit = 64;
+
+  /// The value of [circumference]: NaN in the `undefined` state.
+  double _circumference = double.nan;
+
+  /// The value of [endAngle]: NaN in the `undefined` state.
+  double _endAngle = double.nan;
+
+  /// The value of [fullCircles]: NaN in the `undefined` state.
+  double _fullCircles = double.nan;
+
+  /// The value of [innerRadius]: NaN in the `undefined` state.
+  double _innerRadius = double.nan;
+
+  /// The value of [outerRadius]: NaN in the `undefined` state.
+  double _outerRadius = double.nan;
+
+  /// The value of [pixelMargin]: NaN in the `undefined` state.
+  double _pixelMargin = double.nan;
+
+  /// The value of [startAngle]: NaN in the `undefined` state.
+  double _startAngle = double.nan;
+
+  /// The bits of the numeric properties of the class in the `undefined`
+  /// state (Chart.js ADR 0054 §9). All start set; the constructor sets
+  /// [pixelMargin] and [fullCircles].
+  int _undefinedBits =
+      _circumferenceBit |
+      _endAngleBit |
+      _fullCirclesBit |
+      _innerRadiusBit |
+      _outerRadiusBit |
+      _pixelMarginBit |
+      _startAngleBit;
 
   /// The value of [circular]. Dart `null` stands for JS `undefined`. The
   /// name `_circular` is the function that reads the option `circular`.
@@ -934,53 +973,74 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   /// NaN in the `undefined` state, the start value. JS `null` never reaches
   /// it. `this['circumference']` gives [undefined] in that state.
   @override
-  double get circumference => _circumference ?? double.nan;
+  double get circumference => _circumference;
 
-  set circumference(double value) => _circumference = value;
+  set circumference(double value) {
+    _circumference = value;
+    _undefinedBits &= ~_circumferenceBit;
+  }
 
   /// element.arc.ts:403 `endAngle: number`. NaN in the `undefined` state,
   /// the start value, as [circumference].
   @override
-  double get endAngle => _endAngle ?? double.nan;
+  double get endAngle => _endAngle;
 
-  set endAngle(double value) => _endAngle = value;
+  set endAngle(double value) {
+    _endAngle = value;
+    _undefinedBits &= ~_endAngleBit;
+  }
 
   /// element.arc.ts:404 `fullCircles: number`: the count of full circles
   /// in [circumference], that [draw] sets.
   ///
   /// It starts at 0. NaN after a write by name of [undefined].
-  double get fullCircles => _fullCircles ?? double.nan;
+  double get fullCircles => _fullCircles;
 
-  set fullCircles(double value) => _fullCircles = value;
+  set fullCircles(double value) {
+    _fullCircles = value;
+    _undefinedBits &= ~_fullCirclesBit;
+  }
 
   /// element.arc.ts:405 `innerRadius: number`. NaN in the `undefined`
   /// state, the start value, as [circumference].
   @override
-  double get innerRadius => _innerRadius ?? double.nan;
+  double get innerRadius => _innerRadius;
 
-  set innerRadius(double value) => _innerRadius = value;
+  set innerRadius(double value) {
+    _innerRadius = value;
+    _undefinedBits &= ~_innerRadiusBit;
+  }
 
   /// element.arc.ts:406 `outerRadius: number`. NaN in the `undefined`
   /// state, the start value, as [circumference].
   @override
-  double get outerRadius => _outerRadius ?? double.nan;
+  double get outerRadius => _outerRadius;
 
-  set outerRadius(double value) => _outerRadius = value;
+  set outerRadius(double value) {
+    _outerRadius = value;
+    _undefinedBits &= ~_outerRadiusBit;
+  }
 
   /// element.arc.ts:407 `pixelMargin: number`: 0.33 for an inner border,
   /// else 0. [draw] sets it.
   ///
   /// It starts at 0. NaN after a write by name of [undefined].
-  double get pixelMargin => _pixelMargin ?? double.nan;
+  double get pixelMargin => _pixelMargin;
 
-  set pixelMargin(double value) => _pixelMargin = value;
+  set pixelMargin(double value) {
+    _pixelMargin = value;
+    _undefinedBits &= ~_pixelMarginBit;
+  }
 
   /// element.arc.ts:408 `startAngle: number`. NaN in the `undefined`
   /// state, the start value, as [circumference].
   @override
-  double get startAngle => _startAngle ?? double.nan;
+  double get startAngle => _startAngle;
 
-  set startAngle(double value) => _startAngle = value;
+  set startAngle(double value) {
+    _startAngle = value;
+    _undefinedBits &= ~_startAngleBit;
+  }
 
   /// element.arc.ts:409 `circular: boolean`.
   ///
@@ -990,18 +1050,158 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
 
   set circular(bool value) => _circularFlag = value;
 
+  /// The read by name ([operator []]) of a numeric property with the bit
+  /// [bit] and the field value [value]: [undefined] while the bit is set,
+  /// else [value].
+  Object? _numberOf(int bit, double value) =>
+      _undefinedBits & bit != 0 ? undefined : value;
+
+  /// The write by name ([operator []=]) of [value] into the numeric
+  /// property [prop] with the bit [bit]: sets or clears the bit, and gives
+  /// the new field value, which the caller stores. [toNumberProp] converts
+  /// [value] and throws its [ArgumentError].
+  double _byNameNumber(int bit, String prop, Object? value) {
+    final number = toNumberProp(prop, value);
+    if (number == null) {
+      _undefinedBits |= bit;
+      return double.nan;
+    }
+    _undefinedBits &= ~bit;
+    return number;
+  }
+
+  /// [Element.markUndefined] for the properties of [ArcProps]. The other ids
+  /// go to [Element].
+  @internal
+  @override
+  void markUndefined(AnimatedProp prop) {
+    switch (prop.id) {
+      case animatedPropCircumference:
+        _circumference = double.nan;
+        _undefinedBits |= _circumferenceBit;
+      case animatedPropEndAngle:
+        _endAngle = double.nan;
+        _undefinedBits |= _endAngleBit;
+      case animatedPropInnerRadius:
+        _innerRadius = double.nan;
+        _undefinedBits |= _innerRadiusBit;
+      case animatedPropOuterRadius:
+        _outerRadius = double.nan;
+        _undefinedBits |= _outerRadiusBit;
+      case animatedPropStartAngle:
+        _startAngle = double.nan;
+        _undefinedBits |= _startAngleBit;
+      default:
+        super.markUndefined(prop);
+    }
+  }
+
+  /// [Element.isUndefined] for the properties of [ArcProps]. The other ids
+  /// go to [Element].
+  @internal
+  @override
+  bool isUndefined(AnimatedProp prop) => switch (prop.id) {
+    animatedPropCircumference => _undefinedBits & _circumferenceBit != 0,
+    animatedPropEndAngle => _undefinedBits & _endAngleBit != 0,
+    animatedPropInnerRadius => _undefinedBits & _innerRadiusBit != 0,
+    animatedPropOuterRadius => _undefinedBits & _outerRadiusBit != 0,
+    animatedPropStartAngle => _undefinedBits & _startAngleBit != 0,
+    _ => super.isUndefined(prop),
+  };
+
+  /// Whether the element is of the class [ArcElement] itself, not of a user
+  /// subclass: the typed writes are for this class only (Chart.js ADR 0054
+  /// §9).
+  late final bool _builtIn = identical(runtimeType, ArcElement);
+
+  /// [Element.takesProperties]: an [ArcProperties], for an element of the
+  /// class [ArcElement] itself.
+  @internal
+  @override
+  bool takesProperties(TypedRecord props) => props is ArcProperties && _builtIn;
+
+  /// [Element.writePropertyAt] for an [ArcProperties] (the literals of
+  /// controller.doughnut.js:278-289 and controller.polarArea.js:194-203):
+  /// the typed setter of the key at [position]. An extra key, a foreign
+  /// value and a value that the setter does not take (JS `null`) go by name
+  /// ([assignKey]).
+  @internal
+  @override
+  void writePropertyAt(TypedRecord props, int position) {
+    final values = props as ArcProperties;
+    final slot = values.slotAt(position);
+    if (slot < 0 || values.isForeignSlot(slot)) {
+      // An extra key, or a value outside the type of the field.
+      assignKey(values, position);
+      return;
+    }
+    switch (slot) {
+      case 0:
+        x = values.x;
+      case 1:
+        y = values.y;
+      case 2:
+        startAngle = values.startAngle;
+      case 3:
+        endAngle = values.endAngle;
+      case 4:
+        circumference = values.circumference;
+      case 5:
+        outerRadius = values.outerRadius;
+      case 6:
+        innerRadius = values.innerRadius;
+      case 7:
+        final value = values.options;
+        if (value == null) {
+          assignKey(values, position);
+        } else {
+          options = value;
+        }
+      default:
+        assignKey(values, position);
+    }
+  }
+
+  /// [Element.writeNumber] for the properties of [ArcProps]: the typed
+  /// setters for the class [ArcElement] itself. The other ids, and an
+  /// element of a user subclass, go to [Element].
+  @internal
+  @override
+  void writeNumber(AnimatedProp prop, double value) {
+    if (_builtIn) {
+      switch (prop.id) {
+        case animatedPropCircumference:
+          circumference = value;
+          return;
+        case animatedPropEndAngle:
+          endAngle = value;
+          return;
+        case animatedPropInnerRadius:
+          innerRadius = value;
+          return;
+        case animatedPropOuterRadius:
+          outerRadius = value;
+          return;
+        case animatedPropStartAngle:
+          startAngle = value;
+          return;
+      }
+    }
+    super.writeNumber(prop, value);
+  }
+
   /// The JS property read `element[prop]` (Chart.js ADR 0017, section 5),
   /// for the properties of element.arc.ts:402-409. Other names go to
   /// `Element`.
   @override
   Object? operator [](String prop) => switch (prop) {
-    'circumference' => _circumference ?? undefined,
-    'endAngle' => _endAngle ?? undefined,
-    'fullCircles' => _fullCircles ?? undefined,
-    'innerRadius' => _innerRadius ?? undefined,
-    'outerRadius' => _outerRadius ?? undefined,
-    'pixelMargin' => _pixelMargin ?? undefined,
-    'startAngle' => _startAngle ?? undefined,
+    'circumference' => _numberOf(_circumferenceBit, _circumference),
+    'endAngle' => _numberOf(_endAngleBit, _endAngle),
+    'fullCircles' => _numberOf(_fullCirclesBit, _fullCircles),
+    'innerRadius' => _numberOf(_innerRadiusBit, _innerRadius),
+    'outerRadius' => _numberOf(_outerRadiusBit, _outerRadius),
+    'pixelMargin' => _numberOf(_pixelMarginBit, _pixelMargin),
+    'startAngle' => _numberOf(_startAngleBit, _startAngle),
     'circular' => _circularFlag ?? undefined,
     _ => super[prop],
   };
@@ -1015,19 +1215,19 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   void operator []=(String prop, Object? value) {
     switch (prop) {
       case 'circumference':
-        _circumference = toNumberProp(prop, value);
+        _circumference = _byNameNumber(_circumferenceBit, prop, value);
       case 'endAngle':
-        _endAngle = toNumberProp(prop, value);
+        _endAngle = _byNameNumber(_endAngleBit, prop, value);
       case 'fullCircles':
-        _fullCircles = toNumberProp(prop, value);
+        _fullCircles = _byNameNumber(_fullCirclesBit, prop, value);
       case 'innerRadius':
-        _innerRadius = toNumberProp(prop, value);
+        _innerRadius = _byNameNumber(_innerRadiusBit, prop, value);
       case 'outerRadius':
-        _outerRadius = toNumberProp(prop, value);
+        _outerRadius = _byNameNumber(_outerRadiusBit, prop, value);
       case 'pixelMargin':
-        _pixelMargin = toNumberProp(prop, value);
+        _pixelMargin = _byNameNumber(_pixelMarginBit, prop, value);
       case 'startAngle':
-        _startAngle = toNumberProp(prop, value);
+        _startAngle = _byNameNumber(_startAngleBit, prop, value);
       case 'circular':
         _circularFlag = toBoolProp(prop, value);
       default:
@@ -1044,9 +1244,10 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   /// `undefined`. Dart `null` for [chartX] or [chartY] is JS `null`, which
   /// the subtraction of `getAngleFromPoint` reads as 0.
   ///
-  /// It reads the properties through `getProps` with `jsToNumber`. It reads
-  /// `circumference` with `valueOrDefault`: `undefined` gives the sweep from
-  /// the angles, and NaN stays NaN. The test `startAngle !== endAngle`
+  /// It reads the properties through the typed forms of `getProps`
+  /// ([finalNumber], [finalValue]), as numbers. It reads `circumference`
+  /// with `valueOrDefault`: `undefined` gives the sweep from the angles, and
+  /// NaN stays NaN. The test `startAngle !== endAngle`
   /// compares the numbers. Both angles in the `undefined` state give NaN,
   /// where upstream compares two `undefined`. `_angleBetween` is false for
   /// NaN, so the result is the same.
@@ -1056,23 +1257,42 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
     double? chartY, [
     bool? useFinalPosition,
   ]) {
-    final point = getProps(const ['x', 'y'], useFinalPosition);
+    // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
     final (:angle, :distance) = getAngleFromPoint(
-      ElementPoint(jsToNumber(point['x']), jsToNumber(point['y'])),
+      ElementPoint(
+        finalNumber(AnimatedProp.x, x, useFinalPosition),
+        finalNumber(AnimatedProp.y, y, useFinalPosition),
+      ),
       ElementPoint(chartX ?? 0, chartY ?? 0),
     );
-    final props = getProps(const [
-      'startAngle',
-      'endAngle',
-      'innerRadius',
-      'outerRadius',
-      'circumference',
-    ], useFinalPosition);
-    final startAngle = jsToNumber(props['startAngle']);
-    final endAngle = jsToNumber(props['endAngle']);
-    final innerRadius = jsToNumber(props['innerRadius']);
-    final outerRadius = jsToNumber(props['outerRadius']);
-    final circumference = props['circumference'];
+    // `getProps(['startAngle', 'endAngle', 'innerRadius', 'outerRadius',
+    // 'circumference'], useFinalPosition)` in the typed form. The
+    // circumference keeps `undefined` for valueOrDefault.
+    final startAngle = finalNumber(
+      AnimatedProp.startAngle,
+      _startAngle,
+      useFinalPosition,
+    );
+    final endAngle = finalNumber(
+      AnimatedProp.endAngle,
+      _endAngle,
+      useFinalPosition,
+    );
+    final innerRadius = finalNumber(
+      AnimatedProp.innerRadius,
+      _innerRadius,
+      useFinalPosition,
+    );
+    final outerRadius = finalNumber(
+      AnimatedProp.outerRadius,
+      _outerRadius,
+      useFinalPosition,
+    );
+    final circumference = finalValue(
+      AnimatedProp.circumference,
+      _numberOf(_circumferenceBit, _circumference),
+      useFinalPosition,
+    );
     // The JS `+` ([jsAdd]): a string `spacing` or `borderWidth` joins
     // (`'5' + 1` is `'51'`), and the `/` applies `ToNumber`.
     final rAdjust =
@@ -1130,20 +1350,30 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   ElementPoint getCenterPoint([
     bool? useFinalPosition,
   ]) {
-    final props = getProps(const [
-      'x',
-      'y',
-      'startAngle',
-      'endAngle',
-      'innerRadius',
-      'outerRadius',
-    ], useFinalPosition);
-    final x = jsToNumber(props['x']);
-    final y = jsToNumber(props['y']);
-    final startAngle = jsToNumber(props['startAngle']);
-    final endAngle = jsToNumber(props['endAngle']);
-    final innerRadius = jsToNumber(props['innerRadius']);
-    final outerRadius = jsToNumber(props['outerRadius']);
+    // `getProps(['x', 'y', 'startAngle', 'endAngle', 'innerRadius',
+    // 'outerRadius'], useFinalPosition)` in the typed form.
+    final x = finalNumber(AnimatedProp.x, this.x, useFinalPosition);
+    final y = finalNumber(AnimatedProp.y, this.y, useFinalPosition);
+    final startAngle = finalNumber(
+      AnimatedProp.startAngle,
+      _startAngle,
+      useFinalPosition,
+    );
+    final endAngle = finalNumber(
+      AnimatedProp.endAngle,
+      _endAngle,
+      useFinalPosition,
+    );
+    final innerRadius = finalNumber(
+      AnimatedProp.innerRadius,
+      _innerRadius,
+      useFinalPosition,
+    );
+    final outerRadius = finalNumber(
+      AnimatedProp.outerRadius,
+      _outerRadius,
+      useFinalPosition,
+    );
     final offset = _offset(options);
     final spacing = _spacing(options);
     final halfAngle = (startAngle + endAngle) / 2;

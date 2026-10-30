@@ -44,12 +44,18 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
+import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
+    show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
+import 'package:flutter_chartjs_port/src/options/props.dart' show BarProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show BarOptionsScope;
+import 'package:flutter_chartjs_port/src/options/typed_record.dart'
+    show TypedRecord;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:meta/meta.dart';
 
 /// The option `borderWidth` of [options]: [BarOptions.borderWidthValue] for
 /// typed options, else `jsGet(options, 'borderWidth')` (Chart.js ADR 0018,
@@ -88,6 +94,10 @@ typedef _Bounds = ({double left, double top, double right, double bottom});
 /// `parseBorderWidth`.
 typedef _BorderWidths = ({double t, double r, double b, double l});
 
+/// The animated property `horizontal`: not a built-in name of
+/// [AnimatedProp], so it reads the running animations by name.
+const AnimatedProp _horizontalProp = AnimatedProp.custom('horizontal');
+
 /// element.bar.js:15 `getBarBounds`.
 ///
 /// Helper function to get the bounds of the bar regardless of the
@@ -97,22 +107,26 @@ typedef _BorderWidths = ({double t, double r, double b, double l});
 /// @return bounds of the bar
 /// @private
 ///
-/// The numbers of `getProps` are read with `jsToNumber`, the `ToNumber` of
-/// the upstream arithmetic (Chart.js ADR 0017, section 7). Dart `null` for
-/// [useFinalPosition] stands for JS `undefined`.
+/// The numbers of `getProps` are read through its typed form
+/// ([Element.finalNumber]): the `ToNumber` of the upstream arithmetic
+/// (Chart.js ADR 0017, section 7). Dart `null` for [useFinalPosition] stands
+/// for JS `undefined`.
 _Bounds _getBarBounds(BarElement bar, [bool? useFinalPosition]) {
-  final props = bar.getProps(const [
-    'x',
-    'y',
-    'base',
-    'width',
-    'height',
-  ], useFinalPosition);
-  final x = jsToNumber(props['x']);
-  final y = jsToNumber(props['y']);
-  final base = jsToNumber(props['base']);
-  final width = jsToNumber(props['width']);
-  final height = jsToNumber(props['height']);
+  // `bar.getProps(['x', 'y', 'base', 'width', 'height'], useFinalPosition)`
+  // in the typed form.
+  final x = bar.finalNumber(AnimatedProp.x, bar.x, useFinalPosition);
+  final y = bar.finalNumber(AnimatedProp.y, bar.y, useFinalPosition);
+  final base = bar.finalNumber(AnimatedProp.base, bar._base, useFinalPosition);
+  final width = bar.finalNumber(
+    AnimatedProp.width,
+    bar._width,
+    useFinalPosition,
+  );
+  final height = bar.finalNumber(
+    AnimatedProp.height,
+    bar._height,
+    useFinalPosition,
+  );
 
   // Upstream declares `let left, right, top, bottom, half;`.
   final double left;
@@ -165,12 +179,13 @@ _BorderWidths _parseBorderWidth(BarElement bar, double maxW, double maxH) {
 
 /// element.bar.js:54 `parseBorderRadius`.
 ///
-/// `enableBorderRadius` is read by name through `getProps`. The JS `||`
-/// operands are tested with `ToBoolean` ([jsTruthy]) in the upstream order.
+/// `enableBorderRadius` is the typed property (`getProps` without `final`
+/// gives the element). The JS `||` operands are tested with `ToBoolean`
+/// ([jsTruthy]) in the upstream order.
 TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
-  final enableBorderRadius = bar.getProps(const [
-    'enableBorderRadius',
-  ])['enableBorderRadius'];
+  // `bar.getProps(['enableBorderRadius']).enableBorderRadius`: getProps
+  // without `final` gives the element itself.
+  final enableBorderRadius = bar.enableBorderRadius ?? false;
   final value = _borderRadius(bar.options);
   final o = toTRBLCorners(value);
   final maxR = jsMin(maxW, maxH);
@@ -178,7 +193,7 @@ TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
 
   // If the value is an object, assume the user knows what they are doing
   // and apply as directed.
-  final enableBorder = jsTruthy(enableBorderRadius) || isObject(value);
+  final enableBorder = enableBorderRadius || isObject(value);
 
   return _Corners(
     topLeft: _skipOrLimit(
@@ -377,20 +392,36 @@ class BarElement extends Element implements types.VisualElementRange {
   /// The value of [horizontal]. Dart `null` stands for JS `undefined`.
   bool? _horizontal;
 
-  /// The value of [base]. Dart `null` stands for JS `undefined`.
-  double? _base;
+  /// The bit of [base] in [_undefinedBits].
+  static const int _baseBit = 1;
 
-  /// The value of [width]. Dart `null` stands for JS `undefined`.
-  double? _width;
+  /// The bit of [width] in [_undefinedBits].
+  static const int _widthBit = 2;
 
-  /// The value of [height]. Dart `null` stands for JS `undefined`.
-  double? _height;
+  /// The bit of [height] in [_undefinedBits].
+  static const int _heightBit = 4;
 
-  /// The value of [inflateAmount]. Dart `null` stands for JS `undefined`.
-  double? _inflateAmount;
+  /// The bit of [inflateAmount] in [_undefinedBits].
+  static const int _inflateAmountBit = 8;
+
+  /// The value of [base]: NaN in the `undefined` state.
+  double _base = double.nan;
+
+  /// The value of [width]: NaN in the `undefined` state.
+  double _width = double.nan;
+
+  /// The value of [height]: NaN in the `undefined` state.
+  double _height = double.nan;
+
+  /// The value of [inflateAmount]: NaN in the `undefined` state.
+  double _inflateAmount = double.nan;
+
+  /// The bits of the numeric properties of the class in the `undefined`
+  /// state (Chart.js ADR 0054 §9). All start set (:169-172).
+  int _undefinedBits = _baseBit | _widthBit | _heightBit | _inflateAmountBit;
 
   /// The value of [borderSkipped]. Dart `null` stands for JS `undefined`.
-  Map<String, Object?>? _borderSkipped;
+  Object? _borderSkipped;
 
   /// The value of [enableBorderRadius]. Dart `null` stands for JS
   /// `undefined`.
@@ -410,44 +441,64 @@ class BarElement extends Element implements types.VisualElementRange {
   ///
   /// NaN in the `undefined` state, the start value. JS `null` never reaches
   /// it. `this['base']` gives `undefined` in that state.
-  double get base => _base ?? double.nan;
+  double get base => _base;
 
-  set base(double value) => _base = value;
+  set base(double value) {
+    _base = value;
+    _undefinedBits &= ~_baseBit;
+  }
 
   /// element.bar.js:170 `this.width = undefined` (`BarProps.width`,
   /// index.d.ts:2144). NaN in the `undefined` state, as [base].
-  double get width => _width ?? double.nan;
+  double get width => _width;
 
-  set width(double value) => _width = value;
+  set width(double value) {
+    _width = value;
+    _undefinedBits &= ~_widthBit;
+  }
 
   /// element.bar.js:171 `this.height = undefined` (`BarProps.height`,
   /// index.d.ts:2145). NaN in the `undefined` state, as [base].
-  double get height => _height ?? double.nan;
+  double get height => _height;
 
-  set height(double value) => _height = value;
+  set height(double value) {
+    _height = value;
+    _undefinedBits &= ~_heightBit;
+  }
 
   /// element.bar.js:172 `this.inflateAmount = undefined`: the pixels that
   /// [draw] adds to the rectangles. `controller.bar.js:252-256` sets it from
   /// the `inflateAmount` option. NaN in the `undefined` state, as [base].
-  double get inflateAmount => _inflateAmount ?? double.nan;
+  double get inflateAmount => _inflateAmount;
 
-  set inflateAmount(double value) => _inflateAmount = value;
+  set inflateAmount(double value) {
+    _inflateAmount = value;
+    _undefinedBits &= ~_inflateAmountBit;
+  }
 
   /// controller.bar.js:202-232 `properties.borderSkipped`, which
   /// element.bar.js:43 and :59 read: the skipped edges of the border.
   ///
-  /// It is a JS plain object, thus a `Map<String, Object?>` (Chart.js ADR
-  /// 0043). Each key that `controller.bar.js` writes has the value true:
-  /// `'top'`, `'right'`, `'bottom'` or `'left'`, or another edge name of the
+  /// It is a JS plain object: a `Map<String, Object?>` (Chart.js ADR 0043)
+  /// or a typed object with the face ([JsObjectFace], Chart.js ADR 0054 §5).
+  /// Each key that `controller.bar.js` writes has the value true: `'top'`,
+  /// `'right'`, `'bottom'` or `'left'`, or another edge name of the
   /// `borderSkipped` option, which [draw] ignores. [draw] reads the four
-  /// edges with [jsGet] and tests them with `ToBoolean` ([jsTruthy]).
+  /// edges by name and tests them with `ToBoolean` ([jsTruthy]).
   ///
   /// Dart `null` stands for JS `undefined`, the value before the first
   /// update. Then [draw] throws a [TypeError], as upstream does. JS `null`
   /// never reaches it.
-  Map<String, Object?>? get borderSkipped => _borderSkipped;
+  Object? get borderSkipped => _borderSkipped;
 
-  set borderSkipped(Map<String, Object?> value) => _borderSkipped = value;
+  /// The setter of [borderSkipped]: a Map or a [JsObjectFace]. Another value
+  /// throws an [ArgumentError], as the write by name does.
+  set borderSkipped(Object value) {
+    if (value is! Map<String, Object?> && value is! JsObjectFace) {
+      throw ArgumentError.value(value, 'borderSkipped', 'Not an object');
+    }
+    _borderSkipped = value;
+  }
 
   /// controller.bar.js:410 and :219 `properties.enableBorderRadius`, which
   /// element.bar.js:55 reads: whether a number `borderRadius` rounds the
@@ -459,6 +510,142 @@ class BarElement extends Element implements types.VisualElementRange {
 
   set enableBorderRadius(bool value) => _enableBorderRadius = value;
 
+  /// The read by name ([operator []]) of a numeric property with the bit
+  /// [bit] and the field value [value]: [undefined] while the bit is set,
+  /// else [value].
+  Object? _numberOf(int bit, double value) =>
+      _undefinedBits & bit != 0 ? undefined : value;
+
+  /// The write by name ([operator []=]) of [value] into the numeric
+  /// property [prop] with the bit [bit]: sets or clears the bit, and gives
+  /// the new field value, which the caller stores. [toNumberProp] converts
+  /// [value] and throws its [ArgumentError].
+  double _byNameNumber(int bit, String prop, Object? value) {
+    final number = toNumberProp(prop, value);
+    if (number == null) {
+      _undefinedBits |= bit;
+      return double.nan;
+    }
+    _undefinedBits &= ~bit;
+    return number;
+  }
+
+  /// [Element.markUndefined] for [base], [width] and [height]. The other
+  /// ids go to [Element].
+  @internal
+  @override
+  void markUndefined(AnimatedProp prop) {
+    switch (prop.id) {
+      case animatedPropBase:
+        _base = double.nan;
+        _undefinedBits |= _baseBit;
+      case animatedPropWidth:
+        _width = double.nan;
+        _undefinedBits |= _widthBit;
+      case animatedPropHeight:
+        _height = double.nan;
+        _undefinedBits |= _heightBit;
+      default:
+        super.markUndefined(prop);
+    }
+  }
+
+  /// [Element.isUndefined] for [base], [width] and [height]. The other ids
+  /// go to [Element].
+  @internal
+  @override
+  bool isUndefined(AnimatedProp prop) => switch (prop.id) {
+    animatedPropBase => _undefinedBits & _baseBit != 0,
+    animatedPropWidth => _undefinedBits & _widthBit != 0,
+    animatedPropHeight => _undefinedBits & _heightBit != 0,
+    _ => super.isUndefined(prop),
+  };
+
+  /// Whether the element is of the class [BarElement] itself, not of a user
+  /// subclass: the typed writes are for this class only (Chart.js ADR 0054
+  /// §9).
+  late final bool _builtIn = identical(runtimeType, BarElement);
+
+  /// [Element.takesProperties]: a [BarProperties], for an element of the
+  /// class [BarElement] itself.
+  @internal
+  @override
+  bool takesProperties(TypedRecord props) => props is BarProperties && _builtIn;
+
+  /// [Element.writePropertyAt] for a [BarProperties] (the literal of
+  /// controller.bar.js:407-424 with `options`, `borderSkipped` and
+  /// `inflateAmount` of :427-430): the typed setter of the
+  /// key at [position]. An extra key, a foreign value
+  /// and a value that the setter does not take (JS `null` or `undefined`)
+  /// go by name ([assignKey]).
+  @internal
+  @override
+  void writePropertyAt(TypedRecord props, int position) {
+    final values = props as BarProperties;
+    final slot = values.slotAt(position);
+    if (slot < 0 || values.isForeignSlot(slot)) {
+      // An extra key, or a value outside the type of the field.
+      assignKey(values, position);
+      return;
+    }
+    switch (slot) {
+      case 0:
+        horizontal = values.horizontal;
+      case 1:
+        base = values.base;
+      case 2:
+        enableBorderRadius = values.enableBorderRadius;
+      case 3:
+        x = values.x;
+      case 4:
+        y = values.y;
+      case 5:
+        height = values.height;
+      case 6:
+        width = values.width;
+      case 7:
+        final value = values.options;
+        if (value == null) {
+          assignKey(values, position);
+        } else {
+          options = value;
+        }
+      case 8:
+        final value = values.borderSkipped;
+        if (value is Map<String, Object?> || value is JsObjectFace) {
+          borderSkipped = value!;
+        } else {
+          assignKey(values, position);
+        }
+      case 9:
+        inflateAmount = values.inflateAmount;
+      default:
+        assignKey(values, position);
+    }
+  }
+
+  /// [Element.writeNumber] for [base], [width] and [height]: the typed
+  /// setters for the class [BarElement] itself. The other ids, and an
+  /// element of a user subclass, go to [Element].
+  @internal
+  @override
+  void writeNumber(AnimatedProp prop, double value) {
+    if (_builtIn) {
+      switch (prop.id) {
+        case animatedPropBase:
+          base = value;
+          return;
+        case animatedPropWidth:
+          width = value;
+          return;
+        case animatedPropHeight:
+          height = value;
+          return;
+      }
+    }
+    super.writeNumber(prop, value);
+  }
+
   /// The JS property read `bar[prop]` (Chart.js ADR 0017, section 5).
   ///
   /// It handles `horizontal`, `base`, `width`, `height`, `inflateAmount`,
@@ -468,10 +655,10 @@ class BarElement extends Element implements types.VisualElementRange {
   @override
   Object? operator [](String prop) => switch (prop) {
     'horizontal' => _horizontal ?? undefined,
-    'base' => _base ?? undefined,
-    'width' => _width ?? undefined,
-    'height' => _height ?? undefined,
-    'inflateAmount' => _inflateAmount ?? undefined,
+    'base' => _numberOf(_baseBit, _base),
+    'width' => _numberOf(_widthBit, _width),
+    'height' => _numberOf(_heightBit, _height),
+    'inflateAmount' => _numberOf(_inflateAmountBit, _inflateAmount),
     'borderSkipped' => _borderSkipped ?? undefined,
     'enableBorderRadius' => _enableBorderRadius ?? undefined,
     _ => super[prop],
@@ -483,7 +670,8 @@ class BarElement extends Element implements types.VisualElementRange {
   /// - `base`, `width`, `height` and `inflateAmount` accept a `num` or
   ///   [undefined].
   /// - `horizontal` and `enableBorderRadius` accept a `bool` or [undefined].
-  /// - `borderSkipped` accepts a `Map<String, Object?>` or [undefined].
+  /// - `borderSkipped` accepts a `Map<String, Object?>`, a [JsObjectFace]
+  ///   or [undefined].
   /// - [Element] handles the other names.
   ///
   /// Throws an [ArgumentError] for a value outside the type of a declared
@@ -494,15 +682,17 @@ class BarElement extends Element implements types.VisualElementRange {
       case 'horizontal':
         _horizontal = toBoolProp(prop, value);
       case 'base':
-        _base = toNumberProp(prop, value);
+        _base = _byNameNumber(_baseBit, prop, value);
       case 'width':
-        _width = toNumberProp(prop, value);
+        _width = _byNameNumber(_widthBit, prop, value);
       case 'height':
-        _height = toNumberProp(prop, value);
+        _height = _byNameNumber(_heightBit, prop, value);
       case 'inflateAmount':
-        _inflateAmount = toNumberProp(prop, value);
+        _inflateAmount = _byNameNumber(_inflateAmountBit, prop, value);
       case 'borderSkipped':
-        _borderSkipped = toObjectProp<Map<String, Object?>>(prop, value);
+        _borderSkipped = value is JsObjectFace
+            ? value
+            : toObjectProp<Map<String, Object?>>(prop, value);
       case 'enableBorderRadius':
         _enableBorderRadius = toBoolProp(prop, value);
       default:
@@ -580,21 +770,23 @@ class BarElement extends Element implements types.VisualElementRange {
 
   /// element.bar.js:215 `getCenterPoint(useFinalPosition)`.
   ///
-  /// The numbers of `getProps` are read with `jsToNumber` and `horizontal`
-  /// with `jsTruthy` (Chart.js ADR 0017, section 7). A copied `undefined`
-  /// gives NaN in the [ElementPoint].
+  /// The numbers of `getProps` are read through its typed forms as numbers
+  /// and `horizontal` with `jsTruthy` (Chart.js ADR 0017, section 7). A
+  /// copied `undefined` gives NaN in the [ElementPoint].
   @override
   ElementPoint getCenterPoint([bool? useFinalPosition]) {
-    final props = getProps(const [
-      'x',
-      'y',
-      'base',
-      'horizontal',
-    ], useFinalPosition);
-    final x = jsToNumber(props['x']);
-    final y = jsToNumber(props['y']);
-    final base = jsToNumber(props['base']);
-    final horizontal = jsTruthy(props['horizontal']);
+    // `getProps(['x', 'y', 'base', 'horizontal'], useFinalPosition)` in the
+    // typed form.
+    final x = finalNumber(AnimatedProp.x, this.x, useFinalPosition);
+    final y = finalNumber(AnimatedProp.y, this.y, useFinalPosition);
+    final base = finalNumber(AnimatedProp.base, _base, useFinalPosition);
+    final horizontal = jsTruthy(
+      finalValue(
+        _horizontalProp,
+        _horizontal ?? undefined,
+        useFinalPosition,
+      ),
+    );
     return ElementPoint(
       horizontal ? (x + base) / 2 : x,
       horizontal ? y : (y + base) / 2,

@@ -1,5 +1,7 @@
 // Original code, not ported from Chart.js: core.element cases with no spec.
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart';
@@ -97,6 +99,36 @@ void main() {
       expect(element.x, isNaN);
       expect(element.y, 2);
       expect(element.isUndefined(const AnimatedProp.custom('foo')), isTrue);
+    });
+  });
+
+  // The id constants of the typed switches match the ids of AnimatedProp.
+  test('the id constants are the ids of AnimatedProp', () {
+    expect(animatedPropX, AnimatedProp.x.id);
+    expect(animatedPropY, AnimatedProp.y.id);
+    expect(animatedPropBase, AnimatedProp.base.id);
+    expect(animatedPropWidth, AnimatedProp.width.id);
+    expect(animatedPropHeight, AnimatedProp.height.id);
+    expect(animatedPropCircumference, AnimatedProp.circumference.id);
+    expect(animatedPropEndAngle, AnimatedProp.endAngle.id);
+    expect(animatedPropInnerRadius, AnimatedProp.innerRadius.id);
+    expect(animatedPropOuterRadius, AnimatedProp.outerRadius.id);
+    expect(animatedPropStartAngle, AnimatedProp.startAngle.id);
+  });
+
+  group(r'$context', () {
+    test('the typed read gives a ScriptableContext only', () {
+      final context = ScriptableContext(null)..['type'] = 'data';
+      final elem = Element();
+      expect(elem.$context, isNull);
+      elem.$context = context;
+      expect(elem.$context, same(context));
+      expect(elem[r'$context'], same(context));
+      elem[r'$context'] = 'ctx';
+      expect(elem.$context, isNull);
+      expect(elem[r'$context'], 'ctx');
+      elem[r'$context'] = undefined;
+      expect(elem[r'$context'], _isUndefined);
     });
   });
 
