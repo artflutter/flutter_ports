@@ -37,8 +37,11 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos �
   three Chart.js submodules.
   Each check can also run alone:
   - `check:lib-imports`: the import allowlists of `lib/`, of the pure layers and of the tests that
-    the web legs compile. It also fails when a ported file imports `lib/src/theme/`. It keeps the
-    `lib/pure.dart` closure of `packages/chartjs_test_utils` a pure layer.
+    the web legs compile. It also fails when a ported file imports `lib/src/theme/`, and when a
+    file of `lib/src/widgets/` imports a file of `controllers/`, `scales/`, `elements/` or
+    `plugins/`, or `lib/src/index.dart` or `lib/src/index.umd.dart`: the widget registers no
+    component (Chart.js ADR 0048 §3). It keeps the `lib/pure.dart` closure of
+    `packages/chartjs_test_utils` a pure layer.
   - `check:headers`: the line-1 header of each Dart file in `lib/`, `test/` and `tool/` of
     `flutter_chartjs_port` and `chartjs_test_utils`. It compares the project, license and holder with
     `packages/flutter_chartjs_port/tool/port_sources.yaml`, the `LICENSE` of the package that contains
@@ -129,8 +132,28 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 
 - `packages/flutter_chartjs_port`: the Chart.js port (library, `publish_to: none` until 0.1.0).
   Its `analysis_options.yaml` includes the rules of the root file, and its `.pubignore` keeps
-  `doc/`, `test/`, `tool/` and `dart_test.yaml` out of the published archive (Chart.js ADR 0047).
-  The harness and the gallery name it as a path dependency.
+  `doc/`, `test/`, `tool/`, `dart_test.yaml` and `build/` out of the published archive (Chart.js
+  ADR 0047). The harness and the gallery name it as a path dependency. `README.md` is the README
+  of pub.dev. It names a file outside the archive by an absolute GitHub URL (Chart.js ADR 0047).
+  `example/main.dart` (port-only, no pubspec, Chart.js ADR 0047 §5) is the example of the archive:
+  one `ChartView` with a data update. The workspace formats and analyzes it with the package
+  rules. `check:headers` and `check:lib-imports` do not examine `example/`.
+  - The public libraries (Chart.js ADR 0048 §5), port-only and not pure layers:
+    `lib/flutter_chartjs_port.dart` (the app library: `chartjs.dart` without `Animation` and
+    `Element`, the two Flutter names, and `ChartView`, `ChartTheme` and `ChartThemeData`),
+    `lib/chartjs.dart` (the `chart.js` entry: `lib/src/types.dart` with a hide list, the Canvas 2D
+    interface, `ChartMeta`, `defaultDateZone`, `setDefaultDateZone`, `notifyArrayListeners`,
+    `JsClass`, `Undefined`, `undefined` and `lib/src/upstream.dart`) and `lib/helpers.dart` (the
+    `chart.js/helpers` entry: `lib/src/helpers/index.dart` without the Dart names of the upstream
+    `_` exports). An app imports the app library next to `material.dart` with no prefix.
+    `doc/public_api.txt` is the committed list of their export names.
+    `test/tool/public_api_test.dart` compares the list, checks that the app library shares no name
+    with the Flutter libraries and `dart:ui`, checks the `@internal` rule of Chart.js ADR 0048 §6,
+    and checks that the libraries cover the `exports` of `doc/upstream/manifest.json` (the
+    allowlist `_notExported` has the reasons). After a change of the public API,
+    `PUBLIC_API_UPDATE=1 flutter test test/tool/public_api_test.dart` writes the list again.
+    `test/port/public_library_test.dart` imports the app library next to `material.dart`,
+    registers the line set and pumps a `ChartView`.
   - `lib/src/`: ported modules at their upstream paths (`controllers/`, `core/`, `elements/`,
     `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), `kurkle_color/` (the `@kurkle/color`
     0.3.2 port), and `js/`, the JS runtime: port-only `js_*.dart` files and the fdlibm ports
@@ -206,7 +229,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `core.datasetController` and `core.scale` (Chart.js ADR 0020).
     - `core.controller.dart` has `Chart`. `resize` and `eventHandler` are fields that hold a
       function (Chart.js ADR 0022). `Chart.register` and `Chart.unregister` take one List.
-      `Chart.registry` is a static field (Chart.js ADR 0020). The dataset meta is the class
+      `Chart.registry` is a static field (Chart.js ADR 0020). `Chart.jsClass` is the class value
+      with the statics of `core.controller.js:105-120` (Chart.js ADR 0048 §2), as are
+      `Animation.jsClass`, `Animations.jsClass` and `FlutterPlatform.jsClass`. `toBase64Image`
+      returns a `Future<String>` from `HTMLCanvasElement.toDataURL` (row
+      `platform-to-base64-image`): each fake canvas of the tests has that member. The dataset meta is the class
       `ChartMeta`. Its `_dataset` is `dataset_` (Chart.js ADR 0023). `getDataVisibility` returns
       `true` at once for an empty `_hiddenIndices`. `toggleDataVisibility` takes any JS value
       (`Object?`) and writes the key `ToString(index)`, as upstream. `ChartMeta.total` is a typed
@@ -219,7 +246,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       `src/index.ts`, with the four namespaces and `registerables`. The namespace `controllers` has
       the eight controllers of phase 7 and the namespace `plugins` has the seven plugins of
       `lib/src/plugins/index.dart`, both in code unit order. Thus `flutter_test_config.dart`
-      registers them with the built-in components.
+      registers them with the built-in components. `lib/src/index.umd.dart` is the port of
+      `src/index.umd.ts` (Chart.js ADR 0048 §1): the lazy `chartUmd`, the value `Chart.jsClass`
+      with the UMD statics, which registers the four namespaces at its first read (row
+      `platform-umd-entry`). `Chart.platforms.DomPlatform` is `FlutterPlatform.jsClass` (row
+      `platform-umd-dom-platform`). No public library exports the file, and no widget imports it.
+      The specs read the UMD statics through `chartUmd`. `test/port/index.umd_test.dart` compares
+      its keys with `index_umd_reference.dart` of `tool/reference/index_umd_reference.mjs`.
+      `lib/src/types.dart` is the port of `src/types.ts`: `lib/src/index.dart` and
+      `lib/src/types/index.dart` without the 8 names that both declare (row `adapt-types-entry`).
   - `lib/src/controllers/`: the eight dataset controllers of phase 7. `index.dart` exports them
     (the port of `src/controllers/index.js`). Each controller file has the
     controller class and its class value `<Name>Controller.jsClass` (statics `id`, `defaults`,
@@ -299,8 +334,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       interfaces in `lib/` (`test/port/plugins/plugin.filler/point_implementers_test.dart`).
     - `plugin.legend.dart`: `Legend` (extends `Element`, implements `types.LegendElement`,
       `LayoutItem` and `TRBL`) with `Legend.jsClass`, and the plugin Map `legend`. The items, the
-      hit boxes (`legendHitBoxes`, not on `types.LegendElement`: read it through a cast to `Legend`)
-      and the column sizes are Maps with the upstream keys. The label options `boxWidth`,
+      hit boxes (`legendHitBoxes`, also a port-only member of `types.LegendElement`, which the
+      keyboard of `ChartView` reads, Chart.js ADR 0051 §2) and the column sizes are Maps with the
+      upstream keys. The label options `boxWidth`,
       `boxHeight`, `pointStyleWidth` and `padding` are numbers (row `adapt-legend-number-options`).
       The default `onClick` gives the number of the property key of the raw `datasetIndex` to `hide`
       and `show` (row `adapt-legend-dataset-index`).
@@ -339,13 +375,53 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `RenderChartHost`). A touch tap gives the compatibility mouse events. A tap outside gives
     `mouseout` to the chart of the last tap (Chart.js ADR 0037). A resize observer gets its first
     notification at the next layout of the host. `flushCanvasMutations` is the mutation checkpoint of the harness (Chart.js ADR 0022).
+    `onFirstLayout` is the start hook of the owner of the canvas: `ChartView` starts its chart in
+    it (Chart.js ADR 0049 §2). The keyboard of `ChartView` sends its events through
+    `dispatchCanvasEvent` (`canvas.dispatchEvent`).
     `native_event.dart` is the stand-in for the DOM event, a pure layer.
   - `lib/src/theme/` (Chart.js ADR 0042, port-only): `compile.dart` has `compileChartTheme` over
     raw Map themes, the emission guard and the deep freeze. `presets.dart` has the internal
-    `ChartThemes.light` and `ChartThemes.none`. Both files are pure layers. Ported files never
-    import them. `test/port/theme/coverage_test.dart` (theming.md §8 test 4) compares
+    `ChartThemes.light` and `ChartThemes.none`. Both files are pure layers. `theme_data.dart` has
+    the public `ChartThemeData` (Chart.js ADR 0050): 6 `Color?` tokens, 2 `TextStyle?` fonts,
+    `palette` and `paletteBackgroundAlpha`, the presets `.light()` and `.dark()` (the mirror rule),
+    `copyWith`, `lerp` and deep `==`, and the internal `themeDataToRaw` and `compileThemeData`
+    (the compiled map of each instance, in an `Expando`). `chart_theme.dart` has `ChartTheme`, an
+    `InheritedTheme` with a non-null `data` (`maybeOf` for charts, `of` with the light fallback).
+    Both import Flutter: they are not pure layers. Ported files never import a file of
+    `lib/src/theme/`. `test/port/theme/coverage_test.dart` (theming.md §8 test 4) compares
     `light_snapshot.json` with the defaults inventory of `doc/upstream/manifest.json`.
-    `THEME_SNAPSHOT_UPDATE=1` writes the snapshot again.
+    `THEME_SNAPSHOT_UPDATE=1` writes the snapshot again. `theme_data_test.dart` and
+    `chart_theme_test.dart` have test 7. `light_pixels_test.dart` checks that the light preset
+    paints the bytes of an unthemed chart (16 cases, also on the `test` job of each OS), and
+    `blue_screen_test.dart` also has 16 cases with an active element. `goldens_test.dart` (test 9,
+    the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
+    `bar_dark.png`.
+  - `lib/src/widgets/` (Chart.js ADRs 0049-0051, port-only, not pure layers). No file of it
+    imports a component or an index of the components (`check:lib-imports`), and no file writes
+    `defaults` or `overrides`.
+    - `chart_view.dart` has `ChartView`. It keeps one `UiCanvasElement` for the life of its state
+      and starts the chart in `ChartHost.onFirstLayout`. The chart gets a root Map: a shallow copy
+      of the app config, with `$theme` and the widget plugin. A new config, a new theme and a
+      change of the reduced-motion preference reach the chart in one post-frame callback (Chart.js
+      ADR 0049 §4). `build` sets the reduced-motion flag from
+      `MediaQuery.maybeDisableAnimationsOf`. A chart under `TickerMode(enabled: false)` is muted.
+      `dispose` destroys the chart and disposes the context. A `Focus` and a `Semantics` node
+      (`container`, `image`, `semanticLabel`) wrap the host (Chart.js ADR 0051 §1 and §8).
+    - `chart_theme_switch.dart` has `ChartThemeSwitch`, the runtime theme switch (theming.md §3.7):
+      the entry `$theme`, the in-place restore of the user `scales` and of the palette keys, and
+      one update with `'theme'`, `'themeFrame'` or `'default'`.
+    - `chart_view_plugin.dart` has the inline plugin `$chartView`, last in the `plugins` List of
+      the root Map: the palette records of the switch and the focus ring.
+      `plugins.$chartView: false` turns it off.
+    - `chart_keyboard.dart` has `ChartKeyboard` (Chart.js ADR 0051): the keys move a virtual mouse
+      over the legend hit boxes (through `types.LegendElement`) and the data elements, and send
+      `mousemove`, `mousedown`, `mouseup`, `click` and `mouseout` `NativeEvent`s to the canvas.
+    - `test/port/widgets/` (VM only): `chart_view_test.dart` (the start, the life cycle and the
+      keys, the diagnostics, the update, the size, the callbacks and reduced motion),
+      `chart_view_unregistered_test.dart` (it calls `removeBuiltins()` first in `main()`),
+      `chart_theme_switch_test.dart` (theming.md §8 test 8), `chart_keyboard_test.dart` and
+      `chart_view_semantics_test.dart` (Chart.js ADR 0051). A test that pumps a `ChartView` gives
+      it a config that is not `const`: Chart.js writes into its `data` and `options`.
   - `test/flutter_test_config.dart`: the port of `test/index.js`. `flutter test` runs it around
     each test file of the package ([Tests](#tests)).
   - `test/specs/`: ported upstream specs. `test/kurkle_color/`: the ported `@kurkle/color` tests.
@@ -375,7 +451,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     runner. Its `run` hook compares the parsed time values and the time scales with the date strings
     of its config. `_differs` and `_unparsed` name `controller.bar/bar-thickness-no-overlap.json`
     (the moment forgiving parse). Its untagged group `twins` compares the list with `fixtureSkips`.
-    `dart_test.yaml` (also in `packages/chartjs_test_utils`) declares the tag `fixtures`.
+    The `dart_test.yaml` of the package declares the tags `fixtures` and `golden` (the theme
+    goldens of Chart.js ADR 0050). The `dart_test.yaml` of `packages/chartjs_test_utils` declares
+    the tag `fixtures`.
   - `tool/`: the port checks (`check_*.dart`), tool 5 (`spec_cases.dart`, also tool 7 with
     `--fixtures`), tool 6 (`parity.dart`), tool 8 (`port_order.dart`), shared code in `tool/src/`,
     `port_sources.yaml` (one entry for each project that the package ports code from, with its pin;
@@ -478,8 +556,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     datasets, and the hover text of `getLabelAndValue`) and the help text. The help text gives the
     docs source and the input: a hover or a tap on an element shows the tooltip, a tap outside the
     chart hides it, and a tap on a legend item hides or shows its data. Its last line gives the
-    keys of Chart.js ADR 0051. The chart has the semantics label `<title> chart: <variant>`. The
-    app follows the platform brightness: its builder puts a `ChartTheme` above each route, with the
+    keys of Chart.js ADR 0051. The chart is a `ChartView` with the config that the page makes once
+    for each variant, and `onChartCreated` gives the chart to the page. The chart has the semantics
+    label `<title> chart: <variant>`. The app follows the platform brightness: its builder puts a `ChartTheme` above each route, with the
     light preset or the dark preset over the surface of the dark color scheme (Chart.js ADR 0050).
     The host has no height: the platform gives the aspect of the docs (2, or 1 for doughnut, pie,
     polar area and radar). The page body caps its width at 600. The keys are
@@ -495,9 +574,19 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     other parameters are after the readout (Chart.js ADR 0031 §10.7, Open). The plugins of
     `registerables` run with their defaults in both tabs: the legend and the tooltip show. A legend
     click in the Core tab also updates the dataset segments: the inline plugin of the tab gets each
-    event in its `afterEvent` hook.
-  - `lib/demo/chart_canvas.dart` hosts a real chart. It connects `ChartHost.onTickerModeChanged`
-    to `animator.mute` and `animator.unmute`.
+    event in its `afterEvent` hook. Each tab shows its chart in a `ChartView` in a `SizedBox` of
+    the height, with `maintainAspectRatio: false`. The keys `core.host` and `axes.host` are on the
+    box.
+  - The gallery imports the app library `package:flutter_chartjs_port/flutter_chartjs_port.dart`,
+    and `helpers.dart` with a `show` list. A file of `lib/` with an import of
+    `package:flutter_chartjs_port/src/` has `// ignore_for_file: implementation_imports` after the
+    line `// The reason of each import of lib/src is the comment above it.`, and one reason line
+    above each such import. A test file has only the reason lines: the lint reports only `lib/`.
+    `lib/demo/demo_common.dart` has `jsNumberText`, the JS text of a number for the readouts.
+  - `lib/demo/chart_canvas.dart` hosts a real chart for the stress host `HOST=canvas` (the side A
+    of the night series A-N1 of Chart.js ADR 0049) and for `_StressChart`, a chart class that
+    times its own draws. It connects `ChartHost.onTickerModeChanged` to `animator.mute` and
+    `animator.unmute`. It goes after the night record.
   - The modes `chart` and `axes` of the Stress tab measure the real chart path. The mode `chart`
     takes the chart type (the define `TYPE`, 8 types, the `type` line of icon segments). Line and
     scatter draw the points of phase 5 on two hidden unit scales. `axes` adds real scales
@@ -506,14 +595,19 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `lib/demo/stress_chart_config.dart`, Chart.js ADR 0031 Open). The other plugins run; the filler
     fills the radar of the mode `chart`. `lib/demo/stress_timing.dart` has `StressChartTiming`, with
     the parts `elements`, `layout`, `datasetsUpdate` and `datasetsDraw`. `lib/main_stress.dart` is
-    the profiling entry. Its defines `SEMANTICS` and `WINDOWS` serve the night series B-N1 of
+    the profiling entry. In the modes `chart`, `axes` and `plugins`, its define `HOST` selects the
+    host: `canvas` (`ChartCanvas`, the default) or `view` (`ChartView`). `BATCHES` (15) splits the
+    timed window into batches, and each `STRESS` line has the key `host` and the batch figures
+    `buildP50Ms`, `buildP90Ms`, `rasterP50Ms` and `rasterP90Ms`. Its defines `SEMANTICS` and
+    `WINDOWS` serve the night series B-N1 of
     phase 9: `SEMANTICS=1` turns the semantics on, and `WINDOWS=1` prints a line
     `STRESS_WINDOW {json}` for each window of 1 second. With `SEMANTICS` (0 or 1), the toolbar and
     the readout of `StressDemo` are out of the semantics tree (`chartSemanticsOnly`), so that B-N1
     measures the chart node. `lib/main_bench.dart` with
     `lib/bench/chart_bench.dart` is the frameless benchmark of the same cases
-    (`packages/flutter_chartjs_port/doc/performance.md` §6). Its mode `theme` (`theme.switch`,
-    `theme.anim` and `theme.equal`) runs the internal theme switch of `ChartView`.
+    (`packages/flutter_chartjs_port/doc/performance.md` §6). Its mode `motion` (`motion.line` and
+    `motion.bar`) times an animated `update`, and its mode `theme` (`theme.switch`, `theme.anim`
+    and `theme.equal`) runs the internal theme switch of `ChartView`.
   - The layout rule (Chart.js ADR 0031 §10) applies to the nine type pages and to the Stress,
     Core and Axes tabs: each parameter is a full-width `SegmentChoice` or
     `SegmentToggles` line of `lib/demo/demo_controls.dart`, with short text or icons. A
@@ -970,9 +1064,10 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   phase 7), `test/port/plugins/*_reference.dart` and
   `test/port/plugins/plugin.filler/*_reference.dart` (the plugins of phase 8; the tooltip generator
   writes two files, `plugin_tooltip_reference.dart` and `plugin_tooltip_more_reference.dart`,
-  because a data file stays below 2,500,000 bytes) and
+  because a data file stays below 2,500,000 bytes),
   `test/port/platform/chart_host_input_reference.dart` (the input path of the legend and the
-  tooltip, Chart.js ADR 0037 §17). The other generators run on the reference engine of Chart.js
+  tooltip, Chart.js ADR 0037 §17) and `test/port/index_umd_reference.dart` (the keys of the UMD
+  `Chart`, Chart.js ADR 0048 §1). The other generators run on the reference engine of Chart.js
   ADR 0045. `log10_reference.mjs`, `atan2_reference.mjs` and `trig_reference.mjs` stop unless
   Node.js is the x64 build v24.12.0 (Chart.js ADR 0045 §2): on arm64, the log10 and trig data
   differ in the last bits and in the NaN signs.
