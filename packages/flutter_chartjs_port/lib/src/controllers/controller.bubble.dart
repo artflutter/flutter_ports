@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/controllers/controller.bubble.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-parsed, the typed data of Chart.js ADR 0054.
 
 /// Port of `src/controllers/controller.bubble.js`.
 ///
@@ -7,12 +8,14 @@
 /// each point from the index scale and the value scale, and writes the
 /// properties of each `PointElement` through `updateElement`.
 ///
-/// - A parsed item, a data item and `_custom` are any value (Chart.js ADR
-///   0036). A read with a `String` key is [jsGetKey], a read with a number
-///   index is [jsGetIndex], and the read `item[2]` of a data item is
-///   [jsGet] with the key `'2'` (Chart.js ADR 0036, section 5). A read of a
-///   resolver or of an option object is [jsGet] (Chart.js ADR 0017, section
-///   8).
+/// - The parsed data is typed (Chart.js ADR 0054 §8): a parsed item of the
+///   parse functions is a [ParsedItem], and its `_custom` the radius. The
+///   reads of a parsed value are [parsedValueOf]. A data item is any value
+///   (Chart.js ADR 0036): the read `item[2]` is [jsGetIndex], and the read
+///   `item.r` is the typed field of a `TypedDataItem`, else a read by name.
+///   A parsed item of `parsing: false` is a data item of the user, read by
+///   name. The options of a point are a [PointOptions], and the
+///   properties a [PointProperties] (Chart.js ADR 0054 §9).
 /// - A raw option value stays `Object?` until its upstream operator. Then
 ///   the port applies the runtime form of that operator: [jsAdd] for `+=`
 ///   (Chart.js ADR 0036, section 7).
@@ -32,9 +35,9 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, controllerArgs;
+    show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show copyOptions;
+    show ElementOptions, PointOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -42,6 +45,13 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
+import 'package:flutter_chartjs_port/src/options/parsed.dart'
+    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/props.dart'
+    show PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         AnimationOptionsScope,
@@ -50,8 +60,18 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ChartOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/data_item.dart'
+    show TypedDataItem;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+
+/// `options.radius` of the resolved options of a data element: the raw
+/// value ([ElementOptions.valueOf]), typed for a [PointOptions].
+Object? _radiusOf(ElementOptions options) => options.valueOf(OptionKey.radius);
+
+/// `parsed._custom` of a parsed item: the typed field of a [ParsedItem],
+/// else the read by name of a data item of `parsing: false`.
+Object? _customOf(Object? parsed) =>
+    parsed is ParsedItem ? parsed.custom : jsGetKey(parsed, '_custom');
 
 /// controller.bubble.js:4 `BubbleController extends DatasetController`.
 class BubbleController extends DatasetController {
@@ -111,7 +131,7 @@ class BubbleController extends DatasetController {
   /// Parse array of primitive values
   /// @protected
   @override
-  List<AnyObject> parsePrimitiveData(
+  List<ParsedItem> parsePrimitiveData(
     types.ChartMeta meta,
     List<Object?> data,
     double start,
@@ -119,10 +139,7 @@ class BubbleController extends DatasetController {
   ) {
     final parsed = super.parsePrimitiveData(meta, data, start, count);
     for (var i = 0; i < parsed.length; i++) {
-      parsed[i]['_custom'] = jsGet(
-        resolveDataElementOptions(i + start),
-        'radius',
-      );
+      parsed[i].custom = _radiusOf(resolveDataElementOptions(i + start));
     }
     return parsed;
   }
@@ -132,10 +149,10 @@ class BubbleController extends DatasetController {
   /// Parse array of arrays
   /// @protected
   ///
-  /// `item[2]` is [jsGet] with the key `'2'`: the item is a List or another
-  /// value (Chart.js ADR 0036, section 5).
+  /// `item[2]` is [jsGetIndex]: the item is a List or another value
+  /// (Chart.js ADR 0036, section 5).
   @override
-  List<AnyObject> parseArrayData(
+  List<ParsedItem> parseArrayData(
     types.ChartMeta meta,
     List<Object?> data,
     double start,
@@ -144,9 +161,9 @@ class BubbleController extends DatasetController {
     final parsed = super.parseArrayData(meta, data, start, count);
     for (var i = 0; i < parsed.length; i++) {
       final item = jsGetIndex(data, start + i);
-      parsed[i]['_custom'] = valueOrDefault(
-        jsGet(item, '2'),
-        jsGet(resolveDataElementOptions(i + start), 'radius'),
+      parsed[i].custom = valueOrDefault(
+        jsGetIndex(item, 2),
+        _radiusOf(resolveDataElementOptions(i + start)),
       );
     }
     return parsed;
@@ -159,9 +176,11 @@ class BubbleController extends DatasetController {
   ///
   /// `item && item.r && +item.r` is the value of the `&&` chain: a falsy
   /// item, else a falsy `r`, else the `ToNumber` of `r` (Chart.js ADR 0036,
-  /// section 7).
+  /// section 7). `item.r` is the typed field of a `TypedDataItem` (Dart
+  /// `null` is an absent `r`), else the read by name of the data item of
+  /// the user.
   @override
-  List<AnyObject> parseObjectData(
+  List<ParsedItem> parseObjectData(
     types.ChartMeta meta,
     List<Object?> data,
     double start,
@@ -174,12 +193,14 @@ class BubbleController extends DatasetController {
       if (!jsTruthy(item)) {
         r = item;
       } else {
-        final value = jsGetKey(item, 'r');
+        final value = item is TypedDataItem
+            ? item.r ?? undefined
+            : jsGetKey(item, 'r');
         r = jsTruthy(value) ? jsToNumber(value) : value;
       }
-      parsed[i]['_custom'] = valueOrDefault(
+      parsed[i].custom = valueOrDefault(
         r,
-        jsGet(resolveDataElementOptions(i + start), 'radius'),
+        _radiusOf(resolveDataElementOptions(i + start)),
       );
     }
     return parsed;
@@ -224,9 +245,9 @@ class BubbleController extends DatasetController {
     final xScale = meta.xScale;
     final yScale = meta.yScale;
     final parsed = getParsed(index);
-    final x = xScale!.getLabelForValue(jsGetKey(parsed, 'x'));
-    final y = yScale!.getLabelForValue(jsGetKey(parsed, 'y'));
-    final r = jsGetKey(parsed, '_custom');
+    final x = xScale!.getLabelForValue(parsedValueOf(parsed, AxisKey.x, 'x'));
+    final y = yScale!.getLabelForValue(parsedValueOf(parsed, AxisKey.y, 'y'));
+    final r = _customOf(parsed);
     final label = jsGetIndex(labels, index);
 
     return (
@@ -266,28 +287,32 @@ class BubbleController extends DatasetController {
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     final iAxis = iScale.axis;
     final vAxis = vScale.axis;
+    final iKey = AxisKey.of(iAxis);
+    final vKey = AxisKey.of(vAxis);
 
     for (var i = start; i < start + count; i++) {
       final point = points[i.toInt()];
       final parsed = reset ? false : getParsed(i);
-      final properties = <String, Object?>{};
-      final iPixel = properties[iAxis] = reset
+      final properties = PointProperties();
+      final iPixel = reset
           ? iScale.getPixelForDecimal(0.5)
-          : iScale.getPixelForValue(jsGetKey(parsed, iAxis));
-      final vPixel = properties[vAxis] = reset
+          : iScale.getPixelForValue(parsedValueOf(parsed, iKey, iAxis));
+      setPointAxis(properties, iKey, iAxis, iPixel);
+      final vPixel = reset
           ? vScale.getBasePixel()
-          : vScale.getPixelForValue(jsGetKey(parsed, vAxis));
+          : vScale.getPixelForValue(parsedValueOf(parsed, vKey, vAxis));
+      setPointAxis(properties, vKey, vAxis, vPixel);
 
-      properties['skip'] = iPixel.isNaN || vPixel.isNaN;
+      properties.skip = iPixel.isNaN || vPixel.isNaN;
 
       if (includeOptions) {
         final options =
             sharedOptions ??
             resolveDataElementOptions(i, point.active ? 'active' : mode);
-        properties['options'] = options;
+        properties.options = options;
 
         if (reset) {
-          options['radius'] = 0.0;
+          options.storeKey(OptionKey.radius, 0.0);
         }
       }
 
@@ -302,32 +327,33 @@ class BubbleController extends DatasetController {
   /// @protected
   ///
   /// Dart `null` for [mode] stands for JS `undefined`. `Object.assign({},
-  /// values, {$shared: false})` is `copyOptions(values)..[r'$shared'] =
-  /// false`: the copy keeps the class of the options (Chart.js ADR 0021,
-  /// section 3). `parsed && parsed._custom` is the value of `&&`, and `+=`
-  /// is [jsAdd] (Chart.js ADR 0036, section 7).
+  /// values, {$shared: false})` is `values.clone()` with `$shared` false:
+  /// the copy keeps the class of the options (Chart.js ADR 0021, section
+  /// 3). `parsed && parsed._custom` is the value of `&&`, and `+=` is
+  /// [jsAdd] of the raw `radius` (Chart.js ADR 0036, section 7): a string
+  /// radius joins.
   @override
-  AnyObject resolveDataElementOptions(double index, [String? mode]) {
+  ElementOptions resolveDataElementOptions(double index, [String? mode]) {
     final parsed = getParsed(index);
     var values = super.resolveDataElementOptions(index, mode);
 
     // In case values were cached (and thus frozen), we need to clone the
     // values
-    if (jsTruthy(values[r'$shared'])) {
+    if (jsTruthy(values.$sharedValue)) {
       // DIVERGES(chartjs): adapt-typed-element-options, a copy of the class.
-      values = copyOptions(values)..[r'$shared'] = false;
+      values = values.clone()..storeKey(OptionKey.dollarShared, false);
     }
 
     // Custom radius resolution
-    final radius = jsGet(values, 'radius');
+    final radius = _radiusOf(values);
     if (mode != 'active') {
-      values['radius'] = 0.0;
+      values.storeKey(OptionKey.radius, 0.0);
     }
-    values['radius'] = jsAdd(
-      jsGet(values, 'radius'),
-      valueOrDefault(
-        jsTruthy(parsed) ? jsGetKey(parsed, '_custom') : parsed,
-        radius,
+    values.storeKey(
+      OptionKey.radius,
+      jsAdd(
+        _radiusOf(values),
+        valueOrDefault(jsTruthy(parsed) ? _customOf(parsed) : parsed, radius),
       ),
     );
 

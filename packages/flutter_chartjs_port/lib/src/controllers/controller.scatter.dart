@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/controllers/controller.scatter.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-parsed, the typed data of Chart.js ADR 0054.
 
 /// Port of `src/controllers/controller.scatter.js`.
 ///
@@ -7,18 +8,22 @@
 /// come from the index scale and the value scale. With the option
 /// `showLine`, it also writes a `LineElement` as the dataset element.
 ///
-/// - A parsed item and a data item are any value (Chart.js ADR 0036). A
-///   read with a `String` key is [jsGetKey], a read with a number index is
-///   [jsGetIndex]. A read of a resolver or of an option object is [jsGet]
-///   (Chart.js ADR 0017, section 8).
+/// - The parsed data is typed (Chart.js ADR 0054 §8): the reads of a parsed
+///   value are [parsedValueOf], typed for a [ParsedItem]. A parsed item of
+///   `parsing: false` is a data item of the user, read by name (Chart.js
+///   ADR 0036). The dataset options read typed ([OptionView.readKey]), and
+///   so do the [LineOptions] of the line.
 /// - A pass of the loop of [ScatterController.updateElements] reads each
 ///   key of its parsed item once, and keeps no value for the next pass (the
 ///   3-read form of Chart.js ADR 0036, section 8). Each local of a parsed read
 ///   names the upstream lines that it serves.
-/// - The controller reads the members of other modules through
-///   `lib/src/types/` and imports no concrete scale, element or chart
-///   module (Chart.js ADR 0028, section 1). The four writes into the line
-///   (`scatter.js:80-83`) are writes by name through `types.PropertyAccess`.
+/// - The properties of a point are a [PointProperties], and those of the
+///   line a [LineProperties] (Chart.js ADR 0054 §9). The writes into the
+///   point of a direct update and the four writes into the line
+///   (`scatter.js:80-83`) take the typed setters for an element of the
+///   exact class [PointElement] or [LineElement], and the writes by name
+///   through `types.PropertyAccess` for an element of another class (a user
+///   element class, Chart.js ADR 0017, section 5).
 ///   [ScatterController.getMaxOverflow] casts a point to
 ///   `types.PointElement` at `size`.
 /// - `this.chart.registry` (`scatter.js:105`) is the singleton `registry`
@@ -27,16 +32,22 @@
 ///   `core.registry.dart`, and upstream does not import it.
 /// - [ScatterController.jsClass] is the class as a value with the statics
 ///   `id`, `defaults` and `overrides` (Chart.js ADR 0020, section 3).
-/// - The writes by name into the point of a direct update stay writes by
-///   name (Chart.js ADR 0036, section 8: the step 7 list).
 ///
 /// This library imports `core.datasetController.dart`, which imports
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, controllerArgs;
+    show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
+import 'package:flutter_chartjs_port/src/elements/element.line.dart'
+    show LineElement;
+import 'package:flutter_chartjs_port/src/elements/element.point.dart'
+    show PointElement;
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+    show ElementOptions, LineOptions;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
@@ -48,6 +59,13 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
+import 'package:flutter_chartjs_port/src/options/parsed.dart'
+    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/props.dart'
+    show LineProperties, PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         ChartOptionsScope,
@@ -55,20 +73,140 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         LineControllerDatasetOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
-/// The JS write `properties[key] = value` of controller.scatter.js:129-140.
+/// The JS write `element[key] = value` by name into an element of a user
+/// element class (Chart.js ADR 0017, section 5), or of a property that the
+/// element class does not declare.
+void _setProperty(types.PropertyAccess element, String key, Object? value) {
+  element[key] = value;
+}
+
+/// The writes `properties[key] = value` of controller.scatter.js:127-140
+/// (Chart.js ADR 0054 §9).
 ///
-/// `properties` is the point of a direct update (:127): the write is a
-/// write by name of the element (Chart.js ADR 0017, section 5). In the other
-/// modes it is the new object that goes to `updateElement`.
-void _setProperty(Object properties, String key, Object? value) {
-  switch (properties) {
-    case final AnyObject object:
-      object[key] = value;
-    case final types.PropertyAccess element:
-      element[key] = value;
+/// `properties` is the point of a direct update and a new object in the
+/// other modes (:127). The new object is a [PointProperties]. A point of
+/// the exact class [PointElement] takes the typed setters. A point of
+/// another class (a user element class) takes the writes by name of
+/// [_setProperty], in the same order. The writes reach the point at once,
+/// as upstream: the scriptable options of the user that run between two
+/// writes see the earlier writes.
+final class _PointWrites {
+  _PointWrites({required this.direct});
+
+  /// `directUpdate` (:121).
+  final bool direct;
+
+  /// The new object of a mode that is not direct, else Dart `null`.
+  PointProperties? object;
+
+  /// The point of the exact class [PointElement] of a direct update.
+  PointElement? _element;
+
+  /// The point of another class of a direct update.
+  types.PropertyAccess? _access;
+
+  /// :127 `const properties = directUpdate ? point : {};`.
+  void begin(types.Element point) {
+    if (!direct) {
+      object = PointProperties();
+    } else if (identical(point.runtimeType, PointElement)) {
+      _element = point as PointElement;
+      _access = null;
+    } else {
+      _element = null;
+      // Each data element is an Element: the cast of `_insertElements`
+      // (row adapt-component-class-role).
+      _access = point as types.PropertyAccess;
+    }
+  }
+
+  /// `properties[axis] = value` (:129-130), with [key] the key of [axis].
+  void axis(AxisKey key, String axis, double value) {
+    final object = this.object;
+    if (object != null) {
+      setPointAxis(object, key, axis, value);
+      return;
+    }
+    final element = _element;
+    if (element == null) {
+      _setProperty(_access!, axis, value);
+    } else if (key == AxisKey.x) {
+      element.x = value;
+    } else if (key == AxisKey.y) {
+      element.y = value;
+    } else {
+      _setProperty(element, axis, value);
+    }
+  }
+
+  /// `properties.skip = value` (:132).
+  // The write of one boolean property.
+  // ignore: avoid_positional_boolean_parameters
+  void skip(bool value) {
+    final object = this.object;
+    if (object != null) {
+      object.skip = value;
+    } else if (_element case final element?) {
+      element.skip = value;
+    } else {
+      _setProperty(_access!, 'skip', value);
+    }
+  }
+
+  /// `properties.stop = value` (:133).
+  // The write of one boolean property.
+  // ignore: avoid_positional_boolean_parameters
+  void stop(bool value) {
+    final object = this.object;
+    if (object != null) {
+      object.stop = value;
+    } else if (_element case final element?) {
+      element.stop = value;
+    } else {
+      _setProperty(_access!, 'stop', value);
+    }
+  }
+
+  /// `properties.parsed = value` (:135). A JS `null` or `undefined` value
+  /// is outside the type of the typed setter of the point: it goes by name.
+  void parsed(Object? value) {
+    final object = this.object;
+    if (object != null) {
+      object.parsed = value;
+    } else if (_element case final element? when value != null) {
+      if (value is Undefined) {
+        _setProperty(element, 'parsed', value);
+      } else {
+        element.parsed = value;
+      }
+    } else {
+      _setProperty(_element ?? _access!, 'parsed', value);
+    }
+  }
+
+  /// `properties.raw = value` (:136). A point does not declare `raw`: the
+  /// write goes by name.
+  void raw(Object? value) {
+    final object = this.object;
+    if (object != null) {
+      object.raw = value;
+    } else {
+      _setProperty(_element ?? _access!, 'raw', value);
+    }
+  }
+
+  /// `properties.options = value` (:140).
+  void options(ElementOptions value) {
+    final object = this.object;
+    if (object != null) {
+      object.options = value;
+    } else if (_element case final element?) {
+      element.options = value;
+    } else {
+      _setProperty(_access!, 'options', value);
+    }
   }
 }
 
@@ -123,6 +261,7 @@ class ScatterController extends DatasetController {
   ///
   /// The label is `labels[index] || ''`: any value (Chart.js ADR 0028,
   /// section 2). The `+` of the value joins the [jsToString] of each part.
+  /// `chart.data.labels` is a property of the data object of the user.
   @override
   ({Object? label, String value}) getLabelAndValue(double index) {
     final meta = cachedMeta;
@@ -131,8 +270,8 @@ class ScatterController extends DatasetController {
     final xScale = meta.xScale;
     final yScale = meta.yScale;
     final parsed = getParsed(index);
-    final x = xScale!.getLabelForValue(jsGetKey(parsed, 'x'));
-    final y = yScale!.getLabelForValue(jsGetKey(parsed, 'y'));
+    final x = xScale!.getLabelForValue(parsedValueOf(parsed, AxisKey.x, 'x'));
+    final y = yScale!.getLabelForValue(parsedValueOf(parsed, AxisKey.y, 'y'));
     final label = jsGetIndex(labels, index);
 
     return (
@@ -148,12 +287,15 @@ class ScatterController extends DatasetController {
   ///
   /// - With a truthy `showLine`, the update adds the dataset element when
   ///   [datasetElementType] is falsy (:74-76, Chart.js issue #11333). The
-  ///   four writes of :80-83 are writes by name of an untyped property
-  ///   (Chart.js ADR 0017, section 5; Chart.js ADR 0028, section 1). The
-  ///   null check before the cast to `types.PropertyAccess` throws a
-  ///   [TypeError] for Dart `null`, as `undefined._chart = ...` does. The
-  ///   write `points` goes to the setter of the row
-  ///   `adapt-line-points-elements`: a typed copy of `meta.data`.
+  ///   four writes of :80-83 are the typed setters of a line of the exact
+  ///   class [LineElement], and writes by name of an untyped property for a
+  ///   line of another class (Chart.js ADR 0017, section 5; Chart.js ADR
+  ///   0028, section 1). The null check throws a [TypeError] for Dart
+  ///   `null`, as `undefined._chart = ...` does. The write `points` goes to
+  ///   the setter of the row `adapt-line-points-elements`: a typed copy of
+  ///   `meta.data`. `_dataset._decimated` is a property of the dataset
+  ///   object of the user that the decimation plugin writes: a read by
+  ///   name.
   /// - Else, a truthy [datasetElementType] removes the dataset element
   ///   (:91-95). `delete meta.dataset` is Dart `null`: the type of
   ///   `meta.dataset` holds the JS `undefined` as Dart `null`.
@@ -176,7 +318,7 @@ class ScatterController extends DatasetController {
       count = points.length.toDouble();
     }
 
-    if (jsTruthy(jsGet(options, 'showLine'))) {
+    if (jsTruthy(options.readKey(OptionKey.showLine))) {
       // https://github.com/chartjs/Chart.js/issues/11333
       if (!jsTruthy(datasetElementType)) {
         addElements();
@@ -185,18 +327,32 @@ class ScatterController extends DatasetController {
       final dataset = meta.dataset_;
 
       // Update Line
-      final access = line! as types.PropertyAccess;
-      access['_chart'] = chart;
-      access['_datasetIndex'] = index;
-      access['_decimated'] = jsTruthy(jsGetKey(dataset, '_decimated'));
-      access['points'] = points;
+      final target = line!;
+      final decimated = jsTruthy(jsGetKey(dataset, '_decimated'));
+      if (identical(target.runtimeType, LineElement)) {
+        (target as LineElement)
+          ..chart = chart
+          ..datasetIndex = index
+          ..decimated = decimated
+          ..points = points;
+      } else {
+        final access = target as types.PropertyAccess;
+        _setProperty(access, '_chart', chart);
+        _setProperty(access, '_datasetIndex', index);
+        _setProperty(access, '_decimated', decimated);
+        _setProperty(access, 'points', points);
+      }
 
-      final options = resolveDatasetElementOptions(mode);
-      options['segment'] = jsGet(this.options, 'segment');
-      updateElement(line, null, <String, Object?>{
-        'animated': !jsTruthy(animationsDisabled),
-        'options': options,
-      }, mode);
+      final options = resolveDatasetElementOptions(mode)
+        ..storeKey(OptionKey.segment, this.options.readKey(OptionKey.segment));
+      updateElement(
+        target,
+        null,
+        LineProperties()
+          ..animated = !jsTruthy(animationsDisabled)
+          ..options = options,
+        mode,
+      );
     } else if (jsTruthy(datasetElementType)) {
       // https://github.com/chartjs/Chart.js/issues/11333
       meta.dataset = null;
@@ -213,7 +369,7 @@ class ScatterController extends DatasetController {
   /// `registry` (row `adapt-chart-registry-getter`).
   @override
   void addElements() {
-    final showLine = jsGet(options, 'showLine');
+    final showLine = options.readKey(OptionKey.showLine);
 
     if (!jsTruthy(datasetElementType) && jsTruthy(showLine)) {
       // DIVERGES(chartjs): adapt-chart-registry-getter, the registry singleton.
@@ -227,12 +383,12 @@ class ScatterController extends DatasetController {
   /// mode)`.
   ///
   /// - `properties` is the point of a direct update and a new object in the
-  ///   other modes (:127). The writes into it are [_setProperty].
+  ///   other modes (:127). The writes into it are [_PointWrites].
   /// - `isNumber(spanGaps) ? spanGaps : Infinity` gets its `ToNumber` once:
   ///   its only use, the `>` of :133, applies `ToNumber` to it.
   /// - `start > 0 && this.getParsed(start - 1)` is `false` or the parsed
   ///   item. `parsed[iAxis] - prevParsed[iAxis]` applies `ToNumber` to both
-  ///   reads. `false[iAxis]` is `undefined`, as [jsGetKey] gives.
+  ///   reads. `false[iAxis]` is `undefined`, as [parsedValueOf] gives.
   /// - The one-read rule in one pass (Chart.js ADR 0036, section 8):
   ///   `vValue` serves the reads of `parsed[vAxis]` at :128 and :130, and
   ///   `iValue` the reads of `parsed[iAxis]` at :129 and :133. Between :128
@@ -265,71 +421,67 @@ class ScatterController extends DatasetController {
     final includeOptions = this.includeOptions(mode, sharedOptions);
     final iAxis = iScale!.axis;
     final vAxis = vScale!.axis;
-    final spanGaps = jsGet(options, 'spanGaps');
-    final segment = jsGet(options, 'segment');
+    final iKey = AxisKey.of(iAxis);
+    final vKey = AxisKey.of(vAxis);
+    final options = this.options;
+    final spanGaps = options.readKey(OptionKey.spanGaps);
+    final segment = options.readKey(OptionKey.segment);
     final maxGapLength = isNumber(spanGaps)
         ? jsToNumber(spanGaps)
         : double.infinity;
     final directUpdate =
         jsTruthy(chart.animationsDisabled) || reset || mode == 'none';
     var prevParsed = start > 0 ? getParsed(start - 1) : false;
+    final writes = _PointWrites(direct: directUpdate);
 
     for (var i = start; i < start + count; ++i) {
       final point = points[i.toInt()];
       final parsed = getParsed(i);
-      // :127 `const properties = directUpdate ? point : {};`. `object` is
-      // the new object, Dart `null` for a direct update.
-      final object = directUpdate ? null : <String, Object?>{};
-      final properties = object ?? point as types.PropertyAccess;
+      writes.begin(point);
       // :128, also :130 (one-read rule).
-      final vValue = jsGetKey(parsed, vAxis);
+      final vValue = parsedValueOf(parsed, vKey, vAxis);
       final nullData = isNullOrUndef(vValue);
       // :129, also :133 (one-read rule).
-      final iValue = jsGetKey(parsed, iAxis);
+      final iValue = parsedValueOf(parsed, iKey, iAxis);
       final iPixel = iScale.getPixelForValue(iValue, i);
-      _setProperty(properties, iAxis, iPixel);
+      writes.axis(iKey, iAxis, iPixel);
       final vPixel = reset || nullData
           ? vScale.getBasePixel()
           : vScale.getPixelForValue(
               jsTruthy(stacked) ? applyStack(vScale, parsed, stacked) : vValue,
               i,
             );
-      _setProperty(properties, vAxis, vPixel);
-
-      _setProperty(
-        properties,
-        'skip',
-        iPixel.isNaN || vPixel.isNaN || nullData,
-      );
-      // :133 `i > 0 && (Math.abs(parsed[iAxis] - prevParsed[iAxis])) >
-      // maxGapLength`. `prevParsed[iAxis]` is a read at each pass (the
-      // 3-read form, see above).
-      _setProperty(
-        properties,
-        'stop',
-        i > 0 &&
-            (jsToNumber(iValue) - jsToNumber(jsGetKey(prevParsed, iAxis)))
-                    .abs() >
-                maxGapLength,
-      );
+      writes
+        ..axis(vKey, vAxis, vPixel)
+        ..skip(iPixel.isNaN || vPixel.isNaN || nullData)
+        // :133 `i > 0 && (Math.abs(parsed[iAxis] - prevParsed[iAxis])) >
+        // maxGapLength`. `prevParsed[iAxis]` is a read at each pass (the
+        // 3-read form, see above).
+        ..stop(
+          i > 0 &&
+              (jsToNumber(iValue) -
+                          jsToNumber(parsedValueOf(prevParsed, iKey, iAxis)))
+                      .abs() >
+                  maxGapLength,
+        );
       if (jsTruthy(segment)) {
-        _setProperty(properties, 'parsed', parsed);
-        _setProperty(properties, 'raw', jsGetIndex(jsGet(dataset, 'data'), i));
+        writes
+          ..parsed(parsed)
+          // `_dataset.data[i]`: the data of the dataset object of the user.
+          ..raw(jsGetIndex(jsGet(dataset, 'data'), i));
       }
 
       if (includeOptions) {
         // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
         // shared options.
-        _setProperty(
-          properties,
-          'options',
+        writes.options(
           sharedOptions ??
               resolveDataElementOptions(i, point.active ? 'active' : mode),
         );
       }
 
       if (!directUpdate) {
-        updateElement(point, i, object!, mode);
+        updateElement(point, i, writes.object!, mode);
       }
 
       prevParsed = parsed;
@@ -349,7 +501,9 @@ class ScatterController extends DatasetController {
   ///   dataset.options.borderWidth || 0` keeps the raw value: a truthy
   ///   `borderWidth` is the result, also for an empty data. `Math.max`
   ///   applies `ToNumber` to it. A dataset element that is Dart `null`
-  ///   throws a [TypeError], as `undefined.options` does.
+  ///   throws a [TypeError], as `undefined.options` does. The options of a
+  ///   line are a [LineOptions]; the options of a user element type read
+  ///   by name.
   /// - The cast to `types.PointElement` stands at the upstream read of
   ///   `size` (Chart.js ADR 0028, section 1).
   @override
@@ -357,7 +511,7 @@ class ScatterController extends DatasetController {
     final meta = cachedMeta;
     final data = meta.data;
 
-    if (!jsTruthy(jsGet(options, 'showLine'))) {
+    if (!jsTruthy(options.readKey(OptionKey.showLine))) {
       var max = 0.0;
       for (var i = data.length - 1; i >= 0; --i) {
         max = jsMax(
@@ -377,7 +531,7 @@ class ScatterController extends DatasetController {
     if (!jsTruthy(datasetOptions)) {
       border = 0.0;
     } else {
-      final borderWidth = jsGet(datasetOptions, 'borderWidth');
+      final borderWidth = readOption(datasetOptions, OptionKey.borderWidth);
       border = jsTruthy(borderWidth) ? borderWidth : 0.0;
     }
 

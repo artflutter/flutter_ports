@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/controllers/controller.bar.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-parsed, the typed data of Chart.js ADR 0054.
 
 /// Port of `src/controllers/controller.bar.js`.
 ///
@@ -7,11 +8,17 @@
 /// index scale and the value scale, and writes the properties of each
 /// `BarElement` through `updateElement`.
 ///
-/// - A parsed item, a data item, a `_custom` object and a stack object are
-///   any value (Chart.js ADR 0036). A read with a `String` key is
-///   [jsGetKey], a read with a number index is [jsGetIndex], and the read
-///   `parsed._stacks` is [stacksOf]. A read of a resolver or of an option
-///   object is [jsGet] (Chart.js ADR 0017, section 8).
+/// - The parsed data is typed (Chart.js ADR 0054 §8): a parsed item is a
+///   [ParsedItem], its `_custom` of a float bar a [FloatingBar], and its
+///   stack object a [StackEntry]. The reads of a parsed value are
+///   [parsedValueOf], and the reads of the stacks [stacksOf] and
+///   [axisStackOf]. A parsed item of `parsing: false` is a data item of the
+///   user: it and its `_custom` and `_stacks` objects read by name
+///   ([jsGetKey], Chart.js ADR 0036).
+/// - The dataset options read typed ([OptionView.readKey]), and so do the
+///   [BarOptions] of an element. The options of a user element type read
+///   by name. The properties of a bar are a [BarProperties] (Chart.js ADR
+///   0054 §9).
 /// - A raw option value stays `Object?` until its upstream operator. Then
 ///   the port applies the runtime form of that operator: [jsToNumber],
 ///   [jsTruthy], [jsAdd] or the Dart `==` for `===` (Chart.js ADR 0036,
@@ -33,12 +40,27 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
+import 'dart:typed_data';
+
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, DatasetStack, controllerArgs, stacksOf;
+    show
+        DatasetController,
+        DatasetStack,
+        axisStackOf,
+        controllerArgs,
+        dataItemValue,
+        parsedValueOf,
+        setStackValue,
+        stacksOf,
+        visualValuesOf;
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+    show BarOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show arrayUnique;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show defined, isArray, isNullOrUndef, resolveObjectKey, valueOrDefault;
+    show defined, isArray, isNullOrUndef, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show MinMax, sign;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
@@ -49,6 +71,12 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
+import 'package:flutter_chartjs_port/src/options/parsed.dart'
+    show AxisKey, FloatingBar, ParsedItem, StackEntry;
+import 'package:flutter_chartjs_port/src/options/props.dart'
+    show BarProperties, BorderSkipped;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         AnimationOptionsScope,
@@ -58,7 +86,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         GridLineOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
@@ -168,18 +195,18 @@ double _computeMinSampleSize(types.ChartMeta meta) {
 _CategoryTraits _computeFitCategoryTraits(
   double index,
   _Ruler ruler,
-  Object? options,
+  OptionView options,
   double stackCount,
 ) {
-  final thickness = jsGet(options, 'barThickness');
+  final thickness = options.readKey(OptionKey.barThickness);
   double size;
   Object? ratio;
 
   if (isNullOrUndef(thickness)) {
     size =
         jsToNumber(ruler.min) *
-        jsToNumber(jsGet(options, 'categoryPercentage'));
-    ratio = jsGet(options, 'barPercentage');
+        jsToNumber(options.readKey(OptionKey.categoryPercentage));
+    ratio = options.readKey(OptionKey.barPercentage);
   } else {
     // When bar thickness is enforced, category and bar percentages are
     // ignored.
@@ -210,14 +237,14 @@ _CategoryTraits _computeFitCategoryTraits(
 _CategoryTraits _computeFlexCategoryTraits(
   double index,
   _Ruler ruler,
-  Object? options,
+  OptionView options,
   double stackCount,
 ) {
   final pixels = ruler.pixels;
   final curr = pixels[index.toInt()];
   var prev = index > 0 ? pixels[index.toInt() - 1] : null;
   var next = index < pixels.length - 1 ? pixels[index.toInt() + 1] : null;
-  final percent = jsGet(options, 'categoryPercentage');
+  final percent = options.readKey(OptionKey.categoryPercentage);
 
   // :96 `if (prev === null)`.
   // first data: its size is double based on the next point or,
@@ -233,7 +260,7 @@ _CategoryTraits _computeFlexCategoryTraits(
 
   return (
     chunk: size / stackCount,
-    ratio: jsGet(options, 'barPercentage'),
+    ratio: options.readKey(OptionKey.barPercentage),
     start: start,
   );
 }
@@ -241,12 +268,14 @@ _CategoryTraits _computeFlexCategoryTraits(
 /// controller.bar.js:117 `parseFloatBar(entry, item, vScale, i)`.
 ///
 /// [entry] is a List (`isArray`, :145). `Math.min` and `Math.max` apply
-/// `ToNumber` to the parsed values. `_custom` keeps the parsed values as
-/// they are in `start` and `end`.
+/// `ToNumber` to the parsed values. `_custom` is a [FloatingBar]: it keeps
+/// the parsed values as they are in `start` and `end`. [vKey] is the key of
+/// the axis of [vScale].
 void _parseFloatBar(
   Object? entry,
-  AnyObject item,
+  ParsedItem item,
   types.Scale vScale,
+  AxisKey vKey,
   double i,
 ) {
   final startValue = vScale.parse(jsGetIndex(entry, 0), i);
@@ -263,35 +292,40 @@ void _parseFloatBar(
 
   // Store `barEnd` (furthest away from origin) as parsed value,
   // to make stacking straight forward
-  item[vScale.axis] = barEnd;
-
-  item['_custom'] = <String, Object?>{
-    'barStart': barStart,
-    'barEnd': barEnd,
-    'start': startValue,
-    'end': endValue,
-    'min': min,
-    'max': max,
-  };
+  item
+    ..setValue(vKey, vScale.axis, barEnd)
+    ..custom = FloatingBar(
+      barStart: barStart,
+      barEnd: barEnd,
+      start: startValue,
+      end: endValue,
+      min: min,
+      max: max,
+    );
 }
 
-/// controller.bar.js:144 `parseValue(entry, item, vScale, i)`.
-AnyObject _parseValue(
+/// controller.bar.js:144 `parseValue(entry, item, vScale, i)`. [vKey] is
+/// the key of the axis of [vScale].
+ParsedItem _parseValue(
   Object? entry,
-  AnyObject item,
+  ParsedItem item,
   types.Scale vScale,
+  AxisKey vKey,
   double i,
 ) {
   if (isArray(entry)) {
-    _parseFloatBar(entry, item, vScale, i);
+    _parseFloatBar(entry, item, vScale, vKey, i);
   } else {
-    item[vScale.axis] = vScale.parse(entry, i);
+    item.setValue(vKey, vScale.axis, vScale.parse(entry, i));
   }
   return item;
 }
 
 /// controller.bar.js:153 `parseArrayOrPrimitive(meta, data, start, count)`.
-List<AnyObject> _parseArrayOrPrimitive(
+///
+/// Each item is a [ParsedItem]: the key of the index axis first, then the
+/// key of the value axis and `_custom` (Chart.js ADR 0054 §8).
+List<ParsedItem> _parseArrayOrPrimitive(
   types.ChartMeta meta,
   List<Object?> data,
   double start,
@@ -301,29 +335,68 @@ List<AnyObject> _parseArrayOrPrimitive(
   final vScale = meta.vScale;
   final labels = iScale!.getLabels();
   final singleScale = identical(iScale, vScale);
-  final parsed = <AnyObject>[];
+  final iKey = AxisKey.of(iScale.axis);
+  // Upstream reads `vScale.axis` in the loop: no read for no item.
+  final vKey = vScale == null ? AxisKey.other : AxisKey.of(vScale.axis);
+  final parsed = <ParsedItem>[];
 
   for (var i = start, ilen = start + count; i < ilen; ++i) {
     final entry = jsGetIndex(data, i);
-    final item = <String, Object?>{};
     // :164 `singleScale || iScale.parse(labels[i], i)`: the value of `||`,
     // `true` for a single scale.
-    item[iScale.axis] = singleScale
-        ? true
-        : iScale.parse(jsGetIndex(labels, i), i);
-    parsed.add(_parseValue(entry, item, vScale!, i));
+    final item = ParsedItem()
+      ..setValue(
+        iKey,
+        iScale.axis,
+        singleScale ? true : iScale.parse(jsGetIndex(labels, i), i),
+      );
+    parsed.add(_parseValue(entry, item, vScale!, vKey, i));
   }
   return parsed;
 }
+
+/// `parsed._custom` of a parsed item: the typed field of a [ParsedItem],
+/// else the read by name of a data item of `parsing: false`.
+Object? _customOf(Object? parsed) =>
+    parsed is ParsedItem ? parsed.custom : jsGetKey(parsed, '_custom');
+
+/// `custom[key]` of the `_custom` object of a data item of `parsing: false`:
+/// a user object, read by name. A [FloatingBar] reads typed at each site.
+Object? _userCustomValue(Object? custom, String key) => jsGetKey(custom, key);
 
 /// controller.bar.js:170 `isFloatBar(custom)`.
 ///
 /// Upstream returns the value of `&&`. Each caller tests it as a boolean
 /// (:410, :568), so a `bool` result keeps the behavior.
-bool _isFloatBar(Object? custom) =>
-    jsTruthy(custom) &&
-    !identical(jsGetKey(custom, 'barStart'), undefined) &&
-    !identical(jsGetKey(custom, 'barEnd'), undefined);
+///
+/// A [FloatingBar] has numbers in `barStart` and `barEnd`. A key that user
+/// code deleted or wrote by name with another value gives NaN in the typed
+/// field: then the face gives the JS value.
+bool _isFloatBar(Object? custom) {
+  if (custom is FloatingBar) {
+    return (!custom.barStart.isNaN ||
+            !identical(custom.jsRead('barStart'), undefined)) &&
+        (!custom.barEnd.isNaN ||
+            !identical(custom.jsRead('barEnd'), undefined));
+  }
+  return jsTruthy(custom) &&
+      !identical(_userCustomValue(custom, 'barStart'), undefined) &&
+      !identical(_userCustomValue(custom, 'barEnd'), undefined);
+}
+
+/// `stack._top` of the stack object of a bar (:220, :410): the typed field
+/// of a [StackEntry], else the read by name of a `_stacks` object that user
+/// code gave a data item of `parsing: false`. A value of another class that
+/// user code wrote into a [StackEntry] reads through the face.
+Object? _stackTop(Object? stack) => stack is StackEntry
+    ? stack.top ?? stack.jsRead('_top')
+    : jsGetKey(stack, '_top');
+
+/// `stack._bottom` of the stack object of a bar (:222, :410), as
+/// [_stackTop].
+Object? _stackBottom(Object? stack) => stack is StackEntry
+    ? stack.bottom ?? stack.jsRead('_bottom')
+    : jsGetKey(stack, '_bottom');
 
 /// controller.bar.js:174 `barSign(size, vScale, actualBase)`.
 ///
@@ -340,20 +413,20 @@ double _barSign(double size, types.Scale vScale, Object? actualBase) {
 
 /// controller.bar.js:181 `borderProps(properties)`.
 ///
-/// `a > b` is [jsLessThan] with the operands in the other order.
+/// `base`, `x` and `y` are numbers: `a > b` compares two `double` values.
 ({String start, String end, bool reverse, String top, String bottom})
-_borderProps(AnyObject properties) {
+_borderProps(BarProperties properties) {
   bool reverse;
   String start;
   String end;
   String top;
   String bottom;
-  if (jsTruthy(properties['horizontal'])) {
-    reverse = jsLessThan(properties['x'], properties['base']);
+  if (properties.horizontal) {
+    reverse = properties.base > properties.x;
     start = 'left';
     end = 'right';
   } else {
-    reverse = jsLessThan(properties['base'], properties['y']);
+    reverse = properties.base < properties.y;
     start = 'bottom';
     end = 'top';
   }
@@ -391,10 +464,31 @@ bool _strictEquals(Object? a, Object? b) {
 /// The JS `value || 0` without `ToNumber`: a truthy value stays as it is.
 Object? _orZero(Object? value) => jsTruthy(value) ? value : 0.0;
 
+/// `res[edge] = true` of `setBorderSkipped` (:222, :226): the typed field of
+/// the edge `top`, `right`, `bottom` or `left`, else an extra of the edge
+/// name (the property key of a user `borderSkipped` value).
+void _skipEdge(BorderSkipped res, Object? edge) {
+  switch (jsToString(edge)) {
+    case 'top':
+      res.top = true;
+    case 'right':
+      res.right = true;
+    case 'bottom':
+      res.bottom = true;
+    case 'left':
+      res.left = true;
+    case final name:
+      res.jsWrite(name, true);
+  }
+}
+
 /// controller.bar.js:202 `setBorderSkipped(properties, options, stack,
 /// index)`.
 ///
-/// The property key of `res[edge]` is the `ToString` of the edge.
+/// `res` is a [BorderSkipped] (Chart.js ADR 0054 §9). The property key of
+/// `res[edge]` is the `ToString` of the edge ([_skipEdge]). The options are
+/// `properties.options || bars[i].options`: a [BarOptions] reads typed
+/// ([readOption]), and the options of a user element type read by name.
 ///
 /// `(stack._top || 0) === index` keeps a truthy `_top` as it is and
 /// compares it with `===` ([_strictEquals]). No arithmetic follows, thus
@@ -402,45 +496,40 @@ Object? _orZero(Object? value) => jsTruthy(value) ? value : 0.0;
 /// the dataset index 0 or 1. Only a user `_stacks` object in a `parsing:
 /// false` item can hold such a value.
 void _setBorderSkipped(
-  AnyObject properties,
+  BarProperties properties,
   Object? options,
   Object? stack,
   double index,
 ) {
-  var edge = jsGet(options, 'borderSkipped');
-  final res = <String, Object?>{};
+  var edge = readOption(options, OptionKey.borderSkipped);
+  final res = BorderSkipped();
 
   if (!jsTruthy(edge)) {
-    properties['borderSkipped'] = res;
+    properties.borderSkipped = res;
     return;
   }
 
   if (edge == true) {
-    properties['borderSkipped'] = <String, Object?>{
-      'top': true,
-      'right': true,
-      'bottom': true,
-      'left': true,
-    };
+    properties.borderSkipped = BorderSkipped.all();
     return;
   }
 
   final (:start, :end, :reverse, :top, :bottom) = _borderProps(properties);
 
   if (edge == 'middle' && jsTruthy(stack)) {
-    properties['enableBorderRadius'] = true;
-    if (_strictEquals(_orZero(jsGetKey(stack, '_top')), index)) {
+    properties.enableBorderRadius = true;
+    if (_strictEquals(_orZero(_stackTop(stack)), index)) {
       edge = top;
-    } else if (_strictEquals(_orZero(jsGetKey(stack, '_bottom')), index)) {
+    } else if (_strictEquals(_orZero(_stackBottom(stack)), index)) {
       edge = bottom;
     } else {
-      res[jsToString(_parseEdge(bottom, start, end, reverse))] = true;
+      _skipEdge(res, _parseEdge(bottom, start, end, reverse));
       edge = top;
     }
   }
 
-  res[jsToString(_parseEdge(edge, start, end, reverse))] = true;
-  properties['borderSkipped'] = res;
+  _skipEdge(res, _parseEdge(edge, start, end, reverse));
+  properties.borderSkipped = res;
 }
 
 /// controller.bar.js:234 `parseEdge(edge, a, b, reverse)`.
@@ -475,15 +564,23 @@ Object? _startEnd(Object? v, String start, String end) {
 
 /// controller.bar.js:252 `setInflateAmount(properties, {inflateAmount},
 /// ratio)`.
-void _setInflateAmount(AnyObject properties, Object? options, double ratio) {
-  final inflateAmount = jsGet(options, 'inflateAmount');
-  properties['inflateAmount'] = inflateAmount == 'auto'
-      ? (ratio == 1 ? 0.33 : 0.0)
-      // The element takes a number (Chart.js ADR 0017, section 5). Its only
-      // reader applies ToNumber (element.bar.js:127-140, :179-196).
-      : inflateAmount is num || identical(inflateAmount, undefined)
-      ? inflateAmount
-      : jsToNumber(inflateAmount);
+///
+/// The element takes a number (Chart.js ADR 0017, section 5). Its only
+/// reader applies ToNumber (element.bar.js:127-140, :179-196). An absent
+/// option gives the property `undefined`, through the face of the props.
+void _setInflateAmount(
+  BarProperties properties,
+  Object? options,
+  double ratio,
+) {
+  final inflateAmount = readOption(options, OptionKey.inflateAmount);
+  if (inflateAmount == 'auto') {
+    properties.inflateAmount = ratio == 1 ? 0.33 : 0.0;
+  } else if (identical(inflateAmount, undefined)) {
+    properties.jsWrite('inflateAmount', undefined);
+  } else {
+    properties.inflateAmount = jsToNumber(inflateAmount);
+  }
 }
 
 /// controller.bar.js:258 `BarController extends DatasetController`.
@@ -551,7 +648,7 @@ class BarController extends DatasetController {
   /// primitive/array data for float bars
   /// @protected
   @override
-  List<AnyObject> parsePrimitiveData(
+  List<ParsedItem> parsePrimitiveData(
     types.ChartMeta meta,
     List<Object?> data,
     double start,
@@ -566,7 +663,7 @@ class BarController extends DatasetController {
   /// data for float bars
   /// @protected
   @override
-  List<AnyObject> parseArrayData(
+  List<ParsedItem> parseArrayData(
     types.ChartMeta meta,
     List<Object?> data,
     double start,
@@ -594,8 +691,11 @@ class BarController extends DatasetController {
   /// but throw here. The cache of `resolveObjectKey` is private to
   /// `helpers.core.dart`, and the cast is the form of Chart.js ADR 0036,
   /// section 4.
+  ///
+  /// Each item is a [ParsedItem]. A `TypedDataItem` data item gives its
+  /// typed field for the default key ([dataItemValue]).
   @override
-  List<AnyObject> parseObjectData(
+  List<ParsedItem> parseObjectData(
     types.ChartMeta meta,
     List<Object?> data,
     double start,
@@ -603,23 +703,33 @@ class BarController extends DatasetController {
   ) {
     final iScale = meta.iScale;
     final vScale = meta.vScale;
-    final xAxisKey = valueOrDefault(jsGet(parsing, 'xAxisKey'), 'x');
-    final yAxisKey = valueOrDefault(jsGet(parsing, 'yAxisKey'), 'y');
+    final xAxisKey = valueOrDefault(
+      readOption(parsing, OptionKey.xAxisKey),
+      'x',
+    );
+    final yAxisKey = valueOrDefault(
+      readOption(parsing, OptionKey.yAxisKey),
+      'y',
+    );
     final iAxisKey = iScale!.axis == 'x' ? xAxisKey : yAxisKey;
     final vAxisKey = vScale!.axis == 'x' ? xAxisKey : yAxisKey;
-    final parsed = <AnyObject>[];
+    final iKey = AxisKey.of(iScale.axis);
+    final vKey = AxisKey.of(vScale.axis);
+    final parsed = <ParsedItem>[];
     for (var i = start, ilen = start + count; i < ilen; ++i) {
       final obj = jsGetIndex(data, i);
-      final item = <String, Object?>{};
-      item[iScale.axis] = iScale.parse(
-        resolveObjectKey(obj, iAxisKey! as String),
-        i,
-      );
+      final item = ParsedItem()
+        ..setValue(
+          iKey,
+          iScale.axis,
+          iScale.parse(dataItemValue(obj, iAxisKey! as String), i),
+        );
       parsed.add(
         _parseValue(
-          resolveObjectKey(obj, vAxisKey! as String),
+          dataItemValue(obj, vAxisKey! as String),
           item,
           vScale,
+          vKey,
           i,
         ),
       );
@@ -641,12 +751,18 @@ class BarController extends DatasetController {
     DatasetStack? stack,
   ) {
     super.updateRangeFromParsed(range, scale, parsed, stack);
-    final custom = jsGetKey(parsed, '_custom');
+    final custom = _customOf(parsed);
     if (jsTruthy(custom) && identical(scale, cachedMeta.vScale)) {
       // float bar: only one end of the bar is considered by `super`
-      range
-        ..min = jsMin(range.min, jsToNumber(jsGetKey(custom, 'min')))
-        ..max = jsMax(range.max, jsToNumber(jsGetKey(custom, 'max')));
+      if (custom is FloatingBar) {
+        range
+          ..min = jsMin(range.min, custom.min)
+          ..max = jsMax(range.max, custom.max);
+      } else {
+        range
+          ..min = jsMin(range.min, jsToNumber(_userCustomValue(custom, 'min')))
+          ..max = jsMax(range.max, jsToNumber(_userCustomValue(custom, 'max')));
+      }
     }
   }
 
@@ -670,18 +786,33 @@ class BarController extends DatasetController {
     final iScale = meta.iScale;
     final vScale = meta.vScale;
     final parsed = getParsed(index);
-    final custom = jsGetKey(parsed, '_custom');
-    final value = _isFloatBar(custom)
-        ? '[${jsToString(jsGetKey(custom, 'start'))}, '
-              '${jsToString(jsGetKey(custom, 'end'))}]'
-        : jsToString(vScale!.getLabelForValue(jsGetKey(parsed, vScale.axis)));
+    final custom = _customOf(parsed);
+    final String value;
+    if (_isFloatBar(custom)) {
+      final (start, end) = custom is FloatingBar
+          ? (custom.start, custom.end)
+          : (
+              _userCustomValue(custom, 'start'),
+              _userCustomValue(custom, 'end'),
+            );
+      value = '[${jsToString(start)}, ${jsToString(end)}]';
+    } else {
+      value = jsToString(
+        vScale!.getLabelForValue(_axisValueOf(parsed, vScale)),
+      );
+    }
 
     return (
-      label: jsToString(
-        iScale!.getLabelForValue(jsGetKey(parsed, iScale.axis)),
-      ),
+      label: jsToString(iScale!.getLabelForValue(_axisValueOf(parsed, iScale))),
       value: value,
     );
+  }
+
+  /// `parsed[scale.axis]`: [parsedValueOf] with the key of the axis of
+  /// [scale].
+  static Object? _axisValueOf(Object? parsed, types.Scale scale) {
+    final axis = scale.axis;
+    return parsedValueOf(parsed, AxisKey.of(axis), axis);
   }
 
   /// controller.bar.js:379 `initialize()`.
@@ -691,7 +822,8 @@ class BarController extends DatasetController {
 
     super.initialize();
 
-    // `const meta = this._cachedMeta; meta.stack = ...`.
+    // `const meta = this._cachedMeta; meta.stack = ...`: the dataset object
+    // of the user.
     cachedMeta.stack = jsGet(getDataset(), 'stack');
   }
 
@@ -722,41 +854,40 @@ class BarController extends DatasetController {
     final horizontal = vScale.isHorizontal();
     final ruler = _getRuler();
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
+    final vAxis = vScale.axis;
+    final vKey = AxisKey.of(vAxis);
 
     for (var i = start; i < start + count; i++) {
       final parsed = getParsed(i);
-      final vpixels = reset || isNullOrUndef(jsGetKey(parsed, vScale.axis))
+      final vpixels = reset || isNullOrUndef(parsedValueOf(parsed, vKey, vAxis))
           ? (size: double.nan, base: base, head: base, center: double.nan)
           : _calculateBarValuePixels(i);
       final ipixels = _calculateBarIndexPixels(i, ruler);
       final itemStacks = stacksOf(parsed);
-      // `(parsed._stacks || {})[vScale.axis]`: literal (Chart.js ADR 0036,
-      // section 8).
-      final stack = jsGetKey(
-        jsTruthy(itemStacks) ? itemStacks : <String, Object?>{},
-        vScale.axis,
-      );
+      // `(parsed._stacks || {})[vScale.axis]`: the read of the empty object
+      // gives `undefined` (Chart.js ADR 0036, section 8).
+      final stack = jsTruthy(itemStacks)
+          ? axisStackOf(itemStacks, vKey, vAxis)
+          : undefined;
 
-      final properties = <String, Object?>{
-        'horizontal': horizontal,
-        'base': vpixels.base,
+      final properties = BarProperties()
+        ..horizontal = horizontal
+        ..base = vpixels.base
         // :410 `!stack || isFloatBar(parsed._custom) || (index ===
         // stack._top || index === stack._bottom)`.
-        'enableBorderRadius':
+        ..enableBorderRadius =
             !jsTruthy(stack) ||
-            _isFloatBar(jsGetKey(parsed, '_custom')) ||
-            (index == jsGetKey(stack, '_top') ||
-                index == jsGetKey(stack, '_bottom')),
-        'x': horizontal ? vpixels.head : ipixels.center,
-        'y': horizontal ? ipixels.center : vpixels.head,
-        'height': horizontal ? ipixels.size : vpixels.size.abs(),
-        'width': horizontal ? vpixels.size.abs() : ipixels.size,
-      };
+            _isFloatBar(_customOf(parsed)) ||
+            (index == _stackTop(stack) || index == _stackBottom(stack))
+        ..x = horizontal ? vpixels.head : ipixels.center
+        ..y = horizontal ? ipixels.center : vpixels.head
+        ..height = horizontal ? ipixels.size : vpixels.size.abs()
+        ..width = horizontal ? vpixels.size.abs() : ipixels.size;
 
       if (includeOptions) {
         // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
         // shared options.
-        properties['options'] =
+        properties.options =
             sharedOptions ??
             resolveDataElementOptions(
               i,
@@ -765,7 +896,7 @@ class BarController extends DatasetController {
       }
       // `properties.options || bars[i].options`: the value is an options
       // object or absent.
-      final options = properties['options'] ?? bars[i.toInt()].options;
+      final options = properties.options ?? bars[i.toInt()].options;
       _setBorderSkipped(properties, options, stack, index);
       _setInflateAmount(properties, options, ruler.ratio);
       updateElement(bars[i.toInt()], i, properties, mode);
@@ -789,26 +920,32 @@ class BarController extends DatasetController {
     final iScale = cachedMeta.iScale;
     final metasets = iScale!
         .getMatchingVisibleMetas(type)
-        .where((meta) => jsTruthy(jsGet(meta.controller!.options, 'grouped')))
+        .where(
+          (meta) => jsTruthy(
+            readOption(meta.controller!.options, OptionKey.grouped),
+          ),
+        )
         .toList();
-    final stacked = jsGet(iScale.options, 'stacked');
+    final stacked = readOption(iScale.options, OptionKey.stacked);
     final stacks = <Object?>[];
     final currentParsed = cachedMeta.controller!.getParsed(
       dataIndex ?? double.nan,
     );
+    final iAxis = iScale.axis;
+    final iKey = AxisKey.of(iAxis);
     final iScaleValue = jsTruthy(currentParsed)
-        ? jsGetKey(currentParsed, iScale.axis)
+        ? parsedValueOf(currentParsed, iKey, iAxis)
         : currentParsed;
 
     // :443-450: `true`, or Dart `null` for the JS `undefined` of no return.
     bool? skipNull(types.ChartMeta meta) {
       // `Array.prototype.find` gives `undefined` when no item matches.
       final parsed = meta.parsed.firstWhere(
-        (item) => _strictEquals(jsGetKey(item, iScale.axis), iScaleValue),
+        (item) => _strictEquals(parsedValueOf(item, iKey, iAxis), iScaleValue),
         orElse: () => undefined,
       );
       final val = jsTruthy(parsed)
-          ? jsGetKey(parsed, meta.vScale!.axis)
+          ? _axisValueOf(parsed, meta.vScale!)
           : parsed;
 
       if (isNullOrUndef(val) || jsIsNaN(val)) {
@@ -874,11 +1011,22 @@ class BarController extends DatasetController {
   /// `shift()` on an empty array.
   String? getFirstScaleIdForIndexAxis() {
     final scales = chart.scales;
-    final indexScaleId = jsGet(chart.options, 'indexAxis');
+    final indexScaleId = readOption(chart.options, OptionKey.indexAxis);
+    // The `Object.keys` order of the scale ids of the user.
     return jsObjectKeys(
       scales,
     ).where((key) => scales[key]!.axis == indexScaleId).firstOrNull;
   }
+
+  /// `indexAxis === 'x' ? dataset.xAxisID : dataset.yAxisID` (:503-504,
+  /// :642): the axis id of the dataset object [dataset] of the user, read
+  /// by name.
+  Object? _indexAxisIdOf(Object? dataset) => jsGet(
+    dataset,
+    readOption(chart.options, OptionKey.indexAxis) == 'x'
+        ? 'xAxisID'
+        : 'yAxisID',
+  );
 
   /// controller.bar.js:499 `_getAxis()`.
   ///
@@ -894,6 +1042,7 @@ class BarController extends DatasetController {
   List<String> _getAxis() {
     final axis = <String, Object?>{};
     final firstScaleAxisId = getFirstScaleIdForIndexAxis();
+    // The data object of the user.
     final datasets = jsGet(chart.data, 'datasets');
     if (datasets is! List) {
       throw TypeError();
@@ -901,14 +1050,13 @@ class BarController extends DatasetController {
     for (final dataset in datasets) {
       axis[jsToString(
             valueOrDefault(
-              jsGet(chart.options, 'indexAxis') == 'x'
-                  ? jsGet(dataset, 'xAxisID')
-                  : jsGet(dataset, 'yAxisID'),
+              _indexAxisIdOf(dataset),
               firstScaleAxisId ?? undefined,
             ),
           )] =
           true;
     }
+    // `Object.keys(axis)`: the JS order of the axis ids.
     return jsObjectKeys(axis);
   }
 
@@ -943,22 +1091,26 @@ class BarController extends DatasetController {
 
   /// controller.bar.js:532 `_getRuler()`.
   /// @private
+  ///
+  /// `pixels` is a [Float64List]: an internal array of numbers that no user
+  /// code reaches (Chart.js ADR 0054 §8).
   _Ruler _getRuler() {
     final opts = options;
     final meta = cachedMeta;
     final iScale = meta.iScale;
-    final pixels = <double>[];
+    final ilen = meta.data.length;
+    final pixels = Float64List(ilen);
+    // Upstream reads `iScale.axis` in the loop: no read for no element.
+    final iKey = iScale == null ? AxisKey.other : AxisKey.of(iScale.axis);
 
-    for (var i = 0, ilen = meta.data.length; i < ilen; ++i) {
-      pixels.add(
-        iScale!.getPixelForValue(
-          jsGetKey(getParsed(i.toDouble()), iScale.axis),
-          i.toDouble(),
-        ),
+    for (var i = 0; i < ilen; ++i) {
+      pixels[i] = iScale!.getPixelForValue(
+        parsedValueOf(getParsed(i.toDouble()), iKey, iScale.axis),
+        i.toDouble(),
       );
     }
 
-    final barThickness = jsGet(opts, 'barThickness');
+    final barThickness = opts.readKey(OptionKey.barThickness);
     final min = jsTruthy(barThickness)
         ? barThickness
         : _computeMinSampleSize(meta);
@@ -970,12 +1122,12 @@ class BarController extends DatasetController {
       end: iScale.endPixel,
       stackCount: getStackCount(),
       scale: iScale,
-      grouped: jsGet(opts, 'grouped'),
+      grouped: opts.readKey(OptionKey.grouped),
       // bar thickness ratio used for non-grouped bars
       ratio: jsTruthy(barThickness)
           ? 1.0
-          : jsToNumber(jsGet(opts, 'categoryPercentage')) *
-                jsToNumber(jsGet(opts, 'barPercentage')),
+          : jsToNumber(opts.readKey(OptionKey.categoryPercentage)) *
+                jsToNumber(opts.readKey(OptionKey.barPercentage)),
     );
   }
 
@@ -999,13 +1151,15 @@ class BarController extends DatasetController {
     final vScale = cachedMeta.vScale;
     final stacked = cachedMeta.stacked;
     final datasetIndex = cachedMeta.index;
-    final baseValue = jsGet(options, 'base');
-    final minBarLength = jsToNumber(jsGet(options, 'minBarLength'));
+    final baseValue = options.readKey(OptionKey.base);
+    final minBarLength = jsToNumber(options.readKey(OptionKey.minBarLength));
     final actualBase = jsTruthy(baseValue) ? baseValue : 0.0;
     final parsed = getParsed(index);
-    final custom = jsGetKey(parsed, '_custom');
+    final custom = _customOf(parsed);
     final floating = _isFloatBar(custom);
-    var value = jsGetKey(parsed, vScale!.axis);
+    final vAxis = vScale!.axis;
+    final vKey = AxisKey.of(vAxis);
+    var value = parsedValueOf(parsed, vKey, vAxis);
     Object? start = 0.0;
     var length = jsTruthy(stacked)
         ? applyStack(vScale, parsed, stacked)
@@ -1019,14 +1173,21 @@ class BarController extends DatasetController {
     }
 
     if (floating) {
-      value = jsGetKey(custom, 'barStart');
-      length =
-          jsToNumber(jsGetKey(custom, 'barEnd')) -
-          jsToNumber(jsGetKey(custom, 'barStart'));
+      // `custom.barStart` and `custom.barEnd`, each read once: the reads of
+      // an object have no side effect.
+      final Object? barStart;
+      final Object? barEnd;
+      if (custom is FloatingBar) {
+        barStart = custom.barStart;
+        barEnd = custom.barEnd;
+      } else {
+        barStart = _userCustomValue(custom, 'barStart');
+        barEnd = _userCustomValue(custom, 'barEnd');
+      }
+      value = barStart;
+      length = jsToNumber(barEnd) - jsToNumber(barStart);
       // bars crossing origin are not stacked
-      if (value != 0 &&
-          sign(jsToNumber(value)) !=
-              sign(jsToNumber(jsGetKey(custom, 'barEnd')))) {
+      if (value != 0 && sign(jsToNumber(value)) != sign(jsToNumber(barEnd))) {
         start = 0.0;
       }
       start = jsAdd(start, value);
@@ -1061,13 +1222,16 @@ class BarController extends DatasetController {
       if (jsTruthy(stacked) && !floating) {
         // visual data coordinates after applying minBarLength
         // :615 `parsed._stacks[vScale.axis]._visualValues[datasetIndex] =
-        // ...`. DC writes `_visualValues` as a Map<String, Object?>
-        // (core.datasetController.js:170-173). Another value throws a
-        // TypeError at the cast, as the JS write into a primitive does.
-        (jsGetKey(jsGetKey(stacksOf(parsed), vScale.axis), '_visualValues')!
-                as AnyObject)[jsNumberToString(datasetIndex)] =
-            (vScale.getValueForPixel(head) ?? double.nan) -
-            (vScale.getValueForPixel(base) ?? double.nan);
+        // ...`. DC writes `_visualValues` as an IndexValues
+        // (core.datasetController.js:170-173). Another value is a user
+        // object: a Map takes the write, and another value throws a
+        // TypeError, as the JS write into a primitive does.
+        setStackValue(
+          visualValuesOf(axisStackOf(stacksOf(parsed), vKey, vAxis)),
+          datasetIndex,
+          (vScale.getValueForPixel(head) ?? double.nan) -
+              (vScale.getValueForPixel(base) ?? double.nan),
+        );
       }
     }
 
@@ -1090,9 +1254,12 @@ class BarController extends DatasetController {
   _BarPixels _calculateBarIndexPixels(double index, _Ruler ruler) {
     final scale = ruler.scale;
     final options = this.options;
-    final skipNull = jsGet(options, 'skipNull');
+    final skipNull = options.readKey(OptionKey.skipNull);
     final maxBarThickness = jsToNumber(
-      valueOrDefault(jsGet(options, 'maxBarThickness'), double.infinity),
+      valueOrDefault(
+        options.readKey(OptionKey.maxBarThickness),
+        double.infinity,
+      ),
     );
     double center;
     double size;
@@ -1101,7 +1268,7 @@ class BarController extends DatasetController {
       final stackCount = jsTruthy(skipNull)
           ? getStackCount(index)
           : ruler.stackCount;
-      final range = jsGet(options, 'barThickness') == 'flex'
+      final range = options.readKey(OptionKey.barThickness) == 'flex'
           ? _computeFlexCategoryTraits(
               index,
               ruler,
@@ -1114,9 +1281,7 @@ class BarController extends DatasetController {
               options,
               stackCount * axisCount,
             );
-      final axisID = jsGet(chart.options, 'indexAxis') == 'x'
-          ? jsGet(getDataset(), 'xAxisID')
-          : jsGet(getDataset(), 'yAxisID');
+      final axisID = _indexAxisIdOf(getDataset());
       final axes = _getAxis();
       final axisKey = valueOrDefault(
         axisID,
@@ -1135,7 +1300,7 @@ class BarController extends DatasetController {
     } else {
       // For non-grouped bar charts, exact pixel values are used
       center = scale.getPixelForValue(
-        jsGetKey(getParsed(index), scale.axis),
+        _axisValueOf(getParsed(index), scale),
         index,
       );
       size = jsMin(maxBarThickness, jsToNumber(ruler.min) * ruler.ratio);
@@ -1161,9 +1326,11 @@ class BarController extends DatasetController {
     final rects = meta.data;
     final ilen = rects.length;
     var i = 0;
+    // Upstream reads `vScale.axis` in the loop: no read for no element.
+    final vKey = vScale == null ? AxisKey.other : AxisKey.of(vScale.axis);
 
     for (; i < ilen; ++i) {
-      if (jsGetKey(getParsed(i.toDouble()), vScale!.axis) != null &&
+      if (parsedValueOf(getParsed(i.toDouble()), vKey, vScale!.axis) != null &&
           !jsTruthy(rects[i].hidden)) {
         (rects[i] as types.VisualElement).draw(ctx!);
       }

@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/controllers/controller.doughnut.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-parsed, the typed data of Chart.js ADR 0054.
 
 /// Port of `src/controllers/controller.doughnut.js`.
 ///
@@ -9,10 +10,13 @@
 ///
 /// - A parsed item and a data item are any value (Chart.js ADR 0036). A read
 ///   with a number index is [jsGetIndex], and the write `meta._parsed[i] =`
-///   is [jsSetIndex]. A read of a resolver or of an option object is [jsGet]
-///   (Chart.js ADR 0017, section 8). The one cast of a data value is the
-///   `data` List of [DoughnutController.parse] (Chart.js ADR 0036, section 5
-///   item 4).
+///   is [jsSetIndex]. The parsed items stay the upstream numbers (Chart.js
+///   ADR 0054 §8). The one cast of a data value is the `data` List of
+///   [DoughnutController.parse] (Chart.js ADR 0036, section 5 item 4).
+/// - The dataset, chart and legend options and the [ElementOptions] of an
+///   arc read typed ([OptionView.readKey], [readOption]). The data object
+///   and the dataset objects of the user read by name. The properties of an
+///   arc are an [ArcProperties] (Chart.js ADR 0054 §9).
 /// - A raw option value stays `Object?` until its upstream operator. Then
 ///   the port applies the runtime form of that operator: [jsToNumber],
 ///   [jsTruthy], [jsOrZero] before `Math.max`, or [jsAdd] (Chart.js ADR
@@ -36,6 +40,10 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs;
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+    show ElementOptions;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isObject, resolveObjectKey, toDimension, toPercentage, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
@@ -51,6 +59,9 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
+import 'package:flutter_chartjs_port/src/options/props.dart' show ArcProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         AnimationOptionsScope,
@@ -112,6 +123,14 @@ _RatioAndOffset _getRatioAndOffset(
   }
   return (ratioX: ratioX, ratioY: ratioY, offsetX: offsetX, offsetY: offsetY);
 }
+
+/// `value.length` of a value of the data object of the user: the length of
+/// a List or a String, else the read by name.
+Object? _lengthOf(Object? value) => switch (value) {
+  final List<Object?> list => list.length.toDouble(),
+  final String string => string.length.toDouble(),
+  _ => jsGet(value, 'length'),
+};
 
 /// controller.doughnut.js:37 `DoughnutController extends DatasetController`.
 class DoughnutController extends DatasetController {
@@ -268,6 +287,7 @@ class DoughnutController extends DatasetController {
   /// string throws a [TypeError] at the first item.
   @override
   void parse(double start, double count) {
+    // `this._cachedMeta`'s dataset: the dataset object of the user.
     final data = jsGet(getDataset(), 'data');
     final meta = cachedMeta;
 
@@ -281,7 +301,7 @@ class DoughnutController extends DatasetController {
       var getter = (double i) => jsToNumber(jsGetIndex(data, i));
 
       if (isObject(jsGetIndex(data, start))) {
-        final key = valueOrDefault(jsGet(parsing, 'key'), 'value');
+        final key = valueOrDefault(readOption(parsing, OptionKey.key), 'value');
         getter = (i) =>
             jsToNumber(resolveObjectKey(jsGetIndex(data, i), key! as String));
       }
@@ -297,7 +317,7 @@ class DoughnutController extends DatasetController {
   ///
   /// `this.options.rotation - 90` applies `ToNumber` to the raw option.
   double _getRotation() {
-    return toRadians(jsToNumber(jsGet(options, 'rotation')) - 90);
+    return toRadians(jsToNumber(options.readKey(OptionKey.rotation)) - 90);
   }
 
   /// controller.doughnut.js:179 `_getCircumference()`.
@@ -305,7 +325,7 @@ class DoughnutController extends DatasetController {
   ///
   /// `toRadians` multiplies the raw option: `ToNumber`.
   double _getCircumference() {
-    return toRadians(jsToNumber(jsGet(options, 'circumference')));
+    return toRadians(jsToNumber(options.readKey(OptionKey.circumference)));
   }
 
   /// controller.doughnut.js:187 `_getRotationExtents()`.
@@ -338,9 +358,9 @@ class DoughnutController extends DatasetController {
   }
 
   /// `this.chart.data.datasets.length`, read again at each call as the loop
-  /// conditions of upstream read it.
+  /// conditions of upstream read it. The data object of the user.
   double _datasetCount() =>
-      jsToNumber(jsGet(jsGet(chart.data, 'datasets'), 'length'));
+      jsToNumber(_lengthOf(jsGet(chart.data, 'datasets')));
 
   /// controller.doughnut.js:211 `update(mode)`.
   ///
@@ -359,13 +379,16 @@ class DoughnutController extends DatasetController {
     final arcs = meta.data;
     final spacing = jsAdd(
       getMaxBorderWidth() + getMaxOffset(arcs),
-      jsGet(options, 'spacing'),
+      options.readKey(OptionKey.spacing),
     );
     final maxSize = jsMax(
       (jsMin(chartArea.width, chartArea.height) - jsToNumber(spacing)) / 2,
       0,
     );
-    final cutout = jsMin(toPercentage(jsGet(options, 'cutout'), maxSize), 1);
+    final cutout = jsMin(
+      toPercentage(options.readKey(OptionKey.cutout), maxSize),
+      1,
+    );
     final chartWeight = _getRingWeight(index);
 
     // Compute the maximal rotation & circumference limits.
@@ -381,7 +404,10 @@ class DoughnutController extends DatasetController {
     final maxWidth = (chartArea.width - jsToNumber(spacing)) / ratioX;
     final maxHeight = (chartArea.height - jsToNumber(spacing)) / ratioY;
     final maxRadius = jsMax(jsMin(maxWidth, maxHeight) / 2, 0);
-    final outerRadius = toDimension(jsGet(options, 'radius'), maxRadius);
+    final outerRadius = toDimension(
+      options.readKey(OptionKey.radius),
+      maxRadius,
+    );
     final innerRadius = jsMax(outerRadius * cutout, 0);
     final radiusLength =
         (outerRadius - innerRadius) / _getVisibleDatasetWeightTotal();
@@ -408,7 +434,13 @@ class DoughnutController extends DatasetController {
     final opts = options;
     final meta = cachedMeta;
     final circumference = _getCircumference();
-    if ((reset && jsTruthy(jsGet(jsGet(opts, 'animation'), 'animateRotate'))) ||
+    if ((reset &&
+            jsTruthy(
+              readOption(
+                opts.readKey(OptionKey.animation),
+                OptionKey.animateRotate,
+              ),
+            )) ||
         !chart.getDataVisibility(i) ||
         jsGetIndex(meta.parsed, i) == null ||
         jsTruthy(meta.data[i.toInt()].hidden)) {
@@ -436,13 +468,14 @@ class DoughnutController extends DatasetController {
     final chart = this.chart;
     final chartArea = chart.chartArea!;
     final opts = chart.options;
-    final animationOpts = jsGet(opts, 'animation');
+    final animationOpts = readOption(opts, OptionKey.animation);
     final centerX = (chartArea.left + chartArea.right) / 2;
     final centerY = (chartArea.top + chartArea.bottom) / 2;
     final animateScale =
-        reset && jsTruthy(jsGet(animationOpts, 'animateScale'));
-    final innerRadius = animateScale ? 0.0 : this.innerRadius ?? undefined;
-    final outerRadius = animateScale ? 0.0 : this.outerRadius ?? undefined;
+        reset && jsTruthy(readOption(animationOpts, OptionKey.animateScale));
+    // Dart `null` is the `undefined` of the radius before the first update.
+    final innerRadius = animateScale ? 0.0 : this.innerRadius;
+    final outerRadius = animateScale ? 0.0 : this.outerRadius;
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     var startAngle = _getRotation();
     double i;
@@ -454,19 +487,26 @@ class DoughnutController extends DatasetController {
     for (i = start; i < start + count; ++i) {
       final circumference = _circumference(i, reset);
       final arc = arcs[i.toInt()];
-      final properties = <String, Object?>{
-        'x': centerX + (offsetX ?? double.nan),
-        'y': centerY + (offsetY ?? double.nan),
-        'startAngle': startAngle,
-        'endAngle': startAngle + circumference,
-        'circumference': circumference,
-        'outerRadius': outerRadius,
-        'innerRadius': innerRadius,
-      };
+      final properties = ArcProperties()
+        ..x = centerX + (offsetX ?? double.nan)
+        ..y = centerY + (offsetY ?? double.nan)
+        ..startAngle = startAngle
+        ..endAngle = startAngle + circumference
+        ..circumference = circumference;
+      if (outerRadius == null) {
+        properties.jsWrite('outerRadius', undefined);
+      } else {
+        properties.outerRadius = outerRadius;
+      }
+      if (innerRadius == null) {
+        properties.jsWrite('innerRadius', undefined);
+      } else {
+        properties.innerRadius = innerRadius;
+      }
       if (includeOptions) {
         // `sharedOptions || ...`: Dart `null` is the JS `undefined` of no
         // shared options.
-        properties['options'] =
+        properties.options =
             sharedOptions ??
             resolveDataElementOptions(i, arc.active ? 'active' : mode);
       }
@@ -523,7 +563,7 @@ class DoughnutController extends DatasetController {
     final labels = jsTruthy(labelsValue) ? labelsValue : const <Object?>[];
     final value = formatNumber(
       jsToNumber(jsGetIndex(meta.parsed, index)),
-      jsGet(chart.options, 'locale'),
+      readOption(chart.options, OptionKey.locale),
     );
 
     // `labels[index] || ''`
@@ -562,10 +602,10 @@ class DoughnutController extends DatasetController {
 
     for (var i = 0.0, ilen = arcs.length.toDouble(); i < ilen; ++i) {
       final options = controller!.resolveDataElementOptions(i);
-      if (jsGet(options, 'borderAlign') != 'inner') {
+      if (readOption(options, OptionKey.borderAlign) != 'inner') {
         max = jsMax(
-          jsMax(max, jsOrZero(jsGet(options, 'borderWidth'))),
-          jsOrZero(jsGet(options, 'hoverBorderWidth')),
+          jsMax(max, jsOrZero(readOption(options, OptionKey.borderWidth))),
+          jsOrZero(readOption(options, OptionKey.hoverBorderWidth)),
         );
       }
     }
@@ -574,15 +614,16 @@ class DoughnutController extends DatasetController {
 
   /// controller.doughnut.js:362 `getMaxOffset(arcs)`.
   ///
-  /// `options.offset || 0` in `Math.max` is [jsOrZero].
+  /// `options.offset || 0` in `Math.max` is [jsOrZero] of the raw value
+  /// ([ElementOptions.valueOf]).
   double getMaxOffset(List<types.Element> arcs) {
     var max = 0.0;
 
     for (var i = 0.0, ilen = arcs.length.toDouble(); i < ilen; ++i) {
       final options = resolveDataElementOptions(i);
       max = jsMax(
-        jsMax(max, jsOrZero(jsGet(options, 'offset'))),
-        jsOrZero(jsGet(options, 'hoverOffset')),
+        jsMax(max, jsOrZero(options.valueOf(OptionKey.offset))),
+        jsOrZero(options.valueOf(OptionKey.hoverOffset)),
       );
     }
     return max;
@@ -616,6 +657,7 @@ class DoughnutController extends DatasetController {
     return jsMax(
       jsToNumber(
         valueOrDefault(
+          // The dataset object of the user, in the data object of the user.
           jsGet(
             jsGetIndex(jsGet(chart.data, 'datasets'), datasetIndex),
             'weight',
@@ -648,17 +690,20 @@ class DoughnutController extends DatasetController {
 /// legend item is a Map with the keys in the order of the upstream literal.
 List<Object?> _generateLabels(types.Chart chart) {
   final data = chart.data;
-  final labelsOptions = jsGet(chart.legend!.options, 'labels');
-  final pointStyle = jsGet(labelsOptions, 'pointStyle');
-  final textAlign = jsGet(labelsOptions, 'textAlign');
-  final color = jsGet(labelsOptions, 'color');
-  final useBorderRadius = jsGet(labelsOptions, 'useBorderRadius');
-  final borderRadius = jsGet(labelsOptions, 'borderRadius');
-  if (jsTruthy(jsGet(jsGet(data, 'labels'), 'length')) &&
-      jsTruthy(jsGet(jsGet(data, 'datasets'), 'length'))) {
+  final labelsOptions = readOption(chart.legend!.options, OptionKey.labels);
+  final pointStyle = readOption(labelsOptions, OptionKey.pointStyle);
+  final textAlign = readOption(labelsOptions, OptionKey.textAlign);
+  final color = readOption(labelsOptions, OptionKey.color);
+  final useBorderRadius = readOption(labelsOptions, OptionKey.useBorderRadius);
+  final borderRadius = readOption(labelsOptions, OptionKey.borderRadius);
+  // The data object of the user. Upstream reads `data.labels` twice: a read
+  // of the data object has no side effect.
+  final labelsValue = jsGet(data, 'labels');
+  if (jsTruthy(_lengthOf(labelsValue)) &&
+      jsTruthy(_lengthOf(jsGet(data, 'datasets')))) {
     // `data.labels.map(...)`: a value without `map` throws a TypeError, as
     // the cast does.
-    final labels = jsGet(data, 'labels')! as List<Object?>;
+    final labels = labelsValue! as List<Object?>;
     return [
       for (final (i, label) in labels.indexed)
         _labelItem(
@@ -680,9 +725,10 @@ List<Object?> _generateLabels(types.Chart chart) {
 /// (controller.doughnut.js:99-119), with the values that it reads from
 /// `_generateLabels`.
 ///
-/// Each style value is a read [jsGet]: an absent key gives [undefined], for
-/// example `lineJoin` of the default `borderJoinStyle`. `index` is a number
-/// (Chart.js ADR 0045).
+/// Each style value is a raw read of the [ElementOptions] of the style
+/// ([readOption]): an absent key gives [undefined], for example `lineJoin`
+/// of the default `borderJoinStyle`. `index` is a number (Chart.js ADR
+/// 0045). The legend item stays a Map: the legend plugin reads Map items.
 Map<String, Object?> _labelItem(
   types.Chart chart,
   Object? label,
@@ -698,19 +744,21 @@ Map<String, Object?> _labelItem(
 
   return <String, Object?>{
     'text': label,
-    'fillStyle': jsGet(style, 'backgroundColor'),
+    'fillStyle': readOption(style, OptionKey.backgroundColor),
     'fontColor': color,
     'hidden': !chart.getDataVisibility(i),
-    'lineDash': jsGet(style, 'borderDash'),
-    'lineDashOffset': jsGet(style, 'borderDashOffset'),
-    'lineJoin': jsGet(style, 'borderJoinStyle'),
-    'lineWidth': jsGet(style, 'borderWidth'),
-    'strokeStyle': jsGet(style, 'borderColor'),
+    'lineDash': readOption(style, OptionKey.borderDash),
+    'lineDashOffset': readOption(style, OptionKey.borderDashOffset),
+    'lineJoin': readOption(style, OptionKey.borderJoinStyle),
+    'lineWidth': readOption(style, OptionKey.borderWidth),
+    'strokeStyle': readOption(style, OptionKey.borderColor),
     'textAlign': textAlign,
     'pointStyle': pointStyle,
     // `useBorderRadius && (borderRadius || style.borderRadius)`
     'borderRadius': jsTruthy(useBorderRadius)
-        ? (jsTruthy(borderRadius) ? borderRadius : jsGet(style, 'borderRadius'))
+        ? (jsTruthy(borderRadius)
+              ? borderRadius
+              : readOption(style, OptionKey.borderRadius))
         : useBorderRadius,
     // Extra data used for toggling the correct item
     'index': i,

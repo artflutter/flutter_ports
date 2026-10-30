@@ -968,9 +968,11 @@ final class _Run {
           '${_encOptions(sharedOptions)} include=$includeOptions',
         );
       case 'includeOptions':
+        // The shared options are an options object: an empty one stands
+        // for the `{}` of the generator.
         final value = controller(args[0]).includeOptions(
           args[1]! as String,
-          args[2] == true ? <String, Object?>{} : null,
+          args[2] == true ? GenericElementOptions() : null,
         );
         out.add('includeOptions ${_s(args[0])} ${args[1]} ${args[2]}: $value');
       case 'context':

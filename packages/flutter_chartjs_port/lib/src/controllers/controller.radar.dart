@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/controllers/controller.radar.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-parsed, the typed data of Chart.js ADR 0054.
 
 /// Port of `src/controllers/controller.radar.js`.
 ///
@@ -7,16 +8,17 @@
 /// position of its value on the radial linear scale, and closes the
 /// `LineElement` of the dataset through the points.
 ///
-/// - A parsed item is any value (Chart.js ADR 0036). The reads
-///   `parsed[vScale.axis]` and `this.getParsed(i).r` are [jsGetKey], and the
-///   label read `vScale.getLabels()[index]` is [jsGetIndex]. A read of a
-///   resolver is [jsGet] (Chart.js ADR 0017, section 8).
-/// - The controller reads the members of other modules through
-///   `lib/src/types/` and imports no concrete scale, element or chart
-///   module (Chart.js ADR 0028, section 1). The write `line.points =
-///   points` is a write by name through `types.PropertyAccess`. The scale
-///   cast to `types.RadialLinearScale` stands at the upstream call of
-///   `getPointPositionForValue` (:88).
+/// - The parsed data is typed (Chart.js ADR 0054 §8): the reads
+///   `parsed[vScale.axis]` and `this.getParsed(i).r` are [parsedValueOf],
+///   typed for a [ParsedItem]. A parsed item of another class reads by
+///   name. The label read `vScale.getLabels()[index]` is [jsGetIndex]. The
+///   dataset options read typed ([OptionView.readKey]).
+/// - The properties of the line are a [LineProperties], and those of a
+///   point a [PointProperties] (Chart.js ADR 0054 §9). The write
+///   `line.points = points` is the typed setter of a line of the exact class
+///   [LineElement], and a write by name through `types.PropertyAccess` for a
+///   line of another class. The scale cast to `types.RadialLinearScale`
+///   stands at the upstream call of `getPointPositionForValue` (:88).
 /// - The label of [RadarController.getLabelAndValue] is the raw label
 ///   (Chart.js ADR 0028, section 2).
 /// - [RadarController.jsClass] is the class as a value with the statics
@@ -29,15 +31,21 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, controllerArgs;
+    show DatasetController, controllerArgs, parsedValueOf;
+import 'package:flutter_chartjs_port/src/elements/element.line.dart'
+    show LineElement;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show parseObjectDataRadialScale;
+    show OptionView, parseObjectDataRadialScaleOf;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsGetKey;
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
+import 'package:flutter_chartjs_port/src/options/parsed.dart'
+    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/props.dart'
+    show LineProperties, PointProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         ChartOptionsScope,
@@ -46,7 +54,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         RadarControllerDatasetOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// controller.radar.js:4 `RadarController extends DatasetController`.
@@ -105,43 +112,50 @@ class RadarController extends DatasetController {
   ({Object? label, String value}) getLabelAndValue(double index) {
     final vScale = cachedMeta.vScale;
     final parsed = getParsed(index);
+    final label = jsGetIndex(vScale!.getLabels(), index);
+    final axis = vScale.axis;
 
     return (
-      label: jsGetIndex(vScale!.getLabels(), index),
-      value: jsToString(vScale.getLabelForValue(jsGetKey(parsed, vScale.axis))),
+      label: label,
+      value: jsToString(
+        vScale.getLabelForValue(parsedValueOf(parsed, AxisKey.of(axis), axis)),
+      ),
     );
   }
 
   /// controller.radar.js:49 `parseObjectData(meta, data, start, count)`.
   ///
   /// `_parseObjectDataRadialScale.bind(this)(meta, data, start, count)` is
-  /// [jsCall] with the controller as `thisArg`. The closure of
-  /// [parseObjectDataRadialScale] returns a `List<Map<String, Object?>>`:
-  /// the cast of the result list cannot throw.
+  /// the typed body [parseObjectDataRadialScaleOf] with the two values that
+  /// it reads from `meta` and `this`: `meta.iScale` first, then
+  /// `this._parsing`, in the upstream order. Each item is a [ParsedItem]
+  /// `{r}`.
   @override
-  List<AnyObject> parseObjectData(
+  List<ParsedItem> parseObjectData(
     types.ChartMeta meta,
     List<Object?> data,
     double start,
     double count,
   ) {
-    return jsCall(parseObjectDataRadialScale, [
-          meta,
-          data,
-          start,
-          count,
-        ], thisArg: this)!
-        as List<AnyObject>;
+    return parseObjectDataRadialScaleOf(
+      meta.iScale,
+      parsing,
+      data,
+      start,
+      count,
+    );
   }
 
   /// controller.radar.js:53 `update(mode)`.
   ///
   /// `meta.data || []`: `meta.data` is always a List. `line.points =
-  /// points` is a write by name through `types.PropertyAccess` (Chart.js
-  /// ADR 0028, section 1): the setter of `LineElement` copies the elements
-  /// into a typed list (row `adapt-line-points-elements`). The null check
-  /// throws a [TypeError] for a meta without a dataset element, as the JS
-  /// write into `undefined` does.
+  /// points` is the typed setter of a line of the exact class
+  /// [LineElement], and a write by name through `types.PropertyAccess` for
+  /// a line of another class (Chart.js ADR 0054 §9): the setter of
+  /// `LineElement` copies the elements into a typed list (row
+  /// `adapt-line-points-elements`). The null check throws a [TypeError] for
+  /// a meta without a dataset element, as the JS write into `undefined`
+  /// does.
   @override
   void update(String mode) {
     final meta = cachedMeta;
@@ -150,22 +164,26 @@ class RadarController extends DatasetController {
     final labels = meta.iScale!.getLabels();
 
     // Update Line
-    (line! as types.PropertyAccess)['points'] = points;
+    final target = line!;
+    if (identical(target.runtimeType, LineElement)) {
+      (target as LineElement).points = points;
+    } else {
+      _setProperty(target as types.PropertyAccess, 'points', points);
+    }
     // In resize mode only point locations change, so no need to set the
     // points or options.
     if (mode != 'resize') {
       final options = resolveDatasetElementOptions(mode);
-      if (!jsTruthy(jsGet(this.options, 'showLine'))) {
-        options['borderWidth'] = 0.0;
+      if (!jsTruthy(this.options.readKey(OptionKey.showLine))) {
+        options.storeKey(OptionKey.borderWidth, 0.0);
       }
 
-      final properties = <String, Object?>{
-        '_loop': true,
-        '_fullLoop': labels.length == points.length,
-        'options': options,
-      };
+      final properties = LineProperties()
+        ..loop = true
+        ..fullLoop = labels.length == points.length
+        ..options = options;
 
-      updateElement(line, null, properties, mode);
+      updateElement(target, null, properties, mode);
     }
 
     // Update Points
@@ -178,16 +196,17 @@ class RadarController extends DatasetController {
   /// stands in the loop, after the option resolution of :87, at the
   /// upstream call of `getPointPositionForValue` (:88, Chart.js ADR 0028,
   /// section 1). Thus an update with no point reads no member of the scale
-  /// and throws nothing, as upstream. `this.getParsed(i).r` is [jsGetKey]:
-  /// an absent key gives [undefined], and the scale gives NaN for it
-  /// (Chart.js ADR 0025, section 1). A JS `null` item throws a [TypeError],
-  /// as the JS property read of `null` does.
+  /// and throws nothing, as upstream. `this.getParsed(i).r` is
+  /// [parsedValueOf]: an absent key gives [undefined], and the scale gives
+  /// NaN for it (Chart.js ADR 0025, section 1). A JS `null` item throws a
+  /// [TypeError], as the JS property read of `null` does.
   ///
   /// In the mode `reset`, `x` and `y` are `xCenter` and `yCenter` of the
   /// scale. Before the first layout of the scale, both are Dart `null`, the
   /// JS `undefined` (scale.radialLinear.js:416-418). The element then gets
-  /// `undefined`, and `isNaN(undefined)` is true. Thus the next animation of
-  /// `x` and `y` starts at the target, as upstream (core.animation.js:32).
+  /// `undefined` through the face of the [PointProperties], and
+  /// `isNaN(undefined)` is true. Thus the next animation of `x` and `y`
+  /// starts at the target, as upstream (core.animation.js:32).
   @override
   void updateElements(
     List<types.Element> points,
@@ -207,21 +226,35 @@ class RadarController extends DatasetController {
       final radial = scale! as types.RadialLinearScale;
       final pointPosition = radial.getPointPositionForValue(
         i,
-        jsGetKey(getParsed(i), 'r'),
+        parsedValueOf(getParsed(i), AxisKey.r, 'r'),
       );
 
       final x = reset ? radial.xCenter : pointPosition.x;
       final y = reset ? radial.yCenter : pointPosition.y;
 
-      final properties = <String, Object?>{
-        'x': x ?? undefined,
-        'y': y ?? undefined,
-        'angle': pointPosition.angle,
-        'skip': x == null || x.isNaN || y == null || y.isNaN,
-        'options': options,
-      };
+      final properties = PointProperties();
+      if (x == null) {
+        properties.jsWrite('x', undefined);
+      } else {
+        properties.x = x;
+      }
+      if (y == null) {
+        properties.jsWrite('y', undefined);
+      } else {
+        properties.y = y;
+      }
+      properties
+        ..angle = pointPosition.angle
+        ..skip = x == null || x.isNaN || y == null || y.isNaN
+        ..options = options;
 
       updateElement(point, i, properties, mode);
     }
   }
+}
+
+/// The JS write `element[key] = value` by name into an element of a user
+/// element class (Chart.js ADR 0017, section 5).
+void _setProperty(types.PropertyAccess element, String key, Object? value) {
+  element[key] = value;
 }

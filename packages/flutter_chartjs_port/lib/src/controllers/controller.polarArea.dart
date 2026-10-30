@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 src/controllers/controller.polarArea.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-parsed, the typed data of Chart.js ADR 0054.
 
 /// Port of `src/controllers/controller.polarArea.js`.
 ///
@@ -8,10 +9,13 @@
 /// `updateElement`. The radius of each arc comes from the radial linear
 /// scale `r`.
 ///
-/// - A parsed item and a data item are any value (Chart.js ADR 0036). A read
-///   with a `String` key is [jsGetKey], and a read with a number index is
-///   [jsGetIndex]. A read of a resolver or of an option object is [jsGet]
-///   (Chart.js ADR 0017, section 8).
+/// - The parsed data is typed (Chart.js ADR 0054 §8): the read `parsed.r`
+///   is [parsedValueOf], typed for a [ParsedItem]. A parsed item of
+///   `parsing: false` is a data item of the user, read by name (Chart.js
+///   ADR 0036). A read with a number index is [jsGetIndex]. The chart, the
+///   dataset and the legend options and the [ArcOptions] of an element read
+///   typed ([readOption]). The properties of an arc are an
+///   [ArcProperties] (Chart.js ADR 0054 §9).
 /// - `getMinMax` keeps the raw parsed values of the range and compares them
 ///   with [jsLessThan], as upstream compares with `<` and `>` (Chart.js ADR
 ///   0036, section 7). Two string values compare as strings.
@@ -34,20 +38,26 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, controllerArgs;
+    show DatasetController, controllerArgs, parsedValueOf;
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+    show ArcOptions, ElementOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show parseObjectDataRadialScale;
+    show parseObjectDataRadialScaleOf, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
     show formatNumber;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show pi, toRadians;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax, jsMin;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsGetKey;
+    show jsGet, jsGetIndex;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
+import 'package:flutter_chartjs_port/src/options/parsed.dart'
+    show AxisKey, ParsedItem;
+import 'package:flutter_chartjs_port/src/options/props.dart' show ArcProperties;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         AngleLineOptionsScope,
@@ -62,7 +72,6 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         PolarAreaControllerDatasetOptionsScope,
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// controller.polarArea.js:38 `generateLabels(chart)` of
@@ -73,29 +82,42 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// `data.labels.length` of an absent `labels` throws a [TypeError], as in
 /// JavaScript. A `labels` value with a truthy `length` that is not a List
 /// throws a [TypeError] at the cast, where upstream throws at `map`.
+///
+/// `chart.data` is the data object of the user: its reads go by name. The
+/// legend options read typed ([readOption]).
 List<Object?> _generateLabels(types.Chart chart) {
   final data = chart.data;
-  if (jsTruthy(jsGet(jsGet(data, 'labels'), 'length')) &&
-      jsTruthy(jsGet(jsGet(data, 'datasets'), 'length'))) {
+  final labels = jsGet(data, 'labels');
+  if (jsTruthy(_lengthOf(labels)) &&
+      jsTruthy(_lengthOf(jsGet(data, 'datasets')))) {
     // `const {labels: {pointStyle, color}} = chart.legend.options;`
-    final labelsOptions = jsGet(chart.legend!.options, 'labels');
-    final pointStyle = jsGet(labelsOptions, 'pointStyle');
-    final color = jsGet(labelsOptions, 'color');
+    final labelsOptions = readOption(chart.legend!.options, OptionKey.labels);
+    final pointStyle = readOption(labelsOptions, OptionKey.pointStyle);
+    final color = readOption(labelsOptions, OptionKey.color);
 
     return [
-      for (final (i, label)
-          in (jsGet(data, 'labels')! as List<Object?>).indexed)
+      for (final (i, label) in (labels! as List<Object?>).indexed)
         _item(chart, label, i.toDouble(), pointStyle, color),
     ];
   }
   return <Object?>[];
 }
 
+/// `value.length` of a value of the data object of the user: the length of
+/// a List or a String, else the read by name.
+Object? _lengthOf(Object? value) => switch (value) {
+  final List<Object?> list => list.length.toDouble(),
+  final String string => string.length.toDouble(),
+  _ => jsGet(value, 'length'),
+};
+
 /// The callback of `data.labels.map` (controller.polarArea.js:43-59).
 ///
-/// The keys keep the order of the upstream literal. A key of `style` that is
-/// absent gives [jsGet]'s `undefined`, as the JS property read does. `index`
-/// is a `double` (Chart.js ADR 0045).
+/// The keys keep the order of the upstream literal: the legend item stays a
+/// Map (the legend plugin reads Map items). A key of `style` that is absent
+/// gives `undefined`, as the JS property read does: the style is an
+/// [ElementOptions], and [readOption] gives its raw value. `index` is a
+/// `double` (Chart.js ADR 0045).
 Map<String, Object?> _item(
   types.Chart chart,
   Object? label,
@@ -108,10 +130,10 @@ Map<String, Object?> _item(
 
   return <String, Object?>{
     'text': label,
-    'fillStyle': jsGet(style, 'backgroundColor'),
-    'strokeStyle': jsGet(style, 'borderColor'),
+    'fillStyle': readOption(style, OptionKey.backgroundColor),
+    'strokeStyle': readOption(style, OptionKey.borderColor),
     'fontColor': color,
-    'lineWidth': jsGet(style, 'borderWidth'),
+    'lineWidth': readOption(style, OptionKey.borderWidth),
     'pointStyle': pointStyle,
     'hidden': !chart.getDataVisibility(i),
 
@@ -125,7 +147,8 @@ Map<String, Object?> _item(
 ///
 /// `toggleDataVisibility(legendItem.index)` gives the raw item index to
 /// `types.Chart.toggleDataVisibility`, which writes the property key
-/// `ToString(index)` (core.controller.js:881-883), as upstream.
+/// `ToString(index)` (core.controller.js:881-883), as upstream. The legend
+/// item is a Map of the legend plugin, or a user object: a read by name.
 void _onClick(Object? e, Object? legendItem, types.LegendElement legend) {
   legend.chart.toggleDataVisibility(jsGet(legendItem, 'index'));
   legend.chart.update();
@@ -234,11 +257,12 @@ class PolarAreaController extends DatasetController {
     final meta = cachedMeta;
     final chart = this.chart;
     // `chart.data.labels || []`
-    final labelsValue = chart.data['labels'];
+    // The data object of the user.
+    final labelsValue = jsGet(chart.data, 'labels');
     final labels = jsTruthy(labelsValue) ? labelsValue : const <Object?>[];
     final value = formatNumber(
-      jsToNumber(jsGetKey(jsGetIndex(meta.parsed, index), 'r')),
-      jsGet(chart.options, 'locale'),
+      jsToNumber(parsedValueOf(jsGetIndex(meta.parsed, index), AxisKey.r, 'r')),
+      readOption(chart.options, OptionKey.locale),
     );
 
     // `labels[index] || ''`
@@ -249,22 +273,25 @@ class PolarAreaController extends DatasetController {
   /// controller.polarArea.js:109 `parseObjectData(meta, data, start,
   /// count)`.
   ///
-  /// `_parseObjectDataRadialScale.bind(this)(meta, data, start, count)`:
-  /// [jsCall] with this controller as `thisArg`. The function returns a
-  /// `List` of `{r}` objects, the type of the result of this method.
+  /// `_parseObjectDataRadialScale.bind(this)(meta, data, start, count)` is
+  /// the typed body [parseObjectDataRadialScaleOf] with the two values that
+  /// it reads from `meta` and `this`: `meta.iScale` first, then
+  /// `this._parsing`, in the upstream order. Each item is a [ParsedItem]
+  /// `{r}`.
   @override
-  List<AnyObject> parseObjectData(
+  List<ParsedItem> parseObjectData(
     types.ChartMeta meta,
     List<Object?> data,
     double start,
     double count,
   ) {
-    return jsCall(
-          parseObjectDataRadialScale,
-          [meta, data, start, count],
-          thisArg: this,
-        )!
-        as List<AnyObject>;
+    return parseObjectDataRadialScaleOf(
+      meta.iScale,
+      parsing,
+      data,
+      start,
+      count,
+    );
   }
 
   /// controller.polarArea.js:113 `update(mode)`.
@@ -302,7 +329,7 @@ class PolarAreaController extends DatasetController {
     // `return` that stops the loop.
     for (var index = 0; index < meta.data.length; index++) {
       // One read of `this.getParsed(index).r` (:128), as upstream.
-      final parsed = jsGetKey(getParsed(index.toDouble()), 'r');
+      final parsed = parsedValueOf(getParsed(index.toDouble()), AxisKey.r, 'r');
 
       if (!jsIsNaN(parsed) && chart.getDataVisibility(index.toDouble())) {
         if (jsLessThan(parsed, min)) {
@@ -336,9 +363,12 @@ class PolarAreaController extends DatasetController {
     );
 
     final outerRadius = jsMax(minSize / 2, 0);
+    final cutoutPercentage = readOption(opts, OptionKey.cutoutPercentage);
     final innerRadius = jsMax(
-      jsTruthy(jsGet(opts, 'cutoutPercentage'))
-          ? (outerRadius / 100) * jsToNumber(jsGet(opts, 'cutoutPercentage'))
+      // Upstream reads `opts.cutoutPercentage` twice: a read of the options
+      // has no side effect.
+      jsTruthy(cutoutPercentage)
+          ? (outerRadius / 100) * jsToNumber(cutoutPercentage)
           : 1.0,
       0,
     );
@@ -375,7 +405,7 @@ class PolarAreaController extends DatasetController {
     final reset = mode == 'reset';
     final chart = this.chart;
     final opts = chart.options;
-    final animationOpts = jsGet(opts, 'animation');
+    final animationOpts = readOption(opts, OptionKey.animation);
     // `const scale = this._cachedMeta.rScale;`
     final scale = cachedMeta.rScale! as types.RadialLinearScale;
     final centerX = scale.xCenter;
@@ -394,37 +424,58 @@ class PolarAreaController extends DatasetController {
       var startAngle = angle;
       var endAngle = angle + _computeAngle(i, mode, defaultAngle);
       var outerRadius = chart.getDataVisibility(i)
-          ? scale.getDistanceFromCenterForValue(jsGetKey(getParsed(i), 'r'))
+          ? scale.getDistanceFromCenterForValue(
+              parsedValueOf(getParsed(i), AxisKey.r, 'r'),
+            )
           : 0.0;
       angle = endAngle;
 
       if (reset) {
-        if (jsTruthy(jsGet(animationOpts, 'animateScale'))) {
+        if (jsTruthy(readOption(animationOpts, OptionKey.animateScale))) {
           outerRadius = 0;
         }
-        if (jsTruthy(jsGet(animationOpts, 'animateRotate'))) {
+        if (jsTruthy(readOption(animationOpts, OptionKey.animateRotate))) {
           startAngle = endAngle = datasetStartAngle;
         }
       }
 
-      final properties = <String, Object?>{
-        'x': centerX ?? undefined,
-        'y': centerY ?? undefined,
-        'innerRadius': 0.0,
-        'outerRadius': outerRadius,
-        'startAngle': startAngle,
-        'endAngle': endAngle,
-        'options': resolveDataElementOptions(i, arc.active ? 'active' : mode),
-      };
+      // `x` and `y` are `undefined` before the first layout of the scale:
+      // the face of the properties keeps it.
+      final properties = ArcProperties();
+      if (centerX == null) {
+        properties.jsWrite('x', undefined);
+      } else {
+        properties.x = centerX;
+      }
+      if (centerY == null) {
+        properties.jsWrite('y', undefined);
+      } else {
+        properties.y = centerY;
+      }
+      final elementOptions = resolveDataElementOptions(
+        i,
+        arc.active ? 'active' : mode,
+      );
+      properties
+        ..innerRadius = 0.0
+        ..outerRadius = outerRadius
+        ..startAngle = startAngle
+        ..endAngle = endAngle
+        ..options = elementOptions;
 
       // Arc defaults (`spacing=0`, `spacingMode='angular'`) can mask
       // polarArea-level values.
-      final elementOptions = properties['options']! as AnyObject;
-      if (elementOptions['spacing'] == 0) {
-        elementOptions['spacing'] = jsGet(options, 'spacing');
+      if (elementOptions.valueOf(OptionKey.spacing) == 0) {
+        elementOptions.storeKey(
+          OptionKey.spacing,
+          options.readKey(OptionKey.spacing),
+        );
       }
-      if (elementOptions['spacingMode'] == 'angular') {
-        elementOptions['spacingMode'] = jsGet(options, 'spacingMode');
+      if (elementOptions.valueOf(OptionKey.spacingMode) == 'angular') {
+        elementOptions.storeKey(
+          OptionKey.spacingMode,
+          options.readKey(OptionKey.spacingMode),
+        );
       }
 
       updateElement(arc, i, properties, mode);
@@ -442,7 +493,9 @@ class PolarAreaController extends DatasetController {
 
     // `meta.data.forEach((element, index) => ...)`.
     for (var index = 0; index < meta.data.length; index++) {
-      if (!jsIsNaN(jsGetKey(getParsed(index.toDouble()), 'r')) &&
+      if (!jsIsNaN(
+            parsedValueOf(getParsed(index.toDouble()), AxisKey.r, 'r'),
+          ) &&
           chart.getDataVisibility(index.toDouble())) {
         count++;
       }
@@ -455,12 +508,16 @@ class PolarAreaController extends DatasetController {
   /// @private
   ///
   /// `angle || defaultAngle` keeps a truthy raw `angle` option. `toRadians`
-  /// applies `ToNumber` to it at the arithmetic.
+  /// applies `ToNumber` to it at the arithmetic. The raw value is
+  /// [ElementOptions.valueOf], typed for an [ArcOptions].
   double _computeAngle(double index, String mode, double defaultAngle) {
     if (!chart.getDataVisibility(index)) {
       return 0;
     }
-    final angle = jsGet(resolveDataElementOptions(index, mode), 'angle');
+    final angle = resolveDataElementOptions(
+      index,
+      mode,
+    ).valueOf(OptionKey.angle);
     return toRadians(jsToNumber(jsTruthy(angle) ? angle : defaultAngle));
   }
 }
