@@ -1,2 +1,0 @@
-jsGet 2
-stringIndex 2

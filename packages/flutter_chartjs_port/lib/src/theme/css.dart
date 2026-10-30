@@ -7,7 +7,10 @@
 ///   a raw Map theme of `compile.dart`. [colorToRgba] gives its `rgba()`
 ///   string through `themeColorToRgba`, the string that the compiled theme
 ///   holds for the token.
-/// - [fontSpecOf] gives the `FontSpec` Map of a `TextStyle`.
+/// - [fontSpecOf] gives the `FontSpec` Map of a `TextStyle`, the font token
+///   of a raw Map theme. [fontScopeOf] gives the same keys and values as a
+///   typed `FontSpecScope` (Chart.js ADR 0054 §7), the font of the typed
+///   API.
 ///
 /// `theme_data.dart` converts the tokens of `ChartThemeData` with these
 /// functions. The typed API of Chart.js ADR 0052 converts its values with the
@@ -22,6 +25,8 @@ library;
 import 'dart:ui' show Color, ColorSpace, FontStyle;
 
 import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show FontSpecScope;
 import 'package:flutter_chartjs_port/src/theme/compile.dart'
     show RawThemeColor, themeColorToRgba;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -92,6 +97,28 @@ AnyObject? fontSpecOf(TextStyle? font) {
     'weight': ?font.fontWeight?.value.toDouble(),
     'lineHeight': ?font.height,
   };
+}
+
+/// The `FontSpec` of [font] as a typed `FontSpecScope` (Chart.js ADR 0054
+/// §7), or Dart `null`: the keys and the values of [fontSpecOf] in the same
+/// order. Each call gives a new scope.
+FontSpecScope? fontScopeOf(TextStyle? font) {
+  if (font == null) return null;
+  final names = [
+    ?font.fontFamily,
+    ...?font.fontFamilyFallback,
+  ].where((name) => name.isNotEmpty);
+  final scope = FontSpecScope();
+  if (names.isNotEmpty) scope.family = names.map(_familyName).join(', ');
+  if (font.fontSize case final size?) scope.size = size;
+  if (font.fontStyle case final fontStyle?) {
+    scope.style = fontStyle == FontStyle.italic ? 'italic' : 'normal';
+  }
+  if (font.fontWeight case final weight?) {
+    scope.weight = weight.value.toDouble();
+  }
+  if (font.height case final height?) scope.lineHeight = height;
+  return scope;
 }
 
 /// The CSS form of the family [name] in a family list.

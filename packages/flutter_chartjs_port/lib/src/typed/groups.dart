@@ -16,7 +16,19 @@ import 'dart:ui' show Color;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, ValueChanged, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/theme/css.dart' show fontSpecOf;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        AnimationOptionsScope,
+        FillerOptionsScope,
+        InteractionOptionsScope,
+        LegendLabelOptionsScope,
+        LegendOptionsScope,
+        TitleOptionsScope,
+        TooltipCallbacksScope,
+        TooltipOptionsScope;
+import 'package:flutter_chartjs_port/src/theme/css.dart' show fontScopeOf;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show ChartAnimationDetails, ChartLegendEventDetails, ChartTooltipItem;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
@@ -174,35 +186,37 @@ final class ChartLegend with Diagnosticable {
   }
 }
 
-/// The `legend` Map of [legend] (Chart.js ADR 0052, section 2). The
-/// handlers lower to trampolines that call the handler of the newest
-/// config of [lowering].
+/// The `legend` scope of [legend] (Chart.js ADR 0052, section 2; Chart.js
+/// ADR 0054 §7). The handlers lower to trampolines that call the handler of
+/// the newest config of [lowering].
 @internal
-Map<String, Object?> lowerLegend(
+LegendOptionsScope lowerLegend(
   ChartLegend legend,
   ChartConfigLowering lowering,
 ) {
-  final labels = <String, Object?>{
-    'color': ?colorValue(legend.labelColor),
-    'font': ?fontSpecOf(legend.labelFont),
-    'boxWidth': ?legend.boxWidth,
-    'boxHeight': ?legend.boxHeight,
-    'padding': ?legend.labelPadding,
-    'usePointStyle': ?legend.usePointStyle,
-  };
-  return mergeExtra(<String, Object?>{
-    'display': ?legend.display,
-    'position': ?legend.position?.name,
-    'align': ?legend.align?.name,
-    'reverse': ?legend.reverse,
-    if (labels.isNotEmpty) 'labels': labels,
-    if (legend.onClick != null)
-      'onClick': legendTrampoline(() => lowering.config.legend?.onClick),
-    if (legend.onHover != null)
-      'onHover': legendTrampoline(() => lowering.config.legend?.onHover),
-    if (legend.onLeave != null)
-      'onLeave': legendTrampoline(() => lowering.config.legend?.onLeave),
-  }, legend.extra);
+  final labels = LegendLabelOptionsScope();
+  put(labels, OptionKey.color, colorValue(legend.labelColor));
+  put(labels, OptionKey.font, fontScopeOf(legend.labelFont));
+  put(labels, OptionKey.boxWidth, legend.boxWidth);
+  put(labels, OptionKey.boxHeight, legend.boxHeight);
+  put(labels, OptionKey.padding, legend.labelPadding);
+  put(labels, OptionKey.usePointStyle, legend.usePointStyle);
+  final scope = LegendOptionsScope();
+  put(scope, OptionKey.display, legend.display);
+  put(scope, OptionKey.position, legend.position?.name);
+  put(scope, OptionKey.align, legend.align?.name);
+  put(scope, OptionKey.reverse, legend.reverse);
+  if (labels.ownKeyCount != 0) scope.labels = labels;
+  if (legend.onClick != null) {
+    scope.onClick = legendTrampoline(() => lowering.config.legend?.onClick);
+  }
+  if (legend.onHover != null) {
+    scope.onHover = legendTrampoline(() => lowering.config.legend?.onHover);
+  }
+  if (legend.onLeave != null) {
+    scope.onLeave = legendTrampoline(() => lowering.config.legend?.onLeave);
+  }
+  return mergeExtra(scope, legend.extra);
 }
 
 /// A title or a subtitle: the options of the title plugin,
@@ -310,19 +324,20 @@ final class ChartTitle with Diagnosticable {
   }
 }
 
-/// The `title` or `subtitle` Map of [title].
+/// The `title` or `subtitle` scope of [title].
 @internal
-Map<String, Object?> lowerTitle(ChartTitle title) =>
-    mergeExtra(<String, Object?>{
-      'display': ?title.display,
-      'text': ?title.text,
-      'color': ?colorValue(title.color),
-      'font': ?fontSpecOf(title.font),
-      'align': ?title.align?.name,
-      'position': ?title.position?.name,
-      'padding': ?paddingValue(title.padding),
-      'fullSize': ?title.fullSize,
-    }, title.extra);
+TitleOptionsScope lowerTitle(ChartTitle title) {
+  final scope = TitleOptionsScope();
+  put(scope, OptionKey.display, title.display);
+  put(scope, OptionKey.text, title.text);
+  put(scope, OptionKey.color, colorValue(title.color));
+  put(scope, OptionKey.font, fontScopeOf(title.font));
+  put(scope, OptionKey.align, title.align?.name);
+  put(scope, OptionKey.position, title.position?.name);
+  put(scope, OptionKey.padding, paddingScope(title.padding));
+  put(scope, OptionKey.fullSize, title.fullSize);
+  return mergeExtra(scope, title.extra);
+}
 
 /// The tooltip: the options of the tooltip plugin,
 /// `options.plugins.tooltip` (`docs/configuration/tooltip.md`).
@@ -491,41 +506,45 @@ final class ChartTooltip with Diagnosticable {
   }
 }
 
-/// The `tooltip` Map of [tooltip]. The text callbacks lower to trampolines
-/// that call the callback of the newest config of [lowering].
+/// The `tooltip` scope of [tooltip]. The text callbacks lower to
+/// trampolines that call the callback of the newest config of [lowering].
 @internal
-Map<String, Object?> lowerTooltip(
+TooltipOptionsScope lowerTooltip(
   ChartTooltip tooltip,
   ChartConfigLowering lowering,
 ) {
-  final callbacks = <String, Object?>{
-    if (tooltip.titleText != null)
-      'title': tooltipItemsTrampoline(
-        () => lowering.config.tooltip?.titleText,
-      ),
-    if (tooltip.labelText != null)
-      'label': tooltipItemTrampoline(() => lowering.config.tooltip?.labelText),
-    if (tooltip.footerText != null)
-      'footer': tooltipItemsTrampoline(
-        () => lowering.config.tooltip?.footerText,
-      ),
-  };
-  return mergeExtra(<String, Object?>{
-    'enabled': ?tooltip.enabled,
-    'mode': ?tooltip.mode?.name,
-    'intersect': ?tooltip.intersect,
-    'backgroundColor': ?colorValue(tooltip.backgroundColor),
-    'titleColor': ?colorValue(tooltip.titleColor),
-    'titleFont': ?fontSpecOf(tooltip.titleFont),
-    'bodyColor': ?colorValue(tooltip.bodyColor),
-    'bodyFont': ?fontSpecOf(tooltip.bodyFont),
-    'footerColor': ?colorValue(tooltip.footerColor),
-    'footerFont': ?fontSpecOf(tooltip.footerFont),
-    'padding': ?paddingValue(tooltip.padding),
-    'cornerRadius': ?tooltip.cornerRadius,
-    'displayColors': ?tooltip.displayColors,
-    if (callbacks.isNotEmpty) 'callbacks': callbacks,
-  }, tooltip.extra);
+  final callbacks = TooltipCallbacksScope();
+  if (tooltip.titleText != null) {
+    callbacks.title = tooltipItemsTrampoline(
+      () => lowering.config.tooltip?.titleText,
+    );
+  }
+  if (tooltip.labelText != null) {
+    callbacks.label = tooltipItemTrampoline(
+      () => lowering.config.tooltip?.labelText,
+    );
+  }
+  if (tooltip.footerText != null) {
+    callbacks.footer = tooltipItemsTrampoline(
+      () => lowering.config.tooltip?.footerText,
+    );
+  }
+  final scope = TooltipOptionsScope();
+  put(scope, OptionKey.enabled, tooltip.enabled);
+  put(scope, OptionKey.mode, tooltip.mode?.name);
+  put(scope, OptionKey.intersect, tooltip.intersect);
+  put(scope, OptionKey.backgroundColor, colorValue(tooltip.backgroundColor));
+  put(scope, OptionKey.titleColor, colorValue(tooltip.titleColor));
+  put(scope, OptionKey.titleFont, fontScopeOf(tooltip.titleFont));
+  put(scope, OptionKey.bodyColor, colorValue(tooltip.bodyColor));
+  put(scope, OptionKey.bodyFont, fontScopeOf(tooltip.bodyFont));
+  put(scope, OptionKey.footerColor, colorValue(tooltip.footerColor));
+  put(scope, OptionKey.footerFont, fontScopeOf(tooltip.footerFont));
+  put(scope, OptionKey.padding, paddingScope(tooltip.padding));
+  put(scope, OptionKey.cornerRadius, tooltip.cornerRadius);
+  put(scope, OptionKey.displayColors, tooltip.displayColors);
+  if (callbacks.ownKeyCount != 0) scope.callbacks = callbacks;
+  return mergeExtra(scope, tooltip.extra);
 }
 
 /// The interaction: which elements an event hits, `options.interaction`
@@ -594,14 +613,15 @@ final class ChartInteraction with Diagnosticable {
   }
 }
 
-/// The `interaction` Map of [interaction].
+/// The `interaction` scope of [interaction].
 @internal
-Map<String, Object?> lowerInteraction(ChartInteraction interaction) =>
-    mergeExtra(<String, Object?>{
-      'mode': ?interaction.mode?.name,
-      'intersect': ?interaction.intersect,
-      'includeInvisible': ?interaction.includeInvisible,
-    }, interaction.extra);
+InteractionOptionsScope lowerInteraction(ChartInteraction interaction) {
+  final scope = InteractionOptionsScope();
+  put(scope, OptionKey.mode, interaction.mode?.name);
+  put(scope, OptionKey.intersect, interaction.intersect);
+  put(scope, OptionKey.includeInvisible, interaction.includeInvisible);
+  return mergeExtra(scope, interaction.extra);
+}
 
 /// The filler: the options of the filler plugin, `options.plugins.filler`
 /// (`docs/charts/area.md`, "Configuration").
@@ -650,12 +670,13 @@ final class ChartFiller with Diagnosticable {
   }
 }
 
-/// The `filler` Map of [filler].
+/// The `filler` scope of [filler].
 @internal
-Map<String, Object?> lowerFiller(ChartFiller filler) => mergeExtra(
-  <String, Object?>{'propagate': ?filler.propagate},
-  filler.extra,
-);
+FillerOptionsScope lowerFiller(ChartFiller filler) {
+  final scope = FillerOptionsScope();
+  put(scope, OptionKey.propagate, filler.propagate);
+  return mergeExtra(scope, filler.extra);
+}
 
 /// The animation of the chart: `options.animation`
 /// (`docs/configuration/animations.md`).
@@ -766,26 +787,29 @@ final class ChartAnimation with Diagnosticable {
 }
 
 /// The `animation` option of [animation]: `false` for
-/// [ChartAnimation.none], else a Map. The callbacks lower to trampolines
-/// that call the callback of the newest config of [lowering].
+/// [ChartAnimation.none], else an `AnimationOptionsScope`. The callbacks
+/// lower to trampolines that call the callback of the newest config of
+/// [lowering].
 @internal
 Object lowerAnimation(
   ChartAnimation animation,
   ChartConfigLowering lowering,
 ) {
   if (animation._none) return false;
-  return mergeExtra(<String, Object?>{
-    'duration': ?millisecondsOf(animation.duration),
-    'delay': ?millisecondsOf(animation.delay),
-    'easing': ?animation.easing?.name,
-    'loop': ?animation.loop,
-    if (animation.onProgress != null)
-      'onProgress': animationTrampoline(
-        () => lowering.config.animation?.onProgress,
-      ),
-    if (animation.onComplete != null)
-      'onComplete': animationTrampoline(
-        () => lowering.config.animation?.onComplete,
-      ),
-  }, animation.extra);
+  final scope = AnimationOptionsScope();
+  put(scope, OptionKey.duration, millisecondsOf(animation.duration));
+  put(scope, OptionKey.delay, millisecondsOf(animation.delay));
+  put(scope, OptionKey.easing, animation.easing?.name);
+  put(scope, OptionKey.loop, animation.loop);
+  if (animation.onProgress != null) {
+    scope.onProgress = animationTrampoline(
+      () => lowering.config.animation?.onProgress,
+    );
+  }
+  if (animation.onComplete != null) {
+    scope.onComplete = animationTrampoline(
+      () => lowering.config.animation?.onComplete,
+    );
+  }
+  return mergeExtra(scope, animation.extra);
 }

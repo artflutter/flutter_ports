@@ -17,7 +17,18 @@ import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Scale;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show JsFunction;
-import 'package:flutter_chartjs_port/src/theme/css.dart' show fontSpecOf;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        AngleLineOptionsScope,
+        GridLineOptionsScope,
+        PointLabelOptionsScope,
+        ScaleOptionsScope,
+        ScaleTitleOptionsScope,
+        TickOptionsScope,
+        TimeScaleTimeOptionsScope;
+import 'package:flutter_chartjs_port/src/theme/css.dart' show fontScopeOf;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
     show AxisTickInfo;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
@@ -109,9 +120,9 @@ abstract final class ChartAxis with Diagnosticable {
   /// The scale type: the id of the scale class.
   String get _type;
 
-  /// Adds the keys of the axis class to [map], after the keys of
+  /// Writes the keys of the axis class into [scope], after the keys of
   /// [ChartAxis] before [ticks].
-  void _lowerOwn(Map<String, Object?> map);
+  void _lowerOwn(ScaleOptionsScope scope);
 
   /// The properties of the axis, in parameter order.
   List<TypedProperty> get _props;
@@ -149,24 +160,21 @@ abstract final class ChartAxis with Diagnosticable {
   }
 }
 
-/// The axis Map of [axis] (Chart.js ADR 0052, section 2): `type` first,
-/// then the keys in parameter order, and [ChartAxis.extra] last.
+/// The axis scope of [axis] (Chart.js ADR 0052, section 2; Chart.js ADR
+/// 0054 §7): a new `ScaleOptionsScope` with `type` first, then the keys in
+/// parameter order, and [ChartAxis.extra] last.
 @internal
-Map<String, Object?> lowerAxis(ChartAxis axis) {
-  final map = <String, Object?>{
-    'type': axis._type,
-    'display': ?axis.display,
-    'position': ?axis.position?.name,
-    'reverse': ?axis.reverse,
-    'stacked': ?axis.stacked,
-  };
-  axis._lowerOwn(map);
-  map.addAll({
-    'ticks': ?_lowerTicks(axis.ticks),
-    'grid': ?_lowerGrid(axis.grid),
-    'title': ?_lowerTitle(axis.title),
-  });
-  return mergeExtra(map, axis.extra);
+ScaleOptionsScope lowerAxis(ChartAxis axis) {
+  final scope = ScaleOptionsScope()..type = axis._type;
+  put(scope, OptionKey.display, axis.display);
+  put(scope, OptionKey.position, axis.position?.name);
+  put(scope, OptionKey.reverse, axis.reverse);
+  put(scope, OptionKey.stacked, axis.stacked);
+  axis._lowerOwn(scope);
+  if (_lowerTicks(axis.ticks) case final ticks?) scope.ticks = ticks;
+  if (_lowerGrid(axis.grid) case final grid?) scope.grid = grid;
+  if (_lowerTitle(axis.title) case final title?) scope.title = title;
+  return mergeExtra(scope, axis.extra);
 }
 
 /// A category axis: the scale type `category` (`docs/axes/cartesian/
@@ -229,8 +237,11 @@ final class CategoryAxis extends ChartAxis {
   String get _type => 'category';
 
   @override
-  void _lowerOwn(Map<String, Object?> map) =>
-      map.addAll({'labels': ?labels, 'min': ?min, 'max': ?max});
+  void _lowerOwn(ScaleOptionsScope scope) {
+    put(scope, OptionKey.labels, labels);
+    put(scope, OptionKey.min, min);
+    put(scope, OptionKey.max, max);
+  }
 
   @override
   List<TypedProperty> get _props => [
@@ -323,13 +334,13 @@ final class LinearAxis extends ChartAxis {
   String get _type => 'linear';
 
   @override
-  void _lowerOwn(Map<String, Object?> map) => map.addAll({
-    'min': ?min,
-    'max': ?max,
-    'suggestedMin': ?suggestedMin,
-    'suggestedMax': ?suggestedMax,
-    'beginAtZero': ?beginAtZero,
-  });
+  void _lowerOwn(ScaleOptionsScope scope) {
+    put(scope, OptionKey.min, min);
+    put(scope, OptionKey.max, max);
+    put(scope, OptionKey.suggestedMin, suggestedMin);
+    put(scope, OptionKey.suggestedMax, suggestedMax);
+    put(scope, OptionKey.beginAtZero, beginAtZero);
+  }
 
   @override
   List<TypedProperty> get _props => [
@@ -407,12 +418,12 @@ final class LogarithmicAxis extends ChartAxis {
   String get _type => 'logarithmic';
 
   @override
-  void _lowerOwn(Map<String, Object?> map) => map.addAll({
-    'min': ?min,
-    'max': ?max,
-    'suggestedMin': ?suggestedMin,
-    'suggestedMax': ?suggestedMax,
-  });
+  void _lowerOwn(ScaleOptionsScope scope) {
+    put(scope, OptionKey.min, min);
+    put(scope, OptionKey.max, max);
+    put(scope, OptionKey.suggestedMin, suggestedMin);
+    put(scope, OptionKey.suggestedMax, suggestedMax);
+  }
 
   @override
   List<TypedProperty> get _props => [
@@ -434,12 +445,13 @@ base mixin _TimeOptions on ChartAxis {
   TimeUnit? get unit;
   String? get tooltipFormat;
 
-  void _lowerTime(Map<String, Object?> map) {
-    final time = <String, Object?>{
-      'unit': ?unit,
-      'tooltipFormat': ?tooltipFormat,
-    };
-    map.addAll({'min': ?min, 'max': ?max, if (time.isNotEmpty) 'time': time});
+  void _lowerTime(ScaleOptionsScope scope) {
+    final time = TimeScaleTimeOptionsScope();
+    put(time, OptionKey.unit, unit);
+    put(time, OptionKey.tooltipFormat, tooltipFormat);
+    put(scope, OptionKey.min, min);
+    put(scope, OptionKey.max, max);
+    if (time.ownKeyCount != 0) scope.time = time;
   }
 
   List<TypedProperty> get _timeProps => [
@@ -531,7 +543,7 @@ final class TimeAxis extends ChartAxis with _TimeOptions {
   String get _type => 'time';
 
   @override
-  void _lowerOwn(Map<String, Object?> map) => _lowerTime(map);
+  void _lowerOwn(ScaleOptionsScope scope) => _lowerTime(scope);
 
   @override
   List<TypedProperty> get _props => [
@@ -612,7 +624,7 @@ final class TimeSeriesAxis extends ChartAxis with _TimeOptions {
   String get _type => 'timeseries';
 
   @override
-  void _lowerOwn(Map<String, Object?> map) => _lowerTime(map);
+  void _lowerOwn(ScaleOptionsScope scope) => _lowerTime(scope);
 
   @override
   List<TypedProperty> get _props => [
@@ -749,28 +761,24 @@ final class RadialLinearAxis extends ChartAxis {
   String get _type => 'radialLinear';
 
   @override
-  void _lowerOwn(Map<String, Object?> map) {
-    final pointLabels = <String, Object?>{
-      'display': ?pointLabelsDisplay,
-      'color': ?colorValue(pointLabelsColor),
-      'font': ?fontSpecOf(pointLabelsFont),
-      'padding': ?pointLabelsPadding,
-    };
-    final angleLines = <String, Object?>{
-      'display': ?angleLinesDisplay,
-      'color': ?colorValue(angleLinesColor),
-      'lineWidth': ?angleLinesLineWidth,
-    };
-    map.addAll({
-      'min': ?min,
-      'max': ?max,
-      'suggestedMin': ?suggestedMin,
-      'suggestedMax': ?suggestedMax,
-      'beginAtZero': ?beginAtZero,
-      'startAngle': ?startAngle,
-      if (pointLabels.isNotEmpty) 'pointLabels': pointLabels,
-      if (angleLines.isNotEmpty) 'angleLines': angleLines,
-    });
+  void _lowerOwn(ScaleOptionsScope scope) {
+    final pointLabels = PointLabelOptionsScope();
+    put(pointLabels, OptionKey.display, pointLabelsDisplay);
+    put(pointLabels, OptionKey.color, colorValue(pointLabelsColor));
+    put(pointLabels, OptionKey.font, fontScopeOf(pointLabelsFont));
+    put(pointLabels, OptionKey.padding, pointLabelsPadding);
+    final angleLines = AngleLineOptionsScope();
+    put(angleLines, OptionKey.display, angleLinesDisplay);
+    put(angleLines, OptionKey.color, colorValue(angleLinesColor));
+    put(angleLines, OptionKey.lineWidth, angleLinesLineWidth);
+    put(scope, OptionKey.min, min);
+    put(scope, OptionKey.max, max);
+    put(scope, OptionKey.suggestedMin, suggestedMin);
+    put(scope, OptionKey.suggestedMax, suggestedMax);
+    put(scope, OptionKey.beginAtZero, beginAtZero);
+    put(scope, OptionKey.startAngle, startAngle);
+    if (pointLabels.ownKeyCount != 0) scope.pointLabels = pointLabels;
+    if (angleLines.ownKeyCount != 0) scope.angleLines = angleLines;
   }
 
   @override
@@ -899,20 +907,24 @@ final class AxisTicks with Diagnosticable {
   }
 }
 
-/// The `ticks` Map of [ticks], or Dart `null`.
-Map<String, Object?>? _lowerTicks(AxisTicks? ticks) {
+/// The `ticks` scope of [ticks], or Dart `null`.
+TickOptionsScope? _lowerTicks(AxisTicks? ticks) {
   if (ticks == null) return null;
   final format = ticks.format;
-  return mergeExtra(<String, Object?>{
-    'display': ?ticks.display,
-    'color': ?colorValue(ticks.color),
-    'font': ?fontSpecOf(ticks.font),
-    'padding': ?ticks.padding,
-    'stepSize': ?ticks.stepSize,
-    'maxRotation': ?ticks.maxRotation,
-    'autoSkip': ?ticks.autoSkip,
-    'callback': ?(format == null ? null : _tickCallback(format)),
-  }, ticks.extra);
+  final scope = TickOptionsScope();
+  put(scope, OptionKey.display, ticks.display);
+  put(scope, OptionKey.color, colorValue(ticks.color));
+  put(scope, OptionKey.font, fontScopeOf(ticks.font));
+  put(scope, OptionKey.padding, ticks.padding);
+  put(scope, OptionKey.stepSize, ticks.stepSize);
+  put(scope, OptionKey.maxRotation, ticks.maxRotation);
+  put(scope, OptionKey.autoSkip, ticks.autoSkip);
+  put(
+    scope,
+    OptionKey.callback,
+    format == null ? null : _tickCallback(format),
+  );
+  return mergeExtra(scope, ticks.extra);
 }
 
 /// The tick `callback` of [format]: a [JsFunction], so that the scale is
@@ -1015,17 +1027,18 @@ final class AxisGrid with Diagnosticable {
   }
 }
 
-/// The `grid` Map of [grid], or Dart `null`.
-Map<String, Object?>? _lowerGrid(AxisGrid? grid) => grid == null
-    ? null
-    : mergeExtra(<String, Object?>{
-        'display': ?grid.display,
-        'color': ?colorValue(grid.color),
-        'lineWidth': ?grid.lineWidth,
-        'drawOnChartArea': ?grid.drawOnChartArea,
-        'drawTicks': ?grid.drawTicks,
-        'offset': ?grid.offset,
-      }, grid.extra);
+/// The `grid` scope of [grid], or Dart `null`.
+GridLineOptionsScope? _lowerGrid(AxisGrid? grid) {
+  if (grid == null) return null;
+  final scope = GridLineOptionsScope();
+  put(scope, OptionKey.display, grid.display);
+  put(scope, OptionKey.color, colorValue(grid.color));
+  put(scope, OptionKey.lineWidth, grid.lineWidth);
+  put(scope, OptionKey.drawOnChartArea, grid.drawOnChartArea);
+  put(scope, OptionKey.drawTicks, grid.drawTicks);
+  put(scope, OptionKey.offset, grid.offset);
+  return mergeExtra(scope, grid.extra);
+}
 
 /// The title of an axis: `title` (`docs/axes/labelling.md`, "Scale
 /// Title Configuration").
@@ -1111,14 +1124,15 @@ final class AxisTitle with Diagnosticable {
   }
 }
 
-/// The `title` Map of [title], or Dart `null`.
-Map<String, Object?>? _lowerTitle(AxisTitle? title) => title == null
-    ? null
-    : mergeExtra(<String, Object?>{
-        'display': ?title.display,
-        'text': ?title.text,
-        'color': ?colorValue(title.color),
-        'font': ?fontSpecOf(title.font),
-        'align': ?title.align?.name,
-        'padding': ?paddingValue(title.padding),
-      }, title.extra);
+/// The `title` scope of [title], or Dart `null`.
+ScaleTitleOptionsScope? _lowerTitle(AxisTitle? title) {
+  if (title == null) return null;
+  final scope = ScaleTitleOptionsScope();
+  put(scope, OptionKey.display, title.display);
+  put(scope, OptionKey.text, title.text);
+  put(scope, OptionKey.color, colorValue(title.color));
+  put(scope, OptionKey.font, fontScopeOf(title.font));
+  put(scope, OptionKey.align, title.align?.name);
+  put(scope, OptionKey.padding, paddingScope(title.padding));
+  return mergeExtra(scope, title.extra);
+}

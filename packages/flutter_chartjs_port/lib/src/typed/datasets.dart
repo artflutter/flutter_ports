@@ -14,6 +14,17 @@ import 'dart:ui' show Color;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, Key, immutable;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionKey, OptionScope;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        BarControllerDatasetOptionsScope,
+        BubbleControllerDatasetOptionsScope,
+        DoughnutControllerDatasetOptionsScope,
+        GenericDatasetOptionsScope,
+        LineControllerDatasetOptionsScope,
+        PolarAreaControllerDatasetOptionsScope,
+        RadarControllerDatasetOptionsScope;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart' show ChartScript;
 import 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartKind, IndexAxis;
@@ -190,9 +201,9 @@ abstract final class Dataset with Diagnosticable {
   /// The `data` option: the data List or the points List of the app.
   List<Object?>? get _data;
 
-  /// Adds the keys of the dataset class to [map], after the keys of
+  /// Writes the keys of the dataset class into [scope], after the keys of
   /// [Dataset].
-  void _lowerOwn(Map<String, Object?> map);
+  void _lowerOwn(OptionScope scope);
 
   /// The properties of the dataset, in parameter order.
   List<TypedProperty> get _props;
@@ -230,8 +241,10 @@ abstract final class Dataset with Diagnosticable {
   }
 }
 
-/// The dataset Map of [dataset] in a chart of the type [chartType]
-/// (Chart.js ADR 0052, section 2).
+/// The dataset scope of [dataset] in a chart of the type [chartType]
+/// (Chart.js ADR 0052, section 2; Chart.js ADR 0054 §7): a new typed scope
+/// of the dataset kind of the controller of the dataset
+/// ([_datasetScopeOf]).
 ///
 /// The keys come in parameter order. The key `type` comes first, and only
 /// when the controller of the dataset is not the controller of the chart:
@@ -240,32 +253,58 @@ abstract final class Dataset with Diagnosticable {
 /// chart lowers to the form of `docs/charts/mixed.md`. [Dataset.extra]
 /// merges last. [Dataset.key] does not lower.
 @internal
-Map<String, Object?> lowerDataset(Dataset dataset, ChartKind chartType) {
+OptionScope lowerDataset(Dataset dataset, ChartKind chartType) {
   final kind = dataset._kind;
-  final map = <String, Object?>{
-    if (kind != chartType) 'type': kind.name,
-    'label': ?dataset.label,
-    'data': ?dataset._data,
-    'hidden': ?dataset.hidden,
-    'order': ?dataset.order,
-    'backgroundColor': ?colorOption(
+  final scope = _datasetScopeOf(kind);
+  if (kind != chartType) put(scope, OptionKey.type, kind.name);
+  put(scope, OptionKey.label, dataset.label);
+  put(scope, OptionKey.data, dataset._data);
+  put(scope, OptionKey.hidden, dataset.hidden);
+  put(scope, OptionKey.order, dataset.order);
+  put(
+    scope,
+    OptionKey.backgroundColor,
+    colorOption(
       dataset.backgroundColor,
       dataset.backgroundColors,
       dataset.backgroundColorFor,
     ),
-    'borderColor': ?colorOption(
+  );
+  put(
+    scope,
+    OptionKey.borderColor,
+    colorOption(
       dataset.borderColor,
       dataset.borderColors,
       dataset.borderColorFor,
     ),
-    'borderWidth': ?dataset.borderWidth,
-    'hoverBackgroundColor': ?colorValue(dataset.hoverBackgroundColor),
-    'hoverBorderColor': ?colorValue(dataset.hoverBorderColor),
-    'hoverBorderWidth': ?dataset.hoverBorderWidth,
-  };
-  dataset._lowerOwn(map);
-  return mergeExtra(map, dataset.extra);
+  );
+  put(scope, OptionKey.borderWidth, dataset.borderWidth);
+  put(
+    scope,
+    OptionKey.hoverBackgroundColor,
+    colorValue(dataset.hoverBackgroundColor),
+  );
+  put(scope, OptionKey.hoverBorderColor, colorValue(dataset.hoverBorderColor));
+  put(scope, OptionKey.hoverBorderWidth, dataset.hoverBorderWidth);
+  dataset._lowerOwn(scope);
+  return mergeExtra(scope, dataset.extra);
 }
+
+/// A new dataset scope of the controller [kind] (Chart.js ADR 0054 §3): the
+/// dataset kind of `index.d.ts` of each controller (`line` and `scatter`
+/// share `LineControllerDatasetOptions`, `pie` and `doughnut` share
+/// `DoughnutControllerDatasetOptions`).
+OptionScope _datasetScopeOf(ChartKind kind) => switch (kind) {
+  ChartKind.bar => BarControllerDatasetOptionsScope(),
+  ChartKind.line || ChartKind.scatter => LineControllerDatasetOptionsScope(),
+  ChartKind.bubble => BubbleControllerDatasetOptionsScope(),
+  ChartKind.pie ||
+  ChartKind.doughnut => DoughnutControllerDatasetOptionsScope(),
+  ChartKind.polarArea => PolarAreaControllerDatasetOptionsScope(),
+  ChartKind.radar => RadarControllerDatasetOptionsScope(),
+  _ => GenericDatasetOptionsScope(),
+};
 
 /// A dataset of a bar chart: the bar controller (`docs/charts/bar.md`).
 ///
@@ -446,19 +485,19 @@ final class BarDataset extends Dataset {
   List<Object?>? get _data => data ?? points;
 
   @override
-  void _lowerOwn(Map<String, Object?> map) => map.addAll({
-    'xAxisID': ?xAxisID,
-    'yAxisID': ?yAxisID,
-    'stack': ?stack,
-    'indexAxis': ?indexAxis?.name,
-    'borderRadius': ?borderRadius,
-    'barPercentage': ?barPercentage,
-    'categoryPercentage': ?categoryPercentage,
-    'barThickness': ?barThickness,
-    'maxBarThickness': ?maxBarThickness,
-    'minBarLength': ?minBarLength,
-    'grouped': ?grouped,
-  });
+  void _lowerOwn(OptionScope scope) {
+    put(scope, OptionKey.xAxisID, xAxisID);
+    put(scope, OptionKey.yAxisID, yAxisID);
+    put(scope, OptionKey.stack, stack);
+    put(scope, OptionKey.indexAxis, indexAxis?.name);
+    put(scope, OptionKey.borderRadius, borderRadius);
+    put(scope, OptionKey.barPercentage, barPercentage);
+    put(scope, OptionKey.categoryPercentage, categoryPercentage);
+    put(scope, OptionKey.barThickness, barThickness);
+    put(scope, OptionKey.maxBarThickness, maxBarThickness);
+    put(scope, OptionKey.minBarLength, minBarLength);
+    put(scope, OptionKey.grouped, grouped);
+  }
 
   @override
   List<TypedProperty> get _props => [
@@ -502,23 +541,35 @@ base mixin _LineStyle on Dataset {
   Color? get pointHoverBackgroundColor;
   Color? get pointHoverBorderColor;
 
-  /// Adds the keys of the line style to [map].
-  void _lowerLine(Map<String, Object?> map) => map.addAll({
-    'fill': ?fill?.optionValue,
-    'tension': ?tension,
-    'borderDash': ?numberList(borderDash),
-    'spanGaps': ?spanGaps,
-    'showLine': ?showLine,
-    'stepped': ?stepped,
-    'pointRadius': ?pointRadius,
-    'pointHoverRadius': ?pointHoverRadius,
-    'pointStyle': ?pointStyle?.optionValue,
-    'pointBackgroundColor': ?colorValue(pointBackgroundColor),
-    'pointBorderColor': ?colorValue(pointBorderColor),
-    'pointBorderWidth': ?pointBorderWidth,
-    'pointHoverBackgroundColor': ?colorValue(pointHoverBackgroundColor),
-    'pointHoverBorderColor': ?colorValue(pointHoverBorderColor),
-  });
+  /// Writes the keys of the line style into [scope].
+  void _lowerLine(OptionScope scope) {
+    put(scope, OptionKey.fill, fill?.optionValue);
+    put(scope, OptionKey.tension, tension);
+    put(scope, OptionKey.borderDash, numberList(borderDash));
+    put(scope, OptionKey.spanGaps, spanGaps);
+    put(scope, OptionKey.showLine, showLine);
+    put(scope, OptionKey.stepped, stepped);
+    put(scope, OptionKey.pointRadius, pointRadius);
+    put(scope, OptionKey.pointHoverRadius, pointHoverRadius);
+    put(scope, OptionKey.pointStyle, pointStyle?.optionValue);
+    put(
+      scope,
+      OptionKey.pointBackgroundColor,
+      colorValue(pointBackgroundColor),
+    );
+    put(scope, OptionKey.pointBorderColor, colorValue(pointBorderColor));
+    put(scope, OptionKey.pointBorderWidth, pointBorderWidth);
+    put(
+      scope,
+      OptionKey.pointHoverBackgroundColor,
+      colorValue(pointHoverBackgroundColor),
+    );
+    put(
+      scope,
+      OptionKey.pointHoverBorderColor,
+      colorValue(pointHoverBorderColor),
+    );
+  }
 
   /// The properties of the line style, in parameter order.
   List<TypedProperty> get _lineProps => [
@@ -778,14 +829,12 @@ final class LineDataset extends Dataset with _LineStyle {
   List<Object?>? get _data => data ?? points;
 
   @override
-  void _lowerOwn(Map<String, Object?> map) {
-    map.addAll({
-      'xAxisID': ?xAxisID,
-      'yAxisID': ?yAxisID,
-      'stack': ?stack,
-      'indexAxis': ?indexAxis?.name,
-    });
-    _lowerLine(map);
+  void _lowerOwn(OptionScope scope) {
+    put(scope, OptionKey.xAxisID, xAxisID);
+    put(scope, OptionKey.yAxisID, yAxisID);
+    put(scope, OptionKey.stack, stack);
+    put(scope, OptionKey.indexAxis, indexAxis?.name);
+    _lowerLine(scope);
   }
 
   @override
@@ -1002,9 +1051,11 @@ final class ScatterDataset extends Dataset with _LineStyle {
   List<Object?>? get _data => data ?? points;
 
   @override
-  void _lowerOwn(Map<String, Object?> map) {
-    map.addAll({'xAxisID': ?xAxisID, 'yAxisID': ?yAxisID, 'stack': ?stack});
-    _lowerLine(map);
+  void _lowerOwn(OptionScope scope) {
+    put(scope, OptionKey.xAxisID, xAxisID);
+    put(scope, OptionKey.yAxisID, yAxisID);
+    put(scope, OptionKey.stack, stack);
+    _lowerLine(scope);
   }
 
   @override
@@ -1128,13 +1179,13 @@ final class BubbleDataset extends Dataset {
   List<Object?>? get _data => points;
 
   @override
-  void _lowerOwn(Map<String, Object?> map) => map.addAll({
-    'xAxisID': ?xAxisID,
-    'yAxisID': ?yAxisID,
-    'radius': ?radius,
-    'hoverRadius': ?hoverRadius,
-    'pointStyle': ?pointStyle?.optionValue,
-  });
+  void _lowerOwn(OptionScope scope) {
+    put(scope, OptionKey.xAxisID, xAxisID);
+    put(scope, OptionKey.yAxisID, yAxisID);
+    put(scope, OptionKey.radius, radius);
+    put(scope, OptionKey.hoverRadius, hoverRadius);
+    put(scope, OptionKey.pointStyle, pointStyle?.optionValue);
+  }
 
   @override
   List<TypedProperty> get _props => [
@@ -1165,17 +1216,17 @@ base mixin _ArcStyle on Dataset {
   ChartLength? get cutout;
   ChartLength? get radius;
 
-  /// Adds the keys of the arcs to [map].
-  void _lowerArc(Map<String, Object?> map) => map.addAll({
-    'offset': ?offset,
-    'hoverOffset': ?hoverOffset,
-    'spacing': ?spacing,
-    'weight': ?weight,
-    'circumference': ?circumference,
-    'rotation': ?rotation,
-    'cutout': ?cutout?.optionValue,
-    'radius': ?radius?.optionValue,
-  });
+  /// Writes the keys of the arcs into [scope].
+  void _lowerArc(OptionScope scope) {
+    put(scope, OptionKey.offset, offset);
+    put(scope, OptionKey.hoverOffset, hoverOffset);
+    put(scope, OptionKey.spacing, spacing);
+    put(scope, OptionKey.weight, weight);
+    put(scope, OptionKey.circumference, circumference);
+    put(scope, OptionKey.rotation, rotation);
+    put(scope, OptionKey.cutout, cutout?.optionValue);
+    put(scope, OptionKey.radius, radius?.optionValue);
+  }
 
   /// The properties of the arcs, in parameter order.
   List<TypedProperty> get _arcProps => [
@@ -1348,7 +1399,7 @@ final class PieDataset extends Dataset with _ArcStyle {
   List<Object?>? get _data => data;
 
   @override
-  void _lowerOwn(Map<String, Object?> map) => _lowerArc(map);
+  void _lowerOwn(OptionScope scope) => _lowerArc(scope);
 
   @override
   List<TypedProperty> get _props => [
@@ -1492,7 +1543,7 @@ final class DoughnutDataset extends Dataset with _ArcStyle {
   List<Object?>? get _data => data;
 
   @override
-  void _lowerOwn(Map<String, Object?> map) => _lowerArc(map);
+  void _lowerOwn(OptionScope scope) => _lowerArc(scope);
 
   @override
   List<TypedProperty> get _props => [
@@ -1596,11 +1647,11 @@ final class PolarAreaDataset extends Dataset {
   List<Object?>? get _data => data;
 
   @override
-  void _lowerOwn(Map<String, Object?> map) => map.addAll({
-    'offset': ?offset,
-    'hoverOffset': ?hoverOffset,
-    'spacing': ?spacing,
-  });
+  void _lowerOwn(OptionScope scope) {
+    put(scope, OptionKey.offset, offset);
+    put(scope, OptionKey.hoverOffset, hoverOffset);
+    put(scope, OptionKey.spacing, spacing);
+  }
 
   @override
   List<TypedProperty> get _props => [
@@ -1787,7 +1838,7 @@ final class RadarDataset extends Dataset with _LineStyle {
   List<Object?>? get _data => data;
 
   @override
-  void _lowerOwn(Map<String, Object?> map) => _lowerLine(map);
+  void _lowerOwn(OptionScope scope) => _lowerLine(scope);
 
   @override
   List<TypedProperty> get _props => [

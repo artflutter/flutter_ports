@@ -23,9 +23,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show readOption;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_webidl.dart' show canvasStyle;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show dispatchCanvasEvent, hasCanvasEventListener;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
@@ -128,7 +132,7 @@ final class ChartKeyboard {
     if (ctx == null || rect == null) return;
     ctx
       ..save()
-      ..strokeStyle = canvasStyle(chart.options['color'])
+      ..strokeStyle = canvasStyle(readOption(chart.options, OptionKey.color))
       ..lineWidth = 2
       ..setLineDash(const <double>[])
       ..strokeRect(rect.left, rect.top, rect.width, rect.height)
@@ -270,7 +274,7 @@ final class ChartKeyboard {
   /// The groups of section 2: the legend group when the legend shows hit
   /// boxes, then each visible dataset in index order.
   static List<int> _groups(Chart chart) {
-    final datasets = chart.data['datasets'];
+    final datasets = readOption(chart.data, OptionKey.datasets);
     final count = datasets is List ? datasets.length : 0;
     return [
       if (_legendBoxes(chart) != null) _legendGroup,
@@ -296,7 +300,7 @@ final class ChartKeyboard {
           ),
       ];
     }
-    final datasets = chart.data['datasets'];
+    final datasets = readOption(chart.data, OptionKey.datasets);
     if (datasets is! List ||
         group >= datasets.length ||
         !chart.isDatasetVisible(group.toDouble())) {
@@ -323,7 +327,8 @@ final class ChartKeyboard {
   /// hit box. A hidden legend keeps the hit boxes of its last fit.
   static List<AnyObject>? _legendBoxes(types.Chart chart) {
     final legend = chart.legend;
-    if (legend == null || !jsTruthy(jsGet(legend.options, 'display'))) {
+    if (legend == null ||
+        !jsTruthy(readOption(legend.options, OptionKey.display))) {
       return null;
     }
     final boxes = legend.legendHitBoxes;

@@ -10,9 +10,12 @@
 library;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show readOption;
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionKey, OptionScope;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartConfigurationScope;
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -27,16 +30,43 @@ final class _Absent {
 
 /// The two dataset keys that the colors plugin writes
 /// (plugin.colors.ts:36-37, 43, 49).
-const String _borderColor = 'borderColor';
+const OptionKey _borderColor = OptionKey.borderColor;
 
 /// See [_borderColor].
-const String _backgroundColor = 'backgroundColor';
+const OptionKey _backgroundColor = OptionKey.backgroundColor;
 
-/// The value of [key] in [dataset], or [_absent].
-Object? _read(AnyObject dataset, String key) {
-  final value = dataset[key];
-  if (value != null || dataset.containsKey(key)) return value;
+/// The value of [key] in [object], or [_absent]: the cell of a typed scope
+/// (the lowering of a typed config, Chart.js ADR 0054 §7), or the value of
+/// a Map of the app (the raw boundary, §5).
+Object? _read(AnyObject object, OptionKey key) {
+  if (object is OptionScope) {
+    final cell = object.ownCell(key);
+    return cell == null ? _absent : cell.raw;
+  }
+  final name = key.jsName;
+  final value = object[name];
+  if (value != null || object.containsKey(name)) return value;
   return _absent;
+}
+
+/// Writes [value] under [key] of [object], or deletes [key] for [_absent]:
+/// the cell of a typed scope, or a write into a Map of the app (a write into
+/// a user object, judge-c §3.3).
+void _write(AnyObject object, OptionKey key, Object? value) {
+  if (object is OptionScope) {
+    if (identical(value, _absent)) {
+      object.delete(key);
+    } else {
+      object.store(key, object.classifyName(key.jsName, value));
+    }
+    return;
+  }
+  final name = key.jsName;
+  if (identical(value, _absent)) {
+    object.remove(name);
+  } else {
+    object[name] = value;
+  }
 }
 
 /// One palette key of a dataset that the colors plugin wrote: the value
@@ -63,6 +93,12 @@ final class ChartThemeSwitch {
   /// The effective theme of the start or of the last switch.
   ChartThemeData? _applied;
 
+  /// The compiled theme of [_applied] (`compileThemeData`), or Dart `null`.
+  /// The switch compiles a theme once, when it becomes the applied theme
+  /// (judge-c §3.9: the state keeps the compiled theme of its current theme,
+  /// with no memo).
+  AnyObject? _compiled;
+
   /// The user `scales` object of the options, or [_absent].
   Object? _scales = _absent;
 
@@ -70,20 +106,24 @@ final class ChartThemeSwitch {
   /// its `borderColor` and its `backgroundColor`, for each dataset Map.
   final List<Object?> _before = [];
 
-  /// The palette keys that the colors plugin wrote, by dataset Map.
-  final Expando<Map<String, _Write>> _written = Expando<Map<String, _Write>>(
-    'ChartThemeSwitch',
-  );
+  /// The palette keys that the colors plugin wrote, by dataset object.
+  final Expando<Map<OptionKey, _Write>> _written =
+      Expando<Map<OptionKey, _Write>>('ChartThemeSwitch');
 
   /// The effective theme of the start or of the last switch, or Dart `null`.
   ChartThemeData? get applied => _applied;
 
   /// The theme of the root config of a new chart, before `new Chart`:
-  /// records [theme] as the applied theme and writes its compiled map under
-  /// `$theme` of [root], or removes the key when it compiles to Dart `null`.
-  void start(AnyObject root, ChartThemeData? theme) {
+  /// records [theme] as the applied theme and writes its compiled theme
+  /// under `$theme` of [root], or removes the key when it compiles to Dart
+  /// `null`. A new chart of the same theme keeps the compiled theme of the
+  /// state: it compiles only a new theme.
+  void start(ChartConfigurationScope root, ChartThemeData? theme) {
+    if (theme != _applied || _compiled == null) {
+      _compiled = compileThemeData(theme);
+    }
     _applied = theme;
-    _writeTheme(root, compileThemeData(theme));
+    _writeTheme(root, _compiled);
   }
 
   /// Records the user `scales` object of [options] (the identity, or
@@ -91,7 +131,7 @@ final class ChartThemeSwitch {
   /// options object (step 3). `initOptions` then replaces the object in the
   /// options with its merged copy (core.config.js:115-120).
   void recordUserScales(Object? options) {
-    _scales = options is AnyObject ? _read(options, 'scales') : _absent;
+    _scales = options is AnyObject ? _read(options, OptionKey.scales) : _absent;
   }
 
   /// Steps 1 to 4 of the switch to [theme] on [chart], whose raw config is
@@ -113,25 +153,19 @@ final class ChartThemeSwitch {
   ///    `'none'` or `'resize'`.
   String? apply(
     types.Chart chart,
-    AnyObject root,
+    ChartConfigurationScope root,
     ChartThemeData? theme, {
     required bool reducedMotion,
   }) {
     final old = _applied;
     if (theme == old) return null;
+    final oldCompiled = _compiled;
     _applied = theme;
-    final compiled = compileThemeData(theme);
-    if (compiled == null && compileThemeData(old) == null) return null;
+    final compiled = _compiled = compileThemeData(theme);
+    if (compiled == null && oldCompiled == null) return null;
     _writeTheme(root, compiled);
-    final options = root['options'];
-    if (options is AnyObject) {
-      final scales = _scales;
-      if (identical(scales, _absent)) {
-        options.remove('scales');
-      } else {
-        options['scales'] = scales;
-      }
-    }
+    final options = root.optionsCell?.raw;
+    if (options is AnyObject) _write(options, OptionKey.scales, _scales);
     _restorePalette(chart);
     if (compiled == null) return 'default';
     return reducedMotion ? 'themeFrame' : 'theme';
@@ -141,7 +175,7 @@ final class ChartThemeSwitch {
   /// palette keys of each dataset Map before the colors plugin runs.
   void beforeUpdate(types.Chart chart) {
     final before = _before..clear();
-    final datasets = jsGet(chart.data, 'datasets');
+    final datasets = readOption(chart.data, OptionKey.datasets);
     if (datasets is! List) return;
     for (final dataset in datasets) {
       if (dataset is! AnyObject) continue;
@@ -169,10 +203,10 @@ final class ChartThemeSwitch {
 
   /// Records the write of [key] into [dataset] when its value is not
   /// [previous], the value at `beforeUpdate`.
-  void _record(AnyObject dataset, String key, Object? previous) {
+  void _record(AnyObject dataset, OptionKey key, Object? previous) {
     final current = _read(dataset, key);
     if (identical(current, previous)) return;
-    final written = _written[dataset] ??= <String, _Write>{};
+    final written = _written[dataset] ??= <OptionKey, _Write>{};
     final record = written[key];
     if (record != null && identical(previous, record.written)) {
       record.written = current;
@@ -184,7 +218,7 @@ final class ChartThemeSwitch {
   /// Step 4: the palette keys of the datasets of [chart] that still hold the
   /// written value go back to their values before the first write.
   void _restorePalette(types.Chart chart) {
-    final datasets = jsGet(chart.data, 'datasets');
+    final datasets = readOption(chart.data, OptionKey.datasets);
     if (datasets is! List) return;
     for (final dataset in datasets) {
       if (dataset is! AnyObject) continue;
@@ -193,22 +227,20 @@ final class ChartThemeSwitch {
       _written[dataset] = null;
       for (final MapEntry(:key, :value) in written.entries) {
         if (!identical(_read(dataset, key), value.written)) continue;
-        final original = value.original;
-        if (identical(original, _absent)) {
-          dataset.remove(key);
-        } else {
-          dataset[key] = original;
-        }
+        _write(dataset, key, value.original);
       }
     }
   }
 
   /// Writes [compiled] under `$theme` of [root], or removes the key.
-  static void _writeTheme(AnyObject root, AnyObject? compiled) {
+  static void _writeTheme(
+    ChartConfigurationScope root,
+    AnyObject? compiled,
+  ) {
     if (compiled == null) {
-      root.remove(themeConfigKey);
+      root.dollarThemeCell = null;
     } else {
-      root[themeConfigKey] = compiled;
+      root.dollarTheme = compiled;
     }
   }
 }

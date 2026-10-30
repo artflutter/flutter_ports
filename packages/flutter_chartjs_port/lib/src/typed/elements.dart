@@ -17,6 +17,15 @@ import 'dart:ui' show Color;
 
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show
+        ArcOptionsScope,
+        BarOptionsScope,
+        ElementOptionsByTypeScope,
+        LineOptionsScope,
+        PointOptionsScope;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/typed/values.dart'
@@ -92,16 +101,17 @@ final class ChartElements with Diagnosticable {
   }
 }
 
-/// The `elements` Map of [elements]: the keys in parameter order, `extra`
-/// last.
+/// The `elements` scope of [elements] (Chart.js ADR 0054 §7): the keys in
+/// parameter order, `extra` last.
 @internal
-Map<String, Object?> lowerElements(ChartElements elements) =>
-    mergeExtra(<String, Object?>{
-      if (elements.point case final point?) 'point': point._lower(),
-      if (elements.line case final line?) 'line': line._lower(),
-      if (elements.bar case final bar?) 'bar': bar._lower(),
-      if (elements.arc case final arc?) 'arc': arc._lower(),
-    }, elements.extra);
+ElementOptionsByTypeScope lowerElements(ChartElements elements) {
+  final scope = ElementOptionsByTypeScope();
+  if (elements.point case final point?) scope.point = point._lower();
+  if (elements.line case final line?) scope.line = line._lower();
+  if (elements.bar case final bar?) scope.bar = bar._lower();
+  if (elements.arc case final arc?) scope.arc = arc._lower();
+  return mergeExtra(scope, elements.extra);
+}
 
 /// The options of the points of a chart: `elements.point`
 /// (`docs/configuration/elements.md`, "Point Configuration").
@@ -174,15 +184,17 @@ final class PointElementStyle with Diagnosticable {
   );
 
   /// The `point` Map.
-  Map<String, Object?> _lower() => mergeExtra(<String, Object?>{
-    'radius': ?radius,
-    'pointStyle': ?pointStyle?.optionValue,
-    'backgroundColor': ?colorValue(backgroundColor),
-    'borderColor': ?colorValue(borderColor),
-    'borderWidth': ?borderWidth,
-    'hitRadius': ?hitRadius,
-    'hoverRadius': ?hoverRadius,
-  }, extra);
+  PointOptionsScope _lower() {
+    final scope = PointOptionsScope();
+    put(scope, OptionKey.radius, radius);
+    put(scope, OptionKey.pointStyle, pointStyle?.optionValue);
+    put(scope, OptionKey.backgroundColor, colorValue(backgroundColor));
+    put(scope, OptionKey.borderColor, colorValue(borderColor));
+    put(scope, OptionKey.borderWidth, borderWidth);
+    put(scope, OptionKey.hitRadius, hitRadius);
+    put(scope, OptionKey.hoverRadius, hoverRadius);
+    return mergeExtra(scope, extra);
+  }
 
   List<TypedProperty> get _props => [
     ('radius', radius),
@@ -283,15 +295,17 @@ final class LineElementStyle with Diagnosticable {
   );
 
   /// The `line` Map.
-  Map<String, Object?> _lower() => mergeExtra(<String, Object?>{
-    'tension': ?tension,
-    'backgroundColor': ?colorValue(backgroundColor),
-    'borderColor': ?colorValue(borderColor),
-    'borderWidth': ?borderWidth,
-    'borderDash': ?numberList(borderDash),
-    'fill': ?fill?.optionValue,
-    'stepped': ?stepped,
-  }, extra);
+  LineOptionsScope _lower() {
+    final scope = LineOptionsScope();
+    put(scope, OptionKey.tension, tension);
+    put(scope, OptionKey.backgroundColor, colorValue(backgroundColor));
+    put(scope, OptionKey.borderColor, colorValue(borderColor));
+    put(scope, OptionKey.borderWidth, borderWidth);
+    put(scope, OptionKey.borderDash, numberList(borderDash));
+    put(scope, OptionKey.fill, fill?.optionValue);
+    put(scope, OptionKey.stepped, stepped);
+    return mergeExtra(scope, extra);
+  }
 
   List<TypedProperty> get _props => [
     ('tension', tension),
@@ -369,12 +383,14 @@ final class BarElementStyle with Diagnosticable {
   );
 
   /// The `bar` Map.
-  Map<String, Object?> _lower() => mergeExtra(<String, Object?>{
-    'backgroundColor': ?colorValue(backgroundColor),
-    'borderColor': ?colorValue(borderColor),
-    'borderWidth': ?borderWidth,
-    'borderRadius': ?borderRadius,
-  }, extra);
+  BarOptionsScope _lower() {
+    final scope = BarOptionsScope();
+    put(scope, OptionKey.backgroundColor, colorValue(backgroundColor));
+    put(scope, OptionKey.borderColor, colorValue(borderColor));
+    put(scope, OptionKey.borderWidth, borderWidth);
+    put(scope, OptionKey.borderRadius, borderRadius);
+    return mergeExtra(scope, extra);
+  }
 
   List<TypedProperty> get _props => [
     ('backgroundColor', backgroundColor),
@@ -455,13 +471,15 @@ final class ArcElementStyle with Diagnosticable {
   );
 
   /// The `arc` Map.
-  Map<String, Object?> _lower() => mergeExtra(<String, Object?>{
-    'backgroundColor': ?colorValue(backgroundColor),
-    'borderColor': ?colorValue(borderColor),
-    'borderWidth': ?borderWidth,
-    'offset': ?offset,
-    'spacing': ?spacing,
-  }, extra);
+  ArcOptionsScope _lower() {
+    final scope = ArcOptionsScope();
+    put(scope, OptionKey.backgroundColor, colorValue(backgroundColor));
+    put(scope, OptionKey.borderColor, colorValue(borderColor));
+    put(scope, OptionKey.borderWidth, borderWidth);
+    put(scope, OptionKey.offset, offset);
+    put(scope, OptionKey.spacing, spacing);
+    return mergeExtra(scope, extra);
+  }
 
   List<TypedProperty> get _props => [
     ('backgroundColor', backgroundColor),

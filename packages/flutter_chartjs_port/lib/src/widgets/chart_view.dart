@@ -4,16 +4,18 @@
 ///
 /// The widget owns one canvas for the life of its state, shows it in the
 /// internal chart host and starts its chart in the first layout of the host
-/// (Chart.js ADR 0049, section 2). It gives the chart a root Map that it
-/// owns, and it applies a new config in one post-frame callback (section
-/// 4). The typed config of Chart.js ADR 0052 (section 9) lowers to the
-/// Maps of a raw config through one `ChartConfigLowering` for the life of
-/// the state (`lower.dart`): the start lowers the config, and a new config
-/// that is not `==` to the last one reconciles with the live Maps in the
-/// same post-frame callback. The theme of Chart.js ADR 0050 builds on the
-/// root Map and on that callback: the widget writes the compiled theme
-/// under `$theme` of the
-/// root Map, and it switches the theme in the same callback
+/// (Chart.js ADR 0049, section 2). It gives the chart a root config that it
+/// owns, a typed `ChartConfigurationScope` (Chart.js ADR 0054 §7), and it
+/// applies a new config in one post-frame callback (section 4). The typed
+/// config of Chart.js ADR 0052 (section 9) lowers to the typed option
+/// scopes through one `ChartConfigLowering` for the life of the state
+/// (`lower.dart`): the start lowers the config, and a new config that is
+/// not `==` to the last one reconciles with the live scopes in the same
+/// post-frame callback. A raw config gives its top-level values to the root
+/// as they are: its `data` and `options` stay the Maps of the app. The
+/// theme of Chart.js ADR 0050 builds on the root and on that callback: the
+/// widget writes the compiled theme under `$theme` of the root, and it
+/// switches the theme in the same callback
 /// (`chart_theme_switch.dart`) with its inline plugin `$chartView`
 /// (`chart_view_plugin.dart`). The keyboard of Chart.js ADR 0051
 /// (`chart_keyboard.dart`) builds on them too: one `Focus` around the host
@@ -41,7 +43,12 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show Opt, OptionKey;
+import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartConfigurationScope;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
@@ -281,10 +288,14 @@ class ChartView extends StatefulWidget {
       type = typed.type.name;
       datasets = typed.datasets.length;
     } else {
-      final raw = rawConfig!;
-      final data = raw['data'];
-      final list = data is Map ? data['datasets'] : null;
-      type = raw['type'];
+      // The raw boundary (Chart.js ADR 0054 §5): the Maps of the app.
+      final raw = RawScope(rawConfig!);
+      final data = raw.jsRead(OptionKey.data.jsName);
+      final list = data is Map<String, Object?>
+          ? RawScope(data).jsRead(OptionKey.datasets.jsName)
+          : null;
+      final rawType = raw.jsRead(OptionKey.type.jsName);
+      type = identical(rawType, undefined) ? null : rawType;
       datasets = list is List ? list.length : null;
     }
     properties
@@ -327,14 +338,22 @@ class _ChartViewState extends State<ChartView> {
   /// The chart, or null before the start and after a failed start.
   Chart? _chart;
 
-  /// The root Map of the chart (Chart.js ADR 0049, section 4): a shallow
-  /// copy of the app config that the widget owns. `data` and `options` keep
-  /// the identity of the app objects.
-  AnyObject? _root;
+  /// The root config of the chart (Chart.js ADR 0049, section 4): a shallow
+  /// copy of the app config that the widget owns, a typed root scope
+  /// (Chart.js ADR 0054 §7). `data` and `options` keep the identity of the
+  /// app objects.
+  ChartConfigurationScope? _root;
 
-  /// The app config whose values the chart has: the config of the start or
-  /// of the last update. For a typed config, the root Map of its lowering.
-  AnyObject _applied = const {};
+  /// The app config whose values the chart has, as a root scope: the config
+  /// of the start or of the last update. For a typed config, the root scope
+  /// of its lowering. For a raw config, a scope with the top-level values of
+  /// the raw Map ([_rootOf]).
+  ChartConfigurationScope _applied = ChartConfigurationScope();
+
+  /// The raw config of [_applied], or Dart `null` when [_applied] is the
+  /// lowering of a typed config: the identity of the change test of a raw
+  /// config (Chart.js ADR 0049, section 4).
+  Map<String, Object?>? _appliedRaw;
 
   /// The lowering of the typed config, from the first typed config of the
   /// state (Chart.js ADR 0052, section 9). Its `config` is the config of
@@ -440,7 +459,7 @@ class _ChartViewState extends State<ChartView> {
   /// `FlutterError.reportError`, and the state then has no chart: the next
   /// new config starts it.
   void _start({required bool notify}) {
-    final AnyObject config;
+    final ChartConfigurationScope config;
     try {
       config = _appConfig(fresh: true);
     } on Object catch (error, stack) {
@@ -448,30 +467,61 @@ class _ChartViewState extends State<ChartView> {
       return;
     }
     _applied = config;
-    _themeSwitch.recordUserScales(config['options']);
-    final root = _root = Map<String, Object?>.of(config);
-    root['plugins'] = _rootPlugins(jsGet(config, 'plugins'));
+    _themeSwitch.recordUserScales(_valueOf(config.optionsCell));
+    final root = _root = _copyOf(config)
+      ..plugins = _rootPlugins(_valueOf(config.pluginsCell));
     _themeSwitch.start(root, _theme);
     _create(notify: notify);
   }
 
-  /// The app config of the current config: the raw config, or the lowering
-  /// of the typed config (Chart.js ADR 0052, section 9). With [fresh], or
-  /// after a raw config, a typed config lowers to new Maps. Else it
-  /// reconciles with the live Maps of the last typed config.
-  AnyObject _appConfig({required bool fresh}) {
+  /// The app config of the current config as a root scope: the top-level
+  /// values of the raw config ([_rootOf]), or the lowering of the typed
+  /// config (Chart.js ADR 0052, section 9). With [fresh], or after a raw
+  /// config, a typed config lowers to new scopes. Else it reconciles with
+  /// the live scopes of the last typed config.
+  ChartConfigurationScope _appConfig({required bool fresh}) {
     final typed = widget.config;
-    final AnyObject config;
+    final ChartConfigurationScope config;
     if (typed == null) {
-      config = widget.rawConfig!;
+      final raw = widget.rawConfig!;
+      config = _rootOf(raw);
+      _appliedRaw = raw;
     } else if (fresh || _appliedTyped == null) {
       config = (_lowering!..config = typed).lower();
+      _appliedRaw = null;
     } else {
       config = _lowering!.apply(typed);
+      _appliedRaw = null;
     }
     _appliedTyped = typed;
     return config;
   }
+
+  /// The root scope of the raw config [raw]: each top-level entry of the
+  /// Map of the app in its order, with its value as it is (the raw boundary
+  /// of Chart.js ADR 0054 §5). `data` and `options` stay the Maps of the
+  /// app: `initConfig` writes into them, as upstream.
+  static ChartConfigurationScope _rootOf(Map<String, Object?> raw) {
+    final root = ChartConfigurationScope();
+    for (final MapEntry(:key, :value) in raw.entries) {
+      root.jsWrite(key, value);
+    }
+    return root;
+  }
+
+  /// A new root scope with each own key of [config] in its order and the
+  /// same cell: the root that the widget owns.
+  static ChartConfigurationScope _copyOf(ChartConfigurationScope config) {
+    final root = ChartConfigurationScope();
+    for (final key in config.ownKeys) {
+      root.store(key, config.ownCell(key)!);
+    }
+    return root;
+  }
+
+  /// The JS value of [cell]: [undefined] for an absent key.
+  static Object? _valueOf(Opt<Object?>? cell) =>
+      cell == null ? undefined : cell.raw;
 
   /// Reports [error] of [context] through `FlutterError.reportError`.
   static void _reportError(Object error, StackTrace stack, String context) {
@@ -488,17 +538,17 @@ class _ChartViewState extends State<ChartView> {
   /// The debug checks of the app config [config]: no value under `$theme`
   /// (row `theme-H0`, Chart.js ADR 0050, step 2) and a `plugins` value that
   /// is a List, so that the widget plugin can join it.
-  static void _debugCheckConfig(Map<String, Object?> config) {
+  static void _debugCheckConfig(ChartConfigurationScope config) {
     assert(
-      !config.containsKey(themeConfigKey),
+      config.dollarThemeCell == null,
       'The key $themeConfigKey of a ChartView config belongs to the widget. '
       'Give the theme as ChartView.theme or with a ChartTheme above '
       '(Chart.js ADR 0050).',
     );
     assert(
-      config['plugins'] == null || config['plugins'] is List,
+      config.pluginsCell?.raw == null || config.pluginsCell?.raw is List,
       'The plugins of a ChartView config are a List of plugin Maps, not '
-      '${config['plugins'].runtimeType}.',
+      '${config.pluginsCell?.raw.runtimeType}.',
     );
   }
 
@@ -586,7 +636,7 @@ class _ChartViewState extends State<ChartView> {
     final applied = _applied;
     final typed = widget.config;
     final configChanged = typed == null
-        ? !identical(widget.rawConfig, applied)
+        ? !identical(widget.rawConfig, _appliedRaw)
         : typed != _appliedTyped;
     if (!configChanged && !motionUpdate && _theme == _themeSwitch.applied) {
       return;
@@ -603,13 +653,13 @@ class _ChartViewState extends State<ChartView> {
       _theme,
       reducedMotion: _reducedMotion,
     );
-    if (configChanged && !identical(config['platform'], applied['platform'])) {
+    if (configChanged &&
+        !identical(
+          _valueOf(config.platformCell),
+          _valueOf(applied.platformCell),
+        )) {
       // The constructor reads `platform` once (core.controller.js:136).
-      if (config.containsKey('platform')) {
-        root['platform'] = config['platform'];
-      } else {
-        root.remove('platform');
-      }
+      root.platformCell = config.platformCell;
       _chart = null;
       chart.destroy();
       _create(notify: true);
@@ -637,34 +687,34 @@ class _ChartViewState extends State<ChartView> {
   /// ADR 0050, step 3).
   void _applyConfig(
     Chart chart,
-    AnyObject root,
-    Map<String, Object?> config,
-    Map<String, Object?> applied,
+    ChartConfigurationScope root,
+    ChartConfigurationScope config,
+    ChartConfigurationScope applied,
   ) {
     _debugCheckConfig(config);
     _applied = config;
-    final type = jsGet(config, 'type');
-    if (!identical(type, jsGet(applied, 'type'))) {
+    final type = _valueOf(config.typeCell);
+    if (!identical(type, _valueOf(applied.typeCell))) {
       // core.config.js:173 `set type(type)`.
       chart.config.type = type;
     }
-    final data = jsGet(config, 'data');
-    if (!identical(data, jsGet(applied, 'data'))) {
+    final data = _valueOf(config.dataCell);
+    if (!identical(data, _valueOf(applied.dataCell))) {
       // core.controller.js:217 `set data(data)`.
       chart.data = data;
     }
-    final options = jsGet(config, 'options');
-    if (!identical(options, jsGet(applied, 'options'))) {
+    final options = _valueOf(config.optionsCell);
+    if (!identical(options, _valueOf(applied.optionsCell))) {
       _themeSwitch.recordUserScales(options);
       // core.controller.js:225 `set options(options)`.
       chart.options = options;
     }
-    final plugins = jsGet(config, 'plugins');
-    if (!identical(plugins, jsGet(applied, 'plugins'))) {
+    final plugins = _valueOf(config.pluginsCell);
+    if (!identical(plugins, _valueOf(applied.pluginsCell))) {
       // The next notify reads `config.plugins` again
       // (core.plugins.js:101-106) and calls `stop` and `start` for each id
       // that left or came (:113-119).
-      root['plugins'] = _rootPlugins(plugins);
+      root.plugins = _rootPlugins(plugins);
     }
   }
 

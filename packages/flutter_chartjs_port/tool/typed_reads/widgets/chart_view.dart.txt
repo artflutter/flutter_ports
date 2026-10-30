@@ -1,2 +1,0 @@
-jsGet 9
-stringIndex 13
