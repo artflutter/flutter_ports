@@ -201,6 +201,14 @@ and for the typed public API of Chart.js ADR 0052.
   then `operator []` and `operator []=` of each face forward to `jsRead` and `jsWrite`, with the
   JS rules (`undefined` for an absent key). This is an item of the close step (§16).
 
+- The boundary after B6: the config of the user (`config`, `config.data`, `config.options` and
+  the dataset objects) stays raw: the Maps of the user, read through `RawScope` and `jsGet`, with
+  their identity (`chart.config.data` is the object of the user). `ChartView.raw` gives the chart
+  the root Map of Chart.js ADR 0049 §4, a raw scope. `mergeScaleConfig` writes a typed
+  `ScaleOptionsByIdScope` of `ScaleOptionsScope`s into `options.scales`, as upstream writes a new
+  object there. `chart.options`, the scale options and the plugin options are typed views
+  (`OptionView`) with the face. The lowering of Chart.js ADR 0052 gives raw Maps until L5.
+
 ### 6. Values outside the type of a key
 
 - A resolved field has the type of the `index.d.ts` union of its key (`double`, an `enum`, a sealed
@@ -320,7 +328,10 @@ and for the typed public API of Chart.js ADR 0052.
   passes any other name by name. `args` passes through (identity). `Plugin.hookValue(hook)` gives
   the field value; `Plugin.invokeHook` calls a function of the type of the hook
   (`PluginHookFunction<A>` of its argument class) with typed arguments and another function with
-  JS arity, `this` the plugin. A typed hook takes only its argument class.
+  JS arity, `this` the plugin. The public `notifyPlugins` gives the args object of the caller to
+  each hook by identity: a Map plugin and a hook function of user code get it unchanged, also for
+  a built-in hook name. Only a hook function that is typed for the argument class of its hook (a
+  built-in plugin after L4) throws a `TypeError` for an args object of another class.
 - The argument classes are `PluginHookArgs` (`{}`), `UpdateHookArgs`, `CancelableHookArgs`,
   `ResizeHookArgs`, `DatasetUpdateHookArgs`, `DatasetDrawHookArgs`, `EventHookArgs` and
   `TooltipDrawHookArgs`, with the keys of the upstream literals in their order. `Plugin` stays

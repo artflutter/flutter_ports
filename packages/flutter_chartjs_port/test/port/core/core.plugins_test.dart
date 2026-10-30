@@ -545,8 +545,9 @@ null calls: 0''');
         'beforeUpdate none false',
         'afterDatasetUpdate 2.0 false',
       ]);
-      // A typed hook takes only its argument class: a call with other
-      // arguments throws a TypeError.
+      // The narrow case of the row adapt-typed-plugins: a hook function
+      // that is typed for its argument class throws a TypeError for an args
+      // object of another class.
       expect(
         () => service.notify(chart, 'afterDatasetUpdate'),
         throwsA(isA<TypeError>()),
@@ -569,6 +570,50 @@ null calls: 0''');
       expect(service.notify(chart, 'afterInit'), isTrue);
       expect(service.notify(chart, 'myHook'), isTrue);
       expect(calls, [same(chart), same(plugin)]);
+    });
+
+    test('a user plugin gets the args object of the user for a hook', () {
+      // core.plugin.tests.js:3-16: notifyPlugins gives each plugin the same
+      // args object. A Map plugin and a hook of JS arity of a typed plugin
+      // get the Map of the user for the built-in name beforeUpdate.
+      final seen = <Object?>[];
+      final map = <String, Object?>{
+        'id': 'map',
+        'beforeUpdate': JsFunction(
+          (Object? self, Object? chart, Object? args) => seen.add(args),
+        ),
+      };
+      final plugin = Plugin()..id = 'typed';
+      plugin['beforeUpdate'] = JsFunction(
+        (Object? self, Object? chart, Object? args) => seen.add(args),
+      );
+      final chart = _Chart(<String, Object?>{
+        'plugins': [map, plugin],
+      });
+      final service = PluginService()..notify(chart, 'beforeInit');
+      final args = <String, Object?>{'mode': 'user'};
+      expect(service.notify(chart, 'beforeUpdate', args), isTrue);
+      expect(seen, hasLength(2));
+      expect(identical(seen[0], args), isTrue);
+      expect(identical(seen[1], args), isTrue);
+    });
+
+    test('a custom hook name gets the args object of the user', () {
+      final seen = <Object?>[];
+      final map = <String, Object?>{
+        'id': 'map',
+        'myHook': JsFunction(
+          (Object? self, Object? chart, Object? args) => seen.add(args),
+        ),
+      };
+      final chart = _Chart(<String, Object?>{
+        'plugins': [map],
+      });
+      final service = PluginService()..notify(chart, 'beforeInit');
+      final args = <String, Object?>{'a': 1};
+      expect(service.notify(chart, 'myHook', args), isTrue);
+      expect(seen, hasLength(1));
+      expect(identical(seen.single, args), isTrue);
     });
 
     test('a Map plugin reads map[hook] at each notify', () {

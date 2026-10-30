@@ -227,6 +227,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `OptionResolver` (the target of `_createResolver`) and `OptionView` (the target of
     `_attachContext`), with the typed read `readKey(OptionKey)` and a cache by `OptionKey`.
     `Resolver` and `ContextResolver` are their typedefs; `lib/helpers.dart` hides the class names.
+    Both have the face (`JsObjectFace`) over their traps. `mergeScaleConfig` of `core.config.dart`
+    writes a typed `ScaleOptionsByIdScope` of `ScaleOptionsScope`s into `options.scales`; the
+    config, the data and the options of the user stay raw Maps (Chart.js ADR 0054 §5).
     The walk reads a typed scope with `OptionScope.lookup`. `Config.resolveElementNamedOptions` of
     `core.config.dart` is the typed element step of `_resolveElementOptions`: it reads each own key
     of `defaults.elements.<type>` with `readKey` and stores it into the resolved class of the type.

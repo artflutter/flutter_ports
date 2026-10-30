@@ -188,7 +188,7 @@ OptionResolver createResolver(
 /// for a JS `null` value. It is a `MapBase` during the migration (the
 /// scaffolding of Chart.js ADR 0054 §5).
 final class OptionResolver extends MapBase<String, Object?>
-    implements ResolverProxy, JsProxyObject {
+    implements ResolverProxy, JsProxyObject, JsObjectFace {
   OptionResolver._(
     this._scopes,
     this._prefixes,
@@ -394,6 +394,34 @@ final class OptionResolver extends MapBase<String, Object?>
       if (hasOwnProperty(key)) key,
   ];
 
+  // The face of Chart.js ADR 0054 §5: the traps by name.
+
+  /// `resolver[name]`: the `get` trap ([operator []]).
+  @core.override
+  Object? jsRead(String name) => this[name];
+
+  /// `resolver[name] = value`: the `set` trap ([operator []=]).
+  @core.override
+  void jsWrite(String name, Object? value) => this[name] = value;
+
+  /// `Object.keys(resolver)` ([objectKeys]).
+  @core.override
+  List<String> jsKeys() => objectKeys();
+
+  /// `Object.prototype.hasOwnProperty.call(resolver, name)`
+  /// ([hasOwnProperty]).
+  @core.override
+  bool jsHas(String name) => hasOwnProperty(name);
+
+  /// `delete resolver[name]`: the `deleteProperty` trap ([remove]). It
+  /// returns whether the resolver owned [name] before.
+  @core.override
+  bool jsDelete(String name) {
+    final owned = hasOwnProperty(name);
+    remove(name);
+    return owned;
+  }
+
   /// helpers.config.ts:101 the `set` trap.
   ///
   /// A trap for setting property values.
@@ -516,7 +544,7 @@ OptionView attachContext(
 /// The slots of the cache object are fields. The cached option values are a
 /// typed table. The library documentation lists the trap of each member.
 final class OptionView extends MapBase<String, Object?>
-    implements ContextProxy, JsProxyObject {
+    implements ContextProxy, JsProxyObject, JsObjectFace {
   OptionView._(
     this._proxy,
     this._context,
@@ -704,6 +732,34 @@ final class OptionView extends MapBase<String, Object?>
     for (final key in keys)
       if (hasOwnProperty(key)) key,
   ];
+
+  // The face of Chart.js ADR 0054 §5: the traps by name.
+
+  /// `resolver[name]`: the `get` trap ([operator []]).
+  @core.override
+  Object? jsRead(String name) => this[name];
+
+  /// `resolver[name] = value`: the `set` trap ([operator []=]).
+  @core.override
+  void jsWrite(String name, Object? value) => this[name] = value;
+
+  /// `Object.keys(resolver)` ([objectKeys]).
+  @core.override
+  List<String> jsKeys() => objectKeys();
+
+  /// `Object.prototype.hasOwnProperty.call(resolver, name)`
+  /// ([hasOwnProperty]).
+  @core.override
+  bool jsHas(String name) => hasOwnProperty(name);
+
+  /// `delete resolver[name]`: the `deleteProperty` trap ([remove]). It
+  /// returns whether the resolver owned [name] before.
+  @core.override
+  bool jsDelete(String name) {
+    final owned = hasOwnProperty(name);
+    remove(name);
+    return owned;
+  }
 
   /// helpers.config.ts:189 the `set` trap.
   ///

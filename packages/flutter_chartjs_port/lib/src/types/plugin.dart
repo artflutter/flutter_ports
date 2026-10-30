@@ -1005,7 +1005,9 @@ final class Plugin extends MapBase<String, Object?> implements JsObjectFace {
   /// Calls the hook function [function] of [hook] with `(chart, args,
   /// options)`: a typed call when [function] has the type of the hook and
   /// [args] is of its argument class, else a call with JS arity, `this` the
-  /// plugin.
+  /// plugin. [args] passes by identity. A function that is typed for the
+  /// argument class of [hook] throws a [TypeError] for an args object of
+  /// another class (the narrow case of the row `adapt-typed-plugins`).
   Object? invokeHook(
     PluginHook hook,
     Object function,

@@ -50,6 +50,8 @@ import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ScaleOptionsByIdScope, ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
@@ -188,6 +190,12 @@ Object? _retrieveAxisFromDatasets(String id, AnyObject config) {
 ///
 /// `console.error` and `console.warn` are [print], as `deprecated` of
 /// `helpers.core` does.
+///
+/// The result and each merged scale object are typed scopes (Chart.js ADR
+/// 0054 §3): a `ScaleOptionsByIdScope` of `ScaleOptionsScope`s. `mergeIf`
+/// into a typed scope makes typed children of the kinds of their keys. The
+/// keys, the values and their order are the ones of the plain objects.
+// DIVERGES(chartjs): adapt-typed-options, typed scale scopes.
 AnyObject _mergeScaleConfig(AnyObject config, AnyObject options) {
   final overridesOfType = jsGet(overrides, jsGet(config, 'type'));
   final chartDefaults = jsTruthy(overridesOfType)
@@ -195,7 +203,7 @@ AnyObject _mergeScaleConfig(AnyObject config, AnyObject options) {
       : <String, Object?>{'scales': <String, Object?>{}};
   final configScales = _orObject(jsGet(options, 'scales'));
   final chartIndexAxis = getIndexAxis(jsGet(config, 'type'), options);
-  final scales = <String, Object?>{};
+  final scales = ScaleOptionsByIdScope();
 
   // First figure out first scale id's per axis.
   for (final id in _objectKeys(configScales)) {
@@ -215,7 +223,7 @@ AnyObject _mergeScaleConfig(AnyObject config, AnyObject options) {
     ]);
     final defaultId = _getDefaultScaleIDFromAxis(axis, chartIndexAxis);
     final defaultScaleOptions = _orObject(jsGet(chartDefaults, 'scales'));
-    scales[id] = mergeIf(<String, Object?>{}, [
+    scales[id] = mergeIf(ScaleOptionsScope(), [
       <String, Object?>{'axis': axis},
       scaleConf,
       jsGet(defaultScaleOptions, axis),
@@ -239,7 +247,8 @@ AnyObject _mergeScaleConfig(AnyObject config, AnyObject options) {
       final datasetAxisID = jsGet(dataset, '${jsToString(axis)}AxisID');
       final id = jsTruthy(datasetAxisID) ? datasetAxisID : axis;
       final key = jsToString(id);
-      scales[key] = _orObject(jsGet(scales, key));
+      final current = jsGet(scales, key);
+      scales[key] = jsTruthy(current) ? current : ScaleOptionsScope();
       mergeIf(scales[key], [
         <String, Object?>{'axis': axis},
         jsGet(configScales, id),

@@ -238,5 +238,6 @@ const Set<String> reviewedForeignPairs = {
   'PointOptions\trotation\tundefined',
   'PointOptionsScope\tradius\tstring',
   'ScaleOptionsByIdScope\tx\tstring',
+  'ScaleOptionsScope\taxis\tnumber',
   'TickOptionsScope\tmirror\tstring',
 };
