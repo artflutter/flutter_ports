@@ -320,12 +320,19 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     - `core.datasetController.dart` has `DatasetController`, with the mixin `ArrayListener` and
       the class value `DatasetController.jsClass` (Chart.js ADR 0020). `_update` is `update_`, and
       `_getSharedOptions` is `getSharedOptions_` (Chart.js ADR 0023). `cloneIfNotShared` and
-      `getSharedOptions` copy the typed element options with `copyOptions` (Chart.js ADR 0021).
-      `ctx` is writable, as the JS property `_ctx` (Chart.js ADR 0030). `updateElement` takes a
-      `types.Element`, and `getLabelAndValue` gives `({Object? label, String value})` (Chart.js
-      ADR 0028). The reads of parsed items and stack objects use `jsGetKey`, and the index reads
-      use `jsGetIndex` and `jsSetIndex`. `stacksOf` (`@internal`) reads `item._stacks` of a
-      parsed item, also of a List item, through an `Expando` (Chart.js ADR 0036).
+      `getSharedOptions` copy the typed element options with `clone` (Chart.js ADR 0021).
+      `resolveDataElementOptions`, `resolveDatasetElementOptions` and `getStyle` return
+      `ElementOptions`. `ctx` is writable, as the JS property `_ctx` (Chart.js ADR 0030).
+      `updateElement` takes a `types.Element`, and `getLabelAndValue` gives
+      `({Object? label, String value})` (Chart.js ADR 0028). The parse functions give
+      `ParsedItem`; `_stacks` is an `ItemStacks` and the stack objects `StackEntry` (`stacksOf`,
+      `axisStackOf`, `visualValuesOf`, `setStackValue`, all `@internal`); the dataset options are
+      an `OptionView`; the contexts are typed `ScriptableContext` objects; `_cachedDataOpts` is
+      two typed Maps (Chart.js ADR 0054 §8, §11). A parsed item reads with `parsedValueOf`
+      (`@internal`, the `AxisKey` of the scale), and a data item of `parsing: false` and a
+      `_stacks` object that user code gave read with `jsGetKey`. The index reads use `jsGetIndex`
+      and `jsSetIndex`. `stacksOf` reads `item._stacks` of a parsed item, also of a List item,
+      through an `Expando` (Chart.js ADR 0036).
       `_insertElements` keeps the old parsed item at each new index below the old length, as the
       upstream `move` does. `_dataCheck` keeps a string `data` as a `JsStringList`, with no array
       listener (`core.datasetController.js:386`).
@@ -365,9 +372,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `lib/src/controllers/`: the eight dataset controllers of phase 7. `index.dart` exports them
     (the port of `src/controllers/index.js`). Each controller file has the
     controller class and its class value `<Name>Controller.jsClass` (statics `id`, `defaults`,
-    `overrides`; the doughnut also `descriptors`). A controller reads parsed items with
-    `jsGetKey`, `jsGetIndex` and `stacksOf`, and a raw option value stays `Object?` until its
-    upstream operator (Chart.js ADR 0036). It reads the members of other modules through
+    `overrides`; the doughnut also `descriptors`). The parsed items are typed `ParsedItem`
+    objects (Chart.js ADR 0054 §8) read with `parsedValueOf`; a data item of `parsing: false`
+    reads with `jsGetKey`; the properties are the props classes of `lib/src/options/props.dart`.
+    A controller reads the stacks with `stacksOf` and `axisStackOf`, and a raw option value stays
+    `Object?` until its upstream operator (Chart.js ADR 0036). It reads the members of other modules through
     `lib/src/types/` (Chart.js ADR 0028). It casts only to a `types` interface or to a class of
     its own library, at the upstream read. Three other kinds of casts stay: a `List` cast of a
     value that upstream reads as an array, the `String` cast of a parsing key and the `AnyObject`
@@ -381,11 +390,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       pass (`vValue`, `iValue`), and it reads `prevParsed[iAxis]` at each pass, because the
       scriptable options of the user run between two passes (the 3-read form of Chart.js ADR
       0036). `update` writes `_chart`, `_datasetIndex`, `_decimated` and `points` into the line
-      by name (`types.PropertyAccess`), and `draw` casts the line to `types.LineElement`.
+      with the typed setters for a `LineElement`, by name (`types.PropertyAccess`) for another
+      class, and `draw` casts the line to `types.LineElement`.
     - `controller.bubble.dart`: the parsed radius goes to `_custom`. `resolveDataElementOptions`
-      copies the options with `copyOptions(values)..[r'$shared'] = false` (Chart.js ADR 0021 §3)
-      and adds the radius with `jsAdd`: a string radius joins, as upstream. `getMaxOverflow`
-      casts each data element to `types.PointElement` at `size`.
+      copies the options with `values.clone()` and `storeKey(OptionKey.dollarShared, false)`
+      (Chart.js ADR 0021 §3) and adds the radius with `jsAdd`: a string radius joins, as upstream.
+      `getMaxOverflow` casts each data element to `types.PointElement` at `size`.
     - `controller.doughnut.dart`: `overrides` holds the tear-offs of the private top-level legend
       functions `_generateLabels` and `_onClick` (Chart.js ADR 0028 §6). `_onClick` gives the
       raw index of the legend item to `toggleDataVisibility`. `parse` reads a List or a string
@@ -398,10 +408,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     - `controller.polarArea.dart`: it casts the scale `r` to `types.RadialLinearScale` once
       (`controller.polarArea.js:166`), and it ports the #12238 hunk with `== 0` and
       `== 'angular'`. `overrides` holds the legend functions as tear-offs of top-level functions.
-      `parseObjectData` calls `parseObjectDataRadialScale` with `jsCall` and the controller as
-      `thisArg`.
-    - `controller.radar.dart`: the write `line.points = points` is a write by name through
-      `types.PropertyAccess`. The cast to `types.RadialLinearScale` stands in the loop of
+      `parseObjectData` calls `parseObjectDataRadialScaleOf(meta.iScale, parsing, …)` and no
+      longer uses `jsCall`.
+    - `controller.radar.dart`: the write `line.points = points` is the typed setter for a
+      `LineElement`, by name through `types.PropertyAccess` for another class. `parseObjectData`
+      calls `parseObjectDataRadialScaleOf(meta.iScale, parsing, …)` and no longer uses `jsCall`.
+      The cast to `types.RadialLinearScale` stands in the loop of
       `updateElements`, at `controller.radar.js:88`. The label of `getLabelAndValue` is the raw
       label.
     - `controller.scatter.dart`: it imports `core.registry.dart`: `this.chart.registry` is the
