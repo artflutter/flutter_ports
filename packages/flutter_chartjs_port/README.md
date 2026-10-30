@@ -84,7 +84,7 @@ class _VotesChartState extends State<VotesChart> {
 
   @override
   Widget build(BuildContext context) {
-    return ChartView(
+    return ChartView.raw(
       config: _config,
       semanticLabel: 'Bar chart of the votes for six colors',
     );
@@ -99,7 +99,7 @@ shows each chart type of the Chart.js docs.
 
 ### The configuration
 
-`ChartView.config` is a Chart.js configuration: `type`, `data`, `options`, `plugins` (inline
+`ChartView.raw` takes a Chart.js configuration: `type`, `data`, `options`, `plugins` (inline
 plugins) and `platform`. The output of `jsonDecode` works too. Write the options as in the
 [Chart.js docs](https://www.chartjs.org/docs/4.6.1/), with these rules of Dart:
 
@@ -108,7 +108,7 @@ plugins) and `platform`. The output of `jsonDecode` works too. Write the options
   cannot change, so the chart fails to start with `Unsupported operation: Cannot modify
   unmodifiable map`. If your lint set enables `prefer_const_literals_to_create_immutables` (for
   example `very_good_analysis`), the lint asks for `const` when you write the Map literal straight
-  into `ChartView(config: {...})`. Build the Map in a variable, a field of the `State` or a
+  into `ChartView.raw(config: {...})`. Build the Map in a variable, a field of the `State` or a
   function instead.
 - **A nested Map has the type `Map<String, Object?>`.** Chart.js also writes into the dataset
   Maps: the `colors` plugin writes `borderColor` and `backgroundColor`, and the `decimation`

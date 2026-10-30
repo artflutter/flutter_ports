@@ -6,8 +6,13 @@
 /// internal chart host and starts its chart in the first layout of the host
 /// (Chart.js ADR 0049, section 2). It gives the chart a root Map that it
 /// owns, and it applies a new config in one post-frame callback (section
-/// 4). The theme of Chart.js ADR 0050 builds on the root Map and on that
-/// callback: the widget writes the compiled theme under `$theme` of the
+/// 4). The typed config of Chart.js ADR 0052 (section 9) lowers to the
+/// Maps of a raw config through one `ChartConfigLowering` for the life of
+/// the state (`lower.dart`): the start lowers the config, and a new config
+/// that is not `==` to the last one reconciles with the live Maps in the
+/// same post-frame callback. The theme of Chart.js ADR 0050 builds on the
+/// root Map and on that callback: the widget writes the compiled theme
+/// under `$theme` of the
 /// root Map, and it switches the theme in the same callback
 /// (`chart_theme_switch.dart`) with its inline plugin `$chartView`
 /// (`chart_view_plugin.dart`). The keyboard of Chart.js ADR 0051
@@ -40,6 +45,9 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
+import 'package:flutter_chartjs_port/src/typed/config.dart' show ChartConfig;
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_keyboard.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
@@ -48,13 +56,51 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 /// Shows one Chart.js chart: `new Chart(canvas, config)` on a canvas that the
 /// widget owns. Register the components first: `Chart.register(registerables)`.
 ///
+/// Two constructors give the config (Chart.js ADR 0052, section 9):
+///
+/// * `ChartView(config: ChartConfig(...))`, the typed config: the chart
+///   type, the datasets, the data and the options as Dart classes.
+/// * `ChartView.raw(config: {...})`, the raw Chart.js config: a Map in the
+///   form of the Chart.js docs, also `jsonDecode` output, with every option
+///   of Chart.js.
+///
+/// ```dart
+/// ChartView(
+///   config: ChartConfig(
+///     type: .bar,
+///     labels: const ['Red', 'Blue', 'Yellow'],
+///     datasets: [BarDataset(label: '# of Votes', data: votes)],
+///   ),
+/// )
+/// ```
+///
+/// Updates of a typed config: a new config that is `==` to the last one
+/// gives no update, so a parent can build the config in each `build`.
+/// Another config updates the chart after the frame, with the animations of
+/// Chart.js. These rules apply:
+///
+/// * For new data, give a new List. Or change the List in place and call
+///   `chart.update()` from an event handler (the chart of
+///   [onChartCreated]).
+/// * Give a `key` to each dataset when the app adds, removes or reorders
+///   datasets. The key keeps the state of the dataset: its hidden state and
+///   its animations.
+/// * Give a method tear-off or a function in a field for a scriptable color
+///   (`backgroundColorFor`) and for a tick format: a new closure in each
+///   `build` is a new value, and the chart then updates. The event and
+///   tooltip callbacks (`onClick`, `onHover`, the legend handlers, the
+///   tooltip texts and the animation callbacks) can be new closures: the
+///   chart calls the callback of the newest config.
+/// * Change the config, not the Maps of the chart (`chart.data`,
+///   `chart.options`): the next config writes its keys again.
+///
 /// Size: the constraints and the options `responsive`, `maintainAspectRatio`
 /// and `aspectRatio` give the size (the table of Chart.js ADR 0049 §5). In a
 /// `Column` or a scroll view, the aspect ratio gives the height. In a
 /// `SizedBox` or an `Expanded`, set `maintainAspectRatio: false`.
 ///
 /// Callbacks: the options `onHover`, `onClick` and `onResize` and the plugin
-/// hooks are function values in [config]. Each callback runs in one phase,
+/// hooks are function values of the config. Each callback runs in one phase,
 /// and only some phases allow `setState` (the table of Chart.js ADR 0049
 /// §6, one item for each row):
 ///
@@ -65,7 +111,7 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 ///   throttled frame callback. Allowed.
 /// * `onProgress` and `onComplete` of an animation, and the plugin hook
 ///   `afterRender`: a frame callback of the animator. Allowed.
-/// * All hooks of an update of the widget (a new [config], theme or
+/// * All hooks of an update of the widget (a new config, theme or
 ///   reduced-motion preference), and the `onHover` that the update
 ///   replays: a post-frame callback. Allowed.
 /// * [onChartCreated]: a post-frame callback. Allowed.
@@ -122,9 +168,9 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 /// animates. For motion under the preference, wrap the chart in a
 /// `MediaQuery` with `disableAnimations: false`.
 class ChartView extends StatefulWidget {
-  /// Creates a widget that shows the chart of [config].
+  /// Creates a widget that shows the chart of the typed [config].
   const ChartView({
-    required this.config,
+    required ChartConfig this.config,
     this.updateMode,
     this.onChartCreated,
     this.theme,
@@ -133,12 +179,45 @@ class ChartView extends StatefulWidget {
     this.semanticLabel,
     this.excludeFromSemantics = false,
     super.key,
-  });
+  }) : rawConfig = null;
 
-  /// The raw configuration `{type, data, options, plugins, platform}`
-  /// (`jsonDecode` output works). The chart writes into its `data` and
-  /// `options` Maps, as `initConfig` does. A nested Map literal needs the
-  /// type `<String, Object?>`, and the config is never `const`: a `const`
+  /// Creates a widget that shows the chart of the raw Chart.js [config]
+  /// `{type, data, options, plugins, platform}`: the escape hatch for a
+  /// copy of the Chart.js docs, `jsonDecode` output and the options that
+  /// [ChartConfig] does not have. The widget keeps it in [rawConfig].
+  const ChartView.raw({
+    required Map<String, Object?> config,
+    this.updateMode,
+    this.onChartCreated,
+    this.theme,
+    this.focusNode,
+    this.autofocus = false,
+    this.semanticLabel,
+    this.excludeFromSemantics = false,
+    super.key,
+  }) : rawConfig = config,
+       config = null;
+
+  /// The typed config of the chart, or Dart `null` for a widget of
+  /// [ChartView.raw].
+  ///
+  /// The widget lowers it to the Maps of a raw config: a new Map for each
+  /// class, and the Lists of the app (`data`, `points`, `labels`,
+  /// `plugins`) by reference. Thus a `const` config works. A new config that
+  /// is `==` to the last one gives no update. Another one updates the chart
+  /// after the frame. A dataset keeps its dataset Map, its meta and its
+  /// hidden state when the new dataset has the same key and class, or no
+  /// key and the same class at the same index. The update writes only the
+  /// keys of the config: the keys that a plugin wrote into a dataset Map
+  /// stay. The `options` Map stays when only the datasets, the labels or
+  /// the plugins changed: an imperative `chart.options` edit then lasts.
+  final ChartConfig? config;
+
+  /// The raw configuration `{type, data, options, plugins, platform}` of
+  /// [ChartView.raw] (`jsonDecode` output works), or Dart `null` for a
+  /// typed widget. The chart writes into its `data` and `options` Maps, as
+  /// `initConfig` does. A nested Map literal needs the type
+  /// `<String, Object?>`, and the config is never `const`: a `const`
   /// config fails the start. Build it in a variable, a field or a function.
   ///
   /// A new Map updates the chart after the frame; the same Map gives no
@@ -157,11 +236,11 @@ class ChartView extends StatefulWidget {
   ///
   /// The key `$theme` belongs to the widget: in debug mode, a config with
   /// it fails an assert. A `plugins` value is a List.
-  final Map<String, Object?> config;
+  final Map<String, Object?>? rawConfig;
 
-  /// The mode of the `chart.update` call for a new [config]. Null is the
-  /// default mode. When the same frame also switches the theme, the one
-  /// update takes the mode of the theme switch.
+  /// The mode of the `chart.update` call for a new [config] or
+  /// [rawConfig]. Null is the default mode. When the same frame also
+  /// switches the theme, the one update takes the mode of the theme switch.
   final String? updateMode;
 
   /// Called after the frame in which the widget starts a chart, and again
@@ -196,17 +275,21 @@ class ChartView extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    final data = config['data'];
-    final datasets = data is Map ? data['datasets'] : null;
+    final Object? type;
+    final int? datasets;
+    if (config case final typed?) {
+      type = typed.type.name;
+      datasets = typed.datasets.length;
+    } else {
+      final raw = rawConfig!;
+      final data = raw['data'];
+      final list = data is Map ? data['datasets'] : null;
+      type = raw['type'];
+      datasets = list is List ? list.length : null;
+    }
     properties
-      ..add(DiagnosticsProperty<Object?>('type', config['type']))
-      ..add(
-        IntProperty(
-          'datasets',
-          datasets is List ? datasets.length : null,
-          defaultValue: null,
-        ),
-      )
+      ..add(DiagnosticsProperty<Object?>('type', type))
+      ..add(IntProperty('datasets', datasets, defaultValue: null))
       ..add(
         DiagnosticsProperty<ChartThemeData>('theme', theme, defaultValue: null),
       )
@@ -250,8 +333,17 @@ class _ChartViewState extends State<ChartView> {
   AnyObject? _root;
 
   /// The app config whose values the chart has: the config of the start or
-  /// of the last update.
+  /// of the last update. For a typed config, the root Map of its lowering.
   AnyObject _applied = const {};
+
+  /// The lowering of the typed config, from the first typed config of the
+  /// state (Chart.js ADR 0052, section 9). Its `config` is the config of
+  /// the last build: the trampolines of the callbacks read it.
+  ChartConfigLowering? _lowering;
+
+  /// The typed config of [_applied], or Dart `null` when [_applied] is a raw
+  /// config.
+  ChartConfig? _appliedTyped;
 
   /// The `enabled` value of the `TickerMode` of the host.
   bool _tickerEnabled = true;
@@ -292,9 +384,28 @@ class _ChartViewState extends State<ChartView> {
   bool _motionUpdate = false;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.config case final config?) {
+      _lowering = ChartConfigLowering(config);
+    }
+  }
+
+  /// The change test (Chart.js ADR 0052, section 9): `==` for two typed
+  /// configs, identity for two raw configs (Chart.js ADR 0049, section 4),
+  /// and a change of the form. The trampolines read the new typed config at
+  /// once, also when it gives no update.
+  @override
   void didUpdateWidget(ChartView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!identical(oldWidget.config, widget.config)) _scheduleUpdate();
+    final config = widget.config;
+    if (config != null) {
+      (_lowering ??= ChartConfigLowering(config)).config = config;
+      if (oldWidget.config != config) _scheduleUpdate();
+    } else if (oldWidget.config != null ||
+        !identical(oldWidget.rawConfig, widget.rawConfig)) {
+      _scheduleUpdate();
+    }
   }
 
   @override
@@ -324,13 +435,54 @@ class _ChartViewState extends State<ChartView> {
   /// Builds the root Map of the current config and starts the chart. With
   /// [notify], it calls `onChartCreated` at once (in a post-frame callback),
   /// else after the frame.
+  ///
+  /// An exception of the lowering of a typed config goes to
+  /// `FlutterError.reportError`, and the state then has no chart: the next
+  /// new config starts it.
   void _start({required bool notify}) {
-    final config = _applied = widget.config;
+    final AnyObject config;
+    try {
+      config = _appConfig(fresh: true);
+    } on Object catch (error, stack) {
+      _reportError(error, stack, 'while the ChartView lowered its config');
+      return;
+    }
+    _applied = config;
     _themeSwitch.recordUserScales(config['options']);
     final root = _root = Map<String, Object?>.of(config);
     root['plugins'] = _rootPlugins(jsGet(config, 'plugins'));
     _themeSwitch.start(root, _theme);
     _create(notify: notify);
+  }
+
+  /// The app config of the current config: the raw config, or the lowering
+  /// of the typed config (Chart.js ADR 0052, section 9). With [fresh], or
+  /// after a raw config, a typed config lowers to new Maps. Else it
+  /// reconciles with the live Maps of the last typed config.
+  AnyObject _appConfig({required bool fresh}) {
+    final typed = widget.config;
+    final AnyObject config;
+    if (typed == null) {
+      config = widget.rawConfig!;
+    } else if (fresh || _appliedTyped == null) {
+      config = (_lowering!..config = typed).lower();
+    } else {
+      config = _lowering!.apply(typed);
+    }
+    _appliedTyped = typed;
+    return config;
+  }
+
+  /// Reports [error] of [context] through `FlutterError.reportError`.
+  static void _reportError(Object error, StackTrace stack, String context) {
+    FlutterError.reportError(
+      FlutterErrorDetails(
+        exception: error,
+        stack: stack,
+        library: 'flutter_chartjs_port',
+        context: ErrorDescription(context),
+      ),
+    );
   }
 
   /// The debug checks of the app config [config]: no value under `$theme`
@@ -362,14 +514,7 @@ class _ChartViewState extends State<ChartView> {
       _debugCheckConfig(_applied);
       chart = Chart(_canvas, _root);
     } on Object catch (error, stack) {
-      FlutterError.reportError(
-        FlutterErrorDetails(
-          exception: error,
-          stack: stack,
-          library: 'flutter_chartjs_port',
-          context: ErrorDescription('while the ChartView started its chart'),
-        ),
-      );
+      _reportError(error, stack, 'while the ChartView started its chart');
       SchedulerBinding.instance.addPostFrameCallback((_) {
         if (mounted) _destroyPartialChart();
       }, debugLabel: 'ChartView.destroyPartialChart');
@@ -421,6 +566,10 @@ class _ChartViewState extends State<ChartView> {
   /// with [ChartView.updateMode]. It runs after the frame, so every hook of
   /// the update, also the replay of the last event
   /// (core.controller.js:529-532), runs outside the build.
+  ///
+  /// A typed config first reconciles with the live Maps (Chart.js ADR 0052,
+  /// section 9): the reconcile patches the dataset Maps and gives the app
+  /// config of the steps, so the theme switch runs after it.
   void _update(Duration _) {
     _updatePending = false;
     final motionUpdate = _motionUpdate;
@@ -434,12 +583,15 @@ class _ChartViewState extends State<ChartView> {
       _start(notify: true);
       return;
     }
-    final config = widget.config;
     final applied = _applied;
-    final configChanged = !identical(config, applied);
+    final typed = widget.config;
+    final configChanged = typed == null
+        ? !identical(widget.rawConfig, applied)
+        : typed != _appliedTyped;
     if (!configChanged && !motionUpdate && _theme == _themeSwitch.applied) {
       return;
     }
+    final config = configChanged ? _appConfig(fresh: false) : applied;
     final root = _root!;
     if (configChanged) _applyConfig(chart, root, config, applied);
     // Chart.js ADR 0050, steps 1 to 4, also before a new chart of a new

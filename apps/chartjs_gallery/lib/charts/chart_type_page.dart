@@ -189,7 +189,7 @@ class ChartTypePageState extends State<ChartTypePage> {
             ),
           KeyedSubtree(
             key: ValueKey(_variant),
-            child: ChartView(
+            child: ChartView.raw(
               key: ValueKey('type.$stem.host'),
               config: _config,
               onChartCreated: _onChart,

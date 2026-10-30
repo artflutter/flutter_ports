@@ -41,7 +41,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: Align(
           alignment: Alignment.topLeft,
-          child: SizedBox(width: 400, child: ChartView(config: config)),
+          child: SizedBox(width: 400, child: ChartView.raw(config: config)),
         ),
       ),
     );

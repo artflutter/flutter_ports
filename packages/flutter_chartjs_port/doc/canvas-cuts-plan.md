@@ -812,6 +812,15 @@ Changes to the cited files:
   `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart` or a test of §2.6 and §3.5
   changes, and `doc/performance.md` does not change. The references, the inventory (§1.1), the
   tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-30, the typed `ChartView` of [Chart.js ADR 0052](adr/0052-typed-public-api.md) §9
+  (phase 10). `doc/parity.md` gets 2 port-only rows of `test/port/typed/` above the canvas rows:
+  the rows that this plan cites move by +2 (`canvas_ui.dart` from line 400 to line 402,
+  `canvas_ui_path.dart` from 401 to 403, `chart_host.dart` from 408 to 410,
+  `chart_host_test.dart` from 444 to 446), and their text does not change. In `stress_demo.dart`,
+  a file of A3, the one `ChartView(` becomes `ChartView.raw(` on the same line: no line moves.
+  No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart` or a
+  test of §2.6 and §3.5 changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5
+  and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

@@ -36,7 +36,7 @@ library;
 
 import 'dart:ui' show Color;
 
-import 'package:flutter/foundation.dart' show ValueChanged;
+import 'package:flutter/foundation.dart' show Key, ValueChanged;
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
@@ -52,8 +52,10 @@ import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
         ChartLegendItem,
         ChartScript,
         ChartTooltipItem;
-import 'package:flutter_chartjs_port/src/typed/config.dart' show ChartConfig;
-import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
+import 'package:flutter_chartjs_port/src/typed/config.dart'
+    show ChartConfig, ChartKind, optionFieldsEqual, pluginsEqual;
+import 'package:flutter_chartjs_port/src/typed/datasets.dart'
+    show Dataset, lowerDataset;
 import 'package:flutter_chartjs_port/src/typed/groups.dart'
     show
         lowerAnimation,
@@ -68,11 +70,18 @@ import 'package:flutter_chartjs_port/src/types/index.dart'
 import 'package:meta/meta.dart' show internal;
 
 /// The lowering of a typed config to the root Map of a Chart.js config
-/// `{type, data, options, plugins}` (Chart.js ADR 0052, sections 2 and 9).
+/// `{type, data, options, plugins}` (Chart.js ADR 0052, sections 2, 3 and
+/// 9).
 ///
 /// The lowering keeps the newest [config]: the trampolines of the
 /// callbacks read it at each call. A widget that gets a new config that is
 /// `==` to the last one sets [config] and lowers nothing.
+///
+/// It also keeps the live Maps of the last [lower] or [apply]: the root
+/// Map, the `data` and `options` Maps and each dataset Map, with the keys
+/// and the values that the lowering wrote into it. [apply] reconciles a new
+/// config with these Maps (the keyed reconcile of Chart.js ADR 0052,
+/// section 3).
 @internal
 final class ChartConfigLowering {
   /// The lowering of [config].
@@ -81,11 +90,149 @@ final class ChartConfigLowering {
   /// The newest config. The trampolines read its callbacks.
   ChartConfig config;
 
+  /// The config of the live Maps: the config of the last [lower] or
+  /// [apply], or Dart `null` before the first.
+  ChartConfig? _lowered;
+
+  /// The root Map of the last [lower] or [apply].
+  Map<String, Object?> _root = const {};
+
+  /// The live dataset Maps of [_lowered], in dataset order.
+  List<_LiveDataset> _datasets = const [];
+
+  /// The config of the live Maps: the config of the last [lower] or
+  /// [apply], or Dart `null` before the first.
+  ChartConfig? get lowered => _lowered;
+
   /// The root Map of [config]: a new Map at each call, with the keys
   /// `type`, `data` (`labels` by reference and a new `datasets` List),
   /// `options` (a new Map, `ChartConfig.extra` merged last) and `plugins`
   /// by reference.
+  ///
+  /// The new Maps become the live Maps of the next [apply].
   Map<String, Object?> lower() {
+    final config = this.config;
+    assert(
+      _duplicateKey(config.datasets) == null,
+      _duplicateKeyMessage(config.datasets),
+    );
+    _lowered = config;
+    final datasets = _datasets = [
+      for (final dataset in config.datasets)
+        _LiveDataset.lower(dataset, config.type),
+    ];
+    return _root = <String, Object?>{
+      'type': config.type.name,
+      'data': _data(config, datasets),
+      'options': _options(),
+      'plugins': ?config.plugins,
+    };
+  }
+
+  /// The root Map of [next] over the live Maps of the last [lower] or
+  /// [apply] (Chart.js ADR 0052, sections 3 and 9). [next] becomes
+  /// [config]. Before the first [lower], it is [lower].
+  ///
+  /// The root Map is new. Its values follow these rules:
+  /// 1. `type`: the last value when the type is `==`, else the new name.
+  /// 2. The datasets: each dataset of [next] takes a live Map by the match
+  ///    rule. A dataset with a `key` takes the Map of the last dataset with
+  ///    an `==` key and the same class. A dataset without a key takes the
+  ///    Map at its index when the last dataset there has no key and the
+  ///    same class (the rule of `Widget.canUpdate`). Each Map serves at most
+  ///    one dataset. Else the dataset gets a new Map, and the chart a new
+  ///    meta (`core.controller.js:829-853`).
+  /// 3. A matched Map of an `==` dataset, in a chart of the same type, stays
+  ///    as it is. Else the patch removes each key that the last lowering
+  ///    wrote and the new one does not write, and writes each key whose new
+  ///    value is not `==` to the value of the last lowering. The keys that
+  ///    the lowering did not write stay: the keys of the plugins (the colors
+  ///    of `plugin.colors.ts:35-52`, the `data` accessor of the decimation
+  ///    plugin) and the edits of the app.
+  /// 4. `data`: the last Map when the dataset Maps are the last Maps in the
+  ///    same order and `labels` is the same List, else a new Map with
+  ///    `labels` by reference and a new `datasets` List.
+  /// 5. `options`: the last Map when the type and the option fields are
+  ///    `==` (an imperative `chart.options` edit then stays), else a new
+  ///    Map. A new type gives a new Map: `initOptions` merges the scale
+  ///    defaults of the type into the live `options.scales`
+  ///    (`core.config.js:115-120`), so the last Map would keep the axes of
+  ///    the last type.
+  /// 6. `plugins`: the last List when the plugins are `==`, else the new
+  ///    List by reference.
+  Map<String, Object?> apply(ChartConfig next) {
+    config = next;
+    final last = _lowered;
+    if (last == null) return lower();
+    if (next == last) {
+      _lowered = next;
+      return _root;
+    }
+    assert(
+      _duplicateKey(next.datasets) == null,
+      _duplicateKeyMessage(next.datasets),
+    );
+    _lowered = next;
+    final sameType = next.type == last.type;
+    final oldDatasets = _datasets;
+    final datasets = _datasets = _reconcile(next, sameType: sameType);
+    final old = _root;
+    var sameMaps =
+        identical(next.labels, last.labels) &&
+        datasets.length == oldDatasets.length;
+    for (var i = 0; sameMaps && i < datasets.length; i++) {
+      sameMaps = identical(datasets[i].map, oldDatasets[i].map);
+    }
+    return _root = <String, Object?>{
+      'type': sameType ? old['type'] : next.type.name,
+      'data': sameMaps ? old['data'] : _data(next, datasets),
+      'options': sameType && optionFieldsEqual(next, last)
+          ? old['options']
+          : _options(),
+      'plugins': ?(pluginsEqual(next, last) ? old['plugins'] : next.plugins),
+    };
+  }
+
+  /// The live datasets of [next] by the match rule of [apply].
+  List<_LiveDataset> _reconcile(ChartConfig next, {required bool sameType}) {
+    final old = _datasets;
+    final used = List<bool>.filled(old.length, false);
+    // The index of the first live dataset of each key.
+    final keyed = <Key, int>{};
+    for (final (j, live) in old.indexed) {
+      if (live.dataset.key case final key?) keyed.putIfAbsent(key, () => j);
+    }
+    final datasets = <_LiveDataset>[];
+    for (final (i, dataset) in next.datasets.indexed) {
+      final key = dataset.key;
+      final j = key == null
+          ? (i < old.length && old[i].dataset.key == null ? i : null)
+          : keyed[key];
+      if (j == null ||
+          used[j] ||
+          old[j].dataset.runtimeType != dataset.runtimeType) {
+        datasets.add(_LiveDataset.lower(dataset, next.type));
+      } else {
+        used[j] = true;
+        datasets.add(old[j].patch(dataset, next.type, sameType: sameType));
+      }
+    }
+    return datasets;
+  }
+
+  /// The `data` Map of [config]: `labels` by reference and a new `datasets`
+  /// List of the live dataset Maps.
+  static Map<String, Object?> _data(
+    ChartConfig config,
+    List<_LiveDataset> datasets,
+  ) => <String, Object?>{
+    'labels': ?config.labels,
+    'datasets': <Object?>[for (final dataset in datasets) dataset.map],
+  };
+
+  /// The `options` Map of [config]: a new Map, `ChartConfig.extra` merged
+  /// last.
+  Map<String, Object?> _options() {
     final config = this.config;
     final plugins = <String, Object?>{
       if (config.legend case final legend?) 'legend': lowerLegend(legend, this),
@@ -117,18 +264,64 @@ final class ChartConfigLowering {
       if (config.onHover != null)
         'onHover': eventTrampoline(() => this.config.onHover),
     };
-    return <String, Object?>{
-      'type': config.type.name,
-      'data': <String, Object?>{
-        'labels': ?config.labels,
-        'datasets': <Object?>[
-          for (final dataset in config.datasets)
-            lowerDataset(dataset, config.type),
-        ],
-      },
-      'options': mergeExtra(options, config.extra),
-      'plugins': ?config.plugins,
-    };
+    return mergeExtra(options, config.extra);
+  }
+}
+
+/// The first dataset key of [datasets] that two datasets have, or Dart
+/// `null` when the keys are unique, as the keys of the children of a
+/// widget.
+Key? _duplicateKey(List<Dataset> datasets) {
+  final keys = <Key>{};
+  for (final dataset in datasets) {
+    final key = dataset.key;
+    if (key != null && !keys.add(key)) return key;
+  }
+  return null;
+}
+
+/// The message of the debug assert of a key of [datasets] that two datasets
+/// have.
+String _duplicateKeyMessage(List<Dataset> datasets) =>
+    'Two datasets of the ChartConfig have the key '
+    '${_duplicateKey(datasets)}. A key is the identity of a dataset from one '
+    'config to the next: give each dataset its own key.';
+
+/// One live dataset Map of a [ChartConfigLowering]: the typed dataset, the
+/// Map of the chart and the entries that the lowering wrote into it.
+final class _LiveDataset {
+  _LiveDataset(this.dataset, this.map, this.lowered);
+
+  /// The live dataset of a new Map: the lowering of [dataset] in a chart of
+  /// the type [type].
+  factory _LiveDataset.lower(Dataset dataset, ChartKind type) {
+    final map = lowerDataset(dataset, type);
+    return _LiveDataset(dataset, map, Map<String, Object?>.of(map));
+  }
+
+  /// The typed dataset of [map].
+  final Dataset dataset;
+
+  /// The dataset Map of the chart.
+  final Map<String, Object?> map;
+
+  /// The keys and the values that the lowering wrote into [map].
+  final Map<String, Object?> lowered;
+
+  /// This Map with the values of [next] in a chart of the type [type]
+  /// (rule 3 of [ChartConfigLowering.apply]).
+  _LiveDataset patch(Dataset next, ChartKind type, {required bool sameType}) {
+    final map = this.map;
+    if (sameType && next == dataset) return _LiveDataset(next, map, lowered);
+    final written = lowerDataset(next, type);
+    final last = lowered;
+    for (final key in last.keys) {
+      if (!written.containsKey(key)) map.remove(key);
+    }
+    for (final MapEntry(:key, :value) in written.entries) {
+      if (!last.containsKey(key) || last[key] != value) map[key] = value;
+    }
+    return _LiveDataset(next, map, written);
   }
 }
 

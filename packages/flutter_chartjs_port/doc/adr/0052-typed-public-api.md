@@ -484,18 +484,33 @@ final Map<String, Object?>? rawConfig;  // the raw config, every rule of Chart.j
   presence (null or not). Thus a parent that rebuilds with an equal
   config gives no update. Chart.js ADR 0049 rejected an O(points) equality (0049:325-326).
 - The post-frame update lowers through `ChartConfigLowering.apply(newConfig)` and gives the app
-  Map to the unchanged steps 1-6:
-  1. a new root Map, and a new `data` Map with `labels` (by reference) and a new `datasets` List;
+  Map to the unchanged steps 1-6. `ChartConfigLowering` keeps the live Maps of its last lowering:
+  the root Map, the `data` and `options` Maps, and each dataset Map with the entries that the
+  lowering wrote into it. The new root Map has these values:
+  1. `type`: the last value when the type is `==`, else the new name;
   2. each new dataset takes a live Map by the match rule of section 3, else a new Map;
-  3. a matched Map with an `==` dataset stays as it is; else the patch removes the keys that the
-     last lowering wrote and the new one does not write, and writes the new entries;
-  4. the `options` Map stays the same object when the option fields are `==` (then an imperative
-     `chart.options` edit stays, Chart.js ADR 0049 §4); else a new `options` Map;
-  5. `type` and `plugins` as on the raw path.
+  3. a matched Map with an `==` dataset in a chart of the same type stays as it is; else the patch
+     removes the keys that the last lowering wrote and the new one does not write, and writes each
+     entry whose value is not `==` to the value of the last lowering. A key that the lowering did
+     not write stays: a key of a plugin or an edit of the app. A key whose lowered value did not
+     change stays too, so the decimated `data` of the decimation plugin stays when the data List
+     is the same object;
+  4. `data`: the last `data` Map when the dataset Maps are the last Maps in the same order and
+     `labels` is the same List, else a new `data` Map with `labels` (by reference) and a new
+     `datasets` List (the setter of step 2 of Chart.js ADR 0049 §4);
+  5. `options`: the last `options` Map when the type and the option fields are `==` (then an
+     imperative `chart.options` edit stays, Chart.js ADR 0049 §4), else a new `options` Map. A new
+     type gives a new `options` Map: `initOptions` merges the scale defaults of the type into the
+     live `options.scales` (`U/src/core/core.config.js:115-120`), so a kept Map keeps the axes of
+     the old type (for example `offset: true` of a bar `x` axis in a line chart);
+  6. `plugins`: the last List when the plugins are `==`, else the new List, as on the raw path.
+- Two datasets with one `key` fail a debug assert, as two children with one key. An exception of
+  the lowering at the start goes to `FlutterError.reportError`, as an exception of `new Chart`
+  (Chart.js ADR 0049 §2), and the next new config starts the chart.
 - Two `ChartView`s with one `const` config each lower their own Maps.
 - The theme switch of Chart.js ADR 0050 runs after the reconcile, in the same callback.
-- The 62 call sites of `ChartView(` in 13 files change to `ChartView.raw(`: 7 test files under
-  `test/port/`, the 4 gallery files, the example and the dartdoc of `chart_view.dart`.
+- The 63 call sites of `ChartView(` in 13 files change to `ChartView.raw(`: 56 in 7 test files
+  under `test/port/`, 4 in the 4 gallery files, 1 in the example and 2 in the README.
 - The dartdoc and the README state these rules: an `==` config gives no update; give a new List
   for new data, or change the List in place and call `chart.update()`; give a `key` to each
   dataset when the app adds, removes or reorders datasets; use a method tear-off or a field for an
@@ -534,11 +549,11 @@ typed path with dart2wasm through the example and one gallery page (section 13).
 | `test/port/typed/names_test.dart` | the name rules of section 8 over the 44 names and the exports of `typed.dart`: the upstream names from the `exports` of `doc/upstream/manifest.json`, the Flutter and port names through an analyzer resolve |
 | `test/port/typed/lowering_test.dart` | for each typed field, a config with that field alone lowers to the expected key path and value form, with the key order (`jsObjectKeys`). It covers `borderRadius`, `ChartLength`, `Duration`, `EdgeInsets`, `TextStyle`, `Color`, the name types, `extra` (deep merge, wins) and the dataset `type` rule |
 | `test/port/typed/docs_twins_test.dart` | the 11 docs configs of `apps/chartjs_gallery/lib/docs/charts/` and `lib/docs/samples/area/line_boundaries.dart`, and one chart of each of the 8 types, written typed: equal draw calls (`drawCalls`, colors in parsed form), equal resolved options and element properties, equal hits on a grid. Also under `ChartThemeData.light()` |
-| `test/port/typed/reconcile_test.dart` | J2a and J2b as `ChartView` tests; the hidden state, the meta and the elements kept, the first frame near the old value; a removed typed key leaves the live Map; a colors-plugin key stays; a class change at an index gives a new meta; append and remove; a theme switch and a data change in one frame; the decimation plugin (through `extra`) with a new `data` List |
-| `test/port/typed/change_test.dart` | an `==` config gives no `beforeUpdate`; a new `data` List gives one; a new inline `onClick` closure gives none, and the next click calls it; a new `xFor` closure gives one; `ChartView.raw` keeps the identity rule |
+| `test/port/typed/reconcile_test.dart` | J2a and J2b as `ChartView` tests; the hidden state, the meta and the elements kept, the first frame near the old value; a removed typed key leaves the live Map; a colors-plugin key stays; a class change at an index gives a new meta; a new key; append and remove; a keyed reorder; the debug assert of two datasets with one key; the `data` and `options` Maps (step 4 and 5); a new type gives the axes of a new chart; a theme switch and a data change in one frame; the decimation plugin (through `extra`) with a new `data` List |
+| `test/port/typed/change_test.dart` | an `==` config gives no `beforeUpdate`, also a parent that builds the config in each build and a `const` config; a new `data` List gives one; a changed field gives one; a new inline `onClick` closure gives none, and the next click calls it; a legend `onClick` and a tooltip `labelText` of the newest config; a new `xFor` closure gives one, the same tear-off none; `ChartView.raw` keeps the identity rule; a change of the form keeps the chart; two views of one `const` config; the diagnostics; the unmount with a pending update |
 | `test/port/typed/value_semantics_test.dart` | `==`, `hashCode`, `copyWith`, `debugFillProperties` and the `const` constructors of the config classes |
 | `test/port/typed/key_check_test.dart` | section 13 |
-| `test/port/widgets/*` | the 62 call sites to `ChartView.raw(`, no other change |
+| `test/port/widgets/*` | the call sites to `ChartView.raw(`, no other change |
 | `test/port/core/core.controller_index_test.dart` | section 10 |
 | `test/tool/public_api_test.dart` | `doc/public_api.txt` with the new names |
 
@@ -691,7 +706,7 @@ Each part below replaces the cited text on acceptance.
   its message.
 - A typed key that lowers to a path that upstream does not read has no effect. The key check, the
   lowering twins and the docs twins find it.
-- The change of `chart_view.dart` and of the 62 call sites is mechanical.
+- The change of `chart_view.dart` and of the 63 call sites is mechanical.
 - The size is about 10,000-12,000 lines with the tests and the docs.
 
 ## Open

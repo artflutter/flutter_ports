@@ -68,7 +68,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: ChartView(
+          body: ChartView.raw(
             config: config,
             onChartCreated: (chart) => created = chart,
           ),

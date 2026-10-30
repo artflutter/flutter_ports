@@ -103,7 +103,7 @@ class _VotesPageState extends State<VotesPage> {
         children: [
           // In a scroll view, the width and the aspect ratio of the options
           // (2 for a bar chart) give the height.
-          ChartView(
+          ChartView.raw(
             config: _config,
             theme: dark
                 ? const ChartThemeData.dark()

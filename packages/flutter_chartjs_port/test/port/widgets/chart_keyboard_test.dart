@@ -111,7 +111,7 @@ Widget _view(
 }) => SizedBox(
   width: 400,
   height: 280,
-  child: ChartView(
+  child: ChartView.raw(
     config: config,
     focusNode: focusNode,
     autofocus: autofocus,
@@ -833,7 +833,7 @@ void main() {
       ];
       expect(
         properties(
-          ChartView(config: const {}, focusNode: node, autofocus: true),
+          ChartView.raw(config: const {}, focusNode: node, autofocus: true),
         ),
         [
           'type: null',
@@ -841,7 +841,7 @@ void main() {
           'autofocus',
         ],
       );
-      expect(properties(const ChartView(config: {})), ['type: null']);
+      expect(properties(const ChartView.raw(config: {})), ['type: null']);
     });
 
     testWidgets('autofocus focuses the chart at its first build', (

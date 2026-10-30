@@ -1226,7 +1226,7 @@ class StressDemoState extends State<StressDemo> {
     final meter = _viewMeter;
     return SizedBox(
       height: height,
-      child: ChartView(
+      child: ChartView.raw(
         key: ValueKey(key),
         config: _viewConfig!,
         onChartCreated: (chart) {

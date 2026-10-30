@@ -63,7 +63,7 @@ void main() {
       'the action focus', (tester) async {
     final handle = tester.ensureSemantics();
     await tester.pumpWidget(
-      _top(ChartView(config: _config(), semanticLabel: 'Sales by month')),
+      _top(ChartView.raw(config: _config(), semanticLabel: 'Sales by month')),
     );
     expect(
       tester.getSemantics(find.byType(ChartView)),
@@ -91,7 +91,7 @@ void main() {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('sibling'),
-              Expanded(child: ChartView(config: _config())),
+              Expanded(child: ChartView.raw(config: _config())),
             ],
           ),
         ),
@@ -126,7 +126,7 @@ void main() {
     final handle = tester.ensureSemantics();
     await tester.pumpWidget(
       _top(
-        ChartView(
+        ChartView.raw(
           config: _config(),
           semanticLabel: 'Sales by month',
           excludeFromSemantics: true,
@@ -147,7 +147,7 @@ void main() {
     final handle = tester.ensureSemantics();
     late Chart chart;
     Widget build(String label) => _top(
-      ChartView(
+      ChartView.raw(
         config: _config(animated: true),
         semanticLabel: label,
         onChartCreated: (created) => chart = created,
@@ -189,7 +189,7 @@ void main() {
     ];
     expect(
       properties(
-        const ChartView(
+        const ChartView.raw(
           config: {},
           semanticLabel: 'Sales',
           excludeFromSemantics: true,

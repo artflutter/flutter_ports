@@ -98,7 +98,7 @@ Future<Chart> _pumpChart(WidgetTester tester, ChartThemeData theme) async {
             child: SizedBox(
               width: 800,
               height: 600,
-              child: ChartView(
+              child: ChartView.raw(
                 config: _config(),
                 theme: theme,
                 onChartCreated: (chart) => created = chart,

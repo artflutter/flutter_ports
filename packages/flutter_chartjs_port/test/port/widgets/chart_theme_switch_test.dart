@@ -118,7 +118,7 @@ Widget _view(
   String? updateMode,
   Key? key,
 }) => _box(
-  ChartView(config: config, theme: theme, updateMode: updateMode, key: key),
+  ChartView.raw(config: config, theme: theme, updateMode: updateMode, key: key),
 );
 
 /// The chart of the one ChartView of the tree.
@@ -742,7 +742,7 @@ void main() {
 
     testWidgets('the diagnostics name the theme', (tester) async {
       final properties = [
-        for (final property in const ChartView(
+        for (final property in const ChartView.raw(
           config: {},
           theme: ChartThemeData.dark(),
         ).toDiagnosticsNode().getProperties())

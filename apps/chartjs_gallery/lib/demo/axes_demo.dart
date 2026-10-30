@@ -657,7 +657,10 @@ class AxesDemoState extends State<AxesDemo> {
                 builder: (context, constraints) => SizedBox(
                   key: const ValueKey('axes.host'),
                   height: constraints.maxWidth >= 560 ? 360 : 300,
-                  child: ChartView(config: _config, onChartCreated: _onChart),
+                  child: ChartView.raw(
+                    config: _config,
+                    onChartCreated: _onChart,
+                  ),
                 ),
               ),
               const SizedBox(height: 12),

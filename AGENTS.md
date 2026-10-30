@@ -405,7 +405,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `lib/src/widgets/` (Chart.js ADRs 0049-0051, port-only, not pure layers). No file of it
     imports a component or an index of the components (`check:lib-imports`), and no file writes
     `defaults` or `overrides`.
-    - `chart_view.dart` has `ChartView`. It keeps one `UiCanvasElement` for the life of its state
+    - `chart_view.dart` has `ChartView`, with the typed entry `ChartView(config: ChartConfig)` and
+      the raw entry `ChartView.raw(config: Map)` (Chart.js ADR 0052 §9). A typed config lowers
+      through one `ChartConfigLowering` of `lib/src/typed/lower.dart` for the life of the state. A
+      new typed config that is `==` to the last one gives no update. Another one reconciles with
+      the live Maps: a dataset keeps its Map, its meta and its hidden state by its `key`, or
+      without a key by its index and class. It keeps one `UiCanvasElement` for the life of its state
       and starts the chart in `ChartHost.onFirstLayout`. The chart gets a root Map: a shallow copy
       of the app config, with `$theme` and the widget plugin. A new config, a new theme and a
       change of the reduced-motion preference reach the chart in one post-frame callback (Chart.js
@@ -428,8 +433,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       keys, the diagnostics, the update, the size, the callbacks and reduced motion),
       `chart_view_unregistered_test.dart` (it calls `removeBuiltins()` first in `main()`),
       `chart_theme_switch_test.dart` (theming.md §8 test 8), `chart_keyboard_test.dart` and
-      `chart_view_semantics_test.dart` (Chart.js ADR 0051). A test that pumps a `ChartView` gives
-      it a config that is not `const`: Chart.js writes into its `data` and `options`.
+      `chart_view_semantics_test.dart` (Chart.js ADR 0051). A test that pumps a `ChartView.raw`
+      gives it a config that is not `const`: Chart.js writes into its `data` and `options`. The
+      tests of the typed path are `test/port/typed/reconcile_test.dart` and `change_test.dart`.
   - `test/flutter_test_config.dart`: the port of `test/index.js`. `flutter test` runs it around
     each test file of the package ([Tests](#tests)).
   - `test/specs/`: ported upstream specs. `test/kurkle_color/`: the ported `@kurkle/color` tests.

@@ -20,6 +20,7 @@ import 'package:flutter_chartjs_port/src/typed/groups.dart'
         ChartTitle,
         ChartTooltip;
 import 'package:flutter_chartjs_port/src/typed/props.dart';
+import 'package:meta/meta.dart' show internal;
 
 /// The config of a chart: the chart type, the data and the options of a
 /// Chart.js config `{type, data, options, plugins}`
@@ -211,6 +212,14 @@ final class ChartConfig with Diagnosticable {
     ('type', type),
     ('datasets', byItems(datasets)),
     ('labels', labels),
+    ..._optionProps,
+    _pluginsProp,
+    _extraProp,
+  ];
+
+  /// The properties of the parameters that lower into `options`, before
+  /// [plugins].
+  List<TypedProperty> get _optionProps => [
     ('scales', byEntries(scales)),
     ('indexAxis', indexAxis),
     ('responsive', responsive),
@@ -225,9 +234,13 @@ final class ChartConfig with Diagnosticable {
     ('animation', animation),
     ('onClick', byPresence(onClick)),
     ('onHover', byPresence(onHover)),
-    ('plugins', plugins),
-    ('extra', byEntries(extra)),
   ];
+
+  /// The property of [plugins].
+  TypedProperty get _pluginsProp => ('plugins', plugins);
+
+  /// The property of [extra], which lowers into `options` too.
+  TypedProperty get _extraProp => ('extra', byEntries(extra));
 
   @override
   bool operator ==(Object other) =>
@@ -243,6 +256,21 @@ final class ChartConfig with Diagnosticable {
     addProps(properties, _props);
   }
 }
+
+/// Whether the parameters of [a] and [b] that lower into `options` are `==`:
+/// all parameters but `type`, `datasets`, `labels` and `plugins`, with the
+/// compare rules of `==` (Chart.js ADR 0052, section 9, step 4). Then the
+/// reconcile keeps the live `options` Map.
+@internal
+bool optionFieldsEqual(ChartConfig a, ChartConfig b) =>
+    propsEqual(a._optionProps, b._optionProps) &&
+    a._extraProp.$2 == b._extraProp.$2;
+
+/// Whether the [ChartConfig.plugins] of [a] and [b] are `==`, by the compare
+/// rule of `==`. Then the reconcile keeps the live `plugins` List.
+@internal
+bool pluginsEqual(ChartConfig a, ChartConfig b) =>
+    a._pluginsProp.$2 == b._pluginsProp.$2;
 
 /// The type of a chart or of a dataset: the id of a registered controller,
 /// the `type` of a Chart.js config (`core.config.js:93-95`).
