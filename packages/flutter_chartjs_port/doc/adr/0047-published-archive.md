@@ -1,6 +1,6 @@
 # Chart.js ADR 0047: The published archive
 
-- Status: proposed
+- Status: accepted (2026-10-30)
 - Date: 2026-10-29
 - Related: [ADR 0007](../../../../docs/adr/0007-package-names.md) (the package names; a harness
   stays `publish_to: none`), [Chart.js ADR 0035](0035-third-party-sources.md) (the third-party
@@ -116,13 +116,19 @@ keeps the analyzer problems and the format results only for `lib/`, `bin/` and `
 
 ## Open
 
-1. The pana score of the release, from a run on the release commit (phase 9 unit 10).
+1. Closed (2026-10-30): the pana score of the release. pana 0.23.19 on the archive of the release
+   commit `d9011b5`, run after the push of `b397fbf`, gives 155 of 160 points: conventions 25 of
+   30 (the SunPro notice costs 5 points, §4), documentation 20 of 20, platforms 20 of 20,
+   analysis 50 of 50 and dependencies 40 of 40. `dart pub publish --dry-run` on `main` at
+   `b397fbf` gives `flutter_chartjs_port 0.1.0`, 556 KB and 0 warnings.
 
 ## Evidence
 
 - The working files of phase 9 in `.handover/phase9/pana/`: `pana-7c958aa.json` (run 1),
   `pana-solo-7c958aa.json` (run 2), `pana-v2.json` (run 3), `pana-v3.json` (run 4), their `.err`
-  logs, `dry-run-7c958aa.txt` (4 MB) and `dry-run-adr0047.txt` (523 KB, 0 warnings). Not committed.
+  logs, `dry-run-7c958aa.txt` (4 MB), `dry-run-adr0047.txt` (523 KB, 0 warnings),
+  `pana-release-b397fbf.json` (155 of 160) and `dryrun-main-b397fbf.txt` (556 KB, 0 warnings). Not
+  committed.
 - pana 0.23.19: `lib/src/analysis_options.dart:73-177` (the pass-through options),
   `lib/src/sdk_env.dart:349` (the `pub get` before format), `:519` (the outdated step without dev
   dependencies), `:659-676` (the dropped dev dependencies) and `:819` (the kept problems),

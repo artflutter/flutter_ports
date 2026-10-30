@@ -30,8 +30,8 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
 - **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043, 0045, 0046 and 0048-0050 are accepted.
-  Chart.js ADRs 0047 and 0051 are proposed. Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
+  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043 and 0045-0050 are accepted.
+  Chart.js ADR 0051 is proposed. Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
   lead accepted Chart.js ADRs 0038-0043 on 2026-10-23, Chart.js ADRs 0037, 0045 and 0046 on
   2026-10-29, and Chart.js ADRs 0048, 0049 and 0050 on 2026-10-30. Fourteen accepted ADRs are superseded: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
   supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR 0004, Chart.js ADR 0016
@@ -112,7 +112,7 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   - [Chart.js ADR 0045: Reference engine on arm64](adr/0045-reference-engine-arm64.md) (it
     supersedes Chart.js ADR 0032)
   - [Chart.js ADR 0046: Stack fill search, the result of the code A/B](adr/0046-stack-fill-search-result.md)
-  - [Chart.js ADR 0047: The published archive](adr/0047-published-archive.md) (proposed)
+  - [Chart.js ADR 0047: The published archive](adr/0047-published-archive.md)
   - [Chart.js ADR 0048: Entry points and the public library](adr/0048-entry-points-and-public-library.md)
   - [Chart.js ADR 0049: The ChartView widget and reduced motion](adr/0049-chart-view-widget.md)
   - [Chart.js ADR 0050: The public theme API](adr/0050-public-theme-api.md) (it supersedes
@@ -192,8 +192,8 @@ semantics node of `ChartView`
 and 78 skip, no case is missing, and the counts of the fixtures did not change. The release
 commit sets the version 0.1.0, removes `publish_to: none` and adds the `CHANGELOG.md` entry
 ([Chart.js ADR 0047](adr/0047-published-archive.md) §6). The published floor is the workspace
-floor, `sdk: ^3.13.0` and `flutter: ">=3.47.0"` (porting-flow.md §2.12). The upload to pub.dev and
-the pana score of the release (Chart.js ADR 0047, Open 1) are open.
+floor, `sdk: ^3.13.0` and `flutter: ">=3.47.0"` (porting-flow.md §2.12). pana gives the release
+155 of 160 points (Chart.js ADR 0047, Open 1). The upload to pub.dev waits for the maintainer.
 
 The order follows upstream's own layering:
 - `helpers` depend only on `core.defaults` (and a type-only import of the chart controller).

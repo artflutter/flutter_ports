@@ -484,15 +484,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       Chart.js ADR 0042 with the public classes, the presets, the theme switch and the touch sizes,
       and supersedes it (2026-10-30). The porting lead accepted Chart.js ADRs 0032, 0034, 0035 and
       0036 on 2026-10-21, Chart.js ADRs 0038-0043 on 2026-10-23, Chart.js ADRs 0037, 0045 and 0046
-      on 2026-10-29, and Chart.js ADRs 0048, 0049 and 0050 on 2026-10-30. Chart.js ADR 0037 waited
+      on 2026-10-29, and Chart.js ADRs 0047, 0048, 0049 and 0050 on 2026-10-30. Chart.js ADR 0037 waited
       for the device check of step 8. Docs and code cite them for the current rules. The porting
       lead (the agent that runs the phase) owns the ADR statuses (the maintainer, 2026-10-21). It
       accepts an ADR when the decision is implemented and its gates are green. A changed decision
       still gets a new ADR that supersedes the old one. Chart.js ADR 0044 (the stack fill search)
       is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result.
-      Chart.js ADRs 0047 (the published archive) and 0051 (input events and interaction state) are
-      proposed. Chart.js ADR 0047 waits for the pana score of the release (its Open item 1), and
-      Chart.js ADR 0051 for the night series B-N1. The other ADRs are accepted. Docs name them
+      Chart.js ADR 0051 (input events and interaction state) is proposed: it waits for the night
+      series B-N1. The other ADRs are accepted. Docs name them
       "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. An accepted ADR does not change. A changed decision
