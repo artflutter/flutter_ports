@@ -130,7 +130,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 
 ## Layout
 
-- `packages/flutter_chartjs_port`: the Chart.js port (library, `publish_to: none` until 0.1.0).
+- `packages/flutter_chartjs_port`: the Chart.js port (library, version 0.1.0). Its pubspec has no
+  `publish_to`, so pub can publish it (Chart.js ADR 0047 §6). `CHANGELOG.md` has the entry 0.1.0.
   Its `analysis_options.yaml` includes the rules of the root file, and its `.pubignore` keeps
   `doc/`, `test/`, `tool/`, `dart_test.yaml` and `build/` out of the published archive (Chart.js
   ADR 0047). The harness and the gallery name it as a path dependency. `README.md` is the README

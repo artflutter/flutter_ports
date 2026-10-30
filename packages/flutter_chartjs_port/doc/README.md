@@ -189,8 +189,11 @@ semantics node of `ChartView`
 `ChartView` and the public libraries. The package has its README for pub.dev, the example
 `example/main.dart` and the published archive of
 [Chart.js ADR 0047](adr/0047-published-archive.md). On 2026-10-30, 958 spec cases pass, 0 fail
-and 78 skip, no case is missing, and the counts of the fixtures did not change. The published
-floor (porting-flow.md §2.12) and the release of 0.1.0 are open.
+and 78 skip, no case is missing, and the counts of the fixtures did not change. The release
+commit sets the version 0.1.0, removes `publish_to: none` and adds the `CHANGELOG.md` entry
+([Chart.js ADR 0047](adr/0047-published-archive.md) §6). The published floor (porting-flow.md
+§2.12), the upload to pub.dev and the pana score of the release (Chart.js ADR 0047, Open 1) are
+open.
 
 The order follows upstream's own layering:
 - `helpers` depend only on `core.defaults` (and a type-only import of the chart controller).

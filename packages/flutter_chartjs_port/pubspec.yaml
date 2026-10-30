@@ -1,10 +1,8 @@
 name: flutter_chartjs_port
 description: >-
-  A native Dart port of Chart.js for Flutter. Charts are drawn with Flutter's
-  own canvas, with no WebView and no JavaScript. Work in progress.
-version: 0.0.1
-# Remove at the first release.
-publish_to: none
+  A native Dart port of Chart.js 4.6.1 for Flutter. The charts draw on
+  Flutter's own canvas, with no WebView and no JavaScript engine.
+version: 0.1.0
 repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_chartjs_port
 issue_tracker: https://github.com/artflutter/flutter_ports/issues
 topics:
