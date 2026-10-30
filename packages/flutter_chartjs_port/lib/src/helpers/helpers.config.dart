@@ -1300,16 +1300,38 @@ const JsFunction parseObjectDataRadialScale = JsFunction(
   _parseObjectDataRadialScale,
 );
 
-/// The closure of [parseObjectDataRadialScale].
+/// The closure of [parseObjectDataRadialScale]: the typed body with the
+/// reads of `this` and `meta`, in the upstream order.
 List<ParsedItem> _parseObjectDataRadialScale(
   DatasetController self,
   ChartMeta meta,
   List<Object?> data,
   double start,
   double count,
+) => parseObjectDataRadialScaleOf(
+  meta.iScale,
+  self.parsing,
+  data,
+  start,
+  count,
+);
+
+/// helpers.config.ts:437 `_parseObjectDataRadialScale`, the typed body for
+/// the radar and polar area controllers: no [jsCall].
+///
+/// [iScale] is `meta.iScale` and [parsing] is `this._parsing` of the
+/// controller, the two values that upstream reads from `meta` and `this`. A
+/// caller reads them in that order, as the argument order is. The result
+/// is the one of [parseObjectDataRadialScale].
+@internal
+List<ParsedItem> parseObjectDataRadialScaleOf(
+  Scale? iScale,
+  Object? parsing,
+  List<Object?> data,
+  double start,
+  double count,
 ) {
-  final iScale = meta.iScale;
-  final parsingKey = jsGet(self.parsing, 'key');
+  final parsingKey = jsGet(parsing, 'key');
   final key = identical(parsingKey, undefined) ? 'r' : parsingKey;
   final parsed = <ParsedItem>[];
 
