@@ -241,6 +241,18 @@ abstract interface class ChartMeta {
   abstract double? total;
 }
 
+/// The filler state of a dataset meta, a port-only interface (Chart.js ADR
+/// 0054): the property `meta.$filler` that the filler plugin writes
+/// (plugin.filler/index.js:37). index.d.ts declares no such member, and the
+/// fakes of the tests implement [ChartMeta], so [ChartMeta] does not declare
+/// it. The meta class of core.controller.dart implements both interfaces.
+/// The filler, a pure layer, casts a meta to this interface.
+abstract interface class ChartMetaFiller {
+  /// plugin.filler/index.js:37 `meta.$filler`: the `FillerSource` of the
+  /// dataset, or the `undefined` sentinel before the filler writes it.
+  abstract Object? $filler;
+}
+
 /// helpers.extras.ts:146 the type `{xmin, xmax, ymin, ymax}` of
 /// `ChartMeta._scaleRanges`. `index.d.ts` does not declare it.
 /// `_scaleRangesChanged` writes its fields with `Object.assign` (:161).

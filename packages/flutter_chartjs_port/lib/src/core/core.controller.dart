@@ -284,7 +284,8 @@ types.ChartEvent? _determineLastEvent(
 /// object. The animations read and write [visible] and `$animations` by name
 /// (core.controller.js:903, Chart.js ADR 0019, section 9). A name that the
 /// meta does not declare goes to a Map of extra properties.
-final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
+final class ChartMeta
+    implements types.ChartMeta, types.ChartMetaFiller, types.PropertyAccess {
   ChartMeta._({
     required this.order,
     required this.index,
@@ -455,6 +456,7 @@ final class ChartMeta implements types.ChartMeta, types.PropertyAccess {
   /// plugin (its `FillerSource`), or the [undefined] sentinel, the absent
   /// property. The access by name reads and writes it ([operator []],
   /// [operator []=]), because the specs read `meta[r'$filler']`.
+  @override
   Object? $filler = undefined;
 
   /// The extra properties of the access by name. Dart `null` until the

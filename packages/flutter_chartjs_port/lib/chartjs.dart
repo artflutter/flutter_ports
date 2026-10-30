@@ -52,6 +52,7 @@ export 'package:flutter_chartjs_port/src/js/js_undefined.dart'
 export 'package:flutter_chartjs_port/src/types.dart'
     hide
         ChartMeta,
+        ChartMetaFiller,
         ElementPropertyRead,
         LayoutItem,
         PluginService,
