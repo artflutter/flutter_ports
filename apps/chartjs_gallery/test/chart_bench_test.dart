@@ -1288,13 +1288,17 @@ void main() {
       expect(border, matches(RegExp(r'^#([0-9A-F]{3}|[0-9A-F]{6})$')));
     }
     expect(between.toSet(), hasLength(between.length));
-    final line = runChartBenchCase(
-      _pluginCase('theme.anim', ChartBenchCall.frame, {'type': 'line'}),
+    // The timed case draws in each frame only for the doughnut: in the
+    // other types, both presets share the palette, so the first tick ends
+    // each element animation and most frames draw nothing (the draw median
+    // of the line case can be 0).
+    final doughnut = runChartBenchCase(
+      _pluginCase('theme.anim', ChartBenchCall.frame, {'type': 'doughnut'}),
       12,
       _settings,
     );
-    expect(line['case'], 'anim');
-    expect(_median(line, 'draw'), greaterThan(0));
+    expect(doughnut['case'], 'anim');
+    expect(_median(doughnut, 'draw'), greaterThan(0));
     expect(tester.takeException(), isNull);
   });
 
