@@ -1,4 +1,20 @@
-jsGet 22
-stringIndex 3
+# The by-name forms that stay (Chart.js ADR 0054 §5, the raw boundary):
+# - jsGet 3: getCanvas (core.controller.js:51-63) reads the item of the
+#   constructor, any JS value of the user (an array-like, a context, an
+#   object with a canvas).
+# - jsGet 1: the mode function of _updateVisibility reads the object
+#   {datasetIndex} that _updateDatasets gives to a mode function
+#   (core.controller.js:662, :903); a mode function of the user gets the
+#   same plain object.
+# - jsGet 2: setActiveElements reads an item {datasetIndex, index} of the
+#   user (core.controller.js:1101).
+# - jsGet 1: _defaultsValue reads a value of the user in Chart.defaults that
+#   is not a typed scope (defaults.datasets[type], core.controller.js:443).
+# - jsCall 1: _updateDatasets calls the update mode function of the user with
+#   JS arity (core.controller.js:662).
+# - jsObjectKeys 1: _moveNumericKeys walks _hiddenIndices, the object of the
+#   ToString keys of any JS value, in the Object.keys order: the order of the
+#   moves is behavior (core.controller.js:72-84).
+jsGet 7
 jsCall 1
 jsObjectKeys 1

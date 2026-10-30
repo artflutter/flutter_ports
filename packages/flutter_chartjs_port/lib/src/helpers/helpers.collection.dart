@@ -21,6 +21,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/parsed.dart'
+    show AxisKey, ParsedItem;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:meta/meta.dart';
 
@@ -74,12 +76,15 @@ import 'package:meta/meta.dart';
 ///   is an [Element]. The read gives [Element.x] for `'x'` and [Element.y]
 ///   for `'y'`, else [undefined].
 ///
-/// [jsGet] reads every entry that is not an [Element]. An [Element] is a
-/// Dart object, not a Map, so it has its own branch. A key of these tables
+/// A parsed item of the typed model ([ParsedItem], Chart.js ADR 0054 §8)
+/// gives its typed axis value. [jsGet] reads every other entry that is not
+/// an [Element]: an item of the user data (`parsing: false`). An [Element]
+/// is a Dart object, not a Map, so it has its own branch. A key of these tables
 /// is never `length` or an array index. Thus any other entry gives
 /// [undefined]. `null` and [undefined] throw a [TypeError], as JavaScript
 /// does.
 Object? _readKey(Object? entry, String key) {
+  if (entry is ParsedItem) return entry.valueOf(AxisKey.of(key), key);
   if (entry is Element) {
     return switch (key) {
       'x' => entry.x,

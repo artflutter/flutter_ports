@@ -185,7 +185,8 @@ void overrideTextDirection(CanvasRenderingContext2D ctx, Object? direction) {
 /// `textDirection` option instead (`plugin.legend.js:437`,
 /// `plugin.tooltip.js:1087`): `undefined`, or a String such as `'rtl'`.
 /// Thus [original] is an `Object?`, and `original[0]` and `original[1]` are
-/// [jsGet] reads: for `'rtl'`, they give `'r'` and `'t'`. The DOM ignores a
+/// [jsGetIndex] reads, the read of a number index: for `'rtl'`, they give
+/// `'r'` and `'t'`. The DOM ignores a
 /// call of `setProperty` with the priority `'t'`, so the call leaves the
 /// style as [overrideTextDirection] set it, as in the browser.
 ///
@@ -202,8 +203,8 @@ void restoreTextDirection(
 ]) {
   if (!identical(original, undefined)) {
     _prevTextDirection[ctx] = null;
-    final value = jsGet(original, 0);
-    final priority = jsGet(original, 1);
+    final value = jsGetIndex(original, 0);
+    final priority = jsGetIndex(original, 1);
     ctx.canvas.style.setProperty(
       'direction',
       value == null ? '' : jsToString(value),

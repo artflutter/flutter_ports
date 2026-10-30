@@ -17,10 +17,14 @@
 /// The numbers are `double` (Chart.js ADR 0045). `Math.max` is [jsMax]. The
 /// form `a || b` of two numbers is [_or].
 ///
-/// This library is a pure layer. It imports `helpers.core.dart`,
-/// `helpers.options.dart`, the JS runtime and the type libraries.
+/// This library is a pure layer. It imports `helpers.config.dart`
+/// (`readOption`, the typed read of the options of a box, Chart.js ADR 0054
+/// §4), `helpers.core.dart`, `helpers.options.dart`, the JS runtime, the
+/// option keys and the type libraries.
 library;
 
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show each, isObject;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
@@ -30,6 +34,8 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsMax;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
@@ -392,7 +398,7 @@ bool _strictEquals(Object? a, Object? b) {
 ///
 /// The destructuring `{position: pos, options: {stack, stackWeight = 1}}`
 /// (:34) reads `box.position`, then `box.options`, then the two options. A
-/// destructuring of an absent `options` throws a `TypeError`. [jsGet]
+/// destructuring of an absent `options` throws a `TypeError`. [readOption]
 /// throws it for Dart `null`. The default 1 replaces only `undefined`. The
 /// `stackWeight` of another value is its `ToNumber`: `null` gives 0, which
 /// the readers add and divide as upstream adds and divides `null`. The key
@@ -405,8 +411,8 @@ List<_LayoutWrap> _wrapBoxes(List<LayoutItem> boxes) {
     final box = boxes[i];
     final pos = box.position;
     final options = box.options;
-    final stack = jsGet(options, 'stack');
-    final stackWeightOption = jsGet(options, 'stackWeight');
+    final stack = readOption(options, OptionKey.stack);
+    final stackWeightOption = readOption(options, OptionKey.stackWeight);
     final stackWeight = identical(stackWeightOption, undefined)
         ? 1.0
         : jsToNumber(stackWeightOption);
@@ -832,9 +838,9 @@ void _configure(
 ) {
   item
     // DIVERGES(chartjs): adapt-layout-configure-types, a bool, not the value.
-    ..fullSize = jsTruthy(jsGet(options, 'fullSize'))
-    ..position = jsGet(options, 'position')
-    ..weight = jsGet(options, 'weight');
+    ..fullSize = jsTruthy(readOption(options, OptionKey.fullSize))
+    ..position = readOption(options, OptionKey.position)
+    ..weight = readOption(options, OptionKey.weight);
 }
 
 /// core.layouts.js:345 `update`.
@@ -864,7 +870,9 @@ void _update(
     return;
   }
 
-  final padding = toPadding(jsGet(jsGet(chart.options, 'layout'), 'padding'));
+  final padding = toPadding(
+    readOption(readOption(chart.options, OptionKey.layout), OptionKey.padding),
+  );
   final availableWidth = jsMax(width - padding.width, 0);
   final availableHeight = jsMax(height - padding.height, 0);
   final boxes = _buildLayoutBoxes(chart.boxes);
@@ -913,7 +921,7 @@ void _update(
   final visibleVerticalBoxCount = _or(
     verticalBoxes.fold<double>(0, (total, wrap) {
       final options = wrap.box.options;
-      return options != null && jsGet(options, 'display') == false
+      return options != null && readOption(options, OptionKey.display) == false
           ? total
           : total + 1;
     }),

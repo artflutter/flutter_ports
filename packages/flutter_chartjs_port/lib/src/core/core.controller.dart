@@ -47,7 +47,7 @@ import 'package:flutter_chartjs_port/src/core/core.registry.dart'
     as core_registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView;
+    show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show
         callback,
@@ -95,6 +95,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart'
         DatasetDrawHookArgs,
         DatasetUpdateHookArgs,
         EventHookArgs,
+        Plugin,
         ResizeHookArgs,
         UpdateHookArgs;
 import 'package:flutter_chartjs_port/src/upstream.dart'
@@ -142,12 +143,12 @@ num Function(T a, T b) _compare2Level<T>(
 /// `animationOptions` itself, which is not a function.
 void _onAnimationsComplete(AnimationEvent context) {
   final chart = context.chart;
-  final animationOptions = chart.options['animation'];
+  final animationOptions = readOption(chart.options, OptionKey.animation);
 
   chart.notifyPlugins('afterRender');
   callback(
     jsTruthy(animationOptions)
-        ? jsGet(animationOptions, 'onComplete')
+        ? readOption(animationOptions, OptionKey.onComplete)
         : animationOptions,
     [context],
     chart,
@@ -157,10 +158,10 @@ void _onAnimationsComplete(AnimationEvent context) {
 /// core.controller.js:41 `onAnimationProgress(context)`.
 void _onAnimationProgress(AnimationEvent context) {
   final chart = context.chart;
-  final animationOptions = chart.options['animation'];
+  final animationOptions = readOption(chart.options, OptionKey.animation);
   callback(
     jsTruthy(animationOptions)
-        ? jsGet(animationOptions, 'onProgress')
+        ? readOption(animationOptions, OptionKey.onProgress)
         : animationOptions,
     [context],
     chart,
@@ -1283,7 +1284,7 @@ class Chart implements types.Chart {
     for (var i = 0, ilen = datasets.length; i < ilen; i++) {
       final dataset = jsGetIndex(datasets, i.toDouble());
       var meta = getDatasetMeta(i.toDouble());
-      final datasetType = jsGet(dataset, 'type');
+      final datasetType = readOption(dataset, OptionKey.type);
       final type = jsTruthy(datasetType) ? datasetType : config.type;
 
       if (jsTruthy(meta._type) && meta._type != type) {
@@ -1291,14 +1292,14 @@ class Chart implements types.Chart {
         meta = getDatasetMeta(i.toDouble());
       }
       meta._type = type;
-      final indexAxis = jsGet(dataset, 'indexAxis');
+      final indexAxis = readOption(dataset, OptionKey.indexAxis);
       meta
         ..indexAxis =
             (jsTruthy(indexAxis) ? indexAxis : getIndexAxis(type, options))!
                 as String
-        ..order = jsOrZero(jsGet(dataset, 'order'))
+        ..order = jsOrZero(readOption(dataset, OptionKey.order))
         ..index = i.toDouble()
-        ..label = jsToString(jsGet(dataset, 'label'))
+        ..label = jsToString(readOption(dataset, OptionKey.label))
         ..visible = isDatasetVisible(i.toDouble());
 
       final controller = meta.controller;
@@ -1407,7 +1408,9 @@ class Chart implements types.Chart {
       minPadding = jsMax(jsToNumber(controller.getMaxOverflow()), minPadding);
     }
     minPadding = _minPadding =
-        jsTruthy(jsGet(options.readKey(OptionKey.layout), 'autoPadding'))
+        jsTruthy(
+          readOption(options.readKey(OptionKey.layout), OptionKey.autoPadding),
+        )
         ? minPadding
         : 0;
     _updateLayout(minPadding);
@@ -1842,7 +1845,9 @@ class Chart implements types.Chart {
     if (meta == null) {
       meta = ChartMeta._(
         // See isDatasetVisible() comment
-        order: jsTruthy(dataset) ? jsOrZero(jsGet(dataset, 'order')) : 0,
+        order: jsTruthy(dataset)
+            ? jsOrZero(readOption(dataset, OptionKey.order))
+            : 0,
         index: index,
         dataset_: dataset,
       );
@@ -1879,7 +1884,9 @@ class Chart implements types.Chart {
     // if true or false, the dataset.hidden value is ignored, else if null,
     // the dataset hidden state is returned.
     final hidden = meta.hidden;
-    return hidden != null ? !hidden : !jsTruthy(jsGet(dataset, 'hidden'));
+    return hidden != null
+        ? !hidden
+        : !jsTruthy(readOption(dataset, OptionKey.hidden));
   }
 
   /// core.controller.js:876 `setDatasetVisibility(datasetIndex, visible)`.
@@ -2285,7 +2292,7 @@ class Chart implements types.Chart {
   @override
   bool isPluginEnabled(String pluginId) {
     return plugins.cache!
-            .where((p) => jsGet(p.plugin, 'id') == pluginId)
+            .where((p) => _pluginId(p.plugin) == pluginId)
             .length ==
         1;
   }
@@ -2313,11 +2320,20 @@ class Chart implements types.Chart {
     final activated = jsTruthy(replay) ? active : diff(active, lastActive);
 
     if (deactivated.isNotEmpty) {
-      updateHoverStyle(deactivated, jsGet(hoverOptions, 'mode'), false);
+      updateHoverStyle(
+        deactivated,
+        readOption(hoverOptions, OptionKey.mode),
+        false,
+      );
     }
 
-    if (activated.isNotEmpty && jsTruthy(jsGet(hoverOptions, 'mode'))) {
-      updateHoverStyle(activated, jsGet(hoverOptions, 'mode'), true);
+    if (activated.isNotEmpty &&
+        jsTruthy(readOption(hoverOptions, OptionKey.mode))) {
+      updateHoverStyle(
+        activated,
+        readOption(hoverOptions, OptionKey.mode),
+        true,
+      );
     }
   }
 
@@ -2350,7 +2366,10 @@ class Chart implements types.Chart {
       inChartArea: isPointInArea(e),
     );
     bool eventFilter(PluginDescriptor plugin) => _includes(
-      _or(jsGet(plugin.options, 'events'), _options.readKey(OptionKey.events)),
+      _or(
+        readOption(plugin.options, OptionKey.events),
+        _options.readKey(OptionKey.events),
+      ),
       e.native!.type,
     );
 
@@ -2477,7 +2496,7 @@ class Chart implements types.Chart {
     final hoverOptions = _options.readKey(OptionKey.hover);
     return getElementsAtEventForMode(
       e,
-      jsGet(hoverOptions, 'mode'),
+      readOption(hoverOptions, OptionKey.mode),
       hoverOptions,
       useFinalPosition,
     );
@@ -2485,7 +2504,8 @@ class Chart implements types.Chart {
 
   /// `this.data.datasets`: the List of the datasets. `initData` makes it a
   /// List (core.config.js:124). Another value throws a [TypeError].
-  List<Object?> get _datasets => data['datasets']! as List<Object?>;
+  List<Object?> get _datasets =>
+      readOption(data, OptionKey.datasets)! as List<Object?>;
 }
 
 /// core.controller.js:1265 `invalidatePlugins()`.
@@ -2517,6 +2537,12 @@ Object? _defaultsValue(Object? object, Object key) {
   }
   return jsGet(object, key is OptionKey ? key.jsName : key);
 }
+
+/// `plugin.id` of a plugin of the plugin service: the typed field of a
+/// [Plugin], else the read of the Map plugin of the user (core.controller.js
+/// :1139).
+Object? _pluginId(Object plugin) =>
+    plugin is Plugin ? plugin.id : readOption(plugin, OptionKey.id);
 
 /// `value || other`: [value] when it is truthy, else [other].
 Object? _or(Object? value, Object? other) => jsTruthy(value) ? value : other;

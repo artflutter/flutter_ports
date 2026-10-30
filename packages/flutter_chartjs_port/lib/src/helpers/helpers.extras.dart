@@ -22,6 +22,8 @@ import 'dart:math' as math;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show lookupByKey;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -29,6 +31,10 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
+import 'package:flutter_chartjs_port/src/options/parsed.dart'
+    show AxisKey, ParsedItem;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// helpers.extras.ts:7 `fontString`.
@@ -229,7 +235,7 @@ double textX(
     final dataset = meta.dataset;
     final spanGaps = dataset != null
         ? dataset.options != null
-              ? dataset.options!['spanGaps']
+              ? readOption(dataset.options, OptionKey.spanGaps)
               : null
         : null;
     final axis = iScale.axis;
@@ -302,11 +308,16 @@ List<T> _slice<T>(List<T> list, double begin, [double? end]) {
 }
 
 /// The JS read `point[key]` of a parsed item (`unknown[]`, index.d.ts:503):
-/// the Map read for a Map, else [jsGet]. The Map read gives Dart `null` for
-/// an absent key, where JavaScript gives `undefined`. `isNullOrUndef` gives
-/// the same result for both.
-Object? _parsedValue(Object? point, String key) =>
-    point is Map<dynamic, dynamic> ? point[key] : jsGet(point, key);
+/// the typed axis value of a [ParsedItem] (Chart.js ADR 0054 §8), the Map
+/// read for a Map, else [jsGet]: an item of the user data with `parsing:
+/// false`. The Map read gives Dart `null` for an absent key, where
+/// JavaScript gives `undefined`. `isNullOrUndef` gives the same result for
+/// both.
+Object? _parsedValue(Object? point, String key) => switch (point) {
+  final ParsedItem item => item.valueOf(AxisKey.of(key), key),
+  final Map<dynamic, dynamic> map => map[key],
+  _ => jsGet(point, key),
+};
 
 /// helpers.extras.ts:146 `newRanges`, the object literal
 /// `{xmin, xmax, ymin, ymax}` of `_scaleRangesChanged`.

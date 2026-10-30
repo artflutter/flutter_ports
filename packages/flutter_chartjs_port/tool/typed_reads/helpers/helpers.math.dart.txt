@@ -1,1 +1,4 @@
+# - jsGet 1: setMinAndMaxByKey (the exported _setMinAndMaxByKey) reads an
+#   item of an array of the caller that is not a tick, by the property name
+#   that the caller gives.
 jsGet 1

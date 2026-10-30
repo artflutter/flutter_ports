@@ -9,8 +9,12 @@
 /// (filler.drawing.js:13, :188).
 library;
 
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show readOption;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// helpers.dataset.ts:10 and :27 the object literal
@@ -52,12 +56,12 @@ double _edgeOf(Object item, String field) => switch ((item, field)) {
 
 /// helpers.dataset.ts:3 `getSizeForArea`.
 ///
-/// `scale.options.clip` is an option value (Chart.js ADR 0043), and the
-/// test is its ToBoolean. Dart `null` for [chartArea] stands for the JS
-/// `undefined` of a chart before its first layout: the read of its edge
-/// throws a `TypeError`, as in JavaScript.
+/// `scale.options.clip` is an option value, read with [readOption] (Chart.js
+/// ADR 0054 §4), and the test is its ToBoolean. Dart `null` for [chartArea]
+/// stands for the JS `undefined` of a chart before its first layout: the
+/// read of its edge throws a `TypeError`, as in JavaScript.
 double _getSizeForArea(Scale scale, ChartArea? chartArea, String field) {
-  return jsTruthy(scale.options['clip'])
+  return jsTruthy(readOption(scale.options, OptionKey.clip))
       ? _edgeOf(scale, field)
       : _edgeOf(chartArea!, field);
 }

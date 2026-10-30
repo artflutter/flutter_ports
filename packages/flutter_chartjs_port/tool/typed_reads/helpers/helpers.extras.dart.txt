@@ -1,2 +1,3 @@
+# - jsGet 1: _parsedValue reads an item of the user data (parsing: false)
+#   that is neither a ParsedItem nor a Map (Chart.js ADR 0054 §8).
 jsGet 1
-stringIndex 1

@@ -1,1 +1,4 @@
+# - stringIndex 1: updateConfig writes `animation: false` into the options
+#   object of the user (platform.basic.js:20-22), a write into a user object
+#   (judge-c §3.3, Chart.js ADR 0054 §5).
 stringIndex 1

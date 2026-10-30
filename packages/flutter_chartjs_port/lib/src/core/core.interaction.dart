@@ -38,6 +38,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show isPointInArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show lookupByKey, rlookupByKey;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart'
@@ -47,6 +49,10 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsSquare;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
+import 'package:flutter_chartjs_port/src/options/parsed.dart'
+    show AxisKey, ParsedItem;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -144,11 +150,25 @@ double? _positionValue(Point position, Object? axis) =>
     };
 
 /// The JS read `point[key]` of a parsed item (`unknown[]`, index.d.ts:503):
-/// the Map read for a Map, else [jsGet]. The Map read gives Dart `null` for
-/// an absent key, where JavaScript gives `undefined`. `isNullOrUndef` gives
-/// the same result for both.
-Object? _parsedValue(Object? point, String key) =>
-    point is Map<dynamic, dynamic> ? point[key] : jsGet(point, key);
+/// the typed axis value of a [ParsedItem] (Chart.js ADR 0054 §8), the Map
+/// read for a Map, else [jsGet]: an item of the user data with `parsing:
+/// false`. The Map read gives Dart `null` for an absent key, where
+/// JavaScript gives `undefined`. `isNullOrUndef` gives the same result for
+/// both.
+Object? _parsedValue(Object? point, String key) => switch (point) {
+  final ParsedItem item => item.valueOf(AxisKey.of(key), key),
+  final Map<dynamic, dynamic> map => map[key],
+  _ => jsGet(point, key),
+};
+
+/// `element.skip` of core.interaction.js:85 and :188: the typed `skip` of a
+/// point element (Chart.js ADR 0054 §9), else the read by name of the
+/// element (the face of Chart.js ADR 0017 §5): another element class has no
+/// `skip` of its own.
+bool _skipped(Element element) => jsTruthy(switch (element) {
+  final types.PointElement point => point.skip,
+  _ => element['skip'],
+});
 
 /// core.interaction.js:22 `binarySearch`.
 ///
@@ -179,7 +199,7 @@ Object? _parsedValue(Object? point, String key) =>
   final dataset = metaset.dataset;
   final spanGaps = dataset != null
       ? dataset.options != null
-            ? jsGet(dataset.options, 'spanGaps')
+            ? readOption(dataset.options, OptionKey.spanGaps)
             : null
       : null;
 
@@ -279,7 +299,7 @@ void _evaluateInteractionItems(
     final (:lo, :hi) = _binarySearch(metasets[i], axis, value, intersect);
     for (var j = lo; j <= hi; ++j) {
       final element = data[j] as Element;
-      if (!jsTruthy(element['skip'])) {
+      if (!_skipped(element)) {
         handler(element, index, j.toDouble());
       }
     }
@@ -598,19 +618,19 @@ bool _inAxisRange(
 /// or a `List` throws a `TypeError` where upstream calls `axis.indexOf`
 /// (core.interaction.js:95).
 Object? _axisOption(Map<String, Object?> options, String fallback) {
-  final axis = jsGet(options, 'axis');
+  final axis = readOption(options, OptionKey.axis);
   return jsTruthy(axis) ? axis : fallback;
 }
 
 /// The option `options.includeInvisible || false` of core.interaction.js:273,
 /// :309, :339 and :355. The readers test only its truthiness.
 bool _includeInvisibleOption(Map<String, Object?> options) =>
-    jsTruthy(jsGet(options, 'includeInvisible'));
+    jsTruthy(readOption(options, OptionKey.includeInvisible));
 
 /// The option `options.intersect`. The readers test only its truthiness
 /// (core.interaction.js:274, :310, :175, :214, :242).
 bool _intersectOption(Map<String, Object?> options) =>
-    jsTruthy(jsGet(options, 'intersect'));
+    jsTruthy(readOption(options, OptionKey.intersect));
 
 /// `meta.data[index]` of core.interaction.js:285: the element at the number
 /// [index], or Dart `null` for the `undefined` of an index outside the list.
@@ -670,7 +690,7 @@ List<InteractionItem> _index(
     final element = _dataAt(meta.data, index);
 
     // don't count items that are skipped (null data)
-    if (element != null && !jsTruthy(element['skip'])) {
+    if (element != null && !_skipped(element)) {
       elements.add(
         InteractionItem(
           element: element,
