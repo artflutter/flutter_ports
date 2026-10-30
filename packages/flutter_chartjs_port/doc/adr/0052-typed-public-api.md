@@ -225,17 +225,20 @@ The files, all port-only (`// Original code, not ported from Chart.js: <reason>.
 
 ### 2. The lowering
 
-The typed config lowers to the scope Maps of Chart.js ADR 0043, once for each changed config, never
-in a frame. The resolver does not change, and no ported file changes for the lowering. The rules:
+The typed config lowers to the typed option scopes of Chart.js ADR 0054 §7 (the `<Kind>Scope`
+classes of `lib/src/options/scopes.g.dart`), once for each changed config, never in a frame. The
+resolver reads them with the typed reads of Chart.js ADR 0054 §4. The rules:
 
-1. Each class lowers to a new `<String, Object?>` Map with the keys in parameter order. The order
-   of `scales` is the Map order of the app: the box order is behavior.
+1. Each class lowers to a new typed scope of its kind with the keys in parameter order; `put`
+   stores the cell of the shape of each key. The order of `scales` is the Map order of the app:
+   the box order is behavior.
 2. Lists go by reference: `data`, `points`, `labels`, `CategoryAxis.labels` and `plugins`. The
    small style Lists (`backgroundColors`, `borderColors`, `borderDash`) lower to a new List.
-3. A `Color` lowers through `colorToRgba` and a `TextStyle` through `fontSpecOf` of `css.dart`, the
-   conversions of the theme (Chart.js ADR 0050). A `Duration` lowers to `inMicroseconds / 1000`.
-   An `EdgeInsets` lowers to `{top, right, bottom, left}`. A name type lowers to its option value
-   (section 7). `IndexAxis` lowers to its `name`.
+3. A `Color` lowers through `colorToRgba` of `css.dart`, the conversion of the theme (Chart.js ADR
+   0050). A `TextStyle` lowers through `fontScopeOf` of `css.dart` to a `FontSpecScope`. A
+   `Duration` lowers to `inMicroseconds / 1000`. An `EdgeInsets` lowers to a `PaddingScope`
+   `{top, right, bottom, left}`. A name type lowers to its option value (section 7). `IndexAxis`
+   lowers to its `name`.
 4. A plain value never lowers to a closure. Only a function parameter does (`...For` and the
    callbacks).
 5. `xFor` lowers to the 2-argument closure
@@ -252,10 +255,11 @@ in a frame. The resolver does not change, and no ported file changes for the low
    default text (`U/src/plugins/plugin.tooltip.js:447-455`). `AxisTicks.format` lowers to a
    `JsFunction`, so the scale is the `this` of `U/src/core/core.scale.js:574`.
 8. A dataset writes `type` only when its controller id differs from the root `type`.
-9. `extra` merges last, as a deep merge of Maps into new `<String, Object?>` Maps. Other values,
-   Lists included, go by reference. A key of `extra` beats a typed key of the same name, the rule
-   of the `raw` Map of a theme (`P/lib/src/theme/compile.dart:24-26`). This is the escape for a
-   gradient closure or a CSS string. `ChartConfig.extra` merges into `options`.
+9. `extra` merges last into cells: a Map merges into the object of the key, else it becomes a
+   typed scope of the kind of the key (a new `<String, Object?>` Map for a key with no kind); a
+   List and other values go by reference. A key of `extra` beats a typed key of the same name, the
+   rule of the `raw` Map of a theme (`P/lib/src/theme/compile.dart:24-26`). This is the escape for
+   a gradient closure or a CSS string. `ChartConfig.extra` merges into `options`.
 
 ### 3. Data and update
 
@@ -263,14 +267,17 @@ Data:
 - `data: List<num?>`, `points: List<DataPoint>` and `labels: List<Object>` go to the chart by
   reference. The docs idiom "push to `labels` and to each `data`, then `chart.update()`"
   (`U/docs/developers/updates.md:11-15`) thus works for a typed config too, with no copy.
-- `DataPoint` is an extension type over `Map<String, Object?>`. It does not implement `Map`. Its
-  public members are 4 constructors and the getters `x`, `y` and `r`:
+- `DataPoint` is a `final class` that implements `TypedDataItem` (`lib/src/types/data_item.dart`,
+  Chart.js ADR 0054 §7): `Object x` (a `double`, a `DateTime` or a `String`), `double? y` (Dart
+  `null` is JS `null`) and `double? r` (Dart `null` is an absent `r`). Its public members are 4
+  constructors, the fields and the face of the object `{x, y}` or `{x, y, r}`:
   `DataPoint(num x, num? y)`, `DataPoint.time(DateTime x, num? y)`,
-  `DataPoint.label(String x, num? y)` and `DataPoint.bubble(num x, num y, num r)`. Each makes one
-  Map, as the raw `{x, y}` does. The chart reads it with `jsGetKey`. A data point is a leaf with
-  no hierarchy, so J1a does not apply.
-- **Lists are yours, Maps are ours.** The lowering passes each List by reference and makes each
-  Map. Thus a `const` typed config works (t-c P6). The chart does not write into a data List. The
+  `DataPoint.label(String x, num? y)` and `DataPoint.bubble(num x, num y, num r)`. It is not a
+  `Map`; `isObject` is true for it. The chart reads its fields. A write by name throws a
+  `TypeError`, as a write into a frozen object. A data point is a leaf with no hierarchy, so J1a
+  does not apply.
+- **Lists are yours, scopes are ours.** The lowering passes each List by reference and makes each
+  typed scope. Thus a `const` typed config works (t-c P6). The chart does not write into a data List. The
   category scale writes into `labels` for a string value that is not a label (row
   `js-semantics-narrow-labels`, `U/src/scales/scale.category.js:4-12`), and a `const` labels List
   then throws. The typed `data: List<num?>` never adds a label. `DataPoint.label` and
@@ -280,14 +287,15 @@ Update. A new `ChartConfig` that is not `==` to the last one reconciles with the
 - The change test is `ChartConfig ==` (section 9). Lists compare by identity (the `plugins` List
   by the identity of its items), so the cost is
   O(fields + datasets).
-- The match rule: a new dataset with a `key` takes the live Map of the old dataset with an equal
-  key and the same class. A new dataset without a key takes the live Map at its index when the old
-  dataset there has no key and the same class. This is the rule of `Widget.canUpdate`. Each old Map
-  serves at most one new dataset. Else the dataset gets a new Map, as upstream: a new meta
+- The match rule: a new dataset with a `key` takes the live scope of the old dataset with an equal
+  key and the same class. A new dataset without a key takes the live scope at its index when the
+  old dataset there has no key and the same class. This is the rule of `Widget.canUpdate`. Each old
+  scope serves at most one new dataset. Else the dataset gets a new scope, as upstream: a new meta
   (`U/src/core/core.controller.js:829-853`).
-- The patch writes only the keys of the lowering. A key that the last lowering wrote and the new
-  one does not write goes. The keys of plugins stay, for example the colors of
-  `U/src/plugins/plugin.colors.ts:35-52` and the keys of the decimation plugin.
+- The reconcile patches the live typed dataset scope: it deletes the cells that the last lowering
+  wrote and the new one does not, and writes each cell whose JS value is not `==` to the last one.
+  The cells of plugins stay, for example the colors of `U/src/plugins/plugin.colors.ts:35-52` and
+  the keys of the decimation plugin.
 - A kept meta animates from the old values (t-c P5): the data animations are the upstream
   animations. `ChartView.updateMode` stays the way to turn them off.
 - The in-place idiom stays: change a List in place and call `chart.update()` through
@@ -384,14 +392,17 @@ details object is additive. A new upstream argument does not break a callback.
   - `ChartHit` over `ActiveElement`, and it implements `ActiveElement`. It redeclares
     `datasetIndex` and `index` as `int`. `element` comes from `ActiveElement`. A `List<ChartHit>`
     is thus a `List<ActiveElement>`, for example for `chart.setActiveElements`.
-  - `ChartContext` over the context Map (`P/lib/src/helpers/helpers.options.dart:524`): `chart`,
-    `type`, `datasetIndex` (`int?`), `dataIndex` (`int?`, null in a dataset context), `active`,
-    `raw` and `parsed`.
-  - `ChartTooltipItem` over the item Map (`P/lib/src/plugins/plugin.tooltip.dart:232-251`):
-    `chart`, `label`, `parsed`, `raw`, `formattedValue`, `datasetIndex`, `dataIndex` and
-    `datasetLabel` (the `label` of the dataset).
-  - `ChartLegendItem` over the legend item Map: `text`, `datasetIndex` (`int?`), `index` (`int?`)
-    and `hidden`.
+  - `ChartContext` over the typed context (`ContextObject` of
+    `P/lib/src/helpers/helpers.options.dart`: the members of `ScriptableContext` and
+    `ScriptableChartContext`, Chart.js ADR 0054 §11): `chart`, `type`, `datasetIndex` (`int?`),
+    `dataIndex` (`int?`, null in a dataset context), `active`, `raw` and `parsed`.
+  - `ChartTooltipItem` over the tooltip item of the tooltip plugin
+    (`P/lib/src/plugins/plugin.tooltip.dart:232-251`): `chart`, `label`, `parsed`, `raw`,
+    `formattedValue`, `datasetIndex`, `dataIndex` and `datasetLabel` (the `label` of the dataset).
+  - `ChartLegendItem` over the legend item of the legend plugin: `text`, `datasetIndex` (`int?`),
+    `index` (`int?`) and `hidden`.
+  - `ChartTooltipItem` and `ChartLegendItem` become views over the typed items of the plugins
+    (Chart.js ADR 0054 §12).
   - Each `int` getter is `toInt()` of the JS number. A getter gives Dart `null` for the
     `undefined` sentinel, for an absent key and for a value of another type. A view does not
     implement `Map`: no `Map` member is on its autocomplete list.
@@ -484,8 +495,10 @@ The libraries:
   `lib/src/types/` (also `Tick`), `lib/src/core/core.controller.dart` (`Chart`),
   `lib/src/core/core.scale.dart` (`Scale`), `lib/src/core/core.adapters.dart` (`TimeUnit`, the
   type of `TimeAxis.unit`), `lib/src/js/js_function.dart`,
-  `lib/src/js/js_number.dart` (`jsNumberToString`), `lib/src/js/js_undefined.dart` and
-  `lib/src/theme/css.dart`. No file of `lib/src/typed/` imports `controllers/`, `scales/`,
+  `lib/src/js/js_number.dart` (`jsNumberToString`), `lib/src/js/js_undefined.dart`,
+  `lib/src/theme/css.dart`, the typed option scopes of `lib/src/options/` and the typed contexts of
+  `lib/src/helpers/helpers.options.dart` (Chart.js ADR 0054 §7 and §11). No file of
+  `lib/src/typed/` imports `controllers/`, `scales/`,
   `elements/` or `plugins/`: the typed API writes keys, not components, so the tree shaking of
   Chart.js ADR 0048 §3 stays. Ported files never import `lib/src/typed/`.
 
@@ -520,31 +533,33 @@ final Map<String, Object?>? rawConfig;  // the raw config, every rule of Chart.j
   equality (0049:325-326).
 - A key of a nested Map of `extra` that is not a `String` fails a debug assert that names the
   key: Chart.js options are objects with string keys.
-- The post-frame update lowers through `ChartConfigLowering.apply(newConfig)` and gives the app
-  Map to the unchanged steps 1-6. `ChartConfigLowering` keeps the live Maps of its last lowering:
-  the root Map, the `data` and `options` Maps, and each dataset Map with the entries that the
-  lowering wrote into it. The new root Map has these values:
+- The chart gets a typed root scope (`ChartConfigurationScope`): the lowering root, or the
+  top-level values of the raw Map, whose `data` and `options` stay the app Maps.
+- The post-frame update lowers through `ChartConfigLowering.apply(newConfig)` and gives the root
+  scope of the app config to the unchanged steps 1-6. `ChartConfigLowering` keeps the live scopes
+  of its last lowering: the root scope, the `data` and `options` scopes, and each dataset scope
+  with the cells that the lowering wrote into it. The new root scope has these values:
   1. `type`: the last value when the type is `==`, else the new name;
-  2. each new dataset takes a live Map by the match rule of section 3, else a new Map;
-  3. a matched Map with an `==` dataset in a chart of the same type stays as it is; else the patch
-     removes the keys that the last lowering wrote and the new one does not write, and writes each
-     entry whose value is not `==` to the value of the last lowering. A key that the lowering did
-     not write stays: a key of a plugin or an edit of the app. A key whose lowered value did not
-     change stays too, so the decimated `data` of the decimation plugin stays when the data List
-     is the same object;
-  4. `data`: the last `data` Map when the dataset Maps are the last Maps in the same order and
-     `labels` is the same List, else a new `data` Map with `labels` (by reference) and a new
+  2. each new dataset takes a live scope by the match rule of section 3, else a new scope;
+  3. a matched scope with an `==` dataset in a chart of the same type stays as it is; else the
+     patch removes the cells that the last lowering wrote and the new one does not write, and
+     writes each cell whose JS value is not `==` to the value of the last lowering. A key that the
+     lowering did not write stays: a key of a plugin or an edit of the app. A key whose lowered
+     value did not change stays too, so the decimated `data` of the decimation plugin stays when
+     the data List is the same object;
+  4. `data`: the last `data` scope when the dataset scopes are the last scopes in the same order
+     and `labels` is the same List, else a new `data` scope with `labels` (by reference) and a new
      `datasets` List (the setter of step 2 of Chart.js ADR 0049 §4);
-  5. `options`: the last `options` Map when the type and the option fields are `==` (then an
-     imperative `chart.options` edit stays, Chart.js ADR 0049 §4), else a new `options` Map. A new
-     type gives a new `options` Map: `initOptions` merges the scale defaults of the type into the
-     live `options.scales` (`U/src/core/core.config.js:115-120`), so a kept Map keeps the axes of
-     the old type (for example `offset: true` of a bar `x` axis in a line chart);
+  5. `options`: the last `options` scope when the type and the option fields are `==` (then an
+     imperative `chart.options` edit stays, Chart.js ADR 0049 §4), else a new `options` scope. A
+     new type gives a new `options` scope: `initOptions` merges the scale defaults of the type into
+     the live `options.scales` (`U/src/core/core.config.js:115-120`), so a kept scope keeps the
+     axes of the old type (for example `offset: true` of a bar `x` axis in a line chart);
   6. `plugins`: the last List when the plugins are `==`, else the new List, as on the raw path.
 - Two datasets with one `key` fail a debug assert, as two children with one key. An exception of
   the lowering at the start goes to `FlutterError.reportError`, as an exception of `new Chart`
   (Chart.js ADR 0049 §2), and the next new config starts the chart.
-- Two `ChartView`s with one `const` config each lower their own Maps.
+- Two `ChartView`s with one `const` config each lower their own scopes.
 - The theme switch of Chart.js ADR 0050 runs after the reconcile, in the same callback.
 - The 63 call sites of `ChartView(` in 13 files change to `ChartView.raw(`: 56 in 7 test files
   under `test/port/`, 4 in the 4 gallery files, 1 in the example and 2 in the README.
@@ -587,7 +602,7 @@ typed path with dart2wasm through the example and one gallery page (section 13).
 | `test/port/typed/datasets_test.dart` | `DataPoint` (its Map, its getters, a chart reads it); later the dataset lowering |
 | `test/port/typed/callbacks_test.dart` | the views and the details over the objects of a real chart: `int` indexes, the `undefined` rule, `List<ActiveElement>` as `List<ChartHit>`; later `onClick`, `onHover` and the legend handlers through `triggerMouseEvent`, tooltip `labelText` null gives the default text, `AxisTicks.format` gets the scale, `backgroundColorFor` gives the element colors of a raw closure with the same strings |
 | `test/port/typed/names_test.dart` | the name rules of section 8 over the 50 names and the exports of `typed.dart`: the upstream names from the `exports` of `doc/upstream/manifest.json`, the Flutter and port names through an analyzer resolve |
-| `test/port/typed/lowering_test.dart` | for each typed field, a config with that field alone lowers to the expected key path and value form, with the key order (`jsObjectKeys`). It covers `borderRadius`, `ChartLength`, `Duration`, `EdgeInsets`, `TextStyle`, `Color`, the name types, `extra` (deep merge, wins) and the dataset `type` rule |
+| `test/port/typed/lowering_test.dart` | for each typed field, a config with that field alone lowers to the expected key path and value form, with the key order (`jsObjectKeys`): the lowering tests compare the scope faces with the same key paths, values and key order. It covers `borderRadius`, `ChartLength`, `Duration`, `EdgeInsets`, `TextStyle`, `Color`, the name types, `extra` (deep merge, wins) and the dataset `type` rule |
 | `test/port/typed/docs_twins_test.dart` | the 11 docs configs of `apps/chartjs_gallery/lib/docs/charts/` and `lib/docs/samples/area/line_boundaries.dart`, and one chart of each of the 8 types, written typed: equal draw calls (`drawCalls`, colors in parsed form), equal resolved options and element properties, equal hits on a grid. Also under `ChartThemeData.light()` |
 | `test/port/typed/reconcile_test.dart` | J2a and J2b as `ChartView` tests; the hidden state, the meta and the elements kept, the first frame near the old value; a removed typed key leaves the live Map; a colors-plugin key stays; a class change at an index gives a new meta; a new key; append and remove; a keyed reorder; the debug assert of two datasets with one key; the `data` and `options` Maps (step 4 and 5); a new type gives the axes of a new chart; a theme switch and a data change in one frame; the decimation plugin (through `extra`) with a new `data` List |
 | `test/port/typed/change_test.dart` | an `==` config gives no `beforeUpdate`, also a parent that builds the config in each build and a `const` config; a new `data` List gives one; a changed field gives one; a new inline `onClick` closure gives none, and the next click calls it; a legend `onClick` and a tooltip `labelText` of the newest config; a new `xFor` closure gives one, the same tear-off none; `ChartView.raw` keeps the identity rule; a change of the form keeps the chart; two views of one `const` config; the diagnostics; the unmount with a pending update |
@@ -597,9 +612,9 @@ typed path with dart2wasm through the example and one gallery page (section 13).
 | `test/port/core/core.controller_index_test.dart` | section 10 |
 | `test/tool/public_api_test.dart` | `doc/public_api.txt` with the new names |
 
-`test:cases`, `test:fixtures` and the reference tests do not change: they feed raw Maps. Equal Maps
-give equal charts, because the chart reads only the Map. Thus the main test is the lowering twin
-with the key order.
+`test:cases`, `test:fixtures` and the reference tests do not change: they feed raw Maps. A typed
+scope and a raw Map with equal keys, values and key order give equal charts. Thus the main tests
+are the lowering twin with the key order and the docs twins.
 
 ### 12. The night protocol
 
@@ -658,8 +673,8 @@ Each part below replaces the cited text on acceptance.
 
 1. **Chart.js ADR 0043, "Raw configs in 0.1.0"** (0043:97-100) becomes: "**Typed and raw configs
    in 0.1.0.** Release 0.1.0 accepts typed configs (`ChartConfig`, Chart.js ADR 0052) and raw Map
-   configs, `jsonDecode` output included (`ChartView.raw`). The typed API lowers to the same scope
-   Maps. Typed theme component styles depend on it ([theming.md](../theming.md) §5.1)."
+   configs, `jsonDecode` output included (`ChartView.raw`). The typed API lowers to typed scopes.
+   Typed theme component styles depend on it ([theming.md](../theming.md) §5.1)."
 2. **Chart.js ADR 0043, Open 1** ("The typed options API", 0043:218-220) closes: this ADR decides
    the typed options API. Typed theme component styles move to Open 5 of this ADR.
 3. **Chart.js ADR 0048 §5, the app library** (0048:189-192) becomes:
@@ -733,7 +748,7 @@ Each part below replaces the cited text on acceptance.
 
 ## Consequences
 
-- No ported file changes for the typed API, except the index parameters of section 10. The raw
+- The typed API makes no option Map: it lowers to the typed scopes of Chart.js ADR 0054. The raw
   path keeps every rule of Chart.js ADRs 0043 and 0049.
 - The app library gets 50 new names. After 0.1.0, each one is a commitment (Chart.js ADR 0048).
   The `final` classes, the named parameters, the open name sets and the details objects make each
@@ -763,7 +778,7 @@ Each part below replaces the cited text on acceptance.
 6. **The generator.** Trigger: the typed set passes about half of the d.ts option tree
    (section 13).
 7. **Public constructors of the views.** A unit test of a `ChartScript` in an app needs a
-   `ChartContext`. Today the test casts a Map (`map as ChartContext`). Trigger: an app request.
+   `ChartContext`. Today a test makes a context with `createContext`. Trigger: an app request.
 
 ## Evidence
 

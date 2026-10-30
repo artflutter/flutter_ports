@@ -506,12 +506,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `dispatchCanvasEvent` (`canvas.dispatchEvent`).
     `native_event.dart` is the stand-in for the DOM event, a pure layer.
   - `lib/src/theme/` (Chart.js ADR 0050, port-only): `compile.dart` has `compileChartTheme` over
-    raw Map themes, the emission guard and the deep freeze. `presets.dart` has the internal
+    raw Map themes, the emission guard and the deep freeze: `compileChartTheme` gives a deep-frozen
+    typed `ChartOptionsScope` tree (Chart.js ADR 0054 §3). `presets.dart` has the internal
     `ChartThemes.light` and `ChartThemes.none`. Both files are pure layers. `theme_data.dart` has
     the public `ChartThemeData` (Chart.js ADR 0050): 6 `Color?` tokens, 2 `TextStyle?` fonts,
     `palette` and `paletteBackgroundAlpha`, the presets `.light()` and `.dark()` (the mirror rule),
     `copyWith`, `lerp` and deep `==`, and the internal `themeDataToRaw` and `compileThemeData`
-    (the compiled map of each instance, in an `Expando`). `chart_theme.dart` has `ChartTheme`, an
+    (no memo: the theme switch keeps the compiled scope of its current theme). `chart_theme.dart`
+    has `ChartTheme`, an
     `InheritedTheme` with a non-null `data` (`maybeOf` for charts, `of` with the light fallback).
     Both import Flutter: they are not pure layers. Ported files never import a file of
     `lib/src/theme/`. `test/port/theme/coverage_test.dart` (theming.md §8 test 4) compares
@@ -525,16 +527,19 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
     `typed.dart` is its export list of 50 names. `config.dart` has `ChartConfig`, `ChartKind` and
     `IndexAxis`. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
-    and `DataPoint`. `axes.dart` has the 6 axes, `AxisTicks`, `AxisGrid` and `AxisTitle`.
+    and `DataPoint`, a final class that implements `TypedDataItem`. `axes.dart` has the 6 axes,
+    `AxisTicks`, `AxisGrid` and `AxisTitle`.
     `groups.dart` has `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`,
     `ChartInteraction` and `ChartAnimation`. `elements.dart` has `ChartElements` and the 4 element
     styles. `values.dart` has the name types: extension types with `const` constants, for the dot
-    shorthands. `callbacks.dart` has the details classes and the views with `int` indexes. Each
+    shorthands. `callbacks.dart` has the details classes and the views with `int` indexes;
+    `ChartContext` is a view over the typed contexts. Each
     config class is `@immutable` and `final`, with a `const` constructor, `copyWith`, and `==`
     from its `_props` list (`props.dart`). Each class has `extra`, the Chart.js options with no
-    parameter. `lower.dart` (internal) gives the option Maps of the chart for a config
-    (`ChartConfigLowering`), with the conversions of `Color` and `TextStyle` of
-    `lib/src/theme/css.dart`. Ported files never import `lib/src/typed/`, and no file of it imports
+    parameter. `lower.dart` (internal) gives the typed option scopes of the chart for a config
+    (`ChartConfigLowering`: a `ChartConfigurationScope` root, `put`, the typed `mergeExtra`), with
+    `colorToRgba` and `fontScopeOf` of `lib/src/theme/css.dart`. Ported files never import
+    `lib/src/typed/`, and no file of it imports
     a component (`check:lib-imports`).
   - `lib/src/widgets/` (Chart.js ADRs 0049-0051, port-only, not pure layers). No file of it
     imports a component or an index of the components (`check:lib-imports`), and no file writes
@@ -545,11 +550,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       new typed config that is `==` to the last one gives no update. `==` compares the data Lists
       by identity and the event and text callbacks by presence: these callbacks are trampolines
       to the callback of the newest config, and a new closure of a scriptable color or a tick
-      format is a new value. Another config reconciles with the live Maps: a dataset keeps its
-      Map, its meta and its hidden state by its `key`, or without a key by its index and class.
+      format is a new value. Another config reconciles with the live typed scopes: a dataset
+      keeps its scope, its meta and its hidden state by its `key`, or without a key by its index
+      and class.
       The README states these rules for apps. The widget keeps one `UiCanvasElement` for the life
-      of its state and starts the chart in `ChartHost.onFirstLayout`. The chart gets a root Map:
-      a shallow copy of the app config, with `$theme` and the widget plugin. A new config, a new
+      of its state and starts the chart in `ChartHost.onFirstLayout`. The chart gets a typed root
+      scope (`ChartConfigurationScope`): the top-level values of the app config, with `$theme` and
+      the widget plugin. A new config, a new
       theme and a change of the reduced-motion preference reach the chart in one post-frame
       callback (Chart.js ADR 0049 §4). `build` sets the reduced-motion flag from
       `MediaQuery.maybeDisableAnimationsOf`. A chart under `TickerMode(enabled: false)` is muted.
