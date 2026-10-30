@@ -14,8 +14,9 @@
 ///   subclass keeps the JS conversion in its field;
 /// - the extras: the own keys that are not fields, with their values;
 /// - the own-key order: the insertion order of the fields and the extras,
-///   as JS keeps it. Up to 7 keys, the order is a sequence of 4-bit groups
-///   in one `int` (28 bits, also on the web). More keys make a list.
+///   as JS keeps it. Up to 14 keys of a record with at most 14 fields, the
+///   order is a sequence of 4-bit groups in two `int`s of 7 groups each (28
+///   bits each, also on the web). More keys, or more fields, make a list.
 ///
 /// The face ([JsObjectFace]) has the JS rules. During the migration a
 /// record is also a `MapBase` (the scaffolding of Chart.js ADR 0054 §5):
@@ -70,14 +71,22 @@ abstract base class TypedRecord extends MapBase<String, Object?>
   List<Object?>? _foreignValues;
 
   /// The key order as 4-bit groups: a slot + 1, or [_extraGroup] for the
-  /// next extra.
+  /// next extra. The groups 0-6 are in [_order], the groups 7-13 in
+  /// [_order2].
   int _order = 0;
 
-  /// The number of groups in [_order].
+  /// The groups 7-13 of the key order.
+  int _order2 = 0;
+
+  /// The number of groups in [_order] and [_order2].
   int _count = 0;
 
-  /// The key order when it does not fit into [_order].
+  /// The key order when it does not fit into the groups.
   List<String>? _orderList;
+
+  /// Whether an extra has a canonical array index as its name: then
+  /// `Object.keys` puts it first ([jsKeys]).
+  bool _indexKey = false;
 
   /// The names of the extras, in insertion order.
   List<String>? _extraNames;
@@ -88,14 +97,45 @@ abstract base class TypedRecord extends MapBase<String, Object?>
   static const int _bits = 4;
   static const int _mask = 15;
   static const int _extraGroup = 15;
-  static const int _maxGroups = 7;
+  static const int _groupsPerInt = 7;
+  static const int _maxGroups = 14;
 
   /// Whether the field [slot] is present.
-  @protected
   bool hasSlot(int slot) => _present & (1 << slot) != 0;
 
   /// Whether the field [slot] has a foreign value.
   bool isForeignSlot(int slot) => _foreign & (1 << slot) != 0;
+
+  /// Whether a field has a foreign value.
+  bool get hasForeign => _foreign != 0;
+
+  /// The slot of the own key at the 0-based [position] of the order of
+  /// `Object.keys` ([jsKeys]), or -1 for an extra.
+  int slotAt(int position) {
+    if (_indexKey || _orderList != null) return slotOf(keyAt(position));
+    final group = _groupAt(position);
+    return group == _extraGroup ? -1 : group - 1;
+  }
+
+  /// The name of the own key at the 0-based [position] of the order of
+  /// `Object.keys` ([jsKeys]), also for an extra.
+  String keyAt(int position) {
+    if (_indexKey) return jsKeys()[position];
+    final list = _orderList;
+    if (list != null) return list[position];
+    final group = _groupAt(position);
+    if (group != _extraGroup) return fieldNames[group - 1];
+    var extra = 0;
+    for (var p = 0; p < position; p++) {
+      if (_groupAt(p) == _extraGroup) extra++;
+    }
+    return _extraNames![extra];
+  }
+
+  /// The group at [position] of the key order.
+  int _groupAt(int position) => position < _groupsPerInt
+      ? (_order >> (_bits * position)) & _mask
+      : (_order2 >> (_bits * (position - _groupsPerInt))) & _mask;
 
   /// The foreign value of the field [slot], or Dart `null`.
   Object? foreignSlot(int slot) =>
@@ -152,12 +192,21 @@ abstract base class TypedRecord extends MapBase<String, Object?>
     final list = _orderList;
     if (list != null) {
       list.add(name);
-    } else if (_count < _maxGroups) {
-      _order |= group << (_bits * _count);
-      _count++;
+    } else if (_count < _maxGroups && fieldNames.length < _extraGroup) {
+      _appendGroup(group);
     } else {
       _orderList = _decode()..add(name);
     }
+  }
+
+  /// Appends [group] to the groups of the key order.
+  void _appendGroup(int group) {
+    if (_count < _groupsPerInt) {
+      _order |= group << (_bits * _count);
+    } else {
+      _order2 |= group << (_bits * (_count - _groupsPerInt));
+    }
+    _count++;
   }
 
   /// Removes the key [name] from the key order: the field group [group], or
@@ -170,7 +219,7 @@ abstract base class TypedRecord extends MapBase<String, Object?>
     }
     var extra = 0;
     for (var p = 0; p < _count; p++) {
-      final g = (_order >> (_bits * p)) & _mask;
+      final g = _groupAt(p);
       final bool match;
       if (g == _extraGroup) {
         match = group == _extraGroup && extra == extraIndex;
@@ -179,10 +228,14 @@ abstract base class TypedRecord extends MapBase<String, Object?>
         match = g == group;
       }
       if (match) {
-        final low = _order & ((1 << (_bits * p)) - 1);
-        final high = _order >> (_bits * (p + 1));
-        _order = low | (high << (_bits * p));
-        _count--;
+        final groups = [
+          for (var q = 0; q < _count; q++)
+            if (q != p) _groupAt(q),
+        ];
+        _order = 0;
+        _order2 = 0;
+        _count = 0;
+        groups.forEach(_appendGroup);
         return;
       }
     }
@@ -196,7 +249,7 @@ abstract base class TypedRecord extends MapBase<String, Object?>
     final out = <String>[];
     var extra = 0;
     for (var p = 0; p < _count; p++) {
-      final g = (_order >> (_bits * p)) & _mask;
+      final g = _groupAt(p);
       out.add(g == _extraGroup ? _extraNames![extra++] : names[g - 1]);
     }
     return out;
@@ -239,6 +292,7 @@ abstract base class TypedRecord extends MapBase<String, Object?>
     }
     names.add(key);
     values.add(value);
+    if (jsArrayIndex(key) != null) _indexKey = true;
     _append(_extraGroup, key);
   }
 
@@ -292,7 +346,9 @@ abstract base class TypedRecord extends MapBase<String, Object?>
   @override
   List<String> jsKeys() {
     final keys = _decode();
-    if (!keys.any((name) => jsArrayIndex(name) != null)) return keys;
+    if (!_indexKey || !keys.any((name) => jsArrayIndex(name) != null)) {
+      return keys;
+    }
     // The indices are distinct integers: an unstable sort gives one order.
     final indices =
         [

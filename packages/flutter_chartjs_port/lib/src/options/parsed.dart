@@ -404,6 +404,12 @@ final class StackEntry extends TypedRecord {
 
   @override
   List<String> jsKeys() => [...datasetValues.jsKeys(), ...super.jsKeys()];
+
+  @override
+  String keyAt(int position) => jsKeys()[position];
+
+  @override
+  int slotAt(int position) => slotOf(keyAt(position));
 }
 
 /// A JS object whose keys are canonical array indices, for example the
