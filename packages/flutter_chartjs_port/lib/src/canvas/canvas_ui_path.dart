@@ -34,9 +34,11 @@
 /// (canvas-cuts-plan.md §7, N3). The build makes the `ui.Path` calls of an
 /// eager build, in the same order and with the same values. Thus a path that
 /// a fast path of the context draws (a rectangle, a rounded rectangle, a
-/// ring, a circle) makes no `ui.Path` call. The current point and the start
-/// of a subpath on an arc keep the arc, and get their coordinates at the
-/// first read.
+/// ring, a circle, a sector) makes no `ui.Path` call. The current point and
+/// the start of a subpath on an arc keep the arc, and get their coordinates
+/// at the first read. [UiPathBuilder.singleSector] reads the deferred
+/// commands of a wedge or a ring sector, which the context fills with
+/// `drawArc` (N4).
 library;
 
 import 'dart:math' as math;
@@ -286,6 +288,41 @@ const int _closeCode = 6;
 /// The most numbers of one deferred command: an arc.
 const int _maxCommandNumbers = 7;
 
+/// The circular sector that `fill` draws with `drawArc`
+/// ([UiPathBuilder.singleSector]), in bitmap space: the center (`x`, `y`),
+/// the outer radius `radius`, the inner radius `inner` (0 for a wedge with
+/// its center), and the angles of the sector from `start` over `sweep`
+/// radians, with 0 < |`sweep`| < 2π.
+typedef UiSector = ({
+  double x,
+  double y,
+  double radius,
+  double inner,
+  double start,
+  double sweep,
+});
+
+/// The largest distance, in bitmap pixels, of two points that
+/// [UiPathBuilder.singleSector] takes as one point: the line between them
+/// adds no area that a fill shows.
+const double _sectorPointTolerance = 1e-6;
+
+/// The largest difference of two angles, in radians, that
+/// [UiPathBuilder.singleSector] takes as one angle: at a radius of 10000
+/// pixels, the point moves by 1e-5 pixels.
+const double _sectorAngleTolerance = 1e-9;
+
+/// The most items (arc groups and points) of a path that
+/// [UiPathBuilder.singleSector] reads.
+const int _maxSectorItems = 8;
+
+/// Whether the angles [a] and [b] are the same direction, within
+/// [_sectorAngleTolerance].
+bool _sameAngle(double a, double b) {
+  final d = (a - b) % _tau;
+  return d <= _sectorAngleTolerance || _tau - d <= _sectorAngleTolerance;
+}
+
 /// A point of [UiPathBuilder] in bitmap space: the current point or the
 /// start of the subpath. A point on an arc keeps its arc, and gets its
 /// coordinates at the first read of [x] or [y], with the expressions of an
@@ -376,6 +413,12 @@ final class UiPathBuilder implements CanvasPath {
   );
   int _deferred = 0;
   int _numberCount = 0;
+
+  // The items of [singleSector]: the kind of each item (0 a point, 1 an arc
+  // group) and its numbers (x and y; or the center, the radius, the start
+  // and the sweep).
+  final Uint8List _itemKinds = Uint8List(_maxSectorItems);
+  final Float64List _items = Float64List(_maxSectorItems * 5);
 
   // Whether [_path] has the commands of the path so far: then a new command
   // goes to it directly. Only then does [_path] have commands.
@@ -633,6 +676,177 @@ final class UiPathBuilder implements CanvasPath {
   /// `closePath`. The context fills and strokes it with `drawCircle`.
   ({double x, double y, double radius})? get singleCircle =>
       _circle ? (x: _circleX, y: _circleY, radius: _circleR) : null;
+
+  /// The circular sector of the path in bitmap space, when the deferred
+  /// commands are one subpath that fills a wedge with its center or a ring
+  /// sector (canvas-cuts-plan.md §7, N4). The context fills it with
+  /// `drawArc`. `null` for another path, and once the path is built.
+  ///
+  /// The commands may be moves at the start, lines, circular arcs and a
+  /// close at the end. Arcs on one circle that go on from each other in one
+  /// direction make one arc group. A point within [_sectorPointTolerance]
+  /// of the end of the item before it, or of the start of the arc after it,
+  /// adds no line and is dropped, also across the close. The rest must be:
+  /// - one arc group with 0 < |sweep| < 2π and one point at its center: a
+  ///   wedge (the doughnut arc of a pie or a polar area,
+  ///   element.arc.ts:230-286, where the inner arcs have NaN angles);
+  /// - two arc groups on one center with two radii, where the second group
+  ///   starts at the end angle of the first and goes back over its sweep: a
+  ///   ring sector (the doughnut arc). Its two lines are radial.
+  ///
+  /// Both shapes are simple, so the nonzero and the even-odd rule fill the
+  /// same pixels.
+  UiSector? get singleSector {
+    if (_built || _circle || _deferred < 2) return null;
+    final codes = _codes;
+    final n = _numbers;
+    final kinds = _itemKinds;
+    final v = _items;
+    var count = 0;
+    var j = 0;
+    for (var i = 0; i < _deferred; i++) {
+      switch (codes[i]) {
+        case _moveCode || _lineCode:
+          if (codes[i] == _moveCode && count > 0) return null;
+          final x = n[j];
+          final y = n[j + 1];
+          j += 2;
+          if (count > 0 && _nearEnd(count - 1, x, y)) continue;
+          if (count == _maxSectorItems) return null;
+          kinds[count] = 0;
+          v[count * 5] = x;
+          v[count * 5 + 1] = y;
+          count++;
+        case _arcCode:
+          final cx = n[j];
+          final cy = n[j + 1];
+          final r = n[j + 2];
+          final ry = n[j + 3];
+          final start = n[j + 4];
+          final sweep = n[j + 5];
+          final forceMoveTo = n[j + 6] != 0;
+          j += 7;
+          // A circular arc, and a new subpath only at the start.
+          if (r != ry || !(r > 0) || (forceMoveTo && i > 0)) return null;
+          if (count > 0 && kinds[count - 1] == 1) {
+            final k = (count - 1) * 5;
+            if (v[k] == cx &&
+                v[k + 1] == cy &&
+                v[k + 2] == r &&
+                (v[k + 4] > 0) == (sweep > 0) &&
+                _sameAngle(v[k + 3] + v[k + 4], start)) {
+              v[k + 4] += sweep;
+              continue;
+            }
+          }
+          if (count > 0 &&
+              kinds[count - 1] == 0 &&
+              _near(
+                v[(count - 1) * 5],
+                v[(count - 1) * 5 + 1],
+                cx + r * math.cos(start),
+                cy + r * math.sin(start),
+              )) {
+            count--;
+          }
+          if (count == _maxSectorItems) return null;
+          kinds[count] = 1;
+          final k = count * 5;
+          v[k] = cx;
+          v[k + 1] = cy;
+          v[k + 2] = r;
+          v[k + 3] = start;
+          v[k + 4] = sweep;
+          count++;
+        case _closeCode:
+          if (i != _deferred - 1) return null;
+        default:
+          return null;
+      }
+    }
+    // The close: a point at the start of the first item, or the first point
+    // at the end of the last item, adds no line.
+    while (count > 1) {
+      if (kinds[count - 1] == 0 &&
+          _nearStart(0, v[(count - 1) * 5], v[(count - 1) * 5 + 1])) {
+        count--;
+      } else if (kinds[0] == 0 && _nearEnd(count - 1, v[0], v[1])) {
+        v.setRange(0, (count - 1) * 5, v, 5);
+        kinds.setRange(0, count - 1, kinds, 1);
+        count--;
+      } else {
+        break;
+      }
+    }
+    if (count != 2) return null;
+    final arc = kinds[0] == 1 ? 0 : 5;
+    final cx = v[arc];
+    final cy = v[arc + 1];
+    final radius = v[arc + 2];
+    final start = v[arc + 3];
+    final sweep = v[arc + 4];
+    if (!(sweep.abs() < _tau - _sectorAngleTolerance)) return null;
+    if (kinds[0] != kinds[1]) {
+      // A wedge: the other item is the center.
+      final point = 5 - arc;
+      if (!_near(v[point], v[point + 1], cx, cy)) return null;
+      return (
+        x: cx,
+        y: cy,
+        radius: radius,
+        inner: 0,
+        start: start,
+        sweep: sweep,
+      );
+    }
+    // A ring sector: two arc groups.
+    final other = v[7];
+    if (!_near(v[5], v[6], cx, cy) ||
+        other == radius ||
+        (v[9] + sweep).abs() > _sectorAngleTolerance ||
+        !_sameAngle(v[8], start + sweep)) {
+      return null;
+    }
+    return (
+      x: cx,
+      y: cy,
+      radius: math.max(radius, other),
+      inner: math.min(radius, other),
+      start: start,
+      sweep: sweep,
+    );
+  }
+
+  static bool _near(double x0, double y0, double x1, double y1) =>
+      (x0 - x1).abs() <= _sectorPointTolerance &&
+      (y0 - y1).abs() <= _sectorPointTolerance;
+
+  /// Whether (x, y) is at the end of the sector item [index].
+  bool _nearEnd(int index, double x, double y) {
+    final v = _items;
+    final k = index * 5;
+    if (_itemKinds[index] == 0) return _near(v[k], v[k + 1], x, y);
+    final angle = v[k + 3] + v[k + 4];
+    return _near(
+      v[k] + v[k + 2] * math.cos(angle),
+      v[k + 1] + v[k + 2] * math.sin(angle),
+      x,
+      y,
+    );
+  }
+
+  /// Whether (x, y) is at the start of the sector item [index].
+  bool _nearStart(int index, double x, double y) {
+    final v = _items;
+    final k = index * 5;
+    if (_itemKinds[index] == 0) return _near(v[k], v[k + 1], x, y);
+    return _near(
+      v[k] + v[k + 2] * math.cos(v[k + 3]),
+      v[k + 1] + v[k + 2] * math.sin(v[k + 3]),
+      x,
+      y,
+    );
+  }
 
   /// `beginPath()`: empties the path. The `ui.Path` resets only when it has
   /// commands.

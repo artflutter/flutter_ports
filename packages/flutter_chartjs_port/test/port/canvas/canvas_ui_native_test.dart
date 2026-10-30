@@ -8,11 +8,13 @@ library;
 // form with the same drawing on another path.
 
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
+import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';
@@ -551,6 +553,414 @@ void main() {
           );
       });
       expect(comparePixels(port, reference).differing, 0);
+    });
+  });
+
+  group('N4: the sector fill with drawArc', () {
+    /// The calls of `pathArc` (element.arc.ts:230-286) for an arc with no
+    /// border radius, no spacing and no offset: the two halves of the outer
+    /// arc, the line to the inner arc, the two halves of the inner arc
+    /// backwards and the line back. The inner arcs of a wedge ([inner] 0)
+    /// have the NaN angles of `innerEnd / innerRadius` and add nothing.
+    void sectorCalls(
+      CanvasPath p,
+      double x,
+      double y,
+      double outer,
+      double inner,
+      double start,
+      double end,
+    ) {
+      final corner = 0 / inner;
+      final outerMid = (start + end) / 2;
+      final innerStart = end - corner;
+      final innerEnd = start + corner;
+      final innerMid = (innerStart + innerEnd) / 2;
+      p
+        ..arc(x, y, outer, start, outerMid)
+        ..arc(x, y, outer, outerMid, end)
+        ..lineTo(x + math.cos(end) * inner, y + math.sin(end) * inner)
+        ..arc(x, y, inner, innerStart, innerMid, true)
+        ..arc(x, y, inner, innerMid, innerEnd, true)
+        ..lineTo(x + math.cos(start) * outer, y + math.sin(start) * outer)
+        ..closePath();
+    }
+
+    /// A context of 320 x 320 pixels under `retinaScale` at a device pixel
+    /// ratio of 2.
+    UiCanvasContext retina() => UiCanvasElement(
+      width: 320,
+      height: 320,
+    ).getContext2d()..setTransform(2, 0, 0, 2, 0, 0);
+
+    UiSector? sectorOf(
+      void Function(UiCanvasContext ctx) calls, {
+      UiCanvasContext? context,
+    }) {
+      final ctx = (context ?? retina())..beginPath();
+      calls(ctx);
+      return ctx.debugPath.singleSector;
+    }
+
+    test('the arc of a doughnut is a ring sector', () {
+      final sector = sectorOf(
+        (ctx) => sectorCalls(ctx, 80, 70, 50, 25, 0.3, 2.1),
+      )!;
+      expect(sector.x, 160);
+      expect(sector.y, 140);
+      expect(sector.radius, 100);
+      expect(sector.inner, 50);
+      expect(sector.start, closeTo(0.3, 1e-12));
+      expect(sector.sweep, closeTo(1.8, 1e-12));
+    });
+
+    test('the arc of a pie and a wedge from the center are wedges', () {
+      final pie = sectorOf((ctx) => sectorCalls(ctx, 80, 70, 50, 0, -1, 4))!;
+      expect(pie.inner, 0);
+      expect(pie.radius, 100);
+      expect(pie.sweep, closeTo(5, 1e-12));
+      final wedge = sectorOf(
+        (ctx) => ctx
+          ..moveTo(80, 70)
+          ..arc(80, 70, 40, 1, 2.5)
+          ..closePath(),
+      )!;
+      expect(wedge.inner, 0);
+      expect(wedge.radius, 80);
+      expect(wedge.start, 1);
+      expect(wedge.sweep, closeTo(1.5, 1e-12));
+    });
+
+    test('other directions and similarity transforms', () {
+      // The outer arc counterclockwise and the inner arc back.
+      final ring = sectorOf(
+        (ctx) => ctx
+          ..arc(80, 80, 60, 2, 0.5, true)
+          ..arc(80, 80, 20, 0.5, 2),
+      )!;
+      expect(ring.inner, 40);
+      expect(ring.radius, 120);
+      expect(ring.start, 2);
+      expect(ring.sweep, closeTo(-1.5, 1e-12));
+      // The smaller radius first.
+      final inside = sectorOf(
+        (ctx) => ctx
+          ..arc(80, 80, 20, 0, 1)
+          ..arc(80, 80, 60, 1, 0, true)
+          ..closePath(),
+      )!;
+      expect(inside.inner, 40);
+      expect(inside.radius, 120);
+      // A rotation and a mirror keep a sector.
+      final turned = retina()
+        ..rotate(0.7)
+        ..scale(-1, 1);
+      expect(
+        sectorOf(
+          (ctx) => sectorCalls(ctx, -80, 30, 40, 10, 0.2, 1.9),
+          context: turned,
+        ),
+        isNotNull,
+      );
+    });
+
+    test('other paths are no sector', () {
+      final cases = <String, void Function(UiCanvasContext ctx)>{
+        // A corner of a border radius is an arc on another center.
+        'a border radius': (ctx) => ctx
+          ..arc(80, 80, 60, 0.2, 1.5)
+          ..arc(50, 120, 5, 1.5, 2)
+          ..lineTo(80 + math.cos(1.5) * 20, 80 + math.sin(1.5) * 20)
+          ..arc(80, 80, 20, 1.5, 0.2, true)
+          ..closePath(),
+        // The parallel spacing of upstream: other angles on the inner arc.
+        'other inner angles': (ctx) => ctx
+          ..arc(80, 80, 60, 0.2, 1.5)
+          ..arc(80, 80, 20, 1.45, 0.25, true)
+          ..closePath(),
+        'a chord': (ctx) => ctx
+          ..arc(80, 80, 60, 0.2, 1.5)
+          ..closePath(),
+        'a line off the radius': (ctx) => ctx
+          ..arc(80, 80, 60, 0.2, 1.5)
+          ..lineTo(70, 70)
+          ..lineTo(80, 80)
+          ..closePath(),
+        'two subpaths': (ctx) => ctx
+          ..arc(80, 80, 60, 0.2, 1.5)
+          ..lineTo(80, 80)
+          ..closePath()
+          ..moveTo(10, 10)
+          ..lineTo(20, 10),
+        'a full ring': (ctx) => ctx
+          ..arc(80, 80, 60, 0, 2 * math.pi)
+          ..moveTo(100, 80)
+          ..arc(80, 80, 20, 2 * math.pi, 0, true)
+          ..closePath(),
+        'a full turn with the center': (ctx) => ctx
+          ..moveTo(80, 80)
+          ..arc(80, 80, 60, 0, 3.2)
+          ..arc(80, 80, 60, 3.2, 2 * math.pi)
+          ..closePath(),
+        'an ellipse': (ctx) => ctx
+          ..scale(1, 0.5)
+          ..moveTo(80, 80)
+          ..arc(80, 80, 60, 0.2, 1.5)
+          ..closePath(),
+        'a curve': (ctx) => ctx
+          ..moveTo(80, 80)
+          ..arc(80, 80, 60, 0.2, 1.5)
+          ..quadraticCurveTo(10, 10, 80, 80),
+        'a read of the path': (ctx) {
+          ctx
+            ..moveTo(80, 80)
+            ..arc(80, 80, 60, 0.2, 1.5)
+            ..closePath();
+          expect(ctx.debugPath.path.getBounds().isEmpty, isFalse);
+        },
+      };
+      for (final MapEntry(key: name, value: calls) in cases.entries) {
+        expect(sectorOf(calls), isNull, reason: name);
+      }
+    });
+
+    /// Draws [draw] at [factor] times the scale on [factor] times the size,
+    /// and gives the mean of each block of [factor] x [factor] pixels: the
+    /// coverage of the shapes to about 1/[factor] of a pixel. The curves of
+    /// a path and of a stroke flatten within about 1/4 of a device pixel, so
+    /// two forms of one region can differ by that much on an edge pixel at
+    /// the device scale (the probe of canvas-cuts-plan.md §7.5).
+    Future<Render> supersampled(
+      void Function(UiCanvasContext ctx) draw, {
+      int size = 320,
+      int factor = 4,
+    }) async {
+      final big = await renderContext(
+        (ctx) {
+          ctx.scale(factor.toDouble(), factor.toDouble());
+          draw(ctx);
+        },
+        width: size * factor,
+        height: size * factor,
+      );
+      final out = Uint8List(size * size * 4);
+      final area = factor * factor;
+      for (var y = 0; y < size; y++) {
+        for (var x = 0; x < size; x++) {
+          for (var c = 0; c < 4; c++) {
+            var sum = 0;
+            for (var dy = 0; dy < factor; dy++) {
+              final row = (y * factor + dy) * size * factor;
+              for (var dx = 0; dx < factor; dx++) {
+                sum += big.bytes[(row + x * factor + dx) * 4 + c];
+              }
+            }
+            out[(y * size + x) * 4 + c] = (sum / area).round();
+          }
+        }
+      }
+      return Render(out, size, size);
+    }
+
+    /// Expects that the fill of [calls] with [style] draws a sector, with the
+    /// pixels of the fill before form N4: the same calls with the path
+    /// built, which `fill` draws with `drawPath`. At the device scale, no
+    /// pixel differs in area: the two forms flatten their curves in other
+    /// ways, and a ring of 2 pixels can gain or lose 4 % of its ink in each.
+    /// At four times the scale, the worst channel differs by at most 24 of
+    /// 255 and the inked areas by less than 1 %.
+    Future<void> expectSectorPixels(
+      String reason,
+      void Function(UiCanvasContext ctx) style,
+      void Function(CanvasPath p) calls, {
+      String rule = 'nonzero',
+    }) async {
+      void sector(UiCanvasContext ctx) {
+        style(ctx);
+        ctx.beginPath();
+        calls(ctx);
+        expect(ctx.debugPath.singleSector, isNotNull, reason: reason);
+        ctx.fill(rule);
+        expect(ctx.debugPath.debugBuilt, isFalse, reason: reason);
+      }
+
+      void path(UiCanvasContext ctx) {
+        style(ctx);
+        ctx.beginPath();
+        calls(ctx);
+        // A read builds the path: the fill takes drawPath.
+        expect(ctx.debugPath.path.getBounds().isEmpty, isFalse);
+        expect(ctx.debugPath.singleSector, isNull, reason: reason);
+        ctx.fill(rule);
+      }
+
+      final device = comparePixels(
+        await renderContext(sector, width: 320, height: 320),
+        await renderContext(path, width: 320, height: 320),
+      );
+      expect(device.inkA, greaterThan(1), reason: reason);
+      expect(device.solidDiffering, 0, reason: '$reason: $device');
+      expect(device.opaqueFlips, 0, reason: '$reason: $device');
+      final fine = comparePixels(
+        await supersampled(sector),
+        await supersampled(path),
+      );
+      expect(fine.maxChannel, lessThanOrEqualTo(24), reason: '$reason: $fine');
+      expect(fine.inkRatio, lessThan(0.01), reason: '$reason: $fine');
+    }
+
+    test('the fill of a sector gives the pixels of its path', () async {
+      void retinaStyle(UiCanvasContext ctx) => ctx
+        ..scale(2, 2)
+        ..fillStyle = 'rgba(54, 162, 235, 0.45)';
+      const angles = [
+        (0.3, 2.1),
+        (-1.4, 3.0),
+        (2.0, 2.02),
+        (0.5, 0.5 + 2 * math.pi - 0.01),
+        (5.0, 7.5),
+      ];
+      const radii = [(60.0, 30.0), (60.0, 59.0), (60.0, 1.0), (60.0, 0.0)];
+      for (final (start, end) in angles) {
+        for (final (outer, inner) in radii) {
+          await expectSectorPixels(
+            'angles $start to $end, radii $outer and $inner',
+            retinaStyle,
+            (p) => sectorCalls(p, 80, 80, outer, inner, start, end),
+          );
+        }
+      }
+      await expectSectorPixels(
+        'the even-odd rule',
+        retinaStyle,
+        (p) => sectorCalls(p, 80, 80, 60, 30, 0.3, 2.1),
+        rule: 'evenodd',
+      );
+    });
+
+    test('styles and transforms of a sector fill', () async {
+      await expectSectorPixels(
+        'a gradient',
+        (ctx) {
+          final gradient = ctx.createLinearGradient(20, 0, 140, 0)
+            ..addColorStop(0, '#ff0000')
+            ..addColorStop(1, '#0000ff');
+          ctx
+            ..scale(2, 2)
+            ..fillStyle = gradient;
+        },
+        (p) => sectorCalls(p, 80, 80, 60, 30, -0.5, 2.5),
+      );
+      await expectSectorPixels(
+        'globalAlpha and a rotation',
+        (ctx) => ctx
+          ..scale(2, 2)
+          ..translate(80, 80)
+          ..rotate(0.7)
+          ..globalAlpha = 0.5
+          ..fillStyle = '#00aa00',
+        (p) => sectorCalls(p, 0, 0, 60, 20, 0.2, 4),
+      );
+      await expectSectorPixels(
+        'a mirror',
+        (ctx) => ctx
+          ..transform(-2, 0, 0, 2, 320, 0)
+          ..fillStyle = '#aa00aa',
+        (p) => sectorCalls(p, 80, 80, 60, 0, 0.4, 2.4),
+      );
+      await expectSectorPixels(
+        'a device pixel ratio of 2.625',
+        (ctx) => ctx
+          ..scale(2.625, 2.625)
+          ..fillStyle = '#ff6384',
+        (p) => sectorCalls(p, 60, 60, 50, 25, 1.1, 3.3),
+      );
+      await expectSectorPixels(
+        'a composite operation',
+        (ctx) => ctx
+          ..scale(2, 2)
+          ..fillStyle = '#000000'
+          ..fillRect(0, 0, 160, 80)
+          ..globalCompositeOperation = 'xor'
+          ..fillStyle = '#ff0000',
+        (p) => sectorCalls(p, 80, 80, 60, 30, -0.5, 2.5),
+      );
+    });
+
+    test('a doughnut of arcs with their borders', () async {
+      void doughnut(UiCanvasContext ctx, {required bool built}) {
+        ctx
+          ..scale(2, 2)
+          ..lineJoin = 'bevel'
+          ..lineWidth = 2
+          ..strokeStyle = '#ffffff';
+        var start = -math.pi / 2;
+        for (var i = 0; i < 24; i++) {
+          final end = start + (0.1 + (i % 5) * 0.06);
+          ctx
+            ..save()
+            ..fillStyle = 'hsla(${i * 15}, 70%, 50%, 0.8)'
+            ..beginPath();
+          sectorCalls(ctx, 80, 80, 70, 35, start, end);
+          if (built) ctx.debugPath.path;
+          ctx
+            ..fill()
+            ..beginPath();
+          sectorCalls(ctx, 80, 80, 70, 35, start, end);
+          ctx
+            ..stroke()
+            ..restore();
+          start = end;
+        }
+      }
+
+      final device = comparePixels(
+        await renderContext(
+          (ctx) => doughnut(ctx, built: false),
+          width: 320,
+          height: 320,
+        ),
+        await renderContext(
+          (ctx) => doughnut(ctx, built: true),
+          width: 320,
+          height: 320,
+        ),
+      );
+      expect(device.solidDiffering, 0, reason: '$device');
+      expect(device.opaqueFlips, 0, reason: '$device');
+      final fine = comparePixels(
+        await supersampled((ctx) => doughnut(ctx, built: false)),
+        await supersampled((ctx) => doughnut(ctx, built: true)),
+      );
+      expect(fine.maxChannel, lessThanOrEqualTo(24), reason: '$fine');
+    });
+
+    test('the arcs of ArcElement fill as sectors', () {
+      // With no border, the current path after the draw is the path of the
+      // fill (element.arc.ts:289-309).
+      for (final inner in const [0.0, 25.0]) {
+        final ctx = retina();
+        ArcElement({
+          'x': 80,
+          'y': 80,
+          'startAngle': 0.25,
+          'endAngle': 2,
+          'innerRadius': inner,
+          'outerRadius': 60,
+          'circumference': 1.75,
+          'options': <String, Object?>{
+            'backgroundColor': 'rgba(54, 162, 235, 0.45)',
+            'borderColor': '#36A2EB',
+            'borderWidth': 0,
+            'circular': true,
+          },
+        }).draw(ctx);
+        final sector = ctx.debugPath.singleSector;
+        expect(sector, isNotNull, reason: 'inner $inner');
+        expect(sector!.inner, inner * 2);
+        expect(sector.radius, 120);
+        expect(ctx.debugPath.debugBuilt, isFalse);
+      }
     });
   });
 }

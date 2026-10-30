@@ -519,6 +519,9 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
 
   final ui.Paint _fillPaint = ui.Paint();
   final ui.Paint _strokePaint = ui.Paint()..style = ui.PaintingStyle.stroke;
+  // The fill of a ring sector: the stroke of its middle circle with butt
+  // caps ([_fillSector]).
+  final ui.Paint _sectorPaint = ui.Paint()..style = ui.PaintingStyle.stroke;
   final ui.Paint _imagePaint = ui.Paint()..filterQuality = ui.FilterQuality.low;
   final ui.Paint _clearPaint = ui.Paint()..blendMode = ui.BlendMode.clear;
   final ui.Paint _layerPaint = ui.Paint();
@@ -1360,11 +1363,49 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
         } else if (ring != null) {
           canvas.drawDRRect(ring.outer, ring.inner, _fillPaint);
         } else {
-          canvas.drawPath(_path.path..fillType = fillType, _fillPaint);
+          final sector = _path.singleSector;
+          if (sector != null) {
+            _fillSector(canvas, sector);
+          } else {
+            canvas.drawPath(_path.path..fillType = fillType, _fillPaint);
+          }
         }
       }
     }
     _drew();
+  }
+
+  /// Fills [sector] with `drawArc` (canvas-cuts-plan.md §7, N4), with the
+  /// paint of [_fillPaint]: a wedge with its center, or a ring sector as the
+  /// stroke of its middle circle with butt caps and the width of the ring.
+  /// The butt stroke of a circular arc covers the region between its two
+  /// radii and its two end angles, which is the region of the path.
+  void _fillSector(ui.Canvas canvas, UiSector sector) {
+    final (:x, :y, :radius, :inner, :start, :sweep) = sector;
+    if (inner == 0) {
+      canvas.drawArc(
+        ui.Rect.fromLTRB(x - radius, y - radius, x + radius, y + radius),
+        start,
+        sweep,
+        true,
+        _fillPaint,
+      );
+      return;
+    }
+    final fill = _fillPaint;
+    final paint = _sectorPaint
+      ..color = fill.color
+      ..shader = fill.shader
+      ..blendMode = fill.blendMode
+      ..strokeWidth = radius - inner;
+    final middle = (radius + inner) / 2;
+    canvas.drawArc(
+      ui.Rect.fromLTRB(x - middle, y - middle, x + middle, y + middle),
+      start,
+      sweep,
+      false,
+      paint,
+    );
   }
 
   /// The shape of [pair] that has an area, when the other shape has no width

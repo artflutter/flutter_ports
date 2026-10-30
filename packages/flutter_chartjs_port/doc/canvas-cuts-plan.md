@@ -890,6 +890,19 @@ Changes to the cited files:
   `test/port/canvas/canvas_ui_native_test.dart` gets the group of N3 (7 tests, 15 tests in all).
   `doc/status.yaml` changes the rows of `canvas_ui_path.dart` and of the new test file in place: no
   row of `doc/parity.md` moves. The tests of §2.6 and §3.5 do not change. No trigger occurred.
+- 2026-10-30, form N4 of §7. `lib/src/canvas/canvas_ui_path.dart` gets `UiSector`, the sector
+  tolerances, `_sameAngle`, the item buffers and `UiPathBuilder.singleSector` with `_near`,
+  `_nearEnd` and `_nearStart` (1554 lines, 214 lines more). `lib/src/canvas/canvas_ui.dart` gets
+  `_sectorPaint`, the sector branch of `fill` and `_fillSector` (1898 lines, 41 lines more). In
+  `canvas_ui_path.dart`, the lines after line 40 move by +2, the lines after line 288 by +37, the
+  lines after line 378 by +43 and the lines after line 635 by +214. In `canvas_ui.dart`, the lines
+  after line 521 move by +3, the lines after line 1363 by +8 and the lines after line 1369 by +41.
+  §1.1, §2.1, §2.3, §2.5 and §5 give the new line numbers, and the inventory gets the row of N4.
+  §7.5 gets the probe and the thresholds of the sector fill.
+  `test/port/canvas/canvas_ui_native_test.dart` gets the group of N4 (8 tests, 23 tests in all).
+  `doc/status.yaml` changes the rows of `canvas_ui.dart`, `canvas_ui_path.dart` and the new test
+  file in place: no row of `doc/parity.md` moves. The tests of §2.6 and §3.5 and the estimates do
+  not change. No trigger occurred.
 
 ## 1. Why
 
@@ -915,25 +928,26 @@ the estimate (§3.9).
 
 | Part | File:lines | Lines | Flutter API that replaces it | Verdict |
 |---|---|---:|---|---|
-| `UiPathBuilder._bezierArc` (cubic Béziers for a skew, a non-uniform scale with rotation, a rotated ellipse) | `lib/src/canvas/canvas_ui_path.dart:1150-1202` | 53 | `ui.Path.arcTo` in user space, then `extendWithPath(arc, Offset.zero, matrix4: m)` | **Remove** (cut 1) |
-| `_addArc`, axis-aligned branch with the reflection cases `a < 0`, `d < 0` and both | `canvas_ui_path.dart:1086-1108` | 23 | The same matrix path | **Remove** (cut 1) |
-| `_addArc`, similarity branch (rotation, uniform scale, mirror) | `canvas_ui_path.dart:1076-1085` | 10 | It already calls `ui.Path.arcTo` in bitmap space | **Keep**. It is the hot path: `retinaScale` and `translate` give a similarity. |
-| `_nativeArc` (half arcs for a sweep over pi, sweep 0, `forceMoveTo`) | `canvas_ui_path.dart:1112-1148` | 37 | None. A sweep of `2 * pi - 1e-12` rounds to 360 degrees and `arcTo` adds nothing. | **Keep**. The matrix path shares its half split. |
-| `canvasArcSweep` (Chromium `AdjustEndAngle`) | `canvas_ui_path.dart:253-268` | 16 | None. Skia takes the sweep modulo 360 degrees. | **Keep**. The full sweeps change behavior. |
-| `UiTransform` (a-f, the operations, `mapX`/`mapY`, the flags, the matrix writers) | `canvas_ui_path.dart:51-251` | 201 | None. `dart:ui` has no affine type. `Canvas.getTransform` needs a live recording and allocates. `vector_math` `Matrix4` is 4 x 4 and not a dependency. | **Keep** |
-| Current point and subpath start (`_PathPoint`, `_last`, `_start`, `hasSubpath`; a point on an arc keeps its arc, N3 of §7) | `canvas_ui_path.dart:289-347`, `:577-582`, `:681-716` | ~100 | None. `ui.Path` has no current point. | **Keep** |
-| DOM `arcTo` (tangent arc) math | `canvas_ui_path.dart:993-1056` | ~60 | None. `ui.Path.arcToPoint` is the SVG end-point arc. | **Keep**. It calls `_addArc`. |
-| `rect()` with four mapped corners | `canvas_ui_path.dart:782-814` | 33 | None. `addRect` sorts the corners and changes the winding when `w < 0` or `h < 0`. | **Keep** |
-| Pending full circle (`singleCircle`, `_deferCircle`) | `canvas_ui_path.dart:564-575`, `:631-679`, `:940-959` | ~50 | None | **Keep** (cut 3) |
-| `roundRect` of the path builder: `UiPathBuilder.roundRect` (one `addRRect` under an axis-aligned transform, else the HTML segments through `_addArc`), `_mappedRRect`, `_roundRectSegments` | `canvas_ui_path.dart:816-916` | 101 | None. `ui.Path.addRRect` has no direction and no Canvas 2D checks, flips, scale or subpath at (x, y). | **Keep**. A performance addition (porting-flow.md §1.1), not a cut. |
-| The shape tracking of the fast paths (`singleRRect`, `shapePair`, `_trackShape`, the fields `_rrect`, `_shape0`, `_shape1`) | `canvas_ui_path.dart:584-589`, `:599-629` | 37 | None. `ui.Path` does not tell its shapes. | **Keep**. A performance addition (porting-flow.md §1.1). |
-| `rrectContains` and `_cornerContains` (the inner rounded rectangle is inside the outer one) | `canvas_ui_path.dart:1205-1316` | 112 | None. `RRect.contains` tests one point. | **Keep**. A performance addition (porting-flow.md §1.1): the condition of `drawDRRect`. |
-| N3 of §7: the deferred commands of the path builder (`deferredPathCommands`, the command codes, `_codes`, `_numbers`, `_rrects`, `path`, `debugBuilt`, `_build`, `_replay`, `_direct` and the `_path` writers) | `canvas_ui_path.dart:270-287`, `:363-562` | ~220 | None. `ui.Path` builds each command at once. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
+| `UiPathBuilder._bezierArc` (cubic Béziers for a skew, a non-uniform scale with rotation, a rotated ellipse) | `lib/src/canvas/canvas_ui_path.dart:1364-1416` | 53 | `ui.Path.arcTo` in user space, then `extendWithPath(arc, Offset.zero, matrix4: m)` | **Remove** (cut 1) |
+| `_addArc`, axis-aligned branch with the reflection cases `a < 0`, `d < 0` and both | `canvas_ui_path.dart:1300-1322` | 23 | The same matrix path | **Remove** (cut 1) |
+| `_addArc`, similarity branch (rotation, uniform scale, mirror) | `canvas_ui_path.dart:1290-1299` | 10 | It already calls `ui.Path.arcTo` in bitmap space | **Keep**. It is the hot path: `retinaScale` and `translate` give a similarity. |
+| `_nativeArc` (half arcs for a sweep over pi, sweep 0, `forceMoveTo`) | `canvas_ui_path.dart:1326-1362` | 37 | None. A sweep of `2 * pi - 1e-12` rounds to 360 degrees and `arcTo` adds nothing. | **Keep**. The matrix path shares its half split. |
+| `canvasArcSweep` (Chromium `AdjustEndAngle`) | `canvas_ui_path.dart:255-270` | 16 | None. Skia takes the sweep modulo 360 degrees. | **Keep**. The full sweeps change behavior. |
+| `UiTransform` (a-f, the operations, `mapX`/`mapY`, the flags, the matrix writers) | `canvas_ui_path.dart:53-253` | 201 | None. `dart:ui` has no affine type. `Canvas.getTransform` needs a live recording and allocates. `vector_math` `Matrix4` is 4 x 4 and not a dependency. | **Keep** |
+| Current point and subpath start (`_PathPoint`, `_last`, `_start`, `hasSubpath`; a point on an arc keeps its arc, N3 of §7) | `canvas_ui_path.dart:326-384`, `:620-625`, `:895-930` | ~100 | None. `ui.Path` has no current point. | **Keep** |
+| DOM `arcTo` (tangent arc) math | `canvas_ui_path.dart:1207-1270` | ~60 | None. `ui.Path.arcToPoint` is the SVG end-point arc. | **Keep**. It calls `_addArc`. |
+| `rect()` with four mapped corners | `canvas_ui_path.dart:996-1028` | 33 | None. `addRect` sorts the corners and changes the winding when `w < 0` or `h < 0`. | **Keep** |
+| Pending full circle (`singleCircle`, `_deferCircle`) | `canvas_ui_path.dart:607-618`, `:674-678`, `:851-893`, `:1154-1173` | ~50 | None | **Keep** (cut 3) |
+| `roundRect` of the path builder: `UiPathBuilder.roundRect` (one `addRRect` under an axis-aligned transform, else the HTML segments through `_addArc`), `_mappedRRect`, `_roundRectSegments` | `canvas_ui_path.dart:1030-1130` | 101 | None. `ui.Path.addRRect` has no direction and no Canvas 2D checks, flips, scale or subpath at (x, y). | **Keep**. A performance addition (porting-flow.md §1.1), not a cut. |
+| The shape tracking of the fast paths (`singleRRect`, `shapePair`, `_trackShape`, the fields `_rrect`, `_shape0`, `_shape1`) | `canvas_ui_path.dart:627-632`, `:642-672` | 37 | None. `ui.Path` does not tell its shapes. | **Keep**. A performance addition (porting-flow.md §1.1). |
+| `rrectContains` and `_cornerContains` (the inner rounded rectangle is inside the outer one) | `canvas_ui_path.dart:1419-1530` | 112 | None. `RRect.contains` tests one point. | **Keep**. A performance addition (porting-flow.md §1.1): the condition of `drawDRRect`. |
+| N3 of §7: the deferred commands of the path builder (`deferredPathCommands`, the command codes, `_codes`, `_numbers`, `_rrects`, `path`, `debugBuilt`, `_build`, `_replay`, `_direct` and the `_path` writers) | `canvas_ui_path.dart:272-289`, `:400-605` | ~220 | None. `ui.Path` builds each command at once. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
+| N4 of §7: the sector fill (`UiSector`, the tolerances, `_sameAngle`, `singleSector`, `_near`, `_nearEnd`, `_nearStart` and the item buffers; in the context `_sectorPaint`, the sector branch of `fill` and `_fillSector`) | `canvas_ui_path.dart:291-324`, `:417-421`, `:680-849`; `canvas_ui.dart:522-524`, `:1366-1371`, `:1378-1410` | ~250 | `Canvas.drawArc` draws the sector; no `dart:ui` API tells the sector of a path. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
 | `roundRect` of the interface: `CanvasPath.roundRect`, `RoundRectGeometry`, `roundRectGeometry` (the HTML steps 1 to 11), `Path2D.roundRect`, `RoundRectCommand` | `lib/src/canvas/canvas.dart:92-104`, `:107-253`, `:707-722`, `:970-992` | 199 | None. The pure layer has no `dart:ui`. | **Keep**. A performance addition (porting-flow.md §1.1). |
-| The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill` (with no draw call for a shape with no area, N2 of §7), `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:403-410`, `:563-599`, `:1282-1284`, `:1343-1365`, `:1370-1404`, `:1446-1450` | 115 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
-| N1 of §7: the save of the recording canvas only for a state with a clip of its own (`_begin`, `_ownsClips`, `save`, `restore`, the first save in `clip`), and `debugPendingCircles` | `canvas_ui.dart:558-561`, `:677-700`, `:987-1010`, `:1454-1461` | ~60 | None. A `ui.Canvas` has no state stack without its saves. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
+| The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill` (with no draw call for a shape with no area, N2 of §7), `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:403-410`, `:566-602`, `:1285-1287`, `:1346-1373`, `:1411-1445`, `:1487-1491` | 115 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
+| N1 of §7: the save of the recording canvas only for a state with a clip of its own (`_begin`, `_ownsClips`, `save`, `restore`, the first save in `clip`), and `debugPendingCircles` | `canvas_ui.dart:561-564`, `:680-703`, `:990-1013`, `:1495-1502` | ~60 | None. A `ui.Canvas` has no state stack without its saves. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
 | `CircleBatch` | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
-| Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1739-1760` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
+| Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1780-1801` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
 | `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:558-571` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
 | `UiCanvasElement.devicePixelRatio` and `logicalSize` | removed (`canvas_ui.dart:142`, `:175-192` at 69f9d97) | 0 | The host gives the paint scale | **Done** (C2): removed |
 | The paint mapping: display / bitmap for each axis, exactly 1 / DPR within 1e-3 | `chart_host.dart:711-715`, `:738-749` | 17 | `Canvas.scale` in `UiCanvasContext.paint` | **Done** (C2): the one mapping from the bitmap to the display size |
@@ -949,27 +963,28 @@ the estimate (§3.9).
 
 ### 2.1 Current code
 
-`lib/src/canvas/canvas_ui_path.dart` has 1340 lines.
+`lib/src/canvas/canvas_ui_path.dart` has 1554 lines.
 
-- 1-40: the library doc. It says that arcs become cubic Béziers under other transforms.
-- 51-251: `UiTransform`. The flags are `isAxisAligned` (78), `isSimilarity` (83), `scaleFactor`
-  (86), `angle` (89), `isReflected` (92), `isInvertible` (95) and `isTranslation` (98).
-  `writeMatrix4` is at 202-214 and `writeInverseMatrix4` is at 218-231.
-- 253-268: `canvasArcSweep`.
-- 270-347: the deferred commands and `_PathPoint` (§7, N3).
-- 355-1203: `UiPathBuilder`. The deferred commands are 363-562.
-  - 584-589 and 599-629: the shape tracking of the rounded rectangle fast paths (`singleRRect`,
+- 1-42: the library doc. It says that arcs become cubic Béziers under other transforms.
+- 53-253: `UiTransform`. The flags are `isAxisAligned` (80), `isSimilarity` (85), `scaleFactor`
+  (88), `angle` (91), `isReflected` (94), `isInvertible` (97) and `isTranslation` (100).
+  `writeMatrix4` is at 204-216 and `writeInverseMatrix4` is at 220-233.
+- 255-270: `canvasArcSweep`.
+- 272-384: the deferred commands (§7, N3), `UiSector` with the tolerances of `singleSector` (§7,
+  N4), and `_PathPoint` (N3).
+- 392-1417: `UiPathBuilder`. The deferred commands are 400-605, and `singleSector` is 680-849.
+  - 627-632 and 642-672: the shape tracking of the rounded rectangle fast paths (`singleRRect`,
     `shapePair`).
-  - 816-916: `roundRect`, `_mappedRRect` and `_roundRectSegments`. The segments call `_addArc`.
-  - 918-962: `arc`, with the full-circle fast path at 940-959.
-  - 965-991: `ellipse`.
-  - 994-1056: `arcTo` (the DOM tangent arc).
-  - 1062-1110: `_addArc`. The similarity branch is 1076-1085. The axis-aligned branch with the
-    reflection cases is 1086-1108. The Bézier fall-back is 1109.
-  - 1117-1148: `_nativeArc`.
-  - 1152-1202: `_bezierArc`.
-- 1205-1316: `rrectContains` and `_cornerContains`.
-- 1318-1340: `_CachedPath` and `uiPathOf`.
+  - 1030-1130: `roundRect`, `_mappedRRect` and `_roundRectSegments`. The segments call `_addArc`.
+  - 1132-1176: `arc`, with the full-circle fast path at 1154-1173.
+  - 1179-1205: `ellipse`.
+  - 1208-1270: `arcTo` (the DOM tangent arc).
+  - 1276-1324: `_addArc`. The similarity branch is 1290-1299. The axis-aligned branch with the
+    reflection cases is 1300-1322. The Bézier fall-back is 1323.
+  - 1331-1362: `_nativeArc`.
+  - 1366-1416: `_bezierArc`.
+- 1419-1530: `rrectContains` and `_cornerContains`.
+- 1532-1554: `_CachedPath` and `uiPathOf`.
 
 `lib/src/canvas/canvas_ui.dart` uses `UiTransform` for the state (275, 299), the shared matrix
 buffer `_m4` (370), the transform setters (836-874), the shader matrix (637-641), the strokes
@@ -1003,17 +1018,17 @@ and its own `Float64List`. Never reuse a scratch path or `_m4` for them.
 
 The same aliasing is a defect today, on the web only. Work package W fixes it before cut 1.
 
-- `canvas_ui.dart:1423`: `stroke()` under a transform that is not a similarity calls
+- `canvas_ui.dart:1464`: `stroke()` under a transform that is not a similarity calls
   `_strokeUser(_path.path.transform(t.writeInverseMatrix4(_m4)))`. `_strokeUser` then writes the
-  forward matrix into `_m4` (`:933`) before `drawPath` builds the lazy path. The probe was
+  forward matrix into `_m4` (`:936`) before `drawPath` builds the lazy path. The probe was
   `transform(1, 0, 0, 3, 0, 0)`, a line at y = 10 and `stroke()`. On the VM, rows 27 to 32 had ink.
   On CanvasKit and on skwasm, nothing was drawn.
-- `canvas_ui.dart:1441`: a `Path2D` clip calls `uiPathOf(path2d).transform(s.transform.writeMatrix4(_m4))`.
+- `canvas_ui.dart:1482`: a `Path2D` clip calls `uiPathOf(path2d).transform(s.transform.writeMatrix4(_m4))`.
   The state keeps the clip and replays it into later recordings. After the frame arena discards
   the built path, the path builds again with the value that `_m4` has then. The probe did not show
   it, because the probe rendered no second frame.
 - `canvas_ui_paint.dart:136` and `:373-377`: `shaderFor` keeps a copy in `_lastMatrix`, but
-  `_build(matrix)` gives the caller's matrix (the shared `_m4`, from `canvas_ui.dart:814`) to
+  `_build(matrix)` gives the caller's matrix (the shared `_m4`, from `canvas_ui.dart:817`) to
   `ui.ImageShader`. CanvasKit keeps that reference (`canvaskit/shader.dart:252`) and builds the
   shader again from it when the filter quality changes. The risk is low.
 
@@ -1056,8 +1071,8 @@ Do step 0 in work package W. Do steps 1 to 6 in work package C1.
 
 0. **Fix the web aliasing** (work package W, its own commit,
    `fix(flutter_chartjs_port): copy the matrices that the web paths read late`):
-   - `canvas_ui.dart:1423`: `t.writeInverseMatrix4(Float64List(16))`.
-   - `canvas_ui.dart:1441`: `s.transform.writeMatrix4(Float64List(16))`.
+   - `canvas_ui.dart:1464`: `t.writeInverseMatrix4(Float64List(16))`.
+   - `canvas_ui.dart:1482`: `s.transform.writeMatrix4(Float64List(16))`.
    - `canvas_ui_paint.dart` `shaderFor`: call `_build(_lastMatrix)`, so that the shader keeps the
      copy and not the buffer of the caller.
    - Add a comment at each place: the web renderers read the path and the matrix when they build
@@ -1068,10 +1083,10 @@ Do step 0 in work package W. Do steps 1 to 6 in work package C1.
    it from `_nativeArc` and from `_matrixArc`.
 2. In `_addArc`, keep the zero-radius case and the similarity branch. Send every other case to
    `_matrixArc`.
-3. Delete the axis-aligned branch (`:1086-1108`) and `_bezierArc` (`:1150-1202`).
+3. Delete the axis-aligned branch (`:1300-1322`) and `_bezierArc` (`:1364-1416`).
 4. Do not change `arc`, `ellipse`, `arcTo`, the pending circle, `UiTransform`, `canvas_ui.dart`
    or `canvas_ui_batch.dart`.
-5. Update the library doc (`canvas_ui_path.dart:1-40`) and the doc of `_addArc`: the direct path,
+5. Update the library doc (`canvas_ui_path.dart:1-42`) and the doc of `_addArc`: the direct path,
    the matrix path, and the rule of §2.2 (a new path and a new matrix for each call).
 6. If a threshold of the new test file (work package A1) fails only on antialiased edges, adjust
    the threshold in the same commit and say why in the commit message.
@@ -1711,7 +1726,7 @@ commit. The rows differ, so the edits do not overlap. Run the gates of §6.2 bef
 | A2 | Cut 2 tests | `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (row 419) | — | A1, A3, I | The 7 tests of §3.5 that pin the stretch and the display size | Green on the current code. Gates. | 241 test lines, 0.5 day. **Done in phase 5** (2026-10-19, trigger 1) |
 | A3 | Arc scenario and new baselines | `apps/chartjs_gallery/lib/demo/stress_demo.dart`, `apps/chartjs_gallery/lib/main_stress.dart`, `apps/chartjs_gallery/test/canvas_host_demo_test.dart` (if needed), `apps/chartjs_gallery/test/stress_elements_test.dart` (if needed), `doc/performance.md` (new baseline section) | — | A1, A2, I | `--dart-define=POINT_STYLE=<style>` in the stress entry. The baseline of §6.3 on 3 platforms. A scratch micro-benchmark of 5000 wedges (not committed). See the note on A3 below. | Baseline recorded with the commit hash. Old tables marked stale. | ~40 lines, 1 day of runs |
 | I | Renderer probes (optional) | `apps/chartjs_gallery/integration_test/canvas_paths_test.dart` (new), `apps/chartjs_gallery/pubspec.yaml`, root `pubspec.lock` | — | A1, A2, A3 | The web probes of §2.6 as a gallery integration test | Runs on the Pixel 8a, on macOS and in Chrome (dart2js and `--wasm`). Merge alone (lock file). | ~150 lines, 1 day |
-| W | Web matrix aliasing fix | `lib/src/canvas/canvas_ui.dart` (1423, 1441), `lib/src/canvas/canvas_ui_paint.dart` (`shaderFor`), `doc/parity.md` (rows 375, 377) | A1 | A2, A3 | Step 0 of §2.5 | VM pixels unchanged. The stroke probe and the clip probe pass on CanvasKit and on skwasm. | ~6 lines, 0.5 day |
+| W | Web matrix aliasing fix | `lib/src/canvas/canvas_ui.dart` (1464, 1482), `lib/src/canvas/canvas_ui_paint.dart` (`shaderFor`), `doc/parity.md` (rows 375, 377) | A1 | A2, A3 | Step 0 of §2.5 | VM pixels unchanged. The stroke probe and the clip probe pass on CanvasKit and on skwasm. | ~6 lines, 0.5 day |
 | C1 | Cut 1 code | `lib/src/canvas/canvas_ui_path.dart`, `test/port/canvas/canvas_ui_path_test.dart` (thresholds only), `doc/parity.md` (row 376) | A1, W | C2 | Steps 1 to 6 of §2.5 | All tests green. Web probes pass. Perf of §6.3 within the thresholds. | ~-45 net library lines, 1 day |
 | C2 | Cut 2 code (option A) | `lib/src/canvas/canvas.dart`, `lib/src/canvas/canvas_ui.dart`, `lib/src/platform/platform.flutter.dart`, `lib/src/platform/chart_host.dart`, `test/port/canvas/canvas_ui_test.dart`, `test/port/platform/chart_host_test.dart`, `test/port/platform/platform.flutter_test.dart`, `doc/parity.md` (rows 375, 382, 383, 389, 419) | A2, W | C1 | Steps 1 to 6 of §3.4 and the test changes of §3.5 | All tests green. Gallery unchanged on web, macOS and the Pixel 8a. Perf within the thresholds. | ~-10 net library lines, ~+100 test lines, 1.5 days. **Done in phase 5** (2026-10-19, trigger 1) without W, with steps 1 to 7 of §3.4: net +25 library lines, +223 and -67 test lines (§3.9, §3.10). It also changed `canvas_ui_round_rect_test.dart`, `pixel_compare.dart`, `element.arc_test.dart`, `helpers.canvas_test.dart`, Chart.js ADR 0013, Chart.js ADR 0014, `porting-flow.md` and the `parity.md` rows 380 and 418. Its perf runs are in [performance.md](performance.md) §9 (the C2 acceptance below this table). |
 | D | Docs | `doc/adr/0013-canvas-model.md`, `doc/adr/0014-input-events-and-chart-host.md`, `doc/porting-flow.md` | C1, C2 | P | §2.7 and §3.7 (ADR and porting-flow parts), and a "Removal" bullet in Chart.js ADR 0013 §8.1 (§4.1). C2 did the §3.7 part in phase 5. | Status lines unchanged. Links resolve. | ~60 changed lines, 0.5 day |
@@ -2006,6 +2021,18 @@ of the same commands, which takes `drawPath`. The thresholds are those of the fa
 differs by at most 24 of 255, and the inked areas differ by less than 1 %. The tests of §2.6 stay
 green with no change, and so do the theme goldens of the CI runner, the text-metric probe and the
 reference tests.
+
+The sector fill of N4 needs other thresholds. A probe on flutter_tester (Skia on the CPU,
+2026-10-30) compared four forms of one ring sector (radii 120 and 60 bitmap pixels, 1.8 radians):
+`drawArc` against the bitmap-space path of the fill before N4 differs by at most 38 of 255 on edge
+pixels with a color of alpha 0.45, and by 85 with an opaque gradient. The same path in user space
+under `Canvas.transform` (a `Path2D` fill) differs from the bitmap-space path by 41 and 89. Thus
+the difference comes from the flattening of the curves, about 1/3 of a pixel on an edge, and not
+from the form. The tests of N4 thus compare the fill of a sector with the fill of the same calls
+with the path built (`drawPath`) at two scales: at the device scale, no pixel differs in area and
+no pixel flips from opaque to transparent; at four times the scale, with the mean of each block of
+4 x 4 pixels, the worst channel differs by at most 24 of 255 and the inked areas by less than
+1 %.
 
 ### 7.6 The night A/B (the rule is written now, 2026-10-30, before any run)
 
