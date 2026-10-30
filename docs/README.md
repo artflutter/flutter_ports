@@ -41,7 +41,7 @@ package.
     port follows Chart.js fixes and improvements after the pinned tag.
   - [Upstream ledger](../packages/flutter_chartjs_port/doc/upstream-ledger.md): the upstream commits
     after the pinned tag, with their triage.
-  - Decisions (all accepted, except Chart.js ADR 0044, which is rejected, and Chart.js ADRs 0051
+  - Decisions (all accepted, except Chart.js ADR 0044, which is rejected, and Chart.js ADRs 0051,
     0052 and 0053, which are proposed):
     [Chart.js ADR 0001: Theming](../packages/flutter_chartjs_port/doc/adr/0001-theming.md)
     (superseded by Chart.js ADR 0042),
