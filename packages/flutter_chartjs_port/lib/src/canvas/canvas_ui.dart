@@ -555,6 +555,11 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
   @visibleForTesting
   int get debugPictureCount => _pictures.length + (_hasContent ? 1 : 0);
 
+  /// The count of the fills and strokes of the circle run that waits for
+  /// its draw, for tests.
+  @visibleForTesting
+  int get debugPendingCircles => _batch.length;
+
   /// The builder of the current path, for tests: its `singleRect`,
   /// `singleCircle` and `singleRRect` select the fast paths of [fill] and
   /// [clip].
@@ -669,21 +674,30 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
     return true;
   }
 
-  /// Starts a recording. The saved states and their clips are replayed, so
-  /// that the `ui.Canvas` stack matches the state stack.
+  /// Starts a recording. The clips of the saved states are replayed, with a
+  /// save for each state with a clip of its own ([_ownsClips]), so that the
+  /// `ui.Canvas` stack matches the clips of the state stack.
   ui.Canvas _begin() {
     final recorder = _recorder = ui.PictureRecorder();
     final canvas = _canvas = ui.Canvas(recorder);
     var applied = 0;
     for (var i = 0; i <= _depth; i++) {
       final clips = _states[i].clips;
+      if (i > 0 && applied < clips.length) canvas.save();
       for (; applied < clips.length; applied++) {
         clips[applied].applyTo(canvas);
       }
-      if (i < _depth) canvas.save();
     }
     return canvas;
   }
+
+  /// Whether the current state has a clip of its own: a clip that the state
+  /// below it does not have. Only such a state has a save on the recording
+  /// canvas. The layer maps each point through the transform when the point
+  /// is added, so a save and a restore with no clip between them change no
+  /// pixel, and the recording does not get them.
+  bool get _ownsClips =>
+      _depth > 0 && !identical(_s.clips, _states[_depth - 1].clips);
 
   void _endRecording() {
     if (_batch.length > 0) _flushBatch();
@@ -970,25 +984,29 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
 
   // State.
 
+  /// The recording canvas gets no save here: the first clip of the new
+  /// state makes it ([clip]).
   @override
   void save() {
     if (_states.length == _depth + 1) _states.add(_State());
-    if (_batch.length > 0) _flushBatch();
     final next = _states[_depth + 1]..copyFrom(_s);
     _depth++;
     _s = next;
     _path.transform = next.transform;
-    _canvas?.save();
   }
 
+  /// Only a state with a clip of its own ([_ownsClips]) draws the pending
+  /// circles under its clip and restores the recording canvas.
   @override
   void restore() {
     if (_depth == 0) return;
-    if (_batch.length > 0) _flushBatch();
+    if (_ownsClips) {
+      if (_batch.length > 0) _flushBatch();
+      _canvas?.restore();
+    }
     _depth--;
     _s = _states[_depth];
     _path.transform = _s.transform;
-    _canvas?.restore();
   }
 
   // Transforms.
@@ -1427,9 +1445,14 @@ final class UiCanvasContext implements CanvasRenderingContext2D {
           : _PathClip(ui.Path.from(_path.path)..fillType = fillType);
     }
     if (_batch.length > 0) _flushBatch();
+    // The first clip of a saved state makes the save of that state.
+    final first = _depth > 0 && !_ownsClips;
     s.clips = [...s.clips, clip];
     final canvas = _canvas;
-    if (canvas != null) clip.applyTo(canvas);
+    if (canvas != null) {
+      if (first) canvas.save();
+      clip.applyTo(canvas);
+    }
   }
 
   // Line styles.
