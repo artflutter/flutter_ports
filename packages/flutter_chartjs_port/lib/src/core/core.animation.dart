@@ -290,6 +290,16 @@ class Animation implements types.Animation {
   @internal
   double get total => _total;
 
+  /// core.animation.js:39 `_loop`. The differential test of the fast paths
+  /// reads it (Chart.js ADR 0053).
+  @internal
+  bool get loop => _loop;
+
+  /// core.animation.js:36 `_easing`, the easing function of `effects`. The
+  /// differential test of the fast paths reads it (Chart.js ADR 0053).
+  @internal
+  double Function(double t) get easing => _easing;
+
   /// core.animation.js:42 `_from`, the start value.
   @internal
   Object? get from => _from;

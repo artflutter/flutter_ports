@@ -74,6 +74,10 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos โ
   manifest. Without the submodule, each fixture skips with `'n/a: the submodule third_party/Chart.js
   is not checked out'`. With `FIXTURES_REQUIRED=1`, it fails. The CI job `fixtures` makes a shallow
   checkout of `third_party/Chart.js` and sets `FIXTURES_REQUIRED=1`.
+- `dart run melos run test:nofast`: the tests of `flutter_chartjs_port`, the spec, fixture and
+  reference suites included, with every fast path of Chart.js ADR 0053 off
+  (`--dart-define=PORT_FAST_PATHS=false`). The fixtures need the submodule `third_party/Chart.js`.
+  With `FIXTURES_REQUIRED=1`, a missing fixture file fails.
 - `dart run melos run test:goldens`: the theme goldens of `flutter_chartjs_port`
   (`test/port/theme/goldens_test.dart`, the tag `golden`, theming.md ยง8 test 9, Chart.js ADR 0050).
   They skip unless `CHART_GOLDENS=1`. Their pinned runner is the CI job `fixtures` on
@@ -127,7 +131,7 @@ Run from the repository root. `melos` is a dev dependency: use `dart run melos โ
   gallery the way CI does (web with WebAssembly, debug APK, iOS without code signing).
 
 Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `test:cases`,
-`test:fixtures` and `check:port`.
+`test:fixtures`, `test:nofast` and `check:port`.
 
 ## Layout
 
@@ -430,6 +434,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     each test file of the package ([Tests](#tests)).
   - `test/specs/`: ported upstream specs. `test/kurkle_color/`: the ported `@kurkle/color` tests.
     `test/port/`: port-only tests, at the path of the `lib/src/` file that they test.
+    `test/port/js/js_fast_paths_test.dart` is D1 of Chart.js ADR 0053: it builds each config of its
+    corpus (the hand fixtures, bench-like configs and focused configs) with the fast paths off and
+    on, and compares the observations and the user-call trace.
     `test/port/scales/scale_chart_harness.dart` and `scale_time_harness.dart` are helper libraries
     of the scale tests, not test files. `test/port/controllers/` has the controller reference tests
     and their harness `controller_chart_harness.dart` (a library). `controller.<name>_test.dart`
@@ -1202,8 +1209,8 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
   - CI `dco` job: checks the sign-off on every pull-request commit.
 - CI jobs (`.github/workflows/ci.yaml`): `format`, `analyze`, `test` (ubuntu, macOS, Windows),
   `test-web`, `fixtures` (on `ubuntu-24.04`, also the runner of the theme goldens),
-  `port-checks`, `upstream-manifest`, `gallery-web`, `gallery-android`, `gallery-ios`,
-  `upstream-pin`, `reuse` and `dco`. A `workflow_dispatch` run has the inputs `update_goldens` and
+  `test-nofast` (`test:nofast`), `port-checks`, `upstream-manifest`, `gallery-web`,
+  `gallery-android`, `gallery-ios`, `upstream-pin`, `reuse` and `dco`. A `workflow_dispatch` run has the inputs `update_goldens` and
   `flutter_version` (`test:goldens`).
 - Toolchain: Flutter 3.47.7 (Dart 3.13.5), pinned in `.fvmrc`; CI reads the same file. All
   packages and the gallery have the floor `sdk: ^3.13.0` and `flutter: ">=3.47.0"`

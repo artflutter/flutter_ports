@@ -703,6 +703,11 @@ class DatasetController
   /// `animation-transition`.
   AnyObject _cachedDataOpts = {};
 
+  /// core.datasetController.js:259 `_cachedDataOpts`, read only. The
+  /// differential test of the fast paths reads its keys (Chart.js ADR 0053).
+  @internal
+  AnyObject get cachedDataOpts => _cachedDataOpts;
+
   /// core.datasetController.js:260 `_cachedMeta`, the meta of the dataset
   /// (index.d.ts:632).
   @internal
