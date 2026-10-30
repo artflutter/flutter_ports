@@ -31,6 +31,8 @@ library;
 import 'dart:math' as math;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
@@ -47,7 +49,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
 import 'package:meta/meta.dart';
 
 /// The object `generationOptions` of [_generateTicks]
@@ -550,7 +553,7 @@ class LinearScaleBase extends Scale {
     final format = options.ticks.format;
     return formatNumber(
       jsToNumber(value),
-      jsGet(chart.options, 'locale'),
+      readOption(chart.options, OptionKey.locale),
       format is Map<String, Object?> ? format : null,
     );
   }

@@ -1,9 +1,5 @@
 # Lane L2 (Chart.js ADR 0054). The reads by name that stay, with reasons:
-# - jsGet 1: `this.chart.options.locale` (scale.logarithmic.js:198), an
-#   option of the chart view: it moves to the shared readOption of
-#   helpers.config after the interface commit of the base.
 # - stringIndex 1: `Ticks.formatters.logarithmic` of the static defaults
 #   (scale.logarithmic.js:80): `formatters` is the mutable object of
 #   core.ticks.js:9 that user code can change.
-jsGet 1
 stringIndex 1

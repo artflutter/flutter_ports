@@ -45,7 +45,7 @@ import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show arrayUnique, filterBetween, lookup;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView;
+    show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show callback, isFinite, isNullOrUndef, mergeIf, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -60,6 +60,8 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show
         DisplayFormatsScope,
@@ -528,7 +530,7 @@ class TimeScale extends Scale {
 
     super.init(options);
 
-    _normalized = jsTruthy(jsGet(chartOptions, 'normalized'));
+    _normalized = jsTruthy(readOption(chartOptions, OptionKey.normalized));
   }
 
   /// scale.time.js:295 `parse(raw, index)`.

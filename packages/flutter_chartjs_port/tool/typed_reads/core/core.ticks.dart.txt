@@ -1,15 +1,10 @@
 # Lane L2 (Chart.js ADR 0054). The reads by name that stay, with reasons:
-# - jsGet 3: `this.chart.options.locale` and `this.options.ticks.format`
-#   (core.ticks.js:33, :57): the formatter reads the options of any `this`
-#   that a caller gives, also a plain object. They move to the shared
-#   readOption of helpers.config after the interface commit of the base.
 # - stringIndex 1, jsCall 1: `formatters.numeric.apply(this, ...)`
 #   (core.ticks.js:77): `formatters` is the mutable object of core.ticks.js:9,
 #   and the logarithmic formatter reads `numeric` at the call, so that a
 #   replaced `numeric` formats too.
 # - jsObjectKeys 1: _assign, `Object.assign(options, format)`
 #   (core.ticks.js:57) of the number format object of the user.
-jsGet 3
 stringIndex 1
 jsCall 1
 jsObjectKeys 1

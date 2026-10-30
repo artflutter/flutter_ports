@@ -12,6 +12,10 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter_chartjs_port/src/core/scale_options.dart'
+    show TickOptions;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart';
@@ -20,8 +24,9 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/types/index.dart';
 
 /// core.ticks.js:9 `formatters`.
@@ -74,7 +79,7 @@ String _numeric(Scale self, double tickValue, double index, List<Tick> ticks) {
     return '0'; // never show decimal places for 0
   }
 
-  final locale = jsGet(self.chart.options, 'locale');
+  final locale = readOption(self.chart.options, OptionKey.locale);
   Object? notation = undefined;
   // This is used when there are less than 2 ticks as the tick interval.
   var delta = tickValue;
@@ -112,7 +117,10 @@ String _numeric(Scale self, double tickValue, double index, List<Tick> ticks) {
     'minimumFractionDigits': numDecimal,
     'maximumFractionDigits': numDecimal,
   };
-  _assign(options, jsGet(jsGet(self.options, 'ticks'), 'format'));
+  _assign(
+    options,
+    TickOptions(readOption(self.options, OptionKey.ticks)).format,
+  );
 
   return formatNumber(tickValue, locale, options);
 }

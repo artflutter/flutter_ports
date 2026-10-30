@@ -54,7 +54,7 @@ import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show alignPixel, clipArea, measureText, renderText, unclipArea;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show ContextProxy, OptionView;
+    show ContextProxy, OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show
         callback,
@@ -1488,7 +1488,10 @@ class Scale extends _ScalePrototype
           this.maxHeight -
           jsToNumber(_getTickMarkLength(options.grid)) -
           jsToNumber(tickOpts.padding) -
-          _getTitleHeight(options.title, chart.options['font']);
+          _getTitleHeight(
+            options.title,
+            readOption(chart.options, OptionKey.font),
+          );
       maxLabelDiagonal = math.sqrt(
         maxLabelWidth * maxLabelWidth + maxLabelHeight * maxLabelHeight,
       );
@@ -1565,7 +1568,10 @@ class Scale extends _ScalePrototype
     final isHorizontal = this.isHorizontal();
 
     if (display) {
-      final titleHeight = _getTitleHeight(titleOpts, chart.options['font']);
+      final titleHeight = _getTitleHeight(
+        titleOpts,
+        readOption(chart.options, OptionKey.font),
+      );
       if (isHorizontal) {
         minSizeWidth = maxWidth;
         minSizeHeight = jsAdd(_getTickMarkLength(gridOpts), titleHeight);

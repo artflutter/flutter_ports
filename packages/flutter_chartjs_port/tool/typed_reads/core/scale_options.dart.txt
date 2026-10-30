@@ -1,10 +1,6 @@
 # Lane L2 (Chart.js ADR 0054), a new port-only file: the facades of the
 # scale options. The reads by name that stay, with reasons:
-# - jsGet 1: _read, the read of a nested option object that is not a
-#   resolver (a primitive, `null`, `undefined`): the JS property read. It
-#   goes when the facades read through the shared readOption of
-#   helpers.config (the interface commit of the base).
 # - jsGet 1: DisplayFormats.formatOf, `displayFormats[unit]` for a unit that
 #   is not a key of the schema (a unit of a custom date adapter,
 #   scale.time.js:417-418).
-jsGet 2
+jsGet 1

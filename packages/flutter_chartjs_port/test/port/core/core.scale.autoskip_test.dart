@@ -4,8 +4,6 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Tick;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show attachContext, createResolver;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -24,17 +22,8 @@ import 'scale_autoskip_reference.dart';
 
 /// The scale object `{options, _tickSize(), _length, _maxLength}` of a
 /// case, passed as a [types.Scale]. autoSkip reads no other member.
-///
-/// The options of a scale are a resolver view (Chart.js ADR 0054 §4):
-/// `attachContext(createResolver([options]), {})` gives the view of the
-/// plain options of the case.
 final class _Scale implements types.Scale {
-  _Scale(
-    Map<String, Object?> options,
-    this._tickSize,
-    this.length,
-    this.maxLength,
-  ) : options = attachContext(createResolver([options]), <String, Object?>{});
+  _Scale(this.options, this._tickSize, this.length, this.maxLength);
 
   @override
   final Map<String, Object?> options;

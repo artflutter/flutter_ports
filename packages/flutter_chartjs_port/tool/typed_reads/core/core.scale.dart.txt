@@ -8,9 +8,6 @@
 # - stringIndex 3: getLabels reads `data.xLabels`, `data.yLabels` and
 #   `data.labels` of the data object of the user (core.scale.js:359-362), a
 #   raw object of the user (Chart.js ADR 0054 §5).
-# - stringIndex 2: `chart.options.font` (core.scale.js:597, :652), an option
-#   of the chart view: it moves to the shared readOption of helpers.config
-#   after the interface commit of the base.
 jsGet 1
-stringIndex 9
+stringIndex 7
 jsObjectKeys 1
