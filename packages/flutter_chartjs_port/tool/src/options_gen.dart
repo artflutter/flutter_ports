@@ -277,7 +277,7 @@ const Set<String> _memberNames = {
   'owns', 'store', 'delete', 'ownKeys', 'ownKeyCount', 'jsKeys',
   'classifyName', 'jsRead', 'jsWrite', 'jsHas', 'jsDelete', 'cloneScope',
   'hashCode', 'runtimeType', 'length', 'keys', 'values', 'entries',
-  'isEmpty', 'isNotEmpty', 'routes', 'route',
+  'isEmpty', 'isNotEmpty', 'routes', 'route', 'freeze', 'isFrozen',
 };
 
 /// A Dart string literal of [text].

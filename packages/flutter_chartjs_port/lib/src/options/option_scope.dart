@@ -20,13 +20,17 @@
 /// kind is that key; any other name is an extra. An [OptionKey] that the kind
 /// does not declare is an extra under its JS name.
 ///
+/// A scope can be frozen (`Object.freeze`, [OptionScope.freeze]): then each
+/// write throws a [TypeError], the strict-mode write into a frozen object.
+///
 /// This library is a pure layer.
 library;
 
 import 'dart:collection' show MapBase;
 
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
+import 'package:flutter_chartjs_port/src/js/js_object.dart'
+    show JsFreezable, JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart';
@@ -47,9 +51,27 @@ export 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
 /// absent key, as a Map read) over the same own keys. The close step of the
 /// migration removes the scaffolding.
 abstract base class OptionScope extends MapBase<String, Object?>
-    implements OptionObject, JsObjectFace {
+    implements OptionObject, JsObjectFace, JsFreezable {
   /// An empty scope.
   OptionScope();
+
+  /// Whether the scope is frozen ([freeze]).
+  bool _frozen = false;
+
+  /// `Object.isFrozen(this)`.
+  @override
+  bool get isFrozen => _frozen;
+
+  /// `Object.freeze(this)`: shallow, as in JavaScript. From now on each
+  /// write throws a [TypeError] (a write into a frozen object in strict
+  /// mode, helpers.config.ts:101-106): [store], [delete] of an own key,
+  /// [addRoute], and through them the cell setters and the typed setters of
+  /// the generated scopes, [jsWrite], [jsDelete], `operator []=`, [remove]
+  /// and [clear]. The delete of a key that the scope does not own succeeds,
+  /// as in JavaScript. The reads do not change. No member clears the frozen
+  /// state, except the harness restore ([restoreState]).
+  @override
+  void freeze() => _frozen = true;
 
   /// The kind of the scope (`tool/options_schema.yaml`).
   ScopeKind get kind;
@@ -149,6 +171,8 @@ abstract base class OptionScope extends MapBase<String, Object?>
   /// is stored, as `Defaults.route` does. A route of a name that the scope
   /// did not own before its first route is not configurable.
   void addRoute(String name, ScopeRoute route) {
+    // A JavaScript TypeError: Object.defineProperties on a frozen object.
+    if (_frozen) throw TypeError();
     final owned = owns(name);
     final local = owned ? jsRead(name) : undefined;
     final previous = routeOf(name);
@@ -189,6 +213,8 @@ abstract base class OptionScope extends MapBase<String, Object?>
   /// Stores [cell] for [key] (an [OptionKey] or a name). An absent key goes
   /// to the end of the key order, as a JS property set does.
   void store(Object key, Opt<Object?> cell) {
+    // A JavaScript TypeError: a write into a frozen object.
+    if (_frozen) throw TypeError();
     final k = _normalize(key);
     if (k is OptionKey) {
       if (cellOf(k) == null) _order.add(k);
@@ -213,6 +239,9 @@ abstract base class OptionScope extends MapBase<String, Object?>
   /// delete property", strict mode). The delete of a configurable routed key
   /// removes its route.
   bool delete(Object key) {
+    // A JavaScript TypeError: the delete of an own property of a frozen
+    // object. An absent key gives false, as the delete succeeds.
+    if (_frozen && owns(key)) throw TypeError();
     final k = _normalize(key);
     if (_routeNames != null) {
       final name = k is OptionKey ? k.jsName : k as String;
@@ -382,11 +411,13 @@ abstract base class OptionScope extends MapBase<String, Object?>
     [for (final key in _order) _own(key)!],
     List<String>.of(_routeNames ?? const []),
     List<ScopeRoute>.of(_routes ?? const []),
+    _frozen,
   );
 
   /// Whether the scope holds [state]: the same keys in the same order, the
   /// same cells and the same routes.
   bool hasState(ScopeState state) {
+    if (_frozen != state._frozen) return false;
     if (_order.length != state._order.length) return false;
     for (var i = 0; i < _order.length; i++) {
       if (_order[i] != state._order[i]) return false;
@@ -410,8 +441,14 @@ abstract base class OptionScope extends MapBase<String, Object?>
     return true;
   }
 
-  /// Puts back [state] ([saveState]).
+  /// Puts back [state] ([saveState]), also its frozen state.
+  ///
+  /// The restore of the test harness is not a JS write: it puts back the
+  /// snapshot of the global scopes after each test. Thus it writes the
+  /// fields directly and does not test the frozen state, and a scope that a
+  /// test froze is not frozen in the next test.
   void restoreState(ScopeState state) {
+    _frozen = state._frozen;
     for (final key in _order) {
       if (key is OptionKey) setCell(key, null);
     }
@@ -466,7 +503,16 @@ final class ScopeRoute {
 
 /// The saved state of a typed scope ([OptionScope.saveState]).
 final class ScopeState {
-  ScopeState._(this._order, this._cells, this._routeNames, this._routes);
+  ScopeState._(
+    this._order,
+    this._cells,
+    this._routeNames,
+    this._routes,
+    this._frozen,
+  );
+
+  /// Whether the scope was frozen.
+  final bool _frozen;
 
   final List<Object> _order;
   final List<Opt<Object?>> _cells;
