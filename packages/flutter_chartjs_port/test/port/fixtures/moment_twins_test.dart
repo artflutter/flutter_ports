@@ -125,7 +125,7 @@ Object? Function(Object?) _examine(
   final differs = _differs.contains(path);
   var unparsed = 0;
   for (var i = 0; i < datasets; i++) {
-    final meta = chart.getDatasetMeta(i.toDouble());
+    final meta = chart.getDatasetMeta(i);
     for (final scale in [meta.iScale, meta.vScale]) {
       if (scale is! Scale || !_timeTypes.contains(scale.type)) continue;
       for (final item in meta.parsed) {

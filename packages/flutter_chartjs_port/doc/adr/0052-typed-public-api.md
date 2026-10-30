@@ -532,7 +532,10 @@ A user who gets `hit.datasetIndex` (an `int`) cannot call `chart.hide(hit.datase
 - Each changed ported file gets a `DIVERGES` marker and an `adapt` row in `differences.md`:
   `adapt-chart-index-parameters` (`lib/src/core/core.controller.dart`) and
   `adapt-types-chart-index-parameters` (`lib/src/types/index.dart`).
-- The existing tests pass unchanged. One new test calls each method with an `int` variable.
+- The existing tests pass. An override cannot narrow a parameter, so the 3 test fakes and the
+  gallery `DemoChart` that implement `types.Chart` with these methods take `num` too. The
+  `toDouble()` and `* 1.0` of an `int` index at the 56 calls of these methods in the gallery and
+  the tests go. One new test calls each method with an `int` variable.
 
 ### 11. Tests
 

@@ -78,7 +78,7 @@ class ChartTypePageState extends State<ChartTypePage> {
     final datasets = chart.data['datasets']! as List<Object?>;
     return [
       for (var i = 0; i < datasets.length; i++)
-        _datasetLabel(chart.getDatasetMeta(i.toDouble())),
+        _datasetLabel(chart.getDatasetMeta(i)),
     ].join(', ');
   }
 

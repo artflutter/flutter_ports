@@ -428,7 +428,8 @@ abstract interface class Chart {
   List<ChartMeta> getSortedVisibleDatasetMetas();
 
   /// index.d.ts:567 `getDatasetMeta(datasetIndex: number): ChartMeta`.
-  ChartMeta getDatasetMeta(double datasetIndex);
+  // DIVERGES(chartjs): adapt-types-chart-index-parameters, a num index.
+  ChartMeta getDatasetMeta(num datasetIndex);
 
   /// core.controller.js:737 `_getSortedDatasetMetas(filterVisible)`: the
   /// metas in the drawing order, only the visible ones when [filterVisible]
@@ -442,7 +443,8 @@ abstract interface class Chart {
 
   /// index.d.ts:572 `getDataVisibility(index: number): boolean`. The radial
   /// scale calls it (scale.radialLinear.js:463).
-  bool getDataVisibility(double index);
+  // DIVERGES(chartjs): adapt-types-chart-index-parameters, a num index.
+  bool getDataVisibility(num index);
 
   /// index.d.ts:585 `notifyPlugins(hook: string, args?: AnyObject): boolean
   /// | void`. The scale hooks call it (core.scale.js:535).
@@ -488,7 +490,8 @@ abstract interface class Chart {
 
   /// index.d.ts:569 `isDatasetVisible(datasetIndex)`.
   /// controller.doughnut.js:192 calls it.
-  bool isDatasetVisible(double datasetIndex);
+  // DIVERGES(chartjs): adapt-types-chart-index-parameters, a num index.
+  bool isDatasetVisible(num datasetIndex);
 
   /// index.d.ts:571 `toggleDataVisibility(index)`.
   /// controller.doughnut.js:126 and controller.polarArea.js:66 call it.
@@ -500,11 +503,13 @@ abstract interface class Chart {
 
   /// index.d.ts:573 `hide(datasetIndex, dataIndex?)`. plugin.legend.js:649
   /// calls it. Dart `null` for [dataIndex] stands for an absent argument.
-  void hide(double datasetIndex, [double? dataIndex]);
+  // DIVERGES(chartjs): adapt-types-chart-index-parameters, a num index.
+  void hide(num datasetIndex, [num? dataIndex]);
 
   /// index.d.ts:574 `show(datasetIndex, dataIndex?)`. plugin.legend.js:652
   /// calls it. Dart `null` for [dataIndex] stands for an absent argument.
-  void show(double datasetIndex, [double? dataIndex]);
+  // DIVERGES(chartjs): adapt-types-chart-index-parameters, a num index.
+  void show(num datasetIndex, [num? dataIndex]);
 }
 
 /// index.d.ts:622 `DatasetController`.

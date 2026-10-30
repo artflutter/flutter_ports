@@ -179,7 +179,7 @@ final class DemoChart implements types.Chart {
 
   /// No datasets: every index throws.
   @override
-  types.ChartMeta getDatasetMeta(double datasetIndex) =>
+  types.ChartMeta getDatasetMeta(num datasetIndex) =>
       throw RangeError('The demo chart has no datasets.');
 
   /// No datasets.
@@ -189,7 +189,7 @@ final class DemoChart implements types.Chart {
   /// core.controller.js:885 `getDataVisibility(index)`:
   /// `!this._hiddenIndices[index]`. The demo chart hides no index.
   @override
-  bool getDataVisibility(double index) => true;
+  bool getDataVisibility(num index) => true;
 
   /// No plugins: no plugin cancels the hook.
   @override
@@ -205,7 +205,7 @@ final class DemoChart implements types.Chart {
   /// core.controller.js:863 `isDatasetVisible(datasetIndex)`. The demo
   /// chart has no datasets.
   @override
-  bool isDatasetVisible(double datasetIndex) => false;
+  bool isDatasetVisible(num datasetIndex) => false;
 
   /// core.controller.js:859 `getVisibleDatasetCount()`. The demo chart has
   /// no datasets.
@@ -220,12 +220,12 @@ final class DemoChart implements types.Chart {
   /// core.controller.js:908 `hide(datasetIndex, dataIndex)`. The demo chart
   /// has no datasets.
   @override
-  void hide(double datasetIndex, [double? dataIndex]) {}
+  void hide(num datasetIndex, [num? dataIndex]) {}
 
   /// core.controller.js:912 `show(datasetIndex, dataIndex)`. The demo chart
   /// has no datasets.
   @override
-  void show(double datasetIndex, [double? dataIndex]) {}
+  void show(num datasetIndex, [num? dataIndex]) {}
 
   /// core.controller.js:475 `update(mode)`. core.controller.js:536: an
   /// update ends with a render. The demo chart has only the render.

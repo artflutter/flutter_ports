@@ -1005,7 +1005,7 @@ void main() {
               }
               // The filler made the source of each dataset.
               expect(
-                chart.getDatasetMeta(k.toDouble())[r'$filler'],
+                chart.getDatasetMeta(k)[r'$filler'],
                 isNotNull,
                 reason: '$reason $k',
               );

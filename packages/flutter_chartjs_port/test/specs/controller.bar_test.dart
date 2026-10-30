@@ -1496,7 +1496,7 @@ void main() {
         var totalBarWidth = 0.0;
         final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
         for (var i = 0; i < datasets.length; i++) {
-          final bars = chart.getDatasetMeta(i.toDouble()).data;
+          final bars = chart.getDatasetMeta(i).data;
           for (var j = xScale.min; j <= xScale.max; j++) {
             totalBarWidth += (bars[j.toInt()] as BarElement).width;
           }
@@ -1588,7 +1588,7 @@ void main() {
         var totalBarHeight = 0.0;
         final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
         for (var i = 0; i < datasets.length; i++) {
-          final bars = chart.getDatasetMeta(i.toDouble()).data;
+          final bars = chart.getDatasetMeta(i).data;
           for (var j = yScale.min; j <= yScale.max; j++) {
             totalBarHeight += (bars[j.toInt()] as BarElement).height;
           }
@@ -1692,7 +1692,7 @@ void main() {
 
             final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
             for (var i = 0, ilen = datasets.length; i < ilen; ++i) {
-              final meta = chart.getDatasetMeta(i.toDouble());
+              final meta = chart.getDatasetMeta(i);
               expect(_bar(meta, 0).width, toBeCloseToPixel(expected));
               expect(_bar(meta, 1).width, toBeCloseToPixel(expected));
             }
@@ -1709,7 +1709,7 @@ void main() {
 
               final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
               for (var i = 0, ilen = datasets.length; i < ilen; ++i) {
-                final meta = chart.getDatasetMeta(i.toDouble());
+                final meta = chart.getDatasetMeta(i);
                 expect(_bar(meta, 0).width, toBeCloseToPixel(10));
                 expect(_bar(meta, 1).width, toBeCloseToPixel(10));
               }

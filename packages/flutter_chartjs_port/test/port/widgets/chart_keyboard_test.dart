@@ -146,8 +146,7 @@ Widget _pair(Widget keys, Widget mouse) => _top(
       y: read('top') + read('height') / 2,
     );
   }
-  final element =
-      chart.getDatasetMeta(group.toDouble()).data[item] as types.VisualElement;
+  final element = chart.getDatasetMeta(group).data[item] as types.VisualElement;
   final center = element.getCenterPoint(true);
   return (x: center.x!, y: center.y!);
 }

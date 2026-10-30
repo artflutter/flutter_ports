@@ -946,7 +946,7 @@ List<Object?> _datasets(Chart chart) =>
 void _observePalette(_Observe observe, String prefix, Chart chart) {
   for (final (d, dataset) in _datasets(chart).indexed) {
     observe('${prefix}dataset $d', _colorPair(dataset));
-    final meta = chart.getDatasetMeta(d.toDouble());
+    final meta = chart.getDatasetMeta(d);
     for (final i in [0, 1]) {
       observe(
         '${prefix}element $d.$i',
@@ -971,7 +971,7 @@ String _palette(void Function(_Observe observe) body) {
 List<Object?> _styleSetters(Chart chart) {
   final setters = <Object?>[];
   for (var d = 0; d < _datasets(chart).length; d++) {
-    final controller = chart.getDatasetMeta(d.toDouble()).controller!;
+    final controller = chart.getDatasetMeta(d).controller!;
     final target = controller.ctx;
     final mock = createMockContext();
     controller.ctx = mock;
@@ -1004,7 +1004,7 @@ List<String> _lightPalette(String type, Object? theme) {
   final (chart, _) = _paletteChart(type, theme: theme);
   for (final (d, dataset) in _datasets(chart).indexed) {
     observe('dataset $d', _colorPair(dataset));
-    final meta = chart.getDatasetMeta(d.toDouble());
+    final meta = chart.getDatasetMeta(d);
     if (meta.dataset case final Element line) {
       observe('dataset $d line', _colorPair(line.options));
     }

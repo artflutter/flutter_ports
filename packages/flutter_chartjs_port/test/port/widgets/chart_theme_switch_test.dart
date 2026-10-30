@@ -142,7 +142,7 @@ Object? _elementOption(
   int datasetIndex = 0,
   int index = 0,
 }) {
-  final element = chart.getDatasetMeta(datasetIndex.toDouble()).data[index];
+  final element = chart.getDatasetMeta(datasetIndex).data[index];
   return jsGet(element.options, key);
 }
 
@@ -450,8 +450,7 @@ void main() {
       final datasets = [..._datasets(chart)];
       final data = [for (final d in datasets) jsGet(d, 'data')];
       final controllers = [
-        for (var i = 0; i < 2; i++)
-          chart.getDatasetMeta(i.toDouble()).controller,
+        for (var i = 0; i < 2; i++) chart.getDatasetMeta(i).controller,
       ];
       expect(chart.isDatasetVisible(1), isFalse);
       await tester.pumpWidget(_view(config, theme: _themeB));
@@ -461,7 +460,7 @@ void main() {
         expect(_datasets(chart)[i], same(datasets[i]));
         expect(jsGet(datasets[i], 'data'), same(data[i]));
         expect(
-          chart.getDatasetMeta(i.toDouble()).controller,
+          chart.getDatasetMeta(i).controller,
           same(controllers[i]),
         );
       }

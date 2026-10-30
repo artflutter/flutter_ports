@@ -957,9 +957,7 @@ void main() {
         // Trigger an event over top of the element
         const pointIndex = 1;
         const datasetIndex = 0;
-        final point = chart
-            .getDatasetMeta(datasetIndex.toDouble())
-            .data[pointIndex];
+        final point = chart.getDatasetMeta(datasetIndex).data[pointIndex];
 
         await triggerMouseEvent(chart, 'mousemove', point);
         // Check and see if tooltip was displayed
@@ -1111,7 +1109,7 @@ void main() {
           // Trigger an event over top of the
           const pointIndex = 1;
           const datasetIndex = 0;
-          final meta = chart.getDatasetMeta(datasetIndex.toDouble());
+          final meta = chart.getDatasetMeta(datasetIndex);
           final point = meta.data[pointIndex];
           final fn = positioners['test'];
 
@@ -1169,7 +1167,7 @@ void main() {
           // Trigger an event over top of the
           const pointIndex = 1;
           const datasetIndex = 0;
-          final meta = chart.getDatasetMeta(datasetIndex.toDouble());
+          final meta = chart.getDatasetMeta(datasetIndex);
           final point = meta.data[pointIndex];
           await triggerMouseEvent(chart, 'mousemove', point);
 

@@ -235,7 +235,7 @@ void _expectChart(WidgetTester tester, ChartTypePageState state, String id) {
   final datasets = chart.data['datasets']! as List<Object?>;
   expect(datasets, hasLength(expected.controllers.length), reason: id);
   for (var i = 0; i < datasets.length; i++) {
-    final meta = chart.getDatasetMeta(i.toDouble());
+    final meta = chart.getDatasetMeta(i);
     expect(
       meta.controller.runtimeType,
       expected.controllers[i],
@@ -254,7 +254,7 @@ void _expectChart(WidgetTester tester, ChartTypePageState state, String id) {
     state.datasetsLabel,
     [
       for (var i = 0; i < datasets.length; i++)
-        '${chart.getDatasetMeta(i.toDouble()).type} ${expected.counts[i]}',
+        '${chart.getDatasetMeta(i).type} ${expected.counts[i]}',
     ].join(', '),
     reason: id,
   );
@@ -300,8 +300,8 @@ void _expectNoForbiddenControls(String stem) {
 /// a stem of [_dataLegendStems], is visible.
 bool _legendItemVisible(Chart chart, String stem, int index) =>
     _dataLegendStems.contains(stem)
-    ? chart.getDataVisibility(index.toDouble())
-    : chart.isDatasetVisible(index.toDouble());
+    ? chart.getDataVisibility(index)
+    : chart.isDatasetVisible(index);
 
 /// Whether the primary focus is the focus stop of the chart of [stem]
 /// (Chart.js ADR 0051, section 1).

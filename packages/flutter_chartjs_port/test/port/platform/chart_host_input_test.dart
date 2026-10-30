@@ -160,8 +160,7 @@ Map<String, Object?> _observe(Chart chart, _Logs logs) {
     'opacity': tooltip.opacity,
     'legend': List.of(logs.legend),
     'visible': [
-      for (var d = 0; d < datasets.length; d++)
-        chart.isDatasetVisible(d.toDouble()),
+      for (var d = 0; d < datasets.length; d++) chart.isDatasetVisible(d),
     ],
     'lastEvent': lastEvent == null
         ? null

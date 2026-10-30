@@ -1457,7 +1457,7 @@ void main() {
         // barData.datasets.forEach((data, index) => {...}).
         final datasets = barData['datasets']! as List<Object?>;
         for (var index = 0; index < datasets.length; index++) {
-          chart.getDatasetMeta(index.toDouble()).hidden = true;
+          chart.getDatasetMeta(index).hidden = true;
           chart.update();
         }
 

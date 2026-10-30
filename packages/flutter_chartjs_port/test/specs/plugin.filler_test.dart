@@ -50,7 +50,7 @@ List<Object?> _decodedFillValues(Chart chart) {
 
 /// The body of the `map` callback of `decodedFillValues` for [index].
 Object? _decodedFillValue(Chart chart, int index) {
-  final meta = chart.getDatasetMeta(index.toDouble());
+  final meta = chart.getDatasetMeta(index);
   final source = (meta as types.PropertyAccess)[r'$filler'];
   expect(source, isNot(same(undefined)));
   return (source! as FillerSource).fill;

@@ -271,8 +271,8 @@ final class _Chart implements types.Chart {
   List<types.ChartMeta> getSortedVisibleDatasetMetas() => [..._metas];
 
   @override
-  types.ChartMeta getDatasetMeta(double datasetIndex) =>
-      _metas.firstWhere((meta) => meta.index == datasetIndex);
+  types.ChartMeta getDatasetMeta(num datasetIndex) =>
+      _metas.firstWhere((meta) => meta.index == datasetIndex.toDouble());
 
   @override
   bool isPointInArea(types.Point point) =>

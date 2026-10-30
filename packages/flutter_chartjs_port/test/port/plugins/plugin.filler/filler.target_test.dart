@@ -70,11 +70,11 @@ final class _FakeChart implements types.Chart {
   final types.ChartArea? chartArea;
 
   @override
-  types.ChartMeta getDatasetMeta(double datasetIndex) =>
+  types.ChartMeta getDatasetMeta(num datasetIndex) =>
       metas[datasetIndex.toInt()];
 
   @override
-  bool isDatasetVisible(double datasetIndex) => _visible[datasetIndex.toInt()];
+  bool isDatasetVisible(num datasetIndex) => _visible[datasetIndex.toInt()];
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

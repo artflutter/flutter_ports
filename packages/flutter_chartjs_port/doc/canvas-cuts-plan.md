@@ -821,6 +821,14 @@ Changes to the cited files:
   No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart` or a
   test of §2.6 and §3.5 changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5
   and the estimates do not change. No trigger occurred.
+- 2026-10-30, the `num` index parameters of [Chart.js ADR 0052](adr/0052-typed-public-api.md) §10
+  (phase 10). `lib/src/core/core.controller.dart` changes the six visibility and meta methods, not
+  `_resize`. `lib/src/types/index.dart` changes five declarations; this plan cites no line of it.
+  `apps/chartjs_gallery/lib/demo/demo_chart.dart`, which §3.1 cites, changes the parameter types
+  of five methods in place: no line moves, and this plan cites no line of the file. `doc/parity.md`
+  gets one port-only row after the rows that this plan cites (lines 402-446): they do not move.
+  The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change.
+  No trigger occurred.
 
 ## 1. Why
 

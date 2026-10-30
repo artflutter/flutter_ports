@@ -47,8 +47,7 @@ const List<(int, int, int)> _rainbow = [
 /// of [chart].
 List<List<Object?>> _elements(Chart chart) => [
   for (var i = 0; i < (chart.data['datasets']! as List<Object?>).length; i++)
-    for (final element
-        in chart.getDatasetMeta(i.toDouble()).data.cast<chartjs.Element>())
+    for (final element in chart.getDatasetMeta(i).data.cast<chartjs.Element>())
       [
         i,
         element.x,

@@ -83,7 +83,7 @@ Scale _scale(Chart chart, String id) => chart.scales[id]!;
 
 /// The point [index] of the dataset [datasetIndex].
 PointElement _point(Chart chart, int datasetIndex, int index) =>
-    chart.getDatasetMeta(datasetIndex.toDouble()).data[index] as PointElement;
+    chart.getDatasetMeta(datasetIndex).data[index] as PointElement;
 
 /// The value of the readout row [name].
 String _row(AxesDemoState state, String name) =>
@@ -135,7 +135,7 @@ void _expectOnScales(Chart chart) {
   final x = _scale(chart, 'x');
   final y = _scale(chart, 'y');
   for (var d = 0; d < 2; d++) {
-    final meta = chart.getDatasetMeta(d.toDouble());
+    final meta = chart.getDatasetMeta(d);
     expect(identical(meta.iScale, x), isTrue);
     expect(identical(meta.vScale, y), isTrue);
     for (var i = 0; i < meta.data.length; i++) {
@@ -166,7 +166,7 @@ void main() {
     expect(_scale(chart, 'x').options['position'], 'bottom');
     expect(_scale(chart, 'y').options['position'], 'left');
     for (var d = 0; d < 2; d++) {
-      expect(chart.getDatasetMeta(d.toDouble()).data, hasLength(12));
+      expect(chart.getDatasetMeta(d).data, hasLength(12));
     }
     // parsing: true gives the parsed items of the scales.
     final parsed = chart.getDatasetMeta(0).controller!.getParsed(3);

@@ -578,7 +578,8 @@ final class _FakeChart implements types.Chart {
 
   // core.controller.js:829-853.
   @override
-  types.ChartMeta getDatasetMeta(double datasetIndex) {
+  types.ChartMeta getDatasetMeta(num index) {
+    final datasetIndex = index.toDouble();
     final dataset = jsGet(jsGet(data, 'datasets'), datasetIndex);
     final metasets = _metasets;
     final meta = metasets
@@ -611,7 +612,8 @@ final class _FakeChart implements types.Chart {
 
   // core.controller.js:866-875.
   @override
-  bool isDatasetVisible(double datasetIndex) {
+  bool isDatasetVisible(num index) {
+    final datasetIndex = index.toDouble();
     final dataset = jsGet(jsGet(data, 'datasets'), datasetIndex);
     if (!jsTruthy(dataset)) {
       return false;
@@ -1014,7 +1016,7 @@ final class _Run {
     final elements = _elements;
     for (var i = 0; i < datasets.length; i++) {
       final dataset = datasets[i]! as AnyObject;
-      final meta = chart.getDatasetMeta(i.toDouble()) as _Meta;
+      final meta = chart.getDatasetMeta(i) as _Meta;
       final datasetType = jsGet(dataset, 'type');
       final type = (jsTruthy(datasetType) ? datasetType : config.type)!;
       final indexAxis = jsGet(dataset, 'indexAxis');
@@ -1028,7 +1030,7 @@ final class _Run {
         ..order = jsOrZero(jsGet(dataset, 'order'))
         ..index = i.toDouble()
         ..label = jsToString(jsGet(dataset, 'label'))
-        ..visible = chart.isDatasetVisible(i.toDouble());
+        ..visible = chart.isDatasetVisible(i);
       final existing = meta.controllerValue;
       if (existing != null) {
         existing

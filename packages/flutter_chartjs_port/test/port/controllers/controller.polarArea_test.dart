@@ -93,7 +93,7 @@ int _datasetCount(Chart chart) =>
 Object? _polarState(Chart chart) => [
   for (var i = 0; i < _datasetCount(chart); i++)
     _state(
-      chart.getDatasetMeta(i.toDouble()).controller! as PolarAreaController,
+      chart.getDatasetMeta(i).controller! as PolarAreaController,
     ),
 ];
 
@@ -430,7 +430,7 @@ void main() {
         expect(
           [
             for (var i = 0; i < 3; i++)
-              if (chart.getDataVisibility(i.toDouble())) '1' else '0',
+              if (chart.getDataVisibility(i)) '1' else '0',
           ].join(),
           visible,
         );
@@ -462,7 +462,7 @@ void main() {
       expect(
         [
           for (var i = 0; i < 4; i++)
-            if (chart.getDataVisibility(i.toDouble())) '1' else '0',
+            if (chart.getDataVisibility(i)) '1' else '0',
         ].join(),
         '1101',
       );

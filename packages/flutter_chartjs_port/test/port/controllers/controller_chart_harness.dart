@@ -750,7 +750,7 @@ Future<void> runStep(
       chart.update(mode);
     case ['setDatasetVisibility', final num d, final bool v]:
       chart
-        ..setDatasetVisibility(d.toDouble(), v)
+        ..setDatasetVisibility(d, v)
         ..update();
     case ['toggleDataVisibility', final num i]:
       chart

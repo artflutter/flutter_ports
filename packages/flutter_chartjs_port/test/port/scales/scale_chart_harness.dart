@@ -342,8 +342,8 @@ List<Object?> drawCalls(Chart chart) {
   final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
   final controllers = <DatasetController>[
     for (var i = 0; i < datasets.length; i++)
-      if (chart.getDatasetMeta(i.toDouble()).controller
-          case final DatasetController c when identical(c.ctx, target))
+      if (chart.getDatasetMeta(i).controller case final DatasetController c
+          when identical(c.ctx, target))
         c,
   ];
   // The title boxes keep the context of the chart in their own `ctx`
@@ -469,7 +469,7 @@ Map<String, Object?> observeChart(Chart chart, {ScaleObservations? extra}) {
     'points': [
       for (var i = 0; i < datasets.length; i++)
         [
-          for (final p in chart.getDatasetMeta(i.toDouble()).data) [p.x, p.y],
+          for (final p in chart.getDatasetMeta(i).data) [p.x, p.y],
         ],
     ],
   };

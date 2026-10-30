@@ -66,8 +66,7 @@ List<Object?> _datasets(Chart chart) =>
 /// `null` is the JS `undefined` of the constructor.
 Object? _ringGeometry(Chart chart) => [
   for (var i = 0; i < _datasets(chart).length; i++)
-    switch (chart.getDatasetMeta(i.toDouble()).controller!
-        as DoughnutController) {
+    switch (chart.getDatasetMeta(i).controller! as DoughnutController) {
       final c => [
         c.offsetX ?? undefined,
         c.offsetY ?? undefined,

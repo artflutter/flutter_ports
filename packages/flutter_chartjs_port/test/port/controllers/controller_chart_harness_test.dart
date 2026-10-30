@@ -96,8 +96,7 @@ List<Object?> _data(Chart chart, int index) =>
 /// The rounded center of the element [index] of the dataset [dataset].
 (double, double) _center(Chart chart, int dataset, int index) {
   final element =
-      chart.getDatasetMeta(dataset.toDouble()).data[index]
-          as types.VisualElement;
+      chart.getDatasetMeta(dataset).data[index] as types.VisualElement;
   final center = element.getCenterPoint();
   return (center.x!.roundToDouble(), center.y!.roundToDouble());
 }

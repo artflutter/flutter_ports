@@ -784,7 +784,7 @@ void main() {
         (chart.getDatasetMeta(0).data[index] as Element)['hidden'],
       );
       String visibilities(int count) => [
-        for (var i = 0; i < count; i++) chart.getDataVisibility(i.toDouble()),
+        for (var i = 0; i < count; i++) chart.getDataVisibility(i),
       ].join(' ');
       o.observe(
         'visible',
@@ -1366,7 +1366,7 @@ void main() {
       <Object?>['01', null, true, ''].forEach(chart.toggleDataVisibility);
       String visibilities(int count) => [
         for (var i = 0; i < count; i++)
-          if (chart.getDataVisibility(i.toDouble())) '1' else '0',
+          if (chart.getDataVisibility(i)) '1' else '0',
       ].join();
       expect(visibilities(4), '1111');
       chart
@@ -1426,7 +1426,7 @@ void main() {
       void expectVisibility(List<bool> expected) {
         for (var i = 0; i < expected.length; i++) {
           expect(
-            chart.getDataVisibility(i.toDouble()),
+            chart.getDataVisibility(i),
             expected[i],
             reason: 'index $i',
           );

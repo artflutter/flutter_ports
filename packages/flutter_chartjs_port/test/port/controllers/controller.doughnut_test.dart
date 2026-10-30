@@ -78,8 +78,7 @@ Object? _parsedIsData(Chart chart) =>
 /// `null` is the JS `undefined` of the constructor.
 Object? _ringGeometry(Chart chart) => [
   for (var i = 0; i < _datasets(chart).length; i++)
-    switch (chart.getDatasetMeta(i.toDouble()).controller!
-        as DoughnutController) {
+    switch (chart.getDatasetMeta(i).controller! as DoughnutController) {
       final c => [
         c.offsetX ?? undefined,
         c.offsetY ?? undefined,
@@ -482,7 +481,7 @@ void main() {
         expect(
           [
             for (var i = 0; i < 3; i++)
-              if (chart.getDataVisibility(i.toDouble())) '1' else '0',
+              if (chart.getDataVisibility(i)) '1' else '0',
           ].join(),
           visible,
         );
@@ -539,7 +538,7 @@ void main() {
           expect(
             [
               for (var i = 0; i < data.length; i++)
-                if (chart.getDataVisibility(i.toDouble())) '1' else '0',
+                if (chart.getDataVisibility(i)) '1' else '0',
             ].join(),
             visible,
           );

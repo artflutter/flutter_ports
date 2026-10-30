@@ -80,7 +80,7 @@ Map<String, Object?> fixture() {
             // var canvas = chart.canvas;
             // var rect = canvas.getBoundingClientRect();
             for (var i = 0; i < pointStyles.length; ++i) {
-              final point = chart.getDatasetMeta(i.toDouble()).data[i];
+              final point = chart.getDatasetMeta(i).data[i];
               // DIVERGES(chartjs): harness-fixture-sources, the chart event.
               final event = fixtureMouseMove(point);
               (chart as Chart).handleEvent(event);

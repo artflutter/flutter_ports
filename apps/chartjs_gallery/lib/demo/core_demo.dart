@@ -432,7 +432,7 @@ class CoreDemoState extends State<CoreDemo> {
           key: 'core.dataset.$d',
           icon: d == 0 ? Icons.looks_one : Icons.looks_two,
           tooltip: 'dataset ${_datasetStyles[d].label}',
-          value: chart == null || chart.isDatasetVisible(d * 1.0),
+          value: chart == null || chart.isDatasetVisible(d),
           onChanged: (_) => _toggleDataset(d),
         ),
       _command('core.data.randomize', Icons.shuffle, 'randomize', _randomize),

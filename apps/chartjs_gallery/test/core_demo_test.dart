@@ -86,7 +86,7 @@ Finder get _host => find.descendant(
 
 /// The point [index] of the dataset [datasetIndex].
 PointElement _point(Chart chart, int datasetIndex, int index) =>
-    chart.getDatasetMeta(datasetIndex.toDouble()).data[index] as PointElement;
+    chart.getDatasetMeta(datasetIndex).data[index] as PointElement;
 
 /// The radius of the resolved options of [point].
 double _radius(PointElement point) => point.options!['radius']! as double;
@@ -179,7 +179,7 @@ void main() {
     expect(meta.controller, isA<LineController>());
     expect(meta.dataset, isA<LineElement>());
     for (var d = 0; d < 2; d++) {
-      final data = chart.getDatasetMeta(d.toDouble()).data;
+      final data = chart.getDatasetMeta(d).data;
       expect(data, hasLength(12));
       // The points of one dataset share one typed options object, the copy
       // of getSharedOptions (Chart.js ADR 0021).
@@ -642,7 +642,7 @@ void main() {
     expect(state.dataOf(0), hasLength(13));
     await _frames(tester, 70);
     for (var d = 0; d < 2; d++) {
-      final data = chart.getDatasetMeta(d.toDouble()).data;
+      final data = chart.getDatasetMeta(d).data;
       expect(data, hasLength(13));
       final last = data.last as PointElement;
       expect(last.x, closeTo(area.left + 12.5 / 13 * area.width, 1e-9));

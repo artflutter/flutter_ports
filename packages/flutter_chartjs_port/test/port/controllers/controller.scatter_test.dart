@@ -97,7 +97,7 @@ AnyObject _scatter(List<Object?> datasets, [AnyObject? options]) =>
 List<Object?> _points(Chart chart) => [
   for (var i = 0; i < (jsGet(chart.data, 'datasets')! as List).length; i++)
     [
-      for (final point in chart.getDatasetMeta(i.toDouble()).data)
+      for (final point in chart.getDatasetMeta(i).data)
         [
           for (final key in const ['x', 'y', 'skip', 'stop'])
             (point as types.ElementPropertyRead)[key],

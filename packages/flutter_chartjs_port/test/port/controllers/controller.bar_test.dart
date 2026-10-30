@@ -60,7 +60,7 @@ final Map<String, Object? Function(Chart chart)> _extras = {
 Object? _barEdges(Chart chart) => [
   for (var i = 0; i < _datasetCount(chart); i++)
     [
-      for (final element in chart.getDatasetMeta(i.toDouble()).data)
+      for (final element in chart.getDatasetMeta(i).data)
         _edges(element as types.ElementPropertyRead),
     ],
 ];

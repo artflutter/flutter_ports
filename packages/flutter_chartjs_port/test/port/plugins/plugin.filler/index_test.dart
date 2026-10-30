@@ -59,7 +59,7 @@ Object? _observeFiller(Chart chart) {
   final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
   return [
     for (var i = 0; i < datasets.length; i++)
-      _observeSource(chart.getDatasetMeta(i.toDouble())),
+      _observeSource(chart.getDatasetMeta(i)),
   ];
 }
 
@@ -119,8 +119,7 @@ Object? _targets(Chart chart) {
   final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
   return [
     for (var i = 0; i < datasets.length; i++)
-      switch ((chart.getDatasetMeta(i.toDouble())
-          as types.PropertyAccess)[r'$filler']) {
+      switch ((chart.getDatasetMeta(i) as types.PropertyAccess)[r'$filler']) {
         final FillerSource source => _describeTarget(getTarget(source)),
         _ => null,
       },

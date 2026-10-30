@@ -1748,8 +1748,10 @@ class Chart implements types.Chart {
   /// `filter(x => x && x._dataset === dataset).pop()` gives the last meta of
   /// the dataset object, by [identical].
   @override
-  ChartMeta getDatasetMeta(double datasetIndex) {
-    final dataset = jsGetIndex(_datasets, datasetIndex);
+  ChartMeta getDatasetMeta(num datasetIndex) {
+    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
+    final index = datasetIndex.toDouble();
+    final dataset = jsGetIndex(_datasets, index);
     final metasets = this.metasets;
     ChartMeta? meta;
     for (var i = metasets.length - 1; i >= 0; i--) {
@@ -1764,7 +1766,7 @@ class Chart implements types.Chart {
       meta = ChartMeta._(
         // See isDatasetVisible() comment
         order: jsTruthy(dataset) ? jsOrZero(jsGet(dataset, 'order')) : 0,
-        index: datasetIndex,
+        index: index,
         dataset_: dataset,
       );
       metasets.add(meta);
@@ -1787,8 +1789,9 @@ class Chart implements types.Chart {
 
   /// core.controller.js:863 `isDatasetVisible(datasetIndex)`.
   @override
-  bool isDatasetVisible(double datasetIndex) {
-    final dataset = jsGetIndex(_datasets, datasetIndex);
+  bool isDatasetVisible(num datasetIndex) {
+    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
+    final dataset = jsGetIndex(_datasets, datasetIndex.toDouble());
     if (!jsTruthy(dataset)) {
       return false;
     }
@@ -1804,12 +1807,13 @@ class Chart implements types.Chart {
 
   /// core.controller.js:876 `setDatasetVisibility(datasetIndex, visible)`.
   void setDatasetVisibility(
-    double datasetIndex,
+    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
+    num datasetIndex,
     // The upstream signature has a positional `visible`.
     // ignore: avoid_positional_boolean_parameters
     bool visible,
   ) {
-    getDatasetMeta(datasetIndex).hidden = !visible;
+    getDatasetMeta(datasetIndex.toDouble()).hidden = !visible;
   }
 
   /// core.controller.js:881 `toggleDataVisibility(index)`.
@@ -1831,11 +1835,12 @@ class Chart implements types.Chart {
   /// upstream line gives true. The early return skips the key string in that
   /// state (Chart.js ADR 0028, section 4).
   @override
-  bool getDataVisibility(double index) {
+  bool getDataVisibility(num index) {
     // Port-only fast path with the upstream result (Chart.js ADR 0028,
     // section 4).
     if (_hiddenIndices.isEmpty) return true;
-    return !jsTruthy(_hiddenIndices[jsNumberToString(index)]);
+    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
+    return !jsTruthy(_hiddenIndices[jsNumberToString(index.toDouble())]);
   }
 
   /// core.controller.js:892 `_updateVisibility(datasetIndex, dataIndex,
@@ -1876,16 +1881,18 @@ class Chart implements types.Chart {
   ///
   /// Dart `null` for [dataIndex] stands for an absent argument.
   @override
-  void hide(double datasetIndex, [double? dataIndex]) {
-    _updateVisibility(datasetIndex, dataIndex, false);
+  void hide(num datasetIndex, [num? dataIndex]) {
+    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
+    _updateVisibility(datasetIndex.toDouble(), dataIndex?.toDouble(), false);
   }
 
   /// core.controller.js:912 `show(datasetIndex, dataIndex)`.
   ///
   /// Dart `null` for [dataIndex] stands for an absent argument.
   @override
-  void show(double datasetIndex, [double? dataIndex]) {
-    _updateVisibility(datasetIndex, dataIndex, true);
+  void show(num datasetIndex, [num? dataIndex]) {
+    // DIVERGES(chartjs): adapt-chart-index-parameters, a num at the boundary.
+    _updateVisibility(datasetIndex.toDouble(), dataIndex?.toDouble(), true);
   }
 
   /// core.controller.js:919 `_destroyDatasetMeta(datasetIndex)`.
