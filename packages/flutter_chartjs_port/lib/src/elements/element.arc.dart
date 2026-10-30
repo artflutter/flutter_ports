@@ -1191,6 +1191,11 @@ class ArcElement extends Element implements types.VisualElement, ArcProps {
   /// §9).
   late final bool _builtIn = identical(runtimeType, ArcElement);
 
+  /// [Element.typedWrites]: true for the class [ArcElement] itself.
+  @internal
+  @override
+  bool get typedWrites => _builtIn;
+
   /// [Element.takesProperties]: an [ArcProperties], for an element of the
   /// class [ArcElement] itself.
   @internal

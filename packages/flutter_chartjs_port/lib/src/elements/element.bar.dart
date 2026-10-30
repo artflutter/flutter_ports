@@ -608,6 +608,11 @@ class BarElement extends Element implements types.VisualElementRange {
   /// §9).
   late final bool _builtIn = identical(runtimeType, BarElement);
 
+  /// [Element.typedWrites]: true for the class [BarElement] itself.
+  @internal
+  @override
+  bool get typedWrites => _builtIn;
+
   /// [Element.takesProperties]: a [BarProperties], for an element of the
   /// class [BarElement] itself.
   @internal

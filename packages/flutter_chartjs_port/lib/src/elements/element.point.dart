@@ -373,6 +373,11 @@ class PointElement extends Element
   /// §9).
   late final bool _builtIn = identical(runtimeType, PointElement);
 
+  /// [Element.typedWrites]: true for the class [PointElement] itself.
+  @internal
+  @override
+  bool get typedWrites => _builtIn;
+
   /// [Element.takesProperties]: a [PointProperties], for an element of the
   /// class [PointElement] itself.
   @internal

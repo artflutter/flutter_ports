@@ -542,6 +542,16 @@ class Element implements types.Element, types.PropertyAccess, ElementProps {
   @internal
   bool takesProperties(TypedRecord props) => false;
 
+  /// Whether the element is of a built-in element class itself, not of a
+  /// user subclass: the exact-class rule of Chart.js ADR 0054 §9. A
+  /// controller writes the properties of such an element through its typed
+  /// setters, for example in the direct update of the line and scatter
+  /// controllers (controller.line.js:91-111), and the properties of
+  /// another element by name, so that its `operator []=` sees each write.
+  /// [Element] itself gives false.
+  @internal
+  bool get typedWrites => false;
+
   /// The typed write of the own key at [position] of [props], an object
   /// that the element [takesProperties]: `this[key] = props[key]`
   /// (Chart.js ADR 0054 §9). A key that the element class does not type

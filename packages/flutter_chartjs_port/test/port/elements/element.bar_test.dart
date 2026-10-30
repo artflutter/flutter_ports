@@ -5,6 +5,7 @@ import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/props.dart' show BorderSkipped;
 import 'package:flutter_chartjs_port/src/types/animation.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -428,6 +429,28 @@ void main() {
       _bar(_drawCfg()).draw(withArea, _Area());
       _bar(_drawCfg()).draw(withoutArea);
       expect(withArea.getCalls(), withoutArea.getCalls());
+    });
+
+    // Chart.js ADR 0054 §9: the BorderSkipped of the bar controller reads
+    // as the plain object of its edges.
+    test('a BorderSkipped draws as the Map of its edges', () {
+      for (final skipped in [
+        BorderSkipped()..bottom = true,
+        BorderSkipped.all(),
+        BorderSkipped()..['middle'] = true,
+      ]) {
+        final typed = createMockContext();
+        final plain = createMockContext();
+        _bar(_drawCfg({'borderSkipped': skipped})).draw(typed);
+        _bar(
+          _drawCfg({
+            'borderSkipped': <String, Object?>{
+              for (final key in skipped.keys) key: skipped[key],
+            },
+          }),
+        ).draw(plain);
+        expect(typed.getCalls(), plain.getCalls(), reason: '${skipped.keys}');
+      }
     });
 
     test('accepts a typed Map of booleans for borderSkipped', () {

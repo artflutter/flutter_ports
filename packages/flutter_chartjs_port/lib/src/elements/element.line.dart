@@ -1226,6 +1226,11 @@ class LineElement extends Element
   /// §9).
   late final bool _builtIn = identical(runtimeType, LineElement);
 
+  /// [Element.typedWrites]: true for the class [LineElement] itself.
+  @internal
+  @override
+  bool get typedWrites => _builtIn;
+
   /// [Element.takesProperties]: a [LineProperties], for an element of the
   /// class [LineElement] itself.
   @internal
