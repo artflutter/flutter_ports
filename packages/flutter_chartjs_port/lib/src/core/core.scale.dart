@@ -69,7 +69,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show MinMax, halfPi, int16Range, limitValue, toDegrees, toRadians;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show addGrace, createContext, toFont, toPadding;
+    show ScriptableScaleContext, addGrace, createContext, toFont, toPadding;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
@@ -181,8 +181,9 @@ final class Tick implements types.Tick {
 
   /// `$context`, the scriptable context of the tick that [Scale.getContext]
   /// makes (core.scale.js:966-967). Dart `null` stands for JS `undefined`,
-  /// the start value.
-  AnyObject? $context;
+  /// the start value. It is the typed context of index.d.ts:1419 (Chart.js
+  /// ADR 0054 §11).
+  ScriptableScaleContext? $context;
 }
 
 /// core.scale.js:23 `sample`.
@@ -307,22 +308,31 @@ double _getTitleHeight(ScaleTitleOptions options, Object? fallback) {
 }
 
 /// core.scale.js:107 `createScaleContext`.
-AnyObject _createScaleContext(AnyObject parent, Scale scale) {
+///
+/// `createContext` gives the typed context of the type `'scale'`, a
+/// [ScriptableScaleContext] (Chart.js ADR 0054 §11).
+ScriptableScaleContext _createScaleContext(AnyObject parent, Scale scale) {
   return createContext(parent, <String, Object?>{
     'scale': scale,
     'type': 'scale',
-  });
+  }) as ScriptableScaleContext;
 }
 
 /// core.scale.js:114 `createTickContext`.
 ///
 /// The index of the context is a number, which a scriptable option reads.
-AnyObject _createTickContext(AnyObject parent, int index, Tick tick) {
+/// The context of the type `'tick'` is a [ScriptableScaleContext] (Chart.js ADR
+/// 0054 §11).
+ScriptableScaleContext _createTickContext(
+  AnyObject parent,
+  int index,
+  Tick tick,
+) {
   return createContext(parent, <String, Object?>{
     'tick': tick,
     'index': index.toDouble(),
     'type': 'tick',
-  });
+  }) as ScriptableScaleContext;
 }
 
 /// core.scale.js:122 `titleAlign`.
@@ -910,8 +920,9 @@ class Scale extends _ScalePrototype
   bool _dataLimitsCached = false;
 
   /// core.scale.js:249 `$context`, the scriptable context of the scale.
-  /// Dart `null` stands for JS `undefined`, the start value.
-  AnyObject? $context;
+  /// Dart `null` stands for JS `undefined`, the start value. It is the
+  /// typed context of index.d.ts:1419 (Chart.js ADR 0054 §11).
+  ScriptableScaleContext? $context;
 
   /// core.scale.js:497 `_alignToPixels`, the `alignToPixels` option that
   /// `configure` reads. The constructor does not declare it. It starts
@@ -1993,7 +2004,7 @@ class Scale extends _ScalePrototype
   /// Dart `null` for [index] stands for JS `undefined`: the context of the
   /// scale.
   @protected
-  AnyObject getContext([int? index]) {
+  ScriptableScaleContext getContext([int? index]) {
     final ticks = this.ticks ?? const <Tick>[];
 
     if (index != null && index >= 0 && index < ticks.length) {

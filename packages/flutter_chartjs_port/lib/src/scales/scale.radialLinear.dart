@@ -46,7 +46,13 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show halfPi, normalizeAngle, pi, tau, toDegrees, toRadians;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ParsedFont, createContext, toFont, toPadding, toTRBLCorners;
+    show
+        ParsedFont,
+        ScriptableScalePointLabelContext,
+        createContext,
+        toFont,
+        toPadding,
+        toTRBLCorners;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_math.dart'
     show jsCos, jsMax, jsMin, jsRound, jsSin;
@@ -681,12 +687,18 @@ void _drawRadiusLine(
 /// label)`.
 ///
 /// The index of the context is a number, which a scriptable option reads.
-AnyObject _createPointLabelContext(AnyObject parent, int index, Object? label) {
+/// The context of the type `'pointLabel'` is a
+/// [ScriptableScalePointLabelContext] (Chart.js ADR 0054 §11).
+ScriptableScalePointLabelContext _createPointLabelContext(
+  AnyObject parent,
+  int index,
+  Object? label,
+) {
   return createContext(parent, <String, Object?>{
     'label': label,
     'index': index.toDouble(),
     'type': 'pointLabel',
-  });
+  }) as ScriptableScalePointLabelContext;
 }
 
 /// scale.radialLinear.js:147-163 the object of `createPointLabelItem`: the
@@ -1023,7 +1035,7 @@ class RadialLinearScale extends LinearScaleBase
   ///
   /// The scriptable context of the point label [index]. Dart `null` stands
   /// for the JS `undefined` of an index out of the range of the labels.
-  AnyObject? getPointLabelContext(int index) {
+  ScriptableScalePointLabelContext? getPointLabelContext(int index) {
     // `this._pointLabels || []`: a List is truthy.
     final pointLabels = this.pointLabels;
 
