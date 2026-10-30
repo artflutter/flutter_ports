@@ -50,9 +50,9 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 /// A color token of a raw Map theme: the sRGB components of the `dart:ui`
 /// constructor `Color.from(alpha:, red:, green:, blue:)`, each from 0 to 1.
 ///
-/// `themeDataToRaw` of `theme_data.dart` converts a `dart:ui` `Color` of
-/// any color space through `ColorSpace.extendedSRGB` to these components
-/// (Chart.js ADR 0050, theming.md §3.3). [themeColorToRgba] clamps them.
+/// `rawColorOf` of `css.dart` converts a `dart:ui` `Color` of any color
+/// space through `ColorSpace.extendedSRGB` to these components (Chart.js ADR
+/// 0050, theming.md §3.3). [themeColorToRgba] clamps them.
 typedef RawThemeColor = ({double alpha, double red, double green, double blue});
 
 /// The `rgba()` string of [color] (theming.md §3.3): 8-bit sRGB channels and

@@ -433,7 +433,9 @@ blue: 0)`. This keeps the alpha exact. `Color(0x1A000000)` emits
 [Chart.js ADR 0050](adr/0050-public-theme-api.md) decides the public API. The classes are in
 `lib/src/theme/theme_data.dart` and `lib/src/theme/chart_theme.dart`. They import `dart:ui` and
 the widgets library, so they are not pure layers. `compile.dart` and `presets.dart` stay pure and
-internal. The app library of [Chart.js ADR 0048](adr/0048-entry-points-and-public-library.md)
+internal. The internal `css.dart` holds the conversions of a `Color` (`rawColorOf`, `colorToRgba`)
+and of a `TextStyle` (`fontSpecOf`). `theme_data.dart` and the typed API of Chart.js ADR 0052 use
+them, so that one Flutter value gives one option value. The app library of [Chart.js ADR 0048](adr/0048-entry-points-and-public-library.md)
 exports two names: `ChartTheme` and `ChartThemeData`. The samples compile under Dart 3.13, the
 library floor (porting-flow.md §2.12).
 
@@ -603,9 +605,10 @@ specs such as `controller.line.tests.js:784-799` thus run unthemed. Theme tests 
 
 ## 7. Port-only code and divergences
 
-- `lib/src/theme/` holds `tokens.dart`, `theme_data.dart`, `chart_theme.dart`, `presets.dart` and
-  `compile.dart`, each with the port-only header (porting-flow.md, section 1). The parity generator
-  (porting-flow.md, tool 6) lists them in its port-only section. They get no `differences.md` rows.
+- `lib/src/theme/` holds `tokens.dart`, `theme_data.dart`, `chart_theme.dart`, `presets.dart`,
+  `compile.dart` and `css.dart`, each with the port-only header (porting-flow.md, section 1). The
+  parity generator (porting-flow.md, tool 6) lists them in its port-only section. They get no
+  `differences.md` rows.
 - Each hunk has one row in `packages/flutter_chartjs_port/doc/differences.md`, in the column set of porting-flow.md. A
   theme row has the category `theme`. It names its section 8 test. The H4b and H4c rows say
   "added lines".

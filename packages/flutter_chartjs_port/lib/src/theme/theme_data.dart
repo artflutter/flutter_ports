@@ -13,11 +13,12 @@
 /// Ported files never import it (Chart.js ADR 0050, invariant 4).
 library;
 
-import 'dart:ui' show Color, ColorSpace, FontStyle, lerpDouble;
+import 'dart:ui' show Color, FontStyle, lerpDouble;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show ColorProperty, TextStyle;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/theme/css.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 
 /// The tokens of a chart theme (Chart.js ADR 0050, theming.md §4).
@@ -391,28 +392,29 @@ AnyObject? compileThemeData(ChartThemeData? data) {
 /// The raw Map theme of [data]: the input of `compileChartTheme`
 /// (`compile.dart`).
 ///
-/// - `colors`: each color token that is not null, as a [RawThemeColor] of
+/// - `colors`: each color token that is not null, as the [RawThemeColor] of
+///   [rawColorOf] of `css.dart`:
 ///   `Color.withValues(colorSpace: ColorSpace.extendedSRGB)`.
 ///   `themeColorToRgba` then clamps the components. A direct conversion to
 ///   sRGB would only clamp a Display P3 color (theming.md §3.3).
 /// - `typography`: `font` and `pointLabels`, the `FontSpec` Maps of the
-///   fonts that are not null ([_fontSpec]).
+///   fonts that are not null ([fontSpecOf] of `css.dart`).
 /// - `palette`: `{colors, backgroundAlpha}` for a non-empty palette.
 ///
 /// A part without a value is left out.
 @internal
 AnyObject themeDataToRaw(ChartThemeData data) {
   final colors = <String, Object?>{
-    'color': ?_rawColor(data.color),
-    'borderColor': ?_rawColor(data.borderColor),
-    'backgroundColor': ?_rawColor(data.backgroundColor),
-    'surface': ?_rawColor(data.surface),
-    'inverseSurface': ?_rawColor(data.inverseSurface),
-    'onInverseSurface': ?_rawColor(data.onInverseSurface),
+    'color': ?rawColorOf(data.color),
+    'borderColor': ?rawColorOf(data.borderColor),
+    'backgroundColor': ?rawColorOf(data.backgroundColor),
+    'surface': ?rawColorOf(data.surface),
+    'inverseSurface': ?rawColorOf(data.inverseSurface),
+    'onInverseSurface': ?rawColorOf(data.onInverseSurface),
   };
   final typography = <String, Object?>{
-    'font': ?_fontSpec(data.font),
-    'pointLabels': ?_fontSpec(data.pointLabelsFont),
+    'font': ?fontSpecOf(data.font),
+    'pointLabels': ?fontSpecOf(data.pointLabelsFont),
   };
   final palette = data.palette;
   return <String, Object?>{
@@ -420,71 +422,8 @@ AnyObject themeDataToRaw(ChartThemeData data) {
     if (typography.isNotEmpty) 'typography': typography,
     if (palette != null && palette.isNotEmpty)
       'palette': <String, Object?>{
-        'colors': <Object?>[for (final color in palette) _rawColor(color)],
+        'colors': <Object?>[for (final color in palette) rawColorOf(color)],
         'backgroundAlpha': data.paletteBackgroundAlpha,
       },
   };
-}
-
-/// The [RawThemeColor] of [color] through `ColorSpace.extendedSRGB`, or
-/// Dart `null`.
-RawThemeColor? _rawColor(Color? color) {
-  if (color == null) return null;
-  final srgb = color.withValues(colorSpace: ColorSpace.extendedSRGB);
-  return (alpha: srgb.a, red: srgb.r, green: srgb.g, blue: srgb.b);
-}
-
-/// The CSS generic families (CSS Fonts 4 §4.2), the names that the family
-/// string gives without quotes. The canvas layer knows the same names.
-const Set<String> _genericFamilies = {
-  'serif',
-  'sans-serif',
-  'monospace',
-  'cursive',
-  'fantasy',
-  'system-ui',
-  'ui-serif',
-  'ui-sans-serif',
-  'ui-monospace',
-  'ui-rounded',
-  'math',
-  'emoji',
-  'fangsong',
-};
-
-/// The `FontSpec` Map of [font] (`index.d.ts:1817-1836`), or Dart `null`.
-///
-/// The keys come in the order `family`, `size`, `style`, `weight`,
-/// `lineHeight`, each only for a field that is not null:
-/// - `family`: `fontFamily` and `fontFamilyFallback`, joined with `', '`.
-///   Each name is in single quotes (in double quotes when it holds a single
-///   quote), except a CSS generic family. An empty name is left out.
-/// - `size`: `fontSize`.
-/// - `style`: `'italic'` for `FontStyle.italic`, else `'normal'`.
-/// - `weight`: `fontWeight.value` as a number.
-/// - `lineHeight`: `height`, a factor of the size.
-///
-/// The other fields of [font], for example `color` and `letterSpacing`, are
-/// left out with no assert.
-AnyObject? _fontSpec(TextStyle? font) {
-  if (font == null) return null;
-  final names = [
-    ?font.fontFamily,
-    ...?font.fontFamilyFallback,
-  ].where((name) => name.isNotEmpty);
-  final fontStyle = font.fontStyle;
-  return <String, Object?>{
-    if (names.isNotEmpty) 'family': names.map(_familyName).join(', '),
-    'size': ?font.fontSize,
-    if (fontStyle != null)
-      'style': fontStyle == FontStyle.italic ? 'italic' : 'normal',
-    'weight': ?font.fontWeight?.value.toDouble(),
-    'lineHeight': ?font.height,
-  };
-}
-
-/// The CSS form of the family [name] in a family list.
-String _familyName(String name) {
-  if (_genericFamilies.contains(name.toLowerCase())) return name;
-  return name.contains("'") ? '"$name"' : "'$name'";
 }
