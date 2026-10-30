@@ -154,3 +154,7 @@
 	path = third_party/zrender
 	url = https://github.com/ecomfe/zrender
 	shallow = true
+[submodule "third_party/chartjs-plugin-zoom"]
+	path = third_party/chartjs-plugin-zoom
+	url = https://github.com/chartjs/chartjs-plugin-zoom
+	shallow = true

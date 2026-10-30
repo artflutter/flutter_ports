@@ -19,8 +19,15 @@
 # - third_party/zrender: the release tag named by zrenderVersion.
 # - The gitlinks must also equal the "commit" of their entries in
 #   packages/flutter_echarts_port/tool/port_sources.yaml.
-# - Each submodule of .gitmodules: the pin of an entry of a
-#   packages/*/tool/port_sources.yaml file.
+# Also fails unless the third_party/chartjs-plugin-zoom gitlink is the commit
+# of chartjsPluginZoomVersion
+# (packages/flutter_chartjs_plugin_zoom_port/lib/src/upstream.dart, Zoom ADR
+# 0001). A commit pin "<last version>+<sha8>" needs a gitlink that starts
+# with <sha8> and the tag "v<last version>". The gitlink must also equal the
+# "commit" of the entry in
+# packages/flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml.
+# Also fails on a submodule of .gitmodules that no entry of a
+# packages/*/tool/port_sources.yaml file pins.
 # Reads the gitlinks from the index. Thus it needs no submodule checkout. It
 # also works before the first commit. It gets the commit of each tag with
 # git ls-remote.
@@ -237,7 +244,94 @@ if [ "$echarts_seen" = 0 ] || [ "$zrender_seen" = 0 ]; then
   failed=1
 fi
 
-# The loops above examine the D3 and ECharts entries. This loop finds a
+# chartjs-plugin-zoom (Zoom ADR 0001). A commit pin "<last version>+<sha8>":
+# the gitlink starts with <sha8>, is not the commit of the tag
+# "v<last version>", and that tag exists. A release pin: the gitlink is the
+# commit of the tag "v<version>". In both cases the gitlink is the "commit"
+# of the entry.
+zoom_upstream=packages/flutter_chartjs_plugin_zoom_port/lib/src/upstream.dart
+zoom_sources=packages/flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml
+zoom_path=third_party/chartjs-plugin-zoom
+zoom_version=$(sed -n "s/^const String chartjsPluginZoomVersion = '\(.*\)';\$/\1/p" "$zoom_upstream")
+if [ -z "$zoom_version" ]; then
+  echo "chartjsPluginZoomVersion not found in $zoom_upstream" >&2
+  exit 1
+fi
+if [ ! -f "$zoom_sources" ]; then
+  echo "$zoom_sources not found" >&2
+  exit 1
+fi
+zoom_release=${zoom_version%%+*}
+zoom_commit=
+if [ "$zoom_release" != "$zoom_version" ]; then
+  zoom_commit=${zoom_version#*+}
+fi
+if ! [[ $zoom_release =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] ||
+  { [ -n "$zoom_commit" ] && ! [[ $zoom_commit =~ ^[0-9a-f]{8}$ ]]; }; then
+  echo "chartjsPluginZoomVersion $zoom_version is not <version> or <version>+<sha8>" >&2
+  exit 1
+fi
+zoom_seen=0
+while read -r path ref recorded <&3; do
+  if [ "$path" != "$zoom_path" ]; then
+    echo "$zoom_sources pins $path. It must pin only $zoom_path." >&2
+    failed=1
+    continue
+  fi
+  zoom_seen=1
+  if [ -z "$zoom_commit" ]; then
+    if [ "$ref" != "v$zoom_version" ]; then
+      echo "$zoom_sources gives ref $ref for $path, but chartjsPluginZoomVersion is $zoom_version." >&2
+      failed=1
+    fi
+    check_pin "$path" "v$zoom_version" "$recorded" "$zoom_sources"
+    continue
+  fi
+  pinned=$(git ls-files --stage -- "$path" | awk '$1 == "160000" { print $2 }')
+  if [ -z "$pinned" ]; then
+    echo "$path is not recorded as a submodule" >&2
+    failed=1
+    continue
+  fi
+  if [[ $pinned != "$zoom_commit"* ]]; then
+    echo "$path is pinned to $pinned, but chartjsPluginZoomVersion $zoom_version names the commit $zoom_commit." >&2
+    echo "Check out the commit in the submodule and stage it: git add $path" >&2
+    failed=1
+    continue
+  fi
+  if [ "$ref" != "$recorded" ] || [ "$recorded" != "$pinned" ]; then
+    echo "$zoom_sources gives ref $ref and commit $recorded for $path, but the gitlink is $pinned. A commit pin names the full gitlink in both." >&2
+    failed=1
+    continue
+  fi
+  if ! url=$(git config -f .gitmodules "submodule.$path.url"); then
+    echo "$path has no url in .gitmodules" >&2
+    failed=1
+    continue
+  fi
+  if ! expected=$(tag_commit "$url" "v$zoom_release"); then
+    echo "git ls-remote failed for $url" >&2
+    failed=1
+    continue
+  fi
+  if [ -z "$expected" ]; then
+    echo "Tag v$zoom_release not found in $url" >&2
+    failed=1
+    continue
+  fi
+  if [ "$pinned" = "$expected" ]; then
+    echo "$path is pinned to v$zoom_release ($pinned). Write chartjsPluginZoomVersion $zoom_release, not $zoom_version." >&2
+    failed=1
+    continue
+  fi
+  echo "$path is pinned to the commit pin v$zoom_version ($pinned, after v$zoom_release)"
+done 3< <(read_pins "$zoom_sources")
+if [ "$zoom_seen" = 0 ]; then
+  echo "$zoom_sources has no entry for $zoom_path" >&2
+  failed=1
+fi
+
+# The loops above examine the D3, ECharts and zoom entries. This loop finds a
 # submodule without an entry. Each port lists its submodules in its own
 # tool/port_sources.yaml. The Chart.js file lists the Chart.js submodules.
 listed=$(awk '$1 == "path:" { print $2 }' packages/*/tool/port_sources.yaml)

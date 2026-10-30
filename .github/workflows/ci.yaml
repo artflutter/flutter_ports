@@ -60,12 +60,15 @@ jobs:
       # with third_party/d3/package.json. CI does not clone the 33 other D3
       # repositories. packages/flutter_echarts_port/test/upstream_test.dart
       # compares echartsVersion and zrenderVersion with the package.json
-      # files of third_party/echarts and third_party/zrender. Each shard runs
-      # a part of the tests of each upstream_test.dart. Thus each ubuntu leg
-      # makes the checkout.
-      - name: Check out the Chart.js submodules, third_party/d3 and the ECharts submodules
+      # files of third_party/echarts and third_party/zrender.
+      # packages/flutter_chartjs_plugin_zoom_port/test/upstream_test.dart
+      # compares the part of chartjsPluginZoomVersion before "+" with
+      # third_party/chartjs-plugin-zoom/package.json. Each shard runs a part
+      # of the tests of each upstream_test.dart. Thus each ubuntu leg makes
+      # the checkout.
+      - name: Check out the Chart.js submodules, third_party/d3, the ECharts submodules and chartjs-plugin-zoom
         if: matrix.os == 'ubuntu-latest'
-        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/d3 third_party/echarts third_party/zrender
+        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/d3 third_party/echarts third_party/zrender third_party/chartjs-plugin-zoom
       - uses: ./.github/actions/setup
       # Melos gives the options after "--" to each flutter test call.
       # --experimental-faster-testing compiles the test files of a package
@@ -249,6 +252,9 @@ jobs:
     # be the commit of its tag in packages/flutter_d3_port/tool/port_sources.yaml.
     # The third_party/echarts and third_party/zrender gitlinks must be the
     # commits of the release tags named by echartsVersion and zrenderVersion.
+    # The third_party/chartjs-plugin-zoom gitlink must be the commit of
+    # chartjsPluginZoomVersion: for a commit pin "<last version>+<sha8>", a
+    # commit that starts with <sha8>, after the tag "v<last version>".
     # Each submodule of .gitmodules must be the pin of a port_sources.yaml
     # entry. Needs no submodule checkout.
     runs-on: ubuntu-latest

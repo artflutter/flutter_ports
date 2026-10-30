@@ -1,0 +1,66 @@
+# The projects that packages/flutter_chartjs_plugin_zoom_port ports code from
+# (Zoom ADR 0001). Each "// Ported from" header must name a project of this
+# file, with the same license and holder. The only entry is
+# chartjs-plugin-zoom. The package ports no Chart.js code: it imports the
+# public libraries of packages/flutter_chartjs_port (ADR 0009).
+#
+# packages/flutter_chartjs_plugin_zoom_port/test/upstream_test.dart and
+# tool/check_upstream_pin.sh read this file. The test compares the gitlink
+# with "commit". The script compares the gitlink with "commit" and with the
+# <sha8> of chartjsPluginZoomVersion, and it reads the tag of the last
+# version with git ls-remote. Both also fail on a submodule of .gitmodules
+# that no entry of a packages/*/tool/port_sources.yaml file pins.
+#
+# Keys of an entry, as in packages/flutter_chartjs_port/tool/port_sources.yaml:
+# - header: the project name in the header.
+# - version: the header version. A commit pin is "v<last version>+<sha8>"
+#   (Zoom ADR 0001). A release pin is "v<version>".
+# - version_source: where the version comes from.
+# - url: the project repository.
+# - language: the language of the source. "js" is JavaScript or TypeScript,
+#   as in packages/flutter_chartjs_port/tool/port_sources.yaml.
+# - spdx: the SPDX license identifier of the repository LICENSE.md.
+# - holder: the copyright holder, as the header, the package LICENSE and
+#   REUSE.toml write it: the copyright line of the upstream LICENSE.md without
+#   the years.
+# - pin: the reference copy in this repository. kind "submodule" is a git
+#   submodule at the commit "commit". For a commit pin, "ref" is the full
+#   commit: a fetch of that name gives the pinned tree, and a branch name
+#   moves.
+# - targets: the Dart path of a source path (Zoom ADR 0002). A "source" that
+#   ends with "/" is a directory. Its files map into the "dart" directory. The
+#   map changes ".spec.js" and ".test.ts" to "_test.dart", and ".ts" and
+#   ".js" to ".dart". Any other "source" is one file. Its "dart" is the Dart
+#   file. A file target applies before a directory target.
+# - files, file_index: the source paths that exist at the pin. Phase 0 ports
+#   no file. Thus the entry has no such key yet.
+#
+# All paths are relative to the repository root. Only "source" is relative
+# to the project root.
+
+sources:
+  - header: chartjs-plugin-zoom
+    version: "v2.2.0+fb81d331"
+    version_source: chartjsPluginZoomVersion in packages/flutter_chartjs_plugin_zoom_port/lib/src/upstream.dart
+    url: https://github.com/chartjs/chartjs-plugin-zoom
+    language: js
+    spdx: MIT
+    holder: chartjs-plugin-zoom contributors
+    pin:
+      kind: submodule
+      path: third_party/chartjs-plugin-zoom
+      ref: "fb81d3316bbf3504903b10d1a9bc8cd99173b5c4"
+      commit: fb81d3316bbf3504903b10d1a9bc8cd99173b5c4
+    targets:
+      - source: src/scale.types.test.ts
+        dart: packages/flutter_chartjs_plugin_zoom_port/test/specs/scale.types_test.dart
+      - source: src/utils.test.ts
+        dart: packages/flutter_chartjs_plugin_zoom_port/test/specs/utils_test.dart
+      - source: src/
+        dart: packages/flutter_chartjs_plugin_zoom_port/lib/src/
+      - source: test/specs/
+        dart: packages/flutter_chartjs_plugin_zoom_port/test/specs/
+      - source: test/fixtures/
+        dart: packages/flutter_chartjs_plugin_zoom_port/test/fixtures/hand/
+      - source: test/index.js
+        dart: packages/flutter_chartjs_plugin_zoom_port/test/flutter_test_config.dart

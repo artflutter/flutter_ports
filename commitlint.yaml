@@ -20,6 +20,7 @@ rules:
       - chartjs_gallery
       - flutter_d3_port
       - flutter_echarts_port
+      - flutter_chartjs_plugin_zoom_port
       - ci
       - deps
       - docs
