@@ -921,7 +921,9 @@ class Scale extends _ScalePrototype
 
   /// core.scale.js:249 `$context`, the scriptable context of the scale.
   /// Dart `null` stands for JS `undefined`, the start value. It is the
-  /// typed context of index.d.ts:1419 (Chart.js ADR 0054 §11).
+  /// typed context of index.d.ts:1419 (Chart.js ADR 0054 §11). It narrows
+  /// [Element.$context] (Chart.js ADR 0054 §9).
+  @override
   ScriptableScaleContext? $context;
 
   /// core.scale.js:497 `_alignToPixels`, the `alignToPixels` option that
