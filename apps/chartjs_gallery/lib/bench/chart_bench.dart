@@ -16,14 +16,17 @@
 /// Open). The other plugins of `registerables` run: the filler fills the
 /// radar of `chart.radar`. The cases of the plugins (phase 8, the modes
 /// `plugins`, `tooltip`, `fill`, `legend` and `title`) give their own
-/// options. The cases of the mode `motion` (phase 9) have the default
-/// animations on a `BasicPlatform` that keeps them. Each iteration calls the
-/// chart directly and times three parts on the UI thread:
+/// options. The cases of the modes `motion` and `theme` (phase 9) have the
+/// default animations on a `BasicPlatform` that keeps them. The cases of
+/// the mode `theme` switch the theme with the internal theme switch of
+/// `ChartView` (Chart.js ADR 0050). Each iteration calls the chart directly
+/// and times three parts on the UI thread:
 /// - update: `chart.update('none')` without its draw. Only the cases with
 ///   [ChartBenchCall.update] have it. For [ChartBenchCall.frame], it is the
-///   frame without its draws: the event and the tick of the animator. For
-///   [ChartBenchCall.motion], it is `chart.update()` and its render, which
-///   starts the animator and draws nothing.
+///   frame without its draws: the event, the theme switch and its update,
+///   and the tick of the animator. For [ChartBenchCall.motion], it is
+///   `chart.update()` and its render, which starts the animator and draws
+///   nothing.
 /// - draw: `chart.draw()`, also the draw inside `chart.update('none')`, in
 ///   an event or in a tick of the animator.
 /// - end: the end of the recording. The context draws its picture into a
@@ -68,6 +71,9 @@ import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 // Not public: fromNativeEvent, the chart event of a NativeEvent.
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
     show fromNativeEvent;
+// Not public: ChartThemeSwitch, the theme switch of ChartView (Chart.js ADR
+// 0050), which the cases of the mode theme run without a widget.
+import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 
 /// The width of the bitmap of the benchmark canvas, in device pixels.
 const int chartBenchWidth = 800;
@@ -114,9 +120,9 @@ enum ChartBenchCall {
   /// A change of the data (not timed), then `chart.update('none')`.
   update,
 
-  /// One frame of [ChartBenchScene.frame]: an event, a tick of the
-  /// animator, or both, with the draws that they cause. The data does not
-  /// change.
+  /// One frame of [ChartBenchScene.frame]: an event or a theme switch, a
+  /// tick of the animator, or both, with the draws that they cause. The data
+  /// does not change.
   frame,
 
   /// `chart.update()` in the default mode, with the default animations
@@ -1043,6 +1049,218 @@ final List<ChartBenchCase> _motionCases = [
   _motionCase(StressChartType.bar),
 ];
 
+/// The chart types of the cases `theme.switch` and `theme.anim` (the night
+/// record B-R1 of phase 9).
+const List<String> chartBenchThemeTypes = [
+  'line',
+  'bar',
+  'scatter',
+  'radar',
+  'doughnut',
+];
+
+/// The themes of the cases of the mode `theme`, in turn: the two presets of
+/// Chart.js ADR 0050. A chart starts with the first one.
+const List<ChartThemeData> chartBenchThemes = [
+  ChartThemeData.light(),
+  ChartThemeData.dark(),
+];
+
+/// The theme state of a chart of the mode `theme`: the `ChartThemeSwitch`
+/// of `ChartView` (Chart.js ADR 0050, "Runtime switch") on the root config
+/// of the case, as the widget has it on its root Map.
+final class _BenchTheme {
+  /// Records the user `scales` of [root] and writes the compiled [theme]
+  /// under `$theme`, before `new Chart`, as the start of the widget does.
+  _BenchTheme(this.root, ChartThemeData theme) {
+    _switch
+      ..recordUserScales(root['options'])
+      ..start(root, theme);
+  }
+
+  /// The root config of the chart.
+  final Map<String, Object?> root;
+
+  // The bench runs the switch of the widget without a widget.
+  // ignore: invalid_use_of_internal_member
+  final ChartThemeSwitch _switch = ChartThemeSwitch();
+
+  /// The inline plugin of the palette records: the hooks `beforeUpdate` and
+  /// `beforeLayout` of the widget plugin `$chartView`
+  /// (`chart_view_plugin.dart`), without its focus ring. It comes last in
+  /// the plugins of the chart, as the widget plugin does.
+  late final Map<String, Object?> plugin = <String, Object?>{
+    'id': r'$chartView',
+    'beforeUpdate': (Object? chart, Object? args, Object? options) {
+      _switch.beforeUpdate(chart! as Chart);
+    },
+    'beforeLayout': (Object? chart, Object? args, Object? options) {
+      _switch.afterColorize(chart! as Chart);
+    },
+  };
+
+  /// The switch to [theme] in the update callback of the widget: steps 1 to
+  /// 4 of the switch, then one `chart.update` with the mode of step 5
+  /// (`'theme'` for a preset). An equal theme stops at the `==` of step 1:
+  /// no update.
+  void switchTo(Chart chart, ChartThemeData theme) {
+    final mode = _switch.apply(chart, root, theme, reducedMotion: false);
+    if (mode != null) chart.update(mode);
+  }
+}
+
+/// A case of the mode `theme` (the night record B-R1 of phase 9, Chart.js
+/// ADR 0050): a chart of [type] with 3 datasets (doughnut: 1) of N points
+/// with no colors, the labels `Point <i>`, the default scales, the legend
+/// and a title, the default animations on the platform [_AnimatedPlatform],
+/// and the theme state [_BenchTheme] with the light preset. The colors
+/// plugin gives the colors of the datasets from the palette of the theme.
+/// No event reaches the chart. The preparation ends the entry animation.
+/// [frame] makes the frame of the case from the chart and its theme state.
+ChartBenchCase _themeCase(
+  String name,
+  String type, {
+  required void Function(Chart chart, _BenchTheme theme) Function() frame,
+  List<int> counts = chartBenchPluginCounts,
+}) {
+  final datasets = type == 'doughnut' ? 1 : 3;
+  return _pluginCase(
+    'theme',
+    name,
+    ChartBenchCall.frame,
+    counts: counts,
+    keys: {'type': type, 'datasets': datasets},
+    scene: (n) {
+      final timing = _PluginTiming();
+      final series = _BenchSeries(datasets, n);
+      final config = _benchConfig(
+        type,
+        series,
+        datasets: [
+          for (var k = 0; k < datasets; k++)
+            <String, Object?>{
+              'label': 'Dataset ${k + 1}',
+              'data': type == 'scatter'
+                  ? [
+                      for (var i = 0; i < n; i++)
+                        <String, Object?>{
+                          'x': i.toDouble(),
+                          'y': series.data[k][i],
+                        },
+                    ]
+                  : series.data[k],
+            },
+        ],
+        options: <String, Object?>{
+          'plugins': <String, Object?>{
+            'title': <String, Object?>{
+              'display': true,
+              'text': 'Chart.js Theme Chart',
+            },
+          },
+        },
+        plugins: timing.plugins,
+      );
+      config['platform'] = _AnimatedPlatform.jsClass;
+      final theme = _BenchTheme(config, chartBenchThemes.first);
+      (config['plugins']! as List<Object?>).add(theme.plugin);
+      final step = frame();
+      return ChartBenchScene(
+        config: config,
+        takeParts: timing.take,
+        prepare: (chart) => _benchFinishAnimations(),
+        frame: (chart) => step(chart, theme),
+      );
+    },
+  );
+}
+
+/// The case `theme.switch` (TS): each frame is one switch, from the light
+/// preset to the dark preset or back. The switch runs steps 1 to 4 with a
+/// new theme (the compile memo, the `$theme` write, the user scales and the
+/// palette records) and `chart.update('theme')`, which makes the
+/// animations of the element colors. Then the frame ends them: a tick of
+/// the animator one hour later gives each element its end value and draws
+/// the chart, as the last frame of the transition does, and a second tick
+/// removes the animations ([_benchFinishAnimations]). Thus `update` is the
+/// switch, the update and the ticks, and `draw` is the draw of the new
+/// theme.
+ChartBenchCase _themeSwitchCase(String type) => _themeCase(
+  'switch',
+  type,
+  frame: () {
+    var index = 0;
+    return (chart, theme) {
+      index = 1 - index;
+      theme.switchTo(chart, chartBenchThemes[index]);
+      _benchFinishAnimations();
+    };
+  },
+);
+
+/// The case `theme.anim` (TA): the frames of the transition of 200 ms of
+/// the update mode `'theme'` (`compile.dart`, theming.md §3.8), as the
+/// case `tooltip.fade` gives the fade of 200 ms of the tooltip. Each
+/// iteration is one frame: a tick of the animator at a date
+/// [chartBenchFrameMs] later than the frame before, and the draw of that
+/// tick. The first frame of each transition also switches the theme (light
+/// to dark, or back) with `chart.update('theme')`. A transition has
+/// [chartBenchFadeFrames] frames, and the last one ends it. Each
+/// transition moves the dates of its ticks by its phase
+/// ([chartBenchFadePhase]), as in a real frame loop.
+///
+/// Both presets have the palette of Chart.js, so the datasets keep their
+/// colors. In the types `line`, `bar`, `scatter` and `radar`, the first
+/// tick of a transition thus ends each animation (`from === to`,
+/// core.animation.js), and the other frames tick no animation and draw
+/// nothing. In the type `doughnut`, the arc border is the `surface` of the
+/// theme (element.arc.ts:379): it animates in each frame of the transition.
+ChartBenchCase _themeAnimCase(String type) => _themeCase(
+  'anim',
+  type,
+  frame: () {
+    var index = 0;
+    var frame = 0;
+    var transition = 0;
+    var phase = 0.0;
+    var start = 0.0;
+    return (chart, theme) {
+      if (frame == 0) {
+        index = 1 - index;
+        theme.switchTo(chart, chartBenchThemes[index]);
+        start = jsDateNow();
+        phase = (transition * chartBenchFadePhase) % 1;
+        transition++;
+      }
+      frame++;
+      _benchTick(start + (frame + phase) * chartBenchFrameMs);
+      if (frame == chartBenchFadeFrames) frame = 0;
+    };
+  },
+);
+
+/// The case `theme.equal` (TE): each frame calls the switch with a new
+/// instance that is `==` to the applied light preset, as a rebuild of an
+/// app gives a new equal theme. Step 1 of the switch stops at the `==`:
+/// the frame has no update and no draw (the key `notifies` is 0).
+ChartBenchCase _themeEqualCase() => _themeCase(
+  'equal',
+  'line',
+  counts: const [100],
+  frame: () =>
+      (chart, theme) =>
+          theme.switchTo(chart, chartBenchThemes.first.copyWith()),
+);
+
+/// The cases of the night record B-R1 of phase 9 (Chart.js ADR 0050), after
+/// the cases `motion.<type>`: `theme.switch` and `theme.anim` for each type
+/// of [chartBenchThemeTypes], then `theme.equal` of a line chart.
+final List<ChartBenchCase> _themeCases = [
+  for (final type in chartBenchThemeTypes) _themeSwitchCase(type),
+  for (final type in chartBenchThemeTypes) _themeAnimCase(type),
+  _themeEqualCase(),
+];
+
 /// The cases of the benchmark, in the order of a run.
 ///
 /// The mode `chart` has the cases of the stress mode chart. They have no
@@ -1085,7 +1303,9 @@ final List<ChartBenchCase> _motionCases = [
 /// the modes `plugins`, `tooltip`, `fill`, `legend` and `title`. Their
 /// BENCH lines have the key `primary`. Thus a default run times the cases
 /// of phases 5 to 7 first, in the same order as before. The cases
-/// `motion.line` and `motion.bar` of phase 9 come last ([_motionCases]).
+/// `motion.line` and `motion.bar` of phase 9 come next ([_motionCases]),
+/// and the cases of the mode `theme` of phase 9 come last ([_themeCases]):
+/// `theme.switch`, `theme.anim` and `theme.equal`.
 final List<ChartBenchCase> chartBenchCases = [
   _stressCase('a', ChartBenchCall.draw, type: StressChartType.line),
   _stressCase('b', ChartBenchCall.update, type: StressChartType.line),
@@ -1103,6 +1323,7 @@ final List<ChartBenchCase> chartBenchCases = [
       for (final call in chartBenchDrawAndUpdate) _typeCase(type, call),
   ..._pluginCases,
   ..._motionCases,
+  ..._themeCases,
 ];
 
 /// The cases of [selection], a comma list of selectors (see

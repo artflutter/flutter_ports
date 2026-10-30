@@ -9,6 +9,27 @@ void main() {
   runApp(const GalleryApp());
 }
 
+/// The light theme of the gallery.
+final ThemeData galleryLightTheme = ThemeData(
+  colorSchemeSeed: const Color(0xFFFF6384),
+);
+
+/// The dark theme of the gallery. The app takes it when the platform
+/// brightness is dark.
+final ThemeData galleryDarkTheme = ThemeData(
+  colorSchemeSeed: const Color(0xFFFF6384),
+  brightness: Brightness.dark,
+);
+
+/// The chart theme of [galleryDarkTheme]: the dark preset with the surface
+/// of the dark color scheme (Chart.js ADR 0050).
+///
+/// One instance for the life of the app: the compiled theme is kept for
+/// each instance, and the `==` of the theme skips a rebuild with the same
+/// brightness.
+final ChartThemeData galleryDarkChartTheme = const ChartThemeData.dark()
+    .copyWith(surface: galleryDarkTheme.colorScheme.surface);
+
 /// Gallery of Chart.js samples rendered by `flutter_chartjs_port`.
 ///
 /// The list has each chart type of the Chart.js docs (`galleryChartTypes`).
@@ -19,6 +40,13 @@ void main() {
 /// elements of phase 4, the core of phase 5, the scales of phase 6, the
 /// controllers of phase 7 and the plugins of phase 8, and the helpers of
 /// phase 2.
+///
+/// The app follows the platform brightness. The builder of the app puts a
+/// [ChartTheme] above each route: the light preset in the light theme, and
+/// [galleryDarkChartTheme] in the dark theme (Chart.js ADR 0050). A change
+/// of the brightness switches the theme of each chart once, at the middle
+/// of the theme animation of the app, where the brightness of the animated
+/// theme changes.
 class GalleryApp extends StatelessWidget {
   /// Creates the gallery.
   const GalleryApp({super.key});
@@ -27,7 +55,14 @@ class GalleryApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Chart.js for Flutter',
-      theme: ThemeData(colorSchemeSeed: const Color(0xFFFF6384)),
+      theme: galleryLightTheme,
+      darkTheme: galleryDarkTheme,
+      builder: (context, child) => ChartTheme(
+        data: Theme.of(context).brightness == Brightness.dark
+            ? galleryDarkChartTheme
+            : const ChartThemeData.light(),
+        child: child!,
+      ),
       home: const GalleryHome(),
     );
   }

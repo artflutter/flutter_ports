@@ -697,6 +697,28 @@ Changes to the cited files:
   No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart` or
   a test of §2.6 and §3.5 changes. The references, the inventory (§1.1), the tests of §2.6 and
   §3.5 and the estimates do not change. No trigger occurred.
+- 2026-10-30, the gallery theme, the key help and the night cases of phase 9
+  ([Chart.js ADR 0050](adr/0050-public-theme-api.md) and
+  [Chart.js ADR 0051](adr/0051-input-events-and-interaction-state.md), proposed). One gallery
+  file of A3 changes, and the frameless benchmark. `main_stress.dart` gets the defines `SEMANTICS`
+  and `WINDOWS` of the night series B-N1. `SEMANTICS=1` turns the semantics on before the app
+  starts (`SemanticsBinding.instance.ensureSemantics()`, the handle kept), and with `SEMANTICS`
+  each `STRESS` line ends with the key `semantics`. `WINDOWS=1` prints one line
+  `STRESS_WINDOW {json}` for each whole window of 1 second of the frame timings of a scenario
+  (`window`, `frames`, `fps`, `buildMs` and `rasterMs`) before its `STRESS` line, and the line
+  ends with the key `windows`. `lib/bench/chart_bench.dart` gets the mode `theme` after the cases
+  `motion.<type>`: the cases `theme.switch`, `theme.anim` and `theme.equal` of the night record
+  B-R1 run the internal `ChartThemeSwitch` of `ChartView` without a widget, with one new `src/`
+  import and its reason. Without the new defines and cases, the modes, the defines, the `STRESS`
+  and `BENCH` keys and the timed code do not change, so the figures of phases 4 to 9 stay
+  comparable. `stress_demo.dart` and `apps/chartjs_gallery/lib/demo/chart_canvas.dart` do not
+  change. The gallery app gets a dark theme and a `ChartTheme` above each route, and each type
+  page gets the key line of its help text and the semantics label of its chart; this plan cites
+  none of these files. `stress_chart_test.dart`, `chart_bench_test.dart`, `chart_types_test.dart`
+  and `gallery_test.dart` get new tests; this plan cites no line of them. The work of A3
+  (`POINT_STYLE`, the arc scenario and the baselines of §6.3) does not change. No library file
+  that this plan cites changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5
+  and the estimates do not change. No trigger occurred.
 
 ## 1. Why
 

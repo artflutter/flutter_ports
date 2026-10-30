@@ -472,11 +472,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - A type page has at most one control line (the variant), then the chart, the readout (the
     datasets, and the hover text of `getLabelAndValue`) and the help text. The help text gives the
     docs source and the input: a hover or a tap on an element shows the tooltip, a tap outside the
-    chart hides it, and a tap on a legend item hides or shows its data. The host has no height:
-    the platform gives the aspect of the docs (2, or 1 for doughnut, pie, polar area and radar).
-    The page body caps its width at 600. The keys are `gallery.type.<stem>`,
-    `type.<stem>.variant.<variant>`, `type.<stem>.host`, `type.<stem>.readout` and
-    `type.<stem>.help`.
+    chart hides it, and a tap on a legend item hides or shows its data. Its last line gives the
+    keys of Chart.js ADR 0051. The chart has the semantics label `<title> chart: <variant>`. The
+    app follows the platform brightness: its builder puts a `ChartTheme` above each route, with the
+    light preset or the dark preset over the surface of the dark color scheme (Chart.js ADR 0050).
+    The host has no height: the platform gives the aspect of the docs (2, or 1 for doughnut, pie,
+    polar area and radar). The page body caps its width at 600. The keys are
+    `gallery.type.<stem>`, `type.<stem>.variant.<variant>`, `type.<stem>.host`,
+    `type.<stem>.readout` and `type.<stem>.help`.
   - `lib/demo/gallery_components.dart` has `registerGalleryComponents` (it registers
     `registerables` once) and `unitScales` (the two hidden unit scales).
   - The page "Phase 3: canvas and host" has the tabs Canvas, Events, Text, Stress, Elements, Core
@@ -498,8 +501,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `lib/demo/stress_chart_config.dart`, Chart.js ADR 0031 Open). The other plugins run; the filler
     fills the radar of the mode `chart`. `lib/demo/stress_timing.dart` has `StressChartTiming`, with
     the parts `elements`, `layout`, `datasetsUpdate` and `datasetsDraw`. `lib/main_stress.dart` is
-    the profiling entry. `lib/main_bench.dart` with `lib/bench/chart_bench.dart` is the frameless
-    benchmark of the same cases (`packages/flutter_chartjs_port/doc/performance.md` §6).
+    the profiling entry. Its defines `SEMANTICS` and `WINDOWS` serve the night series B-N1 of
+    phase 9: `SEMANTICS=1` turns the semantics on, and `WINDOWS=1` prints a line
+    `STRESS_WINDOW {json}` for each window of 1 second. `lib/main_bench.dart` with
+    `lib/bench/chart_bench.dart` is the frameless benchmark of the same cases
+    (`packages/flutter_chartjs_port/doc/performance.md` §6). Its mode `theme` (`theme.switch`,
+    `theme.anim` and `theme.equal`) runs the internal theme switch of `ChartView`.
   - The layout rule (Chart.js ADR 0031 §10) applies to the nine type pages and to the Stress,
     Core and Axes tabs: each parameter is a full-width `SegmentChoice` or
     `SegmentToggles` line of `lib/demo/demo_controls.dart`, with short text or icons. A
@@ -508,9 +515,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     at 412 x 915. The type pages are also in view at 360 x 640. A widget test pins each page.
     `test/chart_types_test.dart` also pins, on each variant of each type page at 412 x 915, the
     input of Chart.js ADR 0037 §15: a tap on an element shows the tooltip and the readout, a tap on
-    the help text hides them, and two taps on legend item 0 hide and show its data. It pins the
-    help text of each variant, the keys of the host, the readout, the help text and each variant
-    segment, and the title and the filler source of each Area variant.
+    the help text hides them, and two taps on legend item 0 hide and show its data. On each variant
+    it also pins the keys of Chart.js ADR 0051: Tab focuses the chart, Down and Down show the
+    tooltip and the readout of element 0 of dataset 0, Escape hides them, and Down and Enter hide
+    the data of legend item 0. It pins the help text and the semantics label of each variant, the
+    keys of the host, the readout, the help text and each variant segment, and the title and the
+    filler source of each Area variant.
   - Each control has a `ValueKey`. A test finds a segment by its key.
 - `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC). Phase 0
   has no ported code. `doc/README.md` has the plan and the roadmap.

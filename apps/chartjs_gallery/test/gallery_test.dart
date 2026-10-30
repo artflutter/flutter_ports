@@ -1,3 +1,4 @@
+import 'package:chartjs_gallery/charts/chart_type_page.dart';
 import 'package:chartjs_gallery/charts/chart_types.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,17 @@ void _tallView(WidgetTester tester) {
 
 /// The tile of [stem].
 Finder _tile(String stem) => find.byKey(ValueKey('gallery.type.$stem'));
+
+/// Opens the page of [stem] and gives its chart.
+Future<Chart> _openChart(WidgetTester tester, String stem) async {
+  await tester.pumpWidget(const GalleryApp());
+  await tester.scrollUntilVisible(_tile(stem), 100);
+  await tester.pump();
+  await tester.tap(_tile(stem));
+  await tester.pumpAndSettle();
+  final state = tester.state<ChartTypePageState>(find.byType(ChartTypePage));
+  return state.chart!;
+}
 
 void main() {
   testWidgets('lists the tracked version and every chart type', (
@@ -99,5 +111,62 @@ void main() {
       find.textContaining(RegExp('phase 8', caseSensitive: false)),
       findsNothing,
     );
+  });
+
+  testWidgets('a dark platform gives the charts the dark preset over the '
+      'surface of the dark theme (Chart.js ADR 0050)', (tester) async {
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+    final chart = await _openChart(tester, 'bar');
+    expect(
+      Theme.of(tester.element(find.byType(ChartTypePage))).brightness,
+      Brightness.dark,
+    );
+    final theme = ChartTheme.maybeOf(tester.element(find.byType(ChartView)));
+    expect(theme, galleryDarkChartTheme);
+    expect(theme!.surface, galleryDarkTheme.colorScheme.surface);
+    // The color token of the dark preset: '#666' mirrored (theming.md §4).
+    expect(chart.options['color'], 'rgba(153, 153, 153, 1)');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a new platform brightness switches the theme of an open chart', (
+    tester,
+  ) async {
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
+    addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+    final chart = await _openChart(tester, 'doughnut');
+    final arc = chart.getDatasetMeta(0).data.first;
+    // The arc border is the surface of the theme (element.arc.ts:379).
+    expect(arc.options!['borderColor'], 'rgba(255, 255, 255, 1)');
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    await tester.pumpAndSettle();
+    // The same chart, with the dark preset after its transition (Chart.js ADR
+    // 0050, "Runtime switch").
+    final state = tester.state<ChartTypePageState>(find.byType(ChartTypePage));
+    expect(state.chart, same(chart));
+    expect(chart.options['color'], 'rgba(153, 153, 153, 1)');
+    final surface = galleryDarkTheme.colorScheme.surface;
+    expect(
+      arc.options!['borderColor'],
+      'rgba(${(surface.r * 255).round()}, ${(surface.g * 255).round()}, '
+      '${(surface.b * 255).round()}, 1)',
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a light platform gives the charts the light preset', (
+    tester,
+  ) async {
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
+    addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+    final chart = await _openChart(tester, 'bar');
+    expect(
+      ChartTheme.maybeOf(tester.element(find.byType(ChartView))),
+      const ChartThemeData.light(),
+    );
+    // The '#666' of core.defaults.js:43 as the light preset gives it.
+    expect(chart.options['color'], 'rgba(102, 102, 102, 1)');
+    expect(tester.takeException(), isNull);
   });
 }

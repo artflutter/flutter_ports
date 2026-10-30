@@ -27,6 +27,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// `origin`, `start` and `end`. A tap on a legend item hides or shows its
 /// data, and a tap outside the chart hides the tooltip (Chart.js ADR 0037,
 /// section 15).
+///
+/// The chart is one focus stop (Chart.js ADR 0051): the arrow keys move
+/// over the legend items and the elements, Enter or Space clicks, and
+/// Escape clears the hover. Its semantics label is
+/// `<title> chart: <variant>`, for example `Bar chart: vertical`. The
+/// [ChartTheme] of the app themes the chart (Chart.js ADR 0050).
 class ChartTypePage extends StatefulWidget {
   /// Creates the page of [entry].
   const ChartTypePage({required this.entry, super.key});
@@ -44,6 +50,11 @@ class ChartTypePageState extends State<ChartTypePage> {
       'Hover or tap an element: the tooltip shows its label and value. '
       'Tap outside the chart: the tooltip hides. '
       'Tap a legend item: its data hides or shows.';
+
+  /// The keys of the chart (Chart.js ADR 0051, section 3).
+  static const String _keys =
+      'Keys: the arrows move over the legend items and the elements, Enter '
+      'or Space clicks, Escape clears.';
 
   int _variant = 0;
   Chart? _chart;
@@ -182,6 +193,7 @@ class ChartTypePageState extends State<ChartTypePage> {
               key: ValueKey('type.$stem.host'),
               config: _config,
               onChartCreated: _onChart,
+              semanticLabel: '${entry.title} chart: ${_current.text}',
             ),
           ),
           ValueListenableBuilder<int>(
@@ -195,6 +207,7 @@ class ChartTypePageState extends State<ChartTypePage> {
             [
               'Source: ${_current.source}, Chart.js $chartJsVersion.',
               _input,
+              _keys,
             ].join('\n'),
             key: ValueKey('type.$stem.help'),
             style: theme.textTheme.bodySmall?.copyWith(

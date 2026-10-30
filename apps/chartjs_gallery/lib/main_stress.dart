@@ -8,6 +8,7 @@ import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/semantics.dart';
 
 /// The scene of the profiling entry: `--dart-define=MODE=elements` selects
 /// the [StressMode] of that name (`primitives`, `elements`, `bars`, `arcs`,
@@ -31,6 +32,38 @@ const int stressSeconds = int.fromEnvironment('SECONDS', defaultValue: 7);
 /// The batches of the frame percentiles of each scenario:
 /// `--dart-define=BATCHES=<n>`, 15 by default. See [stressBatchFigures].
 const int stressBatches = int.fromEnvironment('BATCHES', defaultValue: 15);
+
+/// The semantics of the profiling entry (the night series B-N1 of phase 9,
+/// Chart.js ADR 0051 section 10): `--dart-define=SEMANTICS=1` turns the
+/// semantics on before the app starts
+/// (`SemanticsBinding.instance.ensureSemantics()`, [stressSemanticsHandle]),
+/// and `--dart-define=SEMANTICS=0` does not. Without the define, it is Dart
+/// `null`: the entry does not turn the semantics on, as before the define.
+/// With the define, each `STRESS` line has the key `semantics`. See
+/// [parseStressSemantics].
+final bool? stressSemantics = parseStressSemantics(
+  const String.fromEnvironment('SEMANTICS'),
+);
+
+/// The value of the define `SEMANTICS` [value]: see [stressSemantics]. An
+/// empty string is a define that is not given. A value that is not 0 or 1
+/// throws an [ArgumentError] at the start.
+bool? parseStressSemantics(String value) =>
+    value.isEmpty ? null : _flag('SEMANTICS', value);
+
+/// The handle of the semantics of `SEMANTICS=1`. The entry keeps it for the
+/// life of the process: the semantics stay on.
+SemanticsHandle? stressSemanticsHandle;
+
+/// Whether each scenario also prints its windows of 1 second:
+/// `--dart-define=WINDOWS=1`. The default is 0. See [stressWindows].
+final bool stressWindowsOn = _flag(
+  'WINDOWS',
+  const String.fromEnvironment(
+    'WINDOWS',
+    defaultValue: '0',
+  ),
+);
 
 /// The widget that hosts the chart of the modes `chart`, `axes` and
 /// `plugins`: `--dart-define=HOST=canvas` (the gallery `ChartCanvas`, the
@@ -117,6 +150,54 @@ StressBatchFigures? stressBatchFigures(
     rasterP50Ms: median((b) => percentile(b, (f) => f.raster, 0.5)),
     rasterP90Ms: median((b) => percentile(b, (f) => f.raster, 0.9)),
   );
+}
+
+/// The length of a window of [stressWindows]: 1 second, in microseconds.
+const int stressWindowMicros = 1000000;
+
+/// One window of [stressWindows]: its number `window` (from 1), the count
+/// of its `frames`, and the means of the build and raster durations of its
+/// frames in ms (Dart `null` for a window with no frame).
+typedef StressWindow = ({
+  int window,
+  int frames,
+  double? buildMs,
+  double? rasterMs,
+});
+
+/// The windows of 1 second of the [frames] of a scenario: window k (from
+/// 1) has the frames with a vsync start from `start + (k - 1)` seconds to
+/// `start + k` seconds, the end not included. [start] and [end] are
+/// microseconds of the frame clock. Only the whole windows count: the last
+/// window ends at [end] or before it. A frame before [start] or in no
+/// whole window does not count. Each window counts, also with no frame or
+/// with fewer than 30 frames.
+List<StressWindow> stressWindows(
+  List<StressFrame> frames, {
+  required int start,
+  required int end,
+}) {
+  final count = math.max(0, (end - start) ~/ stressWindowMicros);
+  final counts = List<int>.filled(count, 0);
+  final build = List<int>.filled(count, 0);
+  final raster = List<int>.filled(count, 0);
+  for (final frame in frames) {
+    if (frame.vsync < start) continue;
+    final k = (frame.vsync - start) ~/ stressWindowMicros;
+    if (k >= count) continue;
+    counts[k]++;
+    build[k] += frame.build;
+    raster[k] += frame.raster;
+  }
+  return [
+    for (var k = 0; k < count; k++)
+      (
+        window: k + 1,
+        frames: counts[k],
+        buildMs: counts[k] == 0 ? null : build[k] / counts[k] / 1000,
+        rasterMs: counts[k] == 0 ? null : raster[k] / counts[k] / 1000,
+      ),
+  ];
 }
 
 /// Whether the labels get a new angle in each frame:
@@ -460,9 +541,30 @@ List<(int, int)> _parse(String value) => value.isEmpty
 /// groups (each second or each 100 frames). Thus a scenario of such a build
 /// waits for the timings of its window, at most 3 seconds, before its line.
 /// A debug build (also a widget test) prints the line at once.
+/// With `SEMANTICS` (0 or 1), the line also has the key `semantics`, at its
+/// end: whether the semantics are on at the end of the scenario
+/// (`SemanticsBinding.semanticsEnabled`). It is true for `SEMANTICS=1`, and
+/// for `SEMANTICS=0` when a screen reader of the platform turns them on.
+/// With `WINDOWS=1`, the line also has the key `windows`, at its end: the
+/// count of the whole windows of 1 second ([stressWindows]). Before the
+/// line, the scenario then prints one line `STRESS_WINDOW {json}` for each
+/// window, with the keys `mode`, `n`, `m`, `window` (the number of the
+/// window, from 1), `frames`, `fps` (the frames of the window in 1 second),
+/// `buildMs` and `rasterMs` (the means of the build and raster durations of
+/// the frame timings of the window, in ms with 3 decimals, Dart `null` for
+/// a window with no frame). Window 1 starts at the vsync of the first frame
+/// timing of the scenario, and the last window ends at the vsync of its
+/// last frame timing, or before it. The line waits for the timings of the
+/// timed window of the batch percentiles, which ends less than 1 second
+/// before the end of the scenario. Thus `SECONDS=17` gives 16 or 17
+/// windows, and window 1 is the warm-up.
 /// Fresh processes give the most stable figures: run one scenario at a time
 /// with `--dart-define=MODE=<mode> --dart-define=SCENARIO=<N>x<M>`.
 void main() {
+  if (stressSemantics ?? false) {
+    WidgetsFlutterBinding.ensureInitialized();
+    stressSemanticsHandle = SemanticsBinding.instance.ensureSemantics();
+  }
   runApp(const StressProfileApp());
 }
 
@@ -473,7 +575,8 @@ class StressProfileApp extends StatefulWidget {
   /// [stressMode], [stressScenarios], [stressScale], [stressYScale],
   /// [stressAutoSkip], [stressType], [stressShowLine], [stressCall],
   /// [stressPluginCase] and [stressHost], the values of the defines. A test
-  /// gives them.
+  /// gives them. [semantics] and [windows] default to [stressSemantics] and
+  /// [stressWindowsOn].
   const StressProfileApp({
     super.key,
     this.mode,
@@ -486,6 +589,8 @@ class StressProfileApp extends StatefulWidget {
     this.call,
     this.pluginCase,
     this.host,
+    this.semantics,
+    this.windows,
   });
 
   /// The mode of the scenarios, or Dart `null` for [stressMode].
@@ -521,6 +626,15 @@ class StressProfileApp extends StatefulWidget {
 
   /// The host of the chart, or Dart `null` for [stressHost].
   final StressHost? host;
+
+  /// The value of the define `SEMANTICS`, or Dart `null` for
+  /// [stressSemantics]. A value gives the `STRESS` lines the key
+  /// `semantics`. Only `main` turns the semantics on.
+  final bool? semantics;
+
+  /// Whether each scenario prints its windows, or Dart `null` for
+  /// [stressWindowsOn].
+  final bool? windows;
 
   @override
   State<StressProfileApp> createState() => _StressProfileAppState();
@@ -567,6 +681,10 @@ class _StressProfileAppState extends State<StressProfileApp> {
 
   StressChartCall get _call =>
       stressCallOf(_mode, widget.call ?? stressCall, _pluginCase.scene);
+
+  bool? get _semantics => widget.semantics ?? stressSemantics;
+
+  bool get _windows => widget.windows ?? stressWindowsOn;
 
   @override
   void initState() {
@@ -636,6 +754,10 @@ class _StressProfileAppState extends State<StressProfileApp> {
       'rasterP50Ms': ms(batches?.rasterP50Ms),
       'rasterP90Ms': ms(batches?.rasterP90Ms),
     });
+    if (_semantics != null) {
+      line['semantics'] = SemanticsBinding.instance.semanticsEnabled;
+    }
+    if (_windows) line['windows'] = _printWindows(line);
     debugPrint('STRESS ${jsonEncode(line)}');
     _window.clear();
     _frames.clear();
@@ -648,6 +770,37 @@ class _StressProfileAppState extends State<StressProfileApp> {
     } else {
       debugPrint('STRESS done');
     }
+  }
+
+  /// Prints one line `STRESS_WINDOW {json}` for each window of 1 second of
+  /// the frame timings of the scenario of [line] ([stressWindows]), from its
+  /// first frame timing to its last one. Gives the count of the windows.
+  ///
+  /// The windows read only the vsync starts of the timings: no time of
+  /// another clock.
+  int _printWindows(Map<String, Object?> line) {
+    if (_frames.isEmpty) return 0;
+    final windows = stressWindows(
+      _frames,
+      start: _frames.first.vsync,
+      end: _frames.last.vsync,
+    );
+    String? ms(double? value) => value?.toStringAsFixed(3);
+    for (final window in windows) {
+      final fps = window.frames * 1e6 / stressWindowMicros;
+      final json = jsonEncode({
+        'mode': line['mode'],
+        'n': line['n'],
+        'm': line['m'],
+        'window': window.window,
+        'frames': window.frames,
+        'fps': fps.toStringAsFixed(2),
+        'buildMs': ms(window.buildMs),
+        'rasterMs': ms(window.rasterMs),
+      });
+      debugPrint('STRESS_WINDOW $json');
+    }
+    return windows.length;
   }
 
   void _next() {

@@ -8,6 +8,7 @@ import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: jsGet, the JS property read of the chart values.
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
@@ -139,6 +140,12 @@ const String _inputHelp =
     'Hover or tap an element: the tooltip shows its label and value. '
     'Tap outside the chart: the tooltip hides. '
     'Tap a legend item: its data hides or shows.';
+
+/// The key line of the help text of each type page (Chart.js ADR 0051,
+/// section 3).
+const String _keyHelp =
+    'Keys: the arrows move over the legend items and the elements, Enter or '
+    'Space clicks, Escape clears.';
 
 /// The stems whose legend items are the data of dataset 0, not the
 /// datasets: the legend labels of the doughnut, pie and polar area
@@ -295,6 +302,21 @@ bool _legendItemVisible(Chart chart, String stem, int index) =>
     _dataLegendStems.contains(stem)
     ? chart.getDataVisibility(index.toDouble())
     : chart.isDatasetVisible(index.toDouble());
+
+/// Whether the primary focus is the focus stop of the chart of [stem]
+/// (Chart.js ADR 0051, section 1).
+bool _chartHasFocus(String stem) {
+  final context = FocusManager.instance.primaryFocus?.context;
+  final view = context?.findAncestorWidgetOfExactType<ChartView>();
+  return view?.key == ValueKey('type.$stem.host');
+}
+
+/// Sends [key] to the focused chart and waits for the frame callback of its
+/// events and the end of the animations (Chart.js ADR 0051, section 4).
+Future<void> _key(WidgetTester tester, LogicalKeyboardKey key) async {
+  await tester.sendKeyEvent(key);
+  await tester.pumpAndSettle();
+}
 
 /// The point of element [index] of dataset 0 that a hover hits.
 Offset _elementCenter(Chart chart, int index) {
@@ -478,10 +500,10 @@ void main() {
 
   for (final entry in galleryChartTypes) {
     final stem = entry.stem;
-    testWidgets('$stem: the help text gives the source and the input', (
-      tester,
-    ) async {
+    testWidgets('$stem: the help text gives the source, the input and the '
+        'keys, and the chart has its semantics label', (tester) async {
       _setView(tester, _pixel8a, 2.625);
+      final semantics = tester.ensureSemantics();
       await _open(tester, stem);
       for (final variant in entry.variants) {
         if (variant != entry.variants.first) {
@@ -493,7 +515,23 @@ void main() {
         expect(
           help.data,
           'Source: ${variant.source}, Chart.js $chartJsVersion.\n'
-          '$_inputHelp',
+          '$_inputHelp\n'
+          '$_keyHelp',
+          reason: variant.key,
+        );
+        // The text alternative of the chart (Chart.js ADR 0051, section 8).
+        expect(
+          tester.widget<ChartView>(_host(stem)).semanticLabel,
+          '${entry.title} chart: ${variant.text}',
+          reason: variant.key,
+        );
+        expect(
+          tester.getSemantics(_host(stem)),
+          isSemantics(
+            label: '${entry.title} chart: ${variant.text}',
+            isImage: true,
+            isFocusable: true,
+          ),
           reason: variant.key,
         );
         // No text of the page tells of a later phase.
@@ -503,6 +541,8 @@ void main() {
           reason: stem,
         );
       }
+      // flutter_test checks the semantics handles before the tearDown.
+      semantics.dispose();
     });
 
     testWidgets('$stem: each control has its ValueKey', (tester) async {
@@ -632,6 +672,83 @@ void main() {
         await tester.tapAt(origin + center);
         await tester.pumpAndSettle();
         expect(_legendItemVisible(chart, stem, 0), isTrue, reason: id);
+        expect(tester.takeException(), isNull, reason: id);
+      });
+    }
+  }
+
+  for (final entry in galleryChartTypes) {
+    final stem = entry.stem;
+    for (final variant in entry.variants) {
+      final id = '$stem.${variant.key}';
+      testWidgets('$id: Tab focuses the chart, Down Down shows element 0, '
+          'Escape hides it, Down Enter hides legend item 0', (tester) async {
+        _setView(tester, _pixel8a, 2.625);
+        final state = await _openVariant(tester, entry, variant);
+        final chart = state.chart!;
+        final readout = find.byKey(ValueKey('type.$stem.readout'));
+
+        // The chart is one focus stop in the traversal order of the page
+        // (Chart.js ADR 0051, section 1): after the back button and the
+        // variant segments.
+        expect(_chartHasFocus(stem), isFalse, reason: id);
+        for (var i = 0; i < 8 && !_chartHasFocus(stem); i++) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+          await tester.pump();
+        }
+        expect(_chartHasFocus(stem), isTrue, reason: id);
+
+        // Down: legend item 0, the first target of the first group. Down:
+        // element 0 of dataset 0, the same index in the next group
+        // (Chart.js ADR 0051, sections 2 and 3). The move is a `mousemove`
+        // at the center of the element: the tooltip shows it, and the
+        // option `onHover` writes the readout.
+        await _key(tester, LogicalKeyboardKey.arrowDown);
+        await _key(tester, LogicalKeyboardKey.arrowDown);
+        final tooltip = chart.tooltip!;
+        expect(tooltip.opacity, 1, reason: id);
+        expect(
+          [
+            for (final point in tooltip.dataPoints!)
+              (jsGet(point, 'datasetIndex'), jsGet(point, 'dataIndex')),
+          ],
+          contains((0, 0)),
+          reason: id,
+        );
+        final (:label, :value) = chart
+            .getDatasetMeta(0)
+            .controller!
+            .getLabelAndValue(0);
+        final text = 'd0#0 $label: $value';
+        expect(state.hoverLabel, startsWith(text), reason: id);
+        expect(
+          find.descendant(of: readout, matching: find.textContaining(text)),
+          findsOneWidget,
+          reason: id,
+        );
+
+        // Escape: a `mouseout` outside the canvas. The tooltip hides
+        // (plugin.tooltip.js:1186-1188), and the plugin typeReadout writes
+        // the readout.
+        await _key(tester, LogicalKeyboardKey.escape);
+        expect(tooltip.opacity, 0, reason: id);
+        expect(chart.getActiveElements(), isEmpty, reason: id);
+        expect(state.hoverLabel, 'none', reason: id);
+        expect(
+          find.descendant(of: readout, matching: find.text('hover none')),
+          findsOneWidget,
+          reason: id,
+        );
+
+        // Down: legend item 0 again. Enter: `mousedown`, `mouseup` and
+        // `click` there, and the legend `onClick` hides its data
+        // (plugin.legend.js:645-655, controller.doughnut.js:125-128,
+        // controller.polarArea.js:65-68).
+        expect(_legendItemVisible(chart, stem, 0), isTrue, reason: id);
+        await _key(tester, LogicalKeyboardKey.arrowDown);
+        await _key(tester, LogicalKeyboardKey.enter);
+        expect(_legendItemVisible(chart, stem, 0), isFalse, reason: id);
+        expect(_chartHasFocus(stem), isTrue, reason: id);
         expect(tester.takeException(), isNull, reason: id);
       });
     }

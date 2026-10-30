@@ -12,6 +12,7 @@ import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: UiCanvasElement, the canvas of the internal host.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
@@ -1053,6 +1054,156 @@ void main() {
       stressBatchFigures(frames, start: 4000, end: 5000, batches: 3),
       isNull,
     );
+  });
+
+  test('the defines SEMANTICS and WINDOWS (the night series B-N1)', () {
+    expect(parseStressSemantics(''), isNull);
+    expect(parseStressSemantics('0'), isFalse);
+    expect(parseStressSemantics('1'), isTrue);
+    expect(() => parseStressSemantics('true'), throwsArgumentError);
+    // Without the defines: no semantics handle, no windows.
+    expect(stressSemantics, isNull);
+    expect(stressSemanticsHandle, isNull);
+    expect(stressWindowsOn, isFalse);
+  });
+
+  test('stressWindows gives the whole windows of 1 second', () {
+    StressFrame frame(int vsync, int buildUs) =>
+        (vsync: vsync, build: buildUs, raster: 2 * buildUs);
+    const s = stressWindowMicros;
+    final frames = [
+      frame(-1, 9000),
+      frame(0, 1000),
+      frame(s - 1, 3000),
+      frame(s, 4000),
+      // Window 3 has no frame. Window 4 does not end before the end.
+      frame(3 * s, 5000),
+    ];
+    final windows = stressWindows(frames, start: 0, end: 4 * s - 1);
+    expect(windows, [
+      (window: 1, frames: 2, buildMs: 2.0, rasterMs: 4.0),
+      (window: 2, frames: 1, buildMs: 4.0, rasterMs: 8.0),
+      (window: 3, frames: 0, buildMs: null, rasterMs: null),
+    ]);
+    expect(stressWindows(frames, start: 0, end: 4 * s), hasLength(4));
+    expect(stressWindows(frames, start: 0, end: s - 1), isEmpty);
+    expect(stressWindows(const [], start: 5, end: 0), isEmpty);
+  });
+
+  testWidgets('main_stress prints the windows with WINDOWS=1 and the key '
+      'semantics with SEMANTICS', (tester) async {
+    final semantics = tester.ensureSemantics();
+    final printed = <String>[];
+    final old = debugPrint;
+    debugPrint = (message, {wrapWidth}) {
+      if (message != null && message.startsWith('STRESS')) {
+        printed.add(message);
+      }
+    };
+    final dispatcher = tester.binding.platformDispatcher;
+    try {
+      await tester.pumpWidget(
+        const StressProfileApp(
+          mode: StressMode.chart,
+          scenarios: [(_n, 0)],
+          host: StressHost.view,
+          semantics: true,
+          windows: true,
+        ),
+      );
+      // The engine of the test reports the timings of its frames in a real
+      // event loop turn. The test drops them and gives the timings callbacks
+      // its own: 250 frames of 10 ms, with a build of 1 ms in the first
+      // second and of 3 ms after it.
+      final report = dispatcher.onReportTimings!;
+      void drop(List<FrameTiming> timings) {}
+      dispatcher.onReportTimings = drop;
+      addTearDown(() {
+        // A failed test restores the callback of the binding.
+        if (dispatcher.onReportTimings == drop) {
+          dispatcher.onReportTimings = report;
+        }
+      });
+      await _frames(tester, 40);
+      const start = 1000000000;
+      report([
+        for (var i = 0; i < 250; i++)
+          FrameTiming(
+            vsyncStart: start + i * 10000,
+            buildStart: start + i * 10000,
+            buildFinish: start + i * 10000 + (i < 100 ? 1000 : 3000),
+            rasterStart: start + i * 10000 + 4000,
+            rasterFinish: start + i * 10000 + 6000,
+            rasterFinishWallTime: start + i * 10000 + 6000,
+          ),
+      ]);
+      dispatcher.onReportTimings = report;
+      await tester.pump(const Duration(seconds: stressSeconds));
+    } finally {
+      // flutter_test checks the debug variables before the tearDown.
+      debugPrint = old;
+    }
+    // The windows come before the STRESS line of their scenario. The
+    // timings span 2.49 seconds: 2 whole windows.
+    expect(printed, hasLength(4));
+    expect(printed.last, 'STRESS done');
+    Map<String, Object?> json(String line, String tag) {
+      expect(line, startsWith('$tag {'));
+      return jsonDecode(line.substring(tag.length + 1)) as Map<String, Object?>;
+    }
+
+    final windows = [
+      for (final line in printed.take(2)) json(line, 'STRESS_WINDOW'),
+    ];
+    expect(windows, [
+      {
+        'mode': 'chart',
+        'n': _n,
+        'm': 0,
+        'window': 1,
+        'frames': 100,
+        'fps': '100.00',
+        'buildMs': '1.000',
+        'rasterMs': '2.000',
+      },
+      {
+        'mode': 'chart',
+        'n': _n,
+        'm': 0,
+        'window': 2,
+        'frames': 100,
+        'fps': '100.00',
+        'buildMs': '3.000',
+        'rasterMs': '2.000',
+      },
+    ]);
+    final line = json(printed[2], 'STRESS');
+    expect(line['host'], 'view');
+    expect(line['semantics'], isTrue);
+    expect(line['windows'], 2);
+    // The new keys come last: the keys of the line before them keep their
+    // order.
+    expect(line.keys.toList().sublist(line.length - 2), [
+      'semantics',
+      'windows',
+    ]);
+    await tester.pumpWidget(const SizedBox());
+    semantics.dispose();
+  });
+
+  testWidgets('main_stress has no window and no key semantics without the '
+      'defines', (tester) async {
+    final lines = await _stressLines(() async {
+      await tester.pumpWidget(
+        const StressProfileApp(mode: StressMode.chart, scenarios: [(_n, 0)]),
+      );
+      await _frames(tester, 40);
+      await tester.pump(const Duration(seconds: stressSeconds));
+    });
+    expect(lines, hasLength(1));
+    expect(lines.single.keys, isNot(contains('semantics')));
+    expect(lines.single.keys, isNot(contains('windows')));
+    await tester.pumpWidget(const SizedBox());
   });
 
   testWidgets('main_stress keeps a late publish out of the next scenario', (

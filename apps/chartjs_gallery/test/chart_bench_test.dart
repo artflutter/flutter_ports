@@ -658,14 +658,20 @@ void main() {
     final first = chartBenchCases.indexWhere(
       (c) => !_phase7Modes.contains(c.mode),
     );
-    // The cases of phase 9 (the mode motion) come after them.
+    // The cases of phase 9 (the modes motion and theme) come after them.
     final phase8 = [
       for (final c in chartBenchCases.sublist(first))
-        if (c.mode != 'motion') c,
+        if (c.mode != 'motion' && c.mode != 'theme') c,
     ];
     expect(
       [for (final c in chartBenchCases.sublist(first + phase8.length)) c.id],
-      ['motion.line', 'motion.bar'],
+      [
+        'motion.line',
+        'motion.bar',
+        for (final _ in chartBenchThemeTypes) 'theme.switch',
+        for (final _ in chartBenchThemeTypes) 'theme.anim',
+        'theme.equal',
+      ],
     );
     // The 24 cases of phases 5 to 7 keep their order before them.
     expect(first, 24);
@@ -1145,6 +1151,171 @@ void main() {
       // The update renders no frame: the animator would draw it.
       expect(_median(line, 'draw'), 0);
     }
+  });
+
+  test('the cases of the mode theme of phase 9 (the night record B-R1)', () {
+    expect(chartBenchThemeTypes, [
+      'line',
+      'bar',
+      'scatter',
+      'radar',
+      'doughnut',
+    ]);
+    expect(chartBenchThemes, const [
+      ChartThemeData.light(),
+      ChartThemeData.dark(),
+    ]);
+    final cases = selectChartBenchCases('theme');
+    // The doughnut has 1 dataset, the other types 3.
+    String row(String name, String type, List<int> counts) =>
+        'theme.$name {type: $type, datasets: ${type == 'doughnut' ? 1 : 3}} '
+        '$counts';
+    expect(
+      [for (final c in cases) '${c.id} ${c.keys} ${c.counts}'],
+      [
+        for (final name in ['switch', 'anim'])
+          for (final type in chartBenchThemeTypes)
+            row(name, type, chartBenchPluginCounts),
+        row('equal', 'line', [100]),
+      ],
+    );
+    for (final c in cases) {
+      expect(c.call, ChartBenchCall.frame, reason: c.id);
+      expect(c.primary, 'update+draw+end', reason: c.id);
+    }
+    expect(selectChartBenchCases('theme.switch'), hasLength(5));
+    expect(selectChartBenchCases('theme.anim'), hasLength(5));
+    expect(selectChartBenchCases('theme.equal'), hasLength(1));
+  });
+
+  testWidgets('theme.switch switches the preset in each frame and ends the '
+      'transition', (tester) async {
+    for (final type in chartBenchThemeTypes) {
+      final scene = _pluginCase('theme.switch', ChartBenchCall.frame, {
+        'type': type,
+      }).scene(12);
+      // The widget form: the compiled light preset under `$theme` of the root
+      // config before `new Chart`, and the palette hooks last.
+      expect(scene.config.keys, contains(r'$theme'), reason: type);
+      final plugins = scene.config['plugins']! as List<Object?>;
+      expect(jsGet(plugins.last, 'id'), r'$chartView', reason: type);
+      final chart = Chart(
+        UiCanvasElement(width: chartBenchWidth, height: chartBenchHeight),
+        scene.config,
+      );
+      addTearDown(chart.destroy);
+      scene.prepare!(chart);
+      expect(animator.has(chart), isFalse, reason: type);
+      final dataset =
+          (chart.data['datasets']! as List<Object?>).first!
+              as Map<String, Object?>;
+      // The colors plugin colors the datasets from the palette of the theme
+      // (plugin.colors.ts:102-125).
+      expect(dataset['backgroundColor'], isNotNull, reason: type);
+      final element = chart.getDatasetMeta(0).data.first;
+      for (final (color, surface) in [
+        ('rgba(153, 153, 153, 1)', 'rgba(0, 0, 0, 1)'),
+        ('rgba(102, 102, 102, 1)', 'rgba(255, 255, 255, 1)'),
+        ('rgba(153, 153, 153, 1)', 'rgba(0, 0, 0, 1)'),
+      ]) {
+        scene.frame!(chart);
+        expect(chart.options['color'], color, reason: type);
+        // The frame ends the transition: no animation stays.
+        expect(animator.has(chart), isFalse, reason: type);
+        // The switch removes the palette colors, and the update colors the
+        // dataset again.
+        expect(dataset['backgroundColor'], isNotNull, reason: type);
+        if (type == 'doughnut') {
+          // The arc border is the surface (element.arc.ts:379).
+          expect(element.options!['borderColor'], surface);
+        }
+      }
+    }
+    final line = runChartBenchCase(
+      _pluginCase('theme.switch', ChartBenchCall.frame, {'type': 'bar'}),
+      12,
+      _settings,
+    );
+    expect(line['mode'], 'theme');
+    expect(line['case'], 'switch');
+    expect(line['type'], 'bar');
+    expect(line['datasets'], 3);
+    expect(line['call'], 'frame');
+    expect(line['primary'], 'update+draw+end');
+    for (final key in _figureKeys(ChartBenchCall.frame, _parts)) {
+      expect(line[key], _figure, reason: key);
+    }
+    expect(_median(line, 'draw'), greaterThan(0));
+    expect(line['notifies'], greaterThan(0));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('theme.anim ticks the transition of 200 ms in 12 frames', (
+    tester,
+  ) async {
+    final scene = _pluginCase('theme.anim', ChartBenchCall.frame, {
+      'type': 'doughnut',
+    }).scene(12);
+    final chart = Chart(
+      UiCanvasElement(width: chartBenchWidth, height: chartBenchHeight),
+      scene.config,
+    );
+    addTearDown(chart.destroy);
+    scene.prepare!(chart);
+    final element = chart.getDatasetMeta(0).data.first;
+    const black = 'rgba(0, 0, 0, 1)';
+    const white = 'rgba(255, 255, 255, 1)';
+    expect(element.options!['borderColor'], white);
+    final borders = <Object?>[];
+    for (var i = 0; i < 2 * chartBenchFadeFrames; i++) {
+      scene.frame!(chart);
+      borders.add(element.options!['borderColor']);
+    }
+    const f = chartBenchFadeFrames;
+    // The arc border animates from the light surface to the dark surface in
+    // the first transition and back in the second one. The colors
+    // interpolator gives the hex string of a grey between the ends
+    // (core.animations.defaults.js, the `hexString` of @kurkle/color), and
+    // the last frame gives the end value.
+    expect(borders[f - 1], black);
+    expect(borders[2 * f - 1], white);
+    final between = [
+      ...borders.sublist(0, f - 1),
+      ...borders.sublist(f, 2 * f - 1),
+    ];
+    for (final border in between) {
+      expect(border, isNot(anyOf(black, white)));
+      expect(border, matches(RegExp(r'^#([0-9A-F]{3}|[0-9A-F]{6})$')));
+    }
+    expect(between.toSet(), hasLength(between.length));
+    final line = runChartBenchCase(
+      _pluginCase('theme.anim', ChartBenchCall.frame, {'type': 'line'}),
+      12,
+      _settings,
+    );
+    expect(line['case'], 'anim');
+    expect(_median(line, 'draw'), greaterThan(0));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('theme.equal stops at the == of the switch: no update', (
+    tester,
+  ) async {
+    final line = runChartBenchCase(_case('theme.equal'), 100, _settings);
+    expect(line['mode'], 'theme');
+    expect(line['case'], 'equal');
+    expect(line['type'], 'line');
+    expect(line['n'], 100);
+    // No notify and no draw: the frame calls no `chart.update`.
+    expect(line['notifies'], 0);
+    expect(line['drawMedianMs'], '0.000');
+    for (final key in _figureKeys(ChartBenchCall.frame, _parts)) {
+      expect(line[key], _figure, reason: key);
+    }
+    for (final part in _parts) {
+      expect(line['${part}MedianMs'], '0.000', reason: part);
+    }
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('each BENCH line has the notify count of one iteration', (
