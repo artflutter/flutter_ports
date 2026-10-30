@@ -11,6 +11,11 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: UiCanvasElement, the canvas of the internal host.
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
     show UiCanvasElement;
+// Not public: Animation, the class of the animations of an element. The
+// prefix keeps it apart from the Animation of Flutter.
+import 'package:flutter_chartjs_port/src/core/core.animation.dart'
+    as port
+    show Animation;
 // Not public: jsToNumber, the JS ToNumber of a raw chart value.
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 // Not public: jsGet, the JS property read of the chart values.
@@ -1330,5 +1335,196 @@ void main() {
     // afterDatasetsDraw and afterDraw: 6 for the draw of one dataset.
     expect(draw['notifies'], 6);
     expect(draw.keys, isNot(contains('primary')));
+  });
+
+  test('the explicit cases of phase 10 leave the older selectors as they '
+      'were', () {
+    // The default run, the mode chart and the mode motion select the same
+    // cases as before the explicit cases (Chart.js ADR 0053).
+    expect(selectChartBenchCases(''), chartBenchCases);
+    expect(chartBenchCases.where((c) => c.explicit), isEmpty);
+    expect(selectChartBenchCases('chart'), hasLength(16));
+    expect(
+      [for (final c in selectChartBenchCases('motion')) c.id],
+      [
+        'motion.line',
+        'motion.bar',
+      ],
+    );
+    expect(selectChartBenchCases('line'), [
+      for (final c in chartBenchCases)
+        if (c.name == 'line') c,
+    ]);
+    expect(
+      [for (final c in chartBenchExplicitCases) c.id],
+      [
+        'motion.line.delay',
+        'chart.c.indexable',
+        'chart.line.primitive',
+      ],
+    );
+    for (final c in chartBenchExplicitCases) {
+      expect(c.explicit, isTrue, reason: c.id);
+      expect(selectChartBenchCases(c.id), [c], reason: c.id);
+      // A name alone selects no case.
+      expect(() => selectChartBenchCases(c.name), throwsArgumentError);
+    }
+    expect(
+      [
+        for (final c in selectChartBenchCases('motion,motion.line.delay')) c.id,
+      ],
+      ['motion.line', 'motion.bar', 'motion.line.delay'],
+    );
+    expect(
+      selectChartBenchCases('chart,chart.c.indexable,chart.line.primitive'),
+      hasLength(18),
+    );
+    final delay = _case('motion.line.delay');
+    expect(delay.call, ChartBenchCall.motion);
+    expect(delay.counts, chartBenchMotionCounts);
+    expect(delay.primary, 'update');
+    final indexable = _case('chart.c.indexable');
+    final primitive = _case('chart.line.primitive');
+    for (final c in [indexable, primitive]) {
+      expect(c.call, ChartBenchCall.update, reason: c.id);
+      expect(c.counts, isNull, reason: c.id);
+      expect(c.primary, 'update+draw+end', reason: c.id);
+    }
+    expect(
+      stressDelayByIndex(<String, Object?>{
+        'type': 'data',
+        'dataIndex': 3.0,
+      }),
+      3.0,
+    );
+    expect(stressDelayByIndex(<String, Object?>{'type': 'dataset'}), 0.0);
+  });
+
+  testWidgets('a tiny run of each explicit case of phase 10 gives its keys '
+      'and parts', (tester) async {
+    const n = 50;
+    for (final benchCase in chartBenchExplicitCases) {
+      final reason = benchCase.id;
+      final lines = await _benchLines(() async {
+        await _runApp(
+          tester,
+          // A new key for each case: a new state runs the new case.
+          ChartBenchApp(
+            key: ValueKey(benchCase.id),
+            cases: [benchCase],
+            counts: const [n],
+            settings: const ChartBenchSettings(
+              batches: 1,
+              batchMs: 10,
+              warmupMs: 0,
+            ),
+          ),
+        );
+      });
+      expect(lines, hasLength(2), reason: reason);
+      expect(lines.last, 'BENCH done', reason: reason);
+      final line = jsonDecode(
+        lines.first.substring('BENCH '.length),
+      ) as Map<String, Object?>;
+      expect(line['mode'], benchCase.mode, reason: reason);
+      expect(line['case'], benchCase.name, reason: reason);
+      expect(line['n'], n, reason: reason);
+      expect(line['call'], benchCase.call.name, reason: reason);
+      expect(line['primary'], benchCase.call.frameMetric, reason: reason);
+      for (final MapEntry(:key, :value) in benchCase.keys.entries) {
+        expect(line[key], value, reason: '$reason $key');
+      }
+      for (final key in _figureKeys(benchCase.call, _parts)) {
+        expect(line[key], _figure, reason: '$reason $key');
+      }
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('motion.line.delay gives each point the delay of its index', (
+    tester,
+  ) async {
+    var checked = false;
+    runChartBenchCase(
+      _case('motion.line.delay'),
+      10,
+      _settings,
+      onChart: (chart) {
+        checked = true;
+        // The update of the last iteration runs its animations.
+        expect(animator.has(chart), isTrue);
+        final points = chart.getDatasetMeta(0).data;
+        double start(int index) {
+          final point = points[index] as PointElement;
+          final animation = point.$animations!['x']! as port.Animation;
+          // The start time of the animation (core.animation.js:37).
+          // ignore: invalid_use_of_internal_member
+          return animation.start;
+        }
+
+        // `start` is `Date.now() + delay`, and the delay of point i is i ms
+        // (core.animation.js:37). Each update reads the clock once for each
+        // animation, so two starts can differ by the clock too.
+        expect(start(9) - start(0), greaterThanOrEqualTo(9));
+        expect(start(5) - start(0), greaterThanOrEqualTo(5));
+      },
+    );
+    expect(checked, isTrue);
+  });
+
+  testWidgets('chart.c.indexable and chart.line.primitive build the charts '
+      'of their forms', (tester) async {
+    var indexable = false;
+    runChartBenchCase(
+      _case('chart.c.indexable'),
+      10,
+      _settings,
+      onChart: (chart) {
+        indexable = true;
+        final points = [
+          for (final element in chart.getDatasetMeta(0).data)
+            element as PointElement,
+        ];
+        // The indexable color gives the color of the index modulo 2.
+        expect(points[0].options!['backgroundColor'], stressChartBackground);
+        expect(points[1].options!['backgroundColor'], stressChartBackgroundOdd);
+        expect(points[2].options!['backgroundColor'], stressChartBackground);
+      },
+    );
+    expect(indexable, isTrue);
+
+    final scene = _case('chart.line.primitive').scene(10);
+    final datasets =
+        (scene.config['data']! as Map<String, Object?>)['datasets']!
+            as List<Object?>;
+    final data =
+        (datasets.single! as Map<String, Object?>)['data']! as List<Object?>;
+    final before = List.of(data);
+    scene.change!();
+    // The change writes new numbers into the same List.
+    expect(data, hasLength(10));
+    expect(data, isNot(before));
+    expect(data.every((value) => value is double), isTrue);
+
+    var primitive = false;
+    runChartBenchCase(
+      _case('chart.line.primitive'),
+      10,
+      _settings,
+      onChart: (chart) {
+        primitive = true;
+        final meta = chart.getDatasetMeta(0);
+        expect(chart.options['parsing'], isNot(false));
+        expect(meta.data, hasLength(10));
+        expect(chart.scales['x']!.type, 'category');
+        // The parse gives new parsed items: x is the index, y the number.
+        // The parsed items of the meta (core.datasetController.js:353).
+        // ignore: invalid_use_of_internal_member
+        final parsed = meta.parsed.first! as Map<String, Object?>;
+        expect(parsed['x'], 0);
+        expect(parsed['y'], isA<double>());
+      },
+    );
+    expect(primitive, isTrue);
   });
 }

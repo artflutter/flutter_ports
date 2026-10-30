@@ -22,8 +22,13 @@ import 'package:flutter/material.dart';
 /// `CASES=theme` selects the 11 cases of the night record B-R1,
 /// `theme.switch` and `theme.anim` of the types `line`, `bar`, `scatter`,
 /// `radar` and `doughnut`, and `theme.equal` of a line chart. `CASES=switch`
-/// or `CASES=theme.switch` selects the 5 cases of one name. A selector that
-/// selects no case throws an [ArgumentError] at the start.
+/// or `CASES=theme.switch` selects the 5 cases of one name. The explicit
+/// cases of the resolver series of phase 10 (Chart.js ADR 0053,
+/// `chartBenchExplicitCases`) run only when their full id is in the list:
+/// `motion.line.delay`, `chart.c.indexable` and `chart.line.primitive`, for
+/// example `CASES=chart,chart.c.indexable`. A mode, a name and a run
+/// without the define never select them. A selector that selects no case
+/// throws an [ArgumentError] at the start.
 final List<ChartBenchCase> benchCases = selectChartBenchCases(
   const String.fromEnvironment('CASES'),
 );

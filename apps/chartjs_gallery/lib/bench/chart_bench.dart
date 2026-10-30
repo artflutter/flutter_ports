@@ -66,6 +66,8 @@ import 'package:flutter_chartjs_port/src/core/core.plugins.dart'
     show FilterCallback;
 // Not public: jsDateNow, the Date.now() of the chart (a test clock sets it).
 import 'package:flutter_chartjs_port/src/js/js_date.dart' show jsDateNow;
+// Not public: jsGet, the reads of the scriptable delay of motion.line.delay.
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 // Not public: NativeEvent, the DOM event that the cases give the chart.
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 // Not public: fromNativeEvent, the chart event of a NativeEvent.
@@ -201,7 +203,8 @@ const List<int> chartBenchDefaultCounts = [1000, 5000, 20000];
 /// One case of the benchmark.
 ///
 /// The BENCH line of a case has the keys `mode` and `case`, and the keys of
-/// [keys]. A later phase adds its cases to [chartBenchCases].
+/// [keys]. A later phase adds its cases to [chartBenchCases], or to
+/// [chartBenchExplicitCases] for a case with [explicit].
 final class ChartBenchCase {
   /// A case [name] of the mode [mode].
   const ChartBenchCase({
@@ -212,7 +215,15 @@ final class ChartBenchCase {
     this.keys = const {},
     this.counts,
     this.primary,
+    this.explicit = false,
   });
+
+  /// Whether only the full [id] selects the case ([selectedBy]). A mode, a
+  /// name and the empty selection never select it. Thus an explicit case
+  /// does not change the cases of an older selector. The cases of the
+  /// resolver series of phase 10 (Chart.js ADR 0053,
+  /// [chartBenchExplicitCases]) are explicit.
+  final bool explicit;
 
   /// The primary metric of the case, for example `update+draw+end`
   /// ([ChartBenchCall.frameMetric]): the BENCH line gets it as the key
@@ -245,9 +256,10 @@ final class ChartBenchCase {
   String get id => '$mode.$name';
 
   /// Whether the selector [selector] selects this case: the mode, the name,
-  /// or the [id].
-  bool selectedBy(String selector) =>
-      selector == mode || selector == name || selector == id;
+  /// or the [id]. Only the [id] selects an [explicit] case.
+  bool selectedBy(String selector) => explicit
+      ? selector == id
+      : selector == mode || selector == name || selector == id;
 }
 
 /// A case of the stress mode chart (Chart.js ADR 0021, section 8; Chart.js
@@ -1049,6 +1061,175 @@ final List<ChartBenchCase> _motionCases = [
   _motionCase(StressChartType.bar),
 ];
 
+/// The delay of the case `motion.line.delay`: `ctx.type === 'data' ?
+/// ctx.dataIndex : 0`, a scriptable `animation.delay` (the form of the
+/// progressive line of the docs, judge-r.md section 4.8). Each data element
+/// gets its own delay, so the animation options of each element differ.
+Object? stressDelayByIndex(Object? context) =>
+    jsGet(context, 'type') == 'data' ? jsGet(context, 'dataIndex') : 0.0;
+
+/// The case `motion.line.delay` of the resolver series of phase 10
+/// (Chart.js ADR 0053): the case `motion.line` ([_motionCase]) with the
+/// scriptable delay [stressDelayByIndex] in `options.animation`. The other
+/// animation options keep their defaults. It is a guard cell of the series
+/// C7: the memo of the animations stays off for a scriptable delay.
+ChartBenchCase _motionDelayCase() => ChartBenchCase(
+  mode: 'motion',
+  name: 'line.delay',
+  call: ChartBenchCall.motion,
+  keys: {'type': 'line', 'sharing': true, 'scriptable': false, 'delay': true},
+  counts: chartBenchMotionCounts,
+  primary: ChartBenchCall.motion.frameMetric,
+  explicit: true,
+  scene: (n) {
+    registerGalleryComponents();
+    final field = StressPointField(n);
+    final scene = StressChartScene(StressChartType.line, n, field);
+    final timing = StressChartTiming();
+    final config = stressChartConfig(
+      scene: scene,
+      scriptable: false,
+      options: chartBenchOptions,
+      plugins: [timing.plugin],
+    );
+    // The default animations with a scriptable delay.
+    (config['options']! as Map<String, Object?>)['animation'] =
+        <String, Object?>{'delay': stressDelayByIndex};
+    config['platform'] = _AnimatedPlatform.jsClass;
+    return ChartBenchScene(
+      config: config,
+      takeParts: timing.take,
+      prepare: (chart) => _benchFinishAnimations(),
+    );
+  },
+);
+
+/// The case `chart.c.indexable` of the resolver series of phase 10
+/// (Chart.js ADR 0053): the case `chart.c` with the indexable
+/// `backgroundColor` `[stressChartBackground, stressChartBackgroundOdd]` in
+/// place of the scriptable color. An indexable option needs the context of
+/// each element (core.config.js:405-418), as a scriptable option does, but
+/// it calls no user function.
+ChartBenchCase _indexableCase() => ChartBenchCase(
+  mode: 'chart',
+  name: 'c.indexable',
+  call: ChartBenchCall.update,
+  keys: {
+    'type': StressChartType.line.name,
+    'sharing': StressChartType.line.sharing,
+    'scriptable': false,
+    'indexable': true,
+  },
+  primary: ChartBenchCall.update.frameMetric,
+  explicit: true,
+  scene: (n) {
+    registerGalleryComponents();
+    final field = StressPointField(n);
+    final scene = StressChartScene(StressChartType.line, n, field);
+    final timing = StressChartTiming();
+    final config = stressChartConfig(
+      scene: scene,
+      scriptable: false,
+      options: chartBenchOptions,
+      plugins: [timing.plugin],
+    );
+    final datasets =
+        (config['data']! as Map<String, Object?>)['datasets']! as List<Object?>;
+    (datasets.single! as Map<String, Object?>)['backgroundColor'] = <Object?>[
+      stressChartBackground,
+      stressChartBackgroundOdd,
+    ];
+    return ChartBenchScene(
+      config: config,
+      change: () => scene.write(field..step(n, chartBenchStep)),
+      takeParts: timing.take,
+    );
+  },
+);
+
+/// The case `chart.line.primitive` of the resolver series of phase 10
+/// (Chart.js ADR 0053): a line chart of N numbers with the labels
+/// `Point <i>`, on a hidden category x axis and a hidden linear y axis from
+/// 0 to 1 (the scales of `chart.bar`). The data is parsed (no option
+/// `parsing: false`): each update parses the numbers into new parsed items
+/// (core.datasetController.js, `parsePrimitiveData`). The dataset has the
+/// point options of `stressChartConfig`. Before each update, the points of
+/// a `StressPointField` move by one frame, and their y values go into the
+/// same data List. It is the cell of the trigger of the typed parsed
+/// records (judge-r.md section 1.2, C8).
+ChartBenchCase _primitiveCase() => ChartBenchCase(
+  mode: 'chart',
+  name: 'line.primitive',
+  call: ChartBenchCall.update,
+  keys: {
+    'type': StressChartType.line.name,
+    'sharing': StressChartType.line.sharing,
+    'scriptable': false,
+    'parsing': true,
+  },
+  primary: ChartBenchCall.update.frameMetric,
+  explicit: true,
+  scene: (n) {
+    registerGalleryComponents();
+    final field = StressPointField(n);
+    final data = <Object?>[for (var i = 0; i < n; i++) field.y[i]];
+    final timing = StressChartTiming();
+    final config = <String, Object?>{
+      'type': 'line',
+      'data': <String, Object?>{
+        'labels': <Object?>[for (var i = 0; i < n; i++) 'Point $i'],
+        'datasets': <Object?>[
+          <String, Object?>{
+            'data': data,
+            'backgroundColor': stressChartBackground,
+            'borderColor': '#36A2EB',
+            'borderWidth': 1.0,
+            'pointStyle': 'circle',
+            'radius': 3.0,
+            'showLine': false,
+            'clip': false,
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'animation': false,
+        'events': <String>[],
+        'maintainAspectRatio': false,
+        'plugins': stressPluginOptions(),
+        'layout': <String, Object?>{'autoPadding': false},
+        'scales': <String, Object?>{
+          'x': stressHiddenScale('category'),
+          'y': stressHiddenScale('linear', min: 0, max: 1),
+        },
+        ...chartBenchOptions,
+      },
+      'plugins': <Object?>[timing.plugin],
+    };
+    return ChartBenchScene(
+      config: config,
+      change: () {
+        field.step(n, chartBenchStep);
+        for (var i = 0; i < n; i++) {
+          data[i] = field.y[i];
+        }
+      },
+      takeParts: timing.take,
+    );
+  },
+);
+
+/// The explicit cases of the resolver series of phase 10 (Chart.js ADR
+/// 0053, judge-r.md section 4.8): `motion.line.delay`, `chart.c.indexable`
+/// and `chart.line.primitive`. Only the full id of a case selects it
+/// ([ChartBenchCase.explicit]). Thus `CASES=chart` still selects the 16
+/// cases of phases 5 to 7, `CASES=motion` the 2 cases of phase 9, and a run
+/// without the define `CASES` the cases of [chartBenchCases].
+final List<ChartBenchCase> chartBenchExplicitCases = [
+  _motionDelayCase(),
+  _indexableCase(),
+  _primitiveCase(),
+];
+
 /// The chart types of the cases `theme.switch` and `theme.anim` (the night
 /// record B-R1 of phase 9).
 const List<String> chartBenchThemeTypes = [
@@ -1305,7 +1486,8 @@ final List<ChartBenchCase> _themeCases = [
 /// of phases 5 to 7 first, in the same order as before. The cases
 /// `motion.line` and `motion.bar` of phase 9 come next ([_motionCases]),
 /// and the cases of the mode `theme` of phase 9 come last ([_themeCases]):
-/// `theme.switch`, `theme.anim` and `theme.equal`.
+/// `theme.switch`, `theme.anim` and `theme.equal`. The explicit cases of
+/// phase 10 are not in this list: see [chartBenchExplicitCases].
 final List<ChartBenchCase> chartBenchCases = [
   _stressCase('a', ChartBenchCall.draw, type: StressChartType.line),
   _stressCase('b', ChartBenchCall.update, type: StressChartType.line),
@@ -1327,19 +1509,27 @@ final List<ChartBenchCase> chartBenchCases = [
 ];
 
 /// The cases of [selection], a comma list of selectors (see
-/// [ChartBenchCase.selectedBy]), in the order of [cases]. An empty
-/// selection gives all [cases]. A selector that selects no case throws an
-/// [ArgumentError].
+/// [ChartBenchCase.selectedBy]), in the order of [cases]. [cases] defaults
+/// to [chartBenchCases], then [chartBenchExplicitCases]. An empty
+/// selection gives the cases of [cases] that are not
+/// [ChartBenchCase.explicit]. Only its full id selects an explicit case,
+/// for example `CASES=chart,chart.c.indexable`. A selector that selects no
+/// case throws an [ArgumentError].
 List<ChartBenchCase> selectChartBenchCases(
   String selection, [
   List<ChartBenchCase>? cases,
 ]) {
-  final all = cases ?? chartBenchCases;
+  final all = cases ?? [...chartBenchCases, ...chartBenchExplicitCases];
   final selectors = [
     for (final part in selection.split(','))
       if (part.trim().isNotEmpty) part.trim(),
   ];
-  if (selectors.isEmpty) return all;
+  if (selectors.isEmpty) {
+    return [
+      for (final c in all)
+        if (!c.explicit) c,
+    ];
+  }
   for (final selector in selectors) {
     if (!all.any((c) => c.selectedBy(selector))) {
       throw ArgumentError.value(selector, 'CASES', 'Selects no case');
