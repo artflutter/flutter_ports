@@ -257,8 +257,9 @@ This ADR takes Chart.js ADR 0037 Open 4:
   last target moves the focus; with `events` that lists `keydown`, a `beforeEvent` plugin gets it
   with NaN `x` and `y`; without it, no `NativeEvent`; the ring draw calls appear only with the
   keyboard focus; `ExcludeFocus` gives no stop.
-- The semantics tests (`SemanticsTester`): the node has the label, the image flag and the focus
-  flags; a null label gives an unlabeled node of its own (J1a as a pin); `excludeFromSemantics`
+- The semantics tests (`tester.ensureSemantics()` and `matchesSemantics` of flutter_test; the
+  `SemanticsTester` of the Flutter repository is not a public API): the node has the label, the
+  image flag and the focus flags; a null label gives an unlabeled node of its own (J1a as a pin); `excludeFromSemantics`
   removes it; a data update and an animation give no semantics update (a listener on the
   semantics owner).
 - A pin of today in `test/port/platform/chart_host_test.dart`: a touch tap on host A, then a mouse

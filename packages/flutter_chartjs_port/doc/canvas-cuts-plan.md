@@ -669,6 +669,15 @@ Changes to the cited files:
   `platform.flutter.dart`, `helpers.dom.dart` or a test of §2.6 and §3.5 changes. The
   references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not change.
   No trigger occurred.
+- 2026-10-30, the semantics node of `ChartView` ([Chart.js ADR
+  0051](adr/0051-input-events-and-interaction-state.md) §8, proposed, phase 9).
+  `lib/src/widgets/chart_view.dart` wraps its `Focus` in one `Semantics` image node, or in
+  `ExcludeSemantics`; this plan does not cite it. `test/port/widgets/chart_view_semantics_test.dart`
+  is new. `doc/parity.md` changes the row of `chart_view.dart` (line 371) in place and gets one
+  port-only row at its end (line 619): the rows that this plan cites do not move. No file of
+  `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart` or a test of
+  §2.6 and §3.5 changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the
+  estimates do not change. No trigger occurred.
 
 ## 1. Why
 

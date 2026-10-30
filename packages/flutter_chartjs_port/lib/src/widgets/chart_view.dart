@@ -76,6 +76,11 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 /// lists `keydown`, `keypress` or `keyup`, the chart also gets these
 /// events, with NaN coordinates. A focus ring shows the focus in the
 /// traditional highlight mode, in the color `options.color`.
+///
+/// Semantics: the chart is one semantics node with the image flag and the
+/// text of [semanticLabel], as a Chart.js canvas with `role="img"` and
+/// `aria-label` (Chart.js ADR 0051, section 8). The node does not change
+/// at a data update or in an animation frame.
 class ChartView extends StatefulWidget {
   /// Creates a widget that shows the chart of [config].
   const ChartView({
@@ -85,6 +90,8 @@ class ChartView extends StatefulWidget {
     this.theme,
     this.focusNode,
     this.autofocus = false,
+    this.semanticLabel,
+    this.excludeFromSemantics = false,
     super.key,
   });
 
@@ -133,6 +140,15 @@ class ChartView extends StatefulWidget {
   /// Whether the chart takes the focus at its first build.
   final bool autofocus;
 
+  /// The text alternative of the chart, as the aria-label of a Chart.js
+  /// canvas with role="img" (docs/general/accessibility.md). Give one for
+  /// each chart.
+  final String? semanticLabel;
+
+  /// Whether the chart has no semantics node. [semanticLabel] then has no
+  /// effect.
+  final bool excludeFromSemantics;
+
   @override
   State<ChartView> createState() => _ChartViewState();
 
@@ -167,7 +183,15 @@ class ChartView extends StatefulWidget {
           defaultValue: null,
         ),
       )
-      ..add(FlagProperty('autofocus', value: autofocus, ifTrue: 'autofocus'));
+      ..add(FlagProperty('autofocus', value: autofocus, ifTrue: 'autofocus'))
+      ..add(StringProperty('semanticLabel', semanticLabel, defaultValue: null))
+      ..add(
+        FlagProperty(
+          'excludeFromSemantics',
+          value: excludeFromSemantics,
+          ifTrue: 'excluded from semantics',
+        ),
+      );
   }
 }
 
@@ -463,7 +487,7 @@ class _ChartViewState extends State<ChartView> {
     // Chart.js ADR 0051, section 1: one focus stop with no Shortcuts and no
     // Actions, so that a key that the chart does not use goes on to the
     // ancestors.
-    return Focus(
+    final focus = Focus(
       focusNode: widget.focusNode,
       autofocus: widget.autofocus,
       onKeyEvent: _keyboard.onKeyEvent,
@@ -473,6 +497,17 @@ class _ChartViewState extends State<ChartView> {
         onTickerModeChanged: _onTickerModeChanged,
         onFirstLayout: _onFirstLayout,
       ),
+    );
+    if (widget.excludeFromSemantics) return ExcludeSemantics(child: focus);
+    // Chart.js ADR 0051, section 8: one image node, as the `Image` widget
+    // builds it. The node is a container also without a label: the chart
+    // is focusable, and an unlabeled chart then never merges into the node
+    // of an ancestor (probe J1a).
+    return Semantics(
+      container: true,
+      image: true,
+      label: widget.semanticLabel ?? '',
+      child: focus,
     );
   }
 
