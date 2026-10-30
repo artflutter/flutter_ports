@@ -12,11 +12,13 @@ import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
-// Chart.js ADR 0052, section 3: a `DataPoint` is the Map of the object form
-// `{x, y}` or `{x, y, r}` at run time. A chart reads a `List<DataPoint>` as
-// the List of its raw twin, with the same elements, and keeps the List of
-// the app: the chart does not write into it. A label that is not in
-// `data.labels` becomes a new label (row `js-semantics-narrow-labels`).
+// Chart.js ADR 0052, section 3, and Chart.js ADR 0054 §7: a `DataPoint` is a
+// typed data item with the face of the object form `{x, y}` or `{x, y, r}`.
+// A chart reads a `List<DataPoint>` as the List of its raw twin, with the
+// same elements, and keeps the List of the app: the chart does not write
+// into it, and a write by name throws, as into a frozen object. A label
+// that is not in `data.labels` becomes a new label (row
+// `js-semantics-narrow-labels`).
 //
 // Sections 1, 2 and 5: a lowered dataset drives the chart as its raw twin.
 // A plain color keeps the option sharing of the data elements, and a List
@@ -58,8 +60,11 @@ List<Object?> _sharing(Chart chart) {
   ];
 }
 
-/// The Map of [point] at run time.
-Map<String, Object?> _map(DataPoint point) => point as Map<String, Object?>;
+/// The object of [point] through its face (Chart.js ADR 0054 §5): its keys
+/// in their order, with their values.
+Map<String, Object?> _map(DataPoint point) => {
+  for (final key in point.jsKeys()) key: point.jsRead(key),
+};
 
 /// A chart of [type] with one dataset of [data] and the scale config
 /// [scales], with no animation.
@@ -87,8 +92,8 @@ List<List<Object?>> _elements(Chart chart) => [
 ];
 
 void main() {
-  group('the Map of a data point', () {
-    test('each constructor makes the Map of its object form', () {
+  group('the object of a data point', () {
+    test('each constructor makes the face of its object form', () {
       expect(_map(DataPoint(1, 2)), {'x': 1, 'y': 2});
       expect(_map(DataPoint(1.5, null)), {'x': 1.5, 'y': null});
       final time = DateTime.utc(2020);
@@ -98,11 +103,22 @@ void main() {
       expect(_map(DataPoint.bubble(1, 2, 5)).keys, ['x', 'y', 'r']);
     });
 
-    test('the getters read the Map', () {
+    test('the fields are the typed values', () {
       final point = DataPoint.bubble(1, 2, 5);
-      expect([point.x, point.y, point.r], [1, 2, 5]);
+      expect([point.x, point.y, point.r], [1.0, 2.0, 5.0]);
+      expect(point.x, isA<double>());
       final gap = DataPoint.label('b', null);
       expect([gap.x, gap.y, gap.r], ['b', null, null]);
+    });
+
+    test('an absent r reads as undefined, and a write by name throws', () {
+      final point = DataPoint(1, 2);
+      expect(point.jsRead('r'), same(undefined));
+      expect(point.jsHas('r'), isFalse);
+      expect(point, isNot(isA<Map<Object?, Object?>>()));
+      expect(() => point.jsWrite('y', 3), throwsA(isA<TypeError>()));
+      expect(() => point.jsDelete('x'), throwsA(isA<TypeError>()));
+      expect(point.y, 2.0);
     });
   });
 

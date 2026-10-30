@@ -13,6 +13,7 @@ import 'dart:ui' show Color;
 
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, Key, immutable;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/typed/callbacks.dart' show ChartScript;
 import 'package:flutter_chartjs_port/src/typed/config.dart'
     show ChartKind, IndexAxis;
@@ -20,6 +21,8 @@ import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/typed/values.dart'
     show ChartFill, ChartLength, ChartPointStyle;
+import 'package:flutter_chartjs_port/src/types/data_item.dart'
+    show TypedDataItem;
 import 'package:meta/meta.dart' show internal;
 
 /// A dataset of a chart: an item of `data.datasets` of a Chart.js config.
@@ -1800,37 +1803,90 @@ final class RadarDataset extends Dataset with _LineStyle {
 /// A data item in the object form `{x, y}` or `{x, y, r}`
 /// (`docs/general/data-structures.md`, "Object[]").
 ///
-/// At run time, a data point is the `Map<String, Object?>` of that object:
-/// each constructor makes one Map, as the raw `{'x': x, 'y': y}` does, and
-/// the chart reads its keys. Thus a `List<DataPoint>` goes to the chart with
-/// no copy. A data point does not implement `Map`.
+/// A data point is a typed data item (Chart.js ADR 0054 §7): the chart
+/// reads its fields [x], [y] and [r] where Chart.js reads the keys of the
+/// object `{x, y}`. Thus a `List<DataPoint>` goes to the chart with no
+/// copy. A data point does not implement `Map`.
 ///
-/// A `null` [y] is a gap in the line.
-extension type DataPoint._(Map<String, Object?> _item) {
+/// A number is a `double`, as each number of Chart.js. A `null` [y] is a
+/// gap in the line.
+///
+/// A data point is immutable: the chart does not write into it. Code that
+/// writes a key into it by name gets the `TypeError` of a write into a
+/// frozen object (`Object.freeze`).
+@immutable
+final class DataPoint implements TypedDataItem {
   /// `{x, y}` with a number [x]: a value of a linear or a logarithmic x
   /// axis, or an index of a category x axis.
-  DataPoint(num x, num? y) : _item = <String, Object?>{'x': x, 'y': y};
+  DataPoint(num x, num? y) : x = x.toDouble(), y = y?.toDouble(), r = null;
 
   /// `{x, y}` with a time [x], for a time or a time series x axis.
-  DataPoint.time(DateTime x, num? y)
-    : _item = <String, Object?>{'x': x, 'y': y};
+  DataPoint.time(DateTime this.x, num? y) : y = y?.toDouble(), r = null;
 
   /// `{x, y}` with a label [x], for a category x axis. A label that is not
   /// in the labels of the chart becomes a new label: the category scale adds
   /// it to `data.labels`.
-  DataPoint.label(String x, num? y) : _item = <String, Object?>{'x': x, 'y': y};
+  DataPoint.label(String this.x, num? y) : y = y?.toDouble(), r = null;
 
   /// `{x, y, r}`: a bubble at ([x], [y]) with the radius [r] in pixels.
   DataPoint.bubble(num x, num y, num r)
-    : _item = <String, Object?>{'x': x, 'y': y, 'r': r};
+    : x = x.toDouble(),
+      y = y.toDouble(),
+      r = r.toDouble();
 
-  /// The x value: a `num`, a `DateTime` or a `String`.
-  Object get x => _item['x']!;
+  /// The x value: a `double`, a `DateTime` or a `String`.
+  @override
+  final Object x;
 
   /// The y value. `null` is a gap.
-  num? get y => _item['y'] as num?;
+  @override
+  final double? y;
 
   /// The bubble radius in pixels, or `null` for a data point that is not a
   /// bubble.
-  num? get r => _item['r'] as num?;
+  @override
+  final double? r;
+
+  // The face of Chart.js ADR 0054 §5: the object `{x, y}` or `{x, y, r}`.
+
+  /// `point[name]`: [x], [y] (Dart `null` is JS `null`), [r] when the point
+  /// has it, else `undefined`.
+  @internal
+  @override
+  Object? jsRead(String name) => switch (name) {
+    'x' => x,
+    'y' => y,
+    'r' when r != null => r,
+    _ => undefined,
+  };
+
+  /// `point[name] = value`: a data point is frozen. A `TypeError`, as a
+  /// write into a frozen object in strict mode.
+  @internal
+  @override
+  void jsWrite(String name, Object? value) => throw TypeError();
+
+  /// `Object.keys(point)`: `x`, `y` and, for a bubble, `r`.
+  @internal
+  @override
+  List<String> jsKeys() => r == null ? const ['x', 'y'] : const ['x', 'y', 'r'];
+
+  /// Whether the point has the key [name].
+  @internal
+  @override
+  bool jsHas(String name) =>
+      name == 'x' || name == 'y' || (name == 'r' && r != null);
+
+  /// `delete point[name]`: a data point is frozen. A `TypeError` for an own
+  /// key, as a delete of a key of a frozen object in strict mode.
+  @internal
+  @override
+  bool jsDelete(String name) {
+    if (jsHas(name)) throw TypeError();
+    return true;
+  }
+
+  @override
+  String toString() =>
+      r == null ? 'DataPoint($x, $y)' : 'DataPoint($x, $y, $r)';
 }

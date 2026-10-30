@@ -20,7 +20,10 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Scale;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ContextObject, ScriptableChartContext, ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
+import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
 import 'package:flutter_chartjs_port/src/types/index.dart'
     show ActiveElement, ChartEvent, LegendElement, Tick;
 import 'package:meta/meta.dart' show immutable;
@@ -158,33 +161,54 @@ extension type ChartHit._(ActiveElement _hit) implements ActiveElement {
 /// The context of a scriptable option (`docs/general/options.md`, "Option
 /// Context"): the chart context, a dataset context or a data context.
 ///
-/// A view of the context object of the chart.
-extension type ChartContext._(Map<String, Object?> _context) {
-  /// The chart.
-  Chart get chart => _context['chart']! as Chart;
+/// A view of the typed context object of the chart (Chart.js ADR 0054 §11):
+/// the getters read the typed members of the dataset and the data context
+/// (`ScriptableContext`) and of the chart context
+/// (`ScriptableChartContext`). A context of another type has no dataset
+/// member: its getters give `null` and `false`.
+extension type ChartContext._(ContextObject _context) {
+  /// The chart: the `chart` of the chart context, the first context of the
+  /// prototype chain of each context (`createContext`).
+  Chart get chart {
+    for (
+      AnyObject? context = _context;
+      context is ContextObject;
+      context = context.prototype
+    ) {
+      if (context is ScriptableChartContext) return context.chart! as Chart;
+    }
+    // A context without a chart context: the `TypeError` of a missing chart.
+    throw TypeError();
+  }
 
   /// The type of the context: `'chart'`, `'dataset'`, `'data'`, `'scale'`,
   /// `'tick'`, `'pointLabel'` or `'tooltip'`.
-  String? get type => _string(_context['type']);
+  String? get type => _string(_context.type);
+
+  /// The dataset or the data context, or Dart `null` for a context of
+  /// another type.
+  ScriptableContext? get _dataContext => switch (_context) {
+    final ScriptableContext context => context,
+    _ => null,
+  };
 
   /// The index of the dataset, or `null` in a chart context.
-  int? get datasetIndex => _int(_context['datasetIndex']);
+  int? get datasetIndex => _int(_dataContext?.datasetIndex);
 
   /// The index of the data item, or `null` in a chart or a dataset context.
-  int? get dataIndex => _int(_context['dataIndex']);
+  int? get dataIndex => _int(_dataContext?.dataIndex);
 
   /// Whether the element is active (hovered). `false` in a chart context.
-  bool get active => _context['active'] == true;
+  bool get active => _dataContext?.active == true;
 
   /// The data item of the dataset at [dataIndex], as the app gave it: a
-  /// `num`, a `DataPoint` Map or another value. `null` outside a data
-  /// context.
-  Object? get raw => _defined(_context['raw']);
+  /// `num`, a `DataPoint` or another value. `null` outside a data context.
+  Object? get raw => _defined(_dataContext?.raw);
 
-  /// The parsed values of the data item: a Map with a key for each axis,
-  /// for example `x` and `y`, or a number for a pie or a doughnut. `null`
-  /// outside a data context.
-  Object? get parsed => _defined(_context['parsed']);
+  /// The parsed values of the data item: an object with a key for each
+  /// axis, for example `x` and `y`, or a number for a pie or a doughnut.
+  /// `null` outside a data context.
+  Object? get parsed => _defined(_dataContext?.parsed);
 }
 
 /// A tooltip item: the argument of the tooltip text callbacks

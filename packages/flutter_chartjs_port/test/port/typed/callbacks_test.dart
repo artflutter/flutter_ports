@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart' show ValueChanged;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart'
     show AnimationEvent;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show createContext;
 import 'package:flutter_chartjs_port/src/js/js_function.dart'
     show JsFunction, jsCall;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
@@ -220,14 +222,15 @@ void main() {
     });
 
     test('undefined, an absent key and another type give null', () {
-      final context = <String, Object?>{
+      // The typed context of a data item (Chart.js ADR 0054 §11).
+      final context = createContext(null, <String, Object?>{
         'type': 'data',
         'raw': undefined,
         'parsed': undefined,
         'datasetIndex': 1.0,
         'dataIndex': 'x',
         'active': 1,
-      } as ChartContext;
+      }) as ChartContext;
       expect(
         [
           context.type,
@@ -239,7 +242,18 @@ void main() {
         ],
         ['data', null, null, 1, null, false],
       );
-      expect((<String, Object?>{} as ChartContext).type, isNull);
+      expect(
+        (createContext(null, <String, Object?>{}) as ChartContext).type,
+        isNull,
+      );
+      // A chart context has no member of a data context.
+      final chartContext = createContext(null, <String, Object?>{
+        'type': 'chart',
+      }) as ChartContext;
+      expect(
+        [chartContext.type, chartContext.datasetIndex, chartContext.active],
+        ['chart', null, false],
+      );
     });
   });
 
