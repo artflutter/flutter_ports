@@ -13,6 +13,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart'
+    show maxAtlasInstances;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -100,6 +102,21 @@ void _paint(UiCanvasContext ctx) {
 }
 
 ui.Paint _fill(int argb) => ui.Paint()..color = ui.Color(argb);
+
+/// A circle of a reference drawing: its center, its radius, its fill and
+/// stroke colors (null for none) and the stroke width.
+typedef _Dot = ({
+  ui.Offset c,
+  double r,
+  ui.Color? fill,
+  ui.Color? stroke,
+  double width,
+});
+
+/// The CSS text of [color] for `fillStyle` and `strokeStyle`.
+String _css(ui.Color color) =>
+    'rgba(${(color.r * 255).round()}, ${(color.g * 255).round()}, '
+    '${(color.b * 255).round()}, ${color.a})';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -961,6 +978,188 @@ void main() {
         expect(sector.radius, 120);
         expect(ctx.debugPath.debugBuilt, isFalse);
       }
+    });
+  });
+
+  group('N5: a color for each instance of a short circle run', () {
+    /// [dots] drawn with `drawCircle`, in order. The centers of the first
+    /// [snapped] dots (all by default) are at the nearest 1/4 pixel, as the
+    /// atlas of the circle batch places them.
+    Future<Render> reference(List<_Dot> dots, {int? snapped}) =>
+        _renderUi((canvas) {
+          for (final (i, d) in dots.indexed) {
+            final snap = i < (snapped ?? dots.length);
+            double place(double v) => snap ? (v * 4).roundToDouble() / 4 : v;
+            final c = ui.Offset(place(d.c.dx), place(d.c.dy));
+            if (d.fill != null) {
+              canvas.drawCircle(c, d.r, ui.Paint()..color = d.fill!);
+            }
+            if (d.stroke != null) {
+              canvas.drawCircle(
+                c,
+                d.r,
+                ui.Paint()
+                  ..color = d.stroke!
+                  ..style = ui.PaintingStyle.stroke
+                  ..strokeWidth = d.width,
+              );
+            }
+          }
+        });
+
+    /// Draws [dots] as `drawPointLegend` draws circles: a full circle, its
+    /// fill and its stroke.
+    void draw(UiCanvasContext ctx, List<_Dot> dots) {
+      for (final d in dots) {
+        ctx
+          ..beginPath()
+          ..arc(d.c.dx, d.c.dy, d.r, 0, 2 * math.pi)
+          ..closePath();
+        if (d.fill != null) {
+          ctx
+            ..fillStyle = _css(d.fill!)
+            ..fill();
+        }
+        if (d.stroke != null) {
+          ctx
+            ..lineWidth = d.width
+            ..strokeStyle = _css(d.stroke!)
+            ..stroke();
+        }
+      }
+    }
+
+    /// The centers of [count] points in rows of 14, at fractional pixels.
+    List<ui.Offset> centers(int count) => [
+      for (var i = 0; i < count; i++)
+        ui.Offset(8 + (i % 14) * 10.37, 8 + (i ~/ 14) * 9.61),
+    ];
+
+    const red = ui.Color(0x73FF6384);
+    const blue = ui.Color(0x7336A2EB);
+    const green = ui.Color(0xCC4BC0C0);
+    const border = ui.Color(0xFF36A2EB);
+    // The largest difference of one channel from the reference with the
+    // centers of the batch, as in the group 'circle batch' of
+    // canvas_ui_test.dart.
+    const tolerance = 8;
+
+    test('two colors that alternate make one run', () async {
+      final dots = <_Dot>[
+        for (final (i, c) in centers(80).indexed)
+          (c: c, r: 3, fill: i.isEven ? red : blue, stroke: border, width: 1),
+      ];
+      late int pending;
+      final port = await renderContext((ctx) {
+        draw(ctx, dots);
+        pending = ctx.debugPendingCircles;
+      });
+      expect(pending, 160);
+      final diff = comparePixels(port, await reference(dots));
+      expect(diff.maxChannel, lessThanOrEqualTo(tolerance), reason: '$diff');
+    });
+
+    test('fills and strokes of several colors', () async {
+      final colors = [red, blue, green, border];
+      final dots = <_Dot>[
+        for (final (i, c) in centers(140).indexed)
+          (
+            c: c,
+            r: 3.5,
+            fill: i % 7 == 3 ? null : colors[i % 4],
+            stroke: i % 5 == 1 ? null : colors[(i + 1) % 4],
+            width: 1.5,
+          ),
+      ];
+      final port = await renderContext((ctx) => draw(ctx, dots));
+      final diff = comparePixels(port, await reference(dots));
+      expect(diff.maxChannel, lessThanOrEqualTo(tolerance), reason: '$diff');
+    });
+
+    test('globalAlpha multiplies the color of each instance', () async {
+      final dots = <_Dot>[
+        for (final (i, c) in centers(40).indexed)
+          (c: c, r: 3, fill: i.isEven ? red : green, stroke: border, width: 1),
+      ];
+      final port = await renderContext((ctx) {
+        ctx.globalAlpha = 0.5;
+        draw(ctx, dots);
+      });
+      final faded = <_Dot>[
+        for (final d in dots)
+          (
+            c: d.c,
+            r: d.r,
+            fill: d.fill!.withValues(alpha: d.fill!.a * 0.5),
+            stroke: d.stroke!.withValues(alpha: 0.5),
+            width: d.width,
+          ),
+      ];
+      final diff = comparePixels(port, await reference(faded));
+      // A probe on flutter_tester (Skia on the CPU): the stroke of 1 pixel of
+      // a translucent color blends some edge pixels twice, where the pieces
+      // of its outline meet, and an opaque white stroke clamps them. Thus
+      // the white sprite times the color gives up to 13 of 255 less on these
+      // pixels than drawCircle with the color, and 3.5 % less ink in each
+      // ring; the sprite of one color has the double blend. The fills have
+      // no such pixels.
+      expect(diff.maxChannel, lessThanOrEqualTo(16), reason: '$diff');
+      expect(diff.solidDiffering, 0, reason: '$diff');
+      expect(diff.inkRatio, lessThan(0.02), reason: '$diff');
+    });
+
+    test('a run of one color of 16 circles or more draws first', () async {
+      final dots = <_Dot>[
+        for (final (i, c) in centers(12).indexed)
+          (c: c, r: 3, fill: i < 10 ? red : blue, stroke: border, width: 1),
+      ];
+      final pending = <int>[];
+      final port = await renderContext((ctx) {
+        for (final d in dots) {
+          draw(ctx, [d]);
+          pending.add(ctx.debugPendingCircles);
+        }
+      });
+      // The run of the 10 red points has 20 circles: the first blue point
+      // draws it and starts a new run.
+      expect(pending, [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 2, 4]);
+      // The red run draws with the atlas, the blue run with drawCircle.
+      final diff = comparePixels(port, await reference(dots, snapped: 10));
+      expect(diff.maxChannel, lessThanOrEqualTo(tolerance), reason: '$diff');
+    });
+
+    test('a short run of several colors draws with drawCircle', () async {
+      final dots = <_Dot>[
+        for (final (i, c) in centers(5).indexed)
+          (
+            c: c,
+            r: 4,
+            fill: [red, blue, green][i % 3],
+            stroke: border,
+            width: 2,
+          ),
+      ];
+      final port = await renderContext((ctx) => draw(ctx, dots));
+      final diff = comparePixels(port, await reference(dots, snapped: 0));
+      expect(diff.differing, 0, reason: '$diff');
+    });
+
+    test('a long run of several colors takes several atlas calls', () async {
+      final dots = <_Dot>[
+        for (final (i, c) in centers(14 * 16).indexed)
+          for (final dy in const [0.0, 2.5, 5.0])
+            (
+              c: c.translate(0, dy),
+              r: 2,
+              fill: [red, blue, green][(i + dy.round()) % 3],
+              stroke: border,
+              width: 1,
+            ),
+      ];
+      expect(dots.length * 2, greaterThan(2 * maxAtlasInstances));
+      final port = await renderContext((ctx) => draw(ctx, dots));
+      final diff = comparePixels(port, await reference(dots));
+      expect(diff.maxChannel, lessThanOrEqualTo(tolerance), reason: '$diff');
     });
   });
 }

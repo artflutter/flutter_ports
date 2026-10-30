@@ -903,6 +903,17 @@ Changes to the cited files:
   `doc/status.yaml` changes the rows of `canvas_ui.dart`, `canvas_ui_path.dart` and the new test
   file in place: no row of `doc/parity.md` moves. The tests of §2.6 and §3.5 and the estimates do
   not change. No trigger occurred.
+- 2026-10-30, form N5 of §7. `CircleBatch` of `lib/src/canvas/canvas_ui_batch.dart` gets a color
+  for each instance (`_colored`, `_colors`, `_atlasColors`, `_colorEach`): a run of fewer than 16
+  circles that meets a fill or a stroke of another color goes on, and `flush` draws it with white
+  sprites, the colors and `BlendMode.modulate`, or below 16 circles with `drawCircle` in the color
+  of each instance. A run of one color keeps its code. The file has 309 lines (43 lines more). This
+  plan cites no line of the file; the inventory row of `CircleBatch` names N5. §7.5 gets the
+  thresholds of the translucent strokes. `test/port/canvas/canvas_ui_native_test.dart` gets the
+  group of N5 (6 tests, 29 tests in all). `doc/status.yaml` changes the rows of `canvas_ui.dart`,
+  `canvas_ui_batch.dart` and the new test file in place: no row of `doc/parity.md` moves. The tests
+  of §2.6, among them the group "circle batch" of `canvas_ui_test.dart`, and the estimates do not
+  change. No trigger occurred.
 
 ## 1. Why
 
@@ -946,7 +957,7 @@ the estimate (§3.9).
 | `roundRect` of the interface: `CanvasPath.roundRect`, `RoundRectGeometry`, `roundRectGeometry` (the HTML steps 1 to 11), `Path2D.roundRect`, `RoundRectCommand` | `lib/src/canvas/canvas.dart:92-104`, `:107-253`, `:707-722`, `:970-992` | 199 | None. The pure layer has no `dart:ui`. | **Keep**. A performance addition (porting-flow.md §1.1). |
 | The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill` (with no draw call for a shape with no area, N2 of §7), `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:403-410`, `:566-602`, `:1285-1287`, `:1346-1373`, `:1411-1445`, `:1487-1491` | 115 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
 | N1 of §7: the save of the recording canvas only for a state with a clip of its own (`_begin`, `_ownsClips`, `save`, `restore`, the first save in `clip`), and `debugPendingCircles` | `canvas_ui.dart:561-564`, `:680-703`, `:990-1013`, `:1495-1502` | ~60 | None. A `ui.Canvas` has no state stack without its saves. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
-| `CircleBatch` | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
+| `CircleBatch`, with a color for each instance of a run that meets another color below 16 circles (N5 of §7) | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
 | Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:1780-1801` | ~30 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
 | `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:558-571` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
 | `UiCanvasElement.devicePixelRatio` and `logicalSize` | removed (`canvas_ui.dart:142`, `:175-192` at 69f9d97) | 0 | The host gives the paint scale | **Done** (C2): removed |
@@ -2033,6 +2044,14 @@ with the path built (`drawPath`) at two scales: at the device scale, no pixel di
 no pixel flips from opaque to transparent; at four times the scale, with the mean of each block of
 4 x 4 pixels, the worst channel differs by at most 24 of 255 and the inked areas by less than
 1 %.
+
+The runs of several colors of N5 compare with `drawCircle` at the centers of the batch, with the
+tolerance of 8 of 255 of the group "circle batch" of `canvas_ui_test.dart`. One case needs more: on
+flutter_tester, a stroke of 1 pixel in a translucent color blends some edge pixels twice where the
+pieces of its outline meet, and an opaque white stroke clamps them. Thus a white sprite times the
+color gives up to 13 of 255 less on these pixels than `drawCircle` and the colored sprite of a run
+of one color, and about 3.5 % less ink in each ring (a probe of 2026-10-30). The test of
+`globalAlpha` 0.5 has the tolerance 16 and no pixel that differs in area.
 
 ### 7.6 The night A/B (the rule is written now, 2026-10-30, before any run)
 

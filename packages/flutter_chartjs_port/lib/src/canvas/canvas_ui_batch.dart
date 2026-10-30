@@ -21,6 +21,14 @@
 /// host at a fractional device pixel, or under a scale, resamples the
 /// sprites and keeps the centers in place, as it does for the vector
 /// content of the bitmap.
+///
+/// A run of fewer than [minAtlasRun] circles that meets a fill or a stroke
+/// of another color goes on with a color for each instance
+/// (canvas-cuts-plan.md §7, N5): points with a scriptable color, for
+/// example. Such a run draws white sprites, and `drawRawAtlas` multiplies
+/// each one by the color of its instance (`BlendMode.modulate`): white
+/// times a color is that color. A run of one color keeps its colored
+/// sprites.
 library;
 
 import 'dart:collection';
@@ -107,22 +115,28 @@ ui.Image _sprite(_SpriteKey key, int cell) {
   return image;
 }
 
-/// A run of full-circle fills and strokes with one radius, one fill color,
-/// and one stroke color and width, in bitmap space.
+/// A run of full-circle fills and strokes with one radius and one stroke
+/// width, in bitmap space: with one fill color and one stroke color, or
+/// with a color for each instance.
 final class CircleBatch {
   double _radius = 0;
   ui.Color? _fill;
   ui.Color? _stroke;
   double _width = 0;
+  // The run has a color for each instance in [_colors].
+  bool _colored = false;
 
-  // For each instance: x, y (the center) and the kind (0 fill, 1 stroke).
+  // For each instance: x, y (the center), the kind (0 fill, 1 stroke) and,
+  // in a run with a color for each instance, the ARGB color.
   Float64List _xs = Float64List(256);
   Float64List _ys = Float64List(256);
   Uint8List _kinds = Uint8List(256);
+  Int32List _colors = Int32List(256);
 
-  // The transforms and the rects of one atlas call.
+  // The transforms, the rects and the colors of one atlas call.
   final Float32List _transforms = Float32List(maxAtlasInstances * 4);
   final Float32List _rects = Float32List(maxAtlasInstances * 4);
+  final Int32List _atlasColors = Int32List(maxAtlasInstances);
 
   final ui.Paint _fillPaint = ui.Paint();
   final ui.Paint _strokePaint = ui.Paint()..style = ui.PaintingStyle.stroke;
@@ -133,7 +147,8 @@ final class CircleBatch {
   int length = 0;
 
   /// Whether the run takes a fill ([stroke] false) or a stroke of a circle
-  /// with [radius] in [color] (and the stroke [width]).
+  /// with [radius] in [color] (and the stroke [width]). A run of fewer than
+  /// [minAtlasRun] circles takes another color (see [add]).
   bool accepts(
     double radius,
     ui.Color color, {
@@ -142,16 +157,16 @@ final class CircleBatch {
   }) {
     if (length == 0) return true;
     if (radius != _radius) return false;
-    if (stroke) {
-      final current = _stroke;
-      return current == null ||
-          (_width == width && (identical(current, color) || current == color));
-    }
-    final current = _fill;
-    return current == null || identical(current, color) || current == color;
+    final current = stroke ? _stroke : _fill;
+    if (current == null) return true;
+    if (stroke && _width != width) return false;
+    if (_colored || identical(current, color) || current == color) return true;
+    return length < minAtlasRun;
   }
 
-  /// Adds a fill or a stroke. The run must accept it (see [accepts]).
+  /// Adds a fill or a stroke. The run must accept it (see [accepts]). A
+  /// color that is not the color of the run for its kind gives each
+  /// instance of the run its color, and the run then takes any color.
   void add(
     double x,
     double y,
@@ -164,6 +179,13 @@ final class CircleBatch {
       _radius = radius;
       _fill = null;
       _stroke = null;
+      _colored = false;
+    }
+    if (!_colored) {
+      final current = stroke ? _stroke : _fill;
+      if (current != null && !identical(current, color) && current != color) {
+        _colorEach();
+      }
     }
     if (stroke) {
       _stroke = color;
@@ -175,7 +197,18 @@ final class CircleBatch {
     _xs[length] = x;
     _ys[length] = y;
     _kinds[length] = stroke ? 1 : 0;
+    if (_colored) _colors[length] = color.toARGB32();
     length++;
+  }
+
+  /// Gives each instance of the run the fill or the stroke color of the run.
+  void _colorEach() {
+    _colored = true;
+    final fill = _fill?.toARGB32() ?? 0;
+    final stroke = _stroke?.toARGB32() ?? 0;
+    for (var i = 0; i < length; i++) {
+      _colors[i] = _kinds[i] == 0 ? fill : stroke;
+    }
   }
 
   void _grow() {
@@ -183,6 +216,7 @@ final class CircleBatch {
     _xs = Float64List(size)..setRange(0, length, _xs);
     _ys = Float64List(size)..setRange(0, length, _ys);
     _kinds = Uint8List(size)..setRange(0, length, _kinds);
+    _colors = Int32List(size)..setRange(0, length, _colors);
   }
 
   /// Empties the run without a draw.
@@ -199,8 +233,14 @@ final class CircleBatch {
       _drawDirect(canvas, n);
       return;
     }
-    final fill = _fill?.toARGB32() ?? 0;
-    final stroke = _stroke?.toARGB32() ?? 0;
+    // A run with a color for each instance has white sprites, and the atlas
+    // multiplies them by the colors.
+    final colored = _colored;
+    const white = 0xFFFFFFFF;
+    final fill = colored ? (_fill == null ? 0 : white) : _fill?.toARGB32() ?? 0;
+    final stroke = colored
+        ? (_stroke == null ? 0 : white)
+        : _stroke?.toARGB32() ?? 0;
     final width = _stroke == null ? 0.0 : _width;
     final cell = (2 * (_radius + width / 2) + 4).ceil();
     final image = _sprite((_radius, fill, stroke, width), cell);
@@ -209,6 +249,7 @@ final class CircleBatch {
     const steps = subpixelSteps * 1.0;
     final transforms = _transforms;
     final rects = _rects;
+    final colors = _atlasColors;
     var j = 0;
     for (var i = 0; i < n; i++) {
       // The center in steps of 1 / subpixelSteps pixel: a whole pixel and
@@ -229,6 +270,7 @@ final class CircleBatch {
         ..[j + 1] = top
         ..[j + 2] = left + size
         ..[j + 3] = top + size;
+      if (colored) colors[j >> 2] = _colors[i];
       j += 4;
       if (j == transforms.length || i == n - 1) {
         final full = j == transforms.length;
@@ -236,8 +278,10 @@ final class CircleBatch {
           image,
           full ? transforms : Float32List.sublistView(transforms, 0, j),
           full ? rects : Float32List.sublistView(rects, 0, j),
-          null,
-          null,
+          colored
+              ? (full ? colors : Int32List.sublistView(colors, 0, j >> 2))
+              : null,
+          colored ? ui.BlendMode.modulate : null,
           null,
           _atlasPaint,
         );
@@ -247,6 +291,7 @@ final class CircleBatch {
   }
 
   void _drawDirect(ui.Canvas canvas, int n) {
+    final colored = _colored;
     final fill = _fill;
     if (fill != null) _fillPaint.color = fill;
     final stroke = _stroke;
@@ -256,11 +301,9 @@ final class CircleBatch {
         ..strokeWidth = _width;
     }
     for (var i = 0; i < n; i++) {
-      canvas.drawCircle(
-        ui.Offset(_xs[i], _ys[i]),
-        _radius,
-        _kinds[i] == 0 ? _fillPaint : _strokePaint,
-      );
+      final paint = _kinds[i] == 0 ? _fillPaint : _strokePaint;
+      if (colored) paint.color = ui.Color(_colors[i]);
+      canvas.drawCircle(ui.Offset(_xs[i], _ys[i]), _radius, paint);
     }
   }
 }
