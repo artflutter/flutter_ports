@@ -423,27 +423,31 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `lib/src/plugins/` (Chart.js ADRs 0038-0041 and 0050): the seven plugins of phase 8.
     `index.dart` (the port of `src/plugins/index.js`) exports the plugin objects `colors`,
     `decimation`, `filler`, `legend`, `subTitle`, `title` and `tooltip`, with the export names in
-    lowerCamelCase. Each plugin object is a mutable Map with the upstream keys in the upstream
-    order, and its hooks take the upstream parameter counts (Chart.js ADR 0038). The library exports
-    no class `Title`, `Legend` or `Tooltip`. `plugin.decimation.dart` and the files of
-    `plugin.filler/` are pure layers. The other plugin files are not: `plugin.title`,
-    `plugin.legend` and `plugin.subtitle` reach `helpers.extras`, `plugin.tooltip` imports
-    `core.animations`, and `plugin.colors` imports the controllers.
+    lowerCamelCase. Each plugin object is a typed `Plugin` of `lib/src/types/plugin.dart` with the
+    upstream keys in the upstream order; its hooks are private functions of the hook type `(chart,
+    args, options)` (Chart.js ADR 0054 §12). The plugins read their options through the facades of
+    the port-only pure `plugin_options.dart`. The library exports no class `Title`, `Legend` or
+    `Tooltip`. `plugin.decimation.dart`, `plugin_options.dart` and the files of `plugin.filler/` are
+    pure layers. The other plugin files are not: `plugin.title`, `plugin.legend` and
+    `plugin.subtitle` reach `helpers.extras`, `plugin.tooltip` imports `core.animations`, and
+    `plugin.colors` imports the controllers.
     - `plugin.colors.dart`: the plugin `colors` with the theme hunks H4a-H4c and H5 (Chart.js ADR
       0050). H5 reads the palette from the theme map of the chart through `chartThemeOf` of
       `core.config.dart`. The doughnut and polar area colorizers throw a `TypeError` for a `data`
-      that is not a List. The colorizers write into the dataset Map of the user: a Map with a narrow
-      value type or an unmodifiable Map throws (differences.md row `js-semantics-narrow-datasets`).
+      that is not a List. The colorizers write a typed dataset scope through its typed keys, and
+      the dataset Map of the user by name: a Map with a narrow value type or an unmodifiable Map
+      throws (differences.md row `js-semantics-narrow-datasets`).
     - `plugin.decimation.dart`: the plugin object `decimation`. The `data` accessor of
       `plugin.decimation.js:249-265` is a plain entry with the getter value, an `Expando` with the
       last value that the plugin wrote, and a sync before each use (Chart.js ADR 0038 §8, row
-      `adapt-decimation-data-accessor`). `lttbDecimation` and `minMaxDecimation` are `@internal`:
+      `adapt-decimation-data-accessor`). On a typed dataset scope, the accessor uses its typed keys
+      `_data` and `_decimated`. `lttbDecimation` and `minMaxDecimation` are `@internal`:
       the pure test `test/port/plugins/plugin.decimation_algorithms_test.dart` calls them. They read
       the data items with the JS operators (`jsAdd`, `jsToNumber`, `jsToInt32`, `jsLessThan`). Data
       that is not a List throws a `TypeError` (row `js-semantics-decimation-data`).
     - `plugin.filler/`: the 8 files of `src/plugins/plugin.filler/` (Chart.js ADR 0040).
-      `index.dart` has the plugin Map `filler` and the source class `FillerSource`; `meta.$filler`
-      is an extra property of the meta, read by name. The filler wraps each plain point of upstream
+      `index.dart` has the plugin `filler` and the source class `FillerSource`; `meta.$filler`
+      is the typed field of `types.ChartMetaFiller`. The filler wraps each plain point of upstream
       in a `PointElement` with only the properties of the plain object (row
       `adapt-line-points-elements`): the boundary points, the radial polygon, the edge objects of
       `segments` and the results of `interpolate` in the stack line (`stackResultPoint`; an Array
@@ -452,28 +456,31 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       not implement `types.LineElement`. `PointElement` stays the only implementer of the point
       interfaces in `lib/` (`test/port/plugins/plugin.filler/point_implementers_test.dart`).
     - `plugin.legend.dart`: `Legend` (extends `Element`, implements `types.LegendElement`,
-      `LayoutItem` and `TRBL`) with `Legend.jsClass`, and the plugin Map `legend`. The items, the
-      hit boxes (`legendHitBoxes`, also a port-only member of `types.LegendElement`, which the
-      keyboard of `ChartView` reads, Chart.js ADR 0051 §2) and the column sizes are Maps with the
-      upstream keys. The label options `boxWidth`,
-      `boxHeight`, `pointStyleWidth` and `padding` are numbers (row `adapt-legend-number-options`).
-      The default `onClick` gives the number of the property key of the raw `datasetIndex` to `hide`
-      and `show` (row `adapt-legend-dataset-index`).
-    - `plugin.subtitle.dart` has the plugin Map `subTitle` (no `_element`). Its box is a `Title` of
+      `LayoutItem` and `TRBL`) with `Legend.jsClass`, and the plugin `legend`. The items of the
+      built-in `generateLabels`, the hit boxes (`legendHitBoxes`, also a port-only member of
+      `types.LegendElement`, which the keyboard of `ChartView` reads, Chart.js ADR 0051 §2) and the
+      column sizes are `LegendItem`, `LegendHitBox` and `LegendColumnSize`: typed records with the
+      upstream keys and the face. An item of user code is read by name. The label options
+      `boxWidth`, `boxHeight`, `pointStyleWidth` and `padding` are numbers (row
+      `adapt-legend-number-options`). The default `onClick` gives the number of the property key
+      of the raw `datasetIndex` to `hide` and `show` (row `adapt-legend-dataset-index`).
+    - `plugin.subtitle.dart` has the plugin `subTitle` (no `_element`). Its box is a `Title` of
       `plugin.title.dart`, and the `WeakMap` of upstream is a file-private `Expando<Title>`
       (Chart.js ADR 0038 §5).
     - `plugin.title.dart` has `Title` (`extends Element implements LayoutItem`, the class value
-      `Title.jsClass` with the superclass `Element.jsClass`) and the plugin Map `title`. The box
+      `Title.jsClass` with the superclass `Element.jsClass`) and the plugin `title`. The box
       fields start as NaN, `undefined` and `false`. `draw` takes an optional chart area.
       `chart.titleBlock` is a field of `types.Chart`: Dart `null` is the JS `undefined` (Chart.js
       ADR 0038).
     - `plugin.tooltip.dart` has `Tooltip extends Element implements types.TooltipModel`, the
       positioners Map (`Tooltip.positioners`, the static of `Tooltip.jsClass` and the plugin key
-      `positioners` are one Map), the default callbacks and the plugin Map `tooltip` (Chart.js ADR
-      0039). The access by name covers its 28 own names and `_ignoreReplayEvents`: `operator []`
-      and `operator []=` handle the 24 names that `Element` does not handle. `update` is a field
-      that holds a function (row `harness-method-fields`). The hooks cast `chart.tooltip` to
-      `Tooltip`.
+      `positioners` are one Map), the default callbacks and the plugin `tooltip` (Chart.js ADR
+      0039). The tooltip items, body items, label colors, label point styles and positions are typed
+      records (`TooltipItem`, `TooltipBodyItem`, `TooltipLabelStyle`, `TooltipLabelPointStyle`,
+      `TooltipPosition`); `invokeCallbackWithFallback` takes an `OptionKey`. The access by name
+      covers its 28 own names and `_ignoreReplayEvents`: `operator []` and `operator []=` handle
+      the 24 names that `Element` does not handle. `update` is a field that holds a function (row
+      `harness-method-fields`). The hooks cast `chart.tooltip` to `Tooltip`.
   - `lib/src/scales/`: the six scales of `scales/index.dart` and `scale.linearbase.dart`
     (`LinearScaleBase`: not exported, not registered). They are not pure layers: each imports
     `core.scale`. The value methods take any JS value (`Object?`). The category, linear and
