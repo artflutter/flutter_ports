@@ -312,6 +312,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       at `core.scale.js:15`. `core.scale.dart` and `core.scale.autoskip.dart` are not pure layers:
       `core.scale` imports `helpers.extras`, and `core.scale.autoskip` imports `core.scale`.
       `Scale` implements `MinMax`. Its value methods take `Object?` (Chart.js ADR 0025).
+    - `scale_options.dart` (port-only, pure through `core.ticks`) has the typed facades of the
+      scale options (Chart.js ADR 0054 §4): extension types over the `OptionView` of a scale.
+      `Scale.options` is a `CoreScaleOptions`, and each scale class narrows it to the facade of
+      its type. A getter gives the raw JS value, and the readers keep their JS operators. A
+      nested facade (`TickOptions`, …) holds any JS value and reads with `readOption`.
     - `core.datasetController.dart` has `DatasetController`, with the mixin `ArrayListener` and
       the class value `DatasetController.jsClass` (Chart.js ADR 0020). `_update` is `update_`, and
       `_getSharedOptions` is `getSharedOptions_` (Chart.js ADR 0023). `cloneIfNotShared` and
