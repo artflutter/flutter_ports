@@ -9,8 +9,9 @@ Why ports instead of wrappers, and what already exists on pub.dev: [docs/prior-a
 For the D3 packages, see the [D3 prior-art survey](packages/flutter_d3_port/doc/prior-art/README.md).
 For the ECharts packages, see the [ECharts prior-art survey](packages/flutter_echarts_port/doc/prior-art/README.md).
 
-> **Status:** early. The Chart.js port is scaffolded and nothing renders yet. Nothing is
-> published to pub.dev yet.
+> **Status:** The Chart.js port has the eight chart types, the six scales and the seven plugins of
+> Chart.js v4.6.1, with the Flutter widget `ChartView`, a theme API, keyboard and semantics
+> support, and reduced motion. Nothing is published to pub.dev yet.
 > The D3 port is in phase 0: the package, the 34 pinned submodules and the design. It has no
 > ported code.
 > The ECharts port is in phase 0: the package, the two pinned submodules (Apache ECharts and

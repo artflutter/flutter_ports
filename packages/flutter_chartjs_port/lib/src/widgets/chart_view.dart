@@ -54,12 +54,35 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 /// `SizedBox` or an `Expanded`, set `maintainAspectRatio: false`.
 ///
 /// Callbacks: the options `onHover`, `onClick` and `onResize` and the plugin
-/// hooks are function values in [config]. The table of the phases where a
-/// callback can call `setState` is in Chart.js ADR 0049 §6. The hooks of
-/// the start (`install`, `start`, `beforeInit`, `afterInit`, the first
-/// update and the first `onResize`) run in the layout of the host: there, a
-/// callback must not call `setState`, and it calls
-/// `WidgetsBinding.instance.addPostFrameCallback` instead.
+/// hooks are function values in [config]. Each callback runs in one phase,
+/// and only some phases allow `setState` (the table of Chart.js ADR 0049
+/// §6, one item for each row):
+///
+/// * `onHover`, `onClick`, and the plugin hooks `beforeEvent` and
+///   `afterEvent` of an input: a throttled frame callback. `setState` is
+///   allowed.
+/// * `onResize` and the plugin hook `resize` after a size change: a
+///   throttled frame callback. Allowed.
+/// * `onProgress` and `onComplete` of an animation, and the plugin hook
+///   `afterRender`: a frame callback of the animator. Allowed.
+/// * All hooks of an update of the widget (a new [config], theme or
+///   reduced-motion preference), and the `onHover` that the update
+///   replays: a post-frame callback. Allowed.
+/// * [onChartCreated]: a post-frame callback. Allowed.
+/// * The start: the plugin hooks `install`, `start`, `beforeInit` and
+///   `afterInit`, the hooks and the scriptable options of the first update,
+///   the first `onResize` and `resize`, and the `onComplete` of a first
+///   render with no animation (each first render under reduced motion): the
+///   first layout of the host. Not allowed.
+/// * The plugin hooks `attach` and `detach` of an attach change or a canvas
+///   swap: a layout or a build. Not allowed.
+/// * The plugin hooks `beforeDestroy`, `afterDestroy`, `stop` and
+///   `uninstall` at the unmount: `dispose`. Not allowed.
+///
+/// In a phase that does not allow `setState`, a callback calls
+/// `WidgetsBinding.instance.addPostFrameCallback` and calls `setState`
+/// there. In debug mode, a `setState` call in the start fails with "Build
+/// scheduled during frame.", and the chart does not start.
 ///
 /// Theme: [theme], or the [ChartTheme] above, themes the chart (Chart.js
 /// ADR 0050). Chart.js options beat each key of the theme. A new theme
@@ -92,7 +115,8 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 /// Reduced motion: when `MediaQuery.disableAnimations` is true, the chart
 /// animates nothing (Chart.js ADR 0049, section 7). Each update, hover,
 /// tooltip and theme switch then goes to its end values at once. The
-/// resolved options stay, and `onComplete` runs once for each render. When
+/// resolved options stay, and `onComplete` runs once for each render: for
+/// the first render, in the start, where it must not call `setState`. When
 /// the preference turns on, the chart updates after the frame, and a
 /// running animation ends at its target. When it turns off, the next update
 /// animates. For motion under the preference, wrap the chart in a

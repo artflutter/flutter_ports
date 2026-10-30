@@ -13,7 +13,7 @@ This document gives the design behind Chart.js ADR 0050, which states the comple
 Chart.js ADR 0042 with the public API. Chart.js ADR 0042 decided the mechanism of section 3.
 Section 5 gives the public API of Chart.js ADR 0050 (phase 9).
 
-Upstream paths are relative to `third_party/Chart.js` (v4.5.1, `9c5cf9f`). forui citations use
+Upstream paths are relative to `third_party/Chart.js` (v4.6.1, `76d8cf89`). forui citations use
 the form `forui/0.27.6:<path>:<line>` of the [survey](prior-art/forui-theming.md).
 
 **Decision (Chart.js ADR 0042, which restates Chart.js ADR 0001)**
@@ -32,7 +32,7 @@ the form `forui/0.27.6:<path>:<line>` of the [survey](prior-art/forui-theming.md
 
 Goals:
 
-1. **No theme means upstream:** unthemed specs and fixtures behave like v4.5.1.
+1. **No theme means upstream:** unthemed specs and fixtures behave like the pin (v4.6.1).
 2. **A small, replayable diff:** the hunks only add lines. No hunk changes an upstream line
    (Chart.js ADR 0042).
 3. **Familiar to forui users:** an inherited theme, value equality, `copyWith`, `lerp`, presets.

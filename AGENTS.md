@@ -416,6 +416,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     - `chart_keyboard.dart` has `ChartKeyboard` (Chart.js ADR 0051): the keys move a virtual mouse
       over the legend hit boxes (through `types.LegendElement`) and the data elements, and send
       `mousemove`, `mousedown`, `mouseup`, `click` and `mouseout` `NativeEvent`s to the canvas.
+      When `options.events` lists `keydown`, `keypress` or `keyup`, it also sends these key events
+      with NaN offsets (Chart.js ADR 0051 §5).
     - `test/port/widgets/` (VM only): `chart_view_test.dart` (the start, the life cycle and the
       keys, the diagnostics, the update, the size, the callbacks and reduced motion),
       `chart_view_unregistered_test.dart` (it calls `removeBuiltins()` first in `main()`),
@@ -488,9 +490,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       still gets a new ADR that supersedes the old one. Chart.js ADR 0044 (the stack fill search)
       is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result.
       Chart.js ADRs 0047 (the published archive) and 0051 (input events and interaction state) are
-      proposed. Chart.js ADR 0047 waits for the publish dry run of the release, and Chart.js ADR
-      0051 for the night series B-N1. The other ADRs are accepted. Docs name them "Chart.js ADR
-      NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
+      proposed. Chart.js ADR 0047 waits for the pana score of the release (its Open item 1), and
+      Chart.js ADR 0051 for the night series B-N1. The other ADRs are accepted. Docs name them
+      "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a file of
       `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
       `packages/flutter_echarts_port/doc/adr/`. An accepted ADR does not change. A changed decision
       gets a new ADR that states the complete decision and supersedes the old ADR.
@@ -580,10 +582,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the height, with `maintainAspectRatio: false`. The keys `core.host` and `axes.host` are on the
     box.
   - The gallery imports the app library `package:flutter_chartjs_port/flutter_chartjs_port.dart`,
-    and `helpers.dart` with a `show` list. A file of `lib/` with an import of
-    `package:flutter_chartjs_port/src/` has `// ignore_for_file: implementation_imports` after the
-    line `// The reason of each import of lib/src is the comment above it.`, and one reason line
-    above each such import. A test file has only the reason lines: the lint reports only `lib/`.
+    and `helpers.dart` with a `show` list. `lib/demo/elements_demo.dart` also imports
+    `package:flutter_chartjs_port/chartjs.dart` `as chartjs show Element`. A file of `lib/` with an
+    import of `package:flutter_chartjs_port/src/` has `// ignore_for_file: implementation_imports`
+    after the line `// The reason of each import of lib/src is the comment above it.`, and one
+    reason line above each such import. A test file has only the reason lines: the lint reports
+    only `lib/`.
     `lib/demo/demo_common.dart` has `jsNumberText`, the JS text of a number for the readouts.
   - `lib/demo/chart_canvas.dart` hosts a real chart for the stress host `HOST=canvas` (the side A
     of the night series A-N1 of Chart.js ADR 0049) and for `_StressChart`, a chart class that
@@ -599,8 +603,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the parts `elements`, `layout`, `datasetsUpdate` and `datasetsDraw`. `lib/main_stress.dart` is
     the profiling entry. In the modes `chart`, `axes` and `plugins`, its define `HOST` selects the
     host: `canvas` (`ChartCanvas`, the default) or `view` (`ChartView`). `BATCHES` (15) splits the
-    timed window into batches, and each `STRESS` line has the key `host` and the batch figures
-    `buildP50Ms`, `buildP90Ms`, `rasterP50Ms` and `rasterP90Ms`. Its defines `SEMANTICS` and
+    timed window into batches, and each `STRESS` line has the batch figures `buildP50Ms`,
+    `buildP90Ms`, `rasterP50Ms` and `rasterP90Ms`. Only the `STRESS` lines of the modes `chart`,
+    `axes` and `plugins` have the key `host`. Its defines `SEMANTICS` and
     `WINDOWS` serve the night series B-N1 of
     phase 9: `SEMANTICS=1` turns the semantics on, and `WINDOWS=1` prints a line
     `STRESS_WINDOW {json}` for each window of 1 second. With `SEMANTICS` (0 or 1), the toolbar and

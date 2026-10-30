@@ -7,7 +7,8 @@ JavaScript engine and no network access at runtime, and the same code runs on ev
 platform.
 
 This is not a wrapper. Packages such as [`chartjs_flutter`](https://pub.dev/packages/chartjs_flutter)
-run the JavaScript Chart.js in a WebView. The
+run the JavaScript Chart.js in a WebView on Android and iOS, or in a DOM canvas in an
+`HtmlElementView` on the web. The
 [prior-art survey](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_port/doc/prior-art/README.md)
 compares the existing Chart.js packages.
 
@@ -22,7 +23,11 @@ compares the existing Chart.js packages.
 - Animations, hover, tooltips and legend clicks with a mouse, a touch screen or the keyboard.
 - A theme API with light and dark presets, a semantics node for screen readers, and reduced
   motion.
-- Android, iOS, web (JavaScript and WebAssembly builds), macOS, Windows and Linux.
+- Plain Dart and Flutter code with no platform code, so it builds for each Flutter platform:
+  Android, iOS, web (JavaScript and WebAssembly builds), macOS, Windows and Linux. The CI of the
+  repository runs the tests with `flutter test` on Linux, macOS and Windows, and in Chrome with
+  dart2js and dart2wasm. It builds the gallery app for the web (WebAssembly), Android and iOS. The
+  gallery also runs on macOS. No app build runs on Windows or Linux yet.
 
 Each source file of Chart.js has a row in the
 [parity tracker](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_port/doc/parity.md).
@@ -101,15 +106,20 @@ plugins) and `platform`. The output of `jsonDecode` works too. Write the options
 - **A configuration is never `const`.** Chart.js writes into the `data` and `options` Maps of the
   configuration when it starts the chart (`initConfig` of `core.config.js`). A `const` Map
   cannot change, so the chart fails to start with `Unsupported operation: Cannot modify
-  unmodifiable map`. The lint `prefer_const_literals_to_create_immutables` asks for `const` when
-  you write the Map literal straight into `ChartView(config: {...})`. Build the Map in a variable,
-  a field of the `State` or a function instead.
+  unmodifiable map`. If your lint set enables `prefer_const_literals_to_create_immutables` (for
+  example `very_good_analysis`), the lint asks for `const` when you write the Map literal straight
+  into `ChartView(config: {...})`. Build the Map in a variable, a field of the `State` or a
+  function instead.
 - **A nested Map has the type `Map<String, Object?>`.** Chart.js also writes into the dataset
   Maps: the `colors` plugin writes `borderColor` and `backgroundColor`, and the `decimation`
   plugin writes `data`. A Map literal with a narrower inferred type, for example
   `{'data': [1, 2, 3]}` (a `Map<String, List<int>>`), throws a `TypeError` at that write. Write
-  `<String, Object?>{...}` for each nested Map. A label List must be growable: Chart.js adds a
-  string label to it when a data value names a new category.
+  `<String, Object?>{...}` for each nested Map.
+- **A label List is growable and takes a `String`.** Chart.js adds a string label to it when a
+  data value or a `min` or `max` option names a new category. A growable list of strings works.
+  For labels that are not strings, for example numbers or multi-line labels, write
+  `<Object?>[...]`: a `List<int>` or a `List<List<String>>` throws a `TypeError` at the add, and a
+  `const`, unmodifiable or fixed-length List throws an `UnsupportedError`.
 - **Callbacks are Dart functions.** Give `onClick`, `onHover`, `onResize`, the animation
   callbacks, the tick callbacks and the scriptable options as functions in the options. A
   function can declare fewer parameters than Chart.js passes, as in JavaScript:
@@ -189,12 +199,23 @@ In a `Row`, the width is unbounded: put the chart in an `Expanded` or give it a 
 
 ### Callbacks and `setState`
 
-A callback of an input or of a frame can call `setState`: `onHover`, `onClick`, `onResize`
-after a size change, the animation callbacks, the hooks of an update of the widget, and
-`onChartCreated`. The hooks of the start run in the layout of the chart: `install`, `start`,
-`beforeInit`, `afterInit`, the hooks of the first update, the scriptable options of the first
-update and the first `onResize`. There, a callback must not call `setState`. Call
-`WidgetsBinding.instance.addPostFrameCallback` instead.
+Each callback of a chart runs in one phase of the Flutter frame, and only some phases allow
+`setState`:
+
+| Callback | Phase | `setState` |
+|---|---|---|
+| `onHover`, `onClick`, and the plugin hooks `beforeEvent` and `afterEvent` of an input | a frame callback after the input | allowed |
+| `onResize` and the plugin hook `resize` after a size change | a frame callback | allowed |
+| `onProgress` and `onComplete` of an animation, and the plugin hook `afterRender` | a frame callback of the animator | allowed |
+| all hooks of an update of the widget (a new `config`, a new theme or a new reduced-motion setting), and the `onHover` that the update replays | a post-frame callback | allowed |
+| `onChartCreated` | a post-frame callback | allowed |
+| the start of the chart: the plugin hooks `install`, `start`, `beforeInit` and `afterInit`, the hooks and the scriptable options of the first update, the first `onResize` and `resize`, and the `onComplete` of a first render with no animation (each first render under [reduced motion](#reduced-motion)) | the first layout of the chart | not allowed |
+| the plugin hooks `attach` and `detach` when the chart attaches to or detaches from its host | a layout or a build | not allowed |
+| the plugin hooks `beforeDestroy`, `afterDestroy`, `stop` and `uninstall` when the widget leaves the tree | `dispose` | not allowed |
+
+In a phase that does not allow `setState`, call `WidgetsBinding.instance.addPostFrameCallback`
+and call `setState` in its callback. In debug mode, a `setState` call in the start fails with
+`Build scheduled during frame.`, and the chart does not start.
 
 ### Theming
 
@@ -210,7 +231,7 @@ MaterialApp(
         : const ChartThemeData.light(),
     child: child!,
   ),
-  home: const VotesPage(),
+  home: const Scaffold(body: VotesChart()),
 );
 ```
 
@@ -247,8 +268,10 @@ as a Chart.js canvas with `role="img"` and `aria-label`. Give each chart a label
 
 When `MediaQuery.disableAnimations` is true (for example when the platform setting to reduce
 motion is on), the chart animates nothing: each update, hover, tooltip and theme switch goes to
-its end values at once, and `onComplete` runs once for each render. For motion under the
-setting, wrap the chart in a `MediaQuery` with `disableAnimations: false`.
+its end values at once, and `onComplete` runs once for each render. The `onComplete` of the
+first render then runs in the start of the chart, where it must not call `setState`
+([Callbacks and `setState`](#callbacks-and-setstate)). For motion under the setting, wrap the
+chart in a `MediaQuery` with `disableAnimations: false`.
 
 ## Libraries
 
@@ -279,7 +302,8 @@ app reads. These differences are visible to an app:
 - **Numbers.** Tick labels and tooltips format numbers with `NumberFormat` of package:intl. A few
   strings differ from `Intl.NumberFormat` of a browser, for example in compact notation.
 - **Dart collections.** A dataset Map has the type `Map<String, Object?>`, a label List is
-  growable, and a configuration is never `const` ([The configuration](#the-configuration)).
+  growable and takes a `String` (`<Object?>[...]` for labels that are not strings), and a
+  configuration is never `const` ([The configuration](#the-configuration)).
 - **Data changes.** A `push`, `pop`, `shift`, `splice` or `unshift` on a data List needs
   `notifyArrayListeners` ([Updates](#updates)).
 - **No DOM and no CSS.** The CSS of the canvas and of its container (margins, paddings, borders,

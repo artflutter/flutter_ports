@@ -767,6 +767,13 @@ Changes to the cited files:
   0049 §4); this plan does not cite it. The `parity.md` rows that this plan cites do not change.
   The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not
   change. No trigger occurred.
+- 2026-10-30, the review fixes of the release docs (phase 9). `doc/porting-flow.md` changes the
+  heading of §2.11 and the row 2.11 of the §2 table in place: no line moves. The text of §2.2, of
+  §2.7 and of the cited rows does not change. `lib/src/widgets/chart_view.dart` gets the callback
+  table of Chart.js ADR 0049 §6 in its dartdoc; this plan does not cite it. The package README,
+  `AGENTS.md`, `doc/theming.md` and Chart.js ADR 0049 change text that this plan does not cite.
+  The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not
+  change. No trigger occurred.
 
 ## 1. Why
 

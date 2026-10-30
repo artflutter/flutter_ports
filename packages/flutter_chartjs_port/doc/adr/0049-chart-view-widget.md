@@ -178,10 +178,10 @@ rule of Chart.js ADR 0016:348 then also covers the start hooks (section 6).
     Maps give new metas, as upstream;
   - a nested Map literal of a config needs the type `<String, Object?>`: the chart writes into it;
   - a config is never `const`: `initConfig` writes into `data` and `options`
-    (`src/core/core.config.js@v4.6.1:115-126`), so a `const` config fails the start with an
-    `UnsupportedError`. The lint `prefer_const_literals_to_create_immutables` asks for `const` on
-    a Map literal in `ChartView(config: {...})`. Thus the app builds the Map in a variable, a
-    field or a function;
+    (`src/core/core.config.js@v4.6.1:129-136`, through `initOptions` and `initData` at
+    `:115-127`), so a `const` config fails the start with an `UnsupportedError`. The lint
+    `prefer_const_literals_to_create_immutables` asks for `const` on a Map literal in
+    `ChartView(config: {...})`. Thus the app builds the Map in a variable, a field or a function;
   - a parent that rebuilds in each frame keeps its config in its `State`, or uses
     `updateMode: 'none'`;
   - an `onHover` that calls `setState` compares the value first;
