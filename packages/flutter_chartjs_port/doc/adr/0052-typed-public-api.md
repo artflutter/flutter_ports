@@ -280,8 +280,9 @@ Update. A new `ChartConfig` that is not `==` to the last one reconciles with the
   use it, or (R3) the 9 chart types of the gallery need it. Four corrections of the judge apply:
   1. The bar `borderRadius` is a `double`, not a `BorderRadius` (t-b P5). The docs sample uses the
      number (`U/docs/samples/bar/border-radius.md:32`, `:41`).
-  2. The `cutout` and `radius` of pie and doughnut take `ChartLength` (`U/src/types/index.d.ts:319`).
-     A doughnut API without its cutout fails the doughnut docs config of the gallery.
+  2. The `cutout` and `radius` of pie and doughnut take `ChartLength`
+     (`U/src/types/index.d.ts:319`, `:330`). A doughnut API without its cutout fails the doughnut
+     docs config of the gallery.
   3. `labels` is `List<Object>`: strings, numbers, `DateTime` values and multi-line `List<String>`
      items.
   4. Each dataset has `Key? key` (section 3). It does not lower.
@@ -428,12 +429,12 @@ The libraries:
   analyzer rejects the wrong type at `ChartView`, and the dartdoc of each names the other.
 - `check:lib-imports` gets an allowlist for `lib/src/typed/`: `dart:ui`,
   `package:flutter/foundation.dart`, `package:flutter/painting.dart`, `package:meta/meta.dart`,
-  `lib/src/types/`, `lib/src/core/core.controller.dart` (`Chart`), `lib/src/core/core.scale.dart`
-  (`Scale`, `Tick`), `lib/src/js/js_function.dart`, `lib/src/js/js_number.dart`
-  (`jsNumberToString`), `lib/src/js/js_undefined.dart` and `lib/src/theme/css.dart`. No file of
-  `lib/src/typed/` imports `controllers/`, `scales/`, `elements/` or `plugins/`: the typed API
-  writes keys, not components, so the tree shaking of Chart.js ADR 0048 §3 stays. Ported files
-  never import `lib/src/typed/`.
+  `lib/src/types/` (also `Tick`), `lib/src/core/core.controller.dart` (`Chart`),
+  `lib/src/core/core.scale.dart` (`Scale`), `lib/src/js/js_function.dart`,
+  `lib/src/js/js_number.dart` (`jsNumberToString`), `lib/src/js/js_undefined.dart` and
+  `lib/src/theme/css.dart`. No file of `lib/src/typed/` imports `controllers/`, `scales/`,
+  `elements/` or `plugins/`: the typed API writes keys, not components, so the tree shaking of
+  Chart.js ADR 0048 §3 stays. Ported files never import `lib/src/typed/`.
 
 ### 9. `ChartView`
 
@@ -479,9 +480,9 @@ final Map<String, Object?>? rawConfig;  // the raw config, every rule of Chart.j
 ### 10. The index parameters of `Chart`
 
 A user who gets `hit.datasetIndex` (an `int`) cannot call `chart.hide(hit.datasetIndex)` with a
-`double` parameter. The gallery shows the friction: `apps/chartjs_gallery/lib/demo/core_demo.dart:435`
-(`chart.isDatasetVisible(d * 1.0)`) and `lib/charts/chart_type_page.dart:81`
-(`getDatasetMeta(i.toDouble())`).
+`double` parameter. The gallery shows the friction:
+`apps/chartjs_gallery/lib/demo/core_demo.dart:435` (`chart.isDatasetVisible(d * 1.0)`) and
+`lib/charts/chart_type_page.dart:81` (`getDatasetMeta(i.toDouble())`).
 
 - In 0.1.0, these 6 methods of `Chart` take `num` at the public boundary: `getDatasetMeta(num)`,
   `isDatasetVisible(num)`, `setDatasetVisibility(num, bool)`, `getDataVisibility(num)`,
@@ -704,7 +705,7 @@ The working files of the phase 10 design panel in `.handover/phase10/panel/` (no
   `src/core/core.scale.js:574`; `src/plugins/plugin.tooltip.js:447-455`;
   `src/plugins/plugin.colors.ts:35-52`; `src/plugins/plugin.filler/filler.options.js:120-137`;
   `src/elements/element.bar.js:54-71`; `src/scales/scale.category.js:4-12`;
-  `src/helpers/helpers.easing.ts:12-122`; `src/types/index.d.ts:319`, `:516-521`, `:770-799`,
-  `:1844`, `:2040-2053`, `:2300`, `:3926-3931`; `src/types/layout.d.ts:3`;
+  `src/helpers/helpers.easing.ts:12-122`; `src/types/index.d.ts:319`, `:330`, `:516-521`,
+  `:770-799`, `:1844`, `:2040-2053`, `:2300`, `:3926-3931`; `src/types/layout.d.ts:3`;
   `docs/developers/updates.md:11-15`; `docs/samples/bar/border-radius.md:32`, `:41`;
   `docs/charts/mixed.md`.
