@@ -29,6 +29,12 @@ enum OptionKey {
   /// The key `_allKeys`.
   descAllKeys('_allKeys'),
 
+  /// The key `_data`.
+  descData('_data'),
+
+  /// The key `_decimated`.
+  descDecimated('_decimated'),
+
   /// The key `_fallback`.
   descFallback('_fallback'),
 
@@ -1037,6 +1043,8 @@ OptionKey? optionKeyOf(String name) => switch (name) {
   r'$shared' => OptionKey.dollarShared,
   r'$theme' => OptionKey.dollarTheme,
   '_allKeys' => OptionKey.descAllKeys,
+  '_data' => OptionKey.descData,
+  '_decimated' => OptionKey.descDecimated,
   '_fallback' => OptionKey.descFallback,
   '_indexable' => OptionKey.descIndexable,
   '_scriptable' => OptionKey.descScriptable,

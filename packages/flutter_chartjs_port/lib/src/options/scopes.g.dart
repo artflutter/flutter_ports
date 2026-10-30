@@ -8125,6 +8125,42 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
     classify(OptionKey.dataElementType, value),
   );
 
+  Opt<Object>? _descData;
+
+  /// The cell of `_data`, or Dart `null` when absent.
+  Opt<Object>? get descDataCell => _descData;
+
+  /// Stores the cell of `_data`. Dart `null` deletes the key.
+  set descDataCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descData);
+    } else {
+      store(OptionKey.descData, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_data`.
+  set descData(Object value) =>
+      store(OptionKey.descData, classify(OptionKey.descData, value));
+
+  Opt<Object>? _descDecimated;
+
+  /// The cell of `_decimated`, or Dart `null` when absent.
+  Opt<Object>? get descDecimatedCell => _descDecimated;
+
+  /// Stores the cell of `_decimated`. Dart `null` deletes the key.
+  set descDecimatedCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descDecimated);
+    } else {
+      store(OptionKey.descDecimated, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_decimated`.
+  set descDecimated(Object value) =>
+      store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
+
   @override
   Opt<Object?>? cellOf(OptionKey key) => switch (key) {
     OptionKey.parsing => _parsing,
@@ -8168,6 +8204,8 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => _elements,
     OptionKey.datasetElementType => _datasetElementType,
     OptionKey.dataElementType => _dataElementType,
+    OptionKey.descData => _descData,
+    OptionKey.descDecimated => _descDecimated,
     _ => null,
   };
 
@@ -8256,6 +8294,10 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
         _datasetElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
       case OptionKey.dataElementType:
         _dataElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
+      case OptionKey.descData:
+        _descData = fitCell(cell, (raw) => classifyUnion(raw, 64));
+      case OptionKey.descDecimated:
+        _descDecimated = fitCell(cell, (raw) => classifyUnion(raw, 64));
       default:
         throw ArgumentError.value(
           key,
@@ -8307,7 +8349,9 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
     OptionKey.drawActiveElementsOnTop ||
     OptionKey.elements ||
     OptionKey.datasetElementType ||
-    OptionKey.dataElementType => true,
+    OptionKey.dataElementType ||
+    OptionKey.descData ||
+    OptionKey.descDecimated => true,
     _ => false,
   };
 
@@ -8354,6 +8398,8 @@ base class BarControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
     OptionKey.datasetElementType => classifyUnion(raw, 6),
     OptionKey.dataElementType => classifyUnion(raw, 6),
+    OptionKey.descData => classifyUnion(raw, 64),
+    OptionKey.descDecimated => classifyUnion(raw, 64),
     _ => kind.classifyOther(raw),
   };
 }
@@ -9357,6 +9403,42 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
     classify(OptionKey.dataElementType, value),
   );
 
+  Opt<Object>? _descData;
+
+  /// The cell of `_data`, or Dart `null` when absent.
+  Opt<Object>? get descDataCell => _descData;
+
+  /// Stores the cell of `_data`. Dart `null` deletes the key.
+  set descDataCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descData);
+    } else {
+      store(OptionKey.descData, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_data`.
+  set descData(Object value) =>
+      store(OptionKey.descData, classify(OptionKey.descData, value));
+
+  Opt<Object>? _descDecimated;
+
+  /// The cell of `_decimated`, or Dart `null` when absent.
+  Opt<Object>? get descDecimatedCell => _descDecimated;
+
+  /// Stores the cell of `_decimated`. Dart `null` deletes the key.
+  set descDecimatedCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descDecimated);
+    } else {
+      store(OptionKey.descDecimated, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_decimated`.
+  set descDecimated(Object value) =>
+      store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
+
   @override
   Opt<Object?>? cellOf(OptionKey key) => switch (key) {
     OptionKey.parsing => _parsing,
@@ -9413,6 +9495,8 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => _elements,
     OptionKey.datasetElementType => _datasetElementType,
     OptionKey.dataElementType => _dataElementType,
+    OptionKey.descData => _descData,
+    OptionKey.descDecimated => _descDecimated,
     _ => null,
   };
 
@@ -9530,6 +9614,10 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
         _datasetElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
       case OptionKey.dataElementType:
         _dataElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
+      case OptionKey.descData:
+        _descData = fitCell(cell, (raw) => classifyUnion(raw, 64));
+      case OptionKey.descDecimated:
+        _descDecimated = fitCell(cell, (raw) => classifyUnion(raw, 64));
       default:
         throw ArgumentError.value(
           key,
@@ -9594,7 +9682,9 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
     OptionKey.drawActiveElementsOnTop ||
     OptionKey.elements ||
     OptionKey.datasetElementType ||
-    OptionKey.dataElementType => true,
+    OptionKey.dataElementType ||
+    OptionKey.descData ||
+    OptionKey.descDecimated => true,
     _ => false,
   };
 
@@ -9654,6 +9744,8 @@ base class LineControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
     OptionKey.datasetElementType => classifyUnion(raw, 6),
     OptionKey.dataElementType => classifyUnion(raw, 6),
+    OptionKey.descData => classifyUnion(raw, 64),
+    OptionKey.descDecimated => classifyUnion(raw, 64),
     _ => kind.classifyOther(raw),
   };
 }
@@ -10266,6 +10358,42 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
     classify(OptionKey.dataElementType, value),
   );
 
+  Opt<Object>? _descData;
+
+  /// The cell of `_data`, or Dart `null` when absent.
+  Opt<Object>? get descDataCell => _descData;
+
+  /// Stores the cell of `_data`. Dart `null` deletes the key.
+  set descDataCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descData);
+    } else {
+      store(OptionKey.descData, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_data`.
+  set descData(Object value) =>
+      store(OptionKey.descData, classify(OptionKey.descData, value));
+
+  Opt<Object>? _descDecimated;
+
+  /// The cell of `_decimated`, or Dart `null` when absent.
+  Opt<Object>? get descDecimatedCell => _descDecimated;
+
+  /// Stores the cell of `_decimated`. Dart `null` deletes the key.
+  set descDecimatedCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descDecimated);
+    } else {
+      store(OptionKey.descDecimated, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_decimated`.
+  set descDecimated(Object value) =>
+      store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
+
   @override
   Opt<Object?>? cellOf(OptionKey key) => switch (key) {
     OptionKey.parsing => _parsing,
@@ -10301,6 +10429,8 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => _elements,
     OptionKey.datasetElementType => _datasetElementType,
     OptionKey.dataElementType => _dataElementType,
+    OptionKey.descData => _descData,
+    OptionKey.descDecimated => _descDecimated,
     _ => null,
   };
 
@@ -10373,6 +10503,10 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
         _datasetElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
       case OptionKey.dataElementType:
         _dataElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
+      case OptionKey.descData:
+        _descData = fitCell(cell, (raw) => classifyUnion(raw, 64));
+      case OptionKey.descDecimated:
+        _descDecimated = fitCell(cell, (raw) => classifyUnion(raw, 64));
       default:
         throw ArgumentError.value(
           key,
@@ -10416,7 +10550,9 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
     OptionKey.fill ||
     OptionKey.elements ||
     OptionKey.datasetElementType ||
-    OptionKey.dataElementType => true,
+    OptionKey.dataElementType ||
+    OptionKey.descData ||
+    OptionKey.descDecimated => true,
     _ => false,
   };
 
@@ -10455,6 +10591,8 @@ base class BubbleControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
     OptionKey.datasetElementType => classifyUnion(raw, 6),
     OptionKey.dataElementType => classifyUnion(raw, 6),
+    OptionKey.descData => classifyUnion(raw, 64),
+    OptionKey.descDecimated => classifyUnion(raw, 64),
     _ => kind.classifyOther(raw),
   };
 }
@@ -11301,6 +11439,42 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
     classify(OptionKey.dataElementType, value),
   );
 
+  Opt<Object>? _descData;
+
+  /// The cell of `_data`, or Dart `null` when absent.
+  Opt<Object>? get descDataCell => _descData;
+
+  /// Stores the cell of `_data`. Dart `null` deletes the key.
+  set descDataCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descData);
+    } else {
+      store(OptionKey.descData, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_data`.
+  set descData(Object value) =>
+      store(OptionKey.descData, classify(OptionKey.descData, value));
+
+  Opt<Object>? _descDecimated;
+
+  /// The cell of `_decimated`, or Dart `null` when absent.
+  Opt<Object>? get descDecimatedCell => _descDecimated;
+
+  /// Stores the cell of `_decimated`. Dart `null` deletes the key.
+  set descDecimatedCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descDecimated);
+    } else {
+      store(OptionKey.descDecimated, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_decimated`.
+  set descDecimated(Object value) =>
+      store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
+
   @override
   Opt<Object?>? cellOf(OptionKey key) => switch (key) {
     OptionKey.parsing => _parsing,
@@ -11349,6 +11523,8 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => _elements,
     OptionKey.datasetElementType => _datasetElementType,
     OptionKey.dataElementType => _dataElementType,
+    OptionKey.descData => _descData,
+    OptionKey.descDecimated => _descDecimated,
     _ => null,
   };
 
@@ -11447,6 +11623,10 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
         _datasetElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
       case OptionKey.dataElementType:
         _dataElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
+      case OptionKey.descData:
+        _descData = fitCell(cell, (raw) => classifyUnion(raw, 64));
+      case OptionKey.descDecimated:
+        _descDecimated = fitCell(cell, (raw) => classifyUnion(raw, 64));
       default:
         throw ArgumentError.value(
           key,
@@ -11503,7 +11683,9 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
     OptionKey.drawActiveElementsOnTop ||
     OptionKey.elements ||
     OptionKey.datasetElementType ||
-    OptionKey.dataElementType => true,
+    OptionKey.dataElementType ||
+    OptionKey.descData ||
+    OptionKey.descDecimated => true,
     _ => false,
   };
 
@@ -11555,6 +11737,8 @@ base class DoughnutControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
     OptionKey.datasetElementType => classifyUnion(raw, 6),
     OptionKey.dataElementType => classifyUnion(raw, 6),
+    OptionKey.descData => classifyUnion(raw, 64),
+    OptionKey.descDecimated => classifyUnion(raw, 64),
     _ => kind.classifyOther(raw),
   };
 }
@@ -12418,6 +12602,42 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
     classify(OptionKey.dataElementType, value),
   );
 
+  Opt<Object>? _descData;
+
+  /// The cell of `_data`, or Dart `null` when absent.
+  Opt<Object>? get descDataCell => _descData;
+
+  /// Stores the cell of `_data`. Dart `null` deletes the key.
+  set descDataCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descData);
+    } else {
+      store(OptionKey.descData, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_data`.
+  set descData(Object value) =>
+      store(OptionKey.descData, classify(OptionKey.descData, value));
+
+  Opt<Object>? _descDecimated;
+
+  /// The cell of `_decimated`, or Dart `null` when absent.
+  Opt<Object>? get descDecimatedCell => _descDecimated;
+
+  /// Stores the cell of `_decimated`. Dart `null` deletes the key.
+  set descDecimatedCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descDecimated);
+    } else {
+      store(OptionKey.descDecimated, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_decimated`.
+  set descDecimated(Object value) =>
+      store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
+
   @override
   Opt<Object?>? cellOf(OptionKey key) => switch (key) {
     OptionKey.parsing => _parsing,
@@ -12467,6 +12687,8 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => _elements,
     OptionKey.datasetElementType => _datasetElementType,
     OptionKey.dataElementType => _dataElementType,
+    OptionKey.descData => _descData,
+    OptionKey.descDecimated => _descDecimated,
     _ => null,
   };
 
@@ -12567,6 +12789,10 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
         _datasetElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
       case OptionKey.dataElementType:
         _dataElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
+      case OptionKey.descData:
+        _descData = fitCell(cell, (raw) => classifyUnion(raw, 64));
+      case OptionKey.descDecimated:
+        _descDecimated = fitCell(cell, (raw) => classifyUnion(raw, 64));
       default:
         throw ArgumentError.value(
           key,
@@ -12624,7 +12850,9 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
     OptionKey.drawActiveElementsOnTop ||
     OptionKey.elements ||
     OptionKey.datasetElementType ||
-    OptionKey.dataElementType => true,
+    OptionKey.dataElementType ||
+    OptionKey.descData ||
+    OptionKey.descDecimated => true,
     _ => false,
   };
 
@@ -12677,6 +12905,8 @@ base class PolarAreaControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
     OptionKey.datasetElementType => classifyUnion(raw, 6),
     OptionKey.dataElementType => classifyUnion(raw, 6),
+    OptionKey.descData => classifyUnion(raw, 64),
+    OptionKey.descDecimated => classifyUnion(raw, 64),
     _ => kind.classifyOther(raw),
   };
 }
@@ -13749,6 +13979,42 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
     classify(OptionKey.dataElementType, value),
   );
 
+  Opt<Object>? _descData;
+
+  /// The cell of `_data`, or Dart `null` when absent.
+  Opt<Object>? get descDataCell => _descData;
+
+  /// Stores the cell of `_data`. Dart `null` deletes the key.
+  set descDataCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descData);
+    } else {
+      store(OptionKey.descData, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_data`.
+  set descData(Object value) =>
+      store(OptionKey.descData, classify(OptionKey.descData, value));
+
+  Opt<Object>? _descDecimated;
+
+  /// The cell of `_decimated`, or Dart `null` when absent.
+  Opt<Object>? get descDecimatedCell => _descDecimated;
+
+  /// Stores the cell of `_decimated`. Dart `null` deletes the key.
+  set descDecimatedCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descDecimated);
+    } else {
+      store(OptionKey.descDecimated, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_decimated`.
+  set descDecimated(Object value) =>
+      store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
+
   @override
   Opt<Object?>? cellOf(OptionKey key) => switch (key) {
     OptionKey.parsing => _parsing,
@@ -13809,6 +14075,8 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => _elements,
     OptionKey.datasetElementType => _datasetElementType,
     OptionKey.dataElementType => _dataElementType,
+    OptionKey.descData => _descData,
+    OptionKey.descDecimated => _descDecimated,
     _ => null,
   };
 
@@ -13934,6 +14202,10 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
         _datasetElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
       case OptionKey.dataElementType:
         _dataElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
+      case OptionKey.descData:
+        _descData = fitCell(cell, (raw) => classifyUnion(raw, 64));
+      case OptionKey.descDecimated:
+        _descDecimated = fitCell(cell, (raw) => classifyUnion(raw, 64));
       default:
         throw ArgumentError.value(
           key,
@@ -14002,7 +14274,9 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
     OptionKey.rAxisID ||
     OptionKey.elements ||
     OptionKey.datasetElementType ||
-    OptionKey.dataElementType => true,
+    OptionKey.dataElementType ||
+    OptionKey.descData ||
+    OptionKey.descDecimated => true,
     _ => false,
   };
 
@@ -14066,6 +14340,8 @@ base class RadarControllerDatasetOptionsScope extends OptionScope {
     OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
     OptionKey.datasetElementType => classifyUnion(raw, 6),
     OptionKey.dataElementType => classifyUnion(raw, 6),
+    OptionKey.descData => classifyUnion(raw, 64),
+    OptionKey.descDecimated => classifyUnion(raw, 64),
     _ => kind.classifyOther(raw),
   };
 }
@@ -14475,6 +14751,42 @@ base class GenericDatasetOptionsScope extends OptionScope {
     classify(OptionKey.dataElementType, value),
   );
 
+  Opt<Object>? _descData;
+
+  /// The cell of `_data`, or Dart `null` when absent.
+  Opt<Object>? get descDataCell => _descData;
+
+  /// Stores the cell of `_data`. Dart `null` deletes the key.
+  set descDataCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descData);
+    } else {
+      store(OptionKey.descData, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_data`.
+  set descData(Object value) =>
+      store(OptionKey.descData, classify(OptionKey.descData, value));
+
+  Opt<Object>? _descDecimated;
+
+  /// The cell of `_decimated`, or Dart `null` when absent.
+  Opt<Object>? get descDecimatedCell => _descDecimated;
+
+  /// Stores the cell of `_decimated`. Dart `null` deletes the key.
+  set descDecimatedCell(Opt<Object>? cell) {
+    if (cell == null) {
+      delete(OptionKey.descDecimated);
+    } else {
+      store(OptionKey.descDecimated, cell);
+    }
+  }
+
+  /// Stores the plain value [value] of `_decimated`.
+  set descDecimated(Object value) =>
+      store(OptionKey.descDecimated, classify(OptionKey.descDecimated, value));
+
   @override
   Opt<Object?>? cellOf(OptionKey key) => switch (key) {
     OptionKey.parsing => _parsing,
@@ -14499,6 +14811,8 @@ base class GenericDatasetOptionsScope extends OptionScope {
     OptionKey.elements => _elements,
     OptionKey.datasetElementType => _datasetElementType,
     OptionKey.dataElementType => _dataElementType,
+    OptionKey.descData => _descData,
+    OptionKey.descDecimated => _descDecimated,
     _ => null,
   };
 
@@ -14549,6 +14863,10 @@ base class GenericDatasetOptionsScope extends OptionScope {
         _datasetElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
       case OptionKey.dataElementType:
         _dataElementType = fitCell(cell, (raw) => classifyUnion(raw, 6));
+      case OptionKey.descData:
+        _descData = fitCell(cell, (raw) => classifyUnion(raw, 64));
+      case OptionKey.descDecimated:
+        _descDecimated = fitCell(cell, (raw) => classifyUnion(raw, 64));
       default:
         throw ArgumentError.value(
           key,
@@ -14581,7 +14899,9 @@ base class GenericDatasetOptionsScope extends OptionScope {
     OptionKey.transitions ||
     OptionKey.elements ||
     OptionKey.datasetElementType ||
-    OptionKey.dataElementType => true,
+    OptionKey.dataElementType ||
+    OptionKey.descData ||
+    OptionKey.descDecimated => true,
     _ => false,
   };
 
@@ -14609,6 +14929,8 @@ base class GenericDatasetOptionsScope extends OptionScope {
     OptionKey.elements => classifyScope<ElementOptionsByTypeScope>(raw),
     OptionKey.datasetElementType => classifyUnion(raw, 6),
     OptionKey.dataElementType => classifyUnion(raw, 6),
+    OptionKey.descData => classifyUnion(raw, 64),
+    OptionKey.descDecimated => classifyUnion(raw, 64),
     _ => kind.classifyOther(raw),
   };
 }

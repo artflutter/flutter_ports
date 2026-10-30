@@ -715,6 +715,8 @@ enum ScopeKind {
       OptionKey.elements,
       OptionKey.datasetElementType,
       OptionKey.dataElementType,
+      OptionKey.descData,
+      OptionKey.descDecimated,
     ],
     ScopeKind.lineControllerDatasetOptions => const [
       OptionKey.parsing,
@@ -771,6 +773,8 @@ enum ScopeKind {
       OptionKey.elements,
       OptionKey.datasetElementType,
       OptionKey.dataElementType,
+      OptionKey.descData,
+      OptionKey.descDecimated,
     ],
     ScopeKind.bubbleControllerDatasetOptions => const [
       OptionKey.parsing,
@@ -806,6 +810,8 @@ enum ScopeKind {
       OptionKey.elements,
       OptionKey.datasetElementType,
       OptionKey.dataElementType,
+      OptionKey.descData,
+      OptionKey.descDecimated,
     ],
     ScopeKind.doughnutControllerDatasetOptions => const [
       OptionKey.parsing,
@@ -854,6 +860,8 @@ enum ScopeKind {
       OptionKey.elements,
       OptionKey.datasetElementType,
       OptionKey.dataElementType,
+      OptionKey.descData,
+      OptionKey.descDecimated,
     ],
     ScopeKind.polarAreaControllerDatasetOptions => const [
       OptionKey.parsing,
@@ -903,6 +911,8 @@ enum ScopeKind {
       OptionKey.elements,
       OptionKey.datasetElementType,
       OptionKey.dataElementType,
+      OptionKey.descData,
+      OptionKey.descDecimated,
     ],
     ScopeKind.radarControllerDatasetOptions => const [
       OptionKey.parsing,
@@ -963,6 +973,8 @@ enum ScopeKind {
       OptionKey.elements,
       OptionKey.datasetElementType,
       OptionKey.dataElementType,
+      OptionKey.descData,
+      OptionKey.descDecimated,
     ],
     ScopeKind.genericDatasetOptions => const [
       OptionKey.parsing,
@@ -987,6 +999,8 @@ enum ScopeKind {
       OptionKey.elements,
       OptionKey.datasetElementType,
       OptionKey.dataElementType,
+      OptionKey.descData,
+      OptionKey.descDecimated,
     ],
     ScopeKind.scaleOptions => const [
       OptionKey.display,
@@ -1689,6 +1703,8 @@ enum ScopeKind {
       OptionKey.elements => 32,
       OptionKey.datasetElementType => 6,
       OptionKey.dataElementType => 6,
+      OptionKey.descData => 64,
+      OptionKey.descDecimated => 64,
       _ => 0,
     },
     ScopeKind.lineControllerDatasetOptions => switch (key) {
@@ -1746,6 +1762,8 @@ enum ScopeKind {
       OptionKey.elements => 32,
       OptionKey.datasetElementType => 6,
       OptionKey.dataElementType => 6,
+      OptionKey.descData => 64,
+      OptionKey.descDecimated => 64,
       _ => 0,
     },
     ScopeKind.bubbleControllerDatasetOptions => switch (key) {
@@ -1782,6 +1800,8 @@ enum ScopeKind {
       OptionKey.elements => 32,
       OptionKey.datasetElementType => 6,
       OptionKey.dataElementType => 6,
+      OptionKey.descData => 64,
+      OptionKey.descDecimated => 64,
       _ => 0,
     },
     ScopeKind.doughnutControllerDatasetOptions => switch (key) {
@@ -1831,6 +1851,8 @@ enum ScopeKind {
       OptionKey.elements => 32,
       OptionKey.datasetElementType => 6,
       OptionKey.dataElementType => 6,
+      OptionKey.descData => 64,
+      OptionKey.descDecimated => 64,
       _ => 0,
     },
     ScopeKind.polarAreaControllerDatasetOptions => switch (key) {
@@ -1881,6 +1903,8 @@ enum ScopeKind {
       OptionKey.elements => 32,
       OptionKey.datasetElementType => 6,
       OptionKey.dataElementType => 6,
+      OptionKey.descData => 64,
+      OptionKey.descDecimated => 64,
       _ => 0,
     },
     ScopeKind.radarControllerDatasetOptions => switch (key) {
@@ -1942,6 +1966,8 @@ enum ScopeKind {
       OptionKey.elements => 32,
       OptionKey.datasetElementType => 6,
       OptionKey.dataElementType => 6,
+      OptionKey.descData => 64,
+      OptionKey.descDecimated => 64,
       _ => 0,
     },
     ScopeKind.genericDatasetOptions => switch (key) {
@@ -1967,6 +1993,8 @@ enum ScopeKind {
       OptionKey.elements => 32,
       OptionKey.datasetElementType => 6,
       OptionKey.dataElementType => 6,
+      OptionKey.descData => 64,
+      OptionKey.descDecimated => 64,
       _ => 0,
     },
     ScopeKind.scaleOptions => switch (key) {

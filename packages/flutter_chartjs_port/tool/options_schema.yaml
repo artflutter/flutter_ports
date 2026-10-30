@@ -518,6 +518,8 @@ kinds:
       elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
       datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
       dataElementType: string | bool
+      _data: any  # the decimation accessor, plugin.decimation.js:249-265 (undefined when absent)
+      _decimated: any  # written at plugin.decimation.js:280, read at controller.line.js:59
   LineControllerDatasetOptions:
     doc: index.d.ts:189 LineControllerDatasetOptions (index.d.ts:66 ControllerDatasetOptions, PointPrefixedOptions, PointPrefixedHoverOptions, LineOptions, LineHoverOptions, AnimationOptions) with index.d.ts:2317 FillerControllerDatasetOptions and index.d.ts:216 LineControllerChartOptions, a line or scatter dataset and `datasets.line`, `datasets.scatter`.
     keys:
@@ -575,6 +577,8 @@ kinds:
       elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
       datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
       dataElementType: string | bool
+      _data: any  # the decimation accessor, plugin.decimation.js:249-265 (undefined when absent)
+      _decimated: any  # written at plugin.decimation.js:280, read at controller.line.js:59
   BubbleControllerDatasetOptions:
     doc: index.d.ts:162 BubbleControllerDatasetOptions (index.d.ts:66 ControllerDatasetOptions, PointOptions, PointHoverOptions), a bubble dataset and `datasets.bubble`.
     keys:
@@ -611,6 +615,8 @@ kinds:
       elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
       datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
       dataElementType: string | bool
+      _data: any  # the decimation accessor, plugin.decimation.js:249-265 (undefined when absent)
+      _decimated: any  # written at plugin.decimation.js:280, read at controller.line.js:59
   DoughnutControllerDatasetOptions:
     doc: index.d.ts:247 DoughnutControllerDatasetOptions (index.d.ts:66 ControllerDatasetOptions, ArcOptions, ArcHoverOptions, AnimationOptions) with index.d.ts:307 DoughnutControllerChartOptions, a doughnut or pie dataset and `datasets.doughnut`, `datasets.pie`.
     keys:
@@ -660,6 +666,8 @@ kinds:
       elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
       datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
       dataElementType: string | bool
+      _data: any  # the decimation accessor, plugin.decimation.js:249-265 (undefined when absent)
+      _decimated: any  # written at plugin.decimation.js:280, read at controller.line.js:59
   PolarAreaControllerDatasetOptions:
     doc: index.d.ts:390 PolarAreaControllerDatasetOptions (index.d.ts:247 DoughnutControllerDatasetOptions and `angle`) with index.d.ts:400 PolarAreaControllerChartOptions, a polar area dataset and `datasets.polarArea`.
     keys:
@@ -710,6 +718,8 @@ kinds:
       elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
       datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
       dataElementType: string | bool
+      _data: any  # the decimation accessor, plugin.decimation.js:249-265 (undefined when absent)
+      _decimated: any  # written at plugin.decimation.js:280, read at controller.line.js:59
   RadarControllerDatasetOptions:
     doc: index.d.ts:430 RadarControllerDatasetOptions (index.d.ts:66 ControllerDatasetOptions, the point options with the prefixed and hover ones, LineOptions, LineHoverOptions, AnimationOptions) with index.d.ts:2317 FillerControllerDatasetOptions, a radar dataset and `datasets.radar`.
     keys:
@@ -771,6 +781,8 @@ kinds:
       elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, controller.radar.js defaults
       datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
       dataElementType: string | bool
+      _data: any  # the decimation accessor, plugin.decimation.js:249-265 (undefined when absent)
+      _decimated: any  # written at plugin.decimation.js:280, read at controller.line.js:59
   GenericDatasetOptions:
     doc: index.d.ts:66 ControllerDatasetOptions with index.d.ts:3859 ChartDatasetProperties and the keys that core code reads for each dataset, a dataset of a chart type without a dataset kind and `datasets.<custom type>`.
     others: any
@@ -797,6 +809,8 @@ kinds:
       elements: scope ElementOptionsByType  # the scope key datasets.<type>.elements.<element>, core.config.js:252
       datasetElementType: string | bool  # read at core.controller.js:443 (index.d.ts:701)
       dataElementType: string | bool
+      _data: any  # the decimation accessor, plugin.decimation.js:249-265 (undefined when absent)
+      _decimated: any  # written at plugin.decimation.js:280, read at controller.line.js:59
   # ---------------------------------------------------------------------------------------------
   # The scales. One kind for every scale type.
   # ---------------------------------------------------------------------------------------------
