@@ -800,6 +800,16 @@ Changes to the cited files:
   `tool/src/lib_imports.dart` gets the allowlist of `lib/src/typed/`; this plan cites no line of
   these files. No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart`,
   `helpers.dom.dart` or a test of §2.6 and §3.5 changes. The references, the inventory (§1.1), the
+- 2026-10-30, the common part of [Chart.js ADR 0053](adr/0053-resolver-fast-paths.md) (phase 10:
+  the switch of the fast paths, the differential test, the resolver trace reference, the bench
+  cells and the upstream page of P3). `doc/parity.md` gets five port-only rows, at lines 403, 440
+  and 477-479. The rows of `canvas_ui.dart` to `chart_host.dart` (lines 382-390) and of
+  `canvas_ui_test.dart` (line 396) do not move. The rows of `platform.flutter_test.dart` and
+  `chart_host_test.dart` move from lines 425-426 to lines 426-427; their text does not change.
+  `core.animation.dart` and `core.datasetController.dart` get internal getters, and AGENTS.md gets
+  the script `test:nofast`; this plan cites none of them. No file of `lib/src/canvas/`,
+  `chart_host.dart`, `platform.flutter.dart`, `helpers.dom.dart` or a test of §2.6 and §3.5
+  changes, and `doc/performance.md` does not change. The references, the inventory (§1.1), the
   tests of §2.6 and §3.5 and the estimates do not change. No trigger occurred.
 
 ## 1. Why

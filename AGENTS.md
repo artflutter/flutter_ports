@@ -470,7 +470,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `port_sources.yaml` (one entry for each project that the package ports code from, with its pin;
     the Chart.js entry maps `test/fixtures/` to `packages/flutter_chartjs_port/test/fixtures/hand/`),
     `upstream_manifest/` (tool 4, Node.js) and `reference/` (the Node.js generators of reference
-    data).
+    data, and `reference/p3_page/`: the upstream page of the P3 comparison of performance.md
+    §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
     - `doc/adr/`: Chart.js ADRs 0001-0053. Fourteen of them are superseded: Chart.js ADR 0010

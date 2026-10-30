@@ -1,0 +1,4 @@
+# Build outputs of the P3 page (README.md): the field of field_gen.dart and
+# the run logs of serve.mjs. The dist of Chart.js stays in its build folder.
+field.json
+logs/
