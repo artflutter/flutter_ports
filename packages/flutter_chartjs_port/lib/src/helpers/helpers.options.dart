@@ -560,6 +560,13 @@ base class ContextObject extends MapBase<String, Object?>
   @protected
   bool fieldSet(String name, Object? value) => false;
 
+  /// Makes [name] an own key: a new name goes to the end of the own-key
+  /// order, as `operator []=` does. A typed setter of a subclass calls it
+  /// before it sets its field.
+  void _claim(String name) {
+    if (!_names.contains(name)) _names.add(name);
+  }
+
   /// `this[name]` (`[[Get]]`) for a typed field: the own [field], else the
   /// value of the prototype chain.
   Object? _fieldRead(Object? field, String name) =>
@@ -726,6 +733,35 @@ final class ScriptableContext extends ContextObject {
   /// A dataset or data context with the parent [prototype].
   ScriptableContext(super.prototype);
 
+  /// core.datasetController.js:182 `createDatasetContext(parent, index)`:
+  /// the keys `active` (false), `dataset` (undefined), `datasetIndex`,
+  /// `index`, `mode` ('default') and `type` ('dataset'), in this order.
+  ScriptableContext.dataset(super.prototype, double index) {
+    this
+      ..active = false
+      ..dataset = undefined
+      ..datasetIndex = index
+      ..index = index
+      ..mode = 'default'
+      .._setType('dataset');
+  }
+
+  /// core.datasetController.js:195 `createDataContext(parent, index,
+  /// element)`: the keys `active` (false), `dataIndex`, `parsed`
+  /// (undefined), `raw` (undefined), `element`, `index`, `mode`
+  /// ('default') and `type` ('data'), in this order.
+  ScriptableContext.data(super.prototype, double index, Object? element) {
+    this
+      ..active = false
+      ..dataIndex = index
+      ..parsed = undefined
+      ..raw = undefined
+      .._setElement(element)
+      ..index = index
+      ..mode = 'default'
+      .._setType('data');
+  }
+
   Object? _active = _unset;
   Object? _dataset = _unset;
   Object? _datasetIndex = _unset;
@@ -763,6 +799,59 @@ final class ScriptableContext extends ContextObject {
 
   /// `mode`.
   Object? get mode => _fieldRead(_mode, 'mode');
+
+  // The typed writes of `getContext` (core.datasetController.js:762-786).
+  // Each one makes its name an own key first, as `operator []=` does.
+
+  set active(Object? value) {
+    _claim('active');
+    _active = value;
+  }
+
+  set dataset(Object? value) {
+    _claim('dataset');
+    _dataset = value;
+  }
+
+  set datasetIndex(Object? value) {
+    _claim('datasetIndex');
+    _datasetIndex = value;
+  }
+
+  set dataIndex(Object? value) {
+    _claim('dataIndex');
+    _dataIndex = value;
+  }
+
+  set parsed(Object? value) {
+    _claim('parsed');
+    _parsed = value;
+  }
+
+  set raw(Object? value) {
+    _claim('raw');
+    _raw = value;
+  }
+
+  set index(Object? value) {
+    _claim('index');
+    _index = value;
+  }
+
+  set mode(Object? value) {
+    _claim('mode');
+    _mode = value;
+  }
+
+  void _setElement(Object? value) {
+    _claim('element');
+    _element = value;
+  }
+
+  void _setType(Object? value) {
+    _claim('type');
+    _type = value;
+  }
 
   @override
   Object? fieldGet(String name) => switch (name) {
