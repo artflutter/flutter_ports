@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show updateBezierControlPoints;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/options/props.dart'
+    show PointProperties;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -742,4 +744,76 @@ void main() {
       );
     });
   });
+
+  // Chart.js ADR 0054 §9: the typed writes of a property object, with the
+  // exact-class rule.
+  group('typed writes', () {
+    test('assign of a PointProperties takes the typed setters', () {
+      final options = PointOptions();
+      final parsed = <String, Object?>{'x': 1.0, 'y': 2.0};
+      final props = PointProperties()
+        ..y = 2
+        ..x = 1
+        ..skip = false
+        ..stop = true
+        ..parsed = parsed
+        ..options = options
+        ..angle = 0.5;
+      final point = PointElement()..assign(props);
+      expect(point.x, 1);
+      expect(point.y, 2);
+      expect(point.skip, isFalse);
+      expect(point.stop, isTrue);
+      expect(point.parsed, same(parsed));
+      expect(point.options, same(options));
+      expect(point.angle, 0.5);
+      expect(point['cp1x'], _isUndefined);
+    });
+
+    test('a foreign value and an extra key go by name', () {
+      final foreign = PointProperties()
+        ..x = 1
+        ..['y'] = 'a';
+      final point = PointElement();
+      expect(() => point.assign(foreign), throwsArgumentError);
+      // The key before the throw is written, as Object.assign does.
+      expect(point.x, 1);
+      expect(point['y'], _isUndefined);
+      final extra = PointProperties()
+        ..x = 3
+        ..['raw'] = 7
+        ..['custom'] = 'c';
+      final other = PointElement()..assign(extra);
+      expect(other.x, 3);
+      expect(other['raw'], 7);
+      expect(other['custom'], 'c');
+    });
+
+    test('an element of a user subclass gets the writes by name', () {
+      final order = <String>[];
+      final point = _RecordingPoint(order)
+        ..assign(
+          PointProperties()
+            ..y = 2
+            ..x = 1,
+        );
+      expect(order, ['y', 'x']);
+      expect(point.x, 1);
+      expect(point.typedWrites, isFalse);
+      expect(PointElement().typedWrites, isTrue);
+    });
+  });
+}
+
+/// A point of a user subclass that records each write by name.
+final class _RecordingPoint extends PointElement {
+  _RecordingPoint(this.order);
+
+  final List<String> order;
+
+  @override
+  void operator []=(String prop, Object? value) {
+    order.add(prop);
+    super[prop] = value;
+  }
 }
